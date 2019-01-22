@@ -1,0 +1,36 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<style>
+* {
+	font-family: Verdana !important;font-size: 14px !important;font-weight: light !important;color: black !important;
+}
+</style>
+
+<center>
+	<table style="width: 600px; padding-right: 30px; padding-left: 30px;font-family: Verdana !important;font-size: 14px !important;font-weight: light !important;color: black !important;">
+		<tr>
+			<td><a href="http://www.intelidente.com" target="_blank"><img src="http://www.intelidente.com/images/email/header.jpg" /></a></td>
+		</tr>
+
+		<tr>
+			<td>
+				<p style="font-family: Verdana, Geneva, sans-serif; font-size: 14px; font-weight: light; text-align: left; color: #58585b;">
+
+					<strong>Prezado(a) #cliente, <br /><br /></strong>
+					Segue seu Resumo Diário do Intelidente: 
+					
+					<br /> <br /> <br /> 
+					
+					#relatorio
+					<br />
+					<strong>Equipe Intelidente.</strong>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="http://www.intelidente.com" target="_blank"><img src="http://www.intelidente.com/images/email/footer3.jpg" /></a></td>
+		</tr>
+	</table>
+</center>
+</html>

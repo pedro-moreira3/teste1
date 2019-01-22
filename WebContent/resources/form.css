@@ -1,0 +1,394 @@
+/* Font Type */
+.FontBold {
+	font-weight: bold !important;
+}
+
+.FontLight {
+	font-weight: lighter !important;
+}
+
+.FontNormal {
+	font-weight: normal !important;
+}
+
+.ui-picklist .ui-picklist-buttons {
+    vertical-align: top !important;
+}
+
+.ui-selectcheckboxmenu {
+	font-weight : normal !important;
+}
+
+span.profissional input[type="text"] {
+	width: 350px;
+}
+
+span.paciente input[type="text"] {
+	width: 350px;
+}
+
+.unidadeMedidaString {
+	margin-left: 10px;
+	margin-top: 5px;
+}
+
+.quantidadeArvore {
+	width: 50px
+}
+
+span.itembusca input[type="text"] {
+	width: 350px;
+}
+
+.ui-datatable table {
+    table-layout: auto;
+}
+
+.ui-tree{
+	overflow: auto;
+	height: 300px;
+	width: auto;
+}
+
+.legend-title {
+	text-align: left;
+	margin-bottom: 8px;
+	font-weight: bold;
+	font-size: 90%;
+}
+
+.legend-scale ul {
+	margin: 0;
+	padding: 0;
+	float: left;
+	list-style: none;
+}
+
+.legend-scale ul li {
+	display: block;
+	float: left;
+	width: 50px;
+	margin-bottom: 6px;
+	text-align: center;
+	font-size: 80%;
+	list-style: none;
+}
+
+ul.legend-labels li span {
+	display: block;
+	float: left;
+	height: 15px;
+	width: 50px;
+}
+
+.legend-source {
+	font-size: 70%;
+	color: #999;
+	clear: both;
+}
+
+.ui-menu .ui-menuitem-text {
+	font-weight: bold;
+}
+
+div#lume\:wizard .ui-paginator-page {
+	width: 40px;
+	height: 40px;
+}
+
+div#lume\:anamneseTotem td,div#lume\:tabView\:anamneseTotemConfirmacao td,div#lume\:tabView\:dtEvolucao td,div#lume\:dtProcedimentosSelecionados td,div#lume\:dtProcedimentosDisponiveis td
+	{
+	border-style: none;
+	border-width: 0px;
+	margin: auto;
+	overflow: auto;
+	padding: auto;
+	padding-right: 10px;
+}
+
+table.ui-selectoneradio,table.ui-selectmanycheckbox {
+	width: auto;
+}
+
+.files {
+	width: 600px;
+}
+
+.menu_bar .ui-menu-list span {
+	color: white !important;
+}
+
+.labelTotem {
+	font-weight: bold;
+}
+
+.valueTotem {
+	margin-right: 20px;
+}
+
+div#bemvindo {
+	color: #666666;
+	font-size: 14px;
+	font-weight: bold;
+	position: fixed;
+	right: 10px;
+	text-align: right;
+	top: 25px;
+	width: 300px;
+}
+
+.ui-outputlabel-rfi {
+	color: red;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.dente {
+	margin-right: 5px;
+	width: 50px;
+	float: left;
+}
+
+.blocos {
+	display: block;
+	float: left;
+	width: 100%;
+}
+
+.numero {
+	text-align: center;
+}
+
+.ui-toolbar-group-left {
+	width: 50%;
+}
+
+.ui-tabs .ui-tabs-panel {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.fc-event-skin {
+	background-color: inherit;
+	color: inherit;
+	border-color: inherit;
+}
+
+.agendamentoNaoConfirmado {
+	border-color: #F00 !important;
+	background-color: #F00 !important;
+	color: #fff !important;
+}
+
+.clienteNaClinica {
+	border-color: #00FF7F !important;
+	background-color: #00FF7F !important;
+	color: #000 !important;
+}
+
+.agendamentoConfirmado {
+	border-color: blue !important;
+	background-color: blue !important;
+	color: #fff !important;
+}
+
+.agendamentoAtendido {
+	border-color: #49826C !important;
+	background-color: #49826C !important;
+	color: #fff !important;
+}
+
+.agendamentoPrecadastro {
+	border-color: yellow !important;
+	background-color: yellow !important;
+	color: black !important;
+}
+
+.agendamentoCancelado {
+	border-color: grey !important;
+	background-color: grey !important;
+	color: #fff !important;
+}
+
+.agendamentoFalta {
+	border-color: #B22222 !important;
+	background-color: #B22222 !important;
+	color: black !important;
+}
+
+.agendamentoAfastamento {
+	border-color: #FF9 !important;
+	background-color: #FF9 !important;
+	color: black !important;
+}
+
+.agemdamentoEncaixe {
+	border-color: #00BFFF !important;
+	background-color: #00BFFF !important;
+	color: #fff !important;
+}
+
+.emAtendimento {
+	border-color: #C1FFC1 !important;
+	background-color: #C1FFC1 !important;
+	color: #000 !important;
+}
+
+.agendamentoRemarcado {
+	border-color: #CDC5BF !important;
+	background-color: #CDC5BF !important;
+	color: #000 !important;
+}
+
+.fileupload-buttonbar {
+	width: 420px;
+	height: 30px;
+}
+
+h2 {
+	text-align: left;
+	color: #1111ef;
+}
+
+.msgs {
+	color: #ffffff;
+	border: solid thick red;
+	border-radius: 1em;
+	box-shadow: black 0.5em 0.5em 0.3em;
+	background: #feeffe;
+}
+
+.jqplot-target {
+	font-size: 1.2em;
+}
+
+.ui-growl {
+	margin-top: 40px;
+	left: 40%;
+}
+
+ui-treenode {
+	height: 200px;
+	border: 0px;
+}
+
+span.lumeField {
+	display: inline-block;
+	width: 100%;
+	text-align: left;
+	margin-bottom: 5px;
+}
+
+.ui-fileupload,.fileupload-content {
+	width: 420px;
+}
+
+span.lumeField input[type="text"],textarea,input[type="radio"],textarea,selectOneRadio,select,selectOneMenu,ajax,.ui-selectonemenu,.ui-checkbox,.ui-selectoneradio,.ui-message-error,.ui-datalist-data,.ui-inputtextarea,.ui-fileupload,.ui-selectmanycheckbox,.ui-editor,.ui-autocomplete,.ui-tree
+	{
+	font-weight: normal;
+	text-align: left;
+	float: left;
+}
+
+.lumeSemBorda {
+	border: 0px;
+}
+
+.ui-password {
+	width: 140px;
+}
+
+.ui-state-disabled,.ui-widget-content .ui-state-disabled,.ui-widget-header .ui-state-disabled
+	{
+	background-image: none;
+	opacity: 0.6;
+}
+
+.ui-state-error,.ui-widget-content .ui-state-error,.ui-widget-header .ui-state-error
+	{
+	border: 1px solid #C5DBEC;
+	color: #2E6E9E;
+}
+
+.ui-datalist-data {
+	border: 0px;
+	padding-left: 15px;
+}
+
+button.ui-button {
+	margin-right: 10px;
+}
+
+span.lumeField input:disabled {
+	font-weight: bold;
+	color: #333333;
+}
+
+span.lumeField label,span.lumeField fieldset {
+	display: inline-block;
+	width: 20%;
+	padding-right: 7px;
+	float: left;
+	font-weight: bold;
+}
+
+span.lumeFieldDialog label {
+	display: inline-block;
+	width: 100%;
+	padding-right: 7px;
+	float: left;
+}
+
+span.lumeField .msg {
+	font-weight: bold;
+	font-style: normal;
+	color: #f00;
+	margin-left: 7px;
+	float: left;
+}
+
+span.lumeField table {
+	display: inline-table;
+	text-align: left;
+	float: left;
+}
+
+span.lumeField table label {
+	text-align: left;
+	width: auto;
+	display: inline;
+	/**line-height: 1.8em;**/
+	float: left;
+}
+
+.article .rf-p {
+	padding: 10px;
+	margin: 0px;
+}
+
+.article .rf-p-hdr {
+	font-family: Arial, Verdana, sans-serif;
+	font-size: 11px;
+	font-weight: bold;
+	font-style: normal;
+	color: #ffffff;
+	padding: 4px;
+	background-color: #0FB3F9;
+	background-repeat: repeat-x;
+	background-position: left;
+	background-image: url(../images/item_bg.png);
+}
+
+.article .rf-p-b {
+	padding: 3px;
+	border: none;
+}
+
+div.lumeButton, .lumeButton div {
+	padding: 3px;
+	border: none !important;
+	width: 100%;
+	text-align: left;
+	background-color: #F5F3E5 !important;
+	background: #F5F3E5 !important;
+}

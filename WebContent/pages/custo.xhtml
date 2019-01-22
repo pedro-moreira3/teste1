@@ -1,0 +1,112 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<h:inputHidden id="idCusto" value="#{custoMB.entity.id}" />
+					<p:panel id="pnCusto" styleClass="BordNone">
+
+						<h1 class="CardBigTopic">Registro de Custos Diretos</h1>
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+						style="border:0px none; background-color:transparent;">
+
+							<p:outputLabel for="paciente" value="#{dominioMB.cliente} :" />
+							<p:autoComplete dropdown="true" queryDelay="1000" size="42" minQueryLength="3" value="#{custoMB.paciente}" id="paciente"
+								completeMethod="#{custoMB.geraSugestoes}" var="p" itemLabel="#{p.dadosBasico.nomeDocumento}" itemValue="#{p}" converter="paciente"
+								required="true" scrollHeight="400">
+								<p:ajax event="itemSelect" listener="#{custoMB.handleSelect}" process="paciente" update=":lume:dtCusto,:lume:pnCusto" />
+							</p:autoComplete>
+
+							<p:outputLabel for="planoTratamento" value="#{dominioMB.planoTratamento} : " />
+							<p:selectOneMenu id="planoTratamento" required="true" disabled="#{custoMB.paciente == null}" value="#{custoMB.planoTratamento}"
+								 converter="planoTratamento">
+								<f:selectItem itemLabel="Selecione um plano" value="#{null}" />
+								<f:selectItems value="#{custoMB.planoTratamentos}" var="pt" itemValue="#{pt}" itemLabel="#{pt.descricao}" />
+								<p:ajax update=":lume:botoes,:lume:pnCusto" listener="#{custoMB.handleSelectPT}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel for="planoTratamentoProcedimento" value="Procedimento : " />
+							<p:selectOneMenu id="planoTratamentoProcedimento" required="true" disabled="#{custoMB.planoTratamento == null}"
+								value="#{custoMB.planoTratamentoProcedimento}"  converter="planoTratamentoProcedimento">
+								<f:selectItem itemLabel="Selecione um procedimento" value="#{null}" />
+								<f:selectItems value="#{custoMB.planoTratamentoProcedimentos}" var="ptp" itemValue="#{ptp}" itemLabel="#{ptp.descricaoCompleta}" />
+							</p:selectOneMenu>
+							
+							<p:outputLabel for="dtRegistro" value="Data : " />
+							<p:calendar id="dtRegistro" required="true" value="#{custoMB.dataRegistro}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" maxdate="#{odontoMB.sysdate}" class="Wid10" disabled="#{custoMB.planoTratamento == null}"> 
+							</p:calendar>							
+
+							<p:outputLabel for="valorCusto" value="Custo : " />
+							<p:inputNumber id="valorCusto" disabled="#{custoMB.planoTratamento == null}" value="#{custoMB.valor}" required="true" maxlength="10"
+								maxValue="99999999.99" decimalSeparator="," symbol="" thousandSeparator="." class="Wid10"/>
+
+							<p:outputLabel for="descricaoCusto" value="Descrição do custo : " />
+							<p:inputTextarea id="descricaoCusto" value="#{custoMB.descricao}" required="true" maxlength="100" disabled="#{custoMB.planoTratamento == null}" />
+							
+						</p:panelGrid>
+
+
+						<div class="SeparatorFull"></div>
+						<p:panel id="botoes" styleClass="BordNone">
+
+							<div class="Container25 Responsive100">
+								<p:commandButton id="persist" value="Salvar" icon="White fa fa-save" actionListener="#{custoMB.actionPersist}" 
+									update=":lume:pnCusto,:lume:dtCusto,:lume:botoes" process=":lume:pnCusto,@this" disabled="#{custoMB.planoTratamento == null}"
+									styleClass="GreenButton" />
+							</div>
+							<div class="Container25 Responsive100">
+								<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{custoMB.actionRemove}"
+									update=":lume:pnCusto,:lume:dtCusto,:lume:botoes" process=":lume:pnCusto,@this" disabled="#{custoMB.desabilitaExclusao()}"
+									styleClass="RedButton" />
+							</div>
+							<div class="Container25 Responsive100">
+								<p:commandButton id="new" value="Novo" icon="White fa fa-file-o" actionListener="#{custoMB.actionNew}" 
+									update=":lume:pnCusto,:lume:dtCusto,:lume:botoes" process=":lume:pnCusto,@this" disabled="#{custoMB.planoTratamento == null}" />
+							</div>
+						</p:panel>
+					</p:panel>
+
+					<div class="EmptyBox20"></div>
+
+
+					<p:dataTable filterDelay="1500"  reflow="true" var="custo" value="#{custoMB.custos}" paginator="true" rows="20" paginatorPosition="bottom" id="dtCusto"
+						emptyMessage="" selection="#{custoMB.custoSelecionado}" selectionMode="single" rowKey="#{custo}">
+						<p:ajax event="rowSelect" update=":lume:pnCusto,:lume:botoes" listener="#{custoMB.carrega}" />
+						<f:facet name="header">Lançamentos</f:facet>
+
+						<p:column headerText="Data de Faturamento" sortBy="#{custo.dataFaturamento}" filterBy="#{custo.dataFaturamento}" filterMatchMode="contains">
+							<h:outputText value="#{custo.dataFaturamentoStr}" title="#{custo.id}" />
+						</p:column>
+						<p:column headerText="Data do Custo" sortBy="#{custo.dataRegistro}" filterBy="#{custo.dataRegistroStr}" filterMatchMode="contains">
+							<h:outputText value="#{custo.dataRegistroStr}" />
+						</p:column>						
+						<p:column headerText="Paciente" sortBy="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
+							filterBy="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}" filterMatchMode="contains">
+							<h:outputText value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}" />
+						</p:column>
+						<p:column headerText="Plano de Tratamento" sortBy="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}"
+							filterBy="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}" filterMatchMode="contains">
+							<h:outputText value="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}" />
+						</p:column>
+						<p:column headerText="Procedimento" sortBy="#{custo.planoTratamentoProcedimento.descricaoCompleta}"
+							filterBy="#{custo.planoTratamentoProcedimento.descricaoCompleta}" filterMatchMode="contains">
+							<h:outputText value="#{custo.planoTratamentoProcedimento.descricaoCompleta}" />
+						</p:column>
+						<p:column sortBy="#{custo.descricao}" headerText="Descrição" filterBy="#{custo.descricao}">
+							<h:outputText value="#{custo.descricao}" />
+						</p:column>
+						<p:column sortBy="#{custo.valor}" style="text-align:center;" headerText="Parcela" filterBy="#{custo.valor}">
+							<h:outputText value="#{custo.valor}" />
+						</p:column>
+					</p:dataTable>
+
+
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

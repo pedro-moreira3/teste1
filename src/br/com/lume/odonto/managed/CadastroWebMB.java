@@ -1,0 +1,430 @@
+package br.com.lume.odonto.managed;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import javax.faces.event.ActionEvent;
+
+import org.apache.log4j.Logger;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.FlowEvent;
+import org.primefaces.model.DualListModel;
+import org.primefaces.model.UploadedFile;
+
+import br.com.lume.common.exception.business.BusinessException;
+import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
+import br.com.lume.common.exception.business.UsuarioDuplicadoException;
+import br.com.lume.common.exception.techinical.TechnicalException;
+import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.Endereco;
+import br.com.lume.common.util.EnviaEmail;
+import br.com.lume.common.util.JSFHelper;
+import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Status;
+import br.com.lume.odonto.bo.DocumentoBO;
+import br.com.lume.odonto.bo.DominioBO;
+import br.com.lume.odonto.bo.EspecialidadeBO;
+import br.com.lume.odonto.bo.FilialBO;
+import br.com.lume.odonto.bo.ItemBO;
+import br.com.lume.odonto.bo.KitBO;
+import br.com.lume.odonto.bo.PerguntaBO;
+import br.com.lume.odonto.bo.ProcedimentoBO;
+import br.com.lume.odonto.bo.ProcedimentoKitBO;
+import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.odonto.entity.DadosBasico;
+import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.Especialidade;
+import br.com.lume.odonto.entity.Filial;
+import br.com.lume.odonto.entity.OdontoPerfil;
+import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.entity.ProfissionalEspecialidade;
+import br.com.lume.odonto.entity.ProfissionalFilial;
+import br.com.lume.odonto.exception.DataNascimentoException;
+import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.odonto.util.UF;
+import br.com.lume.security.bo.EmpresaBO;
+import br.com.lume.security.bo.PerfilBO;
+import br.com.lume.security.bo.UsuarioBO;
+import br.com.lume.security.entity.Empresa;
+import br.com.lume.security.entity.Usuario;
+
+@ManagedBean
+@ViewScoped
+public class CadastroWebMB extends LumeManagedBean<Empresa> {
+
+    private Logger log = Logger.getLogger(CadastroWebMB.class);
+
+    private static final long serialVersionUID = 1L;
+
+    private Profissional profissional = new Profissional();
+
+    private ProfissionalBO profissionalBO;
+
+    private Filial filial;
+
+    private boolean skip;
+
+    private FilialBO filialBO;
+
+    private Usuario usuario;
+
+    private UploadedFile anexo;
+
+    private DualListModel<Especialidade> especialidadePickList = new DualListModel<>();
+
+    private List<Dominio> dominios;
+
+    private EspecialidadeBO especialidadeBO;
+
+    private ProcedimentoBO procedimentoBO;
+
+    private UsuarioBO usuarioBO;
+
+    private PerfilBO perfilBO;
+
+    private DominioBO dominioBO;
+
+    private EmpresaBO empresaBO;
+
+    private boolean dadosClinica;
+
+    private boolean concordoAdesao, concordoPrivacidade;
+
+    private boolean pnInicialVisivel;
+
+    public CadastroWebMB() {
+        super(new EmpresaBO());
+        this.setClazz(Empresa.class);
+        filialBO = new FilialBO();
+        profissionalBO = new ProfissionalBO();
+        especialidadeBO = new EspecialidadeBO();
+        procedimentoBO = new ProcedimentoBO();
+        usuarioBO = new UsuarioBO();
+        perfilBO = new PerfilBO();
+        dominioBO = new DominioBO();
+        empresaBO = new EmpresaBO();
+        pnInicialVisivel = true;
+    }
+
+    public String actionPersist() {
+        try {
+//            if (1 == 1) {
+//                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+//                this.addInfo(OdontoMensagens.getMensagem("cadastroweb.email.enviado"), "");
+//                pnInicialVisivel = false;
+//                return "";
+//            }
+            Usuario usu = usuarioBO.findByEmail(profissional.getDadosBasico().getEmail());
+            if (usu != null) {
+                usuarioBO.resetSenha(usu);
+                this.addError("Já existe um cadastro com este email, estamos renviando a senha para você!", "");
+                pnInicialVisivel = false;
+                return "";
+            }
+
+            this.getEntity().setEmpStrEstoque(Empresa.ESTOQUE_COMPLETO);
+            this.getEntity().setEmpChaSts(Status.ATIVO);
+            this.getEntity().setEmpChaTrial(Status.SIM);
+            Calendar c = Calendar.getInstance();
+            this.getEntity().setEmpDtmCriacao(c.getTime());
+            this.getEntity().setEmpDtmAceite(c.getTime());
+            this.getEntity().setEmpChaIp(JSFHelper.getRequest().getRemoteAddr());
+            c.add(Calendar.MONTH, 1);
+            this.getEntity().setEmpDtmExpiracao(c.getTime());
+            ((EmpresaBO) this.getbO()).persist(this.getEntity());
+            cadastrarDadosTemplate(getEntity());
+            this.actionPersistFilial(null);
+            this.actionPersistProfissional(null);
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            this.addInfo(OdontoMensagens.getMensagem("cadastroweb.email.enviado"), "");
+            pnInicialVisivel = false;
+            return "";
+        } catch (UsuarioDuplicadoException e) {
+            this.addError("Usuário já cadastrado com este login/email", "");
+            log.error("Erro no actionPersist CadastroWebMB :" + OdontoMensagens.getMensagem("profissional.nascimento.erro"), e);
+        } catch (DataNascimentoException e) {
+            this.addError(OdontoMensagens.getMensagem("profissional.nascimento.erro"), "");
+            log.error("Erro no actionPersist CadastroWebMB :" + OdontoMensagens.getMensagem("profissional.nascimento.erro"), e);
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            log.error("Erro no actionPersist CadastroWebMB", e);
+        }
+        pnInicialVisivel = false;
+        return "";
+    }
+
+    public void actionPreencherDadosFisica() {
+        if ("F".equals(this.getEntity().getEmpChaTipo()) && this.isDadosClinica()) {
+            if (profissional.getDadosBasico().getNome() == null || profissional.getDadosBasico().getNome().equals("")) {
+                profissional.getDadosBasico().setNome(this.getEntity().getEmpStrNme());
+            }
+            if (profissional.getDadosBasico().getEmail() == null || profissional.getDadosBasico().getEmail().equals("")) {
+                profissional.getDadosBasico().setEmail(this.getEntity().getEmpStrEmail());
+            }
+        }
+    }
+
+    public void actionLogin() {
+        JSFHelper.redirect("login.jsf");
+    }
+
+    public void actionPersistFilial(ActionEvent event) throws BusinessException, TechnicalException {
+        DadosBasico dadosBasico = new DadosBasico();
+        dadosBasico.setNome(this.getEntity().getEmpStrNme());
+        dadosBasico.setDocumento(this.getEntity().getEmpChaCnpj());
+        dadosBasico.setEmail(this.getEntity().getEmpStrEmail());
+        dadosBasico.setUf(this.getEntity().getEmpChaUf());
+        dadosBasico.setCidade(this.getEntity().getEmpStrCidade());
+        dadosBasico.setBairro(this.getEntity().getEmpStrBairro());
+        dadosBasico.setCep(this.getEntity().getEmpChaCep());
+        dadosBasico.setEndereco(this.getEntity().getEmpStrEndereco());
+        dadosBasico.setTelefone(this.getEntity().getEmpChaFone());
+        dadosBasico.setNumero(0);
+        filial = new Filial();
+        filial.setDadosBasico(dadosBasico);
+        filial.setIdEmpresa(this.getEntity().getEmpIntCod());
+        filial.setDataCadastro(Calendar.getInstance().getTime());
+        filialBO.persist(filial);
+    }
+
+    public void actionPersistProfissional(ActionEvent event) throws BusinessException, TechnicalException, UsuarioDuplicadoException, ServidorEmailDesligadoException, Exception {
+        this.actionPersistUsuarioLumeSecurity(event);
+        List<ProfissionalEspecialidade> profissionalEspecialidades = new ArrayList<>();
+        for (Especialidade es : especialidadePickList.getTarget()) {
+            profissionalEspecialidades.add(new ProfissionalEspecialidade(profissional, es));
+        }
+        profissional.setProfissionalEspecialidade(profissionalEspecialidades);
+        profissional.setIdUsuario(usuario.getUsuIntCod());
+        profissional.setIdEmpresa(this.getEntity().getEmpIntCod());
+        profissional.setPerfil(OdontoPerfil.ADMINISTRADOR);
+        profissional.setProfissionalFilials(Arrays.asList(new ProfissionalFilial(profissional, filial)));
+        profissional.setTempoConsulta(30);
+        profissionalBO.persist(profissional);
+    }
+
+    public void actionPersistUsuarioLumeSecurity(ActionEvent event) throws UsuarioDuplicadoException, ServidorEmailDesligadoException, Exception {
+        usuario = usuarioBO.findUsuarioByLogin(profissional.getDadosBasico().getEmail().toUpperCase());
+        if (usuario == null) {
+            usuario = new Usuario();
+            usuario.setUsuStrNme(profissional.getDadosBasico().getNome());
+            usuario.setUsuStrEml(profissional.getDadosBasico().getEmail());
+            usuario.setUsuStrLogin(profissional.getDadosBasico().getEmail());
+            usuario.setPerfisUsuarios(Arrays.asList(perfilBO.getPerfilbyDescricaoAndSistema(OdontoPerfil.ADMINISTRADOR, this.getLumeSecurity().getSistemaAtual())));
+            usuario.setUsuIntDiastrocasenha(999);
+            usuario.setUsuChaTutorial("S");
+            usuarioBO.persistUsuarioExterno(usuario);
+        } else {
+            Map<String, String> valores = new HashMap<>();
+            valores.put("#nome", usuario.getUsuStrNme());
+            valores.put("#usuario", usuario.getUsuStrLogin());
+            valores.put("#senha", "[a senha do usuário que você já utiliza]");
+            EnviaEmail.enviaEmail(usuario.getUsuStrEml(), "Bem Vindo ao Intelidente", EnviaEmail.buscarTemplate(valores, EnviaEmail.BEM_VINDO));
+        }
+    }
+
+    public void cadastrarDadosTemplate(Empresa destino) {
+        try {
+            EspecialidadeBO especialidadeBO = new EspecialidadeBO();
+            ItemBO itemBO = new ItemBO();
+            ProcedimentoBO procedimentoBO = new ProcedimentoBO();
+            PerguntaBO perguntaBO = new PerguntaBO();
+            KitBO kitBO = new KitBO();
+            ProcedimentoKitBO procedimentoKitBO = new ProcedimentoKitBO();
+            DocumentoBO documentoBO = new DocumentoBO();
+
+            EmpresaBO empresaBO = new EmpresaBO();
+            Empresa modelo = empresaBO.find(Long.parseLong(OdontoMensagens.getMensagem("empresa.modelo")));
+
+            especialidadeBO.clonarDadosEmpresaDefault(modelo, destino);
+            System.out.println("Cadastrou Especialidade!");
+            addInfo("Cadastrou Especialidade!", "");
+
+            itemBO.clonarDadosEmpresaDefault(modelo, destino);
+            System.out.println("Cadastrou Itens!");
+            addInfo("Cadastrou Itens!", "");
+
+            procedimentoBO.clonarDadosEmpresaDefault(modelo, destino);
+            System.out.println("Cadastrou Procedimentos!");
+            addInfo("Cadastrou Procedimentos!", "");
+
+            perguntaBO.clonarDadosEmpresaDefault(modelo, destino);
+            System.out.println("Cadastrou Pergunta/Resposta!");
+            addInfo("Cadastrou Pergunta/Resposta!", "");
+
+            kitBO.clonarDadosEmpresaDefault(modelo, destino);
+            System.out.println("Cadastrou Kits!");
+            addInfo("Cadastrou Kits!", "");
+
+            procedimentoKitBO.clonarDadosEmpresaDefault(modelo, destino);
+            System.out.println("Procedimento/Kits Kits!");
+            addInfo("Cadastrou Procedimento/Kits Kits!", "");
+
+            documentoBO.clonarDadosEmpresaDefault(modelo, destino);
+            System.out.println("Documentos!");
+            addInfo("Cadastrou Documentos!", "");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String onFlowProcess(FlowEvent event) {
+        log.info("Current wizard step:" + event.getOldStep());
+        log.info("Next step:" + event.getNewStep());
+        if ("confirmacao".equals(event.getNewStep())) {
+            if (!concordoAdesao) {
+                this.addError("Para continuar, leia e concorde com o Termo e Condições de Uso.", "");
+                return event.getOldStep();
+            }
+        }
+        if (skip) {
+            skip = false;
+            return "confirm";
+        } else {
+            return event.getNewStep();
+        }
+    }
+
+    public void uploadCertificado(FileUploadEvent event) {
+        try {
+            anexo = event.getFile();
+            profissional.setCertificado(anexo.getContents());
+        } catch (Exception e) {
+            this.addError("Erro ao fazer upload de certificado", "");
+            log.error("Erro ao fazer upload de certificado", e);
+        }
+    }
+
+    public void actionBuscaCep() {
+        String cep = this.getEntity().getEmpChaCep();
+        if (this.getEntity().getEmpChaCep() == null) {
+            cep = profissional.getDadosBasico().getCep();
+        }
+        if (cep != null && !cep.equals("")) {
+            cep = cep.replaceAll("-", "");
+            Endereco endereco = Endereco.getEndereco(cep);
+            profissional.getDadosBasico().setBairro(endereco.getBairro());
+            profissional.getDadosBasico().setCidade(endereco.getCidade());
+            profissional.getDadosBasico().setEndereco(endereco.getRua());
+            profissional.getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());
+            if (this.getEntity().getEmpChaCep() != null) {
+                this.getEntity().setEmpStrBairro(endereco.getBairro());
+                this.getEntity().setEmpStrCidade(endereco.getCidade());
+                this.getEntity().setEmpStrEndereco(endereco.getRua());
+                this.getEntity().setEmpChaUf(endereco.getEstado().toUpperCase().trim());
+            }
+        }
+    }
+
+    public List<Dominio> getDominios() {
+        try {
+            dominios = dominioBO.listByObjetoAndTipo("profissional", "prefixo");
+            for (Dominio dominio : dominios) {
+                if (dominio.getNome().length() > 5) {
+                    dominio.setNome(dominio.getNome().substring(0, 5));
+                }
+            }
+            Collections.sort(dominios);
+        } catch (Exception e) {
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+            this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
+        }
+        return dominios;
+    }
+
+    public void setDominios(List<Dominio> dominios) {
+        this.dominios = dominios;
+    }
+
+    public Profissional getProfissional() {
+        return profissional;
+    }
+
+    public void setProfissional(Profissional profissional) {
+        this.profissional = profissional;
+    }
+
+    public ProfissionalBO getProfissionalBO() {
+        return profissionalBO;
+    }
+
+    public void setProfissionalBO(ProfissionalBO profissionalBO) {
+        this.profissionalBO = profissionalBO;
+    }
+
+    public Filial getFilial() {
+        return filial;
+    }
+
+    public void setFilial(Filial filial) {
+        this.filial = filial;
+    }
+
+    public FilialBO getFilialBO() {
+        return filialBO;
+    }
+
+    public void setFilialBO(FilialBO filialBO) {
+        this.filialBO = filialBO;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public List<UF> getListUF() {
+        return UF.getList();
+    }
+
+    public boolean isSkip() {
+        return skip;
+    }
+
+    public void setSkip(boolean skip) {
+        this.skip = skip;
+    }
+
+    public boolean isConcordoAdesao() {
+        return concordoAdesao;
+    }
+
+    public void setConcordoAdesao(boolean concordoAdesao) {
+        this.concordoAdesao = concordoAdesao;
+    }
+
+    public boolean isConcordoPrivacidade() {
+        return concordoPrivacidade;
+    }
+
+    public void setConcordoPrivacidade(boolean concordoPrivacidade) {
+        this.concordoPrivacidade = concordoPrivacidade;
+    }
+
+    public boolean isDadosClinica() {
+        return dadosClinica;
+    }
+
+    public void setDadosClinica(boolean dadosClinica) {
+        this.dadosClinica = dadosClinica;
+    }
+
+    public boolean isPnInicialVisivel() {
+        return pnInicialVisivel;
+    }
+
+    public void setPnInicialVisivel(boolean pnInicialVisivel) {
+        this.pnInicialVisivel = pnInicialVisivel;
+    }
+
+}

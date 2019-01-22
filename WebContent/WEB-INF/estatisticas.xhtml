@@ -1,0 +1,34 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:po="http://primefaces.org/olympos">
+	<h:form>
+		<ul class="layout-tab-submenu" id="layout-estatisticas">
+			<li><a class="TexAlCenter">AGENDAMENTOS</a>
+				<ul>
+					<div class="EmptyBox10"></div>
+					<li><a href="agendamento.jsf" class="menulink TexAlCenter"> <i class="icon-calendar133 Blue Fs30 Wid100 Fnone"></i> <span
+							class="DispBlock">Hoje </span> <span class="DispBlock Fs20 Green"> 
+							<h:outputText value="#{estatisticasMB.quantidadeAgendamentosHoje}">
+									<f:convertNumber maxFractionDigits="2" />
+							</h:outputText>
+						</span>
+					</a></li>
+					<div class="EmptyBox10"></div>
+					<li><a href="agendamento.jsf" class="menulink TexAlCenter"> <i class="icon-calendar133 Blue Fs30 Wid100 Fnone"></i> <span
+							class="DispBlock">Mês Atual</span> <span class="DispBlock Fs20 Green">
+							<h:outputText value="#{estatisticasMB.quantidadeAgendamentosMesAtual}">
+									<f:convertNumber maxFractionDigits="2" />
+							</h:outputText>							
+							</span>
+					</a></li>
+					<div class="EmptyBox10"></div>
+					<li><a href="agendamento.jsf" class="menulink TexAlCenter"> <i class="icon-calendar133 Blue Fs30 Wid100 Fnone"></i> <span
+							class="DispBlock">Plano</span> <span class="DispBlock Fs20 Green">
+							<h:outputText value="#{estatisticasMB.quantidadeAgendamentosPlano}">
+									<f:convertNumber maxFractionDigits="2" />
+							</h:outputText>	
+							</span>
+					</a></li>
+				</ul></li>
+		</ul>
+	</h:form>
+</ui:composition>

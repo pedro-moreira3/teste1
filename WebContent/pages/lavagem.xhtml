@@ -1,0 +1,122 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <div class="Container100 Responsive100 NoIndent">
+            <div class="Container100 ui-fluid NoPadding">
+                <div class="Card">
+                    <h:inputHidden id="id" value="#{lavagemMB.entity.id}" />
+
+                    <p:panel id="pnLavagem" styleClass="BordNone">
+                        <h1 class="CardBigTopic">Entrega para Lavagem Manual</h1>
+                        <div class="SeparatorFull"></div>
+
+                        <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+
+                            <p:outputLabel for="descricao" value="Descrição : " />
+                            <p:inputText id="descricao" value="#{lavagemMB.entity.descricao}" style="width: 300px;" maxlength="50" />
+
+                            <p:outputLabel for="observacao" value="Observações : " />
+                            <p:inputTextarea id="observacao" autoResize="false" value="#{lavagemMB.entity.observacao}" cols="50" rows="4" maxlength="100" />
+
+                            <p:outputLabel for="solicitante" value="Solicitante : " />
+                            <p:autoComplete dropdown="true" queryDelay="1000" value="#{lavagemMB.entity.solicitante}" id="solicitante" completeMethod="#{lavagemMB.geraSugestoes}" var="profissional"
+                                itemLabel="#{profissional.dadosBasico.prefixoNome}" itemValue="#{profissional}" converter="profissional" forceSelection="true" minQueryLength="3"
+                                styleClass="profissional">
+                                <p:ajax event="itemSelect" listener="#{reservaMB.handleSelectProfissional}" update=":lume:solicitante" />
+                            </p:autoComplete>
+
+                            <p:outputLabel for="clinica" value="Instrumentos da clínica? " />
+                            <p:selectOneRadio id="clinica" value="#{lavagemMB.entity.clinica}" required="true">
+                                <f:selectItem itemLabel="Sim" itemValue="true" />
+                                <f:selectItem itemLabel="Não" itemValue="false" />
+                            </p:selectOneRadio>
+
+                            <p:outputLabel for="item" value="Item: " />
+                            <p:autoComplete id="item" required="true" value="#{lavagemMB.itemSelecionado}" completeMethod="#{lavagemMB.procurarItemComplete}" var="i" itemLabel="#{i.descricao}"
+                                itemValue="#{i}" converter="item" multiple="false" dropdown="true" minQueryLength="3" maxResults="20" queryDelay="1000"/>
+
+                        </p:panelGrid>
+
+
+
+                        <div class="SeparatorFull"></div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{lavagemMB.actionPersist}" oncomplete="handleDialogRequest(xhr, status, args)"
+                                update=":lume:pnLavagem, :lume:dtEsterilizacao, lume:confirmDialog" process=":lume:pnLavagem" disabled="#{lavagemMB.entity.id != 0}" styleClass="GreenButton" />
+                        </div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{lavagemMB.actionNew}" update=":lume:pnLavagem, :lume:dtEsterilizacao" immediate="true" />
+                        </div>
+
+                        <div class="EmptyBox20"></div>
+
+
+                    </p:panel>
+                    <p:panel styleClass="BordNone">
+                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtEsterilizacao" value="#{lavagemMB.lavagens}" var="lavagem" rows="15" paginator="true" selection="#{lavagemMB.entity}"
+                            selectionMode="single" rowKey="#{lavagem}" paginatorPosition="bottom">
+                            <p:ajax event="rowSelect" update=":lume:pnLavagem" listener="#{lavagemMB.carregarLavagem}"/>
+                            <f:facet name="header">Lavagens</f:facet>
+
+                            <p:column filterBy="#{lavagem.descricao}" sortBy="#{lavagem.descricao}" filterMatchMode="contains" headerText="Descrição">
+                                <h:outputText value="#{lavagem.descricao}" title="#{lavagem.id}" />
+                            </p:column>
+                            <p:column filterBy="#{lavagem.solicitante.dadosBasico.prefixoNome}" sortBy="#{lavagem.solicitante.dadosBasico.prefixoNome}" filterMatchMode="contains"
+                                headerText="Solicitante">
+                                <h:outputText value="#{lavagem.solicitante.dadosBasico.prefixoNome}" />
+                            </p:column>
+                            <p:column filterBy="#{lavagem.dataStr}" sortBy="#{lavagem.dataStrOrd}" filterMatchMode="contains" headerText="Data do Cadastro">
+                                <h:outputText value="#{lavagem.dataStr}" />
+                            </p:column>
+                            <p:column filterBy="#{lavagem.resumo}" sortBy="#{lavagem.resumo}" filterMatchMode="contains">
+                                <f:facet name="header">
+                                    <h:outputText value="Resumo" />
+                                </f:facet>
+                                <h:outputText value="#{lavagem.resumo}" />
+                            </p:column>
+                            <p:column sortBy="#{lavagem.clinica}" filterBy="#{lavagem.clinica}" filterMatchMode="exact">
+                                <f:facet name="header">
+                                    <h:outputText value="Instrumento da clínica?" />
+                                </f:facet>
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('tbLavagem').filter()">
+                                        <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItem itemLabel="Sim" itemValue="true" />
+                                        <f:selectItem itemLabel="Não" itemValue="false" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{lavagem.clinica == true ? 'Sim' : 'Não'}" />
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+
+
+                    <p:confirmDialog id="confirmDialog" width="400" header="Retirada dos materiais" severity="info" widgetVar="senha" appendToBody="true">
+                        <f:facet name="message">
+                            <p:panel id="documentoImprimir" styleClass="BordNone">
+                                <h:outputText value="#{lavagemMB.data}" escape="false" />
+                            </p:panel>
+
+                        </f:facet>
+                        <div class="Container50 Responsive100">
+                            <p:commandButton id="confirm" value="Ok" oncomplete="PF('senha').hide()"/>
+                        </div>
+                        <div class="Container50 Responsive100">
+                            <p:commandButton value="Imprimir" type="button" icon="fa fa-print White" oncomplete="PF('senha').hide()" styleClass="NavyButton">
+                                <p:printer target="documentoImprimir" />
+                            </p:commandButton>
+                        </div>
+                    </p:confirmDialog>
+
+                    <script type="text/javascript">
+																					function handleDialogRequest(xhr, status, args) {
+																						if (args.dlg == true) {
+																							PF('senha').show();
+																						}
+																					}
+																				</script>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

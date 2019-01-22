@@ -1,0 +1,24 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<center>
+	<table style="width: 600px; padding-right: 30px; padding-left: 30px;">
+		<tr>
+			<td><a href="http://www.intelidente.com" target="_blank"><img src="http://www.intelidente.com/images/email/header.jpg" /></a></td>
+		</tr>
+
+		<tr>
+			<td>
+				<p
+					style="font-family: Verdana, Geneva, sans-serif; font-size: 14px; font-weight: light; text-align: left; color: #58585b;">
+					<strong>Olá, #nome.</strong><br /> <br /> <br /> A equipe do Intelidente detectou o cancelamento da sua experiência com o software
+					inteligente.<br /> <br /> O serviço permanecerá em funcionamento até o dia #data.<br /> <br /> Esperamos o seu retorno em breve.<br /> <br />
+					Até logo,<br /> <strong>Equipe Intelidente.</strong>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="http://www.intelidente.com" target="_blank"><img src="http://www.intelidente.com/images/email/footer4.jpg" /></a></td>
+		</tr>
+	</table>
+</center>
+</html>

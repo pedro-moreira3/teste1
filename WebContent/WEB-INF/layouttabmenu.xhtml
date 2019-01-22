@@ -1,0 +1,69 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:po="http://primefaces.org/olympos">
+
+
+
+	<ul id="layout-tab-menu">
+		<li><a href="#" class="active" rel="layout-menu"> <i class="moon-chair" ></i> <span class="layout-tab-menu-link-text"><span></span>
+					Menu</span>
+		</a></li>
+		<h:panelGroup rendered="#{perfilMB.administrador || perfilMB.dentista || perfilMB.responsavelTecnico}">
+			<li><a href="#" rel="layout-agenda"> <i class="icon-event9"></i> <span class="layout-tab-menu-link-text"><span></span> Minha Agenda</span>
+			</a></li>
+		</h:panelGroup>
+		<h:panelGroup rendered="#{perfilMB.estoqueCompleto and (perfilMB.administrador || perfilMB.auxiliarDentista || perfilMB.responsavelTecnico)}">
+			<li><a href="#" rel="layout-reservas"> <i class="fa fa-shopping-basket"></i> <span class="layout-tab-menu-link-text"><span></span>
+						Reservas</span>
+			</a></li>
+		</h:panelGroup>
+		<h:panelGroup
+			rendered="#{perfilMB.administrador || perfilMB.auxiliarAdministrativo || perfilMB.auxiliarDentista || perfilMB.responsavelTecnico || perfilMB.administradorClinica}">
+			<li><a href="#" rel="layout-estatisticas"> <i class="fa fa-tachometer"></i> <span class="layout-tab-menu-link-text"><span></span>
+						Agendamentos</span>
+			</a></li>
+		</h:panelGroup>
+		<h:panelGroup
+			rendered="#{perfilMB.administrador || perfilMB.secretaria || perfilMB.auxiliarAdministrativo || perfilMB.responsavelTecnico || perfilMB.administradorClinica}">
+			<li><a href="#" rel="layout-retorno"> <i class="fa fa-exchange"></i> <span class="layout-tab-menu-link-text"><span></span> Retornos</span>
+			</a></li>
+		</h:panelGroup>
+		<h:panelGroup rendered="#{perfilMB.administrador || perfilMB.administradorClinica}">
+			<li><a href="#" rel="layout-extrato"> <i class="fa fa-dollar"></i> <span class="layout-tab-menu-link-text"><span></span> Extrato</span>
+			</a></li>
+		</h:panelGroup>
+	</ul>
+
+	<h:form id="menuform">
+		<po:menu model="#{menuMB.menuModel}" styleClass="layout-tab-submenu">
+		</po:menu>
+	</h:form>
+
+	<script>
+		Olympos.restoreMenuState();
+	</script>
+
+	<h:panelGroup rendered="#{perfilMB.administrador || perfilMB.dentista || perfilMB.responsavelTecnico}">
+		<ui:include src="minhaagenda.xhtml" />
+	</h:panelGroup>
+
+
+	<h:panelGroup rendered="#{perfilMB.estoqueCompleto and (perfilMB.administrador || perfilMB.auxiliarDentista || perfilMB.responsavelTecnico)}">
+		<ui:include src="reservas.xhtml" />
+	</h:panelGroup>
+
+	<h:panelGroup
+		rendered="#{perfilMB.administrador || perfilMB.auxiliarAdministrativo || perfilMB.auxiliarDentista || perfilMB.responsavelTecnico || perfilMB.administradorClinica}">
+		<ui:include src="estatisticas.xhtml" />
+	</h:panelGroup>
+
+	<h:panelGroup
+		rendered="#{perfilMB.administrador || perfilMB.secretaria || perfilMB.auxiliarAdministrativo || perfilMB.responsavelTecnico || perfilMB.administradorClinica}">
+		<ui:include src="retornos.xhtml" />
+	</h:panelGroup>
+
+	<h:panelGroup rendered="#{perfilMB.administrador || perfilMB.administradorClinica}">
+		<ui:include src="extrato.xhtml" />
+	</h:panelGroup>
+
+
+</ui:composition>

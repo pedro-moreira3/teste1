@@ -1,0 +1,198 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+				<style>
+				.hasDatepicker{
+					width: 50% !important;
+				}
+				</style>
+
+					<p:panel id="pnNotaFiscal" styleClass="BordNone">
+
+						<h:inputHidden id="id" value="#{notaFiscalMB.entity.id}" />
+
+						<h1 class="CardBigTopic">Notas Fiscais</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+							<p:outputLabel for="numero" value="Número : " />
+							<p:inputText id="numero" value="#{notaFiscalMB.entity.numero}" required="true" class="Wid30"/>
+
+							<p:outputLabel for="fornecedor" value="Fornecedor: " />
+							<p:selectOneMenu id="fornecedor" value="#{notaFiscalMB.entity.fornecedor}" converter="fornecedor" required="true"  class="Wid50" >
+								<f:selectItem itemValue="#{null}" itemLabel="Selecione um fornecedor" />
+								<f:selectItems value="#{notaFiscalMB.fornecedores}" var="f" itemLabel="#{f.dadosBasico.nome}" itemValue="#{f}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel for="entrada" value="Data Entrada : " />
+							<p:calendar id="entrada" value="#{notaFiscalMB.entity.dataEntrada}" required="true" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" class="Wid10"/>
+
+							<p:outputLabel for="expedicao" value="Data Expedição : " />
+							<p:calendar id="expedicao" value="#{notaFiscalMB.entity.dataExpedicao}" required="true" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" class="Wid10"/>
+
+							<p:outputLabel for="valor" value="Valor Total: " />
+							<p:inputNumber id="valor" value="#{notaFiscalMB.entity.valorTotal}" required="true" maxlength="13" maxValue="9999999999.99"
+								decimalSeparator="," symbol="R$ " thousandSeparator="." class="Wid20"/>
+						</p:panelGrid>
+
+						<p:panel id="pnMateriais" styleClass="BordNone">
+
+							<div class="SeparatorFull"></div>
+							<div class="Container25 Responsive100">
+								<p:commandButton id="addMateriais" icon="fa fa-plus White" value="Adicionar" actionListener="#{notaFiscalMB.actionOpenDialogMateriais}"
+									update=":lume:fmaterial:dtMateriaisSemNF" process="@this" oncomplete="PF('wDgMateriais').show();" styleClass="GreenButton" />
+							</div>
+							<div class="Container25 Responsive100">
+								<p:commandButton id="delMateriais" icon="fa fa-minus White" value="Remover" disabled="#{notaFiscalMB.material == null}"
+									actionListener="#{notaFiscalMB.actionRemoveMaterial}" update=":lume:pnMateriais" process="@this"
+									 styleClass="RedButton" />
+							</div>
+
+							<div class="EmptyBox20"></div>
+
+
+							<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMateriais" value="#{notaFiscalMB.entity.materiais}" var="m" rows="15" paginator="true"
+								selection="#{notaFiscalMB.material}" selectionMode="single" rowKey="#{m}" paginatorPosition="bottom">
+
+								<f:facet name="header">Materiais da Nota Fiscal</f:facet>
+
+								<p:ajax event="rowSelect" update=":lume:delMateriais" />
+								<p:ajax event="rowUnselect" update=":lume:delMateriais" />
+								<p:column filterBy="#{m.item.descricaoLimpa}" sortBy="#{m.item.descricao}" filterMatchMode="contains" headerText="Descrição">
+									<h:outputText value="#{m.item.descricao}" />
+								</p:column>
+								<p:column filterBy="#{m.local.descricao}" sortBy="#{m.local.descricao}" filterMatchMode="contains" headerText="Localização">
+									<h:outputText value="#{m.local.descricao}" />
+								</p:column>
+								<p:column filterBy="#{m.quantidadeTotal}" sortBy="#{m.quantidadeTotal}" filterMatchMode="contains" headerText="Quantidade Total">
+									<h:outputText value="#{m.quantidadeTotal}" />
+								</p:column>
+								<p:column filterBy="#{m.valor}" sortBy="#{m.valor}" filterMatchMode="contains" headerText="Valor Unitário">
+									<h:outputText value="#{m.valor}">
+										<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+									</h:outputText>
+								</p:column>
+								<p:column filterBy="#{m.marca.nome}" sortBy="#{m.marca.nome}" filterMatchMode="contains" headerText="Marca">
+									<h:outputText value="#{m.marca.nome}" />
+								</p:column>
+								<p:column filterBy="#{m.procedenciaString}" sortBy="#{m.procedenciaString}" filterMatchMode="contains" headerText="Procedência">
+									<h:outputText value="#{m.procedenciaString}" />
+								</p:column>
+								<p:column filterBy="#{m.dataCadastroStr}" sortBy="#{m.dataCadastroStrOrd}" filterMatchMode="contains" headerText="Data do Cadastro">
+									<h:outputText value="#{m.dataCadastroStr}" />
+								</p:column>
+							</p:dataTable>
+						</p:panel>
+
+
+						<div class="SeparatorFull"></div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{notaFiscalMB.actionPersist}"
+								update=":lume:pnNotaFiscal, :lume:dtNotaFiscal" process=":lume:pnNotaFiscal" 
+								styleClass="GreenButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{notaFiscalMB.actionRemove}"
+								update=":lume:pnNotaFiscal, :lume:dtNotaFiscal" process="@this" disabled="#{notaFiscalMB.entity.id==null}"
+								 styleClass="RedButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{notaFiscalMB.actionNew}"
+								update=":lume:pnNotaFiscal, :lume:dtNotaFiscal" immediate="true"  />
+						</div>
+
+						<div class="EmptyBox20"></div>
+
+						<p:defaultCommand target=":lume:persist" />
+
+					</p:panel>
+					<p:panel styleClass="BordNone">
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtNotaFiscal" value="#{notaFiscalMB.notasFiscais}" var="nf" rows="15" paginator="true"
+							selection="#{notaFiscalMB.entity}" selectionMode="single" rowKey="#{nf}" paginatorPosition="bottom">
+							<p:ajax event="rowSelect" listener="#{notaFiscalMB.onRowSelect}" update=":lume:pnNotaFiscal" />
+							<f:facet name="header">Notas Fiscais</f:facet>
+
+							<p:column filterBy="#{nf.numero}" sortBy="#{nf.numero}" filterMatchMode="contains" headerText="Número">
+								<h:outputText value="#{nf.numero}" />
+							</p:column>
+
+							<p:column filterBy="#{nf.fornecedor.dadosBasico.nome}" sortBy="#{nf.fornecedor.dadosBasico.nome}" filterMatchMode="contains"
+								headerText="Fornecedor">
+								<h:outputText value="#{nf.fornecedor.dadosBasico.nome}" />
+							</p:column>
+
+							<p:column filterBy="#{nf.dataEntradaStr}" sortBy="#{nf.dataEntradaStrOrd}" filterMatchMode="contains" headerText="Data de Entrada">
+								<h:outputText value="#{nf.dataEntradaStr}" />
+							</p:column>
+							<p:column filterBy="#{nf.dataExpedicaoStr}" sortBy="#{nf.dataExpedicaoStrOrd}" filterMatchMode="contains" headerText="Data de Expedição">
+								<h:outputText value="#{nf.dataExpedicaoStr}" />
+							</p:column>
+						</p:dataTable>
+
+					</p:panel>
+
+					<p:dialog header="Adicionar Materiais" id="dMateriais" widgetVar="wDgMateriais" responsive="true" appendToBody="true" modal="true"
+						dynamic="true">
+
+						<h:form id="fmaterial">
+
+							<div class="Container25 Responsive100">
+								<p:commandButton id="addSlctMateriais" icon="fa fa-plus White" value="Adicionar Selecionado(s)"
+									actionListener="#{notaFiscalMB.actionAdicionarMateriais}" update=":lume:dtMateriais" process="@this,:lume:fmaterial:dtMateriaisSemNF"
+									oncomplete="PF('wDgMateriais').hide();" styleClass="GreenButton" />
+							</div>
+
+							<div class="EmptyBox20"></div>
+
+
+							<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMateriaisSemNF" value="#{notaFiscalMB.materiais}" var="m" rows="10"
+								selection="#{notaFiscalMB.slctMateriais}" rowKey="#{m}" paginator="true" paginatorPosition="bottom">
+
+								<f:facet name="header">  
+					            Selecione os materiais que deseje adicionar à nota fiscal  
+					        </f:facet>
+
+								<p:column selectionMode="multiple" />
+
+								<p:column filterBy="#{m.item.descricaoLimpa}" sortBy="#{m.item.descricao}" filterMatchMode="contains" headerText="Descrição">
+									<h:outputText value="#{m.item.descricao}" />
+								</p:column>
+
+								<p:column filterBy="#{m.local.descricao}" sortBy="#{m.local.descricao}" filterMatchMode="contains" headerText="Localização">
+									<h:outputText value="#{m.local.descricao}" />
+								</p:column>
+								<p:column filterBy="#{m.quantidadeTotal}" sortBy="#{m.quantidadeTotal}" filterMatchMode="contains" headerText="Qtde Total">
+									<h:outputText value="#{m.quantidadeTotal}" />
+								</p:column>
+								<p:column filterBy="#{m.valor}" sortBy="#{m.valor}" filterMatchMode="contains" headerText="Valor Unitário">
+									<h:outputText value="#{m.valor}">
+										<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+									</h:outputText>
+								</p:column>
+								<p:column filterBy="#{m.marca.nome}" sortBy="#{m.marca.nome}" filterMatchMode="contains" headerText="Marca">
+									<h:outputText value="#{m.marca.nome}" />
+								</p:column>
+								<p:column filterBy="#{m.procedenciaString}" sortBy="#{m.procedenciaString}" filterMatchMode="contains" headerText="Procedência">
+									<h:outputText value="#{m.procedenciaString}" />
+								</p:column>
+								<p:column filterBy="#{m.dataCadastroStr}" sortBy="#{m.dataCadastroStrOrd}" filterMatchMode="contains" headerText="Cadastro">
+									<h:outputText value="#{m.dataCadastroStr}" />
+								</p:column>
+							</p:dataTable>
+
+						</h:form>
+					</p:dialog>
+
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

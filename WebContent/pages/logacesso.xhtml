@@ -1,0 +1,104 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 NoIndent Flex FlexWrap">
+
+			<h:panelGroup id="pnPrincipal" styleClass="BordNone">
+
+				<div class="Card">
+					<div class="Container100 ui-fluid NoPadding">
+						<h1 class="CardBigTopic">Log de Acessos</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:panelGrid id="pnDados" columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+							<p:outputLabel for="empresa" value="Empresa : " />
+							<p:selectOneMenu id="empresa" converter="empresa" required="true" value="#{logAcessoMB.empresa}" styleClass="Wid50">
+								<f:selectItem itemValue="#{empresa}" itemLabel="Selecione uma Empresa" />
+								<f:selectItems value="#{logAcessoMB.empresas}" var="e" itemLabel="#{e.empStrNme}" itemValue="#{e}" />
+								<p:ajax event="itemSelect" listener="#{logAcessoMB.handleSelectEmpresa}" process="empresa" update=":lume:usuario"/>
+							</p:selectOneMenu>
+
+							<p:outputLabel for="usuario" value="Usuário : " />
+							<p:selectOneMenu id="usuario" converter="usuario" value="#{logAcessoMB.usuario}" styleClass="Wid50">
+								<f:selectItem itemValue="#{usuario}" itemLabel="Selecione um usuário" />
+								<f:selectItems value="#{logAcessoMB.usuarios}" var="u" itemLabel="#{u.usuStrNme}" itemValue="#{u}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel for="dataInicioConsulta" value="Inicio : " />
+							<p:calendar id="dataInicioConsulta" value="#{logAcessoMB.dataInicioConsulta}" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid30" />
+
+							<p:outputLabel for="dataFimConsulta" value="Fim : " />
+							<p:calendar id="dataFimConsulta" value="#{logAcessoMB.dataFimConsulta}" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid30" />
+
+							<p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{logAcessoMB.consultar}" update=":lume:pnPrincipal"
+								process="@this,:lume:pnDados" styleClass="OrangeButton" />
+
+						</p:panelGrid>
+					</div>
+				</div>
+
+				<div class="Container60 Responsive50  Flex FlexWrap">
+					<div class="Card">
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtLogAcesso" value="#{logAcessoMB.listLogAcesso}" var="el" rows="15" paginator="true" paginatorPosition="bottom"
+							widgetVar="dtLogAcesso">
+							<f:facet name="header">
+								<p:outputLabel value="#{lumeSecurity.cabecGenerico(logAcessoMB.entityList,'Acesso')}" />
+							</f:facet>
+							<p:column filterBy="#{el.usuario.usuStrNme}" filterMatchMode="contains" headerText="Usuário">
+								<f:facet name="filter">
+									<p:selectOneMenu id="usuario" converter="usuario" value="#{logAcessoMB.usuario}" styleClass="Wid35" onchange="PF('dtLogAcesso').filter()">
+										<f:selectItem itemValue="#{usuario}" itemLabel="Selecione um Usuário" />
+										<f:selectItems value="#{logAcessoMB.usuarios}" var="u" itemLabel="#{u.usuStrNme}" itemValue="#{u}" />
+									</p:selectOneMenu>
+								</f:facet>
+								<h:outputText value="#{el.usuario.usuStrNme}" />
+							</p:column>
+							<p:column filterBy="#{el.objeto.objStrDes}" sortBy="#{el.objeto.objStrDes}" filterMatchMode="contains" headerText="Tela">
+								<h:outputText value="#{el.objeto.objStrDes}" />
+							</p:column>
+							<p:column filterBy="#{el.logDtmEntradaStr}" sortBy="#{el.logDtmEntrada}" filterMatchMode="contains" headerText="Data">
+								<h:outputText value="#{el.logDtmEntradaStr}" />
+							</p:column>
+						</p:dataTable>
+					</div>
+				</div>
+
+				<div class="Container40 Responsive50  Flex FlexWrap">
+					<div class="Card">
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtLogAcessoSumarizado" value="#{logAcessoMB.listLogAcessoSumarizado}" var="las" rows="15" paginator="true"
+							paginatorPosition="bottom" widgetVar="dtLogAcessoSumarizado">
+							<f:facet name="header">
+									Quantidade de Acessos por tela
+								</f:facet>
+							<p:column filterBy="#{las.objNome}" sortBy="#{las.objNome}" filterMatchMode="contains" headerText="Nome">
+								<h:outputText value="#{las.objNome}" />
+							</p:column>
+							<p:column filterBy="#{las.qtdAcessos}" sortBy="#{las.qtdAcessos}" filterMatchMode="contains" headerText="Quantidade de Acessos">
+								<h:outputText value="#{las.qtdAcessos}" />
+							</p:column>
+						</p:dataTable>
+					</div>
+				</div>
+
+				<div class="ui-g-12 ui-g-nopad">
+					<div class="ui-g">
+						<div class="ui-g-12 ui-md-4"></div>
+						<div class="ui-g-12 ui-md-4">
+							<div class="Card">
+								<p:chart type="pie" model="#{logAcessoMB.pieModel}" styleClass="Wid35" rendered="#{logAcessoMB.pieModel != null}" responsive="true" />
+							</div>
+						</div>
+						<div class="ui-g-12 ui-md-4"></div>
+					</div>
+
+				</div>
+
+
+			</h:panelGroup>
+
+		</div>
+
+	</ui:define>
+</ui:composition>

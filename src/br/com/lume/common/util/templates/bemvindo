@@ -1,0 +1,30 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<center>
+	<table style="width: 600px; padding-right: 30px; padding-left: 30px;">
+		<tr>
+			<td><a href="http://www.intelidente.com" target="_blank"><img src="http://www.intelidente.com/images/email/header.jpg" /></a></td>
+		</tr>
+
+		<tr>
+			<td>
+				<p style="font-family: Verdana, Geneva, sans-serif; font-size: 14px; font-weight: light; text-align: left; color: #58585b;">
+
+					<strong>Bem-vindo #nome</strong>!<br /> <br /> <br /> Parabéns por escolher o Intelidente, o software odontológico mais inteligente do Brasil.
+					Nele você terá o controle 360 graus da sua clínica, além de funcionalidades práticas para facilitar e agilizar o atendimento do dia a dia.<br />
+					Acreditamos que essa ferramenta
+					contribuirá positivamente para seu negócio.<br /> <br /> Login: #usuario<br /> Senha: #senha<br /> <br /> <a
+						href="http://sistema.intelidente.com" class="button" target="_blank"
+						style="margin: 0; padding: 0; font-size: 100%; font-family: 'Avenir Next', 'Helvetica Neue', 'Helvetica', 'Helvetica', 'Arial', 'sans-serif'; line-height: 1.65; color: white; text-decoration: none; display: inline-block; background: #FF8500; border: solid #FF8500; border-width: 10px 20px 8px; font-weight: bold; border-radius: 4px;">Clique
+						aqui para acessar</a><br /> <br /> Qualquer dúvida, não hesite em nos enviar um email: <strong>contato@intelidente.com</strong><br /> <br /> <br />
+					Boa experiência!<br /> <strong>Equipe Intelidente.</strong>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="http://www.intelidente.com" target="_blank"><img src="http://www.intelidente.com/images/email/footer1.jpg" /></a></td>
+		</tr>
+	</table>
+</center>
+</html>

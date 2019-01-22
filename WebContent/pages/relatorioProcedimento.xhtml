@@ -1,0 +1,99 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<p:panel id="pnPrincipal" styleClass="BordNone">
+
+						<h1 class="CardBigTopic">Relatório de Procedimentos</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+
+							<p:outputLabel for="profissional" value="Finalizado por : " />
+							<p:autoComplete dropdown="true" queryDelay="1000" value="#{relatorioProcedimentoMB.profissional}" styleClass="profissional" id="profissional"
+								minQueryLength="3" completeMethod="#{relatorioProcedimentoMB.geraSugestoesProfissional}" var="profissional"
+								itemLabel="#{profissional.dadosBasico.prefixoNome}" itemValue="#{profissional}" converter="profissional" forceSelection="true">
+							</p:autoComplete>
+
+							<p:column></p:column>
+							<p:column></p:column>
+
+							<p:outputLabel for="inicio" value="Dt.Inicial Finalização : " />
+							<p:calendar id="inicio" value="#{relatorioProcedimentoMB.inicio}" pattern="dd/MM/yyyy" mask="true" class="Wid20" required="true" />
+
+							<p:outputLabel for="fim" value="Dt.Final Finalização : " />
+							<p:calendar id="fim" value="#{relatorioProcedimentoMB.fim}" pattern="dd/MM/yyyy" mask="true" class="Wid20" required="true" />
+
+
+						</p:panelGrid>
+
+						<div class="SeparatorFull"></div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioProcedimentoMB.filtra}"
+								update="dtPrincipal" tabindex="1" process="@this,pnPrincipal" styleClass="OrangeButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioProcedimentoMB.actionNew}"
+								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton value="Excel" ajax="false" icon="White fa fa-file-pdf-o" styleClass="GreenButton">
+								<p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="procedimento" />
+							</p:commandButton>
+						</div>
+
+					</p:panel>
+
+					<div class="EmptyBox20"></div>
+
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioProcedimentoMB.relatorioProcedimentos}" var="m" rows="20"
+						paginator="true" rowKey="#{m}" paginatorPosition="bottom">
+						<f:facet name="header">Procedimentos</f:facet>
+						<p:column filterBy="#{m.procedimento.descricaoLimpa}" sortBy="#{m.procedimento.descricao}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Procedimento" />
+							</f:facet>
+							<h:outputText value="#{m.procedimento.descricao}" title="#{m.id}" />
+						</p:column>
+						<p:column filterBy="#{m.finalizadoPorProfissional.dadosBasico.nome}" sortBy="#{m.finalizadoPorProfissional.dadosBasico.nome}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Finalizado por" />
+							</f:facet>
+							<h:outputText value="#{m.finalizadoPorProfissional.dadosBasico.nome}" />
+						</p:column>
+						<p:column filterBy="#{m.planoTratamento.paciente.dadosBasico.nomeStr}" sortBy="#{m.planoTratamento.paciente.dadosBasico.nome}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Paciente" />
+							</f:facet>
+							<h:outputText value="#{m.planoTratamento.paciente.dadosBasico.nome}" />
+						</p:column>						
+						<p:column filterBy="#{m.valorDesconto}" sortBy="#{m.valorDesconto}" filterMatchMode="contains" style="text-align:right">
+							<f:facet name="header">
+								<h:outputText value="Valor c/ Desconto(R$)" />
+							</f:facet>
+							<h:outputText value="#{m.valorDesconto}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+							</h:outputText>
+							<f:facet name="footer">
+								<h:outputText value="#{relatorioProcedimentoMB.totalValor}">
+									<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+								</h:outputText>
+							</f:facet>
+						</p:column>
+						<p:column filterBy="#{m.dataFinalizadoStr}" sortBy="#{m.dataFinalizado}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Data Finalização" />
+							</f:facet>
+							<h:outputText value="#{m.dataFinalizadoStr}" />
+						</p:column>
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

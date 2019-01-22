@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<style type="text/css">
+.ui-growl {
+	z-index: 999999 !important;
+}
+</style>
+	<style>
+.ui-widget-header a {
+	color: #FFFFFF;
+}
+</style>
+	<div id="header">
+		<div id="navigation">
+			<!-- <ui:include src="top-menu.xhtml"></ui:include>-->
+			<p:toolbarGroup
+				styleClass="ui-breadcrumb ui-module ui-widget ui-widget-header ui-corner-all"
+				style="border: 0px" align="right"
+				rendered="${lumeSecurity.usuario != null}">
+				<div id="bemvindo">
+					Bem-Vindo(a),
+					<h:outputText value="${lumeSecurity.usuario.usuStrNme}" />
+					<p:graphicImage id="help" value="/images/help.png" height="15" width="15" />
+					<p:tooltip style="outline: none; position: center;min-width: 200px; max-width: 400px; background:white; color:green" id="helpToolTip" for="help" >
+						<h:outputText value="#{odontoMenuMB.mostraAjuda}" escape="false"/>
+					</p:tooltip>
+				</div>
+			</p:toolbarGroup>
+			<!-- 	<p:menubar model="#{odontoMenuMB.menuModel}" 
+				rendered="${!lumeSecurity.usuario.temPerfil('Almoxarife')}" />
+ -->
+			<p:menubar model="#{odontoMenuMB.menuModel}" autoDisplay="false"
+				style="max-width:50%;width:auto" />
+		</div>
+	</div>
+
+</ui:composition>

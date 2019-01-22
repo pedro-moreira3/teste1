@@ -1,0 +1,249 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <style>
+.ui-picklist .ui-picklist-list {
+    height: 100px;
+}
+
+.fc-time-grid-container {
+    height: auto !important;
+}
+
+.ui-growl {
+    z-index: 999999 !important;
+}
+
+.ui-dialog {
+    overflow: auto !important;
+}
+
+div.ui-selectoneradio label {
+    width: auto !important;
+}
+</style>
+        <script>
+                                    function resize(dialog) {
+                                        //'#lume\\:pnAgendamento'
+                                        $(window).resize(function() {
+                                            $(dialog).css({
+                                                'width' : $(window).width(),
+                                                'height' : $(window).height(),
+                                                'left' : '0px',
+                                                'top' : '0px'
+                                            });
+                                        }).resize();
+                                    }
+                                </script>
+        <div class="Container100 Responsive100 NoIndent">
+            <div class="Container100 ui-fluid NoPadding">
+                <div class="Card">
+
+                    <h1 class="CardBigTopic">Fila de Atendimento</h1>
+                    <div class="SeparatorFull"></div>
+
+                    <h:panelGrid columns="3" styleClass="lumeField" id="pnFiltro">
+                        <p:outputLabel for="filtro" value="Dia : " />
+                        <p:selectOneMenu id="filtro" value="#{relatorioAtendimentoMB.filtro}" rendered="#{relatorioAtendimentoMB.dia != 7}">
+                            <f:selectItem itemValue="CURRENT_DATE" itemLabel="HOJE" />
+                            <f:selectItem itemValue="CURRENT_DATE +1" itemLabel="AMANHÃ" />
+                            <p:ajax listener="#{relatorioAtendimentoMB.carregaLista}" process="@this" update="@form" />
+                        </p:selectOneMenu>
+                        <p:selectOneMenu id="filtroSegunda" value="#{relatorioAtendimentoMB.filtro}" rendered="#{relatorioAtendimentoMB.dia == 7}">
+                            <f:selectItem itemValue="#{null}" itemLabel="HOJE" />
+                            <f:selectItem itemValue="CURRENT_DATE +2" itemLabel="SEGUNDA" />
+                            <p:ajax listener="#{relatorioAtendimentoMB.carregaLista}" process="@this" update="@form" />
+                        </p:selectOneMenu>
+                        <p:commandButton value="Novo Agendamento" icon="White fa fa-book White" oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
+                            action="#{agendamentoMB.filaAtendimento(a)}" update="lume:pnAgendamento" process="@this" />
+                    </h:panelGrid>
+
+
+                    <div class="SeparatorFull"></div>
+                    <div class="EmptyBox20"></div>
+
+                    <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtAtendimento" value="#{relatorioAtendimentoMB.agendamentos}" var="a" rows="15" paginator="true" rowKey="#{a}"
+                        paginatorPosition="bottom">
+                        <f:facet name="header">Agendamentos</f:facet>
+                        <p:column filterBy="#{a.profissional.dadosBasico.nome}" sortBy="#{a.profissional.dadosBasico.nome}" filterMatchMode="contains" headerText="Profissional">
+                            <h:outputText value="#{a.profissional.dadosBasico.nome}" />
+                        </p:column>
+                        <p:column filterBy="#{a.paciente.dadosBasico.nomeStr}" sortBy="#{a.paciente.dadosBasico.nome}" filterMatchMode="contains" headerText="#{dominioMB.cliente}">
+                            <h:outputText value="#{a.paciente.dadosBasico.nome}" />
+                        </p:column>
+                        <p:column headerText="Agendar c/ mesmo profissional">
+                            <p:commandButton icon="White fa fa-book White" oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');" process="@this"
+                                action="#{agendamentoMB.filaAtendimento(a)}" update="lume:pnAgendamento" />
+                        </p:column>
+                        <p:column headerText="Whats">
+                            <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{a.whatsURL}');return false;" styleClass="GreenButton" disable="#{a.whatsURL == null}" />
+                        </p:column>
+                        <p:column headerText="Pagamento">
+                            <p:button id="pagamento" icon="White fa fa-money" styleClass="GreenButton" onclick="window.open('pagamento.jsf?id=#{a.paciente.id}');return false;"/>
+                        </p:column>
+                        <p:column filterBy="#{a.paciente.siglaConvenio}" sortBy="#{a.paciente.siglaConvenio}" filterMatchMode="contains" headerText="Con./Part.">
+                            <h:outputText value="#{a.paciente.siglaConvenio}" />
+                        </p:column>
+                        <p:column filterBy="#{a.statusDescricao}" sortBy="#{a.statusDescricao}" filterMatchMode="contains" headerText="Status" width="15%">
+                            <p:selectOneMenu value="#{a.status}" disabled="#{!relatorioAtendimentoMB.liberaEdicao}">
+                                <p:ajax process="@this" listener="#{relatorioAtendimentoMB.persistAgendamento(a)}" update="@form" />
+
+                                <f:selectItem itemLabel="Não confirmado" itemValue="N" />
+                                <f:selectItem itemLabel="Confirmado" itemValue="S" />
+                                <f:selectItem itemLabel="Cliente na clínica" itemValue="I" />
+                                <f:selectItem itemLabel="Em atendimento" itemValue="O" />
+                                <f:selectItem itemLabel="Atendido" itemValue="A" />
+                                <f:selectItem itemLabel="Falta" itemValue="B" />
+                                <f:selectItem itemLabel="Cancelado" itemValue="C" />
+
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column filterBy="#{a.auxiliarStr}" sortBy="#{a.auxiliarStr}" filterMatchMode="contains" headerText="Auxiliar?" width="8%">
+                            <p:selectOneMenu id="auxiliar" value="#{a.auxiliar}" disabled="#{!relatorioAtendimentoMB.liberaEdicao}">
+                                <p:ajax process="@this" listener="#{relatorioAtendimentoMB.persistAgendamento(a)}" update="@form" />
+                                <f:selectItem itemLabel="S" itemValue="true" />
+                                <f:selectItem itemLabel="N" itemValue="false" />
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column filterBy="#{a.cadeira}" sortBy="#{a.cadeira}" filterMatchMode="contains" headerText="Cadeira" width="8%">
+                            <p:selectOneMenu id="cadeira" value="#{a.cadeira}">
+                                <p:ajax process="@this" listener="#{relatorioAtendimentoMB.persistAgendamento(a)}" update="@form" />
+                                <f:selectItems value="#{relatorioAtendimentoMB.cadeiras}" var="c" itemLabel="#{c}" itemValue="#{c}" />
+                            </p:selectOneMenu>
+                        </p:column>
+                        <p:column sortBy="#{a.inicio}" filterMatchMode="contains" headerText="Ini/Fim" width="8%">
+                            <h:outputText value="#{a.inicioStrH}" /> / <h:outputText value="#{a.fimStrH}" />
+                        </p:column>                        
+                        <p:column filterBy="#{a.chegouAsStr}" sortBy="#{a.chegouAsStrOrd}" filterMatchMode="contains" headerText="Chegou às" width="8%">
+                            <p:calendar value="#{a.chegouAs}" pattern="HH:mm" mask="true" showButtonPanel="true"
+                                disabled="#{!relatorioAtendimentoMB.liberaEdicao or relatorioAtendimentoMB.filtro == 'CURRENT_DATE +1'}" timeOnly="true">
+                                <p:ajax listener="#{relatorioAtendimentoMB.persistAgendamento(a)}" process="@this" update="@form" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column filterBy="#{a.iniciouAsStr}" sortBy="#{a.iniciouAsStrOrd}" filterMatchMode="contains" headerText="Ini. Atend. às" width="8%">
+                            <p:calendar value="#{a.iniciouAs}" pattern="HH:mm" mask="true" showButtonPanel="true"
+                                disabled="#{!relatorioAtendimentoMB.liberaEdicao or relatorioAtendimentoMB.filtro == 'CURRENT_DATE +1'}" timeOnly="true">
+                                <p:ajax listener="#{relatorioAtendimentoMB.persistAgendamento(a)}" process="@this" update="@form" />
+                            </p:calendar>
+                        </p:column>
+                        <p:column filterBy="#{a.finalizouAsStr}" sortBy="#{a.finalizouAsStrOrd}" filterMatchMode="contains" headerText="Fim Atend. às" width="8%">
+                            <p:calendar value="#{a.finalizouAs}" pattern="HH:mm" mask="true" showButtonPanel="true"
+                                disabled="#{!relatorioAtendimentoMB.liberaEdicao or relatorioAtendimentoMB.filtro == 'CURRENT_DATE +1'}" timeOnly="true">
+                                <p:ajax listener="#{relatorioAtendimentoMB.persistAgendamento(a)}" process="@this" update="@form" />
+                            </p:calendar>
+                        </p:column>
+                    </p:dataTable>
+
+                    <div class="SeparatorFull"></div>
+                    <div class="EmptyBox20"></div>
+
+                    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+                    <script type="text/javascript">
+                  //<![CDATA[
+                      google.charts.load("current", {packages:['corechart','timeline']});
+                      google.charts.setOnLoadCallback(drawChart);
+                      google.charts.setOnLoadCallback(drawPacientesAgendamento);
+                      function drawChart() {
+                    
+                    	var tamanho = new Array(#{relatorioAtendimentoMB.atendimentosChart});
+                    	
+                    	console.debug(tamanho[0][0]);
+                        if(tamanho[0][0] != '') {
+                            var container = document.getElementById('chartAtendimentos');
+                            var chart = new google.visualization.Timeline(container);
+                            var dataTable = new google.visualization.DataTable();
+                            dataTable.addColumn({ type: 'string', id: 'Profissional' });
+                            dataTable.addColumn({ type: 'string', id: 'Paciente' });
+                            dataTable.addColumn({ type: 'date', id: 'Inicio' });
+                            dataTable.addColumn({ type: 'date', id: 'Fim' });
+                            
+                            
+                            dataTable.addRows([#{relatorioAtendimentoMB.atendimentosChart}]);
+                        
+                            
+                            var paddingHeight = 100;
+                         	var rowHeight = #{relatorioAtendimentoMB.totalProfissionaisAgendamento} * 50;
+                         	var chartHeight = rowHeight + paddingHeight;
+                         	console.debug(#{relatorioAtendimentoMB.totalProfissionaisAgendamento});
+                         	console.debug(chartHeight);
+                         	
+                         	if(chartHeight < 150) {
+                         		chartHeight = 150;
+                         	}
+                         	console.debug(chartHeight);
+
+                            var options = {
+                              timeline: { colorByRowLabel: true },
+                              height: chartHeight
+                            };
+                        
+                            chart.draw(dataTable, options);
+                    	}
+                      }
+                      
+                     function drawPacientesAgendamento() {
+                          var data = google.visualization.arrayToDataTable([
+                              ['', ''],
+                              #{relatorioAtendimentoMB.pacientesAgendamento}
+                             ]);
+                      
+                            var options = {
+                              title: 'Status das consultas'
+                            };
+                      
+                            var chart = new google.visualization.PieChart(document.getElementById('chartPacientesAgendamento'));
+                            chart.draw(data, options);
+                      }
+                  // ]]>
+                    </script>
+
+                    <div id="chartPacientesAgendamento" style="height: 300px;"></div>
+
+                    <div id="chartAtendimentos"></div>
+
+                    <div class="SeparatorFull"></div>
+                    <div class="EmptyBox20"></div>
+
+                    <h:inputHidden id="profissional" />
+                    <p:remoteCommand id="btBloqueioAgenda" name="btBloqueioAgenda" actionListener="#{relatorioAtendimentoMB.carregaLista}" update="@form" />
+
+                    <p:growl id="messages" globalOnly="true" />
+
+
+                    <p:dialog widgetVar="eventDialog" header="Agendamento" resizable="false" id="pnAgendamento" responsive="true" position="10,10" modal="true" style="position:absolute !important;"
+                        appendToBody="true">
+                        <p:growl id="messageDlg" globalOnly="true" />
+
+                        <div class="Container100 Responsive100 NoIndent">
+                            <div class="Container100 ui-fluid NoPadding">
+                                <div class="Card" style="margin-top: -35px">
+
+
+                                    <ui:include src="dlgagendamento.xhtml" />
+
+
+                                    <p:separator />
+
+                                    <h:panelGroup id="botoesAgenda">
+
+                                        <h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
+                                            <div class="Container25 Responsive100">
+                                                <p:commandButton id="persist" icon="White fa fa-save" process="pnAgendamento" value="Salvar" actionListener="#{agendamentoMB.actionPersist}"
+                                                    update=":lume:messages" oncomplete="btBloqueioAgenda();PF('eventDialog').hide();" styleClass="GreenButton" />
+                                            </div>
+                                        </h:panelGroup>
+                                        <div class="Container25 Responsive100">
+                                            <p:commandButton icon="White fa fa-close" value="Fechar" process="@this" onclick="PF('eventDialog').hide()" />
+                                        </div>
+                                    </h:panelGroup>
+                                </div>
+                            </div>
+                        </div>
+                    </p:dialog>
+
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

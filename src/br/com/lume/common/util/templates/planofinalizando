@@ -1,0 +1,30 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<center>
+	<table style="width: 600px; padding-right: 30px; padding-left: 30px;">
+		<tr>
+			<td><a href="http://www.intelidente.com" target="_blank"><img src="http://www.intelidente.com/images/email/header.jpg" /></a></td>
+		</tr>
+
+		<tr>
+			<td>
+				<p style="font-family: Verdana, Geneva, sans-serif; font-size: 14px; font-weight: light; text-align: left; color: #58585b;">
+
+					<strong>Saudações da Equipe do Intelidente!</strong><br /> <br /> <br /> 
+					Constatamos que você já usou 85% da sua franquia de consultas. Nós ficamos muito felizes por isso, afinal sua clínica está bem movimentada.<br /> <br /> 
+					Não queremos que a operação da sua clínica pare, portanto tenha a preocupação de que se chegar ao limite do Plano que você contratou que é de #qtd_agendamentos agendamentos até o dia <strong>#data</strong> você deve entrar em contato com a
+					nossa central de atendimento e trocar o seu plano.<br /> <br /> 
+					Para troca de plano, por favor entre em contato com nossa central de atendimento pelo fone 41
+					3204 7149 ou pelo e-mail: <strong>contato@intelidente.com</strong>.<br /> <br /> 
+					Até logo!<br /> 
+					<strong>Equipe Intelidente.</strong>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="http://www.intelidente.com" target="_blank"><img src="http://www.intelidente.com/images/email/footer3.jpg" /></a></td>
+		</tr>
+	</table>
+</center>
+</html>

@@ -1,0 +1,76 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<h:inputHidden id="idDesconto" value="#{descontoMB.entity.id}" />
+					<p:panel id="pnDesconto" styleClass="BordNone">
+
+
+						<h1 class="CardBigTopic">Cadastro de Descontos</h1>
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;" id="pgDesconto">
+
+
+							<p:outputLabel for="descricao" value="Descrição : " />
+							<p:inputText id="descricao" required="true" value="#{descontoMB.entity.descricao}" />
+
+
+
+							<p:outputLabel for="valorDesconto" value="Valor Desconto (%) : " />
+							<p:inputNumber id="valorDesconto" value="#{descontoMB.entity.valorDesconto}" required="true" maxlength="2" maxValue="99" style="width:125px"
+								decimalSeparator="," symbol="" thousandSeparator="." />
+
+							<p:outputLabel for="tipo" value="Forma de Pagamento: " />
+							<p:selectOneMenu id="tipo" value="#{descontoMB.entity.formaPagamento}" required="true">
+								<f:selectItem itemValue="#{null}" itemLabel="Selecione uma forma de Pagamento" />
+								<f:selectItems value="#{lancamentoMB.dominios}" var="tp" itemValue="#{tp.valor}" itemLabel="#{tp.nome}" />
+							</p:selectOneMenu>
+
+
+						</p:panelGrid>
+
+						<div class="SeparatorFull"></div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{descontoMB.actionPersist}"
+								 update=":lume:pnDesconto,:lume:dtDesconto" process=":lume:pgDesconto,@this" styleClass="GreenButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{descontoMB.actionRemove}"
+								update=":lume:pnDesconto,:lume:dtDesconto" process="@this" disabled="#{descontoMB.entity.id == 0}"
+								 styleClass="RedButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{descontoMB.actionNew}"
+								 update=":lume:pnDesconto,:lume:dtDesconto" immediate="true" />
+						</div>
+
+						<div class="EmptyBox20"></div>
+
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtDesconto" value="#{descontoMB.descontos}" var="desconto" rows="15" paginator="true"
+							selection="#{descontoMB.entity}" selectionMode="single" rowKey="#{desconto}" paginatorPosition="bottom">
+							<p:ajax event="rowSelect" update=":lume:pnDesconto" />
+							<f:facet name="header">Descontos</f:facet>
+							<p:column filterBy="#{desconto.descricao}" sortBy="#{desconto.descricao}" filterMatchMode="contains" headerText="Descrição">
+								<h:outputText value="#{desconto.descricao}" />
+							</p:column>
+							<p:column filterBy="#{desconto.formaPagamentoStr}" sortBy="#{desconto.formaPagamentoStr}" filterMatchMode="contains"
+								headerText="Forma de Pagamento">
+								<h:outputText value="#{desconto.formaPagamentoStr}" />
+							</p:column>
+							<p:column filterBy="#{desconto.valorDesconto}" sortBy="#{desconto.valorDesconto}" style="text-align:right" filterMatchMode="contains"
+								headerText="Valor Desconto (%)">
+								<h:outputText value="#{desconto.valorDesconto}">
+									<f:convertNumber currencySymbol="" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

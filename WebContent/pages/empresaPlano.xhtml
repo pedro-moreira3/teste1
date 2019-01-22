@@ -1,0 +1,45 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<p:dataTable filterDelay="1500"  reflow="true" var="empresa" value="#{empresaMB.empresasPlano}" paginator="true" rows="20" paginatorPosition="bottom" id="dtEmpresa"
+						emptyMessage="">
+						<f:facet name="header">Empresas</f:facet>
+
+						<p:column headerText="Nome" sortBy="#{empresa.empStrNme}" filterBy="#{empresa.empStrNme}" filterMatchMode="contains">
+							<h:outputText value="#{empresa.empStrNme}" />
+						</p:column>
+
+						<p:column headerText="Plano">
+							<p:selectOneMenu id="plano" value="#{empresa.idPlano}" autoWidth="false">
+								<p:ajax process="@this" listener="#{empresaMB.trocarPlano(empresa)}" />
+								<f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
+								<f:selectItems value="#{empresaMB.planos}" var="p" itemValue="#{p.id}" itemLabel="#{p.nome}" />
+							</p:selectOneMenu>
+						</p:column>
+
+						<p:column sortBy="#{empresa.empStrClienteIuguID}" filterBy="#{empresa.empStrClienteIuguID}" filterMatchMode="contains" headerText="ID Iugu Cliente">
+							<h:outputText value="#{empresa.empStrClienteIuguID}" />
+						</p:column>
+                        
+                        <p:column sortBy="#{empresa.empStrAssinaturaIuguID}" filterBy="#{empresa.empStrAssinaturaIuguID}" filterMatchMode="contains" headerText="ID Iugu Assinatura">
+                            <h:outputText value="#{empresa.empStrAssinaturaIuguID}" />
+                        </p:column>
+
+						<p:column headerText="Data de expiração">
+							<p:calendar id="empDtmExpiracao" value="#{empresa.empDtmExpiracao}" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+5" class="Wid30" mask="true" />
+							<p:commandButton icon="White fa fa-save" actionListener="#{empresaMB.actionAlterarDataExpiracao(empresa)}" process="@this,empDtmExpiracao"
+								styleClass="GreenButton Wid50" />
+						</p:column>
+
+					</p:dataTable>
+
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

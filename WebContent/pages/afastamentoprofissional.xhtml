@@ -1,0 +1,96 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<p:panel id="pnAfastamento" styleClass="BordNone">
+						<h:inputHidden id="id" value="#{perguntaMB.entity.id}" />
+
+						<h1 class="CardBigTopic">Bloqueios</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+							<p:outputLabel for="tipo" value="Tipo : " />
+							<p:selectOneRadio id="tipo" value="#{afastamentoProfissionalMB.dominioSelecionado}" converter="dominio" required="true"
+								disabled="#{afastamentoProfissionalMB.admin}" layout="grid" columns="3">
+								<f:selectItems value="#{afastamentoProfissionalMB.dominios}" var="tp" itemValue="#{tp}" itemLabel="#{tp.nome}" />
+							</p:selectOneRadio>
+
+							<p:outputLabel for="inicio" value="Inicio : " />
+							<p:calendar id="inicio" value="#{afastamentoProfissionalMB.entity.inicio}" mindate="01/01/00" minHour="00" pattern="dd/MM/yyyy HH:mm"
+								locale="#{lumeSecurity.locale}" required="true" disabled="#{afastamentoProfissionalMB.admin}" mask="true">
+								<p:ajax event="dateSelect" listener="#{afastamentoProfissionalMB.selecionadaDtInicio}" />
+							</p:calendar>
+
+							<p:outputLabel for="fim" value="Fim : " />
+							<p:calendar id="fim" value="#{afastamentoProfissionalMB.entity.fim}" maxdate="31/12/2099" maxHour="23" pattern="dd/MM/yyyy HH:mm"
+								locale="#{lumeSecurity.locale}" required="true" disabled="#{afastamentoProfissionalMB.admin}" mask="true">
+								<p:ajax event="dateSelect" listener="#{afastamentoProfissionalMB.selecionadaDtFim}" />
+							</p:calendar>
+
+							<p:outputLabel for="observacao" value="Observação : " />
+							<p:inputText id="observacao" required="true" value="#{afastamentoProfissionalMB.entity.observacao}" maxlength="100"
+								disabled="#{afastamentoProfissionalMB.admin}" />
+
+							<p:outputLabel for="valido" value="Validado : " rendered="#{afastamentoProfissionalMB.admin}" />
+							<p:selectOneRadio id="valido" value="#{afastamentoProfissionalMB.entity.valido}" required="true" rendered="#{afastamentoProfissionalMB.admin}">
+								<f:selectItem itemLabel="Sim" itemValue="S" />
+								<f:selectItem itemLabel="Não" itemValue="N" />
+							</p:selectOneRadio>
+						</p:panelGrid>
+
+						<div class="SeparatorFull"></div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="persistAfastamento" icon="White fa fa-save" value="Salvar" actionListener="#{afastamentoProfissionalMB.actionPersist}"
+								process="pnAfastamento" update=":lume:pnAfastamento,:lume:dtAfastamento" 
+								styleClass="GreenButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="deletAfastamento" icon="White fa fa-trash-o" value="Excluir" actionListener="#{afastamentoProfissionalMB.actionRemove}"
+								update=":lume:pnAfastamento,:lume:dtAfastamento" process="@this" disabled="#{afastamentoProfissionalMB.entity.id == 0}"
+								 styleClass="RedButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="newAfastamento" icon="White fa fa-file-o" value="Novo" actionListener="#{afastamentoProfissionalMB.actionNew}"
+								update=":lume:pnAfastamento,:lume:dtAfastamento,:lume:inicio" immediate="true" tabindex="1" process="@this,pnAfastamento"
+								 />
+						</div>
+
+					</p:panel>
+
+					<div class="EmptyBox20"></div>
+
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtAfastamento" value="#{afastamentoProfissionalMB.afastamentos}" var="afa" rows="7"
+						paginator="true" selection="#{afastamentoProfissionalMB.entity}" selectionMode="single" rowKey="#{afa}" paginatorPosition="bottom">
+						<p:ajax event="rowSelect" update=":lume:pnAfastamento" listener="#{afastamentoProfissionalMB.carregaTela}" />
+						<f:facet name="header">Bloqueios</f:facet>
+						<p:column rendered="#{afastamentoProfissionalMB.admin}" headerText="Profissional" sortBy="#{afa.profissional.dadosBasico.nome}"
+							filterBy="#{afa.profissional.dadosBasico.nome}" filterMatchMode="contains">
+							<h:outputText value="#{afa.profissional.dadosBasico.nome}" />
+						</p:column>
+						<p:column headerText="Tipo" sortBy="#{afa.tipoAfastamentoStr}" filterBy="#{afa.tipoAfastamentoStr}" filterMatchMode="contains">
+							<h:outputText value="#{afa.tipoAfastamentoStr}" />
+						</p:column>
+						<p:column headerText="Inicio" sortBy="#{afa.inicioStr}" filterBy="#{afa.inicioStrOrd}" filterMatchMode="contains">
+							<h:outputText value="#{afa.inicioStr}" />
+						</p:column>
+						<p:column headerText="Fim" sortBy="#{afa.fimStr}" filterBy="#{afa.fimStrOrd}" filterMatchMode="contains">
+							<h:outputText value="#{afa.fimStr}" />
+						</p:column>
+						<p:column headerText="Observação" sortBy="#{afa.observacao}" filterBy="#{afa.observacao}" filterMatchMode="contains">
+							<h:outputText value="#{afa.observacao}" />
+						</p:column>
+						<p:column headerText="Validado" sortBy="#{afa.validoStr}" filterBy="#{afa.validoStr}" filterMatchMode="contains">
+							<h:outputText value="#{afa.validoStr}" />
+						</p:column>
+					</p:dataTable>
+
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

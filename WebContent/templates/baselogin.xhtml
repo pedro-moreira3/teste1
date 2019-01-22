@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=9" />
+		<title>LT Clini</title>
+	</f:facet>
+</h:head>
+<h:body>
+	<ui:insert name="styles"></ui:insert>
+	<script type="text/javascript">
+		jQuery(function($) {
+			if ($.datepicker) {
+				$.datepicker.regional['pt-BR'] = {
+					closeText : 'Fechar',
+					prevText : '&#x3c;Anterior',
+					nextText : 'Pr&oacute;ximo&#x3e;',
+					currentText : 'Hoje',
+					monthNames : [ 'Janeiro', 'Fevereiro', 'Mar&ccedil;o',
+							'Abril', 'Maio', 'Junho', 'Julho', 'Agosto',
+							'Setembro', 'Outubro', 'Novembro', 'Dezembro' ],
+					monthNamesShort : [ 'Jan', 'Fev', 'Mar', 'Abr', 'Mai',
+							'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez' ],
+					dayNames : [ 'Domingo', 'Segunda-feira',
+							'Ter&ccedil;a-feira', 'Quarta-feira',
+							'Quinta-feira', 'Sexta-feira', 'S&aacute;bado' ],
+					dayNamesShort : [ 'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex',
+							'S&aacute;b' ],
+					dayNamesMin : [ 'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex',
+							'S&aacute;b' ],
+					weekHeader : 'Sm',
+					dateFormat : 'dd/MM/yyyy hh:mm:ss',
+					firstDay : 0,
+					isRTL : false,
+					showMonthAfterYear : false,
+					yearSuffix : ''
+				};
+				$.datepicker.setDefaults($.datepicker.regional['pt-BR']);
+			}
+			if ($.timepicker) {
+				$.timepicker.regional['pt-BR'] = {
+					currentText : "Agora",
+					closeText : "OK",
+					ampm : false,
+					timeFormat : "hh:mm:ss",
+					timeOnlyTitle : "Definição do Horário",
+					timeText : "Horário",
+					hourText : "Hora",
+					minuteText : "Minuto",
+					secondText : "Segundo",
+					showSecond : false
+				};
+				$.timepicker.setDefaults($.timepicker.regional['pt-BR']);
+			}
+		});
+		function updateServer(name) {
+			document.getElementById('lume:id').value = name;
+			document.getElementById('lume:login').click();
+		}
+	</script>
+	<f:view>
+		<div id="wrap" class="wrap">
+			<h:form id="lume">
+				<div id="container" class="container">
+					<div id="header">
+						<div id="navigation"></div>
+					</div>
+					<div id="article" class="article">
+						<ui:insert name="article"></ui:insert>
+					</div>
+				</div>
+			</h:form>
+		</div>
+		<div id="footer" class="footer">
+			<ui:insert name="footer"></ui:insert>
+		</div>
+	</f:view>
+</h:body>
+</html>

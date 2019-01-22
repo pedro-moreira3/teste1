@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<style>
+.ui-panelgrid td {
+	border-width: 1px;
+	border-style: solid;
+	border-color: inherit;
+	padding: 4px 10px;
+	vertical-align: top;
+}
+</style>
+
+					<p:panel id="pngrafico" styleClass="BordNone">
+
+						<h1 class="CardBigTopic">Cockpit</h1>
+						<div class="SeparatorFull"></div>						
+						<p:panelGrid columns="3" columnClasses="ui-grid-col-4,ui-grid-col-4,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+						style="border:0px none; background-color:transparent;">
+							<ui:repeat var="gp" value="#{cockpitMB.graficos1}">
+								<p:chart type="metergauge" model="#{gp.chartModel}" style="width:100%;height:250px;vertical-align: top;" responsive="true"/>
+							</ui:repeat>
+							<ui:repeat var="gp" value="#{cockpitMB.graficos2}">
+								<p:chart type="metergauge" model="#{gp.chartModel}" style="width:100%;height:250px;vertical-align: top;" responsive="true"/>
+							</ui:repeat>
+							<ui:repeat var="gp" value="#{cockpitMB.graficos3}">
+								<p:chart type="metergauge" model="#{gp.chartModel}" style="width:100%;height:250px;vertical-align: top;" responsive="true"/>
+							</ui:repeat>
+						</p:panelGrid>
+					</p:panel>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

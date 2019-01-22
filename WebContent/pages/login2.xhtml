@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+	</f:facet>
+	<title>INTELIDENTE</title>
+	<ui:insert name="head" />
+</h:head>
+
+<h:body styleClass="InteliBack">
+	<h:form id="lume">
+
+		<div class="Wid70 MarAuto">
+			<div class="Wid70 MarAuto WidAutoOnMobile TexAlCenter">
+
+				<div class="Wid70 MarAuto WidAutoOnMobile">
+					<div class="EmptyBox50 ShowOnDesktop"></div>
+					<div class="EmptyBox20 ShowOnMobile"></div>
+
+					<div class="Container100">
+						<h:graphicImage name="logo_branco.png" styleClass="MarAuto Wid100" library="images" />
+					</div>
+					<div class="EmptyBox30"></div>
+					<div class="Card ui-fluid ShadowEffect NavyBack">
+						<div class="Container100">
+							<p:inputText placeholder="Usuário" style="padding:15px !important;" value="#{odontoLoginMB.entity.usuStrLogin}" />
+						</div>
+						<div class="Container100">
+							<p:password placeholder="Senha" style="padding:15px !important;" value="#{odontoLoginMB.entity.usuStrSenha}" feedback="false" />
+						</div>
+						<div class="EmptyBox20"></div>
+						<div class="Container100">
+							<p:commandButton value="Login" styleClass="GreenButton" action="#{odontoLoginMB.actionLogin}" icon="White fa fa-lock White Fs16" ajax="false" />
+						</div>
+						<div class="EmptyBox10"></div>
+						<div class="Separator"></div>
+						<div class="EmptyBox10"></div>
+						<div class="Container100 Responsive100">
+							<p:commandLink value="Esqueci minha senha" onclick="PF('confirmation').show()" style="color: #FFFFFF !important"/>
+						</div>
+
+						
+
+						<div class="EmptyBox10"></div>
+						<div class="Container100 Responsive100">		
+							<p:messages id="mensagens" showDetail="true" autoUpdate="true" globalOnly="true" />
+						</div>
+					</div>
+
+					<div class="EmptyBox20"></div>
+					<div class="Wid100 FontLatoRegular Fs12 TransparentWhite">
+						<i class="White fa fa-copyright DispInlBlock"></i> Lume Tecnologia 2016
+					</div>
+					<div class="EmptyBox30"></div>
+				</div>
+			</div>
+		</div>
+
+		<p:confirmDialog id="confirmDialog" message="Você tem certeza que deseja resetar a sua senha?" header="Esqueci minha Senha" severity="alert"
+			widgetVar="confirmation" appendToBody="true">
+			<p:commandButton id="confirm" value="Sim" oncomplete="PF('confirmation').hide()" action="#{odontoLoginMB.actionResetSenha}"
+				update=":lume:mensagens" />
+			<p:commandButton id="decline" value="Não" onclick="PF('confirmation').hide()" type="button" />
+		</p:confirmDialog>
+
+	</h:form>
+	<style>
+.ui-button-text, .ui-button-text-only .ui-button-text {
+	padding: 15px !important;
+	transition: none !important;
+}
+</style>
+
+	<h:outputStylesheet name="css/core-layout.css" library="olympos-layout" />
+	<h:outputStylesheet name="css/font-awesome.css" library="olympos-layout" />
+	<h:outputStylesheet name="css/animate.css" library="olympos-layout" />
+	<h:outputStylesheet name="css/olympos-layout.css" library="olympos-layout" />
+	<h:outputStylesheet name="css/olympos-font.css" library="olympos-layout" />
+</h:body>
+
+</html>

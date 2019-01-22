@@ -1,0 +1,155 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <div class="Container100 Responsive100 NoIndent">
+            <div class="Container100 ui-fluid NoPadding">
+                <div class="Card">
+                    <p:panel id="pnPrincipal" styleClass="BordNone">
+
+                        <h1 class="CardBigTopic">Relatório de Esterilização</h1>
+                        <div class="SeparatorFull"></div>
+
+                        <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                            style="border:0px none; background-color:transparent;">
+
+                            <p:outputLabel for="inicio" value="Inicio : " />
+                            <p:calendar id="inicio" value="#{relatorioEsterilizacaoMB.inicio}" pattern="dd/MM/yyyy" mask="true" class="Wid20" />
+
+                            <p:outputLabel for="fim" value="Fim : " />
+                            <p:calendar id="fim" value="#{relatorioEsterilizacaoMB.fim}" pattern="dd/MM/yyyy" mask="true" class="Wid20" />
+
+                        </p:panelGrid>
+
+                        <div class="SeparatorFull"></div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioEsterilizacaoMB.filtra}" update="dtPrincipal,pnPrincipal"
+                                process="@this,pnPrincipal,inicio,fim" styleClass="OrangeButton" />
+                        </div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
+                                <p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="RelatorioEsterilizacao" />
+                            </p:commandButton>
+                        </div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioEsterilizacaoMB.actionNew}" update="dtPrincipal,pnPrincipal" immediate="true"
+                                tabindex="1" />
+                        </div>
+
+                    </p:panel>
+
+                    <div class="EmptyBox20"></div>
+
+
+                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" selection="#{relatorioEsterilizacaoMB.entity}" selectionMode="single" value="#{relatorioEsterilizacaoMB.esterilizacoes}"
+                        var="esterilizacaoSolicitada" rows="10" paginator="true" rowKey="#{esterilizacaoSolicitada}" paginatorPosition="bottom">
+                        <f:facet name="header">Esterilizações</f:facet>
+                        <p:ajax event="rowSelect" listener="#{relatorioEsterilizacaoMB.mostraItens}" update=":lume:dtItens" process="@this" />
+                        <p:column filterBy="#{esterilizacaoSolicitada.descricao}" sortBy="#{esterilizacaoSolicitada.descricao}" filterMatchMode="contains" headerText="Descrição">
+                            <f:facet name="header">
+                                <h:outputText value="Descrição" />
+                            </f:facet>
+                            <h:outputText value="#{esterilizacaoSolicitada.descricao}" title="#{esterilizacaoSolicitada.id}" />
+                        </p:column>
+                        <p:column filterBy="#{esterilizacaoSolicitada.solicitante.dadosBasico.prefixoNome}" sortBy="#{esterilizacaoSolicitada.solicitante.dadosBasico.prefixoNome}"
+                            filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Solicitante" />
+                            </f:facet>
+                            <h:outputText value="#{esterilizacaoSolicitada.solicitante.dadosBasico.prefixoNome}" />
+                        </p:column>
+                        <p:column filterBy="#{esterilizacaoSolicitada.profissional.dadosBasico.prefixoNome}" sortBy="#{esterilizacaoSolicitada.profissional.dadosBasico.prefixoNome}"
+                            filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Esterilizador" />
+                            </f:facet>
+                            <h:outputText value="#{esterilizacaoSolicitada.profissional.dadosBasico.prefixoNome}" />
+                        </p:column>
+                        <p:column filterBy="#{esterilizacaoSolicitada.status}" sortBy="#{esterilizacaoSolicitada.status}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Status" />
+                            </f:facet>
+                            <h:outputText value="#{esterilizacaoSolicitada.status}" />
+                        </p:column>
+                        <p:column filterBy="#{esterilizacaoSolicitada.dataDevolucaoStr}" sortBy="#{esterilizacaoSolicitada.dataDevolucaoStr}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Data de Devolução" />
+                            </f:facet>
+                            <h:outputText value="#{esterilizacaoSolicitada.dataDevolucaoStr}" />
+                        </p:column>
+                        <p:column filterBy="#{esterilizacaoSolicitada.dataStr}" sortBy="#{esterilizacaoSolicitada.dataStrOrd}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Data do Pedido" />
+                            </f:facet>
+                            <h:outputText value="#{esterilizacaoSolicitada.dataStr}" />
+                        </p:column>
+                        <p:column filterBy="#{esterilizacaoSolicitada.dataValidadeStr}" sortBy="#{esterilizacaoSolicitada.dataValidadeStr}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Data de Validade" />
+                            </f:facet>
+                            <h:outputText value="#{esterilizacaoSolicitada.dataValidadeStr}" />
+                        </p:column>
+                        <p:column filterBy="#{esterilizacaoSolicitada.resumo}" sortBy="#{esterilizacaoSolicitada.resumo}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Resumo" />
+                            </f:facet>
+                            <h:outputText value="#{esterilizacaoSolicitada.resumo}" />
+                        </p:column>
+                    </p:dataTable>
+                    <br /> <br />
+                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtItens" value="#{relatorioEsterilizacaoMB.itens}" var="i" rows="10" paginator="true" rowKey="#{i}" paginatorPosition="bottom">
+                        <f:facet name="header">Analítico</f:facet>
+                        <p:column filterBy="#{i.kit.descricao}" sortBy="#{i.kit.descricao}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Kit" />
+                            </f:facet>
+                            <h:outputText value="#{i.kit.descricao}" />
+                        </p:column>
+                        <p:column filterBy="#{i.item.descricaoLimpa}" sortBy="#{i.item.descricao}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Item" />
+                            </f:facet>
+                            <h:outputText value="#{i.item.descricao}" />
+                        </p:column>
+                        <p:column filterBy="#{i.quantidade}" sortBy="#{i.quantidade}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Quantidade" />
+                            </f:facet>
+                            <h:outputText value="#{i.quantidade}" />
+                        </p:column>
+                    </p:dataTable>
+
+                    <br /> <br />
+                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtDescartes" value="#{relatorioEsterilizacaoMB.descartes}" var="i" rows="10" paginator="true" rowKey="#{i}" paginatorPosition="bottom">
+                        <f:facet name="header">Descartes</f:facet>
+                        <p:column filterBy="#{i.item.descricaoLimpa}" sortBy="#{i.item.descricao}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Item" />
+                            </f:facet>
+                            <h:outputText value="#{i.item.descricao}" />
+                        </p:column>                       
+                        <p:column filterBy="#{i.quantidadeAtual.intValue()}" sortBy="#{i.quantidadeAtual.intValue()}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Quantidade" />
+                            </f:facet>
+                            <h:outputText value="#{i.quantidadeAtual.intValue()}" />
+                        </p:column>
+                        <p:column filterBy="#{i.dataCadastroStr}" sortBy="#{i.dataCadastro}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Data" />
+                            </f:facet>
+                            <h:outputText value="#{i.dataCadastroStr}" />
+                        </p:column>
+                        <p:column filterBy="#{i.justificativa}" sortBy="#{i.justificativa}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Justificativa" />
+                            </f:facet>
+                            <h:outputText value="#{i.justificativa}" />
+                        </p:column>
+                    </p:dataTable>
+
+
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

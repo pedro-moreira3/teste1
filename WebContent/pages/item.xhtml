@@ -1,0 +1,161 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <style>
+[role="gridcell"] {
+    text-align: left !important;
+}
+</style>
+
+        <div class="Container100 Responsive100 NoIndent">
+            <div class="Container100 ui-fluid NoPadding">
+                <div class="Card">
+                    <p:panel id="pnItem" styleClass="BordNone">
+                        <h:inputHidden id="id" value="#{itemMB.entity.id}" />
+
+
+                        <h1 class="CardBigTopic">Item</h1>
+                        <div class="SeparatorFull"></div>
+                        <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                            style="border:0px none; background-color:transparent;">
+
+
+                            <h:outputLabel value="Categoria: " for="tbItemPaiTree" />
+                            <p:column>
+                                <p:autoComplete queryDelay="1000" id="digitacao" value="#{itemMB.digitacao}" completeMethod="#{itemMB.filtraItem}" styleClass="itembusca">
+                                    <p:ajax event="itemSelect" listener="#{itemMB.handleSelect}" update=":lume:tbItemPaiTree, :lume:digitacao" />
+                                </p:autoComplete>
+
+                                <p:tree value="#{itemMB.rootPai}" var="itemPai" id="tbItemPaiTree" selection="#{itemMB.selectedItemPai}" selectionMode="single">
+                                    <p:ajax event="select" update=":lume:tbItemPaiTree, :lume:digitacao" listener="#{itemMB.onNodeSelect}" />
+                                    <p:ajax event="unselect" update=":lume:tbItemPaiTree, :lume:digitacao" listener="#{itemMB.onNodeUnselect}" />
+                                    <p:treeNode>
+                                        <h:outputText value="#{itemPai.descricao}" />
+                                    </p:treeNode>
+                                </p:tree>
+                            </p:column>
+                            <p:column></p:column>
+                            <p:column></p:column>
+
+                            <h:outputLabel value="Categoria: " />
+                            <p:selectOneMenu id="categoria" value="#{itemMB.categoria}" class="Wid30" disabled="#{not empty itemMB.entity.itensFilho}">
+                                <p:ajax event="change" listener="#{itemMB.alteraCategoria}" update=":lume:pnItem" process="@this" />
+                                <f:selectItem itemValue="N" itemLabel="Não" />
+                                <f:selectItem itemValue="S" itemLabel="Sim" />
+                            </p:selectOneMenu>
+
+                            <p:outputLabel for="descricao" value="Item: " />
+                            <p:inputText id="descricao" value="#{itemMB.descricao}" required="true" maxlength="100" />
+
+                            <p:outputLabel for="estoqueMinimo" value="Estoque Mínimo: " />
+                            <p:inputText id="estoqueMinimo" value="#{itemMB.entity.estoqueMinimo}" maxlength="10" onkeypress="validaNumeros(event)" style="width:20%" disable="#{itemMB.disableItem}" />
+
+                            <h:outputLabel value="Forma de Armazenamento" />
+                            <p:selectOneMenu id="formaArmazenamento" value="#{itemMB.formaArmazenamento}" converter="dominio" disabled="#{itemMB.disableItem}">
+                                <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
+                                <f:selectItems value="#{itemMB.formasArmazenamento}" var="formaArmazenamento" itemLabel="#{formaArmazenamento.nome}" itemValue="#{formaArmazenamento}" />
+                            </p:selectOneMenu>
+
+                            <h:outputLabel value="Utilização" />
+                            <p:selectOneMenu id="utilizacao" value="#{itemMB.utilizacao}" converter="dominio" disabled="#{itemMB.disableItem}">
+                                <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
+                                <f:selectItems value="#{itemMB.utilizacoes}" var="utilizacao" itemLabel="#{utilizacao.nome}" itemValue="#{utilizacao}" />
+                            </p:selectOneMenu>
+
+                            <h:outputLabel value="Fração Unitária" />
+                            <p:selectOneMenu id="fracaoUnitaria" value="#{itemMB.fracaoUnitaria}" converter="dominio" required="true" disabled="#{itemMB.disableItem}">
+                                <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
+                                <f:selectItems value="#{itemMB.fracoesUnitarias}" var="fracaoUnitaria" itemLabel="#{fracaoUnitaria.nome}" itemValue="#{fracaoUnitaria}" />
+                            </p:selectOneMenu>
+
+                            <h:outputLabel value="Unidade de Medidas" />
+                            <p:selectOneMenu id="unidadeMedida" value="#{itemMB.unidadeMedida}" converter="dominio" required="true" disabled="#{itemMB.disableItem}">
+                                <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
+                                <f:selectItems value="#{itemMB.unidadesMedida}" var="unidadeMedida" itemLabel="#{unidadeMedida.nome}" itemValue="#{unidadeMedida}" />
+                            </p:selectOneMenu>
+
+
+                            <p:outputLabel for="tipo" value="Tipo: " />
+                            <p:selectOneRadio id="tipo" value="#{itemMB.entity.tipo}" required="true">
+                                <f:selectItem itemLabel="Instrumental" itemValue="I" />
+                                <f:selectItem itemLabel="Consumo" itemValue="C" />
+                            </p:selectOneRadio>
+
+                            <p:outputLabel for="aplicacao" value="Aplicação: " />
+                            <p:selectOneRadio id="aplicacao" value="#{itemMB.entity.aplicacao}" required="true">
+                                <f:selectItem itemLabel="Indireta" itemValue="I" />
+                                <f:selectItem itemLabel="Direta" itemValue="D" />
+                            </p:selectOneRadio>
+                        </p:panelGrid>
+                        <div class="SeparatorFull"></div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{itemMB.actionPersist}" update=":lume:pnItem,:lume:pnItemTree" process=":lume:pnItem"
+                                styleClass="GreenButton" />
+                        </div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{itemMB.actionRemove}" oncomplete="handleDialogRequest(xhr, status, args);"
+                                update=":lume:pnItem,:lume:pnItemTree" process="@this" disabled="#{!itemMB.disable}" styleClass="RedButton" />
+                        </div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{itemMB.actionNew}" update=":lume:pnItem,:lume:pnItemTree" immediate="true" />
+                        </div>
+
+                        <div class="EmptyBox20"></div>
+
+                        <p:panel id="pnItemTree" styleClass="BordNone">
+                            <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                                style="border:0px none; background-color:transparent;">
+                                <p:outputLabel for="filtro" value="Filtro : " />
+                                <p:inputText id="filtro" value="#{itemMB.filtroTable}">
+                                </p:inputText>
+                                <p:commandButton id="todos" icon="White fa fa-search" value="Pesquisar" actionListener="#{itemMB.actionTodos}" update=":lume:pnItem,:lume:pnItemTree"
+                                    process=":lume:pnItemTree" styleClass="OrangeButton" />
+                            </p:panelGrid>
+                            <p:treeTable value="#{itemMB.root}" var="item" id="tbItemTree" selection="#{itemMB.selectedItem}" selectionMode="single" style="white-space: normal;">
+                                <p:ajax event="select" listener="#{itemMB.carregaTela()}" update=":lume:pnItem" />
+                                <f:facet name="header">Itens</f:facet>
+                                <p:column headerText="Item" style="width: 25%; white-space: normal;" priority="1">
+                                    <h:outputText value="#{item.descricao}" title="#{item.id}" />
+                                </p:column>
+                                <p:column headerText="Unidade de medida" priority="2">
+                                    <h:outputText value="#{item.unidadeMedidaString}" />
+                                </p:column>
+                                <p:column headerText="Tipo" priority="2">
+                                    <h:outputText value="#{item.tipoStr}" />
+                                </p:column>
+                                <p:column headerText="Aplicação" priority="2">
+                                    <h:outputText value="#{item.aplicacaoStr}" />
+                                </p:column>
+                                <p:column headerText="Estoque Mínimo" priority="2">
+                                    <h:outputText value="#{item.estoqueMinimo}" />
+                                </p:column>
+                                <p:column headerText="Armazenamento" style="width: 14%; white-space: normal;" priority="2">
+                                    <h:outputText value="#{item.formaArmazenamentoString}" />
+                                </p:column>
+                            </p:treeTable>
+                        </p:panel>
+                    </p:panel>
+
+                    <p:confirmDialog id="confirmDialog" width="400" header="Remover item" severity="info" widgetVar="senha" appendToBody="true">
+                        <f:facet name="message">
+                            <h:outputText value="Você tem certeza que deseja remover este Item? Ele contem vínculo com outros itens que serão excluidos juntamente" />
+                        </f:facet>
+                        <p:commandButton id="confirm" value="Ok" oncomplete="PF('senha').hide()" process="@this" update=":lume:tbItemTree, :lume:pnItem" actionListener="#{itemMB.removeItens}"
+                            styleClass="GreenButton" />
+                        <p:commandButton value="Cancelar" oncomplete="PF('senha').hide()" styleClass="RedButton">
+
+                        </p:commandButton>
+                    </p:confirmDialog>
+                    <script type="text/javascript">
+																					function handleDialogRequest(xhr, status, args) {
+
+																						if (args.dlg == true) {
+																							PF('senha').show();
+																						}
+																					}
+																				</script>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

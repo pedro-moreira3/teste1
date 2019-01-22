@@ -1,0 +1,177 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<p:panel id="pnEsterilizacao" styleClass="BordNone">
+						<h:inputHidden id="id" value="#{esterilizacaoMB.entity.id}" />
+
+						<h1 class="CardBigTopic">Entregas para Esterilização</h1>
+						<div class="SeparatorFull"></div>
+
+
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+							<p:outputLabel for="descricao" value="Descrição : " />
+							<p:inputText id="descricao" value="#{esterilizacaoMB.entity.descricao}" maxlength="50" />
+
+							<p:outputLabel for="observacao" value="Observações : " />
+							<p:inputTextarea id="observacao" autoResize="false" value="#{esterilizacaoMB.entity.observacao}" cols="50" rows="4" maxlength="100" />
+
+							<p:outputLabel for="solicitante" value="Solicitante : " />
+							<p:autoComplete dropdown="true" queryDelay="1000" value="#{esterilizacaoMB.entity.solicitante}" id="solicitante"
+								completeMethod="#{esterilizacaoMB.geraSugestoes}" var="profissional" itemLabel="#{profissional.dadosBasico.prefixoNome}"
+								itemValue="#{profissional}" converter="profissional" forceSelection="true" minQueryLength="3" styleClass="profissional">
+								<p:ajax event="itemSelect" listener="#{reservaMB.handleSelectProfissional}" update=":lume:solicitante" />
+							</p:autoComplete>
+						</p:panelGrid>
+
+
+						<p:panel header="Kits" id="pnItens">
+
+							<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;">
+								<h:outputLabel for="digitacao" value="Kit/Item : " />
+								<p:column>
+									<p:autoComplete queryDelay="1000" id="digitacao" minQueryLength="3" value="#{esterilizacaoMB.digitacao}"
+										completeMethod="#{esterilizacaoMB.filtraKit}" styleClass="itembusca">
+										<p:ajax event="itemSelect" listener="#{esterilizacaoMB.handleSelect}" update=":lume:tbItemTree" />
+									</p:autoComplete>
+
+
+									<p:tree value="#{esterilizacaoMB.root}" var="kit" id="tbItemTree" selection="#{esterilizacaoMB.selectedItem}" selectionMode="single">
+										<p:ajax event="select" listener="#{esterilizacaoMB.onNodeSelect}" update=":lume:digitacao" process="@this" />
+										<p:ajax event="unselect" listener="#{esterilizacaoMB.onNodeUnselect}" />
+										<p:treeNode>
+											<h:outputText value="#{kit}" />
+										</p:treeNode>
+									</p:tree>
+								</p:column>
+
+
+								<p:outputLabel for="quantidade" value="Quantidade: " />
+								<p:inputText id="quantidade" value="#{esterilizacaoMB.quantidade}" maxlength="8" size="10" styleClass="Wid50" />
+							</p:panelGrid>
+
+
+							<h:panelGroup rendered="#{esterelizacaoMB.incluindo}">
+								<div class="Container25 Responsive100">
+									<p:commandButton id="adicionar" icon="fa fa-plus White" value="Adicionar" actionListener="#{esterelizacaoMB.adicionar}"
+										update=":lume:pnEsterilizacao, :lume:pnItens" process=":lume:pnEsterilizacao" styleClass="GreenButton" />
+								</div>
+							</h:panelGroup>
+
+							<h:panelGroup rendered="#{!esterelizacaoMB.incluindo}">
+								<div class="Container25 Responsive100">
+									<p:commandButton id="remover" icon="fa fa-minus White" value="Remover" actionListener="#{esterelizacaoMB.remover}"
+										update=":lume:pnEsterilizacao, :lume:pnItens" process="@this" styleClass="RedButton" />
+								</div>
+							</h:panelGroup>
+							<h:panelGroup rendered="#{!esterelizacaoMB.incluindo}">
+								<div class="Container25 Responsive100">
+									<p:commandButton id="atualizar" icon="fa fa-check White" value="Atualizar" actionListener="#{esterelizacaoMB.atualizar}"
+										update=":lume:pnEsterilizacao, :lume:pnItens" process=":lume:pnEsterilizacao" styleClass="OrangeButton" />
+								</div>
+							</h:panelGroup>
+							<div class="Container25 Responsive100">
+								<p:commandButton id="limpar" icon="fa fa-minus White" value="Limpar" actionListener="#{esterelizacaoMB.limpar}"
+									update=":lume:pnEsterilizacao, :lume:pnItens" process=":lume:pnEsterilizacao, :lume:pnItens"  />
+							</div>
+
+							<div class="EmptyBox20"></div>
+
+							<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtItens" value="#{esterilizacaoMB.esterilizacaoKits}" var="esterilizacaoKit" rows="15"
+								paginator="true" selection="#{esterilizacaoMB.esterilizacaoKit}" selectionMode="single" rowKey="#{esterilizacaoKit}"
+								paginatorPosition="bottom">
+								<p:ajax event="rowSelect" listener="#{esterilizacaoMB.carregaTela}" update=":lume:pnEsterilizacao" />
+
+								<p:column headerText="Kit">
+									<h:outputText value="#{esterilizacaoKit.kit.descricao}" />
+								</p:column>
+								<p:column headerText="Item">
+									<h:outputText value="#{esterilizacaoKit.item.descricao}" />
+								</p:column>
+								<p:column headerText="Quantidade">
+									<h:outputText value="#{esterilizacaoKit.quantidade}" />
+								</p:column>
+							</p:dataTable>
+						</p:panel>
+						<div class="SeparatorFull"></div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{esterilizacaoMB.actionPersist}"
+								oncomplete="handleDialogRequest(xhr, status, args)" update=":lume:pnEsterilizacao, :lume:pnItens, :lume:dtEsterilizacao, lume:confirmDialog"
+								process=":lume:pnEsterilizacao"  styleClass="GreenButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{esterilizacaoMB.actionRemove}"
+								update=":lume:pnEsterilizacao, :lume:pnItens, :lume:dtEsterilizacao" process="@this" disabled="#{esterilizacaoMB.entity.id==0}"
+								 styleClass="RedButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{esterilizacaoMB.actionNew}"
+								update=":lume:pnEsterilizacao, :lume:pnItens, :lume:dtEsterilizacao" immediate="true"  />
+						</div>
+						<div class="EmptyBox20"></div>
+
+					</p:panel>
+					<p:panel styleClass="BordNone">
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtEsterilizacao" value="#{esterilizacaoMB.esterilizacoes}" var="esterilizacao" rows="15"
+							paginator="true" selection="#{esterilizacaoMB.entity}" selectionMode="single" rowKey="#{esterilizacao}" paginatorPosition="bottom">
+							<p:ajax event="rowSelect" update=":lume:pnEsterilizacao, :lume:dtItens" listener="#{esterilizacaoMB.carregaTelaGeral}" />
+							<f:facet name="header">Esterilizacões</f:facet>
+
+							<p:column filterBy="#{esterilizacao.descricao}" sortBy="#{esterilizacao.descricao}" filterMatchMode="contains" headerText="Descrição">
+								<h:outputText value="#{esterilizacao.descricao}" />
+							</p:column>
+							<p:column filterBy="#{esterilizacao.solicitante.dadosBasico.prefixoNome}" sortBy="#{esterilizacao.solicitante.dadosBasico.prefixoNome}"
+								filterMatchMode="contains" headerText="Solicitante">
+								<h:outputText value="#{esterilizacao.solicitante.dadosBasico.prefixoNome}" />
+							</p:column>
+							<p:column filterBy="#{esterilizacao.dataStr}" sortBy="#{esterilizacao.dataStrOrd}" filterMatchMode="contains" headerText="Data do Cadastro">
+								<h:outputText value="#{esterilizacao.dataStr}" />
+							</p:column>
+							<p:column filterBy="#{esterilizacao.resumo}" sortBy="#{esterilizacao.resumo}" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Resumo" />
+								</f:facet>
+								<h:outputText value="#{esterilizacao.resumo}" />
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+
+
+
+					<p:confirmDialog id="confirmDialog" header="Retirada dos materiais" severity="info" widgetVar="senha" appendToBody="true">
+						<f:facet name="message">
+							<p:panel id="documentoImprimir">
+								<h:outputText value="#{esterilizacaoMB.data}" escape="false" />
+							</p:panel>
+
+						</f:facet>
+						<div class="Container50 Responsive100">
+							<p:commandButton id="confirm" value="Ok" icon="White fa fa-check" actionListener="#{esterilizacaoMB.actionNew}" oncomplete="PF('senha').hide()"
+								update=":lume:pnEsterilizacao" styleClass="GreenButton" />
+						</div>
+						<div class="Container50 Responsive100">
+							<p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" oncomplete="PF('senha').hide()">
+								<p:printer target="documentoImprimir" styleClass="NavyButton" />
+								<!-- menu do browser / imprimir / configurar pagina /  remove reader e fooder  -->
+							</p:commandButton>
+						</div>
+					</p:confirmDialog>
+
+					<script type="text/javascript">
+						function handleDialogRequest(xhr, status, args) {
+							if (args.dlg == true) {
+								PF('senha').show();
+							}
+						}
+					</script>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

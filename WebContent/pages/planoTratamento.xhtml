@@ -1,0 +1,436 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    <div class="Container100 Responsive100 NoIndent">
+        <div class="Container100 ui-fluid NoPadding">
+            <div class="Card">
+                <style>
+label.ui-helper-hidden {
+    display: none !important;
+}
+</style>
+                <h:inputHidden id="idPlanoTratamento" value="#{planoTratamentoMB.entity.id}" />
+
+                <p:panel id="pnPlanoTratamento" styleClass="BordNone">
+
+                    <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+
+                        <p:outputLabel for="desc" value="Descrição do Plano : " />
+                        <p:inputText id="desc" value="#{planoTratamentoMB.entity.descricao}" required="true" />
+
+                        <p:outputLabel for="desc" value="Profissional para finalizar o procedimento : " rendered="#{planoTratamentoMB.admin}" />
+
+                        <p:column>
+
+                            <p:selectOneMenu id="profissionalFinalizaProcedimento" value="#{planoTratamentoMB.profissionalFinalizaProcedimento}" converter="profissional"
+                                rendered="#{planoTratamentoMB.admin}" filter="true" filterMatchMode="contains" styleClass="MarRight10" style="width: 65% !important;float: left;">
+                                <p:ajax process="@this" />
+                                <f:selectItem itemValue="#{null}" itemLabel="Selecione um profissional" />
+                                <f:selectItems value="#{planoTratamentoMB.profissionais}" var="profissional" itemLabel="#{profissional.dadosBasico.prefixoNome}" itemValue="#{profissional}" />
+                            </p:selectOneMenu>
+
+                        </p:column>
+
+                        <p:outputLabel for="odontogramapt" value="Odontograma vinculado : " rendered="#{planoTratamentoMB.admin}" />
+                        <p:selectOneMenu id="odontogramapt" value="#{planoTratamentoMB.entity.odontograma}" filter="true" filterMatchMode="contains" autoWidth="false" converter="odontograma"
+                            rendered="#{planoTratamentoMB.admin}" disabled="#{planoTratamentoMB.entity == null or planoTratamentoMB.entity.id == 0}">
+                            <p:ajax process="@this" />
+                            <f:selectItem itemLabel="Selecione um Odontograma" noSelectionOption="true" itemValue="#{null}" />
+                            <f:selectItems value="#{planoTratamentoMB.odontogramas}" var="o" itemValue="#{o}" itemLabel="#{o.dataCadastroStr}" />
+                        </p:selectOneMenu>
+
+                    </p:panelGrid>
+
+                    <div class="SeparatorFull"></div>
+
+
+                    <p:remoteCommand process=":lume:tabView:dtProcedimentosSelecionadospt" update=":lume:tabView:dtProcedimentosSelecionadospt" name="atualizaSubTotalDesconto" />
+
+                    <h:panelGroup styleClass="lumeField">
+                        <p:fieldset id="procedimentosSelecionadospt" legend="Procedimentos Selecionados">
+                            <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtProcedimentosSelecionadospt" var="plano" editable="true"
+                                value="#{planoTratamentoMB.planoTratamentoProcedimentos}" rows="10" paginator="true" paginatorPosition="bottom">
+                                <p:ajax event="rowEdit" />
+                                <p:column styleClass="TexAlCenter" width="40px;">
+                                    <p:commandButton icon="fa fa-minus White" disabled="#{plano.finalizado || planoTratamentoMB.finalizado}"
+                                        actionListener="#{planoTratamentoMB.onProcedimentoRemove(plano)}" process="@this" update=":lume:tabView:dtProcedimentosSelecionadospt" />
+                                </p:column>
+                                <p:column styleClass="TexAlCenter" sortBy="#{plano.sequencial}" headerText="Nr." width="50px;">
+                                    <p:inputText value="#{plano.sequencial}" />
+                                </p:column>
+                                <p:column sortBy="#{plano.codigoConvenio}" headerText="Cód. Convênio" width="70px;">
+                                    <h:outputText value="#{plano.codigoConvenio}" />
+                                </p:column>
+                                <p:column sortBy="#{plano.procedimento.descricao}" headerText="Procedimento">
+                                    <h:outputText value="#{plano.procedimento.descricao}" />
+                                </p:column>
+                                <p:column rendered="#{planoTratamentoMB.visivel}" sortBy="#{plano.valorDescontoLabel}" headerText="Valor(R$)" id="clValor" width="120px;">
+
+                                    <p:inputNumber id="valortroca" value="#{plano.valorDesconto}" required="true" maxlength="13" maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+                                        thousandSeparator="." onchange="atualizaSubTotalDesconto()" rendered="#{planoTratamentoMB.trocaValor}">
+                                    </p:inputNumber>
+
+                                    <h:outputText value="#{plano.valorDesconto}" rendered="#{!planoTratamentoMB.trocaValor}">
+                                        <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                                    </h:outputText>
+
+                                    <f:facet name="footer">
+                                        <h:outputText value="#{planoTratamentoMB.subTotalDesconto}" id="subTotalDesconto">
+                                            <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                                        </h:outputText>
+                                    </f:facet>
+                                </p:column>
+                                <p:column headerText="Prioridade" width="60px;">
+                                    <p:inputMask id="prioridade" value="#{plano.prioridade}" disabled="#{((plano.finalizado) ||  planoTratamentoMB.finalizado)}" maxlength="2" mask="9?9" />
+                                </p:column>
+                                <p:column headerText="Finalizado" width="100px;">
+                                    <p:selectManyCheckbox id="status" value="#{plano.statuss}"
+                                        disabled="#{((plano.finalizado) ||  planoTratamentoMB.finalizado || planoTratamentoMB.entity.id == null)}" styleClass="lumeField"
+                                        style="width: 35px;display: inline-block;">
+                                        <f:selectItem itemLabel="" itemValue="F" />
+                                    </p:selectManyCheckbox>
+                                    <p:commandButton icon="White fa fa-gear" title="Finalizar Novamente" actionListener="#{planoTratamentoMB.actionFinalizarNovamente(plano)}"
+                                        update=":lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento" process=":lume:tabView:pnPlanoTratamento,@this" styleClass="RedButton"
+                                        disabled="#{planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.existeProcedimentoFinalizado == false}" style="float: right;"
+                                        rendered="#{planoTratamentoMB.admin and plano.finalizado}">
+                                        <p:confirm header="Confirmação" message="Deseja realmente mudar o finalizador deste procedimento?" icon="fa fa-warning" />
+                                    </p:commandButton>
+                                </p:column>
+                                <p:column headerText="Dta. de Finalização" styleClass="cabecalho" sortBy="#{plano.dataFinalizadoStrOrd}" width="70px;">
+                                    <h:outputText value="#{plano.dataFinalizadoStr}" />
+                                </p:column>
+                                <p:column headerText="Finalizado Por" sortBy="#{plano.finalizadoPorProfissional.dadosBasico.nome}" width="70px;">
+                                    <h:outputText value="#{plano.finalizadoPorProfissional.dadosBasico.nome}" />
+                                </p:column>
+                                <p:column sortBy="#{plano.denteRegiao}" headerText="Dente/Região" width="70px;">
+                                    <h:outputText value="#{plano.denteRegiao}" />
+                                </p:column>
+                                <p:column headerText="Face" width="70px;">
+                                    <h:outputText value="#{plano.facesSelecionadasStr}" rendered="#{plano.facesSelecionadasStr != '[Selecione]'}" />
+                                </p:column>
+                                <p:column headerText="Agendamentos" width="100px;">
+                                    <h:outputText value="#{plano.agendamentoPTPDatas}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:fieldset>
+                    </h:panelGroup>
+
+                    <div class="SeparatorFull"></div>
+
+                    <h:panelGroup>
+                        <div class="Container16 Responsive100">
+                            <p:commandButton id="persistPlanoTratamento" icon="White fa fa-save" value="Salvar" actionListener="#{planoTratamentoMB.actionPersist}"
+                                oncomplete="handleDialogRequest(xhr, status, args);"
+                                update=":lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento,:lume:tabView:evolucao,:lume:tabView:dtPlanoTratamentoOrtodontia"
+                                process=":lume:tabView:pnPlanoTratamento,@this" styleClass="GreenButton" disabled="#{planoTratamentoMB.entity.id == null}" />
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{planoTratamentoMB.admin}">
+                        <div class="Container16 Responsive100">
+                            <p:commandButton id="devolucao" icon="White fa fa-times-circle" onclick="PF('devolver').show();" value="Encerrar"
+                                update=":lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento" process="@this"
+                                disabled="#{planoTratamentoMB.entity == null or planoTratamentoMB.entity.id == null or  planoTratamentoMB.finalizado}" styleClass="OrangeButton"
+                                rendered="#{planoTratamentoMB.admin}" />
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{planoTratamentoMB.visivel}">
+                        <div class="Container16 Responsive100">
+                            <p:commandButton id="geraNegociacao" icon="White fa fa-list-ul" value="Orçamento" oncomplete="PF('dlg').show()" action="#{planoTratamentoMB.carregaTelaOrcamento}"
+                                update=":lume:tabView:pnOrcamento,:lume:tabView:dtPlanoTratamento,:lume:tabView:pnOrcamento,:lume:tabView:persistOrcamento" process="@this"
+                                disabled="#{planoTratamentoMB.entity == null or planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.ortodontico}" styleClass="NavyButton" />
+                        </div>
+                    </h:panelGroup>
+
+                    <div class="Container16 Responsive100">
+                        <p:commandButton id="geraOrcamento" icon="White fa fa-money" value="Imprimir Orçamento" oncomplete="PF('dlgGerarOrcamento').show()"
+                            update=":lume:tabView:pnConteudoImpressaoOrcamento,:lume:tabView:pnConteudoImpressaoOrcamento,:lume:tabView:persistOrcamento,:lume:tabView:dtOrcamento" process="@this"
+                            disabled="#{planoTratamentoMB.entity == null or planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.ortodontico}" styleClass="OrangeButton" />
+                    </div>
+
+                    <h:panelGroup rendered="#{planoTratamentoMB.admin}">
+                        <div class="Container16 Responsive100">
+                            <p:commandButton id="ptinicial" icon="White fa fa-file-o" value="Criar P.T. Inicial" update=":lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento"
+                                process="@this" styleClass="PinkButton" rendered="#{planoTratamentoMB.admin}" actionListener="#{planoTratamentoMB.actionPTInicial}"
+                                disabled="#{planoTratamentoMB.paciente == null}" />
+                        </div>
+                    </h:panelGroup>
+
+
+                </p:panel>
+
+                <div class="EmptyBox20"></div>
+
+
+                <p:panel id="tbPlanoTratamento">
+                    <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtPlanoTratamento" value="#{planoTratamentoMB.planosTratamento}" var="planoTratamento" rows="10" paginator="true"
+                        paginatorPosition="bottom" selection="#{planoTratamentoMB.entity}" selectionMode="single" rowKey="#{planoTratamento}">
+                        <p:ajax event="rowSelect" update=":lume:tabView:pnPlanoTratamento" listener="#{planoTratamentoMB.atualizaTela}" />
+                        <f:facet name="header">Planos de Tratamento</f:facet>
+                        <p:column filterBy="#{planoTratamento.descricaoComConvenio}" sortBy="#{planoTratamento.descricaoComConvenio}" filterMatchMode="contains" headerText="Descrição">
+                            <h:outputText value="#{planoTratamento.descricaoComConvenio}" title="#{planoTratamento.id}" />
+                        </p:column>
+                        <p:column filterBy="#{planoTratamento.profissional.dadosBasico.prefixoNome}" sortBy="#{planoTratamento.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains"
+                            headerText="Profissional">
+                            <h:outputText value="#{planoTratamento.profissional.dadosBasico.prefixoNome}" />
+                        </p:column>
+                        <p:column filterBy="#{planoTratamento.dataHoraStr}" filterMatchMode="contains" headerText="Data/Hora P.T." sortBy="#{planoTratamento.dataHoraStrOrd}">
+                            <h:outputText value="#{planoTratamento.dataHoraStr}" />
+                        </p:column>
+                        <p:column filterBy="#{planoTratamento.odontograma.dataCadastroStr}" filterMatchMode="contains" headerText="Data/Hora Odontograma"
+                            sortBy="#{planoTratamento.odontograma.dataCadastro}">
+                            <h:outputText value="#{planoTratamento.odontograma.dataCadastroStrE}" />
+                        </p:column>
+                        <p:column headerText="Finalizado" sortBy="#{planoTratamento.finalizadoStr}" filterBy="#{planoTratamento.finalizadoStr}">
+                            <h:outputText value="#{planoTratamento.finalizadoStr}" />
+                        </p:column>
+                        <p:column filterBy="#{planoTratamento.dataFinalizadoStr}" filterMatchMode="contains" styleClass="cabecalho" headerText="Data de Finalização"
+                            sortBy="#{planoTratamento.dataFinalizadoStrOrd}">
+                            <h:outputText value="#{planoTratamento.dataFinalizadoStr}" />
+                        </p:column>
+                        <p:column filterBy="#{planoTratamento.finalizadoPorProfissional.dadosBasico.nome}" filterMatchMode="contains" headerText="Finalizado Por"
+                            sortBy="#{planoTratamento.finalizadoPorProfissional.dadosBasico.nome}">
+                            <h:outputText value="#{planoTratamento.finalizadoPorProfissional.dadosBasico.nome}" />
+                        </p:column>
+                        <p:column filterBy="#{planoTratamento.justificativa}" filterMatchMode="contains" headerText="Justificativa" sortBy="#{planoTratamento.justificativa}">
+                            <h:outputText value="#{planoTratamento.justificativa}" />
+                        </p:column>
+                        <p:column filterBy="#{planoTratamento.valorTotal}" sortBy="#{planoTratamento.valorTotal}" rendered="#{planoTratamentoMB.visivel}" filterMatchMode="contains"
+                            headerText="Valor Original">
+                            <h:outputText value="#{planoTratamento.valorTotal}">
+                                <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column filterBy="#{planoTratamento.valorTotalOrcamento}" sortBy="#{planoTratamento.valorTotalOrcamento}" rendered="#{planoTratamentoMB.visivel}" filterMatchMode="contains"
+                            headerText="Valor Orçamento">
+                            <h:outputText value="#{planoTratamento.valorTotalOrcamento}">
+                                <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column filterBy="#{planoTratamento.valor}" sortBy="#{planoTratamento.valor}" rendered="#{planoTratamentoMB.visivel}" filterMatchMode="contains"
+                            headerText="Valor Restante à Pagar">
+                            <h:outputText value="#{planoTratamento.valor}">
+                                <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
+                        </p:column>
+                    </p:dataTable>
+                </p:panel>
+
+                <p:dialog widgetVar="dlg" header="Orçamento" id="dlgOrcamento" resizable="true" modal="true" width="800">
+                    <p:panel id="pnOrcamento" styleClass="BordNone">
+                        <p:panelGrid columns="4" columnClasses="ui-grid-col-3,ui-grid-col-3,ui-grid-col-3,ui-grid-col-3" layout="grid" styleClass="ui-panelgrid-blank"
+                            style="border:0px none; background-color:transparent;">
+
+                            <p:outputLabel for="valorOriginal" value="Valor Total Original : " style="font-weight: bold !important;" />
+                            <h:outputText id="valorOriginal" value="#{planoTratamentoMB.valorTotalOriginal}">
+                                <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
+
+                            <p:outputLabel for="totalPago" value="Valor Total Pago : " style="font-weight: bold !important;" />
+                            <h:outputText id="totalPago" value="#{planoTratamentoMB.totalPago}">
+                                <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
+
+                            <p:outputLabel for="desconto" value="Desconto(%): " style="font-weight: bold !important;" />
+                            <p:inputNumber id="desconto" value="#{planoTratamentoMB.porcentagem}" required="false" maxlength="3" maxValue="999" decimalSeparator="," symbol="" thousandSeparator="." />
+
+
+                            <p:outputLabel for="descontoConcedido" value="Ultimo desconto aplicado(%): " style="font-weight: bold !important;" />
+                            <h:outputText id="descontoConcedido" value="#{planoTratamentoMB.entity.desconto}">
+                                <f:convertNumber currencySymbol="" type="currency" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
+
+
+                            <p:outputLabel for="valor" value="Valor à Pagar : " style="font-weight: bold !important;" />
+                            <h:outputText id="valor" value="#{planoTratamentoMB.valorTotal}" style="font-weight: bold !important;color:#00aeef;">
+                                <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
+
+                            <p:outputLabel for="iniciodataCredito" value="Data de Crédito : " style="font-weight: bold !important;" />
+                            <p:calendar id="iniciodataCredito" value="#{planoTratamentoMB.dataCredito}" required="true" pattern="dd/MM/yyyy" locale="#{lumeSecurity.locale}" mask="true" />
+
+                        </p:panelGrid>
+                        <div class="SeparatorFull"></div>
+
+                        <div class="Container50 Responsive100">
+                            <p:commandButton id="simulaLancamento" icon="White fa fa-gear" value="Simular Orçamento" actionListener="#{planoTratamentoMB.actionSimulaLancamento}"
+                                process=":lume:tabView:pnOrcamento,:lume:tabView:dlgOrcamento" update=":lume:tabView:pnOrcamento,:lume:tabView:persistOrcamento" styleClass="OrangeButton" />
+                        </div>
+                        <div class="Container50 Responsive100">
+                            <p:commandButton id="persistOrcamento" icon="White fa fa-save" value="Salvar" actionListener="#{planoTratamentoMB.actionPersistOrcamento}"
+                                process=":lume:tabView:dlgOrcamento" oncomplete="handleDialogRequest(xhr, status, args)" update=":lume:tabView:pnPlanoTratamento,:lume:tabView:tbPlanoTratamento"
+                                disabled="#{planoTratamentoMB.lancamento == null}" styleClass="GreenButton" />
+                        </div>
+
+                    </p:panel>
+
+                </p:dialog>
+
+
+                <p:dialog id="devolver" widgetVar="devolver" header="Finalizar" responsive="true" modal="true">
+                    <p:panelGrid id="pgFinalizar" columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+
+                        <p:outputLabel for="justificativa" value="Justificativa : " />
+                        <p:selectOneMenu id="justificativa" value="#{planoTratamentoMB.justificativa}" converter="dominio" required="true">
+                            <f:selectItem itemValue="#{null}" itemLabel="Selecione uma justificativa" />
+                            <f:selectItems value="#{planoTratamentoMB.justificativas}" var="justificativa" itemLabel="#{justificativa.nome}" itemValue="#{justificativa}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel for="retorno" value="Data retorno : " />
+                        <p:calendar id="retorno" value="#{planoTratamentoMB.retorno}" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}" navigator="true" yearRange="-0:+1"
+                            mindate="#{odontoMB.sysdate}" mask="true">
+                        </p:calendar>
+
+                        <p:outputLabel for="observacoesretornopt" value="Observações do Retorno : " />
+                        <p:inputTextarea id="observacoesretornopt" rows="3" cols="33" value="#{planoTratamentoMB.observacoesRetorno}" maxlength="200" />
+                    </p:panelGrid>
+
+                    <div class="SeparatorFull"></div>
+                    <div class="Container100 Responsive100">
+                        <p:commandButton id="persistDevolver" icon="White fa fa-save" value="Salvar" actionListener="#{planoTratamentoMB.actionFinalizar}"
+                            update=":lume:tabView:justificativa,:lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento,:lume:tabView:pgFinalizar" process="@this, :lume:tabView:justificativa, :lume:tabView:retorno, :lume:tabView:observacoesretornopt"
+                            oncomplete="handleDialogRequest(xhr, status, args)" styleClass="GreenButton" />
+                    </div>
+                </p:dialog>
+
+                <p:dialog id="evolucao" widgetVar="evolucao" header="Evolução" responsive="true" modal="true">
+                    <p:panel styleClass="BordNone">
+                        <h:panelGroup styleClass="lumeField">
+                            <h:outputLabel escape="false" value="#{planoTratamentoMB.evolucaoProcedimento}" />
+                        </h:panelGroup>
+                        <h:panelGroup styleClass="lumeField" id="pnEvolucaopt">
+                            <p:outputLabel for="descricaopt" value="Descrição : " />
+                            <p:inputTextarea id="descricaopt" cols="60" rows="6" autoResize="false" value="#{planoTratamentoMB.evolucao.descricao}" maxlength="2000" required="true" />
+                            <p:message for="descricaopt" styleClass="msg" />
+                        </h:panelGroup>
+
+                        <h:panelGroup styleClass="lumeField" id="pnRetorno2">
+                            <p:outputLabel for="retorno2" value="Data retorno : " />
+                            <p:calendar id="retorno2" value="#{planoTratamentoMB.retorno}" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}"
+                                navigator="true" yearRange="-0:+1" mindate="#{odontoMB.sysdate}" mask="true">
+                            </p:calendar>
+                            <p:message for="retorno2" styleClass="msg" />
+                        </h:panelGroup>
+
+                        <h:panelGroup styleClass="lumeField">
+
+                            <p:outputLabel for="observacoesretornopt2" value="Observações do Retorno : " />
+                            <p:inputTextarea id="observacoesretornopt2" rows="3" cols="33" value="#{planoTratamentoMB.observacoesRetorno}" maxlength="200" />
+                        </h:panelGroup>
+
+                        <p:separator />
+                        <p:commandButton id="persistEvolucaopt" icon="White fa fa-save" value="Salvar" actionListener="#{planoTratamentoMB.actionEvolucao}"
+                            update=":lume:tabView:pnEvolucaopt,:lume:tabView:pnRetorno2,:lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento"
+                            process="@this, :lume:tabView:descricaopt, :lume:tabView:retorno2, :lume:tabView:observacoesretornopt2" oncomplete="handleDialogRequest(xhr, status, args)" />
+                    </p:panel>
+                </p:dialog>
+
+                <p:dialog id="dlgGerarOrcamento" widgetVar="dlgGerarOrcamento" header="Orçamento" responsive="true" modal="true">
+                    <div class="Container100 NoIndent Flex FlexWrap">
+                        <p:panel id="pnConteudoImpressaoOrcamento" styleClass="BordNone">
+                            <p:graphicImage value="#{lumeSecurity.empresa.logo}" width="180px;" height="50px;" rendered="#{lumeSecurity.empresa.logo != null}" />
+
+                            <h1 class="CardBigTopic" align="center">
+                                <u> <h:outputText value="Orçamento" />
+                                </u>
+                            </h1>
+                            <div class="SeparatorFull"></div>
+
+                            <h1 class="CardBigTopic">
+                                <h:outputText value="#{planoTratamentoMB.nomeClinica}" />
+                                <br />
+                            </h1>
+                            <h1 class="CardSmallTopic">
+                                <h:outputText value="#{planoTratamentoMB.endTelefoneClinica}" />
+                                <br />
+                            </h1>
+
+                            <div class="SeparatorFull"></div>
+
+                            <div class="Container25 Responsive25">
+                                <span class="FontLatoBold Fs14 Green DispBlock">Paciente</span>
+                                <div class="EmptyBox5"></div>
+                                <span class="FontLatoBold Fs20 Navy DispBlock"><h:outputText value="#{planoTratamentoMB.paciente.dadosBasico.nome}" /></span>
+                                <div class="EmptyBox5"></div>
+                            </div>
+                            <div class="Container25 Responsive25">
+                                <span class="FontLatoBold Fs14 Green DispBlock">Data do Orçamento</span>
+                                <div class="EmptyBox5"></div>
+                                <span class="FontLatoBold Fs20 Navy DispBlock"><h:outputText value="#{planoTratamentoMB.dataOrcamento}" /></span>
+                                <div class="EmptyBox5"></div>
+                            </div>
+
+                            <div class="Container25 Responsive25">
+                                <span class="FontLatoBold Fs14 Green DispBlock">Realizado por</span>
+                                <div class="EmptyBox5"></div>
+                                <span class="FontLatoBold Fs20 Navy DispBlock"><h:outputText value="#{planoTratamentoMB.profissionalLogado}" /></span>
+                                <div class="EmptyBox5"></div>
+                            </div>
+
+                            <h:panelGroup rendered="#{planoTratamentoMB.entity.convenioValor == false}">
+                                <div class="Container25 Responsive25">
+                                    <span class="FontLatoBold Fs14 Green DispBlock">Valor Total</span>
+                                    <div class="EmptyBox5"></div>
+                                    <span class="FontLatoBold Fs20 Navy DispBlock"><h:outputText value="#{planoTratamentoMB.subTotalDesconto}">
+                                            <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                                        </h:outputText></span>
+                                    <div class="EmptyBox5"></div>
+                                </div>
+                            </h:panelGroup>
+
+                            <div class="Container100 Responsive100 Flex">
+                                <p:dataTable filterDelay="1500" emptyMessage="" var="plano" id="dtOrcamento" editable="true" value="#{planoTratamentoMB.planoTratamentoProcedimentos}">
+                                    <f:facet name="header">
+												Plano de Tratamento: <h:outputText value="#{planoTratamentoMB.entity.descricao}" />
+                                    </f:facet>
+                                    <p:column headerText="Procedimento">
+                                        <h:outputText value="#{plano.descricaoStr}" />
+                                    </p:column>
+                                    <p:column headerText="Valor Original(R$)" rendered="#{planoTratamentoMB.entity.convenioValor == false}">
+                                        <h:outputText value="#{plano.valorDescontoStr}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                            <div class="Container100 Responsive100" align="right" style="margin-top: 25px">
+                                <h:outputText value="*Orçamento válido por 15 dias." styleClass="observacao-orcamento"/>
+                            </div>
+
+                        </p:panel>
+                        <div class="SeparatorFull"></div>
+
+                        <div class="Container25">
+                            <p:commandButton value="Imprimir" style="margin-left:8% !important" type="button" icon="White fa fa-print White" styleClass="NavyButton"
+                                onclick="PF('dlgGerarOrcamento').hide()">
+                                <p:printer target="pnConteudoImpressaoOrcamento" />
+                            </p:commandButton>
+                        </div>
+                    </div>
+
+                </p:dialog>
+
+
+
+                <script type="text/javascript">
+																	function handleDialogRequest(xhr, status, args) {
+																		if (args.justificativa == true) {
+																			PF('devolver').hide();
+																		}
+																		if (args.evolucao == true) {
+																			PF('evolucao').show();
+																		}
+																		if (args.descEvolucao == true) {
+																			PF('evolucao').hide();
+																		}
+																		if (args.orcamento == true) {
+																			PF('dlg').hide();
+																		}
+																		if (args.dlgGerarDocumento == true) {
+																			PF('dlgGerarDocumento').hide();
+																		}
+																	}
+																</script>
+            </div>
+        </div>
+    </div>
+</ui:composition>

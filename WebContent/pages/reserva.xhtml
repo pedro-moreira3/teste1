@@ -1,0 +1,199 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <style>
+.ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
+    width: auto !important;
+}
+</style>
+
+        <div class="Container100 Responsive100 NoIndent">
+            <div class="Container100 ui-fluid NoPadding">
+                <div class="Card">
+
+                    <p:panel id="pnReserva" styleClass="BordNone">
+
+                        <h:inputHidden id="id" value="#{reservaMB.entity.id}" />
+
+
+                        <h1 class="CardBigTopic">Reserva de Materiais</h1>
+                        <div class="SeparatorFull"></div>
+
+                        <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;"
+                            id="pgReserva">
+
+                            <p:outputLabel for="descricao" value="Descrição : " />
+                            <p:inputText id="descricao" value="#{reservaMB.entity.descricao}" maxlength="50" />
+
+                            <p:outputLabel for="prazo" value="Data Utilização : " />
+                            <p:calendar id="prazo" value="#{reservaMB.entity.prazo}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" mindate="#{reservaMB.prazo}"
+                                timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" class="Wid10">
+                                <p:ajax event="dateSelect" listener="#{reservaMB.selectAgendamentos}" process=":lume:pgReserva" update=":lume:profissional,:lume:agendamento, :lume:prazo" />
+                            </p:calendar>
+
+                            <p:outputLabel for="observacao" value="Observações : " />
+                            <p:inputTextarea id="observacao" autoResize="false" value="#{reservaMB.entity.observacao}" cols="50" rows="4" maxlength="200" />
+
+                            <p:outputLabel for="profissional" value="Profissional : " />
+                            <p:autoComplete dropdown="true" queryDelay="1000" value="#{reservaMB.profissionalSelecionado}" id="profissional" completeMethod="#{reservaMB.geraSugestoes}"
+                                var="profissional" minQueryLength="3" itemLabel="#{profissional.dadosBasico.prefixoNome}" itemValue="#{profissional}" converter="profissional" forceSelection="true"
+                                styleClass="profissional">
+                                <p:ajax event="itemSelect" listener="#{reservaMB.handleSelectProfissional}" process=":lume:pgReserva" update=":lume:agendamento" />
+                            </p:autoComplete>
+
+                            <p:outputLabel for="agendamento" value="Agendamento : " />
+                            <p:selectOneMenu id="agendamento" converter="agendamento" value="#{reservaMB.entity.agendamento}" styleClass="Wid50">
+                                <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
+                                <f:selectItems value="#{reservaMB.agendamentos}" var="a" itemLabel="#{a.paciente.dadosBasico.nome} - #{a.inicioStr}" itemValue="#{a}" />
+                                <p:ajax update=":lume:planoTratamentoProcedimentoAgendamento,:lume:observacao" process=":lume:agendamento" listener="#{reservaMB.carregaProcedimentos}" />
+                            </p:selectOneMenu>
+
+                        </p:panelGrid>
+
+                        <p:panel id="pnItens" header="Itens">
+
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+
+
+
+                                <h:outputLabel for="digitacao" value="Kit : " />
+                                <p:column>
+                                    <p:autoComplete queryDelay="1000" id="digitacao" value="#{reservaMB.digitacao}" minQueryLength="3" completeMethod="#{reservaMB.filtraKit}" styleClass="itembusca">
+                                        <p:ajax event="itemSelect" listener="#{reservaMB.handleSelect}" update=":lume:tbKitTree" />
+                                    </p:autoComplete>
+
+
+                                    <p:tree value="#{reservaMB.root}" var="kit" id="tbKitTree" selection="#{reservaMB.selectedKit}" selectionMode="single">
+                                        <p:ajax event="select" listener="#{reservaMB.onNodeSelect}" update=":lume:digitacao" process="@this" />
+                                        <p:ajax event="unselect" listener="#{reservaMB.onNodeUnselect}" />
+                                        <p:treeNode>
+                                            <h:outputText value="#{kit.descricao} (#{kit.tipo})" />
+                                        </p:treeNode>
+                                    </p:tree>
+                                </p:column>
+
+
+                                <p:outputLabel for="quantidade" value="Quantidade: " />
+                                <p:inputText id="quantidade" value="#{reservaMB.quantidade}" required="true" maxlength="10" onkeypress="validaNumeros(event)" style="width:20%" />
+
+                                <p:outputLabel for="planoTratamentoProcedimentoAgendamento" value="Procedimentos : " />
+                                <p:selectCheckboxMenu id="planoTratamentoProcedimentoAgendamento" converter="agendamentoPlano" value="#{reservaMB.planoTratamentoProcedimentoAgendamentos}"
+                                    label="Selecione o(s) procedimento(s)" required="#{reservaMB.procedimentoObrigatorio}" styleClass="Wid50">
+                                    <f:selectItems value="#{reservaMB.agendamentoProcedimentos}" var="ap" itemValue="#{ap}" itemLabel="#{ap.planoTratamentoProcedimento.descricaoCompleta}" />
+                                </p:selectCheckboxMenu>
+
+                            </p:panelGrid>
+
+                            <div class="Separator"></div>
+
+
+                            <h:panelGroup rendered="#{reservaMB.incluindo}">
+                                <div class="Container25 Responsive100">
+                                    <p:commandButton id="adicionar" icon="fa fa-plus White" value="Adicionar" actionListener="#{reservaMB.adicionar}" update=":lume:pnReserva, :lume:dtKits"
+                                        process=":lume:pnReserva" styleClass="GreenButton" />
+                                </div>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{!reservaMB.incluindo}">
+                                <div class="Container25 Responsive100">
+                                    <p:commandButton id="remover" icon="fa fa-minus White" value="Remover" actionListener="#{reservaMB.remover}" update=":lume:pnReserva, :lume:dtKits" process="@this"
+                                        styleClass="RedButton" />
+                                </div>
+                            </h:panelGroup>
+
+                            <h:panelGroup rendered="#{!reservaMB.incluindo}">
+                                <div class="Container25 Responsive100">
+                                    <p:commandButton id="atualizar" icon="fa fa-check White" value="Atualizar" actionListener="#{reservaMB.atualizar}" update=":lume:pnReserva, :lume:dtKits"
+                                        process=":lume:pnReserva" styleClass="OrangeButton" />
+                                </div>
+                            </h:panelGroup>
+
+
+                            <div class="Container25 Responsive100">
+                                <p:commandButton id="limpar" icon="fa fa-minus White" value="Limpar" actionListener="#{reservaMB.limpar}" update=":lume:pnReserva, :lume:dtKits"
+                                    process=":lume:pnReserva, :lume:dtKits" />
+                            </div>
+
+                            <div class="EmptyBox20"></div>
+
+
+                        </p:panel>
+
+
+                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtKits" value="#{reservaMB.reservaKits}" var="reservaKit" rows="15" paginator="true" selection="#{reservaMB.reservaKit}"
+                            selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom">
+                            <p:ajax event="rowSelect" listener="#{reservaMB.carregaTela}" update=":lume:pnReserva" />
+
+                            <p:column headerText="Descrição">
+                                <h:outputText value="#{reservaKit.kit.descricao}  (#{reservaKit.kit.tipo})" />
+                            </p:column>
+                            <p:column headerText="Quantidade">
+                                <h:outputText value="#{reservaKit.quantidade}" />
+                            </p:column>
+                            <p:column headerText="Procedimento">
+                                <h:outputText value="#{reservaKit.procedimentoStr}" />
+                            </p:column>
+                        </p:dataTable>
+
+
+                        <div class="SeparatorFull"></div>
+
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{reservaMB.actionPersist}" update=":lume:pnReserva, :lume:dtKits, :lume:dtReserva"
+                                process=":lume:pnReserva" styleClass="GreenButton" />
+                        </div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{reservaMB.actionRemove}" update=":lume:pnReserva, :lume:dtKits, :lume:dtReserva"
+                                process="@this" disabled="#{reservaMB.entity.id==0}" styleClass="RedButton" />
+                        </div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{reservaMB.actionNew}" update=":lume:pnReserva, :lume:dtKits, :lume:dtReserva"
+                                immediate="true" />
+                        </div>
+                        <div class="EmptyBox20"></div>
+
+                    </p:panel>
+
+
+                    <p:panel>
+                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtReserva" value="#{reservaMB.reservas}" var="reserva" rows="15" paginator="true" selection="#{reservaMB.entity}"
+                            selectionMode="single" rowKey="#{reserva}" paginatorPosition="bottom">
+                            <p:ajax event="rowSelect" update=":lume:pnReserva" listener="#{reservaMB.carregaTelaGeral}" />
+                            <f:facet name="header">
+                                <h:panelGroup id="filtro" rendered="#{reservaMB.admin}">
+									A partir de :
+									<p:calendar value="#{reservaMB.dataIni}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true"
+                                        yearRange="-100:+1" style="width: 95px !important;margin-right: 5px;" />
+                                    <p:commandButton id="pesquisar" icon="fa fa-search White" actionListener="#{reservaMB.geraLista}" update="@form" tabindex="1" process=":lume:dtReserva:filtro"
+                                        styleClass="OrangeButton" style="margin-left: 10px;" />
+                                </h:panelGroup>
+                            </f:facet>
+
+                            <p:column filterBy="#{reserva.descricao}" sortBy="#{reserva.descricao}" filterMatchMode="contains" headerText="Descrição">
+                                <h:outputText value="#{reserva.descricao}" title="#{reserva.id}" />
+                            </p:column>
+                            <p:column filterBy="#{reserva.profissional.dadosBasico.prefixoNome}" sortBy="#{reserva.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains"
+                                headerText="Profissional">
+                                <h:outputText value="#{reserva.profissional.dadosBasico.prefixoNome}" />
+                            </p:column>
+                            <p:column filterBy="#{reserva.agendamento.paciente.dadosBasico.prefixoNome}" sortBy="#{reserva.agendamento.paciente.dadosBasico.prefixoNome}" filterMatchMode="contains"
+                                headerText="Paciente">
+                                <h:outputText value="#{reserva.agendamento.paciente.dadosBasico.prefixoNome}" />
+                            </p:column>
+                            <p:column filterBy="#{reserva.agendamento.inicioStr}" sortBy="#{reserva.agendamento.inicioStr}" filterMatchMode="contains" headerText="Data de Agendamento">
+                                <h:outputText value="#{reserva.agendamento.inicioStr}" />
+                            </p:column>
+                            <p:column filterBy="#{reserva.prazoStr}" sortBy="#{reserva.prazoStrOrd}" filterMatchMode="contains" headerText="Data da Utilização">
+                                <h:outputText value="#{reserva.prazoStr}" />
+                            </p:column>
+                            <p:column filterBy="#{reserva.dataStr}" sortBy="#{reserva.dataStrOrd}" filterMatchMode="contains" headerText="Data do Cadastro">
+                                <h:outputText value="#{reserva.dataStr}" />
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:panel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,158 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+
+					<p:tabView id="tabView">
+						<p:tab id="tab1" title="Dados">
+
+							<p:panelGrid id="pnDados" columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;">
+
+								<p:outputLabel for="nome" value="Nome : " />
+								<p:inputText id="nome" value="#{pacienteExternoMB.entity.dadosBasico.nome}" required="true" />
+
+								<p:outputLabel for="documento" value="CPF: " />
+								<p:inputMask id="documento" value="#{pacienteExternoMB.entity.dadosBasico.documento}" mask="999.999.999-99" />
+
+								<p:outputLabel for="rg" value="RG : " />
+								<p:inputText id="rg" value="#{pacienteExternoMB.entity.dadosBasico.rg}" />
+
+								<p:outputLabel for="cep" value="CEP : " />
+								<p:column>
+									<p:inputMask id="cep" value="#{pacienteExternoMB.entity.dadosBasico.cep}" maxlength="8" mask="99999-999" styleClass="Wid80 MarRight10">
+										<f:validator validatorId="cepValidator" />
+									</p:inputMask>
+									<p:commandButton id="cepsearch" icon="fa fa-search White" actionListener="#{pacienteExternoMB.actionBuscaCep}"
+										update=":lume:tabView:endereco,:lume:tabView:bairro,:lume:tabView:cidade,:lume:tabView:estado" process="@this,:lume:tabView:cep" />
+								</p:column>
+
+								<p:outputLabel for="endereco" value="Endereço : " />
+								<p:inputText id="endereco" value="#{pacienteExternoMB.entity.dadosBasico.endereco}" />
+
+								<p:outputLabel for="numero" value="Numero : " />
+								<p:inputText id="numero" value="#{pacienteExternoMB.entity.dadosBasico.numero}" />
+
+								<p:outputLabel for="bairro" value="Bairro : " />
+								<p:inputText id="bairro" value="#{pacienteExternoMB.entity.dadosBasico.bairro}" />
+
+								<p:outputLabel for="cidade" value="Cidade : " />
+								<p:inputText id="cidade" value="#{pacienteExternoMB.entity.dadosBasico.cidade}" />
+
+								<p:outputLabel for="estado" value="Estado : " />
+								<p:selectOneMenu id="estado" value="#{pacienteExternoMB.entity.dadosBasico.uf}">
+									<f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
+									<f:selectItems value="#{pacienteExternoMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
+								</p:selectOneMenu>
+
+								<p:outputLabel for="telResidencia" value="Telefone residencial : " />
+								<p:inputText id="telResidencia" value="#{pacienteExternoMB.entity.dadosBasico.telefone}" styleClass="telefone" />
+
+								<p:outputLabel for="telCelular" value="Telefone celular : " />
+								<p:inputText id="telCelular" value="#{pacienteExternoMB.entity.dadosBasico.celular}" styleClass="telefone" />
+
+								<p:outputLabel for="dtNascimento" value="Data de nascimento : " />
+								<p:calendar id="dtNascimento" value="#{pacienteExternoMB.entity.dadosBasico.dataNascimento}" pattern="dd/MM/yyyy" showWeeksBar="false"
+									locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" maxdate="#{odontoMB.sysdate}"
+									mask="true" />
+
+								<p:outputLabel for="sexo" value="Sexo : " />
+								<p:selectOneRadio id="sexo" value="#{pacienteExternoMB.entity.dadosBasico.sexo}">
+									<f:selectItem itemLabel="Masculino" itemValue="M" />
+									<f:selectItem itemLabel="Feminino" itemValue="F" />
+								</p:selectOneRadio>
+							</p:panelGrid>
+
+							<br />
+							<br />
+
+							<p:commandButton id="persistPaciente" icon="White fa fa-save" value="Salvar" actionListener="#{pacienteExternoMB.actionPersistPaciente}"
+								update=":lume:tabView:pnDados" process=":lume:tabView:pnDados,@this" styleClass="GreenButton"
+								style="width: 30% !important;margin-left: 10px;margin-bottom: 10px;" />
+
+
+						</p:tab>
+
+						<p:tab id="tab2" title="Anamnese">
+
+							<h:panelGroup id="pnAnamnese">
+								<ui:repeat var="anamnese" value="#{pacienteExternoMB.anamnesesPreCadastro}">
+									<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-4,ui-grid-col-8"
+										style="border:0px none; background-color:transparent;">
+										<p:column>
+											<p:outputLabel for="texte" value="#{anamnese.pergunta.descricao}"
+												rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTexto}" />
+										</p:column>
+										<p:column>
+											<p:inputText id="texte" value="#{anamnese.resposta}" required="#{anamnese.pergunta.requerida}"
+												requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
+												rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTexto}" />
+										</p:column>
+									</p:panelGrid>
+
+									<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-4,ui-grid-col-8"
+										style="border:0px none; background-color:transparent;">
+										<p:outputLabel for="onMenu" value="#{anamnese.pergunta.descricao}"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaUmaEmVarias}" />
+										<p:selectOneMenu id="onMenu" value="#{anamnese.resposta}" converter="resposta" required="#{anamnese.pergunta.requerida}"
+											requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaUmaEmVarias}">
+											<f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
+											<f:selectItems value="#{anamnese.pergunta.respostas}" var="resposta" itemLabel="#{resposta.descricao}" itemValue="#{resposta.descricao}" />
+										</p:selectOneMenu>
+									</p:panelGrid>
+
+									<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-4,ui-grid-col-8"
+										style="border:0px none; background-color:transparent;">
+										<p:outputLabel for="checkBox" value="#{anamnese.pergunta.descricao}"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaVariasEmVarias}" />
+										<p:selectManyCheckbox id="checkBox" value="#{anamnese.respostas}" required="#{anamnese.pergunta.requerida}"
+											requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaVariasEmVarias}" layout="responsive" columns="3">
+											<f:selectItems value="#{anamnese.pergunta.respostas}" var="resposta" itemLabel="#{resposta.descricao}" itemValue="#{resposta.descricao}" />
+										</p:selectManyCheckbox>
+									</p:panelGrid>
+
+									<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-4,ui-grid-col-8"
+										style="border:0px none; background-color:transparent;">
+										<p:outputLabel for="onRadio" value="#{anamnese.pergunta.descricao}"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaSimOuNao}" />
+										<p:selectOneRadio id="onRadio" value="#{anamnese.resposta}" required="#{anamnese.pergunta.requerida}"
+											requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaSimOuNao}">
+											<f:selectItem itemLabel="Sim" itemValue="Sim" />
+											<f:selectItem itemLabel="Não" itemValue="Não" />
+										</p:selectOneRadio>
+									</p:panelGrid>
+
+									<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" columnClasses="ui-grid-col-4,ui-grid-col-8"
+										style="border:0px none; background-color:transparent;">
+										<p:outputLabel for="numero" value="#{anamnese.pergunta.descricao}"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaQuantidade}" />
+										<p:inputText value="#{anamnese.resposta}" validatorMessage="Favor digitar um número." id="numero" required="#{anamnese.pergunta.requerida}"
+											requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaQuantidade}">
+											<f:validateRegex pattern="[0-9]*" />
+										</p:inputText>
+									</p:panelGrid>
+								</ui:repeat>
+							</h:panelGroup>
+
+							<br />
+							<br />
+
+							<p:commandButton id="persistAnamnese" icon="White fa fa-save" value="Salvar" actionListener="#{pacienteExternoMB.actionPersistAnamnese}"
+								update=":lume:tabView:pnAnamnese" process=":lume:tabView:pnAnamnese,@this" styleClass="GreenButton"
+								style="width: 30% !important;margin-left: 10px;margin-bottom: 10px;" />
+						</p:tab>
+					</p:tabView>
+
+
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

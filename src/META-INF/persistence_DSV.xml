@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="Odonto">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<exclude-unlisted-classes>false</exclude-unlisted-classes>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
+			<property name="javax.persistence.jdbc.url"
+				value="jdbc:postgresql://ltdepg01.lume.intra:5432/intelid" />
+			<property name="javax.persistence.jdbc.user" value="inteli" />
+			<property name="javax.persistence.jdbc.password" value="8HtMVhWB" />
+			
+			<property name="eclipselink.cache.shared.default" value="false" />
+			
+			<property name="eclipselink.jpa.uppercase-column-names" value="true"/>
+			
+			<!-- P/ VER SQLS EXECUTADOS PELO JPA -->
+			<property name="eclipselink.logging.level.sql" value="FINE"/>
+			<property name="eclipselink.logging.parameters" value="true"/> 
+			
+			<property name="eclipselink.cache.shared.default" value="false" />
+			<property name="eclipselink.cache.size.default" value="0" />
+			<property name="eclipselink.cache.type.default" value="none" />
+			<property name="eclipselink.target-database" value="PostgreSQL" />
+			<property name="eclipselink.weaving" value="false" />
+		</properties>
+	</persistence-unit>
+	<persistence-unit name="LumeSecurity">
+		<provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+		<exclude-unlisted-classes>false</exclude-unlisted-classes>
+		<properties>
+			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />			
+			
+			<property name="javax.persistence.jdbc.url"
+				value="jdbc:postgresql://ltdepg01.lume.intra:5432/intelid" />
+			<property name="javax.persistence.jdbc.user" value="inteli" />
+			<property name="javax.persistence.jdbc.password" value="8HtMVhWB" />
+									
+			<property name="eclipselink.jpa.uppercase-column-names" value="true"/>
+									
+			<property name="eclipselink.cache.shared.default" value="false" />
+			<property name="eclipselink.cache.size.default" value="0" />
+			<property name="eclipselink.cache.type.default" value="none" />
+			<property name="eclipselink.target-database" value="PostgreSQL" />
+			<property name="eclipselink.weaving" value="false" />
+			
+			<property name="eclipselink.logging.level.sql" value="FINE"/>
+			<property name="eclipselink.logging.parameters" value="true"/>
+			
+		</properties>
+	</persistence-unit>
+</persistence>

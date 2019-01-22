@@ -1,0 +1,28 @@
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+<center>
+	<table style="width: 600px; padding-right: 30px; padding-left: 30px;">
+		<tr>
+			<td><a href="http://www.intelidente.com" target="_blank"><img src="http://www.intelidente.com/images/email/header.jpg" /></a></td>
+		</tr>
+
+		<tr>
+			<td>
+
+				<p style="font-family: Verdana, Geneva, sans-serif; font-size: 14px; font-weight: light; text-align: left; color: #58585b;">
+					<strong>Olá #nome.</strong><br /> <br /> <br /> A equipe do Intelidente detectou um problema com o pagamento de sua assinatura no mês #mes,
+					por favor regularize sua assinatura junto ao PayPal e entre em contato conosco pelo e-mail:<br /> <a href="mailto:contato@intelidente.com"
+						target="_top">contato@intelidente.com</a><br /> <br /> O sistema permanecerá suspenso por 30 dias, após este período será cancelado.<br /> <br />
+					Esperamos o seu retorno em breve.<br /> <br /> Até logo,<br /> <strong>Equipe Intelidente.</strong>
+				</p>
+			</td>
+		</tr>
+		<tr>
+			<td><a href="http://www.intelidente.com" target="_blank"><img src="http://www.intelidente.com/images/email/footer4.jpg" /></a></td>
+		</tr>
+	</table>
+
+</center>
+</html>
+

@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:po="http://primefaces.org/olympos">
+	<h:form>
+		<ul class="layout-tab-submenu" id="layout-agenda">
+			<li><a>Minha Agenda</a>
+				<ul>
+					<ui:repeat var="a" value="#{minhaAgendaMB.agendamentos}">
+						<div class="EmptyBox10"></div>
+							<li>
+								<p:commandLink action="#{reservaMB.agendamentoPaciente(a)}" styleClass="menulink" ajax="false">
+									<h:panelGroup rendered="#{a.confirmado}">
+										<i class="icon-person278 Fs18 Green" title="Paciente confirmado"></i>
+									</h:panelGroup>
+									<h:panelGroup rendered="#{!a.confirmado}">
+										<i class="icon-person278 Fs18 Red" title="Paciente não confirmado"></i>
+									</h:panelGroup>
+								</p:commandLink>
+								<p:commandLink action="#{reservaMB.agendamentoReserva(a)}" styleClass="menulink" ajax="false">
+									<h:panelGroup rendered="#{a.reserva}">
+										<i class="fa fa-shopping-basket Fs18 Green" title="Material reservado"></i>
+									</h:panelGroup>
+									<h:panelGroup rendered="#{!a.reserva}">
+										<i class="fa fa-shopping-basket Fs18 Red" title="Material não reservado"></i>
+									</h:panelGroup>
+								</p:commandLink>																	
+								
+								<h:panelGroup class="ui-widget menulink">
+									<span class="Fs14 DispBlock">#{a.inicioStr}</span>
+	
+									<div class="EmptyBox5"></div>
+									<span class="DispBlock White Fs14 FontLatoRegular">#{a.paciente.dadosBasico.nome}</span>
+	
+									<ui:repeat var="p" value="#{a.planoTratamentoProcedimentosAgendamento}">
+										<span class="DispBlock FontLatoLight Opac70">#{p.planoTratamentoProcedimento.procedimento.descricao}</span>
+									</ui:repeat>
+								</h:panelGroup>												
+							</li>
+					</ui:repeat>
+				</ul></li>
+		</ul>
+	</h:form>
+</ui:composition>

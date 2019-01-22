@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+
+					<h:inputHidden id="idEspecialidade" value="#{especialidadeMB.entity.id}" />
+					<p:panel id="pnEspecialidade" styleClass="BordNone">
+
+						<h1 class="CardBigTopic">Cadastro de Especialidades</h1>
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="descricao" value="Descrição : " />
+							<p:inputText id="descricao" value="#{especialidadeMB.entity.descricao}" required="true" maxlength="100" />
+
+							<p:outputLabel for="anamnese" value="Aparece na Anamnese? : " />
+							<p:selectOneRadio id="anamnese" value="#{especialidadeMB.entity.anamnese}">
+								<f:selectItem itemLabel="Sim" itemValue="true" />
+								<f:selectItem itemLabel="Não" itemValue="false" />
+							</p:selectOneRadio>
+
+							<p:column styleClass="NoPadding"></p:column>
+							<p:column styleClass="NoPadding"></p:column>
+						</p:panelGrid>
+
+						<div class="SeparatorFull"></div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{especialidadeMB.actionPersist}"
+								update=":lume:pnEspecialidade,:lume:tbEspecialidade" process=":lume:pnEspecialidade" styleClass="GreenButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{especialidadeMB.actionRemove}"
+								update=":lume:pnEspecialidade,:lume:tbEspecialidade" process="@this" disabled="#{especialidadeMB.entity.id == null}" styleClass="RedButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{especialidadeMB.actionNew}"
+								update=":lume:pnEspecialidade , :lume:dtEspecialidade" immediate="true" />
+						</div>
+					</p:panel>
+
+					<div class="EmptyBox20"></div>
+
+					<p:panel id="tbEspecialidade" styleClass="BordNone">
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtEspecialidade" value="#{especialidadeMB.especialidades}" var="especialidade" rows="10"
+							paginator="true" paginatorPosition="bottom" selection="#{especialidadeMB.entity}" selectionMode="single" rowKey="#{especialidade}">
+							<p:ajax event="rowSelect" update=":lume:pnEspecialidade" />
+							<f:facet name="header">Especialidades</f:facet>
+							<p:column filterBy="#{especialidade.descricaoLimpa}" sortBy="#{especialidade.descricao}" filterMatchMode="contains" headerText="Descrição">
+								<h:outputText value="#{especialidade.descricao}" />
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+
+
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

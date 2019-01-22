@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<f:view xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:pm="http://primefaces.org/mobile" contentType="text/html"
+	renderKitId="PRIMEFACES_MOBILE">
+	<h:head>
+		<f:facet name="first">
+			<meta http-equiv="X-UA-Compatible" content="IE=9" />
+			<title>ODONTO Clínica</title>
+		</f:facet>
+	</h:head>
+	<h:body>
+		<pm:page title="Hello World">
+			<pm:view id="main">
+				<pm:header title="Header">
+					<f:facet name="left">
+						<p:button value="Voltar" icon="back"
+							href="esterilizacaoMobile.jsf" />
+					</f:facet>
+					<pm:navBar>
+						<p:button value="Devolução" icon="gear"
+							href="devolucaoesterilizacaoMobile.jsf"
+							styleClass="ui-btn-active" />
+						<p:button value="Esterilização" icon="grid"
+							href="esterilizacaoMobile.jsf" />
+					</pm:navBar>
+				</pm:header>
+				<pm:content>
+					<h:form id="lume">
+
+						<p:panel>
+							<p:dataTable filterDelay="1500"  reflow="true"  emptyMessage="" id="dtEsterilizacoesSolicitadas"
+								value="#{esterilizacaoMB.esterilizacoesSolicitadas}"
+								var="esterilizacaoSolicitada" rows="10" paginator="true"
+								selection="#{esterilizacaoMB.esterilizacaoSolicitada}"
+								selectionMode="single" rowKey="#{esterilizacaoSolicitada}"
+								paginatorPosition="bottom">
+								<f:facet name="header">Esterilizações Solicitadas</f:facet>
+								<p:ajax event="rowSelect"
+									listener="#{esterilizacaoMB.habilitaDevolucao}"
+									update=":lume:dtItens, :lume:dtEsterilizacoesSolicitadas, :lume:devolucao"
+									process="@this" />
+								<p:column filterBy="#{esterilizacaoSolicitada.descricao}"
+									sortBy="#{esterilizacaoSolicitada.descricao}"
+									filterMatchMode="contains" headerText="Descrição">
+									<h:outputText value="#{esterilizacaoSolicitada.descricao}" />
+								</p:column>
+								<p:column
+									filterBy="#{esterilizacaoSolicitada.profissional.dadosBasico.prefixoNome}"
+									sortBy="#{esterilizacaoSolicitada.profissional.dadosBasico.prefixoNome}"
+									filterMatchMode="contains" headerText="Profissional">
+									<h:outputText
+										value="#{esterilizacaoSolicitada.profissional.dadosBasico.prefixoNome}" />
+								</p:column>
+								<p:column filterBy="#{esterilizacaoSolicitada.dataStr}"
+									sortBy="#{esterilizacaoSolicitada.dataStrOrd}"
+									filterMatchMode="contains" headerText="Data do Pedido">
+									<h:outputText value="#{esterilizacaoSolicitada.dataStr}" />
+								</p:column>
+							</p:dataTable>
+						</p:panel>
+						<p:panel>
+							<p:dataTable filterDelay="1500"  reflow="true"  emptyMessage="" id="dtKits"
+								value="#{esterilizacaoMB.kitsSolicitados}" editable="true"
+								var="kit" rows="7" paginator="true" paginatorPosition="bottom">
+								<f:facet name="header">Kits</f:facet>
+								<p:column filterBy="#{kit.kit.descricao}"
+									sortBy="#{kit.kit.descricao}" filterMatchMode="contains"
+									headerText="Descrição">
+									<h:outputText value="#{kit.kit.descricao}" />
+								</p:column>
+								<p:column filterBy="#{kit.quantidade}"
+									sortBy="#{kit.quantidade}" filterMatchMode="contains"
+									headerText="Quantidade">
+									<h:outputText value="#{kit.quantidade}" />
+								</p:column>
+							</p:dataTable>
+						</p:panel>
+						<p:panel styleClass="lumeButton">
+							<p:commandButton id="devolucao" icon="White fa fa-save"
+								value="Devolver"
+								actionListener="#{esterilizacaoMB.actionDevolucao}"
+								disabled="#{!esterilizacaoMB.enableDevolucao}"
+								update=":lume:dtItens, :lume:dtEsterilizacoesSolicitadas"
+								process=":lume:dtItens, @this"
+								 />
+						</p:panel>
+
+
+
+					</h:form>
+
+					<p:ajaxStatus onerror="PF('dgAjaxError').show();" />
+					<p:confirmDialog
+						message="Não foi possível completar a operação, servidor temporariamente indísponível!"
+						header="Erro" severity="alert" widgetVar="dgAjaxError">
+						<p:button value="Fechar" onclick="PF('dgAjaxError').hide();" />
+					</p:confirmDialog>
+
+				</pm:content>
+			</pm:view>
+		</pm:page>
+
+	</h:body>
+</f:view>

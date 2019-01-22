@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:po="http://primefaces.org/olympos">
+	<h:form>
+		<ul class="layout-tab-submenu" id="layout-extrato">
+		<li>			
+            <a>EXTRATO MENSAL</a>
+            <ul>
+            	<li><a href="relatorioContabil.jsf" class="menulink">                 	   
+                         <li>
+                         	<a href="relatorioContabil.jsf" class="menulink OvHidden"> 
+                         		<i class="fa fa-money Fs26 #{relatorioContabilMB.saldoInicial lt 0 ? 'RedLight' : 'GreenLight'}"></i> 
+		                        <span class="Fleft DispInlBlock">
+		                            <span class="DispBlock White Fs14 FontLatoRegular">
+		                            	<h:outputText value="#{relatorioContabilMB.saldoInicial}"><f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" /></h:outputText>
+		                            </span>
+		                            <div class="EmptyBox5"></div>
+		                            <span class="DispBlock White Fs14 FontLatoRegular">SALDO INICIAL</span>
+		                        </span>
+		                    </a>
+		                </li>                                                                   
+                    </a>
+                </li>          
+            	<ui:repeat var="a" value="#{relatorioContabilMB.lancamentoContabeis}">            
+                	<li><a href="relatorioContabil.jsf" class="menulink">                 	   
+                         <li>
+                         	<a href="relatorioContabil.jsf" class="menulink OvHidden"> 
+                         		<i class="fa fa-dollar Fs26 #{a.tipo == 'Pagar' ? 'RedLight' : 'GreenLight'}"></i> 
+		                        <span class="Fleft DispInlBlock">
+		                            <span class="DispBlock White Fs14 FontLatoRegular">
+		                            	<h:outputText value="#{a.valor}"><f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" /></h:outputText>
+		                            </span>
+		                            <div class="EmptyBox5"></div>
+		                            <span class="Fs10 DispBlock"><h:outputText value="#{a.nome}"/></span>
+		                            <span class="Fs10 DispBlock"><h:outputText value="#{a.descricao}"/></span>
+		                            <span class="DispBlock FontLatoLight Fs12">
+		                            	<h:outputText value="#{a.data}">
+											<f:convertDateTime pattern="dd/MM/yyyy"/>
+										</h:outputText>
+									</span>
+		                        </span>
+		                    </a>
+		                </li>                                                                   
+                    </a></li>
+                </ui:repeat>               
+                <li><a href="relatorioContabil.jsf" class="menulink">                 	   
+                         <li>
+                         	<a href="relatorioContabil.jsf" class="menulink OvHidden"> 
+                         		<i class="fa fa-money Fs26 #{relatorioContabilMB.saldoFinal lt 0 ? 'RedLight' : 'GreenLight'}"></i> 
+		                        <span class="Fleft DispInlBlock">
+		                            <span class="DispBlock White Fs14 FontLatoRegular">
+		                            	<h:outputText value="#{relatorioContabilMB.saldoFinal}"><f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" /></h:outputText>
+		                            </span>
+		                            <div class="EmptyBox5"></div>
+		                            <span class="DispBlock White Fs14 FontLatoRegular">SALDO FINAL</span>
+		                        </span>
+		                    </a>
+		                </li>                                                                   
+                    </a>
+                </li>                
+            </ul>
+        </li>
+		</ul>
+	</h:form>
+</ui:composition>

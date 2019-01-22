@@ -1,0 +1,298 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<style>
+.ui-fluid .ui-button {
+	width: 40% !important;
+}
+</style>
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<p:wizard id="wizard" widgetVar="wiz" flowListener="#{pacienteTotemMB.onFlowProcess}" nextLabel="Próximo" backLabel="Voltar"
+						style="font-size: 25px;">
+						<p:tab id="apresentacaoTab" title="Apresentação">
+							<div class="Card">
+								<div class="EmptyBox10"></div>
+								<div class="Container100 NoIndent Responsive100">
+									<i class="icon-mind Green Fs60 Fleft MarRight10"></i> <span class="FontLatoBlack Black Opac80 Fleft Fs20 DispBlock">Bem vindo ao
+										INTELIDENTE</span> <br />
+									<div class="EmptyBox10"></div>
+									<span class="FontLatoBlack Black Opac80 Fleft Fs16 DispBlock"> Aqui você poderá informar seus dados pessoais e algumas questões
+										relevantes para o atendimento em nossa clínica. Para utilizar o sistema, basta informar o email cadastrado na recepção e clicar em Próximo.
+									</span>
+
+								</div>
+								<div class="Container100 NoIndent ui-fluid Responsive100 Fs14"></div>
+								<div class="EmptyBox10"></div>
+							</div>
+						</p:tab>
+						<p:tab id="identificacaoTab" title="Identificação">
+							<p:panel>
+								<h:inputHidden id="id" value="#{pacienteTotemMB.entity.id}" />
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="email" value="E-Mail : " />
+									<p:inputText id="email" value="#{pacienteTotemMB.entity.dadosBasico.email}" required="true" maxlength="200" validatorMessage="Email Inválido">
+										<f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" />
+									</p:inputText>
+									<p:message styleClass="msg" for="email" />
+								</h:panelGroup>
+							</p:panel>
+						</p:tab>
+						<p:tab id="dadosPessoaisTab" title="Dados Pessoais">
+							<p:panel>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="nome" value="Nome : " />
+									<p:inputText id="nome" value="#{pacienteTotemMB.entity.dadosBasico.nome}" required="true" maxlength="200" />
+									<p:message for="nome" styleClass="msg" />
+								</h:panelGroup>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="documento" value="CPF : " />
+									<p:inputMask id="documento" value="#{pacienteTotemMB.entity.dadosBasico.documento}" mask="999.999.999-99" />
+									<p:message for="documento" styleClass="msg" />
+								</h:panelGroup>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="rg" value="RG : " />
+									<p:inputText id="rg" value="#{pacienteTotemMB.entity.dadosBasico.rg}" maxlength="12" />
+									<p:message for="rg" styleClass="msg" />
+								</h:panelGroup>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="telResidencia" value="Telefone Residencial : " />
+									<p:inputText id="telResidencia" value="#{pacienteTotemMB.entity.dadosBasico.telefone}" styleClass="telefone" />
+									<p:message for="telResidencia" styleClass="msg" />
+								</h:panelGroup>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="telCelular" value="Telefone Celular : " />
+									<p:inputText id="telCelular" value="#{pacienteTotemMB.entity.dadosBasico.celular}" styleClass="telefone" />
+									<p:message for="telCelular" styleClass="msg" />
+								</h:panelGroup>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="dtNascimento" value="Data de Nascimento : " />
+									<p:calendar id="dtNascimento" value="#{pacienteTotemMB.entity.dadosBasico.dataNascimento}" pattern="dd/MM/yyyy" showWeeksBar="false"
+										locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" maxdate="#{odontoMB.sysdate}" mask="true"/>
+									<p:message for="dtNascimento" styleClass="msg" />
+								</h:panelGroup>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="sexo" value="Sexo : " />
+									<p:selectOneRadio id="sexo" value="#{pacienteTotemMB.entity.dadosBasico.sexo}">
+										<f:selectItem itemLabel="Masculino" itemValue="M" />
+										<f:selectItem itemLabel="Feminino" itemValue="F" />
+									</p:selectOneRadio>
+									<p:message styleClass="msg" for="sexo" />
+								</h:panelGroup>
+							</p:panel>
+						</p:tab>
+						<p:tab id="enderecoTab" title="Endereço">
+							<p:panel>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="cep" value="CEP : " />
+									<p:inputMask id="cep" value="#{pacienteTotemMB.entity.dadosBasico.cep}" maxlength="8" mask="99999-999" styleClass="Wid80 MarRight10">
+										<f:validator validatorId="cepValidator" />
+									</p:inputMask>
+									<p:commandButton id="cepsearch" icon="fa fa-search White" actionListener="#{pacienteTotemMB.actionBuscaCep}"
+										update=":lume:endereco,:lume:bairro,:lume:cidade,:lume:estado" process="@this,:lume:cep" style="width: 45px;height: 45px;" />
+									<p:message for="cep" styleClass="msg" />
+								</h:panelGroup>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="endereco" value="Endereço : " />
+									<p:inputText id="endereco" value="#{pacienteTotemMB.entity.dadosBasico.endereco}" maxlength="200" />
+									<p:message for="endereco" styleClass="msg" />
+								</h:panelGroup>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="numero" value="Número : " />
+									<p:inputText id="numero" value="#{pacienteTotemMB.entity.dadosBasico.numero}" maxlength="6" />
+									<p:message for="numero" styleClass="msg" />
+								</h:panelGroup>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="bairro" value="Bairro : " />
+									<p:inputText id="bairro" value="#{pacienteTotemMB.entity.dadosBasico.bairro}" maxlength="200" />
+									<p:message for="bairro" styleClass="msg" />
+								</h:panelGroup>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="complemento" value="Complemento : " />
+									<p:inputText id="complemento" value="#{pacienteTotemMB.entity.dadosBasico.complemento}" maxlength="100" />
+									<p:message for="complemento" styleClass="msg" />
+								</h:panelGroup>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="cidade" value="Cidade : " />
+									<p:inputText id="cidade" value="#{pacienteTotemMB.entity.dadosBasico.cidade}" maxlength="200" />
+									<p:message for="cidade" styleClass="msg" />
+								</h:panelGroup>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="estado" value="Estado : " />
+									<p:selectOneMenu id="estado" value="#{pacienteTotemMB.entity.dadosBasico.uf}">
+										<f:selectItems value="#{pacienteTotemMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
+									</p:selectOneMenu>
+									<p:message for="estado" styleClass="msg" />
+								</h:panelGroup>
+							</p:panel>
+						</p:tab>
+						<p:tab id="anamnese" title="Anamnese" rendered="#{pacienteTotemMB.possuiPerguntas}">
+							<p:panel>
+								<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" value="#{pacienteTotemMB.anamnesesPreCadastro}" var="anamnesePreCadastro" rows="5" paginator="true"
+									paginatorPosition="bottom" id="anamneseTotem" paginatorTemplate="{PageLinks}">
+									<p:column style="width:50%;">
+										<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaTexto}">
+											<h:outputLabel value="#{anamnesePreCadastro.pergunta.descricao}" />
+										</h:panelGroup>
+
+										<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaUmaEmVarias}">
+											<h:outputLabel value="#{anamnesePreCadastro.pergunta.descricao}" />
+										</h:panelGroup>
+										<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaVariasEmVarias}">
+											<h:outputLabel value="#{anamnesePreCadastro.pergunta.descricao}" />
+										</h:panelGroup>
+
+										<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaSimOuNao}">
+											<h:outputLabel value="#{anamnesePreCadastro.pergunta.descricao}" />
+										</h:panelGroup>
+
+										<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaQuantidade}">
+											<h:outputLabel value="#{anamnesePreCadastro.pergunta.descricao}" />
+										</h:panelGroup>
+									</p:column>
+									<p:column>
+										<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaTexto}">
+											<p:inputText value="#{anamnesePreCadastro.resposta}" style="width: 340px;" />
+										</h:panelGroup>
+
+										<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaUmaEmVarias}">
+											<p:selectOneMenu value="#{anamnesePreCadastro.resposta}" converter="resposta">
+												<f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
+												<f:selectItems value="#{anamnesePreCadastro.pergunta.respostas}" var="resposta" itemLabel="#{resposta.descricao}"
+													itemValue="#{resposta.descricao}" />
+											</p:selectOneMenu>
+										</h:panelGroup>
+										<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaVariasEmVarias}">
+											<p:selectManyCheckbox value="#{anamnesePreCadastro.respostas}">
+												<f:selectItems value="#{anamnesePreCadastro.pergunta.respostas}" var="resposta" itemLabel="#{resposta.descricao}"
+													itemValue="#{resposta.descricao}" />
+											</p:selectManyCheckbox>
+										</h:panelGroup>
+
+										<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaSimOuNao}">
+											<p:selectOneRadio value="#{anamnesePreCadastro.resposta}">
+												<f:selectItem itemLabel="Sim" itemValue="Sim" />
+												<f:selectItem itemLabel="Não" itemValue="Não" />
+											</p:selectOneRadio>
+										</h:panelGroup>
+
+										<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaQuantidade}">
+											<p:inputText value="#{anamnesePreCadastro.resposta}" style="width: 340px;float:left;" validatorMessage="Favor digitar um número."
+												id="numero">
+												<f:validateRegex pattern="[0-9]*" />
+											</p:inputText>
+											<p:message styleClass="msg" for="numero" />
+										</h:panelGroup>
+									</p:column>
+								</p:dataTable>
+							</p:panel>
+						</p:tab>
+						<p:tab id="fimTab" title="Confirmação">
+							<p:panel>
+								<p:tabView id="tabView">
+									<p:tab id="tab1" title="Dados">
+										<h:panelGrid columns="4">
+											<h:outputLabel value="E-Mail : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.email}" class="valueTotem" />
+											<h:outputLabel value="Nome : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.nome}" class="valueTotem" />
+											<h:outputLabel value="CPF : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.documento}" class="valueTotem" />
+											<h:outputLabel value="RG : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.rg}" class="valueTotem" />
+											<h:outputLabel value="Telefone residencial : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.telefone}" class="valueTotem" />
+											<h:outputLabel value="Telefone celular : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.celular}" class="valueTotem" />
+											<h:outputLabel value="Data de nascimento : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.dataNascimentoStr}" class="valueTotem" />
+											<h:outputLabel value="Sexo : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.sexo}" class="valueTotem" />
+											<h:outputLabel value="CEP : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.cep}" class="valueTotem" />
+											<h:outputLabel value="Endereço : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.endereco}" class="valueTotem" />
+											<h:outputLabel value="Numero : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.numero}" class="valueTotem" />
+											<h:outputLabel value="Bairro : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.bairro}" class="valueTotem" />
+											<h:outputLabel value="Cidade : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.cidade}" class="valueTotem" />
+											<h:outputLabel value="Estado : " class="labelTotem" />
+											<h:outputText value="#{pacienteTotemMB.entity.dadosBasico.uf}" class="valueTotem" />
+										</h:panelGrid>
+									</p:tab>
+									<p:tab id="tab2" title="Anamnese" rendered="#{pacienteTotemMB.possuiPerguntas}">
+										<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" value="#{pacienteTotemMB.anamnesesPreCadastro}" var="anamnesePreCadastro" rows="3"
+											paginator="true" paginatorPosition="bottom" id="anamneseTotemConfirmacao" paginatorTemplate="{PageLinks}">
+											<p:column style="width:50%;">
+												<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaTexto}">
+													<h:outputLabel value="#{anamnesePreCadastro.pergunta.descricao}" />
+												</h:panelGroup>
+
+												<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaUmaEmVarias}">
+													<h:outputLabel value="#{anamnesePreCadastro.pergunta.descricao}" />
+												</h:panelGroup>
+												<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaVariasEmVarias}">
+													<h:outputLabel value="#{anamnesePreCadastro.pergunta.descricao}" />
+												</h:panelGroup>
+
+												<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaSimOuNao}">
+													<h:outputLabel value="#{anamnesePreCadastro.pergunta.descricao}" />
+												</h:panelGroup>
+
+												<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaQuantidade}">
+													<h:outputLabel value="#{anamnesePreCadastro.pergunta.descricao}" />
+												</h:panelGroup>
+											</p:column>
+											<p:column>
+												<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaTexto}">
+													<p:inputText value="#{anamnesePreCadastro.resposta}" style="width: 340px;" disabled="true" />
+												</h:panelGroup>
+												<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaUmaEmVarias}">
+													<p:selectOneMenu value="#{anamnesePreCadastro.resposta}" converter="resposta" disabled="true">
+														<f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
+														<f:selectItems value="#{anamnesePreCadastro.pergunta.respostas}" var="resposta" itemLabel="#{resposta.descricao}"
+															itemValue="#{resposta.descricao}" />
+													</p:selectOneMenu>
+												</h:panelGroup>
+												<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaVariasEmVarias}">
+													<p:selectManyCheckbox value="#{anamnesePreCadastro.respostas}" disabled="true">
+														<f:selectItems value="#{anamnesePreCadastro.pergunta.respostas}" var="resposta" itemLabel="#{resposta.descricao}"
+															itemValue="#{resposta.descricao}" />
+													</p:selectManyCheckbox>
+												</h:panelGroup>
+
+												<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaSimOuNao}">
+													<p:selectOneRadio value="#{anamnesePreCadastro.resposta}" disabled="true">
+														<f:selectItem itemLabel="Sim" itemValue="Sim" />
+														<f:selectItem itemLabel="Não" itemValue="Não" />
+													</p:selectOneRadio>
+												</h:panelGroup>
+
+												<h:panelGroup rendered="#{anamnesePreCadastro.pergunta.tipoResposta == anamnesePreCadastro.pergunta.tipoRespostaQuantidade}">
+													<p:inputText value="#{anamnesePreCadastro.resposta}" style="width: 340px;" disabled="true">
+														<f:validateRegex pattern="[0-9]*" />
+													</p:inputText>
+												</h:panelGroup>
+											</p:column>
+										</p:dataTable>
+									</p:tab>
+								</p:tabView>
+								<div class="Separator"></div>
+								<div class="Container50 Responsive100">
+									<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{pacienteTotemMB.actionPersist}" process=":lume:wizard"
+										update=":lume:wizard" styleClass="GreenButton" />
+								</div>
+								<div class="EmptyBox20"></div>
+							</p:panel>
+						</p:tab>
+					</p:wizard>
+
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>
