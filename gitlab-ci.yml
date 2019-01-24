@@ -1,0 +1,59 @@
+image: java:latest
+
+variables:
+  noFailure: "Failures: 0, Skips: 0"
+  outPath: "./build-out"
+  targetPath: "./target"
+  warFile: "intelidente.war"
+  warLatest: "intelidente.latest"
+  warErro: "intelidente.error"
+  warOld: "intelidente.old"
+  urlProd: "https://intelidente.lumetec.com.br/intelidente"
+  urlDesenv: "http://dev-intelidente.lumetec.com.br/intelidente"
+  urlLocal: "http://localhost:8080/intelidente"
+  MAVEN_CLI_OPTS: "-s ~/.m2/settings.xml --batch-mode"
+  MAVEN_OPTS: "-Dmaven.repo.local=~/.m2/repository -Dfile.encoding=ISO-8859-1"
+ 
+cache:
+  paths:
+   - ~/.m2/repository/
+
+before_script:
+  - branch=$CI_COMMIT_REF_NAME
+  - paramsDeploy='-DintelidenteBuild='$CI_PIPELINE_ID' -DintelidenteMaster='$CI_PIPELINE_IID' -DintelidenteHotFix='
+  - 'if [ $branch == "master" ]; then profile=wildfly-remote-prod; fi'
+  - 'if [ $branch == "desenv" ]; then profile=wildfly-remote-dev; fi'
+  - 'echo "========================================================================================"'
+  - 'echo "=   BRANCH.......................: $branch"'
+  - 'echo "=   PROFILE......................: $profile"'
+  - 'echo "=   N COMMIT.....................: $CI_PIPELINE_IID ($branch)"'
+  - 'echo "=   N COMMIT.....................: $CI_PIPELINE_ID (Todos os branches)"'
+  - 'echo "========================================================================================"'
+
+stages:
+  - build
+  - test
+
+build:
+  stage: build
+  script:  
+   - 'if [ $branch != "master" ] && [ $branch != "desenv" ]; then echo "Branch sem finalidade de deploy"; mvn compile; mvn package; exit 0; fi'
+   - echo 'Clean no projeto e compilar classes'
+   - mvn $MAVEN_OPTS clean compile
+   - echo 'Realizar undeploy de WAR antigo.'
+   - mvn $MAVEN_OPTS wildfly:undeploy -P $profile
+   - echo 'Realizar package do novo WAR e deploy do arquivo gerado.'
+   - mvn $MAVEN_OPTS wildfly:deploy $paramsDeploy -P $profile
+   - 'if [ -f "$targetPath/$warFile" ]; then mv $targetPath/$warFile $outPath/$warLatest; fi'
+   - echo 'Aguardando reinicio do servidor'
+   - sleep 30
+
+test:
+  stage: test
+  script:
+   - 'if [ $branch == "master" ]; then urlTeste=$urlProd; elif [ $branch == "desenv" ]; then urlTeste=$urlDesenv; else "Branch sem ambiente de teste"; exit 0; fi'
+   - echo 'URL para teste '$urlTeste
+   - echo 'Indo ate pasta de saida'
+   - cd $outPath
+   - echo 'Iniciando teste.'
+   - 'if java -jar intelidenteLoginTest.jar -h $urlTeste -r y | grep """$noFailure"""; then cd ../; echo "Deploy feito e testado com sucesso!"; echo "Salvando WAR para backup futuro"; if [ -f $outPath/$warLatest ]; then mv $outPath/$warLatest $outPath/$warOld; fi; else cd ../; echo "Inicio do backup"; if [ ! -f $outPath/$warOld ]; then echo "Nao ha war antigo para deploy backup"; exit 1; fi; echo "Salvando WAR com erro"; if [ -f $outPath/$warLatest ]; then mv $outPath/$warLatest $outPath/$warErro; fi; echo "Retornando WAR antigo"; mv $outPath/$warOld $targetPath/$warFile; echo "Realizando deploy do WAR antigo"; mvn $MAVEN_OPTS wildfly:deploy $paramsDeploy -Dwildfly.deployment.filename=$warFile -P $profile; fi'

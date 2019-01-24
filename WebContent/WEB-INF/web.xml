@@ -79,10 +79,6 @@
         <location>/login.jsf</location>
     </error-page>
     <error-page>
-        <exception-type>com.ibm.db2.jcc.a.SqlException</exception-type>
-        <location>/login.jsf</location>
-    </error-page>
-    <error-page>
         <exception-type>java.lang.RuntimeException</exception-type>
         <location>/login.jsf</location>
     </error-page>
@@ -147,8 +143,4 @@
         <extension>svg#fontawesomeregular</extension>
         <mime-type>image/svg+xml</mime-type>
     </mime-mapping>
-    <init-param>
-        <param-name>jersey.config.server.provider.classnames</param-name>
-        <param-value>org.glassfish.jersey.jackson.JacksonFeature</param-value>
-    </init-param>
 </web-app>
