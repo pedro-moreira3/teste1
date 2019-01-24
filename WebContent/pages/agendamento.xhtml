@@ -50,9 +50,8 @@ div.ui-selectoneradio label {
 
         <p:dialog widgetVar="eventDialog" header="Agendamento" resizable="false" id="pnAgendamento" responsive="true" position="10,10" modal="true" style="position:absolute !important;"
             appendToBody="true" focus="paciente">
-            <p:growl id="messageDlg" globalOnly="true" />
 
-            <p:ajax event="close" listener="#{agendamentoMB.handleClose}" update=":lume:messages,:lume:pnAgendamento, messageDlg, :lume:profissional, btBloqueioAgenda"
+            <p:ajax event="close" listener="#{agendamentoMB.handleClose}" update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
                 oncomplete="PF('myschedule').update();" />
 
             <div class="Container100 Responsive100 NoIndent">
@@ -70,7 +69,7 @@ div.ui-selectoneradio label {
                             <h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
                                 <div class="Container25 Responsive100">
                                     <p:commandButton id="persist" icon="White fa fa-save" process="pnAgendamento" value="Salvar" actionListener="#{agendamentoMB.actionPersist}"
-                                        update=":lume:messages,:lume:pnAgendamento, messageDlg, :lume:profissional, btBloqueioAgenda" oncomplete="PF('myschedule').update();" styleClass="GreenButton" />
+                                        update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda" oncomplete="PF('myschedule').update();" styleClass="GreenButton" />
                                 </div>
                             </h:panelGroup>
                             <h:panelGroup rendered="#{agendamentoMB.entity != null and agendamentoMB.entity.id > 0}">
@@ -81,11 +80,11 @@ div.ui-selectoneradio label {
                             </h:panelGroup>
                             <div class="Container25 Responsive100">
                                 <p:commandButton icon="White fa fa-close" value="Fechar" process="@this" onclick="PF('eventDialog').hide()" actionListener="#{agendamentoMB.handleClose}"
-                                    update=":lume:messages,:lume:pnAgendamento, messageDlg, :lume:profissional, btBloqueioAgenda" oncomplete="PF('myschedule').update();" />
+                                    update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda" oncomplete="PF('myschedule').update();" />
                             </div>
                             <div class="Container25 Responsive100">
                                 <p:commandButton id="confirmarPreCadastro" icon="White fa fa-save" process="pnAgendamento" value="Confirmar Pré Agendamento"
-                                    update=":lume:messages,pnAgendamento, btBloqueioAgenda" oncomplete="PF('myschedule').update();" actionListener="#{agendamentoMB.actionConfirmarPreCadastro}"
+                                    update="pnAgendamento, btBloqueioAgenda" oncomplete="PF('myschedule').update();" actionListener="#{agendamentoMB.actionConfirmarPreCadastro}"
                                     rendered="#{agendamentoMB.entity.status == 'P'}" />
                             </div>
                         </h:panelGroup>
@@ -206,7 +205,6 @@ div.ui-selectoneradio label {
 
 
                     </p:panel>
-                    <p:growl id="messages" globalOnly="true" />
                     <p:schedule id="schedule" value="#{agendamentoMB.schedule}" axisFormat="HH:mm" style="width:100%;heigth:100%;margin: 0 auto;display: inline-block;" slotMinutes="15"
                         widgetVar="myschedule" locale="pt" timeZone="#{lumeSecurity.timeZone}" firstHour="8" view="agendaWeek" timeFormat="HH:mm" minTime="07:00" maxTime="21:00" allDaySlot="false"
                         columnFormat="ddd D/M" draggable="false" resizable="false" initialDate="#{agendamentoMB.initialDate}" >
@@ -243,7 +241,7 @@ div.ui-selectoneradio label {
 								</script>
 
         <p:confirmDialog id="confirmDialog" message=" Você tem certeza que deseja excluir o agendamento?" header="Excluir agendamento?" severity="alert" widgetVar="confirmation" appendToBody="true">
-            <p:commandButton id="confirm" value="Sim" update=":lume:messages,:lume:pnAgendamento" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" onclick="PF('confirmation').hide();"
+            <p:commandButton id="confirm" value="Sim" update=":lume:pnAgendamento" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" onclick="PF('confirmation').hide();"
                 actionListener="#{agendamentoMB.actionRemove}" process="@this" />
             <p:commandButton id="decline" value="Não" onclick="PF('confirmation').hide()" type="button" />
         </p:confirmDialog>
@@ -258,13 +256,13 @@ div.ui-selectoneradio label {
         </p:confirmDialog>
         <p:confirmDialog id="confirmDialogSair" message=" Você tem certeza que deseja sair sem salvar?" header="Deseja sair sem salvar?" severity="alert" widgetVar="sairConfirmation"
             appendToBody="true">
-            <p:commandButton id="confirm2" value="Sim" update=":lume:messages" onclick="PF('sairConfirmation').hide();PF('eventDialog').hide()" process="@this" />
+            <p:commandButton id="confirm2" value="Sim" onclick="PF('sairConfirmation').hide();PF('eventDialog').hide()" process="@this" />
             <p:commandButton id="decline3" value="Não" onclick="PF('sairConfirmation').hide();PF('eventDialog').show()" type="button" />
 
         </p:confirmDialog>
 
         <p:confirmDialog id="remarcado" message=" Você tem certeza que deseja remarcar o agendamento?" header="Remarcadar" severity="alert" widgetVar="remarcado" appendToBody="true">
-            <p:commandButton id="confirmRemarcado" value="Sim" update=":lume:messages" onclick="PF('remarcado').hide();" process="@this" />
+            <p:commandButton id="confirmRemarcado" value="Sim" onclick="PF('remarcado').hide();" process="@this" />
             <p:commandButton id="declineRemarcado" value="Não" onclick="PF('remarcado').hide();PF('eventDialog').hide()" type="button" />
 
         </p:confirmDialog>

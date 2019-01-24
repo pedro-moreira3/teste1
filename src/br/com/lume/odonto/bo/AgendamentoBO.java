@@ -39,20 +39,22 @@ public class AgendamentoBO extends BO<Agendamento> {
     @Override
     public boolean persist(Agendamento agendamento) throws BusinessException, TechnicalException {
         ReservaBO reservaBO = new ReservaBO();
-        try {
-            agendamento.setDataUltAlteracao(Calendar.getInstance().getTime());
-            agendamento.setProfissionalUltAlteracao(ProfissionalBO.getProfissionalLogado());
-            super.persist(agendamento);
-            if (Empresa.ESTOQUE_COMPLETO.equals(EmpresaBO.getEmpresaLogada().getEmpStrEstoque())) {
-                if (agendamento.getExcluido().equals(
-                        Status.NAO) && !agendamento.getStatus().equals(StatusAgendamento.CANCELADO.getSigla()) && !agendamento.getStatus().equals(StatusAgendamento.REMARCADO.getSigla())) {
-                    reservaBO.persistByAgendamento(agendamento);
-                }
+//        try {
+        agendamento.setDataUltAlteracao(Calendar.getInstance().getTime());
+        agendamento.setProfissionalUltAlteracao(ProfissionalBO.getProfissionalLogado());
+        super.persist(agendamento);
+        if (Empresa.ESTOQUE_COMPLETO.equals(EmpresaBO.getEmpresaLogada().getEmpStrEstoque())) {
+            if (agendamento.getExcluido().equals(
+                    Status.NAO) && !agendamento.getStatus().equals(StatusAgendamento.CANCELADO.getSigla()) && !agendamento.getStatus().equals(StatusAgendamento.REMARCADO.getSigla())) {
+                reservaBO.persistByAgendamento(agendamento);
             }
-        } catch (Exception e) {
-            log.error("Erro no persist", e);
-            return false;
         }
+//        } catch (Exception e) {
+//            log.error("Erro no persist", e);
+//            System.out.println(e.getMessage());
+//            System.out.println(e.getLocalizedMessage());
+//            return false;
+//        }
         return true;
     }
 

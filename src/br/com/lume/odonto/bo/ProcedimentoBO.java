@@ -124,7 +124,7 @@ public class ProcedimentoBO extends BO<Procedimento> {
                 sb.append("TRANSLATE(UPPER(P.DESCRICAO),'ÁÀÄÂÃÉÈËÊÍÌÏÎÓÒÖÔÕÚÙÜÇ', 'AAAAAEEEEIIIIOOOOOUUUC') LIKE '%" + descricao.toUpperCase() + "%' AND ");
             }
             sb.append("P.ID_EMPRESA = ?1 AND P.EXCLUIDO = 'N' ");
-            sb.append("AND P.ID_ESPECIALIDADE = E.ID AND E.DESCRICAO = 'ORTODONTIA' ");
+            sb.append("AND P.ID_ESPECIALIDADE = E.ID AND (UPPER(E.DESCRICAO) = 'ORTODONTIA' OR UPPER(E.DESCRICAO) ='ORTODONTIA E ORTOPEDIA FACIAL') ");
             sb.append("ORDER BY P.DESCRICAO ");
 
             Query query = this.getDao().createNativeQuery(sb.toString(), Procedimento.class);

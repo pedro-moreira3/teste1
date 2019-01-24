@@ -1,50 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd"
-	version="2.1">
-	<application>
-		<locale-config>
-			<default-locale>pt_BR</default-locale>
-		</locale-config>
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd" version="2.1">
+    <application>
+        <locale-config>
+            <default-locale>pt_BR</default-locale>
+        </locale-config>
 
-		<resource-bundle>
-			<base-name>br.com.lume.resources.security</base-name>
-			<var>msg</var>
-		</resource-bundle>
-		<message-bundle>br.com.lume.resources.security</message-bundle>
-	</application>
+        <resource-bundle>
+            <base-name>br.com.lume.resources.security</base-name>
+            <var>msg</var>
+        </resource-bundle>
+        <message-bundle>br.com.lume.resources.security</message-bundle>
+    </application>
 
 
-	<application>
-		<locale-config>
-			<default-locale>pt_BR</default-locale>
-		</locale-config>
+    <application>
+        <locale-config>
+            <default-locale>pt_BR</default-locale>
+        </locale-config>
 
-		<resource-bundle>
-			<base-name>br.com.lume.odonto.resources.odonto</base-name>
-			<var>odonto</var>
-		</resource-bundle>
-		<message-bundle>br.com.lume.odonto.resources.odonto</message-bundle>
-	</application>
+        <resource-bundle>
+            <base-name>br.com.lume.odonto.resources.odonto</base-name>
+            <var>odonto</var>
+        </resource-bundle>
+        <message-bundle>br.com.lume.odonto.resources.odonto</message-bundle>
+    </application>
 
 
-	<lifecycle>
-		<phase-listener>br.com.lume.common.phaselistener.AuthorizationListener</phase-listener>
-	</lifecycle>
+    <lifecycle>
+        <phase-listener>br.com.lume.common.phaselistener.AuthorizationListener</phase-listener>
+    </lifecycle>
 
-	<component>
-		<component-type>org.primefaces.component.OlymposMenu</component-type>
-		<component-class>org.primefaces.olympos.component.menu.OlymposMenu</component-class>
-	</component>
+    <component>
+        <component-type>org.primefaces.component.OlymposMenu</component-type>
+        <component-class>org.primefaces.olympos.component.menu.OlymposMenu</component-class>
+    </component>
 
-	<render-kit>
-		<renderer>
-			<component-family>org.primefaces.component</component-family>
-			<renderer-type>org.primefaces.component.OlymposMenuRenderer</renderer-type>
-			<renderer-class>org.primefaces.olympos.component.menu.OlymposMenuRenderer</renderer-class>
-		</renderer>
-	</render-kit>
+    <render-kit>
+        <renderer>
+            <component-family>org.primefaces.component</component-family>
+            <renderer-type>org.primefaces.component.OlymposMenuRenderer</renderer-type>
+            <renderer-class>org.primefaces.olympos.component.menu.OlymposMenuRenderer</renderer-class>
+        </renderer>
+    </render-kit>
 
 </faces-config>

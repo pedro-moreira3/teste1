@@ -1,3 +1,7 @@
+.fc-content{
+    padding: 0 !important;
+}
+
 .fc-time-grid-event>.fc-content {
     text-align: center;
 }

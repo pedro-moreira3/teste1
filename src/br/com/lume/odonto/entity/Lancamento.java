@@ -273,7 +273,7 @@ public class Lancamento implements Serializable, Comparable<Lancamento> {
         if (dominio != null) {
             formaStr = dominio.getNome();
         }
-        if ("CC".equals(formaPagamento) || "CD".equals(formaPagamento)) {
+        if ("CC".equals(formaPagamento)) {
             formaStr += " (" + getParcelaMaxima() + "x)";
         }
         return formaStr;

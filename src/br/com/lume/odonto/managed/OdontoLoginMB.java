@@ -89,10 +89,17 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                     JSFHelper.getSession().setAttribute("PERFIL_LOGADO", OdontoPerfil.PACIENTE);
                     JSFHelper.getSession().setAttribute("EMPRESA_LOGADA", empresaBO.find(paciente.getIdEmpresa()));
                 } else {
-                    perfilLogado = profissional.getPerfil();
-                    JSFHelper.getSession().setAttribute("PROFISSIONAL_LOGADO", profissional);
-                    JSFHelper.getSession().setAttribute("PERFIL_LOGADO", perfilLogado);
-                    JSFHelper.getSession().setAttribute("EMPRESA_LOGADA", empresaBO.find(profissional.getIdEmpresa()));
+                    if (!Profissional.INATIVO.equals(profissional.getStatus())) {
+                        perfilLogado = profissional.getPerfil();
+                        JSFHelper.getSession().setAttribute("PROFISSIONAL_LOGADO", profissional);
+                        JSFHelper.getSession().setAttribute("PERFIL_LOGADO", perfilLogado);
+                        JSFHelper.getSession().setAttribute("EMPRESA_LOGADA", empresaBO.find(profissional.getIdEmpresa()));
+                    } else {
+                        RequestContext context = RequestContext.getCurrentInstance();
+                        context.execute("PF('loading').hide();");
+                        this.addError("Profissional Inativo.", "");
+                        return "";
+                    }
                 }
                 ((LoginBO) this.getbO()).validaSituacaoEmpresa(this.getEntity());
                 ((LoginBO) this.getbO()).carregaObjetosPermitidos(userLogin, perfilLogado, this.getLumeSecurity(), profissional);
@@ -117,11 +124,17 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
             Profissional profissional = null;
             if (!OdontoPerfil.PACIENTE.equals(perfil)) {
                 profissional = profissionalBO.find(Long.parseLong(id));
-                perfilLogado = profissional.getPerfil();
-                userLogin = usuarioBO.find(profissional.getIdUsuario());
-                JSFHelper.getSession().setAttribute("PROFISSIONAL_LOGADO", profissional);
-                JSFHelper.getSession().setAttribute("PERFIL_LOGADO", perfilLogado);
-                JSFHelper.getSession().setAttribute("EMPRESA_LOGADA", empresaBO.find(profissional.getIdEmpresa()));
+
+                if (!Profissional.INATIVO.equals(profissional.getStatus())) {
+                    perfilLogado = profissional.getPerfil();
+                    userLogin = usuarioBO.find(profissional.getIdUsuario());
+                    JSFHelper.getSession().setAttribute("PROFISSIONAL_LOGADO", profissional);
+                    JSFHelper.getSession().setAttribute("PERFIL_LOGADO", perfilLogado);
+                    JSFHelper.getSession().setAttribute("EMPRESA_LOGADA", empresaBO.find(profissional.getIdEmpresa()));
+                } else {
+                    this.addError("Profissional Inativo.", "");
+                    return "";
+                }
             } else {
                 perfilLogado = OdontoPerfil.PACIENTE;
                 Paciente paciente = pacienteBO.find(Long.parseLong(id));

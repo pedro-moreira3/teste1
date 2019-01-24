@@ -70,7 +70,7 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
             odontogramaMB.atualizaOdontograma();
         } else if (event.getTab().getTitle().equals("Ortodontia")) {
             ortodontiaMB.carregarTela();
-        } else if (event.getTab().getTitle().equals("Agendamentos")) {
+        } else if (event.getTab().getTitle().equals("Frequência")) {
             pacienteMB.carregarAgendamentos();
         }
     }

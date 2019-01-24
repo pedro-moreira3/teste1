@@ -103,6 +103,8 @@ public class Profissional implements Serializable, Comparable<Profissional> {
 
     public static final String ATIVO = "A";
 
+    public static final String INATIVO = "I";
+
     @ManyToOne
     @JoinColumn(name = "JUSTIFICATIVA")
     private Dominio justificativa;

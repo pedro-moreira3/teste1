@@ -79,7 +79,7 @@ div.ui-selectoneradio label {
                             <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{a.whatsURL}');return false;" styleClass="GreenButton" disable="#{a.whatsURL == null}" />
                         </p:column>
                         <p:column headerText="Pagamento">
-                            <p:button id="pagamento" icon="White fa fa-money" styleClass="GreenButton" onclick="window.open('pagamento.jsf?id=#{a.paciente.id}');return false;"/>
+                            <p:button id="pagamento" icon="White fa fa-money" styleClass="OrangeButton" onclick="window.open('pagamento.jsf?id=#{a.paciente.id}');return false;"/>
                         </p:column>
                         <p:column filterBy="#{a.paciente.siglaConvenio}" sortBy="#{a.paciente.siglaConvenio}" filterMatchMode="contains" headerText="Con./Part.">
                             <h:outputText value="#{a.paciente.siglaConvenio}" />
@@ -208,12 +208,10 @@ div.ui-selectoneradio label {
                     <h:inputHidden id="profissional" />
                     <p:remoteCommand id="btBloqueioAgenda" name="btBloqueioAgenda" actionListener="#{relatorioAtendimentoMB.carregaLista}" update="@form" />
 
-                    <p:growl id="messages" globalOnly="true" />
 
 
                     <p:dialog widgetVar="eventDialog" header="Agendamento" resizable="false" id="pnAgendamento" responsive="true" position="10,10" modal="true" style="position:absolute !important;"
                         appendToBody="true">
-                        <p:growl id="messageDlg" globalOnly="true" />
 
                         <div class="Container100 Responsive100 NoIndent">
                             <div class="Container100 ui-fluid NoPadding">
@@ -230,7 +228,7 @@ div.ui-selectoneradio label {
                                         <h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
                                             <div class="Container25 Responsive100">
                                                 <p:commandButton id="persist" icon="White fa fa-save" process="pnAgendamento" value="Salvar" actionListener="#{agendamentoMB.actionPersist}"
-                                                    update=":lume:messages" oncomplete="btBloqueioAgenda();PF('eventDialog').hide();" styleClass="GreenButton" />
+                                                    oncomplete="btBloqueioAgenda();PF('eventDialog').hide();" styleClass="GreenButton" />
                                             </div>
                                         </h:panelGroup>
                                         <div class="Container25 Responsive100">
