@@ -12,13 +12,11 @@
                         <p:outputLabel for="inicioAfastamento" value="Inicio : " />
                         <p:calendar id="inicioAfastamento" value="#{afastamentoMB.inicio}" mindate="01/01/00" minHour="00" pattern="dd/MM/yyyy HH:mm" locale="#{lumeSecurity.locale}" required="true"
                             class="Wid30" mask="true">
-                            <p:ajax event="dateSelect" listener="#{afastamentoMB.selecionadaDtInicio}" />
                         </p:calendar>
 
                         <p:outputLabel for="fimAfastamento" value="Fim : " />
                         <p:calendar id="fimAfastamento" value="#{afastamentoMB.fim}" maxdate="31/12/2099" maxHour="23" pattern="dd/MM/yyyy HH:mm" locale="#{lumeSecurity.locale}" required="true"
                             class="Wid30" mask="true">
-                            <p:ajax event="dateSelect" listener="#{afastamentoMB.selecionadaDtFim}" />
                         </p:calendar>
 
                         <p:outputLabel for="tipo" value="Tipo : " />

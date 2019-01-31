@@ -843,7 +843,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 return;
             }
             dadosBasicoBO.validaTelefonePaciente(paciente.getDadosBasico());
-            pacienteBO.validaPacienteDuplicadoEmpresa(paciente);
+            //pacienteBO.validaPacienteDuplicadoEmpresa(paciente);
             paciente.setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
             if (paciente.getDadosBasico().getEmail() != null && !paciente.getDadosBasico().getEmail().isEmpty()) {
                 usuario = usuarioBO.findUsuarioByLogin(paciente.getDadosBasico().getEmail().toUpperCase());
