@@ -245,7 +245,7 @@ public class PacienteBO extends BO<Paciente> {
     }
 
     public void validaPacienteDuplicadoEmpresa(Paciente paciente) throws UsuarioDuplicadoException {
-        if (paciente.getId() == null || paciente.getId() == 0) {
+        if ((paciente.getId() == null || paciente.getId() == 0) && paciente.getDadosBasico().getEmail() != null && !paciente.getDadosBasico().getEmail().isEmpty()) {
             Map<String, Object> parametros = new HashMap<>();
             parametros.put("upper(o.dadosBasico.email) = '" + paciente.getDadosBasico().getEmail().toUpperCase() + "'", GenericListDAO.FILTRO_GENERICO_QUERY);
             parametros.put("idEmpresa", ProfissionalBO.getProfissionalLogado().getIdEmpresa());
