@@ -8,8 +8,8 @@
 		<properties>
 			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />
 			<property name="javax.persistence.jdbc.url"
-				value="jdbc:postgresql://gcprpg01.lume.global:5432/inteli" />
-			<property name="javax.persistence.jdbc.user" value="inteli" />
+				value="jdbc:postgresql://azprpg01.postgres.database.azure.com:5432/intelidentep?ssl=true" />
+			<property name="javax.persistence.jdbc.user" value="intelidentep@azprpg01" />
 			<property name="javax.persistence.jdbc.password" value="8HtMVhWB" />
 			
 			<property name="eclipselink.cache.shared.default" value="false" />
@@ -35,8 +35,8 @@
 			<property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver" />			
 			
 			<property name="javax.persistence.jdbc.url"
-				value="jdbc:postgresql://gcprpg01.lume.global:5432/inteli" />
-			<property name="javax.persistence.jdbc.user" value="inteli" />
+				value="jdbc:postgresql://azprpg01.postgres.database.azure.com:5432/intelidentep?ssl=true" />
+			<property name="javax.persistence.jdbc.user" value="intelidentep@azprpg01" />
 			<property name="javax.persistence.jdbc.password" value="8HtMVhWB" />
 									
 			<property name="eclipselink.jpa.uppercase-column-names" value="true"/>
