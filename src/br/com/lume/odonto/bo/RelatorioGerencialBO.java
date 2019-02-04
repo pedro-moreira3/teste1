@@ -520,21 +520,20 @@ public class RelatorioGerencialBO extends BO<Paciente> {
         StringBuffer sb = new StringBuffer();
         sb.append("SELECT ");
         sb.append(
-                "(SELECT A.INICIO FROM AGENDAMENTO A WHERE A.ID_PACIENTE = P.ID AND A.STATUS NOT IN ('B') AND DATE(INICIO) <= CURRENT_DATE AND INICIO IS NOT NULL ORDER BY ID DESC FETCH FIRST 1 ROW ONLY) AS DATA_ULTIMA_ALTERACAO, ");
-        sb.append(
-                "(SELECT A.STATUS FROM AGENDAMENTO A WHERE A.ID_PACIENTE = P.ID AND A.STATUS NOT IN ('B') AND DATE(INICIO) <= CURRENT_DATE AND INICIO IS NOT NULL ORDER BY ID DESC FETCH FIRST 1 ROW ONLY) AS NOME_MAE ");
+                "(SELECT A.INICIO FROM AGENDAMENTO A WHERE A.ID_PACIENTE = P.ID  AND DATE(INICIO) <= CURRENT_DATE AND INICIO IS NOT NULL ORDER BY ID DESC FETCH FIRST 1 ROW ONLY) AS DATA_ULTIMA_ALTERACAO, ");
+        sb.append("(SELECT A.STATUS FROM AGENDAMENTO A WHERE A.ID_PACIENTE = P.ID  AND DATE(INICIO) <= CURRENT_DATE AND INICIO IS NOT NULL ORDER BY ID DESC FETCH FIRST 1 ROW ONLY) AS NOME_MAE ");
         sb.append(",P.ID,P.ID_DADOS_BASICOS ");
         sb.append("FROM PACIENTE P ");
         sb.append("WHERE P.ID_EMPRESA = ?1 ");
         sb.append("AND P.EXCLUIDO = 'N' ");
-        sb.append("AND EXISTS (SELECT 1 FROM AGENDAMENTO A WHERE A.ID_PACIENTE = P.ID AND A.STATUS NOT IN ('B') AND DATE(A.INICIO) <= CURRENT_DATE ) ");
+        sb.append("AND EXISTS (SELECT 1 FROM AGENDAMENTO A WHERE A.ID_PACIENTE = P.ID  AND DATE(A.INICIO) <= CURRENT_DATE ) ");
         sb.append("AND NOT EXISTS ");
         sb.append("( ");
         sb.append("   SELECT ");
         sb.append("   1 ");
         sb.append("   FROM AGENDAMENTO A ");
         sb.append("   WHERE A.ID_PACIENTE = P.ID ");
-        sb.append("   AND DATE(A.INICIO) BETWEEN '" + Utils.dateToString(inicio, "yyyy-MM-dd") + "' AND '" + Utils.dateToString(fim, "yyyy-MM-dd") + "' AND A.STATUS NOT IN ('B') ");
+        sb.append("   AND DATE(A.INICIO) BETWEEN '" + Utils.dateToString(inicio, "yyyy-MM-dd") + "' AND '" + Utils.dateToString(fim, "yyyy-MM-dd") + "' ");
         sb.append(") ORDER BY 1 DESC ");
 
         Query query = this.getDao().createNativeQuery(sb.toString(), Paciente.class);
