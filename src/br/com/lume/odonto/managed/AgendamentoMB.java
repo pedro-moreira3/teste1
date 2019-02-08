@@ -290,8 +290,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 if (this.getEntity().getId() == 0) {
                     this.getEntity().setProfissional(profissional);
                     this.getEntity().setDataAgendamento(new Date());
-                }
-                this.getEntity().setAgendador(ProfissionalBO.getProfissionalLogado());
+                    this.getEntity().setAgendador(ProfissionalBO.getProfissionalLogado());
+                }                
+                
                 if (this.getEntity().getStatus().equals(StatusAgendamento.CANCELADO.getSigla())) {
                     if (justificativa != null) {
                         this.getEntity().setJustificativa(justificativa.getNome());
