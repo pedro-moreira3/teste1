@@ -57,6 +57,18 @@ public class Utils {
     public static String formataCEP(String linha) {
         return format("##.###-###", linha);
     }
+    
+    public static Date getLastHourOfDate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.MONTH, 1);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.add(Calendar.DATE, -1);
+        cal.set(Calendar.HOUR, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+       return cal.getTime();
+    }
 
     public static String format(String pattern, Object value) {
         MaskFormatter mask;

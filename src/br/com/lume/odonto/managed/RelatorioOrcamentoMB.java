@@ -39,9 +39,11 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<RelatorioOrcamento> {
         this.relatorioOrcamentoBO = new RelatorioOrcamentoBO();
         this.setClazz(RelatorioOrcamento.class);
         Calendar c = Calendar.getInstance();
-        this.fim = c.getTime();
+       // this.fim = c.getTime();
         c.add(Calendar.MONTH, -1);
         this.inicio = c.getTime();
+        c = Calendar.getInstance();
+        this.fim = c.getTime(); 
         this.filtra();
     }
 
@@ -49,6 +51,9 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<RelatorioOrcamento> {
         if ((this.inicio != null && this.fim != null) && (this.inicio.getTime() > this.fim.getTime())) {
             this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
         } else {
+     
+            this.fim = Utils.getLastHourOfDate(this.fim);
+            
             this.somaValorTotal = new BigDecimal(0);
             this.somaValorTotalDesconto = new BigDecimal(0);
             this.relatorioOrcamentos = this.relatorioOrcamentoBO.listAll(this.inicio, this.fim);

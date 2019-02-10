@@ -117,8 +117,8 @@ public class Odontograma implements Serializable {
     }
 
     @Transient
-    public String getDataCadastroStr() {
-        return Utils.dateToString(dataCadastro, "dd/MM/yyyy hh:mm");
+    public String getDataCadastroStr() {  
+        return Utils.dateToString(dataCadastro);        
     }
 
     @Transient

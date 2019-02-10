@@ -24,8 +24,8 @@ public class RelatorioOrcamentoBO extends BO<RelatorioOrcamento> {
     public List<RelatorioOrcamento> listAll(Date inicio, Date fim) {
         try {
             StringBuffer sb = new StringBuffer();
-            sb.append("SELECT ");
-            sb.append("ROW_NUMBER() OVER () * EXTRACT(MICROSECONDS FROM NOW()) AS ID, ");
+            sb.append("SELECT DISTINCT ");
+           // sb.append("ROW_NUMBER() OVER () * EXTRACT(MICROSECONDS FROM NOW()) AS ID, ");
             sb.append("PT.ID,DB.NOME AS PACIENTE, DB2.NOME AS PROFISSIONAL, PT.DATA_HORA AS DATA, PT.VALOR_TOTAL, PT.VALOR_TOTAL_DESCONTO, ");
             sb.append("CASE ");
             sb.append("WHEN (PT.DATA_FINALIZADO IS NOT NULL) THEN 'Finalizado' ");
