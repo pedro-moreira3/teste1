@@ -2,6 +2,7 @@ package br.com.lume.common.connection;
 
 import java.io.Serializable;
 import java.sql.ResultSet;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
 import java.util.List;
 
@@ -9,8 +10,6 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
-
-import com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException;
 
 public class GenericDAO<E> extends GenericListDAO<E> implements Serializable {
 
@@ -93,7 +92,7 @@ public class GenericDAO<E> extends GenericListDAO<E> implements Serializable {
             }
             pstmt.close();
             tx.commit();
-        } catch (SqlIntegrityConstraintViolationException e) {
+        } catch (SQLIntegrityConstraintViolationException e) {
             tx.rollback();
             this.log.error("Erro no persistNative", e);
         } catch (Exception e) {
