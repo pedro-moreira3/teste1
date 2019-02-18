@@ -35,13 +35,19 @@ public class EmailListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent arg0) {
         try {
-            String servidor = InetAddress.getLocalHost().getHostName();
+            String servidor = InetAddress.getLocalHost().getHostAddress();
+            
+            System.out.println("IP do servidor de prod:" + servidor);
+            System.out.println("Host do servidor de prod:" + InetAddress.getLocalHost().getHostName());
+            System.out.println("Host do servidor de prod canonico:" + InetAddress.getLocalHost().getCanonicalHostName());
+            System.out.println("Host do servidor de prod ip raw:" + InetAddress.getLocalHost().getAddress());
+            
             if (OdontoMensagens.getMensagem("servidor.producao").trim().equals(servidor.trim())) {
 
                 String hora = arg0.getServletContext().getInitParameter("HORA_BATCH");
 
                 CronTrigger trigger = new CronTrigger("MyTrigger", Scheduler.DEFAULT_GROUP, "0 0 " + hora + " * * ?");
-                CronTrigger trigger2 = new CronTrigger("MyTrigger2", Scheduler.DEFAULT_GROUP, "0 15 " + hora + " * * ?");
+          //     CronTrigger trigger2 = new CronTrigger("MyTrigger2", Scheduler.DEFAULT_GROUP, "0 15 " + hora + " * * ?");
                 CronTrigger trigger3 = new CronTrigger("MyTrigger3", Scheduler.DEFAULT_GROUP, "0 30 " + hora + " * * ?");
                 CronTrigger trigger4 = new CronTrigger("MyTrigger3", Scheduler.DEFAULT_GROUP, "0 45 " + hora + " * * ?");
 
