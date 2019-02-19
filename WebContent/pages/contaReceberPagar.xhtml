@@ -1,0 +1,321 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <style>
+@media ( min-width : 500px) {
+    .Wid50, .Wid50 input {
+        width: auto !important;
+    }
+}
+
+.extrato-financeiro td {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+</style>
+
+        <p:tabView id="tv" styleClass="NoPadding">
+            <p:ajax event="tabChange" listener="#{relatorioContabilMB.onTabChange}" update=":lume:tv:pnExtrato,:lume:tv:pnExtratoDetalhado"
+                process="@this,:lume:tv:pnExtrato,:lume:tv:pnExtratoDetalhado" />
+
+            <p:tab id="tab1" title="Pagamentos/Recebimentos">
+                <div class="Container100 Responsive100 NoIndent">
+                    <div class="Container100 ui-fluid NoPadding">
+                        <div class="Card">
+                            <h:inputHidden id="idLancamentoContabil" value="#{lancamentoContabilMB.entity.id}" />
+                            <p:panel id="pnLancamentoContabil" styleClass="BordNone">
+                                <h1 class="CardBigTopic">Pagamentos/Recebimentos</h1>
+                                <div class="SeparatorFull"></div>
+                                <p:outputLabel for="forma" value="Forma : " />
+                                <p:selectOneRadio id="forma" value="#{lancamentoContabilMB.tipo}">
+                                    <p:ajax process="@this" update=":lume:tv:pnLancamentoContabil" listener="#{lancamentoContabilMB.carrearListasPorTipoPagamento}" />
+                                    <f:selectItem itemLabel="Pagamento" itemValue="Pagar" />
+                                    <f:selectItem itemLabel="Recebimento" itemValue="Receber" />
+                                </p:selectOneRadio>
+                                <h:panelGroup styleClass="lumeField" id="pnBtorigem">
+                                    <p:outputLabel for="dadosBasicos" value="Origem/Destino : " />
+                                    <p:autoComplete queryDelay="1000" value="#{lancamentoContabilMB.entity.dadosBasico}" id="dadosBasicos" completeMethod="#{lancamentoContabilMB.geraSugestoes}"
+                                        var="d" itemLabel="#{d.tipoInformacaoNome}" itemValue="#{d}" converter="dadosBasico" required="true" size="46" minQueryLength="3" dropdown="true"
+                                        style="width:45% !important">
+                                        <p:ajax event="itemSelect" listener="#{lancamentoContabilMB.handleSelect}" process=":lume:tv:dadosBasicos"
+                                            update=":lume:tv:tipocategoria, :lume:tv:categoria, :lume:tv:motivo" />
+                                    </p:autoComplete>
+                                    <p:commandButton id="novoOrigem" rendered="#{!lancamentoContabilMB.visivel}" icon="fa fa-plus White" update="pnNovoOrigem, :lume:tv:pnBtorigem" immediate="true"
+                                        actionListener="#{lancamentoContabilMB.novoOrigem}" style="margin-left: 5px;" />
+                                    <p:commandButton id="cancelarNovoOrigem" rendered="#{lancamentoContabilMB.visivel}" icon="fa fa-minus White" update="pnNovoOrigem, :lume:tv:pnBtorigem"
+                                        immediate="true" actionListener="#{lancamentoContabilMB.cancelarNovoOrigem}" style="margin-left: 5px;" />
+                                </h:panelGroup>
+                                <p:panel id="pnNovoOrigem" visible="#{lancamentoContabilMB.visivel}" styleClass="BordNone">
+                                    <h:panelGroup styleClass="lumeField">
+                                        <p:outputLabel for="nomeOrigem" value="Nome : " />
+                                        <p:inputText id="nomeOrigem" value="#{lancamentoContabilMB.origem.dadosBasico.nome}" maxlength="200" required="#{lancamentoContabilMB.visivel}"
+                                            styleClass="Wid30" />
+                                    </h:panelGroup>
+                                    <h:panelGroup styleClass="lumeField">
+                                        <p:outputLabel for="tipoOrigem" value="Tipo de Pessoa: " />
+                                        <p:selectOneRadio id="tipoOrigem" value="#{lancamentoContabilMB.tipoOrigem}" columns="4">
+                                            <f:selectItem itemLabel="Juridica" itemValue="J" />
+                                            <f:selectItem itemLabel="Física" itemValue="F" />
+                                            <p:ajax update=":lume:tv:pgDocumento" />
+                                        </p:selectOneRadio>
+                                    </h:panelGroup>
+                                    <h:panelGroup styleClass="lumeField" id="pgDocumento">
+                                        <p:outputLabel value="Documento : " />
+                                        <p:inputMask id="documentoCPF" value="#{lancamentoContabilMB.origem.dadosBasico.documento}" mask="999.999.999-99" rendered="#{lancamentoContabilMB.tipoOrigem == 'F'}" required="false"
+                                            validator="cpfValidator" class="Wid30" />
+                                        <p:inputMask id="documentoCNPJ" value="#{lancamentoContabilMB.origem.dadosBasico.documento}" mask="99.999.999/9999-99" rendered="#{lancamentoContabilMB.tipoOrigem == 'J'}"
+                                            required="false" validator="cnpjValidator" class="Wid30" />
+                                    </h:panelGroup>
+                                    <div class="SeparatorFull"></div>
+                                    <div class="Container20 Responsive100">
+                                        <p:commandButton id="persistOrigem" icon="White fa fa-save" styleClass="GreenButton" process="pgDocumento,nomeOrigem,@this" value="Salvar"
+                                            update=":lume:tv:pnNovoOrigem, :lume:tv:dadosBasicos" actionListener="#{lancamentoContabilMB.actionPersistOrigem}" />
+                                    </div>
+                                    <div class="Container60"></div>
+                                </p:panel>
+                                <h:panelGroup styleClass="lumeField">
+                                    <p:outputLabel for="tipocategoria" value="Tipo Categoria : " />
+                                    <p:selectOneMenu id="tipocategoria" converter="tipocategoria" required="false" value="#{lancamentoContabilMB.tipoCategoria}" styleClass="Wid50" filter="true"
+                                        filterMatchMode="contains">
+                                        <p:ajax process="@this" update="categoria" listener="#{lancamentoContabilMB.carregarCategorias}" />
+                                        <f:selectItem itemValue="#{null}" itemLabel="Selecione um Tipo Categoria" />
+                                        <f:selectItems value="#{lancamentoContabilMB.tiposCategoria}" var="m" itemLabel="#{m.descricao}" itemValue="#{m}" />
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                                <h:panelGroup styleClass="lumeField">
+                                    <p:outputLabel for="categoria" value="Categoria : " />
+                                    <p:selectOneMenu id="categoria" converter="categoriamotivo" required="false" value="#{lancamentoContabilMB.categoria}" styleClass="Wid50" filter="true"
+                                        filterMatchMode="contains">
+                                        <p:ajax process="@this" update="motivo" listener="#{lancamentoContabilMB.carregarMotivos}" />
+                                        <f:selectItem itemValue="#{null}" itemLabel="Selecione uma Categoria" />
+                                        <f:selectItems value="#{lancamentoContabilMB.categorias}" var="m" itemLabel="#{m.descricao}" itemValue="#{m}" />
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+                                <h:panelGroup styleClass="lumeField">
+                                    <p:outputLabel for="motivo" value="Motivo : " />
+                                    <p:selectOneMenu id="motivo" converter="motivo" required="true" value="#{lancamentoContabilMB.entity.motivo}" styleClass="Wid50" filter="true"
+                                        filterMatchMode="contains">
+                                        <p:ajax process="@this" update="tipocategoria,categoria" listener="#{lancamentoContabilMB.carregarTipoECategoria}" />
+                                        <f:selectItem itemValue="#{null}" itemLabel="Selecione um Motivo" />
+                                        <f:selectItems value="#{lancamentoContabilMB.motivos}" var="m" itemLabel="#{m.descricao}" itemValue="#{m}" />
+                                    </p:selectOneMenu>
+                                </h:panelGroup>
+
+                                <h:panelGroup styleClass="lumeField">
+                                    <p:outputLabel for="data" value="Data : " />
+                                    <p:calendar id="data" required="true" value="#{lancamentoContabilMB.entity.data}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+                                        locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" class="Wid10">
+                                    </p:calendar>
+                                </h:panelGroup>
+
+                                <h:panelGroup styleClass="lumeField">
+                                    <p:outputLabel for="valor" value="Valor : " />
+                                    <p:inputNumber id="valor" value="#{lancamentoContabilMB.entity.valor}" required="true" maxlength="13" maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+                                        thousandSeparator="." class="Wid10" />
+                                </h:panelGroup>
+                                <div class="SeparatorFull"></div>
+                                <div class="Container25 Responsive100">
+                                    <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{lancamentoContabilMB.actionPersist}"
+                                        update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil" process="@this,dadosBasicos,motivo,data,valor" styleClass="GreenButton" />
+                                </div>
+                                <div class="Container25 Responsive100">
+                                    <p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{lancamentoContabilMB.actionRemove}"
+                                        update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil" process="@this" disabled="#{lancamentoContabilMB.entity.id == 0}" styleClass="RedButton" />
+                                </div>
+                                <div class="Container25 Responsive100">
+                                    <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{lancamentoContabilMB.actionNew}"
+                                        update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil" immediate="true" />
+                                </div>
+                                <div class="Container25 Responsive100">
+                                    <p:commandButton value="Excel" ajax="false" immediate="true" icon="White fa fa-file-excel-o" styleClass="GreenButton">
+                                        <p:dataExporter encoding="iso-8859-1" type="xls" target="dtLancamentoContabil" fileName="pagamentorecebimentos" />
+                                    </p:commandButton>
+                                </div>
+                            </p:panel>
+                            <div class="EmptyBox20"></div>
+
+                            <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtLancamentoContabil" value="#{lancamentoContabilMB.lancamentoContabeis}" var="lc" rows="15"
+                                paginator="true" selection="#{lancamentoContabilMB.entity}" selectionMode="single" rowKey="#{lc}" paginatorPosition="bottom">
+                                <p:ajax event="rowSelect" update=":lume:tv:pnLancamentoContabil" listener="#{lancamentoContabilMB.carregaTela}" />
+                                <f:facet name="header">Contas a Pagar/Receber</f:facet>
+
+                                <p:column filterBy="#{lc.dadosBasico.nome}" sortBy="#{lc.dadosBasico.nome}" filterMatchMode="contains" headerText="Origem/Destino">
+                                    <h:outputText value="#{lc.dadosBasico.nome}" title="#{lc.id}" />
+                                </p:column>
+                                <p:column filterBy="#{lc.motivo.categoria.tipoCategoria.descricao}" sortBy="#{lc.motivo.categoria.tipoCategoria.descricao}" filterMatchMode="contains"
+                                    headerText="Tipo Categoria">
+                                    <h:outputText value="#{lc.motivo.categoria.tipoCategoria.descricao}" />
+                                </p:column>
+                                <p:column filterBy="#{lc.motivo.categoria.descricao}" sortBy="#{lc.motivo.categoria.descricao}" filterMatchMode="contains" headerText="Categoria">
+                                    <h:outputText value="#{lc.motivo.categoria.descricao}" />
+                                </p:column>
+                                <p:column filterBy="#{lc.motivo.descricao}" sortBy="#{lc.motivo.descricao}" filterMatchMode="contains" headerText="Motivo">
+                                    <h:outputText value="#{lc.motivo.descricao}" />
+                                </p:column>
+                                <p:column filterBy="#{lc.valor}" sortBy="#{lc.valor}" style="text-align:right" filterMatchMode="contains" headerText="Valor(R$)">
+                                    <h:outputText value="#{lc.valor}">
+                                        <f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Data" filterBy="#{lc.dataStr}" sortBy="#{lc.data}" filterMatchMode="contains">
+                                    <h:outputText value="#{lc.dataStr}" />
+                                </p:column>
+                                <p:column filterBy="#{lc.tipo}" sortBy="#{lc.tipo}" filterMatchMode="contains" headerText="Tipo">
+                                    <h:outputText value="#{lc.tipo}" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+            </p:tab>
+
+            <p:tab id="tab2" title="Validação Lançamento">
+                <div class="Container100 Responsive100 NoIndent">
+                    <div class="Container100 ui-fluid NoPadding">
+                        <div class="Card">
+                            <p:panel styleClass="BordNone">
+                                <h1 class="CardBigTopic">Validação Lançamentos</h1>
+                                <div class="SeparatorFull"></div>
+                            </p:panel>
+                            <div class="EmptyBox20"></div>
+                            <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtLancamentoValidar" value="#{lancamentoContabilMB.lancamentosValidar}" var="lc" rows="50"
+                                paginator="true" paginatorPosition="bottom">
+                                <f:facet name="header">Lançamentos</f:facet>
+                                <p:column filterBy="#{lc.orcamento.planoTratamento.paciente.dadosBasico.nomeStr}" sortBy="#{lc.orcamento.planoTratamento.paciente.dadosBasico.nome}"
+                                    filterMatchMode="contains" headerText="Paciente">
+                                    <h:outputText value="#{lc.orcamento.planoTratamento.paciente.dadosBasico.nome}" title="#{lc.id}" />
+                                </p:column>
+                                <p:column filterBy="#{lc.formaPagamentoStr}" sortBy="#{lc.formaPagamentoStr}" filterMatchMode="contains" headerText="Forma">
+                                    <h:outputText value="#{lc.formaPagamentoStr}" />
+                                </p:column>
+                                <p:column filterBy="#{lc.valor}" sortBy="#{lc.valor}" filterMatchMode="contains" headerText="Valor(R$)">
+                                    <h:outputText value="#{lc.valor}">
+                                        <f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column filterBy="#{lc.valorComDesconto}" sortBy="#{lc.valorComDesconto}" filterMatchMode="contains" headerText="Valor(R$) C/ Desconto">
+                                    <h:outputText value="#{lc.valorComDesconto}">
+                                        <f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+                                    </h:outputText>
+                                </p:column>
+                                <p:column headerText="Data Pagamento" filterBy="#{lc.dataPagamentoStr}" sortBy="#{lc.dataPagamento}" filterMatchMode="contains">
+                                    <h:outputText value="#{lc.dataPagamentoStr}" />
+                                </p:column>
+                                <p:column headerText="Data Crédito" filterBy="#{lc.dataCreditoStr}" sortBy="#{lc.dataCreditoStr}" filterMatchMode="contains">
+                                    <p:calendar id="dtCreditoLancamento" value="#{lc.dataCredito}" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}"
+                                        timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" class="Wid50" mask="true" />
+                                </p:column>
+                                <p:column headerText="Conferência" width="100">
+                                    <p:commandButton icon="White fa fa-thumbs-o-up" actionListener="#{lancamentoContabilMB.actionValidarLancamento(lc)}" update=":lume:tv:dtLancamentoValidar"
+                                        process="@this,dtCreditoLancamento" styleClass="GreenButton Wid50" />
+                                </p:column>
+                            </p:dataTable>
+                        </div>
+                    </div>
+                </div>
+            </p:tab>
+            <p:tab id="tab3" title="Extrato">
+                <div class="Container100 Responsive100 NoIndent">
+                    <div class="Container100 ui-fluid NoPadding">
+                        <div class="Card">
+                            <p:panel id="pnExtrato" styleClass="BordNone">
+
+                                <p:panel styleClass="BordNone">
+                                    <h1 class="CardBigTopic">Extrato Financeiro</h1>
+                                    <div class="SeparatorFull"></div>
+                                </p:panel>
+                                <div class="EmptyBox20"></div>
+
+                                <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                                    style="border:0px none; background-color:transparent;">
+
+                                    <p:outputLabel for="inicio" value="Inicio : " />
+                                    <p:calendar id="inicio" value="#{relatorioContabilMB.inicio}" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid50" />
+
+                                    <p:outputLabel for="fim" value="Fim : " />
+                                    <p:calendar id="fim" value="#{relatorioContabilMB.fim}" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid50" />
+
+                                </p:panelGrid>
+
+                                <div class="SeparatorFull"></div>
+                                <div class="Container25 Responsive100">
+                                    <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioContabilMB.filtra}" update="extrato"
+                                        process="@this,extrato,inicio,fim" styleClass="OrangeButton" />
+                                </div>
+                                <div class="Container25 Responsive100">
+                                    <p:commandButton id="limpar" icon="White fa fa-file-o" value="Limpar" update="inicio, fim" process="@this" actionListener="#{relatorioContabilMB.actionLimpar}" />
+                                </div>
+
+                                <div class="Container25 Responsive100">
+                                    <p:commandButton value="Imprimir" type="button" icon="White fa fa-print" styleClass="NavyButton">
+                                        <p:printer target="extrato" />
+                                    </p:commandButton>
+                                </div>
+
+                                <div class="EmptyBox20"></div>
+                                <div class="SeparatorFull"></div>
+                                <div class="EmptyBox20"></div>
+
+                                <h:outputLabel id="extrato" value="#{relatorioContabilMB.extrato}" escape="false" />
+                            </p:panel>
+                        </div>
+                    </div>
+                </div>
+            </p:tab>
+            <p:tab id="tab4" title="Extrato Detalhado">
+                <div class="Container100 Responsive100 NoIndent">
+                    <div class="Container100 ui-fluid NoPadding">
+                        <div class="Card">
+                            <p:panel id="pnExtratoDetalhado" styleClass="BordNone">
+
+                                <p:panel styleClass="BordNone">
+                                    <h1 class="CardBigTopic">Extrato Financeiro Detalhado</h1>
+                                    <div class="SeparatorFull"></div>
+                                </p:panel>
+                                <div class="EmptyBox20"></div>
+
+                                <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                                    style="border:0px none; background-color:transparent;">
+
+                                    <p:outputLabel for="inicioDetalhado" value="Inicio : " />
+                                    <p:calendar id="inicioDetalhado" value="#{relatorioContabilDetalhadoMB.inicio}" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid50" />
+
+                                    <p:outputLabel for="fimDetalhado" value="Fim : " />
+                                    <p:calendar id="fimDetalhado" value="#{relatorioContabilDetalhadoMB.fim}" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid50" />
+
+                                </p:panelGrid>
+
+                                <div class="SeparatorFull"></div>
+                                <div class="Container25 Responsive100">
+                                    <p:commandButton id="pesquisarDetalhado" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioContabilDetalhadoMB.filtra}"
+                                        update="extratoDetalhado" process="@this,extratoDetalhado,inicioDetalhado,fimDetalhado" styleClass="OrangeButton" />
+                                </div>
+                                <div class="Container25 Responsive100">
+                                    <p:commandButton id="limparDetalhado" icon="White fa fa-file-o" value="Limpar" update="inicioDetalhado, fimDetalhado" process="@this"
+                                        actionListener="#{relatorioContabilDetalhadoMB.actionLimpar}" />
+                                </div>
+
+                                <div class="Container25 Responsive100">
+                                    <p:commandButton value="Imprimir" type="button" icon="White fa fa-print" styleClass="NavyButton">
+                                        <p:printer target="extratoDetalhado" />
+                                    </p:commandButton>
+                                </div>
+
+                                <div class="EmptyBox20"></div>
+                                <div class="SeparatorFull"></div>
+                                <div class="EmptyBox20"></div>
+
+                                <h:outputLabel id="extratoDetalhado" value="#{relatorioContabilDetalhadoMB.extrato}" escape="false" />
+                            </p:panel>
+                        </div>
+                    </div>
+                </div>
+            </p:tab>
+        </p:tabView>
+
+
+
+
+
+    </ui:define>
+</ui:composition>

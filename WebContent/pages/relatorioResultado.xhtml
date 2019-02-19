@@ -1,0 +1,194 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <div class="Container100 Responsive100 NoIndent">
+            <div class="Container100 ui-fluid NoPadding">
+                <div class="Card">
+                    <p:panel id="pnPrincipal" styleClass="BordNone">
+
+                        <h1 class="CardBigTopic">Relatório de Resultados</h1>
+                        <div class="SeparatorFull"></div>
+
+                        <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                            style="border:0px none; background-color:transparent;">
+
+                            <p:outputLabel for="profissional" value="Finalizado Por : " />
+                            <p:autoComplete dropdown="true" queryDelay="1000" size="35" value="#{relatorioResultadoMB.profissional}" id="profissional" minQueryLength="3"
+                                completeMethod="#{relatorioResultadoMB.geraSugestoesProfissional}" var="profissional" itemLabel="#{profissional.dadosBasico.prefixoNome}" itemValue="#{profissional}"
+                                converter="profissional" forceSelection="true" required="false">
+                            </p:autoComplete>
+
+                            <p:column></p:column>
+                            <p:column></p:column>
+
+                            <p:outputLabel for="inicio" value="Inicio : " />
+                            <p:calendar id="inicio" value="#{relatorioResultadoMB.inicio}" pattern="dd/MM/yyyy" mask="true" class="Wid30" required="true" />
+
+                            <p:outputLabel for="fim" value="Fim : " />
+                            <p:calendar id="fim" value="#{relatorioResultadoMB.fim}" pattern="dd/MM/yyyy" mask="true" class="Wid30" required="true" />
+
+                        </p:panelGrid>
+                        <div class="SeparatorFull"></div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioResultadoMB.filtra}" update="dtPrincipal,pnPrincipal" tabindex="1"
+                                process="@this,pnPrincipal" styleClass="OrangeButton" />
+                        </div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
+                                <p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="relatorioResultado" />
+                            </p:commandButton>
+                        </div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="limpar" icon="White fa fa-file-o" value="Limpar" update="inicio, fim, dtPrincipal" process="@this"
+                                actionListener="#{relatorioResultadoMB.actionLimpar}" />
+                        </div>
+                    </p:panel>
+
+                    <div class="EmptyBox20"></div>
+
+                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioResultadoMB.relatorioResultados}" var="m" rows="20" paginator="true" rowKey="#{m}"
+                        paginatorPosition="bottom">
+                        <f:facet name="header">Procedimentos</f:facet>
+                        <p:column filterBy="#{m.profissional.dadosBasico.nome}" sortBy="#{m.profissional.dadosBasico.nome}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Finalizado Por" />
+                            </f:facet>
+                            <h:outputText value="#{m.profissional.dadosBasico.nome}" title="#{m.id}" />
+                        </p:column>
+                        <p:column filterBy="#{m.paciente.dadosBasico.nomeStr}" sortBy="#{m.paciente.dadosBasico.nome}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Paciente" />
+                            </f:facet>
+                            <h:outputText value="#{m.paciente.dadosBasico.nome}" />
+                        </p:column>
+                        <p:column filterBy="#{m.dataStr}" sortBy="#{m.dataAgendamento}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Data do P.T." />
+                            </f:facet>
+                            <h:outputText value="#{m.dataStr}" />
+                        </p:column>
+                        <p:column filterBy="#{m.planoTratamento.descricao}" sortBy="#{m.planoTratamento.descricao}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="P.T." />
+                            </f:facet>
+                            <h:outputText value="#{m.planoTratamento.descricao}" />
+                        </p:column>
+                        <p:column filterBy="#{m.procedimento.descricaoLimpa}" sortBy="#{m.procedimento.descricao}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Procedimento" />
+                            </f:facet>
+                            <h:outputText value="#{m.procedimento.descricao}" />
+                        </p:column>
+                        <p:column filterBy="#{m.valorMaterial}" sortBy="#{m.valorMaterial}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Valor Gasto Material(R$)" />
+                            </f:facet>
+                            <h:panelGroup rendered="#{m.valorMaterial.doubleValue() == 0}">
+                                <h:outputText value="#{m.valorMaterial}">
+                                    <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                                </h:outputText>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{m.valorMaterial.doubleValue() != 0}">
+                                <p:commandLink action="#{relatorioResultadoMB.carregaDetalheValorMaterial(m)}" oncomplete="PF('dlgValorMaterial').show();" process="@this"
+                                    update=":lume:dtValorMaterial">
+                                    <h:outputText value="#{m.valorMaterial}">
+                                        <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                                    </h:outputText>
+                                </p:commandLink>
+                            </h:panelGroup>
+                            <f:facet name="footer">
+                                <h:outputText value="#{relatorioResultadoMB.relatorioResultados.stream().map(obj-> obj.valorMaterial).sum()}">
+                                    <f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+                                </h:outputText>
+                            </f:facet>
+                        </p:column>
+                        <p:column filterBy="#{m.valor}" sortBy="#{m.valor}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Valor Procedimento(R$)" />
+                            </f:facet>
+                            <h:outputText value="#{m.valor}">
+                                <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
+                            <f:facet name="footer">
+                                <h:outputText value="#{relatorioResultadoMB.relatorioResultados.stream().map(obj-> obj.valor).sum()}">
+                                    <f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+                                </h:outputText>
+                            </f:facet>
+                        </p:column>
+                        <p:column filterBy="#{m.valorRepassado}" sortBy="#{m.valorRepassado}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Valor Repassado(R$)" />
+                            </f:facet>
+                            <h:outputText value="#{m.valorRepassado}">
+                                <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
+                            <f:facet name="footer">
+                                <h:outputText value="#{relatorioResultadoMB.relatorioResultados.stream().map(obj-> obj.valorRepassado).sum()}">
+                                    <f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+                                </h:outputText>
+                            </f:facet>
+                        </p:column>
+                        <p:column filterBy="#{m.resultado}" sortBy="#{m.resultado}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Resultado(R$)" />
+                            </f:facet>
+                            <h:outputText value="#{m.resultado}">
+                                <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
+                            <f:facet name="footer">
+                                <h:outputText value="#{relatorioResultadoMB.relatorioResultados.stream().map(obj-> obj.resultado).sum()}">
+                                    <f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+                                </h:outputText>
+                            </f:facet>
+                        </p:column>
+                    </p:dataTable>
+
+                </div>
+            </div>
+        </div>
+
+
+        <p:dialog widgetVar="dlgValorMaterial">
+            <div class="Card">
+                <h1 class="CardBigTopic">Detalhamento dos materiais</h1>
+                <div class="SeparatorFull"></div>
+                <p:dataTable filterDelay="1500"  reflow="true" var="m" value="#{relatorioResultadoMB.detalhesMaterial}" rowKey="m" paginator="true" rows="20" paginatorPosition="bottom" id="dtValorMaterial"
+                    emptyMessage="Esse procedimento não possui custos.">
+                    <f:facet name="header">Materiais</f:facet>
+                    <p:column sortBy="#{m.descricao}" headerText="Descrição" filterBy="#{m.descricao}" style="width:30%">
+                        <h:outputText value="#{m.descricao}" />
+                    </p:column>
+                    <p:column sortBy="#{m.qtdPedida}" headerText="Qtd. Pedida" filterBy="#{m.qtdPedida}">
+                        <h:outputText value="#{m.qtdPedida}" />
+                    </p:column>
+                    <p:column sortBy="#{m.qtdUtilizada}" headerText="Qtd. Utilizada" filterBy="#{m.qtdUtilizada}">
+                        <h:outputText value="#{m.qtdUtilizada}" />
+                    </p:column>
+                    <p:column sortBy="#{m.qtdNaoUtilizada}" headerText="Qtd. Não Utilizada" filterBy="#{m.qtdNaoUtilizada}">
+                        <h:outputText value="#{m.qtdNaoUtilizada}" />
+                    </p:column>
+                    <p:column sortBy="#{m.valor}" style="text-align:center;" headerText="Valor Unit." filterBy="#{m.valor}">
+                        <h:outputText value="#{m.valor}">
+                            <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column sortBy="#{m.valorUtilizado}" style="text-align:center;" headerText="Valor Tot. Utilizado" filterBy="#{m.valorUtilizado}">
+                        <h:outputText value="#{m.valorUtilizado}">
+                            <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                        </h:outputText>
+                        <f:facet name="footer">
+                            <h:outputText value="#{relatorioResultadoMB.detalhesMaterial.stream().map(obj-> obj.valorUtilizado).sum()}">
+                                <f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+                            </h:outputText>
+                        </f:facet>
+                    </p:column>
+                </p:dataTable>
+                <br />
+                <div class="Container16 Responsive100">
+                    <p:commandButton id="fechar" icon="White fa fa-times" value="Fechar" oncomplete="PF('dlgValorMaterial').hide();" process="@this" styleClass="RedButton" />
+                </div>
+            </div>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>

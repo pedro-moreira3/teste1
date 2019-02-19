@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<script>
+			function resize(dialog) {
+				$(window).resize(function() {
+					$(dialog).css({
+						'width' : $(window).width(),
+						'height' : $(window).height(),
+						'left' : '0px',
+						'top' : '0px'
+					});
+				}).resize();
+			}
+		</script>
+
+		<p:dialog widgetVar="tutorialDialog1Vez" header="Tutorial" id="dgTutorial1Vez" responsive="true" modal="true" position="10,10" appendToBody="true"
+			style="position:absolute;overflow:auto;" visible="true" onShow="resize('#lume\\:dgTutorial1Vez');">	
+			<p:galleria showCaption="false" autoPlay="false" value="#{odontoMenuMB.tutorialImagens}" var="imagem" panelHeight="520" panelWidth="920"
+				style="margin: 0 auto;">
+				<h:graphicImage name="#{imagem}" library="images/tutorial" styleClass="ImagemResponsiva" title="" alt="" height="520" panelWidth="920" />
+			</p:galleria>
+
+			<div class="SeparatorFull"></div>
+
+			<p:commandButton id="fechar" icon="White fa fa-close" value="Fechar" process="@this" styleClass="RedButton"
+				oncomplete="PF('tutorialDialog1Vez').hide()" />
+			<p:spacer width="10" />
+
+			<p:selectBooleanCheckbox value="#{odontoMenuMB.mostrarTutorial}">
+				<p:ajax process="@this" listener="#{odontoMenuMB.atualizarMostrarTutorial}" />
+			</p:selectBooleanCheckbox>
+			<h:outputText value=" Sempre Mostrar tutorial" />
+
+		</p:dialog>
+	</ui:define>
+</ui:composition>

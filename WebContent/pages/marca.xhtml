@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<h:inputHidden id="idMarca" value="#{marcaMB.entity.id}" />
+					<p:panel id="pnMarca" styleClass="BordNone">
+						<h1 class="CardBigTopic">Marca</h1>
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+
+							<p:outputLabel for="nome" value="Descrição : " />
+							<p:inputText id="nome" value="#{marcaMB.entity.nome}" required="true" maxlength="100" />
+
+						</p:panelGrid>
+						<div class="SeparatorFull"></div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{marcaMB.actionPersist}"
+								 update=":lume:pnMarca,:lume:dtMarca" process=":lume:pnMarca" styleClass="GreenButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{marcaMB.actionRemove}"
+								update=":lume:pnMarca,:lume:dtMarca" process="@this" disabled="#{marcaMB.entity.id == 0}" 
+								styleClass="RedButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{marcaMB.actionNew}"
+								 update=":lume:pnMarca,:lume:dtMarca" immediate="true" />
+						</div>
+					</p:panel>
+					<div class="EmptyBox20"></div>
+
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMarca" value="#{marcaMB.marcas}" var="marca" rows="15" paginator="true"
+						selection="#{marcaMB.entity}" selectionMode="single" rowKey="#{marca}" paginatorPosition="bottom">
+						<p:ajax event="rowSelect" update=":lume:pnMarca" />
+						<f:facet name="header">Marcas</f:facet>
+
+						<p:column filterBy="#{marca.nome}" sortBy="#{marca.nome}" filterMatchMode="contains" headerText="Descrição">
+							<h:outputText value="#{marca.nome}" title="#{marca.id}" />
+						</p:column>
+						<p:column filterBy="#{marca.dataCadastroStr}" sortBy="#{marca.dataCadastroStrOrd}" filterMatchMode="contains" headerText="Data do Cadastro">
+							<h:outputText value="#{marca.dataCadastroStr}" />
+						</p:column>
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

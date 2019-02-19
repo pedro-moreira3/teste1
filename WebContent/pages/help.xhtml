@@ -1,0 +1,86 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<h:inputHidden id="idHelp" value="#{helpMB.entity.id}" />
+					<p:panel id="pnHelp" styleClass="BordNone">
+
+						<h1 class="CardBigTopic">Cadastro de Help</h1>
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+							<p:outputLabel for="tela" value="Tela : " />
+							<p:selectOneMenu id="tela" value="#{helpMB.objetoSelecionado}" converter="objeto" required="true" styleClass="Wid50" filter="true" filterMatchMode="contains">
+								<f:selectItem itemValue="#{null}" itemLabel="Selecione uma Tela" />
+								<f:selectItems value="#{helpMB.telas}" var="t" itemValue="#{t}" itemLabel="#{t.objStrDes}" />
+								<p:ajax process="@this" update=":lume:pnHelp,:lume:imagens" listener="#{helpMB.carregarHelpByTelaSelecionada}" />
+							</p:selectOneMenu>
+
+							<h:panelGroup styleClass="lumeField" id="pnImagens">
+								<p:outputLabel value="Imagens: " for="imagens" />
+								<p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank"
+									style="border:0px none; background-color:transparent;">
+									<p:fileUpload id="imagens" fileUploadListener="#{helpMB.handleFileUpload}" mode="advanced" auto="true" dragDropSupport="false"
+										multiple="true" sizeLimit="250000" fileLimit="3" allowTypes="/(\.|\/)(gif|jpe?g|png)$/" update=":lume:dtImagens, :lume:help"
+										invalidSizeMessage="Tamanho da imagem inválida." invalidFileMessage="Tipo de arquivo não suportado."
+										disabled="#{helpMB.objetoSelecionado == null}">
+									</p:fileUpload>
+									<p:dataTable filterDelay="1500"  emptyMessage="Nenhum registro" var="img" value="#{helpMB.entity.imagens}" paginator="true" rows="7" paginatorPosition="bottom"
+										id="dtImagens"  selection="#{helpMB.imagem}" selectionMode="single"
+										rowKey="#{img}">
+										<f:facet name="header">
+											Imagens
+										</f:facet>
+										<p:ajax event="rowSelect" process="@this,:lume:help" update=":lume:help" listener="#{helpMB.insereImagemHTML}" />
+										<p:column>
+											<h:outputText value="#{img.nomeOriginal}" />
+										</p:column>
+										<p:column>
+											<p:commandButton id="new" icon="fa fa-trash White" action="#{helpMB.removerImagem(img)}" update=":lume:pnImagens,:lume:help"
+												process="@this,:lume:help" />
+										</p:column>
+
+									</p:dataTable>
+								</p:panelGrid>
+							</h:panelGroup>
+
+							<p:outputLabel for="help" value="Help : " />
+							<p:editor id="help" widgetVar="editorWidget" value="#{helpMB.entity.conteudo}" width="600" height="600" />
+
+						</p:panelGrid>
+						<div class="SeparatorFull"></div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{helpMB.actionPersist}"
+								 update=":lume:pnHelp,:lume:dtHelp" process=":lume:pnHelp" styleClass="GreenButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{helpMB.actionRemove}"
+								update=":lume:pnHelp,:lume:dtHelp" process="@this" disabled="#{helpMB.entity.id == 0}" 
+								styleClass="RedButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{helpMB.actionNew}"
+								 update=":lume:pnHelp,:lume:dtHelp" immediate="true" />
+						</div>
+					</p:panel>
+					<div class="EmptyBox20"></div>
+
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtHelp" value="#{helpMB.helps}" var="help" rows="15" paginator="true" selection="#{helpMB.entity}"
+						selectionMode="single" rowKey="#{help}" paginatorPosition="bottom">
+						<p:ajax event="rowSelect" update=":lume:pnHelp" listener="#{helpMB.carregarObjetoByTela}" />
+						<f:facet name="header">Helps</f:facet>
+
+						<p:column filterBy="#{help.label}" sortBy="#{help.label}" filterMatchMode="contains" headerText="Tela">
+							<h:outputText value="#{help.label}" />
+						</p:column>
+
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

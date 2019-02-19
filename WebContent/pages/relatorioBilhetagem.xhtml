@@ -1,0 +1,103 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<p:panel id="pnPrincipal" styleClass="BordNone">
+						<h1 class="CardBigTopic">Bilhetagem</h1>
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+						style="border:0px none; background-color:transparent;">
+
+
+							<p:outputLabel for="inicio" value="Inicio : " />
+							<p:calendar id="inicio" value="#{relatorioBilhetagemMB.inicio}" pattern="dd/MM/yyyy" mask="true" required="true"  class="Wid10"/>
+
+							<p:outputLabel for="fim" value="Fim : " />
+							<p:calendar id="fim" value="#{relatorioBilhetagemMB.fim}" pattern="dd/MM/yyyy" mask="true" required="true"  class="Wid10"/>
+
+							<p:outputLabel for="status" value="Status : " />
+							<p:selectOneMenu id="status" value="#{relatorioBilhetagemMB.status}" required="true" class="Wid30">
+								<f:selectItem itemLabel="Selecione um status" itemValue="" />
+								<f:selectItem itemLabel="Atendido" itemValue="A" />
+								<f:selectItem itemLabel="Cancelado" itemValue="C" />
+								<f:selectItem itemLabel="Não Confirmado" itemValue="N" />
+								<f:selectItem itemLabel="Confirmado" itemValue="S" />
+								<f:selectItem itemLabel="Pré Agendado" itemValue="P" />
+								<f:selectItem itemLabel="Falta" itemValue="B" />
+								<f:selectItem itemLabel="Encaixe" itemValue="E" />
+								<f:selectItem itemLabel="Remarcado" itemValue="R" />
+								<f:selectItem itemLabel="Cliente na Clínica" itemValue="I" />
+								<f:selectItem itemLabel="Em Atendimento" itemValue="O" />
+								<f:selectItem itemLabel="Excluido" itemValue="EX" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+
+						<div class="SeparatorFull"></div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioBilhetagemMB.filtra}"
+								update="dtPrincipal,pnPrincipal" tabindex="1" process="@this,pnPrincipal" 
+								styleClass="OrangeButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
+								<p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="#{relatorioBilhetagemMB.vigencia}" />
+							</p:commandButton>
+						</div>
+
+					</p:panel>
+					<div class="EmptyBox20"></div>
+
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioBilhetagemMB.relatorioBilhetagens}" var="m" rows="20"
+						paginator="true" rowKey="#{m}" paginatorPosition="bottom">
+						<f:facet name="header">Bilhetagem</f:facet>
+
+						<p:column filterBy="#{m.profissional}" sortBy="#{m.profissional}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Profissional" />
+							</f:facet>
+							<h:outputText value="#{m.profissional}" />
+						</p:column>
+						<p:column filterBy="#{m.paciente}" sortBy="#{m.paciente}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Paciente" />
+							</f:facet>
+							<h:outputText value="#{m.paciente}" />
+						</p:column>
+						<p:column filterBy="#{m.inicioStrOrd}" sortBy="#{m.inicioStr}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Inicio" />
+							</f:facet>
+							<h:outputText value="#{m.inicioStr}" />
+						</p:column>
+						<p:column filterBy="#{m.fimStrOrd}" sortBy="#{m.fimStr}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Fim" />
+							</f:facet>
+							<h:outputText value="#{m.fimStr}" />
+						</p:column>
+						<p:column filterBy="#{m.status}" sortBy="#{m.status}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Status" />
+							</f:facet>
+							<h:outputText value="#{m.status}" />
+						</p:column>
+						<p:column filterBy="#{m.quantidade}" sortBy="#{m.quantidade}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Quantidade" />
+							</f:facet>
+							<h:outputText value="#{m.quantidade}" />
+							<f:facet name="footer">
+								<h:outputText
+									value="Total procedimento/consulta  :  #{relatorioBilhetagemMB.somaQuantidade} / #{relatorioBilhetagemMB.relatorioBilhetagens.size()}">
+								</h:outputText>
+							</f:facet>
+						</p:column>
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

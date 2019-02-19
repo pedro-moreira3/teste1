@@ -1,0 +1,662 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+
+
+
+
+	<style>
+<!-- /* Font Definitions */
+@font-face {
+	font-family: "Cambria Math";
+	panose-1: 2 4 5 3 5 4 6 3 2 4;
+}
+
+@font-face {
+	font-family: "Calibri Light";
+	panose-1: 2 15 3 2 2 2 4 3 2 4;
+}
+
+@font-face {
+	font-family: Calibri;
+	panose-1: 2 15 5 2 2 2 4 3 2 4;
+}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal {
+	margin-top: 0cm;
+	margin-right: 0cm;
+	margin-bottom: 8.0pt;
+	margin-left: 0cm;
+	line-height: 107%;
+	font-size: 11.0pt;
+	font-family: "Calibri", sans-serif;
+}
+
+h2 {
+	mso-style-link: "Título 2 Char";
+	margin-right: 0cm;
+	margin-left: 0cm;
+	font-size: 18.0pt;
+	font-family: "Times New Roman", serif;
+	font-weight: bold;
+}
+
+h3 {
+	mso-style-link: "Título 3 Char";
+	margin-right: 0cm;
+	margin-left: 0cm;
+	font-size: 13.5pt;
+	font-family: "Times New Roman", serif;
+	font-weight: bold;
+}
+
+h4 {
+	mso-style-link: "Título 4 Char";
+	margin-right: 0cm;
+	margin-left: 0cm;
+	font-size: 12.0pt;
+	font-family: "Times New Roman", serif;
+	font-weight: bold;
+}
+
+p.MsoFootnoteText, li.MsoFootnoteText, div.MsoFootnoteText {
+	mso-style-link: "Texto de nota de rodapé Char";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	font-size: 10.0pt;
+	font-family: "Calibri", sans-serif;
+}
+
+p.MsoHeader, li.MsoHeader, div.MsoHeader {
+	mso-style-link: "Cabeçalho Char";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	font-size: 11.0pt;
+	font-family: "Calibri", sans-serif;
+}
+
+p.MsoFooter, li.MsoFooter, div.MsoFooter {
+	mso-style-link: "Rodapé Char";
+	margin: 0cm;
+	margin-bottom: .0001pt;
+	font-size: 11.0pt;
+	font-family: "Calibri", sans-serif;
+}
+
+span.MsoFootnoteReference {
+	vertical-align: super;
+}
+
+a:link, span.MsoHyperlink {
+	color: blue;
+	text-decoration: underline;
+}
+
+a:visited, span.MsoHyperlinkFollowed {
+	color: #954F72;
+	text-decoration: underline;
+}
+
+p {
+	margin-right: 0cm;
+	margin-left: 0cm;
+	font-size: 12.0pt;
+	font-family: "Times New Roman", serif;
+}
+
+p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph {
+	margin-top: 0cm;
+	margin-right: 0cm;
+	margin-bottom: 8.0pt;
+	margin-left: 36.0pt;
+	line-height: 107%;
+	font-size: 11.0pt;
+	font-family: "Calibri", sans-serif;
+}
+
+p.MsoListParagraphCxSpFirst, li.MsoListParagraphCxSpFirst, div.MsoListParagraphCxSpFirst
+	{
+	margin-top: 0cm;
+	margin-right: 0cm;
+	margin-bottom: 0cm;
+	margin-left: 36.0pt;
+	margin-bottom: .0001pt;
+	line-height: 107%;
+	font-size: 11.0pt;
+	font-family: "Calibri", sans-serif;
+}
+
+p.MsoListParagraphCxSpMiddle, li.MsoListParagraphCxSpMiddle, div.MsoListParagraphCxSpMiddle
+	{
+	margin-top: 0cm;
+	margin-right: 0cm;
+	margin-bottom: 0cm;
+	margin-left: 36.0pt;
+	margin-bottom: .0001pt;
+	line-height: 107%;
+	font-size: 11.0pt;
+	font-family: "Calibri", sans-serif;
+}
+
+p.MsoListParagraphCxSpLast, li.MsoListParagraphCxSpLast, div.MsoListParagraphCxSpLast
+	{
+	margin-top: 0cm;
+	margin-right: 0cm;
+	margin-bottom: 8.0pt;
+	margin-left: 36.0pt;
+	line-height: 107%;
+	font-size: 11.0pt;
+	font-family: "Calibri", sans-serif;
+}
+
+span.Ttulo2Char {
+	mso-style-name: "Título 2 Char";
+	mso-style-link: "Título 2";
+	font-family: "Times New Roman", serif;
+	font-weight: bold;
+}
+
+span.Ttulo3Char {
+	mso-style-name: "Título 3 Char";
+	mso-style-link: "Título 3";
+	font-family: "Times New Roman", serif;
+	font-weight: bold;
+}
+
+span.Ttulo4Char {
+	mso-style-name: "Título 4 Char";
+	mso-style-link: "Título 4";
+	font-family: "Times New Roman", serif;
+	font-weight: bold;
+}
+
+p.mt-20, li.mt-20, div.mt-20 {
+	mso-style-name: mt-20;
+	margin-right: 0cm;
+	margin-left: 0cm;
+	font-size: 12.0pt;
+	font-family: "Times New Roman", serif;
+}
+
+span.TextodenotaderodapChar {
+	mso-style-name: "Texto de nota de rodapé Char";
+	mso-style-link: "Texto de nota de rodapé";
+}
+
+span.text-x-small {
+	mso-style-name: text-x-small;
+}
+
+span.CabealhoChar {
+	mso-style-name: "Cabeçalho Char";
+	mso-style-link: Cabeçalho;
+}
+
+span.RodapChar {
+	mso-style-name: "Rodapé Char";
+	mso-style-link: Rodapé;
+}
+
+.MsoChpDefault {
+	font-family: "Calibri", sans-serif;
+}
+
+.MsoPapDefault {
+	margin-bottom: 8.0pt;
+	line-height: 107%;
+}
+/* Page Definitions */
+@page WordSection1 {
+	size: 595.3pt 841.9pt;
+	margin: 42.55pt 1.0cm 42.55pt 2.0cm;
+}
+
+div.WordSection1 {
+	page: WordSection1;
+}
+/* List Definitions */
+ol {
+	margin-bottom: 0cm;
+}
+
+ul {
+	margin-bottom: 0cm;
+}
+-->
+</style>
+
+
+
+	<div class="WordSection1">
+
+		<div style='border: none; border-bottom: solid windowtext 1.0pt; padding: 0cm 0cm 1.0pt 0cm'>
+
+			<p class="MsoNormal" align="center"
+				style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: center; line-height: normal; border: none; padding: 0cm'>
+				<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></b>
+			</p>
+
+			<p class="MsoNormal" align="center"
+				style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: center; line-height: normal; border: none; padding: 0cm'>
+				<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>CONTRATO DE LICENÇA DE USO DE PROGRAMA DE COMPUTADOR
+						DENOMINADO DE “INTELIDENTE” EXCLUSIVAMENTE VIA WEBSITE  </span></b>
+			</p>
+
+		</div>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>Este Contrato de Licença de Usuário Final (<b>CONTRATO</b>) é um
+				acordo legal entre o usuário final (Pessoa Física ou Jurídica) denominado <b>CONTRATANTE,</b> e a <b>LUME SERVIÇOS DE TECNOLOGIA LTDA</b>, pessoa
+				jurídica de direito privado, inscrita no <b>CNPJ nº 02.306.226/0001-40</b>, com sede na Rua João Zaitter, nº 702, Centro, na cidade de Pinhais –
+				PR., doravante denominado <b>CONTRATADA</b>, para uso do programa de computador denominado <b>INTELIDENTE<a href="#_ftn1" name="_ftnref1"
+					title=""><span class="MsoFootnoteReference"><span class="MsoFootnoteReference"></span></span></a></b> (<b>INTELIDENTE - Gestão de Clínicas e
+					Consultórios Odontológicos</b>), mediante as cláusulas e condições abaixo.
+			</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoListParagraph" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>1.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+				</span></span></b><b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>DO OBJETO</span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></b>
+		</p>
+
+		<p class="MsoListParagraphCxSpFirst" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>O presente <b>CONTRATO</b> tem como objeto a <b>LICENÇA DE USO</b>
+				<b>DO PROGRAMA DE COMPUTADOR</b>, cuja propriedade material e intelectual pertence à <b>CONTRATADA</b>, denominado de<b> INTELIDENTE</b>, <b>exclusivamente
+					através da website (www.intelidente.com)</b>, por <b>prazo indeterminado</b>, a partir do ato de aceitação, sem ressalvas e/ou reservas de todos os
+				termos e condições aqui estabelecidas.
+			</span>
+		</p>
+
+		<p class="MsoListParagraphCxSpMiddle" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif; color: red'>&#160;</span>
+		</p>
+
+		<p class="MsoListParagraphCxSpLast" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>2.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+				</span></span></b><b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>DA DECLARAÇÃO DE VONTADE E ACEITE</span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal; background: white'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoListParagraphCxSpFirst" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal; background: white'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>O CONTRATANTE declara que teve acesso antecipado aos Termos e
+				Condições do presente CONTRATO, que leu e compreendeu, inexistindo dúvidas quanto aos seus direitos e obrigações, que os aceita livre e
+				incondicionalmente, sem ressalva e/ou reserva, constituindo este instrumento o acordo único e completo entre as partes, que  está ciente e que
+				concorda com a política de confidencialidade e ambientes de proteção de informações confidenciais, dados pessoais e registros de acesso,
+				consentindo livre e expressamente às ações de coleta, uso, armazenamento e tratamento das referidas informações e dados, que e</span><span
+				style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>stá ciente da aplicação do INTELIDENTE, das suas FUNCIONALIDADES, e dos
+				PLANOS ofertados, publicados no website www.intelidente.com</span><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>, bem
+				como o que cada um deles oferece e o seu custo mensal e que poderá migrar de PLANO a qualquer momento. E</span><span
+				style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>stá ciente de que as operações que corresponderem à aceitação do
+				presente CONTRATO, de determinadas opções, bem como de rescisão e demais alterações, serão registradas nos bancos de dados da CONTRATADA,
+				juntamente com a data e hora em que o aceite foi manifestado pelo CONTRATANTE, podendo tal informação ser utilizada como prova, independentemente
+				de outra formalidade. Está ciente que a</span><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>o utilizar o INTELIDENTE,
+				mesmo que parcial ou a título de teste, o CONTRATANTE estará vinculado aos termos deste CONTRATO, concordando com os mesmos. Em caso de
+				discordância dos termos aqui apresentados, a utilização do INTELIDENTE deve ser imediatamente interrompida. Aceitos os termos e as condições do
+				presente instrumento, sem reservas e/ou ressalvas, este CONTRATO concede ao CONTRATANTE o direito, não exclusivo e intransferível para usar o
+				INTELIDENTE. </span><span class="text-x-small"><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>Declara que é
+					maior de idade e está autorizado a aceitar este Contrato em nome de todas as pessoas e entidades para as quais (ou cujos Dispositivos) você está
+					obtendo as Soluções.</span></span>
+		</p>
+
+		<p class="MsoListParagraphCxSpLast" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal; background: white'>
+			<span class="text-x-small"><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>O USUÁRIO fica ciente e concorda que este Termo de Uso poderá ser
+				alterado pela CONTRATADA, a qualquer tempo, sendo que a continuidade de utilização ficará a critério do CONTRATANTE, sendo que o uso continuado do
+				INTELIDENTE constitui aceitação da versão mais recente do Termo de Uso e Política de Privacidade. </span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal; background: white'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoListParagraph" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>3.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+				</span></span></b><b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>DA PROPRIEDADE INTELECTUAL</span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal; background: white'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal; background: white'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>Pelo presente instrumento, o CONTRATANTE não adquire, nenhum
+				direito de propriedade intelectual ou outros direitos exclusivos, incluindo patentes, desenhos, marcas, direitos autorais ou direitos sobre
+				informações confidenciais ou segredos de negócio, sobre ou relacionados ao INTELIDENTE ou nenhuma parte dele. O CONTRATANTE também não adquire
+				nenhum direito sobre ou relacionado ao INTELIDENTE ou qualquer componente dele, além dos direitos expressamente licenciados ao mesmo sob o
+				presente CONTRATO ou em qualquer outro contrato mutuamente acordado por escrito que o CONTRATANTE possa ter celebrado com a CONTRATADA. Quaisquer
+				direitos não expressamente concedidos sob o presente instrumento são reservados. Também será de propriedade exclusiva da CONTRATADA, todo o
+				conteúdo disponibilizado no site, incluindo, mas não se limitando, textos, gráficos, imagens, logos, ícones, fotografias, conteúdo editorial,
+				notificações, softwares e qualquer outro material.</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal; background: white'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoListParagraph" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>4.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+				</span></span></b><b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>DAS RESTRIÇÕES </span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>O CONTRATANTE não poderá utilizar e nem permitir o uso do
+				INTELIDENTE para outra finalidade que não seja o uso interno. Esta licença não implica na capacidade de acessar outros SOFTWARES além daqueles
+				originalmente localizados no INTELIDENTE. Em nenhuma hipótese o CONTRATANTE terá direito e/ou acesso ao código fonte do INTELIDENTE ora
+				licenciado, por este se tratar de propriedade intelectual da CONTRATADA. A licença atribuída a este CONTRATO restringe-se na utilização do
+				INTELIDENTE, para benefício próprio, e utilização dos recursos conforme plano adquirido. O CONTRATANTE não adquire, pelo presente instrumento,
+				nenhum direito de propriedade intelectual ou outros direitos exclusivos, incluindo patentes, desenhos, marcas, direitos autorais ou direitos sobre
+				informações confidenciais ou segredos de negócio, sobre ou relacionados ao INTELIDENTE ou nenhuma parte dele. Em hipótese alguma é permitido ao
+				CONTRATANTE ou a terceiros, de forma geral: Copiar, ceder, sublicenciar, vender, dar em locação ou em garantia, reproduzir, doar, alienar de
+				qualquer forma, transferir total ou parcialmente, sob quaisquer modalidades, gratuita ou onerosamente, provisória ou permanentemente, o
+				INTELIDENTE objeto deste CONTRATO, assim como seus módulos, partes, manuais ou quaisquer informações relativas ao mesmo. Retirar ou alterar, total
+				ou parcialmente, os avisos de reserva de direito existente no INTELIDENTE e na documentação. Praticar engenharia reversa, descompilação ou
+				desmontagem do INTELIDENTE. </span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></b>
+		</p>
+
+		<p class="MsoListParagraph" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>5.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+				</span></span></b><b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>DAS OBRIGAÇÕES DAS PARTES </span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></b>
+		</p>
+
+		<p class="MsoListParagraph" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>5.1.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+			</span></span><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>São obrigações exclusivas do CONTRATANTE: </span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>Manter equipe capacitada para a operação do INTELIDENTE e para a
+				comunicação com a CONTRATADA e prover, sempre que ocorrerem quaisquer problemas com o INTELIDENTE, toda a documentação e informações que relatem
+				as circunstâncias em que os problemas ocorreram, objetivando facilitar e agilizar os trabalhos, assim como quaisquer detalhes solicitados pela
+				CONTRATADA. Manter, aos seus dispêndios, a infraestrutura necessária, tais como: linha de telecomunicação, modem, softwares de comunicação,
+				endereço de correio eletrônico e outros recursos necessários à comunicação com a CONTRATADA e acesso ao INTELIDENTE. Responder pelas informações
+				inseridas no INTELIDENTE, pelo cadastramento, permissões, senhas e modo de uso de seus usuários. A CONTRATADA em hipótese alguma será responsável
+				pelo conteúdo (informações, senhas, cópias de informações, etc.) sobre o INTELIDENTE, não sendo, portanto, estas informações revisadas em momento
+				algum. A responsabilidade pelas informações inseridas e/ou resultantes do INTELIDENTE é do CONTRATANTE. Efetuar os pagamentos de acordo com o
+				plano escolhido e as condições estipuladas neste CONTRATO. </span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></b>
+		</p>
+
+		<p class="MsoListParagraph" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>5.2.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+			</span></span><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>São obrigações exclusivas da CONTRATADA: </span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>A CONTRATADA garante ao CONTRATANTE que o INTELIDENTE deverá
+				funcionar regularmente, se respeitadas às condições de uso definidas neste objeto. Na ocorrência de falhas de programação, a CONTRATADA
+				obrigar-se-á a corrigi-las, podendo a seu critério, substituir a cópia dos Programas com falhas por cópias corrigidas. Suspender o acesso ao
+				INTELIDENTE, do CONTRATANTE que esteja desrespeitando as cláusulas deste CONTRATO ou as normas legais em vigor, independentemente de aviso prévio.
+				Alterar as especificações e/ou características do INTELIDENTE licenciados para a melhoria e/ou correções de erros. </span><span
+				style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>Disponibilizar acesso aos serviços de suporte, em dias úteis,
+				compreendido das 08h00 às 18h00 (pelo horário de Brasília) via chat e através de correio eletrônico (contato@intelidente.com)</span><span
+				style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>, para esclarecimento de dúvidas de ordem não funcional diretamente
+				relacionadas a problemas no INTELIDENTE.</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></b>
+		</p>
+
+		<p class="MsoListParagraphCxSpFirst" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>5.3.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+			</span></span><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>A CONTRATADA se isenta de quaisquer obrigações nas seguintes
+				situações:</span>
+		</p>
+
+		<p class="MsoListParagraphCxSpLast" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>Por falha de operação, operação por pessoas não autorizadas ou
+				qualquer outra causa em que não exista culpa comprovada da CONTRATADA. Pelo cumprimento dos prazos legais do CONTRATANTE para a entrega de
+				documentos fiscais ou pagamentos de impostos. Pelos danos ou prejuízos decorrentes de decisões administrativas, gerenciais ou comerciais tomadas
+				com base nas informações fornecidas pelo INTELIDENTE. Por problemas definidos como “caso fortuito” ou “força maior” contemplados pelo Art. 393, do
+				Código Civil Brasileiro. Em nenhum caso a CONTRATADA será responsável por danos pessoais ou qualquer prejuízo incidental, especial, indireto ou
+				consequente, incluindo, sem limitação, prejuízos por perda de lucro, corrupção ou perda de dados, falha de transmissão ou recepção de dados, não
+				continuidade do negócio ou qualquer outro prejuízo ou perda comercial, decorrentes ou relacionados ao uso inadequado ou sua inabilidade em usar o
+				INTELIDENTE. </span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></b>
+		</p>
+
+		<p class="MsoListParagraph" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>6.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+				</span></span></b><b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>DO PRAZO DE VIGÊNCIA DO CONTRATO </span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>O presente <b>CONTRATO</b> entrará em vigor na data de aceite pelo
+				<b>CONTRATANTE</b>, e vigorará por prazo indeterminado.
+			</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></b>
+		</p>
+
+		<p class="MsoListParagraph" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>7.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+				</span></span></b><b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>DO PREÇO E DA FORMA DE PAGAMENTO</span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>O CONTRATANTE pagará à CONTRATADA o valor MENSAL correspondente ao
+				“<b>PLANO</b>” escolhido dentre as opções disponibilizadas no website, <b><u>exclusivamente via PAYPAL</u></b>, devendo para tanto abrir e manter
+				uma conta através do site: www.paypal.com.br
+			</span><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>. A tolerância de atraso no pagamento será de até 05(cinco) dias, a
+				partir do qual, não sendo acusado o pagamento, o acesso ao INTELIDENTE será bloqueado automaticamente, independente de aviso ou notificação, sendo
+				liberado novamente após a confirmação do pagamento. </span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoListParagraph" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>8.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+				</span></span></b><b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>DA RESCISÃO E DA RESTITUIÇÃO DOS DADOS</span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>O presente CONTRATO estará automaticamente rescindido quando o
+				CONTRATANTE deixar de pagar 03 mensalidades consecutivas; pelo uso inadequado do INTELIDENTE ou por incidir em práticas proibidas. Ocorrendo a
+				rescisão do CONTRATO, os dados lançados no INTELIDENTE e que são de propriedade do CONTRATANTE serão mantidos em arquivo à disposição do
+				CONTRATANTE, por um período de 90 (noventa) dias, a partir dos quais serão deletados definitivamente.</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoListParagraph" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>9.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+				</span></span></b><b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>DAS PRÁTICAS PROIBIDAS</span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>O CONTRATANTE fica ciente e concorda que, no acesso e utilização
+				do INTELIDENTE, é terminantemente proibido: Distribuir, modificar, vender, alugar ou de qualquer forma explorar economicamente o serviço
+				INTELIDENTE, os dados e informações a ele relacionados, bem como utilizá-los para finalidade que não seja pessoal e imediata ou, ainda, para a
+				criação ou fornecimento de outros produtos ou serviços. Fornecer, por ocasião do cadastro e preenchimento de perfil no website, informações
+				falsas, inexatas, desatualizadas ou incompletas, bem como assumir intencionalmente a personalidade de outra pessoa, física ou jurídica. Disseminar
+				ou instalar vírus ou qualquer outro código, arquivo ou software com o propósito de interromper, destruir, acessar indevidamente, limitar ou
+				interferir no funcionamento ou segurança do INTELIDENTE, ou, ainda, para qualquer outra finalidade ilícita. Praticar qualquer ato contrário à
+				legislação em vigor. O CONTRATANTE se compromete a não praticar atos que: Violem a lei, a moral, os bons costumes, a propriedade intelectual, os
+				direitos à honra, à vida privada, o sigilo das comunicações, à imagem, à intimidade pessoal e familiar. Infrinjam patentes, marcas, segredos
+				comerciais, direitos autorais. Estimulem a prática de condutas ilícitas. Incitem a prática de atos de discriminação, seja em razão de sexo, raça,
+				religião, crenças, idade ou qualquer outra condição. Coloquem à disposição ou possibilitem o acesso a mensagens, produtos ou serviços ilícitos,
+				violentos, pornográficos, degradantes. Induzam ou incitem práticas perigosas, de risco ou nocivas para a saúde e para o equilíbrio psíquico. Sejam
+				falsos, ambíguos, inexatos, exagerados, de forma que possam induzir a erro sobre seu objeto ou sobre as intenções ou propósitos do comunicador.
+				Constituam publicidade ilícita, enganosa ou desleal, e que configurem concorrência desleal. Veiculem, incitem ou estimulem a pedofilia. Hostilizem
+				terceiros. Transmitam conteúdos ilegais, danosos, incômodos, ameaçadores, abusivos, tortuosos, difamatórios, vulgares, obscenos, invasores da
+				intimidade de terceiros, odiosos, xenófobos, ou, de algum modo, inaceitáveis; e/ou sejam considerados como práticas de Spam. </span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoListParagraph" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>10.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+				</span></span></b><b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>DAS DISPOSIÇÕES GERAIS</span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>A CONTRATADA, poderá, a qualquer tempo, ceder, no todo ou em
+				parte, os direitos e obrigações inerentes ao presente CONTRATO. Não constituem causas de rescisão contratual, o não cumprimento das obrigações
+				aqui assumidas em decorrência de fatos que independam da vontade das partes, tais como os que configuram o caso fortuito e a força maior previstos
+				no artigo 393 do Código Civil Brasileiro. Se qualquer disposição deste CONTRATO for considerada nula, anulável, inválida ou inoperante, nenhuma
+				outra disposição será afetada como consequência disso e, portanto, as disposições restantes permanecerão em pleno vigor e efeito como se tal
+				disposição nula, anulável, inválida ou inoperante não estivesse contida neste CONTRATO. O CONTRATANTE concorda que a CONTRATADA possa divulgar o
+				fechamento do contrato para fins comerciais, fazendo menção ao nome e à marca do CONTRATANTE em campanhas comerciais, podendo, inclusive, divulgar
+				mensagens enviadas de forma escrita ou oral, por telefone, para uso em sites, jornais, revistas e outras campanhas, enquanto vigorar o presente
+				CONTRATO. O CONTRATANTE aceita, ainda, receber notificações via correio eletrônico sobre treinamentos, parcerias e campanhas relacionadas ao
+				INTELIDENTE. Neste ato, o CONTRATANTE expressamente autoriza a CONTRATADA a colher e utilizar seus dados técnicos e operacionais presentes no
+				INTELIDENTE, para fins de estudos e melhorias no INTELIDENTE. Os conteúdos inseridos no INTELIDENTE estarão sujeitos ao monitoramento, podendo ser
+				excluídos ou suprimidos se violarem qualquer um dos dispositivos legais ou do presente CONTRATO. </span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif; color: black'>O presente </span><b><span
+				style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>Contrato de Licença de Uso de Programa de Computador - Intelidente
+					001/2016-V1R1-17.10.2016 - </span></b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>encontra-se</span><span
+				style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif; color: black'> registrado no Ofício de Registro de Títulos e Documentos
+				de Pinhais – PR.</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoListParagraphCxSpFirst" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; text-indent: 0cm; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>11.<span style='font: 7.0pt "Times New Roman"'>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+				</span></span></b><b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>DO FORO </span></b>
+		</p>
+
+		<p class="MsoListParagraphCxSpLast" style='margin: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<b><span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span></b>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>As PARTES elegem o Foro da cidade de Pinhais - PR, como único
+				competente para dirimir as dúvidas ou controvérsias decorrentes deste Contrato. </span>
+		</p>
+
+		<p class="MsoNormal" align="center" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: center; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoNormal" align="center" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: center; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>Pinhais – PR, 17 de outubro de 2016.</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoNormal" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: justify; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>&#160;</span>
+		</p>
+
+		<p class="MsoNormal" align="center" style='margin-bottom: 0cm; margin-bottom: .0001pt; text-align: center; line-height: normal'>
+			<span style='font-size: 13.0pt; font-family: "Calibri Light", sans-serif'>ACEITO OS TERMOS E QUERO
+					COMEÇAR AGORA!</span>
+		</p>
+
+	</div>
+
+	<div>
+		<br clear="all"></br>
+		<hr align="left" size="1" width="100%"></hr>
+		<div id="ftn1">
+
+			<p class="MsoFootnoteText">
+				 INTELIDENTE 001/2016-V1R1-17.10.2016
+			</p>
+
+		</div>
+
+	</div>
+
+
+
+
+
+
+</ui:composition>

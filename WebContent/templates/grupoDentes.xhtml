@@ -1,0 +1,18 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    <div style="width: 445px;">
+        <ui:repeat var="g" value="#{grupo}">
+            <div class="dente">
+                <div class="numero">
+                    <div style="background: url(../images/odontograma/#{g}.png) no-repeat; height : 120px;background-position: bottom;"><h:outputText escape="false" value="#{odontogramaMB.diagnosticosDente(g,'')}"/></div>
+                </div>
+                <div style="text-align: center;">
+                    <p:commandLink oncomplete="resize('#lume\\:tabView\\:dlgProcedimento');PF('dlgProcedimento').show();" process="@this" action="#{odontogramaMB.carregaProcedimentos}" value="#{g}" rendered="#{odontogramaMB.planoTratamento != null and odontogramaMB.planoTratamento.id != 0 and odontogramaMB.entity.id != 0}" update=":lume:tabView:pgProcedimento">
+                        <f:param name="dente" value="#{g}" />
+                    </p:commandLink>
+                    <h:outputText value="#{g}" rendered="#{odontogramaMB.planoTratamento == null or odontogramaMB.planoTratamento.id == 0}" />
+                </div>
+            </div>
+        </ui:repeat>
+    </div>
+</ui:composition>

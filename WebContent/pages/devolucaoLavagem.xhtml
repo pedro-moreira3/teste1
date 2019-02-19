@@ -1,0 +1,153 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <div class="Container100 Responsive100 NoIndent">
+            <div class="Container100 ui-fluid NoPadding">
+                <div class="Card">
+                    <p:panel styleClass="BordNone">
+
+                        <h1 class="CardBigTopic">Devolução da Lavagem</h1>
+                        <div class="SeparatorFull"></div>
+
+
+                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtLavagensSolicitas" value="#{lavagemMB.lavagensSolicitadas}" var="lavagemSolicitada" rows="10" paginator="true"
+                            selection="#{lavagemMB.lavagemSelecionadas}" rowKey="#{lavagemSolicitada}" paginatorPosition="bottom" widgetVar="tbLavagem">
+                            <f:facet name="header">Lavagens Solicitadas</f:facet>
+
+                            <p:column selectionMode="multiple" style="width:16px;text-align:center" />
+            
+
+                            <p:ajax event="rowSelect" process="@this" update=":lume:dtKits, :lume:dtLavagensSolicitas, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+                                listener="#{lavagemMB.habilitaDevolucao}" />
+                            <p:ajax event="rowSelectCheckbox" process="@this" update=":lume:dtKits, :lume:dtLavagensSolicitas, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+                                listener="#{lavagemMB.habilitaDevolucao}" />
+                            <p:ajax event="rowUnselectCheckbox" process="@this" update=":lume:dtKits, :lume:dtLavagensSolicitas, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+                                listener="#{lavagemMB.habilitaDevolucao}" />
+                            <p:ajax event="toggleSelect" process="@this" update=":lume:dtKits, :lume:dtLavagensSolicitas, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+                                listener="#{lavagemMB.habilitaDevolucao}" />
+
+
+
+                            <p:column filterBy="#{lavagemSolicitada.descricao}" sortBy="#{lavagemSolicitada.descricao}" filterMatchMode="contains" headerText="Descrição">
+                                <h:outputText value="#{lavagemSolicitada.descricao}" title="#{lavagemSolicitada.id}" />
+                            </p:column>
+                            <p:column filterBy="#{lavagemSolicitada.observacao}" sortBy="#{lavagemSolicitada.observacao}" filterMatchMode="contains" headerText="Observação">
+                                <h:outputText value="#{lavagemSolicitada.observacao}" />
+                            </p:column>
+
+                            <p:column filterBy="#{lavagemSolicitada.solicitante.dadosBasico.prefixoNome}" sortBy="#{lavagemSolicitada.solicitante.dadosBasico.prefixoNome}" filterMatchMode="contains"
+                                headerText="Solicitante">
+                                <h:outputText value="#{lavagemSolicitada.solicitante.dadosBasico.prefixoNome}" />
+                            </p:column>
+                            <p:column filterBy="#{lavagemSolicitada.profissional.dadosBasico.prefixoNome}" sortBy="#{lavagemSolicitada.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains"
+                                headerText="Esterilizador">
+                                <h:outputText value="#{lavagemSolicitada.profissional.dadosBasico.prefixoNome}" />
+                            </p:column>
+                            <p:column filterBy="#{lavagemSolicitada.status}" sortBy="#{lavagemSolicitada.status}" filterMatchMode="contains" headerText="Status">
+                                <h:outputText value="#{lavagemSolicitada.status}" />
+                            </p:column>
+
+                            <p:column filterBy="#{lavagemSolicitada.dataValidadeStr}" sortBy="#{lavagemSolicitada.dataValidadeStr}" filterMatchMode="contains" headerText="Data de Validade">
+                                <h:outputText value="#{lavagemSolicitada.dataValidadeStr}" />
+                            </p:column>
+                            <p:column filterBy="#{lavagemSolicitada.dataStr}" sortBy="#{lavagemSolicitada.dataStrOrd}" filterMatchMode="contains" headerText="Data do Pedido">
+                                <h:outputText value="#{lavagemSolicitada.dataStr}" />
+                            </p:column>
+                            <p:column filterBy="#{lavagemSolicitada.resumo}" sortBy="#{lavagemSolicitada.resumo}" filterMatchMode="contains">
+                                <f:facet name="header">
+                                    <h:outputText value="Resumo" />
+                                </f:facet>
+                                <h:outputText value="#{lavagemSolicitada.resumo}" />
+                            </p:column>
+
+                            <p:column sortBy="#{lavagemSolicitada.clinica}" filterBy="#{lavagemSolicitada.clinica}" filterMatchMode="exact">
+                                <f:facet name="header">
+                                    <h:outputText value="Instrumento da clínica?" />
+                                </f:facet>
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('tbLavagem').filter()">
+                                        <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItem itemLabel="Sim" itemValue="true" />
+                                        <f:selectItem itemLabel="Não" itemValue="false" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{lavagemSolicitada.clinica == true ? 'Sim' : 'Não'}" />
+                            </p:column>
+                        </p:dataTable>
+
+                        <div class="EmptyBox20"></div>
+
+                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="#{lavagemMB.msg}" id="dtKits" selection="#{lavagemMB.lavagemKitSelecionada}" selectionMode="single"
+                            value="#{lavagemMB.lavagemKitsSolicitados}" var="lk" rowKey="#{lk}" rows="7" paginator="true" paginatorPosition="bottom">
+                            <f:facet name="header">Detalhes</f:facet>
+                            <p:ajax event="rowSelect" update=":lume:pnButton,:lume:pnDescartar" process=":lume:dtKits" listener="#{lavagemMB.actionLimpaJustificativa}" />
+                            <p:column filterBy="#{lk.kit.descricao}" sortBy="#{lk.kit.descricao}" filterMatchMode="contains" headerText="Kit">
+                                <h:outputText value="#{lk.kit.descricao}" title="#{lk.id}" />
+                            </p:column>
+                            <p:column filterBy="#{lk.item.descricaoLimpa}" sortBy="#{lk.item.descricao}" filterMatchMode="contains" headerText="Item">
+                                <h:outputText value="#{lk.item.descricao}" />
+                            </p:column>
+                            <p:column filterBy="#{lk.quantidade}" sortBy="#{lk.quantidade}" filterMatchMode="contains" headerText="Quantidade">
+                                <h:outputText value="#{lk.quantidade}" />
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:panel id="pnButton" styleClass="BordNone">
+
+                            <div class="SeparatorFull"></div>
+                            <div class="Container25 Responsive100">
+                                <p:commandButton id="actionEsterilizar" icon="White fa  fa-bitbucket" value="Esterilizar" actionListener="#{lavagemMB.actionEsterilizar}"
+                                    disabled="#{!lavagemMB.enableDevolucao}" update=":lume:dtKits,:lume:dtLavagensSolicitas,:lume:pnButton" process=":lume:dtKits, @this" styleClass="GreenButton" />
+                            </div>
+                            <div class="Container25 Responsive100">
+                                <p:commandButton id="devolucao" icon="White fa fa-gavel" value="Finalizar" actionListener="#{lavagemMB.actionDevolucao}" disabled="#{!lavagemMB.enableDevolucao}"
+                                    update=":lume:dtKits,:lume:dtLavagensSolicitas,:lume:pnButton" process=":lume:dtKits, @this" styleClass="OrangeButton" />
+                            </div>
+                            <div class="Container25 Responsive100">
+                                <p:commandButton id="actionDescartar" icon="White fa fa-trash" value="Descartar" onclick="PF('descartar').show()"
+                                    update=":lume:dtKits, :lume:dtLavagensSolicitas,:lume:pnButton" process=":lume:dtKits, @this" styleClass="RedButton"
+                                    disabled="#{lavagemMB.lavagemKitSelecionada == null || lavagemMB.lavagemKitSelecionada.lavagem.clinica == false}">
+                                    <p:confirm header="Confirmação" message="Este item será retirado do estoque, deseja confirmar?" icon="ui-icon-alert" />
+                                </p:commandButton>
+                            </div>
+                        </p:panel>
+                        <p:dialog id="descartarTela" widgetVar="descartar" header="Descartar" responsive="true" modal="true">
+                            <p:panel id="pnDescartar" style="display: inline-block;">
+                                <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+                                    style="border:0px none; background-color:transparent;">
+
+                                    <p:outputLabel for="quantidadeDescarte" value="Quantidade descartada : " />
+                                    <p:inputText id="quantidadeDescarte" required="true" value="#{lavagemMB.quantidadeDescarte}">
+                                        <f:validateLongRange minimum="1" />
+                                    </p:inputText>
+
+                                    <p:outputLabel for="justificativa" value="Justificativa : " />
+                                    <p:selectOneMenu id="justificativa" required="true" value="#{lavagemMB.justificativa}" converter="dominio">
+                                        <f:selectItem itemValue="#{null}" itemLabel="Selecione uma justificativa" />
+                                        <f:selectItems value="#{lavagemMB.justificativas}" var="justificativa" itemLabel="#{justificativa.nome}" itemValue="#{justificativa}" />
+                                    </p:selectOneMenu>
+
+                                </p:panelGrid>
+                                <div class="Separator"></div>
+                                <div class="Container100 Responsive100">
+                                    <p:commandButton id="persistDescartar" icon="White fa fa-save" value="Salvar" actionListener="#{lavagemMB.actionDescarte}"
+                                        update=":lume:quantidadeDescarte, :lume:justificativa,:lume:dtKits, :lume:dtLavagensSolicitas,:lume:pnButton, :lume:pnDescartar"
+                                        process=":lume:quantidadeDescarte, :lume:justificativa,:lume:dtKits, @this, :lume:pnDescartar" oncomplete="handleDialogRequest(xhr, status, args)"
+                                        styleClass="GreenButton" />
+                                </div>
+                            </p:panel>
+                        </p:dialog>
+                        <script type="text/javascript">
+																									function handleDialogRequest(xhr, status, args) {
+																										if (args.descartar == true) {
+																											PF('descartar').hide();
+																										}
+
+																									}
+																								</script>
+                    </p:panel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,169 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+
+					<p:panel id="pnPedido" styleClass="BordNone">
+						<h:inputHidden id="id" value="#{pedidoMB.entity.id}" />
+
+
+						<h1 class="CardBigTopic">Pedidos de Compras</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+
+							<p:outputLabel for="descricao" value="Descrição : " />
+							<p:inputText id="descricao" value="#{pedidoMB.entity.descricao}" style="width: 300px;" required="true" maxlength="50" />
+
+							<p:outputLabel for="prazo" value="Data Limite : " />
+							<p:calendar id="prazo" value="#{pedidoMB.entity.prazo}" required="true" pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" mindate="#{pedidoMB.dataAtual}" mask="true"/>
+
+
+							<p:outputLabel for="observacao" value="Observações : " />
+							<p:inputTextarea id="observacao" autoResize="false" value="#{pedidoMB.entity.observacao}" cols="50" rows="4" maxlength="200" />
+
+							<p:outputLabel for="plano" value="Status : " />
+							<p:selectOneMenu id="plano" value="#{pedidoMB.entity.status}" required="true">
+								<f:selectItem itemValue="#{null}" itemLabel="Selecione um status" />
+								<f:selectItems value="#{pedidoMB.dominios}" var="tp" itemValue="#{tp.valor}" itemLabel="#{tp.nome}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+						<p:panel id="pnItens" header="Itens">
+							<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;">
+
+
+								<h:outputLabel for="digitacao" value="Item : " />
+								<p:column>
+									<p:autoComplete queryDelay="1000" id="digitacao" value="#{pedidoMB.digitacao}" minQueryLength="3" completeMethod="#{pedidoMB.filtraItem}"
+										styleClass="itembusca">
+										<p:ajax event="itemSelect" listener="#{pedidoMB.handleSelect}" update=":lume:tbItemTree" />
+									</p:autoComplete>
+
+									<p:tree value="#{pedidoMB.root}" var="item" style="height:300px;" id="tbItemTree" selection="#{pedidoMB.selectedItem}" selectionMode="single">
+
+										<p:ajax event="select" listener="#{pedidoMB.onNodeSelect}" update=":lume:digitacao" process="@this" />
+										<p:ajax event="unselect" listener="#{pedidoMB.onNodeUnselect}" />
+										<p:treeNode>
+											<h:outputText value="#{item.descricao}" />
+										</p:treeNode>
+									</p:tree>
+								</p:column>
+
+
+								<p:outputLabel for="quantidade" value="Quantidade: " />
+								<p:inputMask id="quantidade" value="#{pedidoMB.quantidade}" styleClass="Wid50" maxlength="8" mask="9?99999" />
+							</p:panelGrid>
+
+							<div class="Separator"></div>
+
+							<h:panelGroup rendered="#{pedidoMB.incluindo}">
+								<div class="Container25 Responsive100">
+									<p:commandButton id="adicionar" icon="fa fa-plus White" value="Adicionar" actionListener="#{pedidoMB.adicionar}"
+										update=":lume:pnPedido, :lume:pnItens" process=":lume:pnPedido" oncomplete="handleDialogRequest(xhr, status, args);"
+										styleClass="GreenButton" />
+								</div>
+							</h:panelGroup>
+
+							<h:panelGroup rendered="#{!pedidoMB.incluindo}">
+								<div class="Container25 Responsive100">
+									<p:commandButton id="remover" icon="fa fa-minus White" value="Remover" actionListener="#{pedidoMB.remover}"
+										update=":lume:pnPedido, :lume:pnItens" process="@this" styleClass="RedButton" />
+								</div>
+							</h:panelGroup>
+
+							<h:panelGroup rendered="#{!pedidoMB.incluindo}">
+								<div class="Container25 Responsive100">
+									<p:commandButton id="atualizar" icon="fa fa-check White" value="Atualizar" actionListener="#{pedidoMB.atualizar}"
+										update=":lume:pnPedido, :lume:pnItens" process=":lume:pnPedido" styleClass="OrangeButton" />
+								</div>
+							</h:panelGroup>
+
+							<div class="Container25 Responsive100">
+								<p:commandButton id="limpar" icon="fa fa-minus White" value="Limpar" actionListener="#{pedidoMB.limpar}"
+									update=":lume:pnPedido, :lume:pnItens" process=":lume:pnPedido, :lume:pnItens"  />
+							</div>
+							<div class="EmptyBox20"></div>
+						</p:panel>
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtItens" value="#{pedidoMB.pedidoItens}" var="pedidoItem" rows="15" paginator="true"
+							selection="#{pedidoMB.pedidoItem}" selectionMode="single" rowKey="#{pedidoItem}" paginatorPosition="bottom">
+							<p:ajax event="rowSelect" listener="#{pedidoMB.carregaTela}" update=":lume:pnPedido" />
+
+							<p:column headerText="Descrição">
+								<h:outputText value="#{pedidoItem.item.descricao}" />
+							</p:column>
+							<p:column headerText="Quantidade">
+								<h:outputText value="#{pedidoItem.quantidade}" />
+							</p:column>
+						</p:dataTable>
+					</p:panel>
+					
+					<div class="SeparatorFull"></div>
+
+					<div class="Container25 Responsive100">
+						<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{pedidoMB.actionPersist}"
+							update=":lume:pnPedido, :lume:pnItens, :lume:dtPedido" process=":lume:pnPedido" 
+							styleClass="GreenButton" />
+					</div>
+					<div class="Container25 Responsive100">
+						<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{pedidoMB.actionRemove}"
+							update=":lume:pnPedido, :lume:pnItens, :lume:dtPedido" process="@this" disabled="#{pedidoMB.entity.id==0}"
+							 styleClass="RedButton" />
+					</div>
+					<div class="Container25 Responsive100">
+						<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{pedidoMB.actionNew}"
+							update=":lume:pnPedido, :lume:pnItens, :lume:dtPedido" immediate="true"  />
+					</div>
+
+					<div class="EmptyBox20"></div>
+
+
+					<p:panel styleClass="BordNone">
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPedido" value="#{pedidoMB.pedidos}" var="pedido" rows="15" paginator="true"
+							selection="#{pedidoMB.entity}" selectionMode="single" rowKey="#{pedido}" paginatorPosition="bottom">
+							<p:ajax event="rowSelect" update=":lume:pnPedido" listener="#{pedidoMB.carregaTelaGeral}" />
+							<f:facet name="header">Pedidos</f:facet>
+
+							<p:column filterBy="#{pedido.descricao}" sortBy="#{pedido.descricao}" filterMatchMode="contains" headerText="Descrição">
+								<h:outputText value="#{pedido.descricao}" />
+							</p:column>
+							<p:column filterBy="#{pedido.prazoStr}" sortBy="#{pedido.prazoStrOrd}" filterMatchMode="contains" headerText="Data Limite">
+								<h:outputText value="#{pedido.prazoStr}" />
+							</p:column>
+							<p:column filterBy="#{pedido.dataStr}" sortBy="#{pedido.dataStrOrd}" filterMatchMode="contains" headerText="Data do Cadastro">
+								<h:outputText value="#{pedido.dataStr}" />
+							</p:column>
+							<p:column filterBy="#{pedido.statusStr}" sortBy="#{pedido.statusStr}" filterMatchMode="contains" headerText="Status">
+								<h:outputText value="#{pedido.statusStr}" />
+							</p:column>
+
+						</p:dataTable>
+
+						<p:confirmDialog id="confirmDialog" message="Quantidade acima do máximo permitido! Você tem certeza que deseja fazer o pedido?"
+							header="Quantidade acima do máximo permitido!" severity="alert" widgetVar="confirmation" appendToBody="true">
+
+							<p:commandButton id="confirm" value="Sim" onclick="PF('confirmation').hide();" process="@this" />
+
+							<p:commandButton id="decline" value="Não" actionListener="#{pedidoMB.decline}" onclick="PF('confirmation').hide()"
+								update=":lume:pnPedido, :lume:pnItens" process="@this" />
+
+						</p:confirmDialog>
+					</p:panel>
+					<script type="text/javascript">
+						function handleDialogRequest(xhr, status, args) {
+							if (args.dlg == true) {
+								PF('confirmation').show();
+							}
+						}
+					</script>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

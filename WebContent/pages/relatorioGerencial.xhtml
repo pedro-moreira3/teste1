@@ -1,0 +1,317 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <style>
+.ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
+    width: auto !important;
+}
+
+.Blue {
+    color: #1e739e !important;
+}
+
+.ui-grid-col-4 {
+    text-align: center;
+}
+</style>
+
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">
+        </script>
+
+        <script>
+            google.charts.load('current', {packages: ['corechart', 'bar', 'gauge'], 'language': 'pt_br'});
+            google.charts.setOnLoadCallback(drawMultSeries);
+            
+            function drawMultSeries() {
+                drawFinanceiro();
+                drawPacientesAgendamento();
+                drawPacientesConvenio();
+                drawOcupacao();
+                drawOrcamentos();
+                drawPacientesAtivos();
+                drawProfissionaisMaisRentaveis();
+                drawAgendamentosHorario();
+            }
+            
+            function drawFinanceiro() {
+                var data = google.visualization.arrayToDataTable([
+                    ['', '', { role: 'style' }],
+                    ['Receitas', #{relatorioGerencialMB.recebimento}, 'blue'],       
+                    ['Despesas',#{relatorioGerencialMB.pagamentosConsultorio}, 'red'],         
+                    ['Saldo', #{relatorioGerencialMB.saldoDoDia}, 'green'],
+                  ]);
+            
+                  var options = {
+                    title: 'Financeiro',
+                    animation: {
+                        duration: 1500,
+                        startup: true
+                    },
+                    legend: { position: "none" },
+                    chartArea: {width: '50%'},
+                    hAxis: {
+                      title: '',
+                      minValue: 0,
+                      format : 'currency'
+                    },
+                    vAxis: {
+                      title: ''
+                    }
+                  };
+            
+                  var chart = new google.visualization.BarChart(document.getElementById('chartFinanceiro'));
+                  chart.draw(data, options);
+            }
+            
+            function drawProfissionaisMaisRentaveis() {
+                var data = google.visualization.arrayToDataTable([
+                    ['', ''],
+                    #{relatorioGerencialMB.profissionaisMaisRentaveisStr}
+                  ]);
+            
+                  var options = {
+                    title: 'Profissionais que mais faturaram(valor bruto)',
+                    animation: {
+                        duration: 1500,
+                        startup: true
+                    },
+                    legend: { position: "none" },
+                    chartArea: {width: '50%'},
+                    hAxis: {
+                      title: '',
+                      minValue: 0,
+                      format : 'currency'
+                    },
+                    vAxis: {
+                      title: ''
+                    }
+                  };
+            
+                  var chart = new google.visualization.BarChart(document.getElementById('chartProfissionaisMaisRentaveis'));
+                  chart.draw(data, options);
+            }
+            
+            function drawPacientesAgendamento() {
+                var data = google.visualization.arrayToDataTable([
+                    ['', ''],
+                    ['Atendidos', #{relatorioGerencialMB.pacientesAtendidos}],
+                    ['Faltaram', #{relatorioGerencialMB.pacientesNaoVieram}],
+                    ['Remarcaram', #{relatorioGerencialMB.pacientesRemarcaram}],
+                    ['Cancelaram', #{relatorioGerencialMB.pacientesCancelados}]
+                  ]);
+            
+                  var options = {
+                    title: 'Status da Agenda'
+                  };
+            
+                  var chart = new google.visualization.PieChart(document.getElementById('chartPacientesAgendamento'));
+                  chart.draw(data, options);
+            }
+            
+            function drawPacientesConvenio() {
+                var data = google.visualization.arrayToDataTable([
+                    ['', ''],     
+                    ['Particular',#{relatorioGerencialMB.pacientesSemConvenio}],         
+                    ['Convênio', #{relatorioGerencialMB.pacientesConvenio}],
+                  ]);
+            
+                  var options = {
+                    title: 'Pacientes atendidos por'
+                  };
+            
+                  var chart = new google.visualization.PieChart(document.getElementById('chartPacientesConvenio'));
+                  chart.draw(data, options);
+            }
+            
+            function drawOcupacao() {
+                var data = google.visualization.arrayToDataTable([
+                    ['', ''],     
+                    ['Ocupado',#{relatorioGerencialMB.taxaDeOcupacao}],         
+                    ['Ociosa', 100-#{relatorioGerencialMB.taxaDeOcupacao}],
+                  ]);
+            
+                  var options = {
+                    title: 'Taxa de ocupação'                  
+                  };
+            
+                  var chart = new google.visualization.PieChart(document.getElementById('chartOcupacao'));
+                  chart.draw(data, options);
+            }
+            
+            function drawOrcamentos() {
+                var data = google.visualization.arrayToDataTable([
+                    ['', ''],     
+                    #{relatorioGerencialMB.orcamentosAprovadosStr}
+                  ]);
+            
+                  var options = {
+                    title: 'Orçamentos'                  
+                  };
+            
+                  var chart = new google.visualization.PieChart(document.getElementById('chartOrcamentos'));
+                  chart.draw(data, options);
+            }
+            
+            function drawPacientesAtivos() {
+                var data = google.visualization.arrayToDataTable([
+                    ['', ''],     
+                    ['Agendados',#{relatorioGerencialMB.pacientesAtivos}],         
+                    ['Não agendados', #{relatorioGerencialMB.pacientesInativos}],
+                  ]);
+            
+                  var options = {
+                    title: 'Pacientes que foram agendados no período selecionado'                  
+                  };
+            
+                  var chart = new google.visualization.PieChart(document.getElementById('chartPacientesAtivos'));
+                  chart.draw(data, options);
+            }
+            
+            function drawAgendamentosHorario() {
+                var data = google.visualization.arrayToDataTable([
+                  ['Horário','Agendamentos'],
+                  #{relatorioGerencialMB.agendamentosHorarioStr}
+                ]);
+
+                var options = {
+                  title: 'Pico de atendimento',
+                  hAxis: {title: 'Horário'},
+                  vAxis: {title: 'Agendamentos'},
+                  legend: 'none'
+                };
+
+                var chart = new google.visualization.AreaChart(document.getElementById('chartAgendamentosHorario'));
+
+                chart.draw(data, options);
+              }
+                        
+                        
+                    
+        </script>
+
+
+        <div class="Container100 Responsive100 NoIndent">
+            <div class="Container100 ui-fluid NoPadding">
+                <div class="Card">
+
+
+                    <h1 class="CardBigTopic">Dashboard</h1>
+                    <div class="SeparatorFull"></div>
+
+                    <p:panelGrid id="filtro" columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+                        style="border:0px none; background-color:transparent;">
+
+                        <p:outputLabel value="Período: " />
+
+                        <h:panelGroup>
+                            <p:calendar value="#{relatorioGerencialMB.inicio}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}"
+                                navigator="true" yearRange="-100:+1" style="width: 95px !important;margin-right: 5px;" />
+
+                            <p:outputLabel value="até" style="margin-right: 10px;margin-left: 10px;" />
+
+                            <p:calendar value="#{relatorioGerencialMB.fim}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}"
+                                navigator="true" yearRange="-100:+1" />
+                        </h:panelGroup>
+
+                        <p:outputLabel value="Filtro Período: " />
+
+                        <p:selectOneMenu value="#{relatorioGerencialMB.filtroPeriodo}" styleClass="Wid30">
+                            <p:ajax process="@this" update="@form" listener="#{relatorioGerencialMB.actionTrocaDatas}" />
+                            <f:selectItem itemValue="O" itemLabel="Ontem" />
+                            <f:selectItem itemValue="H" itemLabel="Hoje" />
+                            <f:selectItem itemValue="M" itemLabel="Mês Atual" />
+                            <f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+                            <f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+                            <f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+                            <f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+                        </p:selectOneMenu>
+
+                    </p:panelGrid>
+
+                    <div class="Container25 Responsive100">
+                        <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioGerencialMB.actionFiltrar}" styleClass="OrangeButton"
+                            process="@this,filtro" update="@form" />
+                    </div>
+
+                    <div class="EmptyBox5"></div>
+
+                    <div class="SeparatorFull"></div>
+
+
+
+                    <div class="EmptyBox5"></div>
+
+
+                    <div class="Container100 Responsive100">
+                        <div class="Container50 Responsive100">
+                            <div id="chartFinanceiro"></div>
+                        </div>
+                        <div class="Container50 Responsive100">
+                            <div id="chartProfissionaisMaisRentaveis"></div>
+                        </div>
+                    </div>
+                    <div class="Container100 Responsive100">
+                        <div class="Container50 Responsive100">
+                            <div id="chartPacientesAgendamento" style="height: 400px;"></div>
+                        </div>
+                        <div class="Container50 Responsive100">
+                            <div id="chartPacientesConvenio" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                    <div class="Container100 Responsive100">
+                        <div class="Container50 Responsive100">
+                            <div id="chartOcupacao" style="height: 400px;"></div>
+                        </div>
+                        <div class="Container50 Responsive100">
+                            <div id="chartOrcamentos" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                    <div class="Container100 Responsive100">
+                        <div class="Container50 Responsive100">
+                            <div id="chartPacientesAtivos" style="height: 400px;"></div>
+                        </div>
+                    </div>
+                    <div class="Container100 Responsive100">
+                        <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtPacientes" value="#{relatorioGerencialMB.pacientesInativosDetalhe}" var="paciente" rows="10"
+                            paginator="true" paginatorPosition="bottom">
+                            <f:facet name="header">Pacientes não atendidos no período
+                            </f:facet>
+                            <p:column sortBy="#{paciente.dadosBasico.nome}" filterBy="#{paciente.dadosBasico.nomeStr}" filterMatchMode="contains" headerText="Nome">
+                                <h:outputText value="#{paciente.dadosBasico.nome}" title="#{paciente.id}" />
+                            </p:column>
+                            <p:column sortBy="#{paciente.dadosBasico.telefone}" filterBy="#{paciente.dadosBasico.telefone}" filterMatchMode="contains" headerText="Tel">
+                                <h:outputText value="#{paciente.dadosBasico.telefone}" />
+                            </p:column>
+                            <p:column sortBy="#{paciente.dadosBasico.celular}" filterBy="#{paciente.dadosBasico.celular}" filterMatchMode="contains" headerText="Cel">
+                                <h:outputText value="#{paciente.dadosBasico.celular}" />
+                            </p:column>
+                            <p:column sortBy="#{paciente.dadosBasico.email}" filterBy="#{paciente.dadosBasico.email}" filterMatchMode="contains" headerText="E-mail">
+                                <h:outputText value="#{paciente.dadosBasico.email}" />
+                            </p:column>
+                            <p:column sortBy="#{paciente.dataUltimaAlteracao}" filterBy="#{paciente.dataUltimaAlteracaosStr}" filterMatchMode="contains" headerText="Dta. Últ. Agendamento">
+                                <h:outputText value="#{paciente.dataUltimaAlteracaosStr}" />
+                            </p:column>
+                             <p:column sortBy="#{paciente.statusUltimoAgendamento}" filterBy="#{paciente.statusUltimoAgendamento}" filterMatchMode="contains" headerText="Status Últ. Agendamento">
+                                <h:outputText value="#{paciente.statusUltimoAgendamento}" />
+                            </p:column>
+                            <p:column headerText="Whats">
+                                <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{paciente.whatsURL}');return false;" styleClass="GreenButton" disable="#{paciente.whatsURL == null}" />
+                            </p:column>
+                        </p:dataTable>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton value="Excel" ajax="false" process="dtConferencias" icon="White fa fa-file-excel-o" styleClass="GreenButton">
+                                <p:dataExporter encoding="iso-8859-1" type="xls" target=":lume:dtPacientes" fileName="PacientesParaReativar" />
+                            </p:commandButton>
+                        </div>
+                    </div>
+
+                    <div class="Container100 Responsive100">
+                        <div id="chartAgendamentosHorario" style="height: 400px;"></div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

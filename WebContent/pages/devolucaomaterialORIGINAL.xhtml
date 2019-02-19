@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	template="/templates/default.xhtml">
+	<ui:define name="article">
+		<p:layout fullPage="true">
+			<p:layoutUnit position="north" size="150">
+				<ui:include src="commons/navigation.xhtml" />
+			</p:layoutUnit>
+			<p:layoutUnit position="center">
+				<p:panel header="Devolução de Materiais">
+					<p:dataTable filterDelay="1500"  reflow="true"  emptyMessage="" id="dtKitsDisponibilizados"
+						value="#{controleMaterialMB.kitsDisponibilizados}"
+						var="reservaKit" rows="7" paginator="true"
+						selection="#{controleMaterialMB.reservaKit}"
+						selectionMode="single" rowKey="#{reservaKit}"
+						paginatorPosition="bottom">
+						<f:facet name="header">Kits Disponibilizados</f:facet>
+						<p:ajax event="rowSelect"
+							listener="#{controleMaterialMB.habilitaDevolucao}"
+							update=":lume:dtMateriais, :lume:dtKitsDisponibilizados, :lume:devolucao , :lume:naoUtilizado"
+							process="@this" />
+
+						<p:column filterBy="#{reservaKit.kit.descricao}"
+							sortBy="#{reservaKit.kit.descricao}" filterMatchMode="contains"
+							headerText="Descrição">
+							<h:outputText value="#{reservaKit.kit.descricao}" />
+						</p:column>
+						<p:column
+							filterBy="#{reservaKit.reserva.profissional.dadosBasico.prefixoNome}"
+							sortBy="#{reservaKit.reserva.profissional.dadosBasico.prefixoNome}"
+							filterMatchMode="contains" headerText="Profissional">
+							<h:outputText
+								value="#{reservaKit.reserva.profissional.dadosBasico.prefixoNome}" />
+						</p:column>
+						<p:column filterBy="#{reservaKit.reserva.local.descricao}"
+							sortBy="#{reservaKit.reserva.local.descricao}"
+							filterMatchMode="contains" headerText="Destino">
+							<h:outputText value="#{reservaKit.reserva.local.descricao}" />
+						</p:column>
+						<p:column filterBy="#{reservaKit.reserva.dataStr}"
+							sortBy="#{reservaKit.reserva.dataStrOrd}"
+							filterMatchMode="contains" headerText="Data do Pedido">
+							<h:outputText value="#{reservaKit.reserva.dataStr}" />
+						</p:column>
+						<p:column filterBy="#{reservaKit.reserva.prazoStr}"
+							sortBy="#{reservaKit.reserva.prazoStrOrd}"
+							filterMatchMode="contains" headerText="Data da Utilização">
+							<h:outputText value="#{reservaKit.reserva.prazoStr}" />
+						</p:column>
+						<p:column filterBy="#{reservaKit.quantidade}"
+							sortBy="#{reservaKit.quantidade}" filterMatchMode="contains"
+							headerText="Quantidade">
+							<h:outputText value="#{reservaKit.quantidade}" />
+						</p:column>
+					</p:dataTable>
+				
+					<p:dataTable filterDelay="1500"  reflow="true"  emptyMessage="" id="dtMateriais"
+						value="#{controleMaterialMB.materiais}" editable="true"
+						var="material" rows="7" paginator="true"
+						paginatorPosition="bottom">
+						<p:ajax event="rowEdit"
+							listener="#{controleMaterialMB.validaCampo}"
+							update=":lume:devolucao , :lume:naoUtilizado" />
+						<f:facet name="header">Materiais</f:facet>
+						<p:column filterBy="#{material.material.item.descricao}"
+							sortBy="#{material.material.item.descricao}"
+							filterMatchMode="contains" headerText="Descrição">
+							<h:outputText value="#{material.material.item.descricao}" />
+						</p:column>
+						<p:column filterBy="#{material.material.marca.nome}"
+							sortBy="#{material.material.marca.nome}"
+							filterMatchMode="contains" headerText="Marca">
+							<h:outputText value="#{material.material.marca.nome}" />
+						</p:column>
+						<p:column sortBy="#{material.quantidade}"
+							filterMatchMode="contains"
+							headerText="Quantidade Disponibilizada">
+							<h:outputText value="#{material.quantidade}" ><f:convertNumber currencySymbol="" type="currency"
+									locale="#{lumeSecurity.locale}" /></h:outputText>
+							<h:outputText
+								value="#{material.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString"  />
+						</p:column>
+						<p:column sortBy="#{material.unidade}" filterMatchMode="contains"
+							headerText="Unidades disponibilizadas">
+							<h:outputText value="#{material.unidade}" />
+							<h:outputText value="#{material.material.item.fracaoUnitariaStr}" />
+							<h:outputText value="#{material.material.tamanhoUnidade}" ><f:convertNumber currencySymbol="" type="currency"
+									locale="#{lumeSecurity.locale}" /></h:outputText>
+							<h:outputText
+								value="#{material.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString"  />
+						</p:column>
+						<p:column headerText="Unidades Devolvidas" style="width:25%">
+							<p:cellEditor>
+								<f:facet name="output">
+									<h:outputText id="quantidadeDevolvidaOutput"
+										value="#{material.quantidadeDevolvida}" />
+
+									<h:outputText
+										value="#{material.material.item.fracaoUnitariaStr}" />
+									<h:outputText value="#{material.material.tamanhoUnidade}" ><f:convertNumber currencySymbol="" type="currency"
+									locale="#{lumeSecurity.locale}" /></h:outputText>
+									<h:outputText
+										value="#{material.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString"  />
+								</f:facet>
+								<f:facet name="input">
+									<p:inputMask id="quantidadeDevolvida" style="width:96%"
+										value="#{material.quantidadeDevolvida}" maxlength="8"
+										mask="99999999" required="true" />
+									<h:outputText
+										value="#{material.material.item.fracaoUnitariaStr}" />
+									<h:outputText value="#{material.material.tamanhoUnidade}" />
+									<h:outputText
+										value="#{material.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString"  />
+								</f:facet>
+							</p:cellEditor>
+						</p:column>
+						<p:column headerText="Opções" style="width:50px">
+							<p:rowEditor />
+						</p:column>
+					</p:dataTable>
+				<p:panel styleClass="lumeButton">
+					<p:commandButton id="devolucao" icon="White fa fa-save"
+						value="Finalizar Devolução"
+						actionListener="#{controleMaterialMB.actionDevolucao}"
+						disabled="#{!controleMaterialMB.enableDevolucao}"
+						update=":lume:dtMateriais, :lume:dtKitsDisponibilizados"
+						process=":lume:dtMateriais, @this"
+						 />
+					<p:commandButton id="naoUtilizado" icon="White fa fa-save"
+						value="Não utilizado" onclick="PF('dlg').show();"
+						disabled="#{!controleMaterialMB.enableDevolucao}"
+						 />
+				</p:panel>
+				<p:dialog id="dlg" widgetVar="dlg" header="Não Utilizado" modal="true" responsive="true">
+					<h:panelGroup styleClass="lumeField">
+						<p:outputLabel for="justificativa" value="Justificativa : " />
+						<p:selectOneMenu id="justificativa"
+							value="#{controleMaterialMB.justificativa}" style="width: 340px;"
+							converter="dominio">
+							<f:selectItem itemValue="#{null}"
+								itemLabel="Selecione uma justificativa" />
+							<f:selectItems value="#{controleMaterialMB.justificativas}"
+								var="justificativa" itemLabel="#{justificativa.nome}"
+								itemValue="#{justificativa}" />
+						</p:selectOneMenu>
+
+					</h:panelGroup>
+					<p:separator />
+					<p:commandButton id="persist" icon="White fa fa-save"
+						value="Salvar"
+						actionListener="#{controleMaterialMB.actionNaoUtilizado}"
+						update=":lume:dtMateriais, :lume:dtKitsDisponibilizados"
+						process="@this" 
+						oncomplete="PF('dlg').hide();" />
+				</p:dialog>
+				</p:panel>
+			</p:layoutUnit>
+		</p:layout>
+	</ui:define>
+</ui:composition>

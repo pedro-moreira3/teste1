@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+
+	<p:remoteCommand id="carregaRegioes" name="carregaRegioes"
+		actionListener="#{odontogramaTextoMB.carregaRegioes}" process="@this"
+		update=":lume:tabView:dtFaces" />
+
+
+	<p:panel id="pnOdontogramaTexto" header="Cadastro de Odontograma Texto">
+
+		<h:panelGroup styleClass="lumeField">
+			<p:outputLabel for="dente" value="Dente : " />
+			<p:autoComplete queryDelay="1000"  id="dente" value="#{odontogramaTextoMB.dente}"
+				completeMethod="#{odontogramaTextoMB.geraSugestoesDente}"
+				required="true" forceSelection="true" 
+				scrollHeight="500">
+				<p:ajax event="itemSelect" process="@this" />
+			</p:autoComplete>
+			<p:message for="dente" styleClass="msg" />
+		</h:panelGroup>
+		<h:panelGroup styleClass="lumeField">
+			<p:outputLabel for="statusDente" value="Status : " />
+			<p:autoComplete queryDelay="1000"  value="#{odontogramaTextoMB.statusDente}"
+				id="statusDente" required="true" minQueryLength="3"
+				completeMethod="#{odontogramaTextoMB.geraSugestoesStatusDente}"
+				var="c" itemLabel="#{c.descricao}" itemValue="#{c}"
+				converter="statusDente" forceSelection="true" 
+				scrollHeight="500" />
+			<p:message for="statusDente" styleClass="msg" />
+		</h:panelGroup>
+		<h:panelGroup styleClass="lumeField">
+			<p:outputLabel for="face" value="Face : " />
+			<p:autoComplete queryDelay="1000"  id="face" value="#{odontogramaTextoMB.face}"
+				required="true" minQueryLength="3"
+				completeMethod="#{odontogramaTextoMB.geraSugestoesFace}"
+				forceSelection="true"  scrollHeight="500" />
+			<p:message for="face" styleClass="msg" />
+		</h:panelGroup>
+
+		<p:commandButton id="persistRegiao" icon="ui-icon ui-icon-circle-plus"
+			value="Inserir"
+			actionListener="#{odontogramaTextoMB.actionPersistRegiao}"
+			process="dente,statusDente,face,@this"
+			update="dtFaces,pnOdontogramaTexto" />
+
+
+		<p:dataTable filterDelay="1500"  reflow="true"  emptyMessage="" id="dtFaces"
+			value="#{odontogramaTextoMB.regioes}" var="regiaoDente" rows="7"
+			paginator="true" selection="#{odontogramaTextoMB.regiaoDente}"
+			selectionMode="single" rowKey="#{regiaoDente}"
+			paginatorPosition="bottom">
+			<p:ajax event="rowSelect" update=":lume:tabView:pnOdontogramaTexto" />
+			<f:facet name="header">Faces</f:facet>
+			<p:column sortBy="#{regiaoDente.dente.descricao}"
+				filterBy="#{regiaoDente.dente.descricao}" filterMatchMode="contains"
+				headerText="Dente">
+				<h:outputText value="#{regiaoDente.dente.descricao}" />
+			</p:column>
+			<p:column sortBy="#{regiaoDente.statusDente.descricao}"
+				filterBy="#{regiaoDente.statusDente.descricao}"
+				filterMatchMode="contains" headerText="Status">
+				<h:outputText value="#{regiaoDente.statusDente.descricao}" />
+			</p:column>
+			<p:column sortBy="#{regiaoDente.face}" filterBy="#{regiaoDente.face}"
+				filterMatchMode="contains" headerText="Face">
+				<h:outputText value="#{regiaoDente.face}" />
+			</p:column>
+			<p:column headerText="Excluir">
+				<p:commandButton icon="ui-icon ui-icon-circle-minus" value="Excluir"
+					actionListener="#{odontogramaTextoMB.actionRemoveFace(regiaoDente)}"
+					process="@this" update="dtFaces" />
+			</p:column>
+		</p:dataTable>
+
+		<p:separator />
+
+		<h:panelGroup styleClass="lumeField">
+			<p:outputLabel for="observacoes2" value="Observações : " />
+			<p:inputTextarea id="observacoes2" autoResize="false"
+				value="#{odontogramaTextoMB.observacoes}" cols="50" maxlength="200" />
+			<p:message for="observacoes2" styleClass="msg" />
+		</h:panelGroup>
+
+		<p:separator />
+
+		<p:panel styleClass="lumeButton">
+			<p:commandButton id="persistOdontograma2" icon="White fa fa-save"
+				value="Salvar"
+				actionListener="#{odontogramaTextoMB.actionPersistOdontogramaTexto}"
+				disabled="#{odontogramaTextoMB.paciente == null}"
+				
+				process="observacoes2,@this"
+				oncomplete="carregarListaOdontograma();carregarOdontograma();"
+				update=":lume:tabView:dtFaces" />
+		</p:panel>
+	</p:panel>
+
+</ui:composition>

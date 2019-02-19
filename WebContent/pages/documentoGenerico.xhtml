@@ -1,0 +1,92 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<p:panel id="pnDocumentoGenerico" visible="#{documentoGenericoMB.visivel}" styleClass="BordNone">
+						<h1 class="CardBigTopic">Contrato Paciente</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:fieldset legend="Documento" toggleable="true">
+							<h:outputText id="documentoImprimir3" value="#{documentoGenericoMB.documento}" escape="false" />
+						</p:fieldset>
+
+						<div class="Container25 Responsive100">
+							<p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton">
+								<p:printer target="documentoImprimir3" />
+							</p:commandButton>
+						</div>
+						<div class="SeparatorFull"></div>
+
+						<div class="EmptyBox20"></div>
+					</p:panel>
+
+					<p:panel id="pnDocumentoGenericoPrincipal" styleClass="BordNone">
+
+						<h1 class="CardBigTopic">Contrato Paciente</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+
+							<p:outputLabel for="pacienteSelecionado" value="#{dominioMB.cliente} :" />
+							<p:autoComplete dropdown="true" queryDelay="1000" value="#{documentoGenericoMB.paciente}" id="pacienteSelecionado" completeMethod="#{documentoGenericoMB.geraSugestoes}"
+								var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}" converter="paciente" forceSelection="true" scrollHeight="400" minQueryLength="3" styleClass="Wid50">
+								<p:ajax event="itemSelect" listener="#{documentoGenericoMB.handleSelectPacienteSelecionado}"
+									update=":lume:pnDocumentoGenerico,:lume:pnDocumentoGenericoPrincipal,:lume:dtDocumentoGenerico" process="@this" />
+							</p:autoComplete>
+
+							<p:outputLabel for="tipoDocumentoDocumentoGenerico" value="Documento : " />
+							<p:selectOneMenu id="tipoDocumentoDocumentoGenerico" value="#{documentoGenericoMB.documentoSelecionado}" converter="documento" styleClass="Wid50">
+								<f:selectItem itemLabel="Selecione um Documento" value="#{null}" />
+								<f:selectItems value="#{documentoGenericoMB.documentos}" var="dc" itemValue="#{dc}" itemLabel="#{dc.descricao}" />
+								<p:ajax update="pnDocumentoGenericoPrincipal,pnDocumentoGenerico" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+
+						<ui:repeat var="tagDinamica" value="#{documentoGenericoMB.tagDinamicasAsList}">
+							<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+								<p:column>
+									<h:outputLabel value="#{tagDinamica.tag}" />
+								</p:column>
+								<p:column>
+									<p:inputText value="#{tagDinamica.respTag}" styleClass="Wid50" />
+								</p:column>
+							</p:panelGrid>
+						</ui:repeat>
+
+						<div class="SeparatorFull"></div>
+						<h:panelGroup rendered="#{documentoGenericoMB.liberaBotao}">
+							<div class="Container25 Responsive100">
+								<p:commandButton id="persist5" icon="White fa fa-save" value="Gerar Documento" actionListener="#{documentoGenericoMB.actionPersist}"
+									update=":lume:pnDocumentoGenerico,:lume:pnDocumentoGenericoPrincipal,:lume:dtDocumentoGenerico" process=":lume:pnDocumentoGenericoPrincipal"
+									disabled="#{documentoGenericoMB.entity.id != 0}" styleClass="GreenButton" />
+							</div>
+						</h:panelGroup>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="new5" icon="White fa fa-file-o" value="Novo" actionListener="#{documentoGenericoMB.actionNew}"
+								update=":lume:pnDocumentoGenerico,:lume:pnDocumentoGenericoPrincipal,:lume:dtDocumentoGenerico" immediate="true" tabindex="1" process="@this" />
+						</div>
+
+						<div class="EmptyBox20"></div>
+
+					</p:panel>
+
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtDocumentoGenerico" value="#{documentoGenericoMB.entityList}" var="rct" rows="7" paginator="true"
+						selection="#{documentoGenericoMB.entity}" selectionMode="single" rowKey="#{rct}" paginatorPosition="bottom">
+						<p:ajax event="rowSelect" update=":lume:pnDocumentoGenerico,:lume:pnDocumentoGenericoPrincipal" listener="#{documentoGenericoMB.atualizaTela}" />
+						<f:facet name="header">Outros Documentos</f:facet>
+						<p:column headerText="Data" sortBy="#{rct.dataHoraStrOrd}" filterBy="#{rct.dataHoraStr}" filterMatchMode="contains">
+							<h:outputText value="#{rct.dataHoraStr}" title="#{rct.id}"/>
+						</p:column>
+						<p:column filterBy="#{rct.profissional.dadosBasico.prefixoNome}" sortBy="#{rct.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains" headerText="Profissional">
+							<h:outputText value="#{rct.profissional.dadosBasico.prefixoNome}" />
+						</p:column>
+
+					</p:dataTable>
+
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

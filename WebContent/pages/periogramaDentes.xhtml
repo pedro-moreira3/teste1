@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+    <p:panelGrid styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+        <p:column>
+            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank periograma" style="border:0px none; background-color:transparent;" columnClasses="labelPeriograma">
+                <p:outputLabel value="Dente" />
+                <p:outputLabel value="Sangramento à sondagem" />
+                <p:outputLabel value="Placa" />
+                <p:outputLabel value="Margem Gengival" />
+                <p:outputLabel value="Profundidade de sondagem" />
+            </p:panelGrid>
+        </p:column>
+        <ui:repeat var="p" value="#{dentes}">
+            <p:column>
+                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank periograma" style="border:0px none; background-color:transparent;">
+                                    #{p.dente}                               
+                                    <h:panelGroup>
+                        <p:selectBooleanCheckbox value="#{p.sangramento1}" styleClass="sangramento" />
+                        <p:selectBooleanCheckbox value="#{p.sangramento2}" styleClass="sangramento" />
+                        <p:selectBooleanCheckbox value="#{p.sangramento3}" styleClass="sangramento" />
+                    </h:panelGroup>
+                    <h:panelGroup>
+                        <p:selectBooleanCheckbox value="#{p.placa1}" />
+                        <p:selectBooleanCheckbox value="#{p.placa2}" />
+                        <p:selectBooleanCheckbox value="#{p.placa3}" />
+                    </h:panelGroup>
+                    <h:panelGroup>
+                        <p:inputText value="#{p.margemGengival1}" styleClass="inputPeriograma" />
+                        <p:inputText value="#{p.margemGengival2}" styleClass="inputPeriograma" />
+                        <p:inputText value="#{p.margemGengival3}" styleClass="inputPeriograma" />
+                    </h:panelGroup>
+                    <h:panelGroup>
+                        <p:inputText value="#{p.profundidadeSondagem1}" styleClass="inputPeriograma" />
+                        <p:inputText value="#{p.profundidadeSondagem2}" styleClass="inputPeriograma" />
+                        <p:inputText value="#{p.profundidadeSondagem3}" styleClass="inputPeriograma" />
+                    </h:panelGroup>
+                </p:panelGrid>
+            </p:column>
+        </ui:repeat>
+    </p:panelGrid>
+</ui:composition>

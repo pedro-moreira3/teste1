@@ -1,0 +1,167 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<p:panel id="pnFiltro" styleClass="BordNone">
+
+						<h1 class="CardBigTopic">Entrada/Saída de Materiais</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+
+							<p:outputLabel for="profissional" value="Profissional : " />
+							<p:autoComplete queryDelay="1000" dropdown="true" minQueryLength="3" value="#{relatorioEntradaSaidaMaterialMB.profissional}" id="profissional"
+								completeMethod="#{relatorioEntradaSaidaMaterialMB.filtraProfissinal}" var="profissional" itemLabel="#{profissional.dadosBasico.prefixoNome}"
+								itemValue="#{profissional}" converter="profissional" forceSelection="true" styleClass="profissional">
+								<p:ajax event="itemSelect" listener="#{relatorioEntradaSaidaMaterialMB.handleSelectProfissional}" update=":lume:profissional" />
+							</p:autoComplete>
+
+
+							<p:outputLabel for="item" value="Item : " />
+							<p:autoComplete queryDelay="1000" value="#{relatorioEntradaSaidaMaterialMB.item}" id="item" minQueryLength="3"
+								completeMethod="#{relatorioEntradaSaidaMaterialMB.filtraItem}" var="item" itemLabel="#{item.descricao}" itemValue="#{item}" converter="item"
+								forceSelection="true">
+								<p:ajax event="itemSelect" listener="#{relatorioEntradaSaidaMaterialMB.handleSelectItem}" update=":lume:item" />
+							</p:autoComplete>
+
+
+							<p:outputLabel for="local" value="Local Material : " />
+							<p:autoComplete queryDelay="1000" value="#{relatorioEntradaSaidaMaterialMB.local}" id="local" dropdown="true" minQueryLength="3"
+								completeMethod="#{relatorioEntradaSaidaMaterialMB.filtraLocal}" var="local" itemLabel="#{local.descricao}" itemValue="#{local}"
+								converter="local" forceSelection="true">
+								<p:ajax event="itemSelect" listener="#{relatorioEntradaSaidaMaterialMB.handleSelectlocal}" update=":lume:local" />
+							</p:autoComplete>
+
+
+							<p:outputLabel for="periodoInicial" value="Período Inicial : " />
+							<p:calendar id="periodoInicial" value="#{relatorioEntradaSaidaMaterialMB.periodoInicial}" required="true" pattern="dd/MM/yyyy"
+								showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" />
+
+
+
+							<p:outputLabel for="periodoFinal" value="Período Final : " />
+							<p:calendar id="periodoFinal" value="#{relatorioEntradaSaidaMaterialMB.periodoFinal}" required="true" pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" />
+						</p:panelGrid>
+
+						<div class="SeparatorFull"></div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="pesquisar" value="Pesquisar" icon="fa fa-search White" actionListener="#{relatorioEntradaSaidaMaterialMB.actionFiltra}"
+								update=":lume:dtMaterial,:lume:linear,:lume:pnFiltro,:lume:grafico" process="@this,:lume:pnFiltro"
+								 styleClass="GreenButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioEntradaSaidaMaterialMB.actionNew}"
+								update=":lume:dtMaterial,:lume:linear,:lume:pnFiltro,:lume:grafico" process="@this"  />
+						</div>
+
+					</p:panel>
+
+					<div class="EmptyBox20"></div>
+
+
+					<p:panel id="grafico" styleClass="BordNone">
+						<p:chart id="linear" type="line" model="#{relatorioEntradaSaidaMaterialMB.linearModel}" style="width:100%;"
+							rendered="#{!relatorioEntradaSaidaMaterialMB.naoEncontrado}" />
+					</p:panel>
+
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{relatorioEntradaSaidaMaterialMB.materiais}" var="m" rows="20"
+						paginator="true" rowKey="#{m}" paginatorPosition="bottom">
+						<f:facet name="header">Materiais</f:facet>
+						<p:column filterBy="#{m.itemLimpo}" sortBy="#{m.item}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Item" />
+							</f:facet>
+							<h:outputText value="#{m.item}" />
+						</p:column>
+						<p:column filterBy="#{m.estoqueMinimo}" sortBy="#{m.estoqueMinimo}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Estoque Mínimo" />
+							</f:facet>
+							<h:outputText value="#{m.estoqueMinimo}" />
+							<h:outputLabel value="#{m.unidadeMedidaStr}" disabled="true" />
+						</p:column>
+						<p:column filterBy="#{m.localMaterial.descricaoLimpa}" sortBy="#{m.localMaterial.descricao}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Local Material" />
+							</f:facet>
+							<h:outputText value="#{m.localMaterial.descricao}" />
+						</p:column>
+						<p:column filterBy="#{m.localReserva.descricaoLimpa}" sortBy="#{m.localReserva.descricao}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Local Reserva" />
+							</f:facet>
+							<h:outputText value="#{m.localReserva.descricao}" />
+						</p:column>
+						<p:column filterBy="#{m.profissional.dadosBasico.nomeLimpo}" sortBy="#{m.profissional.dadosBasico.nome}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Profissional" />
+							</f:facet>
+							<h:outputText value="#{m.profissional.dadosBasico.nome}" />
+						</p:column>
+						<p:column filterBy="#{m.valorMedio}" sortBy="#{m.valorMedio}" filterMatchMode="contains" style="text-align:right">
+							<f:facet name="header">
+								<h:outputText value="Valor Médio(R$)" />
+							</f:facet>
+							<h:outputText value="#{m.valorMedio}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+							</h:outputText>
+						</p:column>
+						<p:column filterBy="#{m.valorTotal}" sortBy="#{m.valorTotal}" filterMatchMode="contains" style="text-align:right">
+							<f:facet name="header">
+								<h:outputText value="Valor Total(R$)">
+								</h:outputText>
+							</f:facet>
+							<h:outputText value="#{m.valorTotal}">
+								<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+							</h:outputText>
+						</p:column>
+						<p:column filterBy="#{m.statusStr}" sortBy="#{m.statusStr}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Status" />
+							</f:facet>
+							<h:outputText value="#{m.statusStr}" />
+						</p:column>
+						<p:column filterBy="#{m.procedimento.descricaoLimpa}" sortBy="#{m.procedimento.descricao}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Procedimento" />
+							</f:facet>
+							<h:outputText value="#{m.procedimento.descricao}" />
+						</p:column>
+						<p:column filterBy="#{m.tamanhoUnidade}" sortBy="#{m.tamanhoUnidade}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Tamanho Unidade" />
+							</f:facet>
+							<h:outputText value="#{m.tamanhoUnidade}" />
+							<h:outputLabel value="#{m.unidadeMedidaStr}" disabled="true" />
+						</p:column>
+						<p:column filterBy="#{m.quantidade}" sortBy="#{m.quantidade}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Quantidade" />
+							</f:facet>
+							<h:outputText value="#{m.quantidade}" />
+							<h:outputLabel value="#{m.unidadeMedidaStr}" disabled="true" />
+						</p:column>
+						<p:column filterBy="#{m.validadeStr}" sortBy="#{m.validadeStrOrd}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Validade" />
+							</f:facet>
+							<h:outputText value="#{m.validadeStr}" />
+						</p:column>
+						<p:column filterBy="#{m.ordenacaoStr}" sortBy="#{m.ordenacaoStrOrd}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Data" />
+							</f:facet>
+							<h:outputText value="#{m.ordenacaoStr}" />
+						</p:column>
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

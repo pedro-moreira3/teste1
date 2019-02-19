@@ -1,0 +1,41 @@
+<script id="lume:tabView:dtOdontograma_s" type="text/javascript">
+	$(function() {
+		PrimeFaces.cw('DataTable', 'widget_lume_tabView_dtOdontograma', {
+			id : 'lume:tabView:dtOdontograma',
+			paginator : {
+				id : [ 'lume:tabView:dtOdontograma_paginator_bottom' ],
+				rows : 10,
+				rowCount : 18,
+				page : 0,
+				currentPageTemplate : '({currentPage} of {totalPages})',
+				alwaysVisible : false
+			},
+			selectionMode : 'single',
+			filtering : true,
+			filterEvent : 'keyup',
+			behaviors : {
+				rowSelect : function(event) {
+					PrimeFaces.ab({
+						source : 'lume:tabView:dtOdontograma',
+						process : 'lume:tabView:dtOdontograma',
+						update : 'lume:tabView:dtOdontograma',
+						event : 'rowSelect',
+						oncomplete : function(xhr, status, args) {
+							carregarOdontograma();
+							;
+						}
+					}, arguments[1]);
+				}
+			}
+		});
+	});
+</script>
+</div>
+</div>
+<input type="hidden" id="lume:tabView_activeIndex" name="lume:tabView_activeIndex" value="0" />
+</div>
+<script id="lume:tabView_s" type="text/javascript">
+	PrimeFaces.cw('TabView', 'widget_lume_tabView', {
+		id : 'lume:tabView'
+	});
+</script>

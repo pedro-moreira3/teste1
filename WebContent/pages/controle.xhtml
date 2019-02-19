@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets" template="/templates/default.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="article">
+		<p:layout fullPage="true">
+			 <p:ajaxStatus onstart="PF('loading').show();" onsuccess="PF('loading').hide();" />
+		<p:dialog modal="true" widgetVar="loading" draggable="false"
+			closable="false" showHeader="false" resizable="false">
+				<p:graphicImage value="/images/ajax-loader.gif" />
+				Carregando...
+		</p:dialog> 
+			<p:layoutUnit position="north" size="150">
+				<ui:include src="commons/navigation.xhtml" />
+			</p:layoutUnit>
+			<p:layoutUnit position="center">
+				<p:tabView id="tabView">
+					<p:tab id="tab1" title="Entrega de Materiais">
+						<ui:include src="entregamaterial.xhtml" />
+					</p:tab>
+
+				</p:tabView>
+			</p:layoutUnit>
+		</p:layout>
+	</ui:define>
+</ui:composition>

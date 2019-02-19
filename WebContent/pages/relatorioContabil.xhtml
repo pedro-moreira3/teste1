@@ -1,0 +1,50 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<p:panel id="pnPrincipal" styleClass="BordNone">
+
+						<h1 class="CardBigTopic">Extrato Financeiro</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+							<p:outputLabel for="inicio" value="Inicio : " />
+							<p:calendar id="inicio" value="#{relatorioContabilMB.inicio}" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid50"/>
+
+							<p:outputLabel for="fim" value="Fim : " />
+							<p:calendar id="fim" value="#{relatorioContabilMB.fim}" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid50"/>
+
+						</p:panelGrid>
+
+						<div class="SeparatorFull"></div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioContabilMB.filtra}" update="pnPrincipal"
+								process="@this,pnPrincipal,inicio,fim,s" styleClass="OrangeButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="limpar" icon="White fa fa-file-o" value="Limpar" update="inicio, fim" process="@this"
+								actionListener="#{relatorioContabilMB.actionLimpar}" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton value="Excel" ajax="false" rendered="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
+								<p:dataExporter encoding="iso-8859-1" type="xls" target="s" fileName="RelatorioContabil" />
+							</p:commandButton>
+						</div>					
+						
+						<div class="EmptyBox20"></div>
+						<div class="SeparatorFull"></div>
+						<div class="EmptyBox20"></div>
+
+						<h:outputLabel id="s" value="#{relatorioContabilMB.s}" escape="false" />
+					</p:panel>
+
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

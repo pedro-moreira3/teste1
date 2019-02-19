@@ -1,0 +1,24 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:po="http://primefaces.org/olympos">
+	<h:form>
+		<ul class="layout-tab-submenu" id="layout-retorno">
+			<li><a>Retornos</a>
+				<ul>
+					<ui:repeat var="a" value="#{retornoHojeMB.retornos}">
+						<div class="EmptyBox10"></div>
+						<li><p:commandLink action="#{agendamentoMB.agendamentoRetorno(a)}" styleClass="menulink" ajax="false">
+								<i class="icon-person278 Fs18 Green"></i>
+
+								<span class="Fs14 DispBlock">#{a.paciente.dadosBasico.nome}</span>
+
+								<div class="EmptyBox5"></div>
+								
+								<span class="DispBlock White Fs12 FontLatoRegular">#{a.planoTratamento.descricao}</span>
+								<span class="DispBlock White Fs12 FontLatoRegular">#{a.planoTratamento.profissional.dadosBasico.nome}</span>
+								<span class="DispBlock White Fs12 FontLatoRegular">#{a.paciente.dadosBasico.telefoneStr}</span>
+							</p:commandLink></li>
+					</ui:repeat>
+				</ul></li>
+		</ul>
+	</h:form>
+</ui:composition>

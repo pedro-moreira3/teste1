@@ -1,0 +1,37 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<h:inputHidden id="idgrafico" value="#{graficoProfissionalMB.entity.id}" />
+					<p:panel id="pngrafico" styleClass="BordNone">
+
+						<h1 class="CardBigTopic">Cadastro de Gráficos Profissional</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="graficos" value="Gráficos : " />
+							<p:pickList id="graficos" value="#{graficoProfissionalMB.graficos}" var="g" itemLabel="#{g.descricao}" itemValue="#{g}" converter="grafico" responsive="true"/>
+						</p:panelGrid>
+
+
+
+						<div class="SeparatorFull"></div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{graficoProfissionalMB.actionPersist}"
+								 update=":lume:pngrafico" process=":lume:pngrafico" styleClass="GreenButton"/>
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{graficoProfissionalMB.actionNew}"
+								 update=":lume:pngrafico" immediate="true"/>
+						</div>
+
+					</p:panel>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

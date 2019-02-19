@@ -1,0 +1,99 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+
+    <ui:define name="content">
+
+        <h:inputHidden value="#{tabPacienteMB.activeIndex}"/>
+
+        <div class="Container100 Responsive100 NoIndent">
+            <div class="Container100 ui-fluid NoPadding">
+                <div class="Card">
+
+                    <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+
+                        <h1 class="CardBigTopic">Paciente</h1>
+                        <div class="SeparatorFull"></div>
+                        <h:panelGroup>
+                            <p:autoComplete dropdown="true" queryDelay="1000" value="#{pacienteMB.entity}" minQueryLength="3" completeMethod="#{pacienteMB.geraSugestoesPaciente}" var="p"
+                                itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}" converter="paciente" forceSelection="true" styleClass="paciente MarRight5 Wid70" style="width:30% !important">
+                                <p:ajax event="itemSelect" listener="#{pacienteMB.validaIdade}" />
+                                <p:ajax event="itemSelect" listener="#{pacienteMB.carregarAgendamentos}" />
+                                <p:ajax event="itemSelect" listener="#{exameMB.limpaExames}" />
+                                <p:ajax event="itemSelect" listener="#{planoTratamentoMB.carregarDados}" />
+                                <p:ajax event="itemSelect" listener="#{evolucaoMB.limpaEvolucoes}" />
+                                <p:ajax event="itemSelect" listener="#{periogramaMB.carregarTela}" />
+                                <p:ajax event="itemSelect" listener="#{ortodontiaMB.carregarTela}" />
+                                <p:ajax event="itemSelect" listener="#{planoTratamentoMB.handleSelectPaciente}" update=":lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento" />
+                                <p:ajax event="itemSelect" update=":lume" oncomplete="$('div#lume\\:tabView\\:pnAtestado').hide();carregarListaOdontograma();window.scrollTo(0,0);"
+                                    listener="#{odontogramaMB.atualizaOdontograma}" />
+                            </p:autoComplete>
+                            <p:commandButton icon="White fa fa-eraser" styleClass="OrangeButton" actionListener="#{pacienteMB.actionNew}" update=":lume" process="@this" />
+                        </h:panelGroup>
+                    </p:panelGrid>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="Container100 Responsive100 NoIndent" style="margin-top: 10px;">
+            <div class="Container100 ui-fluid NoPadding">
+
+                <div class="Card">
+                    <p:panel id="pnPrincipal" styleClass="BordNone">
+                        <p:tabView id="tabView" styleClass="NoPadding" onTabChange="fechaMenu();" activeIndex="#{tabPacienteMB.activeIndex}">
+
+                            <p:ajax event="tabChange" listener="#{tabPacienteMB.onTabChange}" update="@form" />
+
+                            <p:tab id="tab1" title="Dados Cadastrais">
+                                <ui:include src="dadosPaciente.xhtml" />
+                            </p:tab>
+
+                            <p:tab id="tab2" title="Anamnese" disabled="#{pacienteMB.entity.id == null}">
+                                <ui:include src="anamnese.xhtml" />
+                            </p:tab>
+
+                            <p:tab id="tab3" title="Odontograma" disabled="#{pacienteMB.entity.id == null}">
+                                <ui:include src="odontograma.xhtml" />
+                            </p:tab>
+
+                            <p:tab id="tab9" title="Plano Ortodôntico" disabled="#{pacienteMB.entity.id == null}">
+                                <ui:include src="ortodontia.xhtml" />
+                            </p:tab>
+
+                            <p:tab id="tab8" title="Plano de Tratamento" disabled="#{pacienteMB.entity.id == null}">
+                                <ui:include src="planoTratamento.xhtml" />
+                            </p:tab>
+
+                            <p:tab id="tab7" title="Periograma" disabled="#{pacienteMB.entity.id == null}">
+                                <ui:include src="periograma.xhtml" />
+                            </p:tab>
+
+                            <p:tab id="tab5" title="Evolução" disabled="#{pacienteMB.entity.id == null}">
+                                <ui:include src="evolucao.xhtml" />
+                            </p:tab>
+
+                            <p:tab id="tab6" title="Exames" disabled="#{pacienteMB.entity.id == null}">
+                                <ui:include src="exame.xhtml" />
+                            </p:tab>
+
+                            <p:tab id="tab10" title="Frequência" disabled="#{pacienteMB.entity.id == null}">
+                                <ui:include src="historicoagendamentos.xhtml" />
+                            </p:tab>
+
+                        </p:tabView>
+                        <p:dialog widgetVar="eventDialog" header="Descrição" showEffect="fade" hideEffect="fade" modal="true" responsive="true" position="bottom">
+                            <pe:ckEditor value="#{evolucaoMB.entity.descricao}" id="descricao" height="480" />
+                            <p:panel styleClass="lumeButton">
+                                <p:commandButton id="persistEvolucao" icon="White fa fa-save" value="Salvar" actionListener="#{evolucaoMB.actionPersist}" process="@this,descricao"
+                                    oncomplete="PF('eventDialog').hide()" update=":lume:tabView:dtEvolucao" />
+                            </p:panel>
+                        </p:dialog>
+                    </p:panel>
+
+                </div>
+            </div>
+        </div>
+
+
+    </ui:define>
+</ui:composition>

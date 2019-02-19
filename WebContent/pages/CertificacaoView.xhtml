@@ -1,0 +1,71 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=9" />
+		<title>TESTE</title>
+	</f:facet>
+	</h:head>
+	<h:body>
+		<f:view>
+			<h:form id="fCertificacao">  
+			    <p:panel id="painelCertificacao" header="Cadastro de Certificacao" style="margin-bottom:10px;">
+			    	<h:inputHidden id="idCertificacao" value="#{pc_CertificacaoView.entity.id}" />  
+			        <p:messages id="messages" />  
+			        <h:panelGrid columns="2">  
+			            <p:outputLabel for="certificadoCertificacao" value="Certificado:" />
+			            <h:selectOneMenu id="certificadoCertificacao" value="#{pc_CertificacaoView.entity.certificado}" converter="certificado">
+							<f:selectItems value="#{pc_CertificacaoView.certificados}" var="certificado" itemLabel="#{certificado.descricao}" itemValue="#{certificado}"/>
+						</h:selectOneMenu>
+			              
+			            <p:outputLabel for="usuarioCertificacao" value="Usuario:" />
+			            <h:selectOneMenu id="usuarioCertificacao" value="#{pc_CertificacaoView.entity.usuario}" converter="user">
+							<f:selectItems value="#{pc_CertificacaoView.usuarios}" var="usuario" itemLabel="#{usuario.descricao}" itemValue="#{usuario}"/>
+						</h:selectOneMenu>
+			              
+			            <h:outputLabel for="dataInicialCertificacao" value="Data Inicial:" />  
+			            <p:calendar id="dataInicialCertificacao" 
+							value="#{pc_CertificacaoView.entity.dataInicial}"
+							pattern="dd/MM/yyyy" showWeeksBar="false"
+							locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}"
+							navigator="true" yearRange="-10:+10" mask="true">
+						</p:calendar>  
+			  
+			            <h:outputLabel for="dataFinalCertificacao" value="Data Final:" />  
+			            <p:calendar id="dataFinalCertificacao" 
+							value="#{pc_CertificacaoView.entity.dataFinal}"
+							pattern="dd/MM/yyyy" showWeeksBar="false"
+							locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}"
+							navigator="true" yearRange="-10:+10" mask="true">
+						</p:calendar>  
+	
+					    <p:commandButton id="incluir" value="Salvar" update="@form" process=":fCertificacao:painelCertificacao" actionListener="#{pc_CertificacaoView.actionPersist}"/>
+			        </h:panelGrid>
+				</p:panel>  
+	 			<p:dataTable filterDelay="1500"  reflow="true"  emptyMessage=""  id="dtCertificacao" value="#{pc_CertificacaoView.entityList}" var="certificacao" style="width:100%" 
+	 			rows="8" paginator="true" selection="#{pc_CertificacaoView.entity}" selectionMode="single" rowKey="#{certificacao}" paginatorPosition="bottom">
+		 			<p:ajax event="rowSelect" update=":fCertificacao:painelCertificacao" process="@this"/>
+					<f:facet name="header">Certificacoes</f:facet>
+					<p:column headerText="Certificado" style="width:35%">
+						<h:outputText value="#{certificacao.certificadoStr.descricao}" />
+					</p:column>
+					<p:column headerText="Usuario" style="width:35%">
+						<h:outputText value="#{certificacao.usuarioStr.descricao}" />
+					</p:column>
+					<p:column headerText="Data Inicial" style="width:15%">
+						<h:outputText value="#{certificacao.dataInicial}" />
+					</p:column>
+					<p:column headerText="Data Final" style="width:15%">
+						<h:outputText value="#{certificacao.dataFinal}" />
+					</p:column>
+					<p:column>
+					    <p:commandButton  icon="ui-icon-trash" update="dtCertificacao" actionListener="#{pc_CertificacaoView.actionRemove(certificacao.id)}"/>  
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</f:view>
+	</h:body>
+</html>

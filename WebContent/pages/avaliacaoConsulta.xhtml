@@ -1,0 +1,53 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+
+
+
+		<style>
+.ui-rating-cancel {
+	display: none !important;
+}
+</style>
+
+
+
+
+
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<p:panel id="pnAfastamento" styleClass="BordNone">
+
+						<h1 class="CardBigTopic">Avaliações</h1>
+						<div class="SeparatorFull"></div>
+
+
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtAvaliacao" value="#{avaliacaoConsultaMB.avaliacoes}" var="avaliacao" rows="20" paginator="true" paginatorPosition="bottom">
+							<f:facet name="header">Consultas realizadas</f:facet>
+
+							<p:column filterBy="#{avaliacao.agendamento.profissional.dadosBasico.prefixoNome}" sortBy="#{avaliacao.agendamento.profissional.dadosBasico.nome}" filterMatchMode="contains"
+								headerText="Cirurgião Dentista">
+								<h:outputText value="#{avaliacao.agendamento.profissional.dadosBasico.prefixoNome}" />
+							</p:column>
+
+							<p:column filterBy="#{avaliacao.agendamento.fimStr}" sortBy="#{avaliacao.agendamento.fimStrOrd}" filterMatchMode="contains" headerText="Data">
+								<h:outputText value="#{avaliacao.agendamento.fimStr}">
+									<f:convertDateTime pattern="dd/MM/yyyy hh:mm:ss" />
+								</h:outputText>
+							</p:column>
+
+							<p:column headerText="Avaliação">
+								<p:rating value="#{avaliacao.avaliacao}">
+									<p:ajax event="rate" listener="#{avaliacaoConsultaMB.onRate}" update="dtAvaliacao" />
+									<p:ajax event="cancel" listener="#{avaliacaoConsultaMB.onRate}" update="dtAvaliacao" />
+								</p:rating>
+							</p:column>
+
+						</p:dataTable>
+					</p:panel>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

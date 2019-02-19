@@ -1,0 +1,178 @@
+@CHARSET "ISO-8859-1";
+
+body {
+	margin: 0px;
+	padding: 0px;
+	font-family: Verdana, sans-serif;
+	font-size: 10px;
+}
+
+#header {
+	background-image: url("../images/bg.png");
+	background-repeat: repeat-x;
+}
+
+#navigation {
+	background-image: url("../images/LTClini.png");
+	background-repeat: no-repeat;
+	height: 145px;
+}
+
+.ui-menu {
+	background-image: url("../images/fundo_verde.png");
+	background-repeat: repeat;
+	position: fixed;
+	display: block;
+	top: 65px;
+	right: 0px;
+}
+
+a.footer-link:link {
+	text-decoration: none;
+}
+
+a.footer-link:visited {
+	text-decoration: none;
+}
+
+a.footer-link:hover {
+	text-decoration: none;
+}
+
+a.footer-link:active {
+	text-decoration: none;
+}
+
+/* --- Container in base.xhtml --- */
+.container {
+	margin: 0px;
+	padding: 0px;
+}
+
+/* --- Header --- */
+.header {
+	width: 100%;
+	height: 153px;
+	margin: 0px;
+	padding: 0px;
+	background-image: url("../images/header_back.png");
+	background-repeat: repeat-x;
+}
+
+.top-menu {
+	width: 100%;
+	height: 33px;
+	position: relative;
+	float: left;
+	/* 	background-image: url("../images/top-menu.png");
+	background-repeat: repeat-x; */
+	font-family: Verdana, sans-serif;
+	font-size: 11px;
+	color: white;
+}
+
+/* --- Navigation --- */
+.nav {
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+	/*	vertical-align: middle;
+ 	background-image: url(../images/nav_back.png);
+	background-repeat: repeat-x; */
+}
+
+/* --- Article --- */
+.article {
+	margin: 0px;
+	padding: 0px;
+	padding-bottom: 85px;
+}
+
+/* --- Footer --- */
+.footer {
+	position: relative;
+	width: 100%;
+	height: 85px;
+	bottom: 0px;
+	padding-top: 0;
+	padding-bottom: -2px;
+	margin-top: -85px;
+	font-size: 75%;
+	text-align: center;
+	/*	background-color: #FFF;
+	background-image: url("../images/footer_back.png");
+	background-repeat: repeat-x; */
+	clear: both;
+}
+
+.footerContato {
+	text-decoration: none;
+	font-family: Verdana, sans-serif;
+	font-size: 10px;
+	color: black;
+	font-weight: normal;
+}
+
+.footer div#bgfooter {
+	height: 90px;
+	padding-left: 10px;
+}
+
+a.footer-link:link {
+	text-decoration: none;
+	font-family: Verdana, sans-serif;
+	font-size: 11px;
+	color: black;
+	font-weight: normal;
+}
+
+a.footer-link:visited {
+	text-decoration: none;
+	font-family: Verdana, sans-serif;
+	font-size: 11px;
+	color: black;
+	font-weight: normal;
+}
+
+a.footer-link:hover {
+	text-decoration: none;
+	font-family: Verdana, sans-serif;
+	font-size: 11px;
+	color: black;
+}
+
+a.footer-link:active {
+	text-decoration: none;
+	font-family: Verdana, sans-serif;
+	font-size: 11px;
+	color: black;
+	font-weight: normal;
+}
+
+.Preto {
+	background-color: #CFCFCF;
+	background-image: none;
+	color: #000000;
+}
+
+.Vermelho {
+	background-color: LightSalmon;
+	background-image: none;
+	color: #000000;
+}
+
+.Amarelo {
+	background-color: #EEDD82;
+	background-image: none;
+	color: #000000;
+}
+
+.Verde {
+	background-color: DarkSeaGreen1;
+	background-image: none;
+	color: #000000;
+}
+
+.SemSLA {
+	
+}

@@ -1,0 +1,12 @@
+update SEG_OBJETO set OBJ_STR_DES='Rel Avaliação Atend.' where OBJ_INT_COD = (select OBJ_INT_COD from SEG_OBJETO where OBJ_STR_CAMINHO = 'relatorioAvaliacao.jsf');
+update SEG_OBJETO set OBJ_STR_DES='Rel Plano Tratam.' where OBJ_INT_COD = (select OBJ_INT_COD from SEG_OBJETO where OBJ_STR_CAMINHO = 'relatorioPlanoTratamento.jsf');
+update SEG_OBJETO set OBJ_STR_DES='Pagamentos/Recebimentos' where OBJ_INT_COD = (select OBJ_INT_COD from SEG_OBJETO where OBJ_STR_CAMINHO = 'contaReceberPagar.jsf');
+update SEG_OBJETO set OBJ_STR_DES='Convênio-Procedimento' where OBJ_INT_COD = (select OBJ_INT_COD from SEG_OBJETO where OBJ_STR_CAMINHO = 'convenioProcedimento.jsf');
+update SEG_OBJETO set OBJ_STR_DES='Ajuste de Estoque' where OBJ_INT_COD = (select OBJ_INT_COD from SEG_OBJETO where OBJ_STR_DES = 'Conferência de Estoque');
+update SEG_OBJETO set OBJ_STR_DES='Ajuste de Materiais' where OBJ_INT_COD = (select OBJ_INT_COD from SEG_OBJETO where OBJ_STR_DES = 'Conferência de Materiais');
+update SEG_OBJETO set OBJ_STR_DES='Consulta Ajustes' where OBJ_INT_COD = (select OBJ_INT_COD from SEG_OBJETO where OBJ_STR_DES = 'Consulta Conferências');
+update SEG_OBJETO set OBJ_STR_DES='Fornecedor' where OBJ_INT_COD = (select OBJ_INT_COD from SEG_OBJETO where OBJ_STR_CAMINHO = 'fornecedor.jsf');
+update SEG_OBJETO set OBJ_INT_CODPAI = 121 where OBJ_INT_COD = (select OBJ_INT_COD from SEG_OBJETO where OBJ_STR_CAMINHO = 'fornecedor.jsf');
+update SEG_OBJETO set OBJ_STR_DES='Kits/Procedimentos' where OBJ_INT_COD = (select OBJ_INT_COD from SEG_OBJETO where OBJ_STR_DES = 'Kits-Procedimentos');
+update SEG_OBJETO set OBJ_INT_CODPAI = 121 where OBJ_INT_COD = (select OBJ_INT_COD from SEG_OBJETO where OBJ_STR_DES = 'Kits/Procedimentos');
+update SEG_OBJETO set OBJ_STR_DES='Cadastro de Tarifas' where OBJ_INT_COD = (select OBJ_INT_COD from SEG_OBJETO where OBJ_STR_DES = 'Cadastro de Tarifas de Cartões');

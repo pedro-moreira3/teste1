@@ -1,0 +1,427 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <style>
+.ui-commandlink {
+    text-decoration: none;
+    !
+    important;
+}
+
+.problema-odontograma {
+    border-radius: 4px;
+    color: #fff;
+    font-size: 11px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, .3);
+    text-align: center;
+    z-index: 1;
+    margin-bottom: 5px;
+    position: relative;
+    top: 20px;
+    padding: 1px 3px;
+}
+
+.problema-odontograma-carie {
+    background: red;
+}
+</style>
+
+
+
+    <p:remoteCommand id="carregarListaOdontograma" name="carregarListaOdontograma" actionListener="#{odontogramaMB.carregarOdontogramas}" process="@this"
+        update=":lume:tabView:odontograma,:lume:tabView:planoTratamento, :lume:tabView:procedimentosOdontograma, :lume:tabView:pnOdontograma" />
+
+    <div class="Container100 Responsive100 NoIndent">
+        <div class="Container100 NoPadding">
+            <div class="Card">
+
+                <p:panel id="pnOdontograma" styleClass="BordNone">
+
+
+                    <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+
+                        <p:outputLabel for="odontograma" value="Odontograma : " />
+                        <h:panelGroup>
+                            <p:selectOneMenu id="odontograma" style="float:left;width:300px !important;" value="#{odontogramaMB.entity}" filter="true" filterMatchMode="contains" autoWidth="false"
+                                converter="odontograma">
+                                <p:ajax update=":lume:tabView:pnOdontograma" listener="#{odontogramaMB.actionSelecionarOdontograma}" process="@this" />
+                                <f:selectItem itemLabel="Selecione um Odontograma" noSelectionOption="true" itemValue="#{null}" />
+                                <f:selectItems value="#{odontogramaMB.odontogramas}" var="o" itemValue="#{o}" itemLabel="#{o.dataCadastroStr}" />
+                            </p:selectOneMenu>
+                            <p:commandButton icon="White fa fa-file-o" actionListener="#{odontogramaMB.actionCriarOdontograma}" update=":lume:tabView:pnOdontograma" process="@this"
+                                style="float:left;margin-left: 10px;" title="Novo Odontograma">
+                                <p:confirm header="Confirmação" message="Deseja realmente criar um novo odontograma?" icon="fa fa-warning" />
+                            </p:commandButton>
+                            <p:commandButton icon="White fa fa-trash-o" actionListener="#{odontogramaMB.actionExcluirOdontograma}" update=":lume:tabView:pnOdontograma" process="@this"
+                                style="float:left;margin-left: 10px;" title="Excluir Odontograma" styleClass="RedButton" disabled="#{odontogramaMB.entity == null or odontogramaMB.entity.id == 0}"
+                                rendered="#{odontogramaMB.admin}">
+                                <p:confirm header="Confirmação" message="Deseja realmente deletar este odontograma? Os planos de tratamentos vinculados serão perdidos também." icon="fa fa-warning" />
+                            </p:commandButton>
+                        </h:panelGroup>
+
+                        <p:outputLabel for="planoTratamento" value="Plano Tratamento : " />
+
+                        <h:panelGroup>
+                            <p:selectOneMenu id="planoTratamento" style="float:left;width:300px !important;" value="#{odontogramaMB.planoTratamento}" filter="true" filterMatchMode="contains"
+                                autoWidth="false" converter="planoTratamento" disabled="#{odontogramaMB.entity == null or odontogramaMB.entity.id == 0}">
+                                <p:ajax process="@this" update=":lume:tabView:planoTratamento, :lume:tabView:procedimentosOdontograma, :lume:tabView:pnOdontograma"
+                                    listener="#{odontogramaMB.carregarProcedimentosPT}" />
+                                <f:selectItem itemLabel="Selecione um Plano Tratamento" noSelectionOption="true" itemValue="#{null}" />
+                                <f:selectItems value="#{odontogramaMB.planosTratamento}" var="pt" itemValue="#{pt}" itemLabel="#{pt.descricaoComConvenio}" />
+                            </p:selectOneMenu>
+                            <p:commandButton icon="White fa fa-file-o" style="float:left;margin-left: 10px;" title="Novo Plano de Tratamento" actionListener="#{odontogramaMB.actionNewPT}"
+                                update=":lume:tabView:pgPt" process="@this" oncomplete="PF('dlgPt').show();" disabled="#{odontogramaMB.entity == null or odontogramaMB.entity.id == 0}" />
+                            <p:commandButton icon="White fa fa-trash-o" actionListener="#{odontogramaMB.actionExcluirPT}"
+                                update=":lume:tabView:planoTratamento, :lume:tabView:procedimentosOdontograma, :lume:tabView:pnOdontograma" process="@this" style="float:left;margin-left: 10px;"
+                                title="Excluir Plano de Tratamento" styleClass="RedButton" rendered="#{odontogramaMB.admin}"
+                                disabled="#{odontogramaMB.planoTratamento == null or odontogramaMB.planoTratamento.id == 0}">
+                                <p:confirm header="Confirmação" message="Deseja realmente excluir este Plano de Tratamento?" icon="fa fa-warning" />
+                            </p:commandButton>
+                        </h:panelGroup>
+
+                        <p:outputLabel for="observacoes" value="Observações : " />
+                        <p:inputTextarea id="observacoes" autoResize="true" value="#{odontogramaMB.observacoes}" cols="100" maxlength="200" />
+                    </p:panelGrid>
+                    <div class="Separator"></div>
+
+                    <p:panel visible="#{odontogramaMB.paciente != null}" style="border:0px" id="pnDenteOdontograma">
+                        <h:panelGrid columns="2" style="margin: 0 auto;" id="tbOdontograma1">
+
+                            <h:panelGroup>
+                                <ui:include src="/templates/grupoDentes.xhtml">
+                                    <ui:param name="grupo" value="#{odontogramaMB.grupoDente1}" />
+                                </ui:include>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <ui:include src="/templates/grupoDentes.xhtml">
+                                    <ui:param name="grupo" value="#{odontogramaMB.grupoDente2}" />
+                                </ui:include>
+                            </h:panelGroup>
+                        </h:panelGrid>
+
+
+                        <h:panelGrid columns="2" style="margin: 0 auto; table-layout: fixed; width: 560px;">
+                            <h:panelGroup>
+                                <ui:include src="/templates/grupoDentes.xhtml">
+                                    <ui:param name="grupo" value="#{odontogramaMB.grupoDente5}" />
+                                    <ui:param name="style" value="float:right;" />
+                                    <ui:param name="size" value="30" />
+                                </ui:include>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <ui:include src="/templates/grupoDentes.xhtml">
+                                    <ui:param name="grupo" value="#{odontogramaMB.grupoDente6}" />
+                                    <ui:param name="size" value="30" />
+                                </ui:include>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <ui:include src="/templates/grupoDentes2.xhtml">
+                                    <ui:param name="grupo" value="#{odontogramaMB.grupoDente8}" />
+                                    <ui:param name="style" value="float:right;" />
+                                    <ui:param name="size" value="30" />
+                                </ui:include>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <ui:include src="/templates/grupoDentes2.xhtml">
+                                    <ui:param name="grupo" value="#{odontogramaMB.grupoDente7}" />
+                                    <ui:param name="size" value="30" />
+                                </ui:include>
+                            </h:panelGroup>
+
+                        </h:panelGrid>
+
+                        <h:panelGrid columns="2" style="margin: 0 auto;">
+
+                            <h:panelGroup>
+                                <ui:include src="/templates/grupoDentes2.xhtml">
+                                    <ui:param name="grupo" value="#{odontogramaMB.grupoDente4}" />
+                                </ui:include>
+                            </h:panelGroup>
+
+                            <h:panelGroup>
+                                <ui:include src="/templates/grupoDentes2.xhtml">
+                                    <ui:param name="grupo" value="#{odontogramaMB.grupoDente3}" />
+                                </ui:include>
+                            </h:panelGroup>
+
+                        </h:panelGrid>
+                    </p:panel>
+                    <br />
+
+                    <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="procedimentosOdontograma" var="procedimento" editable="true"
+                        value="#{odontogramaMB.planoTratamento.planoTratamentoProcedimentos}" rows="10" paginator="true" paginatorPosition="bottom">
+                        <f:facet name="header">Procedimentos Selecionados</f:facet>
+                        <p:column sortBy="#{procedimento.procedimento.descricao}" filterBy="#{procedimento.procedimento.descricao}" filterMatchMode="contains" headerText="Procedimento" width="40%">
+                            <h:outputText id="descricao" value="#{procedimento.procedimento.descricao}" />
+                        </p:column>
+                        <p:column sortBy="#{procedimento.denteRegiao}" filterBy="#{procedimento.denteRegiao}" filterMatchMode="contains" headerText="Dente/Região">
+                            <h:outputText value="#{procedimento.denteRegiao}" rendered="#{procedimento.denteObj == null}" />
+                            <p:commandLink oncomplete="resize('#lume\\:tabView\\:dlgProcedimento');PF('dlgProcedimento').show();" process="@this" action="#{odontogramaMB.carregaProcedimentos}"
+                                value="#{procedimento.denteObj.descricao}" rendered="#{procedimento.denteObj != null}" update=":lume:tabView:pgProcedimento">
+                                <f:param name="dente" value="#{procedimento.denteObj.descricao}" />
+                            </p:commandLink>
+                        </p:column>
+                        <p:column sortBy="#{procedimento.facesSelecionadasStr}" filterBy="#{procedimento.facesSelecionadasStr}" filterMatchMode="contains" headerText="Face">
+                            <h:outputText value="#{procedimento.facesSelecionadasStr}" rendered="#{procedimento.procedimento.quantidadeFaces > 0}" />
+                        </p:column>
+                        <p:column headerText="Diagnósticos">
+                            <h:outputText escape="false" value="#{odontogramaMB.diagnosticosDente(procedimento.denteObj.descricao,'position: inherit;')}" />
+                        </p:column>
+                        <p:column headerText="Dta. de Finalização" sortBy="#{procedimento.dataFinalizado}" filterBy="#{procedimento.dataFinalizadoStr}">
+                            <h:outputText value="#{procedimento.dataFinalizadoStr}" />
+                        </p:column>
+                        <p:column headerText="Finalizado Por" sortBy="#{procedimento.finalizadoPorProfissional.dadosBasico.nome}" filterBy="#{procedimento.finalizadoPorProfissional.dadosBasico.nome}">
+                            <h:outputText value="#{procedimento.finalizadoPorProfissional.dadosBasico.nome}" />
+                        </p:column>
+                    </p:dataTable>
+
+                    <br />
+
+                    <div class="Separator"></div>
+
+                    <div class="Card ui-fluid">
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="persistOdontograma" icon="White fa fa-save White" value="Salvar" actionListener="#{odontogramaMB.persistDente}" process="@this"
+                                update=":lume:tabView:odontograma,:lume:tabView:pnOdontograma, :lume:tabView:dtPlanoTratamento"
+                                disabled="#{odontogramaMB.planoTratamento == null or odontogramaMB.planoTratamento.id == 0}" styleClass="GreenButton" />
+                        </div>
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="newOdontograma" icon="White fa fa-file-o" value="Novo" actionListener="#{odontogramaMB.actionNew}"
+                                update=":lume:tabView:odontograma,:lume:tabView:planoTratamento, :lume:tabView:procedimentosOdontograma, :lume:tabView:pnOdontograma" process="@this" />
+                        </div>
+
+                        <div class="Container25 Responsive100">
+                            <p:commandButton icon="White fa fa-registered" value="Regiões" process="@this" oncomplete="resize('#lume\\:tabView\\:dlgProcedimento');PF('dlgProcedimento').show();"
+                                actionListener="#{odontogramaMB.enableRegioes(true)}" styleClass="OrangeButton" update=":lume:tabView:pgProcedimento"
+                                disabled="#{(odontogramaMB.planoTratamento == null or odontogramaMB.planoTratamento.id == 0) or odontogramaMB.entity.id == 0}" />
+                        </div>
+
+                        <div class="Container25 Responsive100">
+                            <p:commandButton icon="White fa fa-asterisk" value="Personalizar" process="@this" oncomplete="PF('dlgPersonalizar').show();" styleClass="PinkButton" />
+                        </div>
+                    </div>
+
+
+                </p:panel>
+
+                <p:messages id="messages" autoUpdate="true" escape="false" />
+
+
+                <p:dialog id="dlgPt" widgetVar="dlgPt" responsive="true" width="900">
+                    <h:panelGroup id="pgPt">
+                        <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+                            <p:outputLabel value="Descrição:" />
+                            <p:inputText id="planoTratamentoDescricao" value="#{odontogramaMB.planoTratamento.descricao}" required="true" style="width:50%;" />
+
+                            <p:outputLabel value="Utilizar o convênio #{odontogramaMB.paciente.convenio.dadosBasico.nome} :" rendered="#{odontogramaMB.paciente.convenio != null}" />
+                            <p:selectBooleanCheckbox id="bconvenio" value="#{odontogramaMB.planoTratamento.bconvenio}" rendered="#{odontogramaMB.paciente.convenio != null}" />
+
+                        </p:panelGrid>
+
+                        <div class="Separator"></div>
+
+                        <div class="Card ui-fluid Container100 Responsive100">
+                            <div class="Container25 Responsive100">
+                                <p:commandButton icon="White fa fa-save" value="Salvar" styleClass="GreenButton" process="@this,planoTratamentoDescricao,bconvenio" oncomplete="PF('dlgPt').hide()"
+                                    update=":lume:tabView:planoTratamento, :lume:tabView:procedimentosOdontograma, :lume:tabView:pnOdontograma, :lume:tabView:dtPlanoTratamento"
+                                    actionListener="#{odontogramaMB.actionPersistPT}" />
+                            </div>
+                        </div>
+                    </h:panelGroup>
+                </p:dialog>
+
+                <p:dialog id="dlgProcedimento" widgetVar="dlgProcedimento" responsive="true" width="800" onHide="resize('#lume\\:tabView\\:dlgProcedimento');">
+                    <h:panelGroup id="pgProcedimento">
+
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+                            <p:outputLabel value="Dente #{odontogramaMB.denteSelecionado.descricao}" styleClass="CardBigTopic" rendered="#{!odontogramaMB.enableRegioes}" />
+                            <p:outputLabel for="regioes" value="Regiões: " rendered="#{odontogramaMB.enableRegioes}" />
+                            <p:selectOneMenu id="regioes" value="#{odontogramaMB.regiaoSelecionada}" filter="true" filterMatchMode="contains" autoWidth="false" style="float:left;width:50% !important"
+                                rendered="#{odontogramaMB.enableRegioes}">
+                                <p:ajax process="@this" />
+                                <f:selectItem itemLabel="Arcada Superior/Inferior" itemValue="Arcada Superior/Inferior" />
+                                <f:selectItem itemLabel="Arcada Superior" itemValue="Arcada Superior" />
+                                <f:selectItem itemLabel="Arcada Inferior" itemValue="Arcada Inferior" />
+                                <f:selectItem itemLabel="Segmento Superior Direito" itemValue="Segmento Superior Direito" />
+                                <f:selectItem itemLabel="Segmento Superior Anterior" itemValue="Segmento Superior Anterior" />
+                                <f:selectItem itemLabel="Segmento Superior Esquerdo" itemValue="Segmento Superior Esquerdo" />
+                                <f:selectItem itemLabel="Segmento Inferior Direito" itemValue="Segmento Inferior Direito" />
+                                <f:selectItem itemLabel="Segmento Inferior Anterior" itemValue="Segmento Inferior Anterior" />
+                                <f:selectItem itemLabel="Segmento Inferior Esquerdo" itemValue="Segmento Inferior Esquerdo" />
+                                <f:selectItem itemLabel="Seio Maxilar Direito" itemValue="Seio Maxilar Direito" />
+                                <f:selectItem itemLabel="Seio Maxila Esquerdo" itemValue="Seio Maxila Esquerdo" />
+                                <f:selectItem itemLabel="Seio Maxilar Bilateral" itemValue="Seio Maxilar Bilateral" />
+                            </p:selectOneMenu>
+
+                            <div class="Separator"></div>
+
+
+                        </p:panelGrid>
+
+
+
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+
+                            <p:outputLabel for="problema" value="Diagnóstico : " />
+
+                            <p:column>
+                                <p:selectOneMenu id="problema" value="#{odontogramaMB.statusDenteDenteSelecionado}" converter="statusDente" filter="true" filterMatchMode="contains" autoWidth="false"
+                                    style="float:left;width:50% !important">
+                                    <p:ajax process="@this" update="adicionarStatusDente" />
+                                    <f:selectItem itemLabel="Selecione um diagnóstico" noSelectionOption="true" itemValue="#{null}" />
+                                    <f:selectItems value="#{odontogramaMB.statusDente}" var="statusDente" itemLabel="#{statusDente.descricao}" itemValue="#{statusDente}" />
+                                </p:selectOneMenu>
+                                <p:commandButton id="adicionarStatusDente" icon="White fa fa-plus White" actionListener="#{odontogramaMB.actionAdicionarStatusDente}"
+                                    update=":lume:tabView:pnDenteOdontograma,:lume:tabView:dtStatusDenteSelecionados,:lume:tabView:procedimentosOdontograma,:lume:tabView:problema,@this"
+                                    process="@this" style="float:left;margin-left: 5px;margin-top: 1px;" disabled="#{odontogramaMB.statusDenteDenteSelecionado == null}" />
+                            </p:column>
+
+                        </p:panelGrid>
+
+                        <div class="Separator"></div>
+
+                        <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtStatusDenteSelecionados" var="regiao" editable="true" value="#{odontogramaMB.denteSelecionado.regioes}"
+                            rows="10" paginator="true" paginatorPosition="bottom">
+                            <p:column sortBy="#{regiao.statusDente.descricao}" headerText="Diagnóstico">
+                                <h:outputText value="#{regiao.statusDente.descricao}" />
+                            </p:column>
+                            <p:column headerText="Face">
+                                <p:selectCheckboxMenu value="#{regiao.facesArray}" label="#{regiao.facesArrayLabel}" rendered="#{regiao.statusDente.temFace}">
+                                    <p:ajax process="@this" listener="#{odontogramaMB.actionPersistFacesStatusDente(regiao)}"
+                                        update="@this,:lume:tabView:pnDenteOdontograma,:lume:tabView:procedimentosOdontograma" />
+                                    <f:selectItems value="#{regiao.facesStr}" var="face" itemValue="#{face}" itemLabel="#{face}" />
+                                </p:selectCheckboxMenu>
+                            </p:column>
+                            <p:column width="10%">
+                                <p:commandButton icon="White fa fa-minus White" actionListener="#{odontogramaMB.actionRemoverStatusDente(regiao)}"
+                                    update=":lume:tabView:pnDenteOdontograma,:lume:tabView:dtStatusDenteSelecionados,:lume:tabView:procedimentosOdontograma,:lume:tabView:problema,@this"
+                                    process="@this" />
+                            </p:column>
+                        </p:dataTable>
+
+                        <div class="Separator"></div>
+
+
+                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+
+                            <p:outputLabel for="procedimento" value="Procedimento: " />
+                            <p:column>
+                                <p:autoComplete dropdown="true" queryDelay="1000" value="#{odontogramaMB.procedimentoSelecionado}" id="procedimento"
+                                    completeMethod="#{odontogramaMB.geraSugestoesProcedimento}" var="p" itemLabel="#{p.descricao}" itemValue="#{p}" converter="procedimento" forceSelection="true"
+                                    scrollHeight="400" minQueryLength="3" style="float:left !important;width:50% !important" inputStyle="width:500px;">
+                                    <p:ajax event="itemSelect" process="@this" update="adicionarPtp" />
+                                </p:autoComplete>
+                                <p:commandButton id="adicionarPtp" icon="White fa fa-plus White" actionListener="#{odontogramaMB.actionAdicionarProcedimento}"
+                                    update=":lume:tabView:dtProcedimentosSelecionados,:lume:tabView:procedimentosOdontograma,procedimento,@this" process="@this"
+                                    style="float:left;margin-left: 5px;margin-top: 1px;" disabled="#{odontogramaMB.procedimentoSelecionado == null}" />
+                            </p:column>
+                        </p:panelGrid>
+
+                        <div class="Separator"></div>
+
+                        <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtProcedimentosSelecionados" var="procedimento" editable="true" value="#{odontogramaMB.procedimentosDente}"
+                            rows="10" paginator="true" paginatorPosition="bottom">
+                            <p:column sortBy="#{procedimento.procedimento.descricao}" headerText="Procedimento">
+                                <h:outputText id="descricao" value="#{procedimento.procedimento.descricao}" />
+                            </p:column>
+                            <p:column headerText="Face" id="cFaces" rendered="#{!odontogramaMB.enableRegioes}">
+                                <p:selectCheckboxMenu id="face" value="#{procedimento.facesSelecionadas}" label="#{procedimento.facesSelecionadasStr}"
+                                    rendered="#{procedimento.procedimento.quantidadeFaces > 0}">
+                                    <p:ajax process="@this" listener="#{odontogramaMB.actionPersistFaces(procedimento)}" update=":lume:tabView:procedimentosOdontograma,@this" />
+                                    <f:selectItems value="#{procedimento.faces}" var="face" itemValue="#{face}" itemLabel="#{face}" />
+                                </p:selectCheckboxMenu>
+                            </p:column>
+                            <p:column headerText="Região" rendered="#{odontogramaMB.enableRegioes}">
+                                <p:selectOneMenu id="regioes" value="#{procedimento.regiao}" filter="true" filterMatchMode="contains" autoWidth="false" style="float:left;"
+                                    rendered="#{odontogramaMB.enableRegioes}">
+                                    <p:ajax process="@this" listener="#{odontogramaMB.actionAlterarRegiao(procedimento)}" />
+                                    <f:selectItem itemLabel="Arcada Superior/Inferior" itemValue="Arcada Superior/Inferior" />
+                                    <f:selectItem itemLabel="Arcada Superior" itemValue="Arcada Superior" />
+                                    <f:selectItem itemLabel="Arcada Inferior" itemValue="Arcada Inferior" />
+                                    <f:selectItem itemLabel="Segmento Superior Direito" itemValue="Segmento Superior Direito" />
+                                    <f:selectItem itemLabel="Segmento Superior Anterior" itemValue="Segmento Superior Anterior" />
+                                    <f:selectItem itemLabel="Segmento Superior Esquerdo" itemValue="Segmento Superior Esquerdo" />
+                                    <f:selectItem itemLabel="Segmento Inferior Direito" itemValue="Segmento Inferior Direito" />
+                                    <f:selectItem itemLabel="Segmento Inferior Anterior" itemValue="Segmento Inferior Anterior" />
+                                    <f:selectItem itemLabel="Segmento Inferior Esquerdo" itemValue="Segmento Inferior Esquerdo" />
+                                    <f:selectItem itemLabel="Seio Maxilar Direito" itemValue="Seio Maxilar Direito" />
+                                    <f:selectItem itemLabel="Seio Maxila Esquerdo" itemValue="Seio Maxila Esquerdo" />
+                                    <f:selectItem itemLabel="Seio Maxilar Bilateral" itemValue="Seio Maxilar Bilateral" />
+                                </p:selectOneMenu>
+
+                            </p:column>
+                        </p:dataTable>
+                    </h:panelGroup>
+
+                    <div class="Separator"></div>
+
+                    <div class="Card ui-fluid Container100 Responsive100">
+                        <div class="Container25 Responsive100">
+                            <p:commandButton icon="White fa fa-close" value="Fechar" process="@this" onclick="PF('dlgProcedimento').hide();" styleClass="RedButton" />
+                        </div>
+                    </div>
+
+                </p:dialog>
+
+                <p:dialog id="dlgPersonalizar" widgetVar="dlgPersonalizar" responsive="true" width="800">
+
+                    <p:panelGrid columns="2" id="pgStatusDente" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+                        style="border:0px none; background-color:transparent;">
+
+                        <p:outputLabel for="descricaoSD" value="Descrição : " />
+                        <p:inputText id="descricaoSD" value="#{odontogramaMB.statusDenteSelecionado.descricao}" required="true" maxlength="35" />
+
+                        <p:outputLabel for="temFace" value="Usa face? : " />
+                        <p:selectBooleanCheckbox id="temFace" value="#{odontogramaMB.statusDenteSelecionado.temFace}" />
+
+                        <p:outputLabel for="label" value="Label : " />
+                        <p:inputText id="label" value="#{odontogramaMB.statusDenteSelecionado.label}" required="true" maxlength="10" />
+
+                        <p:outputLabel for="cor" value="Cor : " />
+                        <p:colorPicker id="cor" value="#{odontogramaMB.statusDenteSelecionado.corPF}" />
+                    </p:panelGrid>
+
+                    <div class="Separator"></div>
+
+                    <div class="Card ui-fluid Container100 Responsive100">
+                        <div class="Container25 Responsive100">
+                            <p:commandButton icon="White fa fa-save White" value="Salvar" actionListener="#{odontogramaMB.actionPersistStatusDente}" process="@this,pgStatusDente"
+                                styleClass="GreenButton" update="pgStatusDente,dtStatusDenteEmpresa" />
+                        </div>
+
+                        <div class="Container25 Responsive100">
+                            <p:commandButton icon="White fa fa-file-o" value="Novo" actionListener="#{odontogramaMB.actionNewStatusDente}" update=":lume:tabView:pgStatusDente" process="@this" />
+                        </div>
+
+                        <div class="Container25 Responsive100">
+                            <p:commandButton icon="White fa fa-close" value="Fechar" process="@this" onclick="PF('dlgPersonalizar').hide()" styleClass="RedButton" />
+                        </div>
+
+                    </div>
+
+
+                    <p:dataTable filterDelay="1500" id="dtStatusDenteEmpresa" reflow="true" emptyMessage="" value="#{odontogramaMB.statusDenteEmpresa}" var="sd" rows="7" paginator="true"
+                        selection="#{odontogramaMB.statusDenteSelecionado}" selectionMode="single" rowKey="#{sd}" paginatorPosition="bottom">
+                        <p:ajax event="rowSelect" update="lume:tabView:pgStatusDente" />
+                        <f:facet name="header">Diagnósticos Personalizados</f:facet>
+
+                        <p:column headerText="Descrição">
+                            <h:outputText value="#{sd.descricao}" />
+                        </p:column>
+
+                        <p:column headerText="Stick">
+                            <h:outputText value="#{sd.getStick('position: inherit;')}" escape="false" />
+                        </p:column>
+                    </p:dataTable>
+
+                </p:dialog>
+
+            </div>
+        </div>
+    </div>
+</ui:composition>

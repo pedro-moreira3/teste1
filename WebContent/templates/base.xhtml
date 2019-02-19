@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=9" />
+		<title>LT Clini</title>
+	</f:facet>
+	<h:outputScript name="jquery.mask.js" />
+</h:head>
+<h:body>
+	<ui:insert name="styles"></ui:insert>
+	<script type="text/javascript">
+		PrimeFaces.locales['pt'] = {
+			closeText : 'Fechar',
+			prevText : '&#x3c;Anterior',
+			nextText : 'Pr&oacute;ximo&#x3e;',
+			currentText : 'Hoje',
+			monthNames : [ 'Janeiro', 'Fevereiro', 'Mar&ccedil;o', 'Abril',
+					'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro',
+					'Novembro', 'Dezembro' ],
+			monthNamesShort : [ 'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
+					'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez' ],
+			dayNames : [ 'Domingo', 'Segunda-feira', 'Ter&ccedil;a-feira',
+					'Quarta-feira', 'Quinta-feira', 'Sexta-feira',
+					'S&aacute;bado' ],
+			dayNamesShort : [ 'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex',
+					'S&aacute;b' ],
+			dayNamesMin : [ 'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex',
+					'S&aacute;b' ],
+			weekHeader : 'Sm',
+			firstDay : 1,
+			isRTL : false,
+			showMonthAfterYear : false,
+			yearSuffix : '',
+			month : 'Mês',
+			week : 'Semana',
+			day : 'Dia',
+			allDayText : 'Todo Dia'
+		};
+
+		jQuery(function($) {
+			if ($.datepicker) {
+				$.datepicker.regional['pt-BR'] = {
+					closeText : 'Fechar',
+					prevText : '&#x3c;Anterior',
+					nextText : 'Pr&oacute;ximo&#x3e;',
+					currentText : 'Hoje',
+					monthNames : [ 'Janeiro', 'Fevereiro', 'Mar&ccedil;o',
+							'Abril', 'Maio', 'Junho', 'Julho', 'Agosto',
+							'Setembro', 'Outubro', 'Novembro', 'Dezembro' ],
+					monthNamesShort : [ 'Jan', 'Fev', 'Mar', 'Abr', 'Mai',
+							'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez' ],
+					dayNames : [ 'Domingo', 'Segunda-feira',
+							'Ter&ccedil;a-feira', 'Quarta-feira',
+							'Quinta-feira', 'Sexta-feira', 'S&aacute;bado' ],
+					dayNamesShort : [ 'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex',
+							'S&aacute;b' ],
+					dayNamesMin : [ 'Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex',
+							'S&aacute;b' ],
+					weekHeader : 'Sm',
+					dateFormat : 'dd/MM/yyyy hh:mm:ss',
+					firstDay : 0,
+					isRTL : false,
+					showMonthAfterYear : false,
+					yearSuffix : ''
+				};
+				$.datepicker.setDefaults($.datepicker.regional['pt-BR']);
+			}
+			if ($.timepicker) {
+				$.timepicker.regional['pt-BR'] = {
+					currentText : "Agora",
+					closeText : "OK",
+					ampm : false,
+					timeFormat : "hh:mm:ss",
+					timeOnlyTitle : "Definição do Horário",
+					timeText : "Horário",
+					hourText : "Hora",
+					minuteText : "Minuto",
+					secondText : "Segundo",
+					showSecond : false
+				};
+				$.timepicker.setDefaults($.timepicker.regional['pt-BR']);
+			}
+
+			//masktel();
+
+		});
+
+		function masktel(objeto) {
+			$(objeto)
+					.mask(
+							'(00) 0000-0000',
+							{
+								onKeyPress : function(phone, e, currentField,
+										options) {
+									var new_sp_phone = phone
+											.match(/^(\([129][123456789]\) 9(5[0-9]|6[0-9]|7[01234569]|8[0-9]|9[0-9])[0-9]{1})/g);
+									new_sp_phone ? $(currentField).mask(
+											'(00) 00000-0000', options) : $(
+											currentField).mask(
+											'(00) 0000-0000', options)
+									// 11 950
+									// 11 96
+									// 11 97
+									// 11 98
+									// 11 99
+
+								}
+							});
+		}
+
+		function handleAjaxRequest(xhr, status, args) {
+			var xmlDoc = xhr.responseXML;
+			errorNodes = xmlDoc.getElementsByTagName('error-name');
+			if (errorNodes.length == 0)
+				return;
+			errorName = errorNodes[0].childNodes[0].nodeValue;
+			switch (errorName) {
+			case 'class javax.faces.application.ViewExpiredException':
+				alert('Sessão expirada, redirecionando para tela inicial!');
+				window.location.href = 'login.jsf';
+				break;
+			}
+		}
+
+		function unmaskDocumento(objeto){
+			$(objeto).mask("00000000000000",null);
+		}
+		function maskDocumentoTabView(objeto) {
+			documento = document.getElementById('lume:tabView:documento');
+			if(documento.value.length > 11)
+				$(objeto).mask("00.000.000/0000-00",null);
+			else
+				$(objeto).mask("000.000.000-00",null);
+		}
+
+		function maskDocumento(objeto) {
+			documento = document.getElementById('lume:documento');
+			if(documento.value.length > 11)
+				$(objeto).mask("00.000.000/0000-00",null);
+			else
+				$(objeto).mask("000.000.000-00",null);
+		}
+
+		function updateServer(text) {
+			document.getElementById('lume:tabView:text').value = text;
+			document.getElementById('lume:tabView:salvaBiometria').click();
+		}
+		function updateServerPaciente(text) {
+			document.getElementById('lume:tabView:textPaciente').value = text;
+			document.getElementById('lume:tabView:salvaBiometriaPaciente')
+					.click();
+		}
+		
+	</script>
+	<f:view>
+		<h:form id="lume">
+			<div id="container" class="container">
+				<div id="article" class="article">
+					<ui:insert name="article"></ui:insert>
+				</div>
+			</div>
+
+		</h:form>
+		
+		<p:ajaxStatus onerror="PF('dgAjaxError').show();" />
+		<p:confirmDialog
+			message="Não foi possível completar a operação, servidor temporariamente indísponível!"
+			header="Erro" severity="alert" widgetVar="dgAjaxError">
+			<p:button value="Fechar" onclick="PF('dgAjaxError').hide();" />
+		</p:confirmDialog>
+
+	</f:view>
+	
+	
+</h:body>
+</html>

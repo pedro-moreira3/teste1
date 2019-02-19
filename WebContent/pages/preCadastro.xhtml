@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+	</f:facet>
+	<title>INTELIDENTE</title>
+	<ui:insert name="head" />
+</h:head>
+
+<h:body styleClass="WhiteBack">
+	<h:form id="lume">
+
+		<div class="Wid70 MarAuto">
+			<div class="Wid70 MarAuto WidAutoOnMobile TexAlCenter">
+
+				<div class="Wid70 MarAuto WidAutoOnMobile">
+					<div class="EmptyBox50 ShowOnDesktop"></div>
+					<div class="EmptyBox20 ShowOnMobile"></div>
+
+					<div class="Container100">
+						<h:graphicImage name="logo_idente.png" styleClass="MarAuto Wid100" library="images" />
+					</div>
+					<div class="EmptyBox30"></div>
+					<div class="Card ui-fluid ShadowEffect InteliBack">
+						<div class="EmptyBox10"></div>
+						<div class="Container100 Responsive100">
+							<p:commandButton id="cadastro1" icon="White fa fa-clipboard Fs16 White" action="#{odontoLoginMB.actionCadastroWeb}" value="Novo Cadastro"
+								ajax="false" styleClass="NavyButton" />
+						</div>
+						<div class="EmptyBox10"></div>
+
+						<div class="Separator"></div>
+						<div class="EmptyBox10"></div>
+
+						<div class="Container100 Responsive100">
+							<p:commandButton id="cadastro2" icon="White fa fa-cc-paypal Fs16 White" action="#{odontoLoginMB.actionCadastroPagamento}" value="Pagamento PayPal"
+								ajax="false" styleClass="NavyButton" />
+						</div>
+						<div class="EmptyBox10"></div>
+
+					</div>
+
+					<div class="EmptyBox20"></div>
+					<div class="Wid100 FontLatoRegular Fs12 Black">
+						<i class="Black fa fa-copyright DispInlBlock"></i> Lume Tecnologia 2016
+					</div>
+					<div class="EmptyBox30"></div>
+				</div>
+			</div>
+		</div>
+
+	</h:form>
+	<style>
+.ui-button-text, .ui-button-text-only .ui-button-text {
+	padding: 15px !important;
+	transition: none !important;
+}
+</style>
+
+	<h:outputStylesheet name="css/core-layout.css" library="olympos-layout" />
+	<h:outputStylesheet name="css/font-awesome.css" library="olympos-layout" />
+	<h:outputStylesheet name="css/animate.css" library="olympos-layout" />
+	<h:outputStylesheet name="css/olympos-layout.css" library="olympos-layout" />
+	<h:outputStylesheet name="css/olympos-font.css" library="olympos-layout" />
+</h:body>
+
+</html>

@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <div class="Container100 Responsive100 NoIndent">
+            <div class="Container100 ui-fluid NoPadding">
+                <div class="Card">
+
+                    <h1 class="CardBigTopic">Relatório de Estoque</h1>
+
+                    <div class="SeparatorFull"></div>
+
+                    <div class="Container25 Responsive100">
+                        <p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
+                            <p:dataExporter encoding="iso-8859-1" type="xls" target="dtMaterial" fileName="Material" />
+                        </p:commandButton>
+                    </div>
+
+                    <div class="EmptyBox20"></div>
+
+
+                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{relatorioMaterialMB.materiais}" var="m" rows="20" paginator="true" rowKey="#{m}" paginatorPosition="bottom">
+                        <f:facet name="header">Materiais</f:facet>
+                        <p:column filterBy="#{m.item}" sortBy="#{m.item}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Item" />
+                            </f:facet>
+                            <h:outputText value="#{m.item}" title="#{m.id}" />
+                        </p:column>
+                        <p:column filterBy="#{m.tipoStr}" sortBy="#{m.tipoStr}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Tipo" />
+                            </f:facet>
+                            <h:outputText value="#{m.tipoStr}" />
+                        </p:column>
+                        <p:column filterBy="#{m.marca}" sortBy="#{m.marca}" filterMatchMode="contains" rendered="#{materialMB.estoqueCompleto}">
+                            <f:facet name="header">
+                                <h:outputText value="Marca" />
+                            </f:facet>
+                            <h:outputText value="#{m.marca}" />
+                        </p:column>
+                        <p:column filterBy="#{m.quantidadeAtual}" sortBy="#{m.quantidadeAtual}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Quantidade Total Atual" />
+                            </f:facet>
+                            <h:outputText value="#{m.quantidadeAtual}">
+                                <f:convertNumber />
+                            </h:outputText>
+                            <h:outputLabel value="#{m.unidadeMedidaStr}" disabled="true" />
+                        </p:column>
+                        <p:column filterBy="#{m.valor}" sortBy="#{m.valor}" filterMatchMode="contains" rendered="#{materialMB.estoqueCompleto}">
+                            <f:facet name="header">
+                                <h:outputText value="Valor Unitário(R$)" />
+                            </f:facet>
+                            <h:outputText value="#{m.valor}">
+                                <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column filterBy="#{m.valorTotal}" sortBy="#{m.valorTotal}" filterMatchMode="contains" rendered="#{materialMB.estoqueCompleto}">
+                            <f:facet name="header">
+                                <h:outputText value="Valor Total(R$)" />
+                            </f:facet>
+                            <h:outputText value="#{m.valorTotal}">
+                                <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
+                            <f:facet name="footer">
+                                <h:outputText value="#{relatorioMaterialMB.materiais.stream().map(obj-> obj.valorTotal).sum()}">
+                                    <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                                </h:outputText>
+                            </f:facet>
+                        </p:column>
+                        <p:column filterBy="#{m.local}" sortBy="#{m.local}" filterMatchMode="contains" rendered="#{materialMB.estoqueCompleto}">
+                            <f:facet name="header">
+                                <h:outputText value="Local" />
+                            </f:facet>
+                            <h:outputText value="#{m.local}" />
+                        </p:column>
+                        <p:column filterBy="#{m.dataUltimaUtilizacaoStr}" sortBy="#{m.dataUltimaUtilizacaoSort}" filterMatchMode="contains" rendered="#{materialMB.estoqueCompleto}">
+                            <f:facet name="header">
+                                <h:outputText value="Última Utilização" />
+                            </f:facet>
+                            <h:outputText value="#{m.dataUltimaUtilizacaoStr}" />
+                        </p:column>
+                    </p:dataTable>
+
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

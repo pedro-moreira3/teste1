@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets">
+
+    <div class="Container100 Responsive100 NoIndent">
+        <div class="Container100 ui-fluid NoPadding">
+            <div class="Card">
+                <p:panel id="pnPrincipal" styleClass="BordNone">
+
+                    <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+
+                        <h:panelGroup id="foto">
+                            <div class="Container100">
+                                <p:graphicImage styleClass="Fleft" value="#{profissionalMB.entity.imagemUsuario}" stream="false" style="width:100%;"
+                                    rendered="#{profissionalMB.entity.imagemUsuario != null}" />
+                                <h:graphicImage name="sem-imagem-avatar.png" styleClass="Fleft" style="width:100%;" library="images" rendered="#{profissionalMB.entity.imagemUsuario == null}" />
+                            </div>
+                        </h:panelGroup>
+
+                        <p:fieldset legend="Dados Pessoais" toggleable="true">
+
+
+                            <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                                style="border:0px none; background-color:transparent;">
+
+                                <p:outputLabel for="perfil" value="Perfil :" />
+                                <p:selectOneMenu id="perfil" required="true" value="#{profissionalMB.perfil}" converter="perfil" layout="grid" columns="2">
+                                    <p:ajax update="pgPerfil,:lume:tabView:objetosPerfil,pgFazOrcamento" process="@this,pgPerfil" listener="#{profissionalMB.carregarObjetosPerfisProfissional}" />
+                                    <f:selectItem itemValue="#{null}" itemLabel="Selecione um Perfil" />
+                                    <f:selectItems value="#{profissionalMB.perfis}" var="perfil" itemLabel="#{perfil.perStrDes}" itemValue="#{perfil}" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="picklist" value="Especialidades : " />
+                                <p:selectCheckboxMenu id="picklist" value="#{profissionalMB.especialidadesSelecionadas}" label="Especialidades" filter="true" filterMatchMode="startsWith"
+                                    converter="especialidade">
+                                    <f:selectItems value="#{profissionalMB.especialidades}" var="e" itemLabel="#{e.descricao}" itemValue="#{e}" />
+                                </p:selectCheckboxMenu>
+
+                                <p:outputLabel for="prefixo" value="Prefixo :" rendered="true" />
+                                <p:selectOneMenu id="prefixo" value="#{profissionalMB.entity.dadosBasico.prefixo}">
+                                    <f:selectItems value="#{profissionalMB.dominios}" var="tp" itemValue="#{tp.nome}" itemLabel="#{tp.nome}" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="nome" value="Nome/Razão Social :" rendered="true" />
+                                <p:inputText id="nome" value="#{profissionalMB.entity.dadosBasico.nome}" required="true" maxlength="200" />
+
+                                <p:outputLabel for="email" value="E-Mail :" rendered="true" />
+                                <p:inputText id="email" value="#{profissionalMB.entity.dadosBasico.email}" required="true" maxlength="200" validatorMessage="Email Inválido">
+                                    <f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" />
+                                </p:inputText>
+
+                                <p:outputLabel for="documento" value="CPF:" />
+                                <p:inputMask id="documento" validatorMessage="CPF inválido" required="false" value="#{profissionalMB.entity.dadosBasico.documento}" mask="999.999.999-99" class="Wid50">
+                                    <f:validator validatorId="documentoValidator" />
+                                </p:inputMask>
+
+                                <p:outputLabel for="rg" value="RG : " />
+                                <p:inputText id="rg" value="#{profissionalMB.entity.dadosBasico.rg}" maxlength="12" class="Wid50" />
+
+                                <p:outputLabel for="cep" value="CEP : " />
+                                <p:column>
+                                    <p:inputMask id="cep" required="false" value="#{profissionalMB.entity.dadosBasico.cep}" maxlength="8" mask="99999-999" styleClass="Wid80 MarRight10" class="Wid30">
+                                        <f:validator validatorId="cepValidator" />
+                                    </p:inputMask>
+
+                                    <p:commandButton id="cepsearch" icon="White fa fa-search White" actionListener="#{profissionalMB.actionBuscaCep}"
+                                        update=":lume:tabView:endereco,:lume:tabView:bairro,:lume:tabView:cidade,:lume:tabView:estado" process="@this,:lume:tabView:cep" />
+                                </p:column>
+
+                                <p:outputLabel for="endereco" value="Endereço : " />
+                                <p:inputText id="endereco" required="false" value="#{profissionalMB.entity.dadosBasico.endereco}" maxlength="200" />
+
+                                <p:outputLabel for="numero" value="Número : " />
+                                <p:inputText id="numero" required="false" value="#{profissionalMB.entity.dadosBasico.numero}" maxlength="6" class="Wid20" />
+
+                                <p:outputLabel for="bairro" value="Bairro : " />
+                                <p:inputText id="bairro" required="false" value="#{profissionalMB.entity.dadosBasico.bairro}" maxlength="200" class="Wid60" />
+
+                                <p:outputLabel for="complemento" value="Complemento : " />
+                                <p:inputText id="complemento" value="#{profissionalMB.entity.dadosBasico.complemento}" maxlength="100" />
+
+                                <p:outputLabel for="cidade" value="Cidade : " />
+                                <p:inputText id="cidade" required="false" value="#{profissionalMB.entity.dadosBasico.cidade}" class="Wid60" />
+
+                                <p:outputLabel for="estado" value="Estado : " />
+                                <p:selectOneMenu id="estado" required="false" value="#{profissionalMB.entity.dadosBasico.uf}" class="Wid60">
+                                    <f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
+                                    <f:selectItems value="#{profissionalMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="telResidencia" value="Telefone Residencial : " />
+                                <p:inputText id="telResidencia" value="#{profissionalMB.entity.dadosBasico.telefone}" styleClass="telefone Wid50" onfocus="mascaraTelefone()" />
+
+
+                                <p:outputLabel for="telCelular" value="Telefone Celular : " />
+                                <p:inputText id="telCelular" value="#{profissionalMB.entity.dadosBasico.celular}" styleClass="telefone Wid50" onfocus="mascaraTelefone()" />
+
+                                <p:outputLabel for="dtNascimento" value="Data de Nascimento :" />
+                                <p:calendar id="dtNascimento" required="false" value="#{profissionalMB.entity.dadosBasico.dataNascimento}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+                                    locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" maxdate="#{odontoMB.sysdate}" class="Wid50" />
+
+                                <p:outputLabel for="sexo" value="Sexo :" rendered="true" />
+                                <p:selectOneRadio id="sexo" required="false" value="#{profissionalMB.entity.dadosBasico.sexo}">
+                                    <f:selectItem itemLabel="Masculino" itemValue="M" />
+                                    <f:selectItem itemLabel="Feminino" itemValue="F" />
+                                </p:selectOneRadio>
+
+                                <p:outputLabel for="foto" value="Foto : " />
+                                <h:panelGroup>
+                                    <div class="Container70">
+                                        <p:commandButton value="Tirar Foto" process="@this" update=":lume:tabView:pnTirarFoto" icon="White fa fa-camera" disabled="#{profissionalMB.entity.id == null}"
+                                            styleClass="NavyButton" oncomplete="PF('dlgTirarFoto').show();" actionListener="#{profissionalMB.renderedPhotoCam}" />
+                                    </div>
+                                </h:panelGroup>
+                            </p:panelGrid>
+                        </p:fieldset>
+
+                    </p:panelGrid>
+
+                    <p:panelGrid id="pgFazOrcamento" columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank"
+                        style="border:0px none; background-color:transparent;">
+                        <p:column></p:column>
+                        <p:fieldset legend="Orçamento" toggleable="true" collapsed="true">
+                            <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                                style="border:0px none; background-color:transparent;">
+
+                                <p:outputLabel id="lbfazOrcamento" for="fazOrcamento" value="Faz Orçamento? : "
+                                    rendered="#{profissionalMB.perfil == null || profissionalMB.perfil.perStrDes == 'Recepcionista' || profissionalMB.perfil.perStrDes == 'Auxiliar Administrativo'}" />
+                                <p:selectBooleanCheckbox id="fazOrcamento" value="#{profissionalMB.entity.fazOrcamento}"
+                                    rendered="#{profissionalMB.perfil == null || profissionalMB.perfil.perStrDes == 'Recepcionista' || profissionalMB.perfil.perStrDes == 'Auxiliar Administrativo'}" />
+
+                                <p:outputLabel id="lbdesconto" for="desconto" value="Desconto(%) : " />
+                                <p:inputMask id="desconto" mask="9?9" value="#{profissionalMB.entity.desconto}" maxlength="2" class="Wid20">
+                                </p:inputMask>
+                            </p:panelGrid>
+                        </p:fieldset>
+                    </p:panelGrid>
+
+
+                    <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+                        <p:column></p:column>
+                        <p:fieldset legend="Dentista" toggleable="true" collapsed="true">
+                            <p:panelGrid id="pgPerfil" columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                                style="border:0px none; background-color:transparent;">
+
+                                <p:outputLabel for="cro" value="Registro do conselho : " />
+                                <p:inputText id="cro" value="#{profissionalMB.entity.registroConselho}" maxlength="8" required="#{profissionalMB.perfil.perStrDes == 'Cirurgião Dentista'}" />
+
+                                <p:outputLabel for="estadoConselho" value="Estado conselho: " />
+                                <p:selectOneMenu id="estadoConselho" required="#{profissionalMB.perfil.perStrDes == 'Cirurgião Dentista'}" value="#{profissionalMB.entity.estadoConselho}" class="Wid60">
+                                    <f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
+                                    <f:selectItems value="#{profissionalMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="tempoConsulta" value="Tempo de Consulta(min) : " />
+                                <p:inputText id="tempoConsulta" required="#{profissionalMB.perfil.perStrDes == 'Cirurgião Dentista'}" value="#{profissionalMB.entity.tempoConsulta}" maxlength="10"
+                                    class="Wid50">
+                                </p:inputText>
+                            </p:panelGrid>
+                        </p:fieldset>
+                    </p:panelGrid>
+
+                    <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+                        <p:column></p:column>
+                        <p:fieldset legend="Remuneração" toggleable="true" collapsed="true">
+
+                            <p:panelGrid id="pgRemuneracao" columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                                style="border:0px none; background-color:transparent;">
+
+                                <p:outputLabel for="tipoRemuneracao" value="Tipo de remuneração:" rendered="true" />
+                                <p:selectOneRadio id="tipoRemuneracao" required="false" value="#{profissionalMB.entity.tipoRemuneracao}" layout="responsive" columns="1">
+                                    <p:ajax process="@this" update="pgRemuneracao" />
+                                    <f:selectItem itemLabel="Procedimento" itemValue="PRO" />
+                                    <f:selectItem itemLabel="Porcentagem" itemValue="POR" />
+                                    <f:selectItem itemLabel="Fixa" itemValue="FIX" />
+                                </p:selectOneRadio>
+
+                                <p:column></p:column>
+                                <p:column></p:column>
+
+                                <p:outputLabel for="percentualRemuneracao" value="Remuneração(%) : " rendered="#{profissionalMB.entity.tipoRemuneracao == 'POR'}" />
+                                <p:inputText id="percentualRemuneracao" required="#{profissionalMB.entity.tipoRemuneracao == 'POR'}" value="#{profissionalMB.entity.percentualRemuneracao}"
+                                    rendered="#{profissionalMB.entity.tipoRemuneracao == 'POR'}" styleClass="Wid50">
+                                    <f:validateLongRange minimum="1" maximum="100" />
+                                </p:inputText>
+
+                                <p:outputLabel for="remuneracaoManutencao" value="Remuneração Manut.(%) : " rendered="#{profissionalMB.entity.tipoRemuneracao == 'POR'}" />
+                                <p:inputText id="remuneracaoManutencao" required="#{profissionalMB.entity.tipoRemuneracao == 'POR'}" value="#{profissionalMB.entity.remuneracaoManutencao}"
+                                    rendered="#{profissionalMB.entity.tipoRemuneracao == 'POR'}" styleClass="Wid50">
+                                    <f:validateLongRange minimum="0" maximum="99" />
+                                </p:inputText>
+
+                                <p:outputLabel for="valorRemuneracao" value="Valor Remuneração : " rendered="#{profissionalMB.entity.tipoRemuneracao == 'FIX'}" />
+                                <p:inputNumber id="valorRemuneracao" required="#{profissionalMB.entity.tipoRemuneracao == 'FIX'}" value="#{profissionalMB.entity.valorRemuneracao}" maxlength="13"
+                                    maxValue="9999999999.99" decimalSeparator="," symbol="R$ " thousandSeparator="." class="Wid50" rendered="#{profissionalMB.entity.tipoRemuneracao == 'FIX'}" />
+
+                                <p:outputLabel for="diaRemuneracao" value="Dia Pagamento : " rendered="#{profissionalMB.entity.tipoRemuneracao == 'FIX'}" />
+                                <p:inputText id="diaRemuneracao" required="#{profissionalMB.entity.tipoRemuneracao == 'FIX'}" value="#{profissionalMB.entity.diaRemuneracao}"
+                                    rendered="#{profissionalMB.entity.tipoRemuneracao == 'FIX'}" styleClass="Wid10">
+                                    <f:validateLongRange minimum="1" maximum="31" />
+                                </p:inputText>
+                            </p:panelGrid>
+                        </p:fieldset>
+                    </p:panelGrid>
+
+
+
+                    <div class="SeparatorFull"></div>
+
+                    <div class="Container25 Responsive100">
+                        <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{profissionalMB.actionPersist}"
+                            update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal" process=":lume:tabView:pnPrincipal,:lume:tabView:pnPerfilProfissional" styleClass="GreenButton" />
+                    </div>
+
+                    <div class="Container25 Responsive100">
+                        <p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{profissionalMB.actionRemove}"
+                            update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal" process="@this" disabled="#{profissionalMB.desabilitaExcluir}" styleClass="RedButton" />
+                    </div>
+
+                    <div class="Container25 Responsive100">
+                        <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{profissionalMB.actionNew}" update=":lume:tabView" immediate="true" tabindex="1" />
+                    </div>
+                    <div class="Container25 Responsive100">
+                        <p:commandButton id="reenviarSenha" icon="White fa fa-lock" value="Reenviar Senha" actionListener="#{profissionalMB.actionReenviarSenha}"
+                            update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal" disabled="#{profissionalMB.entity.id == null || profissionalMB.entity.dadosBasico.email == ''}"
+                            process=":lume:tabView:pnPrincipal" styleClass="NavyButton" />
+                    </div>
+
+                    <h:panelGroup rendered="#{profissionalMB.entity.status=='A'}">
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="inativar" icon="White fa fa-chain-broken" onclick="PF('dlg').show();" value="Inativar" update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal"
+                                process="@this" disabled="#{profissionalMB.entity.id == null}" styleClass="NavyButton" />
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup rendered="#{profissionalMB.entity.status=='I'}">
+                        <div class="Container25 Responsive100">
+                            <p:commandButton id="ativar" icon="White fa fa-chain" onclick="PF('dlgAtivar').show();" value="Ativar"
+                                update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal,:lume:tabView:pnJustificativa2" process="@this" disabled="#{profissionalMB.entity.id == null}"
+                                styleClass="NavyButton" />
+                        </div>
+                    </h:panelGroup>
+                </p:panel>
+                <div class="EmptyBox20"></div>
+                <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtPrincipal" value="#{profissionalMB.profissionais}" var="profissional" rows="7" paginator="true"
+                    selection="#{profissionalMB.entity}" selectionMode="single" rowKey="#{profissional}" paginatorPosition="bottom">
+                    <p:ajax event="rowSelect" update=":lume:tabView" listener="#{profissionalMB.carregaTela}" />
+                    <p:ajax event="rowSelect" update=":lume:tabView" listener="#{profissionalPontoMB.carregarPontos}" />
+                    <f:facet name="header">Profissional</f:facet>
+                    <p:column filterBy="#{profissional.dadosBasico.nomeLimpo}" filterMatchMode="contains" headerText="Nome" sortBy="#{profissional.dadosBasico.nomeLimpo}">
+                        <h:outputText value="#{profissional.dadosBasico.prefixoNome}" title="#{profissional.id}" />
+                    </p:column>
+                    <p:column filterBy="#{profissional.perfil}" filterMatchMode="contains" headerText="Perfil" sortBy="#{profissional.perfil}">
+                        <h:outputText value="#{profissional.perfil}" />
+                    </p:column>
+                    <p:column filterBy="#{profissional.dadosBasico.email}" filterMatchMode="contains" headerText="E-mail" sortBy="#{profissional.dadosBasico.email}">
+                        <h:outputText value="#{profissional.dadosBasico.email}" />
+                    </p:column>
+                    <p:column filterBy="#{profissional.dadosBasico.dataNascimentoStr}" filterMatchMode="contains" headerText="Data de Nascimento" sortBy="#{profissional.dadosBasico.dataNascimento}">
+                        <h:outputText value="#{profissional.dadosBasico.dataNascimento}">
+                            <f:convertDateTime pattern="dd/MM/yyyy" locale="pt_BR" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column filterBy="#{profissional.registroConselhoStr}" filterMatchMode="contains" headerText="Registro do Conselho" sortBy="#{profissional.registroConselhoStr}">
+                        <h:outputText value="#{profissional.registroConselhoStr}" />
+                    </p:column>
+                    <p:column filterBy="#{profissional.dadosBasico.celular}" filterMatchMode="contains" headerText="Telefone Celular" sortBy="#{profissional.dadosBasico.celular}">
+                        <h:outputText value="#{profissional.dadosBasico.celular}" />
+                    </p:column>
+                </p:dataTable>
+                <p:dialog id="dlg" widgetVar="dlg" header="Inativar" responsive="true" modal="true">
+                    <h:panelGroup styleClass="lumeField" id="pnJustificativa">
+                        <p:outputLabel for="justificativa" value="Justificativa : " />
+                        <p:selectOneMenu id="justificativa" value="#{profissionalMB.entity.justificativa}" converter="dominio" required="true">
+                            <f:selectItem itemValue="#{null}" itemLabel="Selecione uma justificativa" />
+                            <f:selectItems value="#{profissionalMB.justificativas}" var="justificativa" itemLabel="#{justificativa.nome}" itemValue="#{justificativa}" />
+                        </p:selectOneMenu>
+                        <p:message for="justificativa" styleClass="msg" />
+                    </h:panelGroup>
+                    <div class="SeparatorFull"></div>
+                    <div class="Container50 Responsive100">
+                        <p:commandButton id="persistInativar" icon="White fa fa-chain-broken" value="Inativar" actionListener="#{profissionalMB.actionInativar}"
+                            update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal,:lume:tabView:pnJustificativa" process="@this,:lume:tabView:pnJustificativa"
+                            oncomplete="handleDialogRequest(xhr, status, args)" styleClass="GreenButton" />
+                    </div>
+                    <div class="Container50 Responsive100">
+                        <p:commandButton id="cancelarInativar" icon="White fa fa-trash-o" value="Cancelar" update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal,:lume:tabView:pnJustificativa"
+                            process="@this,:lume:tabView:pnJustificativa" oncomplete="PF('dlg').hide()" styleClass="RedButton" />
+                    </div>
+                </p:dialog>
+
+                <p:dialog id="dlgAtivar" widgetVar="dlgAtivar" header="Ativar" responsive="true" modal="true">
+                    <h:panelGroup styleClass="lumeField" id="pnJustificativa2">
+                        <p:outputLabel for="justificativa2" value="Justificativa : " />
+                        <p:inputText id="justificativa2" value="#{profissionalMB.entity.justificativa.nome}" disabled="true" />
+                        <p:message for="justificativa2" styleClass="msg" />
+                    </h:panelGroup>
+                    <div class="SeparatorFull"></div>
+                    <div class="Container50 Responsive100">
+                        <p:commandButton id="persistAtivar" icon="White fa fa-save" value="Ativar" actionListener="#{profissionalMB.actionAtivar}"
+                            update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal,:lume:tabView:pnJustificativa2" process="@this,pnJustificativa2"
+                            oncomplete="handleDialogRequest(xhr, status, args)" styleClass="GreenButton" />
+                    </div>
+                    <div class="Container50 Responsive100">
+                        <p:commandButton id="cancelar" icon="White fa fa-trash-o" value="Cancelar" update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal,:lume:tabView:pnJustificativa2"
+                            process="@this,pnJustificativa2" oncomplete="PF('dlgAtivar').hide()" styleClass="RedButton" />
+                    </div>
+                </p:dialog>
+                <script type="text/javascript">
+																	function handleDialogRequest(xhr, status, args) {
+																		if (args.justificativa == true) {
+																			PF('dlg').hide();
+																			PF('dlgAtivar').hide();
+																		}
+
+																	}
+																</script>
+            </div>
+        </div>
+    </div>
+
+    <h:panelGroup id="pnTirarFoto">
+        <p:dialog id="dlgTirarFoto" header="Tirar Foto" widgetVar="dlgTirarFoto" responsive="true" modal="true">
+            <div class="Container100 Responsive100 NoIndent">
+                <div class="Container100 ui-fluid NoPadding">
+                    <div class="Container50 Responsive100">
+                        <p:commandButton value="Capturar" icon="White fa fa-camera" type="button" onclick="PF('pc').capture()" styleClass="NavyButton" />
+                    </div>
+                    <div class="Container50 Responsive100">
+                        <p:commandButton value="Salvar" icon="White fa fa-save" process="@this" styleClass="GreenButton" actionListener="#{profissionalMB.actionSalvarFoto}"
+                            oncomplete="PF('dlgTirarFoto').hide();" update=":lume:tabView:foto" />
+                    </div>
+                    <div class="SeparatorFull"></div>
+                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+                        <p:photoCam widgetVar="pc" listener="#{profissionalMB.onCapture}" update="photo" rendered="#{profissionalMB.renderedPhotoCam}" />
+                        <p:outputPanel id="photo">
+                            <p:graphicImage value="#{profissionalMB.scFoto}" stream="false" />
+                        </p:outputPanel>
+                    </p:panelGrid>
+                </div>
+            </div>
+        </p:dialog>
+    </h:panelGroup>
+
+</ui:composition>

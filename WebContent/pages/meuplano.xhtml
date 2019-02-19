@@ -1,0 +1,115 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <div class="Container100 Responsive100 NoIndent">
+            <div class="Container100 ui-fluid NoPadding">
+                <div class="Card">
+                    <h1 class="CardBigTopic">Extrato do Plano do Intelidente</h1>
+                    <div class="SeparatorFull"></div>
+
+                    <p:fieldset legend="Consumo" toggleable="true">
+                        <div class="Container25 Responsive100">
+                            <div class="Card">
+                                <div class="EmptyBox10"></div>
+                                <div class="Container60 NoIndent Responsive100">
+                                    <span class="FontLatoBlack Black Opac80 Fleft Fs13 DispBlock">AGENDAMENTOS REALIZADOS ESTE MÊS</span><br /> <span
+                                        class="FontLatoRegular Green Fleft Fs40 DispBlock"> <h:outputText value="#{meuPlanoMB.agendamentosMes}">
+                                            <f:convertNumber maxFractionDigits="2" />
+                                        </h:outputText>
+                                    </span>
+                                </div>
+                                <div class="EmptyBox10"></div>
+                            </div>
+                        </div>
+                        <div class="Container25 Responsive100">
+                            <div class="Card">
+                                <div class="EmptyBox10"></div>
+                                <div class="Container60 NoIndent Responsive100">
+                                    <span class="FontLatoBlack Black Opac80 Fleft Fs13 DispBlock">TOTAL DE AGENDAMENTOS DO PLANO</span><br /> <span class="FontLatoRegular Green Fleft Fs40 DispBlock">
+                                        <h:outputText value="#{meuPlanoMB.agendamentosPlano}">
+                                            <f:convertNumber maxFractionDigits="2" />
+                                        </h:outputText>
+                                    </span>
+                                </div>
+                                <div class="EmptyBox10"></div>
+                            </div>
+                        </div>
+                        <div class="Container25 Responsive100">
+                            <div class="Card">
+                                <div class="EmptyBox10"></div>
+                                <div class="Container60 NoIndent Responsive100">
+                                    <span class="FontLatoBlack Black Opac80 Fleft Fs13 DispBlock">TOTAL(%) UTILIZADO DO PLANO</span><br /> <span class="FontLatoRegular Green Fleft Fs40 DispBlock"><h:outputText
+                                            value="#{meuPlanoMB.porcentagemUtilizado}">
+                                            <f:convertNumber currencySymbol="" type="currency" locale="#{lumeSecurity.locale}" />
+                                        </h:outputText>%</span>
+                                </div>
+                                <div class="EmptyBox10"></div>
+                            </div>
+                        </div>
+                        <div class="Container25 Responsive100">
+                            <div class="Card">
+                                <div class="EmptyBox10"></div>
+                                <div class="Container60 NoIndent Responsive100">
+                                    <span class="FontLatoBlack Black Opac80 Fleft Fs13 DispBlock">DATA DE VENCIMENTO DO PLANO</span><br /> <span class="FontLatoRegular Green Fleft Fs40 DispBlock"><h:outputText
+                                            value="#{meuPlanoMB.dataVencimentoPlano}" /></span>
+                                </div>
+                                <div class="EmptyBox10"></div>
+                            </div>
+                        </div>
+                        <div class="Container100 Responsive100">
+                            <div class="Card">
+
+
+                                <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" value="#{meuPlanoMB.agendamentos}" var="a" paginator="true" paginatorPosition="bottom" rows="5">
+                                    <f:facet name="header">Histórico de Consumo</f:facet>
+                                    <p:column headerText="Mês">
+                                        <h:outputText value="#{a[0]}" />
+                                    </p:column>
+                                    <p:column headerText="Agendamentos">
+                                        <h:outputText value="#{a[1]}" />
+                                    </p:column>
+                                </p:dataTable>
+
+                                <div class="Separator"></div>
+
+                                <div class="FontLatoBlack Black Opac80 Fleft Fs15 DispBlock">Para trocar de plano entre em contato com a nossa central de atendimento de segunda a sexta das 8:00
+                                    as 18:00, pelo telefone: 41 3204-7149 ou pelo e-mail contato@intelidente.com.</div>
+                            </div>
+                        </div>
+                    </p:fieldset>
+
+                    <br />
+
+                    <p:fieldset legend="Iugu" toggleable="true" rendered="#{meuPlanoMB.recentInvoices != null}">
+                        <div class="Container100 Responsive100">
+                            <div class="Card">
+                                <p:dataTable emptyMessage="Nenhum Aviso no momento" value="#{meuPlanoMB.recentInvoices}" var="objeto" rows="5" paginatorPosition="bottom" paginatorAlwaysVisible="true"
+                                    paginator="true" rowKey="#{objeto}">
+                                    <f:facet name="header">Faturas</f:facet>
+                                    <p:column headerText="Dta. Vencimento">
+                                        <h:outputText value="#{objeto.dueDateStr}" />
+                                    </p:column>
+                                    <p:column headerText="Status">
+                                        <h:outputText value="#{objeto.statusStr}" />
+                                    </p:column>
+                                    <p:column headerText="Total">
+                                        <h:outputText value="#{objeto.total}" />
+                                    </p:column>
+                                    <p:column headerText="Visualizar">
+                                        <a href="#{objeto.secureUrl}" target="_blank" style="color: #0c0cff; text-decoration: underline;">Ver Fatura</a>
+                                    </p:column>
+                                    <p:column style="width:30%" headerText="E-mail de envio">
+                                        <h:outputText value="#{objeto.email}" />
+                                    </p:column>
+                                    <p:column headerText="Data de criação">
+                                        <h:outputText value="   #{objeto.createdAt}" />
+                                    </p:column>
+                                </p:dataTable>
+                            </div>
+                        </div>
+                    </p:fieldset>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

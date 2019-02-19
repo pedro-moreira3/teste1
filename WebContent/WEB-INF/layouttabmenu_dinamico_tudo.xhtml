@@ -1,0 +1,20 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:po="http://primefaces.org/olympos">
+
+
+
+	<ul id="layout-tab-menu">
+		<ui:repeat var="o" value="#{menuMB.modulos}">
+			<li><a href="#" rel="layout-#{o.objIntCod}"> <i class="icon-chat66"></i> <span class="layout-tab-menu-link-text"><span></span>#{o.objStrDes}</span>
+			</a></li>
+		</ui:repeat>
+	</ul>
+
+	<ui:repeat var="o" value="#{menuMB.modulos}">
+		<h:form id="menuform#{o.objIntCod}">
+			<po:menu model="#{menuMB.menuModelUnit(o)}" id="layout-#{o.objIntCod}" styleClass="layout-tab-submenu">
+			</po:menu>
+		</h:form>
+	</ui:repeat>
+
+</ui:composition>

@@ -1,0 +1,101 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+					<p:panel id="pnTermoConsentimento" visible="#{termoConsentimentoMB.visivel}" styleClass="BordNone">
+						<h1 class="CardBigTopic">Consentimento</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:fieldset legend="Documento" toggleable="true">
+							<h:outputText id="documentoImprimirTermo" value="#{termoConsentimentoMB.documento}" escape="false" />
+						</p:fieldset>
+
+						<div class="Container25 Responsive100">
+							<p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton">
+								<p:printer target="documentoImprimirTermo" />
+							</p:commandButton>
+						</div>
+						<div class="SeparatorFull"></div>
+
+						<div class="EmptyBox20"></div>
+					</p:panel>
+
+
+					<p:panel id="pnTermoConsentimentoPrincipal" styleClass="BordNone">
+
+						<h1 class="CardBigTopic">Termo de Consentimento</h1>
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="pacienteSelecionado" value="#{dominioMB.cliente} :" />
+							<p:autoComplete dropdown="true" queryDelay="1000" value="#{termoConsentimentoMB.paciente}" id="pacienteSelecionado" minQueryLength="3"
+								completeMethod="#{termoConsentimentoMB.geraSugestoes}" var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}" converter="paciente" forceSelection="true"
+								scrollHeight="400" styleClass="Wid50">
+								<p:ajax event="itemSelect" listener="#{termoConsentimentoMB.handleSelectPacienteSelecionado}"
+									update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo,:lume:pnTermoConsentimento" process="@this" />
+							</p:autoComplete>
+
+							<p:outputLabel for="tipoDocumentoTermo" value="Documento : " />
+							<f:ajax render="planoTratamento">
+								<p:selectOneMenu id="tipoDocumentoTermo" value="#{termoConsentimentoMB.documentoSelecionado}" converter="documento" styleClass="Wid50">
+									<f:selectItem itemLabel="Selecione um Documento" value="#{null}" />
+									<f:selectItems value="#{termoConsentimentoMB.documentos}" var="dc" itemValue="#{dc}" itemLabel="#{dc.descricao}" />
+									<p:ajax update="pnTermoConsentimentoPrincipal,pnTermoConsentimento" />
+								</p:selectOneMenu>
+							</f:ajax>
+
+							<p:outputLabel for="planoTratamento" value="Plano : " />
+							<p:selectOneMenu id="planoTratamento" value="#{termoConsentimentoMB.entity.planoTratamento}" converter="planoTratamento" styleClass="Wid50">
+								<f:selectItem itemValue="#{null}" itemLabel="Selecione um plano" />
+								<f:selectItems value="#{termoConsentimentoMB.planoTratamentos}" var="planoTratamento" itemLabel="#{planoTratamento.descricao} - #{planoTratamento.dataHoraStr}"
+									itemValue="#{planoTratamento}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+
+						<ui:repeat var="tagDinamica" value="#{termoConsentimentoMB.tagDinamicasAsList}">
+							<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+								<p:column>
+									<h:outputLabel value="#{tagDinamica.tag}" />
+								</p:column>
+								<p:column>
+									<p:inputText value="#{tagDinamica.respTag}" styleClass="Wid50" />
+								</p:column>
+							</p:panelGrid>
+						</ui:repeat>
+
+
+						<div class="SeparatorFull"></div>
+						<h:panelGroup rendered="#{termoConsentimentoMB.liberaBotao}">
+							<div class="Container25 Responsive100">
+								<p:commandButton id="persistTermo" icon="White fa fa-save" value="Gerar Termo" actionListener="#{termoConsentimentoMB.actionPersist}"
+									update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo" process=":lume:pnTermoConsentimentoPrincipal"
+									disabled="#{termoConsentimentoMB.entity.id != null}" styleClass="GreenButton" />
+							</div>
+						</h:panelGroup>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="newTermo" icon="White fa fa-file-o" value="Novo" actionListener="#{termoConsentimentoMB.actionNew}"
+								update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo" immediate="true" tabindex="1" process="@this" />
+						</div>
+
+						<div class="EmptyBox20"></div>
+
+					</p:panel>
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtTermo" value="#{termoConsentimentoMB.entityList}" var="tct" rows="7" paginator="true"
+						selection="#{termoConsentimentoMB.entity}" selectionMode="single" rowKey="#{tct}" paginatorPosition="bottom">
+						<p:ajax event="rowSelect" update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo" listener="#{termoConsentimentoMB.atualizaTela}" />
+						<f:facet name="header">Termos de Consentimento</f:facet>
+						<p:column headerText="Data" sortBy="#{tct.dataHora}" filterBy="#{tct.dataHora}" filterMatchMode="contains">
+							<h:outputText value="#{tct.dataHora}" title="#{tct.id}">
+								<f:convertDateTime ptctern="dd/MM/yyyy HH:mm" locale="pt_BR" />
+							</h:outputText>
+						</p:column>
+						<p:column filterBy="#{tct.profissional.dadosBasico.prefixoNome}" sortBy="#{tct.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains" headerText="Profissional">
+							<h:outputText value="#{tct.profissional.dadosBasico.prefixoNome}"  />
+						</p:column>
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

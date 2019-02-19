@@ -1,0 +1,1 @@
+alter table paciente add column indicacao varchar(200);

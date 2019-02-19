@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 ui-fluid NoPadding">
+				<div class="Card">
+
+					<p:panel id="pnNoticiaRSS" styleClass="BordNone">
+						<h1 class="CardBigTopic">Configuração de Notícia RSS</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+							<p:outputLabel for="titulo" value="Título : " />
+							<p:inputText id="titulo" value="#{noticiaRssMB.entity.titulo}" required="true" maxlength="100" />
+
+							<p:outputLabel for="corpo" value="Corpo : " />
+							<p:inputTextarea id="corpo" value="#{noticiaRssMB.entity.descricao}" required="true" maxlength="500" />
+
+							<p:outputLabel for="url" value="URL : " />
+							<p:inputText id="url" value="#{noticiaRssMB.entity.url}" maxlength="200" />
+
+							<p:outputLabel for="dataPublicacao" value="Data da Publicação: " />
+							<p:calendar id="dataPublicacao" required="true" value="#{noticiaRssMB.entity.dataPublicacao}" pattern="dd/MM/yyyy HH:mm"
+								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" mindate="#{noticiaRssMB.dataAtual}" mask="true"/>
+
+							<h:outputLabel value="Imagem : " />
+							<p:fileUpload id="imagem" fileUploadListener="#{noticiaRssMB.uploadArquivo}" mode="advanced" label="Anexar" auto="true" rendered="true"
+								allowTypes="/(\.|\/)(gif|jpeg|png|jpg)$/" sizeLimit="10485760" invalidFileMessage="Apenas imagens."
+								invalidSizeMessage="Tamanho excedeu o limite." styleClass="Wid50" style="margin-left: -5px;"/>
+						</p:panelGrid>
+
+						<div class="SeparatorFull"></div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{noticiaRssMB.actionPersist}"
+								update=":lume:pnNoticiaRSS,:lume:dtNoticia" process=":lume:pnNoticiaRSS" 
+								styleClass="GreenButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{noticiaRssMB.actionRemove}"
+								update=":lume:pnNoticiaRSS, :lume:dtNoticia" process="@this" disabled="#{noticiaRssMB.entity.id == null}"
+								 styleClass="RedButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{noticiaRssMB.actionNew}" update=":lume:pnNoticiaRSS"
+								immediate="true"  />
+						</div>
+					</p:panel>
+
+					<div class="EmptyBox20"></div>
+
+
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtNoticia" value="#{noticiaRssMB.noticiasRss}" var="noticia" rows="15" paginator="true"
+						selection="#{noticiaRssMB.entity}" selectionMode="single" rowKey="#{noticia}" paginatorPosition="bottom">
+						<p:ajax event="rowSelect" update=":lume:pnNoticiaRSS" />
+						<f:facet name="header">Notícias</f:facet>
+
+						<p:column filterBy="#{noticia.titulo}" sortBy="#{noticia.titulo}" filterMatchMode="contains" headerText="Titulo">
+							<h:outputText value="#{noticia.titulo}" />
+						</p:column>
+						<p:column filterBy="#{noticia.descricao}" sortBy="#{noticia.descricao}" filterMatchMode="contains" headerText="Corpo">
+							<h:outputText value="#{noticia.descricao}" />
+						</p:column>
+						<p:column filterBy="#{noticia.dataPublicacaoStr}" sortBy="#{noticia.dataPublicacaoStrOrd}" filterMatchMode="contains"
+							headerText="Data da Publicação">
+							<h:outputText value="#{noticia.dataPublicacaoStr}" />
+						</p:column>
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,88 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+	<script>
+		function resize(dialog) {
+			$(window).resize(function() {
+				$(dialog).css({
+					'width' : $(window).width(),
+					'height' : $(window).height(),
+					'left' : '0px',
+					'top' : '0px'
+				});
+			}).resize();
+		}
+	</script>
+	<!-- LAYOUT TOPBAR COVER -->
+	<div id="layout-topbar-cover">
+		<div id="layout-topbar-row">
+			<div id="layout-topbar-left">
+				<a href="#" id="logo"><h:graphicImage name="logo_branco.png" library="images" /></a>
+			</div>
+			<div id="layout-topbar-right">
+
+				<a id="menu-resize-btn" class="topbar-link Animated03"><h:graphicImage name="images/menu-resize-btn-icon.svg" id="menu-resize-btn"
+						library="olympos-layout" /></a> <a id="mobile-menu-btn" class="topbar-link Animated03"><h:graphicImage name="images/menu-btn-icon.svg"
+						id="menu-btn-icon" library="olympos-layout" /></a>
+
+				<div id="search-bar">
+					
+					<div class="FontLatoBlack White Opac80 Fleft DispBlock AlertaPayPal" >
+						<h:form>
+							<p:commandButton  value="#{odontoLoginMB.msgTrial}" styleClass="RedButton" action="cadastroPagamento.jsf" 
+								icon="White fa fa-money White Fs16" ajax="false" rendered="#{odontoLoginMB.trial}" onclick="this.form.target='_blank'" style="font-size: 10px !important;"/>
+						</h:form>
+					</div>
+					
+					<div class="FontLatoBlack White Opac80 Fleft DispBlock" style="margin: 1.4rem 2.1rem 0px 0px; font-size: 1.2rem;" id="bemvindo">
+						Bem-Vindo(a),
+						<h:outputText value="#{lumeSecurity.nomeLogado}" />
+					</div>
+					<p:graphicImage styleClass="profile-image Fleft" id="photo" value="#{lumeSecurity.imagemUsuario}"
+						rendered="#{lumeSecurity.imagemUsuario != null}" />
+					<p:commandLink class="topbar-link Animated03 Fleft" action="chat.jsf" title="Chat">
+						<i class="fa fa-user" title="Chat Online"></i>
+					</p:commandLink>
+					<p:commandLink class="topbar-link Animated03 Fleft" action="meuplano.jsf" rendered="#{odontoLoginMB.administrador}" title="Meu Plano">
+						<i class="fa fa-gear" title="Meu Plano"></i>
+					</p:commandLink>
+					<p:commandLink class="topbar-link Animated03 Fleft" onclick="PF('helpDialog').show();resize('#dgHelp');" title="Ajuda">
+						<i class="fa fa-question-circle" title="Help"></i>
+					</p:commandLink>
+					 
+					<p:commandLink class="topbar-link Animated03 Fleft" onclick="PF('tutorialDialog').show();resize('#dgTutorial');" title="Tutorial">
+						<i class="fa fa-file-text-o " title="Tutorial"></i>
+					</p:commandLink>
+					
+
+					<a href="login.jsf?logoff" class="topbar-link Animated03 Fright"><i class="fa fa-power-off" title="Sair"></i></a>
+				</div>
+
+
+			</div>
+		</div>
+	</div>
+	<p:dialog widgetVar="helpDialog" header="Help" id="dgHelp" responsive="true" modal="true" position="10,10" appendToBody="true"
+		style="position:absolute;overflow:auto;">
+		<h:outputText value="#{odontoMenuMB.mostraAjudaInteliDente}" escape="false" />
+
+		<div class="SeparatorFull"></div>
+
+		<p:commandButton id="fechar" icon="White fa fa-close" value="Fechar" process="@this" styleClass="RedButton" oncomplete="PF('helpDialog').hide()" />
+	</p:dialog>
+
+	<p:dialog widgetVar="tutorialDialog" header="Tutorial" id="dgTutorial" responsive="true" modal="true" position="10,10" appendToBody="true" visible="false" onShow="resize('#dgTutorial');">
+		<h:form>
+			<p:galleria showCaption="false" autoPlay="false" value="#{odontoMenuMB.tutorialImagens}" var="imagem" panelHeight="520" panelWidth="920" style="margin: 0 auto;">
+				<h:graphicImage name="#{imagem}" library="images/tutorial" styleClass="ImagemResponsiva" title="" alt="" height="520" panelWidth="920"/>
+			</p:galleria>
+
+			<div class="SeparatorFull"></div>
+
+			<p:commandButton id="fechar" icon="White fa fa-close" value="Fechar" process="@this" styleClass="RedButton"
+				oncomplete="PF('tutorialDialog').hide()" />
+
+		</h:form>
+	</p:dialog>
+
+</ui:composition>

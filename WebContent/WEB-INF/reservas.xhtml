@@ -1,0 +1,23 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:f="http://java.sun.com/jsf/core" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" xmlns:po="http://primefaces.org/olympos">
+	<h:form>
+	<ul class="layout-tab-submenu" id="layout-reservas">
+		<li><a>Reservas de hoje</a>
+			<ul>
+				<ui:repeat var="reservaKit" value="#{reservasMB.reservas}">
+					<div class="EmptyBox10"></div>
+					<li>
+						<p:commandLink action="#{controleMaterialMB.materiaisLink(reservaKit)}" styleClass="menulink" ajax="false">																	
+							<i class=" fa fa-cube Fs16 Green"></i>				
+							<span class="Fs14 DispBlock">#{reservaKit.kit.descricao}</span> 					
+							<div class="EmptyBox5"></div> 
+							<span class="DispBlock White Fs14 FontLatoRegular">#{reservaKit.reserva.profissional.dadosBasico.prefixoNome}</span> 
+							<span class="DispBlock White Fs14 FontLatoLight Opac70">#{reservaKit.reserva.agendamento.paciente.dadosBasico.prefixoNome}</span>						
+						</p:commandLink>
+					</li>
+				</ui:repeat>
+			</ul>
+		</li>		
+	</ul>
+	</h:form>	
+</ui:composition>
