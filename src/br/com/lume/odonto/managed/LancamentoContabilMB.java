@@ -1,5 +1,6 @@
 package br.com.lume.odonto.managed;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -252,7 +253,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 isPagamentoProfissional = true;
             }
             if (this.getEntity().getTipo().equals("Pagar") && !isPagamentoProfissional) {
-                this.getEntity().setValor((this.getEntity().getValor().negate()));
+                if (this.getEntity().getValor().compareTo(BigDecimal.ZERO) > 0) {
+                    this.getEntity().setValor((this.getEntity().getValor().negate()));    
+                }                
             }
         } else {
             LancamentoContabil lc = ((LancamentoContabilBO) this.getbO()).findByTipoInicial();
