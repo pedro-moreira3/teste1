@@ -1,5 +1,6 @@
 image: java:latest
 
+
 variables:
   noFailure: "Failures: 0, Skips: 0"
   outPath: "./build-out"
