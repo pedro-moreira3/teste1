@@ -5,7 +5,6 @@ import java.net.InetAddress;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -17,7 +16,7 @@ import br.com.lume.odonto.util.OdontoMensagens;
 
 public class EmailListener implements ServletContextListener {
 
-    private Logger log = Logger.getLogger(EmailListener.class);
+ //   private Logger log = Logger.getLogger(EmailListener.class);
 
     private Scheduler scheduler;
 
@@ -35,14 +34,14 @@ public class EmailListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent arg0) {
         try {
-            String servidor = InetAddress.getLocalHost().getHostAddress();
+         //   String servidor = InetAddress.getLocalHost().getHostAddress();
             
-            System.out.println("IP do servidor de prod:" + servidor);
-            System.out.println("Host do servidor de prod:" + InetAddress.getLocalHost().getHostName());
-            System.out.println("Host do servidor de prod canonico:" + InetAddress.getLocalHost().getCanonicalHostName());
-            System.out.println("Host do servidor de prod ip raw:" + InetAddress.getLocalHost().getAddress());
+          //  System.out.println("IP do servidor de prod:" + servidor);
+         //   System.out.println("Host do servidor de prod:" + InetAddress.getLocalHost().getHostName());
+         ///   System.out.println("Host do servidor de prod canonico:" + InetAddress.getLocalHost().getCanonicalHostName());
+          //  System.out.println("Host do servidor de prod ip raw:" + InetAddress.getLocalHost().getAddress());
             
-            if (OdontoMensagens.getMensagem("servidor.producao").trim().equals(servidor.trim())) {
+       //     if (OdontoMensagens.getMensagem("servidor.producao").trim().equals(servidor.trim())) {
 
                 String hora = arg0.getServletContext().getInitParameter("HORA_BATCH");
 
@@ -68,9 +67,9 @@ public class EmailListener implements ServletContextListener {
                 scheduler.start();
 
                 System.out.println("Listener Email Iniciado.");
-            } else {
-                System.out.println("Contexto em desenvolvimento : " + servidor);
-            }
+         //   } else {
+          //      System.out.println("Contexto em desenvolvimento : " + servidor);
+          //  }
         } catch (Exception e) {
             e.printStackTrace();
         }
