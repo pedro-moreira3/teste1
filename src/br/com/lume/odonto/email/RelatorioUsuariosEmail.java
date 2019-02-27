@@ -40,7 +40,7 @@ public class RelatorioUsuariosEmail implements Job {
 
                 EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", emails, "Intelidente - Resumo semanal de usuários ", EnviaEmail.buscarTemplate(valores, EnviaEmail.RESUMO_USUARIO),
                         Mensagens.getMensagemOffLine("email.smtpHost.prod"));
-            }
+           }
         } catch (Exception e) {
             e.printStackTrace();
         }
