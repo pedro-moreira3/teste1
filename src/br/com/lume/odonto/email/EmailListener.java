@@ -46,7 +46,9 @@ public class EmailListener implements ServletContextListener {
             String testeDados = "IP do servidor de prod:" + servidor 
                     + "Host do servidor de prod:" + InetAddress.getLocalHost().getHostName() +
                     "Host do servidor de prod canonico:" + InetAddress.getLocalHost().getCanonicalHostName() +  
-                    "Host do servidor de prod ip raw:" + InetAddress.getLocalHost().getAddress();
+                    "Host do servidor de prod ip raw:" + InetAddress.getLocalHost().getAddress()+
+                    "servidor de produção conf" + OdontoMensagens.getMensagem("servidor.producao").trim()
+                    ;
             
             EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", "ariel.pires@lumetec.com.br", "Intelidente - teste de host ", testeDados,
                     Mensagens.getMensagemOffLine("email.smtpHost.prod"));
@@ -57,7 +59,7 @@ public class EmailListener implements ServletContextListener {
 
                 CronTrigger trigger = new CronTrigger("MyTrigger", Scheduler.DEFAULT_GROUP, "0 0 " + hora + " * * ?");
                CronTrigger trigger2 = new CronTrigger("MyTrigger2", Scheduler.DEFAULT_GROUP, "0 15 " + hora + " * * ?");
-                CronTrigger trigger3 = new CronTrigger("MyTrigger3", Scheduler.DEFAULT_GROUP, "0 52 " + hora + " * * ?");
+                CronTrigger trigger3 = new CronTrigger("MyTrigger3", Scheduler.DEFAULT_GROUP, "0 30 " + hora + " * * ?");
                 CronTrigger trigger4 = new CronTrigger("MyTrigger4", Scheduler.DEFAULT_GROUP, "0 45 " + hora + " * * ?");
 
                 scheduler = new StdSchedulerFactory().getScheduler();
