@@ -179,7 +179,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             pacientes = pacienteBO.listByEmpresa();
             tempoConsulta = ProfissionalBO.getProfissionalLogado().getTempoConsulta();
             carregarCadeiras();
-            filtroAgendamento.addAll(Arrays.asList("F", "A", "I", "S", "O", "E", "B", "N", "P", "R", "D", "G", "H"));
+            filtroAgendamento.addAll(Arrays.asList("F", "A", "I", "S", "O", "E", "B", "N", "P", "G", "H"));
             initialDate = Calendar.getInstance().getTime();
         } catch (Exception e) {
             log.error(e);
