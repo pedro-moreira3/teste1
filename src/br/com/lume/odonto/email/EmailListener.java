@@ -5,19 +5,20 @@ import java.net.InetAddress;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.apache.log4j.Logger;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
+import br.com.lume.common.util.EnviaEmail;
+import br.com.lume.common.util.Mensagens;
 import br.com.lume.odonto.contify.ContifyBatch;
 import br.com.lume.odonto.util.OdontoMensagens;
 
 public class EmailListener implements ServletContextListener {
 
-    private Logger log = Logger.getLogger(EmailListener.class);
+ //   private Logger log = Logger.getLogger(EmailListener.class);
 
     private Scheduler scheduler;
 
@@ -37,27 +38,37 @@ public class EmailListener implements ServletContextListener {
         try {
             String servidor = InetAddress.getLocalHost().getHostAddress();
             
-            System.out.println("IP do servidor de prod:" + servidor);
-            System.out.println("Host do servidor de prod:" + InetAddress.getLocalHost().getHostName());
-            System.out.println("Host do servidor de prod canonico:" + InetAddress.getLocalHost().getCanonicalHostName());
-            System.out.println("Host do servidor de prod ip raw:" + InetAddress.getLocalHost().getAddress());
+          //  System.out.println("IP do servidor de prod:" + servidor);
+         //   System.out.println("Host do servidor de prod:" + InetAddress.getLocalHost().getHostName());
+         ///   System.out.println("Host do servidor de prod canonico:" + InetAddress.getLocalHost().getCanonicalHostName());
+          //  System.out.println("Host do servidor de prod ip raw:" + InetAddress.getLocalHost().getAddress());
+            
+            String testeDados = "IP do servidor de prod:" + servidor 
+                    + "Host do servidor de prod:" + InetAddress.getLocalHost().getHostName() +
+                    "Host do servidor de prod canonico:" + InetAddress.getLocalHost().getCanonicalHostName() +  
+                    "Host do servidor de prod ip raw:" + InetAddress.getLocalHost().getAddress()+
+                    "servidor de produção conf" + OdontoMensagens.getMensagem("servidor.producao").trim()
+                    ;
+            
+            EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", "ariel.pires@lumetec.com.br", "Intelidente - teste de host ", testeDados,
+                    Mensagens.getMensagemOffLine("email.smtpHost.prod"));
             
             if (OdontoMensagens.getMensagem("servidor.producao").trim().equals(servidor.trim())) {
 
                 String hora = arg0.getServletContext().getInitParameter("HORA_BATCH");
 
                 CronTrigger trigger = new CronTrigger("MyTrigger", Scheduler.DEFAULT_GROUP, "0 0 " + hora + " * * ?");
-          //     CronTrigger trigger2 = new CronTrigger("MyTrigger2", Scheduler.DEFAULT_GROUP, "0 15 " + hora + " * * ?");
+               CronTrigger trigger2 = new CronTrigger("MyTrigger2", Scheduler.DEFAULT_GROUP, "0 15 " + hora + " * * ?");
                 CronTrigger trigger3 = new CronTrigger("MyTrigger3", Scheduler.DEFAULT_GROUP, "0 30 " + hora + " * * ?");
-                CronTrigger trigger4 = new CronTrigger("MyTrigger3", Scheduler.DEFAULT_GROUP, "0 45 " + hora + " * * ?");
+                CronTrigger trigger4 = new CronTrigger("MyTrigger4", Scheduler.DEFAULT_GROUP, "0 45 " + hora + " * * ?");
 
                 scheduler = new StdSchedulerFactory().getScheduler();
 
                 JobDetail jobDetail = new JobDetail("LancamentoContabilProfissional", Scheduler.DEFAULT_GROUP, LancamentoContabilAutomatico.class);
                 scheduler.scheduleJob(jobDetail, trigger);
 
-//                JobDetail jobDetail2 = new JobDetail("RelatorioGerencialEmail", Scheduler.DEFAULT_GROUP, RelatorioGerencialEmail.class);
-//                scheduler.scheduleJob(jobDetail2, trigger2);
+                JobDetail jobDetail2 = new JobDetail("RelatorioGerencialEmail", Scheduler.DEFAULT_GROUP, RelatorioGerencialEmail.class);
+                scheduler.scheduleJob(jobDetail2, trigger2);
 
                 JobDetail jobDetail3 = new JobDetail("RelatorioUsuariosEmail", Scheduler.DEFAULT_GROUP, RelatorioUsuariosEmail.class);
                 scheduler.scheduleJob(jobDetail3, trigger3);

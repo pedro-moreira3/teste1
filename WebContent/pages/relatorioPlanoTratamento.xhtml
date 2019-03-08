@@ -72,7 +72,7 @@
                                 immediate="true" tabindex="1" />
                         </div>
                         <div class="Container25 Responsive100">
-                            <p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
+                            <p:commandButton immediate="true" value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                 <p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="planoTratamento" />
                             </p:commandButton>
                         </div>
@@ -126,7 +126,7 @@
                                 </h:outputText>
                             </p:column>
 
-                            <p:column rendered="#{relatorioPlanoTratamentoMB.status == 'N'}">
+                            <p:column rendered="#{relatorioPlanoTratamentoMB.status == 'N'}" exportable="false">
                                 <p:commandButton icon="White fa fa-times-circle" onclick="PF('devolver').show();" title="Encerrar" process="@this" styleClass="OrangeButton"
                                     action="#{planoTratamentoMB.setEntity(m)}" />
                                 <p:button icon="White fa fa-eye" title="Visualizar" onclick="window.open('paciente.jsf?idpt=#{m.id}'); return false;" />

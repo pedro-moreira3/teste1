@@ -14,15 +14,15 @@
 							style="border:0px none; background-color:transparent;">
 
 							<p:outputLabel for="inicio" value="Inicio : " />
-							<p:calendar id="inicio" value="#{relatorioLancamentoMB.inicio}" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid20"/>
+							<p:calendar id="inicio" value="#{relatorioLancamentoMB.inicio}" autocomplete="off" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid20"/>
 
 							<p:outputLabel for="fim" value="Fim : " />
-							<p:calendar id="fim" value="#{relatorioLancamentoMB.fim}" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid20"/>
+							<p:calendar id="fim" value="#{relatorioLancamentoMB.fim}" autocomplete="off" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid20"/>
 
 							<p:outputLabel for="status" value="Status : " />
 							<p:selectOneMenu id="status" value="#{relatorioLancamentoMB.status}">
 								<f:selectItem itemLabel="Todos" itemValue="T" />
-								<f:selectItems value="#{lancamentoMB.statuss}" var="status" itemLabel="#{status}" itemValue="#{status}" />
+								<f:selectItems value="#{relatorioLancamentoMB.statuss}" var="status" itemLabel="#{status}" itemValue="#{status}" />
 							</p:selectOneMenu>
 
 						</p:panelGrid>
