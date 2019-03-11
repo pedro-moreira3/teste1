@@ -29,7 +29,7 @@ public class RelatorioUsuariosEmail implements Job {
     public void doRelatorioGerencialEmail() {
         try {
             Calendar cal = Calendar.getInstance();
-            if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
+            if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY ) {
                 String emails = "alvaro@consultoriolegal.com.br;joao.serra@lumetec.com.br;ariel.pires@lumetec.com.br;ricardo.poncio@lumetec.com.br;rogerio.nagata@lumetec.com.br";
 
                 Map<String, String> valores = new HashMap<>();
