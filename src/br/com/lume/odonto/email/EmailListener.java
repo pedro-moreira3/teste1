@@ -36,22 +36,16 @@ public class EmailListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent arg0) {
         try {
-            String servidor = InetAddress.getLocalHost().getHostAddress();
+            String servidor = InetAddress.getLocalHost().getHostName();
             
           //  System.out.println("IP do servidor de prod:" + servidor);
          //   System.out.println("Host do servidor de prod:" + InetAddress.getLocalHost().getHostName());
          ///   System.out.println("Host do servidor de prod canonico:" + InetAddress.getLocalHost().getCanonicalHostName());
           //  System.out.println("Host do servidor de prod ip raw:" + InetAddress.getLocalHost().getAddress());
             
-            String testeDados = "IP do servidor de prod:" + servidor 
-                    + "Host do servidor de prod:" + InetAddress.getLocalHost().getHostName() +
-                    "Host do servidor de prod canonico:" + InetAddress.getLocalHost().getCanonicalHostName() +  
-                    "Host do servidor de prod ip raw:" + InetAddress.getLocalHost().getAddress()+
-                    "servidor de produção conf" + OdontoMensagens.getMensagem("servidor.producao").trim()
-                    ;
-            
-            EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", "ariel.pires@lumetec.com.br", "Intelidente - teste de host ", testeDados,
-                    Mensagens.getMensagemOffLine("email.smtpHost.prod"));
+      
+         //   EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", "ariel.pires@lumetec.com.br", "Intelidente - teste de host ", testeDados,
+          //         Mensagens.getMensagemOffLine("email.smtpHost.prod"));
             
             if (OdontoMensagens.getMensagem("servidor.producao").trim().equals(servidor.trim())) {
 
