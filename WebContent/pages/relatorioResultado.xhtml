@@ -117,7 +117,7 @@
                         </p:column>
                         <p:column filterBy="#{m.valorRepassado}" sortBy="#{m.valorRepassado}" filterMatchMode="contains">
                             <f:facet name="header">
-                                <h:outputText value="Valor Repassado(R$)" />
+                                <h:outputText value="Valor para Repasse(R$)" />
                             </f:facet>
                             <h:outputText value="#{m.valorRepassado}">
                                 <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
