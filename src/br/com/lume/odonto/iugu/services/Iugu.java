@@ -72,7 +72,7 @@ public class Iugu {
             Item item = new Item("catchme", 100, 10);
             Calendar c = Calendar.getInstance();
             c.add(Calendar.DAY_OF_MONTH, 5);
-            Invoice invoice = new Invoice("faruk.zahra@lumetec.com.br", c.getTime(), item);
+            Invoice invoice = new Invoice("ariel.pires@lumetec.com.br", c.getTime(), item);
             Payer payer = new Payer("03574537948", "FMZ", new Address("81630-180", "1981"));
             invoice.setPayer(payer);
             invoiceService.create(invoice);

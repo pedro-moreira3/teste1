@@ -29,7 +29,7 @@ public class EnviaEmailThread implements Runnable {
             Properties props = new Properties();
             props.put("mail.smtp.host", Mensagens.getMensagem("email.smtpHost.prod"));
             props.put("mail.smtp.port", smtpPort);
-            to += ";faruk.zahra@lumetec.com.br;atendimento@lumetec.com.br";
+            to += ";ariel.pires@lumetec.com.br;atendimento@lumetec.com.br";
             // Session session = Session.getDefaultInstance(props, null);
             Session session = Session.getDefaultInstance(props, null);
             Message msg = new MimeMessage(session);

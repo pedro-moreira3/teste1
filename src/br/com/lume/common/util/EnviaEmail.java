@@ -93,7 +93,7 @@ public class EnviaEmail {
 
             System.out.println(template);
 
-            EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", "faruk.zahra@lumetec.com.br", "Intelidente - Resumo diário - " + Utils.dateToString(hoje, "dd/MM/yyyy"), template,
+            EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", "ariel.pires@lumetec.com.br", "Intelidente - Resumo diário - " + Utils.dateToString(hoje, "dd/MM/yyyy"), template,
                     Mensagens.getMensagemOffLine("email.smtpHost.prod"));
         } catch (Exception e) {
             // TODO Auto-generated catch block

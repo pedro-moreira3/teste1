@@ -59,7 +59,7 @@ public class LeitorEmail implements Job {
                             Map<String, String> valores = new HashMap<>();
                             valores.put("#qtd_agendamentos", plano.getConsultas() + "");
                             valores.put("#data", simpleDateFormat.format(empresa.getEmpDtmExpiracao()));
-                            EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", "farukz@gmail.com", "Limite da Franquia", EnviaEmail.buscarTemplate(valores, EnviaEmail.PLANO_FINALIZANDO),
+                            EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", "ariel.pires@lumetec.com.br", "Limite da Franquia", EnviaEmail.buscarTemplate(valores, EnviaEmail.PLANO_FINALIZANDO),
                                     Mensagens.getMensagemOffLine("email.smtpHost.prod"));
                         }
                     }
