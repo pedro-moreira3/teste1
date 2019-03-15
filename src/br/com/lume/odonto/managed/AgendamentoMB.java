@@ -573,7 +573,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                         this.getInicio()) && agnd.getFim().before(this.getFim()))) && agnd.getId() != this.getEntity().getId()) {
                     if ((Status.SIM.equals(this.getEntity().getEncaixe())) || (agnd.getStatus().equals(StatusAgendamento.REMARCADO.getSigla())) || (this.getEntity().getStatus().equals(
                             StatusAgendamento.REMARCADO.getSigla())) || (this.getEntity().getStatus().equals(
-                                    StatusAgendamento.CANCELADO.getSigla())) || (agnd.getStatus().equals(StatusAgendamento.CANCELADO.getSigla())) || (Status.SIM.equals(agnd.getEncaixe()))) {
+                                    StatusAgendamento.CANCELADO.getSigla())) || (agnd.getStatus().equals(StatusAgendamento.ERRO_AGENDAMENTO.getSigla())) ||
+                            (agnd.getStatus().equals(StatusAgendamento.CANCELADO.getSigla())) || (Status.SIM.equals(agnd.getEncaixe()))) {
                         return true;
                     } else {
                         return false;
