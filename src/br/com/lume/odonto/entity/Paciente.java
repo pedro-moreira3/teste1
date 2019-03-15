@@ -20,7 +20,9 @@ import org.primefaces.model.StreamedContent;
 
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
+import br.com.lume.odonto.bo.AgendamentoBO;
 import br.com.lume.odonto.bo.PacienteBO;
+import br.com.lume.odonto.bo.ReservaBO;
 
 @Entity
 @Table(name = "PACIENTE")
@@ -336,6 +338,20 @@ public class Paciente implements Serializable, Comparable<Paciente> {
     public String getStatusUltimoAgendamento() {
         try {
             return StatusAgendamento.findBySigla(nomeMae).getDescricao();
+        } catch (Exception e) {}
+        return "";
+    }
+    
+    public String getStatusProximoAgendamento() {
+        try {
+            return new AgendamentoBO().findStatusProximoAgendamentoPaciente(this);
+        } catch (Exception e) {}
+        return "";
+    }
+    
+    public String getDataProximoAgendamentoStr() {
+        try {
+            return new AgendamentoBO().findDataProximoAgendamentoPaciente(this);
         } catch (Exception e) {}
         return "";
     }

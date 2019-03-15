@@ -289,6 +289,50 @@ public class AgendamentoBO extends BO<Agendamento> {
         }
         return null;
     }
+    
+    public String findDataProximoAgendamentoPaciente(Paciente paciente) {
+        try {
+            if (paciente != null) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("select ");
+                sb.append("* ");
+                sb.append("from Agendamento as a ");
+                sb.append("WHERE date(a.inicio) > '" + Utils.dateToString(new Date(), "yyyy-MM-dd") + "'");
+                sb.append("AND a.excluido = 'N' ");
+                sb.append("AND a.ID_PACIENTE = ?1 ");               
+                sb.append("ORDER BY a.inicio ASC LIMIT 1");
+                Query q = this.getDao().createNativeQuery(sb.toString(), Agendamento.class);
+                q.setParameter(1, paciente.getId());
+                return this.list(q).get(0).getInicioStr();
+            }
+        } catch (Exception e) {
+            log.error("Erro no findDataProximoAgendamentoPaciente", e);
+        }
+        return null;
+    }
+  
+    public String findStatusProximoAgendamentoPaciente(Paciente paciente) {
+        try {
+            if (paciente != null) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("select ");
+                sb.append("* ");
+                sb.append("from Agendamento as a ");
+                sb.append("WHERE date(a.inicio) > '" + Utils.dateToString(new Date(), "yyyy-MM-dd") + "'");
+                sb.append("AND a.excluido = 'N' ");
+                sb.append("AND a.ID_PACIENTE = ?1 ");               
+                sb.append("ORDER BY a.inicio ASC LIMIT 1");
+                Query q = this.getDao().createNativeQuery(sb.toString(), Agendamento.class);
+                q.setParameter(1, paciente.getId());
+                
+                return StatusAgendamento.findBySigla(this.list(q).get(0).getStatus()).getDescricao();
+            }
+        } catch (Exception e) {
+            log.error("Erro no findStatusProximoAgendamentoPaciente", e);
+        }
+        return null;
+    }    
+    
 
     public List<Agendamento> listByProfissionalAndStatusAndDataLimite(Profissional profissional, Date data) {
         try {
