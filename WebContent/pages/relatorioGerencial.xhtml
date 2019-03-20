@@ -278,22 +278,22 @@
                             </f:facet>
                             <p:column sortBy="#{paciente.dadosBasico.nome}" filterBy="#{paciente.dadosBasico.nomeStr}" filterMatchMode="contains" headerText="Nome">
                                 <h:outputText value="#{paciente.dadosBasico.nome}" title="#{paciente.id}" />
-                            </p:column>
-                            <p:column sortBy="#{paciente.dadosBasico.telefone}" filterBy="#{paciente.dadosBasico.telefone}" filterMatchMode="contains" headerText="Tel">
-                                <h:outputText value="#{paciente.dadosBasico.telefone}" />
-                            </p:column>
+                            </p:column>                          
                             <p:column sortBy="#{paciente.dadosBasico.celular}" filterBy="#{paciente.dadosBasico.celular}" filterMatchMode="contains" headerText="Cel">
                                 <h:outputText value="#{paciente.dadosBasico.celular}" />
-                            </p:column>
-                            <p:column sortBy="#{paciente.dadosBasico.email}" filterBy="#{paciente.dadosBasico.email}" filterMatchMode="contains" headerText="E-mail">
-                                <h:outputText value="#{paciente.dadosBasico.email}" />
-                            </p:column>
+                            </p:column>                        
                             <p:column sortBy="#{paciente.dataUltimaAlteracao}" filterBy="#{paciente.dataUltimaAlteracaosStr}" filterMatchMode="contains" headerText="Dta. Últ. Agendamento">
                                 <h:outputText value="#{paciente.dataUltimaAlteracaosStr}" />
                             </p:column>
                              <p:column sortBy="#{paciente.statusUltimoAgendamento}" filterBy="#{paciente.statusUltimoAgendamento}" filterMatchMode="contains" headerText="Status Últ. Agendamento">
                                 <h:outputText value="#{paciente.statusUltimoAgendamento}" />
                             </p:column>
+                            <p:column sortBy="#{paciente.dataProximoAgendamentoStr}" filterBy="#{paciente.dataProximoAgendamentoStr}" filterMatchMode="contains" headerText="Dta. Prox. Agendamento">
+                                <h:outputText value="#{paciente.dataProximoAgendamentoStr}" />
+                            </p:column>
+                             <p:column sortBy="#{paciente.statusProximoAgendamento}" filterBy="#{paciente.statusProximoAgendamento}" filterMatchMode="contains" headerText="Status Prox. Agendamento">
+                                <h:outputText value="#{paciente.statusProximoAgendamento}" />
+                            </p:column>                            
                             <p:column headerText="Whats">
                                 <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{paciente.whatsURL}');return false;" styleClass="GreenButton" disable="#{paciente.whatsURL == null}" />
                             </p:column>
