@@ -120,7 +120,7 @@ public class ReservaKitBO extends BO<ReservaKit> {
             sb.append("AND rk.excluido= :excluido ");
             sb.append("AND r.idEmpresa = :empresa ");
             sb.append("AND r.excluido= :excluido ");
-            sb.append("ORDER BY r.prazo ");
+            sb.append("ORDER BY r.agendamento.inicio ");
             Query q = this.getDao().createQuery(sb.toString());
             q.setParameter("status", status);
             q.setParameter("empresa", ProfissionalBO.getProfissionalLogado().getIdEmpresa());

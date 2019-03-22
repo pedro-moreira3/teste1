@@ -582,8 +582,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     this.addError("Valor do plano está diferente do valor do orçamento, é preciso refazer o orçamento!", "");
                 }
             } else {
-                if (visivel) {
+                if (visivel && getEntity().getFinalizado().equals("N")) {
                     this.addError("Este plano é novo e ainda não tem orçamento, é preciso fazer o orçamento!", "");
+                }else {
+                    this.addError("Este plano já foi finalizado!", "");
                 }
             }
         }
