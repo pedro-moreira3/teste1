@@ -104,8 +104,9 @@ public class LancamentoBO extends BO<Lancamento> {
             sb.append("FROM LANCAMENTO M WHERE ");
             sb.append("ID_ORCAMENTO = ?1 AND ");
             sb.append("FORMA_PAGAMENTO = ?2 AND ");
-            sb.append("EXCLUIDO = 'N' AND ");
-            sb.append("VALOR = ?3 ");
+            sb.append("EXCLUIDO = 'N' ");
+            // "AND ");
+         //   sb.append("VALOR = ?3 ");
 
             Query query = this.getDao().createNativeQuery(sb.toString());
             query.setParameter(1, idOrcamento);

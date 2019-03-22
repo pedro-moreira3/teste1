@@ -80,19 +80,15 @@
 							<p:column sortBy="#{lancamento.numeroParcela}" style="text-align:center" headerText="Parcela" filterBy="#{lancamento.numeroParcela}" filterMatchMode="contains">
 								<h:outputText value="#{lancamento.numeroParcela}" />
 							</p:column>
-
-							<p:column headerText="Data de Crédito" sortBy="#{lancamento.dataCredito}" filterBy="#{lancamento.dataCreditoStr}" filterMatchMode="contains">
-								<h:outputText value="#{lancamento.dataCreditoStr}" />
-							</p:column>
-
 							<p:column headerText="Data do Pagamento" sortBy="#{lancamento.dataPagamento}" filterBy="#{lancamento.dataPagamentoStr}" filterMatchMode="contains">
 								<h:outputText value="#{lancamento.dataPagamentoStr}" />
 							</p:column>
-
+							<p:column headerText="Data de Crédito" sortBy="#{lancamento.dataCredito}" filterBy="#{lancamento.dataCreditoStr}" filterMatchMode="contains">
+								<h:outputText value="#{lancamento.dataCreditoStr}" />
+							</p:column>
 							<p:column headerText="Forma de Pagamento" sortBy="#{lancamento.formaPagamentoStr}" filterBy="#{lancamento.formaPagamentoStr}" filterMatchMode="contains">
 								<h:outputText value="#{lancamento.formaPagamentoStr}" />
 							</p:column>
-
 							<p:column headerText="Valor(R$)" sortBy="#{lancamento.valor}" style="text-align:right" filterBy="#{lancamento.valor}" filterMatchMode="contains">
 								<h:outputText value="#{lancamento.valor}">
 									<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />

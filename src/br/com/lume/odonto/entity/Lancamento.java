@@ -274,7 +274,16 @@ public class Lancamento implements Serializable, Comparable<Lancamento> {
             formaStr = dominio.getNome();
         }
         if ("CC".equals(formaPagamento)) {
-            formaStr += " (" + getParcelaMaxima() + "x)";
+            int cartaoCreditoParcela = getNumeroParcelaCartaoCredito();
+            String parcelaInicial = "" + cartaoCreditoParcela;
+           if(cartaoCreditoParcela < 10) {
+               parcelaInicial = "0" + cartaoCreditoParcela; 
+           } 
+           String parcelaFinal = "" + getParcelaMaxima();
+           if(getParcelaMaxima() < 10) {
+               parcelaFinal = "0" + getParcelaMaxima(); 
+           }
+            formaStr += " ("+parcelaInicial+"/" + parcelaFinal + ")";
         }
         return formaStr;
     }
@@ -289,6 +298,20 @@ public class Lancamento implements Serializable, Comparable<Lancamento> {
 
     public void setNumeroParcela(int numeroParcela) {
         this.numeroParcela = numeroParcela;
+    }
+    
+    @Transient
+    public int getNumeroParcelaCartaoCredito() {
+        int parcela = 1;
+        for (Lancamento l : this.getOrcamento().getLancamentos()) {
+            if(l.getOrcamento().equals(this.getOrcamento()) && l.getFormaPagamento() != null && l.getFormaPagamento().equals("CC") && l.getExcluido().equals("N")) {
+                if(l.getDataCredito() != null && this.getDataCredito() != null && (l.getDataCredito().before(this.getDataCredito()))) {
+                    parcela++;
+                }     
+            }
+                      
+        }
+        return parcela;
     }
 
     public BigDecimal getValorOriginal() {
