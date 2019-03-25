@@ -251,11 +251,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void actionFinalizar(ActionEvent event) {
         try {
             
-            if(verificarProcedimentosEmAberto(this.getEntity())) {               
-                this.addError(OdontoMensagens.getMensagem("erro.procedimentos.abertos"), "");
-                return;
-            }
-            
             BigDecimal totalPagar = ((PlanoTratamentoBO) this.getbO()).findValorPagarByPlanoTratamento(this.getEntity().getId());
             totalPagar = totalPagar == null ? new BigDecimal(0) : totalPagar;
 
@@ -287,16 +282,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             log.error("Erro no actionFinalizar", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
-    }
-
-    private boolean verificarProcedimentosEmAberto(PlanoTratamento planoTratamento) {
-        List<PlanoTratamentoProcedimento> planosProcedimentos =  planoTratamento.getPlanoTratamentoProcedimentos();
-        for (PlanoTratamentoProcedimento planoTratamentoProcedimento : planosProcedimentos) {
-            if(planoTratamentoProcedimento.getStatus() == null || !planoTratamentoProcedimento.getStatus().equals("F")) {
-                return true;
-            }
-        }        
-        return false;
     }
 
     public void cancelaAgendamentos() {
