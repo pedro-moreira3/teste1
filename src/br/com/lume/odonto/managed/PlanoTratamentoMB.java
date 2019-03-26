@@ -756,7 +756,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             totalPago = new BigDecimal(0);
             for (Lancamento lan : lancamentoBO.listByPlanoTratamentoOrcamentoNaoExcluido(getEntity())) {
                 if (lan.getDataPagamento() != null) {
-                    totalPago = totalPago.add(lan.getValorOriginal());
+                    totalPago = totalPago.add(lan.getValor());
                 }
             }
             valorTotal = valorTotal.subtract(totalPago);
