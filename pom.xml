@@ -731,7 +731,7 @@
 		<profile>
 			<id>wildfly-remote-prod</id>
 			<properties>
-				<wildfly-hostname>azprintelidenteapp</wildfly-hostname>
+				<wildfly-hostname>azprintelidenteapp.lume.azure</wildfly-hostname>
 				<wildfly-port>9990</wildfly-port>
 				<wildfly-username>desenv</wildfly-username>
 				<wildfly-password>linux123</wildfly-password>
