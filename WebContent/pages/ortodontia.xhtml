@@ -251,8 +251,8 @@ li.orcamento-li {
 
                                 <div class="Container50 Responsive100">
                                     <p:commandButton icon="White fa fa-gear White" value="Gerar Orçamento Anual" styleClass="OrangeButton"
-                                        disabled="#{ortodontiaMB.entity == null or ortodontiaMB.entity.id == null}" action="#{ortodontiaMB.actionOrcamentoAnual}" process="@this"
-                                        update=":lume:tabView:pnOrtodontia">
+                                        disabled="#{ortodontiaMB.entity == null or ortodontiaMB.entity.id == null}" action="#{ortodontiaMB.actionOrcamentoAnual}" process="@this,valorProcedimentoPadrao"
+                                        update=":lume:tabView:pnOrtodontia,valorProcedimentoPadrao">
                                         <p:confirm header="Confirmação" message="Deseja criar o orçamento anual?" icon="fa fa-warning" />
                                     </p:commandButton>
                                 </div>
