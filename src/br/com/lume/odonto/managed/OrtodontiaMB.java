@@ -145,10 +145,40 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                 } else {
                     this.addError("É preciso finalizar os procedimentos ortodonticos restantes antes de fazer um novo orçamento anual.", "");
                 }
+                //refazer procedimento em caso de paciente ainda nao ter pago nada.
+            } else if (getEntity().getValorPago().doubleValue() == 0d) { 
+                for (PlanoTratamentoProcedimento planoTratamentoProc : planoTratamentoProcedimentoBO.listByPlanoTratamento(getEntity())) {
+                    planoTratamentoProc.setValor(valorProcedimentoOrtodontico);
+                    planoTratamentoProc.setValorDesconto(valorProcedimentoOrtodontico);                  
+                    planoTratamentoProc.getPlanoTratamento().getOrcamentos();
+                    for (Orcamento orcamento : planoTratamentoProc.getPlanoTratamento().getOrcamentos()) {
+                        orcamento.setValorProcedimentoOrtodontico(valorProcedimentoOrtodontico);
+                        BigDecimal valorTotal = valorProcedimentoOrtodontico.multiply(new BigDecimal(getQtdMesesRestantes()));
+                        orcamento.setValorTotal(valorTotal);    
+                        
+                        List<Lancamento> lancamentos = new ArrayList<>();
+                        
+                        for (Lancamento lancamento : orcamento.getLancamentos()) {
+                            lancamento.setValor(valorTotal);
+                            lancamento.setValorOriginal(valorTotal);
+                            lancamentos.add(lancamento);
+                        }
+                        orcamento.setLancamentos(lancamentos);
+                        orcamentoBO.persist(orcamento);
+                        
+                    }
+                    getEntity().setValorTotalRestante(valorProcedimentoOrtodontico);
+                    getEntity().setValorTotalRestante(valorProcedimentoOrtodontico);
+                    ((PlanoTratamentoBO) getbO()).carregarNovoValorTotal(getEntity(), valorProcedimentoOrtodontico);   
+                    getbO().persist(getEntity());
+                    planoTratamentoProcedimentoBO.persist(planoTratamentoProc);                 
+                } 
+                actionCarregarPlano();
             } else {
                 NumberFormat formatter = NumberFormat.getCurrencyInstance(getLumeSecurity().getLocale());
                 this.addError("É preciso que o cliente quite os débitos " + formatter.format(getEntity().getValorOrcamentoRestante()) + " antes de fazer um novo orçamento anual.", "");
             }
+            
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e);
