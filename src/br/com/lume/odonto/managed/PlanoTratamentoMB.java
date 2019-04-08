@@ -251,11 +251,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void actionFinalizar(ActionEvent event) {
         try {
             
-            if(verificarProcedimentosEmAberto(this.getEntity())) {               
-                this.addError(OdontoMensagens.getMensagem("erro.procedimentos.abertos"), "");
-                return;
-            }
-            
             BigDecimal totalPagar = ((PlanoTratamentoBO) this.getbO()).findValorPagarByPlanoTratamento(this.getEntity().getId());
             totalPagar = totalPagar == null ? new BigDecimal(0) : totalPagar;
 
@@ -287,16 +282,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             log.error("Erro no actionFinalizar", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
-    }
-
-    private boolean verificarProcedimentosEmAberto(PlanoTratamento planoTratamento) {
-        List<PlanoTratamentoProcedimento> planosProcedimentos =  planoTratamento.getPlanoTratamentoProcedimentos();
-        for (PlanoTratamentoProcedimento planoTratamentoProcedimento : planosProcedimentos) {
-            if(planoTratamentoProcedimento.getStatus() == null || !planoTratamentoProcedimento.getStatus().equals("F")) {
-                return true;
-            }
-        }        
-        return false;
     }
 
     public void cancelaAgendamentos() {
@@ -582,8 +567,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     this.addError("Valor do plano está diferente do valor do orçamento, é preciso refazer o orçamento!", "");
                 }
             } else {
-                if (visivel) {
+                if (visivel && getEntity().getFinalizado().equals("N")) {
                     this.addError("Este plano é novo e ainda não tem orçamento, é preciso fazer o orçamento!", "");
+                }else {
+                    this.addError("Este plano já foi finalizado!", "");
                 }
             }
         }
@@ -769,7 +756,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             totalPago = new BigDecimal(0);
             for (Lancamento lan : lancamentoBO.listByPlanoTratamentoOrcamentoNaoExcluido(getEntity())) {
                 if (lan.getDataPagamento() != null) {
-                    totalPago = totalPago.add(lan.getValorOriginal());
+                    totalPago = totalPago.add(lan.getValor());
                 }
             }
             valorTotal = valorTotal.subtract(totalPago);

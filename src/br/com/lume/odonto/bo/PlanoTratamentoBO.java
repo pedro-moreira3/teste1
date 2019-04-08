@@ -213,7 +213,7 @@ public class PlanoTratamentoBO extends BO<PlanoTratamento> {
 
     public BigDecimal findValorPagoByPlanoTratamento(Long idPlanoTratamento) throws Exception {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT SUM(LAN.VALOR_ORIGINAL) FROM PLANO_TRATAMENTO PT, ORCAMENTO ORC, LANCAMENTO LAN ");
+        sb.append("SELECT SUM(LAN.VALOR) FROM PLANO_TRATAMENTO PT, ORCAMENTO ORC, LANCAMENTO LAN ");
         sb.append("WHERE ");
         sb.append("PT.ID = ORC.ID_PLANO_TRATAMENTO AND ");
         sb.append("ORC.ID = LAN.ID_ORCAMENTO AND ");
