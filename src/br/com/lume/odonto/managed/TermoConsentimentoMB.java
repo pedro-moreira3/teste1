@@ -79,7 +79,7 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
             documentos = documentoBO.listByTipoDocumento(dominio);
             profissionalLogado = ProfissionalBO.getProfissionalLogado();
             if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
-                    OdontoPerfil.RESPONSAVEL_TECNICO)) {
+                    OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
                 liberaBotao = true;
             }
             this.setPaciente(PacienteBO.getPacienteSelecionado());

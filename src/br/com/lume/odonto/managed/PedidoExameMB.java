@@ -79,7 +79,7 @@ public class PedidoExameMB extends LumeManagedBean<PedidoExame> {
         }
         profissionalLogado = ProfissionalBO.getProfissionalLogado();
         if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
-                OdontoPerfil.RESPONSAVEL_TECNICO)) {
+                OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
             liberaBotao = true;
         }
         this.setClazz(PedidoExame.class);
