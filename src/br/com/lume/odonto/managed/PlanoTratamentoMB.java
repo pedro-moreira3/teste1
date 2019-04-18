@@ -15,7 +15,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
@@ -240,7 +240,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             planoTratamentoBO.persist(this.getEntity());
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             this.actionNew(event);
-            PrimeFaces.current().ajax().addCallbackParam("descEvolucao", true);
+            RequestContext.getCurrentInstance().addCallbackParam("descEvolucao", true);
         } catch (Exception e) {
             log.error("Erro no actionPersistEvolucao", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -274,7 +274,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 planoTratamentoBO.persist(this.getEntity());
                 this.actionNew(event);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
+                RequestContext.getCurrentInstance().addCallbackParam("justificativa", true);
             }
         } catch (Exception e) {
             log.error("Erro no actionFinalizar", e);
@@ -429,7 +429,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     }
                     evolucaoProcedimento += evoPro;
                     evolucoes.add(evoPro.replaceAll("<br/>", ""));
-                    PrimeFaces.current().ajax().addCallbackParam("evolucao", true);
+                    RequestContext.getCurrentInstance().addCallbackParam("evolucao", true);
                     aux = false;
                 }
             } else {
@@ -843,7 +843,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             calculaRepasses();
             actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-            PrimeFaces.current().ajax().addCallbackParam("orcamento", true);
+            RequestContext.getCurrentInstance().addCallbackParam("orcamento", true);
         } catch (Exception e) {
             log.error("Erro no actionPersist OrcamentoMB", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");

@@ -16,7 +16,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -252,7 +252,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             }
             this.getEntity().setStatus(Status.INATIVO);
             this.actionPersist(event);
-            PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
+            RequestContext.getCurrentInstance().addCallbackParam("justificativa", true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -271,7 +271,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.getEntity().setJustificativa(null);
             this.getEntity().setStatus(Status.ATIVO);
             this.actionPersist(event);
-            PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
+            RequestContext.getCurrentInstance().addCallbackParam("justificativa", true);
         } catch (Exception e) {
             e.printStackTrace();
         }

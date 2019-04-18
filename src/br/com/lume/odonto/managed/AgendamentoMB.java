@@ -15,7 +15,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
@@ -358,7 +358,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             this.actionNew(event);
             profissional = null;
             carregarScheduleTarefas();
-            PrimeFaces.current().ajax().addCallbackParam("dlg", dlg);
+            RequestContext.getCurrentInstance().addCallbackParam("dlg", dlg);
         } else {
             this.addError(OdontoMensagens.getMensagem("erro.agendamento.planotratamento.vazio"), "");
         }
@@ -735,7 +735,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.setFim(cal.getTime());
         this.validaHoraUtilProfissional(profissional);
         this.validaAfastamento();
-        PrimeFaces.current().ajax().addCallbackParam("hora", horaUtilValida);
+        RequestContext.getCurrentInstance().addCallbackParam("hora", horaUtilValida);
         validaHabilitaSalvar();
     }
 
@@ -812,11 +812,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                     agendamento.getFim()) || this.getInicio().getTime() == agendamento.getInicio().getTime()) {
                 afastamento = false;
                 this.addError(OdontoMensagens.getMensagem("info.agendamento.afastamento"), "");
-                PrimeFaces.current().ajax().addCallbackParam("dlg", true);
+                RequestContext.getCurrentInstance().addCallbackParam("dlg", true);
                 return;
             }
         }
-        PrimeFaces.current().ajax().addCallbackParam("afastamento", afastamento);
+        RequestContext.getCurrentInstance().addCallbackParam("afastamento", afastamento);
     }
 
     private void criarUsuario(Usuario usuario, Paciente paciente) throws UsuarioDuplicadoException, ServidorEmailDesligadoException, Exception {

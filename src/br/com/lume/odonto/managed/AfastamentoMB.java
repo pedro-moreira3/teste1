@@ -9,7 +9,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
+import org.primefaces.context.RequestContext;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -63,15 +63,15 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
 
     @Override
     public void actionRemove(ActionEvent event) {
-        PrimeFaces.current().ajax().addCallbackParam("validado", false);
+        RequestContext.getCurrentInstance().addCallbackParam("validado", false);
         super.actionRemove(event);
-        PrimeFaces.current().ajax().addCallbackParam("validado", true);
+        RequestContext.getCurrentInstance().addCallbackParam("validado", true);
     }
 
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            PrimeFaces.current().ajax().addCallbackParam("validado", false);
+            RequestContext.getCurrentInstance().addCallbackParam("validado", false);
             if (GenericValidator.validarRangeData(this.getInicio(), this.getFim(), true)) {
                 this.validaData();
                 this.getEntity().setTipo(dominioSelecionado.getValor());
@@ -84,7 +84,7 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
                 this.setInicio(null);
                 this.setFim(null);
                 agendamentoMB.limpaPacienteSelecionado();
-                PrimeFaces.current().ajax().addCallbackParam("validado", true);
+                RequestContext.getCurrentInstance().addCallbackParam("validado", true);
             } else {
                 this.addError(OdontoMensagens.getMensagem("erro.data.rang"), "");
             }

@@ -14,7 +14,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
 import br.com.lume.common.exception.business.BusinessException;
@@ -286,7 +286,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             this.colocaValoresPlanoTratamentoProcedimentos();
             this.actionNew(event);
-            PrimeFaces.current().ajax().addCallbackParam("descEvolucao", true);
+            RequestContext.getCurrentInstance().addCallbackParam("descEvolucao", true);
         } catch (Exception e) {
             log.error("Erro no actionPersistEvolucao", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -612,7 +612,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
                 planoTratamentoBO.persist(this.getEntity());
                 this.actionNew(event);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
+                RequestContext.getCurrentInstance().addCallbackParam("justificativa", true);
             }
         } catch (Exception e) {
             log.error("Erro no actionFinalizar", e);
@@ -739,7 +739,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
                     }
                     evolucaoProcedimento += evoPro;
                     evolucoes.add(evoPro.replaceAll("<br/>", ""));
-                    PrimeFaces.current().ajax().addCallbackParam("evolucao", true);
+                    RequestContext.getCurrentInstance().addCallbackParam("evolucao", true);
                     aux = false;
                 }
             } else {
@@ -978,7 +978,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
                 this.ordenaListas();
                 subTotalDesconto = subTotalDesconto.subtract(this.getValorProcedimento(planoTratamentoProcedimentoRemove, true));
             } else {
-                PrimeFaces.current().ajax().addCallbackParam("senha", true);
+                RequestContext.getCurrentInstance().addCallbackParam("senha", true);
             }
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");

@@ -13,7 +13,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
+import org.primefaces.context.RequestContext;
 import org.primefaces.event.CloseEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
@@ -383,7 +383,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
                 calculaRepasses(pt);
                 planoTratamentoMB.actionNew(null);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                PrimeFaces.current().ajax().addCallbackParam("orcamento", true);
+                RequestContext.getCurrentInstance().addCallbackParam("orcamento", true);
             }
         } catch (Exception e) {
             log.error("Erro no actionPersist OrcamentoMB", e);
@@ -398,7 +398,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
         } else {
             super.actionRemove(arg0);
             planoTratamentoMB.actionNew(null);
-            PrimeFaces.current().ajax().addCallbackParam("orcamento", true);
+            RequestContext.getCurrentInstance().addCallbackParam("orcamento", true);
         }
     }
 
