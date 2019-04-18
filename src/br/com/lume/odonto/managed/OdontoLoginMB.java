@@ -7,7 +7,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -95,8 +95,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                         JSFHelper.getSession().setAttribute("PERFIL_LOGADO", perfilLogado);
                         JSFHelper.getSession().setAttribute("EMPRESA_LOGADA", empresaBO.find(profissional.getIdEmpresa()));
                     } else {
-                        RequestContext context = RequestContext.getCurrentInstance();
-                        context.execute("PF('loading').hide();");
+                        PrimeFaces.current().executeScript("PF('loading').hide();");
                         this.addError("Profissional Inativo.", "");
                         return "";
                     }
@@ -105,8 +104,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                 ((LoginBO) this.getbO()).carregaObjetosPermitidos(userLogin, perfilLogado, this.getLumeSecurity(), profissional);
             }
         } catch (Exception e) {
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.execute("PF('loading').hide();");
+            PrimeFaces.current().executeScript("PF('loading').hide();");
             this.addError(e.getMessage(), "");
             log.error("Erro ao efetuar login.", e);
             return "";

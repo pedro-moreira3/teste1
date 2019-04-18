@@ -14,7 +14,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.event.SelectEvent;
@@ -174,8 +174,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
             this.geraProtocolo();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             this.geraLista();
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.addCallbackParam("dlg", true);
+            PrimeFaces.current().ajax().addCallbackParam("dlg", true);
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -248,8 +247,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
                 this.setEnableDevolucao(false);
                 this.actionNew(event);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                RequestContext context = RequestContext.getCurrentInstance();
-                context.addCallbackParam("descartar", true);
+                PrimeFaces.current().ajax().addCallbackParam("descartar", true);
             } else {
                 this.addError(OdontoMensagens.getMensagem("lavagem.descarte.externo"), "");
             }
@@ -699,8 +697,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
             this.geraListaSolicitadas();
             this.setEnableDevolucao(false);
             dataValidade = null;
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.addCallbackParam("esterilizar", true);
+            PrimeFaces.current().ajax().addCallbackParam("esterilizar", true);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);

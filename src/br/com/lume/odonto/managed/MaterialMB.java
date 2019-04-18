@@ -15,7 +15,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.event.SelectEvent;
@@ -294,8 +294,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                         MaterialLog.ENTRADA_MATERIAL_DEVOLVER));
                 this.actionNew(event);
                 this.geraLista();
-                RequestContext context = RequestContext.getCurrentInstance();
-                context.addCallbackParam("justificativa", true);
+                PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
             } else {
                 this.addError(OdontoMensagens.getMensagem("material.quantidade.maior"), "");
             }

@@ -14,7 +14,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
@@ -164,8 +164,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
             getEntity().setClinica(true);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             this.geraLista();
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.addCallbackParam("dlg", true);
+            PrimeFaces.current().ajax().addCallbackParam("dlg", true);
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -318,8 +317,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                 this.geraListaSolicitadas();
                 this.actionNew(event);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                RequestContext context = RequestContext.getCurrentInstance();
-                context.addCallbackParam("descartar", true);
+                PrimeFaces.current().ajax().addCallbackParam("descartar", true);
             } else {
                 this.addError(OdontoMensagens.getMensagem("lavagem.descarte.externo"), "");
             }
@@ -462,8 +460,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                 this.geraListaSolicitadas();
                 this.setEnableDevolucao(false);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                RequestContext context = RequestContext.getCurrentInstance();
-                context.addCallbackParam("esterilizar", true);
+                PrimeFaces.current().ajax().addCallbackParam("esterilizar", true);
                 dataValidade = null;
             }
             this.setLavagemSelecionadas(null);

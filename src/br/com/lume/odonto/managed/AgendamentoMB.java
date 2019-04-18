@@ -15,7 +15,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
@@ -279,7 +279,6 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         if (profissionalDentroAgenda != null) {
             profissional = profissionalDentroAgenda;
         }
-        RequestContext context = RequestContext.getCurrentInstance();
         if ((procedimentosPickList.getSource().isEmpty() && procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado == null) || (!procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado != null)) {
             this.getEntity().setPlanoTratamentoProcedimentosAgendamento(this.insereAgendamento(procedimentosPickList.getTarget()));
             this.getEntity().setPlanoTratamento(planoTratamentoSelecionado);
@@ -359,7 +358,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             this.actionNew(event);
             profissional = null;
             carregarScheduleTarefas();
-            context.addCallbackParam("dlg", dlg);
+            PrimeFaces.current().ajax().addCallbackParam("dlg", dlg);
         } else {
             this.addError(OdontoMensagens.getMensagem("erro.agendamento.planotratamento.vazio"), "");
         }
@@ -726,7 +725,6 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     public void onDateSelect(SelectEvent selectEvent) {
         Date date = (Date) selectEvent.getObject();
-        RequestContext context = RequestContext.getCurrentInstance();
         this.setEntity(new Agendamento());
         this.setPacienteSelecionado(null);
         this.setPlanoTratamentoSelecionado(null);
@@ -737,7 +735,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.setFim(cal.getTime());
         this.validaHoraUtilProfissional(profissional);
         this.validaAfastamento();
-        context.addCallbackParam("hora", horaUtilValida);
+        PrimeFaces.current().ajax().addCallbackParam("hora", horaUtilValida);
         validaHabilitaSalvar();
     }
 
@@ -808,18 +806,17 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     private void validaAfastamento() {
-        RequestContext context = RequestContext.getCurrentInstance();
         boolean afastamento = true;
         for (Agendamento agendamento : agendamentosAfastamento) {
             if (this.getEntity().getStatus().equals(StatusAgendamento.AFASTAMENTO.getSigla()) || this.getInicio().after(agendamento.getInicio()) && this.getInicio().before(
                     agendamento.getFim()) || this.getInicio().getTime() == agendamento.getInicio().getTime()) {
                 afastamento = false;
                 this.addError(OdontoMensagens.getMensagem("info.agendamento.afastamento"), "");
-                context.addCallbackParam("dlg", true);
+                PrimeFaces.current().ajax().addCallbackParam("dlg", true);
                 return;
             }
         }
-        context.addCallbackParam("afastamento", afastamento);
+        PrimeFaces.current().ajax().addCallbackParam("afastamento", afastamento);
     }
 
     private void criarUsuario(Usuario usuario, Paciente paciente) throws UsuarioDuplicadoException, ServidorEmailDesligadoException, Exception {

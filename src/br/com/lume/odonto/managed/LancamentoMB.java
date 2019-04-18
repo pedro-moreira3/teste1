@@ -13,7 +13,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 
@@ -380,8 +380,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
                     this.pagarParcela(valorAPagar);
                 }
                 this.carregaTela();
-                RequestContext context = RequestContext.getCurrentInstance();
-                context.addCallbackParam("pagar", true);
+                PrimeFaces.current().ajax().addCallbackParam("pagar", true);
             } else {
                 this.addError("Valor maior que a parcela!", "");
             }

@@ -13,7 +13,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
@@ -590,14 +590,13 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
             System.out.println(">>>>>>>>>>>>>>>>> carregarOdontograma " + odontograma.getId());
             validaFaces();
             actionCarregarPTOdontograma();
-            RequestContext context = RequestContext.getCurrentInstance();
             if (this.getEntity() == null || this.getEntity().getId() == 0) {
-                context.addCallbackParam("valido", false);
+                PrimeFaces.current().ajax().addCallbackParam("valido", false);
             } else {
-                if (context != null) {
-                    context.addCallbackParam("odontograma", gson.toJson(new RegiaoDenteBO().listByOdontograma(odontograma)));
-                    context.addCallbackParam("observacoes", odontograma.getObservacoes());
-                    context.addCallbackParam("valido", true);
+                if (PrimeFaces.current() != null) {
+                    PrimeFaces.current().ajax().addCallbackParam("odontograma", gson.toJson(new RegiaoDenteBO().listByOdontograma(odontograma)));
+                    PrimeFaces.current().ajax().addCallbackParam("observacoes", odontograma.getObservacoes());
+                    PrimeFaces.current().ajax().addCallbackParam("valido", true);
                 }
             }
         } catch (Exception e) {

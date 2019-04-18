@@ -20,10 +20,10 @@
     </persistence-unit>
 
     <persistence-unit name="LumeSecurity" transaction-type="RESOURCE_LOCAL">
-        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <shared-cache-mode>NONE</shared-cache-mode>
-        <non-jta-data-source>java:/LsDB</non-jta-data-source>
+        <non-jta-data-source>java:/OdontoDB</non-jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
             <property name="eclipselink.cache.shared.default" value="false" />
