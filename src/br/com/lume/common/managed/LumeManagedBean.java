@@ -13,7 +13,7 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
+import org.primefaces.context.RequestContext;
 
 import br.com.lume.common.bo.BO;
 import br.com.lume.common.util.JSFHelper;
@@ -181,7 +181,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
 
     private void addMessage(Severity severity, String summary, String detail, String type) {
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
-        PrimeFaces.current().executeScript("message('', '" + summary + " " + detail + "', '" + type + "')");
+        RequestContext.getCurrentInstance().execute("message('', '" + summary + " " + detail + "', '" + type + "')");
     }
 
     public BO<E> getbO() {

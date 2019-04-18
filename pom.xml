@@ -49,12 +49,6 @@
 		</dependency>
 		<!-- END SYSTEM DEPENDENCIES -->
 		
-		<!-- https://mvnrepository.com/artifact/org.primefaces.themes/all-themes -->
-		<dependency>
-		    <groupId>org.primefaces.themes</groupId>
-		    <artifactId>all-themes</artifactId>
-		    <version>1.0.10</version>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
 		<dependency>
 			<groupId>commons-beanutils</groupId>
@@ -138,13 +132,13 @@
 		<dependency>
 			<groupId>org.primefaces</groupId>
 			<artifactId>primefaces</artifactId>
-			<version>7.0</version>
+			<version>6.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.primefaces.extensions/primefaces-extensions -->
 		<dependency>
 			<groupId>org.primefaces.extensions</groupId>
 			<artifactId>primefaces-extensions</artifactId>
-			<version>7.0</version>
+			<version>6.0.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.primefaces.themes/redmond -->
 		<dependency>
@@ -156,7 +150,7 @@
 		<dependency>
 			<groupId>org.primefaces.extensions</groupId>
 			<artifactId>resources-ckeditor</artifactId>
-			<version>7.0</version>
+			<version>6.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->	
