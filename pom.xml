@@ -25,14 +25,13 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/WebContent/WEB-INF/lib/NBioBSPJNISigned.jar</systemPath>
 		</dependency>
-		<!--
 		<dependency>
 			<groupId>org.primefaces</groupId>
 			<artifactId>olympos-theme</artifactId>
 			<version>1.1.2</version>
 			<scope>system</scope>
 			<systemPath>${basedir}/WebContent/WEB-INF/lib/olympos-theme-1.1.2.jar</systemPath>
-		</dependency> -->
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/tools.devnull/trugger -->
 		<dependency>
 			<groupId>tools.devnull</groupId>
@@ -139,13 +138,13 @@
 		<dependency>
 			<groupId>org.primefaces</groupId>
 			<artifactId>primefaces</artifactId>
-			<version>7.0</version>
+			<version>6.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.primefaces.extensions/primefaces-extensions -->
 		<dependency>
 			<groupId>org.primefaces.extensions</groupId>
 			<artifactId>primefaces-extensions</artifactId>
-			<version>7.0</version>
+			<version>6.0.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.primefaces.themes/redmond -->
 		<dependency>
@@ -157,7 +156,7 @@
 		<dependency>
 			<groupId>org.primefaces.extensions</groupId>
 			<artifactId>resources-ckeditor</artifactId>
-			<version>7.0</version>
+			<version>6.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->	
