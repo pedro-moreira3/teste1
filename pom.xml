@@ -17,6 +17,154 @@
 		</repository>
 	</repositories>
 	<dependencies>
+		<!-- BEGIN SYSTEM DEPENDENCIES -->
+		<dependency>
+			<groupId>NBioBSPJNISigned</groupId>
+			<artifactId>NBioBSPJNISigned</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/WebContent/WEB-INF/lib/NBioBSPJNISigned.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>org.primefaces</groupId>
+			<artifactId>olympos-theme</artifactId>
+			<version>1.1.2</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/WebContent/WEB-INF/lib/olympos-theme-1.1.2.jar</systemPath>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/tools.devnull/trugger -->
+		<dependency>
+			<groupId>tools.devnull</groupId>
+			<artifactId>trugger</artifactId>
+			<version>2.7.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/WebContent/WEB-INF/lib/trugger-2.7.0.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>webserviceutils</groupId>
+			<artifactId>webserviceutils</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/WebContent/WEB-INF/lib/webserviceutils.jar</systemPath>
+		</dependency>
+		<!-- END SYSTEM DEPENDENCIES -->
+		
+		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.9.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.6</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink -->
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>2.7.4</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.persistence/javax.persistence -->
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>javax.persistence</artifactId>
+			<version>2.2.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.el/javax.el-api -->
+		<dependency>
+		    <groupId>javax.el</groupId>
+		    <artifactId>javax.el-api</artifactId>
+		    <version>3.0.1-b06</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.imgscalr/imgscalr-lib -->
+		<dependency>
+			<groupId>org.imgscalr</groupId>
+			<artifactId>imgscalr-lib</artifactId>
+			<version>4.2</version>
+		</dependency>	
+		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-json-jackson -->
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-json-jackson</artifactId>
+			<version>2.28</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-sse -->
+		<dependency>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-sse</artifactId>
+			<version>2.28</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/log4j/log4j -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.17</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api -->
+		<dependency>
+		    <groupId>javax.mail</groupId>
+		    <artifactId>javax.mail-api</artifactId>
+		    <version>1.6.2</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>4.1.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.sun.faces/jsf-api -->
+		<dependency>
+		    <groupId>com.sun.faces</groupId>
+		    <artifactId>jsf-api</artifactId>
+		    <version>2.2.18</version>
+		</dependency> 
+		<!-- https://mvnrepository.com/artifact/org.primefaces/primefaces -->
+		<dependency>
+			<groupId>org.primefaces</groupId>
+			<artifactId>primefaces</artifactId>
+			<version>6.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.primefaces.extensions/primefaces-extensions -->
+		<dependency>
+			<groupId>org.primefaces.extensions</groupId>
+			<artifactId>primefaces-extensions</artifactId>
+			<version>6.0.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.primefaces.themes/redmond -->
+		<dependency>
+			<groupId>org.primefaces.themes</groupId>
+			<artifactId>redmond</artifactId>
+			<version>1.0.10</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.primefaces.extensions/resources-ckeditor -->
+		<dependency>
+			<groupId>org.primefaces.extensions</groupId>
+			<artifactId>resources-ckeditor</artifactId>
+			<version>6.0.0</version>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->	
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>1.8.6</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/xalan/xalan -->
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.2</version>
+		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.glassfish.hk2.external/aopalliance-repackaged 
 		<dependency>
@@ -25,7 +173,6 @@
 			<version>2.5.0-b42</version>
 		</dependency>
 -->		
-
 		<!-- https://mvnrepository.com/artifact/org.apache.axis/axis 
 		<dependency>
 			<groupId>org.apache.axis</groupId>
@@ -33,7 +180,6 @@
 			<version>1.4</version>
 		</dependency>
 -->			
-		
 		<!-- https://mvnrepository.com/artifact/javax.enterprise/cdi-api 
 
 		<dependency>
@@ -43,13 +189,6 @@
 			<scope>provided</scope>
 		</dependency>
 -->		
-		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->	
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>1.9.3</version>
-		</dependency>
-	
 		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec 
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -57,7 +196,6 @@
 			<version>1.7</version>
 		</dependency>
 tem versao 1.12 -->
-
 		<!-- https://mvnrepository.com/artifact/commons-discovery/commons-discovery 
 		<dependency>
 			<groupId>commons-discovery</groupId>
@@ -65,7 +203,6 @@ tem versao 1.12 -->
 			<version>0.2</version>
 		</dependency>
 tem versao 0.5 -->
-
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-email 
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -81,14 +218,6 @@ tem versao 1.5 -->
 			<version>1.2.2</version>
 		</dependency>
 tem versao 1.4 -->
-
-		<!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.6</version>
-		</dependency>
-		
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -96,7 +225,6 @@ tem versao 1.4 -->
 			<version>3.1</version>
 		</dependency>
 tem versao 3.9 -->
-
 		<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging 
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -104,7 +232,6 @@ tem versao 3.9 -->
 			<version>1.2</version>
 		</dependency>
 -->		
-		
 		<!-- https://mvnrepository.com/artifact/dom4j/dom4j 
 		<dependency>
 			<groupId>dom4j</groupId>
@@ -112,7 +239,6 @@ tem versao 3.9 -->
 			<version>1.6.1</version>
 		</dependency>
 -->		
-		
 		<!-- https://mvnrepository.com/artifact/com.sun.mail/dsn 
 		<dependency>
 			<groupId>com.sun.mail</groupId>
@@ -120,21 +246,6 @@ tem versao 3.9 -->
 			<version>1.6.3</version>
 		</dependency>
 -->
-		
-		<!-- https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink -->
-		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>eclipselink</artifactId>
-			<version>2.7.4</version>
-		</dependency>
-
-		<!-- https://mvnrepository.com/artifact/org.eclipse.persistence/javax.persistence -->
-		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>javax.persistence</artifactId>
-			<version>2.2.1</version>
-		</dependency>
-		
 		<!-- https://mvnrepository.com/artifact/javax.el/el-api 
 		<dependency>
 			<groupId>javax.el</groupId>
@@ -142,14 +253,7 @@ tem versao 3.9 -->
 			<version>2.2</version>
 		</dependency>
 migrado https://mvnrepository.com/artifact/javax.el/javax.el-api
--->		
-		<!-- https://mvnrepository.com/artifact/javax.el/javax.el-api -->
-		<dependency>
-		    <groupId>javax.el</groupId>
-		    <artifactId>javax.el-api</artifactId>
-		    <version>3.0.1-b06</version>
-		</dependency>
-		
+-->	
 		<!-- https://mvnrepository.com/artifact/com.lapis.jsfexporter/export-source-primefaces 
 		<dependency>
 			<groupId>com.lapis.jsfexporter</groupId>
@@ -157,7 +261,6 @@ migrado https://mvnrepository.com/artifact/javax.el/javax.el-api
 			<version>1.0.3.Final</version>
 		</dependency>
 -->
-
 		<!-- https://mvnrepository.com/artifact/com.lapis.jsfexporter/export-type-csv 
 		<dependency>
 			<groupId>com.lapis.jsfexporter</groupId>
@@ -165,7 +268,6 @@ migrado https://mvnrepository.com/artifact/javax.el/javax.el-api
 			<version>1.0.3.Final</version>
 		</dependency>
 -->		
-		
 		<!-- https://mvnrepository.com/artifact/com.lapis.jsfexporter/export-type-excel 
 		<dependency>
 			<groupId>com.lapis.jsfexporter</groupId>
@@ -173,7 +275,6 @@ migrado https://mvnrepository.com/artifact/javax.el/javax.el-api
 			<version>1.0.3.Final</version>
 		</dependency>
 -->		
-		
 		<!-- https://mvnrepository.com/artifact/com.lapis.jsfexporter/export-type-pdf 
 		<dependency>
 			<groupId>com.lapis.jsfexporter</groupId>
@@ -181,7 +282,6 @@ migrado https://mvnrepository.com/artifact/javax.el/javax.el-api
 			<version>1.0.3.Final</version>
 		</dependency>
 -->		
-		
 		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson 
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
@@ -189,7 +289,6 @@ migrado https://mvnrepository.com/artifact/javax.el/javax.el-api
 			<version>2.2.1</version>
 		</dependency>
 tem versao 2.8.5 -->
-
 		<!-- https://mvnrepository.com/artifact/org.glassfish.hk2/hk2-api 
 		<dependency>
 			<groupId>org.glassfish.hk2</groupId>
@@ -197,7 +296,6 @@ tem versao 2.8.5 -->
 			<version>2.5.0-b42</version>
 		</dependency>
 tem versao 2.5.0 -->
-		
 		<!-- https://mvnrepository.com/artifact/org.glassfish.hk2/hk2-locator 
 		<dependency>
 			<groupId>org.glassfish.hk2</groupId>
@@ -205,7 +303,6 @@ tem versao 2.5.0 -->
 			<version>2.5.0-b42</version>
 		</dependency>
 tem versao 2.5.0 -->
-
 		<!-- https://mvnrepository.com/artifact/org.glassfish.hk2/hk2-utils
 		<dependency>
 			<groupId>org.glassfish.hk2</groupId>
@@ -213,7 +310,6 @@ tem versao 2.5.0 -->
 			<version>2.5.0-b42</version>
 		</dependency>
 tem versao 2.5.0 -->
-
 		<!-- https://mvnrepository.com/artifact/com.sun.mail/imap 
 		<dependency>
 			<groupId>com.sun.mail</groupId>
@@ -221,14 +317,6 @@ tem versao 2.5.0 -->
 			<version>1.6.3</version>
 		</dependency>
 -->
-
-		<!-- https://mvnrepository.com/artifact/org.imgscalr/imgscalr-lib -->
-		<dependency>
-			<groupId>org.imgscalr</groupId>
-			<artifactId>imgscalr-lib</artifactId>
-			<version>4.2</version>
-		</dependency>	
-		
 		<!-- https://mvnrepository.com/artifact/com.lowagie/itext 
 		<dependency>
 			<groupId>com.lowagie</groupId>
@@ -244,7 +332,6 @@ movido https://mvnrepository.com/artifact/com.itextpdf/itextpdf -->
 			<version>2.9.6</version>
 		</dependency>
 tem versao 2.9.8 -->
-
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -252,7 +339,6 @@ tem versao 2.9.8 -->
 			<version>2.9.6</version>
 		</dependency>
 tem versao 2.9.8 -->
-
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind 
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -260,7 +346,6 @@ tem versao 2.9.8 -->
 			<version>2.9.6</version>
 		</dependency>
 tem versao 2.9.8 -->
-
 		<!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.module/jackson-module-jaxb-annotations 
 		<dependency>
 			<groupId>com.fasterxml.jackson.module</groupId>
@@ -268,7 +353,6 @@ tem versao 2.9.8 -->
 			<version>2.9.6</version>
 		</dependency>
 tem versao 2.9.8 -->
-
 		<!-- https://mvnrepository.com/artifact/org.javassist/javassist 
 		<dependency>
 			<groupId>org.javassist</groupId>
@@ -276,7 +360,6 @@ tem versao 2.9.8 -->
 			<version>3.22.0-CR2</version>
 		</dependency>
 tem versao 3.24.1-GA -->
-
 		<!-- https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api 
 		<dependency>
 			<groupId>javax.annotation</groupId>
@@ -284,7 +367,6 @@ tem versao 3.24.1-GA -->
 			<version>1.2</version>
 		</dependency>
 tem versao 1.3.2 -->
-		
 		<!-- https://mvnrepository.com/artifact/org.glassfish/javax.faces 
 		<dependency>
 			<groupId>org.glassfish</groupId>
@@ -292,7 +374,6 @@ tem versao 1.3.2 -->
 			<version>2.2.9</version>
 		</dependency>
 tem versao 2.4.0 -->		
-		
 		<!-- https://mvnrepository.com/artifact/javax.inject/javax.inject 
 		<dependency>
 			<groupId>javax.inject</groupId>
@@ -300,7 +381,6 @@ tem versao 2.4.0 -->
 			<version>1</version>
 		</dependency>
 -->		
-		
 		<!-- https://mvnrepository.com/artifact/org.glassfish.hk2.external/javax.inject 
 		<dependency>
 			<groupId>org.glassfish.hk2.external</groupId>
@@ -308,7 +388,6 @@ tem versao 2.4.0 -->
 			<version>2.5.0-b42</version>
 		</dependency>
 tem versao 2.5.0-b62 -->
-
 		<!-- https://mvnrepository.com/artifact/javax.json.bind/javax.json.bind-api 
 		<dependency>
 			<groupId>javax.json.bind</groupId>
@@ -316,7 +395,6 @@ tem versao 2.5.0-b62 -->
 			<version>1.0</version>
 		</dependency>
 -->
-		
 		<!-- https://mvnrepository.com/artifact/org.glassfish/javax.json 
 		<dependency>
 			<groupId>org.glassfish</groupId>
@@ -324,7 +402,6 @@ tem versao 2.5.0-b62 -->
 			<version>1.1</version>
 		</dependency>
 tem versao 1.1.4 -->
-
 		<!-- https://mvnrepository.com/artifact/javax.json/javax.json-api 
 		<dependency>
 			<groupId>javax.json</groupId>
@@ -332,15 +409,6 @@ tem versao 1.1.4 -->
 			<version>1.1</version>
 		</dependency>
 tem versao 1.1.4 -->
-		
-		<!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>4.0.1</version>
-			<scope>provided</scope>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/javax.ws.rs/javax.ws.rs-api 
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
@@ -348,7 +416,6 @@ tem versao 1.1.4 -->
 			<version>2.1</version>
 		</dependency>
 tem versao 2.1.1-->		
-		
 		<!-- https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api 
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
@@ -356,7 +423,6 @@ tem versao 2.1.1-->
 			<version>2.2.7</version>
 		</dependency>
 tem versao 2.3.1-->
-
 		<!-- https://mvnrepository.com/artifact/jaxen/jaxen 
 		<dependency>
 			<groupId>jaxen</groupId>
@@ -364,7 +430,6 @@ tem versao 2.3.1-->
 			<version>1.1.6</version>
 		</dependency>
 tem versao 1.2.0-->
-
 		<!-- https://mvnrepository.com/artifact/javax.xml/jaxrpc-api 
 		<dependency>
 			<groupId>javax.xml</groupId>
@@ -372,7 +437,6 @@ tem versao 1.2.0-->
 			<version>1.1</version>
 		</dependency>
 tem versao 2.0_EA1 -->
-		
 		<!-- https://mvnrepository.com/artifact/org.jboss.spec.javax.interceptor/jboss-interceptors-api_1.1_spec 
 		<dependency>
 			<groupId>org.jboss.spec.javax.interceptor</groupId>
@@ -380,7 +444,6 @@ tem versao 2.0_EA1 -->
 			<version>1.0.0.Beta1</version>
 		</dependency>
 tem versao 1.0.1.Final -->		
-		
 		<!-- https://mvnrepository.com/artifact/org.jdom/jdom 
 		<dependency>
 			<groupId>org.jdom</groupId>
@@ -388,7 +451,6 @@ tem versao 1.0.1.Final -->
 			<version>1.1.3</version>
 		</dependency>
 tem versao 2.0.2 -->		
-		
 		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-client 
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
@@ -397,7 +459,6 @@ tem versao 2.0.2 -->
 		</dependency>
 movido https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-client
 -->
-
 		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-common 
 		<dependency>
 			<groupId>org.glassfish.jersey.core</groupId>
@@ -405,7 +466,6 @@ movido https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-clien
 			<version>2.28</version>
 		</dependency>
 -->
-
 		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.containers/jersey-container-servlet 
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
@@ -413,7 +473,6 @@ movido https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-clien
 			<version>2.28</version>
 		</dependency>
 -->
-
 		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.containers/jersey-container-servlet-core 
 		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
@@ -421,7 +480,6 @@ movido https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-clien
 			<version>2.28</version>
 		</dependency>
 -->
-		
 		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.ext/jersey-entity-filtering 
 		<dependency>
 			<groupId>org.glassfish.jersey.ext</groupId>
@@ -429,7 +487,6 @@ movido https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-clien
 			<version>2.27</version>
 		</dependency>
 -->
-
 		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.inject/jersey-hk2 
 		<dependency>
 			<groupId>org.glassfish.jersey.inject</groupId>
@@ -443,23 +500,7 @@ movido https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-clien
 			<artifactId>jersey-media-jaxb</artifactId>
 			<version>2.28</version>
 		</dependency>
--->
-
-		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-json-jackson -->
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-jackson</artifactId>
-			<version>2.28</version>
-		</dependency>
-
-
-		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-sse -->
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-sse</artifactId>
-			<version>2.28</version>
-		</dependency>
-		
+-->		
 		<!-- https://mvnrepository.com/artifact/com.sun.jersey/jersey-server 
 		<dependency>
 			<groupId>com.sun.jersey</groupId>
@@ -468,7 +509,6 @@ movido https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-clien
 		</dependency>
 migrado https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-server
 -->
-
 		<!-- https://mvnrepository.com/artifact/com.jcraft/jsch 
 		<dependency>
 			<groupId>com.jcraft</groupId>
@@ -476,7 +516,6 @@ migrado https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-serv
 			<version>0.1.49</version>
 		</dependency>
 tem versao 0.1.55 -->
-
 		<!-- https://mvnrepository.com/artifact/com.lapis.jsfexporter/jsf-exporter-core
 		<dependency>
 			<groupId>com.lapis.jsfexporter</groupId>
@@ -484,7 +523,6 @@ tem versao 0.1.55 -->
 			<version>1.0.3.Final</version>
 		</dependency>
  -->
-  
 		<!-- https://mvnrepository.com/artifact/javax.servlet/jsp-api 
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -494,7 +532,6 @@ tem versao 0.1.55 -->
 		</dependency>
 movido https://mvnrepository.com/artifact/javax.servlet.jsp/javax.servlet.jsp-api
 -->
-		
 		<!-- https://mvnrepository.com/artifact/javax.annotation/jsr250-api 
 		<dependency>
 			<groupId>javax.annotation</groupId>
@@ -503,7 +540,6 @@ movido https://mvnrepository.com/artifact/javax.servlet.jsp/javax.servlet.jsp-ap
 		</dependency>
 movido https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api
 -->
-
 		<!-- https://mvnrepository.com/artifact/javax.servlet/jstl 
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -512,14 +548,6 @@ movido https://mvnrepository.com/artifact/javax.annotation/javax.annotation-api
 		</dependency>
 movido https://mvnrepository.com/artifact/javax.servlet.jsp.jstl/jstl
 -->
-
-		<!-- https://mvnrepository.com/artifact/log4j/log4j -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>1.2.17</version>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/javax.mail/mail 
 		<dependency>
 			<groupId>javax.mail</groupId>
@@ -528,14 +556,6 @@ movido https://mvnrepository.com/artifact/javax.servlet.jsp.jstl/jstl
 		</dependency>
 movido https://mvnrepository.com/artifact/javax.mail/javax.mail-api
 -->
-		<!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api -->
-		<dependency>
-		    <groupId>javax.mail</groupId>
-		    <artifactId>javax.mail-api</artifactId>
-		    <version>1.6.2</version>
-		</dependency>
-
-
 		<!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api 
 		<dependency>
 			<groupId>javax.mail</groupId>
@@ -543,22 +563,6 @@ movido https://mvnrepository.com/artifact/javax.mail/javax.mail-api
 			<version>1.6.2</version>
 		</dependency>
 -->
-
-		<dependency>
-			<groupId>NBioBSPJNISigned</groupId>
-			<artifactId>NBioBSPJNISigned</artifactId>
-			<version>1.0.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/WebContent/WEB-INF/lib/NBioBSPJNISigned.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>org.primefaces</groupId>
-			<artifactId>olympos-theme</artifactId>
-			<version>1.1.2</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/WebContent/WEB-INF/lib/olympos-theme-1.1.2.jar</systemPath>
-		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.osgi/org.osgi.core 
 		<dependency>
 			<groupId>org.osgi</groupId>
@@ -567,7 +571,6 @@ movido https://mvnrepository.com/artifact/javax.mail/javax.mail-api
 			<scope>provided</scope>
 		</dependency>
 tem versao 6.0.0 -->
-
 		<!-- https://mvnrepository.com/artifact/org.glassfish.hk2/osgi-resource-locator 
 		<dependency>
 			<groupId>org.glassfish.hk2</groupId>
@@ -575,7 +578,6 @@ tem versao 6.0.0 -->
 			<version>1.0.1</version>
 		</dependency>
 tem versao 2.4 -->
-
 		<!-- https://mvnrepository.com/artifact/org.primefaces.themes/pepper-grinder 
 		<dependency>
 			<groupId>org.primefaces.themes</groupId>
@@ -583,7 +585,6 @@ tem versao 2.4 -->
 			<version>1.0.1</version>
 		</dependency>
 tem versao 1.0.10 -->
-
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -591,14 +592,6 @@ tem versao 1.0.10 -->
 			<version>3.8</version>
 		</dependency>
 tem versao 4.1.0 -->
-
-		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
-		<dependency>
-			<groupId>org.apache.poi</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>4.1.0</version>
-		</dependency>
-		
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml-schemas 
 		<dependency>
 			<groupId>org.apache.poi</groupId>
@@ -606,7 +599,6 @@ tem versao 4.1.0 -->
 			<version>3.8</version>
 		</dependency>
 tem versao 4.1.0 -->
-
 		<!-- https://mvnrepository.com/artifact/com.sun.mail/pop3 
 		<dependency>
 			<groupId>com.sun.mail</groupId>
@@ -614,7 +606,6 @@ tem versao 4.1.0 -->
 			<version>1.6.3</version>
 		</dependency>
 -->
-
 		<!-- https://mvnrepository.com/artifact/postgresql/postgresql 
 		<dependency>
 			<groupId>postgresql</groupId>
@@ -622,36 +613,7 @@ tem versao 4.1.0 -->
 			<version>9.0-801.jdbc4</version>
 		</dependency>
 movido https://mvnrepository.com/artifact/org.postgresql/postgresql
--->
-		
-		<!-- https://mvnrepository.com/artifact/com.sun.faces/jsf-api -->
-		<dependency>
-		    <groupId>com.sun.faces</groupId>
-		    <artifactId>jsf-api</artifactId>
-		    <version>2.2.18</version>
-		</dependency> 
-		
-		<!-- https://mvnrepository.com/artifact/org.primefaces/primefaces -->
-		<dependency>
-			<groupId>org.primefaces</groupId>
-			<artifactId>primefaces</artifactId>
-			<version>6.0</version>
-		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/org.primefaces.extensions/primefaces-extensions -->
-		<dependency>
-			<groupId>org.primefaces.extensions</groupId>
-			<artifactId>primefaces-extensions</artifactId>
-			<version>6.0.0</version>
-		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/org.primefaces.themes/redmond -->
-		<dependency>
-			<groupId>org.primefaces.themes</groupId>
-			<artifactId>redmond</artifactId>
-			<version>1.0.10</version>
-		</dependency>
-		
+-->		
 		<!-- https://mvnrepository.com/artifact/org.primefaces.themes/afterdark 
 		<dependency>
 			<groupId>org.primefaces.themes</groupId>
@@ -666,7 +628,6 @@ movido https://mvnrepository.com/artifact/org.postgresql/postgresql
 			<version>1.0.8</version>
 		</dependency>
 tem versao 1.0.10 -->
-
 		<!-- https://mvnrepository.com/artifact/org.primefaces.themes/smoothness 
 		<dependency>
 			<groupId>org.primefaces.themes</groupId>
@@ -674,7 +635,6 @@ tem versao 1.0.10 -->
 			<version>1.0.8</version>
 		</dependency>
 tem versao 1.0.10 -->
-
 		<!-- https://mvnrepository.com/artifact/org.primefaces.themes/south-street 
 		<dependency>
 			<groupId>org.primefaces.themes</groupId>
@@ -682,23 +642,7 @@ tem versao 1.0.10 -->
 			<version>1.0.8</version>
 		</dependency>
 tem versao 1.0.10 -->
-
-		<!-- https://mvnrepository.com/artifact/org.primefaces.extensions/resources-ckeditor -->
-		<dependency>
-			<groupId>org.primefaces.extensions</groupId>
-			<artifactId>resources-ckeditor</artifactId>
-			<version>6.0.0</version>
-			<scope>runtime</scope>
-		</dependency>
-		
-		<!-- https://mvnrepository.com/artifact/org.quartz-scheduler/quartz -->	
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz</artifactId>
-			<version>1.8.6</version>
-		</dependency>
 <!-- tem versao 2.3.1 -->
-	
 		<!-- https://mvnrepository.com/artifact/rome/rome 
 		<dependency>
 			<groupId>rome</groupId>
@@ -707,7 +651,6 @@ tem versao 1.0.10 -->
 		</dependency>
 migrado https://mvnrepository.com/artifact/com.rometools/rome
 -->
-
 		<!-- https://mvnrepository.com/artifact/javax.xml/saaj-api 
 		<dependency>
 		    <groupId>javax.xml</groupId>
@@ -716,8 +659,6 @@ migrado https://mvnrepository.com/artifact/com.rometools/rome
 		    <type>pom</type>
 		</dependency>
 -->
-
-
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api 
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -725,7 +666,6 @@ migrado https://mvnrepository.com/artifact/com.rometools/rome
 			<version>1.5.10</version>
 		</dependency>
 tem versao 1.7.26 -->
-
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -734,7 +674,6 @@ tem versao 1.7.26 -->
 			<scope>test</scope>
 		</dependency>
 -->
-
 		<!-- https://mvnrepository.com/artifact/com.sun.mail/smtp 
 		<dependency>
 			<groupId>com.sun.mail</groupId>
@@ -742,8 +681,6 @@ tem versao 1.7.26 -->
 			<version>1.4.5</version>
 		</dependency>
 tem versao 1.6.3 -->
-
-
 		<!-- https://mvnrepository.com/artifact/org.swinglabs/swing-layout 
 		<dependency>
 			<groupId>org.swinglabs</groupId>
@@ -751,33 +688,14 @@ tem versao 1.6.3 -->
 			<version>1.0.3</version>
 		</dependency>
 -->
-
-		<!-- https://mvnrepository.com/artifact/tools.devnull/trugger -->
-		<dependency>
-			<groupId>tools.devnull</groupId>
-			<artifactId>trugger</artifactId>
-			<version>2.7.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/WebContent/WEB-INF/lib/trugger-2.7.0.jar</systemPath>
-		</dependency>
-<!-- tem versao 6.3.0 -->		
-				
+<!-- tem versao 6.3.0 -->				
 		<!-- https://mvnrepository.com/artifact/javax.validation/validation-api 
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 			<version>1.1.0.Final</version>
 		</dependency>
-tem versao 2.0.1.Final -->
-
-		<dependency>
-			<groupId>webserviceutils</groupId>
-			<artifactId>webserviceutils</artifactId>
-			<version>1.0.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/WebContent/WEB-INF/lib/webserviceutils.jar</systemPath>
-		</dependency>
-		
+tem versao 2.0.1.Final -->	
 		<!-- https://mvnrepository.com/artifact/wsdl4j/wsdl4j 
 		<dependency>
 			<groupId>wsdl4j</groupId>
@@ -785,15 +703,6 @@ tem versao 2.0.1.Final -->
 			<version>1.6.3</version>
 		</dependency>
 --> 
-
-		<!-- https://mvnrepository.com/artifact/xalan/xalan -->
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>xalan</artifactId>
-			<version>2.7.2</version>
-		</dependency>
-
-
 		<!-- https://mvnrepository.com/artifact/xml-apis/xml-apis 
 		<dependency>
 			<groupId>xml-apis</groupId>
