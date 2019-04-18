@@ -48,19 +48,18 @@
 						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioLancamentoMB.lancamentos}" var="lancamento" rows="10"
 							paginator="true" rowKey="#{lancamento}" paginatorPosition="bottom">
 							<f:facet name="header">Lançamentos</f:facet>
-							<p:column filterBy="#{lancamento.dataCreditoStr}" sortBy="#{lancamento.dataCreditoStr}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Data Crédito" />
-								</f:facet>
-								<h:outputText value="#{lancamento.dataCreditoStr}" title="#{lancamento.id}"/>
-							</p:column>
 							<p:column filterBy="#{lancamento.dataPagamentoStr}" sortBy="#{lancamento.dataPagamentoStrOrd}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Data Pagamento" />
 								</f:facet>
 								<h:outputText value="#{lancamento.dataPagamentoStr}" />
 							</p:column>
-
+							<p:column filterBy="#{lancamento.dataCreditoStr}" sortBy="#{lancamento.dataCreditoStr}" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Data Crédito" />
+								</f:facet>
+								<h:outputText value="#{lancamento.dataCreditoStr}" title="#{lancamento.id}"/>
+							</p:column>
 							<p:column filterBy="#{lancamento.status}" sortBy="#{lancamento.status}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Status" />
