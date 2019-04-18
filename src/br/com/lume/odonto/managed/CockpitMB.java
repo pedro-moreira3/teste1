@@ -69,7 +69,7 @@ public class CockpitMB extends LumeManagedBean<Grafico> {
             meterGaugeChartModel.setIntervalOuterRadius(105);
             meterGaugeChartModel.setSeriesColors("cc6666, FF8787, E7E658,66cc66");
 
-            gp.setChartModel(meterGaugeChartModel);
+          //  gp.setChartModel(meterGaugeChartModel);
             if (this.graficos1.size() == this.graficos2.size() && this.graficos1.size() == this.graficos3.size()) {
                 this.graficos1.add(gp);
             } else if (this.graficos1.size() > this.graficos2.size() && this.graficos2.size() == this.graficos3.size()) {

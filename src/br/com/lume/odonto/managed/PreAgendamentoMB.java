@@ -17,6 +17,7 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.GeradorSenha;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.dominio.bo.DominioBO;
 import br.com.lume.odonto.bo.AfastamentoBO;
 import br.com.lume.odonto.bo.AgendamentoBO;
 import br.com.lume.odonto.bo.HorasUteisProfissionalBO;
@@ -24,6 +25,7 @@ import br.com.lume.odonto.bo.PacienteBO;
 import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Afastamento;
 import br.com.lume.odonto.entity.Agendamento;
+import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.HorasUteisProfissional;
 import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Paciente;
@@ -157,7 +159,11 @@ public class PreAgendamentoMB extends LumeManagedBean<Agendamento> {
             List<Afastamento> afastamentos = afastamentoBO.listByProfissional(profissional);
             for (Afastamento afastamento : afastamentos) {
                 Paciente pacienteAfastamento = new Paciente();
-                pacienteAfastamento.getDadosBasico().setNome(afastamento.getTipoAfastamentoStr());
+
+                Dominio dominio = new DominioBO().listByTipoAndObjeto(afastamento.getTipo(), "afastamento");                 
+                String dominioStr = dominio != null ? dominio.getNome() : "";
+                
+                pacienteAfastamento.getDadosBasico().setNome(dominioStr);
                 Agendamento agendamento = new Agendamento();
                 agendamento.setInicio(afastamento.getInicio());
                 agendamento.setFim(afastamento.getFim());

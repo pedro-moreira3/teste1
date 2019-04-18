@@ -82,9 +82,7 @@ public class LoginBO extends BO<Usuario> {
             if (consultasRealizadasMes > plano.getConsultas()) {
                 throw new PlanoExpiradoException();
             }
-        }
-        JSFHelper.getSession().setAttribute("QUANTIDADE_ERROS_ACESSO", 0);
-        JSFHelper.getSession().setAttribute("menuMB", null);
+        }        
     }
 
     public Usuario doLogin(Usuario usuario, Sistema sistema) throws Exception {
@@ -101,8 +99,6 @@ public class LoginBO extends BO<Usuario> {
                         throw new UsuarioSemPerfilException();
                     }
                 } else {
-                    int qtdErrosAcesso = JSFHelper.getSession().getAttribute("QUANTIDADE_ERROS_ACESSO") != null ? (Integer) JSFHelper.getSession().getAttribute("QUANTIDADE_ERROS_ACESSO") : 0;
-                    JSFHelper.getSession().setAttribute("QUANTIDADE_ERROS_ACESSO", qtdErrosAcesso + 1);
                     throw new SenhaInvalidaException();
                 }
             } else {

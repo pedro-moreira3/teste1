@@ -34,6 +34,7 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
 import br.com.lume.odonto.bo.AfastamentoBO;
+import br.com.lume.afastamento.AfastamentoSingleton;
 import br.com.lume.odonto.bo.AgendamentoBO;
 import br.com.lume.odonto.bo.AgendamentoPlanoTratamentoProcedimentoBO;
 import br.com.lume.odonto.bo.DadosBasicoBO;
@@ -708,8 +709,13 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 afastamentos = afastamentoBO.listByDataValidos(start, end);
             }
             for (Afastamento afastamento : afastamentos) {
-                Paciente pacienteAfastamento = new Paciente();
-                pacienteAfastamento.getDadosBasico().setNome(afastamento.getTipoAfastamentoStr());
+                Paciente pacienteAfastamento = new Paciente();                
+                Dominio dominio = null;
+                dominio = new DominioBO().listByTipoAndObjeto(afastamento.getTipo(), "afastamento");
+             
+                String dominioStr = dominio != null ? dominio.getNome() : "";
+                
+                pacienteAfastamento.getDadosBasico().setNome(dominioStr);
                 Agendamento agendamento = new Agendamento();
                 agendamento.setInicio(afastamento.getInicio());
                 agendamento.setFim(afastamento.getFim());

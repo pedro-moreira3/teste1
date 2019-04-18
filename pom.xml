@@ -19,12 +19,19 @@
 	<dependencies>
 		<!-- BEGIN SYSTEM DEPENDENCIES -->
 		<dependency>
+			<groupId>br.com.lume</groupId>
+			<artifactId>lumeerp</artifactId>
+			<version>1.0.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/WebContent/WEB-INF/lib/lumeerp.jar</systemPath>
+		</dependency>
+		<dependency>
 			<groupId>NBioBSPJNISigned</groupId>
 			<artifactId>NBioBSPJNISigned</artifactId>
 			<version>1.0.0</version>
 			<scope>system</scope>
 			<systemPath>${basedir}/WebContent/WEB-INF/lib/NBioBSPJNISigned.jar</systemPath>
-		</dependency>
+		</dependency>		
 		<dependency>
 			<groupId>org.primefaces</groupId>
 			<artifactId>olympos-theme</artifactId>
