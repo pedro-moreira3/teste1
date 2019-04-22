@@ -194,6 +194,7 @@
 				</excludes>
 			</resource>
 		</resources>
+		<pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -281,7 +282,31 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>au.com.alderaan</groupId>
+				<artifactId>eclipselink-staticweave-maven-plugin</artifactId>
+				<version>1.0.3</version>
+				<executions>
+					<execution>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>weave</goal>
+						</goals>
+						<configuration>
+							<logLevel>ALL</logLevel>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>org.eclipse.persistence</groupId>
+						<artifactId>eclipselink</artifactId>
+						<version>${version.eclipselink}</version>
+					</dependency>
+				</dependencies>
+			</plugin>			
 		</plugins>
+		</pluginManagement>
 	</build>
 	<profiles>
 		<profile>
