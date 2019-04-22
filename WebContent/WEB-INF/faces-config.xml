@@ -38,16 +38,16 @@
     </lifecycle>
 
     <component>
-        <component-type>org.primefaces.component.OlymposMenu</component-type>
-        <component-class>org.primefaces.olympos.component.menu.OlymposMenu</component-class>
-    </component>
+		<component-type>org.primefaces.component.UltimaMenu</component-type>
+		<component-class>org.primefaces.ultima.component.menu.UltimaMenu</component-class>
+	</component>
 
-    <render-kit>
-        <renderer>
-            <component-family>org.primefaces.component</component-family>
-            <renderer-type>org.primefaces.component.OlymposMenuRenderer</renderer-type>
-            <renderer-class>org.primefaces.olympos.component.menu.OlymposMenuRenderer</renderer-class>
-        </renderer>
-    </render-kit>
+	<render-kit>
+		<renderer>
+			<component-family>org.primefaces.component</component-family>
+			<renderer-type>org.primefaces.component.UltimaMenuRenderer</renderer-type>
+			<renderer-class>org.primefaces.ultima.component.menu.UltimaMenuRenderer</renderer-class>
+		</renderer>
+	</render-kit>
 
 </faces-config>

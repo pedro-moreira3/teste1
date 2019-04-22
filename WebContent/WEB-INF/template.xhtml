@@ -9,34 +9,29 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/images/favicon.ico" />
+		<meta name="theme-color"
+			content="#{guestPreferences.themeColors[guestPreferences.theme]}" />
 	</f:facet>
 	<title>INTELIDENTE</title>
 
-
-
-	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
-	<h:outputScript name="js/nanoscroller.js" library="olympos-layout" />
-	<h:outputScript name="js/layout.js" library="olympos-layout" />
-
-	<h:outputScript name="js/jquery.maskedinput.js" library="olympos-layout" />
-	<h:outputScript name="js/odonto.js" library="olympos-layout" />
-    <h:outputScript name="js/sweetalert.min.js" library="olympos-layout" />
-
-	<h:outputScript name="jquery.cookie.js" library="joyride" />
-	<h:outputScript name="modernizr.mq.js" library="joyride" />
-	<h:outputScript name="jquery.joyride-2.1.js" library="joyride" />
-
+	<p:cache region="jscache" key="ultimalayout">
+		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+		
+		<h:outputScript name="js/nanoscroller.js" library="ultima-layout" />
+		<h:outputScript name="js/layout.js" library="ultima-layout" />
+		<h:outputScript name="js/ripple.js" library="ultima-layout" />
+		<h:outputScript name="js/swipe.js" library="ultima-layout" />
+		<h:outputScript name="js/nfe.js" library="ultima-layout" />
+		<h:outputScript name="js/emoticon.js" library="ultima-layout" />
+		
+		<h:outputScript name="js/jquery.maskedinput.js" library="ultima-layout" />
+		<h:outputScript name="js/odonto.js" library="ultima-layout" />
+    	<h:outputScript name="js/sweetalert.min.js" library="ultima-layout" />
+    	<h:outputScript name="jquery.cookie.js" library="joyride" />
+		<h:outputScript name="modernizr.mq.js" library="joyride" />
+		<h:outputScript name="jquery.joyride-2.1.js" library="joyride" />
+	</p:cache>
 	<ui:insert name="head" />
-
-	<h:outputStylesheet name="stylechair.css" library="icomoon" />
-	<h:outputStylesheet name="joyride-2.1.css" library="joyride" />
-	<h:outputStylesheet name="css/core-layout.css" library="olympos-layout" />
-	<h:outputStylesheet name="css/animate.css" library="olympos-layout" />
-	<h:outputStylesheet name="css/nanoscroller.css" library="olympos-layout" />
-	<h:outputStylesheet name="css/olympos-font.css" library="olympos-layout" />
-	<h:outputStylesheet name="css/font-awesome.css" library="olympos-layout" />
-	<h:outputStylesheet name="css/olympos-layout.css" library="olympos-layout" />
-	<h:outputStylesheet name="css/lume.css" library="olympos-layout" />
 
 	<script>
 		//<![CDATA[
@@ -83,41 +78,54 @@
 
 </h:head>
 
-<h:body styleClass="BlueTopbar">
-
+<h:body styleClass="main-body #{guestPreferences.compact ? 'layout-compact' : null}">
 	<ui:include src="topbar.xhtml" />
 
 	<!-- LAYOUT CONTAINER -->
-
-	<div id="layout-container">
-		<div id="layout-container-row">
-
-			<!-- LAYOUT MENU COVER -->
-			<div id="layout-menu-cover" class="nano Animated03">
-				<div id="layout-menu-cover-scroll-content" class="nano-content">
-
-					<ui:include src="layouttabmenu.xhtml" />
-
-				</div>
-			</div>
-
-			<!-- PORTLETS COVER -->
-			<div id="layout-portlets-cover">
-
-				<h:form id="lume">
-					<p:ajaxStatus onstart="PF('loading').show();" onsuccess="PF('loading').hide();" />
-					<p:dialog modal="true" widgetVar="loading" draggable="false" closable="false" showHeader="false" resizable="false">
-						<p:graphicImage value="/images/loading.gif" />
-					</p:dialog>
-					<ui:insert name="content">
-                        Template
-                    </ui:insert>
-				</h:form>
-
-				<ui:include src="footer.xhtml" />
-
-			</div>
-
+	<div class="layout-wrapper #{guestPreferences.menuLayout}">
+		<ui:include src="layouttabmenu.xhtml" />
+		
+		<ui:remove>
+		<ul id="layout-tab-menu">
+			<li><a href="#" class="active" rel="layout-menu"> <i class="moon-chair" ></i> <span class="layout-tab-menu-link-text"><span></span>
+						Menu</span>
+			</a></li>
+			<h:panelGroup rendered="#{perfilMB.administrador || perfilMB.dentista || perfilMB.responsavelTecnico}">
+				<li><a href="#" rel="layout-agenda"> <i class="icon-event9"></i> <span class="layout-tab-menu-link-text"><span></span> Minha Agenda</span>
+				</a></li>
+			</h:panelGroup>
+			<h:panelGroup rendered="#{perfilMB.estoqueCompleto and (perfilMB.administrador || perfilMB.auxiliarDentista || perfilMB.responsavelTecnico)}">
+				<li><a href="#" rel="layout-reservas"> <i class="fa fa-shopping-basket"></i> <span class="layout-tab-menu-link-text"><span></span>
+							Reservas</span>
+				</a></li>
+			</h:panelGroup>
+			<h:panelGroup
+				rendered="#{perfilMB.administrador || perfilMB.auxiliarAdministrativo || perfilMB.auxiliarDentista || perfilMB.responsavelTecnico || perfilMB.administradorClinica}">
+				<li><a href="#" rel="layout-estatisticas"> <i class="fa fa-tachometer"></i> <span class="layout-tab-menu-link-text"><span></span>
+							Agendamentos</span>
+				</a></li>
+			</h:panelGroup>
+			<h:panelGroup
+				rendered="#{perfilMB.administrador || perfilMB.secretaria || perfilMB.auxiliarAdministrativo || perfilMB.responsavelTecnico || perfilMB.administradorClinica}">
+				<li><a href="#" rel="layout-retorno"> <i class="fa fa-exchange"></i> <span class="layout-tab-menu-link-text"><span></span> Retornos</span>
+				</a></li>
+			</h:panelGroup>
+			<h:panelGroup rendered="#{perfilMB.administrador || perfilMB.administradorClinica}">
+				<li><a href="#" rel="layout-extrato"> <i class="fa fa-dollar"></i> <span class="layout-tab-menu-link-text"><span></span> Extrato</span>
+				</a></li>
+			</h:panelGroup>
+		</ul>
+		</ui:remove>
+		
+		<div class="layout-main">
+			<h:form id="lume">
+				<p:ajaxStatus onstart="PF('loading').show();" onsuccess="PF('loading').hide();" />
+				<p:dialog modal="true" widgetVar="loading" draggable="false" closable="false" showHeader="false" resizable="false">
+					<p:graphicImage value="/images/loading.gif" />
+				</p:dialog>
+				<ui:insert name="content">Template</ui:insert>
+			</h:form>
+			<ui:include src="footer.xhtml" />
 		</div>
 	</div>
 
@@ -125,6 +133,18 @@
 		<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check White" />
 		<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-close White" />
 	</p:confirmDialog>
+
+	<p:cache region="csscache" key="ultimalayout">
+		<h:outputStylesheet name="stylechair.css" library="icomoon" />
+		<h:outputStylesheet name="joyride-2.1.css" library="joyride" />
+		
+		<h:outputStylesheet name="css/nanoscroller.css" library="ultima-layout" />
+		<h:outputStylesheet name="css/animate.css" library="ultima-layout" />
+		<h:outputStylesheet name="css/ripple.css" library="ultima-layout" />
+		<h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css" library="ultima-layout" />
+		<h:outputStylesheet name="css/emoticon.css" library="ultima-layout" />
+	</p:cache>
+	<h:outputStylesheet name="css/lume.css" library="ultima-layout" />
 
 </h:body>
 
