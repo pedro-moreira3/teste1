@@ -312,7 +312,7 @@
 		<profile>
 			<id>wildfly-remote-dev</id>
 			<properties>
-				<wildfly-hostname>ltdeapp07.lume.intra</wildfly-hostname>
+				<wildfly-hostname>ltdeapp17.lume.intra</wildfly-hostname>
 				<wildfly-port>9990</wildfly-port>
 				<wildfly-username>desenv</wildfly-username>
 				<wildfly-password>linux123</wildfly-password>
