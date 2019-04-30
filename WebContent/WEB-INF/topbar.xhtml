@@ -16,15 +16,112 @@
 	
 	<div class="topbar clearfix">
 		<div class="topbar-left">
-			<div class="logo">
-				<a href="#" id="logo"><h:graphicImage name="logo_branco.png" library="images" /></a>
-			</div>
+			<div class="logo"></div>
 		</div>
 		<div class="topbar-right" id="topbar_right">
 			<a id="menu-button" href="#"> <i></i>
 			</a> <a id="topbar-menu-button" href="#"> <i class="fa fa-navicon"></i>
 			</a>
 			<ul class="topbar-items fadeInDown animated">
+				<li>
+					<a href="#" title="Sair">
+						<i class="topbar-icon material-icons">power_settings_new</i>
+					</a>
+					<ul class="ultima-menu animated">
+						<li role="menuitem">
+							<a href="login.jsf">
+								<i class="material-icons">&#xE8AC;</i>
+								<span>Sair</span>
+							</a>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="#" title="Tutorial">
+						<i class="topbar-icon material-icons">help</i>
+					</a>
+					<ul class="ultima-menu animated">
+						<li role="menuitem">
+							<p:commandLink
+								class="topbar-link Animated03 Fleft"
+								onclick="PF('tutorialDialog').show();resize('#dgTutorial');"
+								title="Tutorial">
+								<i class="fa fa-file-text-o"></i>
+								<span>Tutorial</span>
+							</p:commandLink>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="#" title="Meu Plano">
+						<i class="topbar-icon material-icons">attach_money</i>
+					</a>
+					<ul class="ultima-menu animated">
+						<li role="menuitem">
+							<p:commandLink
+								class="topbar-link Animated03 Fleft" title="Meu Plano"
+								action="meuplano.jsf" rendered="#{odontoLoginMB.administrador}">
+								<i class="fa fa-gear"></i>
+								<span>Meu Plano</span>
+							</p:commandLink>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<a href="#" title="Chat Online">
+						<i class="topbar-icon material-icons">message</i>
+					</a>
+					<ul class="ultima-menu animated">
+						<li role="menuitem">
+							<p:commandLink class="topbar-link Animated03 Fleft" action="chat.jsf" title="Chat">
+								<i class="fa fa-user" title="Chat Online"></i>
+								<span>Chat Online</span>
+							</p:commandLink>
+						</li>
+					</ul>
+				</li>
+				<li>
+					<p:graphicImage styleClass="profile-image Fleft" id="photo" value="#{lumeSecurity.imagemUsuario}"
+						rendered="#{lumeSecurity.imagemUsuario != null}" />
+				</li>
+				<li>
+					<ui:fragment>
+						<li style="margin-right: 20px !important;">
+							<a style="margin-top: 10px !important; color: white;">
+								<span class="profile-name">
+									Bem-Vindo(a),
+									<h:outputText value="#{lumeSecurity.nomeLogado}" />
+									 | 
+									<h:outputText value="#{lumeSecurity.empresa.empStrNme}" />
+								</span>
+							</a>
+							<ul>
+								<h:panelGroup id="usuario">
+								</h:panelGroup>
+							</ul>
+						</li>
+					</ui:fragment>
+				</li>
+				<li>
+					<ui:fragment>
+						<li>
+							<a style="margin-top: 10px !important; color: white;">
+								<div class="FontLatoBlack White Opac80 Fleft DispBlock AlertaPayPal" >
+									<h:form>
+										<p:commandButton  value="#{odontoLoginMB.msgTrial}" styleClass="RedButton" action="cadastroPagamento.jsf" 
+											icon="White fa fa-money White Fs16" ajax="false" rendered="#{odontoLoginMB.trial}" onclick="this.form.target='_blank'" style="font-size: 10px !important;"/>
+									</h:form>
+								</div>
+							</a>
+							<ul>
+								<h:panelGroup id="trial">
+								</h:panelGroup>
+							</ul>
+						</li>
+					</ui:fragment>
+				</li>
+				
+			<ui:remove>
 				<a id="menu-resize-btn" class="topbar-link Animated03"><h:graphicImage name="images/menu-resize-btn-icon.svg" id="menu-resize-btn"
 							library="ultima-layout" /></a> <a id="mobile-menu-btn" class="topbar-link Animated03"><h:graphicImage name="images/menu-btn-icon.svg"
 							id="menu-btn-icon" library="ultima-layout" /></a>
@@ -59,6 +156,7 @@
 					</p:commandLink>
 					<a href="login.jsf?logoff" class="topbar-link Animated03 Fright"><i class="fa fa-power-off" title="Sair"></i></a>
 				</div>
+				</ui:remove>
 			</ul>
 		</div>
 	</div>

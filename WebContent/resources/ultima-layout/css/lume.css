@@ -158,6 +158,19 @@ li.MENULABEL [href="#"] span {
     width: 100% !important;
 }
 
+.ui-fluid .ui-autocomplete .ui-button {
+    width: 24px !important;
+}
+
+.pacienteChoice {
+	margin-bottom: 0px !important;
+}
+
+.ui-fluid .pacienteChoice .ui-panelgrid-cell {
+	padding-top: 0px !important;
+	padding-bottom: 0px !important;	
+}
+
 .menulink {
     color: #FFFFFF !important;
     text-decoration: none;
@@ -394,49 +407,54 @@ body {
 }
 
 /*Acrescentado para mudar cores dos botões*/
+/*
 .GreenButton
- 
 .ui-button-text {
     background-color: #43a05b !important;
     border-color: #348c4b !important
 }
+*/
 
+/*
 .GreenButton
 .ui-state-hover
- 
 .ui-button-text {
     background-color: #4bb165 !important;
 }
+*/
 
+/*
 .OrangeButton
- 
 .ui-button-text {
     background-color: #ce9800 !important;
     border-color: #c18f00 !important
 }
+*/
 
+/*
 .OrangeButton
 .ui-state-hover
- 
 .ui-button-text {
     background-color: #dea400 !important;
 }
+*/
 
+/*
 .RedButton
- 
 .ui-button-text {
     background-color: #a7002b !important;
     border-color: #bd0a39 !important;
 }
+*/
 
 .LightBlueButton {
     border-color: #B22222 !important;
     background-color: #B22222 !important;
 }
 
+/*
 .RedButton
-.ui-state-hover
- 
+.ui-state-hover 
 .ui-button-text {
     background-color: #d20237 !important;
 }
@@ -444,25 +462,21 @@ body {
 .ui-button-text {
     background-color: #0e9fd6;
 }
+*/
 
+/*
 .ui-button
 .ui-state-hover
- 
 .ui-button-text {
     background-color: #15ade6;
 }
+*/
 
+/*
 .ui-fieldset-legend {
     background-color: #0e9fd6 !important;
 }
-
-.ui-autocomplete
- 
-.ui-autocomplete-dropdown
- 
-.ui-icon-triangle-1-s {
-    margin-left: -5px !important;
-}
+*/
 
 .ui-scrollpanel-container {
     width: 100% !important;
@@ -971,39 +985,7 @@ body {
     background-color: #007480 !important;
 }
 
-/*Acrescentado para mudar cores dos botões*/
-.GreenButton .ui-button-text {
-    background-color: #43a05b !important;
-    border-color: #348c4b !important
-}
-
-.GreenButton.ui-state-hover .ui-button-text {
-    background-color: #4bb165 !important;
-}
-
-.OrangeButton .ui-button-text {
-    background-color: #ce9800 !important;
-    border-color: #c18f00 !important
-}
-
-.OrangeButton.ui-state-hover .ui-button-text {
-    background-color: #dea400 !important;
-}
-
-.RedButton .ui-button-text {
-    background-color: #a7002b !important;
-    border-color: #bd0a39 !important;
-}
-
-.LightBlueButton {
-    border-color: #B22222 !important;
-    background-color: #B22222 !important;
-}
-
-.RedButton.ui-state-hover .ui-button-text {
-    background-color: #d20237 !important;
-}
-
+/*
 .ui-button-text {
     background-color: #0e9fd6;
 }
@@ -1011,14 +993,7 @@ body {
 .ui-button.ui-state-hover .ui-button-text {
     background-color: #15ade6;
 }
-
-.ui-fieldset-legend {
-    background-color: #0e9fd6 !important;
-}
-
-.ui-autocomplete .ui-autocomplete-dropdown .ui-icon-triangle-1-s {
-    margin-left: -5px !important;
-}
+*/
 
 .ui-scrollpanel-container {
     width: 100% !important;
@@ -1473,4 +1448,98 @@ input {
 input {
         width: 60% !important;
     }
+}
+
+/*
+body .ui-button {
+	background-color: #8EB13D;
+}
+
+
+body .ui-button.ui-state-hover {
+	background-color: #5D8102;
+}
+
+body .ui-button.ui-state-focus {
+	background-color: #8EB13D;
+}
+*/
+
+body .ui-button.yellow-btn {
+	background-color: #FFC107 !important;
+}
+
+body .ui-button.lime-btn {
+	background-color: #8EB13D;
+}
+
+body .ui-button.blue-btn {
+	background-color: #819FF7;
+}
+
+body .ui-button.lime-btn.ui-state-hover {
+	background-color: #5D8102;
+}
+
+body .ui-button.dark-blue-btn {
+	background-color: #3F51B5 !important;
+}
+
+body .ui-button.dark-blue-btn.ui-state-hover {
+	background-color: #3F51B5 !important;
+}
+
+body .ui-button.dark-blue-btn.ui-state-focus {
+	outline: 0 none !important;
+	background-color: #3F51B5 !important;
+}
+
+/*Acrescentado para mudar cores dos botões*/
+.GreenButton {
+    background-color: #43a05b !important;
+    border-color: #348c4b !important
+}
+
+.GreenButton.ui-state-hover {
+    background-color: #4bb165 !important;
+}
+
+.OrangeButton {
+    background-color: #ce9800 !important;
+    border-color: #c18f00 !important
+}
+
+.OrangeButton.ui-state-hover {
+    background-color: #dea400 !important;
+}
+
+.RedButton {
+    background-color: #a7002b !important;
+    border-color: #bd0a39 !important;
+}
+
+.LightBlueButton {
+    border-color: #B22222 !important;
+    background-color: #B22222 !important;
+}
+
+.RedButton.ui-state-hover {
+    background-color: #d20237 !important;
+}
+
+.login-body {
+	background: transparent !important;
+	background-color: #E4E4E4 !important;
+}
+
+.copyright {
+	text-align: center;
+	font-size: 12px;
+	padding: .5em;
+	color: #757575 !important;
+	opacity: 0.8;
+}
+
+body .ui-button.ui-button-icon-only {
+	border-radius: 3px;
 }

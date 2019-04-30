@@ -1,126 +1,187 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
 	<f:facet name="first">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
-		<link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/images/favicon.ico" />
+		<link rel="shortcut icon" type="image/x-icon"
+			href="#{request.contextPath}/images/favicon.ico" />
 		<meta name="theme-color"
 			content="#{guestPreferences.themeColors[guestPreferences.theme]}" />
 	</f:facet>
 	<title>INTELIDENTE</title>
 
 	<p:cache region="jscache" key="ultimalayout">
-		<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
-		
+		<script type="text/javascript"
+			src="https://maps.googleapis.com/maps/api/js"></script>
+
 		<h:outputScript name="js/nanoscroller.js" library="ultima-layout" />
 		<h:outputScript name="js/layout.js" library="ultima-layout" />
 		<h:outputScript name="js/ripple.js" library="ultima-layout" />
 		<h:outputScript name="js/swipe.js" library="ultima-layout" />
 		<h:outputScript name="js/nfe.js" library="ultima-layout" />
 		<h:outputScript name="js/emoticon.js" library="ultima-layout" />
-		
-		<h:outputScript name="js/jquery.maskedinput.js" library="ultima-layout" />
+
+		<h:outputScript name="js/jquery.maskedinput.js"
+			library="ultima-layout" />
 		<h:outputScript name="js/odonto.js" library="ultima-layout" />
-    	<h:outputScript name="js/sweetalert.min.js" library="ultima-layout" />
-    	<h:outputScript name="jquery.cookie.js" library="joyride" />
+		<h:outputScript name="js/sweetalert.min.js" library="ultima-layout" />
+		<h:outputScript name="jquery.cookie.js" library="joyride" />
 		<h:outputScript name="modernizr.mq.js" library="joyride" />
 		<h:outputScript name="jquery.joyride-2.1.js" library="joyride" />
 	</p:cache>
 	<ui:insert name="head" />
 
 	<script>
-		//<![CDATA[
-		window.ga = window.ga || function() {
-			(ga.q = ga.q || []).push(arguments)
-		};
-		ga.l = +new Date;
-		ga('create', 'UA-100802286-3', 'auto');
-		ga('send', 'pageview');
-		//]]>
+		function chartExtender() {
+			this.cfg.seriesDefaults = {
+				renderer : $.jqplot.BarRenderer,
+				pointLabels : {
+					show : true
+				},
+				highlighter : {
+					tooltipAxes : 'y'
+				},
+			}, this.cfg.axes.yaxis.tickOptions = {
+				formatString : '%d'
+			}
+		}
+
+		function chartExtenderNoPointLabel() {
+			this.cfg.seriesDefaults = {
+				renderer : $.jqplot.BarRenderer,
+				pointLabels : {
+					show : false
+				},
+				highlighter : {
+					tooltipAxes : 'y'
+				},
+			}, this.cfg.axes.yaxis.tickOptions = {
+				formatString : '%d'
+			}
+		}
 	</script>
-    
-    <script>
-        function chartExtender() {
-            this.cfg.seriesDefaults = {
-                renderer : $.jqplot.BarRenderer,
-                pointLabels : {
-                    show : true
-                },
-                highlighter : {
-                    tooltipAxes : 'y'
-                },
-            }, this.cfg.axes.yaxis.tickOptions = {
-                formatString : '%d'
-            }
-        }
-        
-        function chartExtenderNoPointLabel() {
-            this.cfg.seriesDefaults = {
-                renderer : $.jqplot.BarRenderer,
-                pointLabels : {
-                    show : false
-                },
-                highlighter : {
-                    tooltipAxes : 'y'
-                },
-            }, this.cfg.axes.yaxis.tickOptions = {
-                formatString : '%d'
-            }
-        }
-    </script>
-    
-	<script async="async" src='https://www.google-analytics.com/analytics.js'></script>
+
+	<script async="async"
+		src='https://www.google-analytics.com/analytics.js'></script>
 
 </h:head>
 
-<h:body styleClass="main-body #{guestPreferences.compact ? 'layout-compact' : null}">
-	<ui:include src="topbar.xhtml" />
-
+<h:body
+	styleClass="main-body #{guestPreferences.compact ? 'layout-compact' : null}">
 	<!-- LAYOUT CONTAINER -->
 	<div class="layout-wrapper #{guestPreferences.menuLayout}">
 		<ui:include src="layouttabmenu.xhtml" />
-		
+		<ui:include src="topbar.xhtml" />
+
+		<script type="text/javascript">
+			//<![CDATA[		
+			$(document).ready(
+					function() {
+						var $this = PF('me');
+						if ($this) {
+							var pathname = window.location.pathname;
+							pathname = pathname.substr(pathname
+									.lastIndexOf('/') + 1)
+							if (pathname.indexOf('.jsf') > 0) {
+								var activeLink = $this.menulinks
+										.filter('[href^="' + pathname + '"]');
+
+								//Verifica se existe um link no menu para essa pagina
+								if (activeLink.length != 0) {
+									$this.expandedMenuitems = [];
+									$this.clearMenuState();
+
+									var item = activeLink.parent('li');
+									$this.addMenuitem(item.attr('id'));
+									addParentItems($this, item);
+									rc();
+								}
+							}
+						}
+					});
+
+			function addParentItems($this, item) {
+				if (item && item.length) {
+					var parent = item.parents('li:first');
+					$this.addMenuitem(parent.attr('id'));
+					if (!parent.parent('ul').hasClass('ultima-menu')) {
+						addParentItems($this, parent);
+					} else {
+						return;
+					}
+				}
+				return;
+			}
+
+			window.ga = window.ga || function() {
+				(ga.q = ga.q || []).push(arguments)
+			};
+			ga.l = +new Date;
+			ga('create', 'UA-100802286-3', 'auto');
+			ga('send', 'pageview');
+			//]]>
+		</script>
+
 		<ui:remove>
-		<ul id="layout-tab-menu">
-			<li><a href="#" class="active" rel="layout-menu"> <i class="moon-chair" ></i> <span class="layout-tab-menu-link-text"><span></span>
-						Menu</span>
-			</a></li>
-			<h:panelGroup rendered="#{perfilMB.administrador || perfilMB.dentista || perfilMB.responsavelTecnico}">
-				<li><a href="#" rel="layout-agenda"> <i class="icon-event9"></i> <span class="layout-tab-menu-link-text"><span></span> Minha Agenda</span>
+			<ul id="layout-tab-menu">
+				<li><a href="#" class="active" rel="layout-menu"> <i
+						class="moon-chair"></i> <span class="layout-tab-menu-link-text"><span></span>
+							Menu</span>
 				</a></li>
-			</h:panelGroup>
-			<h:panelGroup rendered="#{perfilMB.estoqueCompleto and (perfilMB.administrador || perfilMB.auxiliarDentista || perfilMB.responsavelTecnico)}">
-				<li><a href="#" rel="layout-reservas"> <i class="fa fa-shopping-basket"></i> <span class="layout-tab-menu-link-text"><span></span>
-							Reservas</span>
-				</a></li>
-			</h:panelGroup>
-			<h:panelGroup
-				rendered="#{perfilMB.administrador || perfilMB.auxiliarAdministrativo || perfilMB.auxiliarDentista || perfilMB.responsavelTecnico || perfilMB.administradorClinica}">
-				<li><a href="#" rel="layout-estatisticas"> <i class="fa fa-tachometer"></i> <span class="layout-tab-menu-link-text"><span></span>
-							Agendamentos</span>
-				</a></li>
-			</h:panelGroup>
-			<h:panelGroup
-				rendered="#{perfilMB.administrador || perfilMB.secretaria || perfilMB.auxiliarAdministrativo || perfilMB.responsavelTecnico || perfilMB.administradorClinica}">
-				<li><a href="#" rel="layout-retorno"> <i class="fa fa-exchange"></i> <span class="layout-tab-menu-link-text"><span></span> Retornos</span>
-				</a></li>
-			</h:panelGroup>
-			<h:panelGroup rendered="#{perfilMB.administrador || perfilMB.administradorClinica}">
-				<li><a href="#" rel="layout-extrato"> <i class="fa fa-dollar"></i> <span class="layout-tab-menu-link-text"><span></span> Extrato</span>
-				</a></li>
-			</h:panelGroup>
-		</ul>
+				<h:panelGroup
+					rendered="#{perfilMB.administrador || perfilMB.dentista || perfilMB.responsavelTecnico}">
+					<li><a href="#" rel="layout-agenda"> <i
+							class="icon-event9"></i> <span class="layout-tab-menu-link-text"><span></span>
+								Minha Agenda</span>
+					</a></li>
+				</h:panelGroup>
+				<h:panelGroup
+					rendered="#{perfilMB.estoqueCompleto and (perfilMB.administrador || perfilMB.auxiliarDentista || perfilMB.responsavelTecnico)}">
+					<li><a href="#" rel="layout-reservas"> <i
+							class="fa fa-shopping-basket"></i> <span
+							class="layout-tab-menu-link-text"><span></span> Reservas</span>
+					</a></li>
+				</h:panelGroup>
+				<h:panelGroup
+					rendered="#{perfilMB.administrador || perfilMB.auxiliarAdministrativo || perfilMB.auxiliarDentista || perfilMB.responsavelTecnico || perfilMB.administradorClinica}">
+					<li><a href="#" rel="layout-estatisticas"> <i
+							class="fa fa-tachometer"></i> <span
+							class="layout-tab-menu-link-text"><span></span>
+								Agendamentos</span>
+					</a></li>
+				</h:panelGroup>
+				<h:panelGroup
+					rendered="#{perfilMB.administrador || perfilMB.secretaria || perfilMB.auxiliarAdministrativo || perfilMB.responsavelTecnico || perfilMB.administradorClinica}">
+					<li><a href="#" rel="layout-retorno"> <i
+							class="fa fa-exchange"></i> <span
+							class="layout-tab-menu-link-text"><span></span> Retornos</span>
+					</a></li>
+				</h:panelGroup>
+				<h:panelGroup
+					rendered="#{perfilMB.administrador || perfilMB.administradorClinica}">
+					<li><a href="#" rel="layout-extrato"> <i
+							class="fa fa-dollar"></i> <span class="layout-tab-menu-link-text"><span></span>
+								Extrato</span>
+					</a></li>
+				</h:panelGroup>
+			</ul>
 		</ui:remove>
-		
+
 		<div class="layout-main">
 			<h:form id="lume">
-				<p:ajaxStatus onstart="PF('loading').show();" onsuccess="PF('loading').hide();" />
-				<p:dialog modal="true" widgetVar="loading" draggable="false" closable="false" showHeader="false" resizable="false">
+				<p:ajaxStatus onstart="PF('loading').show();"
+					onsuccess="PF('loading').hide();" />
+				<p:dialog modal="true" widgetVar="loading" draggable="false"
+					closable="false" showHeader="false" resizable="false">
 					<p:graphicImage value="/images/loading.gif" />
 				</p:dialog>
 				<ui:insert name="content">Template</ui:insert>
@@ -130,18 +191,22 @@
 	</div>
 
 	<p:confirmDialog global="true">
-		<p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check White" />
-		<p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-close White" />
+		<p:commandButton value="Sim" type="button"
+			styleClass="ui-confirmdialog-yes" icon="fa fa-check White" />
+		<p:commandButton value="Não" type="button"
+			styleClass="ui-confirmdialog-no" icon="fa fa-close White" />
 	</p:confirmDialog>
 
 	<p:cache region="csscache" key="ultimalayout">
 		<h:outputStylesheet name="stylechair.css" library="icomoon" />
 		<h:outputStylesheet name="joyride-2.1.css" library="joyride" />
-		
-		<h:outputStylesheet name="css/nanoscroller.css" library="ultima-layout" />
+
+		<h:outputStylesheet name="css/nanoscroller.css"
+			library="ultima-layout" />
 		<h:outputStylesheet name="css/animate.css" library="ultima-layout" />
 		<h:outputStylesheet name="css/ripple.css" library="ultima-layout" />
-		<h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css" library="ultima-layout" />
+		<h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css"
+			library="ultima-layout" />
 		<h:outputStylesheet name="css/emoticon.css" library="ultima-layout" />
 	</p:cache>
 	<h:outputStylesheet name="css/lume.css" library="ultima-layout" />
