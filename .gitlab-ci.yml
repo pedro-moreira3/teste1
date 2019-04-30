@@ -12,11 +12,11 @@ variables:
   urlDesenv: "http://ltdeapp07.lume.intra:8080/intelidente"
   urlLocal: "http://localhost:8080/intelidente"
   MAVEN_CLI_OPTS: "-s ~/.m2/settings.xml --batch-mode"
-  MAVEN_OPTS: "-Dmaven.repo.local=~/.m2/repository -Dfile.encoding=ISO-8859-1"
+  MAVEN_OPTS: "-Dmaven.repo.local=~/.m2_ramdisk/repository/ -Dfile.encoding=ISO-8859-1"
  
 cache:
   paths:
-   - ~/.m2/repository/
+   - ~/.m2_ramdisk/repository/
 
 before_script:
   - branch=$CI_COMMIT_REF_NAME
