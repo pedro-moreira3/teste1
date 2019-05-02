@@ -17,6 +17,7 @@ import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -31,7 +32,6 @@ import br.com.lume.odonto.bo.SugestaoItemBO;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Material;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Sugestao;
 import br.com.lume.odonto.entity.SugestaoItem;

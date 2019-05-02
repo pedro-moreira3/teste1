@@ -19,6 +19,7 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.Dente;
@@ -669,7 +670,7 @@ public class PlanoTratamentoProcedimentoBO extends BO<PlanoTratamentoProcediment
 
     private void atualizaTributo(PlanoTratamentoProcedimento ptp) {
         try {
-            ptp.setTributo(new BigDecimal(EmpresaBO.getEmpresaLogada().getEmpFltImposto()));
+            ptp.setTributo(new BigDecimal(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpFltImposto()));
             persist(ptp);
         } catch (Exception e) {
             e.printStackTrace();

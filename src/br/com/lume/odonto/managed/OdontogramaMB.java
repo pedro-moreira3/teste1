@@ -23,6 +23,7 @@ import com.google.gson.GsonBuilder;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.bo.ConvenioProcedimentoBO;
 import br.com.lume.odonto.bo.DenteBO;
 import br.com.lume.odonto.bo.OdontogramaBO;
@@ -375,7 +376,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
     public void actionPersistStatusDente(ActionEvent event) {
         try {
             statusDenteSelecionado.setCor("#" + statusDenteSelecionado.getCorPF());
-            statusDenteSelecionado.setIdEmpresa(EmpresaBO.getEmpresaLogada().getEmpIntCod());
+            statusDenteSelecionado.setIdEmpresa(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpIntCod());
             statusDenteBO.persist(statusDenteSelecionado);
             statusDenteSelecionado = new StatusDente();
             carregarStatusDente();

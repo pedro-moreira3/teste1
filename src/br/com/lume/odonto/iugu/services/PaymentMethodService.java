@@ -1,14 +1,12 @@
 package br.com.lume.odonto.iugu.services;
 
-import br.com.lume.odonto.iugu.IuguConfiguration;
-import br.com.lume.odonto.iugu.exceptions.IuguException;
-import br.com.lume.odonto.iugu.model.PaymentMethod;
-import br.com.lume.odonto.iugu.model.PaymentToken;
-import br.com.lume.odonto.iugu.responses.PaymentTokenResponse;
-
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import br.com.lume.odonto.iugu.IuguConfiguration;
+import br.com.lume.odonto.iugu.exceptions.IuguException;
+import br.com.lume.odonto.iugu.model.PaymentMethod;
 
 
 public class PaymentMethodService {

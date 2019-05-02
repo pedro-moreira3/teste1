@@ -19,6 +19,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.odonto.bo.AbastecimentoBO;
@@ -37,7 +38,6 @@ import br.com.lume.odonto.entity.ControleMaterial;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialLog;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.PedidoItem;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoCusto;

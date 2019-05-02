@@ -12,12 +12,12 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.bo.RelatorioGerencialBO;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;

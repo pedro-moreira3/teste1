@@ -11,6 +11,7 @@ import org.primefaces.model.menu.MenuModel;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.security.bo.MenuBO;
 import br.com.lume.security.bo.ObjetoBO;
 import br.com.lume.security.bo.SistemaBO;
@@ -49,7 +50,8 @@ public class MenuMB extends LumeManagedBean<Objeto> {
         sistema = new SistemaBO().getSistemaBySigla(JSFHelper.getSistemaAtual());
         menuModel = menuBO.getMenuTreeByUsuarioAndSistema(usuario, sistema, true);
         if (usuario != null) {
-            modulos = objetoBO.getObjetosRaizByUsuarioAndSistema(usuario, sistema);
+            modulos = objetoBO.getObjetosRaizByUsuarioAndSistema(usuario, sistema,Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpStrEstoque());
+            
         }
     }
 

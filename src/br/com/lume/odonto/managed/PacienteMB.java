@@ -21,14 +21,17 @@ import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.biometria.ImpressaoDigital;
 import br.com.lume.odonto.bo.AgendamentoBO;
 import br.com.lume.odonto.bo.AnamneseBO;
@@ -47,7 +50,6 @@ import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Especialidade;
 import br.com.lume.odonto.entity.ItemAnamnese;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Pergunta;
 import br.com.lume.odonto.entity.Profissional;
@@ -145,7 +147,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         carregarPacienteBO = new CarregarPacienteBO();
         this.setClazz(Paciente.class);
         pacienteAnamneses = anamneseBO.listByPaciente(super.getEntity());
-        if (profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) && EmpresaBO.getEmpresaLogada().isEmpBolDentistaAdmin() == false) {
+        if (profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) && Configurar.getInstance().getConfiguracao().getEmpresaLogada().isEmpBolDentistaAdmin() == false) {
             visivelDadosPaciente = false;
         }
         // anamnesesTodos = new ArrayList<ItemAnamnese>();
@@ -171,6 +173,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
     }
+    
+      public StreamedContent getImagemUsuario() {
+          return PacienteBO.getImagemUsuario(this.getEntity());
+      }
 
     public void renderedPhotoCam(ActionEvent event) {
         renderedPhotoCam = true;

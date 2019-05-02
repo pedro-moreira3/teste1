@@ -1,8 +1,9 @@
 package br.com.lume.odonto.iugu.model;
 
 
-import br.com.lume.odonto.iugu.enums.PayableWith;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import br.com.lume.odonto.iugu.enums.PayableWith;
 
 public class PaymentToken {
 

@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.util.Status;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Local;
 import br.com.lume.security.bo.EmpresaBO;
@@ -91,7 +92,7 @@ public class LocalBO extends BO<Local> {
             if (locais != null && !locais.isEmpty()) {
                 return locais.get(0);
             } else {
-                Local local = new Local("Local Padrão Sistema", "SM", EmpresaBO.getEmpresaLogada().getEmpIntCod());
+                Local local = new Local("Local Padrão Sistema", "SM", Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpIntCod());
                 persist(local);
                 return local;
             }

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.connection.GenericDAO;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.ObjetoProfissional;
 import br.com.lume.odonto.entity.Profissional;
@@ -29,7 +30,7 @@ public class ObjetoProfissionalBO extends BO<ObjetoProfissional> {
         try {
             Map<String, Object> parametros = new HashMap<>();
             parametros.put("profissional", profissional);
-            if (Empresa.ESTOQUE_SIMPLIFICADO.equals(EmpresaBO.getEmpresaLogada().getEmpStrEstoque())) {
+            if (Empresa.ESTOQUE_SIMPLIFICADO.equals(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpStrEstoque())) {
                 parametros.put("o.objeto.caminho not in (" + ObjetoBO.OBJETOS_ESTOQUE_COMPLETO + ") ", GenericDAO.FILTRO_GENERICO_QUERY);
             }
             return this.listByFields(parametros);

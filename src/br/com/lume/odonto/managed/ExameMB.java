@@ -20,6 +20,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.imgscalr.Scalr;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
@@ -66,6 +67,20 @@ public class ExameMB extends LumeManagedBean<Exame> {
         this.dominioBO = new DominioBO();
         this.setClazz(Exame.class);
     }
+    
+
+  public StreamedContent getArquivo() {
+      StreamedContent arquivo = null;
+      if (getEntity().getAnexo() != null) {
+          try {
+              ByteArrayInputStream bis = new ByteArrayInputStream(getEntity().getAnexo());
+              arquivo = new DefaultStreamedContent(bis, null, getEntity().getNomeAnexo());
+          } catch (Exception e) {
+              e.printStackTrace();
+          }
+      }
+      return arquivo;
+  }
 
     @Override
     public void actionPersist(ActionEvent event) {

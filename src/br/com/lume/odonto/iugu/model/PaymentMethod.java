@@ -1,7 +1,5 @@
 package br.com.lume.odonto.iugu.model;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import br.com.lume.odonto.iugu.enums.ItemType;

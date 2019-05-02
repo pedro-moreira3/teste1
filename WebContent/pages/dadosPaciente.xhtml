@@ -12,8 +12,8 @@
 
                         <h:panelGroup id="foto">
                             <div class="Container100">
-                                <p:graphicImage styleClass="Fleft" value="#{pacienteMB.entity.imagemUsuario}" stream="false" style="width:100%;" rendered="#{pacienteMB.entity.imagemUsuario != null}" />
-                                <h:graphicImage name="sem-imagem-avatar.png" styleClass="Fleft" style="width:100%;" library="images" rendered="#{pacienteMB.entity.imagemUsuario == null}" />
+                                <p:graphicImage styleClass="Fleft" value="#{pacienteMB.imagemUsuario}" stream="false" style="width:100%;" rendered="#{pacienteMB.imagemUsuario != null}" />
+                                <h:graphicImage name="sem-imagem-avatar.png" styleClass="Fleft" style="width:100%;" library="images" rendered="#{pacienteMB.imagemUsuario == null}" />
                             </div>
                         </h:panelGroup>
                         <p:fieldset legend="Dados Pessoais" toggleable="true" collapsed="false">

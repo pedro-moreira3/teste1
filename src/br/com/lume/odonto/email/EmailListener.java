@@ -11,8 +11,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
-import br.com.lume.common.util.EnviaEmail;
-import br.com.lume.common.util.Mensagens;
 import br.com.lume.odonto.contify.ContifyBatch;
 import br.com.lume.odonto.util.OdontoMensagens;
 

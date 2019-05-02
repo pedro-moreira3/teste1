@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -47,7 +48,6 @@ import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Evolucao;
 import br.com.lume.odonto.entity.Lancamento;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Odontograma;
 import br.com.lume.odonto.entity.Orcamento;
 import br.com.lume.odonto.entity.Paciente;

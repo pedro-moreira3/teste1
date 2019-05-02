@@ -18,6 +18,7 @@ import org.primefaces.event.FlowEvent;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.UploadedFile;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
@@ -42,7 +43,6 @@ import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Especialidade;
 import br.com.lume.odonto.entity.Filial;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ProfissionalEspecialidade;
 import br.com.lume.odonto.entity.ProfissionalFilial;

@@ -23,7 +23,7 @@ import org.primefaces.event.FileUploadEvent;
 
 import com.google.gson.Gson;
 
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.entity.ViaCep;
 import br.com.lume.odonto.util.OdontoMensagens;
 
@@ -235,7 +235,7 @@ public class Utils {
         }
 
         if (targetFile == null || !targetFile.exists()) {
-            nomeImagem = ProfissionalBO.getProfissionalLogado().getIdEmpresa() + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
+            nomeImagem = Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa() + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
             targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
         }
         FileImageOutputStream imageOutput = new FileImageOutputStream(targetFile);

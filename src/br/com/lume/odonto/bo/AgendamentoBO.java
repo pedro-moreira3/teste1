@@ -15,6 +15,7 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
@@ -43,7 +44,7 @@ public class AgendamentoBO extends BO<Agendamento> {
         agendamento.setDataUltAlteracao(Calendar.getInstance().getTime());
         agendamento.setProfissionalUltAlteracao(ProfissionalBO.getProfissionalLogado());
         super.persist(agendamento);
-        if (Empresa.ESTOQUE_COMPLETO.equals(EmpresaBO.getEmpresaLogada().getEmpStrEstoque())) {
+        if (Empresa.ESTOQUE_COMPLETO.equals(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpStrEstoque())) {
             if (agendamento.getExcluido().equals(
                     Status.NAO) && !agendamento.getStatus().equals(StatusAgendamento.CANCELADO.getSigla()) && !agendamento.getStatus().equals(StatusAgendamento.REMARCADO.getSigla())) {
                 reservaBO.persistByAgendamento(agendamento);

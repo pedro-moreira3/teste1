@@ -16,6 +16,8 @@ import org.primefaces.model.menu.Submenu;
 import br.com.lume.common.bo.BO;
 import br.com.lume.common.connection.GenericDAO;
 import br.com.lume.common.util.JSFHelper;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.security.entity.Objeto;
 import br.com.lume.security.entity.Sistema;
@@ -30,7 +32,7 @@ public class MenuBO extends BO<Usuario> {
     private int idMenu = 1;
 
     public MenuBO() {
-        super(GenericDAO.LUME_SECURITY);
+        super(PersistenceUnitName.ODONTO);
         this.setClazz(Usuario.class);
     }
 
@@ -42,8 +44,8 @@ public class MenuBO extends BO<Usuario> {
     public MenuModel getMenuTreeByUsuarioAndSistema(Usuario usuario, Sistema sistema, boolean mostraURL, List<Objeto> objetosRaizBySistema) {
         if (usuario != null && sistema != null) {
             try {
-                List<Objeto> objetosPermitidos = new ObjetoBO().carregaObjetosPermitidos((String) JSFHelper.getSession().getAttribute("PERFIL_LOGADO"),
-                        (Profissional) JSFHelper.getSession().getAttribute("PROFISSIONAL_LOGADO"));
+                List<Objeto> objetosPermitidos = new ObjetoBO().carregaObjetosPermitidos((String) Configurar.getInstance().getConfiguracao().getPerfilLogado(),
+                        (Profissional) Configurar.getInstance().getConfiguracao().getProfissionalLogado());
                 Set<Objeto> labelsPermitidas = this.getLabelsPermitidas(objetosPermitidos);
                 return this.getMenuTree(sistema, labelsPermitidas, objetosPermitidos, mostraURL, objetosRaizBySistema);
             } catch (Exception e) {

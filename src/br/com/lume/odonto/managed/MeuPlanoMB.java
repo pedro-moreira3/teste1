@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.bo.AgendamentoBO;
 import br.com.lume.odonto.bo.PlanoBO;
 import br.com.lume.odonto.bo.ProfissionalBO;
@@ -56,12 +57,12 @@ public class MeuPlanoMB extends LumeManagedBean<Agendamento> {
             if (planoUsuLogado != null) {
                 agendamentosPlano = planoUsuLogado.getConsultas();
                 porcentagemUtilizado = (double) ((100 * (double) agendamentosMes) / (double) agendamentosPlano);
-                if (EmpresaBO.getEmpresaLogada().getEmpDtmExpiracao() != null) {
-                    dataVencimentoPlano = Utils.dateToString(EmpresaBO.getEmpresaLogada().getEmpDtmExpiracao(), "dd/MM/yyyy");
+                if (Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpDtmExpiracao() != null) {
+                    dataVencimentoPlano = Utils.dateToString(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpDtmExpiracao(), "dd/MM/yyyy");
                 }
             }
-            if (EmpresaBO.getEmpresaLogada().getEmpStrAssinaturaIuguID() != null && !EmpresaBO.getEmpresaLogada().getEmpStrAssinaturaIuguID().isEmpty() && recentInvoices == null) {
-                recentInvoices = Iugu.buscaFaturas(EmpresaBO.getEmpresaLogada().getEmpStrAssinaturaIuguID());
+            if (Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpStrAssinaturaIuguID() != null && !Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpStrAssinaturaIuguID().isEmpty() && recentInvoices == null) {
+                recentInvoices = Iugu.buscaFaturas(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpStrAssinaturaIuguID());
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

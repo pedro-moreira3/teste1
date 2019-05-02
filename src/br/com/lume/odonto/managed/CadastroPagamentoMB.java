@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.bo.PlanoBO;
 import br.com.lume.odonto.entity.Plano;
 import br.com.lume.odonto.iugu.model.CustomVariable;
@@ -46,7 +47,7 @@ public class CadastroPagamentoMB extends LumeManagedBean<Empresa> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            Empresa empresa = EmpresaBO.getEmpresaLogada();
+            Empresa empresa = Configurar.getInstance().getConfiguracao().getEmpresaLogada();
             Customer customerIugu = new Customer(empresa.getEmpStrEmail(), empresa.getEmpStrNme(), null, empresa.getEmpChaCep(), Integer.parseInt(empresa.getEmpChaNumEndereco()),
                     empresa.getEmpStrEndereco(), empresa.getEmpStrBairro(), empresa.getEmpStrCidade(), empresa.getEmpChaUf());
             CustomVariable cv = new CustomVariable("intelidente", "true");

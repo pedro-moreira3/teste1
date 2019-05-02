@@ -11,6 +11,7 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import javax.websocket.ClientEndpointConfig.Configurator;
 
 import org.apache.log4j.Logger;
 import org.primefaces.context.RequestContext;
@@ -23,6 +24,7 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.bo.DadosBasicoBO;
 import br.com.lume.odonto.bo.DescontoBO;
 import br.com.lume.odonto.bo.DominioBO;
@@ -163,7 +165,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
             if (idpaciente != null && !idpaciente.isEmpty()) {
                 Paciente pac = pacienteBO.find(Long.parseLong(idpaciente));
                 if (pac != null) {
-                    JSFHelper.getSession().setAttribute("PACIENTE_SELECIONADO", pac);
+                    Configurar.getInstance().getConfiguracao().setPacienteLogado(pac);
                 }
             }
             // descontos = descontoBO.listByEmpresa();

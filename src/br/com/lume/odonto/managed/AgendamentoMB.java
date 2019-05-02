@@ -24,6 +24,7 @@ import org.primefaces.model.LazyScheduleModel;
 import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
@@ -33,8 +34,8 @@ import br.com.lume.common.util.GeradorSenha;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.bo.AfastamentoBO;
-import br.com.lume.afastamento.AfastamentoSingleton;
 import br.com.lume.odonto.bo.AgendamentoBO;
 import br.com.lume.odonto.bo.AgendamentoPlanoTratamentoProcedimentoBO;
 import br.com.lume.odonto.bo.DadosBasicoBO;
@@ -52,7 +53,6 @@ import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.HorasUteisProfissional;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
@@ -171,7 +171,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         reservaBO = new ReservaBO();
         this.setClazz(Agendamento.class);
         try {
-            if (ProfissionalBO.getProfissionalLogado().getPerfil().equals(OdontoPerfil.DENTISTA) && EmpresaBO.getEmpresaLogada().isEmpBolDentistaAdmin() == false) {
+            if (ProfissionalBO.getProfissionalLogado().getPerfil().equals(OdontoPerfil.DENTISTA) && Configurar.getInstance().getConfiguracao().getEmpresaLogada().isEmpBolDentistaAdmin() == false) {
                 visivelDadosPaciente = false;
             }
             gmt = dominioBO.findByEmpresaAndObjetoAndTipoAndValor("agendamento", "hora", "GM").getNome();
@@ -216,7 +216,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     private void carregarCadeiras() {
         cadeiras = new ArrayList<>();
-        for (int i = 1; i <= EmpresaBO.getEmpresaLogada().getEmpIntCadeira(); i++) {
+        for (int i = 1; i <= Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpIntCadeira(); i++) {
             cadeiras.add(i);
         }
     }

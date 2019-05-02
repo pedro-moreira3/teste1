@@ -11,11 +11,14 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.security.LoginSingleton;
 import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.bo.LoginBO;
 import br.com.lume.security.bo.UsuarioBO;
+import br.com.lume.security.entity.Objeto;
 import br.com.lume.security.managed.MenuMB;
 
 @ManagedBean
@@ -53,10 +56,12 @@ public class TrocaUsuarioMB extends LumeManagedBean<Profissional> {
 
     public void actionTrocarUsuario() {
         try {
-            JSFHelper.getSession().setAttribute("PROFISSIONAL_LOGADO", profissionalTrocar);
-            JSFHelper.getSession().setAttribute("PERFIL_LOGADO", profissionalTrocar.getPerfil());
-            JSFHelper.getSession().setAttribute("EMPRESA_LOGADA", empresaBO.find(profissionalTrocar.getIdEmpresa()));
-            loginBO.carregaObjetosPermitidos(usuarioBO.find(profissionalTrocar.getIdUsuario()), profissionalTrocar.getPerfil(), this.getLumeSecurity(), profissionalTrocar);
+            Configurar.getInstance().getConfiguracao().setProfissionalLogado(profissionalTrocar);
+            Configurar.getInstance().getConfiguracao().setPerfilLogado(profissionalTrocar.getPerfil());
+            Configurar.getInstance().getConfiguracao().setEmpresaLogada(empresaBO.find(profissionalTrocar.getIdEmpresa()));         
+            List<Objeto> objetosPermitidos = LoginSingleton.getInstance().getBo().carregaObjetosPermitidos(usuarioBO.find(profissionalTrocar.getIdUsuario()), profissionalTrocar.getPerfil(), profissionalTrocar);
+            this.getLumeSecurity().setUsuario(usuarioBO.find(profissionalTrocar.getIdUsuario()));
+            this.getLumeSecurity().setObjetosPermitidos(objetosPermitidos);
             menuMB.carregarMenu();
         } catch (Exception e) {
             log.error("Erro no actionTrocarUsuario", e);

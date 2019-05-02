@@ -1,13 +1,13 @@
 package br.com.lume.odonto.iugu.services;
 
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import br.com.lume.odonto.iugu.IuguConfiguration;
 import br.com.lume.odonto.iugu.exceptions.IuguException;
 import br.com.lume.odonto.iugu.model.Charge;
 import br.com.lume.odonto.iugu.responses.ChargeResponse;
-
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 public class ChargeService {
 

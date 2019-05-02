@@ -10,6 +10,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.log4j.Logger;
 
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.security.bo.EmpresaBO;
@@ -100,7 +101,7 @@ public class CarregarPacienteBO extends BO<Paciente> {
 
                         if (erro.equals("")) {
                             Paciente pac = new Paciente();
-                            pac.setIdEmpresa(EmpresaBO.getEmpresaLogada().getEmpIntCod());
+                            pac.setIdEmpresa(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpIntCod());
                             pac.setPreCadastro("N");
                             pac.getDadosBasico().setNome(nome);
                             pac.getDadosBasico().setCelular(celular);

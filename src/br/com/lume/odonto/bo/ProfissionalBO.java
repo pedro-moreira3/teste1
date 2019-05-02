@@ -20,6 +20,7 @@ import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Status;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Motivo;
 import br.com.lume.odonto.entity.Paciente;
@@ -201,11 +202,11 @@ public class ProfissionalBO extends BO<Profissional> {
     }
 
     public static Profissional getProfissionalLogado() {
-        return (Profissional) JSFHelper.getSession().getAttribute("PROFISSIONAL_LOGADO");
+        return (Profissional) Configurar.getInstance().getConfiguracao().getProfissionalLogado();
     }
 
     public static void setProfissionalLogado(Profissional profissional) {
-        JSFHelper.getSession().setAttribute("PROFISSIONAL_LOGADO", profissional);
+        Configurar.getInstance().getConfiguracao().setProfissionalLogado(profissional);        
     }
 
     public List<Profissional> listByEmpresaAndPacienteAndPerfil(Paciente paciente, List<String> perfis) throws Exception {

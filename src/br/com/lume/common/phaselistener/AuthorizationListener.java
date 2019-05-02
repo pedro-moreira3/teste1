@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.util.JSFHelper;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.security.bo.LogAcessoBO;
 import br.com.lume.security.bo.ObjetoBO;
 import br.com.lume.security.bo.SistemaBO;
@@ -94,7 +95,7 @@ public class AuthorizationListener implements PhaseListener {
     }
 
     private void logarAcesso(String page, Usuario usuario, String ip) {
-        String paginaAnterior = (String) JSFHelper.getSession().getAttribute("PAGINA_ANTERIOR");
+        String paginaAnterior = (String) Configurar.getInstance().getConfiguracao().getPaginaAnterior();
         if (!page.equals(paginaAnterior)) {
             if (usuario != null) {
                 Sistema sistema = new SistemaBO().getSistemaBySigla(JSFHelper.getSistemaAtual());
@@ -112,7 +113,7 @@ public class AuthorizationListener implements PhaseListener {
                     }
                 }
             }
-            JSFHelper.getSession().setAttribute("PAGINA_ANTERIOR", page);
+            Configurar.getInstance().getConfiguracao().setPaginaAnterior(page);            
         }
     }
 

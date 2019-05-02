@@ -14,6 +14,7 @@ import org.primefaces.model.chart.PieChartModel;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.bo.AgendamentoBO;
 import br.com.lume.odonto.bo.ReservaBO;
 import br.com.lume.odonto.entity.Agendamento;
@@ -107,7 +108,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private void carregarCadeiras() {
         cadeiras = new ArrayList<>();
-        for (int i = 1; i <= EmpresaBO.getEmpresaLogada().getEmpIntCadeira(); i++) {
+        for (int i = 1; i <= Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpIntCadeira(); i++) {
             cadeiras.add(i);
         }
     }

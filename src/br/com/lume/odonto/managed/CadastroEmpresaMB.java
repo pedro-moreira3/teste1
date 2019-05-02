@@ -13,6 +13,7 @@ import org.primefaces.event.FileUploadEvent;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.UF;
@@ -50,7 +51,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
 
     private void carregarEmpresa() {
         try {
-            setEntity(EmpresaBO.getEmpresaLogada());
+            setEntity(Configurar.getInstance().getConfiguracao().getEmpresaLogada());
             profissional = profissionalBO.findAdminInicial();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

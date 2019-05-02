@@ -18,10 +18,12 @@ import org.apache.log4j.Logger;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.SelectEvent;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.bo.AgendamentoBO;
 import br.com.lume.odonto.bo.AgendamentoPlanoTratamentoProcedimentoBO;
 import br.com.lume.odonto.bo.ConvenioProcedimentoBO;
@@ -41,7 +43,6 @@ import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Evolucao;
 import br.com.lume.odonto.entity.Lancamento;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Odontograma;
 import br.com.lume.odonto.entity.Orcamento;
 import br.com.lume.odonto.entity.Paciente;
@@ -574,7 +575,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     private void carregarDadosCabecalho() {
-        Empresa empresalogada = EmpresaBO.getEmpresaLogada();
+        Empresa empresalogada = Configurar.getInstance().getConfiguracao().getEmpresaLogada();
         nomeClinica = empresalogada.getEmpStrNme() != null ? empresalogada.getEmpStrNme() : "";
         endTelefoneClinica = (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() + " - " : "") + (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() + "/" : "") + (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() + " - " : "") + (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
     }

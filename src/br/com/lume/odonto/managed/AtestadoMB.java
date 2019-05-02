@@ -13,6 +13,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 import org.primefaces.event.SelectEvent;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.odonto.bo.AtestadoBO;
@@ -25,7 +26,6 @@ import br.com.lume.odonto.entity.Atestado;
 import br.com.lume.odonto.entity.CID;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.Dominio;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.TagDocumento;

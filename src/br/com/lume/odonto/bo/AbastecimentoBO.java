@@ -18,6 +18,7 @@ import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.managed.AbastecimentoMB;
+import br.com.lume.profissional.ProfissionalSingleton;
 
 public class AbastecimentoBO extends BO<Abastecimento> {
 
@@ -25,6 +26,10 @@ public class AbastecimentoBO extends BO<Abastecimento> {
 
     private static final long serialVersionUID = 1L;
 
+    public static void main(String[] args) {
+        ProfissionalSingleton.getInstance().getBo().testeSelect();
+    }
+    
     public AbastecimentoBO() {
         super(PersistenceUnitName.ODONTO);
         this.setClazz(Abastecimento.class);

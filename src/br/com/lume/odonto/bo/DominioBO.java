@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.util.Status;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.security.bo.EmpresaBO;
@@ -33,7 +34,7 @@ public class DominioBO extends BO<Dominio> {
 
     public BigDecimal getTributo() {
         try {
-            return new BigDecimal(EmpresaBO.getEmpresaLogada().getEmpFltImposto());
+            return new BigDecimal(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpFltImposto());
         } catch (Exception e) {
             this.log.error(e);
         }

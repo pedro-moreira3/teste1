@@ -121,7 +121,7 @@
         </div>
     </div>
     <p:dialog widgetVar="viewDialogResponsivo" header="Visualizar imagem" modal="true" responsive="true" onHide="PF('viewDialogResponsivo').toggleMaximize();">
-        <p:graphicImage value="#{exameMB.entity.arquivo}" stream="false" id="pnResponsivo" style="width: 100%;height: auto;" />
+        <p:graphicImage value="#{exameMB.arquivo}" stream="false" id="pnResponsivo" style="width: 100%;height: auto;" />
     </p:dialog>
     <p:dialog widgetVar="editDialog" header="Editar imagem" id="pnEditar" modal="true" responsive="true" onHide="$('div#_wPaint_menu').hide();">
         <div class="Card">

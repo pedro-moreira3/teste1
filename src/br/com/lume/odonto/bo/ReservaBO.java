@@ -12,6 +12,7 @@ import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.connection.GenericListDAO;
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
@@ -22,7 +23,6 @@ import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.ControleMaterial;
 import br.com.lume.odonto.entity.MaterialLog;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.ProcedimentoKit;
 import br.com.lume.odonto.entity.Reserva;
 import br.com.lume.odonto.entity.ReservaKit;

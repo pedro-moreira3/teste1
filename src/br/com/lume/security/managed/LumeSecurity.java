@@ -1,5 +1,7 @@
 package br.com.lume.security.managed;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -9,10 +11,14 @@ import java.util.TimeZone;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 import br.com.lume.common.util.JSFHelper;
+import br.com.lume.common.util.OdontoMensagens;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.bo.HelpBO;
 import br.com.lume.odonto.bo.PacienteBO;
 import br.com.lume.odonto.bo.ProfissionalBO;
@@ -62,13 +68,27 @@ public class LumeSecurity implements Serializable {
 
     public Empresa getEmpresa() {
         if (empresa == null) {
-            return (Empresa) JSFHelper.getSession().getAttribute("EMPRESA_LOGADA");
+            return (Empresa) Configurar.getInstance().getConfiguracao().getEmpresaLogada();
         }
         return empresa;
     }
+    
+    public StreamedContent getLogo() {
+      try {
+      if (empresa != null && empresa.getEmpStrLogo() != null) {
+          ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+                  FileUtils.readFileToByteArray(new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + empresa.getEmpStrLogo())));
+          DefaultStreamedContent defaultStreamedContent = new DefaultStreamedContent(byteArrayInputStream, "image/" + empresa.getEmpStrLogo().split("\\.")[1], empresa.getEmpStrLogo());
+          return defaultStreamedContent;
+      }
+  } catch (Exception e) {
+      //e.printStackTrace();
+  }
+  return null;
+    }
 
     public String getNomeLogado() {
-        Profissional profissionalLogado = ProfissionalBO.getProfissionalLogado();
+        Profissional profissionalLogado = Configurar.getInstance().getConfiguracao().getProfissionalLogado();
 
         if (profissionalLogado != null) {
             return profissionalLogado.getDadosBasico().getNome();
@@ -182,6 +202,6 @@ public class LumeSecurity implements Serializable {
     }
 
     public StreamedContent getImagemUsuario() {
-        return ProfissionalBO.getImagemUsuario(ProfissionalBO.getProfissionalLogado());
+        return ProfissionalBO.getImagemUsuario(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
     }
 }

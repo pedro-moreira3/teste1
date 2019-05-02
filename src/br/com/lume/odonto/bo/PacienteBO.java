@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.connection.GenericListDAO;
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
@@ -22,8 +23,8 @@ import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Status;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.exception.CpfCnpjDuplicadoException;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -45,15 +46,15 @@ public class PacienteBO extends BO<Paciente> {
     }
 
     public static void setPacienteSelecionado(Paciente paciente) {
-        JSFHelper.getSession().setAttribute("PACIENTE_SELECIONADO", paciente);
+        Configurar.getInstance().getConfiguracao().setPacienteLogado(paciente);        
     }
 
     public static Paciente getPacienteSelecionado() {
-        return (Paciente) JSFHelper.getSession().getAttribute("PACIENTE_SELECIONADO");
+        return (Paciente) Configurar.getInstance().getConfiguracao().getPacienteSelecionado();
     }
 
     public static Paciente getPacienteLogado() {
-        return (Paciente) JSFHelper.getSession().getAttribute("PACIENTE_LOGADO");
+        return (Paciente) Configurar.getInstance().getConfiguracao().getPacienteLogado();
     }
 
     public List<Paciente> listByUsuario(Usuario usuario) {

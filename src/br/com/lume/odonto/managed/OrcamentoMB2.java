@@ -19,6 +19,7 @@ import org.primefaces.event.CloseEvent;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.bo.DominioBO;
 import br.com.lume.odonto.bo.LancamentoBO;
 import br.com.lume.odonto.bo.OrcamentoBO;
@@ -84,7 +85,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
         planoTratamentoBO = new PlanoTratamentoBO();
         planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
         this.setClazz(Orcamento.class);
-        Empresa empresalogada = EmpresaBO.getEmpresaLogada();
+        Empresa empresalogada = Configurar.getInstance().getConfiguracao().getEmpresaLogada();
         nomeClinica = empresalogada.getEmpStrNme() != null ? empresalogada.getEmpStrNme() : "";
         endTelefoneClinica = (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() + " - " : "") + (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() + "/" : "") + (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() + " - " : "") + (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
         try {

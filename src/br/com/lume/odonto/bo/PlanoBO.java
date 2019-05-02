@@ -8,6 +8,7 @@ import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Plano;
 import br.com.lume.security.bo.EmpresaBO;
@@ -37,7 +38,7 @@ public class PlanoBO extends BO<Plano> {
 
     public Plano findByUsuarioLogado() {
         try {
-            return this.find(EmpresaBO.getEmpresaLogada().getIdPlano());
+            return this.find(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getIdPlano());
         } catch (Exception e) {
             this.log.error(e);
         }

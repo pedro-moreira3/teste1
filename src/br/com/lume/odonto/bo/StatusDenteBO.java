@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.util.Status;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.StatusDente;
 import br.com.lume.security.bo.EmpresaBO;
@@ -53,7 +54,7 @@ public class StatusDenteBO extends BO<StatusDente> {
     public List<StatusDente> listAllTemplate() {
         try {
             long idEmpresaTemplate = Empresa.ID_EMPRESA_TEMPLATE;
-            long idEmpresaLogada = EmpresaBO.getEmpresaLogada().getEmpIntCod();
+            long idEmpresaLogada = Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpIntCod();
             String jpql = "select p from StatusDente p where p.excluido='N' and (p.idEmpresa=" + idEmpresaTemplate + " or p.idEmpresa=" + idEmpresaLogada + ") order by p.descricao";
             Query q = this.getDao().createQuery(jpql);
             List<StatusDente> status = this.list(q);
@@ -66,7 +67,7 @@ public class StatusDenteBO extends BO<StatusDente> {
 
     public List<StatusDente> listByEmpresa() {
         try {
-            String jpql = "select p from StatusDente p where p.excluido='N' and p.idEmpresa=" + EmpresaBO.getEmpresaLogada().getEmpIntCod();
+            String jpql = "select p from StatusDente p where p.excluido='N' and p.idEmpresa=" + Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpIntCod();
             Query q = this.getDao().createQuery(jpql);
             List<StatusDente> status = this.list(q);
             return status;
