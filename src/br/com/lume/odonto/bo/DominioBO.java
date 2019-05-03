@@ -17,7 +17,7 @@ import br.com.lume.common.util.Status;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Dominio;
-import br.com.lume.security.bo.EmpresaBO;
+//import br.com.lume.security.bo.EmpresaBO;
 
 public class DominioBO extends BO<Dominio> {
 

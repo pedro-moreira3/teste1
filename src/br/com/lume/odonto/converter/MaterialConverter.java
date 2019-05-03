@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.MaterialBO;
+import br.com.lume.material.MaterialSingleton;
 import br.com.lume.odonto.entity.Material;
 
 @FacesConverter(forClass = Material.class, value = "material")
@@ -21,7 +21,7 @@ public class MaterialConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new MaterialBO().find(id);
+                return MaterialSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

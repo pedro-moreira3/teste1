@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.DadosBasicoBO;
+import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.odonto.entity.DadosBasico;
 
 @FacesConverter(forClass = DadosBasico.class, value = "dadosBasico")
@@ -20,7 +20,7 @@ public class DadosBasicoConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new DadosBasicoBO().find(id);
+                return DadosBasicoSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

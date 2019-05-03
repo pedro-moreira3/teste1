@@ -7,8 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.TipoCategoriaBO;
 import br.com.lume.odonto.entity.TipoCategoria;
+import br.com.lume.tipoCategoria.TipoCategoriaSingleton;
 
 @FacesConverter(forClass = TipoCategoria.class, value = "tipocategoria")
 public class TipoCategoriaConverter implements Converter, Serializable {
@@ -20,7 +20,7 @@ public class TipoCategoriaConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new TipoCategoriaBO().find(id);
+                return TipoCategoriaSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

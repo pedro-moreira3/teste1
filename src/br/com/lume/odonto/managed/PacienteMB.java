@@ -1,6 +1,7 @@
 package br.com.lume.odonto.managed;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -14,6 +15,7 @@ import java.util.Map;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import javax.imageio.stream.FileImageOutputStream;
 
 import org.apache.log4j.Logger;
 import org.primefaces.context.RequestContext;
@@ -184,13 +186,29 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void actionSalvarFoto(ActionEvent event) {
         try {
-            this.getEntity().setNomeImagem(Utils.handleFoto(data, this.getEntity().getNomeImagem()));
+            this.getEntity().setNomeImagem(handleFoto(data, this.getEntity().getNomeImagem()));
         } catch (Exception e) {
             log.error("Erro no actionSalvarFoto", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
 
+    public static String handleFoto(byte[] data, String nomeImagem) throws Exception {
+        File targetFile = null;
+        if (nomeImagem != null && !nomeImagem.equals("")) {
+            targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
+        }
+
+        if (targetFile == null || !targetFile.exists()) {
+            nomeImagem = Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa() + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
+            targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
+        }
+        FileImageOutputStream imageOutput = new FileImageOutputStream(targetFile);
+        imageOutput.write(data, 0, data.length);
+        imageOutput.close();
+        return targetFile.getName();
+    }
+    
     public void onCapture(CaptureEvent captureEvent) {
         data = captureEvent.getData();
         scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));

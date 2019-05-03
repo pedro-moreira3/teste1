@@ -28,9 +28,12 @@ import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.exception.CpfCnpjDuplicadoException;
 import br.com.lume.odonto.util.OdontoMensagens;
-import br.com.lume.security.bo.PerfilBO;
-import br.com.lume.security.bo.SistemaBO;
-import br.com.lume.security.bo.UsuarioBO;
+import br.com.lume.security.PerfilSingleton;
+import br.com.lume.security.SistemaSingleton;
+import br.com.lume.security.UsuarioSingleton;
+//import br.com.lume.security.bo.PerfilBO;
+//import br.com.lume.security.bo.SistemaBO;
+//import br.com.lume.security.bo.UsuarioBO;
 import br.com.lume.security.entity.Perfil;
 import br.com.lume.security.entity.Usuario;
 
@@ -158,10 +161,10 @@ public class PacienteBO extends BO<Paciente> {
         usuario.setUsuStrEml(paciente.getDadosBasico().getEmail());
         usuario.setUsuStrLogin(paciente.getDadosBasico().getEmail());
         usuario.setUsuChaCpf(paciente.getDadosBasico().getDocumento());
-        Perfil perfilbyDescricao = new PerfilBO().getPerfilbyDescricaoAndSistema(OdontoPerfil.PACIENTE, new SistemaBO().getSistemaBySigla("ODONTO"));
+        Perfil perfilbyDescricao = PerfilSingleton.getInstance().getBo().getPerfilbyDescricaoAndSistema(OdontoPerfil.PACIENTE, SistemaSingleton.getInstance().getBo().getSistemaBySigla("ODONTO"));
         usuario.setPerfisUsuarios(Arrays.asList(perfilbyDescricao));
         usuario.setUsuIntDiastrocasenha(999);
-        new UsuarioBO().persistUsuarioExterno(usuario);
+        UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario);
     }
 
     public List<Paciente> listSugestoesComplete(String nome) {

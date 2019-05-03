@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Plano;
-import br.com.lume.security.bo.EmpresaBO;
+//import br.com.lume.security.bo.EmpresaBO;
 
 public class PlanoBO extends BO<Plano> {
 

@@ -29,16 +29,23 @@ import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.odonto.bo.DocumentoBO;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.EspecialidadeBO;
-import br.com.lume.odonto.bo.FilialBO;
-import br.com.lume.odonto.bo.ItemBO;
-import br.com.lume.odonto.bo.KitBO;
+import br.com.lume.documento.DocumentoSingleton;
+import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.especialidade.EspecialidadeSingleton;
+import br.com.lume.filial.FilialSingleton;
+import br.com.lume.item.ItemSingleton;
+import br.com.lume.kit.KitSingleton;
 import br.com.lume.odonto.bo.PerguntaBO;
-import br.com.lume.odonto.bo.ProcedimentoBO;
-import br.com.lume.odonto.bo.ProcedimentoKitBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+//import br.com.lume.odonto.bo.DocumentoBO;
+//import br.com.lume.odonto.bo.DominioBO;
+//import br.com.lume.odonto.bo.EspecialidadeBO;
+//import br.com.lume.odonto.bo.FilialBO;
+//import br.com.lume.odonto.bo.ItemBO;
+//import br.com.lume.odonto.bo.KitBO;
+//import br.com.lume.odonto.bo.PerguntaBO;
+//import br.com.lume.odonto.bo.ProcedimentoBO;
+//import br.com.lume.odonto.bo.ProcedimentoKitBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Especialidade;
@@ -49,9 +56,16 @@ import br.com.lume.odonto.entity.ProfissionalFilial;
 import br.com.lume.odonto.exception.DataNascimentoException;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
-import br.com.lume.security.bo.EmpresaBO;
-import br.com.lume.security.bo.PerfilBO;
-import br.com.lume.security.bo.UsuarioBO;
+import br.com.lume.pergunta.PerguntaSingleton;
+import br.com.lume.procedimento.ProcedimentoSingleton;
+import br.com.lume.procedimentoKit.ProcedimentoKitSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.security.EmpresaSingleton;
+import br.com.lume.security.PerfilSingleton;
+import br.com.lume.security.UsuarioSingleton;
+//import br.com.lume.security.bo.EmpresaBO;
+//import br.com.lume.security.bo.PerfilBO;
+//import br.com.lume.security.bo.UsuarioBO;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.entity.Usuario;
 
@@ -65,13 +79,13 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
     private Profissional profissional = new Profissional();
 
-    private ProfissionalBO profissionalBO;
+   // private ProfissionalBO profissionalBO;
 
     private Filial filial;
 
     private boolean skip;
 
-    private FilialBO filialBO;
+  //  private FilialBO filialBO;
 
     private Usuario usuario;
 
@@ -81,17 +95,17 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
     private List<Dominio> dominios;
 
-    private EspecialidadeBO especialidadeBO;
+  // private EspecialidadeBO especialidadeBO;
 
-    private ProcedimentoBO procedimentoBO;
+   // private ProcedimentoBO procedimentoBO;
 
-    private UsuarioBO usuarioBO;
+  //  private UsuarioBO usuarioBO;
 
-    private PerfilBO perfilBO;
+  //  private PerfilBO perfilBO;
 
-    private DominioBO dominioBO;
+  //  private DominioBO dominioBO;
 
-    private EmpresaBO empresaBO;
+ //   private EmpresaBO empresaBO;
 
     private boolean dadosClinica;
 
@@ -100,16 +114,16 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
     private boolean pnInicialVisivel;
 
     public CadastroWebMB() {
-        super(new EmpresaBO());
+        super(EmpresaSingleton.getInstance().getBo());
         this.setClazz(Empresa.class);
-        filialBO = new FilialBO();
-        profissionalBO = new ProfissionalBO();
-        especialidadeBO = new EspecialidadeBO();
-        procedimentoBO = new ProcedimentoBO();
-        usuarioBO = new UsuarioBO();
-        perfilBO = new PerfilBO();
-        dominioBO = new DominioBO();
-        empresaBO = new EmpresaBO();
+     //   filialBO = new FilialBO();
+      //  profissionalBO = new ProfissionalBO();
+      //  especialidadeBO = new EspecialidadeBO();
+     //   procedimentoBO = new ProcedimentoBO();
+     //   usuarioBO = new UsuarioBO();
+    //    perfilBO = new PerfilBO();
+    //    dominioBO = new DominioBO();
+    //    empresaBO = new EmpresaBO();
         pnInicialVisivel = true;
     }
 
@@ -121,9 +135,9 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 //                pnInicialVisivel = false;
 //                return "";
 //            }
-            Usuario usu = usuarioBO.findByEmail(profissional.getDadosBasico().getEmail());
+            Usuario usu = UsuarioSingleton.getInstance().getBo().findByEmail(profissional.getDadosBasico().getEmail());
             if (usu != null) {
-                usuarioBO.resetSenha(usu);
+                UsuarioSingleton.getInstance().getBo().resetSenha(usu);
                 this.addError("Já existe um cadastro com este email, estamos renviando a senha para você!", "");
                 pnInicialVisivel = false;
                 return "";
@@ -138,7 +152,7 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
             this.getEntity().setEmpChaIp(JSFHelper.getRequest().getRemoteAddr());
             c.add(Calendar.MONTH, 1);
             this.getEntity().setEmpDtmExpiracao(c.getTime());
-            ((EmpresaBO) this.getbO()).persist(this.getEntity());
+            EmpresaSingleton.getInstance().getBo().persist(this.getEntity());
             cadastrarDadosTemplate(getEntity());
             this.actionPersistFilial(null);
             this.actionPersistProfissional(null);
@@ -175,7 +189,7 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
         JSFHelper.redirect("login.jsf");
     }
 
-    public void actionPersistFilial(ActionEvent event) throws BusinessException, TechnicalException {
+    public void actionPersistFilial(ActionEvent event) throws Exception {
         DadosBasico dadosBasico = new DadosBasico();
         dadosBasico.setNome(this.getEntity().getEmpStrNme());
         dadosBasico.setDocumento(this.getEntity().getEmpChaCnpj());
@@ -191,7 +205,7 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
         filial.setDadosBasico(dadosBasico);
         filial.setIdEmpresa(this.getEntity().getEmpIntCod());
         filial.setDataCadastro(Calendar.getInstance().getTime());
-        filialBO.persist(filial);
+        FilialSingleton.getInstance().getBo().persist(filial);
     }
 
     public void actionPersistProfissional(ActionEvent event) throws BusinessException, TechnicalException, UsuarioDuplicadoException, ServidorEmailDesligadoException, Exception {
@@ -206,20 +220,20 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
         profissional.setPerfil(OdontoPerfil.ADMINISTRADOR);
         profissional.setProfissionalFilials(Arrays.asList(new ProfissionalFilial(profissional, filial)));
         profissional.setTempoConsulta(30);
-        profissionalBO.persist(profissional);
+        ProfissionalSingleton.getInstance().getBo().persist(profissional);
     }
 
     public void actionPersistUsuarioLumeSecurity(ActionEvent event) throws UsuarioDuplicadoException, ServidorEmailDesligadoException, Exception {
-        usuario = usuarioBO.findUsuarioByLogin(profissional.getDadosBasico().getEmail().toUpperCase());
+        usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(profissional.getDadosBasico().getEmail().toUpperCase());
         if (usuario == null) {
             usuario = new Usuario();
             usuario.setUsuStrNme(profissional.getDadosBasico().getNome());
             usuario.setUsuStrEml(profissional.getDadosBasico().getEmail());
             usuario.setUsuStrLogin(profissional.getDadosBasico().getEmail());
-            usuario.setPerfisUsuarios(Arrays.asList(perfilBO.getPerfilbyDescricaoAndSistema(OdontoPerfil.ADMINISTRADOR, this.getLumeSecurity().getSistemaAtual())));
+            usuario.setPerfisUsuarios(Arrays.asList(PerfilSingleton.getInstance().getBo().getPerfilbyDescricaoAndSistema(OdontoPerfil.ADMINISTRADOR, this.getLumeSecurity().getSistemaAtual())));
             usuario.setUsuIntDiastrocasenha(999);
             usuario.setUsuChaTutorial("S");
-            usuarioBO.persistUsuarioExterno(usuario);
+            UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario);
         } else {
             Map<String, String> valores = new HashMap<>();
             valores.put("#nome", usuario.getUsuStrNme());
@@ -231,42 +245,42 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
     public void cadastrarDadosTemplate(Empresa destino) {
         try {
-            EspecialidadeBO especialidadeBO = new EspecialidadeBO();
-            ItemBO itemBO = new ItemBO();
-            ProcedimentoBO procedimentoBO = new ProcedimentoBO();
-            PerguntaBO perguntaBO = new PerguntaBO();
-            KitBO kitBO = new KitBO();
-            ProcedimentoKitBO procedimentoKitBO = new ProcedimentoKitBO();
-            DocumentoBO documentoBO = new DocumentoBO();
+          //  EspecialidadeBO especialidadeBO = new EspecialidadeBO();
+          // ItemBO itemBO = new ItemBO();
+           // ProcedimentoBO procedimentoBO = new ProcedimentoBO();
+          //  PerguntaBO perguntaBO = new PerguntaBO();
+         //   KitBO kitBO = new KitBO();
+          //  ProcedimentoKitBO procedimentoKitBO = new ProcedimentoKitBO();
+          //  DocumentoBO documentoBO = new DocumentoBO();
 
-            EmpresaBO empresaBO = new EmpresaBO();
-            Empresa modelo = empresaBO.find(Long.parseLong(OdontoMensagens.getMensagem("empresa.modelo")));
+          //  EmpresaBO empresaBO = new EmpresaBO();
+            Empresa modelo = EmpresaSingleton.getInstance().getBo().find(Long.parseLong(OdontoMensagens.getMensagem("empresa.modelo")));
 
-            especialidadeBO.clonarDadosEmpresaDefault(modelo, destino);
+            EspecialidadeSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Cadastrou Especialidade!");
             addInfo("Cadastrou Especialidade!", "");
 
-            itemBO.clonarDadosEmpresaDefault(modelo, destino);
+            ItemSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Cadastrou Itens!");
             addInfo("Cadastrou Itens!", "");
 
-            procedimentoBO.clonarDadosEmpresaDefault(modelo, destino);
+            ProcedimentoSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Cadastrou Procedimentos!");
             addInfo("Cadastrou Procedimentos!", "");
 
-            perguntaBO.clonarDadosEmpresaDefault(modelo, destino);
+            PerguntaSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Cadastrou Pergunta/Resposta!");
             addInfo("Cadastrou Pergunta/Resposta!", "");
 
-            kitBO.clonarDadosEmpresaDefault(modelo, destino);
+            KitSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Cadastrou Kits!");
             addInfo("Cadastrou Kits!", "");
 
-            procedimentoKitBO.clonarDadosEmpresaDefault(modelo, destino);
+            ProcedimentoKitSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Procedimento/Kits Kits!");
             addInfo("Cadastrou Procedimento/Kits Kits!", "");
 
-            documentoBO.clonarDadosEmpresaDefault(modelo, destino);
+            DocumentoSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Documentos!");
             addInfo("Cadastrou Documentos!", "");
 
@@ -325,7 +339,7 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
     public List<Dominio> getDominios() {
         try {
-            dominios = dominioBO.listByObjetoAndTipo("profissional", "prefixo");
+            dominios = DominioSingleton.getInstance().getBo().listByObjetoAndTipo("profissional", "prefixo");
             for (Dominio dominio : dominios) {
                 if (dominio.getNome().length() > 5) {
                     dominio.setNome(dominio.getNome().substring(0, 5));
@@ -351,13 +365,13 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
         this.profissional = profissional;
     }
 
-    public ProfissionalBO getProfissionalBO() {
-        return profissionalBO;
-    }
+   // public ProfissionalBO getProfissionalBO() {
+   //     return profissionalBO;
+   // }
 
-    public void setProfissionalBO(ProfissionalBO profissionalBO) {
-        this.profissionalBO = profissionalBO;
-    }
+   // public void setProfissionalBO(ProfissionalBO profissionalBO) {
+   //     this.profissionalBO = profissionalBO;
+   // }
 
     public Filial getFilial() {
         return filial;
@@ -367,13 +381,13 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
         this.filial = filial;
     }
 
-    public FilialBO getFilialBO() {
-        return filialBO;
-    }
+   // public FilialBO getFilialBO() {
+   //     return filialBO;
+   // }
 
-    public void setFilialBO(FilialBO filialBO) {
-        this.filialBO = filialBO;
-    }
+  //  public void setFilialBO(FilialBO filialBO) {
+   //     this.filialBO = filialBO;
+  //  }
 
     public Usuario getUsuario() {
         return usuario;

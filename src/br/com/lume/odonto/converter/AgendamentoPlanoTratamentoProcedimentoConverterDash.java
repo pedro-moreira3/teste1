@@ -7,12 +7,12 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.AgendamentoBO;
-import br.com.lume.odonto.bo.AgendamentoPlanoTratamentoProcedimentoBO;
-import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
+import br.com.lume.agendamento.AgendamentoSingleton;
+import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 
 @FacesConverter(forClass = AgendamentoPlanoTratamentoProcedimento.class, value = "agendamentoPlanoDash")
 public class AgendamentoPlanoTratamentoProcedimentoConverterDash implements Converter, Serializable {
@@ -26,13 +26,13 @@ public class AgendamentoPlanoTratamentoProcedimentoConverterDash implements Conv
                 String[] split = value.split("\\|");
                 if (!split[0].equals("0")) {
                     final Long id = Long.parseLong(split[0]);
-                    return new AgendamentoPlanoTratamentoProcedimentoBO().find(id);
+                    return  AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(id);
                 } else {
                     Agendamento ag = null;
                     if (!split[1].equals("0")) {
-                        ag = new AgendamentoBO().find(Long.parseLong(split[1]));
+                        ag = AgendamentoSingleton.getInstance().getBo().find(Long.parseLong(split[1]));
                     }
-                    PlanoTratamentoProcedimento ptp = new PlanoTratamentoProcedimentoBO().find(Long.parseLong(split[2]));
+                    PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(Long.parseLong(split[2]));
                     return new AgendamentoPlanoTratamentoProcedimento(ptp, ag);
                 }
             }

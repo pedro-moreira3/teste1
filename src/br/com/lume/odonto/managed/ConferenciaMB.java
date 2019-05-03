@@ -15,12 +15,18 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.odonto.bo.ConferenciaBO;
-import br.com.lume.odonto.bo.ConferenciaMaterialBO;
-import br.com.lume.odonto.bo.MaterialBO;
-import br.com.lume.odonto.bo.MaterialEmprestadoBO;
-import br.com.lume.odonto.bo.MaterialLogBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.conferencia.ConferenciaSingleton;
+import br.com.lume.conferenciaMaterial.ConferenciaMaterialSingleton;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.material.MaterialSingleton;
+import br.com.lume.materialEmprestado.MaterialEmprestadoSingleton;
+import br.com.lume.materialLog.MaterialLogSingleton;
+//import br.com.lume.odonto.bo.ConferenciaBO;
+//import br.com.lume.odonto.bo.ConferenciaMaterialBO;
+//import br.com.lume.odonto.bo.MaterialBO;
+//import br.com.lume.odonto.bo.MaterialEmprestadoBO;
+//import br.com.lume.odonto.bo.MaterialLogBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Conferencia;
 import br.com.lume.odonto.entity.ConferenciaMaterial;
 import br.com.lume.odonto.entity.Material;
@@ -47,25 +53,25 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
 
     private String conferencia;
 
-    private ConferenciaBO conferenciaBO;
+    //private ConferenciaBO conferenciaBO;
 
-    private MaterialBO materialBO;
+    //private MaterialBO materialBO;
 
     private String descricao;
 
-    private ConferenciaMaterialBO conferenciaMaterialBO;
+    //private ConferenciaMaterialBO conferenciaMaterialBO;
 
-    private MaterialLogBO materialLogBO = new MaterialLogBO();
+    //private MaterialLogBO materialLogBO = new MaterialLogBO();
 
-    private MaterialEmprestadoBO materialEmprestadoBO = new MaterialEmprestadoBO();
+    //private MaterialEmprestadoBO materialEmprestadoBO = new MaterialEmprestadoBO();
 
     private List<MaterialEmprestado> materiaisEmprestado;
 
     public ConferenciaMB() {
-        super(new ConferenciaBO());
-        conferenciaBO = new ConferenciaBO();
-        conferenciaMaterialBO = new ConferenciaMaterialBO();
-        materialBO = new MaterialBO();
+        super(ConferenciaSingleton.getInstance().getBo());
+       // conferenciaBO = new ConferenciaBO();
+      //  conferenciaMaterialBO = new ConferenciaMaterialBO();
+      //  materialBO = new MaterialBO();
         this.geraLista();
         this.setClazz(Conferencia.class);
         if (conferencias != null && !conferencias.isEmpty()) {
@@ -80,9 +86,9 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
     public void actionPersistConferencia(ActionEvent event) {
         try {
             this.getEntity().setData(new Date());
-            this.getEntity().setProfissional(ProfissionalBO.getProfissionalLogado());
+            this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
             this.getEntity().setAlteracao(Status.SIM);
-            this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
             this.getbO().persist(this.getEntity());
             this.geraLista();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -97,17 +103,17 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
     public void actionPersist(ActionEvent event) {
         try {
             if (conferencias != null && !conferencias.isEmpty()) {
-                materialLogBO.persist(new MaterialLog(null, null, material, ProfissionalBO.getProfissionalLogado(), conferenciaMaterial.getValorAlterado().subtract(material.getQuantidadeAtual()),
+                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, material, Configurar.getInstance().getConfiguracao().getProfissionalLogado(), conferenciaMaterial.getValorAlterado().subtract(material.getQuantidadeAtual()),
                         conferenciaMaterial.getValorAlterado(), MaterialLog.AJUSTE_MATERIAL));
                 conferenciaMaterial.setConferencia(conferencias.get(0));
-                conferenciaMaterial.setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+                conferenciaMaterial.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
                 conferenciaMaterial.setMaterial(material);
                 conferenciaMaterial.setValorOriginal(material.getQuantidadeAtual());
                 conferenciaMaterial.setDataCadastro(Calendar.getInstance().getTime());
-                conferenciaMaterialBO.persist(conferenciaMaterial);
+                ConferenciaMaterialSingleton.getInstance().getBo().persist(conferenciaMaterial);
                 material.setQuantidadeAtual(conferenciaMaterial.getValorAlterado());
                 material.setQuantidadeTotal(conferenciaMaterial.getValorAlterado());
-                materialBO.persist(material);
+                MaterialSingleton.getInstance().getBo().persist(material);
                 String motivo = conferenciaMaterial.getMotivo();
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 this.actionNew(event);
@@ -124,8 +130,8 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
     public void carregaMaterialEmprestado(Material material) {
         try {
             this.material = material;
-            materialBO.carregarQuantidadeEmprestada(material);
-            materiaisEmprestado = materialEmprestadoBO.listMateriaisEmprestado(material);
+            MaterialSingleton.getInstance().getBo().carregarQuantidadeEmprestada(material);
+            materiaisEmprestado = MaterialEmprestadoSingleton.getInstance().getBo().listMateriaisEmprestado(material);
             System.out.println(materiaisEmprestado);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -135,7 +141,7 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
 
     public void pesquisa() {
         try {
-            conferenciasMaterial = conferenciaMaterialBO.listByConferencia(this.getEntity());
+            conferenciasMaterial = ConferenciaMaterialSingleton.getInstance().getBo().listByConferencia(this.getEntity());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -144,8 +150,8 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
 
     private void geraLista() {
         try {
-            conferencias = conferenciaBO.listByEmpresa();
-            materiais = materialBO.listAtivosByEmpresa();
+            conferencias = ConferenciaSingleton.getInstance().getBo().listByEmpresa();
+            materiais = MaterialSingleton.getInstance().getBo().listAtivosByEmpresa();
             //materialBO.carregarQuantidadeEmprestada(materiais);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

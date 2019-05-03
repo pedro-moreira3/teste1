@@ -15,13 +15,14 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.util.Status;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.TagDocumento;
-import br.com.lume.security.bo.EmpresaBO;
+import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 
 public class DocumentoBO extends BO<Documento> {
@@ -129,7 +130,7 @@ public class DocumentoBO extends BO<Documento> {
 
     private String replaceDadosClinica(String documento) {
         try {
-            Empresa empresa = new EmpresaBO().find(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+            Empresa empresa = EmpresaSingleton.getInstance().getBo().find(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
             documento = documento.replaceAll("#clinica_nome", empresa.getEmpStrNme() != null ? empresa.getEmpStrNme() : "");
             documento = documento.replaceAll("#clinica_cnpj", empresa.getEmpChaCnpj() != null ? empresa.getEmpChaCnpj() : "");
             documento = documento.replaceAll("#clinica_endereco", empresa.getEmpStrEndereco() != null ? empresa.getEmpStrEndereco() : "");

@@ -9,7 +9,7 @@ import javax.faces.convert.FacesConverter;
 
 import org.apache.log4j.Logger;
 
-import br.com.lume.odonto.bo.LancamentoBO;
+import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Lancamento;
 
 @FacesConverter(forClass = Lancamento.class, value = "lancamento")
@@ -19,14 +19,12 @@ public class LancamentoConverter implements Converter, Serializable {
 
     private Logger log = Logger.getLogger(LancamentoConverter.class);
 
-    LancamentoBO lancamentoBO = new LancamentoBO();
-
     @Override
     public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
         try {
             if (value != null && !value.trim().isEmpty() && value.matches(".*\\d.*")) {
                 final Long cod = Long.parseLong(value);
-                return this.lancamentoBO.find(cod);
+                return LancamentoSingleton.getInstance().getBo().find(cod);
             }
         } catch (Exception e) {
             this.log.error("Erro no getAsObject", e);

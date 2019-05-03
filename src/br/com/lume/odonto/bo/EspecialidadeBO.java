@@ -14,7 +14,8 @@ import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.util.Status;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Especialidade;
-import br.com.lume.security.bo.EmpresaBO;
+import br.com.lume.security.EmpresaSingleton;
+//import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 
 public class EspecialidadeBO extends BO<Especialidade> {
@@ -145,7 +146,7 @@ public class EspecialidadeBO extends BO<Especialidade> {
 
     public static void main(String[] args) {
         try {
-            new EspecialidadeBO().clonarDadosEmpresaDefault(new EmpresaBO().find(41L), new EmpresaBO().find(61L));
+            new EspecialidadeBO().clonarDadosEmpresaDefault(EmpresaSingleton.getInstance().getBo().find(41L), EmpresaSingleton.getInstance().getBo().find(61L));
         } catch (Exception e) {
             e.printStackTrace();
         }

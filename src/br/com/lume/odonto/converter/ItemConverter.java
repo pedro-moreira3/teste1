@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.ItemBO;
+import br.com.lume.item.ItemSingleton;
 import br.com.lume.odonto.entity.Item;
 
 @FacesConverter(forClass = Item.class, value = "item")
@@ -21,7 +21,7 @@ public class ItemConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new ItemBO().find(id);
+                return ItemSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

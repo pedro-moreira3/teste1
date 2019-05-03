@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.DescontoBO;
+import br.com.lume.desconto.DescontoSingleton;
 import br.com.lume.odonto.entity.Desconto;
 
 @FacesConverter(forClass = Desconto.class, value = "desconto")
@@ -20,7 +20,7 @@ public class DescontoConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new DescontoBO().find(id);
+                return DescontoSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

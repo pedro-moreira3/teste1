@@ -9,6 +9,11 @@ import br.com.lume.odonto.entity.DentePeriograma;
 
 public class DentePeriogramaBO extends BO<DentePeriograma> {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3322552456214769654L;
+
     public DentePeriogramaBO() {
         super(PersistenceUnitName.ODONTO);
         this.setClazz(DentePeriograma.class);

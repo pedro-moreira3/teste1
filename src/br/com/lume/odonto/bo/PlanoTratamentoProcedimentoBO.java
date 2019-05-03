@@ -33,7 +33,7 @@ import br.com.lume.odonto.entity.ProfissionalEspecialidade;
 import br.com.lume.odonto.entity.RepasseItem;
 import br.com.lume.odonto.entity.RepasseLancamento;
 import br.com.lume.odonto.entity.RepasseProfissional;
-import br.com.lume.security.bo.EmpresaBO;
+//import br.com.lume.security.bo.EmpresaBO;
 
 public class PlanoTratamentoProcedimentoBO extends BO<PlanoTratamentoProcedimento> {
 

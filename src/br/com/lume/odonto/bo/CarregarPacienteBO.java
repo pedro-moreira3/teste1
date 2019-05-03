@@ -13,8 +13,9 @@ import org.apache.log4j.Logger;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Paciente;
-import br.com.lume.security.bo.EmpresaBO;
-import br.com.lume.security.bo.UsuarioBO;
+import br.com.lume.security.UsuarioSingleton;
+//import br.com.lume.security.bo.EmpresaBO;
+//import br.com.lume.security.bo.UsuarioBO;
 import br.com.lume.security.entity.Usuario;
 
 public class CarregarPacienteBO extends BO<Paciente> {
@@ -32,7 +33,7 @@ public class CarregarPacienteBO extends BO<Paciente> {
         LineIterator it = IOUtils.lineIterator(inputStream, "UTF-8");
         List<String> erros = new ArrayList<>();
         PacienteBO pacienteBO = new PacienteBO();
-        UsuarioBO usuarioBO = new UsuarioBO();
+       // UsuarioBO usuarioBO = new UsuarioBO();
         int linha = 1;
         while (it.hasNext()) {
             String erro = "";
@@ -119,13 +120,13 @@ public class CarregarPacienteBO extends BO<Paciente> {
                             pacienteBO.persist(pac);
 
                             if (criaUsuario != null && criaUsuario.equals("S") && email != null && !email.equals("")) {
-                                Usuario usuario = usuarioBO.findUsuarioByLogin(pac.getDadosBasico().getEmail().toUpperCase());
+                                Usuario usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(pac.getDadosBasico().getEmail().toUpperCase());
                                 if (pac.getId() == null || pac.getIdUsuario() == null) {
                                     if (usuario == null || usuario.getUsuIntCod() == 0) {
                                         usuario = new Usuario();
                                         pacienteBO.criarUsuario(usuario, pac);
                                     } else {
-                                        usuarioBO.enviarEmailPacienteComSenhaPadrao(usuario, "[A mesma utilizada.]");
+                                        UsuarioSingleton.getInstance().getBo().enviarEmailPacienteComSenhaPadrao(usuario, "[A mesma utilizada.]");
                                     }
                                 }
                                 if (usuario != null && usuario.getUsuIntCod() != 0) {

@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.GraficoBO;
+import br.com.lume.grafico.GraficoSingleton;
 import br.com.lume.odonto.entity.Grafico;
 
 @FacesConverter(forClass = Grafico.class, value = "grafico")
@@ -21,7 +21,7 @@ public class GraficoConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new GraficoBO().find(id);
+                return GraficoSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

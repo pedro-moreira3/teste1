@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.CIDBO;
+import br.com.lume.cid.CidSingleton;
 import br.com.lume.odonto.entity.CID;
 
 @FacesConverter(forClass = CID.class, value = "cid")
@@ -19,7 +19,7 @@ public class CIDConverter implements Converter, Serializable {
     public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
         try {
             if (value != null && !value.trim().isEmpty()) {
-                CID cid = (new CIDBO().find(value));
+                CID cid = CidSingleton.getInstance().getBo().find(value);
                 return cid;
             }
         } catch (Exception e) {

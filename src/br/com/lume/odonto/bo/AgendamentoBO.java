@@ -23,7 +23,6 @@ import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.odonto.util.OdontoMensagens;
-import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 
 public class AgendamentoBO extends BO<Agendamento> {

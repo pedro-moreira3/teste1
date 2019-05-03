@@ -7,8 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.profissional.ProfissionalSingleton;
 
 @FacesConverter(forClass = Profissional.class, value = "profissional")
 public class ProfissionalConverter implements Converter, Serializable {
@@ -21,7 +21,7 @@ public class ProfissionalConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new ProfissionalBO().find(id);
+                return ProfissionalSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

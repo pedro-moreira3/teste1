@@ -7,7 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.KitBO;
+import br.com.lume.kit.KitSingleton;
+//import br.com.lume.odonto.bo.KitBO;
 import br.com.lume.odonto.entity.Kit;
 
 @FacesConverter(forClass = Kit.class, value = "kit")
@@ -21,7 +22,7 @@ public class KitConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new KitBO().find(id);
+                return KitSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

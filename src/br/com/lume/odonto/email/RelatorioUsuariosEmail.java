@@ -11,7 +11,7 @@ import org.quartz.JobExecutionException;
 
 import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.RelatorioGerencialBO;
+import br.com.lume.relatorioGerencial.RelatorioGerencialSingleton;
 
 public class RelatorioUsuariosEmail implements Job {
 
@@ -33,10 +33,9 @@ public class RelatorioUsuariosEmail implements Job {
             if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY) {
                 String emails = "alvaro@consultoriolegal.com.br;joao.serra@lumetec.com.br;ariel.pires@lumetec.com.br;ricardo.poncio@lumetec.com.br;rogerio.nagata@lumetec.com.br";
 
-                Map<String, String> valores = new HashMap<>();
-                RelatorioGerencialBO bo = new RelatorioGerencialBO();
+                Map<String, String> valores = new HashMap<>();             
 
-                valores.put("#relatorio", bo.gerarRelatorioUsuario());
+                valores.put("#relatorio", RelatorioGerencialSingleton.getInstance().getBo().gerarRelatorioUsuario());
                 valores.put("#cliente", "");
 
                 EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", emails, "Intelidente - Resumo semanal de usuários ", EnviaEmail.buscarTemplate(valores, EnviaEmail.RESUMO_USUARIO),

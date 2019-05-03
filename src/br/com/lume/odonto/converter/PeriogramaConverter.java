@@ -7,8 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.PeriogramaBO;
 import br.com.lume.odonto.entity.Periograma;
+import br.com.lume.periograma.PeriogramaSingleton;
 
 @FacesConverter(forClass = Periograma.class, value = "periograma")
 public class PeriogramaConverter implements Converter, Serializable {
@@ -21,7 +21,7 @@ public class PeriogramaConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Integer id = Integer.parseInt(value);
-                return new PeriogramaBO().find(id);
+                return PeriogramaSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

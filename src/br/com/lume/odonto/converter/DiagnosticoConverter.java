@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.DiagnosticoOrtodonticoBO;
+import br.com.lume.diagnosticoOrtodontico.DiagnosticoOrtodonticoSingleton;
 import br.com.lume.odonto.entity.DiagnosticoOrtodontico;
 import br.com.lume.odonto.entity.Paciente;
 
@@ -22,7 +22,7 @@ public class DiagnosticoConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new DiagnosticoOrtodonticoBO().find(id);
+                return DiagnosticoOrtodonticoSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

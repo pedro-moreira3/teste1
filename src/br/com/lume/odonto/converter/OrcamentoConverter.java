@@ -7,8 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.OrcamentoBO;
 import br.com.lume.odonto.entity.Orcamento;
+import br.com.lume.orcamento.OrcamentoSingleton;
 
 @FacesConverter(forClass = Orcamento.class, value = "orcamento")
 public class OrcamentoConverter implements Converter, Serializable {
@@ -20,7 +20,7 @@ public class OrcamentoConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new OrcamentoBO().find(id);
+                return OrcamentoSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

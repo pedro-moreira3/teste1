@@ -6,13 +6,16 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
+import br.com.lume.certificacao.CertificacaoSingleton;
+import br.com.lume.certificado.CertificadoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.odonto.bo.CertificacaoBO;
-import br.com.lume.odonto.bo.CertificadoBO;
-import br.com.lume.odonto.bo.UserBO;
+//import br.com.lume.odonto.bo.CertificacaoBO;
+//import br.com.lume.odonto.bo.CertificadoBO;
+//import br.com.lume.odonto.bo.UserBO;
 import br.com.lume.odonto.entity.Certificacao;
 import br.com.lume.odonto.entity.Certificado;
 import br.com.lume.odonto.entity.User;
+import br.com.lume.user.UserSingleton;
 
 @SuppressWarnings("serial")
 @ManagedBean(name = "pc_CertificacaoView")
@@ -24,17 +27,17 @@ public class CertificacaoMB extends LumeManagedBean<Certificacao> {
      */
     private static final long serialVersionUID = -9180417577871273017L;
 
-    private CertificacaoBO certificacaoBO;
+ //   private CertificacaoBO certificacaoBO;
 
-    private UserBO userBO;
+  //  private UserBO userBO;
 
-    private CertificadoBO certificadoBO;
+ //   private CertificadoBO certificadoBO;
 
     public CertificacaoMB() {
-        super(new CertificacaoBO());
-        this.certificacaoBO = new CertificacaoBO();
-        this.userBO = new UserBO();
-        this.certificadoBO = new CertificadoBO();
+        super(CertificacaoSingleton.getInstance().getBo());
+      // this.certificacaoBO = new CertificacaoBO();
+     //   this.userBO = new UserBO();
+      //  this.certificadoBO = new CertificadoBO();
         this.setClazz(Certificacao.class);
     }
 
@@ -42,7 +45,7 @@ public class CertificacaoMB extends LumeManagedBean<Certificacao> {
         try {
             Certificacao u = new Certificacao();
             u.setId(id);
-            this.setEntity(this.certificacaoBO.find(new CertificacaoBO().find(u)));
+            this.setEntity(CertificacaoSingleton.getInstance().getBo().find(u));
             super.actionRemove(null);
         } catch (Exception e) {
             // Já removeu
@@ -54,7 +57,7 @@ public class CertificacaoMB extends LumeManagedBean<Certificacao> {
 
     public List<User> getUsuarios() {
         try {
-            this.usuarios = this.userBO.listAll();
+            this.usuarios = UserSingleton.getInstance().getBo().listAll();
         } catch (Exception e) {
             this.usuarios = new ArrayList<>();
         }
@@ -67,7 +70,7 @@ public class CertificacaoMB extends LumeManagedBean<Certificacao> {
 
     public List<Certificado> getCertificados() {
         try {
-            this.certificados = this.certificadoBO.listAll();
+            this.certificados = CertificadoSingleton.getInstance().getBo().listAll();
         } catch (Exception e) {
             this.certificados = new ArrayList<>();
         }

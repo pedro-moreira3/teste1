@@ -5,10 +5,11 @@ import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
 
+import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.AgendamentoBO;
+//import br.com.lume.odonto.bo.AgendamentoBO;
 import br.com.lume.odonto.entity.Agendamento;
 
 @ManagedBean
@@ -28,22 +29,22 @@ public class ConfirmacaoMB extends LumeManagedBean<Agendamento> {
 
     private String hash;
 
-    private AgendamentoBO agendamentoBO;
+  //  private AgendamentoBO agendamentoBO;
 
     public ConfirmacaoMB() {
-        super(new AgendamentoBO());
+        super(AgendamentoSingleton.getInstance().getBo());
         this.setClazz(Agendamento.class);
-        this.agendamentoBO = new AgendamentoBO();
+      //  this.agendamentoBO = new AgendamentoBO();
         this.id = JSFHelper.getRequest().getParameter("agendamento");
         this.hash = JSFHelper.getRequest().getParameter("hash");
         this.resposta = "Você não esta autorizado !";
         if (this.hash != null && this.id != null) {
             try {
-                Agendamento agendamento = this.agendamentoBO.findByHash(this.id, this.hash);
+                Agendamento agendamento =AgendamentoSingleton.getInstance().getBo().findByHash(this.id, this.hash);
                 if (agendamento != null) {
                     if ("N".equals(agendamento.getStatus())) {
                         agendamento.setStatus("S");
-                        this.agendamentoBO.persist(agendamento);
+                        AgendamentoSingleton.getInstance().getBo().persist(agendamento);
                         this.resposta = "Obrigado por confirmar sua consulta !";
                     } else {
                         this.resposta = "Sua consulta já estava cofirmada !";

@@ -5,7 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import br.com.lume.odonto.bo.DominioBO;
+import br.com.lume.dominio.DominioSingleton;
+//import br.com.lume.odonto.bo.DominioBO;
 import br.com.lume.odonto.iugu.IuguConfiguration;
 import br.com.lume.odonto.iugu.exceptions.IuguException;
 import br.com.lume.odonto.iugu.model.Address;
@@ -24,7 +25,7 @@ public class Iugu {
 
     static {
         try {
-            TOKEN = new DominioBO().findByObjetoAndTipo("IUGU", "TOKEN").getNome();
+            TOKEN = DominioSingleton.getInstance().getBo().findByObjetoAndTipo("IUGU", "TOKEN").getNome();
         } catch (Exception e) {
             e.printStackTrace();
         }
