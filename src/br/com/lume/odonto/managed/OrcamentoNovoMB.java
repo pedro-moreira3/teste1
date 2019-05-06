@@ -10,8 +10,8 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.odonto.bo.OrcamentoBO;
 import br.com.lume.odonto.entity.Orcamento;
+import br.com.lume.orcamento.OrcamentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -27,7 +27,7 @@ public class OrcamentoNovoMB extends LumeManagedBean<Orcamento> {
     private PlanoTratamentoMB planoTratamentoMB;
 
     public OrcamentoNovoMB() {
-        super(new OrcamentoBO());
+        super(OrcamentoSingleton.getInstance().getBo());
         setClazz(Orcamento.class);
     }
 

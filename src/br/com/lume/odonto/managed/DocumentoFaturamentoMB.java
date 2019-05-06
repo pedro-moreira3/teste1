@@ -18,12 +18,16 @@ import org.primefaces.event.SelectEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.DocumentoBO;
-import br.com.lume.odonto.bo.DocumentoFaturamentoBO;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.OrcamentoBO;
-import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
+import br.com.lume.documento.DocumentoSingleton;
+import br.com.lume.documentoFaturamento.DocumentoFaturamentoSingleton;
+import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.odonto.bo.ProfissionalBO;
+//import br.com.lume.odonto.bo.DocumentoBO;
+//import br.com.lume.odonto.bo.DocumentoFaturamentoBO;
+//import br.com.lume.odonto.bo.DominioBO;
+//import br.com.lume.odonto.bo.OrcamentoBO;
+//import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.DocumentoFaturamento;
 import br.com.lume.odonto.entity.Dominio;
@@ -33,6 +37,9 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.TagDocumento;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.orcamento.OrcamentoSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -63,31 +70,31 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
 
     private Date inicio, fim;
 
-    private DominioBO dominioBO;
-
-    private DocumentoBO documentoBO;
-
-    private DocumentoFaturamentoBO documentoFaturamentoBO;
-
-    private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
-
-    private OrcamentoBO orcamentoBO;
-
-    private ProfissionalBO profissionalBO;
+//    private DominioBO dominioBO;
+//
+//    private DocumentoBO documentoBO;
+//
+//    private DocumentoFaturamentoBO documentoFaturamentoBO;
+//
+//    private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
+//
+//    private OrcamentoBO orcamentoBO;
+//
+//    private ProfissionalBO profissionalBO;
 
     private List<DocumentoFaturamento> documentosFaturamento;
 
     public DocumentoFaturamentoMB() {
-        super(new DocumentoFaturamentoBO());
-        this.dominioBO = new DominioBO();
-        this.documentoBO = new DocumentoBO();
-        this.documentoFaturamentoBO = new DocumentoFaturamentoBO();
-        this.planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
-        this.orcamentoBO = new OrcamentoBO();
-        this.profissionalBO = new ProfissionalBO();
+        super(DocumentoFaturamentoSingleton.getInstance().getBo());
+//        this.dominioBO = new DominioBO();
+//        this.documentoBO = new DocumentoBO();
+//        this.documentoFaturamentoBO = new DocumentoFaturamentoBO();
+//        this.planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
+//        this.orcamentoBO = new OrcamentoBO();
+//        this.profissionalBO = new ProfissionalBO();
         try {
-            Dominio dominio = this.dominioBO.findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "F");
-            this.documentos = this.documentoBO.listByTipoDocumento(dominio);
+            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "F");
+            this.documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio);
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
@@ -106,7 +113,7 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
             }
             this.getEntity().setDocumentoGerado(this.documento);
             this.getEntity().setProfissional(this.profissional);
-            this.documentoFaturamentoBO.persist(this.getEntity());
+            DocumentoFaturamentoSingleton.getInstance().getBo().persist(this.getEntity());
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             this.log.error("Erro no actionPersist Atestado", e);
@@ -128,8 +135,8 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
     public void carregarDados() {
         if (this.profissional != null) {
             try {
-                this.faturamentos = this.planoTratamentoProcedimentoBO.listAllByPacienteAndProfissionalAndPeriodoAndProcedimento(null, this.profissional, this.inicio, this.fim, null, "Pagos");
-                this.documentosFaturamento = this.documentoFaturamentoBO.listByProfissional(this.profissional);
+                this.faturamentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listAllByPacienteAndProfissionalAndPeriodoAndProcedimento(null, this.profissional, this.inicio, this.fim, null, "Pagos");
+                this.documentosFaturamento = DocumentoFaturamentoSingleton.getInstance().getBo().listByProfissional(this.profissional);
             } catch (Exception e) {
                 this.log.error("Erro no carregarDados", e);
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -154,7 +161,7 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
 
     public List<Lancamento> listLancamentos(PlanoTratamentoProcedimento ptp) {
         Orcamento orcamento = null;
-        for (Orcamento o : this.orcamentoBO.listByPlanoTratamento(ptp.getPlanoTratamento())) {
+        for (Orcamento o : OrcamentoSingleton.getInstance().getBo().listByPlanoTratamento(ptp.getPlanoTratamento())) {
             if (!o.getExcluido().equals("S")) {
                 orcamento = o;
                 break;
@@ -164,7 +171,7 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
     }
 
     private void replaceDocumento() {
-        this.documento = this.documentoBO.replaceDocumento(this.tagDinamicas, this.profissional.getDadosBasico(), this.documento);
+        this.documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(this.tagDinamicas, this.profissional.getDadosBasico(), this.documento);
         this.documento = this.documento.replaceAll("#periodo", this.getInicioStr() + " à " + this.getFimStr());
         // String finalizacao = "<br><br><br><br><br><br><br>";// Cabeçalho e Rodapé
         String faturamento = INICIO_TABELA;
@@ -243,7 +250,7 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
     }
 
     public void setDocumentoSelecionado(Documento documentoSelecionado) {
-        this.tagDinamicas = this.documentoBO.getTagDinamicas(documentoSelecionado, this.documentoSelecionado, this.tagDinamicas, new String[] { "#profissional", "#periodo", "#faturamento" });
+        this.tagDinamicas = DocumentoSingleton.getInstance().getBo().getTagDinamicas(documentoSelecionado, this.documentoSelecionado, this.tagDinamicas, new String[] { "#profissional", "#periodo", "#faturamento" });
         this.documentoSelecionado = documentoSelecionado;
         this.visivel = true;
         this.documento = documentoSelecionado.getModelo();
@@ -318,7 +325,7 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
     }
 
     public List<Profissional> geraSugestoes(String query) {
-        return this.profissionalBO.listSugestoesComplete(query);
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,ProfissionalBO.getProfissionalLogado().getIdEmpresa());
     }
 
     public List<DocumentoFaturamento> getDocumentosFaturamento() {

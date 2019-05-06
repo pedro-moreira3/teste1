@@ -11,13 +11,13 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.KitBO;
-import br.com.lume.odonto.bo.ProcedimentoBO;
-import br.com.lume.odonto.bo.ProcedimentoKitBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.kit.KitSingleton;
 import br.com.lume.odonto.entity.Kit;
 import br.com.lume.odonto.entity.Procedimento;
 import br.com.lume.odonto.entity.ProcedimentoKit;
+import br.com.lume.procedimento.ProcedimentoSingleton;
+import br.com.lume.procedimentoKit.ProcedimentoKitSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -33,27 +33,21 @@ public class ProcedimentoKitMB extends LumeManagedBean<ProcedimentoKit> {
 
     private Logger log = Logger.getLogger(ProcedimentoKitMB.class);
 
-    private KitBO kitBO;
-
-    private ProcedimentoBO procedimentoBO;
-
     private Procedimento procedimentoSelecionado;
 
     private boolean procedimentoSemKit;
 
     public ProcedimentoKitMB() {
-        super(new ProcedimentoKitBO());
-        this.setClazz(ProcedimentoKit.class);
-        kitBO = new KitBO();
-        procedimentoBO = new ProcedimentoBO();
+        super(ProcedimentoKitSingleton.getInstance().getBo());
+        this.setClazz(ProcedimentoKit.class);     
         this.carregarListas();
     }
 
     private void carregarListas() {
         try {
-            kits = kitBO.listByEmpresa();
+            kits = KitSingleton.getInstance().getBo().listByEmpresa();
             this.carregarProcedimentos();
-            this.setEntityList(((ProcedimentoKitBO) this.getbO()).listByEmpresa());
+            this.setEntityList(ProcedimentoKitSingleton.getInstance().getBo().listByEmpresa());
             this.carregarProcedimentosFiltro();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -64,9 +58,9 @@ public class ProcedimentoKitMB extends LumeManagedBean<ProcedimentoKit> {
     public void carregarProcedimentos() {
         try {
             if (procedimentoSemKit) {
-                procedimentos = procedimentoBO.listProcedimentosSemKitVinculados();
+                procedimentos = ProcedimentoSingleton.getInstance().getBo().listProcedimentosSemKitVinculados();
             } else {
-                procedimentos = procedimentoBO.listByEmpresa();
+                procedimentos = ProcedimentoSingleton.getInstance().getBo().listByEmpresa();
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -87,15 +81,15 @@ public class ProcedimentoKitMB extends LumeManagedBean<ProcedimentoKit> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            ProcedimentoKit pk = ((ProcedimentoKitBO) this.getbO()).findByProcedimentoAndKit(this.getEntity().getProcedimento(), this.getEntity().getKit());
+            ProcedimentoKit pk = ProcedimentoKitSingleton.getInstance().getBo().findByProcedimentoAndKit(this.getEntity().getProcedimento(), this.getEntity().getKit());
             if (pk != null) {
                 pk.setQuantidade(getEntity().getQuantidade());
                 setEntity(pk);
-                ((ProcedimentoKitBO) this.getbO()).persist(this.getEntity());
+                ProcedimentoKitSingleton.getInstance().getBo().persist(this.getEntity());
             } else {
                 procedimentoSelecionado = this.getEntity().getProcedimento();
-                this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
-                ((ProcedimentoKitBO) this.getbO()).persist(this.getEntity());
+                this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+                ProcedimentoKitSingleton.getInstance().getBo().persist(this.getEntity());
                 this.actionNew(event);
                 if (procedimentoSelecionado != null) {
                     this.getEntity().setProcedimento(procedimentoSelecionado);

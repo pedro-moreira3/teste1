@@ -7,17 +7,17 @@ import javax.faces.bean.RequestScoped;
 
 import org.apache.log4j.Logger;
 
+import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.configuracao.Configurar;
-import br.com.lume.odonto.bo.AgendamentoBO;
-import br.com.lume.odonto.bo.PlanoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Plano;
 import br.com.lume.odonto.iugu.responses.InvoiceResponse;
 import br.com.lume.odonto.iugu.services.Iugu;
+import br.com.lume.plano.PlanoSingleton;
 import br.com.lume.security.bo.EmpresaBO;
 
 @ManagedBean
@@ -39,21 +39,21 @@ public class MeuPlanoMB extends LumeManagedBean<Agendamento> {
 
     private String dataVencimentoPlano;
 
-    private PlanoBO planoBO = new PlanoBO();
+  
 
     private List<InvoiceResponse> recentInvoices;
 
     public MeuPlanoMB() {
-        super(new AgendamentoBO());
+        super(AgendamentoSingleton.getInstance().getBo());
         this.setClazz(Agendamento.class);
         this.carregarQuantidadeAgendamentosMes();
     }
 
     private void carregarQuantidadeAgendamentosMes() {
         try {
-            agendamentos = ((AgendamentoBO) this.getbO()).listQuantidadeAgendamentosMes();
-            agendamentosMes = ((AgendamentoBO) this.getbO()).findQuantidadeAgendamentosMesAtual(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
-            Plano planoUsuLogado = planoBO.findByUsuarioLogado();
+            agendamentos = AgendamentoSingleton.getInstance().getBo().listQuantidadeAgendamentosMes();
+            agendamentosMes = AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosMesAtual(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            Plano planoUsuLogado = PlanoSingleton.getInstance().getBo().findByUsuarioLogado();
             if (planoUsuLogado != null) {
                 agendamentosPlano = planoUsuLogado.getConsultas();
                 porcentagemUtilizado = (double) ((100 * (double) agendamentosMes) / (double) agendamentosPlano);

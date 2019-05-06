@@ -23,12 +23,10 @@ import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.ItemBO;
-import br.com.lume.odonto.bo.MaterialBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
-import br.com.lume.odonto.bo.SugestaoBO;
-import br.com.lume.odonto.bo.SugestaoItemBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.item.ItemSingleton;
+import br.com.lume.material.MaterialSingleton;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Material;
@@ -36,6 +34,8 @@ import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Sugestao;
 import br.com.lume.odonto.entity.SugestaoItem;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.sugestao.SugestaoSingleton;
+import br.com.lume.sugestaoItem.SugestaoItemSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -73,30 +73,16 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
 
     private Profissional profissionalLogado;
 
-    private boolean visivel = false, tipo = true;
-
-    private ProfissionalBO profissionalBO;
-
-    private SugestaoItemBO sugestaoItemBO;
-
-    private MaterialBO materialBO;
-
-    private DominioBO dominioBO;
-
-    private ItemBO itemBO;
+    private boolean visivel = false, tipo = true; 
 
     public SugestaoMB() {
-        super(new SugestaoBO());
-        this.profissionalBO = new ProfissionalBO();
-        this.sugestaoItemBO = new SugestaoItemBO();
-        this.materialBO = new MaterialBO();
-        this.dominioBO = new DominioBO();
-        this.itemBO = new ItemBO();
+        super(SugestaoSingleton.getInstance().getBo());
+     
         this.setClazz(Sugestao.class);
         this.setIncluindo(true);
         this.geraList();
         try {
-            this.profissionalLogado = ProfissionalBO.getProfissionalLogado();
+            this.profissionalLogado = Configurar.getInstance().getConfiguracao().getProfissionalLogado();
             if (this.profissionalLogado.getPerfil().equals(OdontoPerfil.AUXILIAR_ADMINISTRATIVO) || this.profissionalLogado.getPerfil().equals(
                     OdontoPerfil.ADMINISTRADOR) || this.profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADORES)) {
                 this.visivel = true;
@@ -113,7 +99,7 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
 
     public void geraList() {
         try {
-            this.setSugestoes(((SugestaoBO) this.getbO()).listByEmpresa());
+            this.setSugestoes(SugestaoSingleton.getInstance().getBo().listByEmpresa());
             if (this.sugestoes != null) {
                 Collections.sort(this.sugestoes);
             }
@@ -125,9 +111,9 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
         this.getEntity().setData(new Date());
-        this.getEntity().setProfissional(ProfissionalBO.getProfissionalLogado());
+        this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
         for (SugestaoItem sugestaoItem : this.getSugestaoItens()) {
             if (sugestaoItem.getId() == 0) {
                 this.getEntity().getSugestaoItens().add(sugestaoItem);
@@ -172,9 +158,9 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
         this.limpar();
     }
 
-    public void remover() {
+    public void remover() throws Exception {
         try {
-            this.sugestaoItemBO.remove(this.getSugestaoItem());
+            SugestaoItemSingleton.getInstance().getBo().remove(this.getSugestaoItem());
         } catch (BusinessException e) {
             e.printStackTrace();
         } catch (TechnicalException e) {
@@ -278,7 +264,7 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
     private BigDecimal quantidadeTotal() {
         BigDecimal quantidadeTotal = new BigDecimal(0);
         try {
-            List<Material> materiais = this.materialBO.listByItem(this.getItem());
+            List<Material> materiais = MaterialSingleton.getInstance().getBo().listByItem(this.getItem());
             for (Material material : materiais) {
                 quantidadeTotal = quantidadeTotal.add(material.getTamanhoUnidade().multiply(material.getQuantidade().multiply(material.getTamanhoUnidade())));
             }
@@ -328,7 +314,7 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
         try {
-            this.status = this.dominioBO.findByEmpresaAndObjetoAndTipoAndValor("sugestao", "status", this.getSugestaoItem().getStatus());
+            this.status = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("sugestao", "status", this.getSugestaoItem().getStatus());
         } catch (Exception e) {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
@@ -413,9 +399,9 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
         this.setItens(new ArrayList<Item>());
         try {
             if (this.getDigitacao() != null) {
-                this.setItens(this.itemBO.listByEmpresaAndDescricaoParcial(this.getDigitacao()));
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao()));
             } else {
-                this.setItens(this.itemBO.listByEmpresa());
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa());
             }
             Collections.sort(this.itens);
         } catch (Exception e) {
@@ -538,7 +524,7 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
 
     public List<Dominio> getDominios() {
         try {
-            this.dominios = this.dominioBO.listByEmpresaAndObjetoAndTipo("sugestao", "status");
+            this.dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("sugestao", "status");
         } catch (Exception e) {
             e.printStackTrace();
         }

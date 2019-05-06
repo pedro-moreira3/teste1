@@ -16,9 +16,12 @@ import org.primefaces.model.TreeNode;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.LocalBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.local.LocalSingleton;
+//import br.com.lume.odonto.bo.DominioBO;
+//import br.com.lume.odonto.bo.LocalBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -41,15 +44,15 @@ public class LocalMB extends LumeManagedBean<Local> {
 
     private boolean disable;
 
-    private DominioBO dominioBO;
+   // private DominioBO dominioBO;
 
     public LocalMB() {
-        super(new LocalBO());
-        this.dominioBO = new DominioBO();
+        super(LocalSingleton.getInstance().getBo());
+     //   this.dominioBO = new DominioBO();
         this.setClazz(Local.class);
         this.setDisable(false);
         try {
-            this.setTiposLocais(this.dominioBO.listByEmpresaAndObjetoAndTipo(LOCAL, OBJETO));
+            this.setTiposLocais(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo(LOCAL, OBJETO));
             this.root = new DefaultTreeNode("", null);
             this.rootPai = new DefaultTreeNode("", null);
             Local firstLevel = new Local();
@@ -64,7 +67,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     @Override
     public void actionPersist(ActionEvent event) {
         boolean error = false;
-        this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
         if (this.tipoLocal != null) {
             this.getEntity().setTipo(this.tipoLocal.getValor());
         }
@@ -125,7 +128,7 @@ public class LocalMB extends LumeManagedBean<Local> {
 
     public void setTipoLocal() {
         try {
-            this.setTipoLocal(this.dominioBO.findByEmpresaAndObjetoAndTipoAndValor(LOCAL, OBJETO, this.getEntity().getTipo()));
+            this.setTipoLocal(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(LOCAL, OBJETO, this.getEntity().getTipo()));
         } catch (Exception e) {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
@@ -167,7 +170,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     public List<Local> getEstoques() {
         List<Local> locais = new ArrayList<>();
         try {
-            locais = ((LocalBO) this.getbO()).listByEmpresaAndTipo(ESTOQUE);
+            locais = LocalSingleton.getInstance().getBo().listByEmpresaAndTipo(ESTOQUE);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -178,7 +181,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     public List<Local> getConsultorios() {
         List<Local> locais = new ArrayList<>();
         try {
-            locais = ((LocalBO) this.getbO()).listByEmpresaAndTipo(CONSULTORIO);
+            locais = LocalSingleton.getInstance().getBo().listByEmpresaAndTipo(CONSULTORIO);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -237,7 +240,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     public List<Local> getLocais() {
         List<Local> locais = new ArrayList<>();
         try {
-            locais = ((LocalBO) this.getbO()).listByEmpresa();
+            locais = LocalSingleton.getInstance().getBo().listByEmpresa();
             for (Local local : locais) {
                 for (Dominio dominio : this.tiposLocais) {
                     if (local.getTipo().equals(dominio.getValor())) {

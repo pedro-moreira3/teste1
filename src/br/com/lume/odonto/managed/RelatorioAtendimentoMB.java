@@ -11,15 +11,15 @@ import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
 import org.primefaces.model.chart.PieChartModel;
 
+import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.configuracao.Configurar;
-import br.com.lume.odonto.bo.AgendamentoBO;
-import br.com.lume.odonto.bo.ReservaBO;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.StatusAgendamento;
-import br.com.lume.security.bo.EmpresaBO;
+import br.com.lume.reserva.ReservaSingleton;
+
 
 @ManagedBean
 @ViewScoped
@@ -41,12 +41,10 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private HashSet<String> profissionaisAgendamento;
 
-    private ReservaBO reservaBO = new ReservaBO();
-
     private List<Integer> cadeiras;
 
     public RelatorioAtendimentoMB() {
-        super(new AgendamentoBO());
+        super(AgendamentoSingleton.getInstance().getBo());
         pieModel = new PieChartModel();
         this.setClazz(Agendamento.class);
         this.carregaLista();
@@ -61,12 +59,12 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                 a.setIniciouAs(Utils.getDataAtual(a.getIniciouAs()));
                 a.setFinalizouAs(Utils.getDataAtual(a.getFinalizouAs()));
 
-                AgendamentoBO bo = ((AgendamentoBO) this.getbO());
+             
                 if (a.getStatus().equals(StatusAgendamento.CANCELADO.getSigla()) || a.getStatus().equals(StatusAgendamento.FALTA.getSigla())) {
-                    reservaBO.cancelaReservas(a);
+                    ReservaSingleton.getInstance().getBo().cancelaReservas(a);
                 }
                 validacoes(a);
-                bo.persist(a);
+                AgendamentoSingleton.getInstance().getBo().persist(a);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             } else {
                 getbO().refresh(a);
@@ -93,8 +91,8 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public void carregaLista() {
         try {
-            AgendamentoBO bo = ((AgendamentoBO) this.getbO());
-            agendamentos = bo.listAgendmantosValidosByDate(filtro);
+           
+            agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosByDate(filtro);
             carregarCadeiras();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -116,21 +114,20 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     public String getPacientesAgendamento() {
         if (filtro.equals("CURRENT_DATE")) {
             StringBuilder sb = new StringBuilder();
-
-            AgendamentoBO bo = ((AgendamentoBO) getbO());
-            Long countByAtendidos = bo.countByAtendidos();
+         
+            Long countByAtendidos = AgendamentoSingleton.getInstance().getBo().countByAtendidos();
             sb.append("['Atendidos', " + countByAtendidos + "],");
 
-            Long countByEmAtendimento = bo.countByEmAtendimento();
+            Long countByEmAtendimento = AgendamentoSingleton.getInstance().getBo().countByEmAtendimento();
             sb.append("['Em Atendimento', " + countByEmAtendimento + "],");
 
-            Long countByAtrasado = bo.countByAtrasado();
+            Long countByAtrasado = AgendamentoSingleton.getInstance().getBo().countByAtrasado();
             sb.append("['Atrasados', " + countByAtrasado + "],");
 
-            Long countByClienteNaClinica = bo.countByClienteNaClinica();
+            Long countByClienteNaClinica = AgendamentoSingleton.getInstance().getBo().countByClienteNaClinica();
             sb.append("['Na Clínica', " + countByClienteNaClinica + "],");
 
-            Long countByPacienteNaoChegou = bo.countByPacienteNaoChegou();
+            Long countByPacienteNaoChegou = AgendamentoSingleton.getInstance().getBo().countByPacienteNaoChegou();
             sb.append("['Consultas restantes', " + countByPacienteNaoChegou + "],");
             return sb.toString();
         } else {

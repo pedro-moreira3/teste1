@@ -14,9 +14,12 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.GraficoBO;
-import br.com.lume.odonto.bo.GraficoProfissionalBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.grafico.GraficoSingleton;
+import br.com.lume.graficoProfissional.GraficoProfissionalSingleton;
+//import br.com.lume.odonto.bo.GraficoBO;
+//import br.com.lume.odonto.bo.GraficoProfissionalBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Grafico;
 import br.com.lume.odonto.entity.GraficoProfissional;
 
@@ -30,17 +33,17 @@ public class GraficoProfissionalMB extends LumeManagedBean<GraficoProfissional> 
 
     private DualListModel<Grafico> graficos;
 
-    private GraficoBO graficoBO;
+  //  private GraficoBO graficoBO;
 
-    private GraficoProfissionalBO graficoProfissionalBO;
+   // private GraficoProfissionalBO graficoProfissionalBO;
 
     public GraficoProfissionalMB() {
-        super(new GraficoProfissionalBO());
-        this.graficoBO = new GraficoBO();
-        this.graficoProfissionalBO = new GraficoProfissionalBO();
+        super(GraficoProfissionalSingleton.getInstance().getBo());
+       // this.graficoBO = new GraficoBO();
+        //this.graficoProfissionalBO = new GraficoProfissionalBO();
         this.setClazz(GraficoProfissional.class);
         try {
-            this.getEntity().setProfissional(ProfissionalBO.getProfissionalLogado());
+            this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
             this.carregaPicklist();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -51,8 +54,8 @@ public class GraficoProfissionalMB extends LumeManagedBean<GraficoProfissional> 
     @Override
     public void actionPersist(ActionEvent arg0) {
         try {
-            this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
-            List<GraficoProfissional> atuais = this.graficoProfissionalBO.listByProfissional(this.getEntity().getProfissional());
+            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            List<GraficoProfissional> atuais = GraficoProfissionalSingleton.getInstance().getBo().listByProfissional(this.getEntity().getProfissional());
             if (atuais != null && !atuais.isEmpty()) {
                 this.remove(atuais);
                 this.novo(atuais);
@@ -69,7 +72,7 @@ public class GraficoProfissionalMB extends LumeManagedBean<GraficoProfissional> 
         }
     }
 
-    private void novo(List<GraficoProfissional> atuais) throws BusinessException, TechnicalException {
+    private void novo(List<GraficoProfissional> atuais) throws Exception {
         // Novo
         for (Grafico g : this.graficos.getTarget()) {
             boolean insere = true;
@@ -84,18 +87,18 @@ public class GraficoProfissionalMB extends LumeManagedBean<GraficoProfissional> 
         }
     }
 
-    private void remove(List<GraficoProfissional> listByProfissional) throws BusinessException, TechnicalException {
+    private void remove(List<GraficoProfissional> listByProfissional) throws Exception {
         for (GraficoProfissional gp : listByProfissional) {
             // Remove
             if (!this.graficos.getTarget().contains(gp.getGrafico())) {
-                this.graficoProfissionalBO.remove(gp);
+                GraficoProfissionalSingleton.getInstance().getBo().remove(gp);
             }
         }
     }
 
-    private void persistNovo(Grafico g) throws BusinessException, TechnicalException {
+    private void persistNovo(Grafico g) throws Exception {
         this.getEntity().setGrafico(g);
-        this.graficoProfissionalBO.persist(this.getEntity());
+        GraficoProfissionalSingleton.getInstance().getBo().persist(this.getEntity());
         this.getEntity().setId(0);
     }
 
@@ -103,9 +106,9 @@ public class GraficoProfissionalMB extends LumeManagedBean<GraficoProfissional> 
         try {
             List<Grafico> source = new ArrayList<>();
             List<Grafico> target = new ArrayList<>();
-            source = this.graficoBO.listByEmpresa();
+            source = GraficoSingleton.getInstance().getBo().listByEmpresa();
             if (this.getEntity().getProfissional() != null) {
-                List<GraficoProfissional> listByProfissional = this.graficoProfissionalBO.listByProfissional(this.getEntity().getProfissional());
+                List<GraficoProfissional> listByProfissional = GraficoProfissionalSingleton.getInstance().getBo().listByProfissional(this.getEntity().getProfissional());
                 for (GraficoProfissional gp : listByProfissional) {
                     target.add(gp.getGrafico());
                 }

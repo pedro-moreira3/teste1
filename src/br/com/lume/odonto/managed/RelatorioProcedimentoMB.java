@@ -16,15 +16,16 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.PacienteBO;
-import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
-import br.com.lume.odonto.bo.RelatorioProcedimentoBO;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RelatorioProcedimento;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.relatorioProcedimento.RelatorioProcedimentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -42,17 +43,11 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<RelatorioProcedimen
 
     private BigDecimal totalValor;
 
-    private PacienteBO pacienteBO;
 
-    private ProfissionalBO profissionalBO;
-
-    private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
 
     public RelatorioProcedimentoMB() {
-        super(new RelatorioProcedimentoBO());
-        this.planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
-        this.pacienteBO = new PacienteBO();
-        this.profissionalBO = new ProfissionalBO();
+        super(RelatorioProcedimentoSingleton.getInstance().getBo());
+ 
         this.setClazz(RelatorioProcedimento.class);
         this.carregarDatasIniciais();
         this.filtra();
@@ -77,7 +72,7 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<RelatorioProcedimen
             } else {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             }
-            this.relatorioProcedimentos = this.planoTratamentoProcedimentoBO.listRelatorioProcedimento(this.profissional, this.inicio, this.fim);
+            this.relatorioProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listRelatorioProcedimento(this.profissional, this.inicio, this.fim);
             for (PlanoTratamentoProcedimento planoTratamentoProcedimento : this.relatorioProcedimentos) {
                 this.totalValor = this.totalValor.add(planoTratamentoProcedimento.getValorDesconto());
             }
@@ -91,14 +86,14 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<RelatorioProcedimen
     }
 
     public List<Paciente> geraSugestoesPaciente(String query) {
-        return this.pacienteBO.listSugestoesComplete(query);
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
     }
 
     public List<Profissional> geraSugestoesProfissional(String query) {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = this.profissionalBO.listDentistasByEmpresa();
+            profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
                         Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {

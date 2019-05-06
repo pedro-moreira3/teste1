@@ -15,12 +15,13 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
-import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
-import br.com.lume.odonto.bo.RelatorioBalancoBO;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RelatorioBalanco;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.relatorioBalanco.RelatorioBalancoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -35,19 +36,15 @@ public class RelatorioBalancoMB extends LumeManagedBean<RelatorioBalanco> {
     private boolean finalizado, repassado;
 
     private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos;
-
-    private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
-
+  
     private Profissional profissional;
-
-    private ProfissionalBO profissionalBO = new ProfissionalBO();
-
+  
     private List<RelatorioBalanco> relatoriosSelecionados;
 
     private String statusPagamento;
 
     public RelatorioBalancoMB() {
-        super(new RelatorioBalancoBO());
+        super(RelatorioBalancoSingleton.getInstance().getBo());
         this.setClazz(RelatorioBalanco.class);
         this.inicio = Utils.getPrimeiroDiaMesCorrente();
         this.fim = Calendar.getInstance().getTime();
@@ -55,7 +52,7 @@ public class RelatorioBalancoMB extends LumeManagedBean<RelatorioBalanco> {
 
     public void actionCarregarProcedimentos() {
         try {
-            this.planoTratamentoProcedimentos = this.planoTratamentoProcedimentoBO.listByRelatoriosBalanco(this.inicio, this.fim, this.profissional, this.statusPagamento);
+            this.planoTratamentoProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByRelatoriosBalanco(this.inicio, this.fim, this.profissional, this.statusPagamento);
         } catch (Exception e) {
             this.log.error("Erro no carregarProcedimentos : ", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -66,7 +63,7 @@ public class RelatorioBalancoMB extends LumeManagedBean<RelatorioBalanco> {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = this.profissionalBO.listByEmpresa();
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
                         Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {

@@ -14,13 +14,12 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.FornecedorBO;
-import br.com.lume.odonto.bo.LancamentoContabilBO;
-import br.com.lume.odonto.bo.MaterialBO;
-import br.com.lume.odonto.bo.MotivoBO;
-import br.com.lume.odonto.bo.NotaFiscalBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.fornecedor.FornecedorSingleton;
+import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
+import br.com.lume.material.MaterialSingleton;
+import br.com.lume.motivo.MotivoSingleton;
+import br.com.lume.notaFiscal.NotaFiscalSingleton;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Material;
@@ -46,26 +45,15 @@ public class NotaFiscalMB extends LumeManagedBean<NotaFiscal> {
 
     private Material[] slctMateriais;
 
-    private FornecedorBO fornecedorBO;
 
-    private MaterialBO materialBO;
-
-    private LancamentoContabilBO lancamentoContabilBO;
-
-    private MotivoBO motivoBO;
-
-    private DominioBO dominioBO;
 
     public NotaFiscalMB() {
-        super(new NotaFiscalBO());
-        this.fornecedorBO = new FornecedorBO();
-        this.materialBO = new MaterialBO();
-        this.lancamentoContabilBO = new LancamentoContabilBO();
-        this.motivoBO = new MotivoBO();
+        super(NotaFiscalSingleton.getInstance().getBo());
+ 
         this.setClazz(NotaFiscal.class);
-        this.dominioBO = new DominioBO();
+;
         try {
-            this.setFornecedores(this.fornecedorBO.listAll());
+            this.setFornecedores(FornecedorSingleton.getInstance().getBo().listAll());
         } catch (Exception e) {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
@@ -75,10 +63,10 @@ public class NotaFiscalMB extends LumeManagedBean<NotaFiscal> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
             this.getbO().persist(this.getEntity());
             for (Material material : this.getEntity().getMateriais()) {
-                this.materialBO.persist(material);
+                MaterialSingleton.getInstance().getBo().persist(material);
             }
             this.geraLancamentoContabil();
             this.actionNew(event);
@@ -99,20 +87,20 @@ public class NotaFiscalMB extends LumeManagedBean<NotaFiscal> {
     private void geraLancamentoContabil() throws Exception, BusinessException, TechnicalException {
         LancamentoContabil lc = null;
         if (this.getEntity().getId() != null) {
-            lc = this.lancamentoContabilBO.findByNotafiscal(this.getEntity());
+            lc = LancamentoContabilSingleton.getInstance().getBo().findByNotafiscal(this.getEntity());
         }
         if (lc == null) {
             lc = new LancamentoContabil();
         }
-        Motivo motivo = this.motivoBO.findBySigla(Motivo.COMPRA_MATERIAIS);
-        lc.setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        Motivo motivo = MotivoSingleton.getInstance().getBo().findBySigla(Motivo.COMPRA_MATERIAIS);
+        lc.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
         lc.setTipo(motivo.getTipo());
         lc.setDadosBasico(this.getEntity().getFornecedor().getDadosBasico());
         lc.setMotivo(motivo);
         lc.setValor(this.getEntity().getValorTotal());
         lc.setNotaFiscal(this.getEntity());
         lc.setData(this.getEntity().getDataEntrada());
-        this.lancamentoContabilBO.persist(lc);
+        LancamentoContabilSingleton.getInstance().getBo().persist(lc);
     }
 
     @Override
@@ -131,7 +119,7 @@ public class NotaFiscalMB extends LumeManagedBean<NotaFiscal> {
     public List<Material> getMateriais() {
         if (this.materiais == null) {
             try {
-                this.setMateriais(this.materialBO.listAtivosByEmpresaWithoutNotaFiscal());
+                this.setMateriais(MaterialSingleton.getInstance().getBo().listAtivosByEmpresaWithoutNotaFiscal());
                 if (this.getEntity().getMateriais() != null && this.getEntity().getMateriais().size() > 0) {
                     this.getMateriais().removeAll(this.getEntity().getMateriais());
                 }
@@ -150,7 +138,7 @@ public class NotaFiscalMB extends LumeManagedBean<NotaFiscal> {
     public List<NotaFiscal> getNotasFiscais() {
         if (this.notasFiscais == null) {
             try {
-                this.setNotasFiscais(((NotaFiscalBO) this.getbO()).listByEmpresa());
+                this.setNotasFiscais(NotaFiscalSingleton.getInstance().getBo().listByEmpresa());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -190,7 +178,7 @@ public class NotaFiscalMB extends LumeManagedBean<NotaFiscal> {
             for (Material m : this.getEntity().getMateriais()) {
                 m.setNotaFiscal(null);
             }
-            new MaterialBO().mergeBatch(this.getEntity().getMateriais());
+            MaterialSingleton.getInstance().getBo().mergeBatch(this.getEntity().getMateriais());
         } catch (Exception e) {
             e.printStackTrace();
         }

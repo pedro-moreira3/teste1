@@ -18,10 +18,14 @@ import org.primefaces.model.TreeNode;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.FornecedorBO;
-import br.com.lume.odonto.bo.FornecedorItemBO;
-import br.com.lume.odonto.bo.ItemBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.fornecedor.FornecedorSingleton;
+import br.com.lume.fornecedorItem.FornecedorItemSingleton;
+import br.com.lume.item.ItemSingleton;
+//import br.com.lume.odonto.bo.FornecedorBO;
+//import br.com.lume.odonto.bo.FornecedorItemBO;
+//import br.com.lume.odonto.bo.ItemBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.FornecedorItem;
 import br.com.lume.odonto.entity.Item;
@@ -47,17 +51,17 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
 
     private List<FornecedorItem> fornecedoresItens;
 
-    private FornecedorBO fornecedorBO;
+  //  private FornecedorBO fornecedorBO;
 
-    private FornecedorItemBO fornecedorItemBO;
+   // private FornecedorItemBO fornecedorItemBO;
 
-    private ItemBO itemBO;
+ //   private ItemBO itemBO;
 
     public FornecedorItemMB() {
-        super(new FornecedorItemBO());
-        this.fornecedorBO = new FornecedorBO();
-        this.fornecedorItemBO = new FornecedorItemBO();
-        this.itemBO = new ItemBO();
+        super(FornecedorItemSingleton.getInstance().getBo());
+      //  this.fornecedorBO = new FornecedorBO();
+      //  this.fornecedorItemBO = new FornecedorItemBO();
+     //   this.itemBO = new ItemBO();
         this.setClazz(FornecedorItem.class);
         this.geralist();
         try {
@@ -69,7 +73,7 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
         try {
-            this.fornecedores = this.fornecedorBO.listByEmpresa();
+            this.fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa();
         } catch (Exception e) {
             this.log.error("Erro no setEntity", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -78,7 +82,7 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
 
     private void geralist() {
         try {
-            this.setFornecedoresItens(this.fornecedorItemBO.listByEmpresa());
+            this.setFornecedoresItens(FornecedorItemSingleton.getInstance().getBo().listByEmpresa());
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -105,7 +109,7 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
         if (this.getEntity().getItem() != null) {
             if (this.validaFornecedorItem()) {
                 super.actionPersist(event);
@@ -119,8 +123,8 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
     }
 
     public boolean validaFornecedorItem() {
-        if (((FornecedorItemBO) this.getbO()).findByFornecedorAndItem(this.getEntity()) == null) {
-            for (FornecedorItem fI : ((FornecedorItemBO) this.getbO()).listByFornecedor(this.getEntity().getFornecedor())) {
+        if (FornecedorItemSingleton.getInstance().getBo().findByFornecedorAndItem(this.getEntity()) == null) {
+            for (FornecedorItem fI : FornecedorItemSingleton.getInstance().getBo().listByFornecedor(this.getEntity().getFornecedor())) {
                 if (fI.getItem().getIdItemPai() != null) {
                     if (fI.getItem().getIdItemPai().equals(this.getEntity().getItem())) {
                         return false;
@@ -253,9 +257,9 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
         this.setItens(new ArrayList<Item>());
         try {
             if (this.getDigitacao() != null) {
-                this.setItens(this.itemBO.listByEmpresaAndDescricaoParcial(this.getDigitacao()));
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao()));
             } else {
-                this.setItens(this.itemBO.listByEmpresa());
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa());
             }
             Collections.sort(this.itens);
         } catch (Exception e) {

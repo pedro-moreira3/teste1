@@ -11,9 +11,12 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.DocumentoBO;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.documento.DocumentoSingleton;
+import br.com.lume.dominio.DominioSingleton;
+//import br.com.lume.odonto.bo.DocumentoBO;
+//import br.com.lume.odonto.bo.DominioBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.Dominio;
 
@@ -31,11 +34,11 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     private List<Dominio> dominios;
 
-    private DominioBO dominioBO;
+  //  private DominioBO dominioBO;
 
     public DocumentoMB() {
-        super(new DocumentoBO());
-        dominioBO = new DominioBO();
+        super(DocumentoSingleton.getInstance().getBo());
+     //   dominioBO = new DominioBO();
         this.setClazz(Documento.class);
         this.addLegendas();
         this.listAll();
@@ -43,11 +46,11 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     public void listAll() {
         try {
-            dominios = dominioBO.listByEmpresaAndObjetoAndTipo("documento", "tipo");
+            dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("documento", "tipo");
             if (this.getEntity() != null && this.getEntity().getTipo() != null) {
-                documentos = ((DocumentoBO) this.getbO()).listByTipoDocumento(this.getEntity().getTipo());
+                documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(this.getEntity().getTipo());
             } else {
-                documentos = ((DocumentoBO) this.getbO()).listAll();
+                documentos = DocumentoSingleton.getInstance().getBo().listAll();
             }
         } catch (Exception e) {
             log.error("Erro ao buscar lista de documentos", e);
@@ -57,7 +60,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
         super.actionPersist(event);
         this.listAll();
     }

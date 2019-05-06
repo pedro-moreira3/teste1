@@ -11,7 +11,8 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.EvolucaoBO;
+import br.com.lume.evolucao.EvolucaoSingleton;
+//import br.com.lume.odonto.bo.EvolucaoBO;
 import br.com.lume.odonto.entity.Evolucao;
 import br.com.lume.odonto.entity.Paciente;
 
@@ -32,11 +33,11 @@ public class EvolucaoMB extends LumeManagedBean<Evolucao> {
 
     private Paciente pacienteAnterior;
 
-    private EvolucaoBO evolucaoBO;
+//    private EvolucaoBO evolucaoBO;
 
     public EvolucaoMB() {
-        super(new EvolucaoBO());
-        this.evolucaoBO = new EvolucaoBO();
+        super(EvolucaoSingleton.getInstance().getBo());
+     //   this.evolucaoBO = new EvolucaoBO();
         this.setClazz(Evolucao.class);
     }
 
@@ -44,7 +45,7 @@ public class EvolucaoMB extends LumeManagedBean<Evolucao> {
     public void actionPersist(ActionEvent event) {
         try {
             this.getEntity().setPaciente(this.pacienteMB.getEntity());
-            this.evolucaoBO.persist(this.getEntity());
+            EvolucaoSingleton.getInstance().getBo().persist(this.getEntity());
 
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             this.actionNew(event);
@@ -81,7 +82,7 @@ public class EvolucaoMB extends LumeManagedBean<Evolucao> {
         if (this.pacienteAnterior == null || this.pacienteAnterior.getId() != pacienteAtual.getId()) {
             this.pacienteAnterior = pacienteAtual;
             if (this.pacienteMB != null && this.pacienteMB.getEntity() != null) {
-                this.evolucoes = this.evolucaoBO.listByPaciente(this.pacienteMB.getEntity());
+                this.evolucoes = EvolucaoSingleton.getInstance().getBo().listByPaciente(this.pacienteMB.getEntity());
             }
         }
         return this.evolucoes;

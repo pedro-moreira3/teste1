@@ -11,8 +11,10 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.DescontoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.desconto.DescontoSingleton;
+//import br.com.lume.odonto.bo.DescontoBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Desconto;
 
 @ManagedBean
@@ -26,14 +28,14 @@ public class DescontoMB extends LumeManagedBean<Desconto> {
     private List<Desconto> descontos = new ArrayList<>();
 
     public DescontoMB() {
-        super(new DescontoBO());
+        super(DescontoSingleton.getInstance().getBo());
         this.geraLista();
         this.setClazz(Desconto.class);
     }
 
     private void geraLista() {
         try {
-            this.descontos = ((DescontoBO) this.getbO()).listByEmpresa();
+            this.descontos = DescontoSingleton.getInstance().getBo().listByEmpresa();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -42,7 +44,7 @@ public class DescontoMB extends LumeManagedBean<Desconto> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
         super.actionPersist(event);
         this.geraLista();
     }

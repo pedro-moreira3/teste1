@@ -18,11 +18,13 @@ import org.primefaces.model.UploadedFile;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.HelpBO;
+import br.com.lume.help.HelpSingleton;
+//import br.com.lume.odonto.bo.HelpBO;
 import br.com.lume.odonto.entity.Help;
 import br.com.lume.odonto.entity.HelpImg;
 import br.com.lume.odonto.util.OdontoMensagens;
-import br.com.lume.security.bo.ObjetoBO;
+import br.com.lume.security.ObjetoSingleton;
+//import br.com.lume.security.bo.ObjetoBO;
 import br.com.lume.security.entity.Objeto;
 
 @ManagedBean
@@ -33,7 +35,7 @@ public class HelpMB extends LumeManagedBean<Help> {
 
     private Logger log = Logger.getLogger(HelpMB.class);
 
-    private ObjetoBO objetoBO;
+ //   private ObjetoBO objetoBO;
 
     private Objeto objetoSelecionado;
 
@@ -44,16 +46,16 @@ public class HelpMB extends LumeManagedBean<Help> {
     private HelpImg imagem;
 
     public HelpMB() {
-        super(new HelpBO());
+        super(HelpSingleton.getInstance().getBo());
         this.setClazz(Help.class);
-        this.objetoBO = new ObjetoBO();
+     //   this.objetoBO = new ObjetoBO();
         this.carregarTelas();
         this.carregarHelp();
     }
 
     private void carregarHelp() {
         try {
-            this.helps = ((HelpBO) this.getbO()).listAll();
+            this.helps = HelpSingleton.getInstance().getBo().listAll();
         } catch (Exception e) {
             this.log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -61,12 +63,12 @@ public class HelpMB extends LumeManagedBean<Help> {
     }
 
     public void carregarObjetoByTela() {
-        this.objetoSelecionado = this.objetoBO.getObjetoByCaminhoAndSistema(this.getEntity().getTela(), this.getLumeSecurity().getSistemaAtual());
+        this.objetoSelecionado = ObjetoSingleton.getInstance().getBo().getObjetoByCaminhoAndSistema(this.getEntity().getTela(), this.getLumeSecurity().getSistemaAtual());
     }
 
     public void carregarHelpByTelaSelecionada() {
         try {
-            Help help = ((HelpBO) this.getbO()).findByTela(this.objetoSelecionado.getCaminho());
+            Help help = HelpSingleton.getInstance().getBo().findByTela(this.objetoSelecionado.getCaminho());
             if (help != null) {
                 this.setEntity(help);
             } else {
@@ -85,7 +87,7 @@ public class HelpMB extends LumeManagedBean<Help> {
 
     private void carregarTelas() {
         try {
-            this.telas = this.objetoBO.getAllObjetosTelaBySistema(this.getLumeSecurity().getSistemaAtual());
+            this.telas = ObjetoSingleton.getInstance().getBo().getAllObjetosTelaBySistema(this.getLumeSecurity().getSistemaAtual());
         } catch (Exception e) {
             this.log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

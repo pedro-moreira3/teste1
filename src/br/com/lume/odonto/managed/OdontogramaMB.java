@@ -24,15 +24,7 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.configuracao.Configurar;
-import br.com.lume.odonto.bo.ConvenioProcedimentoBO;
-import br.com.lume.odonto.bo.DenteBO;
-import br.com.lume.odonto.bo.OdontogramaBO;
-import br.com.lume.odonto.bo.PlanoTratamentoBO;
-import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
-import br.com.lume.odonto.bo.ProcedimentoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
-import br.com.lume.odonto.bo.RegiaoDenteBO;
-import br.com.lume.odonto.bo.StatusDenteBO;
+import br.com.lume.dente.DenteSingleton;
 import br.com.lume.odonto.entity.Dente;
 import br.com.lume.odonto.entity.Odontograma;
 import br.com.lume.odonto.entity.Paciente;
@@ -42,7 +34,13 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoFace;
 import br.com.lume.odonto.entity.Procedimento;
 import br.com.lume.odonto.entity.RegiaoDente;
 import br.com.lume.odonto.entity.StatusDente;
+import br.com.lume.odontograma.OdontogramaSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.procedimento.ProcedimentoSingleton;
+import br.com.lume.regiaoDente.RegiaoDenteSingleton;
 import br.com.lume.security.bo.EmpresaBO;
+import br.com.lume.statusDente.StatusDenteSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -82,25 +80,11 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     private List<Odontograma> odontogramas;
 
-    private StatusDenteBO statusDenteBO;
-
-    private OdontogramaBO odontogramaBO;
-
-    private RegiaoDenteBO regiaoDenteBO;
-
-    private DenteBO denteBO;
-
     private List<PlanoTratamento> planosTratamento;
-
-    private PlanoTratamentoBO planoTratamentoBO = new PlanoTratamentoBO();
-
-    private ProcedimentoBO procedimentoBO = new ProcedimentoBO();
 
     private List<PlanoTratamentoProcedimento> procedimentosDente;
 
-    private Procedimento procedimentoSelecionado;
-
-    private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
+    private Procedimento procedimentoSelecionado;  
 
     private PlanoTratamento planoTratamento;
 
@@ -109,8 +93,6 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
     private String descricaoPT;
 
     private Dente denteSelecionado;
-
-    private ConvenioProcedimentoBO convenioProcedimentoBO = new ConvenioProcedimentoBO();
 
     private boolean enableRegioes = false;
 
@@ -127,11 +109,8 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
     private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos;
 
     public OdontogramaMB() {
-        super(new OdontogramaBO());
-        statusDenteBO = new StatusDenteBO();
-        odontogramaBO = new OdontogramaBO();
-        regiaoDenteBO = new RegiaoDenteBO();
-        denteBO = new DenteBO();
+        super(OdontogramaSingleton.getInstance().getBo());
+    
         this.setClazz(Odontograma.class);
         try {
             carregarStatusDente();
@@ -177,9 +156,9 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     public void carregarStatusDente() {
         HashSet<StatusDente> hashSet = new HashSet<>();
-        statusDente = statusDenteBO.listAllTemplate();
+        statusDente = StatusDenteSingleton.getInstance().getBo().listAllTemplate();
         hashSet.addAll(statusDente);
-        statusDenteEmpresa = statusDenteBO.listByEmpresa();
+        statusDenteEmpresa = StatusDenteSingleton.getInstance().getBo().listByEmpresa();
         hashSet.addAll(statusDenteEmpresa);
         statusDente = new ArrayList<>(hashSet);
         statusDente.sort((o1, o2) -> o1.getDescricao().compareTo(o2.getDescricao()));
@@ -214,15 +193,15 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     public List<Procedimento> geraSugestoesProcedimento(String query) {
         if (planoTratamento != null && planoTratamento.isBconvenio() && paciente.getConvenio() != null) {
-            return procedimentoBO.listSugestoesCompleteConvenio(paciente.getConvenio().getId(), query);
+            return ProcedimentoSingleton.getInstance().getBo().listSugestoesCompleteConvenio(paciente.getConvenio().getId(), query);
         } else {
-            return procedimentoBO.listSugestoesComplete(query);
+            return ProcedimentoSingleton.getInstance().getBo().listSugestoesComplete(query);
         }
     }
 
     public void actionAlterarRegiao(PlanoTratamentoProcedimento ptp) {
         try {
-            planoTratamentoProcedimentoBO.persist(ptp);
+            PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             log.error("Erro no actionAlterarRegiao", e);
@@ -250,7 +229,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
                 }
                 denteSelecionado.getRegioes().add(new RegiaoDente(statusDenteDenteSelecionado, 'C', denteSelecionado));
                 //statusDenteDenteSelecionado = new StatusDente();
-                denteBO.persist(denteSelecionado);
+                DenteSingleton.getInstance().getBo().persist(denteSelecionado);
             }
         } catch (Exception e) {
             log.error("Erro no actionPersistRegioes", e);
@@ -260,7 +239,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     public void actionPersistFacesStatusDente(RegiaoDente rd) {
         try {
-            regiaoDenteBO.persist(rd);
+            RegiaoDenteSingleton.getInstance().getBo().persist(rd);
 
         } catch (Exception e) {
             log.error("Erro no actionPersistFacesStatusDente", e);
@@ -272,7 +251,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
         try {
             if (denteSelecionado != null) {
                 denteSelecionado.getRegioes().remove(rd);
-                denteBO.persist(denteSelecionado);
+                DenteSingleton.getInstance().getBo().persist(denteSelecionado);
             }
         } catch (Exception e) {
             log.error("Erro no actionRemoverStatusDente", e);
@@ -284,10 +263,10 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
         String strDente = JSFHelper.getRequestParameterMap("dente");
         try {
             enableRegioes = false;
-            denteSelecionado = denteBO.findByDescAndOdontograma(strDente, getEntity());
+            denteSelecionado = DenteSingleton.getInstance().getBo().findByDescAndOdontograma(strDente, getEntity());
             if (denteSelecionado == null) {
                 denteSelecionado = new Dente(strDente, getEntity());
-                denteBO.persist(denteSelecionado);
+                DenteSingleton.getInstance().getBo().persist(denteSelecionado);
             }
             carregarProcedimentos(denteSelecionado);
         } catch (Exception e) {
@@ -298,7 +277,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     public void actionCarregarPTOdontograma() {
         try {
-            planosTratamento = planoTratamentoBO.listByOdontograma(getEntity());
+            planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByOdontograma(getEntity());
             if (planoTratamento != null && planoTratamento.isBconvenio() && paciente.getConvenio() != null) {
                 planoTratamento.setConvenio(paciente.getConvenio());
             }
@@ -310,7 +289,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     private void carregarProcedimentosComRegiao() throws Exception {
 
-        procedimentosDente = planoTratamentoProcedimentoBO.listByComRegiaoAndPlanoTratamento(planoTratamento);
+        procedimentosDente = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByComRegiaoAndPlanoTratamento(planoTratamento);
         for (PlanoTratamentoProcedimento ptp : procedimentosDente) {
             List<String> faces = new ArrayList<>();
             for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {
@@ -318,14 +297,14 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
             }
             ptp.setFacesSelecionadas(faces);
         }
-        planoTratamento.setPlanoTratamentoProcedimentos(planoTratamentoProcedimentoBO.listByPlanoTratamento(planoTratamento.getId()));
+        planoTratamento.setPlanoTratamentoProcedimentos(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(planoTratamento.getId()));
 
     }
 
     private void carregarProcedimentos(Dente dente) throws Exception {
         procedimentosDente = null;
         if (denteSelecionado != null && planoTratamento.getId() != null) {
-            procedimentosDente = planoTratamentoProcedimentoBO.listByDenteAndPlanoTratamento(denteSelecionado, planoTratamento);
+            procedimentosDente = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByDenteAndPlanoTratamento(denteSelecionado, planoTratamento);
             for (PlanoTratamentoProcedimento ptp : procedimentosDente) {
                 List<String> faces = new ArrayList<>();
                 for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {
@@ -333,7 +312,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
                 }
                 ptp.setFacesSelecionadas(faces);
             }
-            planoTratamento.setPlanoTratamentoProcedimentos(planoTratamentoProcedimentoBO.listByPlanoTratamento(planoTratamento.getId()));
+            planoTratamento.setPlanoTratamentoProcedimentos(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(planoTratamento.getId()));
         }
     }
 
@@ -355,8 +334,8 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
             }
 
             ptp.setPlanoTratamentoProcedimentoFaces(ptpfList);
-            planoTratamentoProcedimentoBO.persist(ptp);
-            planoTratamento.setPlanoTratamentoProcedimentos(planoTratamentoProcedimentoBO.listByPlanoTratamento(planoTratamento.getId()));
+            PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
+            planoTratamento.setPlanoTratamentoProcedimentos(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(planoTratamento.getId()));
 
         } catch (Exception e) {
             log.error("actionPersistFaces", e);
@@ -366,7 +345,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     public void carregarProcedimentosPT() {
         try {
-            planoTratamento.setPlanoTratamentoProcedimentos(planoTratamentoProcedimentoBO.listByPlanoTratamento(planoTratamento.getId()));
+            planoTratamento.setPlanoTratamentoProcedimentos(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(planoTratamento.getId()));
         } catch (Exception e) {
             log.error("carregarProcedimentosPT", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -377,7 +356,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
         try {
             statusDenteSelecionado.setCor("#" + statusDenteSelecionado.getCorPF());
             statusDenteSelecionado.setIdEmpresa(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpIntCod());
-            statusDenteBO.persist(statusDenteSelecionado);
+            StatusDenteSingleton.getInstance().getBo().persist(statusDenteSelecionado);
             statusDenteSelecionado = new StatusDente();
             carregarStatusDente();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -400,19 +379,19 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
         try {
             if (planoTratamento != null) {
 
-                PlanoTratamentoProcedimento ptp = planoTratamentoProcedimentoBO.carregaProcedimento(planoTratamento, procedimentoSelecionado, getPaciente());
+                PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().carregaProcedimento(planoTratamento, procedimentoSelecionado, getPaciente());
                 if (enableRegioes) {
                     ptp.setRegiao(regiaoSelecionada);
                 } else {
                     ptp.setDenteObj(denteSelecionado);
                 }
-                planoTratamentoProcedimentoBO.persist(ptp);
+                PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
                 if (planoTratamento.getPlanoTratamentoProcedimentos() == null) {
                     planoTratamento.setPlanoTratamentoProcedimentos(new ArrayList<>());
                 }
                 planoTratamento.getPlanoTratamentoProcedimentos().add(ptp);
                 calculaValorTotal();
-                planoTratamentoBO.persist(planoTratamento);
+                PlanoTratamentoSingleton.getInstance().getBo().persist(planoTratamento);
                 if (enableRegioes) {
                     carregarProcedimentosComRegiao();
                 } else {
@@ -432,8 +411,8 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
         try {
             planoTratamento.setOdontograma(getEntity());
             planoTratamento.setPaciente(getPaciente());
-            planoTratamento.setProfissional(ProfissionalBO.getProfissionalLogado());
-            planoTratamentoBO.persist(planoTratamento);
+            planoTratamento.setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            PlanoTratamentoSingleton.getInstance().getBo().persist(planoTratamento);
             actionCarregarPTOdontograma();
             carregarOdontogramas();
         } catch (Exception e) {
@@ -446,7 +425,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
         try {
             Odontograma odontograma = getEntity();
             odontograma = new Odontograma(Calendar.getInstance().getTime(), this.getPaciente(), observacoes != null ? observacoes : "");
-            odontogramaBO.persist(odontograma);
+            OdontogramaSingleton.getInstance().getBo().persist(odontograma);
             setEntity(odontograma);
             actionSelecionarOdontograma();
             carregarOdontogramas();
@@ -459,7 +438,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
     public void actionExcluirOdontograma() {
         try {
             Odontograma odontograma = getEntity();
-            odontogramaBO.remove(odontograma);
+            OdontogramaSingleton.getInstance().getBo().remove(odontograma);
             setEntity(null);
             actionSelecionarOdontograma();
             carregarOdontogramas();
@@ -471,7 +450,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     public void actionExcluirPT() {
         try {
-            planoTratamentoBO.remove(planoTratamento);
+            PlanoTratamentoSingleton.getInstance().getBo().remove(planoTratamento);
             planoTratamento = null;
             actionCarregarPTOdontograma();
             carregarOdontogramas();
@@ -483,7 +462,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     public String diagnosticosDente(String dente, String extraStyle) {
         try {
-            Dente d = denteBO.findByDescAndOdontograma(dente, getEntity());
+            Dente d = DenteSingleton.getInstance().getBo().findByDescAndOdontograma(dente, getEntity());
             if (d != null) {
                 //List<RegiaoDente> regioes = regiaoDenteBO.listByOdontogramaAndDente(getEntity(), d);
                 List<RegiaoDente> regioes = d.getRegioes();
@@ -508,12 +487,12 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
             Odontograma odontograma = getEntity();
             validaFaces();
             calculaValorTotal();
-            planoTratamentoBO.persist(planoTratamento);
+            PlanoTratamentoSingleton.getInstance().getBo().persist(planoTratamento);
 
             if (odontograma == null || odontograma.getId() == 0) {
                 odontograma = new Odontograma(Calendar.getInstance().getTime(), this.getPaciente(), observacoes);
             }
-            odontogramaBO.persist(odontograma);
+            OdontogramaSingleton.getInstance().getBo().persist(odontograma);
             setEntity(odontograma);
             this.carregarOdontogramas();
             carregarUltimoOdontograma();
@@ -558,7 +537,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
     public boolean existeDente(String strDente) {
         try {
             if (getEntity().getId() != 0) {
-                Dente d = denteBO.findByDescAndOdontograma(strDente, getEntity());
+                Dente d = DenteSingleton.getInstance().getBo().findByDescAndOdontograma(strDente, getEntity());
                 return d != null;
             }
         } catch (Exception e) {
@@ -595,7 +574,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
                 RequestContext.getCurrentInstance().addCallbackParam("valido", false);
             } else {
                 if (RequestContext.getCurrentInstance() != null) {
-                    RequestContext.getCurrentInstance().addCallbackParam("odontograma", gson.toJson(new RegiaoDenteBO().listByOdontograma(odontograma)));
+                    RequestContext.getCurrentInstance().addCallbackParam("odontograma", gson.toJson(RegiaoDenteSingleton.getInstance().getBo().listByOdontograma(odontograma)));
                     RequestContext.getCurrentInstance().addCallbackParam("observacoes", odontograma.getObservacoes());
                     RequestContext.getCurrentInstance().addCallbackParam("valido", true);
                 }
@@ -630,7 +609,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
     public void carregarOdontogramas() {
         try {
             if (pacienteMB != null && pacienteMB.getEntity() != null && pacienteMB.getEntity().getId() != null) {
-                odontogramas = odontogramaBO.listByPaciente(this.getPaciente());
+                odontogramas = OdontogramaSingleton.getInstance().getBo().listByPaciente(this.getPaciente());
             }
         } catch (Exception e) {
             log.error("Erro no carregarOdontogramas", e);

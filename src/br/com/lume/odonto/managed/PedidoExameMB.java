@@ -15,11 +15,9 @@ import org.primefaces.event.SelectEvent;
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.DocumentoBO;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.PacienteBO;
-import br.com.lume.odonto.bo.PedidoExameBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.documento.DocumentoSingleton;
+import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Paciente;
@@ -27,6 +25,8 @@ import br.com.lume.odonto.entity.PedidoExame;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.TagDocumento;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.pedidoExame.PedidoExameSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -51,33 +51,21 @@ public class PedidoExameMB extends LumeManagedBean<PedidoExame> {
 
     private Paciente paciente;
 
-    private DominioBO dominioBO;
-
-    private DocumentoBO documentoBO;
-
-    private PedidoExameBO pedidoExameBO;
-
-    private PacienteBO pacienteBO;
-
-    private ProfissionalBO profissionalBO;
 
     private Profissional profissionalLogado;
 
     public PedidoExameMB() {
-        super(new PedidoExameBO());
-        dominioBO = new DominioBO();
-        documentoBO = new DocumentoBO();
-        pedidoExameBO = new PedidoExameBO();
-        pacienteBO = new PacienteBO();
+        super(PedidoExameSingleton.getInstance().getBo());
+   
         try {
-            Dominio dominio = dominioBO.findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "PE");
-            documentos = documentoBO.listByTipoDocumento(dominio);
-            this.setPaciente(PacienteBO.getPacienteSelecionado());
+            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "PE");
+            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio);
+            this.setPaciente(Configurar.getInstance().getConfiguracao().getPacienteSelecionado());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
         }
-        profissionalLogado = ProfissionalBO.getProfissionalLogado();
+        profissionalLogado = Configurar.getInstance().getConfiguracao().getProfissionalLogado();
         if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
                 OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
             liberaBotao = true;
@@ -93,10 +81,10 @@ public class PedidoExameMB extends LumeManagedBean<PedidoExame> {
                 this.replaceDocumento();
                 visivel = true;
             }
-            this.getEntity().setProfissional(ProfissionalBO.getProfissionalLogado());
+            this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
             this.getEntity().setDocumentoGerado(documento);
             this.getEntity().setPaciente(paciente);
-            pedidoExameBO.persist(this.getEntity());
+            PedidoExameSingleton.getInstance().getBo().persist(this.getEntity());
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             log.error("Erro no actionPersist Atestado", e);
@@ -118,7 +106,7 @@ public class PedidoExameMB extends LumeManagedBean<PedidoExame> {
         // return super.getEntityList();
         if (paciente != null) {
             try {
-                return pedidoExameBO.listByPaciente(paciente);
+                return PedidoExameSingleton.getInstance().getBo().listByPaciente(paciente);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -132,7 +120,7 @@ public class PedidoExameMB extends LumeManagedBean<PedidoExame> {
     }
 
     private void replaceDocumento() {
-        documento = documentoBO.replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento);
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento);
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         documento = documento.replaceAll("span", "div");
     }
@@ -166,7 +154,7 @@ public class PedidoExameMB extends LumeManagedBean<PedidoExame> {
     }
 
     public void setDocumentoSelecionado(Documento documentoSelecionado) {
-        tagDinamicas = documentoBO.getTagDinamicas(documentoSelecionado, this.documentoSelecionado, tagDinamicas,
+        tagDinamicas = DocumentoSingleton.getInstance().getBo().getTagDinamicas(documentoSelecionado, this.documentoSelecionado, tagDinamicas,
                 new String[] { "#paciente", "#rg", "#datahoje", "#endereco_completo", "#idade", "#sexo", "#clinica_nome", "#clinica_cnpj", "#clinica_endereco", "#clinica_numero", "#clinica_complemento", "#clinica_bairro", "#clinica_cidade", "#clinica_estado", "#clinica_fone", "#clinica_email", "#clinica_cro_responsavel", "#clinica_logo" });
         this.documentoSelecionado = documentoSelecionado;
         visivel = true;
@@ -198,11 +186,11 @@ public class PedidoExameMB extends LumeManagedBean<PedidoExame> {
     public void handleSelectPacienteSelecionado(SelectEvent event) {
         Object object = event.getObject();
         paciente = (Paciente) object;
-        PacienteBO.setPacienteSelecionado(paciente);
+        Configurar.getInstance().getConfiguracao().setPacienteSelecionado(paciente);
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return pacienteBO.listSugestoesComplete(query);
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
     }
 
     public boolean isLiberaBotao() {

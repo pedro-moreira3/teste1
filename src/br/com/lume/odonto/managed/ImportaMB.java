@@ -20,11 +20,13 @@ import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
 
 import br.com.lume.common.util.Status;
-import br.com.lume.odonto.bo.ConvenioProcedimentoBO;
-import br.com.lume.odonto.bo.PacienteBO;
-import br.com.lume.odonto.bo.PlanoTratamentoBO;
-import br.com.lume.odonto.bo.ProcedimentoBO;
+import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.odonto.bo.ProfissionalBO;
+//import br.com.lume.odonto.bo.ConvenioProcedimentoBO;
+//import br.com.lume.odonto.bo.PacienteBO;
+//import br.com.lume.odonto.bo.PlanoTratamentoBO;
+//import br.com.lume.odonto.bo.ProcedimentoBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Paciente;
@@ -32,6 +34,10 @@ import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Procedimento;
 import br.com.lume.odonto.exception.CpfCnpjInvalidoException;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.procedimento.ProcedimentoSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.validator.CnpjValidator;
 import br.com.lume.security.validator.CpfValidator;
 
@@ -59,25 +65,25 @@ public class ImportaMB implements Serializable {
 
     private int i = 1, errosPaciente = 0, okPacientes = 0, errosPlano = 0, okPlano = 0, erroGenerico = 0;
 
-    private PacienteBO pacienteBO;
+  //  private PacienteBO pacienteBO;
 
-    private ProcedimentoBO procedimentoBO;
+ //   private ProcedimentoBO procedimentoBO;
 
-    private ProfissionalBO profissionalBO;
+  //  private ProfissionalBO profissionalBO;
 
-    private PlanoTratamentoBO planoTratamentoBO;
+ //   private PlanoTratamentoBO planoTratamentoBO;
 
-    private ConvenioProcedimentoBO convenioProcedimentoBO;
+ //   private ConvenioProcedimentoBO convenioProcedimentoBO;
 
     private FacesContext facesContext;
 
     public ImportaMB() {
         this.actionNew();
-        pacienteBO = new PacienteBO();
-        procedimentoBO = new ProcedimentoBO();
-        profissionalBO = new ProfissionalBO();
-        planoTratamentoBO = new PlanoTratamentoBO();
-        convenioProcedimentoBO = new ConvenioProcedimentoBO();
+      //  pacienteBO = new PacienteBO();
+     //   procedimentoBO = new ProcedimentoBO();
+      //  profissionalBO = new ProfissionalBO();
+      //  planoTratamentoBO = new PlanoTratamentoBO();
+      //  convenioProcedimentoBO = new ConvenioProcedimentoBO();
     }
 
     private void actionNew() {
@@ -193,13 +199,13 @@ public class ImportaMB implements Serializable {
     private void insertPlanoTratamento(StringTokenizer tokens) throws Exception {
         Procedimento procedimento = new Procedimento();
         // DOCUMENTO DO PACIENTE ID_PROFISSIONAL ID_PROCEDIMENTO (Separado por : )
-        paciente = pacienteBO.findByDocumentoandEmpresa(this.validaNull(tokens.nextToken()));
+        paciente = PacienteSingleton.getInstance().getBo().findByDocumentoandEmpresa(this.validaNull(tokens.nextToken()),ProfissionalBO.getProfissionalLogado().getIdEmpresa());
         pt.setPaciente(paciente);
-        pt.setProfissional(profissionalBO.find(Long.parseLong(this.validaNull(tokens.nextToken()))));
+        pt.setProfissional(ProfissionalSingleton.getInstance().getBo().find(Long.parseLong(this.validaNull(tokens.nextToken()))));
         // procedimentos virao separado por :
         StringTokenizer tokensProcedimento = new StringTokenizer(tokens.nextToken(), ":");
         while (tokensProcedimento.hasMoreElements()) {
-            procedimento = procedimentoBO.find(Long.parseLong(this.validaNull(tokensProcedimento.nextToken())));
+            procedimento = ProcedimentoSingleton.getInstance().getBo().find(Long.parseLong(this.validaNull(tokensProcedimento.nextToken())));
             this.insertProcedimento(procedimento);
 
         }
@@ -208,7 +214,7 @@ public class ImportaMB implements Serializable {
         pt.setValorTotalDesconto(subTotalDesconto);
         pt.setFinalizado(Status.NAO);
         if (!planoTratamentoProcedimentos.isEmpty()) {
-            planoTratamentoBO.persist(pt);
+            PlanoTratamentoSingleton.getInstance().getBo().persist(pt);
             okPlano++;
         } else {
             errosPlano++;
@@ -228,7 +234,7 @@ public class ImportaMB implements Serializable {
     private void insertProcedimento(Procedimento procedimento) throws Exception {
         BigDecimal valorComDesconto = new BigDecimal(0);
         if (paciente.getConvenio() != null) {
-            ConvenioProcedimento cp = convenioProcedimentoBO.findByConvenioAndProcedimento(paciente.getConvenio(), procedimento);
+            ConvenioProcedimento cp = ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(paciente.getConvenio(), procedimento);
             if (cp != null) {
                 valorComDesconto = cp.getValor();
             } else {

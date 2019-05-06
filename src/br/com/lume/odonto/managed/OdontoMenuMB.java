@@ -13,11 +13,11 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.HelpBO;
+import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.help.HelpSingleton;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Help;
-import br.com.lume.security.bo.UsuarioBO;
+import br.com.lume.security.UsuarioSingleton;
 
 @ManagedBean
 @SessionScoped
@@ -27,20 +27,16 @@ public class OdontoMenuMB extends br.com.lume.security.managed.MenuMB {
 
     private Logger log = Logger.getLogger(OdontoMenuMB.class);
 
-    private DominioBO dominioBO;
-
-    private HelpBO helpBO;
+  
 
     private boolean mostrarTutorial;
 
-    private UsuarioBO usuarioBO = new UsuarioBO();
 
     private List<String> tutorialImagens;
 
     public OdontoMenuMB() {
         super();
-        this.dominioBO = new DominioBO();
-        this.helpBO = new HelpBO();
+      
         this.carregarTutorialImagens();
     }
 
@@ -56,7 +52,7 @@ public class OdontoMenuMB extends br.com.lume.security.managed.MenuMB {
     public String getMostraAjuda() {
         Dominio d = null;
         try {
-            d = this.dominioBO.findByObjetoAndTipo("help", this.getLumeSecurity().getObjetoAtual().getObjStrDes());
+            d = DominioSingleton.getInstance().getBo().findByObjetoAndTipo("help", this.getLumeSecurity().getObjetoAtual().getObjStrDes());
             return d.getNome();
         } catch (Exception e) {
             return "Ajuda indisponível!";
@@ -66,7 +62,7 @@ public class OdontoMenuMB extends br.com.lume.security.managed.MenuMB {
     public void atualizarMostrarTutorial() {
         this.getLumeSecurity().getUsuario().setUsuChaTutorial(this.mostrarTutorial + "");
         try {
-            this.usuarioBO.merge(this.getLumeSecurity().getUsuario());
+            UsuarioSingleton.getInstance().getBo().merge(this.getLumeSecurity().getUsuario());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             this.log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e);
@@ -76,7 +72,7 @@ public class OdontoMenuMB extends br.com.lume.security.managed.MenuMB {
     public String getMostraAjudaInteliDente() {
         Help h = null;
         try {
-            h = this.helpBO.findByTela(this.getLumeSecurity().getPaginaAtual());
+            h = HelpSingleton.getInstance().getBo().findByTela(this.getLumeSecurity().getPaginaAtual());
         } catch (Exception e) {
             return "Ajuda indisponível!<br/>";
         }

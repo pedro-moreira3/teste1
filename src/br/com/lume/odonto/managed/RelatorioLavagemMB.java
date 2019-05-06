@@ -11,8 +11,8 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.odonto.bo.LavagemBO;
-import br.com.lume.odonto.bo.LavagemKitBO;
+import br.com.lume.lavagem.LavagemSingleton;
+import br.com.lume.lavagemKit.LavagemKitSingleton;
 import br.com.lume.odonto.entity.Lavagem;
 import br.com.lume.odonto.entity.LavagemKit;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -31,20 +31,14 @@ public class RelatorioLavagemMB extends LumeManagedBean<Lavagem> {
 
     private List<LavagemKit> itens;
 
-    private LavagemKitBO lavagemKitBO;
-
-    private LavagemBO lavagemBO;
-
     public RelatorioLavagemMB() {
-        super(new LavagemBO());
-        this.lavagemKitBO = new LavagemKitBO();
-        this.lavagemBO = new LavagemBO();
+        super(LavagemSingleton.getInstance().getBo());
         this.setClazz(Lavagem.class);
         this.filtra();
     }
 
     public void mostraItens() throws Exception {
-        this.setItens(this.lavagemKitBO.listByLavagem(this.getEntity()));
+        this.setItens(LavagemKitSingleton.getInstance().getBo().listByLavagem(this.getEntity()));
     }
 
     public void filtra() {
@@ -52,7 +46,7 @@ public class RelatorioLavagemMB extends LumeManagedBean<Lavagem> {
             if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else {
-                this.Lavagens = this.lavagemBO.listAllByPeriodo(this.inicio, this.fim);
+                this.Lavagens = LavagemSingleton.getInstance().getBo().listAllByPeriodo(this.inicio, this.fim);
                 if (this.Lavagens == null || this.Lavagens.isEmpty()) {
                     this.addError(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"), "");
                     this.log.error(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"));

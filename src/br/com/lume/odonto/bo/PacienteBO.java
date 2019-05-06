@@ -21,7 +21,6 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.exception.techinical.TechnicalException;
-import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Status;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
@@ -31,9 +30,6 @@ import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.security.PerfilSingleton;
 import br.com.lume.security.SistemaSingleton;
 import br.com.lume.security.UsuarioSingleton;
-//import br.com.lume.security.bo.PerfilBO;
-//import br.com.lume.security.bo.SistemaBO;
-//import br.com.lume.security.bo.UsuarioBO;
 import br.com.lume.security.entity.Perfil;
 import br.com.lume.security.entity.Usuario;
 

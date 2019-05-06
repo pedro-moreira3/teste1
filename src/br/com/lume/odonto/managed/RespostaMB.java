@@ -11,11 +11,11 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.PerguntaBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
-import br.com.lume.odonto.bo.RespostaBO;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.entity.Pergunta;
 import br.com.lume.odonto.entity.Resposta;
+import br.com.lume.pergunta.PerguntaSingleton;
+import br.com.lume.resposta.RespostaSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -32,14 +32,8 @@ public class RespostaMB extends LumeManagedBean<Resposta> {
 
     private List<Resposta> respostas;
 
-    private PerguntaBO perguntaBO;
-
-    private RespostaBO respostaBO;
-
     public RespostaMB() {
-        super(new RespostaBO());
-        this.perguntaBO = new PerguntaBO();
-        this.respostaBO = new RespostaBO();
+        super(RespostaSingleton.getInstance().getBo());      
         this.setClazz(Resposta.class);
         this.carregaLista();
     }
@@ -47,7 +41,7 @@ public class RespostaMB extends LumeManagedBean<Resposta> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().getPergunta().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+            this.getEntity().getPergunta().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
             super.actionPersist(event);
             this.carregaLista();
         } catch (Exception e) {
@@ -58,8 +52,8 @@ public class RespostaMB extends LumeManagedBean<Resposta> {
 
     public void carregaLista() {
         try {
-            this.perguntas = this.perguntaBO.listComTipoRespComplexa();
-            this.respostas = this.respostaBO.listByEmpresa();
+            this.perguntas = PerguntaSingleton.getInstance().getBo().listComTipoRespComplexa();
+            this.respostas = RespostaSingleton.getInstance().getBo().listByEmpresa();
         } catch (Exception e) {
             this.addError("Erro ao carregar perguntas", "");
         }

@@ -15,8 +15,9 @@ import org.primefaces.context.RequestContext;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.odonto.bo.AgendamentoBO;
+//import br.com.lume.odonto.bo.AgendamentoBO;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoAgenda;
 
@@ -38,7 +39,7 @@ public class ExportarAgendaMB extends LumeManagedBean<Agendamento> {
     private AgendamentoMB agendamentoMB;
 
     public ExportarAgendaMB() {
-        super(new AgendamentoBO());
+        super(AgendamentoSingleton.getInstance().getBo());
         this.setClazz(Agendamento.class);
     }
 
@@ -46,7 +47,7 @@ public class ExportarAgendaMB extends LumeManagedBean<Agendamento> {
         try {
             calcularDatas();
 
-            agendamentos = ((AgendamentoBO) getbO()).listByDataAndProfissional(agendamentoMB.getProfissional(), inicio, fim, null);
+            agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndProfissional(agendamentoMB.getProfissional(), inicio, fim, null);
             if (RequestContext.getCurrentInstance() != null) {
                 if (agendamentos != null && !agendamentos.isEmpty()) {
                     List<AgendamentoAgenda> agendamentosAgenda = new ArrayList<>();

@@ -19,16 +19,16 @@ import org.primefaces.model.TreeNode;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.odonto.bo.ConvenioBO;
-import br.com.lume.odonto.bo.ConvenioProcedimentoBO;
-import br.com.lume.odonto.bo.EspecialidadeBO;
-import br.com.lume.odonto.bo.ProcedimentoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.convenio.ConvenioSingleton;
+import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
+import br.com.lume.especialidade.EspecialidadeSingleton;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.Especialidade;
 import br.com.lume.odonto.entity.Procedimento;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.procedimento.ProcedimentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -46,17 +46,9 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
 
     private String filtroTable;
 
-    private EspecialidadeBO especialidadeBO;
-
-    private ConvenioProcedimentoBO convenioProcedimentoBO;
-
-    private ConvenioBO convenioBO;
-
     public ProcedimentoMB() {
-        super(new ProcedimentoBO());
-        especialidadeBO = new EspecialidadeBO();
-        convenioProcedimentoBO = new ConvenioProcedimentoBO();
-        convenioBO = new ConvenioBO();
+        super(ProcedimentoSingleton.getInstance().getBo());
+
         this.setClazz(Procedimento.class);
         this.geralist();
         this.carregaTreeProcedimentos(null);
@@ -64,7 +56,7 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
 
     private void geralist() {
         try {
-            this.setEspecialidades(especialidadeBO.listByEmpresa());
+            this.setEspecialidades(EspecialidadeSingleton.getInstance().getBo().listByEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
@@ -151,7 +143,7 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
                 if (this.getEntity().getCodigoCfo() == null) {
                     this.getEntity().setCodigoCfo(0);
                 }
-                this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+                this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
                 super.actionPersist(event);
                 this.geralist();
             }
@@ -159,31 +151,31 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
     }
 
     private void atualizaConvenioProcedimento() throws Exception {
-        List<ConvenioProcedimento> cps = convenioProcedimentoBO.listByProcedimento(this.getEntity());
+        List<ConvenioProcedimento> cps = ConvenioProcedimentoSingleton.getInstance().getBo().listByProcedimento(this.getEntity());
         Boolean msg = false;
         if (cps != null && !cps.isEmpty()) {
             for (ConvenioProcedimento cp : cps) {
                 cp.setProcedimento(this.getEntity());
-                cp.setAlteradoPor(ProfissionalBO.getProfissionalLogado());
+                cp.setAlteradoPor(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
                 cp.setDataUltimaAlteracao(Calendar.getInstance().getTime());
-                cp.setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+                cp.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
                 if (cp.getPorcentagem() != null && cp.getPorcentagem().longValue() >= 0) {
                     cp.setValor(cp.getProcedimento().getValor().multiply(cp.getPorcentagem().divide(new BigDecimal(100), MathContext.DECIMAL32)));
                 }
-                convenioProcedimentoBO.persist(cp);
+                ConvenioProcedimentoSingleton.getInstance().getBo().persist(cp);
                 msg = true;
             }
         } else {
-            List<Convenio> convenios = convenioBO.listByEmpresa();
+            List<Convenio> convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa();
             if (convenios != null && !convenios.isEmpty()) {
                 for (Convenio convenio : convenios) {
                     ConvenioProcedimento cp = new ConvenioProcedimento();
                     cp.setConvenio(convenio);
                     cp.setPorcentagem(new BigDecimal(100));
                     cp.setProcedimento(this.getEntity());
-                    cp.setAlteradoPor(ProfissionalBO.getProfissionalLogado());
+                    cp.setAlteradoPor(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
                     cp.setDataUltimaAlteracao(Calendar.getInstance().getTime());
-                    cp.setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+                    cp.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
                     if (cp.getPorcentagem() != null && cp.getPorcentagem().longValue() >= 0) {
                         cp.setValor(cp.getProcedimento().getValor().multiply(cp.getPorcentagem().divide(new BigDecimal(100), MathContext.DECIMAL32)));
                     }

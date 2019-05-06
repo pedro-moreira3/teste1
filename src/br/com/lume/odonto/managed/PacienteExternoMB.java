@@ -8,20 +8,20 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 
+import br.com.lume.anamnese.AnamneseSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.AnamneseBO;
-import br.com.lume.odonto.bo.DadosBasicoBO;
-import br.com.lume.odonto.bo.ItemAnamneseBO;
-import br.com.lume.odonto.bo.PacienteBO;
-import br.com.lume.odonto.bo.PerguntaBO;
+import br.com.lume.dadosBasico.DadosBasicoSingleton;
+import br.com.lume.itemAnamnese.ItemAnamneseSingleton;
 import br.com.lume.odonto.entity.ItemAnamnese;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Pergunta;
 import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.pergunta.PerguntaSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -36,30 +36,16 @@ public class PacienteExternoMB extends LumeManagedBean<Paciente> {
     private boolean possuiPerguntas = true;
 
     private List<ItemAnamnese> anamnesesPreCadastro;
-
-    private PacienteBO pacienteBO;
-
-    private PerguntaBO perguntaBO;
-
-    private ItemAnamneseBO itemAnamneseBO;
-
-    private DadosBasicoBO dadosBasicoBO;
-
-    private AnamneseBO anamneseBO;
+  
 
     public PacienteExternoMB() {
-        super(new PacienteBO());
-        pacienteBO = new PacienteBO();
-        perguntaBO = new PerguntaBO();
-        itemAnamneseBO = new ItemAnamneseBO();
-        dadosBasicoBO = new DadosBasicoBO();
-        anamneseBO = new AnamneseBO();
+        super(PacienteSingleton.getInstance().getBo());    
         this.setClazz(Paciente.class);
         try {
-            paciente = pacienteBO.findByEmpresaEUsuario(this.getLumeSecurity().getUsuario().getEmpresa().getEmpIntCod(), this.getLumeSecurity().getUsuario().getUsuIntCod());
+            paciente = PacienteSingleton.getInstance().getBo().findByEmpresaEUsuario(this.getLumeSecurity().getUsuario().getEmpresa().getEmpIntCod(), this.getLumeSecurity().getUsuario().getUsuIntCod());
             this.setEntity(paciente);
-            List<Pergunta> perguntas = perguntaBO.listPreCadastro(paciente);
-            anamnesesPreCadastro = itemAnamneseBO.perguntasAnamnese(perguntas);
+            List<Pergunta> perguntas = PerguntaSingleton.getInstance().getBo().listPreCadastro(paciente);
+            anamnesesPreCadastro = ItemAnamneseSingleton.getInstance().getBo().perguntasAnamnese(perguntas);
             if (anamnesesPreCadastro.size() <= 0) {
                 this.setPossuiPerguntas(Boolean.FALSE);
             }
@@ -70,12 +56,11 @@ public class PacienteExternoMB extends LumeManagedBean<Paciente> {
 
     public void actionPersistPaciente(ActionEvent event) {
         try {
-            dadosBasicoBO.validaTelefone(this.getEntity().getDadosBasico());
+            DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
             super.actionPersist(event);
-        } catch (TelefoneException te) {
+        }  catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "");
             log.error(OdontoMensagens.getMensagem("erro.valida.telefone"));
-        } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
@@ -88,7 +73,7 @@ public class PacienteExternoMB extends LumeManagedBean<Paciente> {
                     item.setResposta("");
                 }
             }
-            anamneseBO.persistByPaciente(null, this.getEntity(), anamnesesPreCadastro);
+            AnamneseSingleton.getInstance().getBo().persistByPaciente(null, this.getEntity(), anamnesesPreCadastro);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);

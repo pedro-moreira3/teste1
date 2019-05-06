@@ -20,12 +20,8 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.configuracao.Configurar;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.LancamentoBO;
-import br.com.lume.odonto.bo.OrcamentoBO;
-import br.com.lume.odonto.bo.PlanoTratamentoBO;
-import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Orcamento;
@@ -33,6 +29,9 @@ import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Procedimento;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.orcamento.OrcamentoSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 
@@ -59,15 +58,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
 
     private boolean porProcedimento, ciclico;
 
-    private OrcamentoBO orcamentoBO;
-
-    private LancamentoBO lancamentoBO;
-
-    private DominioBO dominioBO;
-
-    private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
-
-    private PlanoTratamentoBO planoTratamentoBO;
+  
 
     private String nomeClinica;
 
@@ -78,19 +69,15 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
     private List<Dominio> formasPagamento;
 
     public OrcamentoMB2() {
-        super(new OrcamentoBO());
-        orcamentoBO = new OrcamentoBO();
-        lancamentoBO = new LancamentoBO();
-        dominioBO = new DominioBO();
-        planoTratamentoBO = new PlanoTratamentoBO();
-        planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
+        super(OrcamentoSingleton.getInstance().getBo());
+     
         this.setClazz(Orcamento.class);
         Empresa empresalogada = Configurar.getInstance().getConfiguracao().getEmpresaLogada();
         nomeClinica = empresalogada.getEmpStrNme() != null ? empresalogada.getEmpStrNme() : "";
         endTelefoneClinica = (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() + " - " : "") + (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() + "/" : "") + (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() + " - " : "") + (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
         try {
             porcentagem = new BigDecimal(0);
-            formasPagamento = dominioBO.listByEmpresaAndObjetoAndTipo("pagamento", "forma");
+            formasPagamento = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,12 +104,12 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
             lancamentos = new ArrayList<>();
             this.setEntity(null);
             PlanoTratamento pt = planoTratamentoMB.getEntity();
-            planoTratamentoMB.setEntity(planoTratamentoBO.find(pt.getId()));
+            planoTratamentoMB.setEntity(PlanoTratamentoSingleton.getInstance().getBo().find(pt.getId()));
 
             valorTotal = planoTratamentoMB.getEntity().getValorTotalDesconto();
             valorTotalOriginal = planoTratamentoMB.getEntity().isAlterouvaloresdesconto() ? planoTratamentoMB.getEntity().getValorTotalDesconto() : planoTratamentoMB.getEntity().getValorTotal();
 
-            Orcamento orcamento = orcamentoBO.findUltimoOrcamentoEmAberto(planoTratamentoMB.getEntity().getId());
+            Orcamento orcamento = OrcamentoSingleton.getInstance().getBo().findUltimoOrcamentoEmAberto(planoTratamentoMB.getEntity().getId());
 
             this.setEntity(orcamento);
             porcentagem = planoTratamentoMB.getEntity().getDesconto();
@@ -132,7 +119,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
 
             }
             totalPago = new BigDecimal(0);
-            for (Lancamento lan : lancamentoBO.listByPlanoTratamentoOrcamentoNaoExcluido(planoTratamentoMB.getEntity())) {
+            for (Lancamento lan : LancamentoSingleton.getInstance().getBo().listByPlanoTratamentoOrcamentoNaoExcluido(planoTratamentoMB.getEntity())) {
                 if (lan.getDataPagamento() != null) {
                     totalPago = totalPago.add(lan.getValorOriginal());
                 }
@@ -141,7 +128,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
             valorTotal = (valorTotal.compareTo(BigDecimal.ZERO)) < 0 ? BigDecimal.ZERO : valorTotal;
             desconto = valorTotal;
             if (this.getEntity() != null && this.getEntity().getId() != 0) {
-                lancamentos = lancamentoBO.listLancamentosNaoPagos(this.getEntity());
+                lancamentos = LancamentoSingleton.getInstance().getBo().listLancamentosNaoPagos(this.getEntity());
                 numeroParcelas = lancamentos.size();
                 if (!lancamentos.isEmpty()) {
                     dataCredito = lancamentos.get(0).getDataCredito();
@@ -161,8 +148,8 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
 
     public void simulaLancamento() {
         if (porcentagem != null) {
-            if (!isDentistaAdmin() && ProfissionalBO.getProfissionalLogado().getDesconto() == null || ProfissionalBO.getProfissionalLogado().getDesconto().doubleValue() < porcentagem.doubleValue()) {
-                porcentagem = ProfissionalBO.getProfissionalLogado().getDesconto() != null ? ProfissionalBO.getProfissionalLogado().getDesconto() : new BigDecimal(0);
+            if (!isDentistaAdmin() && Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDesconto() == null || Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDesconto().doubleValue() < porcentagem.doubleValue()) {
+                porcentagem = Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDesconto() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDesconto() : new BigDecimal(0);
                 this.addError(OdontoMensagens.getMensagem("erro.orcamento.desconto.maior"), "");
                 calculaDesconto();
                 lancamentos = new ArrayList<>();
@@ -207,7 +194,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
                 if (formaPagamento != null && !formaPagamento.isEmpty()) {
                     lancamento.setFormaPagamento(formaPagamento);
                 }
-                Lancamento lanca = lancamentoBO.findByPlanoTratamentoProcedimento(ptp);
+                Lancamento lanca = LancamentoSingleton.getInstance().getBo().findByPlanoTratamentoProcedimento(ptp);
                 if (lanca == null) {
                     lancamentos.add(lancamento);
                     parcela++;
@@ -216,7 +203,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
         } else {
             if (this.getEntity().getPlanoTratamento().getPlanoTratamentoProcedimentos().get(0).getProcedimento().isCiclicoBoo()) {
                 // if (lancamentos == null || lancamentos.isEmpty())
-                lancamentos = lancamentoBO.listLancamentosNaoPagos(this.getEntity());
+                lancamentos = LancamentoSingleton.getInstance().getBo().listLancamentosNaoPagos(this.getEntity());
             }
             parcela = lancamentos.size() + 1;
             for (; parcela <= numeroParcelas; parcela++) {
@@ -270,11 +257,11 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
         try {
             int quantidadeParcelaMaxima = 0;
             if (isAdministrador()) {
-                quantidadeParcelaMaxima = Integer.parseInt(dominioBO.findByEmpresaAndObjetoAndTipoAndNome("orcamento", "parcela", "quantidadeMaxima").getValor());
+                quantidadeParcelaMaxima = Integer.parseInt(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("orcamento", "parcela", "quantidadeMaxima").getValor());
             } else {
-                quantidadeParcelaMaxima = Integer.parseInt(dominioBO.findByEmpresaAndObjetoAndTipoAndNome("orcamento", "parcela", "quantidadeMaximaNormal").getValor());
+                quantidadeParcelaMaxima = Integer.parseInt(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("orcamento", "parcela", "quantidadeMaximaNormal").getValor());
             }
-            BigDecimal valorMinimo = new BigDecimal(dominioBO.findByEmpresaAndObjetoAndTipoAndValor("orcamento", "parcela", "VM").getNome());
+            BigDecimal valorMinimo = new BigDecimal(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("orcamento", "parcela", "VM").getNome());
             if (quantidadeParcelaMaxima < parcela) {
                 log.error(OdontoMensagens.getMensagem("erro.orcamento.parcelaMaxima").replaceFirst("\\{1\\}", String.valueOf(quantidadeParcelaMaxima)));
                 this.addError(OdontoMensagens.getMensagem("erro.orcamento.parcelaMaxima").replaceFirst("\\{1\\}", String.valueOf(quantidadeParcelaMaxima)), "");
@@ -324,9 +311,9 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
         for (PlanoTratamentoProcedimento ptp : planoTratamentoMB.getPlanoTratamentoProcedimentos()) {
             System.out.println(ptp.getValorDesconto().doubleValue() + " != " + ptp.getValorAnterior().doubleValue());
             if (ptp.getStatus() != null && ptp.getStatus().equals("F") && ptp.getValorDesconto().doubleValue() != ptp.getValorAnterior().doubleValue()) {
-                ptp.setValorRepasse(planoTratamentoProcedimentoBO.findValorRepasse(ptp));
+                ptp.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp));
                 try {
-                    planoTratamentoProcedimentoBO.persist(ptp);
+                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
                 } catch (Exception e) {
                     log.error("Erro no calculaRepasses", e);
                     this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -347,28 +334,28 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
                 this.getEntity().setQuantidadeParcelas(numeroParcelas);
                 BigDecimal desconto = valorTotalPlano.subtract(valorTotal.add(totalPago));
                 this.getEntity().setValorTotal(valorTotalPlano.subtract(desconto));
-                this.getEntity().setProfissional(ProfissionalBO.getProfissionalLogado());
+                this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
                 for (Lancamento l : lancamentos) {
                     if (l.getValor().compareTo(l.getValorOriginal()) != 0) {
                         l.setValorOriginal(l.getValor());
                     }
                 }
                 this.getbO().persist(this.getEntity());
-                List<Lancamento> ls = lancamentoBO.listLancamentosNaoPagos(this.getEntity());
+                List<Lancamento> ls = LancamentoSingleton.getInstance().getBo().listLancamentosNaoPagos(this.getEntity());
                 if (ls != null) {
                     for (Lancamento l : ls) {
-                        lancamentoBO.remove(l);
+                        LancamentoSingleton.getInstance().getBo().remove(l);
                     }
                 }
                 for (Lancamento lancamento : lancamentos) {
                     lancamento.setOrcamento(this.getEntity());
-                    lancamentoBO.persist(lancamento);
+                    LancamentoSingleton.getInstance().getBo().persist(lancamento);
                 }
-                PlanoTratamento pt = planoTratamentoBO.find(this.getEntity().getPlanoTratamento());
+                PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().find(this.getEntity().getPlanoTratamento());
                 pt.setValorTotal(valorTotalPlano);
                 pt.setValorTotalDesconto(valorTotalDesconto);
                 pt.setDesconto(porcentagem);
-                planoTratamentoBO.persist(pt);
+                PlanoTratamentoSingleton.getInstance().getBo().persist(pt);
                 List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos = planoTratamentoMB.getPlanoTratamentoProcedimentos();
                 for (PlanoTratamentoProcedimento planoTratamentoProcedimento : planoTratamentoProcedimentos) {
                     planoTratamentoProcedimento.setValorAnterior(planoTratamentoProcedimento.getValorDesconto());
@@ -379,7 +366,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
                         planoTratamentoProcedimento.setValorDesconto(
                                 planoTratamentoProcedimento.getValor().subtract(planoTratamentoProcedimento.getValor().multiply(this.getPorcentagem().divide(new BigDecimal(100)))));
                     }
-                    planoTratamentoProcedimentoBO.merge(planoTratamentoProcedimento);
+                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(planoTratamentoProcedimento);
                 }
                 calculaRepasses(pt);
                 planoTratamentoMB.actionNew(null);
@@ -525,7 +512,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
     }
 
     public String getProfissionalOrcamento() {
-        return ProfissionalBO.getProfissionalLogado().getDadosBasico().getNome();
+        return Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDadosBasico().getNome();
     }
 
     public String getNomeClinica() {

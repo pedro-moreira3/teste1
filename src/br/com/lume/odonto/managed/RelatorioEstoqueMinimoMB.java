@@ -9,8 +9,8 @@ import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.odonto.bo.RelatorioEstoqueMinimoBO;
 import br.com.lume.odonto.entity.RelatorioEstoqueMinimo;
+import br.com.lume.relatorioEstoqueMinimo.RelatorioEstoqueMinimoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -22,17 +22,16 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
 
     private List<RelatorioEstoqueMinimo> materiais = new ArrayList<>();
 
-    private RelatorioEstoqueMinimoBO relatorioEstoqueMinimoBO;
 
     public RelatorioEstoqueMinimoMB() {
-        super(new RelatorioEstoqueMinimoBO());
-        this.relatorioEstoqueMinimoBO = new RelatorioEstoqueMinimoBO();
+        super(RelatorioEstoqueMinimoSingleton.getInstance().getBo());
+     
         this.setClazz(RelatorioEstoqueMinimo.class);
         this.filtra();
     }
 
     public void filtra() {
-        this.materiais = this.relatorioEstoqueMinimoBO.listAllByFilterToReportGroupByItemFiltrado();
+        this.materiais = RelatorioEstoqueMinimoSingleton.getInstance().getBo().listAllByFilterToReportGroupByItemFiltrado();
     }
 
     public List<RelatorioEstoqueMinimo> getMateriais() {

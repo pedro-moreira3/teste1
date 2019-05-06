@@ -12,9 +12,12 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.DadosBasicoBO;
-import br.com.lume.odonto.bo.FornecedorBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.dadosBasico.DadosBasicoSingleton;
+import br.com.lume.fornecedor.FornecedorSingleton;
+//import br.com.lume.odonto.bo.DadosBasicoBO;
+//import br.com.lume.odonto.bo.FornecedorBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.exception.CpfCnpjDuplicadoException;
 import br.com.lume.odonto.exception.TelefoneException;
@@ -31,21 +34,21 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
 
     private List<Fornecedor> fornecedores;
 
-    private FornecedorBO fornecedorBO;
+   // private FornecedorBO fornecedorBO;
 
-    private DadosBasicoBO dadosBasicoBO;
+  //  private DadosBasicoBO dadosBasicoBO;
 
     public FornecedorMB() {
-        super(new FornecedorBO());
-        fornecedorBO = new FornecedorBO();
-        dadosBasicoBO = new DadosBasicoBO();
+        super(FornecedorSingleton.getInstance().getBo());
+       // fornecedorBO = new FornecedorBO();
+     //   dadosBasicoBO = new DadosBasicoBO();
         this.setClazz(Fornecedor.class);
         this.carregaLista();
     }
 
     public void carregaLista() {
         try {
-            fornecedores = fornecedorBO.listByEmpresa();
+            fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa();
             if (fornecedores != null) {
                 Collections.sort(fornecedores);
             }
@@ -59,9 +62,9 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            dadosBasicoBO.validaTelefone(this.getEntity().getDadosBasico());
-            ((FornecedorBO) this.getbO()).validaDuplicado(this.getEntity());
-            this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+            DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
+            FornecedorSingleton.getInstance().getBo().validaDuplicado(this.getEntity());
+            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
             super.actionPersist(event);
             this.carregaLista();
         } catch (TelefoneException te) {

@@ -23,18 +23,18 @@ import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.ItemBO;
-import br.com.lume.odonto.bo.MaterialBO;
-import br.com.lume.odonto.bo.PedidoBO;
-import br.com.lume.odonto.bo.PedidoItemBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.item.ItemSingleton;
+import br.com.lume.material.MaterialSingleton;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.Pedido;
 import br.com.lume.odonto.entity.PedidoItem;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.pedido.PedidoSingleton;
+import br.com.lume.pedidoItem.PedidoItemSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -66,24 +66,13 @@ public class PedidoMB extends LumeManagedBean<Pedido> {
 
     private List<Dominio> dominios = new ArrayList<>();
 
-    private DominioBO dominioBO;
-
-    private PedidoItemBO pedidoItemBO;
-
-    private MaterialBO materialBO;
-
-    private ItemBO itemBO;
-
     public PedidoMB() {
-        super(new PedidoBO());
-        this.dominioBO = new DominioBO();
-        this.pedidoItemBO = new PedidoItemBO();
-        this.materialBO = new MaterialBO();
-        this.itemBO = new ItemBO();
+        super(PedidoSingleton.getInstance().getBo());
+
         this.setClazz(Pedido.class);
         this.setIncluindo(true);
         try {
-            this.dominios = this.dominioBO.listByEmpresaAndObjetoAndTipo("pedido", "status");
+            this.dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pedido", "status");
             this.dataAtual = new Date();
             this.setRoot(new DefaultTreeNode("", null));
             Item firstLevel = new Item();
@@ -97,7 +86,7 @@ public class PedidoMB extends LumeManagedBean<Pedido> {
 
     private void geraLista() {
         try {
-            this.setPedidos(((PedidoBO) this.getbO()).listByEmpresa());
+            this.setPedidos(PedidoSingleton.getInstance().getBo().listByEmpresa());
             if (this.pedidos != null) {
                 Collections.sort(this.pedidos);
             }
@@ -124,9 +113,9 @@ public class PedidoMB extends LumeManagedBean<Pedido> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
         this.getEntity().setData(new Date());
-        this.getEntity().setProfissional(ProfissionalBO.getProfissionalLogado());
+        this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
         for (PedidoItem pedidoItem : this.getPedidoItens()) {
             if (pedidoItem.getId() == 0 || !this.getEntity().getPedidoItens().contains(pedidoItem)) {
                 this.getEntity().getPedidoItens().add(pedidoItem);
@@ -171,9 +160,9 @@ public class PedidoMB extends LumeManagedBean<Pedido> {
         }
     }
 
-    public void remover() {
+    public void remover() throws Exception {
         try {
-            this.pedidoItemBO.remove(this.getPedidoItem());
+            PedidoItemSingleton.getInstance().getBo().remove(this.getPedidoItem());
         } catch (BusinessException e) {
             e.printStackTrace();
         } catch (TechnicalException e) {
@@ -256,7 +245,7 @@ public class PedidoMB extends LumeManagedBean<Pedido> {
     private BigDecimal quantidadeTotal() {
         BigDecimal quantidadeTotal = new BigDecimal(1);
         try {
-            List<Material> materiais = this.materialBO.listByItem(this.getItem());
+            List<Material> materiais = MaterialSingleton.getInstance().getBo().listByItem(this.getItem());
             for (Material material : materiais) {
                 quantidadeTotal = quantidadeTotal.add(material.getQuantidadeAtual());
             }
@@ -360,9 +349,9 @@ public class PedidoMB extends LumeManagedBean<Pedido> {
         this.setItens(new ArrayList<Item>());
         try {
             if (this.getDigitacao() != null) {
-                this.setItens(this.itemBO.listByEmpresaAndDescricaoParcial(this.getDigitacao()));
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao()));
             } else {
-                this.setItens(this.itemBO.listByEmpresa());
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa());
             }
             Collections.sort(this.itens);
         } catch (Exception e) {

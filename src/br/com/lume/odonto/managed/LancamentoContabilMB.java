@@ -14,22 +14,19 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 import org.primefaces.event.SelectEvent;
 
+import br.com.lume.categoriaMotivo.CategoriaMotivoSingleton;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
-import br.com.lume.odonto.bo.CategoriaMotivoBO;
-import br.com.lume.odonto.bo.ConvenioBO;
-import br.com.lume.odonto.bo.FilialBO;
-import br.com.lume.odonto.bo.FornecedorBO;
-import br.com.lume.odonto.bo.LancamentoBO;
-import br.com.lume.odonto.bo.LancamentoContabilBO;
-import br.com.lume.odonto.bo.MotivoBO;
-import br.com.lume.odonto.bo.OrigemBO;
-import br.com.lume.odonto.bo.PacienteBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.convenio.ConvenioSingleton;
+import br.com.lume.fornecedor.FornecedorSingleton;
+import br.com.lume.lancamento.LancamentoSingleton;
+import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
+import br.com.lume.motivo.MotivoSingleton;
 import br.com.lume.odonto.bo.ProfissionalBO;
-import br.com.lume.odonto.bo.TipoCategoriaBO;
 import br.com.lume.odonto.entity.CategoriaMotivo;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.DadosBasico;
@@ -42,6 +39,10 @@ import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.TipoCategoria;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.origem.OrigemSingleton;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.tipoCategoria.TipoCategoriaSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -63,52 +64,27 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     private boolean visivel;
 
-    private LancamentoContabilBO lancamentoContabilBO;
-
-    private CategoriaMotivoBO categoriaMotivoBO;
-
-    private MotivoBO motivoBO;
-
-    private FornecedorBO fornecedorBO;
-
-    private OrigemBO origemBO;
-
-    private PacienteBO pacienteBO;
-
-    private ProfissionalBO profissionalBO;
-
-    private FilialBO filialBO;
-
-    private ConvenioBO convenioBO;
+   
 
     private CategoriaMotivo categoria;
 
     public List<Lancamento> lancamentosValidar;
 
-    private LancamentoBO lancamentoBO = new LancamentoBO();
+
 
     private TipoCategoria tipoCategoria;
 
     private List<TipoCategoria> tiposCategoria;
 
-    private TipoCategoriaBO tipoCategoriaBO;
+  //  private TipoCategoriaBO tipoCategoriaBO;
 
     private String tipo = "Pagar";
 
     private String tipoOrigem = "J";
 
     public LancamentoContabilMB() {
-        super(new LancamentoContabilBO());
-        lancamentoContabilBO = new LancamentoContabilBO();
-        motivoBO = new MotivoBO();
-        fornecedorBO = new FornecedorBO();
-        origemBO = new OrigemBO();
-        pacienteBO = new PacienteBO();
-        profissionalBO = new ProfissionalBO();
-        filialBO = new FilialBO();
-        convenioBO = new ConvenioBO();
-        categoriaMotivoBO = new CategoriaMotivoBO();
-        tipoCategoriaBO = new TipoCategoriaBO();
+        super(LancamentoContabilSingleton.getInstance().getBo());
+      
         this.geraLista();
         this.setClazz(LancamentoContabil.class);
         try {
@@ -121,7 +97,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     private void carregarLancamentosValidar() {
         try {
-            lancamentosValidar = lancamentoBO.listByPagamentoPacienteNaoValidado();
+            lancamentosValidar = LancamentoSingleton.getInstance().getBo().listByPagamentoPacienteNaoValidado();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -131,9 +107,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void carregarCategorias() {
         try {
             if (tipoCategoria != null) {
-                categorias = categoriaMotivoBO.listByTipoCategoria(tipoCategoria);
+                categorias = CategoriaMotivoSingleton.getInstance().getBo().listByTipoCategoria(tipoCategoria);
             } else {
-                categorias = categoriaMotivoBO.listAll();
+                categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -144,9 +120,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void carregarMotivos() {
         try {
             if (categoria != null) {
-                motivos = motivoBO.listByCategoria(categoria, tipo);
+                motivos = MotivoSingleton.getInstance().getBo().listByCategoria(categoria, tipo);
             } else {
-                motivos = motivoBO.listByTipo(tipo);
+                motivos = MotivoSingleton.getInstance().getBo().listByTipo(tipo);
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -163,9 +139,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     private void geraLista() {
         try {
-            tiposCategoria = tipoCategoriaBO.listAll();
-            categorias = categoriaMotivoBO.listAll();
-            lancamentoContabeis = ((LancamentoContabilBO) this.getbO()).listByEmpresa();
+            tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listAll();
+            categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
+            lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listByEmpresa();
             carrearListasPorTipoPagamento();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -183,30 +159,30 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void geraListaSugestoes() {
         try {
             dadosBasicos = new ArrayList<>();
-            List<Origem> origens = origemBO.listByEmpresa();
+            List<Origem> origens = OrigemSingleton.getInstance().getBo().listByEmpresa();
             for (Origem f : origens) {
                 f.getDadosBasico().setTipoInformacao("Origem");
                 dadosBasicos.add(f.getDadosBasico());
             }
 
             if ("Pagar".equals(tipo)) {
-                List<Fornecedor> fornecedores = fornecedorBO.listByEmpresa();
+                List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa();
                 for (Fornecedor f : fornecedores) {
                     f.getDadosBasico().setTipoInformacao("Fornecedor");
                     dadosBasicos.add(f.getDadosBasico());
                 }
-                List<Profissional> profissionais = profissionalBO.listByEmpresa();
+                List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
                 for (Profissional f : profissionais) {
                     f.getDadosBasico().setTipoInformacao("Profissional");
                     dadosBasicos.add(f.getDadosBasico());
                 }
             } else if ("Receber".equals(tipo)) {
-                List<Paciente> pacientes = pacienteBO.listByEmpresa();
+                List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
                 for (Paciente f : pacientes) {
                     f.getDadosBasico().setTipoInformacao("Paciente");
                     dadosBasicos.add(f.getDadosBasico());
                 }
-                List<Convenio> convenios = convenioBO.listByEmpresa();
+                List<Convenio> convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa();
                 for (Convenio f : convenios) {
                     f.getDadosBasico().setTipoInformacao("Convênio");
                     dadosBasicos.add(f.getDadosBasico());
@@ -226,7 +202,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 l.setDataValidado(data);
                 l.setValidadoPorProfissional(ProfissionalBO.getProfissionalLogado().getId());
                 l.setValidado(Status.SIM);
-                lancamentoBO.merge(l);
+                LancamentoSingleton.getInstance().getBo().merge(l);
                 List<LancamentoContabil> lancamentosContabeis = l.getLancamentosContabeis();
                 for (LancamentoContabil lancamentoContabil : lancamentosContabeis) {
                     lancamentoContabil.setData(l.getDataCredito());
@@ -258,7 +234,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 }                
             }
         } else {
-            LancamentoContabil lc = ((LancamentoContabilBO) this.getbO()).findByTipoInicial();
+            LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByTipoInicial();
             if (lc != null) {
                 lc.setValor(this.getEntity().getValor());
                 this.setEntity(lc);
@@ -296,7 +272,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void handleSelect(SelectEvent event) {
         Object object = event.getObject();
         this.getEntity().setDadosBasico((DadosBasico) object);
-        Motivo ultimoMotivo = motivoBO.findUltimoMotivoByDadosBasicos(getEntity().getDadosBasico());
+        Motivo ultimoMotivo = MotivoSingleton.getInstance().getBo().findUltimoMotivoByDadosBasicos(getEntity().getDadosBasico());
         if (ultimoMotivo != null) {
             tipoCategoria = ultimoMotivo.getCategoria().getTipoCategoria();
             categoria = ultimoMotivo.getCategoria();
@@ -319,7 +295,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void actionPersistOrigem(ActionEvent event) {
         try {
             origem.setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
-            origemBO.persist(origem);
+            OrigemSingleton.getInstance().getBo().persist(origem);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             visivel = false;
             this.geraListaSugestoes();

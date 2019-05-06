@@ -14,11 +14,10 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.configuracao.Configurar;
-import br.com.lume.odonto.bo.RelatorioGerencialBO;
 import br.com.lume.odonto.entity.KeyValue;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.StatusAgendamento;
-import br.com.lume.security.bo.EmpresaBO;
+import br.com.lume.relatorioGerencial.RelatorioGerencialSingleton;
 import br.com.lume.security.entity.Empresa;
 
 @ManagedBean
@@ -51,7 +50,7 @@ public class RelatorioGerencialMB extends LumeManagedBean<Paciente> {
     private List<KeyValue> agendamentosHorario;
 
     public RelatorioGerencialMB() {
-        super(new RelatorioGerencialBO());
+        super(RelatorioGerencialSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
         actionTrocaDatas();
     }
@@ -146,26 +145,26 @@ public class RelatorioGerencialMB extends LumeManagedBean<Paciente> {
     public void actionFiltrar(ActionEvent event) {
         try {
             Empresa empresa = Configurar.getInstance().getConfiguracao().getEmpresaLogada();
-            RelatorioGerencialBO bo = ((RelatorioGerencialBO) getbO());
-            recebimento = bo.findRecebimento(inicio, fim, empresa);
-            pagamentosConsultorio = bo.findPagamentosConsultorio(inicio, fim, empresa);
+           // RelatorioGerencialBO bo = ((RelatorioGerencialBO) getbO());
+            recebimento = RelatorioGerencialSingleton.getInstance().getBo().findRecebimento(inicio, fim, empresa);
+            pagamentosConsultorio = RelatorioGerencialSingleton.getInstance().getBo().findPagamentosConsultorio(inicio, fim, empresa);
             pagamentosConsultorio = pagamentosConsultorio.abs();
             saldoDoDia = recebimento.subtract(getPagamentosConsultorio());
-            pacientesAtendidos = bo.findTotalAgendamentoStatus(inicio, fim, StatusAgendamento.ATENDIDO.getSigla(), empresa);
-            pacientesCancelados = bo.findTotalAgendamentoStatus(inicio, fim, StatusAgendamento.CANCELADO.getSigla(), empresa);
-            pacientesNaoVieram = bo.findTotalAgendamentoStatus(inicio, fim, StatusAgendamento.FALTA.getSigla(), empresa);
-            pacientesRemarcaram = bo.findTotalAgendamentoStatus(inicio, fim, StatusAgendamento.REMARCADO.getSigla(), empresa);
+            pacientesAtendidos = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamento.ATENDIDO.getSigla(), empresa);
+            pacientesCancelados = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamento.CANCELADO.getSigla(), empresa);
+            pacientesNaoVieram = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamento.FALTA.getSigla(), empresa);
+            pacientesRemarcaram = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamento.REMARCADO.getSigla(), empresa);
             pacientesAgendados = pacientesAtendidos + pacientesNaoVieram + pacientesRemarcaram + pacientesCancelados;
-            pacientesAtivos = bo.findPacientesAtivos(inicio, fim, empresa);
-            pacientesInativosDetalhe = bo.listPacientesInativos(inicio, fim, empresa);
+            pacientesAtivos = RelatorioGerencialSingleton.getInstance().getBo().findPacientesAtivos(inicio, fim, empresa);
+            pacientesInativosDetalhe = RelatorioGerencialSingleton.getInstance().getBo().listPacientesInativos(inicio, fim, empresa);
             pacientesInativos = pacientesInativosDetalhe.size();
-            pacientesConvenio = bo.findTotalAgendamentoConvenioOuSem(inicio, fim, true, empresa);
-            pacientesSemConvenio = bo.findTotalAgendamentoConvenioOuSem(inicio, fim, false, empresa);
-            minutosAgendados = bo.findTotalMinutosAgendamento(inicio, fim, false, empresa);
-            minutosUtilizados = bo.findTotalMinutosAgendamento(inicio, fim, true, empresa);
-            orcamentosAprovados = bo.listStatutsPTP(inicio, fim, empresa);
-            profissionaisMaisRentaveis = bo.findProfissionaisMaisRentaveis(inicio, fim, empresa);
-            agendamentosHorario = bo.findAgendamentosHorario(inicio, fim, empresa);
+            pacientesConvenio = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoConvenioOuSem(inicio, fim, true, empresa);
+            pacientesSemConvenio = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoConvenioOuSem(inicio, fim, false, empresa);
+            minutosAgendados = RelatorioGerencialSingleton.getInstance().getBo().findTotalMinutosAgendamento(inicio, fim, false, empresa);
+            minutosUtilizados = RelatorioGerencialSingleton.getInstance().getBo().findTotalMinutosAgendamento(inicio, fim, true, empresa);
+            orcamentosAprovados = RelatorioGerencialSingleton.getInstance().getBo().listStatutsPTP(inicio, fim, empresa);
+            profissionaisMaisRentaveis = RelatorioGerencialSingleton.getInstance().getBo().findProfissionaisMaisRentaveis(inicio, fim, empresa);
+            agendamentosHorario = RelatorioGerencialSingleton.getInstance().getBo().findAgendamentosHorario(inicio, fim, empresa);
             minutosOciosos = minutosAgendados - minutosUtilizados;
             taxaDeOcupacao = (int) (minutosUtilizados / 60) * 100 / Configurar.getInstance().getConfiguracao().getEmpresaLogada().getCapacidadeInstalada();
         } catch (Exception e) {

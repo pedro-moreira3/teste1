@@ -11,16 +11,14 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 import org.primefaces.event.FlowEvent;
 
+import br.com.lume.anamnese.AnamneseSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.AnamneseBO;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.ItemAnamneseBO;
-import br.com.lume.odonto.bo.NoticiaBO;
-import br.com.lume.odonto.bo.PacienteBO;
-import br.com.lume.odonto.bo.PerguntaBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.itemAnamnese.ItemAnamneseSingleton;
+import br.com.lume.noticia.NoticiaSingleton;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.ItemAnamnese;
 import br.com.lume.odonto.entity.Noticia;
@@ -29,6 +27,8 @@ import br.com.lume.odonto.entity.Pergunta;
 import br.com.lume.odonto.exception.CpfCnpjDuplicadoException;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.pergunta.PerguntaSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -54,28 +54,13 @@ public class PacienteTotemMB extends LumeManagedBean<Paciente> {
 
     private Random random;
 
-    private DominioBO dominioBO;
 
-    private NoticiaBO noticiaBO;
-
-    private AnamneseBO anamneseBO;
-
-    private PacienteBO pacienteBO;
-
-    private PerguntaBO perguntaBO;
-
-    private ItemAnamneseBO itemAnamneseBO;
 
     public PacienteTotemMB() {
-        super(new PacienteBO());
-        dominioBO = new DominioBO();
-        noticiaBO = new NoticiaBO();
-        anamneseBO = new AnamneseBO();
-        pacienteBO = new PacienteBO();
-        perguntaBO = new PerguntaBO();
-        itemAnamneseBO = new ItemAnamneseBO();
+        super(PacienteSingleton.getInstance().getBo());
+    
         try {
-            List<Dominio> dominios = dominioBO.listByEmpresaAndObjeto("noticia");
+            List<Dominio> dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjeto("noticia");
             for (Dominio dominio : dominios) {
                 if (dominio.getTipo().equals("quantidade")) {
                     this.setQuantidadeNoticias(new Integer(dominio.getValor()));
@@ -94,7 +79,7 @@ public class PacienteTotemMB extends LumeManagedBean<Paciente> {
 
     public void loadNoticias() {
         try {
-            this.setNoticias(noticiaBO.listByEmpresa());
+            this.setNoticias(NoticiaSingleton.getInstance().getBo().listByEmpresa());
             // throw new Exception();
         } catch (Exception e) {
             log.debug(e.getMessage());
@@ -116,7 +101,7 @@ public class PacienteTotemMB extends LumeManagedBean<Paciente> {
                     item.setResposta("");
                 }
             }
-            anamneseBO.persistByPaciente(ProfissionalBO.getProfissionalLogado(), this.getEntity(), anamnesesPreCadastro);
+            AnamneseSingleton.getInstance().getBo().persistByPaciente(Configurar.getInstance().getConfiguracao().getProfissionalLogado(), this.getEntity(), anamnesesPreCadastro);
             super.actionPersist(event);
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
@@ -177,15 +162,15 @@ public class PacienteTotemMB extends LumeManagedBean<Paciente> {
         }
         if ("dadosPessoaisTab".equals(event.getNewStep())) {
             try {
-                paciente = pacienteBO.findByEmail(this.getEntity().getDadosBasico().getEmail());
+                paciente = PacienteSingleton.getInstance().getBo().findByEmail(this.getEntity().getDadosBasico().getEmail());
                 if (paciente != null) {
-                    if (paciente.getIdEmpresa() != ProfissionalBO.getProfissionalLogado().getIdEmpresa()) {
+                    if (paciente.getIdEmpresa() != Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa()) {
                         this.addError(OdontoMensagens.getMensagem("paciente.totem.paciente.nao.pertence"), "");
                         return event.getOldStep();
                     } else {
                         this.setEntity(paciente);
-                        List<Pergunta> perguntas = perguntaBO.listPreCadastro(paciente);
-                        anamnesesPreCadastro = itemAnamneseBO.perguntasAnamnese(perguntas);
+                        List<Pergunta> perguntas = PerguntaSingleton.getInstance().getBo().listPreCadastro(paciente);
+                        anamnesesPreCadastro = ItemAnamneseSingleton.getInstance().getBo().perguntasAnamnese(perguntas);
                         if (anamnesesPreCadastro.size() <= 0) {
                             this.setPossuiPerguntas(Boolean.FALSE);
                         }
@@ -200,7 +185,7 @@ public class PacienteTotemMB extends LumeManagedBean<Paciente> {
         }
         if ("enderecoTab".equals(event.getNewStep())) {
             try {
-                pacienteBO.validaDuplicado(this.getEntity());
+                PacienteSingleton.getInstance().getBo().validaDuplicado(this.getEntity());
             } catch (CpfCnpjDuplicadoException ud) {
                 this.addError(OdontoMensagens.getMensagem("erro.cpf.duplicado"), "");
                 log.error(OdontoMensagens.getMensagem("erro.cpf.duplicado"));

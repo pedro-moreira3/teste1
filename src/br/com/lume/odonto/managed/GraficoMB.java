@@ -11,8 +11,10 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.GraficoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.grafico.GraficoSingleton;
+//import br.com.lume.odonto.bo.GraficoBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Grafico;
 
 @ManagedBean
@@ -26,20 +28,20 @@ public class GraficoMB extends LumeManagedBean<Grafico> {
     private List<Grafico> graficos = new ArrayList<>();
 
     public GraficoMB() {
-        super(new GraficoBO());
+        super(GraficoSingleton.getInstance().getBo());
         this.geraLista();
         this.setClazz(Grafico.class);
     }
 
     @Override
     public void actionPersist(ActionEvent arg0) {
-        this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
         super.actionPersist(arg0);
     }
 
     private void geraLista() {
         try {
-            this.graficos = ((GraficoBO) this.getbO()).listByEmpresa();
+            this.graficos = GraficoSingleton.getInstance().getBo().listByEmpresa();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);

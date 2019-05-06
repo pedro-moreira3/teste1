@@ -11,8 +11,10 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.dominio.DominioSingleton;
+//import br.com.lume.odonto.bo.DominioBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Dominio;
 
 @ManagedBean
@@ -27,11 +29,11 @@ public class DominioMB extends LumeManagedBean<Dominio> {
 
     private List<Dominio> dominios = new ArrayList<>();
 
-    private DominioBO dominioBO;
+//    private DominioBO dominioBO;
 
     public DominioMB() {
-        super(new DominioBO());
-        this.dominioBO = new DominioBO();
+        super(DominioSingleton.getInstance().getBo());
+    //    this.dominioBO = new DominioBO();
         this.setClazz(Dominio.class);
         this.geraLista();
     }
@@ -47,7 +49,7 @@ public class DominioMB extends LumeManagedBean<Dominio> {
     @Override
     public void actionPersist(ActionEvent event) {
         this.getEntity().setEditavel(true);
-        this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
         this.getEntity().setObjeto(this.getEntity().getObjeto().toLowerCase());
         this.getEntity().setTipo(this.getEntity().getTipo().toLowerCase());
         super.actionPersist(event);
@@ -56,7 +58,7 @@ public class DominioMB extends LumeManagedBean<Dominio> {
 
     private void geraLista() {
         try {
-            this.setDominios(((DominioBO) this.getbO()).listByEmpresa());
+            this.setDominios(DominioSingleton.getInstance().getBo().listByEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -80,32 +82,32 @@ public class DominioMB extends LumeManagedBean<Dominio> {
     }
 
     public String getCliente() {
-        Dominio dominio = this.dominioBO.findLabel("paciente");
+        Dominio dominio = DominioSingleton.getInstance().getBo().findLabel("paciente");
         return dominio != null ? dominio.getNome() : " ";
     }
 
     public String getConvenio() {
-        Dominio dominio = this.dominioBO.findLabel("convenio");
+        Dominio dominio = DominioSingleton.getInstance().getBo().findLabel("convenio");
         return dominio != null ? dominio.getNome() : " ";
     }
 
     public String getFilial() {
-        Dominio dominio = this.dominioBO.findLabel("filial");
+        Dominio dominio = DominioSingleton.getInstance().getBo().findLabel("filial");
         return dominio != null ? dominio.getNome() : " ";
     }
 
     public String getDentista() {
-        Dominio dominio = this.dominioBO.findLabel("profissional");
+        Dominio dominio = DominioSingleton.getInstance().getBo().findLabel("profissional");
         return dominio != null ? dominio.getNome() : "Profissional";
     }
 
     public String getConvenioProcedimento() {
-        Dominio dominio = this.dominioBO.findLabel("convenioprocedimento");
+        Dominio dominio = DominioSingleton.getInstance().getBo().findLabel("convenioprocedimento");
         return dominio != null ? dominio.getNome() : " ";
     }
 
     public String getPlanoTratamento() {
-        Dominio dominio = this.dominioBO.findLabel("planotratamento");
+        Dominio dominio = DominioSingleton.getInstance().getBo().findLabel("planotratamento");
         return dominio != null ? dominio.getNome() : " ";
     }
 

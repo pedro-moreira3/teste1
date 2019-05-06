@@ -11,9 +11,9 @@ import org.primefaces.model.chart.PieChartModel;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.RelatorioAvaliacaoBO;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RelatorioAvaliacao;
+import br.com.lume.relatorioAvaliacao.RelatorioAvaliacaoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -30,10 +30,10 @@ public class RelatorioAvaliacaoMB extends LumeManagedBean<RelatorioAvaliacao> {
     private String titulo;
 
     public RelatorioAvaliacaoMB() {
-        super(new RelatorioAvaliacaoBO());
+        super(RelatorioAvaliacaoSingleton.getInstance().getBo());
         this.setClazz(RelatorioAvaliacao.class);
         try {
-            this.avaliacoes = ((RelatorioAvaliacaoBO) this.getbO()).listAgrupadoPorProfissional();
+            this.avaliacoes = RelatorioAvaliacaoSingleton.getInstance().getBo().listAgrupadoPorProfissional();
             this.graficoGeral();
         } catch (Exception e) {
             this.log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
@@ -43,7 +43,7 @@ public class RelatorioAvaliacaoMB extends LumeManagedBean<RelatorioAvaliacao> {
 
     public void graficoGeral() {
         try {
-            List<RelatorioAvaliacao> listAgrupadoPorTotal = ((RelatorioAvaliacaoBO) this.getbO()).listAgrupadoPorTotal();
+            List<RelatorioAvaliacao> listAgrupadoPorTotal = RelatorioAvaliacaoSingleton.getInstance().getBo().listAgrupadoPorTotal();
             this.titulo = "Avaliação de desempenho dos Profissionais da clínica";
             this.carregaDadosGrafico(listAgrupadoPorTotal);
         } catch (Exception e) {
@@ -56,7 +56,7 @@ public class RelatorioAvaliacaoMB extends LumeManagedBean<RelatorioAvaliacao> {
         try {
             if (this.getEntity() != null && this.getEntity().getProfissional() != null) {
                 Profissional profissional = this.getEntity().getProfissional();
-                List<RelatorioAvaliacao> listAgrupadoPorTotal = ((RelatorioAvaliacaoBO) this.getbO()).listAgrupadoPorTotalByProfissional(profissional);
+                List<RelatorioAvaliacao> listAgrupadoPorTotal = RelatorioAvaliacaoSingleton.getInstance().getBo().listAgrupadoPorTotalByProfissional(profissional);
                 this.titulo = "Avaliação de desempenho do profissional " + profissional.getDadosBasico().getNome();
                 this.carregaDadosGrafico(listAgrupadoPorTotal);
             }

@@ -14,10 +14,11 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.odonto.bo.PacienteBO;
-import br.com.lume.odonto.bo.RetornoBO;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Retorno;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.retorno.RetornoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -29,12 +30,10 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     private List<Retorno> retornos = new ArrayList<>();
 
-    private PacienteBO pacienteBO = new PacienteBO();
-
     private Date dataIni, dataFim;
 
     public RetornoMB() {
-        super(new RetornoBO());
+        super(RetornoSingleton.getInstance().getBo());
         Calendar cal = Calendar.getInstance();
         dataIni = cal.getTime();
         cal.add(Calendar.MONTH, 12);
@@ -45,7 +44,7 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     public void geraLista() {
         try {
-            retornos = ((RetornoBO) this.getbO()).listByDate(dataIni, dataFim);
+            retornos = RetornoSingleton.getInstance().getBo().listByDate(dataIni, dataFim);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -53,12 +52,12 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     }
 
     public List<Paciente> geraSugestoesPaciente(String query) {
-        return pacienteBO.listSugestoesComplete(query);
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
     }
 
     public void persistRetorno(Retorno r) {
         try {
-            ((RetornoBO) this.getbO()).persist(r);
+            RetornoSingleton.getInstance().getBo().persist(r);
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");

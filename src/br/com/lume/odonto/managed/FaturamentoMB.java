@@ -22,15 +22,19 @@ import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.configuracao.Configurar;
-import br.com.lume.odonto.bo.CustoBO;
-import br.com.lume.odonto.bo.LancamentoBO;
-import br.com.lume.odonto.bo.LancamentoContabilBO;
-import br.com.lume.odonto.bo.MotivoBO;
-import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
-import br.com.lume.odonto.bo.RepasseItemBO;
-import br.com.lume.odonto.bo.RepasseLancamentoBO;
-import br.com.lume.odonto.bo.RepasseProfissionalBO;
+import br.com.lume.custo.CustoSingleton;
+import br.com.lume.lancamento.LancamentoSingleton;
+import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
+import br.com.lume.motivo.MotivoSingleton;
+//import br.com.lume.odonto.bo.CustoBO;
+//import br.com.lume.odonto.bo.LancamentoBO;
+//import br.com.lume.odonto.bo.LancamentoContabilBO;
+//import br.com.lume.odonto.bo.MotivoBO;
+//import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
+//import br.com.lume.odonto.bo.RepasseItemBO;
+//import br.com.lume.odonto.bo.RepasseLancamentoBO;
+//import br.com.lume.odonto.bo.RepasseProfissionalBO;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Motivo;
@@ -40,6 +44,11 @@ import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RepasseItem;
 import br.com.lume.odonto.entity.RepasseLancamento;
 import br.com.lume.odonto.entity.RepasseProfissional;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.repasseItem.RepasseItemSingleton;
+import br.com.lume.repasseLancamento.RepasseLancamentoSingleton;
+import br.com.lume.repasseProfissional.RepasseProfissionalSingleton;
 import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 
@@ -53,7 +62,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
 
     private Profissional profissional;
 
-    private ProfissionalBO profissionalBO;
+  //  private ProfissionalBO profissionalBO;
 
     private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos = new ArrayList<>();
 
@@ -69,9 +78,9 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
 
     private List<Lancamento> lancamentos = new ArrayList<>();
 
-    private LancamentoBO lancamentoBO;
+   // private LancamentoBO lancamentoBO;
 
-    private CustoBO custoBO;
+   // private CustoBO custoBO;
 
     private Lancamento lancamento;
 
@@ -81,9 +90,9 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
 
     private Integer mes;
 
-    private LancamentoContabilBO lancamentoContabilBO;
+   // private LancamentoContabilBO lancamentoContabilBO;
 
-    private MotivoBO motivoBO;
+  //  private MotivoBO motivoBO;
 
     private String nomeClinica = "", endTelefoneClinica = "";
 
@@ -93,29 +102,29 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
 
     private BigDecimal valorParcial;
 
-    private RepasseProfissionalBO repasseProfissionalBO = new RepasseProfissionalBO();
+ //   private RepasseProfissionalBO repasseProfissionalBO = new RepasseProfissionalBO();
 
     private RepasseProfissional repasseSelecionado;
 
     private List<RepasseProfissional> repasses;
 
-    private RepasseLancamentoBO repasseLancamentoBO = new RepasseLancamentoBO();
+   // private RepasseLancamentoBO repasseLancamentoBO = new RepasseLancamentoBO();
 
     private boolean existeRepasseEmAberto = true;
 
     private List<RepasseItem> repasseItens;
 
-    private RepasseItemBO repasseItemBO = new RepasseItemBO();
+  //  private RepasseItemBO repasseItemBO = new RepasseItemBO();
 
-    private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
+  //  private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
 
     public FaturamentoMB() {
-        super(new PlanoTratamentoProcedimentoBO());
-        profissionalBO = new ProfissionalBO();
-        lancamentoBO = new LancamentoBO();
-        lancamentoContabilBO = new LancamentoContabilBO();
-        custoBO = new CustoBO();
-        motivoBO = new MotivoBO();
+        super(PlanoTratamentoProcedimentoSingleton.getInstance().getBo());
+       // profissionalBO = new ProfissionalBO();
+      //  lancamentoBO = new LancamentoBO();
+      //  lancamentoContabilBO = new LancamentoContabilBO();
+     //   custoBO = new CustoBO();
+     //   motivoBO = new MotivoBO();
         this.setClazz(PlanoTratamentoProcedimento.class);
         this.carregarPlanoTratamentoProcedimentos();
         mes = Calendar.getInstance().get(Calendar.MONTH) + 1;
@@ -126,7 +135,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
 
     public void carregarRepasseItens() {
         try {
-            repasseItens = repasseItemBO.listByRepasseProfissional(repasseSelecionado);
+            repasseItens = RepasseItemSingleton.getInstance().getBo().listByRepasseProfissional(repasseSelecionado);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -137,7 +146,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
             ptp.setValorRepassado(ptp.getValorRepasse());
             ptp.setStatusPagamento('G');
             ptp.setDataRepasse(new Date());
-            planoTratamentoProcedimentoBO.persist(ptp);
+            PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
             carregarPlanoTratamentoProcedimentos();
             addInfo("Procedimento baixado com sucesso.", "");
         } catch (Exception e) {
@@ -174,8 +183,8 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
                 planoTratamentoProcedimento.setStatusPagamento(PlanoTratamentoProcedimento.PAGAMENTO_RESERVADO);
                 planoTratamentoProcedimento.addRepasseLancamento(new RepasseLancamento(lancamento, planoTratamentoProcedimento, valorRepassar, taxaDebitar, RepasseItem.REPASSADO));
                 planoTratamentoProcedimento.setDataRepasse(Calendar.getInstance().getTime());
-                lancamentoBO.merge(lancamento);
-                ((PlanoTratamentoProcedimentoBO) this.getbO()).merge(planoTratamentoProcedimento);
+                LancamentoSingleton.getInstance().getBo().merge(lancamento);
+                PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(planoTratamentoProcedimento);
                 this.carregarPlanoTratamentoProcedimentos();
                 this.carregarLancamentos();
                 if (this.getEntity().getValorRestante().doubleValue() == 0) {
@@ -218,8 +227,8 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
                 }
                 planoTratamentoProcedimento.addRepasseLancamento(new RepasseLancamento(lancamento, planoTratamentoProcedimento, valorRepassar, taxaDebitar, RepasseItem.REPASSADO));
                 planoTratamentoProcedimento.setDataRepasse(Calendar.getInstance().getTime());
-                lancamentoBO.merge(lancamento);
-                ((PlanoTratamentoProcedimentoBO) this.getbO()).merge(planoTratamentoProcedimento);
+                LancamentoSingleton.getInstance().getBo().merge(lancamento);
+                PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(planoTratamentoProcedimento);
                 this.carregarPlanoTratamentoProcedimentos();
                 this.carregarLancamentos();
                 if (this.getEntity().getValorRestante().doubleValue() == 0) {
@@ -236,7 +245,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
 
     public void actionCarregarProcedimentosSemValor(ActionEvent event) {
         try {
-            procedimentosSemValor = ((PlanoTratamentoProcedimentoBO) this.getbO()).listProcedimentosSemValor(profissional, mes, mesesAnteriores);
+            procedimentosSemValor = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listProcedimentosSemValor(profissional, mes, mesesAnteriores);
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
@@ -258,11 +267,11 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
 
     public void actionRemoverReserva(ActionEvent event) {
         try {
-            List<RepasseLancamento> lancamentos = repasseLancamentoBO.listByPlanoTratamentoProcedimento(this.getEntity().getId());
+            List<RepasseLancamento> lancamentos = RepasseLancamentoSingleton.getInstance().getBo().listByPlanoTratamentoProcedimento(this.getEntity().getId());
             if (lancamentos != null && !lancamentos.isEmpty()) {
                 for (RepasseLancamento rl : lancamentos) {
                     BigDecimal valorVoltar = rl.getValor().add(rl.getValorDesconto() != null ? rl.getValorDesconto() : new BigDecimal(0));
-                    Lancamento l = lancamentoBO.find(rl.getLancamento().getId());
+                    Lancamento l = LancamentoSingleton.getInstance().getBo().find(rl.getLancamento().getId());
                     // lancamentoBO.refresh(l);
                     l.setValorRepassado(l.getValorRepassado().subtract(valorVoltar));
                     this.getEntity().setValorRepassado(this.getEntity().getValorRepassado().subtract(rl.getValor()));
@@ -272,8 +281,8 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
                     if (this.getEntity().getRepasseLancamentos() != null && !this.getEntity().getRepasseLancamentos().isEmpty()) {
                         this.getEntity().getRepasseLancamentos().remove(rl);
                     }
-                    lancamentoBO.persist(l);
-                    repasseLancamentoBO.remove(rl);
+                    LancamentoSingleton.getInstance().getBo().persist(l);
+                    RepasseLancamentoSingleton.getInstance().getBo().remove(rl);
                 }
                 this.getbO().persist(this.getEntity());
                 this.getbO().refresh(this.getEntity());
@@ -321,7 +330,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
                 repasseItens.add(new RepasseItem(repasseProfissional, ptp, RepasseItem.REPASSADO, ptp.getValorReservado()));
             }
             repasseProfissional.setRepasseItens(repasseItens);
-            repasseProfissionalBO.persist(repasseProfissional);
+            RepasseProfissionalSingleton.getInstance().getBo().persist(repasseProfissional);
             procedimentosRepasseSelecionados = null;
             this.actionFiltrar(event);
         } catch (Exception e) {
@@ -346,9 +355,9 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
                     this.getbO().merge(ri.getPlanoTratamentoProcedimento());
                 }
                 repasseSelecionado.setDataPagamento(Calendar.getInstance().getTime());
-                repasseSelecionado.setProfissionalPagou(ProfissionalBO.getProfissionalLogado());
+                repasseSelecionado.setProfissionalPagou(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
                 repasseSelecionado.setStatus(RepasseItem.PAGO_COMPLETO);
-                repasseProfissionalBO.merge(repasseSelecionado);
+                RepasseProfissionalSingleton.getInstance().getBo().merge(repasseSelecionado);
                 this.actionFiltrar(event);
                 this.addInfo("Procedimentos Pagos com sucesso! Para conferir acessar o relatório de repasses.", "");
             }
@@ -397,8 +406,8 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
 
     private void geraLancamentoContabil(BigDecimal valor) throws Exception, BusinessException, TechnicalException {
         LancamentoContabil lc = new LancamentoContabil();
-        Motivo motivo = motivoBO.findBySigla(Motivo.PAGAMENTO_PROFISSIONAL);
-        lc.setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        Motivo motivo = MotivoSingleton.getInstance().getBo().findBySigla(Motivo.PAGAMENTO_PROFISSIONAL);
+        lc.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
         lc.setTipo(motivo.getTipo());
         lc.setDadosBasico(profissional.getDadosBasico());
         lc.setMotivo(motivo);
@@ -406,14 +415,14 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
         lc.setNotaFiscal(null);
         // lc.setLancamento(lancamento);
         lc.setData(Calendar.getInstance().getTime());
-        lancamentoContabilBO.persist(lc);
+        LancamentoContabilSingleton.getInstance().getBo().persist(lc);
     }
 
     private void carregarPlanoTratamentoProcedimentos() {
         if (profissional != null) {
             repasseItens = null;
             repasseSelecionado = null;
-            planoTratamentoProcedimentos = ((PlanoTratamentoProcedimentoBO) this.getbO()).listNaoPagosTotalmente(profissional.getId(), mes, mesesAnteriores);
+            planoTratamentoProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listNaoPagosTotalmente(profissional.getId(), mes, mesesAnteriores);
             if (planoTratamentoProcedimentos == null || planoTratamentoProcedimentos.isEmpty()) {
                 this.setEntity(null);
             }
@@ -425,7 +434,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
 
     private void verificaExisteRepasseEmAberto() {
         try {
-            existeRepasseEmAberto = repasseProfissionalBO.existeRepasseEmAberto(profissional.getId());
+            existeRepasseEmAberto = RepasseProfissionalSingleton.getInstance().getBo().existeRepasseEmAberto(profissional.getId());
             if (existeRepasseEmAberto) {
                 this.addError("Enquanto não for pago os repasses antigos não é possível fazer novas reservas.", "");
             }
@@ -437,7 +446,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
 
     private void carregarRepassesProfissional() {
         try {
-            repasses = repasseProfissionalBO.listByProfissional(profissional.getId());
+            repasses = RepasseProfissionalSingleton.getInstance().getBo().listByProfissional(profissional.getId());
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
@@ -449,7 +458,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
     }
 
     private void carregarRepassar() {
-        procedimentosRepasse = ((PlanoTratamentoProcedimentoBO) this.getbO()).listRepassar(profissional.getId(), mes, mesesAnteriores);
+        procedimentosRepasse = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listRepassar(profissional.getId(), mes, mesesAnteriores);
     }
 
     public void actionFiltrar(ActionEvent event) {
@@ -459,7 +468,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
     public void carregarLancamentos() {
         try {
             if (this.getEntity().getPlanoTratamento() != null) {
-                lancamentos = lancamentoBO.listComCredito(this.getEntity().getPlanoTratamento().getId());
+                lancamentos = LancamentoSingleton.getInstance().getBo().listComCredito(this.getEntity().getPlanoTratamento().getId());
                 lancamento = null;
             }
         } catch (Exception e) {
@@ -470,14 +479,14 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
 
     public void carregaCustos(PlanoTratamentoProcedimento ptp) throws Exception {
         custos = new ArrayList<>();
-        custos = custoBO.listbyIdCusto(ptp.getId());
+        custos = CustoSingleton.getInstance().getBo().listbyIdCusto(ptp.getId());
     }
 
     public List<Profissional> geraSugestoesProfissional(String query) {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = profissionalBO.listDentistasByEmpresa();
+            profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
                         Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {

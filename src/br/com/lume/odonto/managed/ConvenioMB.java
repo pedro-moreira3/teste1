@@ -11,9 +11,12 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.ConvenioBO;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.convenio.ConvenioSingleton;
+import br.com.lume.dominio.DominioSingleton;
+//import br.com.lume.odonto.bo.ConvenioBO;
+//import br.com.lume.odonto.bo.DominioBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.util.UF;
@@ -30,22 +33,22 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
 
     public List<Dominio> dominios;
 
-    private DominioBO dominioBO;
+  //  private DominioBO dominioBO;
 
-    private ConvenioBO convenioBO;
+  //  private ConvenioBO convenioBO;
 
     public ConvenioMB() {
-        super(new ConvenioBO());
-        dominioBO = new DominioBO();
-        convenioBO = new ConvenioBO();
+        super(ConvenioSingleton.getInstance().getBo());
+        //dominioBO = new DominioBO();
+      //  convenioBO = new ConvenioBO();
         this.setClazz(Convenio.class);
         this.carregaList();
     }
 
     public void carregaList() {
         try {
-            dominios = dominioBO.listByEmpresaAndObjetoAndTipo("convenio", "tipo");
-            convenios = convenioBO.listByEmpresa();
+            dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("convenio", "tipo");
+            convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,7 +57,7 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
             super.actionPersist(event);
             this.carregaList();
         } catch (Exception e) {

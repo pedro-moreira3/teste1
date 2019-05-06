@@ -11,9 +11,9 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.odonto.bo.EsterilizacaoBO;
-import br.com.lume.odonto.bo.EsterilizacaoKitBO;
-import br.com.lume.odonto.bo.MaterialBO;
+import br.com.lume.esterilizacao.EsterilizacaoSingleton;
+import br.com.lume.esterilizacaoKit.EsterilizacaoKitSIngleton;
+import br.com.lume.material.MaterialSingleton;
 import br.com.lume.odonto.entity.Esterilizacao;
 import br.com.lume.odonto.entity.EsterilizacaoKit;
 import br.com.lume.odonto.entity.Material;
@@ -33,24 +33,16 @@ public class RelatorioEsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
     private List<EsterilizacaoKit> itens;
 
-    private EsterilizacaoBO esterilizacaoBO;
-
-    private EsterilizacaoKitBO esterilizacaoKitBO;
-
-    private MaterialBO materialBO = new MaterialBO();
-
     private List<Material> descartes;
 
     public RelatorioEsterilizacaoMB() {
-        super(new EsterilizacaoBO());
-        esterilizacaoBO = new EsterilizacaoBO();
-        esterilizacaoKitBO = new EsterilizacaoKitBO();
+        super(EsterilizacaoSingleton.getInstance().getBo());   
         this.setClazz(Esterilizacao.class);
         this.filtra();
     }
 
     public void mostraItens() throws Exception {
-        this.setItens(esterilizacaoKitBO.listByEsterilizacao(this.getEntity()));
+        this.setItens(EsterilizacaoKitSIngleton.getInstance().getBo().listByEsterilizacao(this.getEntity()));
     }
 
     public void filtra() {
@@ -58,12 +50,12 @@ public class RelatorioEsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
             if (inicio != null && fim != null && inicio.getTime() > fim.getTime()) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else {
-                esterilizacoes = esterilizacaoBO.listAllByPeriodo(inicio, fim);
+                esterilizacoes = EsterilizacaoSingleton.getInstance().getBo().listAllByPeriodo(inicio, fim);
                 if (esterilizacoes == null || esterilizacoes.isEmpty()) {
                     this.addError(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"), "");
                     log.error(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"));
                 }
-                descartes = materialBO.listDescartePeriodo(inicio, fim);
+                descartes = MaterialSingleton.getInstance().getBo().listDescartePeriodo(inicio, fim);
             }
         } catch (Exception e) {
             log.error(e);

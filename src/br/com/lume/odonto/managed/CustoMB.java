@@ -17,16 +17,22 @@ import org.primefaces.event.SelectEvent;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.odonto.bo.CustoBO;
-import br.com.lume.odonto.bo.PacienteBO;
-import br.com.lume.odonto.bo.PlanoTratamentoBO;
-import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
+import br.com.lume.configuracao.Configurar;
+import br.com.lume.custo.CustoSingleton;
 import br.com.lume.odonto.bo.ProfissionalBO;
+//import br.com.lume.odonto.bo.CustoBO;
+//import br.com.lume.odonto.bo.PacienteBO;
+//import br.com.lume.odonto.bo.PlanoTratamentoBO;
+//import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoCusto;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -58,20 +64,20 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
 
     public PlanoTratamentoProcedimento planoTratamentoProcedimento;
 
-    private PacienteBO pacienteBO;
+ //   private PacienteBO pacienteBO;
 
-    private PlanoTratamentoBO planoTratamentoBO;
+  //  private PlanoTratamentoBO planoTratamentoBO;
 
-    private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
+ //   private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
 
     public CustoMB() {
-        super(new CustoBO());
+        super(CustoSingleton.getInstance().getBo());
         this.setClazz(PlanoTratamentoProcedimentoCusto.class);
-        pacienteBO = new PacienteBO();
-        planoTratamentoBO = new PlanoTratamentoBO();
-        planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
+     //   pacienteBO = new PacienteBO();
+      //  planoTratamentoBO = new PlanoTratamentoBO();
+    //    planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
         try {
-            pacientes = pacienteBO.listByEmpresa();
+            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
 //            setPaciente(PacienteBO.getPacienteSelecionado());
             custos = new ArrayList<>();
             if (paciente != null && paciente.getId() != null) {
@@ -121,8 +127,8 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
             this.getCustoSelecionado().setDataFaturamento(Calendar.getInstance().getTime());
             super.actionPersist(event);
             if (planoTratamentoProcedimento.isFinalizado()) {
-                planoTratamentoProcedimento.setValorRepasse(planoTratamentoProcedimentoBO.findValorRepasse(planoTratamentoProcedimento));
-                planoTratamentoProcedimentoBO.merge(planoTratamentoProcedimento);
+                planoTratamentoProcedimento.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(planoTratamentoProcedimento));
+                PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(planoTratamentoProcedimento);
             }
 //            actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -137,7 +143,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return pacienteBO.listSugestoesComplete(query);
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, ProfissionalBO.getProfissionalLogado().getIdEmpresa());
     }
 
     public void handleSelect(SelectEvent event) {
@@ -145,22 +151,22 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
         paciente = (Paciente) object;
         if (paciente == null) {
             this.addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "");
-        }
-        PacienteBO.setPacienteSelecionado(paciente);
+        }      
+        Configurar.getInstance().getConfiguracao().setPacienteLogado(paciente);
         this.setPlanoTratamento(null);
-        this.setPlanoTratamentos(planoTratamentoBO.listByPaciente(paciente));
+        this.setPlanoTratamentos(PlanoTratamentoSingleton.getInstance().getBo() .listByPaciente(paciente));
         this.carregaListaCusto();
     }
 
     public void handleSelectPT() throws Exception {
         this.setPlanoTratamentoProcedimento(null);
-        this.setPlanoTratamentoProcedimentos(planoTratamentoProcedimentoBO.listByPlanoTratamento(planoTratamento));
+        this.setPlanoTratamentoProcedimentos(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(planoTratamento));
     }
 
     public void carregaListaCusto() {
         this.setEntity(null);
         try {
-            custos = ((CustoBO) this.getbO()).listByPaciente(paciente);
+            custos = CustoSingleton.getInstance().getBo().listByPaciente(paciente);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -193,15 +199,15 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
     }
 
     public Paciente getPaciente() {
-        paciente = PacienteBO.getPacienteSelecionado();
-        this.setPlanoTratamentos(planoTratamentoBO.listByPaciente(paciente));
+        paciente = Configurar.getInstance().getConfiguracao().getPacienteSelecionado();
+        this.setPlanoTratamentos(PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(paciente));
         this.carregaListaCusto();
         return paciente;
     }
 
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
-        PacienteBO.setPacienteSelecionado(paciente);
+        Configurar.getInstance().getConfiguracao().setPacienteSelecionado(paciente);
     }
 
     public PlanoTratamentoProcedimentoCusto getCustoSelecionado() {
