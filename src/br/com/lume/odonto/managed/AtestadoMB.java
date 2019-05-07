@@ -21,8 +21,6 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
-import br.com.lume.odonto.bo.ProfissionalBO;
-//import br.com.lume.odonto.bo.AtestadoBO;
 //import br.com.lume.odonto.bo.CIDBO;
 //import br.com.lume.odonto.bo.DocumentoBO;
 //import br.com.lume.odonto.bo.DominioBO;

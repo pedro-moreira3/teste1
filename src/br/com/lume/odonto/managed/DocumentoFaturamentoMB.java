@@ -18,16 +18,10 @@ import org.primefaces.event.SelectEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.documentoFaturamento.DocumentoFaturamentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
-import br.com.lume.odonto.bo.ProfissionalBO;
-//import br.com.lume.odonto.bo.DocumentoBO;
-//import br.com.lume.odonto.bo.DocumentoFaturamentoBO;
-//import br.com.lume.odonto.bo.DominioBO;
-//import br.com.lume.odonto.bo.OrcamentoBO;
-//import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.DocumentoFaturamento;
 import br.com.lume.odonto.entity.Dominio;
@@ -325,7 +319,7 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
     }
 
     public List<Profissional> geraSugestoes(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
     }
 
     public List<DocumentoFaturamento> getDocumentosFaturamento() {

@@ -18,7 +18,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import br.com.lume.odonto.bo.NoticiaRssBO;
+import br.com.lume.noticiaRss.NoticiaRssSingleton;
 import br.com.lume.odonto.entity.NoticiaRss;
 import br.com.lume.odonto.util.OdontoMensagens;
 
@@ -26,7 +26,7 @@ public class RSSBuilder {
 
     public static void main(String[] bananas) {
         try {
-            new RSSBuilder().createRSSFile(new NoticiaRssBO().listAll());
+            new RSSBuilder().createRSSFile(NoticiaRssSingleton.getInstance().getBo().listAll());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -35,8 +35,6 @@ import br.com.lume.especialidade.EspecialidadeSingleton;
 import br.com.lume.filial.FilialSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.kit.KitSingleton;
-import br.com.lume.odonto.bo.PerguntaBO;
-//import br.com.lume.odonto.bo.DocumentoBO;
 //import br.com.lume.odonto.bo.DominioBO;
 //import br.com.lume.odonto.bo.EspecialidadeBO;
 //import br.com.lume.odonto.bo.FilialBO;

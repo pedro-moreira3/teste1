@@ -25,16 +25,6 @@ import br.com.lume.desconto.DescontoSingleton;
 import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.documentoOrcamento.DocumentoOrcamentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
-import br.com.lume.odonto.bo.ProfissionalBO;
-//import br.com.lume.odonto.bo.ConvenioProcedimentoBO;
-//import br.com.lume.odonto.bo.DescontoBO;
-//import br.com.lume.odonto.bo.DocumentoBO;
-//import br.com.lume.odonto.bo.DocumentoOrcamentoBO;
-//import br.com.lume.odonto.bo.DominioBO;
-//import br.com.lume.odonto.bo.PacienteBO;
-//import br.com.lume.odonto.bo.PlanoTratamentoBO;
-//import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.Desconto;
 import br.com.lume.odonto.entity.Documento;
@@ -316,6 +306,6 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
     }
 }

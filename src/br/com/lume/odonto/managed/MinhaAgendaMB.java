@@ -5,9 +5,9 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
+import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.odonto.bo.AgendamentoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.entity.Agendamento;
 
 @ManagedBean
@@ -21,9 +21,9 @@ public class MinhaAgendaMB extends LumeManagedBean<Agendamento> {
     private List<Agendamento> agendamentos;
 
     public MinhaAgendaMB() {
-        super(new AgendamentoBO());
+        super(AgendamentoSingleton.getInstance().getBo());
         this.setClazz(Agendamento.class);
-        agendamentos = ((AgendamentoBO) this.getbO()).listAgendmantosValidosDeHojeByProfissional(ProfissionalBO.getProfissionalLogado());
+        agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosDeHojeByProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
     }
 
     public List<Agendamento> getAgendamentos() {

@@ -20,12 +20,11 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.configuracao.Configurar;
-import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
+import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.EmpresaSingleton;
-//import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.managed.MenuMB;
 
@@ -36,8 +35,6 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     private static final long serialVersionUID = 1L;
 
     private Logger log = Logger.getLogger(CadastroEmpresaMB.class);
-
-    private ProfissionalBO profissionalBO = new ProfissionalBO();
 
     private Profissional profissional;
 
@@ -60,7 +57,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     private void carregarEmpresa() {
         try {
             setEntity(Configurar.getInstance().getConfiguracao().getEmpresaLogada());
-            profissional = profissionalBO.findAdminInicial();
+            profissional = ProfissionalSingleton.getInstance().getBo().findAdminInicial(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error("Erro ao buscar registros", e);

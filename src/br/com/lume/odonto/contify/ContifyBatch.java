@@ -11,7 +11,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import br.com.lume.common.util.Utils;
-import br.com.lume.odonto.bo.LancamentoContabilBO;
+import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.contify.model.Contact;
 import br.com.lume.odonto.contify.model.ContactData;
 import br.com.lume.odonto.contify.model.Launch;
@@ -45,7 +45,7 @@ public class ContifyBatch implements Job {
                 List<Empresa> empresas = new EmpresaBO().listEmpresasContify();
                 for (Empresa empresa : empresas) {
                     c.add(Calendar.MONTH, -1);
-                    List<LancamentoContabil> lancamentos = new LancamentoContabilBO().listLancamentosContify(empresa.getEmpIntCod());
+                    List<LancamentoContabil> lancamentos = LancamentoContabilSingleton.getInstance().getBo().listLancamentosContify(empresa.getEmpIntCod());
 
                     ContifyConfiguration contify = new ContifyConfiguration();
                     LaunchService service = new LaunchService(contify);

@@ -19,13 +19,12 @@ import org.primefaces.model.StreamedContent;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.OdontoMensagens;
 import br.com.lume.configuracao.Configurar;
-import br.com.lume.odonto.bo.HelpBO;
-import br.com.lume.odonto.bo.PacienteBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.security.bo.EmpresaBO;
-import br.com.lume.security.bo.SistemaBO;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.security.EmpresaSingleton;
+import br.com.lume.security.SistemaSingleton;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.entity.Objeto;
 import br.com.lume.security.entity.Sistema;
@@ -57,11 +56,11 @@ public class LumeSecurity implements Serializable {
 
     private String paginaAtual;
 
-    private HelpBO helpBO = new HelpBO();
+   // private HelpBO helpBO = new HelpBO();
 
     public LumeSecurity() {
         log.debug("Criando LumeSecurity!");
-        sistemaAtual = new SistemaBO().getSistemaBySigla("ODONTO");
+        sistemaAtual = SistemaSingleton.getInstance().getBo().getSistemaBySigla("ODONTO");
         sistema = sistemaAtual;
         log.debug("Sistema hospedeiro ::: " + (sistemaAtual != null ? sistemaAtual.getSisStrDes() : "Nao consegui buscar sistema atual"));
     }
@@ -93,7 +92,7 @@ public class LumeSecurity implements Serializable {
         if (profissionalLogado != null) {
             return profissionalLogado.getDadosBasico().getNome();
         } else {
-            Paciente pacienteLogado = PacienteBO.getPacienteLogado();
+            Paciente pacienteLogado = Configurar.getInstance().getConfiguracao().getPacienteLogado();
             return pacienteLogado.getDadosBasico().getNome();
         }
     }
@@ -118,14 +117,12 @@ public class LumeSecurity implements Serializable {
         this.sistema = sistema;
     }
 
-    public List<Empresa> getEmpresas() {
-        EmpresaBO empresaBO = new EmpresaBO();
-        return empresaBO.getAllEmpresas(true);
+    public List<Empresa> getEmpresas() {       
+        return EmpresaSingleton.getInstance().getBo().getAllEmpresas(true);
     }
 
-    public List<Sistema> getSistemas() {
-        SistemaBO sistemaBO = new SistemaBO();
-        return sistemaBO.getAllSistemas();
+    public List<Sistema> getSistemas() {    
+        return SistemaSingleton.getInstance().getBo().getAllSistemas();
     }
 
     public List<Objeto> getObjetosPermitidos() {
@@ -202,6 +199,16 @@ public class LumeSecurity implements Serializable {
     }
 
     public StreamedContent getImagemUsuario() {
-        return ProfissionalBO.getImagemUsuario(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+        try {
+            if (Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null && Configurar.getInstance().getConfiguracao().getProfissionalLogado().getNomeImagem() != null) {
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+                        FileUtils.readFileToByteArray(new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + Configurar.getInstance().getConfiguracao().getProfissionalLogado().getNomeImagem())));
+                DefaultStreamedContent defaultStreamedContent = new DefaultStreamedContent(byteArrayInputStream, "image/" + Configurar.getInstance().getConfiguracao().getProfissionalLogado().getNomeImagem().split("\\.")[1], Configurar.getInstance().getConfiguracao().getProfissionalLogado().getNomeImagem());
+                return defaultStreamedContent;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

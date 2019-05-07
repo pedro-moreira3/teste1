@@ -19,12 +19,6 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.custo.CustoSingleton;
-import br.com.lume.odonto.bo.ProfissionalBO;
-//import br.com.lume.odonto.bo.CustoBO;
-//import br.com.lume.odonto.bo.PacienteBO;
-//import br.com.lume.odonto.bo.PlanoTratamentoBO;
-//import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
@@ -77,7 +71,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
       //  planoTratamentoBO = new PlanoTratamentoBO();
     //    planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
         try {
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
 //            setPaciente(PacienteBO.getPacienteSelecionado());
             custos = new ArrayList<>();
             if (paciente != null && paciente.getId() != null) {
@@ -103,7 +97,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
         try {
             this.getCustoSelecionado().setExcluido(Status.SIM);
             this.getCustoSelecionado().setDataExclusao(Calendar.getInstance().getTime());
-            this.getCustoSelecionado().setExcluidoPorProfissional(ProfissionalBO.getProfissionalLogado().getId());
+            this.getCustoSelecionado().setExcluidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getId());
             this.getbO().persist(this.getCustoSelecionado());
             this.actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -143,7 +137,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
     }
 
     public void handleSelect(SelectEvent event) {

@@ -26,7 +26,6 @@ import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.motivo.MotivoSingleton;
-import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.CategoriaMotivo;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.DadosBasico;
@@ -200,7 +199,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             if (l != null) {
                 Date data = Calendar.getInstance().getTime();
                 l.setDataValidado(data);
-                l.setValidadoPorProfissional(ProfissionalBO.getProfissionalLogado().getId());
+                l.setValidadoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getId());
                 l.setValidado(Status.SIM);
                 LancamentoSingleton.getInstance().getBo().merge(l);
                 List<LancamentoContabil> lancamentosContabeis = l.getLancamentosContabeis();
@@ -221,7 +220,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         if (this.getEntity().getData() == null) {
             this.getEntity().setData(new Date());
         }
-        this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
         this.getEntity().setTipo(this.getEntity().getMotivo().getTipo());
         if (!this.getEntity().getTipo().equals("Inicial")) {
             boolean isPagamentoProfissional = false;
@@ -294,7 +293,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void actionPersistOrigem(ActionEvent event) {
         try {
-            origem.setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+            origem.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
             OrigemSingleton.getInstance().getBo().persist(origem);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             visivel = false;
