@@ -4,31 +4,30 @@
 	<div class="Container100 Responsive100 NoIndent">
 		<div class="Container100 ui-fluid NoPadding">
 			<div class="Card">
-				<p:panel id="pnEvolucao" styleClass="BordNone">
-					<h1 class="CardBigTopic">Descrição</h1>
-					<div class="SeparatorFull"></div>
+				<p:outputPanel id="pnEvolucao" styleClass="BordNone">
+					<h1>Descrição</h1>
+					
+					<p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+					
 					<p:inputTextarea id="eDescricao" cols="100" rows="6" disabled="#{evolucaoMB.entity.excluido == 'S'}" value="#{evolucaoMB.entity.descricao}"
 						autoResize="true" required="true" maxlength="2000" counterTemplate="{0} caracteres restantes." counter="counter" />
 					<p:message for="eDescricao" styleClass="msg" />
 					<h:outputText id="counter" />
-					<p:separator />
-					<div class="Card ui-fluid">
-						<div class="Container25 Responsive100">
-							<p:commandButton id="persistEvolucao" icon="White fa fa-save White" value="Salvar" actionListener="#{evolucaoMB.actionPersist}"
-								update=":lume:tabView:pnEvolucao,:lume:tabView:dtEvolucao" process=":lume:tabView:pnEvolucao" disabled="#{evolucaoMB.entity.excluido == 'S'}"
-								 styleClass="GreenButton" />
-						</div>
-						<div class="Container25 Responsive100">
-							<p:commandButton id="deleteEvolucao" icon="White fa fa-trash-o White" value="Excluir" actionListener="#{evolucaoMB.actionRemove}"
-								update=":lume:tabView:pnEvolucao,:lume:tabView:dtEvolucao" process=":lume:tabView:pnEvolucao" 
-								disabled="#{evolucaoMB.entity.id==0 or evolucaoMB.entity.excluido == 'S'}" styleClass="RedButton" />
-						</div>
-						<div class="Container25 Responsive100">
-							<p:commandButton id="newEvolucao" icon="White fa fa-file-o White" value="Novo" actionListener="#{evolucaoMB.actionNew}"
-								update=":lume:tabView:pnEvolucao" immediate="true" tabindex="4" process="@this"  />
-						</div>
-					</div>
-				</p:panel>
+					
+					<p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+					
+					<p:panelGrid columns="3" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente">
+						<p:commandButton id="persistEvolucao" icon="White fa fa-save White" value="Salvar" actionListener="#{evolucaoMB.actionPersist}"
+							update=":lume:tabView:pnEvolucao,:lume:tabView:dtEvolucao" process=":lume:tabView:pnEvolucao" disabled="#{evolucaoMB.entity.excluido == 'S'}"
+							 styleClass="GreenButton" />
+						<p:commandButton id="deleteEvolucao" icon="White fa fa-trash-o White" value="Excluir" actionListener="#{evolucaoMB.actionRemove}"
+							update=":lume:tabView:pnEvolucao,:lume:tabView:dtEvolucao" process=":lume:tabView:pnEvolucao" 
+							disabled="#{evolucaoMB.entity.id==0 or evolucaoMB.entity.excluido == 'S'}" styleClass="RedButton" />
+						<p:commandButton id="newEvolucao" icon="White fa fa-file-o White" value="Novo" actionListener="#{evolucaoMB.actionNew}"
+							update=":lume:tabView:pnEvolucao" immediate="true" tabindex="4" process="@this"  />
+					</p:panelGrid>
+				</p:outputPanel>
 				<div class="EmptyBox20"></div>
 
 				<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtEvolucao" value="#{evolucaoMB.evolucoes}" var="evolucao" rows="15" paginator="true"

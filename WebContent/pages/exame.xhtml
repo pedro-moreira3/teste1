@@ -43,41 +43,42 @@
         <div class="Container100 ui-fluid NoPadding">
 
             <div class="Card">
-                <p:panel id="pnExame" styleClass="BordNone">
+                <p:outputPanel id="pnExame" styleClass="BordNone">
 
-                    <h1 class="CardBigTopic">Descrição</h1>
-                    <div class="SeparatorFull"></div>
+                    <h1>Descrição</h1>
+                    
+					<p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+
                     <p:inputTextarea id="descricao" cols="50" rows="6" value="#{exameMB.entity.descricao}" autoResize="true" required="true" maxlength="200" counterTemplate="{0} caracteres restantes."
                         counter="counter" />
                     <div class="EmptyBox20"></div>
-                    <h1 class="CardBigTopic">Arquivo : (JPG/JPEG/GIF/PNG/PDF)</h1>
-                    <div class="SeparatorFull"></div>
+                    <h1>Arquivo : (JPG/JPEG/GIF/PNG/PDF)</h1>
+                    
+                    <p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+                    
                     <h:outputText id="nomeAnexo" value="#{exameMB.entity.nomeAnexo}" />
 
                     <p:fileUpload id="exame" fileUploadListener="#{exameMB.uploadArquivo}" mode="advanced" label="Anexar" auto="true" rendered="true"
                         allowTypes="/(\.|\/)(gif|jpeg|png|pdf|jpg|GIF|JPEG|PNG|PDF|JPG)$/" sizeLimit="5120000" invalidFileMessage="Apenas imagens e PDF pode ser utilizados."
                         invalidSizeMessage="Tamanho excedeu oOo limite." update="nomeAnexo" />
                     <br />
-                    <div class="SeparatorFull"></div>
+                    
+                    <p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
 
-
-                    <div class="Container25 Responsive100">
+                    <p:panelGrid columns="3" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente">
                         <p:commandButton id="persistExame" icon="White fa fa-save" value="Salvar" actionListener="#{exameMB.actionPersist}" update=":lume:tabView:pnExame,:lume:tabView:tbExame"
                             process=":lume:tabView:pnExame" styleClass="GreenButton" />
-                    </div>
-                    <div class="Container25 Responsive100">
                         <p:commandButton id="deleteExame" icon="White fa fa-trash-o" value="Excluir" actionListener="#{exameMB.actionRemove}" update=":lume:tabView:pnExame,:lume:tabView:tbExame"
                             process="@this" disabled="#{exameMB.entity.id == 0}" styleClass="RedButton" />
-                    </div>
-                    <div class="Container25 Responsive100">
                         <p:commandButton id="newExame" icon="White fa fa-file-o" value="Novo" actionListener="#{exameMB.actionNew}" update=":lume:tabView:pnExame,:lume:tabView:dtExame"
                             immediate="true" process="@this" tabindex="1" />
-                    </div>
+                    </p:panelGrid>
 
-                </p:panel>
+                </p:outputPanel>
                 <div class="EmptyBox20"></div>
 
-                <p:panel id="tbExame">
+                <p:outputPanel id="tbExame">
                     <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtExame" value="#{exameMB.exames}" var="exame" rows="10" paginator="true" paginatorPosition="bottom" selection="#{exameMB.entity}"
                         selectionMode="single" rowKey="#{exame}">
                         <p:ajax event="rowSelect" update=":lume:tabView:pnExame" />
@@ -86,29 +87,29 @@
                             <h:outputText value="#{exame.descricao}" />
                         </p:column>
                         <p:column headerText="Download" styleClass="TexAlCenter">
-                            <p:commandButton ajax="false" icon="White fa fa-download " immediate="true">
+                            <p:commandButton ajax="false" icon="White fa fa-download " immediate="true" style="width: 33px !important;">
                                 <p:fileDownload value="#{exame.arquivo}" />
                             </p:commandButton>
                         </p:column>
                         <p:column headerText="Arquivo Original" styleClass="TexAlCenter">
                             <p:commandButton action="#{exameMB.actionEditFile}" icon="White fa fa-save" process="@this" immediate="true" oncomplete="PF('viewDialogResponsivo').show();PF('viewDialogResponsivo').toggleMaximize();"
-                                update=":lume:tabView:pnResponsivo" rendered="#{!exameMB.validaPdf(exame)}">
+                                update=":lume:tabView:pnResponsivo" rendered="#{!exameMB.validaPdf(exame)}" style="width: 33px !important;">
                                 <f:setPropertyActionListener target="#{exameMB.entity}" value="#{exame}" />
                             </p:commandButton>
                             <p:commandButton action="#{exameMB.actionEditFile}" icon="White fa fa-search" process="@this" immediate="true" oncomplete="carregaPdf();"
-                                update=":lume:tabView:media,:lume:tabView:dlgPdf" rendered="#{exameMB.validaPdf(exame)}">
+                                update=":lume:tabView:media,:lume:tabView:dlgPdf" rendered="#{exameMB.validaPdf(exame)}" style="width: 33px !important;">
                                 <f:setPropertyActionListener target="#{exameMB.entity}" value="#{exame}" />
                             </p:commandButton>
                         </p:column>
                         <p:column headerText="Arquivo Editado" styleClass="TexAlCenter BotaoExame">
                             <p:commandButton action="#{exameMB.actionEditFile2}" icon="White fa fa-save" process="@this" immediate="true" oncomplete="doView();PF('viewDialog').show();"
-                                update=":lume:tabView:view,:lume:tabView:viewArquivoBase64" disabled="#{exameMB.validaPdf(exame)}">
+                                update=":lume:tabView:view,:lume:tabView:viewArquivoBase64" disabled="#{exameMB.validaPdf(exame)}" style="width: 33px !important;">
                                 <f:setPropertyActionListener target="#{exameMB.entity}" value="#{exame}" />
                             </p:commandButton>
                         </p:column>
                         <p:column headerText="Editar" styleClass="TexAlCenter BotaoExame">
                             <p:commandButton action="#{exameMB.actionEditFile}" disabled="#{exameMB.validaPdf(exame)}" icon="fa fa-pencil White" process="@this" immediate="true"
-                                update=":lume:tabView:paint,:lume:tabView:arquivoBase64" oncomplete="doPaint();PF('editDialog').show();">
+                                update=":lume:tabView:paint,:lume:tabView:arquivoBase64" oncomplete="doPaint();PF('editDialog').show();" style="width: 33px !important;">
                                 <f:setPropertyActionListener target="#{exameMB.entity}" value="#{exame}" />
                             </p:commandButton>
                         </p:column>
@@ -116,7 +117,7 @@
                             <h:outputText value="#{exame.dataHoraStr}" />
                         </p:column>
                     </p:dataTable>
-                </p:panel>
+                </p:outputPanel>
             </div>
         </div>
     </div>

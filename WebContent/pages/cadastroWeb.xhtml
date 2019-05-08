@@ -71,7 +71,7 @@
                                     <p:inputText id="empStrCidade" value="#{cadastroWebMB.entity.empStrCidade}" required="true" maxlength="50" class="Wid40" />
 
                                     <p:outputLabel for="empChaUf" value="Estado: " />
-                                    <p:selectOneMenu id="empChaUf" value="#{cadastroWebMB.entity.empChaUf}" required="true" class="Wid40">
+                                    <p:selectOneMenu id="empChaUf" value="#{cadastroWebMB.entity.empChaUf}" required="true" styleClass="Wid40">
                                         <f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
                                         <f:selectItems value="#{cadastroWebMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
                                     </p:selectOneMenu>
@@ -88,7 +88,7 @@
                                     <p:inputText id="empChaCro" value="#{cadastroWebMB.entity.empChaCro}" required="false" maxlength="30" class="Wid40" />
 
                                     <p:outputLabel for="estadoConselho" value="Estado conselho: " />
-                                    <p:selectOneMenu id="estadoConselho" required="false" value="#{cadastroWebMB.entity.empStrEstadoConselho}" class="Wid60">
+                                    <p:selectOneMenu id="estadoConselho" required="false" value="#{cadastroWebMB.entity.empStrEstadoConselho}" styleClass="Wid60">
                                         <f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
                                         <f:selectItems value="#{cadastroWebMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
                                     </p:selectOneMenu>

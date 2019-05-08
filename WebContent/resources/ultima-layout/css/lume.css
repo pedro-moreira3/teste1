@@ -11,7 +11,7 @@
 }
 
 .legendaFiltroAgendamento {
-    width: 20px;
+    width: 10px;
     display: inline;
     margin-right: 5px;
     padding-right: 25px;
@@ -1540,6 +1540,30 @@ body .ui-button.dark-blue-btn.ui-state-focus {
 	opacity: 0.8;
 }
 
-body .ui-button.ui-button-icon-only {
+/*body .ui-button.ui-button-icon-only {
 	border-radius: 3px;
+}*/
+
+.ui-dialog-titlebar {
+	background-color: #607D8B !important;
+	color: #ffffff !important;
+}
+
+.ui-dialog-titlebar .ui-dialog-titlebar-icon .ui-icon {
+	color: #ffffff !important;
+}
+
+.md-combo {
+	display: block;
+	position: relative;
+}
+
+body .md-combo .ui-outputlabel {
+	color: #607D8B;
+	font-size: 14px;
+	display: block;
+	position: absolute;
+	pointer-events: none;
+	left: 5px;
+	top: -20px;
 }

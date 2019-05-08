@@ -36,13 +36,13 @@
         <div class="Container100 NoPadding">
             <div class="Card">
 
-                <p:panel id="pnOdontograma" styleClass="BordNone">
+                <p:outputPanel id="pnOdontograma" styleClass="BordNone" style="margin-top: 20px !important;">
 
 
                     <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
 
                         <p:outputLabel for="odontograma" value="Odontograma : " />
-                        <h:panelGroup>
+                        <h:panelGroup style="display: flex;">
                             <p:selectOneMenu id="odontograma" style="float:left;width:300px !important;" value="#{odontogramaMB.entity}" filter="true" filterMatchMode="contains" autoWidth="false"
                                 converter="odontograma">
                                 <p:ajax update=":lume:tabView:pnOdontograma" listener="#{odontogramaMB.actionSelecionarOdontograma}" process="@this" />
@@ -50,11 +50,11 @@
                                 <f:selectItems value="#{odontogramaMB.odontogramas}" var="o" itemValue="#{o}" itemLabel="#{o.dataCadastroStr}" />
                             </p:selectOneMenu>
                             <p:commandButton icon="White fa fa-file-o" actionListener="#{odontogramaMB.actionCriarOdontograma}" update=":lume:tabView:pnOdontograma" process="@this"
-                                style="float:left;margin-left: 10px;" title="Novo Odontograma">
+                                style="float:left;margin-left: 10px;width:33px !important;" title="Novo Odontograma">
                                 <p:confirm header="Confirmação" message="Deseja realmente criar um novo odontograma?" icon="fa fa-warning" />
                             </p:commandButton>
                             <p:commandButton icon="White fa fa-trash-o" actionListener="#{odontogramaMB.actionExcluirOdontograma}" update=":lume:tabView:pnOdontograma" process="@this"
-                                style="float:left;margin-left: 10px;" title="Excluir Odontograma" styleClass="RedButton" disabled="#{odontogramaMB.entity == null or odontogramaMB.entity.id == 0}"
+                                style="float:left;margin-left: 10px;width:33px !important;" title="Excluir Odontograma" styleClass="RedButton" disabled="#{odontogramaMB.entity == null or odontogramaMB.entity.id == 0}"
                                 rendered="#{odontogramaMB.admin}">
                                 <p:confirm header="Confirmação" message="Deseja realmente deletar este odontograma? Os planos de tratamentos vinculados serão perdidos também." icon="fa fa-warning" />
                             </p:commandButton>
@@ -62,7 +62,7 @@
 
                         <p:outputLabel for="planoTratamento" value="Plano Tratamento : " />
 
-                        <h:panelGroup>
+                        <h:panelGroup style="display: flex;">
                             <p:selectOneMenu id="planoTratamento" style="float:left;width:300px !important;" value="#{odontogramaMB.planoTratamento}" filter="true" filterMatchMode="contains"
                                 autoWidth="false" converter="planoTratamento" disabled="#{odontogramaMB.entity == null or odontogramaMB.entity.id == 0}">
                                 <p:ajax process="@this" update=":lume:tabView:planoTratamento, :lume:tabView:procedimentosOdontograma, :lume:tabView:pnOdontograma"
@@ -70,10 +70,10 @@
                                 <f:selectItem itemLabel="Selecione um Plano Tratamento" noSelectionOption="true" itemValue="#{null}" />
                                 <f:selectItems value="#{odontogramaMB.planosTratamento}" var="pt" itemValue="#{pt}" itemLabel="#{pt.descricaoComConvenio}" />
                             </p:selectOneMenu>
-                            <p:commandButton icon="White fa fa-file-o" style="float:left;margin-left: 10px;" title="Novo Plano de Tratamento" actionListener="#{odontogramaMB.actionNewPT}"
+                            <p:commandButton icon="White fa fa-file-o" style="float:left;margin-left: 10px;width:35px !important;" title="Novo Plano de Tratamento" actionListener="#{odontogramaMB.actionNewPT}"
                                 update=":lume:tabView:pgPt" process="@this" oncomplete="PF('dlgPt').show();" disabled="#{odontogramaMB.entity == null or odontogramaMB.entity.id == 0}" />
                             <p:commandButton icon="White fa fa-trash-o" actionListener="#{odontogramaMB.actionExcluirPT}"
-                                update=":lume:tabView:planoTratamento, :lume:tabView:procedimentosOdontograma, :lume:tabView:pnOdontograma" process="@this" style="float:left;margin-left: 10px;"
+                                update=":lume:tabView:planoTratamento, :lume:tabView:procedimentosOdontograma, :lume:tabView:pnOdontograma" process="@this" style="float:left;margin-left: 10px;width:35px !important;"
                                 title="Excluir Plano de Tratamento" styleClass="RedButton" rendered="#{odontogramaMB.admin}"
                                 disabled="#{odontogramaMB.planoTratamento == null or odontogramaMB.planoTratamento.id == 0}">
                                 <p:confirm header="Confirmação" message="Deseja realmente excluir este Plano de Tratamento?" icon="fa fa-warning" />
@@ -83,7 +83,9 @@
                         <p:outputLabel for="observacoes" value="Observações : " />
                         <p:inputTextarea id="observacoes" autoResize="true" value="#{odontogramaMB.observacoes}" cols="100" maxlength="200" />
                     </p:panelGrid>
-                    <div class="Separator"></div>
+                    
+                    <p:separator
+						style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
 
                     <p:panel visible="#{odontogramaMB.paciente != null}" style="border:0px" id="pnDenteOdontograma">
                         <h:panelGrid columns="2" style="margin: 0 auto;" id="tbOdontograma1">
@@ -182,32 +184,24 @@
 
                     <br />
 
-                    <div class="Separator"></div>
+                    <p:separator
+						style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
 
-                    <div class="Card ui-fluid">
-                        <div class="Container25 Responsive100">
+                    <p:panelGrid columns="4" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="persistOdontograma" icon="White fa fa-save White" value="Salvar" actionListener="#{odontogramaMB.persistDente}" process="@this"
                                 update=":lume:tabView:odontograma,:lume:tabView:pnOdontograma, :lume:tabView:dtPlanoTratamento"
                                 disabled="#{odontogramaMB.planoTratamento == null or odontogramaMB.planoTratamento.id == 0}" styleClass="GreenButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="newOdontograma" icon="White fa fa-file-o" value="Novo" actionListener="#{odontogramaMB.actionNew}"
                                 update=":lume:tabView:odontograma,:lume:tabView:planoTratamento, :lume:tabView:procedimentosOdontograma, :lume:tabView:pnOdontograma" process="@this" />
-                        </div>
-
-                        <div class="Container25 Responsive100">
                             <p:commandButton icon="White fa fa-registered" value="Regiões" process="@this" oncomplete="resize('#lume\\:tabView\\:dlgProcedimento');PF('dlgProcedimento').show();"
                                 actionListener="#{odontogramaMB.enableRegioes(true)}" styleClass="OrangeButton" update=":lume:tabView:pgProcedimento"
                                 disabled="#{(odontogramaMB.planoTratamento == null or odontogramaMB.planoTratamento.id == 0) or odontogramaMB.entity.id == 0}" />
-                        </div>
-
-                        <div class="Container25 Responsive100">
                             <p:commandButton icon="White fa fa-asterisk" value="Personalizar" process="@this" oncomplete="PF('dlgPersonalizar').show();" styleClass="PinkButton" />
-                        </div>
-                    </div>
+                    </p:panelGrid>
 
 
-                </p:panel>
+                </p:outputPanel>
 
                 <p:messages id="messages" autoUpdate="true" escape="false" />
 
