@@ -11,11 +11,80 @@
 	</f:facet>
 	<title>INTELIDENTE</title>
 	<ui:insert name="head" />
+	<h:outputScript name="js/ripple.js" library="ultima-layout" />
+	<h:outputScript name="js/layout.js" library="ultima-layout" />
+	<h:outputStylesheet name="css/ripple.css" library="ultima-layout" />
+	<h:outputStylesheet name="css/lume.css" library="ultima-layout" />
+	<h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css" library="ultima-layout" />
+	<style>
+		body .ui-button.ui-button-text-icon-left .ui-icon {
+			margin-top: -7px !important;
+		}
+		
+		body .login-panel {
+			width: 500px !important;
+			padding-bottom: 0px !important;
+		}
+		
+		body #lume:loginPanel {
+			top: 0px !important;
+		}
+		
+		body .multiMessage {
+			padding-top: 0px !important;
+			padding-right: 0px !important;
+			padding-left: 0px !important;
+		}
+		
+		body .clinicaSelect {
+			padding-bottom: 0px !important;
+		}
+	</style>
 </h:head>
 
-<h:body styleClass="WhiteBack">
+<h:body styleClass="login-body">
 	<h:form id="lume">
-
+	
+		<p:outputPanel id="loginPanel">
+			<div class="login-panel ui-fluid">
+				<div class="ui-g">
+				
+					<div class="ui-g-12 ui-lg-12">
+			    		<h:graphicImage name="logo_idente.png" styleClass="MarAuto Wid100" library="images" />
+					</div>
+					<p:outputPanel class="ui-g-12 ui-lg-12 multiMessage" style="font-size: 14px;">
+						Olá <h:outputText value="#{odontoLoginMB.usuarioNome}"/>, o Intelidente é utilizado por muitas Clínicas, ficamos felizes em saber que você tem acesso a mais de uma, por favor escolha a Clínica que você deseja acessar.
+					</p:outputPanel>
+				
+					<div class="card" style="width: 100%">
+	    				<p:outputPanel class="ui-g-12 ui-lg-12 clinicaSelect">
+	    					<h:panelGroup styleClass="md-inputfield">
+	    						<p:selectOneMenu id="login" value="#{odontoLoginMB.login}" required="true" styleClass="SelecaoMenu" autoWidth="false">
+									<f:selectItem itemValue="#{null}" itemLabel="Escolha a Clínica"/>
+									<f:selectItems value="#{odontoLoginMB.logins}" var="l" itemValue="#{l.id}_#{l.perfil}" itemLabel="#{l.descricao}" />
+								</p:selectOneMenu>
+								<p:message styleClass="msg" for="login" />
+	    					</h:panelGroup>
+	    				</p:outputPanel>
+	    				
+	    				<div class="ui-g-12 ui-lg-12" style="padding: 5px 40px; !important">
+							<p:commandButton value="Login"
+								icon="White fa fa-lock White Fs16"
+								action="#{odontoLoginMB.actionLoginMulti}" ajax="false" />
+						</div>    				
+					</div>
+    			</div>
+			</div>
+		</p:outputPanel>
+		<div class="footer copyright">
+			<i class="fa fa-copyright "></i> 2017-
+			<h:outputText value="#{currentDate}">
+				<f:convertDateTime pattern="yyyy" type="date" />
+			</h:outputText>
+			Lume Tecnologia - v.#{odonto.version}.#{odonto.revision}
+		</div>
+    				
+		<ui:remove>
 		<div class="Wid70 MarAuto">
 			<div class="Wid70 MarAuto WidAutoOnMobile TexAlCenter">
 
@@ -57,19 +126,13 @@
 				</div>
 			</div>
 		</div>
+		</ui:remove>
 	</h:form>
-	<style>
-.ui-button-text, .ui-button-text-only .ui-button-text {
-	padding: 15px !important;
-	transition: none !important;
-}
-</style>
 
-	<h:outputStylesheet name="css/core-layout.css" library="olympos-layout" />
-	<h:outputStylesheet name="css/font-awesome.css" library="olympos-layout" />
-	<h:outputStylesheet name="css/animate.css" library="olympos-layout" />
-	<h:outputStylesheet name="css/olympos-layout.css" library="olympos-layout" />
-	<h:outputStylesheet name="css/olympos-font.css" library="olympos-layout" />
+	<h:outputStylesheet name="css/core-layout.css" library="ultima-layout" />
+	<h:outputStylesheet name="css/font-awesome.css" library="ultima-layout" />
+	<h:outputStylesheet name="css/animate.css" library="ultima-layout" />
+	<h:outputStylesheet name="css/core-layout.css" library="ultima-layout" />
 </h:body>
 
 </html>

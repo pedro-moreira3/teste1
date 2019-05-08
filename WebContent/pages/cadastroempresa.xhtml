@@ -75,7 +75,7 @@
                             <p:inputText id="empStrCidade" value="#{cadastroEmpresaMB.entity.empStrCidade}" required="true" maxlength="50" class="Wid40" />
 
                             <p:outputLabel for="empChaUf" value="Estado: " />
-                            <p:selectOneMenu id="empChaUf" value="#{cadastroEmpresaMB.entity.empChaUf}" required="true" class="Wid40">
+                            <p:selectOneMenu id="empChaUf" value="#{cadastroEmpresaMB.entity.empChaUf}" required="true" styleClass="Wid40">
                                 <f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
                                 <f:selectItems value="#{cadastroEmpresaMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
                             </p:selectOneMenu>

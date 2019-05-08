@@ -25,7 +25,7 @@
 							<p:inputText id="numero" value="#{notaFiscalMB.entity.numero}" required="true" class="Wid30"/>
 
 							<p:outputLabel for="fornecedor" value="Fornecedor: " />
-							<p:selectOneMenu id="fornecedor" value="#{notaFiscalMB.entity.fornecedor}" converter="fornecedor" required="true"  class="Wid50" >
+							<p:selectOneMenu id="fornecedor" value="#{notaFiscalMB.entity.fornecedor}" converter="fornecedor" required="true"  styleClass="Wid50" >
 								<f:selectItem itemValue="#{null}" itemLabel="Selecione um fornecedor" />
 								<f:selectItems value="#{notaFiscalMB.fornecedores}" var="f" itemLabel="#{f.dadosBasico.nome}" itemValue="#{f}" />
 							</p:selectOneMenu>

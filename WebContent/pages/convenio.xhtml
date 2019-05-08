@@ -48,7 +48,7 @@
 							<p:inputText id="cidade" required="true" value="#{convenioMB.entity.dadosBasico.cidade}" maxlength="200" class="Wid40" />
 
 							<p:outputLabel for="estado" value="Estado : " />
-							<p:selectOneMenu id="estado" required="true" value="#{convenioMB.entity.dadosBasico.uf}" class="Wid40">
+							<p:selectOneMenu id="estado" required="true" value="#{convenioMB.entity.dadosBasico.uf}" styleClass="Wid40">
 								<f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
 								<f:selectItems value="#{convenioMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
 							</p:selectOneMenu>
@@ -60,7 +60,7 @@
 							<p:inputText id="telCelular" value="#{convenioMB.entity.dadosBasico.celular}" styleClass="telefone Wid20" />
 
 							<p:outputLabel for="tipo" value="Tipo : " />
-							<p:selectOneMenu id="tipo" required="true" value="#{convenioMB.entity.tipo}" class="Wid40">
+							<p:selectOneMenu id="tipo" required="true" value="#{convenioMB.entity.tipo}" styleClass="Wid40">
 								<f:selectItem itemValue="#{null}" itemLabel="Selecione um Tipo" />
 								<f:selectItems value="#{convenioMB.dominios}" var="dominio" itemValue="#{dominio.valor}" itemLabel="#{dominio.nome}" />
 							</p:selectOneMenu>

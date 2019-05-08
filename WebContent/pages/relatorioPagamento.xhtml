@@ -20,7 +20,7 @@
 							<p:calendar id="fim" value="#{lancamentoMB.fim}" pattern="dd/MM/yyyy" mask="true" class="Wid10"/>
 
 							<p:outputLabel for="status" value="Status : " />
-							<p:selectOneMenu id="status" value="#{lancamentoMB.status}" class="Wid30">
+							<p:selectOneMenu id="status" value="#{lancamentoMB.status}" styleClass="Wid30">
 								<f:selectItem itemValue="#{null}" itemLabel="Selecione um Status" />
 								<f:selectItems value="#{lancamentoMB.statuss}" var="status" itemLabel="#{status}" itemValue="#{status}" />
 							</p:selectOneMenu>

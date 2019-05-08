@@ -83,7 +83,7 @@
                                 <p:inputText id="cidade" required="false" value="#{profissionalMB.entity.dadosBasico.cidade}" class="Wid60" />
 
                                 <p:outputLabel for="estado" value="Estado : " />
-                                <p:selectOneMenu id="estado" required="false" value="#{profissionalMB.entity.dadosBasico.uf}" class="Wid60">
+                                <p:selectOneMenu id="estado" required="false" value="#{profissionalMB.entity.dadosBasico.uf}" styleClass="Wid60">
                                     <f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
                                     <f:selectItems value="#{profissionalMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
                                 </p:selectOneMenu>

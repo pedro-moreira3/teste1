@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
-
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
 <h:head>
     <f:facet name="first">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -11,8 +14,36 @@
     </f:facet>
     <title>INTELIDENTE</title>
     <ui:insert name="head" />
+    
+    <h:outputScript name="js/ripple.js" library="ultima-layout" />
+	<h:outputScript name="js/layout.js" library="ultima-layout" />
+	<h:outputStylesheet name="css/ripple.css" library="ultima-layout" />
+	<h:outputStylesheet name="css/lume.css" library="ultima-layout" />
+	<h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css" library="ultima-layout" />
+	<style type="text/css">
+		body .ui-messages .ui-messages-error-icon {
+			color: #FFFFFF;
+		}
+		
+		.login-panel {
+			padding: 10px;
+		}
+		
+		body .ui-messages ul {
+			display: block;
+		}
+		
+		.login-panel .ui-g .ui-g-12 {
+			padding: 20px 40px;
+		}
+		
+		body .ui-button.ui-button-text-icon-left .ui-icon {
+			margin-top: -7px !important;
+		}
+	</style>
+	
     <script>
-					$.removeCookie('olympos_expandeditems', {
+					$.removeCookie('ultima_expandeditems', {
 						path : '/'
 					});
 				</script>
@@ -42,13 +73,67 @@
 
 </h:head>
 
-<h:body styleClass="WhiteBack">
+<h:body styleClass="login-body">
     <p:dialog modal="true" widgetVar="loading" draggable="false" closable="false" showHeader="false" resizable="false">
         <p:graphicImage value="/images/loading.gif" />
     </p:dialog>
 
     <h:form id="lume">
+    
+    	<p:outputPanel id="loginPanel">
+			<div class="login-panel card ui-fluid">
+				<div class="ui-g">
+					<div class="ui-g-12 ui-lg-12">
+    					<h:graphicImage name="logo_idente.png" styleClass="MarAuto Wid100" library="images" />
+    				</div>
+    				
+    				<p:outputPanel class="ui-g-12 ui-lg-12">
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="login" style="padding:15px !important;" value="#{odontoLoginMB.entity.usuStrLogin}" />
+							<label>Usuário</label>
+						</h:panelGroup>
+					</p:outputPanel>
+					<p:outputPanel class="ui-g-12 ui-lg-12">
+						<h:panelGroup styleClass="md-inputfield">
+							<p:password id="password" style="padding:15px !important;" value="#{odontoLoginMB.entity.usuStrSenha}" feedback="false" />
+							<label>Senha</label>
+						</h:panelGroup>
+					</p:outputPanel>
+					
+					<div class="ui-g-12 ui-lg-12" style="padding: 5px 40px; !important">
+						<p:commandButton id="btn_login" value="Login"
+							icon="White fa fa-lock White Fs16"
+							action="#{odontoLoginMB.actionLogin}"
+							onstart="PF('loading').show();validarUserAgent();"
+							oncomplete="PF('loading').hide();" />
+					</div>
+					
+					<div class="ui-g-12 ui-lg-12" style="padding: 5px 40px; !important">
+						<p:separator style="border-bottom: dashed 1px #d1d3d4;border: solid .5px #607D8B;width:100%" />
+					</div>
+					
+					<p:outputPanel class="ui-g-12 ui-lg-12" style="padding: 0px 40px 5px 40px !important;">
+						<p:commandLink value="Esqueci minha senha" onclick="PF('confirmation').show()" />
+					</p:outputPanel>
+					
+					<div class="ui-g-12 ui-lg-12" style="padding: 5px 40px; !important">
+						<p:commandButton id="cadastro"
+							icon="White fa fa-clipboard Fs16 White" value="Cadastro"
+							action="#{odontoLoginMB.actionCadastroWeb}" />
+					</div>
+					
+				</div>
+			</div>
+		</p:outputPanel>
+		<div class="footer copyright">
+			<i class="fa fa-copyright "></i> 2016-
+			<h:outputText value="#{currentDate}">
+				<f:convertDateTime pattern="yyyy" type="date" />
+			</h:outputText>
+			Lume Tecnologia - v.#{odonto.version}.#{odonto.revision}
+		</div>
 
+		<ui:remove>
         <div class="LoginDiv MarAuto">
             <div class="Wid70 MarAuto WidAutoOnMobile TexAlCenter">
 
@@ -94,6 +179,7 @@
                 </div>
             </div>
         </div>
+        </ui:remove>
 
         <p:confirmDialog id="confirmDialog" message="Você tem certeza que deseja resetar a sua senha?" header="Esqueci minha Senha" severity="alert" widgetVar="confirmation" appendToBody="true">
             <p:commandButton id="confirm" value="Sim" oncomplete="PF('confirmation').hide()" action="#{odontoLoginMB.actionResetSenha}"/>
@@ -101,21 +187,14 @@
         </p:confirmDialog>
 
     </h:form>
-    <style>
-.ui-button-text, .ui-button-text-only .ui-button-text {
-    padding: 15px !important;
-    transition: none !important;
-}
-</style>
 
-    <h:outputStylesheet name="css/core-layout.css" library="olympos-layout" />
-    <h:outputStylesheet name="css/font-awesome.css" library="olympos-layout" />
-    <h:outputStylesheet name="css/animate.css" library="olympos-layout" />
-    <h:outputStylesheet name="css/olympos-layout.css" library="olympos-layout" />
-    <h:outputStylesheet name="css/olympos-font.css" library="olympos-layout" />
-    <h:outputStylesheet name="css/lume.css" library="olympos-layout" />
-    <h:outputScript name="js/odonto.js" library="olympos-layout" />
-    <h:outputScript name="js/sweetalert.min.js" library="olympos-layout" />
+    <h:outputStylesheet name="css/core-layout.css" library="ultima-layout" />
+    <h:outputStylesheet name="css/font-awesome.css" library="ultima-layout" />
+    <h:outputStylesheet name="css/animate.css" library="ultima-layout" />
+    <h:outputStylesheet name="css/core-layout.css" library="ultima-layout" />
+    <h:outputStylesheet name="css/lume.css" library="ultima-layout" />
+    <h:outputScript name="js/odonto.js" library="ultima-layout" />
+    <h:outputScript name="js/sweetalert.min.js" library="ultima-layout" />
 
 </h:body>
 

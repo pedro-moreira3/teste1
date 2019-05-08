@@ -14,7 +14,7 @@
 						style="border:0px none; background-color:transparent;">
 
 							<p:outputLabel for="pergunta" value="Pergunta: " />
-							<p:selectOneMenu value="#{respostaMB.entity.pergunta}" id="pergunta" converter="pergunta" class="Wid40">
+							<p:selectOneMenu value="#{respostaMB.entity.pergunta}" id="pergunta" converter="pergunta" styleClass="Wid40">
 								<f:selectItem itemValue="#{null}" itemLabel="Selecione uma Pergunta" />
 								<f:selectItems value="#{respostaMB.perguntas}" var="pergunta" itemLabel="#{pergunta.descricao}" itemValue="#{pergunta}" />
 							</p:selectOneMenu>
