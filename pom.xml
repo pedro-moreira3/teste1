@@ -25,19 +25,11 @@
 		</dependency>
 		<!-- BEGIN SYSTEM DEPENDENCIES -->
 		<dependency>
-<<<<<<< HEAD
 			<groupId>br.com.lume</groupId>
 			<artifactId>lumeerp</artifactId>
 			<version>1.0.0</version>
 			<scope>system</scope>
 			<systemPath>${basedir}/WebContent/WEB-INF/lib/lumeerp.jar</systemPath>
-=======
-			<groupId>ultima-theme</groupId>
-			<artifactId>ultima-theme</artifactId>
-			<version>1.0.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/WebContent/WEB-INF/lib/ultima-theme-2.0.0.jar</systemPath>
->>>>>>> refs/remotes/origin/frontend
 		</dependency>
 		<dependency>
 			<groupId>NBioBSPJNISigned</groupId>
@@ -45,16 +37,6 @@
 			<version>1.0.0</version>
 			<scope>system</scope>
 			<systemPath>${basedir}/WebContent/WEB-INF/lib/NBioBSPJNISigned.jar</systemPath>
-<<<<<<< HEAD
-		</dependency>		
-		<dependency>
-			<groupId>org.primefaces</groupId>
-			<artifactId>olympos-theme</artifactId>
-			<version>1.1.2</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/WebContent/WEB-INF/lib/olympos-theme-1.1.2.jar</systemPath>
-=======
->>>>>>> refs/remotes/origin/frontend
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/tools.devnull/trugger -->
 		<dependency>
@@ -212,7 +194,6 @@
 				</excludes>
 			</resource>
 		</resources>
-		<pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -300,37 +281,13 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<groupId>au.com.alderaan</groupId>
-				<artifactId>eclipselink-staticweave-maven-plugin</artifactId>
-				<version>1.0.3</version>
-				<executions>
-					<execution>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>weave</goal>
-						</goals>
-						<configuration>
-							<logLevel>ALL</logLevel>
-						</configuration>
-					</execution>
-				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.eclipse.persistence</groupId>
-						<artifactId>eclipselink</artifactId>
-						<version>${version.eclipselink}</version>
-					</dependency>
-				</dependencies>
-			</plugin>			
 		</plugins>
-		</pluginManagement>
 	</build>
 	<profiles>
 		<profile>
 			<id>wildfly-remote-dev</id>
 			<properties>
-				<wildfly-hostname>ltdeapp17.lume.intra</wildfly-hostname>
+				<wildfly-hostname>ltdeapp07.lume.intra</wildfly-hostname>
 				<wildfly-port>9990</wildfly-port>
 				<wildfly-username>desenv</wildfly-username>
 				<wildfly-password>linux123</wildfly-password>
