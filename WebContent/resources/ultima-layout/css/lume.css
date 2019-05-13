@@ -1567,3 +1567,19 @@ body .md-combo .ui-outputlabel {
 	left: 5px;
 	top: -20px;
 }
+
+.layout-wrapper .topbar .topbar-left {
+	position: relative;
+}
+
+.layout-wrapper .topbar .topbar-left a img {
+	position: relative;
+	top: 50%; left: 50%;
+	transform: translate(-50%, -50%);
+	height: 4rem !important;
+	margin: 0px !important;
+}
+
+.layout-wrapper .layout-main {
+	padding: 80px 5px 5px 5px;
+}

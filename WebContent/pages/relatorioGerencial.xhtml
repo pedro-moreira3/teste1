@@ -13,6 +13,14 @@
 .ui-grid-col-4 {
     text-align: center;
 }
+
+.tableCustomPadding .ui-panelgrid-cell:nth-child(1) {
+	padding-top: 0px;
+}
+
+.tableCustomPadding .ui-panelgrid-cell:nth-child(1) .ui-panelgrid-cell {
+	padding: 0px;
+}
 </style>
 
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">
@@ -190,13 +198,11 @@
         </script>
 
 
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-
-
-                    <h1 class="CardBigTopic">Dashboard</h1>
-                    <div class="SeparatorFull"></div>
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <h1>Dashboard</h1>
+                    <p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
 
                     <p:panelGrid id="filtro" columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
                         style="border:0px none; background-color:transparent;">
@@ -228,50 +234,50 @@
 
                     </p:panelGrid>
 
-                    <div class="Container25 Responsive100">
+                    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
                         <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioGerencialMB.actionFiltrar}" styleClass="OrangeButton"
                             process="@this,filtro" update="@form" />
-                    </div>
+                    </p:panelGrid>
 
                     <div class="EmptyBox5"></div>
 
-                    <div class="SeparatorFull"></div>
+                    <p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
 
 
 
                     <div class="EmptyBox5"></div>
 
 
-                    <div class="Container100 Responsive100">
-                        <div class="Container50 Responsive100">
+                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                        <p:outputPanel>
                             <div id="chartFinanceiro"></div>
-                        </div>
-                        <div class="Container50 Responsive100">
+                        </p:outputPanel>
+                        <p:outputPanel>
                             <div id="chartProfissionaisMaisRentaveis"></div>
-                        </div>
-                    </div>
-                    <div class="Container100 Responsive100">
-                        <div class="Container50 Responsive100">
+                        </p:outputPanel>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                        <p:outputPanel>
                             <div id="chartPacientesAgendamento" style="height: 400px;"></div>
-                        </div>
-                        <div class="Container50 Responsive100">
+                        </p:outputPanel>
+                        <p:outputPanel>
                             <div id="chartPacientesConvenio" style="height: 400px;"></div>
-                        </div>
-                    </div>
-                    <div class="Container100 Responsive100">
-                        <div class="Container50 Responsive100">
+                        </p:outputPanel>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                        <p:outputPanel>
                             <div id="chartOcupacao" style="height: 400px;"></div>
-                        </div>
-                        <div class="Container50 Responsive100">
+                        </p:outputPanel>
+                        <p:outputPanel>
                             <div id="chartOrcamentos" style="height: 400px;"></div>
-                        </div>
-                    </div>
-                    <div class="Container100 Responsive100">
-                        <div class="Container50 Responsive100">
+                        </p:outputPanel>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                        <p:outputPanel>
                             <div id="chartPacientesAtivos" style="height: 400px;"></div>
-                        </div>
-                    </div>
-                    <div class="Container100 Responsive100">
+                        </p:outputPanel>
+                    </p:panelGrid>
+                    <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group tableCustomPadding">
                         <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtPacientes" value="#{relatorioGerencialMB.pacientesInativosDetalhe}" var="paciente" rows="10"
                             paginator="true" paginatorPosition="bottom">
                             <f:facet name="header">Pacientes não atendidos no período
@@ -295,19 +301,21 @@
                                 <h:outputText value="#{paciente.statusProximoAgendamento}" />
                             </p:column>                            
                             <p:column headerText="Whats">
-                                <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{paciente.whatsURL}');return false;" styleClass="GreenButton" disable="#{paciente.whatsURL == null}" />
+                                <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{paciente.whatsURL}');return false;" styleClass="GreenButton" disable="#{paciente.whatsURL == null}" style="width: 33px !important;" />
                             </p:column>
                         </p:dataTable>
-                        <div class="Container25 Responsive100">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
                             <p:commandButton value="Excel" ajax="false" process="dtConferencias" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                 <p:dataExporter encoding="iso-8859-1" type="xls" target=":lume:dtPacientes" fileName="PacientesParaReativar" />
                             </p:commandButton>
-                        </div>
-                    </div>
+                        </p:panelGrid>
+                    </p:panelGrid>
 
-                    <div class="Container100 Responsive100">
-                        <div id="chartAgendamentosHorario" style="height: 400px;"></div>
-                    </div>
+					<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+						<p:outputPanel>
+                        	<div id="chartAgendamentosHorario" style="height: 400px;"></div>
+                        </p:outputPanel>
+					</p:panelGrid>
 
 
                 </div>
