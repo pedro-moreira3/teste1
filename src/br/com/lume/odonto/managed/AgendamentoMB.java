@@ -65,7 +65,6 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Reserva;
 import br.com.lume.odonto.entity.Retorno;
-import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
@@ -74,7 +73,6 @@ import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingle
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.reserva.ReservaSingleton;
 import br.com.lume.retorno.RetornoSingleton;
-import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.bo.PerfilBO;
 import br.com.lume.security.bo.UsuarioBO;
 import br.com.lume.security.entity.Perfil;

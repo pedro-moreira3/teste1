@@ -8,7 +8,6 @@ import javax.faces.bean.RequestScoped;
 import javax.faces.event.ActionEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
-
 import br.com.lume.odonto.entity.Parceiro;
 import br.com.lume.parceiro.ParceiroSingleton;
 

@@ -16,13 +16,10 @@ import org.apache.log4j.Logger;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
-import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.OdontoMensagens;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.paciente.PacienteSingleton;
-import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.SistemaSingleton;
 import br.com.lume.security.entity.Empresa;

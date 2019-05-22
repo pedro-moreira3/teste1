@@ -17,7 +17,6 @@ import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.entity.KeyValue;
 import br.com.lume.odonto.entity.Paciente;
-import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.relatorioGerencial.RelatorioGerencialSingleton;
 import br.com.lume.security.entity.Empresa;
 

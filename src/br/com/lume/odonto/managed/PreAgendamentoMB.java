@@ -30,7 +30,6 @@ import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.HorasUteisProfissional;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;

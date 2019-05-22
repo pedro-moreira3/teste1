@@ -12,13 +12,11 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.configuracao.Configurar;
-
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Plano;
 import br.com.lume.odonto.iugu.responses.InvoiceResponse;
 import br.com.lume.odonto.iugu.services.Iugu;
 import br.com.lume.plano.PlanoSingleton;
-import br.com.lume.security.bo.EmpresaBO;
 
 @ManagedBean
 @RequestScoped

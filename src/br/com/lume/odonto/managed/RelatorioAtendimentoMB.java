@@ -18,7 +18,6 @@ import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.entity.Agendamento;
-import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.reserva.ReservaSingleton;
 
 //TODO esse menu é fila de atendimento e não um relatorio,

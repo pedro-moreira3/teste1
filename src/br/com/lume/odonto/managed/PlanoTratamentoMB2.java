@@ -48,7 +48,6 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoFace;
 import br.com.lume.odonto.entity.Procedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Retorno;
-import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.odonto.entity.StatusDente;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odontograma.OdontogramaSingleton;

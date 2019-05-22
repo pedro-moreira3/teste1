@@ -10,8 +10,6 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 import org.primefaces.model.DualListModel;
 
-import br.com.lume.common.exception.business.BusinessException;
-import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.configuracao.Configurar;

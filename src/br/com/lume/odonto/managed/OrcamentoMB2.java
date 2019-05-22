@@ -32,7 +32,6 @@ import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.orcamento.OrcamentoSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
-import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 
 @ManagedBean

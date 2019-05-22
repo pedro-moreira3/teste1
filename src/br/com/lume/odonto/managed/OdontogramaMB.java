@@ -39,7 +39,6 @@ import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.procedimento.ProcedimentoSingleton;
 import br.com.lume.regiaoDente.RegiaoDenteSingleton;
-import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.statusDente.StatusDenteSingleton;
 
 @ManagedBean

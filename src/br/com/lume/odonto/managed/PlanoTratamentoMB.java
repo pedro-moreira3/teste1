@@ -45,16 +45,13 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoFace;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Retorno;
-import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odontograma.OdontogramaSingleton;
 import br.com.lume.orcamento.OrcamentoSingleton;
-import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.retorno.RetornoSingleton;
-import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 
 @ManagedBean

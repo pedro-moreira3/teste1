@@ -17,7 +17,6 @@ import br.com.lume.itemAnamnese.ItemAnamneseSingleton;
 import br.com.lume.odonto.entity.ItemAnamnese;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Pergunta;
-import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
 import br.com.lume.paciente.PacienteSingleton;

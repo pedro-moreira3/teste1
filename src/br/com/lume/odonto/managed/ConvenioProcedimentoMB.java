@@ -19,7 +19,6 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
-import br.com.lume.convenioProcedimento.bo.ConvenioProcedimentoBO;
 //import br.com.lume.odonto.bo.ConvenioBO;
 //import br.com.lume.odonto.bo.ConvenioProcedimentoBO;
 //import br.com.lume.odonto.bo.ProcedimentoBO;
