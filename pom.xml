@@ -98,6 +98,13 @@
 			<version>4.0.1</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/javax.ejb/javax.ejb-api -->
+		<dependency>
+		    <groupId>javax.ejb</groupId>
+		    <artifactId>javax.ejb-api</artifactId>
+		    <version>3.2.2</version>
+		</dependency>
+				
 		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.media/jersey-media-json-jackson -->
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
