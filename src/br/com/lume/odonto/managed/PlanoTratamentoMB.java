@@ -24,6 +24,7 @@ import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
@@ -44,16 +45,13 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoFace;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Retorno;
-import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odontograma.OdontogramaSingleton;
 import br.com.lume.orcamento.OrcamentoSingleton;
-import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.retorno.RetornoSingleton;
-import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 
 @ManagedBean
@@ -266,7 +264,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             List<AgendamentoPlanoTratamentoProcedimento> aptps = AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoProcedimento(planoTratamentoProcedimentos);
             if (aptps != null && !aptps.isEmpty()) {
                 for (AgendamentoPlanoTratamentoProcedimento aptp : aptps) {
-                    aptp.getAgendamento().setStatus(StatusAgendamento.CANCELADO.getSigla());
+                    aptp.getAgendamento().setStatusNovo(StatusAgendamentoUtil.CANCELADO.getSigla());
                     aptp.getAgendamento().setDescricao("Cancelado automaticamente pela finalização do plano de tratamento.");
                     AgendamentoSingleton.getInstance().getBo().persist(aptp.getAgendamento());
                 }

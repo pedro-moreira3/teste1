@@ -1,6 +1,7 @@
 package br.com.lume.odonto.util;
 
 import java.math.BigDecimal;
+
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 

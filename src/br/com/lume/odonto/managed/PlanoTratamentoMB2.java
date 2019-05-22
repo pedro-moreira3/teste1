@@ -25,6 +25,7 @@ import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
@@ -47,7 +48,6 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoFace;
 import br.com.lume.odonto.entity.Procedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Retorno;
-import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.odonto.entity.StatusDente;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odontograma.OdontogramaSingleton;
@@ -596,7 +596,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
             List<AgendamentoPlanoTratamentoProcedimento> aptps = AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoProcedimento(planoTratamentoProcedimentos);
             if (aptps != null && !aptps.isEmpty()) {
                 for (AgendamentoPlanoTratamentoProcedimento aptp : aptps) {
-                    aptp.getAgendamento().setStatus(StatusAgendamento.CANCELADO.getSigla());
+                    aptp.getAgendamento().setStatusNovo(StatusAgendamentoUtil.CANCELADO.getSigla());
                     AgendamentoSingleton.getInstance().getBo().persist(aptp.getAgendamento());
                 }
             }

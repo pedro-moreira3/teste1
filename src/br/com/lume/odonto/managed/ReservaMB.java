@@ -39,7 +39,6 @@ import br.com.lume.odonto.entity.Reserva;
 import br.com.lume.odonto.entity.ReservaKit;
 import br.com.lume.odonto.entity.ReservaKitAgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.util.OdontoMensagens;
-import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.reserva.ReservaSingleton;
 import br.com.lume.reservaKit.ReservaKitSingleton;

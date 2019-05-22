@@ -9,7 +9,6 @@ import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.entity.Profissional;

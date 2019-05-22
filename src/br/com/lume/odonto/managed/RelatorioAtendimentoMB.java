@@ -14,13 +14,14 @@ import org.primefaces.model.chart.PieChartModel;
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.entity.Agendamento;
-import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.reserva.ReservaSingleton;
 
-
+//TODO esse menu é fila de atendimento e não um relatorio,
+//necessario mudar o nome dessa classe, verificar permissoes e objetos, e demais relacoes.
 @ManagedBean
 @ViewScoped
 public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
@@ -60,7 +61,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                 a.setFinalizouAs(Utils.getDataAtual(a.getFinalizouAs()));
 
              
-                if (a.getStatus().equals(StatusAgendamento.CANCELADO.getSigla()) || a.getStatus().equals(StatusAgendamento.FALTA.getSigla())) {
+                if (a.getStatus().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || a.getStatus().equals(StatusAgendamentoUtil.FALTA.getSigla())) {
                     ReservaSingleton.getInstance().getBo().cancelaReservas(a);
                 }
                 validacoes(a);
@@ -76,16 +77,16 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void validacoes(Agendamento a) {
-        if (a.getIniciouAs() == null && a.getChegouAs() != null && (!a.getStatus().equals(StatusAgendamento.CANCELADO.getSigla()) || !a.getStatus().equals(
-                StatusAgendamento.REMARCADO.getSigla()) || !a.getStatus().equals(StatusAgendamento.ATENDIDO.getSigla()))) {
-            a.setStatus(StatusAgendamento.CLIENTE_NA_CLINICA.getSigla());
+        if (a.getIniciouAs() == null && a.getChegouAs() != null && (!a.getStatus().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || !a.getStatus().equals(
+                StatusAgendamentoUtil.REMARCADO.getSigla()) || !a.getStatus().equals(StatusAgendamentoUtil.ATENDIDO.getSigla()))) {
+            a.setStatusNovo(StatusAgendamentoUtil.CLIENTE_NA_CLINICA.getSigla());
         }
-        if (a.getFinalizouAs() == null && a.getIniciouAs() != null && (!a.getStatus().equals(StatusAgendamento.CANCELADO.getSigla()) || !a.getStatus().equals(
-                StatusAgendamento.REMARCADO.getSigla()) || !a.getStatus().equals(StatusAgendamento.ATENDIDO.getSigla()))) {
-            a.setStatus(StatusAgendamento.EM_ATENDIMENTO.getSigla());
+        if (a.getFinalizouAs() == null && a.getIniciouAs() != null && (!a.getStatus().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || !a.getStatus().equals(
+                StatusAgendamentoUtil.REMARCADO.getSigla()) || !a.getStatus().equals(StatusAgendamentoUtil.ATENDIDO.getSigla()))) {
+            a.setStatusNovo(StatusAgendamentoUtil.EM_ATENDIMENTO.getSigla());
         }
         if (a.getFinalizouAs() != null) {
-            a.setStatus(StatusAgendamento.ATENDIDO.getSigla());
+            a.setStatusNovo(StatusAgendamentoUtil.ATENDIDO.getSigla());
         }
     }
 

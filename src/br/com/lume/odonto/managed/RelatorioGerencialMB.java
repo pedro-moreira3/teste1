@@ -13,10 +13,10 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.entity.KeyValue;
 import br.com.lume.odonto.entity.Paciente;
-import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.relatorioGerencial.RelatorioGerencialSingleton;
 import br.com.lume.security.entity.Empresa;
 
@@ -150,10 +150,10 @@ public class RelatorioGerencialMB extends LumeManagedBean<Paciente> {
             pagamentosConsultorio = RelatorioGerencialSingleton.getInstance().getBo().findPagamentosConsultorio(inicio, fim, empresa);
             pagamentosConsultorio = pagamentosConsultorio.abs();
             saldoDoDia = recebimento.subtract(getPagamentosConsultorio());
-            pacientesAtendidos = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamento.ATENDIDO.getSigla(), empresa);
-            pacientesCancelados = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamento.CANCELADO.getSigla(), empresa);
-            pacientesNaoVieram = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamento.FALTA.getSigla(), empresa);
-            pacientesRemarcaram = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamento.REMARCADO.getSigla(), empresa);
+            pacientesAtendidos = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamentoUtil.ATENDIDO.getSigla(), empresa);
+            pacientesCancelados = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamentoUtil.CANCELADO.getSigla(), empresa);
+            pacientesNaoVieram = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamentoUtil.FALTA.getSigla(), empresa);
+            pacientesRemarcaram = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamentoUtil.REMARCADO.getSigla(), empresa);
             pacientesAgendados = pacientesAtendidos + pacientesNaoVieram + pacientesRemarcaram + pacientesCancelados;
             pacientesAtivos = RelatorioGerencialSingleton.getInstance().getBo().findPacientesAtivos(inicio, fim, empresa);
             pacientesInativosDetalhe = RelatorioGerencialSingleton.getInstance().getBo().listPacientesInativos(inicio, fim, empresa);

@@ -49,7 +49,6 @@ import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasseItem.RepasseItemSingleton;
 import br.com.lume.repasseLancamento.RepasseLancamentoSingleton;
 import br.com.lume.repasseProfissional.RepasseProfissionalSingleton;
-import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 
 @ManagedBean

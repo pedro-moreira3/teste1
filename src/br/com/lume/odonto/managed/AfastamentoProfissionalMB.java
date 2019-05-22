@@ -12,6 +12,7 @@ import br.com.lume.afastamento.AfastamentoSingleton;
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.dominio.DominioSingleton;
 //import br.com.lume.odonto.bo.AfastamentoBO;
@@ -22,7 +23,6 @@ import br.com.lume.odonto.entity.Afastamento;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.odonto.exception.DataComAgendamentosException;
 import br.com.lume.odonto.exception.DataDuplicadaException;
 import br.com.lume.odonto.exception.DataIgualException;
@@ -115,9 +115,9 @@ public class AfastamentoProfissionalMB extends LumeManagedBean<Afastamento> {
             throw new DataIgualException();
         }
         for (Agendamento agendamento : agendamentos) {
-            if ((!((agendamento.getStatus().equals(StatusAgendamento.REMARCADO.getSigla())) || (agendamento.getStatus().equals(StatusAgendamento.FALTA.getSigla())) || (agendamento.getStatus().equals(
-                    StatusAgendamento.CANCELADO.getSigla())) || (agendamento.getStatus().equals(
-                            StatusAgendamento.ATENDIDO.getSigla())))) && (((agendamento.getInicio().getTime() <= this.getEntity().getInicio().getTime()) && (agendamento.getFim().getTime() >= this.getEntity().getInicio().getTime())) || ((agendamento.getInicio().getTime() <= this.getEntity().getFim().getTime()) && (agendamento.getFim().getTime() >= this.getEntity().getFim().getTime())) || ((this.getEntity().getInicio().getTime() >= agendamento.getInicio().getTime()) && (this.getEntity().getFim().getTime() <= agendamento.getFim().getTime())) || ((this.getEntity().getInicio().getTime() <= agendamento.getInicio().getTime()) && (this.getEntity().getFim().getTime() >= agendamento.getFim().getTime())))) {
+            if ((!((agendamento.getStatus().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) || (agendamento.getStatus().equals(StatusAgendamentoUtil.FALTA.getSigla())) || (agendamento.getStatus().equals(
+                    StatusAgendamentoUtil.CANCELADO.getSigla())) || (agendamento.getStatus().equals(
+                            StatusAgendamentoUtil.ATENDIDO.getSigla())))) && (((agendamento.getInicio().getTime() <= this.getEntity().getInicio().getTime()) && (agendamento.getFim().getTime() >= this.getEntity().getInicio().getTime())) || ((agendamento.getInicio().getTime() <= this.getEntity().getFim().getTime()) && (agendamento.getFim().getTime() >= this.getEntity().getFim().getTime())) || ((this.getEntity().getInicio().getTime() >= agendamento.getInicio().getTime()) && (this.getEntity().getFim().getTime() <= agendamento.getFim().getTime())) || ((this.getEntity().getInicio().getTime() <= agendamento.getInicio().getTime()) && (this.getEntity().getFim().getTime() >= agendamento.getFim().getTime())))) {
                 throw new DataComAgendamentosException();
             }
         }

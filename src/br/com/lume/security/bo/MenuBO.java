@@ -14,8 +14,6 @@ import org.primefaces.model.menu.MenuModel;
 import org.primefaces.model.menu.Submenu;
 
 import br.com.lume.common.bo.BO;
-import br.com.lume.common.connection.GenericDAO;
-import br.com.lume.common.util.JSFHelper;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Profissional;

@@ -47,7 +47,7 @@ public class ExportarAgendaMB extends LumeManagedBean<Agendamento> {
         try {
             calcularDatas();
 
-            agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndProfissional(agendamentoMB.getProfissional(), inicio, fim, null);
+            agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndProfissional(agendamentoMB.getProfissional(), inicio, fim);
             if (RequestContext.getCurrentInstance() != null) {
                 if (agendamentos != null && !agendamentos.isEmpty()) {
                     List<AgendamentoAgenda> agendamentosAgenda = new ArrayList<>();

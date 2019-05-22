@@ -10,7 +10,6 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UF;
-
 import br.com.lume.odonto.entity.Plano;
 import br.com.lume.plano.PlanoSingleton;
 import br.com.lume.security.EmpresaSingleton;

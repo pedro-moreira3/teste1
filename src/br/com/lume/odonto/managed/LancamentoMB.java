@@ -11,7 +11,6 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
-import javax.websocket.ClientEndpointConfig.Configurator;
 
 import org.apache.log4j.Logger;
 import org.primefaces.context.RequestContext;
