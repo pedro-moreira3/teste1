@@ -20,6 +20,7 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.GeradorSenha;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.configuracao.Configurar;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
@@ -72,7 +73,7 @@ public class PreAgendamentoMB extends LumeManagedBean<Agendamento> {
     public void actionPersist(ActionEvent event) {
         if (this.getEntity().getInicio() != null && this.getEntity().getFim() != null) {
             this.getEntity().setHash(GeradorSenha.gerarSenha());
-            this.getEntity().setStatus(StatusAgendamento.PRE_AGENDADO.getSigla());
+            this.getEntity().setStatusNovo(StatusAgendamentoUtil.PRE_AGENDADO.getSigla());
             this.getEntity().setProfissional(profissional);
             this.getEntity().setPaciente(paciente);
             //this.getEntity().setFilial(this.profissional.getProfissionalFilials().get(0).getFilial());
@@ -155,7 +156,7 @@ public class PreAgendamentoMB extends LumeManagedBean<Agendamento> {
                 agendamento.setInicio(afastamento.getInicio());
                 agendamento.setFim(afastamento.getFim());
                 agendamento.setPaciente(pacienteAfastamento);
-                agendamento.setStatus(StatusAgendamento.AFASTAMENTO.getSigla());
+                agendamento.setStatusNovo(StatusAgendamentoUtil.AFASTAMENTO.getSigla());
                 agendados.add(agendamento);
             }
         } catch (Exception e) {

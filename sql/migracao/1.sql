@@ -1,32 +1,55 @@
-CREATE TABLE STATUS_AGENDAMENTO (
-	ID SERIAL PRIMARY KEY,
-	DESCRICAO VARCHAR(200) NOT NULL,
-	SIGLA VARCHAR(2) NOT NULL,
-	COR VARCHAR(10)	
+--35 minutos para rodar em dev o script de migracao para essas tabelas
+
+CREATE TABLE inteli.status_agendamento
+(
+    ID SERIAL PRIMARY KEY,
+    DESCRICAO VARCHAR(200) NOT NULL    
 );
 
-INSERT INTO STATUS_AGENDAMENTO (DESCRICAO, SIGLA, COR) VALUES ('Atendido','A','');
-INSERT INTO STATUS_AGENDAMENTO (DESCRICAO, SIGLA, COR) VALUES ('Não Atendido','N','');
-INSERT INTO STATUS_AGENDAMENTO (DESCRICAO, SIGLA, COR) VALUES ('Agendado','A','');
+INSERT INTO STATUS_AGENDAMENTO (DESCRICAO) VALUES ('Atendido');
+INSERT INTO STATUS_AGENDAMENTO (DESCRICAO) VALUES('Não Atendido');
+INSERT INTO STATUS_AGENDAMENTO (DESCRICAO) VALUES ('Agendado');
+
+CREATE TABLE inteli.origem_agendamento
+(
+    ID SERIAL PRIMARY KEY,
+     DESCRICAO VARCHAR(200) NOT NULL       
+);
+
+INSERT INTO ORIGEM_AGENDAMENTO (DESCRICAO) VALUES ('Encaixe');
+INSERT INTO ORIGEM_AGENDAMENTO (DESCRICAO) VALUES ('Cliente');
+INSERT INTO ORIGEM_AGENDAMENTO (DESCRICAO) VALUES ('Remarcado');
+
+CREATE TABLE inteli.finalidade_agendamento
+(
+    ID SERIAL PRIMARY KEY,
+    DESCRICAO VARCHAR(200) NOT NULL    
+);
+
+INSERT INTO FINALIDADE_AGENDAMENTO (DESCRICAO) VALUES ('Consulta Inicial');
 
 
- AFASTAMENTO("Bloqueio", "F", "agendamentoAfastamento"),
-    ATENDIDO("Atendido", "A", "agendamentoAtendido"),
-    CANCELADO("Cancelado", "C", "agendamentoCancelado"),
-    CLIENTE_NA_CLINICA("Cliente na ClÃ­nica", "I", "clienteNaClinica"),
-    CONFIRMADO("Confirmado", "S", "agendamentoConfirmado"),
-    EM_ATENDIMENTO("Em Atendimento", "O", "emAtendimento"),
-    ENCAIXE("Encaixe", "E", "agendamentoEncaixe"),
-    FALTA("Falta", "B", "agendamentoFalta"),
-    NAO_CONFIRMADO("NÃ£o Confirmado", "N", "agendamentoNaoConfirmado"),
-    PRE_AGENDADO("Agendado pelo Paciente", "P", "agendamentoPrecadastro"),
-    ERRO_AGENDAMENTO("Erro de Agendamento", "D", "agendamentoErroAgendamento"),
-    CONSULTA_INICIAL("Consulta Inicial", "G", "agendamentoConsultaInicial"),
-    ENCAIXE_ATENDIDO("Encaixe Atendido", "H", "agendamentoEncaixeAtendido"),
-    REMARCADO("Remarcado", "R", "agendamentoRemarcado");
+CREATE TABLE inteli.situacao_agendamento
+(
+    ID SERIAL PRIMARY KEY,
+    cliente_clinica timestamp without time zone,
+    confirmado timestamp without time zone,
+    em_atendimento timestamp without time zone
+   );
+   
+   CREATE TABLE inteli.motivo_status_agendamento
+(
+    ID SERIAL PRIMARY KEY,
+  DESCRICAO VARCHAR(200) NOT NULL    
+);
 
-    private StatusAgendamento(String descricao, String sigla, String styleCss) {
-        this.descricao = descricao;
-        this.sigla = sigla;
-        this.styleCss = styleCss;
-    }
+INSERT INTO MOTIVO_STATUS_AGENDAMENTO (DESCRICAO) VALUES ('Cancelado');
+INSERT INTO MOTIVO_STATUS_AGENDAMENTO (DESCRICAO) VALUES ('Erro de Agendamento');
+INSERT INTO MOTIVO_STATUS_AGENDAMENTO (DESCRICAO) VALUES ('Falta');
+INSERT INTO MOTIVO_STATUS_AGENDAMENTO (DESCRICAO) VALUES ('Remarcado'); 
+   
+ALTER TABLE AGENDAMENTO ADD COLUMN ID_STATUS_AGENDAMENTO BIGINT REFERENCES STATUS_AGENDAMENTO(ID);
+ALTER TABLE AGENDAMENTO ADD COLUMN ID_ORIGEM_AGENDAMENTO BIGINT REFERENCES ORIGEM_AGENDAMENTO(ID);
+ALTER TABLE AGENDAMENTO ADD COLUMN ID_FINALIDADE_AGENDAMENTO BIGINT REFERENCES FINALIDADE_AGENDAMENTO(ID);
+ALTER TABLE AGENDAMENTO ADD COLUMN ID_SITUACAO_AGENDAMENTO BIGINT REFERENCES SITUACAO_AGENDAMENTO(ID);
+ALTER TABLE AGENDAMENTO ADD COLUMN ID_MOTIVO_STATUS_AGENDAMENTO BIGINT REFERENCES MOTIVO_STATUS_AGENDAMENTO(ID);

@@ -43,7 +43,7 @@ public class ConfirmacaoMB extends LumeManagedBean<Agendamento> {
                 Agendamento agendamento =AgendamentoSingleton.getInstance().getBo().findByHash(this.id, this.hash);
                 if (agendamento != null) {
                     if ("N".equals(agendamento.getStatus())) {
-                        agendamento.setStatus("S");
+                        agendamento.setStatusNovo("S");
                         AgendamentoSingleton.getInstance().getBo().persist(agendamento);
                         this.resposta = "Obrigado por confirmar sua consulta !";
                     } else {

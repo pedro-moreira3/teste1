@@ -160,7 +160,7 @@ div.ui-selectoneradio label {
 								update="pnAgendamento, btBloqueioAgenda"
 								oncomplete="PF('myschedule').update();"
 								actionListener="#{agendamentoMB.actionConfirmarPreCadastro}"
-								rendered="#{agendamentoMB.entity.status == 'P'}" />
+								rendered="#{agendamentoMB.entity.statusNovo == 'P'}" />
 						</p:panelGrid>
 					</div>
 				</div>
