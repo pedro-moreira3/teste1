@@ -14,13 +14,13 @@
     text-align: center;
 }
 </style>
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-                    <p:panel id="pnPrincipal" styleClass="BordNone">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <p:outputPanel id="pnPrincipal" styleClass="BordNone">
 
-                        <h1 class="CardBigTopic">Relatório de Planos de Tratamento</h1>
-                        <div class="SeparatorFull"></div>
+                        <h1>Relatório de Planos de Tratamento</h1>
+                        <p:separator styleClass="SeparatorFull" />
 
                         <p:panelGrid id="filtro" columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
                             style="border:0px none; background-color:transparent;">
@@ -63,19 +63,16 @@
 
                         <div class="SeparatorFull"></div>
 
-                        <div class="Container25 Responsive100">
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
                             <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioPlanoTratamentoMB.actionFiltrar}" update="dtPrincipal" tabindex="1"
                                 process="@this,pnPrincipal" styleClass="OrangeButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioPlanoTratamentoMB.actionNew}" update="dtPrincipal,pnPrincipal"
                                 immediate="true" tabindex="1" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton immediate="true" value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                 <p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="planoTratamento" />
                             </p:commandButton>
-                        </div>
+                        </p:panelGrid>
 
                         <div class="EmptyBox20"></div>
 
@@ -128,12 +125,13 @@
 
                             <p:column rendered="#{relatorioPlanoTratamentoMB.status == 'N'}" exportable="false">
                                 <p:commandButton icon="White fa fa-times-circle" onclick="PF('devolver').show();" title="Encerrar" process="@this" styleClass="OrangeButton"
-                                    action="#{planoTratamentoMB.setEntity(m)}" />
-                                <p:button icon="White fa fa-eye" title="Visualizar" onclick="window.open('paciente.jsf?idpt=#{m.id}'); return false;" />
+                                    action="#{planoTratamentoMB.setEntity(m)}" style="width: 33px !important;" />
+                                <p:button icon="White fa fa-eye" title="Visualizar" onclick="window.open('paciente.jsf?idpt=#{m.id}'); return false;"
+                                	style="width: 33px !important;" />
                             </p:column>
 
                         </p:dataTable>
-                    </p:panel>
+                    </p:outputPanel>
 
                     <p:remoteCommand id="carregarDados" name="carregarDados" process="@this,lume:filtro" update=":lume:dtPrincipal" actionListener="#{relatorioPlanoTratamentoMB.actionFiltrar}" />
 

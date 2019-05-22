@@ -47,14 +47,14 @@
 
                     <h1>Descrição</h1>
                     
-					<p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+					<p:separator styleClass="SeparatorFull" />
 
                     <p:inputTextarea id="descricao" cols="50" rows="6" value="#{exameMB.entity.descricao}" autoResize="true" required="true" maxlength="200" counterTemplate="{0} caracteres restantes."
                         counter="counter" />
                     <div class="EmptyBox20"></div>
                     <h1>Arquivo : (JPG/JPEG/GIF/PNG/PDF)</h1>
                     
-                    <p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+                    <p:separator styleClass="SeparatorFull" />
                     
                     <h:outputText id="nomeAnexo" value="#{exameMB.entity.nomeAnexo}" />
 
@@ -63,7 +63,7 @@
                         invalidSizeMessage="Tamanho excedeu oOo limite." update="nomeAnexo" />
                     <br />
                     
-                    <p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+                    <p:separator styleClass="SeparatorFull" />
 
                     <p:panelGrid columns="3" layout="grid"
 						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente">

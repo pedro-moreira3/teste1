@@ -64,7 +64,7 @@ div.ui-selectoneradio label {
 	padding-left: 7px !important;
 }
 
-.removeSecondPadding .ui-grid-row .ui-panelgrid-cell:nth-child(1) {
+.removeSecondPadding > .ui-panelgrid-content .ui-grid-row .ui-panelgrid-cell:nth-child(1) {
 	padding-top: 0px !important;	
 }
 
@@ -132,8 +132,7 @@ div.ui-selectoneradio label {
 
 						<ui:include src="dlgagendamento.xhtml" />
 
-						<p:separator
-							style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+						<p:separator styleClass="SeparatorFull" />
 
 						<p:panelGrid columns="2" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid"
@@ -178,8 +177,7 @@ div.ui-selectoneradio label {
 						style="margin: 0 auto; margin-bottom: 10px;border: none">
 						<div class="Container100">
 							<h1 style="margin-bottom: 5px">Agendamento</h1>
-							<p:separator
-								style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+							<p:separator styleClass="SeparatorFull" />
 							<div class="Container100 Responsive100 ui-fluid">
 								<p:fieldset
 									legend="#{agendamentoMB.dentista ? 'Legenda' : 'Filtro'}"
@@ -356,9 +354,8 @@ div.ui-selectoneradio label {
 								</p:fieldset>
 							</div>
 						</div>
-
-
 					</p:panel>
+					<br />
 					<p:schedule id="schedule" value="#{agendamentoMB.schedule}"
 						axisFormat="HH:mm"
 						style="width:100%;heigth:100%;margin: 0 auto;display: inline-block;"

@@ -189,7 +189,7 @@
 
                     <p:panel id="pnExportar" styleClass="BordNone">
                         <h1>Exportar Consultas para o Google Agenda</h1>
-                        <p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+                        <p:separator styleClass="SeparatorFull" />
                         <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
                         	<h:panelGroup class="md-combo" style="margin-top: 20px !important">
 	                            <p:selectOneMenu id="periodo" value="#{exportarAgendaMB.periodo}" required="true">
@@ -209,7 +209,7 @@
                             </h:panelGroup>
                         </p:panelGrid>
 
-                        <p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+                        <p:separator styleClass="SeparatorFull" />
 
                         <div class="Container25 Responsive100">
                             <p:commandButton icon="White fa fa-calendar White" value="Exportar" oncomplete="exportarAgenda();" styleClass="RedButton" process="@this,periodo" />

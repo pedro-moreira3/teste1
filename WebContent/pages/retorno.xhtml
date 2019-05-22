@@ -2,7 +2,7 @@
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
         <style>
-.ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
+.ui-fluid .ui-calendar:not(.dtContato), .ui-fluid .ui-calendar:not(.dtContato) input {
     width: auto !important;
 }
 </style>
@@ -10,13 +10,10 @@
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
                     <h:inputHidden id="idRetorno" value="#{retornoMB.entity.id}" />
-                    <p:panel styleClass="BordNone">
-                        <h1 id="titulo">Retorno</h1>
-                        <p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
-                    </p:panel>
-                    <p:panel id="pnRetorno" styleClass="BordNone">
-                        <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-                            style="border:0px none; background-color:transparent;">
+                    <h1>Retorno</h1>
+                    <p:separator styleClass="SeparatorFull" />
+                    <p:outputPanel id="pnRetorno" styleClass="BordNone">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <h:outputLabel value="Paciente : " />
                             <p:autoComplete dropdown="true" queryDelay="1000" minQueryLength="3" value="#{retornoMB.entity.paciente}" completeMethod="#{retornoMB.geraSugestoesPaciente}" var="p"
                                 itemLabel="#{p.dadosBasico.nomeDocumento}" itemValue="#{p}" converter="paciente" required="true" size="46" scrollHeight="400"
@@ -32,7 +29,7 @@
 
                             <p:outputLabel value="Data Contato : " for="dtContato" />
                             <p:calendar id="dtContato" required="true" value="#{retornoMB.entity.dataRetorno}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}"
-                                timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+1" class="Wid20" />
+                                timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+1" styleClass="dtContato" />
 
                             <p:outputLabel for="observacoesretornocadastro" value="Observações : " />
                             <p:inputTextarea id="observacoesretornocadastro" rows="3" cols="33" value="#{retornoMB.entity.observacoes}" maxlength="200" />
@@ -46,36 +43,30 @@
 
                         </p:panelGrid>
 
-                        <p:separator style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+                        <p:separator styleClass="SeparatorFull" />
                         
-                        <div class="Container25 Responsive100">
+                        <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton icon="White fa fa-save" value="Salvar" actionListener="#{retornoMB.actionPersist}" update=":lume:pnRetorno,:lume:dtRetorno" process=":lume:pnRetorno"
                                 styleClass="GreenButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton icon="White fa fa-trash-o" value="Excluir" actionListener="#{retornoMB.actionRemove}" update=":lume:pnRetorno,:lume:dtRetorno" process="@this"
                                 disabled="#{retornoMB.entity.id == 0}" styleClass="RedButton" />
-                        </div>
-
-                        <div class="Container25 Responsive100">
                             <p:commandButton icon="White fa fa-file-o" value="Novo" actionListener="#{retornoMB.actionNew}" update=":lume:pnRetorno,:lume:dtRetorno" immediate="true" />
-                        </div>
+                        </p:panelGrid>
 
                         <div class="EmptyBox20"></div>
-
-                    </p:panel>
+					</p:outputPanel>
 
                     <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtRetorno" value="#{retornoMB.retornos}" var="retorno" rows="15" paginator="true" selection="#{retornoMB.entity}"
-                        selectionMode="single" rowKey="#{retorno}" paginatorPosition="bottom">
+                        selectionMode="single" rowKey="#{retorno}" paginatorPosition="bottom" styleClass="tableRetorno">
                         <p:ajax event="rowSelect" update=":lume:pnRetorno" />
                         <f:facet name="header">
-                            <h:panelGroup id="filtro">
+                            <h:panelGroup id="filtro" styleClass="dataRetorno">
                                 <p:calendar value="#{retornoMB.dataIni}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}"
                                     navigator="true" yearRange="-100:+1" style="width: 95px !important;margin-right: 5px;" /> até
 								<p:calendar value="#{retornoMB.dataFim}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true"
                                     yearRange="-100:+1" style="width: 95px !important;margin-left: 5px;" />
                                 <p:commandButton id="pesquisar" icon="fa fa-search White" actionListener="#{retornoMB.geraLista}" update="@form" tabindex="1" process=":lume:dtRetorno:filtro"
-                                    styleClass="OrangeButton" style="margin-left: 10px;" />
+                                    styleClass="OrangeButton" style="margin-left: 10px; width: 33px !important" />
                             </h:panelGroup>
                         </f:facet>
                         <p:column filterBy="#{retorno.paciente.dadosBasico.nomeStr}" sortBy="#{retorno.paciente.dadosBasico.nome}" filterMatchMode="contains" headerText="Paciente">
@@ -86,10 +77,11 @@
                         </p:column>
                         <p:column headerText="Agendar" width="50">
                             <p:commandButton icon="White fa fa-book White" oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');" process="@this"
-                                action="#{agendamentoMB.retorno(retorno)}" update="lume:pnAgendamento" />
+                                action="#{agendamentoMB.retorno(retorno)}" update="lume:pnAgendamento" style="width: 33px !important" />
                         </p:column>
                         <p:column headerText="Whats" width="50">
-                            <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{retorno.whatsURL}');return false;" styleClass="GreenButton" disable="#{a.whatsURL == null}" />
+                            <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{retorno.whatsURL}');return false;" styleClass="GreenButton" disable="#{a.whatsURL == null}"
+                            	style="width: 33px !important" />
                         </p:column>
 
                         <p:column filterBy="#{retorno.paciente.convenio.dadosBasico.nome}" sortBy="#{retorno.paciente.convenio.dadosBasico.nome}" filterMatchMode="contains" headerText="Convênio">

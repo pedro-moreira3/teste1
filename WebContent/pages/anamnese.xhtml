@@ -10,8 +10,7 @@
 			<div class="Card">
 				<p:outputPanel id="pnAnamnese" styleClass="BordNone">
 					<h1 style="margin-top: 20px !important;">Especialidades</h1>
-					<p:separator
-						style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+					<p:separator styleClass="SeparatorFull" />
 					<p:selectManyCheckbox id="especialidade"
 						value="#{pacienteMB.especialidadeSelecionada}"
 						converter="especialidade" layout="grid" columns="5">
@@ -21,8 +20,7 @@
 							listener="#{pacienteMB.actionAtualizaPerguntasPorAnamnese}"
 							process="@this" update=":lume:tabView:perguntasEspecialidade" />
 					</p:selectManyCheckbox>
-					<p:separator
-						style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+					<p:separator styleClass="SeparatorFull" />
 
 					<h:panelGroup id="perguntasEspecialidade">
 						<ui:repeat var="anamnesesAgrupadas"
@@ -126,8 +124,7 @@
 							<br />
 						</ui:repeat>
 					</h:panelGroup>
-					<p:separator
-						style="border: none; border-bottom:dashed 1px #ccc; width: 100%;" />
+					<p:separator styleClass="SeparatorFull" />
 					<p:panelGrid columns="3" layout="grid"
 						styleClass="ui-panelgrid-blank form-group ui-fluid">
 						<p:commandButton id="persist2" icon="White fa fa-save White"

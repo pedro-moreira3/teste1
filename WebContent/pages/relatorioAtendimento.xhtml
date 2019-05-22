@@ -35,14 +35,13 @@ div.ui-selectoneradio label {
                                         }).resize();
                                     }
                                 </script>
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<h1>Fila de Atendimento</h1>
+                    <p:separator styleClass="SeparatorFull" />
 
-                    <h1 class="CardBigTopic">Fila de Atendimento</h1>
-                    <div class="SeparatorFull"></div>
-
-                    <h:panelGrid columns="3" styleClass="lumeField" id="pnFiltro">
+                    <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
                         <p:outputLabel for="filtro" value="Dia : " />
                         <p:selectOneMenu id="filtro" value="#{relatorioAtendimentoMB.filtro}" rendered="#{relatorioAtendimentoMB.dia != 7}">
                             <f:selectItem itemValue="CURRENT_DATE" itemLabel="HOJE" />
@@ -56,10 +55,10 @@ div.ui-selectoneradio label {
                         </p:selectOneMenu>
                         <p:commandButton value="Novo Agendamento" icon="White fa fa-book White" oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
                             action="#{agendamentoMB.filaAtendimento(a)}" update="lume:pnAgendamento" process="@this" />
-                    </h:panelGrid>
+                    </p:panelGrid>
 
 
-                    <div class="SeparatorFull"></div>
+                    <p:separator styleClass="SeparatorFull" />
                     <div class="EmptyBox20"></div>
 
                     <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtAtendimento" value="#{relatorioAtendimentoMB.agendamentos}" var="a" rows="15" paginator="true" rowKey="#{a}"
@@ -73,13 +72,15 @@ div.ui-selectoneradio label {
                         </p:column>
                         <p:column headerText="Agendar c/ mesmo profissional">
                             <p:commandButton icon="White fa fa-book White" oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');" process="@this"
-                                action="#{agendamentoMB.filaAtendimento(a)}" update="lume:pnAgendamento" />
+                                action="#{agendamentoMB.filaAtendimento(a)}" update="lume:pnAgendamento" style="width: 33px !important" />
                         </p:column>
                         <p:column headerText="Whats">
-                            <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{a.whatsURL}');return false;" styleClass="GreenButton" disable="#{a.whatsURL == null}" />
+                            <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{a.whatsURL}');return false;" styleClass="GreenButton" disable="#{a.whatsURL == null}"
+                            	style="width: 33px !important" />
                         </p:column>
                         <p:column headerText="Pagamento">
-                            <p:button id="pagamento" icon="White fa fa-money" styleClass="OrangeButton" onclick="window.open('pagamento.jsf?id=#{a.paciente.id}');return false;"/>
+                            <p:button id="pagamento" icon="White fa fa-money" styleClass="OrangeButton" onclick="window.open('pagamento.jsf?id=#{a.paciente.id}');return false;"
+                            	style="width: 33px !important" />
                         </p:column>
                         <p:column filterBy="#{a.paciente.siglaConvenio}" sortBy="#{a.paciente.siglaConvenio}" filterMatchMode="contains" headerText="Con./Part.">
                             <h:outputText value="#{a.paciente.siglaConvenio}" />
@@ -134,7 +135,7 @@ div.ui-selectoneradio label {
                         </p:column>
                     </p:dataTable>
 
-                    <div class="SeparatorFull"></div>
+                    <p:separator styleClass="SeparatorFull" />
                     <div class="EmptyBox20"></div>
 
                     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -182,27 +183,27 @@ div.ui-selectoneradio label {
                     	}
                       }
                       
-                     function drawPacientesAgendamento() {
-                          var data = google.visualization.arrayToDataTable([
-                              ['', ''],
-                              #{relatorioAtendimentoMB.pacientesAgendamento}
-                             ]);
+							function drawPacientesAgendamento() {								
+								var data = new google.visualization.DataTable();
+								data.addColumn('string','');
+								data.addColumn('number','');
+								data.addRows([
+									#{relatorioAtendimentoMB.pacientesAgendamento}
+								]);
                       
-                            var options = {
-                              title: 'Status das consultas'
-                            };
+								var options = {
+									title: 'Status das consultas'
+								};
                       
-                            var chart = new google.visualization.PieChart(document.getElementById('chartPacientesAgendamento'));
-                            chart.draw(data, options);
-                      }
-                  // ]]>
-                    </script>
+								var chart = new google.visualization.PieChart(document.getElementById('chartPacientesAgendamento'));
+								chart.draw(data, options);
+							}
+						// ]]>
+					</script>
 
                     <div id="chartPacientesAgendamento" style="height: 300px;"></div>
-
                     <div id="chartAtendimentos"></div>
-
-                    <div class="SeparatorFull"></div>
+                    <p:separator styleClass="SeparatorFull" />
                     <div class="EmptyBox20"></div>
 
                     <h:inputHidden id="profissional" />

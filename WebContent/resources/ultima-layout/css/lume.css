@@ -1583,3 +1583,9 @@ body .md-combo .ui-outputlabel {
 .layout-wrapper .layout-main {
 	padding: 80px 5px 5px 5px;
 }
+
+.SeparatorFull {
+	border: none;
+	border-bottom:dashed 1px #ccc;
+	width: 100%;
+}
