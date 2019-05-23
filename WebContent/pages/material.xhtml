@@ -1,12 +1,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
                     <h:inputHidden id="idMaterial" value="#{materialMB.entity.id}" />
-                    <p:panel id="pnMaterial" styleClass="BordNone">
-                        <h1 class="CardBigTopic">Entrada de Materiais</h1>
+                    <p:outputPanel id="pnMaterial" styleClass="BordNone">
+                        <h1>Entrada de Materiais</h1>
                         <div class="SeparatorFull"></div>
                         <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
                             <p:column rendered="#{materialMB.estoqueCompleto}">
@@ -42,11 +42,11 @@
                         </p:panelGrid>
                         <br />
                         <p:fieldset legend="Entrada" id="pnEntrada">
-                            <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                            <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"
                                 style="border:0px none; background-color:transparent;" id="pgEntrada">
                                 <p:outputLabel for="quantidade" value="Quantidade de volumes: " />
                                 <p:inputText id="quantidade" value="#{materialMB.entity.quantidade}" maxlength="10" onkeypress="validaNumeros(event)" required="true"
-                                    rendered="#{materialMB.entity.id == 0}" style="width:20%">
+                                    rendered="#{materialMB.entity.id == 0}">
                                     <p:ajax update=":lume:pgEntrada" process=":lume:quantidadeUnidade,@this" listener="#{materialMB.valorTotal}" />
                                 </p:inputText>
                                 <h:outputText value="#{materialMB.entity.quantidade}" rendered="#{materialMB.entity.id != 0}">
@@ -55,7 +55,7 @@
 
                                 <p:outputLabel for="quantidadeUnidade" value="Quantidade dentro do volume: " />
                                 <p:inputText id="quantidadeUnidade" value="#{materialMB.entity.tamanhoUnidade}" maxlength="10" onkeypress="validaNumeros(event)" required="true"
-                                    rendered="#{materialMB.entity.id == 0}" style="width:20%">
+                                    rendered="#{materialMB.entity.id == 0}">
                                     <p:ajax update=":lume:pgEntrada" process=":lume:quantidade,@this" listener="#{materialMB.valorTotal}" />
                                 </p:inputText>
                                 <h:outputText value="#{materialMB.entity.tamanhoUnidade}" rendered="#{materialMB.entity.id != 0}">
@@ -63,19 +63,19 @@
                                 </h:outputText>
 
                                 <p:outputLabel for="quantidadeAtual" value="Quantidade Atual: " />
-                                <p:column>
+                                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                     <h:outputText id="quantidadeAtual" value="#{materialMB.entity.quantidadeAtual}">
                                         <f:convertNumber />
                                     </h:outputText>
                                     <h:outputLabel id="quantidadeAtual2" value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
-                                </p:column>
+                                </p:panelGrid>
 
                                 <p:column rendered="#{materialMB.estoqueCompleto}"></p:column>
                                 <p:column rendered="#{materialMB.estoqueCompleto}"></p:column>
 
                                 <p:outputLabel for="valor" value="Valor do volume:" rendered="#{materialMB.estoqueCompleto}" />
                                 <p:inputNumber id="valor" value="#{materialMB.entity.valorUnidadeInformado}" required="true" maxlength="13" maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
-                                    thousandSeparator="." styleClass="Wid30" rendered="#{materialMB.estoqueCompleto and materialMB.entity.id == 0}">
+                                    thousandSeparator="." rendered="#{materialMB.estoqueCompleto and materialMB.entity.id == 0}">
                                     <p:ajax update=":lume:pgEntrada" process=":lume:pgEntrada" listener="#{materialMB.valorTotal}" />
                                 </p:inputNumber>
                                 <h:outputText value="#{materialMB.entity.valorUnidadeInformado}" rendered="#{materialMB.estoqueCompleto and materialMB.entity.id != 0}">
@@ -86,13 +86,6 @@
                                 <h:outputText id="valorTotal" value="#{materialMB.valorTotal}" rendered="#{materialMB.estoqueCompleto}">
                                     <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
                                 </h:outputText>
-
-
-
-                            </p:panelGrid>
-
-                            <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-                                style="border:0px none; background-color:transparent;">
 
                                 <p:outputLabel for="procedencia" value="Procedência" rendered="#{materialMB.estoqueCompleto}" />
                                 <p:selectOneMenu id="procedencia" value="#{materialMB.procedencia}" converter="dominio" required="true" rendered="#{materialMB.estoqueCompleto}">
@@ -108,43 +101,36 @@
                                 </p:selectOneMenu>
 
                                 <p:outputLabel for="validade" value="Data Validade: " rendered="#{materialMB.estoqueCompleto}" />
-                                <p:calendar id="validade" value="#{materialMB.entity.validade}" pattern="dd/MM/yyyy" mindate="#{materialMB.dateHoje}" class="Wid20" mask="true"
+                                <p:calendar id="validade" value="#{materialMB.entity.validade}" pattern="dd/MM/yyyy" mindate="#{materialMB.dateHoje}" mask="true"
                                     rendered="#{materialMB.estoqueCompleto}" />
 
                                 <p:outputLabel for="marca" value="Marca : " rendered="#{materialMB.estoqueCompleto}" />
                                 <p:column rendered="#{materialMB.estoqueCompleto}">
-                                    <h:panelGroup id="pnBtmarca">
+                                    <h:panelGroup id="pnBtmarca" style="display: flex !important;">
                                         <p:autoComplete queryDelay="1000" value="#{materialMB.entity.marca}" id="marca" minQueryLength="3" completeMethod="#{materialMB.geraSugestoes}" var="marca"
-                                            itemLabel="#{marca.nome}" itemValue="#{marca}" converter="marca" forceSelection="true" required="true" styleClass="Wid80 MarRight10" dropdown="true"
-                                            style="width: 80% !important;">
+                                            itemLabel="#{marca.nome}" itemValue="#{marca}" converter="marca" forceSelection="true" required="true" dropdown="true" style="margin-right: 5px">
                                             <p:ajax event="itemSelect" listener="#{materialMB.handleSelectMarca}" update=":lume:marca" />
                                         </p:autoComplete>
                                         <p:commandButton id="novaMarca" disabled="#{materialMB.entity.id != 0}" rendered="#{!materialMB.novaMarca}" icon="fa fa-plus White"
-                                            update="lbNomeMarca,pnNovaMarca, :lume:pnBtmarca" immediate="true" actionListener="#{materialMB.novo}" />
+                                            update="lblNovaMarca, valueNovaMarca, :lume:pnBtmarca" immediate="true" actionListener="#{materialMB.novo}" style="width: 33px !important" />
                                         <p:commandButton id="cancelarNovoMarca" disabled="#{materialMB.entity.id != 0}" rendered="#{materialMB.novaMarca}" icon="fa fa-minus White"
-                                            update="lbNomeMarca,pnNovaMarca, :lume:pnBtmarca" immediate="true" actionListener="#{materialMB.cancelaNovo}" />
+                                            update="lblNovaMarca, valueNovaMarca, :lume:pnBtmarca" immediate="true" actionListener="#{materialMB.cancelaNovo}" style="width: 33px !important" />
                                     </h:panelGroup>
                                 </p:column>
 
                                 <p:outputLabel for="lote" value="Lote : " rendered="#{materialMB.estoqueCompleto}" />
-                                <p:inputText id="lote" value="#{materialMB.entity.lote}" maxlength="100" styleClass="Wid30" rendered="#{materialMB.estoqueCompleto}" />
+                                <p:inputText id="lote" value="#{materialMB.entity.lote}" maxlength="100" rendered="#{materialMB.estoqueCompleto}" />
 
-                                <p:panel id="lbNomeMarca" visible="#{materialMB.novaMarca}" styleClass="BordNone">
-                                    <p:outputLabel for="nomeMarca" value="Nome : " />
-                                </p:panel>
-                                <p:column>
-                                    <p:panel id="pnNovaMarca" visible="#{materialMB.novaMarca}" styleClass="BordNone">
-                                        <p:panelGrid columns="2" columnClasses="ui-grid-col-8,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-                                            style="border:0px none; background-color:transparent;">
-                                            <p:inputText id="nomeMarca" value="#{materialMB.nomeMarca}" disabled="#{materialMB.entity.id != 0}" maxlength="200" required="#{materialMB.novaMarca}" />
-                                            <p:commandButton id="persistMarca" icon="White fa fa-save" process=":lume:pnNovaMarca" update=":lume:pnNovaMarca,:lume:marca"
-                                                disabled="#{materialMB.entity.id != 0}" actionListener="#{materialMB.actionPersistMarca}" />
-                                        </p:panelGrid>
-                                    </p:panel>
-                                </p:column>
-
-
-
+								<p:outputPanel id="lblNovaMarca">
+									<p:outputLabel for="nomeMarca" value="Nome : " rendered="#{materialMB.novaMarca}" />
+								</p:outputPanel>
+								<p:outputPanel id="valueNovaMarca">
+		                            <p:outputPanel style="display: flex !important;" rendered="#{materialMB.novaMarca}">
+										<p:inputText id="nomeMarca" value="#{materialMB.nomeMarca}" disabled="#{materialMB.entity.id != 0}" maxlength="200" required="#{materialMB.novaMarca}" />
+		                                <p:commandButton id="persistMarca" icon="White fa fa-save" process="lblNovaMarca, valueNovaMarca" update="lblNovaMarca, valueNovaMarca, :lume:marca"
+		                                	disabled="#{materialMB.entity.id != 0}" actionListener="#{materialMB.actionPersistMarca}" style="width: 33px !important" />
+									</p:outputPanel>
+								</p:outputPanel>
 
                             </p:panelGrid>
 
@@ -166,25 +152,20 @@
                                 </p:column>
                             </p:panelGrid>
                         </p:fieldset>
+                        <br />
 
                         <div class="SeparatorFull"></div>
-                        <div class="Container25 Responsive100">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{materialMB.actionPersist}" update=":lume:pnMaterial,:lume:dtMaterial"
                                 process=":lume:pnMaterial" styleClass="GreenButton" />
-                        </div>
-                        <h:panelGroup rendered="#{materialMB.estoqueCompleto}">
-                            <div class="Container25 Responsive100">
-                                <p:commandButton id="devolucao" icon="White fa fa-mail-forward" onclick="PF('dlg').show();" value="Devolver"
-                                    update=":lume:pnMaterial,:lume:dtMaterial,:lume:pnJustificativa" process="@this" disabled="#{materialMB.entity.id == 0}" styleClass="OrangeButton" />
-                            </div>
-                        </h:panelGroup>
-                        <div class="Container25 Responsive100">
+							<p:commandButton id="devolucao" icon="White fa fa-mail-forward" onclick="PF('dlg').show();" value="Devolver" rendered="#{materialMB.estoqueCompleto}"
+								update=":lume:pnMaterial,:lume:dtMaterial,:lume:pnJustificativa" process="@this" disabled="#{materialMB.entity.id == 0}" styleClass="OrangeButton" />
                             <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{materialMB.actionNew}" update=":lume:pnMaterial,:lume:dtMaterial" immediate="true" />
-                        </div>
+                        </p:panelGrid>
 
-                    </p:panel>
+                    </p:outputPanel>
 
-                    <div class="EmptyBox20"></div>
+                    <br />
 
                     <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{materialMB.materiais}" var="material" rows="15" paginator="true" selection="#{materialMB.entity}"
                         selectionMode="single" rowKey="#{material}" paginatorPosition="bottom">
@@ -201,7 +182,7 @@
                             <h:outputText value="#{material.quantidadeAtual}">
                                 <f:convertNumber />
                             </h:outputText>
-                            <h:outputLabel value="#{material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" disabled="true" />
+                            <h:outputLabel value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
                         </p:column>
                         <p:column filterBy="#{material.valor}" sortBy="#{material.valor}" width="11%" style="text-align:right" filterMatchMode="contains" headerText="Valor da Unidade(R$)"
                             rendered="#{materialMB.estoqueCompleto}">
@@ -235,10 +216,10 @@
                         </p:column>
                         <p:column headerText="Log" width="5%">
                             <p:commandButton icon="White fa fa-search" oncomplete="PF('dlgMaterialLog').show();" update=":lume:dtMaterialLog" process="@this"
-                                actionListener="#{materialMB.carregarMaterialLog(material)}" />
+                                actionListener="#{materialMB.carregarMaterialLog(material)}" style="width:33px !important" />
                         </p:column>
                     </p:dataTable>
-                    <p:dialog id="dlg" widgetVar="dlg" header="Devolver" responsive="true" modal="true">
+                    <p:dialog id="dlg" widgetVar="dlg" header="Devolver" responsive="true" modal="true" width="90%">
                         <p:panel id="pnJustificativa" styleClass="BordNone">
                             <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
 
@@ -256,16 +237,17 @@
                                 </p:selectOneMenu>
                             </p:panelGrid>
 
+							<br />
                             <div class="SeparatorFull"></div>
-                            <div class="Container50 Responsive100">
+                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                 <p:commandButton id="persistDevolver" icon="White fa fa-save" value="Salvar" actionListener="#{materialMB.actionDevolver}"
                                     update=":lume:pnJustificativa,:lume:pnMaterial,:lume:dtMaterial" process="@this ,  :lume:pnJustificativa" oncomplete="handleDialogRequest(xhr, status, args)"
                                     styleClass="GreenButton" />
-                            </div>
+                            </p:panelGrid>
                             <div class="EmptyBox20"></div>
                         </p:panel>
                     </p:dialog>
-                    <p:dialog id="dlgMaterialLog" widgetVar="dlgMaterialLog" header="Logs do Material" modal="true">
+                    <p:dialog id="dlgMaterialLog" widgetVar="dlgMaterialLog" header="Logs do Material" modal="true" width="90%">
                         <p:dataTable filterDelay="1500"  id="dtMaterialLog" reflow="true" emptyMessage="" value="#{materialMB.materialLogs}" var="m" rows="20" paginator="true" paginatorPosition="bottom">
                             <p:column filterBy="#{m.quantidadeAlterada}" sortBy="#{m.quantidadeAlterada}" filterMatchMode="contains" headerText="Qtd. Alterada">
                                 <h:outputText value="#{m.quantidadeAlterada}" title="#{m.id}" />
@@ -283,10 +265,11 @@
                                 <h:outputText value="#{m.dataStr}" />
                             </p:column>
                         </p:dataTable>
+                        <br />
                         <div class="SeparatorFull"></div>
-                        <div class="Container25 Responsive100">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="fechar" icon="White fa fa-close" value="Fechar" process="@this" styleClass="RedButton" oncomplete="PF('dlgMaterialLog').hide()" />
-                        </div>
+                        </p:panelGrid>
                     </p:dialog>
                     <script type="text/javascript">
 																					function handleDialogRequest(xhr, status, args) {
