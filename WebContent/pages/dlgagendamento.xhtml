@@ -6,6 +6,22 @@
 
 	<br />
 
+	<style>
+		.childRadioZeroPadd .ui-selectoneradio .ui-g .ui-g-12 {
+			padding: 0px !important
+		}
+		.childRadioZeroPadd > .ui-panelgrid-content > .ui-grid-row > .ui-panelgrid-cell {
+			padding-top: 0px !important;
+			padding-bottom: 0px !important;
+		}
+		.fieldsZeroPadd > .ui-panelgrid-content > .ui-g > .ui-panelgrid-cell {
+			padding-bottom: 0px !important;
+		}
+		.buttonSmaller .ui-picklist-buttons-cell .ui-button {
+			width: 33px !important;
+		}
+	</style>
+
 	<script>
 	    $(document).ready(function() {
 		    $(".labelInline").each(function(index) {
@@ -18,7 +34,7 @@
 	<p:fieldset legend="Status" toggleable="true" collapsed="false" style="margin-top: 20px !important">
 
 		<p:panelGrid columns="6"
-			layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+			layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid fieldsZeroPadd">
 			
 			<h:panelGroup styleClass="md-inputfield">
 				<p:calendar id="inicio" value="#{agendamentoMB.inicio}"
@@ -73,7 +89,7 @@
 		</p:panelGrid>
 
 		<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
-			styleClass="ui-panelgrid-blank">
+			styleClass="ui-panelgrid-blank childRadioZeroPadd">
 
 			<h:panelGroup styleClass="lumeField" id="pnStatus">
 				<p:outputLabel for="confirmado" value="Status: " />
@@ -119,7 +135,7 @@
 	</p:fieldset>
 	
 	<br />
-
+	
 	<p:fieldset legend="Dados Agendamento" toggleable="true"
 		collapsed="#{agendamentoMB.entity.id != 0}">
 
@@ -339,7 +355,7 @@
 						value="Selecione um Procedimento : " />
 					<p:pickList id="procedimentos" style="height:100px;"
 						value="#{agendamentoMB.procedimentosPickList}"
-						var="procedimentosPickList"
+						var="procedimentosPickList" styleClass="buttonSmaller"
 						itemLabel="#{procedimentosPickList.planoTratamentoProcedimento.descricaoCompleta}"
 						itemValue="#{procedimentosPickList}" effect="fade" iconOnly="true"
 						responsive="true" required="false"
@@ -368,113 +384,5 @@
 		</p:panelGrid>
 	</p:fieldset>
 
-<<<<<<< HEAD
-=======
-	<br />
 
-	<p:fieldset legend="Status" toggleable="true" collapsed="false">
-
-		<p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6"
-			layout="grid" styleClass="ui-panelgrid-blank">
-			<h:panelGroup styleClass="md-inputfield">
-				<p:calendar id="inicio" value="#{agendamentoMB.inicio}"
-					pattern="dd/MM/yyyy HH:mm" mask="true">
-					<p:ajax event="dateSelect" process="@this" update="fim"
-						listener="#{agendamentoMB.validaHoraUtilProfissional}" />
-					<p:ajax event="dateSelect" process="@this" update="fim"
-						listener="#{agendamentoMB.calculaDataFim}" />
-				</p:calendar>
-				<p:outputLabel for="inicio" value="Data/Hora Inicial" />
-				<p:message styleClass="msg" for="inicio" />
-			</h:panelGroup>
-			<h:panelGroup styleClass="md-inputfield">
-				<p:calendar id="chegouAs" value="#{agendamentoMB.entity.chegouAs}"
-					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" />
-				<p:outputLabel for="chegouAs" value="Chegou às" />
-				<p:message styleClass="msg" for="chegouAs" />
-			</h:panelGroup>
-
-			<h:panelGroup styleClass="md-inputfield">
-				<p:calendar id="fim" value="#{agendamentoMB.fim}"
-					pattern="dd/MM/yyyy HH:mm" mask="true">
-					<p:ajax event="dateSelect"
-						listener="#{agendamentoMB.validaHoraUtilProfissional}" />
-				</p:calendar>
-				<p:outputLabel for="fim" value="Data/Hora Final" />
-				<p:message styleClass="msg" for="fim" />
-			</h:panelGroup>
-			<h:panelGroup styleClass="md-inputfield">
-				<p:calendar id="iniciouAs" value="#{agendamentoMB.entity.iniciouAs}"
-					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" />
-				<p:outputLabel for="iniciouAs" value="Iniciou atend. às" />
-				<p:message styleClass="msg" for="iniciouAs" />
-			</h:panelGroup>
-
-			<h:panelGroup styleClass="md-combo">
-				<p:selectOneMenu id="cadeira"
-					value="#{agendamentoMB.entity.cadeira}">
-					<f:selectItems value="#{agendamentoMB.cadeiras}" var="c"
-						itemLabel="#{c}" itemValue="#{c}" />
-				</p:selectOneMenu>
-				<p:outputLabel for="cadeira" value="Cadeira" />
-				<p:message styleClass="msg" for="cadeira" />
-			</h:panelGroup>
-			<h:panelGroup styleClass="md-inputfield">
-				<p:calendar id="finalizouAs"
-					value="#{agendamentoMB.entity.finalizouAs}"
-					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" />
-				<p:outputLabel for="finalizouAs" value="Finalizou atend. às" />
-				<p:message styleClass="msg" for="finalizouAs" />
-			</h:panelGroup>
-
-		</p:panelGrid>
-
-		<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid"
-			styleClass="ui-panelgrid-blank">
-
-			<h:panelGroup styleClass="lumeField" id="pnStatus">
-				<p:outputLabel for="confirmado" value="Status: " />
-				<p:selectOneRadio id="confirmado"
-					value="#{agendamentoMB.entity.statusNovo}" layout="responsive"
-					columns="4">
-					<p:ajax update="cancelado" process="inicio,@this" />
-					<f:selectItem itemLabel="Agendado pelo Paciente" itemValue="P" />
-					<f:selectItem itemLabel="Confirmado" itemValue="S" />
-					<f:selectItem itemLabel="Não confirmado" itemValue="N" />
-					<f:selectItem itemLabel="Encaixe" itemValue="E" />
-					<f:selectItem itemLabel="Encaixe Atendido" itemValue="H" />
-					<f:selectItem itemLabel="Atendido" itemValue="A" />
-					<f:selectItem itemLabel="Consulta Inicial" itemValue="G" />
-					<f:selectItem itemLabel="Falta" itemValue="B" />
-					<f:selectItem itemLabel="Cancelado" itemValue="C" />
-					<f:selectItem itemLabel="Erro de Agendamento" itemValue="D" />
-					<f:selectItem itemLabel="Remarcado" itemValue="R"
-						itemDisabled="#{agendamentoMB.entity.id ==0 }" />
-					<f:selectItem itemLabel="Em atendimento" itemValue="O" />
-					<f:selectItem itemLabel="Cliente na clínica" itemValue="I" />
-				</p:selectOneRadio>
-				<h:panelGroup styleClass="lumeField" id="cancelado">
-					<p:outputLabel for="justificativa" value="Justificativa: "
-						rendered="#{agendamentoMB.entity.statusNovo == 'C'}" />
-
-					<p:selectOneMenu id="justificativa"
-						value="#{agendamentoMB.justificativa}" converter="dominio"
-						styleClass="Wid50"
-						rendered="#{agendamentoMB.entity.statusNovo == 'C'}">
-						<f:selectItem itemValue="#{null}"
-							itemLabel="Selecione uma justificativa" />
-						<f:selectItems value="#{agendamentoMB.justificativas}"
-							var="justificativa" itemLabel="#{justificativa.nome}"
-							itemValue="#{justificativa}" />
-					</p:selectOneMenu>
-
-					<p:message styleClass="msg" for="justificativa" />
-				</h:panelGroup>
-			</h:panelGroup>
-		</p:panelGrid>
-
-	</p:fieldset>
-
-
->>>>>>> branch 'backend' of https://git.lumetec.com.br/intelidente/intelidente.git
 </ui:composition>
