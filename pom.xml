@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>42.1.1</version>
+			<version>42.2.5</version>
 		</dependency>
 		<!-- BEGIN SYSTEM DEPENDENCIES -->
 		<dependency>
@@ -145,13 +145,13 @@
 		<dependency>
 			<groupId>org.primefaces</groupId>
 			<artifactId>primefaces</artifactId>
-			<version>6.0</version>
+			<version>7.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.primefaces.extensions/primefaces-extensions -->
 		<dependency>
 			<groupId>org.primefaces.extensions</groupId>
 			<artifactId>primefaces-extensions</artifactId>
-			<version>6.0.0</version>
+			<version>7.0.1</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.primefaces.themes/redmond -->
 		<dependency>
