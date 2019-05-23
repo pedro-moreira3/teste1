@@ -329,7 +329,7 @@
 			<h:panelGroup styleClass="lumeField" id="pnStatus">
 				<p:outputLabel for="confirmado" value="Status: " />
 				<p:selectOneRadio id="confirmado"
-					value="#{agendamentoMB.entity.status}" layout="responsive"
+					value="#{agendamentoMB.entity.statusNovo}" layout="responsive"
 					columns="4">
 					<p:ajax update="cancelado" process="inicio,@this" />
 					<f:selectItem itemLabel="Agendado pelo Paciente" itemValue="P" />
@@ -349,12 +349,12 @@
 				</p:selectOneRadio>
 				<h:panelGroup styleClass="lumeField" id="cancelado">
 					<p:outputLabel for="justificativa" value="Justificativa: "
-						rendered="#{agendamentoMB.entity.status == 'C'}" />
+						rendered="#{agendamentoMB.entity.statusNovo == 'C'}" />
 
 					<p:selectOneMenu id="justificativa"
 						value="#{agendamentoMB.justificativa}" converter="dominio"
 						styleClass="Wid50"
-						rendered="#{agendamentoMB.entity.status == 'C'}">
+						rendered="#{agendamentoMB.entity.statusNovo == 'C'}">
 						<f:selectItem itemValue="#{null}"
 							itemLabel="Selecione uma justificativa" />
 						<f:selectItems value="#{agendamentoMB.justificativas}"
