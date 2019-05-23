@@ -67,7 +67,7 @@
                                     <h:outputText id="quantidadeAtual" value="#{materialMB.entity.quantidadeAtual}">
                                         <f:convertNumber />
                                     </h:outputText>
-                                    <h:outputLabel id="quantidadeAtual2" value="#{materialMB.item.unidadeMedidaString}" styleClass="unidadeMedidaString" disabled="true" />
+                                    <h:outputLabel id="quantidadeAtual2" value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
                                 </p:column>
 
                                 <p:column rendered="#{materialMB.estoqueCompleto}"></p:column>
@@ -162,7 +162,7 @@
                                 <p:column>
                                     <p:inputText id="quantidadeMovimentacao" value="#{materialMB.quantidadeMovimentacao}" maxlength="10" required="true" onkeypress="validaNumeros(event)"
                                         style="width:20%" />
-                                    <h:outputLabel id="quantidadeMovimentacao2" value="#{materialMB.item.unidadeMedidaString}" styleClass="unidadeMedidaString" disabled="true" />
+                                    <h:outputLabel id="quantidadeMovimentacao2" value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
                                 </p:column>
                             </p:panelGrid>
                         </p:fieldset>
@@ -246,7 +246,7 @@
                                 <p:column>
                                     <p:inputMask id="quantidadeDevolvida" value="#{materialMB.quantidade}" maxlength="8" mask="9?99999" required="true" styleClass="Wid50">
                                     </p:inputMask>
-                                    <h:outputLabel value="#{materialMB.item.unidadeMedidaString}" styleClass="unidadeMedidaString" disabled="true" />
+                                    <h:outputLabel value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
                                 </p:column>
 
                                 <p:outputLabel for="justificativa" value="Justificativa : " />

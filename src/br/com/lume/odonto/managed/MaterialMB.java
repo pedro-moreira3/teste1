@@ -451,6 +451,10 @@ public class MaterialMB extends LumeManagedBean<Material> {
             }
         }
     }
+    
+    public String getUnidadeString(Item item) {
+        return null;
+    }
 
     public List<Local> getLocais() {
         return locais;
