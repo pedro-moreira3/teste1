@@ -73,8 +73,10 @@ import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingle
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.reserva.ReservaSingleton;
 import br.com.lume.retorno.RetornoSingleton;
-import br.com.lume.security.bo.PerfilBO;
-import br.com.lume.security.bo.UsuarioBO;
+import br.com.lume.security.PerfilSingleton;
+import br.com.lume.security.UsuarioSingleton;
+//import br.com.lume.security.bo.PerfilBO;
+//import br.com.lume.security.bo.UsuarioBO;
 import br.com.lume.security.entity.Perfil;
 import br.com.lume.security.entity.Usuario;
 import br.com.lume.security.validator.GenericValidator;
@@ -143,9 +145,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
  //   private DadosBasicoBO dadosBasicoBO;
 
-    private UsuarioBO usuarioBO;
+    //private UsuarioBO usuarioBO;
 
-    private PerfilBO perfilBO;
+    //private PerfilBO perfilBO;
 
  //   private ProfissionalBO profissionalBO;
 
@@ -166,8 +168,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public AgendamentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
       
-        usuarioBO = new UsuarioBO();
-        perfilBO = new PerfilBO();
+      //  usuarioBO = new UsuarioBO();
+     //   perfilBO = new PerfilBO();
       
         this.setClazz(Agendamento.class);
         try {
@@ -838,10 +840,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         usuario.setUsuStrNme(paciente.getDadosBasico().getNome());
         usuario.setUsuStrEml(paciente.getDadosBasico().getEmail());
         usuario.setUsuStrLogin(paciente.getDadosBasico().getEmail());
-        Perfil perfilbyDescricao = perfilBO.getPerfilbyDescricaoAndSistema(OdontoPerfil.PACIENTE, this.getLumeSecurity().getSistemaAtual());
+        Perfil perfilbyDescricao = PerfilSingleton.getInstance().getBo().getPerfilbyDescricaoAndSistema(OdontoPerfil.PACIENTE, this.getLumeSecurity().getSistemaAtual());
         usuario.setPerfisUsuarios(Arrays.asList(perfilbyDescricao));
         usuario.setUsuIntDiastrocasenha(999);
-        usuarioBO.persistUsuarioExterno(usuario);
+        UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario);
     }
 
     public void actionPersistPaciente(ActionEvent event) {
@@ -860,7 +862,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             //pacienteBO.validaPacienteDuplicadoEmpresa(paciente);
             paciente.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
             if (paciente.getDadosBasico().getEmail() != null && !paciente.getDadosBasico().getEmail().isEmpty()) {
-                usuario = usuarioBO.findUsuarioByLogin(paciente.getDadosBasico().getEmail().toUpperCase());
+                usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(paciente.getDadosBasico().getEmail().toUpperCase());
                 if (usuario == null) {
                     usuario = new Usuario();
                 }
@@ -901,7 +903,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             log.error("Erro no actionPersistPaciente", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             try {
-                usuarioBO.remove(usuario);
+                UsuarioSingleton.getInstance().getBo().remove(usuario);
             } catch (Exception e1) {
                 log.error("Erro no actionPersistPaciente", e);
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
