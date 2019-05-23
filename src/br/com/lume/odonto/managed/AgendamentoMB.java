@@ -573,10 +573,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                         agnd.getFim()) || (this.getFim().getTime() == (agnd.getFim().getTime()) || (this.getInicio().getTime() == agnd.getInicio().getTime()) || agnd.getInicio().after(
                                 this.getInicio()) && agnd.getInicio().before(this.getFim()) || agnd.getFim().after(
                                         this.getInicio()) && agnd.getFim().before(this.getFim()))) && agnd.getId() != this.getEntity().getId()) {
-                    if ((Status.SIM.equals(this.getEntity().getEncaixe())) || (agnd.getStatus().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) || (this.getEntity().getStatusNovo().equals(
+                    if ((Status.SIM.equals(this.getEntity().getEncaixe())) || (agnd.getStatusNovo().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) || (this.getEntity().getStatusNovo().equals(
                             StatusAgendamentoUtil.REMARCADO.getSigla())) || (this.getEntity().getStatusNovo().equals(
-                                    StatusAgendamentoUtil.CANCELADO.getSigla())) || (agnd.getStatus().equals(StatusAgendamentoUtil.ERRO_AGENDAMENTO.getSigla())) ||
-                            (agnd.getStatus().equals(StatusAgendamentoUtil.CANCELADO.getSigla())) || (Status.SIM.equals(agnd.getEncaixe()))) {
+                                    StatusAgendamentoUtil.CANCELADO.getSigla())) || (agnd.getStatusNovo().equals(StatusAgendamentoUtil.ERRO_AGENDAMENTO.getSigla())) ||
+                            (agnd.getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla())) || (Status.SIM.equals(agnd.getEncaixe()))) {
                         return true;
                     } else {
                         return false;
@@ -665,22 +665,19 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                  
                     agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndProfissional(profissional, start, end);    
                     
-                    for (Agendamento agendamento : agendamentos) {                        
-                        if(!filtroAgendamento.contains(agendamento.getStatusNovo())) {
-                            agendamentos.remove(agendamento);    
-                        }
-                    }
-                    
+                    removerFiltrosAgendamento(agendamentos);                    
                     
                     geraAgendamentoAfastamento(start, end, profissional);
                     agendamentos.addAll(agendamentosAfastamento);
                     pacientePesquisado = null;
                 } else if (pacientePesquisado != null) {
                     this.clear();
-                    agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndPaciente(pacientePesquisado, start, end, filtroAgendamento);
+                    agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndPaciente(pacientePesquisado, start, end);
+                    removerFiltrosAgendamento(agendamentos);
                 } else if (profissional == null) {
                     this.clear();
-                    agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataTodosProfissionais(start, end, filtroAgendamento);
+                    agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataTodosProfissionais(start, end);
+                    removerFiltrosAgendamento(agendamentos);
                     pacientePesquisado = null;
                 }
                 if (agendamentos != null) {
@@ -689,7 +686,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                     Calendar dataAtual = Calendar.getInstance();
                     for (Agendamento agendamento : agendamentos) {
                         String descricao = "";
-                        if (agendamento.getStatus().equals(StatusAgendamentoUtil.AFASTAMENTO.getSigla())) {
+                        if (agendamento.getStatusNovo().equals(StatusAgendamentoUtil.AFASTAMENTO.getSigla())) {
                             descricao = agendamento.getPaciente().getDadosBasico().getNome();
                             descricao += " - " + agendamento.getDescricao();
                         } else {
@@ -702,12 +699,21 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
                         }
                         DefaultScheduleEvent event = new DefaultScheduleEvent(descricao, agendamento.getInicio(), agendamento.getFim(), agendamento);
-                        event.setStyleClass(StatusAgendamentoUtil.findBySigla(agendamento.getStatus()).getStyleCss());
+                        event.setStyleClass(StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getStyleCss());
                         this.addEvent(event);
                     }
                 }
-            }
+            } 
         };
+    }
+    
+    private void removerFiltrosAgendamento(List<Agendamento> agendamentos) {     
+        List<Agendamento> agentamentoAux = new ArrayList<>(agendamentos);
+        for (Agendamento agendamento : agentamentoAux) {
+            if(!filtroAgendamento.contains(agendamento.getStatusNovo())) {
+                agendamentos.remove(agendamento);    
+            }
+        }
     }
 
     private void geraAgendamentoAfastamento(Date start, Date end, Profissional profissional) {
@@ -757,7 +763,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     private void validaHabilitaSalvar() {
-        habilitaSalvar = !StatusAgendamentoUtil.CANCELADO.getSigla().equals(getEntity().getStatus()) && !StatusAgendamentoUtil.REMARCADO.getSigla().equals(getEntity().getStatus());
+        habilitaSalvar = !StatusAgendamentoUtil.CANCELADO.getSigla().equals(getEntity().getStatusNovo()) && !StatusAgendamentoUtil.REMARCADO.getSigla().equals(getEntity().getStatusNovo());
     }
 
     public boolean validaData() {

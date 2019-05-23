@@ -61,7 +61,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                 a.setFinalizouAs(Utils.getDataAtual(a.getFinalizouAs()));
 
              
-                if (a.getStatus().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || a.getStatus().equals(StatusAgendamentoUtil.FALTA.getSigla())) {
+                if (a.getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || a.getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) {
                     ReservaSingleton.getInstance().getBo().cancelaReservas(a);
                 }
                 validacoes(a);
@@ -77,12 +77,12 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void validacoes(Agendamento a) {
-        if (a.getIniciouAs() == null && a.getChegouAs() != null && (!a.getStatus().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || !a.getStatus().equals(
-                StatusAgendamentoUtil.REMARCADO.getSigla()) || !a.getStatus().equals(StatusAgendamentoUtil.ATENDIDO.getSigla()))) {
+        if (a.getIniciouAs() == null && a.getChegouAs() != null && (!a.getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || !a.getStatusNovo().equals(
+                StatusAgendamentoUtil.REMARCADO.getSigla()) || !a.getStatusNovo().equals(StatusAgendamentoUtil.ATENDIDO.getSigla()))) {
             a.setStatusNovo(StatusAgendamentoUtil.CLIENTE_NA_CLINICA.getSigla());
         }
-        if (a.getFinalizouAs() == null && a.getIniciouAs() != null && (!a.getStatus().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || !a.getStatus().equals(
-                StatusAgendamentoUtil.REMARCADO.getSigla()) || !a.getStatus().equals(StatusAgendamentoUtil.ATENDIDO.getSigla()))) {
+        if (a.getFinalizouAs() == null && a.getIniciouAs() != null && (!a.getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || !a.getStatusNovo().equals(
+                StatusAgendamentoUtil.REMARCADO.getSigla()) || !a.getStatusNovo().equals(StatusAgendamentoUtil.ATENDIDO.getSigla()))) {
             a.setStatusNovo(StatusAgendamentoUtil.EM_ATENDIMENTO.getSigla());
         }
         if (a.getFinalizouAs() != null) {

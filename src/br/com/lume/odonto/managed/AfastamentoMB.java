@@ -122,8 +122,8 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
             throw new DataIgualException();
         }
         for (Agendamento agendamento : agendamentos) {
-            if ((!((agendamento.getStatus().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) || (agendamento.getStatus().equals(StatusAgendamentoUtil.FALTA.getSigla())) || (agendamento.getStatus().equals(
-                    StatusAgendamentoUtil.CANCELADO.getSigla())) || (agendamento.getStatus().equals(
+            if ((!((agendamento.getStatusNovo().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) || (agendamento.getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) || (agendamento.getStatusNovo().equals(
+                    StatusAgendamentoUtil.CANCELADO.getSigla())) || (agendamento.getStatusNovo().equals(
                             StatusAgendamentoUtil.ATENDIDO.getSigla())))) && (((agendamento.getInicio().getTime() <= this.getInicio().getTime()) && (agendamento.getFim().getTime() >= this.getInicio().getTime())) || ((agendamento.getInicio().getTime() <= this.getFim().getTime()) && (agendamento.getFim().getTime() >= this.getFim().getTime())) || ((this.getInicio().getTime() >= agendamento.getInicio().getTime()) && (this.getFim().getTime() <= agendamento.getFim().getTime())) || ((this.getInicio().getTime() <= agendamento.getInicio().getTime()) && (this.getFim().getTime() >= agendamento.getFim().getTime())))) {
                 throw new DataComAgendamentosException();
             }
