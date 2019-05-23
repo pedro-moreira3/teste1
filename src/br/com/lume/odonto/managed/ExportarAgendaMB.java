@@ -10,7 +10,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -48,7 +48,7 @@ public class ExportarAgendaMB extends LumeManagedBean<Agendamento> {
             calcularDatas();
 
             agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndProfissional(agendamentoMB.getProfissional(), inicio, fim);
-            if (RequestContext.getCurrentInstance() != null) {
+            if (PrimeFaces.current() != null) {
                 if (agendamentos != null && !agendamentos.isEmpty()) {
                     List<AgendamentoAgenda> agendamentosAgenda = new ArrayList<>();
                     for (Agendamento a : agendamentos) {
@@ -56,8 +56,8 @@ public class ExportarAgendaMB extends LumeManagedBean<Agendamento> {
                     }
                     Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
                     //
-                    RequestContext.getCurrentInstance().addCallbackParam("agendamentos", gson.toJson(agendamentosAgenda));
-                    RequestContext.getCurrentInstance().addCallbackParam("valido", true);
+                    PrimeFaces.current().ajax().addCallbackParam("agendamentos", gson.toJson(agendamentosAgenda));
+                    PrimeFaces.current().ajax().addCallbackParam("valido", true);
                 }
             }
 

@@ -11,7 +11,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.model.DefaultTreeNode;
@@ -245,7 +245,7 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
                 return false;
             } else if ((this.getItem().getEstoqueMaximo() - this.quantidadeTotal().floatValue()) < 0) {
                 if (this.isGestor()) {
-                    RequestContext.getCurrentInstance().addCallbackParam("dlg", true);
+                    PrimeFaces.current().ajax().addCallbackParam("dlg", true);
                 } else {
                     this.log.error(OdontoMensagens.getMensagem("erro.quantidade.acima"));
                     this.addError(OdontoMensagens.getMensagem("erro.quantidade.acima"), "");

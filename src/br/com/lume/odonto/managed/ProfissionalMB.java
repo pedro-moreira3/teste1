@@ -18,7 +18,7 @@ import javax.imageio.stream.FileImageOutputStream;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -417,7 +417,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         try {
             this.getEntity().setStatus(Status.INATIVO);
             this.actionPersist(event);
-            RequestContext.getCurrentInstance().addCallbackParam("justificativa", true);
+            PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -428,7 +428,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             this.getEntity().setJustificativa(null);
             this.getEntity().setStatus(Status.ATIVO);
             this.actionPersist(event);
-            RequestContext.getCurrentInstance().addCallbackParam("justificativa", true);
+            PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
         } catch (Exception e) {
             e.printStackTrace();
         }

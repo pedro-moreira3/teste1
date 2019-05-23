@@ -14,7 +14,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.ToggleSelectEvent;
 
 import br.com.lume.common.exception.business.BusinessException;
@@ -160,14 +160,14 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
 
     public void actionReservarParcial() {
         if (valorParcial.doubleValue() > getEntity().getValorRestante().doubleValue()) {
-            RequestContext.getCurrentInstance().addCallbackParam("dlgReservaParcial", false);
+            PrimeFaces.current().ajax().addCallbackParam("dlgReservaParcial", false);
             addError("Valor maior que o valor devido.", "");
         } else if (valorParcial.doubleValue() > lancamento.getCredito().doubleValue()) {
-            RequestContext.getCurrentInstance().addCallbackParam("dlgReservaParcial", false);
+            PrimeFaces.current().ajax().addCallbackParam("dlgReservaParcial", false);
             addError("Valor maior que o valor em credito no lançamento. ", "");
         } else {
             try {
-                RequestContext.getCurrentInstance().addCallbackParam("dlgReservaParcial", true);
+                PrimeFaces.current().ajax().addCallbackParam("dlgReservaParcial", true);
                 System.out.println(valorParcial);
                 PlanoTratamentoProcedimento planoTratamentoProcedimento = this.getEntity();
 
