@@ -2,21 +2,21 @@
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
         <style>
-.ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
+.ui-fluid .ui-calendar:not(.prazo), .ui-fluid .ui-calendar:not(.prazo) input {
     width: auto !important;
 }
 </style>
 
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
 
-                    <p:panel id="pnReserva" styleClass="BordNone">
+                    <p:outputPanel id="pnReserva" styleClass="BordNone">
 
                         <h:inputHidden id="id" value="#{reservaMB.entity.id}" />
 
 
-                        <h1 class="CardBigTopic">Reserva de Materiais</h1>
+                        <h1>Reserva de Materiais</h1>
                         <div class="SeparatorFull"></div>
 
                         <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;"
@@ -27,7 +27,7 @@
 
                             <p:outputLabel for="prazo" value="Data Utilização : " />
                             <p:calendar id="prazo" value="#{reservaMB.entity.prazo}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" mindate="#{reservaMB.prazo}"
-                                timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" class="Wid10">
+                                timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" styleClass="prazo">
                                 <p:ajax event="dateSelect" listener="#{reservaMB.selectAgendamentos}" process=":lume:pgReserva" update=":lume:profissional,:lume:agendamento, :lume:prazo" />
                             </p:calendar>
 
@@ -74,7 +74,7 @@
 
 
                                 <p:outputLabel for="quantidade" value="Quantidade: " />
-                                <p:inputText id="quantidade" value="#{reservaMB.quantidade}" required="true" maxlength="10" onkeypress="validaNumeros(event)" style="width:20%" />
+                                <p:inputText id="quantidade" value="#{reservaMB.quantidade}" required="true" maxlength="10" onkeypress="validaNumeros(event)" />
 
                                 <p:outputLabel for="planoTratamentoProcedimentoAgendamento" value="Procedimentos : " />
                                 <p:selectCheckboxMenu id="planoTratamentoProcedimentoAgendamento" converter="agendamentoPlano" value="#{reservaMB.planoTratamentoProcedimentoAgendamentos}"
@@ -84,35 +84,23 @@
 
                             </p:panelGrid>
 
-                            <div class="Separator"></div>
-
-
-                            <h:panelGroup rendered="#{reservaMB.incluindo}">
-                                <div class="Container25 Responsive100">
-                                    <p:commandButton id="adicionar" icon="fa fa-plus White" value="Adicionar" actionListener="#{reservaMB.adicionar}" update=":lume:pnReserva, :lume:dtKits"
-                                        process=":lume:pnReserva" styleClass="GreenButton" />
-                                </div>
-                            </h:panelGroup>
-
-                            <h:panelGroup rendered="#{!reservaMB.incluindo}">
-                                <div class="Container25 Responsive100">
-                                    <p:commandButton id="remover" icon="fa fa-minus White" value="Remover" actionListener="#{reservaMB.remover}" update=":lume:pnReserva, :lume:dtKits" process="@this"
-                                        styleClass="RedButton" />
-                                </div>
-                            </h:panelGroup>
-
-                            <h:panelGroup rendered="#{!reservaMB.incluindo}">
-                                <div class="Container25 Responsive100">
-                                    <p:commandButton id="atualizar" icon="fa fa-check White" value="Atualizar" actionListener="#{reservaMB.atualizar}" update=":lume:pnReserva, :lume:dtKits"
-                                        process=":lume:pnReserva" styleClass="OrangeButton" />
-                                </div>
-                            </h:panelGroup>
-
-
-                            <div class="Container25 Responsive100">
-                                <p:commandButton id="limpar" icon="fa fa-minus White" value="Limpar" actionListener="#{reservaMB.limpar}" update=":lume:pnReserva, :lume:dtKits"
-                                    process=":lume:pnReserva, :lume:dtKits" />
-                            </div>
+                            <div class="SeparatorFull"></div>
+							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+	                            <h:panelGroup rendered="#{reservaMB.incluindo}">
+	                                <p:commandButton id="adicionar" icon="fa fa-plus White" value="Adicionar" actionListener="#{reservaMB.adicionar}" update=":lume:pnReserva, :lume:dtKits"
+	                                    process=":lume:pnReserva" styleClass="GreenButton" />
+	                            </h:panelGroup>
+	                            <h:panelGroup rendered="#{!reservaMB.incluindo}">
+									<p:commandButton id="remover" icon="fa fa-minus White" value="Remover" actionListener="#{reservaMB.remover}" update=":lume:pnReserva, :lume:dtKits" process="@this"
+	                                	styleClass="RedButton" />
+	                            </h:panelGroup>
+	                            <h:panelGroup rendered="#{!reservaMB.incluindo}">
+									<p:commandButton id="atualizar" icon="fa fa-check White" value="Atualizar" actionListener="#{reservaMB.atualizar}" update=":lume:pnReserva, :lume:dtKits"
+	                                	process=":lume:pnReserva" styleClass="OrangeButton" />
+	                            </h:panelGroup>
+								<p:commandButton id="limpar" icon="fa fa-minus White" value="Limpar" actionListener="#{reservaMB.limpar}" update=":lume:pnReserva, :lume:dtKits"
+	                            	process=":lume:pnReserva, :lume:dtKits" />
+                            </p:panelGrid>
 
                             <div class="EmptyBox20"></div>
 
@@ -135,27 +123,22 @@
                             </p:column>
                         </p:dataTable>
 
-
+						<br />
                         <div class="SeparatorFull"></div>
 
-                        <div class="Container25 Responsive100">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{reservaMB.actionPersist}" update=":lume:pnReserva, :lume:dtKits, :lume:dtReserva"
                                 process=":lume:pnReserva" styleClass="GreenButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{reservaMB.actionRemove}" update=":lume:pnReserva, :lume:dtKits, :lume:dtReserva"
                                 process="@this" disabled="#{reservaMB.entity.id==0}" styleClass="RedButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{reservaMB.actionNew}" update=":lume:pnReserva, :lume:dtKits, :lume:dtReserva"
                                 immediate="true" />
-                        </div>
+                        </p:panelGrid>
                         <div class="EmptyBox20"></div>
 
-                    </p:panel>
+                    </p:outputPanel>
+					<br />
 
-
-                    <p:panel>
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtReserva" value="#{reservaMB.reservas}" var="reserva" rows="15" paginator="true" selection="#{reservaMB.entity}"
                             selectionMode="single" rowKey="#{reserva}" paginatorPosition="bottom">
                             <p:ajax event="rowSelect" update=":lume:pnReserva" listener="#{reservaMB.carregaTelaGeral}" />
@@ -163,9 +146,9 @@
                                 <h:panelGroup id="filtro" rendered="#{reservaMB.admin}">
 									A partir de :
 									<p:calendar value="#{reservaMB.dataIni}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true"
-                                        yearRange="-100:+1" style="width: 95px !important;margin-right: 5px;" />
+                                        yearRange="-100:+1" style="margin-right: 15px; margin-left: 15px;" />
                                     <p:commandButton id="pesquisar" icon="fa fa-search White" actionListener="#{reservaMB.geraLista}" update="@form" tabindex="1" process=":lume:dtReserva:filtro"
-                                        styleClass="OrangeButton" style="margin-left: 10px;" />
+                                        styleClass="OrangeButton" style="width: 33px !important;" />
                                 </h:panelGroup>
                             </f:facet>
 
@@ -191,7 +174,6 @@
                             </p:column>
 
                         </p:dataTable>
-                    </p:panel>
                 </div>
             </div>
         </div>
