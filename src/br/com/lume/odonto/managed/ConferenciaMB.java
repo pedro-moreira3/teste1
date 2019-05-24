@@ -18,6 +18,7 @@ import br.com.lume.common.util.Status;
 import br.com.lume.conferencia.ConferenciaSingleton;
 import br.com.lume.conferenciaMaterial.ConferenciaMaterialSingleton;
 import br.com.lume.configuracao.Configurar;
+import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.material.MaterialSingleton;
 import br.com.lume.materialEmprestado.MaterialEmprestadoSingleton;
 import br.com.lume.materialLog.MaterialLogSingleton;
@@ -29,6 +30,7 @@ import br.com.lume.materialLog.MaterialLogSingleton;
 //import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Conferencia;
 import br.com.lume.odonto.entity.ConferenciaMaterial;
+import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialEmprestado;
 import br.com.lume.odonto.entity.MaterialLog;
@@ -158,6 +160,12 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
         Collections.sort(materiais);
+    }
+    
+    public String getUnidadeString(Item item) {
+        if(item != null)
+            return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
+        return null;
     }
 
     public List<Material> getMateriais() {

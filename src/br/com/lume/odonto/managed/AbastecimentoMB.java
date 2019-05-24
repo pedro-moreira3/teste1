@@ -26,6 +26,7 @@ import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.configuracao.Configurar;
+import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.material.MaterialSingleton;
 import br.com.lume.materialLog.MaterialLogSingleton;
@@ -566,6 +567,12 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
         this.setItem((Item) (event.getTreeNode().getData()));
         this.setDigitacao(this.getItem().getDescricao());
         this.filtraItem(this.getDigitacao());
+    }
+    
+    public String getUnidadeString(Item item) {
+        if(item != null)
+            return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
+        return null;
     }
 
     public void onNodeUnselect(NodeUnselectEvent event) {

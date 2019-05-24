@@ -452,6 +452,12 @@ public class ItemMB extends LumeManagedBean<Item> {
         }
         return dominios;
     }
+    
+    public String getUnidadeString(Item item) {
+        if(item != null)
+            return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
+        return null;
+    }
 
     public Dominio getFormaArmazenamento() {
         return formaArmazenamento;
