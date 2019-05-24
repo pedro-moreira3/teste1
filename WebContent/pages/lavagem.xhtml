@@ -1,17 +1,14 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
                     <h:inputHidden id="id" value="#{lavagemMB.entity.id}" />
-
-                    <p:panel id="pnLavagem" styleClass="BordNone">
-                        <h1 class="CardBigTopic">Entrega para Lavagem Manual</h1>
+                    <p:outputPanel id="pnLavagem" styleClass="BordNone">
+                        <h1>Entrega para Lavagem Manual</h1>
                         <div class="SeparatorFull"></div>
-
                         <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
-
                             <p:outputLabel for="descricao" value="Descrição : " />
                             <p:inputText id="descricao" value="#{lavagemMB.entity.descricao}" style="width: 300px;" maxlength="50" />
 
@@ -36,23 +33,16 @@
                                 itemValue="#{i}" converter="item" multiple="false" dropdown="true" minQueryLength="3" maxResults="20" queryDelay="1000"/>
 
                         </p:panelGrid>
-
-
-
+						<br />
                         <div class="SeparatorFull"></div>
-                        <div class="Container25 Responsive100">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{lavagemMB.actionPersist}" oncomplete="handleDialogRequest(xhr, status, args)"
                                 update=":lume:pnLavagem, :lume:dtEsterilizacao, lume:confirmDialog" process=":lume:pnLavagem" disabled="#{lavagemMB.entity.id != 0}" styleClass="GreenButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{lavagemMB.actionNew}" update=":lume:pnLavagem, :lume:dtEsterilizacao" immediate="true" />
-                        </div>
-
+                        </p:panelGrid>
                         <div class="EmptyBox20"></div>
-
-
-                    </p:panel>
-                    <p:panel styleClass="BordNone">
+                    </p:outputPanel>
+                    <p:outputPanel styleClass="BordNone">
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtEsterilizacao" value="#{lavagemMB.lavagens}" var="lavagem" rows="15" paginator="true" selection="#{lavagemMB.entity}"
                             selectionMode="single" rowKey="#{lavagem}" paginatorPosition="bottom">
                             <p:ajax event="rowSelect" update=":lume:pnLavagem" listener="#{lavagemMB.carregarLavagem}"/>
@@ -88,7 +78,7 @@
                                 <h:outputText value="#{lavagem.clinica == true ? 'Sim' : 'Não'}" />
                             </p:column>
                         </p:dataTable>
-                    </p:panel>
+                    </p:outputPanel>
 
 
                     <p:confirmDialog id="confirmDialog" width="400" header="Retirada dos materiais" severity="info" widgetVar="senha" appendToBody="true">

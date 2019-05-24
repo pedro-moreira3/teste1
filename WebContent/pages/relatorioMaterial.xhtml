@@ -1,23 +1,17 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-
-                    <h1 class="CardBigTopic">Relatório de Estoque</h1>
-
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <h1>Relatório de Estoque</h1>
                     <div class="SeparatorFull"></div>
-
-                    <div class="Container25 Responsive100">
+                    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                         <p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                             <p:dataExporter encoding="iso-8859-1" type="xls" target="dtMaterial" fileName="Material" />
                         </p:commandButton>
-                    </div>
-
+                    </p:panelGrid>
                     <div class="EmptyBox20"></div>
-
-
                     <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{relatorioMaterialMB.materiais}" var="m" rows="20" paginator="true" rowKey="#{m}" paginatorPosition="bottom">
                         <f:facet name="header">Materiais</f:facet>
                         <p:column filterBy="#{m.item}" sortBy="#{m.item}" filterMatchMode="contains">

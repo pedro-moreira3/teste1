@@ -1,16 +1,15 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
 
-                    <p:panel id="pnMaterial" styleClass="BordNone">
+                    <p:outputPanel id="pnMaterial" styleClass="BordNone">
                         <h:inputHidden id="idMaterial" value="#{materialMB.entity.id}" />
-
-                        <h1 class="CardBigTopic">Movimentação de Materiais</h1>
+                        <h1>Movimentação de Materiais</h1>
                         <div class="SeparatorFull"></div>
-
+						<br />
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{materialMB.materiais}" var="material" rows="6" paginator="true" selection="#{materialMB.entity}"
                             selectionMode="single" rowKey="#{material}" paginatorPosition="bottom">
                             <p:ajax event="rowSelect" update=":lume:pnMaterial" listener="#{materialMB.carregaTela()}" />
@@ -22,7 +21,7 @@
                                 <h:outputText value="#{material.quantidadeAtual}">
                                     <f:convertNumber />
                                 </h:outputText>
-                                <h:outputText value="#{material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{materialMB.getUnidadeString(material.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
                             <p:column filterBy="#{material.marca.nome}" sortBy="#{material.marca.nome}" filterMatchMode="contains" headerText="Marca">
                                 <h:outputText value="#{material.marca.nome}" />
@@ -65,9 +64,8 @@
 
                             <p:outputLabel for="quantidadeMovimentada" value="Quantidade a ser movimentada: " />
                             <p:column>
-                                <p:inputText id="quantidadeMovimentada" value="#{materialMB.quantidadeMovimentada}" maxlength="10" required="true" onkeypress="validaNumeros(event)"
-                                    style="width:10%" />
-                                <h:outputLabel value="#{materialMB.item.unidadeMedidaString}" styleClass="unidadeMedidaString" disabled="true" style="vertical-align: down;" />
+                                <p:inputText id="quantidadeMovimentada" value="#{materialMB.quantidadeMovimentada}" maxlength="10" required="true" onkeypress="validaNumeros(event)" />
+                                <h:outputLabel value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" style="vertical-align: down;" />
                             </p:column>
 
                             <h:outputLabel value="Quantidade Atual: " />
@@ -75,7 +73,7 @@
                                 <h:outputText id="quantidadeAtual" value="#{materialMB.entity.quantidadeAtual}" disabled="true" styleClass="Wid20">
                                     <f:convertNumber />
                                 </h:outputText>
-                                <h:outputText value="#{materialMB.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
 
                             <h:outputLabel value="Valor Unitário: " />
@@ -99,13 +97,13 @@
                             <h:outputLabel value="Data de Movimentação: " />
                             <h:outputLabel id="dataMovimentacao" value="#{materialMB.entity.dataMovimentacaoStr}" disabled="true" />
                         </p:panelGrid>
-
+						<br />
                         <div class="SeparatorFull"></div>
-                        <div class="Container25 Responsive100">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="persist" icon="White fa fa-exchange" value="Movimentar" actionListener="#{materialMB.movimentar}" update=":lume:pnMaterial,:lume:dtMaterial"
                                 process=":lume:pnMaterial" disabled="#{materialMB.entity.id == 0}" styleClass="GreenButton" />
-                        </div>
-                    </p:panel>
+                        </p:panelGrid>
+                    </p:outputPanel>
                 </div>
             </div>
         </div>

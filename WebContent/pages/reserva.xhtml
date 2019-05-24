@@ -61,8 +61,8 @@
                                     <p:autoComplete queryDelay="1000" id="digitacao" value="#{reservaMB.digitacao}" minQueryLength="3" completeMethod="#{reservaMB.filtraKit}" styleClass="itembusca">
                                         <p:ajax event="itemSelect" listener="#{reservaMB.handleSelect}" update=":lume:tbKitTree" />
                                     </p:autoComplete>
-
-
+									<br />
+									<br />
                                     <p:tree value="#{reservaMB.root}" var="kit" id="tbKitTree" selection="#{reservaMB.selectedKit}" selectionMode="single">
                                         <p:ajax event="select" listener="#{reservaMB.onNodeSelect}" update=":lume:digitacao" process="@this" />
                                         <p:ajax event="unselect" listener="#{reservaMB.onNodeUnselect}" />
