@@ -2,12 +2,12 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
 					<h:inputHidden id="idMarca" value="#{marcaMB.entity.id}" />
-					<p:panel id="pnMarca" styleClass="BordNone">
-						<h1 class="CardBigTopic">Marca</h1>
+					<p:outputPanel id="pnMarca" styleClass="BordNone">
+						<h1>Marca</h1>
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
@@ -17,21 +17,18 @@
 							<p:inputText id="nome" value="#{marcaMB.entity.nome}" required="true" maxlength="100" />
 
 						</p:panelGrid>
+						<br />
 						<div class="SeparatorFull"></div>
-						<div class="Container25 Responsive100">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{marcaMB.actionPersist}"
 								 update=":lume:pnMarca,:lume:dtMarca" process=":lume:pnMarca" styleClass="GreenButton" />
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{marcaMB.actionRemove}"
 								update=":lume:pnMarca,:lume:dtMarca" process="@this" disabled="#{marcaMB.entity.id == 0}" 
 								styleClass="RedButton" />
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{marcaMB.actionNew}"
 								 update=":lume:pnMarca,:lume:dtMarca" immediate="true" />
-						</div>
-					</p:panel>
+						</p:panelGrid>
+					</p:outputPanel>
 					<div class="EmptyBox20"></div>
 
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMarca" value="#{marcaMB.marcas}" var="marca" rows="15" paginator="true"

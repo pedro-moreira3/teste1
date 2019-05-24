@@ -2,13 +2,12 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
-					<p:panel id="pnPrincipal" styleClass="BordNone">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
 						<h:inputHidden id="id" value="#{fornecedorMB.entity.id}" />
-
-						<h1 class="CardBigTopic">Fornecedor</h1>
+						<h1>Fornecedor</h1>
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
@@ -20,35 +19,33 @@
 							<p:inputText id="email" value="#{fornecedorMB.entity.dadosBasico.email}" maxlength="200" />
 
 							<p:outputLabel for="documento" value="CPF/CNPJ : " />
-							<p:inputMask id="documento" required="true" validatorMessage="CPF/CNPJ inválido" value="#{fornecedorMB.entity.dadosBasico.documento}" maxlength="18" class="Wid40"
-							onkeypress='mascaraMutuario(this,documento)' onblur='clearTimeout()'>
+							<p:inputMask id="documento" required="true" validatorMessage="CPF/CNPJ inválido" value="#{fornecedorMB.entity.dadosBasico.documento}" maxlength="18"							onkeypress='mascaraMutuario(this,documento)' onblur='clearTimeout()'>
 								<f:validator validatorId="documentoValidator" />
 							</p:inputMask>
 
 							<p:outputLabel for="cep" value="CEP : " />
-							<p:column>
-								<p:inputMask id="cep" required="true" value="#{fornecedorMB.entity.dadosBasico.cep}" maxlength="8" mask="99999-999"
-									styleClass="Wid20 MarRight10">
+							<h:panelGroup style="display: flex !important">
+								<p:inputMask id="cep" required="true" value="#{fornecedorMB.entity.dadosBasico.cep}" maxlength="8" mask="99999-999">
 									<f:validator validatorId="cepValidator" />
 								</p:inputMask>
 								<p:commandButton id="cepsearch" icon="White fa fa-search White" actionListener="#{fornecedorMB.actionBuscaCep}"
-									update=":lume:endereco,:lume:bairro,:lume:cidade,:lume:estado" process="@this,:lume:cep"  />
-							</p:column>
+									update=":lume:endereco,:lume:bairro,:lume:cidade,:lume:estado" process="@this,:lume:cep" style="width: 33px !important" />
+							</h:panelGroup>
 
 							<p:outputLabel for="endereco" value="Endereço : " />
 							<p:inputText id="endereco" required="true" value="#{fornecedorMB.entity.dadosBasico.endereco}" maxlength="200" />
 
 							<p:outputLabel for="numero" value="Número : " />
-							<p:inputMask id="numero" required="true" mask="9?99999" size="10" value="#{fornecedorMB.entity.dadosBasico.numero}" class="Wid20"/>
+							<p:inputMask id="numero" required="true" mask="9?99999" size="10" value="#{fornecedorMB.entity.dadosBasico.numero}" style="width: 100% !important" />
 
 							<p:outputLabel for="bairro" value="Bairro : " />
-							<p:inputText id="bairro" required="true" value="#{fornecedorMB.entity.dadosBasico.bairro}" maxlength="200" class="Wid60"/>
+							<p:inputText id="bairro" required="true" value="#{fornecedorMB.entity.dadosBasico.bairro}" maxlength="200"/>
 
 							<p:outputLabel for="complemento" value="Complemento : " />
 							<p:inputText id="complemento" value="#{fornecedorMB.entity.dadosBasico.complemento}" maxlength="200" />
 
 							<p:outputLabel for="cidade" value="Cidade : " />
-							<p:inputText id="cidade" required="true" value="#{fornecedorMB.entity.dadosBasico.cidade}" maxlength="200" class="Wid60"/>
+							<p:inputText id="cidade" required="true" value="#{fornecedorMB.entity.dadosBasico.cidade}" maxlength="200" />
 
 							<p:outputLabel for="estado" value="Estado : " />
 							<p:selectOneMenu id="estado" required="true" value="#{fornecedorMB.entity.dadosBasico.uf}">
@@ -57,10 +54,10 @@
 							</p:selectOneMenu>
 
 							<p:outputLabel for="telResidencia" value="Telefone Comercial : " />
-							<p:inputText id="telResidencia" value="#{fornecedorMB.entity.dadosBasico.telefone}" styleClass="telefone Wid30" />
+							<p:inputText id="telResidencia" value="#{fornecedorMB.entity.dadosBasico.telefone}" styleClass="telefone" />
 
 							<p:outputLabel for="telCelular" value="Telefone Celular : " />
-							<p:inputText id="telCelular" value="#{fornecedorMB.entity.dadosBasico.celular}" styleClass="telefone Wid30"/>
+							<p:inputText id="telCelular" value="#{fornecedorMB.entity.dadosBasico.celular}" styleClass="telefone"/>
 
 							<p:outputLabel for="contato" value="Contato : " />
 							<p:inputText id="contato" value="#{fornecedorMB.entity.dadosBasico.responsavel}" required="true" maxlength="200" />
@@ -68,27 +65,24 @@
 							<p:column></p:column>
 							<p:column></p:column>
 						</p:panelGrid>
+						<br />
 						<div class="SeparatorFull"></div>
-						<div class="Container25 Responsive100">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{fornecedorMB.actionPersist}"
 								update=":lume:pnPrincipal,:lume:tbDtPrincipal" process=":lume:pnPrincipal" 
 								styleClass="GreenButton" />
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{fornecedorMB.actionRemove}"
 								update=":lume:pnPrincipal,:lume:tbDtPrincipal" process="@this" disabled="#{fornecedorMB.entity.id == null}"
 								 styleClass="RedButton" />
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{fornecedorMB.actionNew}"
 								update=":lume:pnPrincipal,:lume:dtPrincipal" immediate="true" tabindex="1"  />
-						</div>
+						</p:panelGrid>
 
 						<div class="EmptyBox20"></div>
 
-					</p:panel>
+					</p:outputPanel>
 
-					<p:panel id="tbDtPrincipal" styleClass="BordNone">
+					<p:outputLabel id="tbDtPrincipal" styleClass="BordNone">
 
 						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{fornecedorMB.fornecedores}" var="fornecedor" rows="7" paginator="true"
 							selection="#{fornecedorMB.entity}" selectionMode="single" rowKey="#{fornecedor}" paginatorPosition="bottom" paginatorAlwaysVisible="false">
@@ -109,7 +103,7 @@
 								<h:outputText value="#{fornecedor.dadosBasico.responsavel}" />
 							</p:column>
 						</p:dataTable>
-					</p:panel>
+					</p:outputLabel>
 
 
 				</div>

@@ -1,146 +1,190 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
-    <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+
+					<p:outputPanel id="pnMaterial" styleClass="BordNone">
+
+						<h1>Ajuste de Materiais</h1>
+						<div class="SeparatorFull"></div>
+						<br />
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							id="dtMaterial" value="#{conferenciaMB.materiais}" var="material"
+							rows="6" paginator="true" selection="#{conferenciaMB.material}"
+							selectionMode="single" rowKey="#{material}"
+							paginatorPosition="bottom">
+							<p:ajax event="rowSelect" update=":lume:pnMaterial"
+								listener="#{conferenciaMB.carregaTela}" />
+							<f:facet name="header">Materiais</f:facet>
+							<p:column filterBy="#{material.item.descricaoLimpa}"
+								sortBy="#{material.item.descricao}" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Material" />
+								</f:facet>
+								<h:outputText value="#{material.item.descricao}"
+									title="#{material.id}" />
+							</p:column>
+							<p:column filterBy="#{material.local.descricao}"
+								sortBy="#{material.local.descricao}" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Local" />
+								</f:facet>
+								<h:outputText value="#{material.local.descricao}" />
+							</p:column>
+							<p:column filterBy="#{material.quantidadeAtual}"
+								sortBy="#{material.quantidadeAtual}" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Quantidade Disponível" />
+								</f:facet>
+								<h:outputText value="#{material.quantidadeAtual}">
+									<f:convertNumber />
+								</h:outputText>
+								<h:outputLabel
+									value="#{conferenciaMB.getUnidadeString(material.item)}"
+									styleClass="unidadeMedidaString" disabled="true" />
+							</p:column>
+
+							<p:column filterBy="#{material.quantidadeEmprestada}"
+								sortBy="#{material.quantidadeEmprestada}"
+								filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Quantidade Emprestada" />
+								</f:facet>
+
+								<p:commandButton
+									action="#{conferenciaMB.carregaMaterialEmprestado(material)}"
+									oncomplete="PF('dlgMaterialEmprestado').show();"
+									process="@this" update=":lume:pgMaterialEmprestado"
+									icon="White fa fa-search" style="width: 33px !important" />
+
+							</p:column>
+							<p:column filterBy="#{material.marca.nome}"
+								sortBy="#{material.marca.nome}" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Marca" />
+								</f:facet>
+								<h:outputText value="#{material.marca.nome}" />
+							</p:column>
+							<p:column filterBy="#{material.lote}" sortBy="#{material.lote}"
+								filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Lote" />
+								</f:facet>
+								<h:outputText value="#{material.lote}" />
+							</p:column>
+							<p:column filterBy="#{material.dataValidadeStr}"
+								sortBy="#{material.dataValidadeStr}" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Data de Validade" />
+								</f:facet>
+								<h:outputText value="#{material.dataValidadeStr}" />
+							</p:column>
+						</p:dataTable>
+						<br />
+						<div class="SeparatorFull"></div>
+
+						<p:panelGrid columns="2" layout="grid" columnClasses="ui-grid-col-4,ui-grid-col-8"
+							styleClass="ui-panelgrid-blank form-group ui-fluid"
+							style="border:0px none; background-color:transparent;">
+
+							<p:outputLabel for="conferencia" value="Conferência : " />
+							<p:column>
+								<p:inputText id="conferencia" required="true" disabled="true"
+									value="#{conferenciaMB.conferencia}"
+									style="width: calc(60% - 12px) !important;" />
+								<p:commandButton id="novaConferencia" icon="fa fa-plus White"
+									value="Nova Conferência"
+									style="width: 40% !important;margin-left: 10px;"
+									onclick="PF('dlg').show()" process="@this" />
+							</p:column>
+
+							<h:outputLabel value="Material : " />
+							<h:outputText value="#{conferenciaMB.material.item.descricao}"
+								styleClass="FontItalic" />
 
 
-                    <p:panel id="pnMaterial" styleClass="BordNone">
+							<h:outputLabel value="Quantidade Atual : " />
+							<p:column>
+								<h:outputText value="#{conferenciaMB.material.quantidadeAtual}"
+									styleClass="FontItalic">
+									<f:convertNumber />
+								</h:outputText>
 
-                        <h1 class="CardBigTopic">Ajuste de Materiais</h1>
-                        <div class="SeparatorFull"></div>
+								<h:outputText
+									value="#{conferenciaMB.getUnidadeString(conferenciaMB.material.item)}"
+									styleClass="unidadeMedidaString" />
+							</p:column>
 
-                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{conferenciaMB.materiais}" var="material" rows="6" paginator="true" selection="#{conferenciaMB.material}"
-                            selectionMode="single" rowKey="#{material}" paginatorPosition="bottom">
-                            <p:ajax event="rowSelect" update=":lume:pnMaterial" listener="#{conferenciaMB.carregaTela}" />
-                            <f:facet name="header">Materiais</f:facet>
-                            <p:column filterBy="#{material.item.descricaoLimpa}" sortBy="#{material.item.descricao}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Material" />
-                                </f:facet>
-                                <h:outputText value="#{material.item.descricao}" title="#{material.id}" />
-                            </p:column>
-                            <p:column filterBy="#{material.local.descricao}" sortBy="#{material.local.descricao}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Local" />
-                                </f:facet>
-                                <h:outputText value="#{material.local.descricao}" />
-                            </p:column>
-                            <p:column filterBy="#{material.quantidadeAtual}" sortBy="#{material.quantidadeAtual}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Quantidade Disponível" />
-                                </f:facet>
-                                <h:outputText value="#{material.quantidadeAtual}">
-                                    <f:convertNumber />
-                                </h:outputText>
-                                <h:outputLabel value="#{material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" disabled="true" />
-                            </p:column>
+							<p:outputLabel for="alterada" value="Quantidade Alterada : " />
+							<p:column>
+								<p:inputText id="alterada"
+									value="#{conferenciaMB.conferenciaMaterial.valorAlterado}"
+									maxlength="10" onkeypress="validaNumeros(event)" />
+								<h:outputText
+									value="#{conferenciaMB.getUnidadeString(conferenciaMB.material.item)}"
+									styleClass="unidadeMedidaString" disabled="true" />
+							</p:column>
 
-                            <p:column filterBy="#{material.quantidadeEmprestada}" sortBy="#{material.quantidadeEmprestada}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Quantidade Emprestada" />
-                                </f:facet>
-
-                                <p:commandButton action="#{conferenciaMB.carregaMaterialEmprestado(material)}" oncomplete="PF('dlgMaterialEmprestado').show();" process="@this"
-                                    update=":lume:pgMaterialEmprestado" icon="White fa fa-search" />
-
-                            </p:column>
-                            <p:column filterBy="#{material.marca.nome}" sortBy="#{material.marca.nome}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Marca" />
-                                </f:facet>
-                                <h:outputText value="#{material.marca.nome}" />
-                            </p:column>
-                            <p:column filterBy="#{material.lote}" sortBy="#{material.lote}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Lote" />
-                                </f:facet>
-                                <h:outputText value="#{material.lote}" />
-                            </p:column>
-                            <p:column filterBy="#{material.dataValidadeStr}" sortBy="#{material.dataValidadeStr}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Data de Validade" />
-                                </f:facet>
-                                <h:outputText value="#{material.dataValidadeStr}" />
-                            </p:column>
-                        </p:dataTable>
-
-                        <div class="EmptyBox20"></div>
-
-                        <div class="SeparatorFull"></div>
-
-                        <div class="EmptyBox20"></div>
+							<p:outputLabel for="motivo" value="Motivo : " />
+							<p:selectOneMenu id="motivo" required="true"
+								value="#{conferenciaMB.conferenciaMaterial.motivo}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione um Motivo" />
+								<f:selectItem itemValue="Danificado" itemLabel="Danificado" />
+								<f:selectItem itemValue="Extraviado" itemLabel="Extraviado" />
+								<f:selectItem itemValue="Roubado" itemLabel="Roubado" />
+								<f:selectItem itemValue="Vencido" itemLabel="Vencido" />
+								<f:selectItem itemValue="Digitacao"
+									itemLabel="Erro de Digitação" />
+							</p:selectOneMenu>
 
 
-                        <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+						</p:panelGrid>
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="persist" icon="White fa fa-save"
+								value="Salvar" actionListener="#{conferenciaMB.actionPersist}"
+								update=":lume:pnMaterial,:lume:dtMaterial"
+								process=":lume:pnMaterial"
+								disabled="#{conferenciaMB.material.id == 0}"
+								styleClass="GreenButton" />
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo"
+								actionListener="#{conferenciaMB.actionNew}"
+								update=":lume:pnMaterial,:lume:dtMaterial" process="@this" />
+							<p:commandButton value="Excel" ajax="false" immediate="true"
+								process="@this" icon="White fa fa-file-excel-o"
+								styleClass="GreenButton">
+								<p:dataExporter encoding="iso-8859-1" type="xls"
+									target="dtMaterial" fileName="conferenciaMaterial" />
+							</p:commandButton>
+						</p:panelGrid>
 
-                            <p:outputLabel for="conferencia" value="Conferência : " />
-                            <p:column>
-                                <p:inputText id="conferencia" required="true" disabled="true" value="#{conferenciaMB.conferencia}" style="width: 30% !important;" />
-                                <p:commandButton id="novaConferencia" icon="fa fa-plus White" value="Nova Conferência" style="width: 40% !important;margin-left: 10px;" onclick="PF('dlg').show()"
-                                    process="@this" />
-                            </p:column>
+					</p:outputPanel>
 
-                            <h:outputLabel value="Material : " />
-                            <h:outputText value="#{conferenciaMB.material.item.descricao}" styleClass="FontItalic" />
-
-
-                            <h:outputLabel value="Quantidade Atual : " />
-                            <p:column>
-                                <h:outputText value="#{conferenciaMB.material.quantidadeAtual}" styleClass="FontItalic">
-                                    <f:convertNumber />
-                                </h:outputText>
-
-                                <h:outputText value="#{conferenciaMB.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
-                            </p:column>
-
-                            <p:outputLabel for="alterada" value="Quantidade Alterada : " />
-                            <p:column>
-                                 <p:inputText id="alterada" value="#{conferenciaMB.conferenciaMaterial.valorAlterado}" maxlength="10"
-                                                onkeypress="validaNumeros(event)" style="width:20%"/>
-                                <h:outputText value="#{conferenciaMB.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" disabled="true" />
-                            </p:column>
-
-                            <p:outputLabel for="motivo" value="Motivo : " />
-                            <p:selectOneMenu id="motivo" required="true" value="#{conferenciaMB.conferenciaMaterial.motivo}" styleClass="Wid30">
-                                <f:selectItem itemValue="#{null}" itemLabel="Selecione um Motivo" />
-                                <f:selectItem itemValue="Danificado" itemLabel="Danificado" />
-                                <f:selectItem itemValue="Extraviado" itemLabel="Extraviado" />
-                                <f:selectItem itemValue="Roubado" itemLabel="Roubado" />
-                                <f:selectItem itemValue="Vencido" itemLabel="Vencido" />
-                                <f:selectItem itemValue="Digitacao" itemLabel="Erro de Digitação" />
-                            </p:selectOneMenu>
-
-
-                        </p:panelGrid>
-                        <div class="SeparatorFull"></div>
-                        <div class="Container25 Responsive100">
-                            <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{conferenciaMB.actionPersist}" update=":lume:pnMaterial,:lume:dtMaterial"
-                                process=":lume:pnMaterial" disabled="#{conferenciaMB.material.id == 0}" styleClass="GreenButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
-                            <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{conferenciaMB.actionNew}" update=":lume:pnMaterial,:lume:dtMaterial" process="@this" />
-                        </div>
-                        <div class="Container25 Responsive100">
-                            <p:commandButton value="Excel" ajax="false" immediate="true" process="@this" icon="White fa fa-file-excel-o" styleClass="GreenButton">
-                                <p:dataExporter encoding="iso-8859-1" type="xls" target="dtMaterial" fileName="conferenciaMaterial" />
-                            </p:commandButton>
-                        </div>
-
-                    </p:panel>
-
-                    <p:confirmDialog id="dlg" message=" Você tem certeza que deseja criar uma nova conferência?" header="Conferência" severity="alert" widgetVar="dlg" position="center center">
-                        <p:commandButton id="confirm" value="Sim" update=":lume:pnMaterial" actionListener="#{conferenciaMB.actionPersistConferencia}" oncomplete="PF('dlg').hide();" process="@this" />
-                        <p:commandButton id="decline" value="Não" onclick="PF('dlg').hide();" type="button" />
-                    </p:confirmDialog>
-                </div>
-            </div>
-        </div>
-        <h:panelGroup id="pgMaterialEmprestado">
-            <p:dialog widgetVar="dlgMaterialEmprestado">
-                <div class="Card">
-                    <h1 class="CardBigTopic">#{conferenciaMB.material.item.descricao}</h1>
+					<p:confirmDialog id="dlg"
+						message=" Você tem certeza que deseja criar uma nova conferência?"
+						header="Conferência" severity="alert" widgetVar="dlg"
+						position="center center">
+						<p:commandButton id="confirm" value="Sim"
+							update=":lume:pnMaterial"
+							actionListener="#{conferenciaMB.actionPersistConferencia}"
+							oncomplete="PF('dlg').hide();" process="@this" />
+						<p:commandButton id="decline" value="Não"
+							onclick="PF('dlg').hide();" type="button" />
+					</p:confirmDialog>
+				</div>
+			</div>
+		</div>
+		<h:panelGroup id="pgMaterialEmprestado">
+            <p:dialog widgetVar="dlgMaterialEmprestado" modal="true" width="90%">
+                    <h1>#{conferenciaMB.material.item.descricao}</h1>
                     <div class="SeparatorFull"></div>
                     <p:panelGrid columns="6" columnClasses="ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2" layout="grid" styleClass="ui-panelgrid-blank"
                         style="border:0px none; background-color:transparent;">
@@ -162,6 +206,7 @@
 
                     </p:panelGrid>
                     <div class="SeparatorFull"></div>
+                    <br />
                     <p:dataTable filterDelay="1500"  reflow="true" var="material" value="#{conferenciaMB.materiaisEmprestado}" paginator="true" rows="20" paginatorPosition="bottom" id="dtMaterialEmprestado">
                         <p:column filterBy="#{material.profissional.dadosBasico.nome}" sortBy="#{material.profissional.dadosBasico.nome}" filterMatchMode="contains">
                             <f:facet name="header">
@@ -200,10 +245,9 @@
                         </p:column>
                     </p:dataTable>
                     <br />
-                    <div class="Container16 Responsive100">
+                    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                         <p:commandButton id="fechar" icon="White fa fa-times" value="Fechar" oncomplete="PF('dlgMaterialEmprestado').hide();" process="@this" styleClass="RedButton" />
-                    </div>
-                </div>
+                    </p:panelGrid>
             </p:dialog>
         </h:panelGroup>
     </ui:define>
