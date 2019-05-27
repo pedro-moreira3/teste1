@@ -1,12 +1,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-                    <p:panel id="pnPrincipal" styleClass="BordNone">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <p:outputPanel id="pnPrincipal" styleClass="BordNone">
 
-                        <h1 class="CardBigTopic">Relatório de Resultados</h1>
+                        <h1>Relatório de Resultados</h1>
                         <div class="SeparatorFull"></div>
 
                         <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
@@ -22,27 +22,23 @@
                             <p:column></p:column>
 
                             <p:outputLabel for="inicio" value="Inicio : " />
-                            <p:calendar id="inicio" value="#{relatorioResultadoMB.inicio}" pattern="dd/MM/yyyy" mask="true" class="Wid30" required="true" />
+                            <p:calendar id="inicio" value="#{relatorioResultadoMB.inicio}" pattern="dd/MM/yyyy" mask="true" required="true" />
 
                             <p:outputLabel for="fim" value="Fim : " />
-                            <p:calendar id="fim" value="#{relatorioResultadoMB.fim}" pattern="dd/MM/yyyy" mask="true" class="Wid30" required="true" />
+                            <p:calendar id="fim" value="#{relatorioResultadoMB.fim}" pattern="dd/MM/yyyy" mask="true" required="true" />
 
                         </p:panelGrid>
                         <div class="SeparatorFull"></div>
-                        <div class="Container25 Responsive100">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioResultadoMB.filtra}" update="dtPrincipal,pnPrincipal" tabindex="1"
                                 process="@this,pnPrincipal" styleClass="OrangeButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                 <p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="relatorioResultado" />
                             </p:commandButton>
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="limpar" icon="White fa fa-file-o" value="Limpar" update="inicio, fim, dtPrincipal" process="@this"
                                 actionListener="#{relatorioResultadoMB.actionLimpar}" />
-                        </div>
-                    </p:panel>
+                        </p:panelGrid>
+                    </p:outputPanel>
 
                     <div class="EmptyBox20"></div>
 
