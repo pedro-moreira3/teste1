@@ -9,7 +9,7 @@ import javax.faces.convert.FacesConverter;
 
 import org.apache.log4j.Logger;
 
-import br.com.lume.security.bo.AcaoBO;
+import br.com.lume.security.AcaoSingleton;
 import br.com.lume.security.entity.Acao;
 
 @FacesConverter(forClass = Acao.class, value = "acao")
@@ -24,8 +24,8 @@ public class AcaoConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long acaIntCod = Long.parseLong(value);
-                AcaoBO acaoBO = new AcaoBO();
-                return acaoBO.find(acaIntCod);
+               
+                return AcaoSingleton.getInstance().getBo().find(acaIntCod);
             }
         } catch (Exception e) {
             this.log.error("Erro no getAsObject", e);

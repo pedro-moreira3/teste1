@@ -9,7 +9,7 @@ import javax.faces.convert.FacesConverter;
 
 import org.apache.log4j.Logger;
 
-import br.com.lume.security.bo.RestricaoBO;
+import br.com.lume.security.RestricaoSingleton;
 import br.com.lume.security.entity.Restricao;
 
 @FacesConverter(forClass = Restricao.class, value = "restricao")
@@ -24,8 +24,8 @@ public class RestricaoConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long resIntCod = Long.parseLong(value);
-                RestricaoBO restricaoBO = new RestricaoBO();
-                return restricaoBO.find(resIntCod);
+              
+                return RestricaoSingleton.getInstance().getBo().find(resIntCod);
             }
         } catch (Exception e) {
             this.log.error("Erro no getAsObject", e);

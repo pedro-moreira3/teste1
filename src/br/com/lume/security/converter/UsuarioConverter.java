@@ -9,7 +9,7 @@ import javax.faces.convert.FacesConverter;
 
 import org.apache.log4j.Logger;
 
-import br.com.lume.security.bo.UsuarioBO;
+import br.com.lume.security.UsuarioSingleton;
 import br.com.lume.security.entity.Usuario;
 
 @FacesConverter(forClass = Usuario.class, value = "usuario")
@@ -24,8 +24,8 @@ public class UsuarioConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long usuIntCod = Long.parseLong(value);
-                UsuarioBO usuarioBO = new UsuarioBO();
-                return usuarioBO.find(usuIntCod);
+               
+                return UsuarioSingleton.getInstance().getBo().find(usuIntCod);
             }
         } catch (Exception e) {
             this.log.error("Erro no getAsObject", e);
