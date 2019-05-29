@@ -2,38 +2,38 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
-					<p:panel id="pnPrincipal" styleClass="BordNone">
-						<h1 class="CardBigTopic">Trocar Senha</h1>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
+						<h1>Trocar Senha</h1>
 						<div class="SeparatorFull"></div>
 
 						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
 							<p:outputLabel for="usuStrLogin" value="Login :" />
-							<p:inputText id="usuStrLogin" value="#{lumeSecurity.usuario.usuStrLogin}" disabled="true" styleClass="Wid50" />
+							<p:inputText id="usuStrLogin" value="#{lumeSecurity.usuario.usuStrLogin}" disabled="true" />
 
 							<p:outputLabel for="senhaAtual" value="Senha Atual:" />
-							<p:password id="senhaAtual" value="#{trocarSenhaMB.senhaAtual}" required="true" feedback="false" styleClass="Wid50" />
+							<p:password id="senhaAtual" value="#{trocarSenhaMB.senhaAtual}" required="true" feedback="false" />
 
 							<p:outputLabel for="senhaNova" value="Nova Senha:" />
 							<p:password id="senhaNova" value="#{trocarSenhaMB.senhaNova}" required="true" goodLabel="Boa" promptLabel="Insira sua senha"
-								strongLabel="Forte" weakLabel="Fraca" styleClass="Wid50" />
+								strongLabel="Forte" weakLabel="Fraca" />
 
 							<p:outputLabel for="senhaNovaConfirmacao" value="Confirme Nova Senha:" />
 							<p:password id="senhaNovaConfirmacao" value="#{trocarSenhaMB.senhaNovaConfirmacao}" required="true" goodLabel="Boa"
-								promptLabel="Insira sua senha" strongLabel="Forte" weakLabel="Fraca" styleClass="Wid50" />
+								promptLabel="Insira sua senha" strongLabel="Forte" weakLabel="Fraca" />
 						</p:panelGrid>
 
 						<div class="SeparatorFull"></div>
 
-						<div class="Container25 Responsive100">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton value="Salvar" actionListener="#{trocarSenhaMB.actionPersist}" update=":lume:pnPrincipal" icon="White fa fa-save"
 								styleClass="GreenButton" />
-						</div>
+						</p:panelGrid>
 
-					</p:panel>
+					</p:outputPanel>
 				</div>
 			</div>
 		</div>
