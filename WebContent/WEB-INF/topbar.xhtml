@@ -14,6 +14,40 @@
 		}
 	</script>
 	
+	<style>
+		.layout-wrapper .topbar-items>li .topbar-icon {
+			font-size: 27px;
+		}
+		
+		.layout-wrapper .topbar .topbar-right {
+			padding: 8px;
+		}
+		
+		.layout-wrapper .topbar {
+			height: 52px;
+		}
+		
+		.layout-wrapper .topbar .topbar-left {
+			height: 52px;
+		}
+		
+		.layout-wrapper .layout-main {
+			padding: 57px 5px 5px 5px;
+		}
+		
+		.layout-wrapper .layout-menu {
+			top: 52px;
+		}
+		
+		.layout-wrapper .topbar .topbar-right #menu-button {
+			top: 0px;
+		}
+		
+		.layout-wrapper .topbar-items>li>ul {
+			top: 32px;
+		}
+	</style>
+	
 	<div class="topbar clearfix">
 		<div class="topbar-left">
 			<a href="#" id="logo"><h:graphicImage name="logo_branco.png" library="images" /></a>
@@ -87,7 +121,7 @@
 				<li>
 					<ui:fragment>
 						<li style="margin-right: 20px !important;">
-							<a style="margin-top: 10px !important; color: white;">
+							<a style="margin-top: 3px !important; color: white;">
 								<span class="profile-name">
 									Bem-Vindo(a),
 									<h:outputText value="#{lumeSecurity.nomeLogado}" />
