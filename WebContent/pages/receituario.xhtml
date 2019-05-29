@@ -1,36 +1,35 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
 
-					<p:panel id="pnReceituario" visible="#{receituarioMB.visivel}" styleClass="BordNone">
-						<h1 class="CardBigTopic">Receituário</h1>
+					<p:outputPanel id="pnReceituario" rendered="#{receituarioMB.visivel}" styleClass="BordNone">
+						<h1>Receituário</h1>
 						<div class="SeparatorFull"></div>
 
 						<p:fieldset legend="Documento" toggleable="true">
 							<h:outputText id="documentoImprimir2" value="#{receituarioMB.documento}" escape="false" />
 						</p:fieldset>
 
-						<div class="Container25 Responsive100">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton">
 								<p:printer target="documentoImprimir2" />
 							</p:commandButton>
-						</div>
+						</p:panelGrid>
 						<div class="SeparatorFull"></div>
 
 						<div class="EmptyBox20"></div>
-					</p:panel>
+					</p:outputPanel>
 
-					<p:panel id="pnReceituarioPrincipal" styleClass="BordNone">
-						<h1 class="CardBigTopic">Receituário</h1>
+					<p:outputPanel id="pnReceituarioPrincipal" styleClass="BordNone">
+						<h1>Receituário</h1>
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
 							<p:outputLabel for="pacienteSelecionado" value="#{dominioMB.cliente} :" />
 							<p:autoComplete dropdown="true" queryDelay="1000" value="#{receituarioMB.paciente}" id="pacienteSelecionado" minQueryLength="3"
-								completeMethod="#{receituarioMB.geraSugestoes}" var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}" converter="paciente" forceSelection="true" scrollHeight="400"
-								styleClass="Wid50">
+								completeMethod="#{receituarioMB.geraSugestoes}" var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}" converter="paciente" forceSelection="true" scrollHeight="400">
 								<p:ajax event="itemSelect" listener="#{receituarioMB.handleSelectPacienteSelecionado}" update=":lume:pnReceituario,:lume:pnReceituarioPrincipal,:lume:dtReceituario"
 									process="@this" />
 							</p:autoComplete>
@@ -47,29 +46,27 @@
 									<h:outputLabel value="#{tagDinamica.tag}" />
 								</p:column>
 								<p:column>
-									<p:inputText value="#{tagDinamica.respTag}" styleClass="Wid50" />
+									<p:inputText value="#{tagDinamica.respTag}" />
 								</p:column>
 							</p:panelGrid>
 						</ui:repeat>
 
 						<div class="SeparatorFull"></div>
-						<h:panelGroup rendered="#{receituarioMB.liberaBotao}">
-							<div class="Container25 Responsive100">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<h:panelGroup rendered="#{receituarioMB.liberaBotao}">
 								<p:commandButton id="persist4" icon="White fa fa-save" value="Gerar Receituário" actionListener="#{receituarioMB.actionPersist}"
 									update=":lume:pnReceituario,:lume:pnReceituarioPrincipal,:lume:dtReceituario" process=":lume:pnReceituarioPrincipal" disabled="#{receituarioMB.entity.id != 0}"
 									styleClass="GreenButton"  />
-							</div>
-						</h:panelGroup>
-						<h:panelGroup>
-							<div class="Container25 Responsive100">
+							</h:panelGroup>
+							<h:panelGroup>
 								<p:commandButton id="new4" icon="White fa fa-file-o" value="Novo" actionListener="#{receituarioMB.actionNew}"
 									update=":lume:pnReceituario,:lume:pnReceituarioPrincipal,:lume:dtReceituario" immediate="true" tabindex="1" process="@this" />
-							</div>
-						</h:panelGroup>
+							</h:panelGroup>
+						</p:panelGrid>
 
 						<div class="EmptyBox20"></div>
 
-					</p:panel>
+					</p:outputPanel>
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtReceituario" value="#{receituarioMB.entityList}" var="rct" rows="7" paginator="true" selection="#{receituarioMB.entity}"
 						selectionMode="single" rowKey="#{rct}" paginatorPosition="bottom">
 						<p:ajax event="rowSelect" update=":lume:pnReceituario,:lume:pnReceituarioPrincipal" listener="#{receituarioMB.atualizaTela}" />
