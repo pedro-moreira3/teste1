@@ -46,12 +46,12 @@ div.ui-selectoneradio label {
                         <p:selectOneMenu id="filtro" value="#{relatorioAtendimentoMB.filtro}" rendered="#{relatorioAtendimentoMB.dia != 7}">
                             <f:selectItem itemValue="CURRENT_DATE" itemLabel="HOJE" />
                             <f:selectItem itemValue="CURRENT_DATE +1" itemLabel="AMANHÃ" />
-                            <p:ajax listener="#{relatorioAtendimentoMB.carregaLista}" process="@this" update="@form" />
+                            <p:ajax listener="#{relatorioAtendimentoMB.carregaLista}" process="@this" update="dtAtendimento" />
                         </p:selectOneMenu>
                         <p:selectOneMenu id="filtroSegunda" value="#{relatorioAtendimentoMB.filtro}" rendered="#{relatorioAtendimentoMB.dia == 7}">
                             <f:selectItem itemValue="#{null}" itemLabel="HOJE" />
                             <f:selectItem itemValue="CURRENT_DATE +2" itemLabel="SEGUNDA" />
-                            <p:ajax listener="#{relatorioAtendimentoMB.carregaLista}" process="@this" update="@form" />
+                            <p:ajax listener="#{relatorioAtendimentoMB.carregaLista}" process="@this" update="dtAtendimento" />
                         </p:selectOneMenu>
                         <p:commandButton value="Novo Agendamento" icon="White fa fa-book White" oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
                             action="#{agendamentoMB.filaAtendimento(a)}" update="lume:pnAgendamento" process="@this" />
@@ -86,7 +86,7 @@ div.ui-selectoneradio label {
                             <h:outputText value="#{a.paciente.siglaConvenio}" />
                         </p:column>
                         <p:column filterBy="#{a.statusDescricao}" sortBy="#{a.statusDescricao}" filterMatchMode="contains" headerText="Status" width="15%">
-                            <p:selectOneMenu value="#{a.status}" disabled="#{!relatorioAtendimentoMB.liberaEdicao}">
+                            <p:selectOneMenu value="#{a.statusNovo}" disabled="#{!relatorioAtendimentoMB.liberaEdicao}">
                                 <p:ajax process="@this" listener="#{relatorioAtendimentoMB.persistAgendamento(a)}" update="@form" />
 
                                 <f:selectItem itemLabel="Não confirmado" itemValue="N" />
