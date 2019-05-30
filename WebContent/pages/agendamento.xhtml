@@ -68,14 +68,26 @@ div.ui-selectoneradio label {
 	padding-top: 0px !important;	
 }
 
+.ui-selectmanycheckbox tr td {
+	position: relative;
+	display: inline-flex !important;
+	width: 221px !important
+}
+.ui-selectmanycheckbox tr td > div > div:last-child {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
 .ui-selectmanycheckbox tr td label {
 	position: relative;
 	display: inline-flex !important;
 }
-.ui-selectmanycheckbox tr td:nth-child(even) label div:first-child {
+.ui-selectmanycheckbox tr td label div:first-child {
 	position: relative;
 }
-.ui-selectmanycheckbox tr td:nth-child(even) label div:first-child div {
+.ui-selectmanycheckbox tr td label div:first-child div {
 	display: inline-block;
 	position: relative;
 	top: 50%;
