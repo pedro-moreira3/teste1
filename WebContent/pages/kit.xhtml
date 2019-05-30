@@ -45,7 +45,7 @@
                                         required="#{kitMB.digitacao != null}">
                                         <f:convertNumber />
                                     </p:inputText>
-                                    <h:outputLabel id="quantidade2" value="#{kitMB.item.unidadeMedidaString}" styleClass="unidadeMedidaString" disabled="true" />
+                                    <h:outputLabel id="quantidade2" value="#{kitMB.getUnidadeString(kitMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
                                 </p:column>
                             </p:panelGrid>
                             <div class="SeparatorFull"></div>

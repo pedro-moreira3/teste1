@@ -37,13 +37,13 @@
                                 <h:outputText value="#{conferencia.valorOriginal}">
                                     <f:convertNumber />
                                 </h:outputText>
-                                <h:outputText value="#{conferencia.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{conferenciaMB.getUnidadeString(conferencia.material.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
                             <p:column sortBy="#{conferencia.valorAlterado}" filterBy="#{conferencia.valorAlterado}" filterMatchMode="contains" headerText="Quantidade Alterada">
                                 <h:outputText value="#{conferencia.valorAlterado}">
                                     <f:convertNumber />
                                 </h:outputText>
-                                <h:outputText value="#{conferencia.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{conferenciaMB.getUnidadeString(conferencia.material.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
 
                             <p:column sortBy="#{conferencia.motivo}" filterMatchMode="contains" filterBy="#{conferencia.motivo}" headerText="Motivo">

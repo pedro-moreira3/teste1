@@ -60,16 +60,16 @@
                                 <h:outputText value="#{material.quantidade}">
                                     <f:convertNumber />
                                 </h:outputText>
-                                <h:outputText value="#{material.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{controleMaterialMB.getUnidadeString(material.material.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
-                            <p:column headerText="Unidades à devolver/lavar" style="width:25%" sortBy="#{material.material.item.unidadeMedidaString}"
-                                filterBy="#{material.material.item.unidadeMedidaString}">
+                            <p:column headerText="Unidades à devolver/lavar" style="width:25%" sortBy="#{controleMaterialMB.getUnidadeString(material.material.item)}"
+                                filterBy="#{controleMaterialMB.getUnidadeString(material.material.item)}">
                                 <p:cellEditor>
                                     <f:facet name="output">
                                         <h:outputText id="quantidadeDevolvidaOutput" value="#{material.quantidadeDevolvida}">
                                             <f:convertNumber />
                                         </h:outputText>
-                                        <h:outputText value="#{material.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                        <h:outputText value="#{controleMaterialMB.getUnidadeString(material.material.item)}" styleClass="unidadeMedidaString" />
                                     </f:facet>
                                     <f:facet name="input">
                                         <p:inputText id="quantidadeDevolvida" value="#{material.quantidadeDevolvida}" maxlength="10" required="true" onkeypress="validaNumeros(event)" style="width:20%">

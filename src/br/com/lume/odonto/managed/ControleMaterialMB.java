@@ -546,6 +546,12 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
+    
+    public String getUnidadeString(Item item) {
+        if(item != null)
+            return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
+        return null;
+    }
 
     public void setMateriaisDisponiveis(List<Material> materiaisDisponiveis) {
         this.materiaisDisponiveis = materiaisDisponiveis;

@@ -67,7 +67,7 @@
                                 <p:column filterBy="#{kitItemSelecionado.quantidade * controleMaterialMB.quantidadeReservaKit}"
                                     sortBy="#{kitItemSelecionado.quantidade * controleMaterialMB.quantidadeReservaKit}" filterMatchMode="contains" headerText="Quantidade">
                                     <h:outputText value="#{kitItemSelecionado.quantidade * controleMaterialMB.quantidadeReservaKit}" />
-                                    <h:outputText value="#{kitItemSelecionado.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                    <h:outputText value="#{controleMaterialMB.getUnidadeString(kitItemSelecionado.item)}" styleClass="unidadeMedidaString" />
                                 </p:column>
                             </p:dataTable>
                             <br />
@@ -90,7 +90,7 @@
                                     <h:outputText value="#{materiaisSelecionado.quantidadeAtual}">
                                         <f:convertNumber />
                                     </h:outputText>
-                                    <h:outputText value="#{materiaisSelecionado.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                    <h:outputText value="#{controleMaterialMB.getUnidadeString(materiaisSelecionado.item)}" styleClass="unidadeMedidaString" />
                                 </p:column>
                                 <p:column filterBy="#{materiaisSelecionado.marca.nome}" sortBy="#{materiaisSelecionado.marca.nome}" filterMatchMode="contains" headerText="Marca">
                                     <h:outputText value="#{materiaisSelecionado.marca.nome}" />

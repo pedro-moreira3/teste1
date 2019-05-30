@@ -362,6 +362,12 @@ public class KitMB extends LumeManagedBean<Kit> {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
+    
+    public String getUnidadeString(Item item) {
+        if(item != null)
+            return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
+        return null;
+    }
 
     public List<Kit> getKits() {
         return this.kits;

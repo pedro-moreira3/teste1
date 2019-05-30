@@ -5,13 +5,18 @@
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
+		<style>
+		.ui-autocomplete input {
+			height: 100%;
+		}
+		</style>
 		<h:inputHidden value="#{tabPacienteMB.activeIndex}" />
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title pacienteChoice">
 					<p:panelGrid columns="1" layout="grid"
 						styleClass="ui-panelgrid-blank form-group ui-fluid">
-						<h:panelGroup styleClass="md-inputfield" style="margin-top: 20px;">
+						<h:panelGroup styleClass="md-inputfield" style="margin-top: 20px;display: flex">
 							<p:autoComplete dropdown="true" queryDelay="1000"
 								value="#{pacienteMB.entity}" minQueryLength="3"
 								completeMethod="#{pacienteMB.geraSugestoesPaciente}" var="p"
@@ -38,12 +43,11 @@
 							</p:autoComplete>
 							<p:outputLabel for="pacienteChoice" value="Paciente" />
 							<p:message styleClass="msg" for="pacienteChoice" />
+							<p:commandButton id="pesquisar" icon="White fa fa-eraser" style="width: 33px !important"
+								onstart="PF('loading').show();" oncomplete="PF('loading').hide()"
+								actionListener="#{pacienteMB.actionNew}"
+								update=":lume" process="@this" />
 						</h:panelGroup>
-
-						<p:commandButton id="pesquisar" icon="White fa fa-eraser"
-							onstart="PF('loading').show();" oncomplete="PF('loading').hide()"
-							actionListener="#{pacienteMB.actionNew}" value="Limpar Seleção"
-							update=":lume" process="@this" />
 					</p:panelGrid>
 				</div>
 			</div>

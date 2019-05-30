@@ -67,7 +67,7 @@
                                     <f:convertNumber />
                                 </h:outputText>
                                 
-                                <h:outputLabel id="quantidade2" value="#{abastecimentoMB.item.unidadeMedidaString}" styleClass="unidadeMedidaString" disabled="true" />
+                                <h:outputLabel id="quantidade2" value="#{abastecimentoMB.getUnidadeString(abastecimentoMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
                             </p:column>
                         </p:panelGrid>
                         <div class="SeparatorFull"></div>
@@ -96,7 +96,7 @@
                                 <h:outputText value="#{materiaisSelecionado.quantidadeAtual}">
                                     <f:convertNumber />
                                 </h:outputText>
-                                <h:outputText value="#{materiaisSelecionado.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{abastecimentoMB.getUnidadeString(materiaisSelecionado.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
                             <p:column filterBy="#{materiaisSelecionado.marca.nome}" sortBy="#{materiaisSelecionado.marca.nome}" filterMatchMode="contains" headerText="Marca">
                                 <h:outputText value="#{materiaisSelecionado.marca.nome}" />
@@ -145,7 +145,7 @@
                                 <h:outputText value="#{abastecimento.quantidade}">
                                     <f:convertNumber pattern="#0.00" locale="pt_BR" />
                                 </h:outputText>
-                                <h:outputText value="#{abastecimento.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{abastecimentoMB.getUnidadeString(abastecimento.material.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
                             <p:column filterBy="#{abastecimento.dataEntregaStr}" filterMatchMode="contains" headerText="Data da Entrega" sortBy="#{abastecimento.dataEntrega}">
                                 <h:outputText value="#{abastecimento.dataEntregaStr}" />
