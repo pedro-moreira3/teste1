@@ -2,9 +2,9 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
 					<p:dataTable filterDelay="1500"  reflow="true" var="empresa" value="#{empresaMB.empresasPlano}" paginator="true" rows="20" paginatorPosition="bottom" id="dtEmpresa"
 						emptyMessage="">
 						<f:facet name="header">Empresas</f:facet>
@@ -30,10 +30,12 @@
                         </p:column>
 
 						<p:column headerText="Data de expiração">
-							<p:calendar id="empDtmExpiracao" value="#{empresa.empDtmExpiracao}" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}"
-								timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+5" class="Wid30" mask="true" />
-							<p:commandButton icon="White fa fa-save" actionListener="#{empresaMB.actionAlterarDataExpiracao(empresa)}" process="@this,empDtmExpiracao"
-								styleClass="GreenButton Wid50" />
+							<h:panelGroup style="display: flex">
+								<p:calendar id="empDtmExpiracao" value="#{empresa.empDtmExpiracao}" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}"
+									timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+5" mask="true" />
+								<p:commandButton icon="White fa fa-save" actionListener="#{empresaMB.actionAlterarDataExpiracao(empresa)}" process="@this,empDtmExpiracao"
+									styleClass="GreenButton" style="width: 33px !important; margin-left: 5px;" />
+							</h:panelGroup>
 						</p:column>
 
 					</p:dataTable>

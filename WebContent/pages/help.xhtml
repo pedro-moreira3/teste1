@@ -2,19 +2,19 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
 					<h:inputHidden id="idHelp" value="#{helpMB.entity.id}" />
-					<p:panel id="pnHelp" styleClass="BordNone">
+					<p:outputPanel id="pnHelp" styleClass="BordNone">
 
-						<h1 class="CardBigTopic">Cadastro de Help</h1>
+						<h1>Cadastro de Help</h1>
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
 
 							<p:outputLabel for="tela" value="Tela : " />
-							<p:selectOneMenu id="tela" value="#{helpMB.objetoSelecionado}" converter="objeto" required="true" styleClass="Wid50" filter="true" filterMatchMode="contains">
+							<p:selectOneMenu id="tela" value="#{helpMB.objetoSelecionado}" converter="objeto" required="true" filter="true" filterMatchMode="contains">
 								<f:selectItem itemValue="#{null}" itemLabel="Selecione uma Tela" />
 								<f:selectItems value="#{helpMB.telas}" var="t" itemValue="#{t}" itemLabel="#{t.objStrDes}" />
 								<p:ajax process="@this" update=":lume:pnHelp,:lume:imagens" listener="#{helpMB.carregarHelpByTelaSelecionada}" />
@@ -53,20 +53,16 @@
 
 						</p:panelGrid>
 						<div class="SeparatorFull"></div>
-						<div class="Container25 Responsive100">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{helpMB.actionPersist}"
 								 update=":lume:pnHelp,:lume:dtHelp" process=":lume:pnHelp" styleClass="GreenButton" />
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{helpMB.actionRemove}"
 								update=":lume:pnHelp,:lume:dtHelp" process="@this" disabled="#{helpMB.entity.id == 0}" 
 								styleClass="RedButton" />
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{helpMB.actionNew}"
 								 update=":lume:pnHelp,:lume:dtHelp" immediate="true" />
-						</div>
-					</p:panel>
+						</p:panelGrid>
+					</p:outputPanel>
 					<div class="EmptyBox20"></div>
 
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtHelp" value="#{helpMB.helps}" var="help" rows="15" paginator="true" selection="#{helpMB.entity}"
