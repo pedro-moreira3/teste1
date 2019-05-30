@@ -228,7 +228,7 @@
 						style="width: calc(100% - 40px) !important; margin-right: 7px">
 						<p:autoComplete dropdown="true" queryDelay="1000"
 							value="#{agendamentoMB.pacienteSelecionado}" id="paciente"
-							minQueryLength="3"
+							minQueryLength="3" scrollHeight="400"
 							completeMethod="#{agendamentoMB.geraSugestoes}" var="p"
 							itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 							converter="paciente" forceSelection="true"

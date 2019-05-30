@@ -18,7 +18,7 @@
 						styleClass="ui-panelgrid-blank form-group ui-fluid">
 						<h:panelGroup styleClass="md-inputfield" style="margin-top: 20px;display: flex">
 							<p:autoComplete dropdown="true" queryDelay="1000"
-								value="#{pacienteMB.entity}" minQueryLength="3"
+								value="#{pacienteMB.entity}" minQueryLength="3" scrollHeight="400"
 								completeMethod="#{pacienteMB.geraSugestoesPaciente}" var="p"
 								itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 								converter="paciente" forceSelection="true" id="pacienteChoice">
