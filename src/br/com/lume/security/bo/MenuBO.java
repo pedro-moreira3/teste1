@@ -80,6 +80,7 @@ public class MenuBO extends BO<Usuario> {
                         DefaultSubMenu submenu = new DefaultSubMenu();
                         submenu.setId("sb" + idMenu++ + idMenu++);
                         submenu.setLabel(objeto.getObjStrDes());
+                        submenu.setIcon(objeto.getIcone());
 //                        submenu.setIcon("fa fa-caret-right");
                         submenu.setExpanded(true);
 
@@ -98,7 +99,7 @@ public class MenuBO extends BO<Usuario> {
                 if (objetosPermitidos != null) {
                     if (objetosPermitidos.contains(objeto)) {
                         DefaultMenuItem mi = new DefaultMenuItem();
-                        mi.setIcon(objeto.getIcone());
+                        //mi.setIcon(objeto.getIcone());
                         mi.setId("mi" + idMenu++ + idMenu++);
                         mi.setValue(objeto.getObjStrDes());
                         if (mostraURL) {
@@ -108,7 +109,7 @@ public class MenuBO extends BO<Usuario> {
                     }
                 } else {
                     DefaultMenuItem mi = new DefaultMenuItem();
-                    mi.setIcon(objeto.getIcone());
+                    //mi.setIcon(objeto.getIcone());
                     mi.setId("mmi" + idMenu++);
                     mi.setValue(objeto.getObjStrDes());
                     if (mostraURL) {
@@ -155,7 +156,7 @@ public class MenuBO extends BO<Usuario> {
                     if (objetosPermitidos != null) {
                         if (objetosPermitidos.contains(filho)) {
                             DefaultMenuItem mi = new DefaultMenuItem();
-                            mi.setIcon(filho.getIcone());
+                            //mi.setIcon(filho.getIcone());
                             mi.setId("mib" + idMenu++ + idMenu++);
                             mi.setValue(filho.getObjStrDes());
                             if (mostraURL) {
@@ -165,7 +166,7 @@ public class MenuBO extends BO<Usuario> {
                         }
                     } else {
                         DefaultMenuItem mi = new DefaultMenuItem();
-                        mi.setIcon(filho.getIcone());
+                        //mi.setIcon(filho.getIcone());
                         mi.setId("mib" + idMenu++);
                         mi.setValue(filho.getObjStrDes());
                         if (mostraURL) {
