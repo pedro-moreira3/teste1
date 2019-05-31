@@ -82,7 +82,7 @@ public class MenuBO extends BO<Usuario> {
                         submenu.setLabel(objeto.getObjStrDes());
                         submenu.setIcon(objeto.getIcone());
 //                        submenu.setIcon("fa fa-caret-right");
-                        submenu.setExpanded(true);
+                        //submenu.setExpanded(true);
 
                         model.addElement(submenu);
                         raizesMenu.put(objeto.getObjIntCod(), submenu);
