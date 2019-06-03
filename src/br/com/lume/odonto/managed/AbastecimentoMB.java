@@ -694,8 +694,13 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
             cal.setTime(data);
         }
         cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        agendamentos = AgendamentoSingleton.getInstance().getBo().listByProfissionalAndStatusAndDataLimite(profissional, cal.getTime());
+        cal.set(Calendar.MINUTE, 0);        
+        List<Agendamento> agendamentosNew = AgendamentoSingleton.getInstance().getBo().listByProfissionalAndStatusAndDataLimite(profissional, cal.getTime());
+        for (Agendamento agendamento : agendamentosNew) {
+            if(agendamento.getStatusNovo().matches("P|S|N|E|A|I|O")) {
+                agendamentos.add(agendamento);                
+            }
+        }
     }
 
     public void carregaProcedimentos() {

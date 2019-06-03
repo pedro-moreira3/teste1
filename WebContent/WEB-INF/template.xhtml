@@ -179,7 +179,7 @@
 		<div class="layout-main">
 			<h:form id="lume">
 				<p:ajaxStatus onstart="PF('loading').show();"
-					onsuccess="PF('loading').hide();" />
+					onsuccess="PF('loading').hide();" onerror="PF('loading').hide();"/>
 				<p:dialog modal="true" widgetVar="loading" draggable="false"
 					closable="false" showHeader="false" resizable="false">
 					<p:graphicImage value="/images/loading.gif" />

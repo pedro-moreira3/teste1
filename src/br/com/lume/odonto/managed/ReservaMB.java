@@ -442,8 +442,13 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         this.setProfissionalSelecionado((Profissional) event.getObject());
     }
 
-    private void listaAgendamentos() {
-        agendamentos = AgendamentoSingleton.getInstance().getBo().listByProfissionalAndStatusAndDataLimite(profissionalSelecionado, this.getEntity().getPrazo());
+    private void listaAgendamentos() {        
+        List<Agendamento> agendamentosNew = AgendamentoSingleton.getInstance().getBo().listByProfissionalAndStatusAndDataLimite(profissionalSelecionado, this.getEntity().getPrazo());
+        for (Agendamento agendamento : agendamentosNew) {
+            if(agendamento.getStatusNovo().matches("P|S|N|E|A|I|O")) {
+                agendamentos.add(agendamento);                
+            }
+        }
     }
 
     public void carregaProcedimentos() {
