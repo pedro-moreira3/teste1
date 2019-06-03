@@ -22,7 +22,7 @@ before_script:
   - branch=$CI_COMMIT_REF_NAME
   - paramsDeploy='-DintelidenteBuild='$CI_PIPELINE_ID' -DintelidenteMaster='$CI_PIPELINE_IID' -DintelidenteHotFix='
   - 'if [ $branch == "master" ]; then profile=wildfly-remote-prod; fi'
-  - 'if [ $branch == "desenv" ]; then profile=wildfly-remote-dev; fi'
+  - 'if [ $branch == "desenv" ] || [ $branch == "backend" ]; then profile=wildfly-remote-dev; fi'
   - 'echo "========================================================================================"'
   - 'echo "=   BRANCH.......................: $branch"'
   - 'echo "=   PROFILE......................: $profile"'
@@ -37,7 +37,7 @@ stages:
 build:
   stage: build
   script:  
-   - 'if [ $branch != "master" ] && [ $branch != "desenv" ]; then echo "Branch sem finalidade de deploy"; mvn compile; mvn package; exit 0; fi'
+   - 'if [ $branch != "master" ] && [ $branch != "desenv" ] && [ $branch != "backend" ]; then echo "Branch sem finalidade de deploy"; mvn compile; mvn package; exit 0; fi'
    - echo 'Clean no projeto e package do WAR'
    - mvn $MAVEN_OPTS clean package $paramsDeploy
    - echo 'Realizar deploy do arquivo gerado.'
