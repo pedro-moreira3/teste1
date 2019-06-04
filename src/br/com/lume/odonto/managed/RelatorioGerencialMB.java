@@ -150,10 +150,10 @@ public class RelatorioGerencialMB extends LumeManagedBean<Paciente> {
             pagamentosConsultorio = RelatorioGerencialSingleton.getInstance().getBo().findPagamentosConsultorio(inicio, fim, empresa);
             pagamentosConsultorio = pagamentosConsultorio.abs();
             saldoDoDia = recebimento.subtract(getPagamentosConsultorio());
-            pacientesAtendidos = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamentoUtil.ATENDIDO.getSigla(), empresa);
-            pacientesCancelados = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamentoUtil.CANCELADO.getSigla(), empresa);
-            pacientesNaoVieram = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamentoUtil.FALTA.getSigla(), empresa);
-            pacientesRemarcaram = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatus(inicio, fim, StatusAgendamentoUtil.REMARCADO.getSigla(), empresa);
+            pacientesAtendidos = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatusAtendido(inicio, fim, empresa);
+            pacientesCancelados = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatusCancelado(inicio, fim, empresa);
+            pacientesNaoVieram = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatusFalta(inicio, fim, empresa);
+            pacientesRemarcaram = RelatorioGerencialSingleton.getInstance().getBo().findTotalAgendamentoStatusRemarcado(inicio, fim, empresa);
             pacientesAgendados = pacientesAtendidos + pacientesNaoVieram + pacientesRemarcaram + pacientesCancelados;
             pacientesAtivos = RelatorioGerencialSingleton.getInstance().getBo().findPacientesAtivos(inicio, fim, empresa);
             pacientesInativosDetalhe = RelatorioGerencialSingleton.getInstance().getBo().listPacientesInativos(inicio, fim, empresa);
