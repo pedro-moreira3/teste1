@@ -1,6 +1,11 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
+    	<style>
+	    	.autoComplete .ui-autocomplete input {
+				height: 100%;
+			}
+		</style>
         <div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -15,6 +20,7 @@
                                     completeMethod="#{materialMB.filtraLocal}">
                                     <p:ajax event="itemSelect" listener="#{materialMB.handleSelectLocal}" update=":lume:tbLocalTree" />
                                 </p:autoComplete>
+                                <br /><br />
                                 <p:tree value="#{materialMB.rootLocal}" var="local" rendered="#{materialMB.entity.id == 0}" id="tbLocalTree" selection="#{materialMB.selectedLocal}"
                                     selectionMode="single">
                                     <p:ajax event="select" listener="#{materialMB.onNodeSelectLocal}" update=":lume:digitacaoLocal" process="@this" />
@@ -31,6 +37,7 @@
                                     minQueryLength="3">
                                     <p:ajax event="itemSelect" listener="#{materialMB.handleSelect}" update=":lume:tbItemTree, :lume:quantidadeAtual2" />
                                 </p:autoComplete>
+                                <br /><br />
                                 <p:tree value="#{materialMB.root}" var="item" rendered="#{materialMB.entity.id == 0}" id="tbItemTree" selection="#{materialMB.selectedItem}" selectionMode="single">
                                     <p:ajax event="select" listener="#{materialMB.onNodeSelect}" update=":lume:digitacao, :lume:quantidadeAtual2" process="@this" />
                                     <p:ajax event="unselect" listener="#{materialMB.onNodeUnselect}" />
@@ -43,6 +50,7 @@
                         <br />
                         <p:fieldset legend="Entrada" id="pnEntrada">
                             <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"
+                            	columnClasses="ui-g-2, ui-g-4, ui-g-2, ui-g-4"
                                 style="border:0px none; background-color:transparent;" id="pgEntrada">
                                 <p:outputLabel for="quantidade" value="Quantidade de volumes: " />
                                 <p:inputText id="quantidade" value="#{materialMB.entity.quantidade}" maxlength="10" onkeypress="validaNumeros(event)" required="true"
@@ -106,9 +114,10 @@
 
                                 <p:outputLabel for="marca" value="Marca : " rendered="#{materialMB.estoqueCompleto}" />
                                 <p:column rendered="#{materialMB.estoqueCompleto}">
-                                    <h:panelGroup id="pnBtmarca" style="display: flex !important;">
+                                    <h:panelGroup id="pnBtmarca" style="display: flex !important;" styleClass="autoComplete">
                                         <p:autoComplete queryDelay="1000" value="#{materialMB.entity.marca}" id="marca" minQueryLength="3" completeMethod="#{materialMB.geraSugestoes}" var="marca"
-                                            itemLabel="#{marca.nome}" itemValue="#{marca}" converter="marca" forceSelection="true" required="true" dropdown="true" style="margin-right: 5px">
+                                            itemLabel="#{marca.nome}" itemValue="#{marca}" converter="marca" forceSelection="true" required="true" dropdown="true" style="margin-right: 5px"
+                                            scrollHeight="400">
                                             <p:ajax event="itemSelect" listener="#{materialMB.handleSelectMarca}" update=":lume:marca" />
                                         </p:autoComplete>
                                         <p:commandButton id="novaMarca" disabled="#{materialMB.entity.id != 0}" rendered="#{!materialMB.novaMarca}" icon="fa fa-plus White"

@@ -27,7 +27,7 @@ label.ui-helper-hidden {
                         <p:column>
 
                             <p:selectOneMenu id="profissionalFinalizaProcedimento" value="#{planoTratamentoMB.profissionalFinalizaProcedimento}" converter="profissional"
-                                rendered="#{planoTratamentoMB.admin}" filter="true" filterMatchMode="contains" styleClass="MarRight10" style="width: 65% !important;float: left;">
+                                rendered="#{planoTratamentoMB.admin}" filter="true" filterMatchMode="contains">
                                 <p:ajax process="@this" />
                                 <f:selectItem itemValue="#{null}" itemLabel="Selecione um profissional" />
                                 <f:selectItems value="#{planoTratamentoMB.profissionais}" var="profissional" itemLabel="#{profissional.dadosBasico.prefixoNome}" itemValue="#{profissional}" />

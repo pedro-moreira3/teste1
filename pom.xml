@@ -145,7 +145,7 @@
 		<dependency>
 			<groupId>org.primefaces</groupId>
 			<artifactId>primefaces</artifactId>
-			<version>7.0</version>
+			<version>7.0.RC3</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.primefaces.extensions/primefaces-extensions -->
 		<dependency>

@@ -1077,6 +1077,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.horaUtilValida = horaUtilValida;
     }
 
+    //TODO - Corrigir time picker que está sempre em '00:00' na versão posterior à 12 apr.
     public Date getInicio() {
         return inicio;
     }

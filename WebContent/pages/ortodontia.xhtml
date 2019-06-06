@@ -21,6 +21,17 @@ label.ui-helper-hidden {
 li.orcamento-li {
 	list-style-type: disc !important;
 }
+
+.fixaAbaixo {
+	position: relative;
+}
+.fixaAbaixo input {
+	position: absolute;
+	bottom: 0 !important;
+}
+.fixaAbaixo button span {
+	margin-top: -3px !important;
+}
 </style>
 
 				<p:outputPanel id="pnOrtodontia" styleClass="BordNone" style="margin-top: 20px !important;">
@@ -28,6 +39,7 @@ li.orcamento-li {
 					<p:fieldset legend="Dados" toggleable="true">
 
 						<p:panelGrid columns="6" layout="grid"
+							columnClasses="ui-g-1,ui-g-3,ui-g-1,ui-g-3,ui-g-2,ui-g-2"
 							styleClass="ui-panelgrid-blank form-group ui-fluid"
 							style="border:0px none; background-color:transparent;">
 
@@ -35,6 +47,12 @@ li.orcamento-li {
 							<p:inputText value="#{ortodontiaMB.entity.descricao}"
 								required="true" />
 
+							<p:outputLabel value="Valor procedimento : " />
+							<p:inputNumber id="valorProcedimentoPadrao"
+								value="#{ortodontiaMB.valorProcedimentoOrtodontico}"
+								required="true" maxlength="13" maxValue="9999999999.99"
+								decimalSeparator="," symbol="R$ " thousandSeparator="." />
+								
 							<p:outputLabel
 								value="Utilizar o convênio #{ortodontiaMB.paciente.convenio.dadosBasico.nome} :"
 								rendered="#{ortodontiaMB.paciente.convenio != null}" />
@@ -44,13 +62,8 @@ li.orcamento-li {
 								<p:ajax process="@this" update="valorProcedimentoPadrao"
 									listener="#{ortodontiaMB.actionCarregarValorProcedimentoPadrao}" />
 							</p:selectBooleanCheckbox>
-
-							<p:outputLabel value="Valor procedimento : " />
-							<p:inputNumber id="valorProcedimentoPadrao"
-								value="#{ortodontiaMB.valorProcedimentoOrtodontico}"
-								required="true" maxlength="13" maxValue="9999999999.99"
-								decimalSeparator="," symbol="R$ " thousandSeparator="." />
-
+							<p:column rendered="#{ortodontiaMB.paciente.convenio == null}" />
+							<p:column rendered="#{ortodontiaMB.paciente.convenio == null}" />
 
 							<p:outputLabel value="Início do tratamento : " />
 							<p:calendar id="inicioTratamento" required="true"
@@ -197,15 +210,15 @@ li.orcamento-li {
 								layout="grid" styleClass="ui-panelgrid-blank"
 								style="border:0px none; background-color:transparent;">
 								<p:outputLabel value="Procedimento Extra : " />
-								<p:column>
+								<h:panelGroup style="display: flex !important">
 									<p:autoComplete dropdown="true" queryDelay="1000"
 										value="#{ortodontiaMB.procedimentoExtra}"
-										id="procedimentoExtra"
+										id="procedimentoExtra" styleClass="fixaAbaixo"
 										completeMethod="#{ortodontiaMB.geraSugestoesProcedimentoOrtodontico}"
 										var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
 										converter="procedimento" forceSelection="true"
 										scrollHeight="400" minQueryLength="3"
-										style="float:left !important;width: 60% !important;">
+										style="width: calc(60% - 5px) !important; margin-right: 5px !important; position: relative">
 										<p:ajax event="itemSelect" process="@this"
 											update="adicionarProcedimentoExtra,valorProcedimentoExtra"
 											listener="#{ortodontiaMB.actionMudaValorProcedimentoExtra}" />
@@ -214,16 +227,16 @@ li.orcamento-li {
 										value="#{ortodontiaMB.valorProcedimentoExtra}"
 										required="#{ortodontiaMB.procedimentoExtra != null}"
 										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
-										symbol="R$ " thousandSeparator="."
-										style="float:left !important;width: 30% !important;" />
+										symbol="R$ " thousandSeparator="." styleClass="fixaAbaixo"
+										style="width: calc(40% - 33px - 5px) !important; margin-right: 5px !important;" />
 									<p:commandButton id="adicionarProcedimentoExtra"
 										icon="White fa fa-plus White"
 										actionListener="#{ortodontiaMB.actionAdicionarProcedimentoExtra}"
 										update=":lume:tabView:dtProcedimentosOrtodontia,:lume:tabView:dtOrcamentosOrtodontia,:lume:tabView:dtOrcamentosOrtodontia,:lume:tabView:pgTotaisOrtodontia,@this"
 										process="valorProcedimentoExtra,@this"
-										style="float:left;margin-left: 5px;margin-top: 1px;"
+										style="width: 33px !important"
 										disabled="#{ortodontiaMB.procedimentoExtra == null or ortodontiaMB.entity.id == null or ortodontiaMB.entity.id == 0}" />
-								</p:column>
+								</h:panelGroup>
 								<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 									id="dtProcedimentosOrtodontia" var="ptp"
 									value="#{ortodontiaMB.planoTratamentoProcedimentos}" rows="6"

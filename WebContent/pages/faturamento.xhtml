@@ -49,7 +49,7 @@
                         <div class="SeparatorFull"></div>
 
                         <p:fieldset legend="Filtros">
-                            <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                            <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-1,ui-grid-col-5" layout="grid" styleClass="ui-panelgrid-blank"
                                 style="border:0px none; background-color:transparent;">
                                 <p:outputLabel for="profissional" value="Profissional : " />
                                 <p:autoComplete dropdown="true" queryDelay="1000" size="35" value="#{faturamentoMB.profissional}" id="profissional" minQueryLength="3"
@@ -72,7 +72,7 @@
                                     <f:selectItem itemValue="12" itemLabel="Dezembro" />
                                 </p:selectOneMenu>
                             </p:panelGrid>
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank">
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-3,ui-grid-col-9" layout="grid" styleClass="ui-panelgrid-blank">
 	                                	<p:outputLabel for="mesesAnteriores" value="Incluir finalizados em aberto dos meses anteriores : " />
 	                                	<p:selectBooleanCheckbox id="mesesAnteriores" value="#{faturamentoMB.mesesAnteriores}" />
 	                                </p:panelGrid>
@@ -383,7 +383,7 @@
                         <br />
                         <p:fieldset legend="Repasses" toggleable="true" toggleSpeed="500" collapsed="false">
                             <h:panelGroup id="pnReservados">
-                                <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+                                <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank"
                                     style="border:0px none; background-color:transparent;">
                                     <p:outputLabel for="repasse" value="Repasse : " />
                                     <p:selectOneMenu id="repasse" value="#{faturamentoMB.repasseSelecionado}" styleClass="Wid50" converter="repasseProfissional">

@@ -13,7 +13,7 @@
                         <div class="SeparatorFull"></div>
 
 
-                        <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;"
+                        <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;"
                             id="pnDados">
 
                             <p:outputLabel for="profissional" value="Profissional : " />
@@ -49,7 +49,7 @@
                                     styleClass="itembusca" disabled="#{abastecimentoMB.entity.id != 0}">
                                     <p:ajax event="itemSelect" listener="#{abastecimentoMB.handleSelect}" update=":lume:tbItemTree, :lume:quantidade2" />
                                 </p:autoComplete>
-
+								<br /><br />
                                 <p:tree value="#{abastecimentoMB.root}" var="item" id="tbItemTree" selection="#{abastecimentoMB.selectedItem}" selectionMode="single"
                                     rendered="#{abastecimentoMB.entity.id == 0}">
                                     <p:ajax event="select" listener="#{abastecimentoMB.onNodeSelect}" update=":lume:digitacao, :lume:quantidade2,:lume:dtMateriaisDisponiveis" process="@this" />

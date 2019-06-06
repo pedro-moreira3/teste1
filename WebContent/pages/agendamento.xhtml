@@ -64,8 +64,9 @@ div.ui-selectoneradio label {
 	padding-left: 7px !important;
 }
 
-.removeSecondPadding > .ui-panelgrid-content .ui-grid-row .ui-panelgrid-cell:nth-child(1) {
-	padding-top: 0px !important;	
+.removeSecondPadding>.ui-panelgrid-content .ui-grid-row .ui-panelgrid-cell:nth-child(1)
+	{
+	padding-top: 0px !important;
 }
 
 .ui-selectmanycheckbox tr td {
@@ -73,7 +74,8 @@ div.ui-selectoneradio label {
 	display: inline-flex !important;
 	width: 238px !important
 }
-.ui-selectmanycheckbox tr td > div > div:last-child {
+
+.ui-selectmanycheckbox tr td>div>div:last-child {
 	display: inline-block;
 	position: relative;
 	top: 50%;
@@ -84,9 +86,11 @@ div.ui-selectoneradio label {
 	position: relative;
 	display: inline-flex !important;
 }
+
 .ui-selectmanycheckbox tr td label div:first-child {
 	position: relative;
 }
+
 .ui-selectmanycheckbox tr td label div:first-child div {
 	display: inline-block;
 	position: relative;
@@ -94,7 +98,7 @@ div.ui-selectoneradio label {
 	transform: translateY(-50%);
 }
 
-.NoChildPadding > div {
+.NoChildPadding>div {
 	padding: 0px !important;
 }
 </style>
@@ -126,7 +130,6 @@ div.ui-selectoneradio label {
 				<ui:include src="afastamento.xhtml" />
 			</p:dialog>
 		</h:panelGroup>
-
 
 		<p:dialog widgetVar="eventDialog" header="Agendamento"
 			resizable="false" id="pnAgendamento" responsive="true"
@@ -392,6 +395,38 @@ div.ui-selectoneradio label {
 
 
 		<script type="text/javascript">
+			/*
+				if (PrimeFaces.widget.Schedule != undefined) {
+					PrimeFaces.widget.Schedule.prototype.init = function() {
+						this.cfg.titleFormat = {
+							month : 'MMMM yyyy',
+							week : "De d MMM [ yyyy]{ 'à' d [ MMM] 'de' yyyy}",
+							day : 'dddd, d MMM , yyyy'
+						};
+						this.cfg.columnFormat = {
+							month : 'ddd',
+							week : 'ddd d/M',
+							day : 'dddd M/d'
+						};
+						if (this.jq.is(':visible')) {
+							this.jqc.fullCalendar(this.cfg);
+							return true;
+						} else {
+							return false;
+						}
+					};
+				}
+			 */
+			PrimeFaces.widget.Schedule.prototype._oldInit = PrimeFaces.widget.Schedule.prototype.init;
+			PrimeFaces.widget.Schedule.prototype.init = function(cfg) {
+				cfg.columnFormat = {
+					month : 'ddd',
+					week : 'ddd D/M',
+					day : 'dddd D/M'
+				};
+				this._oldInit.apply(this, arguments);
+			};
+
 			function handleDialogRequest(xhr, status, args) {
 				console.debug('handleDialogRequest');
 				console.debug(args);

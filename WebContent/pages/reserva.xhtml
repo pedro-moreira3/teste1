@@ -19,7 +19,7 @@
                         <h1>Reserva de Materiais</h1>
                         <div class="SeparatorFull"></div>
 
-                        <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;"
+                        <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;"
                             id="pgReserva">
 
                             <p:outputLabel for="descricao" value="Descrição : " />
@@ -52,7 +52,7 @@
 
                         <p:panel id="pnItens" header="Itens">
 
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+                            <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
 
 
 
@@ -78,7 +78,7 @@
 
                                 <p:outputLabel for="planoTratamentoProcedimentoAgendamento" value="Procedimentos : " />
                                 <p:selectCheckboxMenu id="planoTratamentoProcedimentoAgendamento" converter="agendamentoPlano" value="#{reservaMB.planoTratamentoProcedimentoAgendamentos}"
-                                    label="Selecione o(s) procedimento(s)" required="#{reservaMB.procedimentoObrigatorio}" styleClass="Wid50">
+                                    label="Selecione o(s) procedimento(s)" required="#{reservaMB.procedimentoObrigatorio}">
                                     <f:selectItems value="#{reservaMB.agendamentoProcedimentos}" var="ap" itemValue="#{ap}" itemLabel="#{ap.planoTratamentoProcedimento.descricaoCompleta}" />
                                 </p:selectCheckboxMenu>
 
