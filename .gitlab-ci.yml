@@ -32,7 +32,6 @@ before_script:
 
 stages:
   - build
-  - test
 
 build:
   stage: build
@@ -45,16 +44,3 @@ build:
    - 'if [ -f "$targetPath/$warFile" ]; then mv $targetPath/$warFile $outPath/$warLatest; fi'
    - echo 'Aguardando reinicio do servidor'
    - sleep 30
-
-test:
-  stage: test
-  script:
-   - 'if [ $branch == "master" ]; then urlTeste=$urlProd; elif [ $branch == "desenv" ]; then urlTeste=$urlDesenv; else "Branch sem ambiente de teste"; exit 0; fi'
-   - echo 'URL para teste '$urlTeste
-   - echo 'Indo ate pasta de saida'
-   - cd $outPath
-   - echo 'Iniciando teste.'
-   - echo 'Teste Skipped.'
-   
-# Teste comentado
-# - 'if java -jar ComproveLoginTest.jar -h $urlTeste -r y | grep """$noFailure"""; then cd ../; echo "Deploy feito e testado com sucesso!"; echo "Salvando WAR para backup futuro"; if [ -f $outPath/$warLatest ]; then mv $outPath/$warLatest $outPath/$warOld; fi; else cd ../; echo "Inicio do backup"; if [ ! -f $outPath/$warOld ]; then echo "Nao ha war antigo para deploy backup"; exit 1; fi; echo "Salvando WAR com erro"; if [ -f $outPath/$warLatest ]; then mv $outPath/$warLatest $outPath/$warErro; fi; echo "Retornando WAR antigo"; mv $outPath/$warOld $targetPath/$warFile; echo "Realizando deploy do WAR antigo"; mvn $MAVEN_OPTS wildfly:deploy-only -P $profile; fi'
