@@ -690,7 +690,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             descricao = agendamento.getPaciente().getDadosBasico().getNome();
                             descricao += " - " + agendamento.getDescricao();
                         } else {
-                            dataAtual.setTime(agendamento.getPaciente().getDadosBasico().getDataNascimento());
+                            if(agendamento != null && agendamento.getPaciente() != null && agendamento.getPaciente().getDadosBasico() != null &&
+                                    agendamento.getPaciente().getDadosBasico().getDataNascimento() != null)   
+                                dataAtual.setTime(agendamento.getPaciente().getDadosBasico().getDataNascimento());
                             if (profissional != null) {
                                 descricao = "[" + agendamento.getPaciente().getSiglaConvenio() + "] " + agendamento.getDescricaoAgenda();
                             } else {
