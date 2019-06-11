@@ -690,6 +690,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             descricao = agendamento.getPaciente().getDadosBasico().getNome();
                             descricao += " - " + agendamento.getDescricao();
                         } else {
+
                             if(agendamento != null && agendamento.getPaciente() != null && agendamento.getPaciente().getDadosBasico() != null &&
                                     agendamento.getPaciente().getDadosBasico().getDataNascimento() != null)   
                                 dataAtual.setTime(agendamento.getPaciente().getDadosBasico().getDataNascimento());
