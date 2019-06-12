@@ -21,7 +21,7 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.custo.CustoSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
@@ -127,7 +127,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
         this.setClazz(PlanoTratamentoProcedimento.class);
         this.carregarPlanoTratamentoProcedimentos();
         mes = Calendar.getInstance().get(Calendar.MONTH) + 1;
-        Empresa empresalogada = Configurar.getInstance().getConfiguracao().getEmpresaLogada();
+        Empresa empresalogada = UtilsFrontEnd.getEmpresaLogada();
         nomeClinica = empresalogada.getEmpStrNme() != null ? empresalogada.getEmpStrNme() : "";
         endTelefoneClinica = (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() + " - " : "") + (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() + "/" : "") + (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() + " - " : "") + (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
     }

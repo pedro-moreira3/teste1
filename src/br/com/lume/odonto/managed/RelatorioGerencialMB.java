@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.KeyValue;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.relatorioGerencial.RelatorioGerencialSingleton;
@@ -144,7 +144,7 @@ public class RelatorioGerencialMB extends LumeManagedBean<Paciente> {
 
     public void actionFiltrar(ActionEvent event) {
         try {
-            Empresa empresa = Configurar.getInstance().getConfiguracao().getEmpresaLogada();
+            Empresa empresa = UtilsFrontEnd.getEmpresaLogada();
            // RelatorioGerencialBO bo = ((RelatorioGerencialBO) getbO());
             recebimento = RelatorioGerencialSingleton.getInstance().getBo().findRecebimento(inicio, fim, empresa);
             pagamentosConsultorio = RelatorioGerencialSingleton.getInstance().getBo().findPagamentosConsultorio(inicio, fim, empresa);
@@ -166,7 +166,7 @@ public class RelatorioGerencialMB extends LumeManagedBean<Paciente> {
             profissionaisMaisRentaveis = RelatorioGerencialSingleton.getInstance().getBo().findProfissionaisMaisRentaveis(inicio, fim, empresa);
             agendamentosHorario = RelatorioGerencialSingleton.getInstance().getBo().findAgendamentosHorario(inicio, fim, empresa);
             minutosOciosos = minutosAgendados - minutosUtilizados;
-            taxaDeOcupacao = (int) (minutosUtilizados / 60) * 100 / Configurar.getInstance().getConfiguracao().getEmpresaLogada().getCapacidadeInstalada();
+            taxaDeOcupacao = (int) (minutosUtilizados / 60) * 100 / UtilsFrontEnd.getEmpresaLogada().getCapacidadeInstalada();
         } catch (Exception e) {
             log.error("Erro no actionFiltrar", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

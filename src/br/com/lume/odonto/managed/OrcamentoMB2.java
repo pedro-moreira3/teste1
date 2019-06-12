@@ -28,6 +28,7 @@ import br.com.lume.odonto.entity.Orcamento;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Procedimento;
+import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.orcamento.OrcamentoSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
@@ -71,9 +72,12 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
         super(OrcamentoSingleton.getInstance().getBo());
      
         this.setClazz(Orcamento.class);
-        Empresa empresalogada = Configurar.getInstance().getConfiguracao().getEmpresaLogada();
+        Empresa empresalogada = UtilsFrontEnd.getEmpresaLogada();
         nomeClinica = empresalogada.getEmpStrNme() != null ? empresalogada.getEmpStrNme() : "";
-        endTelefoneClinica = (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() + " - " : "") + (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() + "/" : "") + (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() + " - " : "") + (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
+        endTelefoneClinica = (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() + " - " : "") +
+                (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() + "/" : "") +
+                (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() + " - " : "") +
+                (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
         try {
             porcentagem = new BigDecimal(0);
             formasPagamento = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma");
@@ -147,8 +151,11 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
 
     public void simulaLancamento() {
         if (porcentagem != null) {
-            if (!isDentistaAdmin() && Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDesconto() == null || Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDesconto().doubleValue() < porcentagem.doubleValue()) {
-                porcentagem = Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDesconto() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDesconto() : new BigDecimal(0);
+            
+            Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
+            
+            if (!isDentistaAdmin() && profissionalLogado.getDesconto() == null || profissionalLogado.getDesconto().doubleValue() < porcentagem.doubleValue()) {
+                porcentagem = profissionalLogado.getDesconto() != null ? profissionalLogado.getDesconto() : new BigDecimal(0);
                 this.addError(OdontoMensagens.getMensagem("erro.orcamento.desconto.maior"), "");
                 calculaDesconto();
                 lancamentos = new ArrayList<>();
@@ -333,7 +340,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
                 this.getEntity().setQuantidadeParcelas(numeroParcelas);
                 BigDecimal desconto = valorTotalPlano.subtract(valorTotal.add(totalPago));
                 this.getEntity().setValorTotal(valorTotalPlano.subtract(desconto));
-                this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
                 for (Lancamento l : lancamentos) {
                     if (l.getValor().compareTo(l.getValorOriginal()) != 0) {
                         l.setValorOriginal(l.getValor());
@@ -511,7 +518,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
     }
 
     public String getProfissionalOrcamento() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDadosBasico().getNome();
+        return UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome();
     }
 
     public String getNomeClinica() {

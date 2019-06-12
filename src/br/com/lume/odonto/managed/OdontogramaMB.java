@@ -23,7 +23,7 @@ import com.google.gson.GsonBuilder;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dente.DenteSingleton;
 import br.com.lume.odonto.entity.Dente;
 import br.com.lume.odonto.entity.Odontograma;
@@ -354,7 +354,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
     public void actionPersistStatusDente(ActionEvent event) {
         try {
             statusDenteSelecionado.setCor("#" + statusDenteSelecionado.getCorPF());
-            statusDenteSelecionado.setIdEmpresa(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpIntCod());
+            statusDenteSelecionado.setIdEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
             StatusDenteSingleton.getInstance().getBo().persist(statusDenteSelecionado);
             statusDenteSelecionado = new StatusDente();
             carregarStatusDente();
@@ -410,7 +410,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
         try {
             planoTratamento.setOdontograma(getEntity());
             planoTratamento.setPaciente(getPaciente());
-            planoTratamento.setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            planoTratamento.setProfissional(UtilsFrontEnd.getProfissionalLogado());
             PlanoTratamentoSingleton.getInstance().getBo().persist(planoTratamento);
             actionCarregarPTOdontograma();
             carregarOdontogramas();

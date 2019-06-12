@@ -22,8 +22,10 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.MessageType;
 import br.com.lume.common.util.StringUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.bo.RestricaoBO;
+import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.managed.LumeSecurity;
 
 public abstract class LumeManagedBean<E extends Serializable> implements Serializable {
@@ -192,8 +194,12 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         // return ProfissionalBO.getProfissionalLogado() != null && getLumeSecurity().getUsuario() != null &&
         // getLumeSecurity().getUsuario().getEmpresa() != null ? getLumeSecurity().getUsuario().getEmpresa().getEmpChaTrial().equals("S") &&
         // ProfissionalBO.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR): false;
-        if (UtilsFrontEnd.getProfissionalLogado() != null && this.getLumeSecurity().getUsuario() != null && this.getLumeSecurity().getUsuario().getEmpresa() != null) {
-            return this.getLumeSecurity().getUsuario().getEmpresa().getEmpChaTrial().equals("S") && UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR);
+        
+        Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
+        Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
+        
+        if  (profissionalLogado != null && this.getLumeSecurity().getUsuario() != null && empresaLogada != null) {
+            return empresaLogada.getEmpChaTrial().equals("S") && profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR);
         } else {
             return false;
         }

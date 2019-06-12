@@ -15,6 +15,7 @@ import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 
 import br.com.lume.odonto.entity.Agendamento;
@@ -56,7 +57,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         try {
             if (a.getInicio().before(a.getFim())) {
 
-                a.setChegouAs(UtilsFrontEnd.getDataAtual(a.getChegouAs()));
+                a.setChegouAs(Utils.getDataAtual(a.getChegouAs()));
                 a.setIniciouAs(UtilsFrontEnd.getDataAtual(a.getIniciouAs()));
                 a.setFinalizouAs(UtilsFrontEnd.getDataAtual(a.getFinalizouAs()));
 
@@ -107,7 +108,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private void carregarCadeiras() {
         cadeiras = new ArrayList<>();
-        for (int i = 1; i <= Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpIntCadeira(); i++) {
+        for (int i = 1; i <= UtilsFrontEnd.getEmpresaLogada().getEmpIntCadeira(); i++) {
             cadeiras.add(i);
         }
     }
