@@ -20,7 +20,7 @@ import org.primefaces.event.SelectEvent;
 import br.com.lume.abastecimento.AbastecimentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.controleMaterial.ControleMaterialSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.esterilizacao.EsterilizacaoSingleton;
@@ -121,12 +121,12 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
     public void actionPersist(ActionEvent event) {
         try {
             Material m = atualizaEstoqueLavagem();
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(idEmpresa);
             this.getEntity().setData(Calendar.getInstance().getTime());
             this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
             this.getEntity().setStatus(Lavagem.ABERTO);
 
-            ControleMaterial cm = new ControleMaterial(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa(), m, new BigDecimal(1));
+            ControleMaterial cm = new ControleMaterial(idEmpresa, m, new BigDecimal(1));
             ControleMaterialSingleton.getInstance().getBo().persist(cm);
 
             ArrayList<LavagemKit> lks = new ArrayList<>();
@@ -190,7 +190,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").contains(
                         Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))) {
@@ -254,7 +254,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                 m2.setDataCadastro(Calendar.getInstance().getTime());
                 m2.setLote(m.getLote());
                 m2.setFornecedor(m.getFornecedor());
-                m2.setExcluidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getId());
+                m2.setExcluidoPorProfissional(idProfissionalLogado);
                 m2.setQuantidadeAtual(new BigDecimal(this.getQuantidadeDescarte()));
                 m2.setQuantidade(new BigDecimal(this.getQuantidadeDescarte()));
                 m2.setValor(m.getValor());
@@ -504,7 +504,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
 
     public Lavagem lavar() throws Exception {
         Lavagem lavagem = new Lavagem();
-        lavagem.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        lavagem.setIdEmpresa(idEmpresa);
         lavagem.setData(Calendar.getInstance().getTime());
         lavagem.setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
         lavagem.setSolicitante(Configurar.getInstance().getConfiguracao().getProfissionalLogado());

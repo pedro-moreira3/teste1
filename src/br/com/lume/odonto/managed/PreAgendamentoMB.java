@@ -21,7 +21,7 @@ import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.GeradorSenha;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
 import br.com.lume.odonto.entity.Afastamento;
@@ -100,7 +100,7 @@ public class PreAgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public List<Profissional> geraSugestoes(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query,idEmpresa);
     }
 
     public void actionPesquisaPreAgendamento(ActionEvent event) {

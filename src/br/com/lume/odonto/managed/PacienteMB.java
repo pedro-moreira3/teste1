@@ -36,8 +36,8 @@ import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.common.util.Utils;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
+
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -173,7 +173,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
 
         if (targetFile == null || !targetFile.exists()) {
-            nomeImagem = Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa() + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
+            nomeImagem = idEmpresa + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
             targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
         }
         FileImageOutputStream imageOutput = new FileImageOutputStream(targetFile);
@@ -276,7 +276,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     private void geraLista() {
         try {
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -294,14 +294,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void actionPersist(ActionEvent event) {
         Usuario usuario = null;
         try {
-            if (Utils.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
+            if (UtilsFrontEnd.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
                 addError("Data de nascimento inválida.", "");
                 return;
             }
             DadosBasicoSingleton.getInstance().getBo().validaTelefonePaciente(this.getEntity().getDadosBasico());
             DadosBasicoSingleton.getInstance().getBo().validaDataNascimento(this.getEntity().getDadosBasico());
-            PacienteSingleton.getInstance().getBo().validaPacienteDuplicadoEmpresa(this.getEntity(),Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            PacienteSingleton.getInstance().getBo().validaPacienteDuplicadoEmpresa(this.getEntity(),idEmpresa);
+            this.getEntity().setIdEmpresa(idEmpresa);
 
             if (this.getEntity().getDadosBasico().getEmail() != null && !this.getEntity().getDadosBasico().getEmail().trim().isEmpty()) {
                 usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(this.getEntity().getDadosBasico().getEmail().toUpperCase());
@@ -416,7 +416,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         String cep = this.getEntity().getDadosBasico().getCep();
         if (cep != null && !cep.equals("")) {
             cep = cep.replaceAll("-", "");
-            ViaCep endereco = Utils.buscaCep(cep);
+            ViaCep endereco = UtilsFrontEnd.buscaCep(cep);
             if (endereco != null) {
                 this.getEntity().getDadosBasico().setBairro(endereco.getBairro());
                 this.getEntity().getDadosBasico().setCidade(endereco.getLocalidade());
@@ -577,7 +577,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     }
 
     public List<Paciente> geraSugestoesPaciente(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,idEmpresa);
     }
 
     public void handleSelectPaciente(SelectEvent event) {

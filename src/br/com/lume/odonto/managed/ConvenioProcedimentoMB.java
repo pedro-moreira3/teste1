@@ -16,7 +16,7 @@ import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 //import br.com.lume.odonto.bo.ConvenioBO;
@@ -95,7 +95,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
             if (this.getEntity().getProcedimento() != null && this.getEntity().getValor() != null && this.getEntity().getProcedimento().getCodigoCfo() != null) {
                 this.getEntity().setAlteradoPor(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
                 this.getEntity().setDataUltimaAlteracao(Calendar.getInstance().getTime());
-                this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+                this.getEntity().setIdEmpresa(idEmpresa);
                 if (this.getEntity().isZeraId()) {
                     this.getEntity().setId(0);
                 }
@@ -166,7 +166,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
             if (this.getEntity().getConvenio() != null) {
                 int cont = -1;
                 if (this.verificaCp()) {
-                    this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+                    this.getEntity().setIdEmpresa(idEmpresa);
                     for (Procedimento p : procedimentos) {
                         ConvenioProcedimento cp = new ConvenioProcedimento();
                         cp.setId(cont--);

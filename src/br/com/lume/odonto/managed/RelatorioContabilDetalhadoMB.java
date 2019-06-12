@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.common.util.Utils;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.LancamentoContabilRelatorio;
@@ -100,7 +100,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
                     dataAnterior = lc.getData();
                     corLinha = this.invertCor(corLinha);
                     extrato += corLinha + "\"><td>";
-                    extrato += Utils.dateToString(dataAnterior, "dd/MM/yyyy");
+                    extrato += UtilsFrontEnd.dateToString(dataAnterior, "dd/MM/yyyy");
                 } else {
                     extrato += corLinha + "\"><td>";
                 }

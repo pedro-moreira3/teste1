@@ -17,7 +17,7 @@ import org.primefaces.event.SelectEvent;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.custo.CustoSingleton;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
@@ -71,7 +71,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
       //  planoTratamentoBO = new PlanoTratamentoBO();
     //    planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
         try {
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
 //            setPaciente(PacienteBO.getPacienteSelecionado());
             custos = new ArrayList<>();
             if (paciente != null && paciente.getId() != null) {
@@ -97,7 +97,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
         try {
             this.getCustoSelecionado().setExcluido(Status.SIM);
             this.getCustoSelecionado().setDataExclusao(Calendar.getInstance().getTime());
-            this.getCustoSelecionado().setExcluidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getId());
+            this.getCustoSelecionado().setExcluidoPorProfissional(idProfissionalLogado);
             this.getbO().persist(this.getCustoSelecionado());
             this.actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -137,7 +137,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, idEmpresa);
     }
 
     public void handleSelect(SelectEvent event) {

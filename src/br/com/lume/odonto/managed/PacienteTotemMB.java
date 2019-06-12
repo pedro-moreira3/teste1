@@ -15,7 +15,7 @@ import br.com.lume.anamnese.AnamneseSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.itemAnamnese.ItemAnamneseSingleton;
 import br.com.lume.noticia.NoticiaSingleton;
@@ -164,7 +164,7 @@ public class PacienteTotemMB extends LumeManagedBean<Paciente> {
             try {
                 paciente = PacienteSingleton.getInstance().getBo().findByEmail(this.getEntity().getDadosBasico().getEmail());
                 if (paciente != null) {
-                    if (paciente.getIdEmpresa() != Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa()) {
+                    if (paciente.getIdEmpresa() != idEmpresa) {
                         this.addError(OdontoMensagens.getMensagem("paciente.totem.paciente.nao.pertence"), "");
                         return event.getOldStep();
                     } else {

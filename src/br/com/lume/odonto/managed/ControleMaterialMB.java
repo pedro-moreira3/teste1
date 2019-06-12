@@ -19,7 +19,7 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.controleMaterial.ControleMaterialSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.item.ItemSingleton;
@@ -288,7 +288,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
             this.getEntity().setReservaKit(this.getReservaKit());
             this.getEntity().setQuantidade(materiaisSelecionado.get(0).getQuantidadeRetirada());
             this.getEntity().setUnidade(1);
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(idEmpresa);
             if (message) {
                 this.actionPersist(event);
             } else {

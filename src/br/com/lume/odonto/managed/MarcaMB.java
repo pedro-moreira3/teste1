@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.marca.MarcaSingleton;
 //import br.com.lume.odonto.bo.MarcaBO;
 //import br.com.lume.odonto.bo.ProfissionalBO;
@@ -48,7 +48,7 @@ public class MarcaMB extends LumeManagedBean<Marca> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        Marca marca = MarcaSingleton.getInstance().getBo().findByNomeAndEmpresa(this.getEntity().getNome(), Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        Marca marca = MarcaSingleton.getInstance().getBo().findByNomeAndEmpresa(this.getEntity().getNome(), idEmpresa);
         if (marca != null) {
             if (marca.getId() != this.getEntity().getId() && marca.getNome().equals(this.getEntity().getNome())) {
                 this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "");
@@ -59,7 +59,7 @@ public class MarcaMB extends LumeManagedBean<Marca> {
                 }
             }
         } else {
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(idEmpresa);
             this.getEntity().setDataCadastro(Calendar.getInstance().getTime());
             super.actionPersist(event);
             this.geraLista();

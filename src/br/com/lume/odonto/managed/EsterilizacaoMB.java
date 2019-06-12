@@ -27,7 +27,7 @@ import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.controleMaterial.ControleMaterialSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.esterilizacao.EsterilizacaoSingleton;
@@ -166,7 +166,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(idEmpresa);
         this.getEntity().setData(Calendar.getInstance().getTime());
         this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
         this.getEntity().setStatus(Esterilizacao.ABERTO);
@@ -230,7 +230,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
                 m2.setDataCadastro(Calendar.getInstance().getTime());
                 m2.setLote(m.getLote());
                 m2.setFornecedor(m.getFornecedor());
-                m2.setExcluidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getId());
+                m2.setExcluidoPorProfissional(idProfissionalLogado);
                 m2.setQuantidadeAtual(new BigDecimal(this.getQuantidadeDescarte()));
                 m2.setQuantidade(new BigDecimal(this.getQuantidadeDescarte()));
                 m2.setValor(m.getValor());
@@ -592,7 +592,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").contains(
                         Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))) {

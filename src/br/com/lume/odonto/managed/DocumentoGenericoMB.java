@@ -15,7 +15,7 @@ import org.primefaces.event.SelectEvent;
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.documentoGenerico.DocumentoGenericoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -202,7 +202,7 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,idEmpresa);
     }
 
     public boolean isLiberaBotao() {

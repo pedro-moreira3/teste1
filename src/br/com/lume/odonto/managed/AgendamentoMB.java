@@ -38,7 +38,8 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
+
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
@@ -173,14 +174,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
       
         this.setClazz(Agendamento.class);
         try {
-            if (Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.DENTISTA) && Configurar.getInstance().getConfiguracao().getEmpresaLogada().isEmpBolDentistaAdmin() == false) {
+            if (UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.DENTISTA) && UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false) {
                 visivelDadosPaciente = false;
             }
             gmt = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("agendamento", "hora", "GM").getNome();
             this.carregarProfissionais();
             qtdProfissionais = profissionais.size();
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
-            tempoConsulta = Configurar.getInstance().getConfiguracao().getProfissionalLogado().getTempoConsulta();
+            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            tempoConsulta = UtilsFrontEnd.getProfissionalLogado().getTempoConsulta();
             carregarCadeiras();
             filtroAgendamento.addAll(Arrays.asList("F", "A", "I", "S", "O", "E", "B", "N", "P", "G", "H"));
             initialDate = Calendar.getInstance().getTime();
@@ -190,7 +191,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
         paciente = new Paciente();
         if (this.isDentista()) {
-            profissional = Configurar.getInstance().getConfiguracao().getProfissionalLogado();
+            profissional = UtilsFrontEnd.getProfissionalLogado();
         } else {
             profissional = null;
         }
@@ -218,7 +219,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     private void carregarCadeiras() {
         cadeiras = new ArrayList<>();
-        for (int i = 1; i <= Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpIntCadeira(); i++) {
+        for (int i = 1; i <= UtilsFrontEnd.getEmpresaLogada().getEmpIntCadeira(); i++) {
             cadeiras.add(i);
         }
     }
@@ -228,7 +229,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         perfis.add(OdontoPerfil.DENTISTA);
         perfis.add(OdontoPerfil.ADMINISTRADOR);
         perfis.add(OdontoPerfil.RESPONSAVEL_TECNICO);
-        profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void validaIdade() {
@@ -252,7 +253,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void handleClose() {
@@ -292,7 +293,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 if (this.getEntity().getId() == 0) {
                     this.getEntity().setProfissional(profissional);
                     this.getEntity().setDataAgendamento(new Date());
-                    this.getEntity().setAgendador(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                    this.getEntity().setAgendador(UtilsFrontEnd.getProfissionalLogado());
                 }                
                 
                 if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla())) {
@@ -657,7 +658,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             @Override
             public void loadEvents(Date start, Date end) {
                 if (AgendamentoMB.this.isDentista()) {
-                    profissional = Configurar.getInstance().getConfiguracao().getProfissionalLogado();
+                    profissional = UtilsFrontEnd.getProfissionalLogado();
                 }
                 if (profissional != null) {
                     tempoConsulta = profissional.getTempoConsulta();
@@ -816,7 +817,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         Agendamento agendamento = (Agendamento) ((ScheduleEvent) selectEvent.getObject()).getData();
         profissional = agendamento.getProfissional();
         profissionalDentroAgenda = profissional;        
-        Configurar.getInstance().getConfiguracao().setPacienteSelecionado(agendamento.getPaciente());
+        UtilsFrontEnd.setPacienteSelecionado(agendamento.getPaciente());
         this.setEntity(agendamento);
         this.setInicio(this.getEntity().getInicio());
         this.setFim(this.getEntity().getFim());
@@ -858,7 +859,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public void actionPersistPaciente(ActionEvent event) {
         Usuario usuario = null;
         try {
-            Paciente pacienteExistente = PacienteSingleton.getInstance().getBo().findByNome(paciente.getDadosBasico().getNome(),Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            Paciente pacienteExistente = PacienteSingleton.getInstance().getBo().findByNome(paciente.getDadosBasico().getNome(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (pacienteExistente != null) {
                 pacienteSelecionado = pacienteExistente;
                 return;
@@ -869,7 +870,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             }
             DadosBasicoSingleton.getInstance().getBo().validaTelefonePaciente(paciente.getDadosBasico());
             //pacienteBO.validaPacienteDuplicadoEmpresa(paciente);
-            paciente.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            paciente.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (paciente.getDadosBasico().getEmail() != null && !paciente.getDadosBasico().getEmail().isEmpty()) {
                 usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(paciente.getDadosBasico().getEmail().toUpperCase());
                 if (usuario == null) {
@@ -899,7 +900,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             }
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             visivel = false;
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             pacienteSelecionado = paciente;
             paciente = new Paciente();
         } catch (TelefoneException te) {

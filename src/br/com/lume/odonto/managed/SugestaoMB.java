@@ -23,7 +23,7 @@ import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.material.MaterialSingleton;
@@ -111,7 +111,7 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(idEmpresa);
         this.getEntity().setData(new Date());
         this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
         for (SugestaoItem sugestaoItem : this.getSugestaoItens()) {

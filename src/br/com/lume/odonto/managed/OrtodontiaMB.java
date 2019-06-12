@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 import br.com.lume.aparelhoOrtodontico.AparelhoOrtodonticoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.diagnosticoOrtodontico.DiagnosticoOrtodonticoSingleton;
 import br.com.lume.dominio.DominioSingleton;

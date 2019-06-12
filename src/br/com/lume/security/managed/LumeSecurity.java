@@ -17,7 +17,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 import br.com.lume.common.util.OdontoMensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.security.EmpresaSingleton;

@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 //import br.com.lume.odonto.bo.DocumentoBO;
@@ -60,7 +60,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(idEmpresa);
         super.actionPersist(event);
         this.listAll();
     }

@@ -18,7 +18,7 @@ import org.primefaces.model.TreeNode;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.fornecedorItem.FornecedorItemSingleton;
 import br.com.lume.item.ItemSingleton;
@@ -109,7 +109,7 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(idEmpresa);
         if (this.getEntity().getItem() != null) {
             if (this.validaFornecedorItem()) {
                 super.actionPersist(event);

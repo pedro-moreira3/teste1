@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.util.JSFHelper;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.security.LogAcessoSingleton;
 import br.com.lume.security.ObjetoSingleton;
 import br.com.lume.security.SistemaSingleton;
@@ -96,9 +96,9 @@ public class AuthorizationListener implements PhaseListener {
         }
         return null;
     }
-
+    
     private void logarAcesso(String page, Usuario usuario, String ip) {
-        String paginaAnterior = (String) Configurar.getInstance().getConfiguracao().getPaginaAnterior();
+        String paginaAnterior = (String) JSFHelper.getSession().getAttribute("PAGINA_ANTERIOR");
         if (!page.equals(paginaAnterior)) {
             if (usuario != null) {
                 Sistema sistema = SistemaSingleton.getInstance().getBo().getSistemaBySigla(JSFHelper.getSistemaAtual());
@@ -116,9 +116,9 @@ public class AuthorizationListener implements PhaseListener {
                     }
                 }
             }
-            Configurar.getInstance().getConfiguracao().setPaginaAnterior(page);            
+            JSFHelper.getSession().setAttribute("PAGINA_ANTERIOR", page);
         }
-    }
+    }    
 
     @Override
     public void afterPhase(PhaseEvent arg0) {

@@ -14,8 +14,8 @@ import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.Utils;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
+
 //import br.com.lume.odonto.bo.PacienteBO;
 //import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Paciente;
@@ -307,10 +307,10 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
 
     public String getMsgTrial() {
         if ("S".equals(this.getLumeSecurity().getUsuario().getEmpresa().getEmpChaTrocaPlano())) {
-            return this.getLumeSecurity().getUsuario() != null && this.getLumeSecurity().getUsuario().getEmpresa() != null ? "Seu acesso expira no dia " + Utils.dateToString(
+            return this.getLumeSecurity().getUsuario() != null && this.getLumeSecurity().getUsuario().getEmpresa() != null ? "Seu acesso expira no dia " + UtilsFrontEnd.dateToString(
                     this.getLumeSecurity().getUsuario().getEmpresa().getEmpDtmExpiracao(), "dd/MM/yyyy") + " - Troque de plano já!" : "";
         } else {
-            return this.getLumeSecurity().getUsuario() != null && this.getLumeSecurity().getUsuario().getEmpresa() != null ? "Seu acesso expira no dia " + Utils.dateToString(
+            return this.getLumeSecurity().getUsuario() != null && this.getLumeSecurity().getUsuario().getEmpresa() != null ? "Seu acesso expira no dia " + UtilsFrontEnd.dateToString(
                     this.getLumeSecurity().getUsuario().getEmpresa().getEmpDtmExpiracao(), "dd/MM/yyyy") + " - Assine Já!" : "";
         }
     }

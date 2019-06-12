@@ -24,7 +24,7 @@ import org.primefaces.model.TreeNode;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.item.ItemSingleton;
@@ -315,7 +315,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 this.getEntity().setValor(this.getValorTotal().divide(this.getEntity().getQuantidadeTotal(), 2, RoundingMode.HALF_UP));
             }
             this.atualizaQuantidadeTotal();
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(idEmpresa);
             if (this.getEntity().getStatus() == null) {
                 this.getEntity().setStatus(ATIVO);
             }
@@ -756,7 +756,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
     public void actionPersistMarca(ActionEvent event) {
         this.getEntity().setMarca(new Marca());
         this.getEntity().getMarca().setNome(this.getNomeMarca());
-        Marca marca = MarcaSingleton.getInstance().getBo().findByNomeAndEmpresa(this.getEntity().getMarca().getNome(), Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        Marca marca = MarcaSingleton.getInstance().getBo().findByNomeAndEmpresa(this.getEntity().getMarca().getNome(), idEmpresa);
         if (marca != null) {
             if (marca.getId() != this.getEntity().getMarca().getId() && marca.getNome().equals(this.getEntity().getMarca().getNome())) {
                 this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "");
@@ -767,7 +767,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 }
             }
         } else {
-            this.getEntity().getMarca().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().getMarca().setIdEmpresa(idEmpresa);
             this.getEntity().getMarca().setDataCadastro(Calendar.getInstance().getTime());
             try {
                 MarcaSingleton.getInstance().getBo().persist(this.getEntity().getMarca());

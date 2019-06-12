@@ -18,7 +18,7 @@ import br.com.lume.cid.CidSingleton;
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 //import br.com.lume.odonto.bo.CIDBO;
@@ -86,12 +86,12 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
             documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio);
           //  cidBO = new CIDBO();
             cids = CidSingleton.getInstance().getBo().listAll();
-            this.setPaciente(Configurar.getInstance().getConfiguracao().getPacienteSelecionado());
+            this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
         }
-        profissionalLogado = Configurar.getInstance().getConfiguracao().getProfissionalLogado();
+        profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
         if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
                 OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
             liberaBotao = true;
@@ -107,7 +107,7 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
                 this.replaceDocumento();
                 visivel = true;
             }
-            this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
             this.getEntity().setAtestadoGerado(documento);
             this.getEntity().setPaciente(paciente);
             AtestadoSingleton.getInstance().getBo().persist(this.getEntity());
@@ -275,11 +275,11 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
     public void handleSelectPacienteSelecionado(SelectEvent event) {
         Object object = event.getObject();
         paciente = (Paciente) object;
-        Configurar.getInstance().getConfiguracao().setPacienteSelecionado(paciente);
+        UtilsFrontEnd.setPacienteSelecionado(paciente);
     }
 
     public List<Paciente> geraSugestoesPaciente(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public boolean isLiberaBotao() {

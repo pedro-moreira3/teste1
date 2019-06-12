@@ -21,7 +21,7 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.custo.CustoSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
@@ -406,7 +406,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
     private void geraLancamentoContabil(BigDecimal valor) throws Exception, BusinessException, TechnicalException {
         LancamentoContabil lc = new LancamentoContabil();
         Motivo motivo = MotivoSingleton.getInstance().getBo().findBySigla(Motivo.PAGAMENTO_PROFISSIONAL);
-        lc.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        lc.setIdEmpresa(idEmpresa);
         lc.setTipo(motivo.getTipo());
         lc.setDadosBasico(profissional.getDadosBasico());
         lc.setMotivo(motivo);
@@ -485,7 +485,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(idEmpresa);
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
                         Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {

@@ -18,7 +18,7 @@ import org.primefaces.event.SelectEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.documentoFaturamento.DocumentoFaturamentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -319,7 +319,7 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
     }
 
     public List<Profissional> geraSugestoes(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,idEmpresa);
     }
 
     public List<DocumentoFaturamento> getDocumentosFaturamento() {

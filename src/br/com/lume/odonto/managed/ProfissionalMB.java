@@ -31,8 +31,8 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.common.util.Utils;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
+
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.especialidade.EspecialidadeSingleton;
@@ -122,7 +122,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
                 this.setPossuiFiliais(true);
             }
             especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa();
-            profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(idEmpresa);
             this.carregaPerfis();
             if (this.isProfissionalIndividual()) {
                 this.setEntity(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
@@ -241,15 +241,15 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         Usuario usuario = null;
         try {
             carregarObjetosProfissional();
-            if (Utils.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
+            if (UtilsFrontEnd.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
                 addError("Data de nascimento inválida.", "");
                 return;
             }
             DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
 
-            ProfissionalSingleton.getInstance().getBo().validaProfissionalDuplicadoEmpresa(this.getEntity(), emailSalvo,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            ProfissionalSingleton.getInstance().getBo().validaProfissionalDuplicadoEmpresa(this.getEntity(), emailSalvo,idEmpresa);
             usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(this.getEntity().getDadosBasico().getEmail().toUpperCase());
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(idEmpresa);
             if (usuario == null) {
                 usuario = new Usuario();
             }
@@ -274,7 +274,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             this.getEntity().setPerfil(perfil.getPerStrDes());
             ProfissionalSingleton.getInstance().getBo().validaDuplicado(this.getEntity());
             Calendar cal = Calendar.getInstance();
-            this.getEntity().setAlteradoPor(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getId());
+            this.getEntity().setAlteradoPor(idProfissionalLogado);
             this.getEntity().setDataUltimaAlteracao(cal.getTime());
             if (filialSelecionadas != null && !filialSelecionadas.isEmpty()) {
                 this.getEntity().setProfissionalFilials(new ArrayList<ProfissionalFilial>());
@@ -290,7 +290,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
                 Configurar.getInstance().getConfiguracao().setProfissionalLogado(this.getEntity());
             }
             this.actionNew(event);
-            profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(idEmpresa);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (
 
@@ -340,7 +340,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         }
 
         if (targetFile == null || !targetFile.exists()) {
-            nomeImagem = Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa() + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
+            nomeImagem = idEmpresa + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
             targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
         }
         FileImageOutputStream imageOutput = new FileImageOutputStream(targetFile);

@@ -26,8 +26,8 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
-import br.com.lume.common.util.Utils;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
+
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.evolucao.EvolucaoSingleton;
@@ -144,7 +144,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
             consulta = true;
         }
         try {
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -159,7 +159,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
         List<String> perfis = new ArrayList<>();
         perfis.add(OdontoPerfil.DENTISTA);
         perfis.add(OdontoPerfil.ADMINISTRADOR);
-        profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis,idEmpresa);
     }
 
     public void carregaListaPlano() {
@@ -440,7 +440,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
             if (!planoTratamentoProcedimentos.contains(ptp) && (ptp.getExcluido().equals(Status.NAO))) {
                 ptp.setExcluido(Status.SIM);
                 ptp.setDataExclusao(new Date());
-                ptp.setExcluidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getId());
+                ptp.setExcluidoPorProfissional(idProfissionalLogado);
                 this.removeLancamentosEmAberto();
             }
         }
@@ -679,7 +679,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
             if (ptp.getStatus() != null && ptp.getStatus().equals(FINALIZADO)) {
                 if (ptp.getFinalizadoPorProfissional() == null) {
-                    String evoPro = " <br/> " + "Procedimento : " + ptp.getProcedimento().getDescricao() + " <br/> " + "    Finalizado : " + Utils.dateToString(
+                    String evoPro = " <br/> " + "Procedimento : " + ptp.getProcedimento().getDescricao() + " <br/> " + "    Finalizado : " + UtilsFrontEnd.dateToString(
                             new Date()) + " <br/> " + "   Por : " + profissionalFinalizaProcedimento.getDadosBasico().getNome();
                     if (ptp.getDenteObj() != null && !ptp.getDenteObj().getDescricao().equals("")) {
                         for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {
@@ -1041,7 +1041,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
     }
 
     public List<Paciente> geraSugestoesPaciente(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,idEmpresa);
     }
 
     private void carregaPacienteSelecionado() {
@@ -1215,7 +1215,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
     }
 
     public String getDataOrcamento() {
-        return Utils.dateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy HH:mm");
+        return UtilsFrontEnd.dateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy HH:mm");
     }
 
     public String getEvolucaoProcedimento() {

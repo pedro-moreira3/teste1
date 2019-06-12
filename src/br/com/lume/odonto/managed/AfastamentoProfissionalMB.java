@@ -13,7 +13,7 @@ import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 //import br.com.lume.odonto.bo.AfastamentoBO;
 //import br.com.lume.odonto.bo.AgendamentoBO;
@@ -60,7 +60,7 @@ public class AfastamentoProfissionalMB extends LumeManagedBean<Afastamento> {
         this.setClazz(Afastamento.class);
     //    this.agendamentoBO = new AgendamentoBO();
 //        this.dominioBO = new DominioBO();
-        this.profissional = Configurar.getInstance().getConfiguracao().getProfissionalLogado();
+        this.profissional = UtilsFrontEnd.getProfissionalLogado();
     }
 
     @Override

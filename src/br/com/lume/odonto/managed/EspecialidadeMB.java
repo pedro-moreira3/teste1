@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.especialidade.EspecialidadeSingleton;
 //import br.com.lume.odonto.bo.EspecialidadeBO;
 //import br.com.lume.odonto.bo.ProfissionalBO;
@@ -51,7 +51,7 @@ public class EspecialidadeMB extends LumeManagedBean<Especialidade> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(idEmpresa);
             this.getEntity().setRangeIni(0);
             this.getEntity().setRangeFim(0);
             super.actionPersist(event);

@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 //import br.com.lume.odonto.bo.PlanoBO;
 import br.com.lume.odonto.entity.Plano;
 import br.com.lume.odonto.iugu.model.CustomVariable;

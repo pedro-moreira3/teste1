@@ -7,7 +7,7 @@ import javax.faces.bean.RequestScoped;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.odonto.entity.Agendamento;
 
 @ManagedBean

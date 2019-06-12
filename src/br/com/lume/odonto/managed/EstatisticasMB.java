@@ -5,7 +5,7 @@ import javax.faces.bean.RequestScoped;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.configuracao.Configurar;
+
 //import br.com.lume.odonto.bo.AgendamentoBO;
 //import br.com.lume.odonto.bo.PlanoBO;
 //import br.com.lume.odonto.bo.ProfissionalBO;
@@ -30,7 +30,7 @@ public class EstatisticasMB extends LumeManagedBean<Agendamento> {
 
     public Integer getQuantidadeAgendamentosMesAtual() {
         try {
-            return AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosMesAtual(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            return AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosMesAtual(idEmpresa);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -39,7 +39,7 @@ public class EstatisticasMB extends LumeManagedBean<Agendamento> {
 
     public Integer getQuantidadeAgendamentosHoje() {
         try {
-            return AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosHoje(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            return AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosHoje(idEmpresa);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -48,7 +48,7 @@ public class EstatisticasMB extends LumeManagedBean<Agendamento> {
 
     public Integer getQuantidadeAgendamentosPlano() {
         try {
-            long idPlano = new EmpresaBO().find(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa()).getIdPlano();
+            long idPlano = new EmpresaBO().find(idEmpresa).getIdPlano();
             Plano p = new PlanoSingleton().getInstance().getBo().find(idPlano);
             if (p != null) {
                 return p.getConsultas();

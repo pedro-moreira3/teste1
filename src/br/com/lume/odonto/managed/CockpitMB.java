@@ -11,7 +11,7 @@ import org.primefaces.model.chart.MeterGaugeChartModel;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.grafico.GraficoSingleton;
 import br.com.lume.graficoProfissional.GraficoProfissionalSingleton;
 //import br.com.lume.odonto.bo.GraficoBO;

@@ -22,7 +22,7 @@ import org.primefaces.model.chart.LineChartSeries;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.local.LocalSingleton;
 import br.com.lume.odonto.entity.Item;
@@ -189,7 +189,7 @@ public class RelatorioEntradaSaidaMaterialMB extends LumeManagedBean<RelatorioEn
     public void geraListas() {
         try {
             this.itens = (ItemSingleton.getInstance().getBo().listByEmpresa());
-            this.profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
             this.locais = (LocalSingleton.getInstance().getBo().listByEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

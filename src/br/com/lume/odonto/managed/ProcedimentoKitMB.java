@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.kit.KitSingleton;
 import br.com.lume.odonto.entity.Kit;
 import br.com.lume.odonto.entity.Procedimento;
@@ -88,7 +88,7 @@ public class ProcedimentoKitMB extends LumeManagedBean<ProcedimentoKit> {
                 ProcedimentoKitSingleton.getInstance().getBo().persist(this.getEntity());
             } else {
                 procedimentoSelecionado = this.getEntity().getProcedimento();
-                this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+                this.getEntity().setIdEmpresa(idEmpresa);
                 ProcedimentoKitSingleton.getInstance().getBo().persist(this.getEntity());
                 this.actionNew(event);
                 if (procedimentoSelecionado != null) {

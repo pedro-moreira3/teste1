@@ -16,7 +16,7 @@ import org.primefaces.model.TreeNode;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.local.LocalSingleton;
 //import br.com.lume.odonto.bo.DominioBO;
@@ -67,7 +67,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     @Override
     public void actionPersist(ActionEvent event) {
         boolean error = false;
-        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(idEmpresa);
         if (this.tipoLocal != null) {
             this.getEntity().setTipo(this.tipoLocal.getValor());
         }

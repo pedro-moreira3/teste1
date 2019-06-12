@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.Utils;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
+
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Plano;
 import br.com.lume.odonto.iugu.responses.InvoiceResponse;
@@ -50,13 +50,13 @@ public class MeuPlanoMB extends LumeManagedBean<Agendamento> {
     private void carregarQuantidadeAgendamentosMes() {
         try {
             agendamentos = AgendamentoSingleton.getInstance().getBo().listQuantidadeAgendamentosMes();
-            agendamentosMes = AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosMesAtual(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            agendamentosMes = AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosMesAtual(idEmpresa);
             Plano planoUsuLogado = PlanoSingleton.getInstance().getBo().findByUsuarioLogado();
             if (planoUsuLogado != null) {
                 agendamentosPlano = planoUsuLogado.getConsultas();
                 porcentagemUtilizado = (double) ((100 * (double) agendamentosMes) / (double) agendamentosPlano);
                 if (Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpDtmExpiracao() != null) {
-                    dataVencimentoPlano = Utils.dateToString(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpDtmExpiracao(), "dd/MM/yyyy");
+                    dataVencimentoPlano = UtilsFrontEnd.dateToString(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpDtmExpiracao(), "dd/MM/yyyy");
                 }
             }
             if (Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpStrAssinaturaIuguID() != null && !Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpStrAssinaturaIuguID().isEmpty() && recentInvoices == null) {

@@ -17,7 +17,7 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.conferencia.ConferenciaSingleton;
 import br.com.lume.conferenciaMaterial.ConferenciaMaterialSingleton;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.material.MaterialSingleton;
 import br.com.lume.materialEmprestado.MaterialEmprestadoSingleton;
@@ -90,7 +90,7 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
             this.getEntity().setData(new Date());
             this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
             this.getEntity().setAlteracao(Status.SIM);
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(idEmpresa);
             this.getbO().persist(this.getEntity());
             this.geraLista();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -108,7 +108,7 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
                 MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, material, Configurar.getInstance().getConfiguracao().getProfissionalLogado(), conferenciaMaterial.getValorAlterado().subtract(material.getQuantidadeAtual()),
                         conferenciaMaterial.getValorAlterado(), MaterialLog.AJUSTE_MATERIAL));
                 conferenciaMaterial.setConferencia(conferencias.get(0));
-                conferenciaMaterial.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+                conferenciaMaterial.setIdEmpresa(idEmpresa);
                 conferenciaMaterial.setMaterial(material);
                 conferenciaMaterial.setValorOriginal(material.getQuantidadeAtual());
                 conferenciaMaterial.setDataCadastro(Calendar.getInstance().getTime());
