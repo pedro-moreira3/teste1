@@ -15,7 +15,7 @@ import org.primefaces.event.SelectEvent;
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.documentoGenerico.DocumentoGenericoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -71,13 +71,13 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
 //        documentoGenericoBO = new DocumentoGenericoBO();
         try {
             Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "D");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio);
-            this.setPaciente(Configurar.getInstance().getConfiguracao().getPacienteSelecionado());
+            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            this.setPaciente(UtilsFrontEnd.getPacienteLogado());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
         }
-        profissionalLogado = Configurar.getInstance().getConfiguracao().getProfissionalLogado();
+        profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
         if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
                 OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
             liberaBotao = true;
@@ -93,7 +93,7 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
                 this.replaceDocumento();
                 visivel = true;
             }
-            this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
             this.getEntity().setDocumentoGerado(documento);
             this.getEntity().setPaciente(paciente);
             DocumentoGenericoSingleton.getInstance().getBo().persist(this.getEntity());
@@ -132,7 +132,8 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
     }
 
     private void replaceDocumento() {
-        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento);
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome(),
+                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         documento = documento.replaceAll("span", "div");
     }
@@ -198,11 +199,11 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
     public void handleSelectPacienteSelecionado(SelectEvent event) {
         Object object = event.getObject();
         paciente = (Paciente) object;     
-        Configurar.getInstance().getConfiguracao().setPacienteSelecionado(paciente);
+        UtilsFrontEnd.setPacienteSelecionado(paciente);
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public boolean isLiberaBotao() {

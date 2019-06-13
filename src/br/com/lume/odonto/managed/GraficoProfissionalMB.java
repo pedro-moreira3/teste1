@@ -12,7 +12,7 @@ import org.primefaces.model.DualListModel;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.grafico.GraficoSingleton;
 import br.com.lume.graficoProfissional.GraficoProfissionalSingleton;
 //import br.com.lume.odonto.bo.GraficoBO;
@@ -41,7 +41,7 @@ public class GraficoProfissionalMB extends LumeManagedBean<GraficoProfissional> 
         //this.graficoProfissionalBO = new GraficoProfissionalBO();
         this.setClazz(GraficoProfissional.class);
         try {
-            this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
             this.carregaPicklist();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -52,7 +52,7 @@ public class GraficoProfissionalMB extends LumeManagedBean<GraficoProfissional> 
     @Override
     public void actionPersist(ActionEvent arg0) {
         try {
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             List<GraficoProfissional> atuais = GraficoProfissionalSingleton.getInstance().getBo().listByProfissional(this.getEntity().getProfissional());
             if (atuais != null && !atuais.isEmpty()) {
                 this.remove(atuais);

@@ -12,7 +12,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.common.util.Utils;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.RelatorioBilhetagem;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.relatorioBilhetagem.RelatorioBilhetagemSingleton;
@@ -67,7 +67,7 @@ public class RelatorioBilhetagemMB extends LumeManagedBean<RelatorioBilhetagem> 
     }
 
     public String getVigencia() {
-        return "Bilhetagem_" + Utils.dateToString(this.inicio, "dd/MM/yyyy") + "_" + Utils.dateToString(this.fim, "dd/MM/yyyy");
+        return "Bilhetagem_" + UtilsFrontEnd.dateToString(this.inicio, "dd/MM/yyyy") + "_" + UtilsFrontEnd.dateToString(this.fim, "dd/MM/yyyy");
     }
 
     public Date getInicio() {

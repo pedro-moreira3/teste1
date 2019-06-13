@@ -27,7 +27,7 @@ import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.controleMaterial.ControleMaterialSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.esterilizacao.EsterilizacaoSingleton;
@@ -166,9 +166,9 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         this.getEntity().setData(Calendar.getInstance().getTime());
-        this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+        this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
         this.getEntity().setStatus(Esterilizacao.ABERTO);
         for (EsterilizacaoKit esterilizacaoItem : this.getEsterilizacaoKits()) {
             if (esterilizacaoItem.getId() == 0 || !this.getEntity().getEsterilizacaoKits().contains(esterilizacaoItem)) {
@@ -193,6 +193,9 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
     }
 
     public void actionDescarte(ActionEvent event) throws Exception {
+        
+        Profissional profisisonalLogado = UtilsFrontEnd.getProfissionalLogado();
+        
         if (this.getQuantidadeDescarte() > this.getEsterilizacaoKitSelecionada().getQuantidade()) {
             this.addError(OdontoMensagens.getMensagem("lavagem.descarte.acima"), "");
         } else if (this.getEsterilizacaoKitSelecionada().getItem() == null) {
@@ -209,17 +212,17 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
                     m = a.getMaterial();
                     a.setQuantidade(a.getQuantidade().subtract(new BigDecimal(this.getQuantidadeDescarte())));
                     AbastecimentoSingleton.getInstance().getBo().persist(a);
-                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, a, m, Configurar.getInstance().getConfiguracao().getProfissionalLogado(), new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
+                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, a, m, profisisonalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
                             MaterialLog.DEVOLUCAO_ESTERILIZACAO_DESCARTAR));
                 } else if (cm != null) {
                     m = cm.getMaterial();
                     cm.setQuantidade(cm.getQuantidade().subtract(new BigDecimal(this.getQuantidadeDescarte())));
                     ControleMaterialSingleton.getInstance().getBo().persist(cm);
-                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, m, Configurar.getInstance().getConfiguracao().getProfissionalLogado(), new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
+                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, m, profisisonalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
                             MaterialLog.DEVOLUCAO_ESTERILIZACAO_DESCARTAR));;
                 } else {
-                    m = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(this.getEsterilizacaoKitSelecionada().getItem()).get(0);
-                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, m, Configurar.getInstance().getConfiguracao().getProfissionalLogado(), new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
+                    m = (Material) MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(this.getEsterilizacaoKitSelecionada().getItem(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, m, profisisonalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
                             MaterialLog.DEVOLUCAO_ESTERILIZACAO_DESCARTAR));
                 }
                 Material m2 = new Material();
@@ -230,7 +233,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
                 m2.setDataCadastro(Calendar.getInstance().getTime());
                 m2.setLote(m.getLote());
                 m2.setFornecedor(m.getFornecedor());
-                m2.setExcluidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getId());
+                m2.setExcluidoPorProfissional(profisisonalLogado.getId());
                 m2.setQuantidadeAtual(new BigDecimal(this.getQuantidadeDescarte()));
                 m2.setQuantidade(new BigDecimal(this.getQuantidadeDescarte()));
                 m2.setValor(m.getValor());
@@ -245,7 +248,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
                 if (getEsterilizacaoKitSelecionada().getQuantidade() == 0) {
                     Esterilizacao e = getEsterilizacaoKitSelecionada().getEsterilizacao();
-                    e.setDevolvidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                    e.setDevolvidoPorProfissional(profisisonalLogado);
                     e.setStatus(Esterilizacao.DESCARTADO);
                     e.setDataDevolucao(Calendar.getInstance().getTime());
                     EsterilizacaoSingleton.getInstance().getBo().persist(e);
@@ -532,9 +535,9 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
         this.setKits(new ArrayList<Kit>());
         try {
             if (this.getDigitacao() != null) {
-                this.setKits(KitSingleton.getInstance().getBo() .listByEmpresaAndDescricaoParcialAndTipo(this.getDigitacao()));
+                this.setKits(KitSingleton.getInstance().getBo() .listByEmpresaAndDescricaoParcialAndTipo(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setKits(KitSingleton.getInstance().getBo().listByEmpresaAndTipo());
+                this.setKits(KitSingleton.getInstance().getBo().listByEmpresaAndTipo(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
             Collections.sort(kits);
         } catch (Exception e) {
@@ -560,7 +563,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
     private void setItemKitSelecionado(String descricao) {
         try {
-            for (Kit kit : KitSingleton.getInstance().getBo().listByEmpresa()) {
+            for (Kit kit : KitSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa())) {
                 if (kit.getDescricao().equals(descricao)) {
                     this.setKit(kit);
                     this.setDigitacao(this.getKit().getDescricao());
@@ -592,7 +595,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").contains(
                         Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))) {
@@ -664,6 +667,9 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
     public void actionDevolucao(ActionEvent event) {
         try {
+            
+            Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
+            
             for (Esterilizacao e : this.getEsterilizacaoSelecionadas()) {
                 if (e.getClinica() != null && e.getClinica()) {
                     for (EsterilizacaoKit lk : e.getEsterilizacaoKits()) {
@@ -673,7 +679,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
                             MaterialSingleton.getInstance().getBo().refresh(lk.getControleMaterial().getMaterial());
                             lk.getControleMaterial().getMaterial().setQuantidadeAtual(lk.getControleMaterial().getMaterial().getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
                             MaterialSingleton.getInstance().getBo().persist(lk.getControleMaterial().getMaterial());// Atualizando estoque
-                            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(lk.getControleMaterial(), null, lk.getControleMaterial().getMaterial(), Configurar.getInstance().getConfiguracao().getProfissionalLogado(),
+                            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(lk.getControleMaterial(), null, lk.getControleMaterial().getMaterial(), profissionalLogado,
                                     new BigDecimal(lk.getQuantidade()), lk.getControleMaterial().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_ESTERILIZACAO_ESTERILIZADO));
                         } else if (lk.getAbastecimento() != null) {
                             lk.getAbastecimento().setQuantidade(lk.getAbastecimento().getQuantidade().subtract(new BigDecimal(lk.getQuantidade())));
@@ -681,21 +687,21 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
                             MaterialSingleton.getInstance().getBo().refresh(lk.getAbastecimento().getMaterial());
                             lk.getAbastecimento().getMaterial().setQuantidadeAtual(lk.getAbastecimento().getMaterial().getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
                             MaterialSingleton.getInstance().getBo().persist(lk.getAbastecimento().getMaterial());// Atualizando estoque
-                            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, lk.getAbastecimento(), lk.getAbastecimento().getMaterial(), Configurar.getInstance().getConfiguracao().getProfissionalLogado(),
+                            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, lk.getAbastecimento(), lk.getAbastecimento().getMaterial(), profissionalLogado,
                                     new BigDecimal(lk.getQuantidade()), lk.getAbastecimento().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_ESTERILIZACAO_ESTERILIZADO));
                         } else {
-                            List<Material> material = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(lk.getItem());
+                            List<Material> material = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(lk.getItem(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                             if (!material.isEmpty()) {
                                 MaterialSingleton.getInstance().getBo().refresh(material.get(0));
                                 material.get(0).setQuantidadeAtual(material.get(0).getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
                                 MaterialSingleton.getInstance().getBo().persist(material.get(0));// Atualizando estoque
-                                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, material.get(0), Configurar.getInstance().getConfiguracao().getProfissionalLogado(), new BigDecimal(lk.getQuantidade()),
+                                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, material.get(0), profissionalLogado, new BigDecimal(lk.getQuantidade()),
                                         material.get(0).getQuantidadeAtual(), MaterialLog.DEVOLUCAO_ESTERILIZACAO_ESTERILIZADO));
                             }
                         }
                     }
                 }
-                e.setDevolvidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                e.setDevolvidoPorProfissional(profissionalLogado);
                 e.setStatus(Esterilizacao.DEVOLVIDO);
                 e.setDataDevolucao(Calendar.getInstance().getTime());
                 e.setDataValidade(dataValidade);
@@ -736,7 +742,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
     public void actionEsterilizacao(ActionEvent event) {
         try {
             for (Esterilizacao e : this.getEsterilizacaoSelecionadas()) {
-                e.setDevolvidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                e.setDevolvidoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
                 e.setStatus(Esterilizacao.ESTERILIZADO);
                 e.setDataValidade(dataValidade);
                 EsterilizacaoSingleton.getInstance().getBo().persist(e);
@@ -827,9 +833,12 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
     public void geraListaSolicitadas() {
         try {
-            this.setEsterilizacoesSolicitadas(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ABERTO));
-            esterilizacoesSolicitadas.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ESTERILIZADO));
-            esterilizacoesSolicitadas.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.EMPACOTADO));
+            
+            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+            
+            this.setEsterilizacoesSolicitadas(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ABERTO, idEmpresaLogada));
+            esterilizacoesSolicitadas.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ESTERILIZADO, idEmpresaLogada));
+            esterilizacoesSolicitadas.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.EMPACOTADO, idEmpresaLogada));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -838,10 +847,13 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
     private void geraLista() {
         try {
+            
+            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+            
             esterilizacoes = new ArrayList<>();
-            esterilizacoes.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ABERTO));
-            esterilizacoes.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ESTERILIZADO));
-            esterilizacoes.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.EMPACOTADO));
+            esterilizacoes.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ABERTO, idEmpresaLogada));
+            esterilizacoes.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ESTERILIZADO, idEmpresaLogada));
+            esterilizacoes.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.EMPACOTADO, idEmpresaLogada));
             if (esterilizacoes != null) {
                 Collections.sort(esterilizacoes);
             }

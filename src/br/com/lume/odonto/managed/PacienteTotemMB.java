@@ -15,7 +15,7 @@ import br.com.lume.anamnese.AnamneseSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.itemAnamnese.ItemAnamneseSingleton;
 import br.com.lume.noticia.NoticiaSingleton;
@@ -101,7 +101,7 @@ public class PacienteTotemMB extends LumeManagedBean<Paciente> {
                     item.setResposta("");
                 }
             }
-            AnamneseSingleton.getInstance().getBo().persistByPaciente(Configurar.getInstance().getConfiguracao().getProfissionalLogado(), this.getEntity(), anamnesesPreCadastro);
+            AnamneseSingleton.getInstance().getBo().persistByPaciente(UtilsFrontEnd.getProfissionalLogado(), this.getEntity(), anamnesesPreCadastro);
             super.actionPersist(event);
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
@@ -164,7 +164,7 @@ public class PacienteTotemMB extends LumeManagedBean<Paciente> {
             try {
                 paciente = PacienteSingleton.getInstance().getBo().findByEmail(this.getEntity().getDadosBasico().getEmail());
                 if (paciente != null) {
-                    if (paciente.getIdEmpresa() != Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa()) {
+                    if (paciente.getIdEmpresa() != UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()) {
                         this.addError(OdontoMensagens.getMensagem("paciente.totem.paciente.nao.pertence"), "");
                         return event.getOldStep();
                     } else {

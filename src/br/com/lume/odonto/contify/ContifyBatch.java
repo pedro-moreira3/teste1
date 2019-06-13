@@ -11,6 +11,7 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import br.com.lume.common.util.Utils;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.contify.model.Contact;
 import br.com.lume.odonto.contify.model.ContactData;

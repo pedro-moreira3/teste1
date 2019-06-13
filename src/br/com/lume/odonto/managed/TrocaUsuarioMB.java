@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.EmpresaSingleton;
@@ -38,7 +38,7 @@ public class TrocaUsuarioMB extends LumeManagedBean<Profissional> {
         super(ProfissionalSingleton.getInstance().getBo());
 
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresaAndAtivo(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresaAndAtivo(idEmpresa);
         } catch (Exception e) {
             log.error("Erro no TrocaUsuarioMB", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

@@ -16,7 +16,7 @@ import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 //import br.com.lume.odonto.bo.ConvenioBO;
@@ -64,8 +64,10 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
      //   convenioBO = new ConvenioBO();
      //   procedimentoBO = new ProcedimentoBO();
         try {
-            convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa();
-            procedimentos = ProcedimentoSingleton.getInstance().getBo().listByEmpresa();
+            Long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+            
+            convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+            procedimentos = ProcedimentoSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             mes = Calendar.getInstance().get(Calendar.MONTH) + 1;
             ano = Calendar.getInstance().get(Calendar.YEAR);
             carregarRelatorio();
@@ -93,9 +95,9 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
     public void actionPersist(ActionEvent event) {
         try {
             if (this.getEntity().getProcedimento() != null && this.getEntity().getValor() != null && this.getEntity().getProcedimento().getCodigoCfo() != null) {
-                this.getEntity().setAlteradoPor(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                this.getEntity().setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
                 this.getEntity().setDataUltimaAlteracao(Calendar.getInstance().getTime());
-                this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+                this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 if (this.getEntity().isZeraId()) {
                     this.getEntity().setId(0);
                 }
@@ -137,7 +139,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
 
     public void carregarRelatorio() {
         try {
-            relatorioConvenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listRelatorioConvenioProcedimentoByEmpresa(mes, ano);
+            relatorioConvenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listRelatorioConvenioProcedimentoByEmpresa(mes, ano, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             log.error("Erro no carregarRelatorio", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -153,7 +155,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
     }
 
     public boolean verificaCp() {
-        convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(this.getEntity().getConvenio());
+        convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(this.getEntity().getConvenio(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (convenioProcedimentos != null && convenioProcedimentos.isEmpty()) {
             return true;
         }
@@ -166,7 +168,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
             if (this.getEntity().getConvenio() != null) {
                 int cont = -1;
                 if (this.verificaCp()) {
-                    this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+                    this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                     for (Procedimento p : procedimentos) {
                         ConvenioProcedimento cp = new ConvenioProcedimento();
                         cp.setId(cont--);

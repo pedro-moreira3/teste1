@@ -15,9 +15,10 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.conferencia.ConferenciaSingleton;
 import br.com.lume.conferenciaMaterial.ConferenciaMaterialSingleton;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.material.MaterialSingleton;
 import br.com.lume.materialEmprestado.MaterialEmprestadoSingleton;
@@ -88,9 +89,9 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
     public void actionPersistConferencia(ActionEvent event) {
         try {
             this.getEntity().setData(new Date());
-            this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
             this.getEntity().setAlteracao(Status.SIM);
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.getbO().persist(this.getEntity());
             this.geraLista();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -105,10 +106,10 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
     public void actionPersist(ActionEvent event) {
         try {
             if (conferencias != null && !conferencias.isEmpty()) {
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, material, Configurar.getInstance().getConfiguracao().getProfissionalLogado(), conferenciaMaterial.getValorAlterado().subtract(material.getQuantidadeAtual()),
+                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, material, UtilsFrontEnd.getProfissionalLogado(), conferenciaMaterial.getValorAlterado().subtract(material.getQuantidadeAtual()),
                         conferenciaMaterial.getValorAlterado(), MaterialLog.AJUSTE_MATERIAL));
                 conferenciaMaterial.setConferencia(conferencias.get(0));
-                conferenciaMaterial.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+                conferenciaMaterial.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 conferenciaMaterial.setMaterial(material);
                 conferenciaMaterial.setValorOriginal(material.getQuantidadeAtual());
                 conferenciaMaterial.setDataCadastro(Calendar.getInstance().getTime());
@@ -143,7 +144,7 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
 
     public void pesquisa() {
         try {
-            conferenciasMaterial = ConferenciaMaterialSingleton.getInstance().getBo().listByConferencia(this.getEntity());
+            conferenciasMaterial = ConferenciaMaterialSingleton.getInstance().getBo().listByConferencia(this.getEntity(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -152,8 +153,8 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
 
     private void geraLista() {
         try {
-            conferencias = ConferenciaSingleton.getInstance().getBo().listByEmpresa();
-            materiais = MaterialSingleton.getInstance().getBo().listAtivosByEmpresa();
+            conferencias = ConferenciaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            materiais = MaterialSingleton.getInstance().getBo().listAtivosByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             //materialBO.carregarQuantidadeEmprestada(materiais);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

@@ -14,7 +14,7 @@ import org.primefaces.model.menu.MenuModel;
 import org.primefaces.model.menu.Submenu;
 
 import br.com.lume.common.bo.BO;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.security.entity.Objeto;
@@ -43,7 +43,7 @@ public class MenuBO extends BO<Usuario> {
         if (usuario != null && sistema != null) {
             try {
                 List<Objeto> objetosPermitidos = new ObjetoBO().carregaObjetosPermitidos((String) Configurar.getInstance().getConfiguracao().getPerfilLogado(),
-                        (Profissional) Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                        (Profissional) UtilsFrontEnd.getProfissionalLogado());
                 Set<Objeto> labelsPermitidas = this.getLabelsPermitidas(objetosPermitidos);
                 return this.getMenuTree(sistema, labelsPermitidas, objetosPermitidos, mostraURL, objetosRaizBySistema);
             } catch (Exception e) {

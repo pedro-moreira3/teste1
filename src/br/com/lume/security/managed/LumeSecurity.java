@@ -17,7 +17,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 import br.com.lume.common.util.OdontoMensagens;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.security.EmpresaSingleton;
@@ -64,7 +64,7 @@ public class LumeSecurity implements Serializable {
 
     public Empresa getEmpresa() {
         if (empresa == null) {
-            return (Empresa) Configurar.getInstance().getConfiguracao().getEmpresaLogada();
+            return (Empresa) UtilsFrontEnd.getEmpresaLogada();
         }
         return empresa;
     }
@@ -84,12 +84,12 @@ public class LumeSecurity implements Serializable {
     }
 
     public String getNomeLogado() {
-        Profissional profissionalLogado = Configurar.getInstance().getConfiguracao().getProfissionalLogado();
+        Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
 
         if (profissionalLogado != null) {
             return profissionalLogado.getDadosBasico().getNome();
         } else {
-            Paciente pacienteLogado = Configurar.getInstance().getConfiguracao().getPacienteLogado();
+            Paciente pacienteLogado = UtilsFrontEnd.getPacienteLogado();
             return pacienteLogado.getDadosBasico().getNome();
         }
     }
@@ -197,10 +197,13 @@ public class LumeSecurity implements Serializable {
 
     public StreamedContent getImagemUsuario() {
         try {
-            if (Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null && Configurar.getInstance().getConfiguracao().getProfissionalLogado().getNomeImagem() != null) {
+            
+            Profissional profissional = UtilsFrontEnd.getProfissionalLogado();
+            
+            if (profissional != null && profissional.getNomeImagem() != null) {
                 ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
-                        FileUtils.readFileToByteArray(new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + Configurar.getInstance().getConfiguracao().getProfissionalLogado().getNomeImagem())));
-                DefaultStreamedContent defaultStreamedContent = new DefaultStreamedContent(byteArrayInputStream, "image/" + Configurar.getInstance().getConfiguracao().getProfissionalLogado().getNomeImagem().split("\\.")[1], Configurar.getInstance().getConfiguracao().getProfissionalLogado().getNomeImagem());
+                        FileUtils.readFileToByteArray(new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + profissional.getNomeImagem())));
+                DefaultStreamedContent defaultStreamedContent = new DefaultStreamedContent(byteArrayInputStream, "image/" + profissional.getNomeImagem().split("\\.")[1], profissional.getNomeImagem());
                 return defaultStreamedContent;
             }
         } catch (Exception e) {

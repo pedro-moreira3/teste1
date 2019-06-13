@@ -25,8 +25,8 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
-import br.com.lume.common.util.Utils;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
+
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.evolucao.EvolucaoSingleton;
@@ -122,7 +122,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         super(PlanoTratamentoSingleton.getInstance().getBo());
         setClazz(PlanoTratamento.class);
         try {
-            profissionalLogado = Configurar.getInstance().getConfiguracao().getProfissionalLogado();
+            profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
             profissionalFinalizaProcedimento = profissionalLogado;
             atualizaTela();
         } catch (Exception e) {
@@ -140,7 +140,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     if (verificaAgendamento()) {
                         try {
                             if (getEntity().getId() == null) {
-                                getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                                getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
                             }
                             verificaAlteracaoValorAdmin();
                             getEntity().setPlanoTratamentoProcedimentos(planoTratamentoProcedimentos);
@@ -235,8 +235,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
             if (totalPago.doubleValue() < totalPagar.doubleValue()) {
                 log.error(OdontoMensagens.getMensagem("erro.encerramento.plano.nao.pago"));
-                this.addError(OdontoMensagens.getMensagem("erro.encerramento.plano.nao.pago").replaceFirst("\\{1\\}", Utils.stringToCurrency(totalPagar)).replaceFirst("\\{2\\}",
-                        Utils.stringToCurrency(totalPago)), "");
+                this.addError(OdontoMensagens.getMensagem("erro.encerramento.plano.nao.pago").replaceFirst("\\{1\\}", UtilsFrontEnd.stringToCurrency(totalPagar)).replaceFirst("\\{2\\}",
+                        UtilsFrontEnd.stringToCurrency(totalPago)), "");
             } else {
                 boolean procedimentoEmAberto = PlanoTratamentoSingleton.getInstance().getBo().findProcedimentosEmAbertoByPlanoTratamento(this.getEntity().getId()) > 0;
                 this.getEntity().setJustificativa(justificativa.getNome());
@@ -287,7 +287,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionPTInicial() {
         try {
-            PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().persistPlano(paciente, Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().persistPlano(paciente, UtilsFrontEnd.getProfissionalLogado());
             if (pt != null) {
                 setEntity(PlanoTratamentoSingleton.getInstance().getBo().find(pt.getId()));
                 atualizaTela();
@@ -397,7 +397,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
             if (ptp.getStatus() != null && ptp.getStatus().equals("F")) {
                 if (ptp.getFinalizadoPorProfissional() == null) {
-                    String evoPro = " <br/> " + "Procedimento : " + ptp.getProcedimento().getDescricao() + " <br/> " + "    Finalizado : " + Utils.dateToString(
+                    String evoPro = " <br/> " + "Procedimento : " + ptp.getProcedimento().getDescricao() + " <br/> " + "    Finalizado : " + UtilsFrontEnd.dateToString(
                             new Date()) + " <br/> " + "   Por : " + profissionalFinalizaProcedimento.getDadosBasico().getNome();
                     if (ptp.getDenteObj() != null && !ptp.getDenteObj().getDescricao().equals("")) {
                         for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {
@@ -458,7 +458,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (agenda == null || agenda.isEmpty()) {
             planoTratamentoProcedimentoRemove.setExcluido(Status.SIM);
             planoTratamentoProcedimentoRemove.setDataExclusao(new Date());
-            planoTratamentoProcedimentoRemove.setExcluidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getId());
+            planoTratamentoProcedimentoRemove.setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
             planoTratamentoProcedimentosExcluidos.add(planoTratamentoProcedimentoRemove);
             planoTratamentoProcedimentos.remove(planoTratamentoProcedimentoRemove);
             ordenaListas();
@@ -551,7 +551,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     private void carregarDadosCabecalho() {
-        Empresa empresalogada = Configurar.getInstance().getConfiguracao().getEmpresaLogada();
+        Empresa empresalogada = UtilsFrontEnd.getEmpresaLogada();
         nomeClinica = empresalogada.getEmpStrNme() != null ? empresalogada.getEmpStrNme() : "";
         endTelefoneClinica = (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() + " - " : "") + (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() + "/" : "") + (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() + " - " : "") + (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
     }
@@ -630,9 +630,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (event != null) {
             Object object = event.getObject();
             paciente = (Paciente) object;
-            Configurar.getInstance().getConfiguracao().setPacienteSelecionado(paciente);
+            UtilsFrontEnd.setPacienteSelecionado(paciente);
         } else {
-            paciente = Configurar.getInstance().getConfiguracao().getPacienteSelecionado();
+            paciente = UtilsFrontEnd.getPacienteLogado();
         }
         carregaPacienteSelecionado();
     }
@@ -655,7 +655,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         List<String> perfis = new ArrayList<>();
         perfis.add(OdontoPerfil.DENTISTA);
         perfis.add(OdontoPerfil.ADMINISTRADOR);
-        profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     private void carregarPlanoTratamentoProcedimentos() throws Exception {
@@ -748,8 +748,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             porcentagem = new BigDecimal(0d);
         }
 
-        if (!isDentistaAdmin() && Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDesconto() == null || Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDesconto().doubleValue() < porcentagem.doubleValue()) {
-            porcentagem = Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDesconto() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDesconto() : new BigDecimal(0);
+        if (!isDentistaAdmin() && UtilsFrontEnd.getProfissionalLogado().getDesconto() == null || UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue() < porcentagem.doubleValue()) {
+            porcentagem = UtilsFrontEnd.getProfissionalLogado().getDesconto() != null ? UtilsFrontEnd.getProfissionalLogado().getDesconto() : new BigDecimal(0);
             this.addError(OdontoMensagens.getMensagem("erro.orcamento.desconto.maior"), "");
             calculaDesconto();
             lancamento = new Lancamento();
@@ -790,7 +790,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             orcamento.setPlanoTratamento(getEntity());
             orcamento.setQuantidadeParcelas(1);
             orcamento.setValorTotal(valorTotal);
-            orcamento.setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            orcamento.setProfissional(UtilsFrontEnd.getProfissionalLogado());
             OrcamentoSingleton.getInstance().getBo().persist(orcamento);
             List<Lancamento> lancamentosNaoPagos = LancamentoSingleton.getInstance().getBo().listLancamentosNaoPagos(orcamento);
             if (lancamentosNaoPagos != null) {
@@ -1002,7 +1002,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public String getDataOrcamento() {
-        return Utils.dateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy HH:mm");
+        return UtilsFrontEnd.dateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy HH:mm");
     }
 
     public Date getDataCredito() {

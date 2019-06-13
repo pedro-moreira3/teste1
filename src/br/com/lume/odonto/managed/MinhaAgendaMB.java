@@ -7,7 +7,7 @@ import javax.faces.bean.RequestScoped;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Agendamento;
 
 @ManagedBean
@@ -23,7 +23,7 @@ public class MinhaAgendaMB extends LumeManagedBean<Agendamento> {
     public MinhaAgendaMB() {
         super(AgendamentoSingleton.getInstance().getBo());
         this.setClazz(Agendamento.class);
-        agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosDeHojeByProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+        agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosDeHojeByProfissional(UtilsFrontEnd.getProfissionalLogado());
     }
 
     public List<Agendamento> getAgendamentos() {

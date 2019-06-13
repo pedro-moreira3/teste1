@@ -21,9 +21,11 @@ import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.MessageType;
 import br.com.lume.common.util.StringUtil;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.bo.RestricaoBO;
+import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.managed.LumeSecurity;
 
 public abstract class LumeManagedBean<E extends Serializable> implements Serializable {
@@ -80,7 +82,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     }
 
     public boolean isEstoqueCompleto() {
-        return EmpresaBO.isEstoqueCompleto(Configurar.getInstance().getConfiguracao().getEmpresaLogada());
+        return EmpresaBO.isEstoqueCompleto(UtilsFrontEnd.getEmpresaLogada());
     }
 
     public boolean validaAcao(String acao) {
@@ -189,62 +191,67 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     }
 
     public boolean isTrial() {
-        // return Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null && getLumeSecurity().getUsuario() != null &&
+        // return ProfissionalBO.getProfissionalLogado() != null && getLumeSecurity().getUsuario() != null &&
         // getLumeSecurity().getUsuario().getEmpresa() != null ? getLumeSecurity().getUsuario().getEmpresa().getEmpChaTrial().equals("S") &&
-        // Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR): false;
-        if (Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null && this.getLumeSecurity().getUsuario() != null && this.getLumeSecurity().getUsuario().getEmpresa() != null) {
-            return this.getLumeSecurity().getUsuario().getEmpresa().getEmpChaTrial().equals("S") && Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR);
+        // ProfissionalBO.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR): false;
+        
+        Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
+        Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
+        
+        if  (profissionalLogado != null && this.getLumeSecurity().getUsuario() != null && empresaLogada != null) {
+            return empresaLogada.getEmpChaTrial().equals("S") && profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR);
         } else {
             return false;
         }
-    }
+    }    
+    
 
     public boolean isAdmin() {
-        return this.isAuxiliarAdministrativo() || this.isAdministrador() || this.isResponsavelTecnico() || isAdministradorClinica() || ((isDentista() && Configurar.getInstance().getConfiguracao().getEmpresaLogada().isEmpBolDentistaAdmin()));
+        return this.isAuxiliarAdministrativo() || this.isAdministrador() || this.isResponsavelTecnico() || isAdministradorClinica() || ((isDentista() && UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin()));
     }
 
     public boolean isGestor() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.GESTOR) : false;
+        return UtilsFrontEnd.getProfissionalLogado() != null ? UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.GESTOR) : false;
     }
 
     public boolean isAdministrador() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR) : false;
+        return UtilsFrontEnd.getProfissionalLogado() != null ? UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR) : false;
     }
 
     public boolean isDentista() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.DENTISTA) : false;
+        return UtilsFrontEnd.getProfissionalLogado() != null ? UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.DENTISTA) : false;
     }
 
     public boolean isDentistaAdmin() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(
-                OdontoPerfil.DENTISTA) && Configurar.getInstance().getConfiguracao().getEmpresaLogada().isEmpBolDentistaAdmin() : false;
+        return UtilsFrontEnd.getProfissionalLogado() != null ? UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(
+                OdontoPerfil.DENTISTA) && UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() : false;
     }
 
     public boolean isOrcamentista() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.ORCAMENTADOR) : false;
+        return UtilsFrontEnd.getProfissionalLogado() != null ? UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ORCAMENTADOR) : false;
     }
 
     public boolean isAuxiliarAdministrativo() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.AUXILIAR_ADMINISTRATIVO) : false;
+        return UtilsFrontEnd.getProfissionalLogado() != null ? UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.AUXILIAR_ADMINISTRATIVO) : false;
     }
 
     public boolean isResponsavelTecnico() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.RESPONSAVEL_TECNICO) : false;
+        return UtilsFrontEnd.getProfissionalLogado() != null ? UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.RESPONSAVEL_TECNICO) : false;
     }
 
     public boolean isAdministradorClinica() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA) : false;
+        return UtilsFrontEnd.getProfissionalLogado() != null ? UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA) : false;
     }
 
     public boolean isAuxiliarDentista() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.AUXILIAR_DENTISTA) : false;
+        return UtilsFrontEnd.getProfissionalLogado() != null ? UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.AUXILIAR_DENTISTA) : false;
     }
 
     public boolean isSecretaria() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.SECRETARIA) : false;
+        return UtilsFrontEnd.getProfissionalLogado() != null ? UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.SECRETARIA) : false;
     }
 
     public boolean isAlmoxarifa() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado() != null ? Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.ALMOXARIFA) : false;
+        return UtilsFrontEnd.getProfissionalLogado() != null ? UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ALMOXARIFA) : false;
     }
 }

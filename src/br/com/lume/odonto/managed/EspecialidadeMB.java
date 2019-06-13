@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.especialidade.EspecialidadeSingleton;
 //import br.com.lume.odonto.bo.EspecialidadeBO;
 //import br.com.lume.odonto.bo.ProfissionalBO;
@@ -38,7 +38,7 @@ public class EspecialidadeMB extends LumeManagedBean<Especialidade> {
 
     public void carregaLista() {
         try {
-            this.especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa();
+            this.especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (this.especialidades != null) {
                 Collections.sort(this.especialidades);
             }
@@ -51,7 +51,7 @@ public class EspecialidadeMB extends LumeManagedBean<Especialidade> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.getEntity().setRangeIni(0);
             this.getEntity().setRangeFim(0);
             super.actionPersist(event);

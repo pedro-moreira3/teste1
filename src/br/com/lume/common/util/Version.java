@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class Version {
 
-    public static String getVersion(String warName) {
+    public static String getVersion(String warName) {        
         File file = new File(warName + ".war");
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         if (file.exists()) {

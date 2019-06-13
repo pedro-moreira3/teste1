@@ -20,7 +20,7 @@ import org.primefaces.event.SelectEvent;
 import br.com.lume.abastecimento.AbastecimentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.controleMaterial.ControleMaterialSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.esterilizacao.EsterilizacaoSingleton;
@@ -121,12 +121,12 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
     public void actionPersist(ActionEvent event) {
         try {
             Material m = atualizaEstoqueLavagem();
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.getEntity().setData(Calendar.getInstance().getTime());
-            this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
             this.getEntity().setStatus(Lavagem.ABERTO);
 
-            ControleMaterial cm = new ControleMaterial(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa(), m, new BigDecimal(1));
+            ControleMaterial cm = new ControleMaterial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), m, new BigDecimal(1));
             ControleMaterialSingleton.getInstance().getBo().persist(cm);
 
             ArrayList<LavagemKit> lks = new ArrayList<>();
@@ -154,7 +154,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
             //System.out.println(" m.getQuantidadeAtualBD() " + m.getQuantidadeAtualBD() + " m.getQuantidadeAtual() " + m.getQuantidadeAtual());
             m.setQuantidadeAtual(m.getQuantidadeAtual().subtract(new BigDecimal(1)));
             MaterialSingleton.getInstance().getBo().persist(m);
-            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, m, Configurar.getInstance().getConfiguracao().getProfissionalLogado(), new BigDecimal(-1), m.getQuantidadeAtual(), MaterialLog.ENTREGA_LAVAGEM_MANUAL));
+            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, m, UtilsFrontEnd.getProfissionalLogado(), new BigDecimal(-1), m.getQuantidadeAtual(), MaterialLog.ENTREGA_LAVAGEM_MANUAL));
             return m;
         }
         return null;
@@ -190,7 +190,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").contains(
                         Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))) {
@@ -217,6 +217,9 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
     }
 
     public void actionDescarte(ActionEvent event) throws Exception {
+        
+        Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
+        
         if (this.getQuantidadeDescarte() > this.getLavagemKitSelecionada().getQuantidade()) {
             this.addError(OdontoMensagens.getMensagem("lavagem.descarte.acima"), "");
         } else if (this.getLavagemKitSelecionada().getItem() == null) {
@@ -232,17 +235,17 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                     m = a.getMaterial();
                     a.setQuantidade(a.getQuantidade().subtract(new BigDecimal(this.getQuantidadeDescarte())));
                     AbastecimentoSingleton.getInstance().getBo().persist(a);
-                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, a, m, Configurar.getInstance().getConfiguracao().getProfissionalLogado(), new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
+                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, a, m, profissionalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
                             MaterialLog.DEVOLUCAO_LAVAGEM_DESCARTAR));
                 } else if (cm != null) {
                     m = cm.getMaterial();
                     cm.setQuantidade(cm.getQuantidade().subtract(new BigDecimal(this.getQuantidadeDescarte())));
                     ControleMaterialSingleton.getInstance().getBo().persist(cm);
-                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, m, Configurar.getInstance().getConfiguracao().getProfissionalLogado(), new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
+                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, m, profissionalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
                             MaterialLog.DEVOLUCAO_LAVAGEM_DESCARTAR));
                 } else {
                     m = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(this.getLavagemKitSelecionada().getItem()).get(0);
-                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, m, Configurar.getInstance().getConfiguracao().getProfissionalLogado(), new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
+                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, m, profissionalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
                             MaterialLog.DEVOLUCAO_LAVAGEM_DESCARTAR));
                 }
 
@@ -254,7 +257,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                 m2.setDataCadastro(Calendar.getInstance().getTime());
                 m2.setLote(m.getLote());
                 m2.setFornecedor(m.getFornecedor());
-                m2.setExcluidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getId());
+                m2.setExcluidoPorProfissional(profissionalLogado.getId());
                 m2.setQuantidadeAtual(new BigDecimal(this.getQuantidadeDescarte()));
                 m2.setQuantidade(new BigDecimal(this.getQuantidadeDescarte()));
                 m2.setValor(m.getValor());
@@ -275,7 +278,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                 }
                 if (finalizar) {
                     Lavagem l = getLavagemKitSelecionada().getLavagem();
-                    l.setDevolvidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                    l.setDevolvidoPorProfissional(profissionalLogado);
                     l.setStatus(Lavagem.DESCARTADO);
                     l.setDataDevolucao(Calendar.getInstance().getTime());
                     LavagemSingleton.getInstance().getBo().persist(l);
@@ -328,6 +331,9 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
 
     public void actionDevolucao(ActionEvent event) {
         try {
+            
+            Profissional profisionalLogado = UtilsFrontEnd.getProfissionalLogado();
+            
             for (Lavagem l : this.getLavagemSelecionadas()) {
                 if (l.getClinica()) {
                     for (LavagemKit lk : l.getLavagemKits()) {
@@ -337,7 +343,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                             MaterialSingleton.getInstance().getBo().refresh(lk.getControleMaterial().getMaterial());
                             lk.getControleMaterial().getMaterial().setQuantidadeAtual(lk.getControleMaterial().getMaterial().getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
                             MaterialSingleton.getInstance().getBo().persist(lk.getControleMaterial().getMaterial());// Atualizando estoque
-                            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(lk.getControleMaterial(), null, lk.getControleMaterial().getMaterial(), Configurar.getInstance().getConfiguracao().getProfissionalLogado(),
+                            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(lk.getControleMaterial(), null, lk.getControleMaterial().getMaterial(), profisionalLogado,
                                     new BigDecimal(lk.getQuantidade()), lk.getControleMaterial().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_LAVAGEM_FINALIZAR));
                         } else if (lk.getAbastecimento() != null) {
                             lk.getAbastecimento().setQuantidade(lk.getAbastecimento().getQuantidade().subtract(new BigDecimal(lk.getQuantidade())));
@@ -345,7 +351,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                             MaterialSingleton.getInstance().getBo().refresh(lk.getAbastecimento().getMaterial());
                             lk.getAbastecimento().getMaterial().setQuantidadeAtual(lk.getAbastecimento().getMaterial().getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
                             MaterialSingleton.getInstance().getBo().persist(lk.getAbastecimento().getMaterial());// Atualizando estoque
-                            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, lk.getAbastecimento(), lk.getAbastecimento().getMaterial(), Configurar.getInstance().getConfiguracao().getProfissionalLogado(),
+                            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, lk.getAbastecimento(), lk.getAbastecimento().getMaterial(), profisionalLogado,
                                     new BigDecimal(lk.getQuantidade()), lk.getAbastecimento().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_LAVAGEM_FINALIZAR));
                         } else {
                             List<Material> material = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(lk.getItem());
@@ -353,13 +359,13 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                                 MaterialSingleton.getInstance().getBo().refresh(material.get(0));
                                 material.get(0).setQuantidadeAtual(material.get(0).getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
                                 MaterialSingleton.getInstance().getBo().persist(material.get(0));// Atualizando estoque
-                                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, material.get(0), Configurar.getInstance().getConfiguracao().getProfissionalLogado(), new BigDecimal(lk.getQuantidade()),
+                                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, material.get(0), profisionalLogado, new BigDecimal(lk.getQuantidade()),
                                         material.get(0).getQuantidadeAtual(), MaterialLog.DEVOLUCAO_LAVAGEM_FINALIZAR));
                             }
                         }
                     }
                 }
-                l.setDevolvidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                l.setDevolvidoPorProfissional(profisionalLogado);
                 l.setStatus(Lavagem.DEVOLVIDO);
                 l.setDataDevolucao(Calendar.getInstance().getTime());
                 LavagemSingleton.getInstance().getBo().persist(l);
@@ -377,6 +383,9 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
 
     public void actionEsterilizar(ActionEvent event) {
         try {
+            
+            Profissional profisionalLogado = UtilsFrontEnd.getProfissionalLogado();
+            
             for (Lavagem l : this.getLavagemSelecionadas()) {
 
                 Esterilizacao esterilizacao = new Esterilizacao();
@@ -403,12 +412,12 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                 esterilizacao.setData(Calendar.getInstance().getTime());
                 esterilizacao.setIdEmpresa(l.getIdEmpresa());
                 esterilizacao.setStatus(Esterilizacao.ABERTO);
-                esterilizacao.setSolicitante(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
-                esterilizacao.setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                esterilizacao.setSolicitante(profisionalLogado);
+                esterilizacao.setProfissional(profisionalLogado);
                 esterilizacao.setDescricao(l.getDescricao());
                 esterilizacao.setObservacao(l.getObservacao());
                 EsterilizacaoSingleton.getInstance().getBo().persist(esterilizacao);
-                l.setDevolvidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                l.setDevolvidoPorProfissional(profisionalLogado);
                 l.setStatus(Lavagem.DEVOLVIDO);
                 l.setDataDevolucao(Calendar.getInstance().getTime());
                 LavagemSingleton.getInstance().getBo().persist(l);
@@ -428,7 +437,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
         try {
             for (Lavagem l : this.getLavagemSelecionadas()) {
 
-                l.setDevolvidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                l.setDevolvidoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
                 l.setStatus(Lavagem.LIMPO);
                 l.setDataValidade(dataValidade);
                 LavagemSingleton.getInstance().getBo().persist(l);
@@ -504,10 +513,10 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
 
     public Lavagem lavar() throws Exception {
         Lavagem lavagem = new Lavagem();
-        lavagem.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        lavagem.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         lavagem.setData(Calendar.getInstance().getTime());
-        lavagem.setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
-        lavagem.setSolicitante(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+        lavagem.setProfissional(UtilsFrontEnd.getProfissionalLogado());
+        lavagem.setSolicitante(UtilsFrontEnd.getProfissionalLogado());
         lavagem.setClinica(true);
         lavagem.setStatus(Lavagem.ABERTO);
         return lavagem;

@@ -15,8 +15,8 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.Utils;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
+
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RelatorioResultado;
 import br.com.lume.odonto.entity.RelatorioResultadoDetalhe;
@@ -84,7 +84,7 @@ public class RelatorioResultadoMB extends LumeManagedBean<RelatorioResultado> {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
                         Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {
@@ -105,7 +105,7 @@ public class RelatorioResultadoMB extends LumeManagedBean<RelatorioResultado> {
     }
 
     public String getVigencia() {
-        return "Orçamento_" + Utils.dateToString(inicio, "dd/MM/yyyy") + "_" + Utils.dateToString(fim, "dd/MM/yyyy");
+        return "Orçamento_" + UtilsFrontEnd.dateToString(inicio, "dd/MM/yyyy") + "_" + UtilsFrontEnd.dateToString(fim, "dd/MM/yyyy");
     }
 
     public List<RelatorioResultado> getrelatorioResultados() {

@@ -14,7 +14,7 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.material.MaterialSingleton;
@@ -63,7 +63,7 @@ public class NotaFiscalMB extends LumeManagedBean<NotaFiscal> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(idEmpresa);
             this.getbO().persist(this.getEntity());
             for (Material material : this.getEntity().getMateriais()) {
                 MaterialSingleton.getInstance().getBo().persist(material);
@@ -93,7 +93,7 @@ public class NotaFiscalMB extends LumeManagedBean<NotaFiscal> {
             lc = new LancamentoContabil();
         }
         Motivo motivo = MotivoSingleton.getInstance().getBo().findBySigla(Motivo.COMPRA_MATERIAIS);
-        lc.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        lc.setIdEmpresa(idEmpresa);
         lc.setTipo(motivo.getTipo());
         lc.setDadosBasico(this.getEntity().getFornecedor().getDadosBasico());
         lc.setMotivo(motivo);

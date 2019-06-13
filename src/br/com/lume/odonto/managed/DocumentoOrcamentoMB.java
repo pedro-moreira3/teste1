@@ -19,7 +19,7 @@ import org.primefaces.event.SelectEvent;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.desconto.DescontoSingleton;
 import br.com.lume.documento.DocumentoSingleton;
@@ -99,9 +99,9 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
 //        planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
         try {
             Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "O");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio);
-            descontos = DescontoSingleton.getInstance().getBo().listByEmpresa();
-            this.setPaciente(Configurar.getInstance().getConfiguracao().getPacienteSelecionado());
+            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            descontos = DescontoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            this.setPaciente(UtilsFrontEnd.getPacienteLogado());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
@@ -121,7 +121,7 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
                 this.replaceDocumento();
                 visivel = true;
             }
-            this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
             this.getEntity().setDocumentoGerado(documento);
             this.getEntity().setPaciente(paciente);
             DocumentoOrcamentoSingleton.getInstance().getBo().persist(this.getEntity());
@@ -170,10 +170,11 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
 
     private void replaceDocumento() {
         BigDecimal valorPS = BigDecimal.ZERO;
-        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento);
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome(),
+                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         String orcamento = "<table border=0 class=\"ui-widget\" width=\"100%\"><tr><td width=\"80%\"><b>Procedimento</b></td><td width=\"20%\"><b>Valor</b></td></tr><tr><td>&nbsp;</td></tr>";
-        List<ConvenioProcedimento> convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(paciente.getConvenio());
+        List<ConvenioProcedimento> convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(paciente.getConvenio(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         boolean PS = false;
         for (PlanoTratamentoProcedimento ptp : planoDeTratamentoProcedimentos) {
             PS = false;
@@ -301,11 +302,11 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
     public void handleSelectPacienteSelecionado(SelectEvent event) {
         Object object = event.getObject();
         paciente = (Paciente) object;
-        Configurar.getInstance().getConfiguracao().setPacienteSelecionado(paciente);
+        UtilsFrontEnd.setPacienteSelecionado(paciente);
         
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 }

@@ -23,7 +23,7 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.desconto.DescontoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -144,7 +144,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
             }
             // descontos = descontoBO.listByEmpresa();
             dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma");
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
             this.setPaciente(Configurar.getInstance().getConfiguracao().getPacienteSelecionado());
             this.setValorAgregadoExcedido(BigDecimal.ZERO);
             if (paciente == null) {
@@ -185,13 +185,13 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
             this.getEntity().setExcluido(Status.SIM);
             this.getEntity().setDataPagamento(null);
             this.getEntity().setFormaPagamento(null);
-            this.getEntity().setExcluidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getId());
+            this.getEntity().setExcluidoPorProfissional(idProfissionalLogado);
             this.getbO().persist(this.getEntity());
             List<LancamentoContabil> lancamentosContabeis = LancamentoContabilSingleton.getInstance().getBo().listByLancamento(this.getEntity());
             for (LancamentoContabil lc : lancamentosContabeis) {
                 lc.setExcluido(Status.SIM);
                 lc.setDataExclusao(Calendar.getInstance().getTime());
-                lc.setExcluidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getId());
+                lc.setExcluidoPorProfissional(idProfissionalLogado);
                 LancamentoContabilSingleton.getInstance().getBo().persist(lc);
             }
             // }
@@ -239,7 +239,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
         LancamentoContabil lc = new LancamentoContabil();
         Motivo motivo = MotivoSingleton.getInstance().getBo().findBySigla(Motivo.PAGAMENTO_CARTAO);
         DadosBasico dadosBasico = DadosBasicoSingleton.getInstance().getBo().findByNome(l.getTarifa().getProduto());
-        lc.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        lc.setIdEmpresa(idEmpresa);
         lc.setTipo(motivo.getTipo());
         lc.setDadosBasico(dadosBasico);
         lc.setMotivo(motivo);
@@ -321,7 +321,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     private void geraLancamentoContabil(Lancamento l) throws Exception {
         LancamentoContabil lc = new LancamentoContabil();
         Motivo motivo = MotivoSingleton.getInstance().getBo().findBySigla(Motivo.PAGAMENTO_PACIENTE);
-        lc.setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        lc.setIdEmpresa(idEmpresa);
         lc.setTipo(motivo.getTipo());
         lc.setDadosBasico(paciente.getDadosBasico());
         lc.setMotivo(motivo);
@@ -520,7 +520,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,idEmpresa);
     }
 
     public void handleSelect(SelectEvent event) {

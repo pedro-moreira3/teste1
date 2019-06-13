@@ -17,7 +17,7 @@ import org.primefaces.event.SelectEvent;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.custo.CustoSingleton;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
@@ -71,7 +71,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
       //  planoTratamentoBO = new PlanoTratamentoBO();
     //    planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
         try {
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 //            setPaciente(PacienteBO.getPacienteSelecionado());
             custos = new ArrayList<>();
             if (paciente != null && paciente.getId() != null) {
@@ -97,7 +97,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
         try {
             this.getCustoSelecionado().setExcluido(Status.SIM);
             this.getCustoSelecionado().setDataExclusao(Calendar.getInstance().getTime());
-            this.getCustoSelecionado().setExcluidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getId());
+            this.getCustoSelecionado().setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
             this.getbO().persist(this.getCustoSelecionado());
             this.actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -121,7 +121,8 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
             this.getCustoSelecionado().setDataFaturamento(Calendar.getInstance().getTime());
             super.actionPersist(event);
             if (planoTratamentoProcedimento.isFinalizado()) {
-                planoTratamentoProcedimento.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(planoTratamentoProcedimento));
+                planoTratamentoProcedimento.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(planoTratamentoProcedimento,
+                        UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
                 PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(planoTratamentoProcedimento);
             }
 //            actionNew(event);
@@ -137,7 +138,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void handleSelect(SelectEvent event) {
@@ -146,7 +147,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
         if (paciente == null) {
             this.addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "");
         }      
-        Configurar.getInstance().getConfiguracao().setPacienteLogado(paciente);
+        UtilsFrontEnd.setPacienteLogado(paciente);
         this.setPlanoTratamento(null);
         this.setPlanoTratamentos(PlanoTratamentoSingleton.getInstance().getBo() .listByPaciente(paciente));
         this.carregaListaCusto();
@@ -193,7 +194,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
     }
 
     public Paciente getPaciente() {
-        paciente = Configurar.getInstance().getConfiguracao().getPacienteSelecionado();
+        paciente = UtilsFrontEnd.getPacienteSelecionado();
         this.setPlanoTratamentos(PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(paciente));
         this.carregaListaCusto();
         return paciente;
@@ -201,7 +202,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
 
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
-        Configurar.getInstance().getConfiguracao().setPacienteSelecionado(paciente);
+        UtilsFrontEnd.setPacienteSelecionado(paciente);
     }
 
     public PlanoTratamentoProcedimentoCusto getCustoSelecionado() {

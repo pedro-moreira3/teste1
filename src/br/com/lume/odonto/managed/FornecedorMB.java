@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 //import br.com.lume.odonto.bo.DadosBasicoBO;
@@ -64,7 +64,7 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
         try {
             DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
             FornecedorSingleton.getInstance().getBo().validaDuplicado(this.getEntity());
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(idEmpresa);
             super.actionPersist(event);
             this.carregaLista();
         } catch (TelefoneException te) {

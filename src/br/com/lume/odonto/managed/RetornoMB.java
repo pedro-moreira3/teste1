@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.paciente.PacienteSingleton;
@@ -52,7 +52,7 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     }
 
     public List<Paciente> geraSugestoesPaciente(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,idEmpresa);
     }
 
     public void persistRetorno(Retorno r) {

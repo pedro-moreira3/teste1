@@ -10,13 +10,15 @@ import org.apache.log4j.Logger;
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.Utils;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
+
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Plano;
+import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.iugu.responses.InvoiceResponse;
 import br.com.lume.odonto.iugu.services.Iugu;
 import br.com.lume.plano.PlanoSingleton;
+import br.com.lume.security.entity.Empresa;
 
 @ManagedBean
 @RequestScoped
@@ -49,18 +51,23 @@ public class MeuPlanoMB extends LumeManagedBean<Agendamento> {
 
     private void carregarQuantidadeAgendamentosMes() {
         try {
-            agendamentos = AgendamentoSingleton.getInstance().getBo().listQuantidadeAgendamentosMes();
-            agendamentosMes = AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosMesAtual(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            
+            Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
             Plano planoUsuLogado = PlanoSingleton.getInstance().getBo().findByUsuarioLogado();
+            agendamentos = AgendamentoSingleton.getInstance().getBo().listQuantidadeAgendamentosMes();
+            agendamentosMes = AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosMesAtual(empresaLogada.getEmpIntCod());
+            
             if (planoUsuLogado != null) {
+                
                 agendamentosPlano = planoUsuLogado.getConsultas();
                 porcentagemUtilizado = (double) ((100 * (double) agendamentosMes) / (double) agendamentosPlano);
-                if (Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpDtmExpiracao() != null) {
-                    dataVencimentoPlano = Utils.dateToString(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpDtmExpiracao(), "dd/MM/yyyy");
+                
+                if (empresaLogada.getEmpDtmExpiracao() != null) {
+                    dataVencimentoPlano = UtilsFrontEnd.dateToString(empresaLogada.getEmpDtmExpiracao(), "dd/MM/yyyy");
                 }
             }
-            if (Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpStrAssinaturaIuguID() != null && !Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpStrAssinaturaIuguID().isEmpty() && recentInvoices == null) {
-                recentInvoices = Iugu.buscaFaturas(Configurar.getInstance().getConfiguracao().getEmpresaLogada().getEmpStrAssinaturaIuguID());
+            if (empresaLogada.getEmpStrAssinaturaIuguID() != null && !empresaLogada.getEmpStrAssinaturaIuguID().isEmpty() && recentInvoices == null) {
+                recentInvoices = Iugu.buscaFaturas(empresaLogada.getEmpStrAssinaturaIuguID());
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

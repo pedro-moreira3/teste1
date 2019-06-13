@@ -13,7 +13,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.common.util.Utils;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.RelatorioOrcamento;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.relatorioOrcamento.RelatorioOrcamentoSingleton;
@@ -49,8 +49,8 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<RelatorioOrcamento> {
             this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
         } else {
             //this.fim = Utils.getLastHourOfDate(this.fim);
-            this.inicio = Utils.setFirstHourDate(this.inicio);
-            this.fim = Utils.setLastHourDate(this.fim);
+            this.inicio = UtilsFrontEnd.setFirstHourDate(this.inicio);
+            this.fim = UtilsFrontEnd.setLastHourDate(this.fim);
             
             this.somaValorTotal = new BigDecimal(0);
             this.somaValorTotalDesconto = new BigDecimal(0);
@@ -77,7 +77,7 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<RelatorioOrcamento> {
     }
 
     public String getVigencia() {
-        return "Orçamento_" + Utils.dateToString(this.inicio, "dd/MM/yyyy") + "_" + Utils.dateToString(this.fim, "dd/MM/yyyy");
+        return "Orçamento_" + UtilsFrontEnd.dateToString(this.inicio, "dd/MM/yyyy") + "_" + UtilsFrontEnd.dateToString(this.fim, "dd/MM/yyyy");
     }
 
     public List<RelatorioOrcamento> getRelatorioOrcamentos() {

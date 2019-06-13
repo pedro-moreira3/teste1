@@ -11,7 +11,7 @@ import org.primefaces.model.chart.MeterGaugeChartModel;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.grafico.GraficoSingleton;
 import br.com.lume.graficoProfissional.GraficoProfissionalSingleton;
 //import br.com.lume.odonto.bo.GraficoBO;
@@ -48,7 +48,7 @@ public class CockpitMB extends LumeManagedBean<Grafico> {
     }
 
     private void createMeterGaugeModel() throws Exception {
-        List<GraficoProfissional> graficos = GraficoProfissionalSingleton.getInstance().getBo().listByProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+        List<GraficoProfissional> graficos = GraficoProfissionalSingleton.getInstance().getBo().listByProfissional(UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         for (GraficoProfissional gp : graficos) {
             int value = GraficoSingleton.getInstance().getBo().findGenerico(gp.getGrafico());
             List<Number> intervals = new ArrayList<>();

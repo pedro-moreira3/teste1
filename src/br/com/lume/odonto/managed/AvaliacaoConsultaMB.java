@@ -13,6 +13,7 @@ import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.avaliacaoConsulta.AvaliacaoConsultaSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.UtilsFrontEnd;
 //import br.com.lume.odonto.bo.AgendamentoBO;
 //import br.com.lume.odonto.bo.AvaliacaoConsultaBO;
 //import br.com.lume.odonto.bo.PacienteBO;
@@ -48,7 +49,7 @@ public class AvaliacaoConsultaMB extends LumeManagedBean<AvaliacaoConsulta> {
 
     private void carregaDados() {
         try {
-            Paciente paciente = PacienteSingleton.getInstance().getBo().findByEmpresaEUsuario(this.getLumeSecurity().getUsuario().getEmpresa().getEmpIntCod(), this.getLumeSecurity().getUsuario().getUsuIntCod());
+            Paciente paciente = PacienteSingleton.getInstance().getBo().findByEmpresaEUsuario(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.getLumeSecurity().getUsuario().getUsuIntCod());
             List<Agendamento> consultasRealizadas = AgendamentoSingleton.getInstance().getBo().listByRealizadasAndPaciente(paciente);
             List<Agendamento> consultasAux = new ArrayList<>();
             this.avaliacoes = AvaliacaoConsultaSingleton.getInstance().getBo().listByPaciente(paciente);

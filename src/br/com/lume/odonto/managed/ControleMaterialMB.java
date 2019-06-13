@@ -19,7 +19,7 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.controleMaterial.ControleMaterialSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.item.ItemSingleton;
@@ -85,9 +85,9 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
 
     private void geraLista() {
         try {
-            this.setMateriaisUnitario(ControleMaterialSingleton.getInstance().getBo().listByEmpresaAndStatus());
-            this.setKitsDisponibilizados(ReservaKitSingleton.getInstance().getBo().listKitsDevolucao());
-            this.setKitsPendentes(ReservaKitSingleton.getInstance().getBo().listByStatusAndReserva(ControleMaterial.PENDENTE));
+            this.setMateriaisUnitario(ControleMaterialSingleton.getInstance().getBo().listByEmpresaAndStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            this.setKitsDisponibilizados(ReservaKitSingleton.getInstance().getBo().listKitsDevolucao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            this.setKitsPendentes(ReservaKitSingleton.getInstance().getBo().listByStatusAndReserva(ControleMaterial.PENDENTE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -119,7 +119,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
         try {
             this.devolveMateriais(event, false);
             // atualiza a reserva para finalizada;
-            this.getReservaKit().setDevolvidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            this.getReservaKit().setDevolvidoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
             this.getReservaKit().setStatus(ControleMaterial.FINALIZADO);
             this.getReservaKit().setDataFinalizado(new Date());
             ReservaKitSingleton.getInstance().getBo().persist(this.getReservaKit());
@@ -168,7 +168,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
         try {
             this.lavaMateriais(event);
             // atualiza a reserva para finalizada;
-            this.getReservaKit().setDevolvidoPorProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            this.getReservaKit().setDevolvidoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
             this.getReservaKit().setStatus(ControleMaterial.FINALIZADO);
             this.getReservaKit().setDataFinalizado(new Date());
             ReservaKitSingleton.getInstance().getBo().persist(this.getReservaKit());
@@ -210,7 +210,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
             }
             this.setEntity(cm);
             this.actionPersistLowProfile(event);
-            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, cm.getMaterial(), Configurar.getInstance().getConfiguracao().getProfissionalLogado(), qtdDevolvida, cm.getMaterial().getQuantidadeAtual(), acao));
+            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, cm.getMaterial(), UtilsFrontEnd.getProfissionalLogado(), qtdDevolvida, cm.getMaterial().getQuantidadeAtual(), acao));
         }
         this.limpaMateriais();
     }
@@ -224,7 +224,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
                 cm.getMaterial().setQuantidadeAtual(cm.getMaterial().getQuantidadeAtual().add(quantidadeDevolver));
                 MaterialSingleton.getInstance().getBo().persist(cm.getMaterial());
                 cm.setQuantidade(cm.getQuantidadeDevolvida());
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, cm.getMaterial(), Configurar.getInstance().getConfiguracao().getProfissionalLogado(), quantidadeDevolver, cm.getMaterial().getQuantidadeAtual(),
+                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, cm.getMaterial(), UtilsFrontEnd.getProfissionalLogado(), quantidadeDevolver, cm.getMaterial().getQuantidadeAtual(),
                         MaterialLog.DEVOLUCAO_KIT_LAVAGEM));
             }
             cm.setStatus(ControleMaterial.UTILIZADO_KIT);
@@ -288,7 +288,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
             this.getEntity().setReservaKit(this.getReservaKit());
             this.getEntity().setQuantidade(materiaisSelecionado.get(0).getQuantidadeRetirada());
             this.getEntity().setUnidade(1);
-            this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (message) {
                 this.actionPersist(event);
             } else {
@@ -319,7 +319,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
                     m.setQuantidadeAtual(new BigDecimal(0));
                 }
                 m.setDataUltimaUtilizacao(Calendar.getInstance().getTime());
-                logs.add(new MaterialLog(getEntity(), null, m, Configurar.getInstance().getConfiguracao().getProfissionalLogado(), quantidadeRetirada.multiply(new BigDecimal(-1)), m.getQuantidadeAtual(),
+                logs.add(new MaterialLog(getEntity(), null, m, UtilsFrontEnd.getProfissionalLogado(), quantidadeRetirada.multiply(new BigDecimal(-1)), m.getQuantidadeAtual(),
                         MaterialLog.EMPRESTIMO_KIT_DISPONIBILIZAR));
                 MaterialSingleton.getInstance().getBo().persist(m);
             }
@@ -362,7 +362,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
                     // devolvendo o material    
                     MaterialSingleton.getInstance().getBo().refresh(cm.getMaterial());
                     cm.getMaterial().setQuantidadeAtual(cm.getMaterial().getQuantidadeAtual().add(quantidadeDevolvida));
-                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, cm.getMaterial(), Configurar.getInstance().getConfiguracao().getProfissionalLogado(), quantidadeDevolvida, cm.getMaterial().getQuantidadeAtual(),
+                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, cm.getMaterial(), UtilsFrontEnd.getProfissionalLogado(), quantidadeDevolvida, cm.getMaterial().getQuantidadeAtual(),
                             MaterialLog.EMPRESTIMO_KIT_CANCELAR));
                     MaterialSingleton.getInstance().getBo().persist(cm.getMaterial());
                     cm.setStatus(ControleMaterial.NAOUTILIZADO);
@@ -472,10 +472,11 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
             try {
                 List<Material> materiaisAtivos;
                 if (!this.getKitItemSelecionado().getItem().getCategoria().equals("S")) {
-                    materiaisAtivos = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(this.getKitItemSelecionado().getItem(), quantidadeTotal.intValue());
+                    materiaisAtivos = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(this.getKitItemSelecionado().getItem(), quantidadeTotal.intValue(),
+                            UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 } else {
-                    List<Item> itensFilhos = ItemSingleton.getInstance().getBo().listByPai(this.getKitItemSelecionado().getItem().getId());
-                    materiaisAtivos = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(itensFilhos, quantidadeTotal.intValue());
+                    List<Item> itensFilhos = ItemSingleton.getInstance().getBo().listByPai(this.getKitItemSelecionado().getItem().getId(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                    materiaisAtivos = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(itensFilhos, quantidadeTotal.intValue(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 }
                 for (Material material : materiaisAtivos) {
                     material.setQuantidadeRetirada(new BigDecimal(quantidadeTotal));

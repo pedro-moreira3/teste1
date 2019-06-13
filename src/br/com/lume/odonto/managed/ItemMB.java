@@ -17,8 +17,8 @@ import org.primefaces.model.TreeNode;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.common.util.Utils;
-import br.com.lume.configuracao.Configurar;
+import br.com.lume.common.util.UtilsFrontEnd;
+
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.material.MaterialSingleton;
@@ -97,7 +97,7 @@ public class ItemMB extends LumeManagedBean<Item> {
     @Override
     public void actionPersist(ActionEvent event) {
         boolean error = false;
-        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(idEmpresa);
         if (this.getFormaArmazenamento() != null) {
             this.getEntity().setFormaArmazenamento(this.getFormaArmazenamento().getValor());
         }
@@ -639,7 +639,7 @@ public class ItemMB extends LumeManagedBean<Item> {
             List<Item> itens2 = new ArrayList<>();
             for (Item item : this.getItens()) {
                 //System.out.println(item.getDescricaoLimpa().toUpperCase());
-                if (item.getDescricaoLimpa().toUpperCase().contains(Utils.normalize(filtroTable.toUpperCase()))) {
+                if (item.getDescricaoLimpa().toUpperCase().contains(UtilsFrontEnd.normalize(filtroTable.toUpperCase()))) {
                     itens2.add(item);
                 }
             }

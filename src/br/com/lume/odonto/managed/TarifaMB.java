@@ -14,7 +14,7 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Tarifa;
@@ -47,7 +47,7 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(Configurar.getInstance().getConfiguracao().getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(idEmpresa);
         DadosBasico basico = new DadosBasico();
         if (DadosBasicoSingleton.getInstance().getBo().findByNome(this.getEntity().getProduto()) == null) {
             basico.setNome(this.getEntity().getProduto());

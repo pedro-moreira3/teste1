@@ -16,7 +16,7 @@ import br.com.lume.common.exception.business.UsuarioSemPerfilException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.configuracao.Configurar;
+
 import br.com.lume.security.bo.LoginBO;
 import br.com.lume.security.bo.ObjetoBO;
 import br.com.lume.security.bo.SistemaBO;

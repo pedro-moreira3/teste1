@@ -17,6 +17,7 @@ import com.google.gson.GsonBuilder;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.UtilsFrontEnd;
 //import br.com.lume.odonto.bo.AgendamentoBO;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoAgenda;
@@ -52,7 +53,7 @@ public class ExportarAgendaMB extends LumeManagedBean<Agendamento> {
                 if (agendamentos != null && !agendamentos.isEmpty()) {
                     List<AgendamentoAgenda> agendamentosAgenda = new ArrayList<>();
                     for (Agendamento a : agendamentos) {
-                        agendamentosAgenda.add(new AgendamentoAgenda(a.getId(), a.getDescricaoAgenda(), a.getDescricao(), a.getEnderecoEmpresa(), a.getInicio(), a.getFim()));
+                        agendamentosAgenda.add(new AgendamentoAgenda(a.getId(), a.getDescricaoAgenda(UtilsFrontEnd.getProfissionalLogado().getPerfil(), super.isAdmin()), a.getDescricao(), a.getEnderecoEmpresa(), a.getInicio(), a.getFim()));
                     }
                     Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
                     //
