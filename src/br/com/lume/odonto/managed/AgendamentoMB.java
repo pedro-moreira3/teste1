@@ -411,10 +411,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 }
                 agendamento.setPlanoTratamentoProcedimentosAgendamento(aptpsNovos);
                 AgendamentoSingleton.getInstance().getBo().persist(agendamento);
-                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(),UtilsFrontEnd.getProfissionalLogado(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(),UtilsFrontEnd.getProfissionalLogado());
                 return true;
             } else if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) {
-                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(),UtilsFrontEnd.getProfissionalLogado(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());                
+                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(),UtilsFrontEnd.getProfissionalLogado());                
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -631,7 +631,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             dlg = true;
             try {
                 this.removeAgendamentoPlanoTratamentoProcedimento();
-                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(),UtilsFrontEnd.getProfissionalLogado(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(),UtilsFrontEnd.getProfissionalLogado());
                 AgendamentoSingleton.getInstance().getBo().remove(this.getEntity());
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
             } catch (Exception e) {
@@ -696,7 +696,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                     agendamento.getPaciente().getDadosBasico().getDataNascimento() != null)   
                                 dataAtual.setTime(agendamento.getPaciente().getDadosBasico().getDataNascimento());
                             if (profissional != null) {
-                                descricao = "[" + agendamento.getPaciente().getSiglaConvenio() + "] " + agendamento.getDescricaoAgenda();
+                                descricao = "[" + agendamento.getPaciente().getSiglaConvenio() + "] " + agendamento.getDescricaoAgenda(UtilsFrontEnd.get);
                             } else {
                                 descricao = agendamento.getProfissional().getDadosBasico().getNomeAbreviado() + " - " + "[" + agendamento.getPaciente().getSiglaConvenio() + "] " + agendamento.getPaciente().getDadosBasico().getNome();
                             }

@@ -337,7 +337,8 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
                     PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().persist(ptpc);
                     PlanoTratamentoProcedimento planoTratamentoProcedimento = ag.getPlanoTratamentoProcedimento();
                     if (planoTratamentoProcedimento.isFinalizado()) {
-                        planoTratamentoProcedimento.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(planoTratamentoProcedimento,UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
+                        planoTratamentoProcedimento.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(planoTratamentoProcedimento,
+                                UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
                         PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(planoTratamentoProcedimento);
                     }
                     return;

@@ -18,7 +18,7 @@ import org.primefaces.model.TreeNode;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.fornecedorItem.FornecedorItemSingleton;
 import br.com.lume.item.ItemSingleton;
@@ -73,7 +73,7 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
         try {
-            this.fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa();
+            this.fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.log.error("Erro no setEntity", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -82,7 +82,7 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
 
     private void geralist() {
         try {
-            this.setFornecedoresItens(FornecedorItemSingleton.getInstance().getBo().listByEmpresa());
+            this.setFornecedoresItens(FornecedorItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -109,7 +109,7 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(idEmpresa);
+        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (this.getEntity().getItem() != null) {
             if (this.validaFornecedorItem()) {
                 super.actionPersist(event);
@@ -123,8 +123,8 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
     }
 
     public boolean validaFornecedorItem() {
-        if (FornecedorItemSingleton.getInstance().getBo().findByFornecedorAndItem(this.getEntity()) == null) {
-            for (FornecedorItem fI : FornecedorItemSingleton.getInstance().getBo().listByFornecedor(this.getEntity().getFornecedor())) {
+        if (FornecedorItemSingleton.getInstance().getBo().findByFornecedorAndItem(this.getEntity(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()) == null) {
+            for (FornecedorItem fI : FornecedorItemSingleton.getInstance().getBo().listByFornecedor(this.getEntity().getFornecedor(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa())) {
                 if (fI.getItem().getIdItemPai() != null) {
                     if (fI.getItem().getIdItemPai().equals(this.getEntity().getItem())) {
                         return false;
@@ -257,7 +257,7 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
         this.setItens(new ArrayList<Item>());
         try {
             if (this.getDigitacao() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao()));
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
                 this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa());
             }

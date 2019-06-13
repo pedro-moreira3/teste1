@@ -27,6 +27,7 @@ import org.primefaces.model.UploadedFile;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.exame.ExameSingleton;
@@ -112,7 +113,7 @@ public class ExameMB extends LumeManagedBean<Exame> {
         try {
             this.arquivo = event.getFile();
             long size = 0;
-            String extensao = UtilsFrontEnd.getExtensao(this.arquivo.getFileName());
+            String extensao = Utils.getExtensao(this.arquivo.getFileName());
             if (extensao.equalsIgnoreCase("jpg") || extensao.equalsIgnoreCase("jpeg") || extensao.equalsIgnoreCase("gif") || extensao.equalsIgnoreCase("png")) {
                 try {
                     BufferedImage img = ImageIO.read(event.getFile().getInputstream()); // load image
@@ -264,7 +265,7 @@ public class ExameMB extends LumeManagedBean<Exame> {
 
     public boolean validaPdf(Exame exame) {
         if (exame != null && exame.getNomeAnexo() != null) {
-            if (UtilsFrontEnd.getExtensao(exame.getNomeAnexo()).equalsIgnoreCase("pdf") || UtilsFrontEnd.getExtensao(exame.getNomeAnexo()).equalsIgnoreCase("zip")) {
+            if (Utils.getExtensao(exame.getNomeAnexo()).equalsIgnoreCase("pdf") || Utils.getExtensao(exame.getNomeAnexo()).equalsIgnoreCase("zip")) {
                 return true;
             }
         }

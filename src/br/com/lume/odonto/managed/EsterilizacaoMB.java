@@ -221,7 +221,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
                     MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, m, profisisonalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
                             MaterialLog.DEVOLUCAO_ESTERILIZACAO_DESCARTAR));;
                 } else {
-                    m = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(this.getEsterilizacaoKitSelecionada().getItem()).get(0));
+                    m = (Material) MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(this.getEsterilizacaoKitSelecionada().getItem(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                     MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, m, profisisonalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
                             MaterialLog.DEVOLUCAO_ESTERILIZACAO_DESCARTAR));
                 }
@@ -535,9 +535,9 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
         this.setKits(new ArrayList<Kit>());
         try {
             if (this.getDigitacao() != null) {
-                this.setKits(KitSingleton.getInstance().getBo() .listByEmpresaAndDescricaoParcialAndTipo(this.getDigitacao()));
+                this.setKits(KitSingleton.getInstance().getBo() .listByEmpresaAndDescricaoParcialAndTipo(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setKits(KitSingleton.getInstance().getBo().listByEmpresaAndTipo());
+                this.setKits(KitSingleton.getInstance().getBo().listByEmpresaAndTipo(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
             Collections.sort(kits);
         } catch (Exception e) {
@@ -563,7 +563,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
     private void setItemKitSelecionado(String descricao) {
         try {
-            for (Kit kit : KitSingleton.getInstance().getBo().listByEmpresa()) {
+            for (Kit kit : KitSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa())) {
                 if (kit.getDescricao().equals(descricao)) {
                     this.setKit(kit);
                     this.setDigitacao(this.getKit().getDescricao());
@@ -690,7 +690,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
                             MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, lk.getAbastecimento(), lk.getAbastecimento().getMaterial(), profissionalLogado,
                                     new BigDecimal(lk.getQuantidade()), lk.getAbastecimento().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_ESTERILIZACAO_ESTERILIZADO));
                         } else {
-                            List<Material> material = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(lk.getItem());
+                            List<Material> material = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(lk.getItem(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                             if (!material.isEmpty()) {
                                 MaterialSingleton.getInstance().getBo().refresh(material.get(0));
                                 material.get(0).setQuantidadeAtual(material.get(0).getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
@@ -833,9 +833,12 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
     public void geraListaSolicitadas() {
         try {
-            this.setEsterilizacoesSolicitadas(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ABERTO));
-            esterilizacoesSolicitadas.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ESTERILIZADO));
-            esterilizacoesSolicitadas.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.EMPACOTADO));
+            
+            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+            
+            this.setEsterilizacoesSolicitadas(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ABERTO, idEmpresaLogada));
+            esterilizacoesSolicitadas.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ESTERILIZADO, idEmpresaLogada));
+            esterilizacoesSolicitadas.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.EMPACOTADO, idEmpresaLogada));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -844,10 +847,13 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
     private void geraLista() {
         try {
+            
+            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+            
             esterilizacoes = new ArrayList<>();
-            esterilizacoes.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ABERTO));
-            esterilizacoes.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ESTERILIZADO));
-            esterilizacoes.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.EMPACOTADO));
+            esterilizacoes.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ABERTO, idEmpresaLogada));
+            esterilizacoes.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.ESTERILIZADO, idEmpresaLogada));
+            esterilizacoes.addAll(EsterilizacaoSingleton.getInstance().getBo().listByEmpresaAndStatus(Esterilizacao.EMPACOTADO, idEmpresaLogada));
             if (esterilizacoes != null) {
                 Collections.sort(esterilizacoes);
             }
