@@ -103,13 +103,13 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                 if (profissional == null) {
                     perfilLogado = OdontoPerfil.PACIENTE;
                     Paciente paciente = PacienteSingleton.getInstance().getBo().findByUsuario(userLogin);
-                    Configurar.getInstance().getConfiguracao().setPacienteLogado(paciente);
+                    UtilsFrontEnd.setPacienteLogado(paciente);
                     Configurar.getInstance().getConfiguracao().setPerfilLogado(OdontoPerfil.PACIENTE);
                     Configurar.getInstance().getConfiguracao().setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa()));                   
                 } else {
                     if (!Profissional.INATIVO.equals(profissional.getStatus())) {
                         perfilLogado = profissional.getPerfil();
-                        Configurar.getInstance().getConfiguracao().setProfissionalLogado(profissional);
+                        UtilsFrontEnd.setProfissionalLogado(profissional);
                         Configurar.getInstance().getConfiguracao().setPerfilLogado(perfilLogado);
                         Configurar.getInstance().getConfiguracao().setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()));                      
                     } else {
@@ -155,7 +155,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                 if (!Profissional.INATIVO.equals(profissional.getStatus())) {
                     perfilLogado = profissional.getPerfil();
                     userLogin = UsuarioSingleton.getInstance().getBo().find(profissional.getIdUsuario());
-                    Configurar.getInstance().getConfiguracao().setProfissionalLogado(profissional);
+                    UtilsFrontEnd.setProfissionalLogado(profissional);
                     Configurar.getInstance().getConfiguracao().setPerfilLogado(perfilLogado);
                     Configurar.getInstance().getConfiguracao().setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()));                 
                 } else {
@@ -166,7 +166,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                 perfilLogado = OdontoPerfil.PACIENTE;
                 Paciente paciente = PacienteSingleton.getInstance().getBo().find(Long.parseLong(id));
                 userLogin = UsuarioSingleton.getInstance().getBo().find(paciente.getIdUsuario());
-                Configurar.getInstance().getConfiguracao().setPacienteLogado(paciente);
+                UtilsFrontEnd.setPacienteLogado(paciente);
                 Configurar.getInstance().getConfiguracao().setPerfilLogado(OdontoPerfil.PACIENTE);
                 Configurar.getInstance().getConfiguracao().setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa()));             
             }
@@ -218,8 +218,8 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
     }
     
     private String verificaPaginaInicial() {
-        Profissional profissional = (Profissional) Configurar.getInstance().getConfiguracao().getProfissionalLogado();
-        Paciente paciente = (Paciente) Configurar.getInstance().getConfiguracao().getPacienteLogado();
+        Profissional profissional = (Profissional) UtilsFrontEnd.getProfissionalLogado();
+        Paciente paciente = (Paciente) UtilsFrontEnd.getPacienteLogado();
         String actionLoginRetorno = "";
         if (profissional != null || paciente != null) {
             if (paciente != null) {

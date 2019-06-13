@@ -354,7 +354,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
                     this.getbO().merge(ri.getPlanoTratamentoProcedimento());
                 }
                 repasseSelecionado.setDataPagamento(Calendar.getInstance().getTime());
-                repasseSelecionado.setProfissionalPagou(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                repasseSelecionado.setProfissionalPagou(UtilsFrontEnd.getProfissionalLogado());
                 repasseSelecionado.setStatus(RepasseItem.PAGO_COMPLETO);
                 RepasseProfissionalSingleton.getInstance().getBo().merge(repasseSelecionado);
                 this.actionFiltrar(event);
@@ -406,7 +406,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
     private void geraLancamentoContabil(BigDecimal valor) throws Exception, BusinessException, TechnicalException {
         LancamentoContabil lc = new LancamentoContabil();
         Motivo motivo = MotivoSingleton.getInstance().getBo().findBySigla(Motivo.PAGAMENTO_PROFISSIONAL);
-        lc.setIdEmpresa(idEmpresa);
+        lc.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         lc.setTipo(motivo.getTipo());
         lc.setDadosBasico(profissional.getDadosBasico());
         lc.setMotivo(motivo);
@@ -485,7 +485,7 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(idEmpresa);
+            profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
                         Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {

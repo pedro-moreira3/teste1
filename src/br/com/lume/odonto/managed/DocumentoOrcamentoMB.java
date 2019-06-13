@@ -19,7 +19,7 @@ import org.primefaces.event.SelectEvent;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.desconto.DescontoSingleton;
 import br.com.lume.documento.DocumentoSingleton;
@@ -101,7 +101,7 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
             Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "O");
             documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio);
             descontos = DescontoSingleton.getInstance().getBo().listByEmpresa();
-            this.setPaciente(Configurar.getInstance().getConfiguracao().getPacienteSelecionado());
+            this.setPaciente(UtilsFrontEnd.getPacienteLogado());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
@@ -121,7 +121,7 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
                 this.replaceDocumento();
                 visivel = true;
             }
-            this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
             this.getEntity().setDocumentoGerado(documento);
             this.getEntity().setPaciente(paciente);
             DocumentoOrcamentoSingleton.getInstance().getBo().persist(this.getEntity());
@@ -301,11 +301,11 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
     public void handleSelectPacienteSelecionado(SelectEvent event) {
         Object object = event.getObject();
         paciente = (Paciente) object;
-        Configurar.getInstance().getConfiguracao().setPacienteSelecionado(paciente);
+        UtilsFrontEnd.setPacienteSelecionado(paciente);
         
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,idEmpresa);
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 }

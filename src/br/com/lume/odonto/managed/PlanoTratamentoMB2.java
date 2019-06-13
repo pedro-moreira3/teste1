@@ -123,7 +123,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS);
             this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
         }
-        profissionalLogado = Configurar.getInstance().getConfiguracao().getProfissionalLogado();
+        profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
         profissionalFinalizaProcedimento = profissionalLogado;
         if (isDentistaAdmin() || profissionalLogado.getPerfil().equals(OdontoPerfil.ORCAMENTADOR) || profissionalLogado.getPerfil().equals(
                 OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(
@@ -148,7 +148,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.setPaciente(Configurar.getInstance().getConfiguracao().getPacienteSelecionado());
+        this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
         if (paciente != null) {
             this.carregaPacienteSelecionado();
         }
@@ -159,7 +159,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
         List<String> perfis = new ArrayList<>();
         perfis.add(OdontoPerfil.DENTISTA);
         perfis.add(OdontoPerfil.ADMINISTRADOR);
-        profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis,idEmpresa);
+        profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void carregaListaPlano() {
@@ -255,7 +255,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
 
     public void actionPTInicial() {
         try {
-            PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().persistPlano(paciente, Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().persistPlano(paciente, UtilsFrontEnd.getProfissionalLogado());
             if (pt != null) {
                 setEntity(PlanoTratamentoSingleton.getInstance().getBo().find(pt.getId()));
                 planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(paciente);
@@ -279,7 +279,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
                             try {
                                 boolean validado = true;
                                 if (this.getEntity().getId() == null) {
-                                    this.getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                                    this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
                                 }
                                 if (this.getEntity().getPlanoTratamentoProcedimentos() == null) {
                                     this.getEntity().setPlanoTratamentoProcedimentos(planoTratamentoProcedimentos);
@@ -440,7 +440,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
             if (!planoTratamentoProcedimentos.contains(ptp) && (ptp.getExcluido().equals(Status.NAO))) {
                 ptp.setExcluido(Status.SIM);
                 ptp.setDataExclusao(new Date());
-                ptp.setExcluidoPorProfissional(idProfissionalLogado);
+                ptp.setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
                 this.removeLancamentosEmAberto();
             }
         }
@@ -1041,7 +1041,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
     }
 
     public List<Paciente> geraSugestoesPaciente(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,idEmpresa);
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     private void carregaPacienteSelecionado() {
@@ -1270,7 +1270,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
     }
 
     public String getProfissionalOrcamento() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado().getDadosBasico().getNome();
+        return UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome();
     }
 
     public List<Profissional> getProfissionais() {

@@ -22,7 +22,7 @@ import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.kit.KitSingleton;
@@ -91,7 +91,7 @@ public class KitMB extends LumeManagedBean<Kit> {
         this.carregaTree();
         this.geralista();
         try {
-            this.profissionalLogado = Configurar.getInstance().getConfiguracao().getProfissionalLogado();
+            this.profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
             if (this.profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || this.profissionalLogado.getPerfil().equals(OdontoPerfil.AUXILIAR_DENTISTA)) {
                 this.visivel = false;
             }
@@ -123,7 +123,7 @@ public class KitMB extends LumeManagedBean<Kit> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(idEmpresa);
+        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         this.getEntity().setData(new Date());
         for (KitItem kitItem : this.getKitItens()) {
             if (!((kitItem.getItem().getTipo().equals("I")) && (kitItem.getKit().getTipo().equals("Instrumental"))) && !((kitItem.getItem().getTipo().equals(

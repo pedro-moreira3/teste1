@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 import br.com.lume.aparelhoOrtodontico.AparelhoOrtodonticoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.diagnosticoOrtodontico.DiagnosticoOrtodonticoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -100,7 +100,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
                 if (novoPlano) {
                     getEntity().setPaciente(getPaciente());
-                    getEntity().setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                    getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
                     getEntity().setOrtodontico(true);
                     getEntity().setValorTotal(calculaValorTotal());
                     getEntity().setValorTotalDesconto(calculaValorTotal());
@@ -246,7 +246,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         o.setOrtodontico(true);
         BigDecimal valorTotal = valorProcedimentoOrtodontico.multiply(new BigDecimal(getQtdMesesRestantes()));
         o.setValorTotal(valorTotal);
-        o.setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+        o.setProfissional(UtilsFrontEnd.getProfissionalLogado());
         o.setQuantidadeParcelas((int) getQtdMesesRestantes());
         Lancamento l = new Lancamento();
 
@@ -388,7 +388,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             o.setPlanoTratamento(getEntity());
             o.setOrtodontico(false);
             o.setValorTotal(ptp.getValor());
-            o.setProfissional(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+            o.setProfissional(UtilsFrontEnd.getProfissionalLogado());
             Lancamento l = new Lancamento();
 
             l.setValor(ptp.getValor());

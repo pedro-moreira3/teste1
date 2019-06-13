@@ -19,7 +19,7 @@ import org.primefaces.model.TreeNode;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.especialidade.EspecialidadeSingleton;
@@ -143,7 +143,7 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
                 if (this.getEntity().getCodigoCfo() == null) {
                     this.getEntity().setCodigoCfo(0);
                 }
-                this.getEntity().setIdEmpresa(idEmpresa);
+                this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 super.actionPersist(event);
                 this.geralist();
             }
@@ -156,9 +156,9 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
         if (cps != null && !cps.isEmpty()) {
             for (ConvenioProcedimento cp : cps) {
                 cp.setProcedimento(this.getEntity());
-                cp.setAlteradoPor(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                cp.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
                 cp.setDataUltimaAlteracao(Calendar.getInstance().getTime());
-                cp.setIdEmpresa(idEmpresa);
+                cp.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 if (cp.getPorcentagem() != null && cp.getPorcentagem().longValue() >= 0) {
                     cp.setValor(cp.getProcedimento().getValor().multiply(cp.getPorcentagem().divide(new BigDecimal(100), MathContext.DECIMAL32)));
                 }
@@ -173,9 +173,9 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
                     cp.setConvenio(convenio);
                     cp.setPorcentagem(new BigDecimal(100));
                     cp.setProcedimento(this.getEntity());
-                    cp.setAlteradoPor(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                    cp.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
                     cp.setDataUltimaAlteracao(Calendar.getInstance().getTime());
-                    cp.setIdEmpresa(idEmpresa);
+                    cp.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                     if (cp.getPorcentagem() != null && cp.getPorcentagem().longValue() >= 0) {
                         cp.setValor(cp.getProcedimento().getValor().multiply(cp.getPorcentagem().divide(new BigDecimal(100), MathContext.DECIMAL32)));
                     }

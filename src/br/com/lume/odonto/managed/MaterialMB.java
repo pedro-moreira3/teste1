@@ -24,7 +24,7 @@ import org.primefaces.model.TreeNode;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.item.ItemSingleton;
@@ -278,7 +278,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 if (justificativa != null) {
                     this.getEntity().setJustificativa(justificativa.getNome());
                 }
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), Configurar.getInstance().getConfiguracao().getProfissionalLogado(), quantidade.multiply(new BigDecimal(-1)), getEntity().getQuantidadeAtual(),
+                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidade.multiply(new BigDecimal(-1)), getEntity().getQuantidadeAtual(),
                         MaterialLog.ENTRADA_MATERIAL_DEVOLVER));
                 this.actionNew(event);
                 this.geraLista();
@@ -315,7 +315,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 this.getEntity().setValor(this.getValorTotal().divide(this.getEntity().getQuantidadeTotal(), 2, RoundingMode.HALF_UP));
             }
             this.atualizaQuantidadeTotal();
-            this.getEntity().setIdEmpresa(idEmpresa);
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (this.getEntity().getStatus() == null) {
                 this.getEntity().setStatus(ATIVO);
             }
@@ -355,7 +355,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                             }
                             if (novo) {
-                                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), Configurar.getInstance().getConfiguracao().getProfissionalLogado(), getEntity().getQuantidadeAtual(),
+                                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), getEntity().getQuantidadeAtual(),
                                         getEntity().getQuantidadeAtual(), MaterialLog.ENTRADA_MATERIAL_CADASTRO));
                             }
                             //actionNew(event);
@@ -397,7 +397,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 }
                 this.getEntity().setQuantidadeTotal(this.getEntity().getQuantidadeAtual());
                 this.getEntity().setDataMovimentacao(Calendar.getInstance().getTime());
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), Configurar.getInstance().getConfiguracao().getProfissionalLogado(), quantidadeMovimentacao, getEntity().getQuantidadeAtual(),
+                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentacao, getEntity().getQuantidadeAtual(),
                         MaterialLog.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA));
                 this.getbO().persist(this.getEntity());
 
@@ -425,7 +425,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             try {
                 this.getbO().refresh(getEntity());
                 this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeAtual().subtract(quantidadeMovimentada));
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), Configurar.getInstance().getConfiguracao().getProfissionalLogado(), quantidadeMovimentada.multiply(new BigDecimal(-1)),
+                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentada.multiply(new BigDecimal(-1)),
                         getEntity().getQuantidadeAtual(), MaterialLog.MOVIMENTACAO_MATERIAL_MOVIMENTAR));
                 this.getbO().persist(this.getEntity());
                 Material material = new Material();
@@ -439,7 +439,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 this.getEntity().setDataMovimentacao(new Date());
                 this.getbO().persist(this.getEntity());
 
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), Configurar.getInstance().getConfiguracao().getProfissionalLogado(), quantidadeMovimentada, getEntity().getQuantidadeAtual(),
+                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentada, getEntity().getQuantidadeAtual(),
                         MaterialLog.MOVIMENTACAO_MATERIAL_MOVIMENTAR));
 
                 this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "");
@@ -756,7 +756,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
     public void actionPersistMarca(ActionEvent event) {
         this.getEntity().setMarca(new Marca());
         this.getEntity().getMarca().setNome(this.getNomeMarca());
-        Marca marca = MarcaSingleton.getInstance().getBo().findByNomeAndEmpresa(this.getEntity().getMarca().getNome(), idEmpresa);
+        Marca marca = MarcaSingleton.getInstance().getBo().findByNomeAndEmpresa(this.getEntity().getMarca().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (marca != null) {
             if (marca.getId() != this.getEntity().getMarca().getId() && marca.getNome().equals(this.getEntity().getMarca().getNome())) {
                 this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "");
@@ -767,7 +767,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 }
             }
         } else {
-            this.getEntity().getMarca().setIdEmpresa(idEmpresa);
+            this.getEntity().getMarca().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.getEntity().getMarca().setDataCadastro(Calendar.getInstance().getTime());
             try {
                 MarcaSingleton.getInstance().getBo().persist(this.getEntity().getMarca());

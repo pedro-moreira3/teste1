@@ -122,10 +122,10 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
                 this.setPossuiFiliais(true);
             }
             especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa();
-            profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(idEmpresa);
+            profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.carregaPerfis();
             if (this.isProfissionalIndividual()) {
-                this.setEntity(Configurar.getInstance().getConfiguracao().getProfissionalLogado());
+                this.setEntity(UtilsFrontEnd.getProfissionalLogado());
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -247,9 +247,9 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             }
             DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
 
-            ProfissionalSingleton.getInstance().getBo().validaProfissionalDuplicadoEmpresa(this.getEntity(), emailSalvo,idEmpresa);
+            ProfissionalSingleton.getInstance().getBo().validaProfissionalDuplicadoEmpresa(this.getEntity(), emailSalvo,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(this.getEntity().getDadosBasico().getEmail().toUpperCase());
-            this.getEntity().setIdEmpresa(idEmpresa);
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (usuario == null) {
                 usuario = new Usuario();
             }
@@ -274,7 +274,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             this.getEntity().setPerfil(perfil.getPerStrDes());
             ProfissionalSingleton.getInstance().getBo().validaDuplicado(this.getEntity());
             Calendar cal = Calendar.getInstance();
-            this.getEntity().setAlteradoPor(idProfissionalLogado);
+            this.getEntity().setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
             this.getEntity().setDataUltimaAlteracao(cal.getTime());
             if (filialSelecionadas != null && !filialSelecionadas.isEmpty()) {
                 this.getEntity().setProfissionalFilials(new ArrayList<ProfissionalFilial>());
@@ -286,11 +286,11 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
                 }
             }
             ProfissionalSingleton.getInstance().getBo().persist(this.getEntity());
-            if (this.getEntity().equals(Configurar.getInstance().getConfiguracao().getProfissionalLogado())) {
+            if (this.getEntity().equals(UtilsFrontEnd.getEmpresaLogada())) {
                 Configurar.getInstance().getConfiguracao().setProfissionalLogado(this.getEntity());
             }
             this.actionNew(event);
-            profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(idEmpresa);
+            profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (
 
@@ -340,7 +340,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         }
 
         if (targetFile == null || !targetFile.exists()) {
-            nomeImagem = idEmpresa + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
+            nomeImagem = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
             targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
         }
         FileImageOutputStream imageOutput = new FileImageOutputStream(targetFile);
@@ -582,7 +582,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
     }
 
     public boolean isProfissionalIndividual() {
-        return Configurar.getInstance().getConfiguracao().getProfissionalLogado().getPerfil().equals(OdontoPerfil.PROFISSIONAL_INDIVIDUAL);
+        return UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.PROFISSIONAL_INDIVIDUAL);
     }
 
     public void setProfissionalIndividual(boolean profissionalIndividual) {
