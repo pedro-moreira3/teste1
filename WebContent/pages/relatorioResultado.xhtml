@@ -45,6 +45,12 @@
                     <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioResultadoMB.relatorioResultados}" var="m" rows="20" paginator="true" rowKey="#{m}"
                         paginatorPosition="bottom">
                         <f:facet name="header">Procedimentos</f:facet>
+                        <p:column exportable="false">                        
+                        	<p:commandButton oncomplete="PF('dlgValorMaterial').show();" process="@this"
+                        		action="#{relatorioResultadoMB.carregaDetalheValorMaterial(m)}"
+								update=":lume:dtValorMaterial" style="width: 33px !important"
+								disabled="#{m.valorMaterial.doubleValue() == 0}" />
+                        </p:column>
                         <p:column filterBy="#{m.profissional.dadosBasico.nome}" sortBy="#{m.profissional.dadosBasico.nome}" filterMatchMode="contains">
                             <f:facet name="header">
                                 <h:outputText value="Finalizado Por" />
@@ -79,19 +85,9 @@
                             <f:facet name="header">
                                 <h:outputText value="Valor Gasto Material(R$)" />
                             </f:facet>
-                            <h:panelGroup rendered="#{m.valorMaterial.doubleValue() == 0}">
-                                <h:outputText value="#{m.valorMaterial}">
-                                    <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
-                                </h:outputText>
-                            </h:panelGroup>
-                            <h:panelGroup rendered="#{m.valorMaterial.doubleValue() != 0}">
-                                <p:commandLink action="#{relatorioResultadoMB.carregaDetalheValorMaterial(m)}" oncomplete="PF('dlgValorMaterial').show();" process="@this"
-                                    update=":lume:dtValorMaterial">
-                                    <h:outputText value="#{m.valorMaterial}">
-                                        <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
-                                    </h:outputText>
-                                </p:commandLink>
-                            </h:panelGroup>
+                            <h:outputText value="#{m.valorMaterial}">
+                            	<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
                             <f:facet name="footer">
                                 <h:outputText value="#{relatorioResultadoMB.relatorioResultados.stream().map(obj-> obj.valorMaterial).sum()}">
                                     <f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
@@ -146,7 +142,7 @@
 
         <p:dialog widgetVar="dlgValorMaterial">
             <div class="Card">
-                <h1 class="CardBigTopic">Detalhamento dos materiais</h1>
+                <h1>Detalhamento dos materiais</h1>
                 <div class="SeparatorFull"></div>
                 <p:dataTable filterDelay="1500"  reflow="true" var="m" value="#{relatorioResultadoMB.detalhesMaterial}" rowKey="m" paginator="true" rows="20" paginatorPosition="bottom" id="dtValorMaterial"
                     emptyMessage="Esse procedimento não possui custos.">
@@ -180,9 +176,9 @@
                     </p:column>
                 </p:dataTable>
                 <br />
-                <div class="Container16 Responsive100">
+                <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                     <p:commandButton id="fechar" icon="White fa fa-times" value="Fechar" oncomplete="PF('dlgValorMaterial').hide();" process="@this" styleClass="RedButton" />
-                </div>
+                </p:panelGrid>
             </div>
         </p:dialog>
 
