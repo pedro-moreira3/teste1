@@ -6,9 +6,6 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.servlet.ServletContextEvent;
 
-import br.com.lume.configuracao.Configuracao;
-
-
 @Singleton
 @Startup
 public class OdontoInitializer {
