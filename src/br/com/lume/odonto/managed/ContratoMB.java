@@ -64,7 +64,7 @@ public class ContratoMB extends LumeManagedBean<Contrato> {
 //        contratoBO = new ContratoBO();
         try {
             Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "C");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio);
+            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
@@ -125,7 +125,9 @@ public class ContratoMB extends LumeManagedBean<Contrato> {
         documento = documento.replaceAll("#dataInicial", this.getEntity().getDataInicialStr());
         documento = documento.replaceAll("#dataFinal", this.getEntity().getDataFinalStr());
         documento = documento.replaceAll("#formaContratacao", this.getEntity().getFormaContratacao().getNome());
-        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, profissionalMB.getEntity().getDadosBasico(), documento);
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, profissionalMB.getEntity().getDadosBasico(), documento, 
+                UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        
         documento = documento.replaceAll("#contratado", profissionalMB.getEntity().getDadosBasico().getNome());
         documento = documento.replaceAll("span", "div");
     }

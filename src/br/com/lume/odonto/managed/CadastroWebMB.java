@@ -29,6 +29,7 @@ import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.especialidade.EspecialidadeSingleton;
@@ -231,7 +232,7 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
             usuario.setPerfisUsuarios(Arrays.asList(PerfilSingleton.getInstance().getBo().getPerfilbyDescricaoAndSistema(OdontoPerfil.ADMINISTRADOR, this.getLumeSecurity().getSistemaAtual())));
             usuario.setUsuIntDiastrocasenha(999);
             usuario.setUsuChaTutorial("S");
-            UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario);
+            UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario,UtilsFrontEnd.getEmpresaLogada());
         } else {
             Map<String, String> valores = new HashMap<>();
             valores.put("#nome", usuario.getUsuStrNme());

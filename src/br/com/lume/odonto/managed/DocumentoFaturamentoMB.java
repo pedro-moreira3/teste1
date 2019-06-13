@@ -18,7 +18,7 @@ import org.primefaces.event.SelectEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.documentoFaturamento.DocumentoFaturamentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -88,7 +88,7 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
 //        this.profissionalBO = new ProfissionalBO();
         try {
             Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "F");
-            this.documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio);
+            this.documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
@@ -129,7 +129,7 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
     public void carregarDados() {
         if (this.profissional != null) {
             try {
-                this.faturamentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listAllByPacienteAndProfissionalAndPeriodoAndProcedimento(null, this.profissional, this.inicio, this.fim, null, "Pagos");
+                this.faturamentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listAllByPacienteAndProfissionalAndPeriodoAndProcedimento(null, this.profissional, this.inicio, this.fim, null, "Pagos", UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 this.documentosFaturamento = DocumentoFaturamentoSingleton.getInstance().getBo().listByProfissional(this.profissional);
             } catch (Exception e) {
                 this.log.error("Erro no carregarDados", e);
@@ -319,7 +319,7 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
     }
 
     public List<Profissional> geraSugestoes(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,idEmpresa);
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public List<DocumentoFaturamento> getDocumentosFaturamento() {

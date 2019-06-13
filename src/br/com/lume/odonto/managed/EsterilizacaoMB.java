@@ -221,7 +221,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
                     MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, m, profisisonalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
                             MaterialLog.DEVOLUCAO_ESTERILIZACAO_DESCARTAR));;
                 } else {
-                    m = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(this.getEsterilizacaoKitSelecionada().getItem()).get(0);
+                    m = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(this.getEsterilizacaoKitSelecionada().getItem()).get(0));
                     MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, m, profisisonalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
                             MaterialLog.DEVOLUCAO_ESTERILIZACAO_DESCARTAR));
                 }

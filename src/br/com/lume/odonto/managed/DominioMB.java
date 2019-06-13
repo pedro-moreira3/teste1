@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 //import br.com.lume.odonto.bo.DominioBO;
 //import br.com.lume.odonto.bo.ProfissionalBO;
@@ -49,7 +49,7 @@ public class DominioMB extends LumeManagedBean<Dominio> {
     @Override
     public void actionPersist(ActionEvent event) {
         this.getEntity().setEditavel(true);
-        this.getEntity().setIdEmpresa(idEmpresa);
+        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         this.getEntity().setObjeto(this.getEntity().getObjeto().toLowerCase());
         this.getEntity().setTipo(this.getEntity().getTipo().toLowerCase());
         super.actionPersist(event);

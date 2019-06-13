@@ -64,8 +64,10 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
      //   convenioBO = new ConvenioBO();
      //   procedimentoBO = new ProcedimentoBO();
         try {
-            convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa();
-            procedimentos = ProcedimentoSingleton.getInstance().getBo().listByEmpresa();
+            Long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+            
+            convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+            procedimentos = ProcedimentoSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             mes = Calendar.getInstance().get(Calendar.MONTH) + 1;
             ano = Calendar.getInstance().get(Calendar.YEAR);
             carregarRelatorio();
@@ -137,7 +139,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
 
     public void carregarRelatorio() {
         try {
-            relatorioConvenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listRelatorioConvenioProcedimentoByEmpresa(mes, ano);
+            relatorioConvenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listRelatorioConvenioProcedimentoByEmpresa(mes, ano, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             log.error("Erro no carregarRelatorio", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -153,7 +155,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
     }
 
     public boolean verificaCp() {
-        convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(this.getEntity().getConvenio());
+        convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(this.getEntity().getConvenio(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (convenioProcedimentos != null && convenioProcedimentos.isEmpty()) {
             return true;
         }

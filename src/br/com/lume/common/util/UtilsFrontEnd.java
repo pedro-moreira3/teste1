@@ -49,4 +49,8 @@ public class UtilsFrontEnd  implements Serializable {
         return (Paciente) JSFHelper.getSession().getAttribute("PACIENTE_LOGADO");
     }    
 
+    public static void setPacienteLogado(Paciente paciente) {
+        JSFHelper.getSession().setAttribute("PACIENTE_LOGADO", paciente);
+    }
+    
 }

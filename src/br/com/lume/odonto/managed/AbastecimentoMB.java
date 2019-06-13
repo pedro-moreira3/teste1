@@ -337,7 +337,7 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
                     PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().persist(ptpc);
                     PlanoTratamentoProcedimento planoTratamentoProcedimento = ag.getPlanoTratamentoProcedimento();
                     if (planoTratamentoProcedimento.isFinalizado()) {
-                        planoTratamentoProcedimento.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(planoTratamentoProcedimento));
+                        planoTratamentoProcedimento.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(planoTratamentoProcedimento,UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
                         PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(planoTratamentoProcedimento);
                     }
                     return;
@@ -379,7 +379,7 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
     public void actionFindMateriais(ActionEvent event) {
         try {
             if (quantidade.intValue() != 0) {
-                materiaisDisponiveis = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(item, quantidade.intValue());
+                materiaisDisponiveis = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(item, quantidade.intValue(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 if (materiaisDisponiveis.isEmpty() || materiaisDisponiveis == null) {
                     this.addWarn(OdontoMensagens.getMensagem("abastecimento.materiais.vazio"), "");
                 }
@@ -552,9 +552,9 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
         this.setItens(new ArrayList<Item>());
         try {
             if (this.getDigitacao() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao()));
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa());
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 // Collections.sort(itens);
             }
         } catch (Exception e) {
@@ -716,13 +716,13 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
     }
 
     private void geraLista() {
-        try {
+        try {            
             if (UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR)) {
-                abastecimentos = AbastecimentoSingleton.getInstance().getBo().listByEmpresa();
+                abastecimentos = AbastecimentoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             } else {
-                abastecimentos = AbastecimentoSingleton.getInstance().getBo().listByStatus(ENTREGUE);
+                abastecimentos = AbastecimentoSingleton.getInstance().getBo().listByStatus(ENTREGUE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             }
-            abastecimentosDevolucao = AbastecimentoSingleton.getInstance().getBo().listByStatus(ENTREGUE);
+            abastecimentosDevolucao = AbastecimentoSingleton.getInstance().getBo().listByStatus(ENTREGUE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             e.printStackTrace();
         }

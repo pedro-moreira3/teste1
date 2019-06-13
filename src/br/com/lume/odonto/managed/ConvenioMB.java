@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.dominio.DominioSingleton;
 //import br.com.lume.odonto.bo.ConvenioBO;
@@ -48,7 +48,7 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
     public void carregaList() {
         try {
             dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("convenio", "tipo");
-            convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa();
+            convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -57,7 +57,7 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().setIdEmpresa(idEmpresa);
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             super.actionPersist(event);
             this.carregaList();
         } catch (Exception e) {

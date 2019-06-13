@@ -318,7 +318,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                         try {
                             if (profissional.getId() != getEntity().getProfissional().getIdUsuario()) {
                                 getEntity().setProfissional(profissional);
-                                List<Reserva> reservas = ReservaSingleton.getInstance().getBo().listByAgendamento(getEntity());
+                                List<Reserva> reservas = ReservaSingleton.getInstance().getBo().listByAgendamento(getEntity(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                                 if (reservas != null && !reservas.isEmpty()) {
                                     for (Reserva reserva : reservas) {
                                         reserva.setProfissional(profissional);
@@ -411,10 +411,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 }
                 agendamento.setPlanoTratamentoProcedimentosAgendamento(aptpsNovos);
                 AgendamentoSingleton.getInstance().getBo().persist(agendamento);
-                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity());
+                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(),UtilsFrontEnd.getProfissionalLogado(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 return true;
             } else if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) {
-                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity());                
+                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(),UtilsFrontEnd.getProfissionalLogado(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());                
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -631,7 +631,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             dlg = true;
             try {
                 this.removeAgendamentoPlanoTratamentoProcedimento();
-                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity());
+                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(),UtilsFrontEnd.getProfissionalLogado(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 AgendamentoSingleton.getInstance().getBo().remove(this.getEntity());
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
             } catch (Exception e) {
@@ -677,7 +677,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                     removerFiltrosAgendamento(agendamentos);
                 } else if (profissional == null) {
                     this.clear();
-                    agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataTodosProfissionais(start, end);
+                    agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataTodosProfissionais(start, end,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                     removerFiltrosAgendamento(agendamentos);
                     pacientePesquisado = null;
                 }
@@ -853,7 +853,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         Perfil perfilbyDescricao = PerfilSingleton.getInstance().getBo().getPerfilbyDescricaoAndSistema(OdontoPerfil.PACIENTE, this.getLumeSecurity().getSistemaAtual());
         usuario.setPerfisUsuarios(Arrays.asList(perfilbyDescricao));
         usuario.setUsuIntDiastrocasenha(999);
-        UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario);
+        UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario,UtilsFrontEnd.getEmpresaLogada());
     }
 
     public void actionPersistPaciente(ActionEvent event) {
@@ -891,7 +891,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 paciente.setIdUsuario(usuario.getUsuIntCod());
             }
             PacienteSingleton.getInstance().getBo().persist(paciente);
-            PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().persistPlano(paciente, profissionalDentroAgenda);
+            PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().persistPlano(paciente, profissionalDentroAgenda, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (pt != null) {
                 pacienteSelecionado = paciente;
                 planoTratamentos = new ArrayList<>();

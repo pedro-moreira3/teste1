@@ -133,7 +133,7 @@ public class AfastamentoProfissionalMB extends LumeManagedBean<Afastamento> {
     public List<Afastamento> getAfastamentos() {
         try {
             if (this.isAdmin()) {
-                this.afastamentos = AfastamentoSingleton.getInstance().getBo().listAdm();
+                this.afastamentos = AfastamentoSingleton.getInstance().getBo().listAdm(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             } else {
                 this.afastamentos = AfastamentoSingleton.getInstance().getBo().listByProfissional(this.profissional);
             }

@@ -11,6 +11,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.eclipse.persistence.internal.sessions.remote.SequencingFunctionCall.GetNextValue;
 import org.primefaces.event.SelectEvent;
 
 import br.com.lume.atestado.AtestadoSingleton;
@@ -83,7 +84,7 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
     //    pacienteBO = new PacienteBO();
         try {
             Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "A");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio);
+            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
           //  cidBO = new CIDBO();
             cids = CidSingleton.getInstance().getBo().listAll();
             this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
@@ -176,7 +177,7 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
     }
 
     private void replaceDocumento() {
-        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento);
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         if(dias != null && !dias.isEmpty()) {
             documento = documento.replaceAll("#dias", this.getDias());    

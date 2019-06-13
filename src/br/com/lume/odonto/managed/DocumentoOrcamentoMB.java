@@ -99,8 +99,8 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
 //        planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
         try {
             Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "O");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio);
-            descontos = DescontoSingleton.getInstance().getBo().listByEmpresa();
+            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            descontos = DescontoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.setPaciente(UtilsFrontEnd.getPacienteLogado());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
@@ -170,10 +170,11 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
 
     private void replaceDocumento() {
         BigDecimal valorPS = BigDecimal.ZERO;
-        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento);
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome(),
+                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         String orcamento = "<table border=0 class=\"ui-widget\" width=\"100%\"><tr><td width=\"80%\"><b>Procedimento</b></td><td width=\"20%\"><b>Valor</b></td></tr><tr><td>&nbsp;</td></tr>";
-        List<ConvenioProcedimento> convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(paciente.getConvenio());
+        List<ConvenioProcedimento> convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(paciente.getConvenio(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         boolean PS = false;
         for (PlanoTratamentoProcedimento ptp : planoDeTratamentoProcedimentos) {
             PS = false;

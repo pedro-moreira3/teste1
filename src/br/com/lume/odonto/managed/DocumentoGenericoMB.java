@@ -71,7 +71,7 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
 //        documentoGenericoBO = new DocumentoGenericoBO();
         try {
             Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "D");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio);
+            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.setPaciente(UtilsFrontEnd.getPacienteLogado());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
@@ -132,7 +132,8 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
     }
 
     private void replaceDocumento() {
-        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento);
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome(),
+                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         documento = documento.replaceAll("span", "div");
     }

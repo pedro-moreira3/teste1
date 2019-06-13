@@ -85,9 +85,9 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
 
     private void geraLista() {
         try {
-            this.setMateriaisUnitario(ControleMaterialSingleton.getInstance().getBo().listByEmpresaAndStatus());
-            this.setKitsDisponibilizados(ReservaKitSingleton.getInstance().getBo().listKitsDevolucao());
-            this.setKitsPendentes(ReservaKitSingleton.getInstance().getBo().listByStatusAndReserva(ControleMaterial.PENDENTE));
+            this.setMateriaisUnitario(ControleMaterialSingleton.getInstance().getBo().listByEmpresaAndStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            this.setKitsDisponibilizados(ReservaKitSingleton.getInstance().getBo().listKitsDevolucao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            this.setKitsPendentes(ReservaKitSingleton.getInstance().getBo().listByStatusAndReserva(ControleMaterial.PENDENTE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -472,10 +472,11 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
             try {
                 List<Material> materiaisAtivos;
                 if (!this.getKitItemSelecionado().getItem().getCategoria().equals("S")) {
-                    materiaisAtivos = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(this.getKitItemSelecionado().getItem(), quantidadeTotal.intValue());
+                    materiaisAtivos = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(this.getKitItemSelecionado().getItem(), quantidadeTotal.intValue(),
+                            UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 } else {
-                    List<Item> itensFilhos = ItemSingleton.getInstance().getBo().listByPai(this.getKitItemSelecionado().getItem().getId());
-                    materiaisAtivos = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(itensFilhos, quantidadeTotal.intValue());
+                    List<Item> itensFilhos = ItemSingleton.getInstance().getBo().listByPai(this.getKitItemSelecionado().getItem().getId(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                    materiaisAtivos = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(itensFilhos, quantidadeTotal.intValue(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 }
                 for (Material material : materiaisAtivos) {
                     material.setQuantidadeRetirada(new BigDecimal(quantidadeTotal));
