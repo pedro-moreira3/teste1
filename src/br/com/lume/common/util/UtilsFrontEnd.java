@@ -1,12 +1,14 @@
 package br.com.lume.common.util;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.security.entity.Empresa;
+import br.com.lume.security.entity.Login;
 
 public class UtilsFrontEnd  implements Serializable {
   
@@ -51,6 +53,22 @@ public class UtilsFrontEnd  implements Serializable {
 
     public static void setPacienteLogado(Paciente paciente) {
         JSFHelper.getSession().setAttribute("PACIENTE_LOGADO", paciente);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Login> getLogins() {
+        return (List<Login>) JSFHelper.getSession().getAttribute("LOGINS");
+    }
+    public void setLogins(List<Login> logins) {
+        JSFHelper.getSession().setAttribute("LOGINS", logins);
+       
+       
+    }
+    public String getUsuarioNome() {
+        return (String) JSFHelper.getSession().getAttribute("USUARIO_NOME");
+    }
+    public void setUsuarioNome(String usuarioNome) {
+        JSFHelper.getSession().setAttribute("USUARIO_NOME", usuarioNome);
     }
     
 }
