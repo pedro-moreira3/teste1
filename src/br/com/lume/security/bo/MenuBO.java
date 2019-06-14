@@ -42,7 +42,7 @@ public class MenuBO extends BO<Usuario> {
     public MenuModel getMenuTreeByUsuarioAndSistema(Usuario usuario, Sistema sistema, boolean mostraURL, List<Objeto> objetosRaizBySistema) {
         if (usuario != null && sistema != null) {
             try {
-                List<Objeto> objetosPermitidos = new ObjetoBO().carregaObjetosPermitidos((String) Configurar.getInstance().getConfiguracao().getPerfilLogado(),
+                List<Objeto> objetosPermitidos = new ObjetoBO().carregaObjetosPermitidos((String) UtilsFrontEnd.getPerfilLogado(),
                         (Profissional) UtilsFrontEnd.getProfissionalLogado());
                 Set<Objeto> labelsPermitidas = this.getLabelsPermitidas(objetosPermitidos);
                 return this.getMenuTree(sistema, labelsPermitidas, objetosPermitidos, mostraURL, objetosRaizBySistema);

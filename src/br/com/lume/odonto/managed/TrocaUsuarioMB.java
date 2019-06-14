@@ -49,7 +49,7 @@ public class TrocaUsuarioMB extends LumeManagedBean<Profissional> {
     public void actionTrocarUsuario() {
         try {
             UtilsFrontEnd.setProfissionalLogado(profissionalTrocar);
-            Configurar.getInstance().getConfiguracao().setPerfilLogado(profissionalTrocar.getPerfil());
+            UtilsFrontEnd.setPerfilLogado(profissionalTrocar.getPerfil());
             UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissionalTrocar.getIdEmpresa()));         
             List<Objeto> objetosPermitidos = LoginSingleton.getInstance().getBo().carregaObjetosPermitidos(UsuarioSingleton.getInstance().getBo().find(profissionalTrocar.getIdUsuario()), profissionalTrocar.getPerfil(), profissionalTrocar);
             this.getLumeSecurity().setUsuario(UsuarioSingleton.getInstance().getBo().find(profissionalTrocar.getIdUsuario()));

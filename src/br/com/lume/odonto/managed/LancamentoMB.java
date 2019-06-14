@@ -412,7 +412,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
         this.getEntity().setRecibo(recibo);
         this.getEntity().setDataPagamento(data);
         this.getEntity().setFormaPagamento(this.getFormaPagamento());
-        this.getEntity().setTributo(DominioSingleton.getInstance().getBo().getTributo());
+        this.getEntity().setTributo(DominioSingleton.getInstance().getBo().getTributo(UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
         if (this.getTarifa() != null && this.getTarifa().getId() != 0) {
             this.getEntity().setTarifa(this.getTarifa());
         }

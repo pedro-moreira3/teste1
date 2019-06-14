@@ -12,6 +12,7 @@ import br.com.lume.anamnese.AnamneseSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.itemAnamnese.ItemAnamneseSingleton;
 import br.com.lume.odonto.entity.ItemAnamnese;
@@ -41,7 +42,7 @@ public class PacienteExternoMB extends LumeManagedBean<Paciente> {
         super(PacienteSingleton.getInstance().getBo());    
         this.setClazz(Paciente.class);
         try {
-            paciente = PacienteSingleton.getInstance().getBo().findByEmpresaEUsuario(this.getLumeSecurity().getUsuario().getEmpresa().getEmpIntCod(), this.getLumeSecurity().getUsuario().getUsuIntCod());
+            paciente = PacienteSingleton.getInstance().getBo().findByEmpresaEUsuario(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod(), this.getLumeSecurity().getUsuario().getUsuIntCod());
             this.setEntity(paciente);
             List<Pergunta> perguntas = PerguntaSingleton.getInstance().getBo().listPreCadastro(paciente);
             anamnesesPreCadastro = ItemAnamneseSingleton.getInstance().getBo().perguntasAnamnese(perguntas);

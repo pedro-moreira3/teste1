@@ -62,10 +62,11 @@ public class UsuarioMB extends LumeManagedBean<Usuario> {
         }
     }
 
+    //this.setEmpresaSelecionada(entity.getEmpresa());
     @Override
     public void setEntity(Usuario entity) {
         if (entity != null) {
-            this.setEmpresaSelecionada(entity.getEmpresa());
+            this.setEmpresaSelecionada(UtilsFrontEnd.getEmpresaLogada());
         }
         super.setEntity(entity);
     }
@@ -85,10 +86,11 @@ public class UsuarioMB extends LumeManagedBean<Usuario> {
         return this.empresaSelecionada;
     }
 
+    //this.setEntityList(usuarioBO.getAllUsuariosByEmpresa(this.getEntity().getEmpresa()));
     public void setEmpresaSelecionada(Empresa empresaSelecionada) {
         //getEntity().setEmpresa(empresaSelecionada);
         UsuarioBO usuarioBO = new UsuarioBO();
-        this.setEntityList(usuarioBO.getAllUsuariosByEmpresa(this.getEntity().getEmpresa()));
+        this.setEntityList(usuarioBO.getAllUsuariosByEmpresa(UtilsFrontEnd.getEmpresaLogada()));
         this.empresaSelecionada = empresaSelecionada;
     }
 }

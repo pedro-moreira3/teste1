@@ -36,8 +36,8 @@ import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -173,7 +173,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
 
         if (targetFile == null || !targetFile.exists()) {
-            nomeImagem = ultils + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
+            nomeImagem = /**ultils*/  "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
             targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
         }
         FileImageOutputStream imageOutput = new FileImageOutputStream(targetFile);
@@ -294,7 +294,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void actionPersist(ActionEvent event) {
         Usuario usuario = null;
         try {
-            if (UtilsFrontEnd.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
+            if (Utils.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
                 addError("Data de nascimento inválida.", "");
                 return;
             }
@@ -416,7 +416,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         String cep = this.getEntity().getDadosBasico().getCep();
         if (cep != null && !cep.equals("")) {
             cep = cep.replaceAll("-", "");
-            ViaCep endereco = UtilsFrontEnd.buscaCep(cep);
+            ViaCep endereco = Utils.buscaCep(cep);
             if (endereco != null) {
                 this.getEntity().getDadosBasico().setBairro(endereco.getBairro());
                 this.getEntity().getDadosBasico().setCidade(endereco.getLocalidade());
