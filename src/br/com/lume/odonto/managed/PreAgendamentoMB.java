@@ -21,7 +21,7 @@ import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.GeradorSenha;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
 import br.com.lume.odonto.entity.Afastamento;
@@ -57,7 +57,7 @@ public class PreAgendamentoMB extends LumeManagedBean<Agendamento> {
         super(AgendamentoSingleton.getInstance().getBo());
         this.setClazz(Agendamento.class);
         try {
-            paciente = PacienteSingleton.getInstance().getBo().findByEmpresaEUsuario(this.getLumeSecurity().getUsuario().getEmpresa().getEmpIntCod(), this.getLumeSecurity().getUsuario().getUsuIntCod());
+            paciente = PacienteSingleton.getInstance().getBo().findByEmpresaEUsuario(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod(), this.getLumeSecurity().getUsuario().getUsuIntCod());
             List<String> perfis = new ArrayList<>();
             perfis.add(OdontoPerfil.DENTISTA);
             perfis.add(OdontoPerfil.ADMINISTRADOR);
@@ -100,7 +100,7 @@ public class PreAgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public List<Profissional> geraSugestoes(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query,idEmpresa);
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void actionPesquisaPreAgendamento(ActionEvent event) {
@@ -174,7 +174,7 @@ public class PreAgendamentoMB extends LumeManagedBean<Agendamento> {
         listExternos.removeAll(listRemove);
         if (listExternos.isEmpty()) {
             String mensagem = OdontoMensagens.getMensagem("preagendamento.sem.horario.vago");
-            mensagem = mensagem.replaceFirst("\\{0\\}", this.getLumeSecurity().getUsuario().getEmpresa().getEmpChaFone());
+            mensagem = mensagem.replaceFirst("\\{0\\}", UtilsFrontEnd.getEmpresaLogada().getEmpChaFone());
             this.addInfo(mensagem, "");
         }
     }

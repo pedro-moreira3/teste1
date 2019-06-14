@@ -132,8 +132,7 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
     }
 
     private void replaceDocumento() {
-        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome(),
-                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         documento = documento.replaceAll("span", "div");
     }

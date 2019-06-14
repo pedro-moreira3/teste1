@@ -53,7 +53,7 @@ public class ExportarAgendaMB extends LumeManagedBean<Agendamento> {
                 if (agendamentos != null && !agendamentos.isEmpty()) {
                     List<AgendamentoAgenda> agendamentosAgenda = new ArrayList<>();
                     for (Agendamento a : agendamentos) {
-                        agendamentosAgenda.add(new AgendamentoAgenda(a.getId(), a.getDescricaoAgenda(UtilsFrontEnd.getProfissionalLogado().getPerfil(), super.isAdmin()), a.getDescricao(), a.getEnderecoEmpresa(), a.getInicio(), a.getFim()));
+                        agendamentosAgenda.add(new AgendamentoAgenda(a.getId(), a.getDescricaoAgenda(UtilsFrontEnd.getProfissionalLogado()), a.getDescricao(), a.getEnderecoEmpresa(), a.getInicio(), a.getFim()));
                     }
                     Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
                     //

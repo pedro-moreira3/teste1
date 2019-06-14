@@ -14,8 +14,8 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RelatorioBalanco;
@@ -46,7 +46,7 @@ public class RelatorioBalancoMB extends LumeManagedBean<RelatorioBalanco> {
     public RelatorioBalancoMB() {
         super(RelatorioBalancoSingleton.getInstance().getBo());
         this.setClazz(RelatorioBalanco.class);
-        this.inicio = UtilsFrontEnd.getPrimeiroDiaMesCorrente();
+        this.inicio = Utils.getPrimeiroDiaMesCorrente();
         this.fim = Calendar.getInstance().getTime();
     }
 
@@ -63,7 +63,7 @@ public class RelatorioBalancoMB extends LumeManagedBean<RelatorioBalanco> {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
                         Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {

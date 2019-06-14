@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.paciente.PacienteSingleton;
@@ -44,7 +44,7 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     public void geraLista() {
         try {
-            retornos = RetornoSingleton.getInstance().getBo().listByDate(dataIni, dataFim);
+            retornos = RetornoSingleton.getInstance().getBo().listByDate(dataIni, dataFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -52,7 +52,7 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     }
 
     public List<Paciente> geraSugestoesPaciente(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,idEmpresa);
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void persistRetorno(Retorno r) {

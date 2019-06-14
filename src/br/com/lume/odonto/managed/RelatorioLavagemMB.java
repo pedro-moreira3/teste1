@@ -11,6 +11,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.lavagem.LavagemSingleton;
 import br.com.lume.lavagemKit.LavagemKitSingleton;
 import br.com.lume.odonto.entity.Lavagem;
@@ -46,7 +47,7 @@ public class RelatorioLavagemMB extends LumeManagedBean<Lavagem> {
             if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else {
-                this.Lavagens = LavagemSingleton.getInstance().getBo().listAllByPeriodo(this.inicio, this.fim);
+                this.Lavagens = LavagemSingleton.getInstance().getBo().listAllByPeriodo(this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 if (this.Lavagens == null || this.Lavagens.isEmpty()) {
                     this.addError(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"), "");
                     this.log.error(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"));

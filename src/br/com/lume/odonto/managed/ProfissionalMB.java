@@ -31,8 +31,8 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.especialidade.EspecialidadeSingleton;
@@ -114,14 +114,14 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         this.setClazz(Profissional.class);
         carregarObjetosPerfis();
         try {
-            filiais = FilialSingleton.getInstance().getBo().listByEmpresa();
+            filiais = FilialSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
             if (filiais == null || filiais.size() == 0) {
                 this.setPossuiFiliais(false);
             } else {
                 this.setPossuiFiliais(true);
             }
-            especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa();
+            especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.carregaPerfis();
             if (this.isProfissionalIndividual()) {
@@ -241,7 +241,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         Usuario usuario = null;
         try {
             carregarObjetosProfissional();
-            if (UtilsFrontEnd.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
+            if (Utils.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
                 addError("Data de nascimento inválida.", "");
                 return;
             }
@@ -265,7 +265,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
                 Usuario usuarioAtual = UsuarioSingleton.getInstance().getBo().find(getEntity().getIdUsuario());
                 if (usuarioAtual != null && !getEntity().getDadosBasico().getEmail().equals(usuarioAtual.getUsuStrEml())) {
                     if (usuario.getUsuIntCod() == 0) {
-                        UsuarioSingleton.getInstance().getBo().alterarEmailUsuario(usuarioAtual, getEntity().getDadosBasico().getEmail().toUpperCase());
+                        UsuarioSingleton.getInstance().getBo().alterarEmailUsuario(usuarioAtual, getEntity().getDadosBasico().getEmail().toUpperCase(), UtilsFrontEnd.getEmpresaLogada());
                         usuario = usuarioAtual;
                     }
                 }
@@ -287,7 +287,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             }
             ProfissionalSingleton.getInstance().getBo().persist(this.getEntity());
             if (this.getEntity().equals(UtilsFrontEnd.getEmpresaLogada())) {
-                Configurar.getInstance().getConfiguracao().setProfissionalLogado(this.getEntity());
+                UtilsFrontEnd.setProfissionalLogado(this.getEntity());
             }
             this.actionNew(event);
             profissionais = ProfissionalSingleton.getInstance().getBo().listCadastroProfissional(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
@@ -392,7 +392,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         usuario.setUsuStrLogin(this.getEntity().getDadosBasico().getEmail());
         usuario.setPerfisUsuarios(Arrays.asList(perfil));
         usuario.setUsuIntDiastrocasenha(999);
-        UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario);
+        UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario, UtilsFrontEnd.getEmpresaLogada());
     }
 
     public void carregaTela() {

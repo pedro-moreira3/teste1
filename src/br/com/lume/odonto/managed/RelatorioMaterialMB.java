@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.RelatorioMaterial;
 import br.com.lume.relatorioMaterial.RelatorioMaterialSingleton;
 
@@ -28,7 +29,7 @@ public class RelatorioMaterialMB extends LumeManagedBean<RelatorioMaterial> {
     public RelatorioMaterialMB() {
         super(RelatorioMaterialSingleton.getInstance().getBo());
         this.setClazz(RelatorioMaterial.class);
-        materiais = RelatorioMaterialSingleton.getInstance().getBo().listAllByFilterToReport();
+        materiais = RelatorioMaterialSingleton.getInstance().getBo().listAllByFilterToReport(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         somaValorTotal = new BigDecimal(0);
         if (materiais != null) {
             for (RelatorioMaterial m : materiais) {

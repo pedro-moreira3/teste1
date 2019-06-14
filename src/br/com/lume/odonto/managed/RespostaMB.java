@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Pergunta;
 import br.com.lume.odonto.entity.Resposta;
 import br.com.lume.pergunta.PerguntaSingleton;
@@ -41,7 +41,7 @@ public class RespostaMB extends LumeManagedBean<Resposta> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().getPergunta().setIdEmpresa(idEmpresa);
+            this.getEntity().getPergunta().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             super.actionPersist(event);
             this.carregaLista();
         } catch (Exception e) {
@@ -52,8 +52,10 @@ public class RespostaMB extends LumeManagedBean<Resposta> {
 
     public void carregaLista() {
         try {
-            this.perguntas = PerguntaSingleton.getInstance().getBo().listComTipoRespComplexa();
-            this.respostas = RespostaSingleton.getInstance().getBo().listByEmpresa();
+            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+            
+            this.perguntas = PerguntaSingleton.getInstance().getBo().listComTipoRespComplexa(idEmpresaLogada);
+            this.respostas = RespostaSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
         } catch (Exception e) {
             this.addError("Erro ao carregar perguntas", "");
         }

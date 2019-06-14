@@ -86,7 +86,7 @@ public class PedidoMB extends LumeManagedBean<Pedido> {
 
     private void geraLista() {
         try {
-            this.setPedidos(PedidoSingleton.getInstance().getBo().listByEmpresa());
+            this.setPedidos(PedidoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             if (this.pedidos != null) {
                 Collections.sort(this.pedidos);
             }
@@ -349,9 +349,9 @@ public class PedidoMB extends LumeManagedBean<Pedido> {
         this.setItens(new ArrayList<Item>());
         try {
             if (this.getDigitacao() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao()));
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa());
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
             Collections.sort(this.itens);
         } catch (Exception e) {

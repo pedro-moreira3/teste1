@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 //import br.com.lume.odonto.bo.DadosBasicoBO;
@@ -48,7 +48,7 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
 
     public void carregaLista() {
         try {
-            fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa();
+            fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (fornecedores != null) {
                 Collections.sort(fornecedores);
             }
@@ -64,7 +64,7 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
         try {
             DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
             FornecedorSingleton.getInstance().getBo().validaDuplicado(this.getEntity());
-            this.getEntity().setIdEmpresa(idEmpresa);
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             super.actionPersist(event);
             this.carregaLista();
         } catch (TelefoneException te) {

@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.security.bo.UsuarioBO;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.entity.Usuario;
@@ -48,7 +49,7 @@ public class UsuarioMB extends LumeManagedBean<Usuario> {
         } else {
             if (this.getEntity().getUsuIntCod() == 0 || this.resetarSenha) {
                 try {
-                    bo.doSenhaPadrao(this.getEntity());
+                    bo.doSenhaPadrao(this.getEntity(), UtilsFrontEnd.getEmpresaLogada());
                 } catch (SendFailedException e) {
                     this.addWarn(Mensagens.getMensagem(Mensagens.EMAIL_INVALIDO), "");
                     this.log.error(Mensagens.getMensagem(Mensagens.EMAIL_INVALIDO), e);

@@ -79,7 +79,7 @@ public class PacienteTotemMB extends LumeManagedBean<Paciente> {
 
     public void loadNoticias() {
         try {
-            this.setNoticias(NoticiaSingleton.getInstance().getBo().listByEmpresa());
+            this.setNoticias(NoticiaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             // throw new Exception();
         } catch (Exception e) {
             log.debug(e.getMessage());

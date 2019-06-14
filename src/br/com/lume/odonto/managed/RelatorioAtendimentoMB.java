@@ -17,7 +17,6 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.reserva.ReservaSingleton;
 
@@ -58,12 +57,12 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
             if (a.getInicio().before(a.getFim())) {
 
                 a.setChegouAs(Utils.getDataAtual(a.getChegouAs()));
-                a.setIniciouAs(UtilsFrontEnd.getDataAtual(a.getIniciouAs()));
-                a.setFinalizouAs(UtilsFrontEnd.getDataAtual(a.getFinalizouAs()));
+                a.setIniciouAs(Utils.getDataAtual(a.getIniciouAs()));
+                a.setFinalizouAs(Utils.getDataAtual(a.getFinalizouAs()));
 
              
                 if (a.getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || a.getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) {
-                    ReservaSingleton.getInstance().getBo().cancelaReservas(a);
+                    ReservaSingleton.getInstance().getBo().cancelaReservas(a, UtilsFrontEnd.getProfissionalLogado());
                 }
                 validacoes(a);
                 AgendamentoSingleton.getInstance().getBo().persist(a);
@@ -94,7 +93,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     public void carregaLista() {
         try {
            
-            agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosByDate(filtro);
+            agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosByDate(filtro, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             carregarCadeiras();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -115,21 +114,23 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public String getPacientesAgendamento() {
         if (filtro.equals("CURRENT_DATE")) {
+            
             StringBuilder sb = new StringBuilder();
+            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
          
-            Long countByAtendidos = AgendamentoSingleton.getInstance().getBo().countByAtendidos();
+            Long countByAtendidos = AgendamentoSingleton.getInstance().getBo().countByAtendidos(idEmpresaLogada);
             sb.append("['Atendidos', " + countByAtendidos + "],");
 
-            Long countByEmAtendimento = AgendamentoSingleton.getInstance().getBo().countByEmAtendimento();
+            Long countByEmAtendimento = AgendamentoSingleton.getInstance().getBo().countByEmAtendimento(idEmpresaLogada);
             sb.append("['Em Atendimento', " + countByEmAtendimento + "],");
 
-            Long countByAtrasado = AgendamentoSingleton.getInstance().getBo().countByAtrasado();
+            Long countByAtrasado = AgendamentoSingleton.getInstance().getBo().countByAtrasado(idEmpresaLogada);
             sb.append("['Atrasados', " + countByAtrasado + "],");
 
-            Long countByClienteNaClinica = AgendamentoSingleton.getInstance().getBo().countByClienteNaClinica();
+            Long countByClienteNaClinica = AgendamentoSingleton.getInstance().getBo().countByClienteNaClinica(idEmpresaLogada);
             sb.append("['Na Clínica', " + countByClienteNaClinica + "],");
 
-            Long countByPacienteNaoChegou = AgendamentoSingleton.getInstance().getBo().countByPacienteNaoChegou();
+            Long countByPacienteNaoChegou = AgendamentoSingleton.getInstance().getBo().countByPacienteNaoChegou(idEmpresaLogada);
             sb.append("['Consultas restantes', " + countByPacienteNaoChegou + "],");
             return sb.toString();
         } else {

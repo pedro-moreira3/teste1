@@ -266,7 +266,9 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     public void carregarTela() {
         try {
             procedimentoPadrao = ProcedimentoSingleton.getInstance().getBo().findByCodigoProcedimento(
-                    Integer.parseInt(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("ortodontia", "procedimento_padrao", "PP").getNome()));
+                    Integer.parseInt(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("ortodontia", "procedimento_padrao", "PP").getNome()),
+                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            
             valorProcedimentoOrtodontico = procedimentoPadrao.getValor();
             planoTratamentoProcedimentos = null;
             setEntity(null);
@@ -342,11 +344,11 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public List<Procedimento> geraSugestoesProcedimento(String query) {
-        return ProcedimentoSingleton.getInstance().getBo().listSugestoesComplete(query);
+        return ProcedimentoSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public List<Procedimento> geraSugestoesProcedimentoOrtodontico(String query) {
-        return ProcedimentoSingleton.getInstance().getBo().listSugestoesCompleteOrtodontico(query);
+        return ProcedimentoSingleton.getInstance().getBo().listSugestoesCompleteOrtodontico(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void actionAdicionarProcedimentoExtra() {

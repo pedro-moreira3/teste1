@@ -19,8 +19,8 @@ import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
@@ -96,7 +96,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     private void carregarLancamentosValidar() {
         try {
-            lancamentosValidar = LancamentoSingleton.getInstance().getBo().listByPagamentoPacienteNaoValidado();
+            lancamentosValidar = LancamentoSingleton.getInstance().getBo().listByPagamentoPacienteNaoValidado(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -140,7 +140,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         try {
             tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listAll();
             categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
-            lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listByEmpresa();
+            lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             carrearListasPorTipoPagamento();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -157,31 +157,34 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void geraListaSugestoes() {
         try {
+            
+            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+            
             dadosBasicos = new ArrayList<>();
-            List<Origem> origens = OrigemSingleton.getInstance().getBo().listByEmpresa();
+            List<Origem> origens = OrigemSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             for (Origem f : origens) {
                 f.getDadosBasico().setTipoInformacao("Origem");
                 dadosBasicos.add(f.getDadosBasico());
             }
 
             if ("Pagar".equals(tipo)) {
-                List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa();
+                List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
                 for (Fornecedor f : fornecedores) {
                     f.getDadosBasico().setTipoInformacao("Fornecedor");
                     dadosBasicos.add(f.getDadosBasico());
                 }
-                List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
+                List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
                 for (Profissional f : profissionais) {
                     f.getDadosBasico().setTipoInformacao("Profissional");
                     dadosBasicos.add(f.getDadosBasico());
                 }
             } else if ("Receber".equals(tipo)) {
-                List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
+                List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
                 for (Paciente f : pacientes) {
                     f.getDadosBasico().setTipoInformacao("Paciente");
                     dadosBasicos.add(f.getDadosBasico());
                 }
-                List<Convenio> convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa();
+                List<Convenio> convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
                 for (Convenio f : convenios) {
                     f.getDadosBasico().setTipoInformacao("Convênio");
                     dadosBasicos.add(f.getDadosBasico());
@@ -199,7 +202,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             if (l != null) {
                 Date data = Calendar.getInstance().getTime();
                 l.setDataValidado(data);
-                l.setValidadoPorProfissional(idProfissionalLogado);
+                l.setValidadoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
                 l.setValidado(Status.SIM);
                 LancamentoSingleton.getInstance().getBo().merge(l);
                 List<LancamentoContabil> lancamentosContabeis = l.getLancamentosContabeis();
@@ -220,7 +223,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         if (this.getEntity().getData() == null) {
             this.getEntity().setData(new Date());
         }
-        this.getEntity().setIdEmpresa(idEmpresa);
+        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         this.getEntity().setTipo(this.getEntity().getMotivo().getTipo());
         if (!this.getEntity().getTipo().equals("Inicial")) {
             boolean isPagamentoProfissional = false;
@@ -233,7 +236,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 }                
             }
         } else {
-            LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByTipoInicial();
+            LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByTipoInicial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (lc != null) {
                 lc.setValor(this.getEntity().getValor());
                 this.setEntity(lc);
@@ -257,7 +260,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         List<DadosBasico> suggestions = new ArrayList<>();
         if (query.length() >= 3) {
             for (DadosBasico d : dadosBasicos) {
-                if (UtilsFrontEnd.normalize(d.getNome()).toLowerCase().contains(query.toLowerCase())) {
+                if (Utils.normalize(d.getNome()).toLowerCase().contains(query.toLowerCase())) {
                     suggestions.add(d);
                 }
             }
@@ -293,7 +296,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void actionPersistOrigem(ActionEvent event) {
         try {
-            origem.setIdEmpresa(idEmpresa);
+            origem.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             OrigemSingleton.getInstance().getBo().persist(origem);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             visivel = false;

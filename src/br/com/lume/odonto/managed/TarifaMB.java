@@ -14,7 +14,7 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Tarifa;
@@ -37,7 +37,7 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
 
     private void geraLista() {
         try {
-            this.tarifas = TarifaSingleton.getInstance().getBo().listByEmpresa();
+            this.tarifas = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -47,7 +47,7 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(idEmpresa);
+        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         DadosBasico basico = new DadosBasico();
         if (DadosBasicoSingleton.getInstance().getBo().findByNome(this.getEntity().getProduto()) == null) {
             basico.setNome(this.getEntity().getProduto());

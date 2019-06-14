@@ -31,6 +31,11 @@ public class UtilsFrontEnd  implements Serializable {
     public static Empresa getEmpresaLogada() {
         return (Empresa) JSFHelper.getSession().getAttribute("EMPRESA_LOGADA");
     }
+    
+    public static void setEmpresaLogada(Empresa empresaLogada) {
+        JSFHelper.getSession().setAttribute("EMPRESA_LOGADA", empresaLogada);
+    }
+    
     public static Profissional getProfissionalLogado() {
         return (Profissional) JSFHelper.getSession().getAttribute("PROFISSIONAL_LOGADO");
     }

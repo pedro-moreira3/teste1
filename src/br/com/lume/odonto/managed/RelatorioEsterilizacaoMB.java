@@ -11,6 +11,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.esterilizacao.EsterilizacaoSingleton;
 import br.com.lume.esterilizacaoKit.EsterilizacaoKitSIngleton;
 import br.com.lume.material.MaterialSingleton;
@@ -50,12 +51,12 @@ public class RelatorioEsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
             if (inicio != null && fim != null && inicio.getTime() > fim.getTime()) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else {
-                esterilizacoes = EsterilizacaoSingleton.getInstance().getBo().listAllByPeriodo(inicio, fim);
+                esterilizacoes = EsterilizacaoSingleton.getInstance().getBo().listAllByPeriodo(inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 if (esterilizacoes == null || esterilizacoes.isEmpty()) {
                     this.addError(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"), "");
                     log.error(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"));
                 }
-                descartes = MaterialSingleton.getInstance().getBo().listDescartePeriodo(inicio, fim);
+                descartes = MaterialSingleton.getInstance().getBo().listDescartePeriodo(inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             }
         } catch (Exception e) {
             log.error(e);

@@ -114,7 +114,7 @@ public class KitMB extends LumeManagedBean<Kit> {
 
     private void geralista() {
         try {
-            this.setKits(KitSingleton.getInstance().getBo().listByEmpresa());
+            this.setKits(KitSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -351,9 +351,9 @@ public class KitMB extends LumeManagedBean<Kit> {
                 this.setItens(new ArrayList<Item>());
             } else {
                 if (this.getDigitacao() != null) {
-                    this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcialAndTipo(this.getDigitacao(), this.getEntity().getTipo().charAt(0) + ""));
+                    this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcialAndTipo(this.getDigitacao(), this.getEntity().getTipo().charAt(0) + "", UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 } else {
-                    this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndTipo(this.getEntity().getTipo().charAt(0) + ""));
+                    this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndTipo(this.getEntity().getTipo().charAt(0) + "", UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 }
             }
             Collections.sort(this.itens);

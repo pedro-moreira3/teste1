@@ -6,6 +6,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.ReservaKit;
 import br.com.lume.reservaKit.ReservaKitSingleton;
 
@@ -22,7 +23,7 @@ public class ReservasMB extends LumeManagedBean<ReservaKit> {
     public ReservasMB() {
         super(ReservaKitSingleton.getInstance().getBo());
         this.setClazz(ReservaKit.class);
-        this.reservas = ReservaKitSingleton.getInstance().getBo().listReservasDia();
+        this.reservas = ReservaKitSingleton.getInstance().getBo().listReservasDia(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public List<ReservaKit> getReservas() {

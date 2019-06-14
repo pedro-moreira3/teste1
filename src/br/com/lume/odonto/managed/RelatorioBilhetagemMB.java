@@ -12,6 +12,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.RelatorioBilhetagem;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -45,7 +46,9 @@ public class RelatorioBilhetagemMB extends LumeManagedBean<RelatorioBilhetagem> 
                 Calendar c = Calendar.getInstance();
                 c.setTime(this.fim);
                 c.add(Calendar.DAY_OF_MONTH, 1);
-                this.relatorioBilhetagens = RelatorioBilhetagemSingleton.getInstance().getBo().listAllByVigenciaAndStatus(this.inicio, c.getTime(), this.status);
+                this.relatorioBilhetagens = RelatorioBilhetagemSingleton.getInstance().getBo().listAllByVigenciaAndStatus(this.inicio, c.getTime(), this.status,
+                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                
                 this.somaQuantidade = 0;
                 for (RelatorioBilhetagem r : this.relatorioBilhetagens) {
                     this.somaQuantidade += r.getQuantidade();
@@ -67,7 +70,7 @@ public class RelatorioBilhetagemMB extends LumeManagedBean<RelatorioBilhetagem> 
     }
 
     public String getVigencia() {
-        return "Bilhetagem_" + UtilsFrontEnd.dateToString(this.inicio, "dd/MM/yyyy") + "_" + UtilsFrontEnd.dateToString(this.fim, "dd/MM/yyyy");
+        return "Bilhetagem_" + Utils.dateToString(this.inicio, "dd/MM/yyyy") + "_" + Utils.dateToString(this.fim, "dd/MM/yyyy");
     }
 
     public Date getInicio() {

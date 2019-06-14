@@ -20,7 +20,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
 
 import br.com.lume.common.util.Status;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 //import br.com.lume.odonto.bo.PacienteBO;
 //import br.com.lume.odonto.bo.PlanoTratamentoBO;
@@ -198,7 +198,7 @@ public class ImportaMB implements Serializable {
     private void insertPlanoTratamento(StringTokenizer tokens) throws Exception {
         Procedimento procedimento = new Procedimento();
         // DOCUMENTO DO PACIENTE ID_PROFISSIONAL ID_PROCEDIMENTO (Separado por : )
-        paciente = PacienteSingleton.getInstance().getBo().findByDocumentoandEmpresa(this.validaNull(tokens.nextToken()),idEmpresa);
+        paciente = PacienteSingleton.getInstance().getBo().findByDocumentoandEmpresa(this.validaNull(tokens.nextToken()),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         pt.setPaciente(paciente);
         pt.setProfissional(ProfissionalSingleton.getInstance().getBo().find(Long.parseLong(this.validaNull(tokens.nextToken()))));
         // procedimentos virao separado por :

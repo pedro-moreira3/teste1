@@ -23,7 +23,7 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.desconto.DescontoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -139,13 +139,13 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
             if (idpaciente != null && !idpaciente.isEmpty()) {
                 Paciente pac = PacienteSingleton.getInstance().getBo().find(Long.parseLong(idpaciente));
                 if (pac != null) {
-                    Configurar.getInstance().getConfiguracao().setPacienteLogado(pac);
+                    UtilsFrontEnd.setPacienteLogado(pac);
                 }
             }
             // descontos = descontoBO.listByEmpresa();
             dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma");
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
-            this.setPaciente(Configurar.getInstance().getConfiguracao().getPacienteSelecionado());
+            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
             this.setValorAgregadoExcedido(BigDecimal.ZERO);
             if (paciente == null) {
                 this.addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "");
@@ -185,13 +185,13 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
             this.getEntity().setExcluido(Status.SIM);
             this.getEntity().setDataPagamento(null);
             this.getEntity().setFormaPagamento(null);
-            this.getEntity().setExcluidoPorProfissional(idProfissionalLogado);
+            this.getEntity().setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
             this.getbO().persist(this.getEntity());
-            List<LancamentoContabil> lancamentosContabeis = LancamentoContabilSingleton.getInstance().getBo().listByLancamento(this.getEntity());
+            List<LancamentoContabil> lancamentosContabeis = LancamentoContabilSingleton.getInstance().getBo().listByLancamento(this.getEntity(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (LancamentoContabil lc : lancamentosContabeis) {
                 lc.setExcluido(Status.SIM);
                 lc.setDataExclusao(Calendar.getInstance().getTime());
-                lc.setExcluidoPorProfissional(idProfissionalLogado);
+                lc.setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
                 LancamentoContabilSingleton.getInstance().getBo().persist(lc);
             }
             // }
@@ -239,7 +239,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
         LancamentoContabil lc = new LancamentoContabil();
         Motivo motivo = MotivoSingleton.getInstance().getBo().findBySigla(Motivo.PAGAMENTO_CARTAO);
         DadosBasico dadosBasico = DadosBasicoSingleton.getInstance().getBo().findByNome(l.getTarifa().getProduto());
-        lc.setIdEmpresa(idEmpresa);
+        lc.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         lc.setTipo(motivo.getTipo());
         lc.setDadosBasico(dadosBasico);
         lc.setMotivo(motivo);
@@ -277,7 +277,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
 
     public void atualizaProduto() {
         if (formaPagamento.equals("CC") || formaPagamento.equals("CD") || formaPagamento.equals("BO")) {
-            tarifas = TarifaSingleton.getInstance().getBo().listByForma(formaPagamento);
+            tarifas = TarifaSingleton.getInstance().getBo().listByForma(formaPagamento, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             produto = true;
         } else {
             if (this.getEntity().getDataPagamento() == null) {
@@ -286,7 +286,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
             produto = false;
         }
         try {
-            descontos = DescontoSingleton.getInstance().getBo().listByEmpresaAndForma(formaPagamento);
+            descontos = DescontoSingleton.getInstance().getBo().listByEmpresaAndForma(formaPagamento, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             valorDesconto = null;
             desconto = null;
             this.atualizaDesconto();
@@ -321,7 +321,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     private void geraLancamentoContabil(Lancamento l) throws Exception {
         LancamentoContabil lc = new LancamentoContabil();
         Motivo motivo = MotivoSingleton.getInstance().getBo().findBySigla(Motivo.PAGAMENTO_PACIENTE);
-        lc.setIdEmpresa(idEmpresa);
+        lc.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         lc.setTipo(motivo.getTipo());
         lc.setDadosBasico(paciente.getDadosBasico());
         lc.setMotivo(motivo);
@@ -395,7 +395,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
                 l.setDataPagamento(Calendar.getInstance().getTime());
                 l.setDataCredito(data.getTime());
                 l.setFormaPagamento(this.getFormaPagamento());
-                l.setTributo(DominioSingleton.getInstance().getBo().getTributo());
+                l.setTributo(DominioSingleton.getInstance().getBo().getTributo(UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
                 persist(l);
                 data.add(Calendar.MONTH, 1);
             }
@@ -520,7 +520,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,idEmpresa);
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void handleSelect(SelectEvent event) {
@@ -534,7 +534,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
         if (paciente == null) {
             this.addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "");
         }
-        Configurar.getInstance().getConfiguracao().setPacienteSelecionado(paciente);
+        UtilsFrontEnd.setPacienteSelecionado(paciente);
         this.carregaListaLancamento();
         this.carregarFiltros();
     }
@@ -558,7 +558,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     public void carregaTela() {
         try {
             this.limpaSelection();
-            lancamentos = LancamentoSingleton.getInstance().getBo().listByFiltros(paciente, listPtSelecionados, inicio, fim, status);
+            lancamentos = LancamentoSingleton.getInstance().getBo().listByFiltros(paciente, listPtSelecionados, inicio, fim, status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             lancamentoDataModel = new LancamentoDataModel(lancamentos);
         } catch (Exception e) {
             e.printStackTrace();
@@ -568,7 +568,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     public void filtra() {
         try {
             lancamentosSelecionados = new Lancamento[10];
-            lancamentos = LancamentoSingleton.getInstance().getBo().listAllByPeriodoAndStatus(inicio, fim, status);
+            lancamentos = LancamentoSingleton.getInstance().getBo().listAllByPeriodoAndStatus(inicio, fim, status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             // lancamentoDataModel = new LancamentoDataModel(lancamentos);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -580,7 +580,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
         this.setEntity(null);
         try {
             lancamentosSelecionados = new Lancamento[10];
-            lancamentos = LancamentoSingleton.getInstance().getBo().listByPacienteAndDependentes(paciente);
+            lancamentos = LancamentoSingleton.getInstance().getBo().listByPacienteAndDependentes(paciente, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             lancamentoDataModel = new LancamentoDataModel(lancamentos);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

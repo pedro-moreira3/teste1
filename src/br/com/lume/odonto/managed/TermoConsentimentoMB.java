@@ -59,13 +59,13 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
         super(TermoConsentimentoSingleton.getInstance().getBo());      
         try {
             Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "T");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio);
+            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
             if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
                     OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
                 liberaBotao = true;
             }
-            this.setPaciente(Configurar.getInstance().getConfiguracao().getPacienteSelecionado());
+            this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
@@ -130,7 +130,7 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
                 procedimentos += planoTratamentoProcedimento.getProcedimento().getDescricao();
             }
         }
-        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento);
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         documento = documento.replaceAll("#plano_tratamento", procedimentos);
         if ((profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA)) || (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR))) {
@@ -230,7 +230,7 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
     public void handleSelectPacienteSelecionado(SelectEvent event) {
         Object object = event.getObject();
         paciente = (Paciente) object;
-        Configurar.getInstance().getConfiguracao().setPacienteSelecionado(paciente);
+        UtilsFrontEnd.setPacienteSelecionado(paciente);
     }
 
     public List<Paciente> geraSugestoes(String query) {

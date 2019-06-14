@@ -259,7 +259,7 @@ public class FornecedorItemMB extends LumeManagedBean<FornecedorItem> {
             if (this.getDigitacao() != null) {
                 this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa());
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
             Collections.sort(this.itens);
         } catch (Exception e) {

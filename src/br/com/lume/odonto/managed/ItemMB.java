@@ -17,6 +17,7 @@ import org.primefaces.model.TreeNode;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 
 import br.com.lume.dominio.DominioSingleton;
@@ -97,7 +98,7 @@ public class ItemMB extends LumeManagedBean<Item> {
     @Override
     public void actionPersist(ActionEvent event) {
         boolean error = false;
-        this.getEntity().setIdEmpresa(idEmpresa);
+        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (this.getFormaArmazenamento() != null) {
             this.getEntity().setFormaArmazenamento(this.getFormaArmazenamento().getValor());
         }
@@ -170,7 +171,7 @@ public class ItemMB extends LumeManagedBean<Item> {
     }
 
     private void removeRecursivo(Item item) throws Exception {
-        List<Item> listByPaiAux = ItemSingleton.getInstance().getBo().listByPai(item.getId());
+        List<Item> listByPaiAux = ItemSingleton.getInstance().getBo().listByPai(item.getId(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (listByPaiAux != null && !listByPaiAux.isEmpty()) {
             for (Item itemAux : listByPaiAux) {
                 this.removeRecursivo(itemAux);
@@ -186,7 +187,7 @@ public class ItemMB extends LumeManagedBean<Item> {
     @Override
     public void actionRemove(ActionEvent arg0) {
         try {
-            listByPai = ItemSingleton.getInstance().getBo().listByPai(this.getEntity().getId());
+            listByPai = ItemSingleton.getInstance().getBo().listByPai(this.getEntity().getId(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (listByPai != null && !listByPai.isEmpty()) {
                 this.addError("Não é possível excluir itens com itens filhos, remova-os antes.", "");
             } else {
@@ -378,11 +379,11 @@ public class ItemMB extends LumeManagedBean<Item> {
         this.setItens(new ArrayList<Item>());
         try {
             if (!filtro && this.getDigitacao() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao()));
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else if (filtro && this.getFiltroTable() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcialAndCategoria(this.getFiltroTable()));
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcialAndCategoria(this.getFiltroTable(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa());
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
             Collections.sort(itens);
         } catch (Exception e) {
@@ -395,9 +396,9 @@ public class ItemMB extends LumeManagedBean<Item> {
         this.setItens(new ArrayList<Item>());
         try {
             if (this.getDigitacao() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresaAndDescricaoParcial(this.getDigitacao()));
+                this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresa());
+                this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
             Collections.sort(itens);
         } catch (Exception e) {
@@ -639,7 +640,7 @@ public class ItemMB extends LumeManagedBean<Item> {
             List<Item> itens2 = new ArrayList<>();
             for (Item item : this.getItens()) {
                 //System.out.println(item.getDescricaoLimpa().toUpperCase());
-                if (item.getDescricaoLimpa().toUpperCase().contains(UtilsFrontEnd.normalize(filtroTable.toUpperCase()))) {
+                if (item.getDescricaoLimpa().toUpperCase().contains(Utils.normalize(filtroTable.toUpperCase()))) {
                     itens2.add(item);
                 }
             }

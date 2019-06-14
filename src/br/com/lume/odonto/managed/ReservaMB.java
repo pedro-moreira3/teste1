@@ -123,9 +123,9 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     public void geraLista() {
         try {
             if (this.isAdmin()) {
-                this.setReservas(ReservaSingleton.getInstance().getBo().listByData(dataIni));
+                this.setReservas(ReservaSingleton.getInstance().getBo().listByData(dataIni, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setReservas(ReservaSingleton.getInstance().getBo().listAtuais());
+                this.setReservas(ReservaSingleton.getInstance().getBo().listAtuais(UtilsFrontEnd.getProfissionalLogado()));
             }
             if (reservas != null) {
                 Collections.sort(reservas);
@@ -144,7 +144,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     }
 
     public String agendamentoPaciente(Agendamento agendamento) {
-        Configurar.getInstance().getConfiguracao().setPacienteSelecionado(agendamento.getPaciente());
+        UtilsFrontEnd.setPacienteSelecionado(agendamento.getPaciente());
         return "paciente.jsf";
     }
 
@@ -405,9 +405,9 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         this.setKits(new ArrayList<Kit>());
         try {
             if (this.getDigitacao() != null) {
-                this.setKits((KitSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao())));
+                this.setKits((KitSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa())));
             } else {
-                this.setKits(KitSingleton.getInstance().getBo().listByEmpresa());
+                this.setKits(KitSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
             Collections.sort(kits);
         } catch (Exception e) {

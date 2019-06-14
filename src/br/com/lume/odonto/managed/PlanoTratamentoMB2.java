@@ -26,8 +26,8 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.evolucao.EvolucaoSingleton;
@@ -144,7 +144,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
             consulta = true;
         }
         try {
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
+            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -164,11 +164,14 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
 
     public void carregaListaPlano() {
         try {
-            procedimentosDisponiveis = ProcedimentoSingleton.getInstance().getBo().listByEmpresa();
+            
+            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+            
+            procedimentosDisponiveis = ProcedimentoSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("convenio", "obrigatorio", "planotratamento");
             if ((dominio != null && dominio.getValor().equals(Status.SIM)) && paciente != null && paciente.getConvenio() != null && paciente.getConvenio().getExcluido().equals(Status.NAO)) {
                 if (paciente.getConvenio().getDataFimVigencia().getTime() >= Calendar.getInstance().getTime().getTime() && paciente.getConvenio().getDataInicioVigencia().getTime() <= Calendar.getInstance().getTime().getTime()) {
-                    List<ConvenioProcedimento> convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(paciente.getConvenio());
+                    List<ConvenioProcedimento> convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(paciente.getConvenio(), idEmpresaLogada);
                     for (ConvenioProcedimento cp : convenioProcedimentos) {
                         Procedimento p = cp.getProcedimento();
                         procedimentosDisponiveis.remove(p);
@@ -297,7 +300,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
 //                                        ptp.setValor(this.getValorProcedimento(ptp, false));
 //                                    }
 //                                    ptp.setValorDesconto(this.getValorProcedimento(ptp, true));
-                                    ptp.setTributo(DominioSingleton.getInstance().getBo().getTributo());
+                                    ptp.setTributo(DominioSingleton.getInstance().getBo().getTributo(UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
                                     // ptp.setCodigoConvenio(ptp.getProcedimento().getCodigoConvenio());
                                     if (ptp.getExcluido().equals(Status.NAO)) {
                                         if (ptp.getProcedimento().getQuantidadeFaces() != null) {
@@ -392,7 +395,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
             if (ptp.getStatus() != null && ptp.getStatus().equals(
                     FINALIZADO) && ptp.getValorAnterior() != null && ptp.getValorDesconto() != null && ptp.getValorAnterior().doubleValue() != ptp.getValorDesconto().doubleValue()) {
-                ptp.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp));
+                ptp.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp, UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
                 PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
             }
         }
@@ -608,7 +611,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
     private void calculaRepasses() {
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
             if (ptp.getStatus() != null && ptp.getStatus().equals(FINALIZADO)) {
-                ptp.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp));
+                ptp.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp, UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
                 try {
                     PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
                 } catch (Exception e) {
@@ -679,7 +682,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
             if (ptp.getStatus() != null && ptp.getStatus().equals(FINALIZADO)) {
                 if (ptp.getFinalizadoPorProfissional() == null) {
-                    String evoPro = " <br/> " + "Procedimento : " + ptp.getProcedimento().getDescricao() + " <br/> " + "    Finalizado : " + UtilsFrontEnd.dateToString(
+                    String evoPro = " <br/> " + "Procedimento : " + ptp.getProcedimento().getDescricao() + " <br/> " + "    Finalizado : " + Utils.dateToString(
                             new Date()) + " <br/> " + "   Por : " + profissionalFinalizaProcedimento.getDadosBasico().getNome();
                     if (ptp.getDenteObj() != null && !ptp.getDenteObj().getDescricao().equals("")) {
                         for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {
@@ -1062,7 +1065,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
         if (event != null) {
             Object object = event.getObject();
             paciente = (Paciente) object;
-            Configurar.getInstance().getConfiguracao().setPacienteSelecionado(paciente);
+            UtilsFrontEnd.setPacienteSelecionado(paciente);
             this.carregaPacienteSelecionado();
         }
     }
@@ -1215,7 +1218,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
     }
 
     public String getDataOrcamento() {
-        return UtilsFrontEnd.dateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy HH:mm");
+        return Utils.dateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy HH:mm");
     }
 
     public String getEvolucaoProcedimento() {

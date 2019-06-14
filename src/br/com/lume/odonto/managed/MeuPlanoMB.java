@@ -10,11 +10,10 @@ import org.apache.log4j.Logger;
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Plano;
-import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.iugu.responses.InvoiceResponse;
 import br.com.lume.odonto.iugu.services.Iugu;
 import br.com.lume.plano.PlanoSingleton;
@@ -53,8 +52,8 @@ public class MeuPlanoMB extends LumeManagedBean<Agendamento> {
         try {
             
             Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
-            Plano planoUsuLogado = PlanoSingleton.getInstance().getBo().findByUsuarioLogado();
-            agendamentos = AgendamentoSingleton.getInstance().getBo().listQuantidadeAgendamentosMes();
+            Plano planoUsuLogado = PlanoSingleton.getInstance().getBo().findByUsuarioLogado(UtilsFrontEnd.getEmpresaLogada().getIdPlano());
+            agendamentos = AgendamentoSingleton.getInstance().getBo().listQuantidadeAgendamentosMes(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             agendamentosMes = AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosMesAtual(empresaLogada.getEmpIntCod());
             
             if (planoUsuLogado != null) {
@@ -63,7 +62,7 @@ public class MeuPlanoMB extends LumeManagedBean<Agendamento> {
                 porcentagemUtilizado = (double) ((100 * (double) agendamentosMes) / (double) agendamentosPlano);
                 
                 if (empresaLogada.getEmpDtmExpiracao() != null) {
-                    dataVencimentoPlano = UtilsFrontEnd.dateToString(empresaLogada.getEmpDtmExpiracao(), "dd/MM/yyyy");
+                    dataVencimentoPlano = Utils.dateToString(empresaLogada.getEmpDtmExpiracao(), "dd/MM/yyyy");
                 }
             }
             if (empresaLogada.getEmpStrAssinaturaIuguID() != null && !empresaLogada.getEmpStrAssinaturaIuguID().isEmpty() && recentInvoices == null) {

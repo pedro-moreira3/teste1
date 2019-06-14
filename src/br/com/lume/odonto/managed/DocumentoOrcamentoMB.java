@@ -170,8 +170,7 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
 
     private void replaceDocumento() {
         BigDecimal valorPS = BigDecimal.ZERO;
-        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome(),
-                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         String orcamento = "<table border=0 class=\"ui-widget\" width=\"100%\"><tr><td width=\"80%\"><b>Procedimento</b></td><td width=\"20%\"><b>Valor</b></td></tr><tr><td>&nbsp;</td></tr>";
         List<ConvenioProcedimento> convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(paciente.getConvenio(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());

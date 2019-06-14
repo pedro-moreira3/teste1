@@ -155,9 +155,9 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     public void carregarStatusDente() {
         HashSet<StatusDente> hashSet = new HashSet<>();
-        statusDente = StatusDenteSingleton.getInstance().getBo().listAllTemplate();
+        statusDente = StatusDenteSingleton.getInstance().getBo().listAllTemplate(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         hashSet.addAll(statusDente);
-        statusDenteEmpresa = StatusDenteSingleton.getInstance().getBo().listByEmpresa();
+        statusDenteEmpresa = StatusDenteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         hashSet.addAll(statusDenteEmpresa);
         statusDente = new ArrayList<>(hashSet);
         statusDente.sort((o1, o2) -> o1.getDescricao().compareTo(o2.getDescricao()));
@@ -194,7 +194,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
         if (planoTratamento != null && planoTratamento.isBconvenio() && paciente.getConvenio() != null) {
             return ProcedimentoSingleton.getInstance().getBo().listSugestoesCompleteConvenio(paciente.getConvenio().getId(), query);
         } else {
-            return ProcedimentoSingleton.getInstance().getBo().listSugestoesComplete(query);
+            return ProcedimentoSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         }
     }
 

@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.EmpresaSingleton;
@@ -38,7 +38,7 @@ public class TrocaUsuarioMB extends LumeManagedBean<Profissional> {
         super(ProfissionalSingleton.getInstance().getBo());
 
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresaAndAtivo(idEmpresa);
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresaAndAtivo(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             log.error("Erro no TrocaUsuarioMB", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -48,9 +48,9 @@ public class TrocaUsuarioMB extends LumeManagedBean<Profissional> {
 
     public void actionTrocarUsuario() {
         try {
-            Configurar.getInstance().getConfiguracao().setProfissionalLogado(profissionalTrocar);
+            UtilsFrontEnd.setProfissionalLogado(profissionalTrocar);
             Configurar.getInstance().getConfiguracao().setPerfilLogado(profissionalTrocar.getPerfil());
-            Configurar.getInstance().getConfiguracao().setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissionalTrocar.getIdEmpresa()));         
+            UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissionalTrocar.getIdEmpresa()));         
             List<Objeto> objetosPermitidos = LoginSingleton.getInstance().getBo().carregaObjetosPermitidos(UsuarioSingleton.getInstance().getBo().find(profissionalTrocar.getIdUsuario()), profissionalTrocar.getPerfil(), profissionalTrocar);
             this.getLumeSecurity().setUsuario(UsuarioSingleton.getInstance().getBo().find(profissionalTrocar.getIdUsuario()));
             this.getLumeSecurity().setObjetosPermitidos(objetosPermitidos);

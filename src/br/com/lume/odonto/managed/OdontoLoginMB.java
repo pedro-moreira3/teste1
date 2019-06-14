@@ -104,21 +104,19 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                     perfilLogado = OdontoPerfil.PACIENTE;
                     Paciente paciente = PacienteSingleton.getInstance().getBo().findByUsuario(userLogin);
                     UtilsFrontEnd.setPacienteLogado(paciente);
-                    Configurar.getInstance().getConfiguracao().setPerfilLogado(OdontoPerfil.PACIENTE);
-                    Configurar.getInstance().getConfiguracao().setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa()));                   
+                    UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa()));                   
                 } else {
                     if (!Profissional.INATIVO.equals(profissional.getStatus())) {
                         perfilLogado = profissional.getPerfil();
                         UtilsFrontEnd.setProfissionalLogado(profissional);
-                        Configurar.getInstance().getConfiguracao().setPerfilLogado(perfilLogado);
-                        Configurar.getInstance().getConfiguracao().setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()));                      
+                        UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()));                      
                     } else {
                         PrimeFaces.current().executeScript("PF('loading').hide();");
                         this.addError("Profissional Inativo.", "");
                         return "";
                     }
                 }
-                LoginSingleton.getInstance().getBo().validaSituacaoEmpresa(this.getEntity());
+                LoginSingleton.getInstance().getBo().validaSituacaoEmpresa(this.getEntity(), UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getPacienteLogado());
                 //((LoginBO) this.getbO()).carregaObjetosPermitidos(userLogin, perfilLogado, this.getLumeSecurity(), profissional);
                // ObjetoBO objetoBO = new ObjetoBO();
                 this.getLumeSecurity().setUsuario(userLogin);
@@ -156,8 +154,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                     perfilLogado = profissional.getPerfil();
                     userLogin = UsuarioSingleton.getInstance().getBo().find(profissional.getIdUsuario());
                     UtilsFrontEnd.setProfissionalLogado(profissional);
-                    Configurar.getInstance().getConfiguracao().setPerfilLogado(perfilLogado);
-                    Configurar.getInstance().getConfiguracao().setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()));                 
+                    UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()));                 
                 } else {
                     this.addError("Profissional Inativo.", "");
                     return "";
@@ -168,9 +165,9 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                 userLogin = UsuarioSingleton.getInstance().getBo().find(paciente.getIdUsuario());
                 UtilsFrontEnd.setPacienteLogado(paciente);
                 Configurar.getInstance().getConfiguracao().setPerfilLogado(OdontoPerfil.PACIENTE);
-                Configurar.getInstance().getConfiguracao().setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa()));             
+                UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa()));             
             }
-            LoginSingleton.getInstance().getBo().validaSituacaoEmpresa(this.getEntity());
+            LoginSingleton.getInstance().getBo().validaSituacaoEmpresa(this.getEntity(), UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getPacienteLogado());
             List<Objeto> objetosPermitidos = LoginSingleton.getInstance().getBo().carregaObjetosPermitidos(userLogin, perfilLogado, profissional);
             this.getLumeSecurity().setUsuario(userLogin);
             this.getLumeSecurity().setObjetosPermitidos(objetosPermitidos);

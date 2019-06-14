@@ -53,7 +53,7 @@ public class GraficoProfissionalMB extends LumeManagedBean<GraficoProfissional> 
     public void actionPersist(ActionEvent arg0) {
         try {
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            List<GraficoProfissional> atuais = GraficoProfissionalSingleton.getInstance().getBo().listByProfissional(this.getEntity().getProfissional());
+            List<GraficoProfissional> atuais = GraficoProfissionalSingleton.getInstance().getBo().listByProfissional(this.getEntity().getProfissional(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (atuais != null && !atuais.isEmpty()) {
                 this.remove(atuais);
                 this.novo(atuais);
@@ -104,9 +104,9 @@ public class GraficoProfissionalMB extends LumeManagedBean<GraficoProfissional> 
         try {
             List<Grafico> source = new ArrayList<>();
             List<Grafico> target = new ArrayList<>();
-            source = GraficoSingleton.getInstance().getBo().listByEmpresa();
+            source = GraficoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (this.getEntity().getProfissional() != null) {
-                List<GraficoProfissional> listByProfissional = GraficoProfissionalSingleton.getInstance().getBo().listByProfissional(this.getEntity().getProfissional());
+                List<GraficoProfissional> listByProfissional = GraficoProfissionalSingleton.getInstance().getBo().listByProfissional(this.getEntity().getProfissional(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 for (GraficoProfissional gp : listByProfissional) {
                     target.add(gp.getGrafico());
                 }

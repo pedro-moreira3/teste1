@@ -56,7 +56,7 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
 
     private void geralist() {
         try {
-            this.setEspecialidades(EspecialidadeSingleton.getInstance().getBo().listByEmpresa());
+            this.setEspecialidades(EspecialidadeSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
@@ -151,7 +151,7 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
     }
 
     private void atualizaConvenioProcedimento() throws Exception {
-        List<ConvenioProcedimento> cps = ConvenioProcedimentoSingleton.getInstance().getBo().listByProcedimento(this.getEntity());
+        List<ConvenioProcedimento> cps = ConvenioProcedimentoSingleton.getInstance().getBo().listByProcedimento(this.getEntity(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         Boolean msg = false;
         if (cps != null && !cps.isEmpty()) {
             for (ConvenioProcedimento cp : cps) {
@@ -166,7 +166,7 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
                 msg = true;
             }
         } else {
-            List<Convenio> convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa();
+            List<Convenio> convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (convenios != null && !convenios.isEmpty()) {
                 for (Convenio convenio : convenios) {
                     ConvenioProcedimento cp = new ConvenioProcedimento();

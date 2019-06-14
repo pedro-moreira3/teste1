@@ -18,8 +18,8 @@ import org.primefaces.event.CloseEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Dominio;
@@ -317,7 +317,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
         for (PlanoTratamentoProcedimento ptp : planoTratamentoMB.getPlanoTratamentoProcedimentos()) {
             System.out.println(ptp.getValorDesconto().doubleValue() + " != " + ptp.getValorAnterior().doubleValue());
             if (ptp.getStatus() != null && ptp.getStatus().equals("F") && ptp.getValorDesconto().doubleValue() != ptp.getValorAnterior().doubleValue()) {
-                ptp.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp));
+                ptp.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp, UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
                 try {
                     PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
                 } catch (Exception e) {
@@ -514,7 +514,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
     }
 
     public String getDataOrcamento() {
-        return UtilsFrontEnd.dateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy HH:mm");
+        return Utils.dateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy HH:mm");
     }
 
     public String getProfissionalOrcamento() {

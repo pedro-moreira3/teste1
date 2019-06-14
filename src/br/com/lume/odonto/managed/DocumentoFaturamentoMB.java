@@ -165,7 +165,8 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
     }
 
     private void replaceDocumento() {
-        this.documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(this.tagDinamicas, this.profissional.getDadosBasico(), this.documento,UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        this.documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(this.tagDinamicas, this.profissional.getDadosBasico(), this.documento,
+                UtilsFrontEnd.getProfissionalLogado());
         this.documento = this.documento.replaceAll("#periodo", this.getInicioStr() + " à " + this.getFimStr());
         // String finalizacao = "<br><br><br><br><br><br><br>";// Cabeçalho e Rodapé
         String faturamento = INICIO_TABELA;

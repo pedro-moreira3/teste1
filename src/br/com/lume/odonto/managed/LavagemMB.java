@@ -110,7 +110,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
 
     public List<Item> procurarItemComplete(String query) {
         try {
-            return ItemSingleton.getInstance().getBo().listProcurarItemComplete(query);
+            return ItemSingleton.getInstance().getBo().listProcurarItemComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -148,7 +148,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
 
     public Material atualizaEstoqueLavagem() throws Exception {
         if (getEntity().getClinica()) {
-            Material m = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItem(itemSelecionado).get(0);
+            Material m = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItem(itemSelecionado, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()).get(0);
             //System.out.println(" m.getQuantidadeAtualBD() " + m.getQuantidadeAtualBD() + " m.getQuantidadeAtual() " + m.getQuantidadeAtual());
             MaterialSingleton.getInstance().getBo().refresh(m);
             //System.out.println(" m.getQuantidadeAtualBD() " + m.getQuantidadeAtualBD() + " m.getQuantidadeAtual() " + m.getQuantidadeAtual());
@@ -244,7 +244,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                     MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, m, profissionalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
                             MaterialLog.DEVOLUCAO_LAVAGEM_DESCARTAR));
                 } else {
-                    m = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(this.getLavagemKitSelecionada().getItem()).get(0);
+                    m = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(this.getLavagemKitSelecionada().getItem(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()).get(0);
                     MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, m, profissionalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
                             MaterialLog.DEVOLUCAO_LAVAGEM_DESCARTAR));
                 }
@@ -354,7 +354,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                             MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, lk.getAbastecimento(), lk.getAbastecimento().getMaterial(), profisionalLogado,
                                     new BigDecimal(lk.getQuantidade()), lk.getAbastecimento().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_LAVAGEM_FINALIZAR));
                         } else {
-                            List<Material> material = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(lk.getItem());
+                            List<Material> material = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(lk.getItem(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                             if (!material.isEmpty()) {
                                 MaterialSingleton.getInstance().getBo().refresh(material.get(0));
                                 material.get(0).setQuantidadeAtual(material.get(0).getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
@@ -528,8 +528,8 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
 
     public void geraListaSolicitadas() {
         try {
-            this.setLavagensSolicitadas(LavagemSingleton.getInstance().getBo().listByEmpresaAndStatus(Lavagem.ABERTO));
-            lavagensSolicitadas.addAll(LavagemSingleton.getInstance().getBo().listByEmpresaAndStatus(Lavagem.LIMPO));
+            this.setLavagensSolicitadas(LavagemSingleton.getInstance().getBo().listByEmpresaAndStatus(Lavagem.ABERTO, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            lavagensSolicitadas.addAll(LavagemSingleton.getInstance().getBo().listByEmpresaAndStatus(Lavagem.LIMPO, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -539,8 +539,8 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
     private void geraLista() {
         try {
             lavagens = new ArrayList<>();
-            lavagens.addAll(LavagemSingleton.getInstance().getBo().listByEmpresaAndStatus(Lavagem.ABERTO));
-            lavagens.addAll(LavagemSingleton.getInstance().getBo().listByEmpresaAndStatus(Lavagem.LIMPO));
+            lavagens.addAll(LavagemSingleton.getInstance().getBo().listByEmpresaAndStatus(Lavagem.ABERTO, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            lavagens.addAll(LavagemSingleton.getInstance().getBo().listByEmpresaAndStatus(Lavagem.LIMPO, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             if (lavagens != null) {
                 Collections.sort(lavagens);
             }

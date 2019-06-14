@@ -2,6 +2,7 @@ package br.com.lume.odonto.util;
 
 import java.math.BigDecimal;
 
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 
@@ -17,7 +18,7 @@ public class GXFinalizarNovamenteValorCorreto {
             for (long id : ids) {
                 PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(id);
                 if (ptp != null) {
-                    BigDecimal valorRepasse = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp);
+                    BigDecimal valorRepasse = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp, UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto());
                     ptp.setValorRepasse(valorRepasse);
                     if (valorRepasse != null) {
                         System.out.println(id + " " + valorRepasse.toString());

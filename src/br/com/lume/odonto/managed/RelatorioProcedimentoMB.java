@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
@@ -72,7 +72,7 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<RelatorioProcedimen
             } else {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             }
-            this.relatorioProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listRelatorioProcedimento(this.profissional, this.inicio, this.fim);
+            this.relatorioProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listRelatorioProcedimento(this.profissional, this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (PlanoTratamentoProcedimento planoTratamentoProcedimento : this.relatorioProcedimentos) {
                 this.totalValor = this.totalValor.add(planoTratamentoProcedimento.getValorDesconto());
             }
@@ -86,14 +86,14 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<RelatorioProcedimen
     }
 
     public List<Paciente> geraSugestoesPaciente(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,idEmpresa);
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public List<Profissional> geraSugestoesProfissional(String query) {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(idEmpresa);
+            profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
                         Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {

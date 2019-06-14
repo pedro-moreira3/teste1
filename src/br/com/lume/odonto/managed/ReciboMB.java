@@ -58,8 +58,8 @@ public class ReciboMB extends LumeManagedBean<Recibo> {
       
         try {
             Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "RC");
-            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio);
-            this.setPaciente(Configurar.getInstance().getConfiguracao().getPacienteSelecionado());
+            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
@@ -119,7 +119,7 @@ public class ReciboMB extends LumeManagedBean<Recibo> {
     }
 
     private void replaceDocumento() {
-        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento);
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         documento = documento.replaceAll("span", "div");
     }
@@ -185,7 +185,7 @@ public class ReciboMB extends LumeManagedBean<Recibo> {
     public void handleSelectPacienteSelecionado(SelectEvent event) {
         Object object = event.getObject();
         paciente = (Paciente) object;
-        Configurar.getInstance().getConfiguracao().setPacienteSelecionado(paciente);
+        UtilsFrontEnd.setPacienteSelecionado(paciente);
     }
 
     public List<Paciente> geraSugestoes(String query) {

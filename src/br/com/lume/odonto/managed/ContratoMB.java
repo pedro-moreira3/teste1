@@ -125,8 +125,7 @@ public class ContratoMB extends LumeManagedBean<Contrato> {
         documento = documento.replaceAll("#dataInicial", this.getEntity().getDataInicialStr());
         documento = documento.replaceAll("#dataFinal", this.getEntity().getDataFinalStr());
         documento = documento.replaceAll("#formaContratacao", this.getEntity().getFormaContratacao().getNome());
-        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, profissionalMB.getEntity().getDadosBasico(), documento, 
-                UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, profissionalMB.getEntity().getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado());
         
         documento = documento.replaceAll("#contratado", profissionalMB.getEntity().getDadosBasico().getNome());
         documento = documento.replaceAll("span", "div");

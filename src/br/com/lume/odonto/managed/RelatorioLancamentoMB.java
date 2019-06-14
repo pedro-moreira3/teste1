@@ -12,6 +12,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -56,7 +57,7 @@ public class RelatorioLancamentoMB extends LumeManagedBean<Lancamento> {
                 if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
                     this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
                 } else {
-                    this.Lancamentos = LancamentoSingleton.getInstance().getBo().listAllByPeriodoAndStatus(this.inicio, this.fim, this.status);
+                    this.Lancamentos = LancamentoSingleton.getInstance().getBo().listAllByPeriodoAndStatus(this.inicio, this.fim, this.status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                     this.somaValor = new BigDecimal(0);
                     for (Lancamento l : this.Lancamentos) {
                         this.somaValor = this.somaValor.add(l.getValor()).setScale(2, BigDecimal.ROUND_HALF_UP);

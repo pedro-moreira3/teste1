@@ -696,7 +696,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                     agendamento.getPaciente().getDadosBasico().getDataNascimento() != null)   
                                 dataAtual.setTime(agendamento.getPaciente().getDadosBasico().getDataNascimento());
                             if (profissional != null) {
-                                descricao = "[" + agendamento.getPaciente().getSiglaConvenio() + "] " + agendamento.getDescricaoAgenda(UtilsFrontEnd.get);
+                                descricao = "[" + agendamento.getPaciente().getSiglaConvenio() + "] " + agendamento.getDescricaoAgenda(UtilsFrontEnd.getProfissionalLogado());
                             } else {
                                 descricao = agendamento.getProfissional().getDadosBasico().getNomeAbreviado() + " - " + "[" + agendamento.getPaciente().getSiglaConvenio() + "] " + agendamento.getPaciente().getDadosBasico().getNome();
                             }
@@ -887,11 +887,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             }
             paciente.setPreCadastro("S");
             if (usuario != null) {
-                paciente.setIdEmpresa(usuario.getEmpresa().getEmpIntCod());
+                paciente.setIdEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
                 paciente.setIdUsuario(usuario.getUsuIntCod());
             }
             PacienteSingleton.getInstance().getBo().persist(paciente);
-            PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().persistPlano(paciente, profissionalDentroAgenda, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().persistPlano(paciente, UtilsFrontEnd.getProfissionalLogado());
             if (pt != null) {
                 pacienteSelecionado = paciente;
                 planoTratamentos = new ArrayList<>();

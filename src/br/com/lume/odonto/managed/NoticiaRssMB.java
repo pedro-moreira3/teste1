@@ -17,8 +17,8 @@ import org.primefaces.model.UploadedFile;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-
 import br.com.lume.noticiaRss.NoticiaRssSingleton;
 import br.com.lume.odonto.entity.NoticiaRss;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -50,7 +50,7 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().setIdEmpresa(idEmpresa);
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.getbO().persist(this.getEntity());
             if (this.arquivo != null) {
                 this.salvaArquivo();
@@ -59,7 +59,7 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
             cal.setTime(new Date());
             cal.add(Calendar.DAY_OF_MONTH, -1);
             if (this.getEntity().getDataPublicacao().getTime() >= cal.getTime().getTime()) {
-                new RSSBuilder().createRSSFile(NoticiaRssSingleton.getInstance().getBo().listByEmpresa());
+                new RSSBuilder().createRSSFile(NoticiaRssSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 this.geraLista();
             } else {
@@ -86,7 +86,7 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
         if (this.arquivo != null) {
             InputStream inputstream = this.arquivo.getInputstream();
             String path = System.getProperty("images");
-            this.getEntity().setImagem(this.getEntity().getId() + "." + UtilsFrontEnd.getExtensao(this.arquivo.getFileName()));
+            this.getEntity().setImagem(this.getEntity().getId() + "." + Utils.getExtensao(this.arquivo.getFileName()));
             File file = new File(path + this.getEntity().getImagem());
             FileOutputStream fileout = new FileOutputStream(file);
             while (inputstream.available() != 0) {
@@ -100,7 +100,7 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
 
     private void geraLista() {
         try {
-            this.noticiasRss = NoticiaRssSingleton.getInstance().getBo().listByEmpresa();
+            this.noticiasRss = NoticiaRssSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             e.printStackTrace();
         }

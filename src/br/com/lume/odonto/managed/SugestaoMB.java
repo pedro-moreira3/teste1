@@ -99,7 +99,7 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
 
     public void geraList() {
         try {
-            this.setSugestoes(SugestaoSingleton.getInstance().getBo().listByEmpresa());
+            this.setSugestoes(SugestaoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             if (this.sugestoes != null) {
                 Collections.sort(this.sugestoes);
             }
@@ -399,9 +399,9 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
         this.setItens(new ArrayList<Item>());
         try {
             if (this.getDigitacao() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao()));
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa());
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
             Collections.sort(this.itens);
         } catch (Exception e) {

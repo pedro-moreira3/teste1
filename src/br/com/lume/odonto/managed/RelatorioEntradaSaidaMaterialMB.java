@@ -22,7 +22,7 @@ import org.primefaces.model.chart.LineChartSeries;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.local.LocalSingleton;
 import br.com.lume.odonto.entity.Item;
@@ -89,7 +89,7 @@ public class RelatorioEntradaSaidaMaterialMB extends LumeManagedBean<RelatorioEn
             }
             cal.add(Calendar.HOUR_OF_DAY, 23);
             this.periodoFinal = cal.getTime();
-            this.materiais = RelatorioEntradaSaidaMaterialSingleton.getInstance().getBo().listAllByFilterToReport(this.local, this.item, this.profissional);
+            this.materiais = RelatorioEntradaSaidaMaterialSingleton.getInstance().getBo().listAllByFilterToReport(this.local, this.item, this.profissional, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.naoEncontrado = true;
             if (this.materiais != null && !this.materiais.isEmpty()) {
                 for (RelatorioEntradaSaidaMaterial resm : this.materiais) {
@@ -188,9 +188,12 @@ public class RelatorioEntradaSaidaMaterialMB extends LumeManagedBean<RelatorioEn
 
     public void geraListas() {
         try {
-            this.itens = (ItemSingleton.getInstance().getBo().listByEmpresa());
-            this.profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresa);
-            this.locais = (LocalSingleton.getInstance().getBo().listByEmpresa());
+            
+            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+            
+            this.itens = (ItemSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada));
+            this.profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+            this.locais = (LocalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }

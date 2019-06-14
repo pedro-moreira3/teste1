@@ -25,8 +25,8 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.evolucao.EvolucaoSingleton;
@@ -235,8 +235,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
             if (totalPago.doubleValue() < totalPagar.doubleValue()) {
                 log.error(OdontoMensagens.getMensagem("erro.encerramento.plano.nao.pago"));
-                this.addError(OdontoMensagens.getMensagem("erro.encerramento.plano.nao.pago").replaceFirst("\\{1\\}", UtilsFrontEnd.stringToCurrency(totalPagar)).replaceFirst("\\{2\\}",
-                        UtilsFrontEnd.stringToCurrency(totalPago)), "");
+                this.addError(OdontoMensagens.getMensagem("erro.encerramento.plano.nao.pago").replaceFirst("\\{1\\}", Utils.stringToCurrency(totalPagar)).replaceFirst("\\{2\\}",
+                        Utils.stringToCurrency(totalPago)), "");
             } else {
                 boolean procedimentoEmAberto = PlanoTratamentoSingleton.getInstance().getBo().findProcedimentosEmAbertoByPlanoTratamento(this.getEntity().getId()) > 0;
                 this.getEntity().setJustificativa(justificativa.getNome());
@@ -314,7 +314,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
             if (ptp.getStatus() != null && ptp.getStatus().equals(
                     "F") && ptp.getValorAnterior() != null && ptp.getValorDesconto() != null && ptp.getValorAnterior().doubleValue() != ptp.getValorDesconto().doubleValue()) {
-                ptp.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp));
+                ptp.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp, UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
                 PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
             }
         }
@@ -397,7 +397,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
             if (ptp.getStatus() != null && ptp.getStatus().equals("F")) {
                 if (ptp.getFinalizadoPorProfissional() == null) {
-                    String evoPro = " <br/> " + "Procedimento : " + ptp.getProcedimento().getDescricao() + " <br/> " + "    Finalizado : " + UtilsFrontEnd.dateToString(
+                    String evoPro = " <br/> " + "Procedimento : " + ptp.getProcedimento().getDescricao() + " <br/> " + "    Finalizado : " + Utils.dateToString(
                             new Date()) + " <br/> " + "   Por : " + profissionalFinalizaProcedimento.getDadosBasico().getNome();
                     if (ptp.getDenteObj() != null && !ptp.getDenteObj().getDescricao().equals("")) {
                         for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {
@@ -607,7 +607,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private void calculaRepasse(PlanoTratamentoProcedimento ptp) {
 
         if (ptp.getStatus() != null && ptp.getStatus().equals("F")) {
-            ptp.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp));
+            ptp.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp, UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
             try {
                 PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
             } catch (Exception e) {
@@ -1002,7 +1002,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public String getDataOrcamento() {
-        return UtilsFrontEnd.dateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy HH:mm");
+        return Utils.dateToString(Calendar.getInstance().getTime(), "dd/MM/yyyy HH:mm");
     }
 
     public Date getDataCredito() {

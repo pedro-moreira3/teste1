@@ -96,7 +96,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
         this.geraLista();
         try {
             this.setProcedencias(this.getPrecedencias());
-            this.setMarcas(MarcaSingleton.getInstance().getBo().listByEmpresa());
+            this.setMarcas(MarcaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             this.setRoot(new DefaultTreeNode("", null));
             Item firstLevel = new Item();
             firstLevel.setDescricao("RAIZ");
@@ -106,7 +106,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             firstLevelLocal.setDescricao("RAIZ");
             this.chargeTreeLocal(new DefaultTreeNode(firstLevelLocal, this.getRootLocal()));
             dateHoje = new Date();
-            fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa();
+            fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
@@ -115,7 +115,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     private void geraLista() {
         try {
-            materiais = MaterialSingleton.getInstance().getBo().listAtivosByEmpresa();
+            materiais = MaterialSingleton.getInstance().getBo().listAtivosByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             Collections.sort(materiais);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -335,7 +335,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 } else {
                     this.getEntity().setItem(this.getItem());
                     if (this.getLocal() == null) {
-                        this.getEntity().setLocal(LocalSingleton.getInstance().getBo().getLocalPadraoSistema());
+                        this.getEntity().setLocal(LocalSingleton.getInstance().getBo().getLocalPadraoSistema(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                     } else {
                         this.getEntity().setLocal(this.getLocal());
                     }
@@ -552,9 +552,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
         this.setLocais(new ArrayList<Local>());
         try {
             if (this.getDigitacaoLocal() != null) {
-                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacaoLocal()));
+                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacaoLocal(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresa());
+                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
             Collections.sort(this.getLocais());
         } catch (Exception e) {
@@ -567,9 +567,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
         this.setItens(new ArrayList<Item>());
         try {
             if (this.getDigitacao() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao()));
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa());
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
             Collections.sort(itens);
         } catch (Exception e) {
@@ -717,7 +717,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
         List<Marca> sugestoes = new ArrayList<>();
         List<Marca> marcas = new ArrayList<>();
         try {
-            marcas = MarcaSingleton.getInstance().getBo().listByEmpresa();
+            marcas = MarcaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Marca m : marcas) {
                 if (Normalizer.normalize(m.getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").contains(
                         Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))) {

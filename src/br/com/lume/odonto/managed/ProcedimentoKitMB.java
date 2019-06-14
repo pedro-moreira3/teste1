@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.kit.KitSingleton;
 import br.com.lume.odonto.entity.Kit;
 import br.com.lume.odonto.entity.Procedimento;
@@ -45,9 +45,9 @@ public class ProcedimentoKitMB extends LumeManagedBean<ProcedimentoKit> {
 
     private void carregarListas() {
         try {
-            kits = KitSingleton.getInstance().getBo().listByEmpresa();
+            kits = KitSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.carregarProcedimentos();
-            this.setEntityList(ProcedimentoKitSingleton.getInstance().getBo().listByEmpresa());
+            this.setEntityList(ProcedimentoKitSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             this.carregarProcedimentosFiltro();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -58,9 +58,9 @@ public class ProcedimentoKitMB extends LumeManagedBean<ProcedimentoKit> {
     public void carregarProcedimentos() {
         try {
             if (procedimentoSemKit) {
-                procedimentos = ProcedimentoSingleton.getInstance().getBo().listProcedimentosSemKitVinculados();
+                procedimentos = ProcedimentoSingleton.getInstance().getBo().listProcedimentosSemKitVinculados(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             } else {
-                procedimentos = ProcedimentoSingleton.getInstance().getBo().listByEmpresa();
+                procedimentos = ProcedimentoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -81,14 +81,15 @@ public class ProcedimentoKitMB extends LumeManagedBean<ProcedimentoKit> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            ProcedimentoKit pk = ProcedimentoKitSingleton.getInstance().getBo().findByProcedimentoAndKit(this.getEntity().getProcedimento(), this.getEntity().getKit());
+            ProcedimentoKit pk = ProcedimentoKitSingleton.getInstance().getBo().findByProcedimentoAndKit(this.getEntity().getProcedimento(), this.getEntity().getKit(),
+                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (pk != null) {
                 pk.setQuantidade(getEntity().getQuantidade());
                 setEntity(pk);
                 ProcedimentoKitSingleton.getInstance().getBo().persist(this.getEntity());
             } else {
                 procedimentoSelecionado = this.getEntity().getProcedimento();
-                this.getEntity().setIdEmpresa(idEmpresa);
+                this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 ProcedimentoKitSingleton.getInstance().getBo().persist(this.getEntity());
                 this.actionNew(event);
                 if (procedimentoSelecionado != null) {

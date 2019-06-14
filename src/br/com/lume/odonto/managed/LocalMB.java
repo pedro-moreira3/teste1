@@ -16,7 +16,7 @@ import org.primefaces.model.TreeNode;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.local.LocalSingleton;
 //import br.com.lume.odonto.bo.DominioBO;
@@ -67,7 +67,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     @Override
     public void actionPersist(ActionEvent event) {
         boolean error = false;
-        this.getEntity().setIdEmpresa(idEmpresa);
+        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (this.tipoLocal != null) {
             this.getEntity().setTipo(this.tipoLocal.getValor());
         }
@@ -170,7 +170,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     public List<Local> getEstoques() {
         List<Local> locais = new ArrayList<>();
         try {
-            locais = LocalSingleton.getInstance().getBo().listByEmpresaAndTipo(ESTOQUE);
+            locais = LocalSingleton.getInstance().getBo().listByEmpresaAndTipo(ESTOQUE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -181,7 +181,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     public List<Local> getConsultorios() {
         List<Local> locais = new ArrayList<>();
         try {
-            locais = LocalSingleton.getInstance().getBo().listByEmpresaAndTipo(CONSULTORIO);
+            locais = LocalSingleton.getInstance().getBo().listByEmpresaAndTipo(CONSULTORIO, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -240,7 +240,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     public List<Local> getLocais() {
         List<Local> locais = new ArrayList<>();
         try {
-            locais = LocalSingleton.getInstance().getBo().listByEmpresa();
+            locais = LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Local local : locais) {
                 for (Dominio dominio : this.tiposLocais) {
                     if (local.getTipo().equals(dominio.getValor())) {

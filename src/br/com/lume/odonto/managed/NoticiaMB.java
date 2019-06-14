@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.noticia.NoticiaSingleton;
 import br.com.lume.odonto.entity.Noticia;
 
@@ -30,7 +30,7 @@ public class NoticiaMB extends LumeManagedBean<Noticia> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().setIdEmpresa(idEmpresa);
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             super.actionPersist(event);
         } catch (Exception e) {
             this.log.error("Erro no actionPersist", e);
@@ -41,7 +41,7 @@ public class NoticiaMB extends LumeManagedBean<Noticia> {
     @Override
     public List<Noticia> getEntityList() {
         try {
-            return NoticiaSingleton.getInstance().getBo().listByEmpresa();
+            return NoticiaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.log.error("Erro no getEntityList", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
