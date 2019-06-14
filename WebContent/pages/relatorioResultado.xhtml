@@ -45,11 +45,11 @@
                     <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioResultadoMB.relatorioResultados}" var="m" rows="20" paginator="true" rowKey="#{m}"
                         paginatorPosition="bottom">
                         <f:facet name="header">Procedimentos</f:facet>
-                        <p:column exportable="false">                        
+                        <p:column exportable="false" width="45">                       
                         	<p:commandButton oncomplete="PF('dlgValorMaterial').show();" process="@this"
                         		action="#{relatorioResultadoMB.carregaDetalheValorMaterial(m)}"
-								update=":lume:dtValorMaterial" style="width: 33px !important"
-								disabled="#{m.valorMaterial.doubleValue() == 0}" />
+								update=":lume:dtValorMaterial" style="width: 33px !important" styleClass="BlueButton"
+								disabled="#{m.valorMaterial.doubleValue() == 0}" icon="fa fa-search" />
                         </p:column>
                         <p:column filterBy="#{m.profissional.dadosBasico.nome}" sortBy="#{m.profissional.dadosBasico.nome}" filterMatchMode="contains">
                             <f:facet name="header">
@@ -140,10 +140,11 @@
         </div>
 
 
-        <p:dialog widgetVar="dlgValorMaterial">
+        <p:dialog widgetVar="dlgValorMaterial" width="90%" modal="true">
             <div class="Card">
                 <h1>Detalhamento dos materiais</h1>
                 <div class="SeparatorFull"></div>
+                <br />
                 <p:dataTable filterDelay="1500"  reflow="true" var="m" value="#{relatorioResultadoMB.detalhesMaterial}" rowKey="m" paginator="true" rows="20" paginatorPosition="bottom" id="dtValorMaterial"
                     emptyMessage="Esse procedimento não possui custos.">
                     <f:facet name="header">Materiais</f:facet>
