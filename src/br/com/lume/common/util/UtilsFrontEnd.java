@@ -56,19 +56,26 @@ public class UtilsFrontEnd  implements Serializable {
     }
     
     @SuppressWarnings("unchecked")
-    public List<Login> getLogins() {
+    public static List<Login> getLogins() {
         return (List<Login>) JSFHelper.getSession().getAttribute("LOGINS");
     }
-    public void setLogins(List<Login> logins) {
+    public static void setLogins(List<Login> logins) {
         JSFHelper.getSession().setAttribute("LOGINS", logins);
        
        
     }
-    public String getUsuarioNome() {
+    public static String getUsuarioNome() {
         return (String) JSFHelper.getSession().getAttribute("USUARIO_NOME");
     }
     public void setUsuarioNome(String usuarioNome) {
         JSFHelper.getSession().setAttribute("USUARIO_NOME", usuarioNome);
+    }
+    
+    public static String getPerfilLogado() {
+        return (String) JSFHelper.getSession().getAttribute("PERFIL_LOGADO");
+    }
+    public static void setPerfilLogado(String perfilLogado) {
+        JSFHelper.getSession().setAttribute("PERFIL_LOGADO", perfilLogado);
     }
     
 }
