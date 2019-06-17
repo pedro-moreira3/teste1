@@ -216,6 +216,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             pacienteSelecionado = null;
         }
     }
+    
+    public boolean isReserva() {
+        try {
+            List<Reserva> reservas = ReservaSingleton.getInstance().getBo().listByAgendamento(getEntity(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            return reservas != null && !reservas.isEmpty();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
     private void carregarCadeiras() {
         cadeiras = new ArrayList<>();

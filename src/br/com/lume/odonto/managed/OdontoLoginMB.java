@@ -217,8 +217,8 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
     }
     
     private String verificaPaginaInicial() {
-        Profissional profissional = (Profissional) UtilsFrontEnd.getProfissionalLogado();
-        Paciente paciente = (Paciente) UtilsFrontEnd.getPacienteLogado();
+        Profissional profissional = UtilsFrontEnd.getProfissionalLogado();
+        Paciente paciente = UtilsFrontEnd.getPacienteLogado();
         String actionLoginRetorno = "";
         if (profissional != null || paciente != null) {
             if (paciente != null) {

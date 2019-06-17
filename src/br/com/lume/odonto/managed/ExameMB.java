@@ -28,7 +28,6 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
-import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.exame.ExameSingleton;
 //import br.com.lume.odonto.bo.DominioBO;

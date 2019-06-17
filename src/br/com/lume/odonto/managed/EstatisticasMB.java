@@ -49,7 +49,8 @@ public class EstatisticasMB extends LumeManagedBean<Agendamento> {
     public Integer getQuantidadeAgendamentosPlano() {
         try {
             long idPlano = new EmpresaBO().find(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()).getIdPlano();
-            Plano p = new PlanoSingleton().getInstance().getBo().find(idPlano);
+            new PlanoSingleton();
+            Plano p = PlanoSingleton.getInstance().getBo().find(idPlano);
             if (p != null) {
                 return p.getConsultas();
             }

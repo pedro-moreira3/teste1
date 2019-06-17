@@ -64,7 +64,7 @@ public class LumeSecurity implements Serializable {
 
     public Empresa getEmpresa() {
         if (empresa == null) {
-            return (Empresa) UtilsFrontEnd.getEmpresaLogada();
+            return UtilsFrontEnd.getEmpresaLogada();
         }
         return empresa;
     }

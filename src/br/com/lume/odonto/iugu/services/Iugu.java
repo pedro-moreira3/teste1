@@ -64,7 +64,7 @@ public class Iugu {
 
     public static void main(String[] args) {
         Iugu iugu = new Iugu();
-        iugu.criarFatura();
+        Iugu.criarFatura();
     }
 
     public static void criarFatura() {

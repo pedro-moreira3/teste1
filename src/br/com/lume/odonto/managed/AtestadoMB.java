@@ -11,7 +11,6 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.eclipse.persistence.internal.sessions.remote.SequencingFunctionCall.GetNextValue;
 import org.primefaces.event.SelectEvent;
 
 import br.com.lume.atestado.AtestadoSingleton;

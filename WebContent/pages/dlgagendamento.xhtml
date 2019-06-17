@@ -213,7 +213,7 @@
 				<p:outputLabel for="reserva" value="Fez reserva?"
 					rendered="#{agendamentoMB.entity.id != 0}" />
 				<p:selectOneRadio id="reserva"
-					value="#{agendamentoMB.entity.reserva}" readonly="true">
+					value="#{agendamentoMB.reserva}" readonly="true">
 					<f:selectItem itemLabel="Sim" itemValue="true" />
 					<f:selectItem itemLabel="Não" itemValue="false" />
 				</p:selectOneRadio>
