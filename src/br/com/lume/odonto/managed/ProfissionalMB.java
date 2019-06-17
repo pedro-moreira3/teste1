@@ -100,7 +100,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     private List<SelectItem> objetosPerfilChecks;
 
-    private List<String> objetosPerfilSelecionados;
+    private List<Long> objetosPerfilSelecionados;
 
     private DefaultStreamedContent scFoto;
 
@@ -187,7 +187,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         List<Objeto> perfis = ObjetoSingleton.getInstance().getBo().listByPerfil(perfil);
         objetosPerfilSelecionados = new ArrayList<>();
         for (Objeto objeto : perfis) {
-            objetosPerfilSelecionados.add(objeto.getObjIntCod() + "");
+            objetosPerfilSelecionados.add(objeto.getObjIntCod());
         }
     }
 
@@ -197,7 +197,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             if (objetos != null && !objetos.isEmpty()) {
                 objetosPerfilSelecionados = new ArrayList<>();
                 for (ObjetoProfissional objetoProfissional : objetos) {
-                    objetosPerfilSelecionados.add(objetoProfissional.getObjeto().getObjIntCod() + "");
+                    objetosPerfilSelecionados.add(objetoProfissional.getObjeto().getObjIntCod());
                 }
             } else {
                 carregarObjetosPerfisProfissional(profissional.getPerfil());
@@ -241,11 +241,17 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         Usuario usuario = null;
         try {
             carregarObjetosProfissional();
+            
             if (Utils.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
                 addError("Data de nascimento inválida.", "");
                 return;
             }
-            DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
+            
+            if(((this.getEntity().getDadosBasico().getCelular() != null) && (!this.getEntity().getDadosBasico().getCelular().isEmpty())) &&
+                    ((this.getEntity().getDadosBasico().getTelefone() != null) && (!this.getEntity().getDadosBasico().getTelefone().isEmpty()))) {
+                
+                DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
+            }
 
             ProfissionalSingleton.getInstance().getBo().validaProfissionalDuplicadoEmpresa(this.getEntity(), emailSalvo,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(this.getEntity().getDadosBasico().getEmail().toUpperCase());
@@ -357,8 +363,8 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
     private void carregarObjetosProfissional() throws Exception {
         List<ObjetoProfissional> objetosProfissional = new ArrayList<>();
         if (objetosPerfilSelecionados != null && !objetosPerfilSelecionados.isEmpty()) {
-            for (String obj : objetosPerfilSelecionados) {
-                objetosProfissional.add(new ObjetoProfissional(getEntity(), ObjetoSingleton.getInstance().getBo().find(Long.parseLong(obj))));
+            for (Long obj : objetosPerfilSelecionados) {
+                objetosProfissional.add(new ObjetoProfissional(getEntity(), ObjetoSingleton.getInstance().getBo().find(obj)));
             }
             getEntity().setObjetosProfissional(objetosProfissional);
         }
@@ -621,11 +627,11 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         this.objetosPerfilChecks = objetosPerfilChecks;
     }
 
-    public List<String> getObjetosPerfilSelecionados() {
+    public List<Long> getObjetosPerfilSelecionados() {
         return objetosPerfilSelecionados;
     }
 
-    public void setObjetosPerfilSelecionados(List<String> objetosPerfilSelecionados) {
+    public void setObjetosPerfilSelecionados(List<Long> objetosPerfilSelecionados) {
         this.objetosPerfilSelecionados = objetosPerfilSelecionados;
     }
 
