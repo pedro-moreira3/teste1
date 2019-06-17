@@ -751,7 +751,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 agendamento.setInicio(afastamento.getInicio());
                 agendamento.setFim(afastamento.getFim());
                 agendamento.setPaciente(pacienteAfastamento);
-                agendamento.setStatusNovo(StatusAgendamentoUtil.AFASTAMENTO.getSigla());
+               agendamento.setStatusAgendamento(null);
                 agendamento.setDescricao(afastamento.getObservacao());
                 agendamentosAfastamento.add(agendamento);
             }

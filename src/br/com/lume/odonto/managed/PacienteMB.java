@@ -338,7 +338,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             }
             this.getbO().persist(this.getEntity());
             this.geraLista();
-            this.actionNew(event);
+        //    this.actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (DataNascimentoException dne) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.datanascimento"), "");

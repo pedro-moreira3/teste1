@@ -802,6 +802,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             lancamento.setOrcamento(orcamento);
             LancamentoSingleton.getInstance().getBo().persist(lancamento);
 
+            if (porcentagem == null) {
+                porcentagem = new BigDecimal(0d);
+            }
+            
             PlanoTratamento pt = getEntity();
             pt.setDesconto(porcentagem);
             PlanoTratamentoSingleton.getInstance().getBo().persist(pt);
