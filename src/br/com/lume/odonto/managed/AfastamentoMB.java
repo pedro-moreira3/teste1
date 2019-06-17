@@ -18,6 +18,7 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.dominio.bo.DominioBO;
 //import br.com.lume.odonto.bo.AfastamentoBO;
 //import br.com.lume.odonto.bo.AgendamentoBO;
 //import br.com.lume.odonto.bo.DominioBO;
@@ -71,6 +72,14 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
         PrimeFaces.current().ajax().addCallbackParam("validado", true);
     }
 
+    public String getAfastamentoTipoStr(Afastamento afastamento) {
+        try {
+            return new DominioBO().listByTipoAndObjeto(afastamento.getTipo(), "afastamento").getNome();
+        } catch (Exception e) {
+            return "Sem informações";
+        }
+    }
+    
     @Override
     public void actionPersist(ActionEvent event) {
         try {

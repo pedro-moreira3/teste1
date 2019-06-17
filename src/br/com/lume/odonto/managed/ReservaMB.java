@@ -446,6 +446,9 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         List<Agendamento> agendamentosNew = AgendamentoSingleton.getInstance().getBo().listByProfissionalAndStatusAndDataLimite(profissionalSelecionado, this.getEntity().getPrazo());
         for (Agendamento agendamento : agendamentosNew) {
             if(agendamento.getStatusNovo().matches("P|S|N|E|A|I|O")) {
+                if(agendamentos == null) {
+                    agendamentos = new ArrayList<Agendamento>();
+                }
                 agendamentos.add(agendamento);                
             }
         }
