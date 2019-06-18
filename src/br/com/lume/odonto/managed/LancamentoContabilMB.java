@@ -249,9 +249,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void carregaTela() {
-        if (this.getEntity().getTipo().equals("Pagar")) {
-            this.getEntity().setValor((this.getEntity().getValor().negate()));
-        }
+       // if (this.getEntity().getTipo().equals("Pagar")) {
+       //     this.getEntity().setValor((this.getEntity().getValor().negate()));
+       // }
         categoria = getEntity().getMotivo().getCategoria();
         tipoCategoria = getEntity().getMotivo().getCategoria().getTipoCategoria();
     }
