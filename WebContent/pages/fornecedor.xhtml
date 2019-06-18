@@ -19,9 +19,9 @@
 							<p:inputText id="email" value="#{fornecedorMB.entity.dadosBasico.email}" maxlength="200" />
 
 							<p:outputLabel for="documento" value="CPF/CNPJ : " />
-							<p:inputMask id="documento" required="true" validatorMessage="CPF/CNPJ inválido" value="#{fornecedorMB.entity.dadosBasico.documento}" maxlength="18"							onkeypress='mascaraMutuario(this,documento)' onblur='clearTimeout()'>
+							<p:inputText id="documento" required="true" validatorMessage="CPF/CNPJ inválido" value="#{fornecedorMB.entity.dadosBasico.documento}" maxlength="18"							onkeypress='mascaraMutuario(this,documento)' onblur='clearTimeout()'>
 								<f:validator validatorId="documentoValidator" />
-							</p:inputMask>
+							</p:inputText>
 
 							<p:outputLabel for="cep" value="CEP : " />
 							<h:panelGroup style="display: flex !important">
