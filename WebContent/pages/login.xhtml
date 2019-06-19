@@ -37,8 +37,27 @@
 			padding: 20px 40px;
 		}
 		
+		.login-panel .ui-g .ui-g-12:nth-child(2) {
+			padding-top: 0px;
+			padding-bottom: 10px;
+		}
+		
+		.login-panel .ui-g .ui-g-12:nth-child(3) {
+			padding-top: 10px;
+		}
+		
+		.login-panel .ui-g .ui-g-12:nth-child(2) input, .login-panel .ui-g .ui-g-12:nth-child(3) input {
+			padding: 15px !important;
+			padding-top: 20px !important;
+			padding-bottom: 10px !important;
+		}
+		
 		body .ui-button.ui-button-text-icon-left .ui-icon {
 			margin-top: -7px !important;
+		}
+		
+		body .login-panel .ui-g .ui-g-12 .ui-button:nth-child(1) {
+			margin-bottom: 10px;
 		}
 	</style>
 	
@@ -89,14 +108,14 @@
     				
     				<p:outputPanel class="ui-g-12 ui-lg-12">
 						<h:panelGroup styleClass="md-inputfield">
-							<p:inputText id="login" style="padding:15px !important;" value="#{odontoLoginMB.entity.usuStrLogin}" />
-							<label>Usuário</label>
+							<p:inputText id="login" value="#{odontoLoginMB.entity.usuStrLogin}" />
+							<label style="margin:15px;margin-left:0px;">Usuário</label>
 						</h:panelGroup>
 					</p:outputPanel>
 					<p:outputPanel class="ui-g-12 ui-lg-12">
 						<h:panelGroup styleClass="md-inputfield">
-							<p:password id="password" style="padding:15px !important;" value="#{odontoLoginMB.entity.usuStrSenha}" feedback="false" />
-							<label>Senha</label>
+							<p:password id="password" value="#{odontoLoginMB.entity.usuStrSenha}" feedback="false" />
+							<label style="margin:15px;margin-left:0px;">Senha</label>
 						</h:panelGroup>
 					</p:outputPanel>
 					

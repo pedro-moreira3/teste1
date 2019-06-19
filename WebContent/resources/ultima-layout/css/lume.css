@@ -1589,3 +1589,7 @@ body .md-combo .ui-outputlabel {
 	border-bottom:dashed 1px #ccc;
 	width: 100%;
 }
+
+body .md-inputfield label:not(.ui-selectonemenu-label) {
+	top: 5px;
+}
