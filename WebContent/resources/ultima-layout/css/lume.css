@@ -1589,3 +1589,8 @@ body .md-combo .ui-outputlabel {
 	border-bottom:dashed 1px #ccc;
 	width: 100%;
 }
+
+.body .ui-state-active, body .ui-state-highlight {
+	background-color: #4e7c73 !important;
+	color: #ffffff !important;
+}
