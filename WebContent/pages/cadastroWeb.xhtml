@@ -226,7 +226,9 @@
                     </p:panel>
 
                     <p:panel styleClass="BordNone" rendered="#{!cadastroWebMB.pnInicialVisivel}" id="pnExterno">
-                        <p:messages autoUpdate="true" globalOnly="true" life="10000" escape="false" />
+                        <p:messages globalOnly="true" life="10000" escape="false">
+                        	<p:autoUpdate />
+                        </p:messages>
                         <div class="Container25 Responsive50">
                             <p:commandButton icon="White fa fa-lock" value="Ir para o Login" action="login.jsf?faces-redirect=true" style="width:100% !important;" styleClass="NavyButton" ajax="false"
                                 immediate="true" />
