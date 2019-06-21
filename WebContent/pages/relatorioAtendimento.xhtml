@@ -222,20 +222,16 @@ div.ui-selectoneradio label {
                                     <ui:include src="dlgagendamento.xhtml" />
 
 
-                                    <p:separator />
+                                    <p:separator styleClass="SeparatorFull" />
 
-                                    <h:panelGroup id="botoesAgenda">
-
-                                        <h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
-                                            <div class="Container25 Responsive100">
+										<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid botoesAgenda">
+                                        	<h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
                                                 <p:commandButton id="persist" icon="White fa fa-save" process="pnAgendamento" value="Salvar" actionListener="#{agendamentoMB.actionPersist}"
-                                                    oncomplete="btBloqueioAgenda();PF('eventDialog').hide();" styleClass="GreenButton" />
-                                            </div>
-                                        </h:panelGroup>
-                                        <div class="Container25 Responsive100">
+                                                    oncomplete="btBloqueioAgenda();handleDialogRequest(xhr, status, args);" styleClass="GreenButton" />
+                                        	</h:panelGroup>
                                             <p:commandButton icon="White fa fa-close" value="Fechar" process="@this" onclick="PF('eventDialog').hide()" />
-                                        </div>
-                                    </h:panelGroup>
+                                        </p:panelGrid>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -244,5 +240,18 @@ div.ui-selectoneradio label {
                 </div>
             </div>
         </div>
+        
+        <script type="text/javascript">
+			function handleDialogRequest(xhr, status, args) {
+				console.debug('handleDialogRequest');
+				console.debug(args);
+				if (args.dlg == true) {
+					PF('eventDialog').hide();
+				} else {
+					window.scrollTo(0, 0);
+				}
+			}
+		</script>
+        
     </ui:define>
 </ui:composition>

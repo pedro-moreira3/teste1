@@ -132,17 +132,20 @@ div.ui-selectoneradio label {
 		</h:panelGroup>
 
 		<p:dialog widgetVar="eventDialog" header="Agendamento"
-			resizable="false" id="pnAgendamento" responsive="true"
-			position="10,10" modal="true" style="position:absolute !important;"
+			resizable="false" responsive="true" width="calc(100% - 2px)" height="100%"
+			position="0,0" modal="true" style="position:absolute !important;"
 			appendToBody="true" focus="paciente">
-
+			
 			<p:ajax event="close" listener="#{agendamentoMB.handleClose}"
 				update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
 				oncomplete="PF('myschedule').update();" />
+			
 
 			<div class="Container100 Responsive100 NoIndent">
 				<div class="Container100 ui-fluid NoPadding">
 					<div class="Card" style="margin-top: -35px">
+					
+					<p:outputPanel id="pnAgendamento">
 
 
 						<ui:include src="dlgagendamento.xhtml" />
@@ -157,7 +160,8 @@ div.ui-selectoneradio label {
 								rendered="#{agendamentoMB.habilitaSalvar}"
 								actionListener="#{agendamentoMB.actionPersist}"
 								update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
-								oncomplete="PF('myschedule').update();" styleClass="GreenButton" />
+								oncomplete="PF('myschedule').update();handleDialogRequest(xhr, status, args);"
+								styleClass="GreenButton" />
 							<p:button id="whats" icon="White fa fa-whatsapp"
 								onclick="window.open('#{agendamentoMB.entity.whatsURL}');return false;"
 								value="Enviar Whatsapp" styleClass="GreenButton"
@@ -176,6 +180,7 @@ div.ui-selectoneradio label {
 								actionListener="#{agendamentoMB.actionConfirmarPreCadastro}"
 								rendered="#{agendamentoMB.entity.statusNovo == 'P'}" />
 						</p:panelGrid>
+						</p:outputPanel>
 					</div>
 				</div>
 			</div>
@@ -437,7 +442,6 @@ div.ui-selectoneradio label {
 				}
 				if (args.afastamento == true) {
 					PF('eventDialog').show();
-					resize('#lume\\:pnAgendamento');
 					window.scrollTo(0, 0);
 				}
 				if (args.hora == false) {
@@ -446,8 +450,6 @@ div.ui-selectoneradio label {
 				if (args.dlg == true) {
 					PF('eventDialog').hide();
 				} else {
-					PF('eventDialog').show();
-					resize('#lume\\:pnAgendamento');
 					window.scrollTo(0, 0);
 				}
 			}
