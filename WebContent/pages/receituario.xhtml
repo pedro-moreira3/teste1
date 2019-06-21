@@ -5,27 +5,28 @@
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 
-					<p:outputPanel id="pnReceituario" rendered="#{receituarioMB.visivel}" styleClass="BordNone">
-						<h1>Receituário</h1>
-						<div class="SeparatorFull"></div>
-
-						<p:fieldset legend="Documento" toggleable="true">
-							<h:outputText id="documentoImprimir2" value="#{receituarioMB.documento}" escape="false" />
-						</p:fieldset>
-
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton">
-								<p:printer target="documentoImprimir2" />
-							</p:commandButton>
-						</p:panelGrid>
-						<div class="SeparatorFull"></div>
-
-						<div class="EmptyBox20"></div>
+					<h1>Receituário</h1>
+					<div class="SeparatorFull"></div>
+					<br />
+						
+					<p:outputPanel id="pnReceituario"> 
+						<p:outputPanel rendered="#{receituarioMB.visivel}" styleClass="BordNone">	
+							<p:fieldset legend="Documento" toggleable="true">
+								<h:outputText id="documentoImprimir2" value="#{receituarioMB.documento}" escape="false" />
+							</p:fieldset>
+	
+							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton">
+									<p:printer target="documentoImprimir2" />
+								</p:commandButton>
+							</p:panelGrid>
+							<div class="SeparatorFull"></div>
+	
+							<div class="EmptyBox20"></div>
+						</p:outputPanel>
 					</p:outputPanel>
 
 					<p:outputPanel id="pnReceituarioPrincipal" styleClass="BordNone">
-						<h1>Receituário</h1>
-						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
 							<p:outputLabel for="pacienteSelecionado" value="#{dominioMB.cliente} :" />
 							<p:autoComplete dropdown="true" queryDelay="1000" value="#{receituarioMB.paciente}" id="pacienteSelecionado" minQueryLength="3"
@@ -37,7 +38,7 @@
 							<p:selectOneMenu id="tipoDocumentoReceituario" value="#{receituarioMB.documentoSelecionado}" converter="documento">
 								<f:selectItem itemLabel="Selecione um Documento" value="#{null}" />
 								<f:selectItems value="#{receituarioMB.documentos}" var="dc" itemValue="#{dc}" itemLabel="#{dc.descricao}" />
-								<p:ajax update="pnReceituarioPrincipal,pnReceituario" />
+								<p:ajax update="lume:pnReceituarioPrincipal, lume:pnReceituario" listener="#{receituarioMB.atualizaTela}" />
 							</p:selectOneMenu>
 						</p:panelGrid>
 						<ui:repeat var="tagDinamica" value="#{receituarioMB.tagDinamicasAsList}">
