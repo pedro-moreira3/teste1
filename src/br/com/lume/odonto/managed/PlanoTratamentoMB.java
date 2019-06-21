@@ -243,9 +243,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.getEntity().setFinalizado(Status.SIM);
                 this.getEntity().setDataFinalizado(new Date());
                 this.getEntity().setFinalizadoPorProfissional(profissionalLogado);
-                if (procedimentoEmAberto) {
+                //if (procedimentoEmAberto) {
                     this.criaRetorno();
-                }
+                //}
                 cancelaAgendamentos();
                 cancelaLancamentos();
                 PlanoTratamentoSingleton.getInstance().getBo().persist(this.getEntity());
@@ -341,9 +341,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (aux) {
             this.getEntity().setFinalizado(Status.SIM);
             this.getEntity().setDataFinalizado(new Date());
-            this.getEntity().setFinalizadoPorProfissional(profissionalLogado);
-            this.criaRetorno();
+            this.getEntity().setFinalizadoPorProfissional(profissionalLogado);         
         }
+        this.criaRetorno();
 
     }
 
@@ -351,7 +351,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         Retorno r = new Retorno();
         try {
             List<Retorno> retornos = RetornoSingleton.getInstance().getBo().listByPlano(this.getEntity());
-            if ((retornos == null || retornos.isEmpty()) && retorno != null) {
+            if(retornos == null || retornos.isEmpty()) {
+                retornos = new ArrayList<Retorno>();
+            }
+            if (retorno != null) {
                 r.setDataRetorno(retorno);
                 r.setPlanoTratamento(this.getEntity());
                 r.setPaciente(getPaciente());
