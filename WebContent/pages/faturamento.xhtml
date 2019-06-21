@@ -37,7 +37,7 @@
 								line-height: 18px !important;
 							}
 							
-							.ui-button {
+							.buttonsReservar .ui-button {
 								height: auto !important;
 							}
     	</style>
@@ -232,7 +232,7 @@
                             </p:dataTable>
                             <br />
                             <div class="SeparatorFull"></div>
-                            <p:panelGrid id="pgReservar" columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                            <p:panelGrid id="pgReservar" columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid buttonsReservar">
                                     <p:commandButton id="reservar" icon="White fa fa-money" value="Reservar Tudo" disabled="#{!faturamentoMB.reservar}" actionListener="#{faturamentoMB.actionReservar}"
                                         update=":lume:pnPrincipal" process=":lume:pnPrincipal" styleClass="GreenButton"
                                         rendered="#{!faturamentoMB.existeRepasseEmAberto}" />
