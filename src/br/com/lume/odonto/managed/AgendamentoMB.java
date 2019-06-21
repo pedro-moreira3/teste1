@@ -336,7 +336,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                     ReservaSingleton.getInstance().getBo().mergeBatch(reservas);
                                 }
                             }
-                            AgendamentoSingleton.getInstance().getBo().persist(this.getEntity());
+                            AgendamentoSingleton.getInstance().getBo().persist(this.getEntity(),UtilsFrontEnd.getProfissionalLogado(),UtilsFrontEnd.getEmpresaLogada().getEmpStrEstoque(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());                    
                             if (retorno != null) {
                                 retorno.setAgendamento(getEntity());
                                 retorno.setRetornar("A");
