@@ -16,8 +16,9 @@
 				<div class="card card-w-title pacienteChoice">
 					<p:panelGrid columns="1" layout="grid"
 						styleClass="ui-panelgrid-blank form-group ui-fluid">
-						<h:panelGroup styleClass="md-inputfield" style="margin-top: 20px;display: flex">
-							<p:autoComplete dropdown="true" queryDelay="1000"
+						<p:outputLabel value="Paciente: " />
+						<h:panelGroup style="display: flex">
+							<p:autoComplete dropdown="true" queryDelay="1000" style="margin-right: 10px;"
 								value="#{pacienteMB.entity}" minQueryLength="3" scrollHeight="400"
 								completeMethod="#{pacienteMB.geraSugestoesPaciente}" var="p"
 								itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
@@ -40,8 +41,7 @@
 								<p:ajax event="itemSelect" update=":lume"
 									oncomplete="$('div#lume\\:tabView\\:pnAtestado').hide();carregarListaOdontograma();window.scrollTo(0,0);"
 									listener="#{odontogramaMB.atualizaOdontograma}" />
-							</p:autoComplete>
-							<p:outputLabel for="pacienteChoice" value="Paciente" />
+							</p:autoComplete>							
 							<p:message styleClass="msg" for="pacienteChoice" />
 							<p:commandButton id="pesquisar" icon="White fa fa-eraser" style="width: 33px !important"
 								onstart="PF('loading').show();" oncomplete="PF('loading').hide()"

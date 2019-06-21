@@ -169,8 +169,8 @@ li.orcamento-li {
 									headerText="Diagnósticos">
 									<h:outputText value="#{d.diagnosticoOrtodontico.descricao}" />
 								</p:column>
-								<p:column width="10%">
-									<p:commandButton icon="White fa fa-minus White"
+								<p:column width="33px">
+									<p:commandButton icon="White fa fa-minus White" style="width: 33px !important;"
 										actionListener="#{ortodontiaMB.actionRemoverDiagnostico(d)}"
 										update=":lume:tabView:dtDiagnosticos" process="@this" />
 								</p:column>
@@ -184,8 +184,8 @@ li.orcamento-li {
 									headerText="Aparelhos">
 									<h:outputText value="#{d.aparelhoOrtodontico.descricao}" />
 								</p:column>
-								<p:column width="10%">
-									<p:commandButton icon="White fa fa-minus White"
+								<p:column width="33px">
+									<p:commandButton icon="White fa fa-minus White" style="width: 33px !important;"
 										actionListener="#{ortodontiaMB.actionRemoverAparelho(d)}"
 										update=":lume:tabView:dtAparelhos" process="@this" />
 								</p:column>
