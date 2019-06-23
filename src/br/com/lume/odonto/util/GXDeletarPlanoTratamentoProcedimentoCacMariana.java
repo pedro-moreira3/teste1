@@ -3,24 +3,25 @@ package br.com.lume.odonto.util;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 
 public class GXDeletarPlanoTratamentoProcedimentoCacMariana {
 
     public static void main(String[] args) {
         try {
-            PlanoTratamentoProcedimentoBO bo = new PlanoTratamentoProcedimentoBO();
+          //  PlanoTratamentoProcedimentoBO bo = new PlanoTratamentoProcedimentoBO();
             long[] ids = new long[] { 25415, 25422, 23367, 26031, 26029, 23253, 23328, 23496 };
             for (long id : ids) {
-                PlanoTratamentoProcedimento ptp = bo.find(id);
+                PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(id);
                 if (ptp != null) {
-                    BigDecimal valorRepasse = bo.findValorRepasse(ptp);
+                    BigDecimal valorRepasse = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(ptp, UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto());
                     ptp.setValorRepassado(valorRepasse);
                     ptp.setValorRepasse(valorRepasse);
                     ptp.setStatusPagamento('G');
                     ptp.setDataRepasse(new Date());
-                    bo.persist(ptp);
+                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
                 }
             }
         } catch (Exception e) {

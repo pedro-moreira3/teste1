@@ -1,118 +1,153 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:ui="http://java.sun.com/jsf/facelets">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<style>
 .ui-selectonemenu-panel {
 	width: 26% !important;
 }
 </style>
-	<div class="Container100 Responsive100 NoIndent">
-		<div class="Container100 ui-fluid NoPadding">
-			<div class="Card">
-				<p:panel id="pnContrato" visible="#{contratoMB.visivel}" styleClass="BordNone">
-					<h1 class="CardBigTopic">Contrato</h1>
-					<div class="SeparatorFull"></div>
-					<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
-						<h:outputLabel for="nomeAtestado" value="Profissional : " />
-						<p:inputText id="nomeAtestado" value="#{profissionalMB.entity.dadosBasico.prefixoNome}" readonly="true" disabled="true" />
-					</p:panelGrid>
+	<p:outputPanel id="pnContrato" rendered="#{contratoMB.visivel}"
+		styleClass="BordNone">
+		<h1>Contrato</h1>
+		<div class="SeparatorFull"></div>
+		<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8"
+			layout="grid" styleClass="ui-panelgrid-blank"
+			style="border:0px none; background-color:transparent;">
+			<h:outputLabel for="nomeAtestado" value="Profissional : " />
+			<p:inputText id="nomeAtestado"
+				value="#{profissionalMB.entity.dadosBasico.prefixoNome}"
+				readonly="true" disabled="true" />
+		</p:panelGrid>
 
-					<p:fieldset legend="Documento" toggleable="true">
-						<h:outputText id="documentoImprimir" value="#{contratoMB.documento}" escape="false" />
-					</p:fieldset>
+		<p:fieldset legend="Documento" toggleable="true">
+			<h:outputText id="documentoImprimir" value="#{contratoMB.documento}"
+				escape="false" />
+		</p:fieldset>
 
-					<div class="Container25 Responsive100">
-						<p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton">
-							<p:printer target="documentoImprimir" />
-						</p:commandButton>
-					</div>
-					<div class="SeparatorFull"></div>
-
-
-					<div class="EmptyBox20"></div>
-
-				</p:panel>
-				<p:panel id="pnContratoPrincipal" styleClass="BordNone">
-					<h1 class="CardBigTopic">Contrato</h1>
-					<div class="SeparatorFull"></div>
-					<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-						style="border:0px none; background-color:transparent;" id="pgDados">
-
-						<p:outputLabel for="tipoDocumento" value="Documento : " />
-						<p:selectOneMenu id="tipoDocumento" value="#{contratoMB.documentoSelecionado}" converter="documento" required="true">
-							<f:selectItem itemLabel="Selecione um Documento" value="#{null}" />
-							<f:selectItems value="#{contratoMB.documentos}" var="dc" itemValue="#{dc}" itemLabel="#{dc.descricao}" />
-							<p:ajax update="pnContratoPrincipal,pnContrato" />
-						</p:selectOneMenu>
-
-						<p:outputLabel for="contratacao" value="Forma de Contratação : " />
-						<p:selectOneMenu id="contratacao" value="#{contratoMB.entity.formaContratacao}" converter="dominio">
-							<f:selectItem itemValue="#{null}" itemLabel="Selecione uma Forma de Contratação" />
-							<f:selectItems value="#{contratoMB.contratacoes}" var="contratacao" itemLabel="#{contratacao.nome}" itemValue="#{contratacao}" />
-						</p:selectOneMenu>
-
-						<p:outputLabel for="dataInicial" value="Data Inicial : " />
-						<p:calendar id="dataInicial" required="true" value="#{contratoMB.entity.dataInicial}" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}"
-							timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" class="Wid20" mask="true" />
-
-						<p:outputLabel for="dataFinal" value="Data Final : " />
-						<p:calendar id="dataFinal" required="true" value="#{contratoMB.entity.dataFinal}" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}"
-							timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" class="Wid20" mask="true" />
-
-					</p:panelGrid>
-
-					<ui:repeat var="tagDinamica" value="#{contratoMB.tagDinamicasAsList}">
-						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-							style="border:0px none; background-color:transparent;">
-							<p:column>
-								<h:outputLabel value="#{tagDinamica.tag}" />
-							</p:column>
-							<p:column>
-								<p:inputText value="#{tagDinamica.respTag}" />
-							</p:column>
-						</p:panelGrid>
-					</ui:repeat>
-
-					<div class="SeparatorFull"></div>
+		<p:panelGrid columns="4" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid">
+			<p:commandButton value="Imprimir" type="button"
+				icon="White fa fa-print White" styleClass="NavyButton">
+				<p:printer target="documentoImprimir" />
+			</p:commandButton>
+		</p:panelGrid>
+		<div class="SeparatorFull"></div>
 
 
-					<div class="Container25 Responsive100">
-						<p:commandButton id="persist3" icon="White fa fa-save" value="Gerar Contrato" actionListener="#{contratoMB.actionPersist}"
-							update=":lume:tabView:pnContrato, :lume:tabView:pnContratoPrincipal, :lume:tabView:dtContrato" process="@this,:lume:tabView:pgDados" disabled="#{contratoMB.entity.id != 0}"
-							styleClass="GreenButton" />
-					</div>
-					<div class="Container25 Responsive100">
-						<p:commandButton id="new3" icon="White fa fa-file-o" value="Novo" actionListener="#{contratoMB.actionNew}"
-							update=":lume:tabView:pnContrato, :lume:tabView:pnContratoPrincipal" tabindex="1" process="@this" />
-					</div>
+		<div class="EmptyBox20"></div>
 
-					<div class="EmptyBox20"></div>
+	</p:outputPanel>
+	<p:outputPanel id="pnContratoPrincipal" styleClass="BordNone">
+		<h1>Contrato</h1>
+		<div class="SeparatorFull"></div>
+		<p:panelGrid columns="4"
+			columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+			layout="grid" styleClass="ui-panelgrid-blank"
+			style="border:0px none; background-color:transparent;" id="pgDados">
 
-					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtContrato" value="#{contratoMB.entityList}" var="att" rows="7" paginator="true" selection="#{contratoMB.entity}"
-						selectionMode="single" rowKey="#{att}" paginatorPosition="bottom">
-						<p:ajax event="rowSelect" update=":lume:tabView:pnContrato,:lume:tabView:pnContratoPrincipal" listener="#{contratoMB.atualizaTela}" />
-						<f:facet name="header">Contratos</f:facet>
-						<p:column headerText="Data" sortBy="#{att.dataHoraStr}" filterBy="#{att.dataHoraStrOrd}" filterMatchMode="contains">
-							<h:outputText value="#{att.dataHoraStr}" />
-						</p:column>
-						<p:column filterBy="#{att.profissionalContratante.dadosBasico.prefixoNome}" sortBy="#{att.profissionalContratante.dadosBasico.prefixoNome}" filterMatchMode="contains"
-							headerText="Profissional">
-							<h:outputText value="#{att.profissionalContratante.dadosBasico.prefixoNome}" />
-						</p:column>
-						<p:column filterBy="#{att.dataInicialStr}" sortBy="#{att.dataInicialStr}" filterMatchMode="contains" headerText="Data Inicial">
-							<h:outputText value="#{att.dataInicialStr}" />
-						</p:column>
-						<p:column filterBy="#{att.dataFinalStr}" sortBy="#{att.dataFinalStr}" filterMatchMode="contains" headerText="Data Final">
-							<h:outputText value="#{att.dataFinalStr}" />
-						</p:column>
-						<p:column filterBy="#{att.formaContratacao.nome}" sortBy="#{att.formaContratacao.nome}" filterMatchMode="contains" headerText="Forma de Contratação">
-							<h:outputText value="#{att.formaContratacao.nome}" />
-						</p:column>
-					</p:dataTable>
-				</p:panel>
-			</div>
-		</div>
-	</div>
+			<p:outputLabel for="tipoDocumento" value="Documento : " />
+			<p:selectOneMenu id="tipoDocumento" style="min-width: auto"
+				value="#{contratoMB.documentoSelecionado}" converter="documento"
+				required="true">
+				<f:selectItem itemLabel="Selecione um Documento" value="#{null}" />
+				<f:selectItems value="#{contratoMB.documentos}" var="dc"
+					itemValue="#{dc}" itemLabel="#{dc.descricao}" />
+				<p:ajax update="pnContratoPrincipal,pnContrato" />
+			</p:selectOneMenu>
 
+			<p:outputLabel for="contratacao" value="Forma de Contratação : " />
+			<p:selectOneMenu id="contratacao"
+				value="#{contratoMB.entity.formaContratacao}" converter="dominio">
+				<f:selectItem itemValue="#{null}"
+					itemLabel="Selecione uma Forma de Contratação" />
+				<f:selectItems value="#{contratoMB.contratacoes}" var="contratacao"
+					itemLabel="#{contratacao.nome}" itemValue="#{contratacao}" />
+			</p:selectOneMenu>
+
+			<p:outputLabel for="dataInicial" value="Data Inicial : " />
+			<p:calendar id="dataInicial" required="true"
+				value="#{contratoMB.entity.dataInicial}" pattern="dd/MM/yyyy"
+				showWeeksBar="false" locale="#{lumeSecurity.locale}"
+				timeZone="#{lumeSecurity.timeZone}" navigator="true"
+				yearRange="-100:+0" mask="true" />
+
+			<p:outputLabel for="dataFinal" value="Data Final : " />
+			<p:calendar id="dataFinal" required="true"
+				value="#{contratoMB.entity.dataFinal}" pattern="dd/MM/yyyy"
+				showWeeksBar="false" locale="#{lumeSecurity.locale}"
+				timeZone="#{lumeSecurity.timeZone}" navigator="true"
+				yearRange="-100:+0" mask="true" />
+
+		</p:panelGrid>
+
+		<ui:repeat var="tagDinamica" value="#{contratoMB.tagDinamicasAsList}">
+			<p:panelGrid columns="4"
+				columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+				layout="grid" styleClass="ui-panelgrid-blank"
+				style="border:0px none; background-color:transparent;">
+				<p:column>
+					<h:outputLabel value="#{tagDinamica.tag}" />
+				</p:column>
+				<p:column>
+					<p:inputText value="#{tagDinamica.respTag}" />
+				</p:column>
+			</p:panelGrid>
+		</ui:repeat>
+
+		<div class="SeparatorFull"></div>
+
+
+		<p:panelGrid columns="4" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid">
+			<p:commandButton id="persist3" icon="White fa fa-save"
+				value="Gerar Contrato" actionListener="#{contratoMB.actionPersist}"
+				update=":lume:tabView:pnContrato, :lume:tabView:pnContratoPrincipal, :lume:tabView:dtContrato"
+				process="@this,:lume:tabView:pgDados"
+				disabled="#{contratoMB.entity.id != 0}" styleClass="GreenButton" />
+			<p:commandButton id="new3" icon="White fa fa-file-o" value="Novo"
+				actionListener="#{contratoMB.actionNew}"
+				update=":lume:tabView:pnContrato, :lume:tabView:pnContratoPrincipal"
+				tabindex="1" process="@this" />
+		</p:panelGrid>
+		<div class="EmptyBox20"></div>
+		<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+			id="dtContrato" value="#{contratoMB.entityList}" var="att" rows="7"
+			paginator="true" selection="#{contratoMB.entity}"
+			selectionMode="single" rowKey="#{att}" paginatorPosition="bottom">
+			<p:ajax event="rowSelect"
+				update=":lume:tabView:pnContrato,:lume:tabView:pnContratoPrincipal"
+				listener="#{contratoMB.atualizaTela}" />
+			<f:facet name="header">Contratos</f:facet>
+			<p:column headerText="Data" sortBy="#{att.dataHoraStr}"
+				filterBy="#{att.dataHoraStrOrd}" filterMatchMode="contains">
+				<h:outputText value="#{att.dataHoraStr}" />
+			</p:column>
+			<p:column
+				filterBy="#{att.profissionalContratante.dadosBasico.prefixoNome}"
+				sortBy="#{att.profissionalContratante.dadosBasico.prefixoNome}"
+				filterMatchMode="contains" headerText="Profissional">
+				<h:outputText
+					value="#{att.profissionalContratante.dadosBasico.prefixoNome}" />
+			</p:column>
+			<p:column filterBy="#{att.dataInicialStr}"
+				sortBy="#{att.dataInicialStr}" filterMatchMode="contains"
+				headerText="Data Inicial">
+				<h:outputText value="#{att.dataInicialStr}" />
+			</p:column>
+			<p:column filterBy="#{att.dataFinalStr}" sortBy="#{att.dataFinalStr}"
+				filterMatchMode="contains" headerText="Data Final">
+				<h:outputText value="#{att.dataFinalStr}" />
+			</p:column>
+			<p:column filterBy="#{att.formaContratacao.nome}"
+				sortBy="#{att.formaContratacao.nome}" filterMatchMode="contains"
+				headerText="Forma de Contratação">
+				<h:outputText value="#{att.formaContratacao.nome}" />
+			</p:column>
+		</p:dataTable>
+	</p:outputPanel>
 </ui:composition>

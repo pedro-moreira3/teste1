@@ -13,9 +13,10 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.PlanoTratamentoBO;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -31,13 +32,10 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
 
     private String filtroPeriodo = "Q";
 
-    private PlanoTratamentoBO planoTratamentoBO;
-
     private String status = "N";
 
     public RelatorioPlanoTratamentoMB() {
-        super(new PlanoTratamentoBO());
-        planoTratamentoBO = new PlanoTratamentoBO();
+        super(PlanoTratamentoSingleton.getInstance().getBo());      
         this.setClazz(PlanoTratamento.class);
         actionTrocaDatas();
     }
@@ -46,7 +44,7 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
         if (inicio != null && fim != null && inicio.getTime() > fim.getTime()) {
             this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
         } else {
-            planoTratamentos = planoTratamentoBO.listPTByDateAndStatus(inicio, fim, status);
+            planoTratamentos = PlanoTratamentoSingleton.getInstance().getBo().listPTByDateAndStatus(inicio, fim, status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         }
     }
 

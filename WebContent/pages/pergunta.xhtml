@@ -2,19 +2,25 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
-					<p:panel id="pnPrincipal" styleClass="BordNone">
+	<style>
+	body .ui-selectoneradio td label {
+			width: calc(100% - 44px) !important;
+			margin-top: 10% !important;
+		}
+	</style>
+	
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
 						<h:inputHidden id="id" value="#{perguntaMB.entity.id}" />
 						
-						<h1 class="CardBigTopic">Cadastro de Perguntas</h1>
+						<h1>Cadastro de Perguntas</h1>
 						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-						style="border:0px none; background-color:transparent;">
+						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 
 							<p:outputLabel for="especialidade" value="Especialidade : " />
-							<p:selectOneMenu id="especialidade" value="#{perguntaMB.especialidade}" style="width: 340px;" converter="especialidade">
+							<p:selectOneMenu id="especialidade" value="#{perguntaMB.especialidade}" converter="especialidade">
 								<f:selectItems value="#{perguntaMB.especialidades}" var="especialidade" itemLabel="#{especialidade.descricao}" itemValue="#{especialidade}" />
 								<p:ajax update=":lume:dtPrincipal,:lume:ordem,:lume:descricao" />
 							</p:selectOneMenu>
@@ -23,7 +29,7 @@
 							<p:inputTextarea id="descricao" autoResize="false" value="#{perguntaMB.entity.descricao}" cols="50" required="true" maxlength="200" />
 
 							<p:outputLabel for="ordem" value="Ordem : " />
-							<p:inputText id="ordem" value="#{perguntaMB.entity.ordem}" style="width: 140px;" maxlength="10" />
+							<p:inputText id="ordem" value="#{perguntaMB.entity.ordem}"  maxlength="10" />
 
 							<p:outputLabel for="tipoResposta" value="Tipo de Resposta: " />
 							<p:selectOneRadio id="tipoResposta" disabled="#{perguntaMB.entity.id != null}" value="#{perguntaMB.entity.tipoResposta}" required="true"
@@ -34,7 +40,8 @@
 								<f:selectItem itemValue="#{perguntaMB.entity.tipoRespostaQuantidade}" itemLabel="Quantidade" />
 								<f:selectItem itemValue="#{perguntaMB.entity.tipoRespostaTexto}" itemLabel="Texto Livre" />
 							</p:selectOneRadio>
-
+						</p:panelGrid>
+						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:outputLabel for="precadastro" value="Liberar Pré-Cadastro: " />
 							<p:selectOneRadio id="precadastro" value="#{perguntaMB.entity.preCadastro}" required="true">
 								<f:selectItem itemValue="S" itemLabel="Sim" />
@@ -46,24 +53,19 @@
 								<f:selectItem itemValue="true" itemLabel="Sim" />
 								<f:selectItem itemValue="false" itemLabel="Não" />
 							</p:selectOneRadio>
-
 						</p:panelGrid>
 						<div class="SeparatorFull"></div>
-						<div class="Container25 Responsive100">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{perguntaMB.actionPersist}"
 								update=":lume:pnPrincipal,:lume:dtPrincipal" process=":lume:pnPrincipal" 
 								styleClass="GreenButton" />
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{perguntaMB.actionRemove}"
 								update=":lume:pnPrincipal,:lume:dtPrincipal" process="@this" disabled="#{perguntaMB.entity.id == null}"
 								 styleClass="RedButton" />
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{perguntaMB.actionNew}"
 								update=":lume:pnPrincipal,:lume:dtPrincipal" immediate="true" tabindex="1"  />
-						</div>
-					</p:panel>
+						</p:panelGrid>
+					</p:outputPanel>
 
 					<div class="EmptyBox20"></div>
 

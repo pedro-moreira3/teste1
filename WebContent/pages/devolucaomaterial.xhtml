@@ -1,13 +1,14 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-                    <p:panel styleClass="BordNone">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <p:outputPanel styleClass="BordNone">
 
-                        <h1 class="CardBigTopic">Devolução de Kits</h1>
+                        <h1>Devolução de Kits</h1>
                         <div class="SeparatorFull"></div>
+                        <br />
 
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtKitsDisponibilizados" value="#{controleMaterialMB.kitsDisponibilizados}" var="reservaKit" rows="7" paginator="true"
                             selection="#{controleMaterialMB.reservaKit}" selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom">
@@ -44,7 +45,7 @@
                                 <h:outputText value="#{reservaKit.quantidade}" />
                             </p:column>
                         </p:dataTable>
-                        <div class="EmptyBox20"></div>
+                        <br />
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMateriais" value="#{controleMaterialMB.materiais}" editable="true" var="material" rows="7" paginator="true"
                             paginatorPosition="bottom">
                             <p:ajax event="rowEdit" listener="#{controleMaterialMB.validaCampo}" update=":lume:devolucao , :lume:lavagem , :lume:naoUtilizado, @this" />
@@ -59,16 +60,16 @@
                                 <h:outputText value="#{material.quantidade}">
                                     <f:convertNumber />
                                 </h:outputText>
-                                <h:outputText value="#{material.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{controleMaterialMB.getUnidadeString(material.material.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
-                            <p:column headerText="Unidades à devolver/lavar" style="width:25%" sortBy="#{material.material.item.unidadeMedidaString}"
-                                filterBy="#{material.material.item.unidadeMedidaString}">
+                            <p:column headerText="Unidades à devolver/lavar" style="width:25%" sortBy="#{controleMaterialMB.getUnidadeString(material.material.item)}"
+                                filterBy="#{controleMaterialMB.getUnidadeString(material.material.item)}">
                                 <p:cellEditor>
                                     <f:facet name="output">
                                         <h:outputText id="quantidadeDevolvidaOutput" value="#{material.quantidadeDevolvida}">
                                             <f:convertNumber />
                                         </h:outputText>
-                                        <h:outputText value="#{material.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                        <h:outputText value="#{controleMaterialMB.getUnidadeString(material.material.item)}" styleClass="unidadeMedidaString" />
                                     </f:facet>
                                     <f:facet name="input">
                                         <p:inputText id="quantidadeDevolvida" value="#{material.quantidadeDevolvida}" maxlength="10" required="true" onkeypress="validaNumeros(event)" style="width:20%">
@@ -81,22 +82,19 @@
                                 <p:rowEditor />
                             </p:column>
                         </p:dataTable>
+                        <br />
                         <div class="SeparatorFull"></div>
                         <p:defaultCommand target=":lume:naoUtilizado"></p:defaultCommand>
 
-                        <div class="Container25 Responsive100">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="devolucao" icon="White fa fa-mail-forward" value="Finalizar Devolução" actionListener="#{controleMaterialMB.actionDevolucao}"
                                 disabled="#{!controleMaterialMB.enableDevolucao}" update=":lume:dtMateriais,:lume:dtKitsDisponibilizados,@this,:lume:naoUtilizado" process=":lume:dtMateriais, @this"
                                 styleClass="OrangeButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="lavagem" icon="White fa fa-tty" value="Lavagem" actionListener="#{controleMaterialMB.actionLavagem}" disabled="#{!controleMaterialMB.enableLavagem}"
                                 update=":lume:dtMateriais,:lume:dtKitsDisponibilizados,@this" process=":lume:dtMateriais, @this" styleClass="AquaButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="naoUtilizado" icon="White fa fa-star-half-o" value="Não utilizado" onclick="PF('dlg').show();" disabled="#{controleMaterialMB.enableNaoUtilizado}"
                                 styleClass="RedButton" />
-                        </div>
+                        </p:panelGrid>
                         <p:dialog id="dlg" widgetVar="dlg" header="Não Utilizado" responsive="true" modal="true">
                             <h:panelGroup styleClass="lumeField">
                                 <p:outputLabel for="justificativa" value="Justificativa : " />
@@ -110,7 +108,7 @@
                             <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{controleMaterialMB.actionNaoUtilizado}"
                                 update=":lume:dtMateriais, :lume:dtKitsDisponibilizados,:lume:naoUtilizado,:lume:devolucao" process=":lume:dlg" oncomplete="PF('dlg').hide();" />
                         </p:dialog>
-                    </p:panel>
+                    </p:outputPanel>
                 </div>
             </div>
         </div>

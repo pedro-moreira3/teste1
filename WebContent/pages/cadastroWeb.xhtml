@@ -71,7 +71,7 @@
                                     <p:inputText id="empStrCidade" value="#{cadastroWebMB.entity.empStrCidade}" required="true" maxlength="50" class="Wid40" />
 
                                     <p:outputLabel for="empChaUf" value="Estado: " />
-                                    <p:selectOneMenu id="empChaUf" value="#{cadastroWebMB.entity.empChaUf}" required="true" class="Wid40">
+                                    <p:selectOneMenu id="empChaUf" value="#{cadastroWebMB.entity.empChaUf}" required="true" styleClass="Wid40">
                                         <f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
                                         <f:selectItems value="#{cadastroWebMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
                                     </p:selectOneMenu>
@@ -88,7 +88,7 @@
                                     <p:inputText id="empChaCro" value="#{cadastroWebMB.entity.empChaCro}" required="false" maxlength="30" class="Wid40" />
 
                                     <p:outputLabel for="estadoConselho" value="Estado conselho: " />
-                                    <p:selectOneMenu id="estadoConselho" required="false" value="#{cadastroWebMB.entity.empStrEstadoConselho}" class="Wid60">
+                                    <p:selectOneMenu id="estadoConselho" required="false" value="#{cadastroWebMB.entity.empStrEstadoConselho}" styleClass="Wid60">
                                         <f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
                                         <f:selectItems value="#{cadastroWebMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
                                     </p:selectOneMenu>
@@ -226,7 +226,9 @@
                     </p:panel>
 
                     <p:panel styleClass="BordNone" rendered="#{!cadastroWebMB.pnInicialVisivel}" id="pnExterno">
-                        <p:messages autoUpdate="true" globalOnly="true" life="10000" escape="false" />
+                        <p:messages globalOnly="true" life="10000" escape="false">
+                        	<p:autoUpdate />
+                        </p:messages>
                         <div class="Container25 Responsive50">
                             <p:commandButton icon="White fa fa-lock" value="Ir para o Login" action="login.jsf?faces-redirect=true" style="width:100% !important;" styleClass="NavyButton" ajax="false"
                                 immediate="true" />

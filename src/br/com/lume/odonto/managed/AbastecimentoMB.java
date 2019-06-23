@@ -19,17 +19,26 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
+import br.com.lume.abastecimento.AbastecimentoSingleton;
+import br.com.lume.agendamento.AgendamentoSingleton;
+import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.AbastecimentoBO;
-import br.com.lume.odonto.bo.AgendamentoBO;
-import br.com.lume.odonto.bo.AgendamentoPlanoTratamentoProcedimentoBO;
-import br.com.lume.odonto.bo.ItemBO;
-import br.com.lume.odonto.bo.MaterialBO;
-import br.com.lume.odonto.bo.MaterialLogBO;
-import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
-import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoCustoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.item.ItemSingleton;
+import br.com.lume.material.MaterialSingleton;
+import br.com.lume.materialLog.MaterialLogSingleton;
+//import br.com.lume.odonto.bo.AbastecimentoBO;
+//import br.com.lume.odonto.bo.AgendamentoBO;
+//import br.com.lume.odonto.bo.AgendamentoPlanoTratamentoProcedimentoBO;
+//import br.com.lume.odonto.bo.ItemBO;
+//import br.com.lume.odonto.bo.MaterialBO;
+//import br.com.lume.odonto.bo.MaterialLogBO;
+//import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
+//import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoCustoBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Abastecimento;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
@@ -37,12 +46,14 @@ import br.com.lume.odonto.entity.ControleMaterial;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialLog;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.PedidoItem;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoCusto;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -98,33 +109,33 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
 
     public static String FINALIZADO = "FI";
 
-    private MaterialBO materialBO;
+  //  private MaterialBO materialBO;
 
-    private AgendamentoPlanoTratamentoProcedimentoBO agendamentoPlanoTratamentoProcedimentoBO;
+   // private AgendamentoPlanoTratamentoProcedimentoBO agendamentoPlanoTratamentoProcedimentoBO;
 
-    private AgendamentoBO agendamentoBO;
+ //   private AgendamentoBO agendamentoBO;
 
-    private ItemBO itemBO;
+//    private ItemBO itemBO;
 
-    private ProfissionalBO profissionalBO;
+  //  private ProfissionalBO profissionalBO;
 
-    private PlanoTratamentoProcedimentoCustoBO planoTratamentoProcedimentoCustoBO;
+ //   private PlanoTratamentoProcedimentoCustoBO planoTratamentoProcedimentoCustoBO;
 
-    private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
+ //   private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
 
     private boolean enableSalvar;
 
-    private MaterialLogBO materialLogBO = new MaterialLogBO();
+//    private MaterialLogBO materialLogBO = new MaterialLogBO();
 
     public AbastecimentoMB() {
-        super(new AbastecimentoBO());
-        agendamentoPlanoTratamentoProcedimentoBO = new AgendamentoPlanoTratamentoProcedimentoBO();
-        agendamentoBO = new AgendamentoBO();
-        materialBO = new MaterialBO();
-        itemBO = new ItemBO();
-        profissionalBO = new ProfissionalBO();
-        planoTratamentoProcedimentoCustoBO = new PlanoTratamentoProcedimentoCustoBO();
-        planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
+        super(AbastecimentoSingleton.getInstance().getBo());
+     //   agendamentoPlanoTratamentoProcedimentoBO = new AgendamentoPlanoTratamentoProcedimentoBO();
+      //  agendamentoBO = new AgendamentoBO();
+     //   materialBO = new MaterialBO();
+    //    itemBO = new ItemBO();
+    //   profissionalBO = new ProfissionalBO();
+    //    planoTratamentoProcedimentoCustoBO = new PlanoTratamentoProcedimentoCustoBO();
+    //    planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
         this.setRoot(new DefaultTreeNode("", null));
         Item firstLevel = new Item();
         firstLevel.setDescricao("RAIZ");
@@ -151,9 +162,9 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
                 if (!quantidadeUtilizada.equals(this.getEntity().getQuantidade())) {// Foi solicitado material e devolvido uma parte ou o total
                     // Devolvendo sobras
                     // Material material = materialBO.find(cm.getMaterial());
-                    materialBO.refresh(getEntity().getMaterial());
+                    MaterialSingleton.getInstance().getBo().refresh(getEntity().getMaterial());
                     this.getEntity().getMaterial().setQuantidadeAtual(this.getEntity().getMaterial().getQuantidadeAtual().add(quantidadeDevolvida));
-                    materialBO.persist(this.getEntity().getMaterial());
+                    MaterialSingleton.getInstance().getBo().persist(this.getEntity().getMaterial());
                     // Atualizado material utilizado
                     this.getEntity().setQuantidade(quantidadeUtilizada);
                 }
@@ -162,7 +173,7 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
                 if (quantidadeDevolvida.doubleValue() != 0d && this.getEntity().getMaterial().getItem().getAplicacao().equals(Item.APLICACAO_DIRETA)) {
                     this.devolveCusto(quantidadeUtilizada);
                 }
-                materialLogBO.persist(new MaterialLog(null, getEntity(), getEntity().getMaterial(), ProfissionalBO.getProfissionalLogado(), quantidadeDevolvida,
+                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, getEntity(), getEntity().getMaterial(), UtilsFrontEnd.getProfissionalLogado(), quantidadeDevolvida,
                         this.getEntity().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_UNITARIA_DEVOLUCAO));
                 super.actionNew(event);
                 this.geraLista();
@@ -177,10 +188,10 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
 
     private void devolveCusto(BigDecimal quantidadeUtilizada) {
         try {
-            PlanoTratamentoProcedimentoCusto ptpCusto = planoTratamentoProcedimentoCustoBO.findByAbastecimento(this.getEntity());
+            PlanoTratamentoProcedimentoCusto ptpCusto =  PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().findByAbastecimento(this.getEntity());
             BigDecimal valorCusto = this.getEntity().getMaterial().getValor().multiply(quantidadeUtilizada);
             ptpCusto.setValor(valorCusto);
-            planoTratamentoProcedimentoCustoBO.merge(ptpCusto);
+            PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().merge(ptpCusto);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -196,11 +207,11 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
                 BigDecimal quantidadeDevolver = this.getEntity().getQuantidade().subtract(this.getQuantidadeDevolvida());
                 // Algo a devolver?
                 if (quantidadeDevolver.compareTo(BigDecimal.ZERO) != 0) {
-                    materialBO.refresh(getEntity().getMaterial());
+                    MaterialSingleton.getInstance().getBo().refresh(getEntity().getMaterial());
                     this.getEntity().getMaterial().setQuantidadeAtual(this.getEntity().getMaterial().getQuantidadeAtual().add(quantidadeDevolver));
-                    materialBO.persist(this.getEntity().getMaterial());// Atualizando estoque
+                    MaterialSingleton.getInstance().getBo().persist(this.getEntity().getMaterial());// Atualizando estoque
                     this.getEntity().setQuantidade(quantidadeDevolvida);
-                    materialLogBO.persist(new MaterialLog(null, getEntity(), getEntity().getMaterial(), ProfissionalBO.getProfissionalLogado(), quantidadeDevolver,
+                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, getEntity(), getEntity().getMaterial(), UtilsFrontEnd.getProfissionalLogado(), quantidadeDevolver,
                             getEntity().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_UNITARIA_LAVAGEM));
                 }
                 this.getEntity().setStatus(ControleMaterial.UTILIZADO_UNITARIO);
@@ -244,7 +255,7 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
                     agendamento = this.getEntity().getAgendamento();
                     List<MaterialLog> logs = this.retiraQuantidade();
                     this.getEntity().setId(0);
-                    this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+                    this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                     this.getEntity().setDataEntrega(new Date());
                     this.getEntity().setProfissional(profissional);
                     this.getEntity().setMaterial(materiaisSelecionado.get(materiaisSelecionado.size() - 1));
@@ -253,7 +264,7 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
                     this.getEntity().setPlanoTratamentoProcedimentosAgendamentos(planoTratamentoProcedimentoAgendamentos);
                     this.getEntity().setQuantidade(this.getQuantidade());
                     this.getbO().persist(this.getEntity());
-                    materialLogBO.persistBatch(logs);
+                    MaterialLogSingleton.getInstance().getBo().persistBatch(logs);
                     this.geraLista();
                     this.persistCusto();
                 } else {
@@ -302,7 +313,7 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
         if (materiaisSelecionado != null && !materiaisSelecionado.isEmpty()) {
             BigDecimal total = new BigDecimal(0);
             for (Material m : materiaisSelecionado) {
-                materialBO.refresh(m);
+                MaterialSingleton.getInstance().getBo().refresh(m);
                 total = total.add(m.getQuantidadeAtual());
             }
             if (quantidade != null && total.doubleValue() >= quantidade.doubleValue()) {
@@ -323,11 +334,12 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
                     BigDecimal valorCusto = m.getValor().multiply(this.getQuantidade());
                     AgendamentoPlanoTratamentoProcedimento ag = planoTratamentoProcedimentoAgendamentos.get(0);
                     PlanoTratamentoProcedimentoCusto ptpc = new PlanoTratamentoProcedimentoCusto(this.getEntity(), ag.getPlanoTratamentoProcedimento(), d, d, valorCusto, m.getItem().getDescricao());
-                    planoTratamentoProcedimentoCustoBO.persist(ptpc);
+                    PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().persist(ptpc);
                     PlanoTratamentoProcedimento planoTratamentoProcedimento = ag.getPlanoTratamentoProcedimento();
                     if (planoTratamentoProcedimento.isFinalizado()) {
-                        planoTratamentoProcedimento.setValorRepasse(planoTratamentoProcedimentoBO.findValorRepasse(planoTratamentoProcedimento));
-                        planoTratamentoProcedimentoBO.merge(planoTratamentoProcedimento);
+                        planoTratamentoProcedimento.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(planoTratamentoProcedimento,
+                                UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
+                        PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(planoTratamentoProcedimento);
                     }
                     return;
                 }
@@ -346,7 +358,7 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
                 BigDecimal quantidadeRetirada = new BigDecimal(0d);
 
                 if (m.getQuantidadeAtual().doubleValue() >= quantidadeRetirar.doubleValue()) {
-                    materialBO.refresh(m);
+                    MaterialSingleton.getInstance().getBo().refresh(m);
                     m.setQuantidadeAtual(m.getQuantidadeAtual().subtract(quantidadeRetirar));
                     quantidadeRetirada = quantidadeRetirar;
                     quantidadeRetirar = new BigDecimal(0);
@@ -357,8 +369,8 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
                     m.setQuantidadeAtual(new BigDecimal(0));
                 }
                 m.setDataUltimaUtilizacao(Calendar.getInstance().getTime());
-                materialBO.persist(m);
-                logs.add(new MaterialLog(null, getEntity(), m, ProfissionalBO.getProfissionalLogado(), quantidadeRetirada.multiply(new BigDecimal(-1)), m.getQuantidadeAtual(),
+                MaterialSingleton.getInstance().getBo().persist(m);
+                logs.add(new MaterialLog(null, getEntity(), m, UtilsFrontEnd.getProfissionalLogado(), quantidadeRetirada.multiply(new BigDecimal(-1)), m.getQuantidadeAtual(),
                         MaterialLog.EMPRESTIMO_UNITARIO));
             }
         }
@@ -368,7 +380,7 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
     public void actionFindMateriais(ActionEvent event) {
         try {
             if (quantidade.intValue() != 0) {
-                materiaisDisponiveis = materialBO.listAtivosByEmpresaAndItemAndQuantidade(item, quantidade.intValue());
+                materiaisDisponiveis = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(item, quantidade.intValue(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 if (materiaisDisponiveis.isEmpty() || materiaisDisponiveis == null) {
                     this.addWarn(OdontoMensagens.getMensagem("abastecimento.materiais.vazio"), "");
                 }
@@ -447,7 +459,7 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
     private BigDecimal quantidadeTotal() {
         BigDecimal quantidadeTotal = new BigDecimal(0);
         try {
-            List<Material> materiais = materialBO.listByItem(this.getItem());
+            List<Material> materiais = MaterialSingleton.getInstance().getBo().listByItem(this.getItem());
             for (Material material : materiais) {
                 quantidadeTotal = quantidadeTotal.add(material.getTamanhoUnidade().multiply(material.getQuantidade().multiply(material.getTamanhoUnidade())));
             }
@@ -541,9 +553,9 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
         this.setItens(new ArrayList<Item>());
         try {
             if (this.getDigitacao() != null) {
-                this.setItens(itemBO.listByEmpresaAndDescricaoParcial(this.getDigitacao()));
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setItens(itemBO.listByEmpresa());
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 // Collections.sort(itens);
             }
         } catch (Exception e) {
@@ -556,6 +568,12 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
         this.setItem((Item) (event.getTreeNode().getData()));
         this.setDigitacao(this.getItem().getDescricao());
         this.filtraItem(this.getDigitacao());
+    }
+    
+    public String getUnidadeString(Item item) {
+        if(item != null)
+            return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
+        return null;
     }
 
     public void onNodeUnselect(NodeUnselectEvent event) {
@@ -646,7 +664,7 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = profissionalBO.listByEmpresaAndAtivo();
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresaAndAtivo(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").contains(
                         Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))) {
@@ -677,12 +695,17 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
             cal.setTime(data);
         }
         cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        agendamentos = agendamentoBO.listByProfissionalAndStatusAndDataLimite(profissional, cal.getTime());
+        cal.set(Calendar.MINUTE, 0);        
+        List<Agendamento> agendamentosNew = AgendamentoSingleton.getInstance().getBo().listByProfissionalAndStatusAndDataLimite(profissional, cal.getTime());
+        for (Agendamento agendamento : agendamentosNew) {
+            if(agendamento.getStatusNovo().matches("P|S|N|E|A|I|O")) {
+                agendamentos.add(agendamento);                
+            }
+        }
     }
 
     public void carregaProcedimentos() {
-        agendamentoProcedimentos = agendamentoPlanoTratamentoProcedimentoBO.listByAgendamento(this.getEntity().getAgendamento());
+        agendamentoProcedimentos = AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByAgendamento(this.getEntity().getAgendamento());
     }
 
     public Profissional getProfissional() {
@@ -694,13 +717,13 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
     }
 
     private void geraLista() {
-        try {
-            if (ProfissionalBO.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR)) {
-                abastecimentos = ((AbastecimentoBO) this.getbO()).listByEmpresa();
+        try {            
+            if (UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR)) {
+                abastecimentos = AbastecimentoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             } else {
-                abastecimentos = ((AbastecimentoBO) this.getbO()).listByStatus(ENTREGUE);
+                abastecimentos = AbastecimentoSingleton.getInstance().getBo().listByStatus(ENTREGUE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             }
-            abastecimentosDevolucao = ((AbastecimentoBO) this.getbO()).listByStatus(ENTREGUE);
+            abastecimentosDevolucao = AbastecimentoSingleton.getInstance().getBo().listByStatus(ENTREGUE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             e.printStackTrace();
         }

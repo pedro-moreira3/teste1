@@ -14,16 +14,16 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.DenteBO;
-import br.com.lume.odonto.bo.OdontogramaBO;
-import br.com.lume.odonto.bo.RegiaoDenteBO;
-import br.com.lume.odonto.bo.StatusDenteBO;
+import br.com.lume.dente.DenteSingleton;
 import br.com.lume.odonto.entity.Dente;
 import br.com.lume.odonto.entity.Odontograma;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.RegiaoDente;
 import br.com.lume.odonto.entity.StatusDente;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.odontograma.OdontogramaSingleton;
+import br.com.lume.regiaoDente.RegiaoDenteSingleton;
+import br.com.lume.statusDente.StatusDenteSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -60,17 +60,11 @@ public class OdontogramaTextoMB extends LumeManagedBean<Odontograma> {
 
     private HashMap<String, Dente> dentesMap = new HashMap<>();
 
-    private StatusDenteBO statusDenteBO;
-
-    private DenteBO denteBO;
-
-    private RegiaoDenteBO regiaoDenteBO;
+  
 
     public OdontogramaTextoMB() {
-        super(new OdontogramaBO());
-        statusDenteBO = new StatusDenteBO();
-        denteBO = new DenteBO();
-        regiaoDenteBO = new RegiaoDenteBO();
+        super(OdontogramaSingleton.getInstance().getBo());
+       
         this.setClazz(Odontograma.class);
         regiaoDente = new RegiaoDente();
         odontograma = new Odontograma();
@@ -90,7 +84,7 @@ public class OdontogramaTextoMB extends LumeManagedBean<Odontograma> {
         faces.add(RegiaoDente.MESIAL);
         faces.add(RegiaoDente.VESTIBULAR);
         try {
-            statusDenteList = statusDenteBO.listSemLimpar();
+            statusDenteList = StatusDenteSingleton.getInstance().getBo().listSemLimpar();
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS);
             this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
@@ -139,12 +133,12 @@ public class OdontogramaTextoMB extends LumeManagedBean<Odontograma> {
             odontograma.setDataCadastro(Calendar.getInstance().getTime());
             odontograma.setPaciente(paciente);
             odontograma.setObservacoes(observacoes);
-            ((OdontogramaBO) this.getbO()).persist(odontograma);
+            OdontogramaSingleton.getInstance().getBo().persist(odontograma);
             for (Dente dente_ : dentesMap.values()) {
-                denteBO.persist(dente_);
+                DenteSingleton.getInstance().getBo().persist(dente_);
             }
             for (RegiaoDente reg_ : regioes) {
-                regiaoDenteBO.persist(reg_);
+                RegiaoDenteSingleton.getInstance().getBo().persist(reg_);
             }
             odontograma = new Odontograma();
             observacoes = "";
@@ -196,7 +190,7 @@ public class OdontogramaTextoMB extends LumeManagedBean<Odontograma> {
         faces.add(RegiaoDente.LINGUAL);
         faces.add(RegiaoDente.MESIAL);
         faces.add(RegiaoDente.VESTIBULAR);
-        faces.add(RegiaoDenteBO.isIncisalOrOclusal(dente));
+        faces.add(RegiaoDenteSingleton.getInstance().getBo().isIncisalOrOclusal(dente));
         List<String> suggestions = new ArrayList<>();
         for (String face : faces) {
             if (face.toLowerCase().startsWith(query.toLowerCase())) {
@@ -268,12 +262,12 @@ public class OdontogramaTextoMB extends LumeManagedBean<Odontograma> {
 
     public void carregaRegioes() {
         try {
-            List<Odontograma> odontogramas = ((OdontogramaBO) this.getbO()).listByPaciente(pacienteMB.getEntity());
+            List<Odontograma> odontogramas = OdontogramaSingleton.getInstance().getBo().listByPaciente(pacienteMB.getEntity());
             if (!odontogramas.isEmpty()) {
                 regioes = new ArrayList<>();
                 dentesMap = new HashMap<>();
                 Odontograma ultimoOdontograma = odontogramas.get(0);
-                List<RegiaoDente> regioes_ = regiaoDenteBO.listByOdontograma(ultimoOdontograma);
+                List<RegiaoDente> regioes_ = RegiaoDenteSingleton.getInstance().getBo().listByOdontograma(ultimoOdontograma);
                 for (RegiaoDente reg : regioes_) {
                     Dente dente_ = new Dente(reg.getDente().getDescricao(), odontograma);
                     if (!dentesMap.containsKey(reg.getDente().getDescricao())) {

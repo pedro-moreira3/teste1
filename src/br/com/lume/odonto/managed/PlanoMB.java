@@ -9,8 +9,8 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.PlanoBO;
 import br.com.lume.odonto.entity.Plano;
+import br.com.lume.plano.PlanoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -23,14 +23,14 @@ public class PlanoMB extends LumeManagedBean<Plano> {
     private List<Plano> planos;
 
     public PlanoMB() {
-        super(new PlanoBO());
+        super(PlanoSingleton.getInstance().getBo());
         this.setClazz(Plano.class);
         this.carregarPlanos();
     }
 
     private void carregarPlanos() {
         try {
-            this.planos = ((PlanoBO) this.getbO()).listAll();
+            this.planos = PlanoSingleton.getInstance().getBo().listAll();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(e);

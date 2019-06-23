@@ -2,50 +2,45 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
-					<p:panel id="pnPlano" styleClass="BordNone">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<p:outputPanel id="pnPlano" styleClass="BordNone">
 
-						<h1 class="CardBigTopic">Cadastro de Planos</h1>
+						<h1>Cadastro de Planos</h1>
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
 
 
 							<p:outputLabel for="nomePlano" value="Nome do Plano : " />
-							<p:inputText id="nomePlano" value="#{planoMB.entity.nome}" maxlength="200" required="true" styleClass="Wid50" />
+							<p:inputText id="nomePlano" value="#{planoMB.entity.nome}" maxlength="200" required="true" />
 
 							<p:outputLabel for="nomePaypal" value="Nome do PayPal : " />
-							<p:inputText id="nomePaypal" value="#{planoMB.entity.nomePaypal}" maxlength="200" required="true" styleClass="Wid50" />
+							<p:inputText id="nomePaypal" value="#{planoMB.entity.nomePaypal}" maxlength="200" required="true" />
 
 							<p:outputLabel for="consultas" value="Consultas : " />
-							<p:inputText id="consultas" value="#{planoMB.entity.consultas}" required="true" maxlength="10" styleClass="Wid20" />
+							<p:inputText id="consultas" value="#{planoMB.entity.consultas}" required="true" maxlength="10" />
 
 							<p:outputLabel for="preco" value="Preço : " />
 							<p:inputNumber id="preco" value="#{planoMB.entity.preco}" required="true" maxlength="13" maxValue="9999999999.99" decimalSeparator=","
-								symbol="R$ " thousandSeparator="." styleClass="Wid20">
+								symbol="R$ " thousandSeparator=".">
 							</p:inputNumber>
 						</p:panelGrid>
 
 
 						<div class="SeparatorFull"></div>
-						<p:panel id="botoes" styleClass="BordNone">
-
-							<div class="Container25 Responsive100">
+						<p:outputPanel id="botoes" styleClass="BordNone">
+							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 								<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{planoMB.actionPersist}"
 									update=":lume:pnPlano,:lume:dtPlano,:lume:botoes" process=":lume:pnPlano,@this" disabled="#{planoMB.entity == null}" styleClass="GreenButton" />
-							</div>
-							<div class="Container25 Responsive100">
 								<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{planoMB.actionRemove}"
 									update=":lume:pnPlano,:lume:dtPlano,:lume:botoes" process=":lume:pnPlano,@this" styleClass="RedButton" />
-							</div>
-							<div class="Container25 Responsive100">
 								<p:commandButton id="new" value="Novo" icon="White fa fa-file-o" actionListener="#{planoMB.actionNew}"
 									update=":lume:pnPlano,:lume:dtPlano,:lume:botoes" process=":lume:pnPlano,@this" disabled="#{planoMB.entity == null}" />
-							</div>
-						</p:panel>
-					</p:panel>
+							</p:panelGrid>
+						</p:outputPanel>
+					</p:outputPanel>
 
 					<div class="EmptyBox20"></div>
 

@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.MarcaBO;
+import br.com.lume.marca.MarcaSingleton;
 import br.com.lume.odonto.entity.Marca;
 
 @FacesConverter(forClass = Marca.class, value = "marca")
@@ -20,7 +20,7 @@ public class MarcaConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new MarcaBO().find(id);
+                return MarcaSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

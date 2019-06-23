@@ -9,19 +9,23 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 
+import br.com.lume.afastamento.AfastamentoSingleton;
+import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.odonto.bo.AfastamentoBO;
-import br.com.lume.odonto.bo.AgendamentoBO;
-import br.com.lume.odonto.bo.DominioBO;
+import br.com.lume.common.util.StatusAgendamentoUtil;
+import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.dominio.bo.DominioBO;
+//import br.com.lume.odonto.bo.AfastamentoBO;
+//import br.com.lume.odonto.bo.AgendamentoBO;
+//import br.com.lume.odonto.bo.DominioBO;
 import br.com.lume.odonto.entity.Afastamento;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.odonto.exception.DataComAgendamentosException;
 import br.com.lume.odonto.exception.DataDuplicadaException;
 import br.com.lume.odonto.exception.DataIgualException;
@@ -50,30 +54,36 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
 
     private String dtMax;
 
-    private DominioBO dominioBO;
+  //  private DominioBO dominioBO;
 
-    private AgendamentoBO agendamentoBO;
+   // private AgendamentoBO agendamentoBO;
 
     public AfastamentoMB() {
-        super(new AfastamentoBO());
-        dominioBO = new DominioBO();
-        agendamentoBO = new AgendamentoBO();
+        super(new AfastamentoSingleton().getBo());
+      //  dominioBO = new DominioBO();
+     //   agendamentoBO = new AgendamentoBO();
         this.setClazz(Afastamento.class);
     }
 
     @Override
     public void actionRemove(ActionEvent event) {
-        RequestContext context = RequestContext.getCurrentInstance();
-        context.addCallbackParam("validado", false);
+        PrimeFaces.current().ajax().addCallbackParam("validado", false);
         super.actionRemove(event);
-        context.addCallbackParam("validado", true);
+        PrimeFaces.current().ajax().addCallbackParam("validado", true);
     }
 
+    public String getAfastamentoTipoStr(Afastamento afastamento) {
+        try {
+            return new DominioBO().listByTipoAndObjeto(afastamento.getTipo(), "afastamento").getNome();
+        } catch (Exception e) {
+            return "Sem informações";
+        }
+    }
+    
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            RequestContext context = RequestContext.getCurrentInstance();
-            context.addCallbackParam("validado", false);
+            PrimeFaces.current().ajax().addCallbackParam("validado", false);
             if (GenericValidator.validarRangeData(this.getInicio(), this.getFim(), true)) {
                 this.validaData();
                 this.getEntity().setTipo(dominioSelecionado.getValor());
@@ -86,7 +96,7 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
                 this.setInicio(null);
                 this.setFim(null);
                 agendamentoMB.limpaPacienteSelecionado();
-                context.addCallbackParam("validado", true);
+                PrimeFaces.current().ajax().addCallbackParam("validado", true);
             } else {
                 this.addError(OdontoMensagens.getMensagem("erro.data.rang"), "");
             }
@@ -106,7 +116,7 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
 
     public void carregaTela() {
         try {
-            dominioSelecionado = dominioBO.listByTipoAndObjeto(this.getEntity().getTipo(), "afastamento");
+            dominioSelecionado = DominioSingleton.getInstance().getBo().listByTipoAndObjeto(this.getEntity().getTipo(), "afastamento");
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -116,18 +126,18 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
     }
 
     public void validaData() throws Exception {
-        List<Agendamento> agendamentos = agendamentoBO.listByProfissional(agendamentoMB.getProfissional());
+        List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo().listByProfissional(agendamentoMB.getProfissional());
         if (this.getInicio().getTime() == this.getFim().getTime()) {
             throw new DataIgualException();
         }
         for (Agendamento agendamento : agendamentos) {
-            if ((!((agendamento.getStatus().equals(StatusAgendamento.REMARCADO.getSigla())) || (agendamento.getStatus().equals(StatusAgendamento.FALTA.getSigla())) || (agendamento.getStatus().equals(
-                    StatusAgendamento.CANCELADO.getSigla())) || (agendamento.getStatus().equals(
-                            StatusAgendamento.ATENDIDO.getSigla())))) && (((agendamento.getInicio().getTime() <= this.getInicio().getTime()) && (agendamento.getFim().getTime() >= this.getInicio().getTime())) || ((agendamento.getInicio().getTime() <= this.getFim().getTime()) && (agendamento.getFim().getTime() >= this.getFim().getTime())) || ((this.getInicio().getTime() >= agendamento.getInicio().getTime()) && (this.getFim().getTime() <= agendamento.getFim().getTime())) || ((this.getInicio().getTime() <= agendamento.getInicio().getTime()) && (this.getFim().getTime() >= agendamento.getFim().getTime())))) {
+            if ((!((agendamento.getStatusNovo().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) || (agendamento.getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) || (agendamento.getStatusNovo().equals(
+                    StatusAgendamentoUtil.CANCELADO.getSigla())) || (agendamento.getStatusNovo().equals(
+                            StatusAgendamentoUtil.ATENDIDO.getSigla())))) && (((agendamento.getInicio().getTime() <= this.getInicio().getTime()) && (agendamento.getFim().getTime() >= this.getInicio().getTime())) || ((agendamento.getInicio().getTime() <= this.getFim().getTime()) && (agendamento.getFim().getTime() >= this.getFim().getTime())) || ((this.getInicio().getTime() >= agendamento.getInicio().getTime()) && (this.getFim().getTime() <= agendamento.getFim().getTime())) || ((this.getInicio().getTime() <= agendamento.getInicio().getTime()) && (this.getFim().getTime() >= agendamento.getFim().getTime())))) {
                 throw new DataComAgendamentosException();
             }
         }
-        for (Afastamento afastamento : ((AfastamentoBO) this.getbO()).listByProfissional((agendamentoMB.getProfissional()))) {
+        for (Afastamento afastamento : AfastamentoSingleton.getInstance().getBo().listByProfissional((agendamentoMB.getProfissional()))) {
             if (((afastamento.getInicio().getTime() <= this.getInicio().getTime()) && (afastamento.getFim().getTime() >= this.getInicio().getTime())) || ((afastamento.getInicio().getTime() <= this.getFim().getTime()) && (afastamento.getFim().getTime() >= this.getFim().getTime())) || ((this.getInicio().getTime() >= afastamento.getInicio().getTime()) && (this.getFim().getTime() <= afastamento.getFim().getTime())) || ((this.getInicio().getTime() <= afastamento.getInicio().getTime()) && (this.getFim().getTime() >= afastamento.getFim().getTime()))) {
                 if (afastamento.getId() != this.getEntity().getId()) {
                     throw new DataDuplicadaException();
@@ -151,7 +161,7 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
     public List<Afastamento> getAfastamentos() {
         try {
             if (agendamentoMB.getProfissional() != null) {
-                afastamentos = ((AfastamentoBO) this.getbO()).listByProfissional(agendamentoMB.getProfissional());
+                afastamentos = AfastamentoSingleton.getInstance().getBo().listByProfissional(agendamentoMB.getProfissional());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -189,7 +199,7 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
 
     public List<Dominio> getDominios() {
         try {
-            dominios = dominioBO.listByEmpresaAndObjeto("afastamento");
+            dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjeto("afastamento");
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");

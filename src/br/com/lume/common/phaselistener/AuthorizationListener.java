@@ -12,9 +12,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.util.JSFHelper;
-import br.com.lume.security.bo.LogAcessoBO;
-import br.com.lume.security.bo.ObjetoBO;
-import br.com.lume.security.bo.SistemaBO;
+
+import br.com.lume.security.LogAcessoSingleton;
+import br.com.lume.security.ObjetoSingleton;
+import br.com.lume.security.SistemaSingleton;
+//import br.com.lume.security.bo.LogAcessoBO;
+//import br.com.lume.security.bo.ObjetoBO;
+//import br.com.lume.security.bo.SistemaBO;
 import br.com.lume.security.entity.LogAcesso;
 import br.com.lume.security.entity.Objeto;
 import br.com.lume.security.entity.Sistema;
@@ -92,13 +96,13 @@ public class AuthorizationListener implements PhaseListener {
         }
         return null;
     }
-
+    
     private void logarAcesso(String page, Usuario usuario, String ip) {
         String paginaAnterior = (String) JSFHelper.getSession().getAttribute("PAGINA_ANTERIOR");
         if (!page.equals(paginaAnterior)) {
             if (usuario != null) {
-                Sistema sistema = new SistemaBO().getSistemaBySigla(JSFHelper.getSistemaAtual());
-                Objeto objeto = new ObjetoBO().getObjetoByCaminhoAndSistema(page, sistema);
+                Sistema sistema = SistemaSingleton.getInstance().getBo().getSistemaBySigla(JSFHelper.getSistemaAtual());
+                Objeto objeto = ObjetoSingleton.getInstance().getBo().getObjetoByCaminhoAndSistema(page, sistema);
                 if (objeto != null) {
                     LogAcesso logAcesso = new LogAcesso();
                     logAcesso.setObjeto(objeto);
@@ -106,7 +110,7 @@ public class AuthorizationListener implements PhaseListener {
                     logAcesso.setUsuario(usuario);
                     logAcesso.setLogStrIp(ip);
                     try {
-                        new LogAcessoBO().persist(logAcesso);
+                        LogAcessoSingleton.getInstance().getBo().persist(logAcesso);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -114,7 +118,7 @@ public class AuthorizationListener implements PhaseListener {
             }
             JSFHelper.getSession().setAttribute("PAGINA_ANTERIOR", page);
         }
-    }
+    }    
 
     @Override
     public void afterPhase(PhaseEvent arg0) {

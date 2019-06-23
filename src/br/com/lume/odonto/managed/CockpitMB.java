@@ -11,9 +11,12 @@ import org.primefaces.model.chart.MeterGaugeChartModel;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.GraficoBO;
-import br.com.lume.odonto.bo.GraficoProfissionalBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.grafico.GraficoSingleton;
+import br.com.lume.graficoProfissional.GraficoProfissionalSingleton;
+//import br.com.lume.odonto.bo.GraficoBO;
+//import br.com.lume.odonto.bo.GraficoProfissionalBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Grafico;
 import br.com.lume.odonto.entity.GraficoProfissional;
 
@@ -27,14 +30,14 @@ public class CockpitMB extends LumeManagedBean<Grafico> {
 
     private List<GraficoProfissional> graficos1 = new ArrayList<>(), graficos2 = new ArrayList<>(), graficos3 = new ArrayList<>();
 
-    private GraficoProfissionalBO graficoProfissionalBO;
+  //  private GraficoProfissionalBO graficoProfissionalBO;
 
-    private GraficoBO graficoBO;
+   // private GraficoBO graficoBO;
 
     public CockpitMB() {
-        super(new GraficoBO());
-        this.graficoProfissionalBO = new GraficoProfissionalBO();
-        this.graficoBO = new GraficoBO();
+        super(GraficoSingleton.getInstance().getBo());
+     //   this.graficoProfissionalBO = new GraficoProfissionalBO();
+      //  this.graficoBO = new GraficoBO();
         this.setClazz(Grafico.class);
         try {
             this.createMeterGaugeModel();
@@ -45,9 +48,9 @@ public class CockpitMB extends LumeManagedBean<Grafico> {
     }
 
     private void createMeterGaugeModel() throws Exception {
-        List<GraficoProfissional> graficos = this.graficoProfissionalBO.listByProfissional(ProfissionalBO.getProfissionalLogado());
+        List<GraficoProfissional> graficos = GraficoProfissionalSingleton.getInstance().getBo().listByProfissional(UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         for (GraficoProfissional gp : graficos) {
-            int value = this.graficoBO.findGenerico(gp.getGrafico());
+            int value = GraficoSingleton.getInstance().getBo().findGenerico(gp.getGrafico());
             List<Number> intervals = new ArrayList<>();
             intervals.add(gp.getGrafico().getMinimo());
             intervals.add(gp.getGrafico().getMaximo());
@@ -69,7 +72,7 @@ public class CockpitMB extends LumeManagedBean<Grafico> {
             meterGaugeChartModel.setIntervalOuterRadius(105);
             meterGaugeChartModel.setSeriesColors("cc6666, FF8787, E7E658,66cc66");
 
-            gp.setChartModel(meterGaugeChartModel);
+          //  gp.setChartModel(meterGaugeChartModel);
             if (this.graficos1.size() == this.graficos2.size() && this.graficos1.size() == this.graficos3.size()) {
                 this.graficos1.add(gp);
             } else if (this.graficos1.size() > this.graficos2.size() && this.graficos2.size() == this.graficos3.size()) {

@@ -17,6 +17,7 @@ import org.primefaces.model.chart.PieChartModel;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.security.LogAcessoSingleton;
 import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.bo.LogAcessoBO;
 import br.com.lume.security.entity.Empresa;
@@ -103,7 +104,10 @@ public class LogAcessoMB extends LumeManagedBean<LogAcesso> {
             this.pieModel = new PieChartModel();
             this.pieModel.setTitle("Telas mais acessadas");
             this.pieModel.setLegendPosition("w");
-            this.logAcessoBO.doPieGraficoAcessos(this.pieModel, this.empresa.getEmpIntCod(), this.dataInicioConsulta, this.dataFimConsulta);
+            List<Object[]> resultList = LogAcessoSingleton.getInstance().getBo().doPieGraficoAcessos(this.empresa.getEmpIntCod(), this.dataInicioConsulta, this.dataFimConsulta);
+            for (Object object[] : resultList) {
+                this.pieModel.set("" + object[0], Integer.parseInt("" + object[1]));
+            }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.RANGE_DATA_INVALIDO), "");
             this.log.error(e);

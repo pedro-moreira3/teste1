@@ -14,10 +14,10 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.DentePeriogramaBO;
-import br.com.lume.odonto.bo.PeriogramaBO;
+import br.com.lume.dentePeriograma.DentePeriogramaSingleton;
 import br.com.lume.odonto.entity.DentePeriograma;
 import br.com.lume.odonto.entity.Periograma;
+import br.com.lume.periograma.PeriogramaSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -32,12 +32,10 @@ public class PeriogramaMB extends LumeManagedBean<Periograma> {
     @ManagedProperty(value = "#{pacienteMB}")
     private PacienteMB pacienteMB;
 
-    private DentePeriogramaBO dentePeriogramaBO = new DentePeriogramaBO();
-
     private Periograma periogramaA, periogramaB;
 
     public PeriogramaMB() {
-        super(new PeriogramaBO());
+        super(PeriogramaSingleton.getInstance().getBo());
         this.setClazz(Periograma.class);
     }
 
@@ -45,14 +43,14 @@ public class PeriogramaMB extends LumeManagedBean<Periograma> {
     public void actionPersist(ActionEvent event) {
         try {
             getbO().persist(getEntity());
-            dentePeriogramaBO.persistBatch(vestibular18ate11);
-            dentePeriogramaBO.persistBatch(palatina18ate11);
-            dentePeriogramaBO.persistBatch(vestibular21ate28);
-            dentePeriogramaBO.persistBatch(palatina21ate28);
-            dentePeriogramaBO.persistBatch(lingual41ate48);
-            dentePeriogramaBO.persistBatch(vestibular41ate48);
-            dentePeriogramaBO.persistBatch(lingual31ate38);
-            dentePeriogramaBO.persistBatch(vestibular31ate38);
+            DentePeriogramaSingleton.getInstance().getBo().persistBatch(vestibular18ate11);
+            DentePeriogramaSingleton.getInstance().getBo().persistBatch(palatina18ate11);
+            DentePeriogramaSingleton.getInstance().getBo().persistBatch(vestibular21ate28);
+            DentePeriogramaSingleton.getInstance().getBo().persistBatch(palatina21ate28);
+            DentePeriogramaSingleton.getInstance().getBo().persistBatch(lingual41ate48);
+            DentePeriogramaSingleton.getInstance().getBo().persistBatch(vestibular41ate48);
+            DentePeriogramaSingleton.getInstance().getBo().persistBatch(lingual31ate38);
+            DentePeriogramaSingleton.getInstance().getBo().persistBatch(vestibular31ate38);
             carregarPeriogramas();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
@@ -63,25 +61,25 @@ public class PeriogramaMB extends LumeManagedBean<Periograma> {
 
     public void actionSelecionarPeriograma() {
         try {
-            vestibular18ate11 = dentePeriogramaBO.listByFaceDente(getEntity().getId(), DentePeriograma.VESTIBULAR, 11, 18);
+            vestibular18ate11 = DentePeriogramaSingleton.getInstance().getBo().listByFaceDente(getEntity().getId(), DentePeriograma.VESTIBULAR, 11, 18);
             Collections.sort(vestibular18ate11, Collections.reverseOrder());
 
-            palatina18ate11 = dentePeriogramaBO.listByFaceDente(getEntity().getId(), DentePeriograma.PALATINA, 11, 18);
+            palatina18ate11 = DentePeriogramaSingleton.getInstance().getBo().listByFaceDente(getEntity().getId(), DentePeriograma.PALATINA, 11, 18);
             Collections.sort(palatina18ate11, Collections.reverseOrder());
 
-            vestibular21ate28 = dentePeriogramaBO.listByFaceDente(getEntity().getId(), DentePeriograma.VESTIBULAR, 21, 28);
+            vestibular21ate28 = DentePeriogramaSingleton.getInstance().getBo().listByFaceDente(getEntity().getId(), DentePeriograma.VESTIBULAR, 21, 28);
 
-            palatina21ate28 = dentePeriogramaBO.listByFaceDente(getEntity().getId(), DentePeriograma.PALATINA, 21, 28);
+            palatina21ate28 = DentePeriogramaSingleton.getInstance().getBo().listByFaceDente(getEntity().getId(), DentePeriograma.PALATINA, 21, 28);
 
-            lingual41ate48 = dentePeriogramaBO.listByFaceDente(getEntity().getId(), DentePeriograma.LINGUAL, 41, 48);
+            lingual41ate48 = DentePeriogramaSingleton.getInstance().getBo().listByFaceDente(getEntity().getId(), DentePeriograma.LINGUAL, 41, 48);
             Collections.sort(lingual41ate48, Collections.reverseOrder());
 
-            vestibular41ate48 = dentePeriogramaBO.listByFaceDente(getEntity().getId(), DentePeriograma.VESTIBULAR, 41, 48);
+            vestibular41ate48 = DentePeriogramaSingleton.getInstance().getBo().listByFaceDente(getEntity().getId(), DentePeriograma.VESTIBULAR, 41, 48);
             Collections.sort(vestibular41ate48, Collections.reverseOrder());
 
-            lingual31ate38 = dentePeriogramaBO.listByFaceDente(getEntity().getId(), DentePeriograma.LINGUAL, 31, 38);
+            lingual31ate38 = DentePeriogramaSingleton.getInstance().getBo().listByFaceDente(getEntity().getId(), DentePeriograma.LINGUAL, 31, 38);
 
-            vestibular31ate38 = dentePeriogramaBO.listByFaceDente(getEntity().getId(), DentePeriograma.VESTIBULAR, 31, 38);
+            vestibular31ate38 = DentePeriogramaSingleton.getInstance().getBo().listByFaceDente(getEntity().getId(), DentePeriograma.VESTIBULAR, 31, 38);
         } catch (Exception e) {
             log.error("Erro no actionSelecionarPeriograma", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -95,7 +93,7 @@ public class PeriogramaMB extends LumeManagedBean<Periograma> {
 
     private void carregarPeriogramas() {
         try {
-            setEntityList(((PeriogramaBO) getbO()).listByPaciente(pacienteMB.getEntity()));
+            setEntityList(PeriogramaSingleton.getInstance().getBo().listByPaciente(pacienteMB.getEntity()));
         } catch (Exception e) {
             log.error("Erro no carregarPeriogramas", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -140,10 +138,10 @@ public class PeriogramaMB extends LumeManagedBean<Periograma> {
 
         if (periogramaA != null && periogramaB != null) {
             try {
-                List<DentePeriograma> periogramaAVestibular11ate28 = dentePeriogramaBO.listByFaceDente(periogramaA.getId(), DentePeriograma.VESTIBULAR, 11, 28);
+                List<DentePeriograma> periogramaAVestibular11ate28 = DentePeriogramaSingleton.getInstance().getBo().listByFaceDente(periogramaA.getId(), DentePeriograma.VESTIBULAR, 11, 28);
                 Collections.sort(periogramaAVestibular11ate28, Collections.reverseOrder());
 
-                List<DentePeriograma> periogramaBVestibular11ate28 = dentePeriogramaBO.listByFaceDente(periogramaB.getId(), DentePeriograma.VESTIBULAR, 11, 28);
+                List<DentePeriograma> periogramaBVestibular11ate28 = DentePeriogramaSingleton.getInstance().getBo().listByFaceDente(periogramaB.getId(), DentePeriograma.VESTIBULAR, 11, 28);
                 Collections.sort(periogramaBVestibular11ate28, Collections.reverseOrder());
 
                 StringBuilder retorno = new StringBuilder();

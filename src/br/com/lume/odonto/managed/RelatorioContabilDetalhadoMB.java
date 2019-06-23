@@ -15,7 +15,8 @@ import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Utils;
-import br.com.lume.odonto.bo.LancamentoContabilBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.LancamentoContabilRelatorio;
 import br.com.lume.odonto.entity.TipoCategoria;
@@ -35,16 +36,13 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
 
     private String extrato, forma = "T";
 
-    private BigDecimal saldoInicial, saldoFinal;
-
-    private LancamentoContabilBO lancamentoContabilBO;
+    private BigDecimal saldoInicial, saldoFinal;   
 
     private NumberFormat formatter;
 
     public RelatorioContabilDetalhadoMB() {
-        super(new LancamentoContabilBO());
-        formatter = NumberFormat.getCurrencyInstance(this.getLumeSecurity().getLocale());
-        lancamentoContabilBO = new LancamentoContabilBO();
+        super(LancamentoContabilSingleton.getInstance().getBo());
+        formatter = NumberFormat.getCurrencyInstance(this.getLumeSecurity().getLocale());      
         this.setClazz(LancamentoContabil.class);
         this.carregarDatasIniciais();
         this.filtra();
@@ -69,7 +67,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
             if (inicio != null && fim != null && inicio.getTime() > fim.getTime()) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else {
-                lancamentoContabeis = lancamentoContabilBO.listAllByPeriodo(inicio, fim);
+                lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listAllByPeriodo(inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 lancamentoContabeis = removeLancamentosNaoValidados();
                 this.geraExtrato();
             }
@@ -171,7 +169,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
 
     private void saldoInicial() {
         saldoInicial = new BigDecimal(0);
-        List<LancamentoContabilRelatorio> lcs = lancamentoContabilBO.listByPeriodoAnterior(inicio, forma);
+        List<LancamentoContabilRelatorio> lcs = LancamentoContabilSingleton.getInstance().getBo().listByPeriodoAnterior(inicio, forma, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         for (LancamentoContabilRelatorio lc : lcs) {
             BigDecimal valor = lc.getValor();
             valor = valor.abs();
@@ -180,7 +178,7 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
             }
             saldoInicial = saldoInicial.add(valor);
         }
-        LancamentoContabil inicial = lancamentoContabilBO.findByTipoInicial(inicio, fim);
+        LancamentoContabil inicial = LancamentoContabilSingleton.getInstance().getBo().findByTipoInicial(inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (inicial != null) {
             saldoInicial = saldoInicial.add(inicial.getValor());
         }

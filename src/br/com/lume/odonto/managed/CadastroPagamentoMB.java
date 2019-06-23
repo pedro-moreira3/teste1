@@ -12,7 +12,8 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.PlanoBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+//import br.com.lume.odonto.bo.PlanoBO;
 import br.com.lume.odonto.entity.Plano;
 import br.com.lume.odonto.iugu.model.CustomVariable;
 import br.com.lume.odonto.iugu.model.Customer;
@@ -20,7 +21,9 @@ import br.com.lume.odonto.iugu.model.Subscription;
 import br.com.lume.odonto.iugu.responses.CustomerResponse;
 import br.com.lume.odonto.iugu.responses.SubscriptionResponse;
 import br.com.lume.odonto.iugu.services.Iugu;
-import br.com.lume.security.bo.EmpresaBO;
+import br.com.lume.plano.PlanoSingleton;
+import br.com.lume.security.EmpresaSingleton;
+//import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 
 @ManagedBean
@@ -33,12 +36,12 @@ public class CadastroPagamentoMB extends LumeManagedBean<Empresa> {
 
     private Logger log = Logger.getLogger(CadastroPagamentoMB.class);
 
-    private PlanoBO planoBO = new PlanoBO();
+  //  private PlanoBO planoBO = new PlanoBO();
 
     private boolean pnInicialVisivel = true;
 
     public CadastroPagamentoMB() {
-        super(new EmpresaBO());
+        super(EmpresaSingleton.getInstance().getBo());
         this.setClazz(Empresa.class);
         this.carregarPlanos();
     }
@@ -46,7 +49,7 @@ public class CadastroPagamentoMB extends LumeManagedBean<Empresa> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            Empresa empresa = EmpresaBO.getEmpresaLogada();
+            Empresa empresa = UtilsFrontEnd.getEmpresaLogada();
             Customer customerIugu = new Customer(empresa.getEmpStrEmail(), empresa.getEmpStrNme(), null, empresa.getEmpChaCep(), Integer.parseInt(empresa.getEmpChaNumEndereco()),
                     empresa.getEmpStrEndereco(), empresa.getEmpStrBairro(), empresa.getEmpStrCidade(), empresa.getEmpChaUf());
             CustomVariable cv = new CustomVariable("intelidente", "true");
@@ -84,7 +87,7 @@ public class CadastroPagamentoMB extends LumeManagedBean<Empresa> {
 
     private void carregarPlanos() {
         try {
-            planos = planoBO.listAll();
+            planos = PlanoSingleton.getInstance().getBo().listAll();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(e);

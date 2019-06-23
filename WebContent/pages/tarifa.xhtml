@@ -2,13 +2,19 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
+	<style>
+		body .ui-selectoneradio td label {
+			width: calc(100% - 44px) !important;
+			margin-top: 10% !important;
+		}
+	</style>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
 					<h:inputHidden id="idTarifa" value="#{tarifaMB.entity.id}" />
-					<p:panel id="pnTarifa" styleClass="BordNone">
+					<p:outputPanel id="pnTarifa" styleClass="BordNone">
 
-						<h1 class="CardBigTopic">Cadastro de Tarifas</h1>
+						<h1>Cadastro de Tarifas</h1>
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
@@ -34,50 +40,46 @@
 
 							<p:outputLabel for="taxa" value="Taxas (%): " />
 							<p:inputNumber id="taxa" value="#{tarifaMB.entity.taxa}" maxlength="13" maxValue="99999999.99" decimalSeparator="," symbol=""
-								thousandSeparator="." required="true" class="Wid30" />
+								thousandSeparator="." required="true" />
 
 
 							<p:outputLabel for="prazo" value="Prazo (dias): " />
-							<p:inputMask id="prazo" value="#{tarifaMB.entity.prazo}" mask="9?999" required="true" class="Wid20" />
+							<p:inputMask id="prazo" value="#{tarifaMB.entity.prazo}" mask="9?999" required="true" />
 
 
 							<p:outputLabel for="tarifa" value="Tarifa : " />
 							<p:inputNumber id="tarifa" value="#{tarifaMB.entity.tarifa}" maxlength="13" maxValue="99999999.99" decimalSeparator="," symbol=""
-								thousandSeparator="." required="true" class="Wid30" />
+								thousandSeparator="." required="true" />
 
 
 							<p:outputLabel for="parcelaMinima" value="Parcela Mínima : " />
-							<p:inputMask id="parcelaMinima" value="#{tarifaMB.entity.parcelaMinima}" mask="9?9" required="true" class="Wid10" />
+							<p:inputMask id="parcelaMinima" value="#{tarifaMB.entity.parcelaMinima}" mask="9?9" required="true" />
 
 
 							<p:outputLabel for="parcelaMaxima" value="Parcela Máxima: " />
-							<p:inputMask id="parcelaMaxima" value="#{tarifaMB.entity.parcelaMaxima}" mask="9?9" required="true" class="Wid10" />
+							<p:inputMask id="parcelaMaxima" value="#{tarifaMB.entity.parcelaMaxima}" mask="9?9" required="true" />
 
 
 							<p:outputLabel for="banco" value="Banco : " />
-							<p:inputText id="banco" value="#{tarifaMB.entity.banco}" required="true" maxlength="4" mask="9?999" class="Wid20" />
+							<p:inputText id="banco" value="#{tarifaMB.entity.banco}" required="true" maxlength="4" mask="9?999" />
 
 
 							<p:outputLabel for="agencia" value="Agência : " />
-							<p:inputText id="agencia" value="#{tarifaMB.entity.agencia}" required="true" maxlength="10" mask="9?999" class="Wid20" />
+							<p:inputText id="agencia" value="#{tarifaMB.entity.agencia}" required="true" maxlength="10" mask="9?999" />
 
 
 
 						</p:panelGrid>
 						<div class="SeparatorFull"></div>
-						<div class="Container25 Responsive100">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{tarifaMB.actionPersist}"
 								update=":lume:pnTarifa,:lume:dtTarifa" process=":lume:pnTarifa" styleClass="GreenButton" />
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{tarifaMB.actionRemove}"
 								update=":lume:pnTarifa,:lume:dtTarifa" process="@this" disabled="#{tarifaMB.entity.id == 0}" styleClass="RedButton" />
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{tarifaMB.actionNew}" update=":lume:pnTarifa,:lume:dtTarifa"
 								immediate="true" />
-						</div>
-					</p:panel>
+						</p:panelGrid>
+					</p:outputPanel>
 					<div class="EmptyBox20"></div>
 
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtTarifa" value="#{tarifaMB.tarifas}" var="tarifa" rows="15" paginator="true"

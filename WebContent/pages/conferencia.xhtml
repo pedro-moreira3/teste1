@@ -2,16 +2,15 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-
-                    <p:panel id="pnConferencias" styleClass="BordNone">
-                        <h1 class="CardBigTopic">Consulta Ajustes</h1>
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <p:outputPanel id="pnConferencias" styleClass="BordNone">
+                        <h1>Consulta Ajustes</h1>
                         <div class="SeparatorFull"></div>
-                        <p:panelGrid columns="4" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+                        <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
                             <p:outputLabel for="conferencia" value="Conferência : " />
-                            <p:selectOneMenu id="conferencia" value="#{conferenciaMB.entity}" style="width: 340px;" converter="conferencia">
+                            <p:selectOneMenu id="conferencia" value="#{conferenciaMB.entity}" converter="conferencia">
                                 <f:selectItem itemLabel="Selecione uma Conferência" value="#{null}" />
                                 <f:selectItems value="#{conferenciaMB.conferencias}" var="c" itemValue="#{c}" itemLabel="#{c.dataStr}" />
                                 <p:ajax update=":lume:pnConferencias" listener="#{conferenciaMB.pesquisa}" />
@@ -38,13 +37,13 @@
                                 <h:outputText value="#{conferencia.valorOriginal}">
                                     <f:convertNumber />
                                 </h:outputText>
-                                <h:outputText value="#{conferencia.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{conferenciaMB.getUnidadeString(conferencia.material.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
                             <p:column sortBy="#{conferencia.valorAlterado}" filterBy="#{conferencia.valorAlterado}" filterMatchMode="contains" headerText="Quantidade Alterada">
                                 <h:outputText value="#{conferencia.valorAlterado}">
                                     <f:convertNumber />
                                 </h:outputText>
-                                <h:outputText value="#{conferencia.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{conferenciaMB.getUnidadeString(conferencia.material.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
 
                             <p:column sortBy="#{conferencia.motivo}" filterMatchMode="contains" filterBy="#{conferencia.motivo}" headerText="Motivo">
@@ -55,14 +54,14 @@
                                 <h:outputText value="#{conferencia.dataCadastroStr}" />
                             </p:column>
                         </p:dataTable>
+                        <br />
                         <div class="SeparatorFull"></div>
-
-                        <div class="Container25 Responsive100">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton value="Excel" ajax="false" process="dtConferencias" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                 <p:dataExporter encoding="iso-8859-1" type="xls" target="dtConferencias" fileName="Conferencia" />
                             </p:commandButton>
-                        </div>
-                    </p:panel>
+                        </p:panelGrid>
+                    </p:outputPanel>
                 </div>
             </div>
         </div>

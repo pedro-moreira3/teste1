@@ -1,15 +1,13 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-                    <p:panel styleClass="BordNone">
-
-                        <h1 class="CardBigTopic">Devolução da Lavagem</h1>
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <p:outputPanel styleClass="BordNone">
+                        <h1>Devolução da Lavagem</h1>
                         <div class="SeparatorFull"></div>
-
-
+                        <br />
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtLavagensSolicitas" value="#{lavagemMB.lavagensSolicitadas}" var="lavagemSolicitada" rows="10" paginator="true"
                             selection="#{lavagemMB.lavagemSelecionadas}" rowKey="#{lavagemSolicitada}" paginatorPosition="bottom" widgetVar="tbLavagem">
                             <f:facet name="header">Lavagens Solicitadas</f:facet>
@@ -75,7 +73,7 @@
                             </p:column>
                         </p:dataTable>
 
-                        <div class="EmptyBox20"></div>
+                        <br />
 
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="#{lavagemMB.msg}" id="dtKits" selection="#{lavagemMB.lavagemKitSelecionada}" selectionMode="single"
                             value="#{lavagemMB.lavagemKitsSolicitados}" var="lk" rowKey="#{lk}" rows="7" paginator="true" paginatorPosition="bottom">
@@ -92,25 +90,22 @@
                             </p:column>
                         </p:dataTable>
 
-                        <p:panel id="pnButton" styleClass="BordNone">
-
+                        <p:outputPanel id="pnButton" styleClass="BordNone">
+                        	<br />
                             <div class="SeparatorFull"></div>
-                            <div class="Container25 Responsive100">
+                            <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                 <p:commandButton id="actionEsterilizar" icon="White fa  fa-bitbucket" value="Esterilizar" actionListener="#{lavagemMB.actionEsterilizar}"
                                     disabled="#{!lavagemMB.enableDevolucao}" update=":lume:dtKits,:lume:dtLavagensSolicitas,:lume:pnButton" process=":lume:dtKits, @this" styleClass="GreenButton" />
-                            </div>
-                            <div class="Container25 Responsive100">
                                 <p:commandButton id="devolucao" icon="White fa fa-gavel" value="Finalizar" actionListener="#{lavagemMB.actionDevolucao}" disabled="#{!lavagemMB.enableDevolucao}"
                                     update=":lume:dtKits,:lume:dtLavagensSolicitas,:lume:pnButton" process=":lume:dtKits, @this" styleClass="OrangeButton" />
-                            </div>
-                            <div class="Container25 Responsive100">
                                 <p:commandButton id="actionDescartar" icon="White fa fa-trash" value="Descartar" onclick="PF('descartar').show()"
                                     update=":lume:dtKits, :lume:dtLavagensSolicitas,:lume:pnButton" process=":lume:dtKits, @this" styleClass="RedButton"
                                     disabled="#{lavagemMB.lavagemKitSelecionada == null || lavagemMB.lavagemKitSelecionada.lavagem.clinica == false}">
                                     <p:confirm header="Confirmação" message="Este item será retirado do estoque, deseja confirmar?" icon="ui-icon-alert" />
                                 </p:commandButton>
-                            </div>
-                        </p:panel>
+                            </p:panelGrid>
+                        </p:outputPanel>
+                        
                         <p:dialog id="descartarTela" widgetVar="descartar" header="Descartar" responsive="true" modal="true">
                             <p:panel id="pnDescartar" style="display: inline-block;">
                                 <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
@@ -128,13 +123,13 @@
                                     </p:selectOneMenu>
 
                                 </p:panelGrid>
-                                <div class="Separator"></div>
-                                <div class="Container100 Responsive100">
+                                <p:separator class="SeparatorFull" />
+                                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                     <p:commandButton id="persistDescartar" icon="White fa fa-save" value="Salvar" actionListener="#{lavagemMB.actionDescarte}"
                                         update=":lume:quantidadeDescarte, :lume:justificativa,:lume:dtKits, :lume:dtLavagensSolicitas,:lume:pnButton, :lume:pnDescartar"
                                         process=":lume:quantidadeDescarte, :lume:justificativa,:lume:dtKits, @this, :lume:pnDescartar" oncomplete="handleDialogRequest(xhr, status, args)"
                                         styleClass="GreenButton" />
-                                </div>
+                                </p:panelGrid>
                             </p:panel>
                         </p:dialog>
                         <script type="text/javascript">
@@ -145,7 +140,7 @@
 
 																									}
 																								</script>
-                    </p:panel>
+                    </p:outputPanel>
                 </div>
             </div>
         </div>

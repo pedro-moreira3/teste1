@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.security.bo.UsuarioBO;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.entity.Usuario;
@@ -48,7 +49,7 @@ public class UsuarioMB extends LumeManagedBean<Usuario> {
         } else {
             if (this.getEntity().getUsuIntCod() == 0 || this.resetarSenha) {
                 try {
-                    bo.doSenhaPadrao(this.getEntity());
+                    bo.doSenhaPadrao(this.getEntity(), UtilsFrontEnd.getEmpresaLogada());
                 } catch (SendFailedException e) {
                     this.addWarn(Mensagens.getMensagem(Mensagens.EMAIL_INVALIDO), "");
                     this.log.error(Mensagens.getMensagem(Mensagens.EMAIL_INVALIDO), e);
@@ -61,10 +62,11 @@ public class UsuarioMB extends LumeManagedBean<Usuario> {
         }
     }
 
+    //this.setEmpresaSelecionada(entity.getEmpresa());
     @Override
     public void setEntity(Usuario entity) {
         if (entity != null) {
-            this.setEmpresaSelecionada(entity.getEmpresa());
+            this.setEmpresaSelecionada(UtilsFrontEnd.getEmpresaLogada());
         }
         super.setEntity(entity);
     }
@@ -84,10 +86,11 @@ public class UsuarioMB extends LumeManagedBean<Usuario> {
         return this.empresaSelecionada;
     }
 
+    //this.setEntityList(usuarioBO.getAllUsuariosByEmpresa(this.getEntity().getEmpresa()));
     public void setEmpresaSelecionada(Empresa empresaSelecionada) {
         //getEntity().setEmpresa(empresaSelecionada);
         UsuarioBO usuarioBO = new UsuarioBO();
-        this.setEntityList(usuarioBO.getAllUsuariosByEmpresa(this.getEntity().getEmpresa()));
+        this.setEntityList(usuarioBO.getAllUsuariosByEmpresa(UtilsFrontEnd.getEmpresaLogada()));
         this.empresaSelecionada = empresaSelecionada;
     }
 }

@@ -9,7 +9,7 @@ import javax.faces.convert.FacesConverter;
 
 import org.apache.log4j.Logger;
 
-import br.com.lume.security.bo.EmpresaBO;
+import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 
 @FacesConverter(forClass = Empresa.class, value = "empresa")
@@ -24,8 +24,8 @@ public class EmpresaConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long empIntCod = Long.parseLong(value);
-                EmpresaBO empresaBO = new EmpresaBO();
-                return empresaBO.find(empIntCod);
+                
+                return EmpresaSingleton.getInstance().getBo().find(empIntCod);
             }
         } catch (Exception e) {
             this.log.error("Erro no getAsObject", e);

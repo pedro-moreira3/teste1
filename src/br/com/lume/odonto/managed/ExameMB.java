@@ -20,6 +20,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.imgscalr.Scalr;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
@@ -27,8 +28,10 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.ExameBO;
+import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.exame.ExameSingleton;
+//import br.com.lume.odonto.bo.DominioBO;
+//import br.com.lume.odonto.bo.ExameBO;
 import br.com.lume.odonto.entity.Exame;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -56,23 +59,37 @@ public class ExameMB extends LumeManagedBean<Exame> {
 
     private boolean habilitaPDF = false, habilitaImage = false;
 
-    private ExameBO exameBO;
+  //  private ExameBO exameBO;
 
-    private DominioBO dominioBO;
+ //   private DominioBO dominioBO;
 
     public ExameMB() {
-        super(new ExameBO());
-        this.exameBO = new ExameBO();
-        this.dominioBO = new DominioBO();
+        super(ExameSingleton.getInstance().getBo());
+      //  this.exameBO = new ExameBO();
+      //  this.dominioBO = new DominioBO();
         this.setClazz(Exame.class);
     }
+    
+
+  public StreamedContent getArquivo() {
+      StreamedContent arquivo = null;
+      if (getEntity().getAnexo() != null) {
+          try {
+              ByteArrayInputStream bis = new ByteArrayInputStream(getEntity().getAnexo());
+              arquivo = new DefaultStreamedContent(bis, null, getEntity().getNomeAnexo());
+          } catch (Exception e) {
+              e.printStackTrace();
+          }
+      }
+      return arquivo;
+  }
 
     @Override
     public void actionPersist(ActionEvent event) {
         try {
             if (this.getEntity().getAnexo() != null) {
                 this.getEntity().setPaciente(this.pacienteMB.getEntity());
-                this.exameBO.persist(this.getEntity());
+                ExameSingleton.getInstance().getBo().persist(this.getEntity());
                 this.setEntity(new Exame());
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 this.pacienteAnterior = null;
@@ -115,7 +132,7 @@ public class ExameMB extends LumeManagedBean<Exame> {
             } else {
                 this.addError(OdontoMensagens.getMensagem("exame.extensao.invalida"), "");
             }
-            if (size > ((Float.parseFloat(this.dominioBO.findByEmpresaAndObjetoAndTipoAndNome("exame", "upload", "tamanho").getValor())) * 1024 * 1024)) { // MEGA
+            if (size > ((Float.parseFloat(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("exame", "upload", "tamanho").getValor())) * 1024 * 1024)) { // MEGA
                 this.addError(OdontoMensagens.getMensagem("exame.tamanho.invalido"), "");
             }
         } catch (Exception e) {
@@ -200,7 +217,7 @@ public class ExameMB extends LumeManagedBean<Exame> {
         byte fileContent[] = Base64.decodeBase64(this.getArquivoBase64().split(",")[1]);
         try {
             this.getEntity().setAnexoAlterado(fileContent);
-            this.exameBO.persist(this.getEntity());
+            ExameSingleton.getInstance().getBo().persist(this.getEntity());
             this.actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
@@ -222,7 +239,7 @@ public class ExameMB extends LumeManagedBean<Exame> {
         if (this.pacienteAnterior == null || this.pacienteAnterior.getId() != pacienteAtual.getId()) {
             this.pacienteAnterior = pacienteAtual;
             if (this.pacienteMB != null && this.pacienteMB.getEntity() != null) {
-                this.exames = this.exameBO.listByPaciente(this.pacienteMB.getEntity());
+                this.exames = ExameSingleton.getInstance().getBo().listByPaciente(this.pacienteMB.getEntity());
                 Collections.sort(this.exames);
             }
         }

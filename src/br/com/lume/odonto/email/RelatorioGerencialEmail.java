@@ -12,14 +12,17 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
-import br.com.lume.odonto.bo.ProfissionalBO;
-import br.com.lume.odonto.bo.RelatorioGerencialBO;
-import br.com.lume.odonto.entity.OdontoPerfil;
+//import br.com.lume.odonto.bo.ProfissionalBO;
+//import br.com.lume.odonto.bo.RelatorioGerencialBO;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.security.bo.EmpresaBO;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.relatorioGerencial.RelatorioGerencialSingleton;
+import br.com.lume.security.EmpresaSingleton;
+//import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 
 public class RelatorioGerencialEmail implements Job {
@@ -37,12 +40,12 @@ public class RelatorioGerencialEmail implements Job {
 
     public void doRelatorioGerencialEmail() {
         try {
-            ProfissionalBO profissionalBO = new ProfissionalBO();
-            EmpresaBO empresaBO = new EmpresaBO();
+          //  ProfissionalBO profissionalBO = new ProfissionalBO();
+      //      EmpresaBO empresaBO = new EmpresaBO();
             List<String> perfis = new ArrayList<>();
             perfis.add(OdontoPerfil.ADMINISTRADOR);
             perfis.add(OdontoPerfil.ADMINISTRADOR_CLINICA);
-            List<Profissional> profissionais = profissionalBO.listByPerfil(perfis);
+            List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByPerfil(perfis);
             Calendar c = Calendar.getInstance();
 
             c.add(Calendar.DAY_OF_MONTH, -1);
@@ -50,15 +53,15 @@ public class RelatorioGerencialEmail implements Job {
             Date hoje = c.getTime();
 
             for (Profissional profissional : profissionais) {
-                Empresa empresa = empresaBO.find(profissional.getIdEmpresa());
+                Empresa empresa = EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa());
                 if (empresa.getEmpChaSts().equals("false") && empresa.getEmpDtmExpiracao() != null && empresa.getEmpDtmExpiracao().after(hoje)) {
 
                     String email = profissional.getDadosBasico().getEmail();
                     if (email != null) {
                         Map<String, String> valores = new HashMap<>();
-                        RelatorioGerencialBO bo = new RelatorioGerencialBO();
+                       // RelatorioGerencialBO bo = new RelatorioGerencialBO();
 
-                        valores.put("#relatorio", bo.gerarRelatorioEmail(empresa));
+                        valores.put("#relatorio", RelatorioGerencialSingleton.getInstance().getBo().gerarRelatorioEmail(empresa));
                         valores.put("#cliente", profissional.getDadosBasico().getNome());
 
                         // TODO TIRAR ISSO

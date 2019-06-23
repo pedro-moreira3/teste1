@@ -7,8 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.UserBO;
 import br.com.lume.odonto.entity.User;
+import br.com.lume.user.UserSingleton;
 
 @FacesConverter(forClass = User.class, value = "user")
 public class UsuarioConverter implements Converter, Serializable {
@@ -20,7 +20,7 @@ public class UsuarioConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new UserBO().find(id);
+                return UserSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

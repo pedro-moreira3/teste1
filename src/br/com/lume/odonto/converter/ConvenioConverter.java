@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.ConvenioBO;
+import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.odonto.entity.Convenio;
 
 @FacesConverter(forClass = Convenio.class, value = "convenio")
@@ -21,7 +21,7 @@ public class ConvenioConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new ConvenioBO().find(id);
+                return ConvenioSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

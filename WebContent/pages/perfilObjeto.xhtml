@@ -2,9 +2,9 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
 					<style>
 .ui-picklist .ui-picklist-list {
 	height: 500px;
@@ -15,15 +15,15 @@
 </style>
 
 
-					<p:panel styleClass="BordNone">
+					<p:outputPanel styleClass="BordNone">
 
-						<h1 class="CardBigTopic">Vinculo de Perfil / Objeto</h1>
+						<h1>Vinculo de Perfil / Objeto</h1>
 						<div class="SeparatorFull"></div>
 
 						<h:panelGroup styleClass="lumeField">
 							<p:outputLabel for="perfil" value="Perfil : " />
 							<f:ajax render="picklist">
-								<p:selectOneMenu id="perfil" value="#{perfilObjetoMB.entity}" style="width: 340px;" required="true" converter="perfil">
+								<p:selectOneMenu id="perfil" value="#{perfilObjetoMB.entity}" required="true" converter="perfil">
 									<f:selectItem itemValue="#{null}" itemLabel="Selecione um perfil" />
 									<f:selectItems value="#{perfilObjetoMB.entityList}" var="perfil" itemLabel="#{perfil.perStrDes}" itemValue="#{perfil}" />
 								</p:selectOneMenu>
@@ -40,23 +40,16 @@
 								<f:facet name="targetCaption">Selecionados</f:facet>
 							</p:pickList>
 						</h:panelGroup>
-
-
+						<br />
 						<div class="SeparatorFull"></div>
-						<p:panel id="botoes" styleClass="BordNone">
-
-							<div class="Container25 Responsive100">
+						<p:outputPanel id="botoes" styleClass="BordNone">
+							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 								<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{perfilObjetoMB.actionNew}" update="@form" immediate="true"
 									styleClass="GreenButton" />
-
-							</div>
-							<div class="Container25 Responsive100">
 								<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{perfilObjetoMB.actionPersist}" update="@form" />
-
-
-							</div>
-						</p:panel>
-					</p:panel>
+							</p:panelGrid>
+						</p:outputPanel>
+					</p:outputPanel>
 				</div>
 			</div>
 		</div>

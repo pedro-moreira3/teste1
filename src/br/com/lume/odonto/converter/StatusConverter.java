@@ -7,8 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.StatBO;
 import br.com.lume.odonto.entity.Stat;
+import br.com.lume.stat.StatSingleton;
 
 @FacesConverter(forClass = Stat.class, value = "status")
 public class StatusConverter implements Converter, Serializable {
@@ -20,7 +20,7 @@ public class StatusConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new StatBO().find(id);
+                return StatSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -11,15 +11,17 @@ import javax.faces.bean.ViewScoped;
 import org.apache.log4j.Logger;
 import org.primefaces.model.chart.PieChartModel;
 
+import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
-import br.com.lume.odonto.bo.AgendamentoBO;
-import br.com.lume.odonto.bo.ReservaBO;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Agendamento;
-import br.com.lume.odonto.entity.StatusAgendamento;
-import br.com.lume.security.bo.EmpresaBO;
+import br.com.lume.reserva.ReservaSingleton;
 
+//TODO esse menu é fila de atendimento e não um relatorio,
+//necessario mudar o nome dessa classe, verificar permissoes e objetos, e demais relacoes.
 @ManagedBean
 @ViewScoped
 public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
@@ -40,12 +42,10 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private HashSet<String> profissionaisAgendamento;
 
-    private ReservaBO reservaBO = new ReservaBO();
-
     private List<Integer> cadeiras;
 
     public RelatorioAtendimentoMB() {
-        super(new AgendamentoBO());
+        super(AgendamentoSingleton.getInstance().getBo());
         pieModel = new PieChartModel();
         this.setClazz(Agendamento.class);
         this.carregaLista();
@@ -60,12 +60,12 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                 a.setIniciouAs(Utils.getDataAtual(a.getIniciouAs()));
                 a.setFinalizouAs(Utils.getDataAtual(a.getFinalizouAs()));
 
-                AgendamentoBO bo = ((AgendamentoBO) this.getbO());
-                if (a.getStatus().equals(StatusAgendamento.CANCELADO.getSigla()) || a.getStatus().equals(StatusAgendamento.FALTA.getSigla())) {
-                    reservaBO.cancelaReservas(a);
+             
+                if (a.getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || a.getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) {
+                    ReservaSingleton.getInstance().getBo().cancelaReservas(a, UtilsFrontEnd.getProfissionalLogado());
                 }
                 validacoes(a);
-                bo.persist(a);
+                AgendamentoSingleton.getInstance().getBo().persist(a);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             } else {
                 getbO().refresh(a);
@@ -77,23 +77,23 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void validacoes(Agendamento a) {
-        if (a.getIniciouAs() == null && a.getChegouAs() != null && (!a.getStatus().equals(StatusAgendamento.CANCELADO.getSigla()) || !a.getStatus().equals(
-                StatusAgendamento.REMARCADO.getSigla()) || !a.getStatus().equals(StatusAgendamento.ATENDIDO.getSigla()))) {
-            a.setStatus(StatusAgendamento.CLIENTE_NA_CLINICA.getSigla());
+        if (a.getIniciouAs() == null && a.getChegouAs() != null && (!a.getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || !a.getStatusNovo().equals(
+                StatusAgendamentoUtil.REMARCADO.getSigla()) || !a.getStatusNovo().equals(StatusAgendamentoUtil.ATENDIDO.getSigla()))) {
+            a.setStatusNovo(StatusAgendamentoUtil.CLIENTE_NA_CLINICA.getSigla());
         }
-        if (a.getFinalizouAs() == null && a.getIniciouAs() != null && (!a.getStatus().equals(StatusAgendamento.CANCELADO.getSigla()) || !a.getStatus().equals(
-                StatusAgendamento.REMARCADO.getSigla()) || !a.getStatus().equals(StatusAgendamento.ATENDIDO.getSigla()))) {
-            a.setStatus(StatusAgendamento.EM_ATENDIMENTO.getSigla());
+        if (a.getFinalizouAs() == null && a.getIniciouAs() != null && (!a.getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || !a.getStatusNovo().equals(
+                StatusAgendamentoUtil.REMARCADO.getSigla()) || !a.getStatusNovo().equals(StatusAgendamentoUtil.ATENDIDO.getSigla()))) {
+            a.setStatusNovo(StatusAgendamentoUtil.EM_ATENDIMENTO.getSigla());
         }
         if (a.getFinalizouAs() != null) {
-            a.setStatus(StatusAgendamento.ATENDIDO.getSigla());
+            a.setStatusNovo(StatusAgendamentoUtil.ATENDIDO.getSigla());
         }
     }
 
     public void carregaLista() {
         try {
-            AgendamentoBO bo = ((AgendamentoBO) this.getbO());
-            agendamentos = bo.listAgendmantosValidosByDate(filtro);
+           
+            agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosByDate(filtro, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             carregarCadeiras();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -107,29 +107,30 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private void carregarCadeiras() {
         cadeiras = new ArrayList<>();
-        for (int i = 1; i <= EmpresaBO.getEmpresaLogada().getEmpIntCadeira(); i++) {
+        for (int i = 1; i <= UtilsFrontEnd.getEmpresaLogada().getEmpIntCadeira(); i++) {
             cadeiras.add(i);
         }
     }
 
     public String getPacientesAgendamento() {
         if (filtro.equals("CURRENT_DATE")) {
+            
             StringBuilder sb = new StringBuilder();
-
-            AgendamentoBO bo = ((AgendamentoBO) getbO());
-            Long countByAtendidos = bo.countByAtendidos();
+            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+         
+            Long countByAtendidos = AgendamentoSingleton.getInstance().getBo().countByAtendidos(idEmpresaLogada);
             sb.append("['Atendidos', " + countByAtendidos + "],");
 
-            Long countByEmAtendimento = bo.countByEmAtendimento();
+            Long countByEmAtendimento = AgendamentoSingleton.getInstance().getBo().countByEmAtendimento(idEmpresaLogada);
             sb.append("['Em Atendimento', " + countByEmAtendimento + "],");
 
-            Long countByAtrasado = bo.countByAtrasado();
+            Long countByAtrasado = AgendamentoSingleton.getInstance().getBo().countByAtrasado(idEmpresaLogada);
             sb.append("['Atrasados', " + countByAtrasado + "],");
 
-            Long countByClienteNaClinica = bo.countByClienteNaClinica();
+            Long countByClienteNaClinica = AgendamentoSingleton.getInstance().getBo().countByClienteNaClinica(idEmpresaLogada);
             sb.append("['Na Clínica', " + countByClienteNaClinica + "],");
 
-            Long countByPacienteNaoChegou = bo.countByPacienteNaoChegou();
+            Long countByPacienteNaoChegou = AgendamentoSingleton.getInstance().getBo().countByPacienteNaoChegou(idEmpresaLogada);
             sb.append("['Consultas restantes', " + countByPacienteNaoChegou + "],");
             return sb.toString();
         } else {

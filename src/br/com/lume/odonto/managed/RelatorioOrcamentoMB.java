@@ -14,9 +14,10 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Utils;
-import br.com.lume.odonto.bo.RelatorioOrcamentoBO;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.RelatorioOrcamento;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.relatorioOrcamento.RelatorioOrcamentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -32,11 +33,8 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<RelatorioOrcamento> {
 
     private BigDecimal somaValorTotal = new BigDecimal(0), somaValorTotalDesconto = new BigDecimal(0);
 
-    private RelatorioOrcamentoBO relatorioOrcamentoBO;
-
     public RelatorioOrcamentoMB() {
-        super(new RelatorioOrcamentoBO());
-        this.relatorioOrcamentoBO = new RelatorioOrcamentoBO();
+        super(RelatorioOrcamentoSingleton.getInstance().getBo());     
         this.setClazz(RelatorioOrcamento.class);
         Calendar c = Calendar.getInstance();
        // this.fim = c.getTime();
@@ -57,7 +55,7 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<RelatorioOrcamento> {
             
             this.somaValorTotal = new BigDecimal(0);
             this.somaValorTotalDesconto = new BigDecimal(0);
-            this.relatorioOrcamentos = this.relatorioOrcamentoBO.listAll(this.inicio, this.fim);
+            this.relatorioOrcamentos = RelatorioOrcamentoSingleton.getInstance().getBo().listAll(this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (this.relatorioOrcamentos != null && !this.relatorioOrcamentos.isEmpty()) {
                 for (RelatorioOrcamento relatorioOrcamento : this.relatorioOrcamentos) {
                     this.somaValorTotal = this.somaValorTotal.add(relatorioOrcamento.getValorTotal());

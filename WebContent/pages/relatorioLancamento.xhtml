@@ -2,22 +2,22 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
-					<p:panel id="pnPrincipal" styleClass="BordNone">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
 
-						<h1 class="CardBigTopic">Relatório de Recebimentos</h1>
+						<h1>Relatório de Recebimentos</h1>
 						<div class="SeparatorFull"></div>
 
 						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
 
 							<p:outputLabel for="inicio" value="Inicio : " />
-							<p:calendar id="inicio" value="#{relatorioLancamentoMB.inicio}" autocomplete="off" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid20"/>
+							<p:calendar id="inicio" value="#{relatorioLancamentoMB.inicio}" autocomplete="off" pattern="dd/MM/yyyy" mask="true" required="true" />
 
 							<p:outputLabel for="fim" value="Fim : " />
-							<p:calendar id="fim" value="#{relatorioLancamentoMB.fim}" autocomplete="off" pattern="dd/MM/yyyy" mask="true" required="true" class="Wid20"/>
+							<p:calendar id="fim" value="#{relatorioLancamentoMB.fim}" autocomplete="off" pattern="dd/MM/yyyy" mask="true" required="true" />
 
 							<p:outputLabel for="status" value="Status : " />
 							<p:selectOneMenu id="status" value="#{relatorioLancamentoMB.status}">
@@ -28,19 +28,15 @@
 						</p:panelGrid>
 
 						<div class="SeparatorFull"></div>
-						<div class="Container25 Responsive100">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioLancamentoMB.filtra}"
 								update="dtPrincipal,pnPrincipal" process="@this,pnPrincipal,inicio,fim" styleClass="OrangeButton" />
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
 								<p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="RelatorioLancamento" />
 							</p:commandButton>
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioLancamentoMB.actionNew}"
 								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1"  />
-						</div>
+						</p:panelGrid>
 
 
 						<div class="EmptyBox20"></div>
@@ -48,19 +44,18 @@
 						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioLancamentoMB.lancamentos}" var="lancamento" rows="10"
 							paginator="true" rowKey="#{lancamento}" paginatorPosition="bottom">
 							<f:facet name="header">Lançamentos</f:facet>
-							<p:column filterBy="#{lancamento.dataCreditoStr}" sortBy="#{lancamento.dataCreditoStr}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Data Crédito" />
-								</f:facet>
-								<h:outputText value="#{lancamento.dataCreditoStr}" title="#{lancamento.id}"/>
-							</p:column>
 							<p:column filterBy="#{lancamento.dataPagamentoStr}" sortBy="#{lancamento.dataPagamentoStrOrd}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Data Pagamento" />
 								</f:facet>
 								<h:outputText value="#{lancamento.dataPagamentoStr}" />
 							</p:column>
-
+							<p:column filterBy="#{lancamento.dataCreditoStr}" sortBy="#{lancamento.dataCreditoStr}" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Data Crédito" />
+								</f:facet>
+								<h:outputText value="#{lancamento.dataCreditoStr}" title="#{lancamento.id}"/>
+							</p:column>
 							<p:column filterBy="#{lancamento.status}" sortBy="#{lancamento.status}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Status" />
@@ -108,7 +103,7 @@
 								</f:facet>
 							</p:column>
 						</p:dataTable>
-					</p:panel>
+					</p:outputPanel>
 
 				</div>
 			</div>

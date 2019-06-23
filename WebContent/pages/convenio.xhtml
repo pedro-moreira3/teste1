@@ -1,94 +1,93 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
 					<h:inputHidden id="idConvenio" value="#{convenioMB.entity.id}" />
-					<p:panel id="pnConvenio" styleClass="BordNone">
+					<p:outputPanel id="pnConvenio" styleClass="BordNone">
 
-						<h1 class="CardBigTopic">Cadastro de Convênios</h1>
+						<h1>Cadastro de Convênios</h1>
 						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
 
 							<p:outputLabel for="nome" value="Nome/Razão : " />
 							<p:inputText id="nome" value="#{convenioMB.entity.dadosBasico.nome}" required="true" maxlength="200" />
 
 							<p:outputLabel for="email" value="E-Mail : " />
-							<p:inputText id="email" value="#{convenioMB.entity.dadosBasico.email}" required="true" maxlength="200" validatorMessage="E-mail inválido">
-								<f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" />
+							<h:panelGroup>
+								<p:inputText id="email" value="#{convenioMB.entity.dadosBasico.email}" required="true" maxlength="200" validatorMessage="E-mail inválido">
+									<f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" />
+								</p:inputText>
 								<p:message for="email" styleClass="msg" />
-							</p:inputText>
+							</h:panelGroup>
+							
 
 							<p:outputLabel for="documento" value="CNPJ : " />
-							<p:inputMask id="documento" required="false" value="#{convenioMB.entity.dadosBasico.documento}" maxlength="18" class="Wid20" mask="99.999.999/9999-99" />
+							<p:inputMask id="documento" required="false" value="#{convenioMB.entity.dadosBasico.documento}" maxlength="18" mask="99.999.999/9999-99" />
 
 							<p:outputLabel for="cep" value="CEP : " />
-							<p:column>
-								<p:inputMask id="cep" required="true" value="#{convenioMB.entity.dadosBasico.cep}" styleClass="Wid80 MarRight10" maxlength="8" mask="99999-999" class="Wid10">
+							<h:panelGroup style="display: flex">
+								<p:inputMask id="cep" required="true" value="#{convenioMB.entity.dadosBasico.cep}" styleClass="MarRight10" maxlength="8" mask="99999-999">
 									<f:validator validatorId="cepValidator" />
 								</p:inputMask>
 								<p:commandButton id="cepsearch" icon="fa fa-search White" actionListener="#{convenioMB.actionBuscaCep}" update=":lume:endereco,:lume:bairro,:lume:cidade,:lume:estado"
-									process="@this,:lume:cep" />
-							</p:column>
+									process="@this,:lume:cep" style="width: 33px !important" />
+							</h:panelGroup>
 
 							<p:outputLabel for="endereco" value="Endereço : " />
 							<p:inputText id="endereco" required="true" value="#{convenioMB.entity.dadosBasico.endereco}" maxlength="200" />
 
 							<p:outputLabel for="numero" value="Número : " />
-							<p:inputMask id="numero" required="true" mask="9?99999" size="10" value="#{convenioMB.entity.dadosBasico.numero}" class="Wid10" />
+							<p:inputMask id="numero" required="true" mask="9?99999" size="10" value="#{convenioMB.entity.dadosBasico.numero}" style="width: 100%" />
 
 							<p:outputLabel for="bairro" value="Bairro : " />
-							<p:inputText id="bairro" required="true" value="#{convenioMB.entity.dadosBasico.bairro}" maxlength="200" class="Wid40" />
+							<p:inputText id="bairro" required="true" value="#{convenioMB.entity.dadosBasico.bairro}" maxlength="200" />
 
 							<p:outputLabel for="complemento" value="Complemento : " />
 							<p:inputText id="complemento" value="#{convenioMB.entity.dadosBasico.complemento}" maxlength="200" />
 
 							<p:outputLabel for="cidade" value="Cidade : " />
-							<p:inputText id="cidade" required="true" value="#{convenioMB.entity.dadosBasico.cidade}" maxlength="200" class="Wid40" />
+							<p:inputText id="cidade" required="true" value="#{convenioMB.entity.dadosBasico.cidade}" maxlength="200" />
 
 							<p:outputLabel for="estado" value="Estado : " />
-							<p:selectOneMenu id="estado" required="true" value="#{convenioMB.entity.dadosBasico.uf}" class="Wid40">
+							<p:selectOneMenu id="estado" required="true" value="#{convenioMB.entity.dadosBasico.uf}">
 								<f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
 								<f:selectItems value="#{convenioMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
 							</p:selectOneMenu>
 
 							<p:outputLabel for="telResidencia" value="Telefone Comercial : " />
-							<p:inputText id="telResidencia" value="#{convenioMB.entity.dadosBasico.telefone}" styleClass="telefone Wid20" />
+							<p:inputText id="telResidencia" value="#{convenioMB.entity.dadosBasico.telefone}" styleClass="telefone" />
 
 							<p:outputLabel for="telCelular" value="Telefone Celular : " />
-							<p:inputText id="telCelular" value="#{convenioMB.entity.dadosBasico.celular}" styleClass="telefone Wid20" />
+							<p:inputText id="telCelular" value="#{convenioMB.entity.dadosBasico.celular}" styleClass="telefone" />
 
 							<p:outputLabel for="tipo" value="Tipo : " />
-							<p:selectOneMenu id="tipo" required="true" value="#{convenioMB.entity.tipo}" class="Wid40">
+							<p:selectOneMenu id="tipo" required="true" value="#{convenioMB.entity.tipo}">
 								<f:selectItem itemValue="#{null}" itemLabel="Selecione um Tipo" />
 								<f:selectItems value="#{convenioMB.dominios}" var="dominio" itemValue="#{dominio.valor}" itemLabel="#{dominio.nome}" />
 							</p:selectOneMenu>
 
 							<p:outputLabel for="dataVigencia" value="Data Inicial de Vigência : " />
 							<p:calendar id="dataVigencia" required="true" value="#{convenioMB.entity.dataInicioVigencia}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
-								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+100" class="Wid10" />
+								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+100" />
 
 							<p:outputLabel for="dataVigenciaFinal" value="Data Final de Vigência : " />
 							<p:calendar id="dataVigenciaFinal" required="true" value="#{convenioMB.entity.dataFimVigencia}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
-								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+100" class="Wid10" />
+								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+100" />
 
 						</p:panelGrid>
 						<div class="SeparatorFull"></div>
-						<div class="Container25 Responsive100">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{convenioMB.actionPersist}" update=":lume:pnConvenio,:lume:dtConvenio"
 								process=":lume:pnConvenio" styleClass="GreenButton" />
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{convenioMB.actionRemove}" update=":lume:pnConvenio,:lume:dtConvenio"
 								process="@this" disabled="#{convenioMB.entity.id == 0}" styleClass="RedButton" />
-						</div>
-						<div class="Container25 Responsive100">
 							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{convenioMB.actionNew}" update=":lume:pnConvenio,:lume:dtConvenio" immediate="true" />
-						</div>
+						</p:panelGrid>
 
 						<div class="EmptyBox20"></div>
-					</p:panel>
+					</p:outputPanel>
 
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtConvenio" value="#{convenioMB.convenios}" var="convenio" rows="7" paginator="true" selection="#{convenioMB.entity}"
 						selectionMode="single" rowKey="#{convenio}" paginatorPosition="bottom">

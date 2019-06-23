@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.FornecedorBO;
+import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.odonto.entity.Fornecedor;
 
 @FacesConverter(forClass = Fornecedor.class, value = "fornecedor")
@@ -20,7 +20,7 @@ public class FornecedorConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new FornecedorBO().find(id);
+                return FornecedorSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

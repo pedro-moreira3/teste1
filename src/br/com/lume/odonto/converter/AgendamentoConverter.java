@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.AgendamentoBO;
+import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.odonto.entity.Agendamento;
 
 @FacesConverter(forClass = Agendamento.class, value = "agendamento")
@@ -20,7 +20,7 @@ public class AgendamentoConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new AgendamentoBO().find(id);
+                return AgendamentoSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

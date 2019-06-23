@@ -13,10 +13,10 @@ import org.primefaces.event.TabChangeEvent;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.PacienteBO;
-import br.com.lume.odonto.bo.PlanoTratamentoBO;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -36,12 +36,10 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     @ManagedProperty(value = "#{ortodontiaMB}")
     private OrtodontiaMB ortodontiaMB;
 
-    private PlanoTratamentoBO planoTratamentoBO = new PlanoTratamentoBO();
-
     private Integer activeIndex;
 
     public TabPacienteMB() {
-        super(new PacienteBO());
+        super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
     }
 
@@ -50,7 +48,7 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
         String idpt = JSFHelper.getRequestParameterMap("idpt");
         if (idpt != null) {
             try {
-                PlanoTratamento pt = planoTratamentoBO.find(new Long(idpt));
+                PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().find(new Long(idpt));
                 pacienteMB.setEntity(pt.getPaciente());
                 planoTratamentoMB.carregarDados();
                 planoTratamentoMB.setEntity(pt);
@@ -97,7 +95,7 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     private void refreshPlanoTratamento(List<PlanoTratamento> planosTratamento) throws Exception {
         if (planosTratamento != null && !planosTratamento.isEmpty()) {
             for (PlanoTratamento planoTratamento : planosTratamento) {
-                planoTratamentoBO.refresh(planoTratamento);
+                PlanoTratamentoSingleton.getInstance().getBo().refresh(planoTratamento);
             }
         }
     }

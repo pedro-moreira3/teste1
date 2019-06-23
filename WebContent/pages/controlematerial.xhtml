@@ -1,12 +1,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-                    <p:panel styleClass="BordNone">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <p:outputPanel styleClass="BordNone">
 
-                        <h1 class="CardBigTopic">Empréstimo de Kits</h1>
+                        <h1>Empréstimo de Kits</h1>
                         <div class="SeparatorFull"></div>
 
                         <p:fieldset legend="Kits">
@@ -50,7 +50,7 @@
                                 </p:column>
                                 <p:column headerText="Disponibilizados">
                                     <p:commandButton icon="White fa fa-search" oncomplete="PF('dlgDisponibilizados').show();" update=":lume:dtDisponibilizados" process="@this"
-                                        actionListener="#{controleMaterialMB.carregarItensDisponibilizados(reservaKit)}" />
+                                        actionListener="#{controleMaterialMB.carregarItensDisponibilizados(reservaKit)}" style="width: 33px !important" />
                                 </p:column>
                             </p:dataTable>
                         </p:fieldset>
@@ -67,10 +67,9 @@
                                 <p:column filterBy="#{kitItemSelecionado.quantidade * controleMaterialMB.quantidadeReservaKit}"
                                     sortBy="#{kitItemSelecionado.quantidade * controleMaterialMB.quantidadeReservaKit}" filterMatchMode="contains" headerText="Quantidade">
                                     <h:outputText value="#{kitItemSelecionado.quantidade * controleMaterialMB.quantidadeReservaKit}" />
-                                    <h:outputText value="#{kitItemSelecionado.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                    <h:outputText value="#{controleMaterialMB.getUnidadeString(kitItemSelecionado.item)}" styleClass="unidadeMedidaString" />
                                 </p:column>
                             </p:dataTable>
-                            <br />
                             <br />
 
                             <p:dataTable filterDelay="1500"  reflow="true" emptyMessage=" " id="dtMateriaisDisponiveis" value="#{controleMaterialMB.materiaisDisponiveis}" var="materiaisSelecionado" rows="7"
@@ -91,7 +90,7 @@
                                     <h:outputText value="#{materiaisSelecionado.quantidadeAtual}">
                                         <f:convertNumber />
                                     </h:outputText>
-                                    <h:outputText value="#{materiaisSelecionado.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                    <h:outputText value="#{controleMaterialMB.getUnidadeString(materiaisSelecionado.item)}" styleClass="unidadeMedidaString" />
                                 </p:column>
                                 <p:column filterBy="#{materiaisSelecionado.marca.nome}" sortBy="#{materiaisSelecionado.marca.nome}" filterMatchMode="contains" headerText="Marca">
                                     <h:outputText value="#{materiaisSelecionado.marca.nome}" />
@@ -106,23 +105,21 @@
                                     <h:outputText value="#{materiaisSelecionado.local.descricao}"/>
                                </p:column>
                             </p:dataTable>
+                            <br />
                             <div class="SeparatorFull"></div>
-                            <div class="Container25 Responsive100">
+                            <p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid">
                                 <p:commandButton id="disponibiliza" icon="White fa fa-mail-forward" value="Disponibilizar" actionListener="#{controleMaterialMB.actionDisponibilizar}"
                                     disabled="#{!controleMaterialMB.enableDisponibilizar}"
                                     update=":lume:dtMateriaisDisponiveis, :lume:dtItensPendentes, :lume:dtKitsPendentes, :lume:disponibiliza , :lume:entregar,:lume:naoUtilizado"
                                     process=":lume:dtMateriaisDisponiveis, @this" styleClass="GreenButton" />
-                            </div>
-                            <div class="Container25 Responsive100">
                                 <p:commandButton id="entregar" icon="White fa fa-sign-out" value="Entregar" disabled="#{!controleMaterialMB.enableEntregar}"
                                     actionListener="#{controleMaterialMB.actionEntregar}"
                                     update=":lume:dtMateriaisDisponiveis,:lume:dtItensPendentes,:lume:dtKitsPendentes,:lume:disponibiliza,:lume:entregar,:lume:naoUtilizado"
                                     process=":lume:dtMateriaisDisponiveis, @this" />
-                            </div>
-                            <div class="Container25 Responsive100">
                                 <p:commandButton id="naoUtilizado" icon="White fa fa-times-circle" value="Cancelar" onclick="PF('dlg').show();" disabled="#{controleMaterialMB.reservaKit.id == null}"
                                     styleClass="RedButton" />
-                            </div>
+                            </p:panelGrid>
                         </p:fieldset>
                         <p:dialog id="dlg" widgetVar="dlg" header="Cancelar" responsive="true" modal="true">
                             <h:panelGroup styleClass="lumeField">
@@ -137,12 +134,12 @@
                                 update=":lume:dtMateriaisDisponiveis,:lume:dtItensPendentes,:lume:dtKitsPendentes,:lume:disponibiliza,:lume:entregar,:lume:naoUtilizado" process="@this,justificativa"
                                 oncomplete="PF('dlg').hide();" />
                         </p:dialog>
-                    </p:panel>
+                    </p:outputPanel>
                 </div>
             </div>
         </div>
         <h:panelGroup id="pgDisponibilizados">
-            <p:dialog id="dlgDisponibilizados" widgetVar="dlgDisponibilizados" header="Disponibilizados" modal="true">
+            <p:dialog id="dlgDisponibilizados" widgetVar="dlgDisponibilizados" header="Disponibilizados" modal="true" width="90%">
                 <p:dataTable filterDelay="1500"  id="dtDisponibilizados" reflow="true" emptyMessage="" value="#{controleMaterialMB.disponibilizados}" var="cm" rows="7" paginator="true" paginatorPosition="bottom">
                     <p:ajax event="rowSelect" update=":lume:dtMateriaisDisponiveis, :lume:dtItensPendentes, :lume:disponibiliza" listener="#{controleMaterialMB.carregaItem}" process="@this" />
                     <f:facet name="header">Itens Disponibilizados</f:facet>
@@ -153,10 +150,11 @@
                         <h:outputText value="#{cm.quantidade}" />
                     </p:column>
                 </p:dataTable>
+                <br />
                 <div class="SeparatorFull"></div>
-                <div class="Container25 Responsive100">
+                <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                     <p:commandButton id="fechar" icon="White fa fa-close" value="Fechar" process="@this" styleClass="RedButton" oncomplete="PF('dlgDisponibilizados').hide()" />
-                </div>
+                </p:panelGrid>
             </p:dialog>
         </h:panelGroup>
     </ui:define>

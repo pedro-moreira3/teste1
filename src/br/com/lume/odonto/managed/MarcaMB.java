@@ -13,8 +13,10 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.MarcaBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.marca.MarcaSingleton;
+//import br.com.lume.odonto.bo.MarcaBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Marca;
 import br.com.lume.odonto.util.OdontoMensagens;
 
@@ -29,14 +31,14 @@ public class MarcaMB extends LumeManagedBean<Marca> {
     private List<Marca> marcas = new ArrayList<>();
 
     public MarcaMB() {
-        super(new MarcaBO());
+        super(MarcaSingleton.getInstance().getBo());
         this.geraLista();
         this.setClazz(Marca.class);
     }
 
     private void geraLista() {
         try {
-            this.marcas = ((MarcaBO) this.getbO()).listByEmpresa();
+            this.marcas = MarcaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -46,7 +48,7 @@ public class MarcaMB extends LumeManagedBean<Marca> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        Marca marca = ((MarcaBO) this.getbO()).findByNomeAndEmpresa(this.getEntity().getNome(), ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        Marca marca = MarcaSingleton.getInstance().getBo().findByNomeAndEmpresa(this.getEntity().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (marca != null) {
             if (marca.getId() != this.getEntity().getId() && marca.getNome().equals(this.getEntity().getNome())) {
                 this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "");
@@ -57,7 +59,7 @@ public class MarcaMB extends LumeManagedBean<Marca> {
                 }
             }
         } else {
-            this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.getEntity().setDataCadastro(Calendar.getInstance().getTime());
             super.actionPersist(event);
             this.geraLista();

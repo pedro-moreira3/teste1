@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.ContaBO;
+import br.com.lume.conta.ContaSingleton;
 import br.com.lume.odonto.entity.Conta;
 
 @FacesConverter(forClass = Conta.class, value = "conta")
@@ -20,7 +20,7 @@ public class ContaConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new ContaBO().find(id);
+                return ContaSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

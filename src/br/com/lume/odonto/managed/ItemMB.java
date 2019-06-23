@@ -18,10 +18,15 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.ItemBO;
-import br.com.lume.odonto.bo.MaterialBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+
+import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.item.ItemSingleton;
+import br.com.lume.material.MaterialSingleton;
+//import br.com.lume.odonto.bo.DominioBO;
+//import br.com.lume.odonto.bo.ItemBO;
+//import br.com.lume.odonto.bo.MaterialBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Material;
@@ -57,18 +62,18 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     private List<Item> listByPai = new ArrayList<>();
 
-    private ItemBO itemBO;
+ //   private ItemBO itemBO;
 
-    private DominioBO dominioBO;
+  //  private DominioBO dominioBO;
 
     List<TreeNode> nodes, nodesAux;
 
-    private MaterialBO materialBO = new MaterialBO();
+//    private MaterialBO materialBO = new MaterialBO();
 
     public ItemMB() {
-        super(new ItemBO());
-        itemBO = new ItemBO();
-        dominioBO = new DominioBO();
+        super(ItemSingleton.getInstance().getBo());
+     //   itemBO = new ItemBO();
+    //    dominioBO = new DominioBO();
         this.setClazz(Item.class);
         categoria = "S";
         this.setDisable(false);
@@ -93,7 +98,7 @@ public class ItemMB extends LumeManagedBean<Item> {
     @Override
     public void actionPersist(ActionEvent event) {
         boolean error = false;
-        this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (this.getFormaArmazenamento() != null) {
             this.getEntity().setFormaArmazenamento(this.getFormaArmazenamento().getValor());
         }
@@ -155,9 +160,9 @@ public class ItemMB extends LumeManagedBean<Item> {
         try {
             for (Item item : listByPai) {
                 this.removeRecursivo(item);
-                ((ItemBO) this.getbO()).remove(item);
+                ItemSingleton.getInstance().getBo().remove(item);
             }
-            ((ItemBO) this.getbO()).remove(this.getEntity());
+            ItemSingleton.getInstance().getBo().remove(this.getEntity());
             this.actionNew(null);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
         } catch (Exception e) {
@@ -166,27 +171,27 @@ public class ItemMB extends LumeManagedBean<Item> {
     }
 
     private void removeRecursivo(Item item) throws Exception {
-        List<Item> listByPaiAux = ((ItemBO) this.getbO()).listByPai(item.getId());
+        List<Item> listByPaiAux = ItemSingleton.getInstance().getBo().listByPai(item.getId(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (listByPaiAux != null && !listByPaiAux.isEmpty()) {
             for (Item itemAux : listByPaiAux) {
                 this.removeRecursivo(itemAux);
             }
             for (Item itemAux : listByPaiAux) {
-                ((ItemBO) this.getbO()).remove(item);
+                ItemSingleton.getInstance().getBo().remove(item);
             }
         } else {
-            ((ItemBO) this.getbO()).remove(item);
+            ItemSingleton.getInstance().getBo().remove(item);
         }
     }
 
     @Override
     public void actionRemove(ActionEvent arg0) {
         try {
-            listByPai = ((ItemBO) this.getbO()).listByPai(this.getEntity().getId());
+            listByPai = ItemSingleton.getInstance().getBo().listByPai(this.getEntity().getId(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (listByPai != null && !listByPai.isEmpty()) {
                 this.addError("Não é possível excluir itens com itens filhos, remova-os antes.", "");
             } else {
-                List<Material> materiais = materialBO.listByItem(this.getEntity());
+                List<Material> materiais = MaterialSingleton.getInstance().getBo().listByItem(this.getEntity());
                 if (materiais != null && !materiais.isEmpty()) {
                     this.addError("Não é possível excluir itens com materiais vinculados.", "");
                 } else {
@@ -374,11 +379,11 @@ public class ItemMB extends LumeManagedBean<Item> {
         this.setItens(new ArrayList<Item>());
         try {
             if (!filtro && this.getDigitacao() != null) {
-                this.setItens(itemBO.listByEmpresaAndDescricaoParcial(this.getDigitacao()));
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else if (filtro && this.getFiltroTable() != null) {
-                this.setItens(itemBO.listByEmpresaAndDescricaoParcialAndCategoria(this.getFiltroTable()));
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcialAndCategoria(this.getFiltroTable(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setItens(itemBO.listByEmpresa());
+                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
             Collections.sort(itens);
         } catch (Exception e) {
@@ -391,9 +396,9 @@ public class ItemMB extends LumeManagedBean<Item> {
         this.setItens(new ArrayList<Item>());
         try {
             if (this.getDigitacao() != null) {
-                this.setItens(itemBO.listCategoriasByEmpresaAndDescricaoParcial(this.getDigitacao()));
+                this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setItens(itemBO.listCategoriasByEmpresa());
+                this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
             Collections.sort(itens);
         } catch (Exception e) {
@@ -416,10 +421,10 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     public void setParametros() {
         try {
-            this.setFormaArmazenamento(dominioBO.findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO[FORMA_ARMAZENAMENTO], this.getEntity().getFormaArmazenamento()));
-            this.setUtilizacao(dominioBO.findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO[UTILIZACAO], this.getEntity().getUtilizacao()));
-            this.setFracaoUnitaria(dominioBO.findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO[FRACAO_UNITARIA], this.getEntity().getFracaoUnitaria()));
-            this.setUnidadeMedida(dominioBO.findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO[UNIDADE_MEDIDA], this.getEntity().getUnidadeMedida()));
+            this.setFormaArmazenamento(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO[FORMA_ARMAZENAMENTO], this.getEntity().getFormaArmazenamento()));
+            this.setUtilizacao(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO[UTILIZACAO], this.getEntity().getUtilizacao()));
+            this.setFracaoUnitaria(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO[FRACAO_UNITARIA], this.getEntity().getFracaoUnitaria()));
+            this.setUnidadeMedida(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO[UNIDADE_MEDIDA], this.getEntity().getUnidadeMedida()));
             if (this.getEntity().getCategoria() != null) {
                 this.setCategoria(this.getEntity().getCategoria());
             } else {
@@ -442,11 +447,17 @@ public class ItemMB extends LumeManagedBean<Item> {
     public List<Dominio> getDominios(int tipo) {
         List<Dominio> dominios = null;
         try {
-            dominios = dominioBO.listByEmpresaAndObjetoAndTipo(OBJETO, TIPO[tipo]);
+            dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo(OBJETO, TIPO[tipo]);
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
         return dominios;
+    }
+    
+    public String getUnidadeString(Item item) {
+        if(item != null)
+            return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
+        return null;
     }
 
     public Dominio getFormaArmazenamento() {

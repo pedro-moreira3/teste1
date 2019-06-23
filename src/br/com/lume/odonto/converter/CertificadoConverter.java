@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.CertificadoBO;
+import br.com.lume.certificado.CertificadoSingleton;
 import br.com.lume.odonto.entity.Certificado;
 
 @FacesConverter(forClass = Certificado.class, value = "certificado")
@@ -20,7 +20,7 @@ public class CertificadoConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new CertificadoBO().find(id);
+                return CertificadoSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

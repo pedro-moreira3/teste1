@@ -16,6 +16,7 @@ import br.com.lume.common.exception.business.UsuarioSemPerfilException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.security.bo.LoginBO;
 import br.com.lume.security.bo.ObjetoBO;
 import br.com.lume.security.bo.SistemaBO;
@@ -88,7 +89,7 @@ public class LoginMB extends LumeManagedBean<Usuario> {
     private void carregaObjetosPermitidos(Usuario userLogin, Sistema sistema) {
         this.getLumeSecurity().setUsuario(userLogin);
         ObjetoBO objetoBO = new ObjetoBO();
-        List<Objeto> objetosPermitidos = objetoBO.getAllObjetosByUsuarioAndSistema(userLogin, sistema);
+        List<Objeto> objetosPermitidos = objetoBO.getAllObjetosByUsuarioAndSistema(userLogin, sistema,UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
         Objeto objeto = new Objeto();
         objeto.setObjStrDes("home");
         objeto.setCaminho("home");

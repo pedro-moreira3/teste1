@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.FilialBO;
+import br.com.lume.filial.FilialSingleton;
 import br.com.lume.odonto.entity.Filial;
 
 @FacesConverter(forClass = Filial.class, value = "filial")
@@ -20,7 +20,7 @@ public class FilialConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new FilialBO().find(id);
+                return FilialSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

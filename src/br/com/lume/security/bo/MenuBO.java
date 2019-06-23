@@ -14,8 +14,8 @@ import org.primefaces.model.menu.MenuModel;
 import org.primefaces.model.menu.Submenu;
 
 import br.com.lume.common.bo.BO;
-import br.com.lume.common.connection.GenericDAO;
-import br.com.lume.common.util.JSFHelper;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.security.entity.Objeto;
 import br.com.lume.security.entity.Sistema;
@@ -30,7 +30,7 @@ public class MenuBO extends BO<Usuario> {
     private int idMenu = 1;
 
     public MenuBO() {
-        super(GenericDAO.LUME_SECURITY);
+        super(PersistenceUnitName.ODONTO);
         this.setClazz(Usuario.class);
     }
 
@@ -42,8 +42,8 @@ public class MenuBO extends BO<Usuario> {
     public MenuModel getMenuTreeByUsuarioAndSistema(Usuario usuario, Sistema sistema, boolean mostraURL, List<Objeto> objetosRaizBySistema) {
         if (usuario != null && sistema != null) {
             try {
-                List<Objeto> objetosPermitidos = new ObjetoBO().carregaObjetosPermitidos((String) JSFHelper.getSession().getAttribute("PERFIL_LOGADO"),
-                        (Profissional) JSFHelper.getSession().getAttribute("PROFISSIONAL_LOGADO"));
+                List<Objeto> objetosPermitidos = new ObjetoBO().carregaObjetosPermitidos(UtilsFrontEnd.getPerfilLogado(),
+                        UtilsFrontEnd.getProfissionalLogado());
                 Set<Objeto> labelsPermitidas = this.getLabelsPermitidas(objetosPermitidos);
                 return this.getMenuTree(sistema, labelsPermitidas, objetosPermitidos, mostraURL, objetosRaizBySistema);
             } catch (Exception e) {
@@ -80,8 +80,9 @@ public class MenuBO extends BO<Usuario> {
                         DefaultSubMenu submenu = new DefaultSubMenu();
                         submenu.setId("sb" + idMenu++ + idMenu++);
                         submenu.setLabel(objeto.getObjStrDes());
+                        submenu.setIcon(objeto.getIcone());
 //                        submenu.setIcon("fa fa-caret-right");
-                        submenu.setExpanded(true);
+                        //submenu.setExpanded(true);
 
                         model.addElement(submenu);
                         raizesMenu.put(objeto.getObjIntCod(), submenu);
@@ -98,7 +99,7 @@ public class MenuBO extends BO<Usuario> {
                 if (objetosPermitidos != null) {
                     if (objetosPermitidos.contains(objeto)) {
                         DefaultMenuItem mi = new DefaultMenuItem();
-                        mi.setIcon(objeto.getIcone());
+                        //mi.setIcon(objeto.getIcone());
                         mi.setId("mi" + idMenu++ + idMenu++);
                         mi.setValue(objeto.getObjStrDes());
                         if (mostraURL) {
@@ -108,7 +109,7 @@ public class MenuBO extends BO<Usuario> {
                     }
                 } else {
                     DefaultMenuItem mi = new DefaultMenuItem();
-                    mi.setIcon(objeto.getIcone());
+                    //mi.setIcon(objeto.getIcone());
                     mi.setId("mmi" + idMenu++);
                     mi.setValue(objeto.getObjStrDes());
                     if (mostraURL) {
@@ -155,7 +156,7 @@ public class MenuBO extends BO<Usuario> {
                     if (objetosPermitidos != null) {
                         if (objetosPermitidos.contains(filho)) {
                             DefaultMenuItem mi = new DefaultMenuItem();
-                            mi.setIcon(filho.getIcone());
+                            //mi.setIcon(filho.getIcone());
                             mi.setId("mib" + idMenu++ + idMenu++);
                             mi.setValue(filho.getObjStrDes());
                             if (mostraURL) {
@@ -165,7 +166,7 @@ public class MenuBO extends BO<Usuario> {
                         }
                     } else {
                         DefaultMenuItem mi = new DefaultMenuItem();
-                        mi.setIcon(filho.getIcone());
+                        //mi.setIcon(filho.getIcone());
                         mi.setId("mib" + idMenu++);
                         mi.setValue(filho.getObjStrDes());
                         if (mostraURL) {

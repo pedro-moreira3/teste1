@@ -16,21 +16,26 @@ import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.ItemBO;
-import br.com.lume.odonto.bo.KitBO;
-import br.com.lume.odonto.bo.KitItemBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.item.ItemSingleton;
+import br.com.lume.kit.KitSingleton;
+import br.com.lume.kitItem.KitItemSingleton;
+//import br.com.lume.odonto.bo.DominioBO;
+//import br.com.lume.odonto.bo.ItemBO;
+//import br.com.lume.odonto.bo.KitBO;
+//import br.com.lume.odonto.bo.KitItemBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Kit;
 import br.com.lume.odonto.entity.KitItem;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
 
@@ -58,35 +63,35 @@ public class KitMB extends LumeManagedBean<Kit> {
 
     private boolean incluindo, admin;
 
-    private KitBO kitBO;
+   // private KitBO kitBO;
 
-    private KitItemBO kitItemBO;
+  //  private KitItemBO kitItemBO;
 
-    private ItemBO itemBO;
+  //  private ItemBO itemBO;
 
-    private DominioBO dominioBO;
+  //  private DominioBO dominioBO;
 
     private List<KitItem> kitItens = new ArrayList<>();
 
     private Profissional profissionalLogado;
 
-    private ProfissionalBO profissionalBO;
+  //  private ProfissionalBO profissionalBO;
 
     private boolean visivel = true;
 
     public KitMB() {
-        super(new KitBO());
-        this.kitBO = new KitBO();
-        this.kitItemBO = new KitItemBO();
-        this.itemBO = new ItemBO();
-        this.dominioBO = new DominioBO();
-        this.profissionalBO = new ProfissionalBO();
+        super(KitSingleton.getInstance().getBo());
+       // this.kitBO = new KitBO();
+       // this.kitItemBO = new KitItemBO();
+      //  this.itemBO = new ItemBO();
+      // this.dominioBO = new DominioBO();
+      //  this.profissionalBO = new ProfissionalBO();
         this.setClazz(Kit.class);
         this.setIncluindo(true);
         this.carregaTree();
         this.geralista();
         try {
-            this.profissionalLogado = ProfissionalBO.getProfissionalLogado();
+            this.profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
             if (this.profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || this.profissionalLogado.getPerfil().equals(OdontoPerfil.AUXILIAR_DENTISTA)) {
                 this.visivel = false;
             }
@@ -109,7 +114,7 @@ public class KitMB extends LumeManagedBean<Kit> {
 
     private void geralista() {
         try {
-            this.setKits(((KitBO) this.getbO()).listByEmpresa());
+            this.setKits(KitSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -118,7 +123,7 @@ public class KitMB extends LumeManagedBean<Kit> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         this.getEntity().setData(new Date());
         for (KitItem kitItem : this.getKitItens()) {
             if (!((kitItem.getItem().getTipo().equals("I")) && (kitItem.getKit().getTipo().equals("Instrumental"))) && !((kitItem.getItem().getTipo().equals(
@@ -164,9 +169,9 @@ public class KitMB extends LumeManagedBean<Kit> {
         }
     }
 
-    public void remover() {
+    public void remover() throws Exception {
         try {
-            this.kitItemBO.remove(this.getKitItem());
+            KitItemSingleton.getInstance().getBo().remove(this.getKitItem());
         } catch (BusinessException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -346,9 +351,9 @@ public class KitMB extends LumeManagedBean<Kit> {
                 this.setItens(new ArrayList<Item>());
             } else {
                 if (this.getDigitacao() != null) {
-                    this.setItens(this.itemBO.listByEmpresaAndDescricaoParcialAndTipo(this.getDigitacao(), this.getEntity().getTipo().charAt(0) + ""));
+                    this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcialAndTipo(this.getDigitacao(), this.getEntity().getTipo().charAt(0) + "", UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 } else {
-                    this.setItens(this.itemBO.listByEmpresaAndTipo(this.getEntity().getTipo().charAt(0) + ""));
+                    this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndTipo(this.getEntity().getTipo().charAt(0) + "", UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 }
             }
             Collections.sort(this.itens);
@@ -356,6 +361,12 @@ public class KitMB extends LumeManagedBean<Kit> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
+    }
+    
+    public String getUnidadeString(Item item) {
+        if(item != null)
+            return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
+        return null;
     }
 
     public List<Kit> getKits() {
@@ -457,7 +468,7 @@ public class KitMB extends LumeManagedBean<Kit> {
     public List<String> getTipos() {
         try {
             List<String> s = new ArrayList<>();
-            List<Dominio> dominios = this.dominioBO.listByEmpresaAndObjetoAndTipo("kit", "tipo");
+            List<Dominio> dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("kit", "tipo");
             for (Dominio dominio : dominios) {
                 s.add(dominio.getNome());
             }

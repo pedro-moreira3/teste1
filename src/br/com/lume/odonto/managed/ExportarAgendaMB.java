@@ -10,13 +10,15 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
-import org.primefaces.context.RequestContext;
+import org.primefaces.PrimeFaces;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.odonto.bo.AgendamentoBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+//import br.com.lume.odonto.bo.AgendamentoBO;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoAgenda;
 
@@ -38,7 +40,7 @@ public class ExportarAgendaMB extends LumeManagedBean<Agendamento> {
     private AgendamentoMB agendamentoMB;
 
     public ExportarAgendaMB() {
-        super(new AgendamentoBO());
+        super(AgendamentoSingleton.getInstance().getBo());
         this.setClazz(Agendamento.class);
     }
 
@@ -46,18 +48,17 @@ public class ExportarAgendaMB extends LumeManagedBean<Agendamento> {
         try {
             calcularDatas();
 
-            agendamentos = ((AgendamentoBO) getbO()).listByDataAndProfissional(agendamentoMB.getProfissional(), inicio, fim, null);
-            RequestContext context = RequestContext.getCurrentInstance();
-            if (context != null) {
+            agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndProfissional(agendamentoMB.getProfissional(), inicio, fim);
+            if (PrimeFaces.current() != null) {
                 if (agendamentos != null && !agendamentos.isEmpty()) {
                     List<AgendamentoAgenda> agendamentosAgenda = new ArrayList<>();
                     for (Agendamento a : agendamentos) {
-                        agendamentosAgenda.add(new AgendamentoAgenda(a.getId(), a.getDescricaoAgenda(), a.getDescricao(), a.getEnderecoEmpresa(), a.getInicio(), a.getFim()));
+                        agendamentosAgenda.add(new AgendamentoAgenda(a.getId(), a.getDescricaoAgenda(UtilsFrontEnd.getProfissionalLogado()), a.getDescricao(), a.getEnderecoEmpresa(), a.getInicio(), a.getFim()));
                     }
                     Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
                     //
-                    context.addCallbackParam("agendamentos", gson.toJson(agendamentosAgenda));
-                    context.addCallbackParam("valido", true);
+                    PrimeFaces.current().ajax().addCallbackParam("agendamentos", gson.toJson(agendamentosAgenda));
+                    PrimeFaces.current().ajax().addCallbackParam("valido", true);
                 }
             }
 

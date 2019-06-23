@@ -12,17 +12,14 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 import org.primefaces.event.SelectEvent;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.DocumentoBO;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.PacienteBO;
-import br.com.lume.odonto.bo.PlanoTratamentoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
-import br.com.lume.odonto.bo.TermoConsentimentoBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.documento.DocumentoSingleton;
+import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.Dominio;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
@@ -30,6 +27,9 @@ import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.TagDocumento;
 import br.com.lume.odonto.entity.TermoConsentimento;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.termoConsentimento.TermoConsentimentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -54,35 +54,18 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
     private Paciente paciente;
 
     private Profissional profissionalLogado = new Profissional();
-
-    private DominioBO dominioBO;
-
-    private DocumentoBO documentoBO;
-
-    private TermoConsentimentoBO termoConsentimentoBO;
-
-    private PlanoTratamentoBO planoTratamentoBO;
-
-    private PacienteBO pacienteBO;
-
-    private ProfissionalBO profissionalBO;
-
+  
     public TermoConsentimentoMB() {
-        super(new TermoConsentimentoBO());
-        dominioBO = new DominioBO();
-        documentoBO = new DocumentoBO();
-        termoConsentimentoBO = new TermoConsentimentoBO();
-        planoTratamentoBO = new PlanoTratamentoBO();
-        pacienteBO = new PacienteBO();
+        super(TermoConsentimentoSingleton.getInstance().getBo());      
         try {
-            Dominio dominio = dominioBO.findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "T");
-            documentos = documentoBO.listByTipoDocumento(dominio);
-            profissionalLogado = ProfissionalBO.getProfissionalLogado();
+            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "T");
+            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
             if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
-                    OdontoPerfil.RESPONSAVEL_TECNICO)) {
+                    OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
                 liberaBotao = true;
             }
-            this.setPaciente(PacienteBO.getPacienteSelecionado());
+            this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
@@ -97,10 +80,10 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
                 documento = documentoSelecionado.getModelo();
                 this.replaceDocumento();
                 visivel = true;
-                this.getEntity().setProfissional(ProfissionalBO.getProfissionalLogado());
+                this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
                 this.getEntity().setTermoGerado(documento);
                 this.getEntity().setPaciente(paciente);
-                termoConsentimentoBO.persist(this.getEntity());
+                TermoConsentimentoSingleton.getInstance().getBo().persist(this.getEntity());
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             } else {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -126,7 +109,7 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
         // return super.getEntityList();
         if (paciente != null) {
             try {
-                return termoConsentimentoBO.listByPaciente(paciente);
+                return TermoConsentimentoSingleton.getInstance().getBo().listByPaciente(paciente);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -147,7 +130,7 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
                 procedimentos += planoTratamentoProcedimento.getProcedimento().getDescricao();
             }
         }
-        documento = documentoBO.replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento);
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         documento = documento.replaceAll("#plano_tratamento", procedimentos);
         if ((profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA)) || (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR))) {
@@ -191,11 +174,11 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
     }
 
     public void setDocumentoSelecionado(Documento documentoSelecionado) {
-        if ((ProfissionalBO.getProfissionalLogado().getPerfil().equals(OdontoPerfil.DENTISTA)) || (ProfissionalBO.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR))) {
-            tagDinamicas = documentoBO.getTagDinamicas(documentoSelecionado, this.documentoSelecionado, tagDinamicas,
+        if ((UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.DENTISTA)) || (UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR))) {
+            tagDinamicas = DocumentoSingleton.getInstance().getBo().getTagDinamicas(documentoSelecionado, this.documentoSelecionado, tagDinamicas,
                     new String[] { "#paciente", "#rg", "#datahoje", "#endereco_completo", "#datanascimento", "#datanascimento_titular", "#documento", "#documento_titular", "#email", "#email_titular", "#endereco_completo_titular", "#paciente_titular", "#rg_titular", "#telefone", "#telefone_titular", "#plano_tratamento", "#profissional", "#cro", "#clinica_nome", "#clinica_cnpj", "#clinica_endereco", "#clinica_numero", "#clinica_complemento", "#clinica_bairro", "#clinica_cidade", "#clinica_estado", "#clinica_fone", "#clinica_email", "#clinica_cro_responsavel", "#clinica_logo" });
         } else {
-            tagDinamicas = documentoBO.getTagDinamicas(documentoSelecionado, this.documentoSelecionado, tagDinamicas,
+            tagDinamicas = DocumentoSingleton.getInstance().getBo().getTagDinamicas(documentoSelecionado, this.documentoSelecionado, tagDinamicas,
                     new String[] { "#paciente", "#rg", "#datahoje", "#endereco_completo", "#datanascimento", "#datanascimento_titular", "#documento", "#documento_titular", "#email", "#email_titular", "#endereco_completo_titular", "#paciente_titular", "#rg_titular", "#telefone", "#telefone_titular", "#plano_tratamento", "#clinica_nome", "#clinica_cnpj", "#clinica_endereco", "#clinica_numero", "#clinica_complemento", "#clinica_bairro", "#clinica_cidade", "#clinica_estado", "#clinica_fone", "#clinica_email", "#clinica_cro_responsavel", "#clinica_logo" });
         }
         this.documentoSelecionado = documentoSelecionado;
@@ -219,7 +202,7 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
 
     public List<PlanoTratamento> getPlanoTratamentos() {
         if (paciente != null) {
-            planoTratamentos = planoTratamentoBO.listByPaciente(paciente);
+            planoTratamentos = PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(paciente);
         }
         return planoTratamentos;
     }
@@ -247,11 +230,11 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
     public void handleSelectPacienteSelecionado(SelectEvent event) {
         Object object = event.getObject();
         paciente = (Paciente) object;
-        PacienteBO.setPacienteSelecionado(paciente);
+        UtilsFrontEnd.setPacienteSelecionado(paciente);
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return pacienteBO.listSugestoesComplete(query);
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public boolean isLiberaBotao() {

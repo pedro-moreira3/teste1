@@ -19,15 +19,12 @@ import org.primefaces.event.SelectEvent;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.odonto.bo.ConvenioProcedimentoBO;
-import br.com.lume.odonto.bo.DescontoBO;
-import br.com.lume.odonto.bo.DocumentoBO;
-import br.com.lume.odonto.bo.DocumentoOrcamentoBO;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.PacienteBO;
-import br.com.lume.odonto.bo.PlanoTratamentoBO;
-import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
+import br.com.lume.desconto.DescontoSingleton;
+import br.com.lume.documento.DocumentoSingleton;
+import br.com.lume.documentoOrcamento.DocumentoOrcamentoSingleton;
+import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.Desconto;
 import br.com.lume.odonto.entity.Documento;
@@ -39,6 +36,9 @@ import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.TagDocumento;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -71,37 +71,37 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
 
     private List<Desconto> descontos = new ArrayList<>();
 
-    private DominioBO dominioBO;
-
-    private DocumentoBO documentoBO;
-
-    private DescontoBO descontoBO;
-
-    private DocumentoOrcamentoBO documentoOrcamentoBO;
-
-    private PlanoTratamentoBO planoTratamentoBO;
-
-    private ConvenioProcedimentoBO convenioProcedimentoBO;
-
-    private PacienteBO pacienteBO;
-
-    private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
+//    private DominioBO dominioBO;
+//
+//    private DocumentoBO documentoBO;
+//
+//    private DescontoBO descontoBO;
+//
+//    private DocumentoOrcamentoBO documentoOrcamentoBO;
+//
+//    private PlanoTratamentoBO planoTratamentoBO;
+//
+//    private ConvenioProcedimentoBO convenioProcedimentoBO;
+//
+//    private PacienteBO pacienteBO;
+//
+//    private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
 
     public DocumentoOrcamentoMB() {
-        super(new DocumentoOrcamentoBO());
-        dominioBO = new DominioBO();
-        documentoBO = new DocumentoBO();
-        descontoBO = new DescontoBO();
-        documentoOrcamentoBO = new DocumentoOrcamentoBO();
-        planoTratamentoBO = new PlanoTratamentoBO();
-        convenioProcedimentoBO = new ConvenioProcedimentoBO();
-        pacienteBO = new PacienteBO();
-        planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
+        super(DocumentoOrcamentoSingleton.getInstance().getBo());
+//        dominioBO = new DominioBO();
+//        documentoBO = new DocumentoBO();
+//        descontoBO = new DescontoBO();
+//        documentoOrcamentoBO = new DocumentoOrcamentoBO();
+//        planoTratamentoBO = new PlanoTratamentoBO();
+//        convenioProcedimentoBO = new ConvenioProcedimentoBO();
+//        pacienteBO = new PacienteBO();
+//        planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
         try {
-            Dominio dominio = dominioBO.findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "O");
-            documentos = documentoBO.listByTipoDocumento(dominio);
-            descontos = descontoBO.listByEmpresa();
-            this.setPaciente(PacienteBO.getPacienteSelecionado());
+            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "O");
+            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            descontos = DescontoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            this.setPaciente(UtilsFrontEnd.getPacienteLogado());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
@@ -121,10 +121,10 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
                 this.replaceDocumento();
                 visivel = true;
             }
-            this.getEntity().setProfissional(ProfissionalBO.getProfissionalLogado());
+            this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
             this.getEntity().setDocumentoGerado(documento);
             this.getEntity().setPaciente(paciente);
-            documentoOrcamentoBO.persist(this.getEntity());
+            DocumentoOrcamentoSingleton.getInstance().getBo().persist(this.getEntity());
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
 //            }
         } catch (Exception e) {
@@ -146,8 +146,8 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
     public List<DocumentoOrcamento> getEntityList() {
         if (paciente != null) {
             try {
-                planoDeTratamentos = planoTratamentoBO.listByPacienteAndValorTotalDesconto(paciente);
-                return documentoOrcamentoBO.listByPaciente(paciente);
+                planoDeTratamentos = PlanoTratamentoSingleton.getInstance().getBo().listByPacienteAndValorTotalDesconto(paciente);
+                return DocumentoOrcamentoSingleton.getInstance().getBo().listByPaciente(paciente);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -170,10 +170,10 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
 
     private void replaceDocumento() {
         BigDecimal valorPS = BigDecimal.ZERO;
-        documento = documentoBO.replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento);
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         String orcamento = "<table border=0 class=\"ui-widget\" width=\"100%\"><tr><td width=\"80%\"><b>Procedimento</b></td><td width=\"20%\"><b>Valor</b></td></tr><tr><td>&nbsp;</td></tr>";
-        List<ConvenioProcedimento> convenioProcedimentos = convenioProcedimentoBO.listByConvenio(paciente.getConvenio());
+        List<ConvenioProcedimento> convenioProcedimentos = ConvenioProcedimentoSingleton.getInstance().getBo().listByConvenio(paciente.getConvenio(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         boolean PS = false;
         for (PlanoTratamentoProcedimento ptp : planoDeTratamentoProcedimentos) {
             PS = false;
@@ -244,7 +244,7 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
     }
 
     public void setDocumentoSelecionado(Documento documentoSelecionado) {
-        tagDinamicas = documentoBO.getTagDinamicas(documentoSelecionado, this.documentoSelecionado, tagDinamicas,
+        tagDinamicas = DocumentoSingleton.getInstance().getBo().getTagDinamicas(documentoSelecionado, this.documentoSelecionado, tagDinamicas,
                 new String[] { "#paciente", "#rg", "#datahoje", "#endereco_completo", "#plano_tratamento" });
         this.documentoSelecionado = documentoSelecionado;
         visivel = true;
@@ -271,7 +271,7 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
 
     public void setPlanoDeTratamento(PlanoTratamento planoDeTratamento) {
         this.planoDeTratamento = planoDeTratamento;
-        planoDeTratamentoProcedimentos = planoTratamentoProcedimentoBO.listByPlanoTratamento(planoDeTratamento);
+        planoDeTratamentoProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(planoDeTratamento);
     }
 
     public List<PlanoTratamento> getPlanoDeTratamentos() {
@@ -301,10 +301,11 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
     public void handleSelectPacienteSelecionado(SelectEvent event) {
         Object object = event.getObject();
         paciente = (Paciente) object;
-        PacienteBO.setPacienteSelecionado(paciente);
+        UtilsFrontEnd.setPacienteSelecionado(paciente);
+        
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return pacienteBO.listSugestoesComplete(query);
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 }

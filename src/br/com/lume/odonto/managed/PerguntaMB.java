@@ -11,11 +11,11 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.EspecialidadeBO;
-import br.com.lume.odonto.bo.PerguntaBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.especialidade.EspecialidadeSingleton;
 import br.com.lume.odonto.entity.Especialidade;
 import br.com.lume.odonto.entity.Pergunta;
+import br.com.lume.pergunta.PerguntaSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -34,17 +34,13 @@ public class PerguntaMB extends LumeManagedBean<Pergunta> {
 
     private Especialidade especialidade;
 
-    private PerguntaBO perguntaBO;
-
-    private EspecialidadeBO especialidadeBO;
 
     public PerguntaMB() {
-        super(new PerguntaBO());
-        this.perguntaBO = new PerguntaBO();
-        this.especialidadeBO = new EspecialidadeBO();
+        super(PerguntaSingleton.getInstance().getBo());
+
         this.setClazz(Pergunta.class);
         try {
-            this.especialidades = this.especialidadeBO.listByEmpresa();
+            this.especialidades = EspecialidadeSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
@@ -55,7 +51,7 @@ public class PerguntaMB extends LumeManagedBean<Pergunta> {
     public void actionPersist(ActionEvent event) {
         try {
             this.getEntity().getId();
-            this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             super.actionPersist(event);
             this.carregaEntityList();
         } catch (Exception e) {
@@ -65,7 +61,7 @@ public class PerguntaMB extends LumeManagedBean<Pergunta> {
     }
 
     public void carregaEntityList() {
-        List<Pergunta> listByEspecialidade = this.perguntaBO.listByEspecialidade(this.especialidade);
+        List<Pergunta> listByEspecialidade = PerguntaSingleton.getInstance().getBo().listByEspecialidade(this.especialidade, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (listByEspecialidade != null && listByEspecialidade.size() > 0) {
             this.getEntity().setOrdem(listByEspecialidade.get(listByEspecialidade.size() - 1).getOrdem() + 1);
         } else {

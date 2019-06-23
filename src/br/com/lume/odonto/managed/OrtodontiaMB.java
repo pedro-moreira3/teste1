@@ -14,17 +14,13 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 
+import br.com.lume.aparelhoOrtodontico.AparelhoOrtodonticoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.AparelhoOrtodonticoBO;
-import br.com.lume.odonto.bo.ConvenioProcedimentoBO;
-import br.com.lume.odonto.bo.DiagnosticoOrtodonticoBO;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.OrcamentoBO;
-import br.com.lume.odonto.bo.PlanoTratamentoBO;
-import br.com.lume.odonto.bo.PlanoTratamentoProcedimentoBO;
-import br.com.lume.odonto.bo.ProcedimentoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
+import br.com.lume.diagnosticoOrtodontico.DiagnosticoOrtodonticoSingleton;
+import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.odonto.entity.AparelhoOrtodontico;
 import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.DiagnosticoOrtodontico;
@@ -36,6 +32,10 @@ import br.com.lume.odonto.entity.PlanoTratamentoAparelho;
 import br.com.lume.odonto.entity.PlanoTratamentoDiagnostico;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Procedimento;
+import br.com.lume.orcamento.OrcamentoSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.procedimento.ProcedimentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -55,23 +55,15 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     private DiagnosticoOrtodontico diagnosticoSelecionado;
 
-    private List<DiagnosticoOrtodontico> diagnosticos;
-
-    private DiagnosticoOrtodonticoBO diagnosticoOrtodonticoBO = new DiagnosticoOrtodonticoBO();
+    private List<DiagnosticoOrtodontico> diagnosticos;   
 
     private AparelhoOrtodontico aparelhoSelecionado;
 
-    private List<AparelhoOrtodontico> aparelhos;
-
-    private AparelhoOrtodonticoBO aparelhoOrtodonticoBO = new AparelhoOrtodonticoBO();
+    private List<AparelhoOrtodontico> aparelhos;   
 
     private Procedimento procedimentoPadrao;
 
-    private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
-
-    private OrcamentoBO orcamentoBO = new OrcamentoBO();
-
-    private BigDecimal valorProcedimentoOrtodontico;
+      private BigDecimal valorProcedimentoOrtodontico;
 
     private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos;
 
@@ -79,16 +71,12 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     private List<Orcamento> orcamentos;
 
-    private ProcedimentoBO procedimentoBO = new ProcedimentoBO();
-
-    private ConvenioProcedimentoBO convenioProcedimentoBO = new ConvenioProcedimentoBO();
-
-    private Procedimento procedimentoExtra;
+       private Procedimento procedimentoExtra;
 
     private BigDecimal valorProcedimentoExtra;
 
     public OrtodontiaMB() {
-        super(new PlanoTratamentoBO());
+        super(PlanoTratamentoSingleton.getInstance().getBo());
         try {
             this.setClazz(PlanoTratamento.class);
             setEntity(new PlanoTratamento());
@@ -112,7 +100,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
                 if (novoPlano) {
                     getEntity().setPaciente(getPaciente());
-                    getEntity().setProfissional(ProfissionalBO.getProfissionalLogado());
+                    getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
                     getEntity().setOrtodontico(true);
                     getEntity().setValorTotal(calculaValorTotal());
                     getEntity().setValorTotalDesconto(calculaValorTotal());
@@ -136,10 +124,10 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     public void actionOrcamentoAnual() {
         try {
             if (getEntity().getValorOrcamentoRestante().doubleValue() == 0d) {
-                if (planoTratamentoProcedimentoBO.findQtdNaoFinalizadosPTPOrtodontia(getEntity().getId()) == 0l) {
+                if (PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findQtdNaoFinalizadosPTPOrtodontia(getEntity().getId()) == 0l) {
                     geraPlanoTratamentoProcedimento();
                     geraOrcamento();
-                    ((PlanoTratamentoBO) getbO()).carregarNovoValorTotal(getEntity(), valorProcedimentoOrtodontico);
+                    PlanoTratamentoSingleton.getInstance().getBo().carregarNovoValorTotal(getEntity(), valorProcedimentoOrtodontico);
                     getbO().persist(getEntity());
                     actionCarregarPlano();
                 } else {
@@ -147,7 +135,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                 }
                 //refazer procedimento em caso de paciente ainda nao ter pago nada.
             } else if (getEntity().getValorPago().doubleValue() == 0d) { 
-                for (PlanoTratamentoProcedimento planoTratamentoProc : planoTratamentoProcedimentoBO.listByPlanoTratamento(getEntity())) {
+                for (PlanoTratamentoProcedimento planoTratamentoProc : PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(getEntity())) {
                     planoTratamentoProc.setValor(valorProcedimentoOrtodontico);
                     planoTratamentoProc.setValorDesconto(valorProcedimentoOrtodontico);                  
                     planoTratamentoProc.getPlanoTratamento().getOrcamentos();
@@ -164,14 +152,14 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                             lancamentos.add(lancamento);
                         }
                         orcamento.setLancamentos(lancamentos);
-                        orcamentoBO.persist(orcamento);
+                        OrcamentoSingleton.getInstance().getBo().persist(orcamento);
                         
                     }
                     getEntity().setValorTotalRestante(valorProcedimentoOrtodontico);
                     getEntity().setValorTotalRestante(valorProcedimentoOrtodontico);
-                    ((PlanoTratamentoBO) getbO()).carregarNovoValorTotal(getEntity(), valorProcedimentoOrtodontico);   
+                    PlanoTratamentoSingleton.getInstance().getBo().carregarNovoValorTotal(getEntity(), valorProcedimentoOrtodontico);   
                     getbO().persist(getEntity());
-                    planoTratamentoProcedimentoBO.persist(planoTratamentoProc);                 
+                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(planoTratamentoProc);                 
                 } 
                 actionCarregarPlano();
             } else {
@@ -188,10 +176,10 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     public void actionCarregarPlano() {
         try {
             valorProcedimentoOrtodontico = procedimentoPadrao.getValor();
-            planoTratamentoProcedimentos = planoTratamentoProcedimentoBO.listPTPOrtodontia(getEntity().getId());
-            planoTratamentoProcedimentosOrcamento = planoTratamentoProcedimentoBO.listPTPOrtodontiaOrcamento(getEntity().getId());
-            PlanoTratamentoBO planoTratamentoBO = (PlanoTratamentoBO) getbO();
-            planoTratamentoBO.carregarValoresOrtodontia(getEntity());
+            planoTratamentoProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listPTPOrtodontia(getEntity().getId());
+            planoTratamentoProcedimentosOrcamento = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listPTPOrtodontiaOrcamento(getEntity().getId());
+        
+            PlanoTratamentoSingleton.getInstance().getBo().carregarValoresOrtodontia(getEntity());
             carregarOrcamentos();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -200,18 +188,18 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     private void carregarOrcamentos() throws Exception {
-        orcamentos = orcamentoBO.listByPlanoTratamento(getEntity());
+        orcamentos = OrcamentoSingleton.getInstance().getBo().listByPlanoTratamento(getEntity());
         if (orcamentos != null && !orcamentos.isEmpty()) {
             for (Orcamento o : orcamentos) {
-                o.setValorPago(orcamentoBO.findValorPago(o));
+                o.setValorPago(OrcamentoSingleton.getInstance().getBo().findValorPago(o));
             }
-            valorProcedimentoOrtodontico = orcamentoBO.findUltimoOrcamentoOrtodontico(getEntity().getId()).getValorProcedimentoOrtodontico();
+            valorProcedimentoOrtodontico = OrcamentoSingleton.getInstance().getBo().findUltimoOrcamentoOrtodontico(getEntity().getId()).getValorProcedimentoOrtodontico();
         }
     }
 
     private void geraPlanoTratamentoProcedimento() throws Exception {
         long qtd = getQtdMesesRestantes();
-        long ultimoSequencial = planoTratamentoProcedimentoBO.findUltimoSequencial(getEntity().getId());
+        long ultimoSequencial = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findUltimoSequencial(getEntity().getId());
         for (int i = 0; i < qtd; i++) {
             PlanoTratamentoProcedimento ptp = new PlanoTratamentoProcedimento();
             ultimoSequencial++;
@@ -221,13 +209,13 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             ptp.setValorDesconto(valorProcedimentoOrtodontico);
             ptp.setPlanoTratamento(getEntity());
             ptp.setOrtodontico(true);
-            planoTratamentoProcedimentoBO.persist(ptp);
+            PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
         }
 
     }
 
     private long getQtdMesesRestantes() {
-        long qtd = getEntity().getMeses() - planoTratamentoProcedimentoBO.findQtdFinalizadosPTPOrtodontia(getEntity().getId());
+        long qtd = getEntity().getMeses() - PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findQtdFinalizadosPTPOrtodontia(getEntity().getId());
         if (qtd >= 12) {
             return 12;
         } else {
@@ -258,7 +246,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         o.setOrtodontico(true);
         BigDecimal valorTotal = valorProcedimentoOrtodontico.multiply(new BigDecimal(getQtdMesesRestantes()));
         o.setValorTotal(valorTotal);
-        o.setProfissional(ProfissionalBO.getProfissionalLogado());
+        o.setProfissional(UtilsFrontEnd.getProfissionalLogado());
         o.setQuantidadeParcelas((int) getQtdMesesRestantes());
         Lancamento l = new Lancamento();
 
@@ -271,14 +259,16 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         List<Lancamento> lancamentos = new ArrayList<>();
         lancamentos.add(l);
         o.setLancamentos(lancamentos);
-        orcamentoBO.persist(o);
+        OrcamentoSingleton.getInstance().getBo().persist(o);
     }
 
     @PostConstruct
     public void carregarTela() {
         try {
-            procedimentoPadrao = new ProcedimentoBO().findByCodigoProcedimento(
-                    Integer.parseInt(new DominioBO().findByEmpresaAndObjetoAndTipoAndValor("ortodontia", "procedimento_padrao", "PP").getNome()));
+            procedimentoPadrao = ProcedimentoSingleton.getInstance().getBo().findByCodigoProcedimento(
+                    Integer.parseInt(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("ortodontia", "procedimento_padrao", "PP").getNome()),
+                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            
             valorProcedimentoOrtodontico = procedimentoPadrao.getValor();
             planoTratamentoProcedimentos = null;
             setEntity(null);
@@ -295,7 +285,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     public void carregarPlanos() {
         try {
             if (getPaciente() != null) {
-                planosTratamento = ((PlanoTratamentoBO) getbO()).listByPacienteOrtodontia(getPaciente());
+                planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPacienteOrtodontia(getPaciente());
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -305,7 +295,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     public void carregarDiagnosticos() {
         try {
-            diagnosticos = diagnosticoOrtodonticoBO.listAll();
+            diagnosticos = DiagnosticoOrtodonticoSingleton.getInstance().getBo().listAll();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
@@ -314,7 +304,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     public void carregarAparelhos() {
         try {
-            aparelhos = aparelhoOrtodonticoBO.listAll();
+            aparelhos = AparelhoOrtodonticoSingleton.getInstance().getBo().listAll();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
@@ -354,28 +344,28 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public List<Procedimento> geraSugestoesProcedimento(String query) {
-        return procedimentoBO.listSugestoesComplete(query);
+        return ProcedimentoSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public List<Procedimento> geraSugestoesProcedimentoOrtodontico(String query) {
-        return procedimentoBO.listSugestoesCompleteOrtodontico(query);
+        return ProcedimentoSingleton.getInstance().getBo().listSugestoesCompleteOrtodontico(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void actionAdicionarProcedimentoExtra() {
         if (procedimentoExtra != null) {
             try {
-                long ultimoSequencial = planoTratamentoProcedimentoBO.findUltimoSequencial(getEntity().getId());
+                long ultimoSequencial = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findUltimoSequencial(getEntity().getId());
 
-                PlanoTratamentoProcedimento ptp = planoTratamentoProcedimentoBO.carregaProcedimento(getEntity(), procedimentoExtra, getPaciente());
+                PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().carregaProcedimento(getEntity(), procedimentoExtra, getPaciente());
 
                 ultimoSequencial++;
                 ptp.setValor(valorProcedimentoExtra);
                 ptp.setValorDesconto(valorProcedimentoExtra);
                 ptp.setSequencial((int) ultimoSequencial);
-                planoTratamentoProcedimentoBO.persist(ptp);
+                PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
                 planoTratamentoProcedimentos.add(ptp);
                 gerarOrcamentoProcedimentoExtra(ptp);
-                ((PlanoTratamentoBO) getbO()).carregarNovoValorTotal(getEntity(), valorProcedimentoOrtodontico);
+                PlanoTratamentoSingleton.getInstance().getBo().carregarNovoValorTotal(getEntity(), valorProcedimentoOrtodontico);
                 getbO().persist(getEntity());
                 procedimentoExtra = null;
                 actionCarregarPlano();
@@ -388,7 +378,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionMudaValorProcedimentoExtra() {
         if (procedimentoExtra != null) {
-            PlanoTratamentoProcedimento ptp = planoTratamentoProcedimentoBO.carregaProcedimento(getEntity(), procedimentoExtra, getPaciente());
+            PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().carregaProcedimento(getEntity(), procedimentoExtra, getPaciente());
             valorProcedimentoExtra = ptp.getValor();
         }
     }
@@ -400,7 +390,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             o.setPlanoTratamento(getEntity());
             o.setOrtodontico(false);
             o.setValorTotal(ptp.getValor());
-            o.setProfissional(ProfissionalBO.getProfissionalLogado());
+            o.setProfissional(UtilsFrontEnd.getProfissionalLogado());
             Lancamento l = new Lancamento();
 
             l.setValor(ptp.getValor());
@@ -412,7 +402,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             List<Lancamento> lancamentos = new ArrayList<>();
             lancamentos.add(l);
             o.setLancamentos(lancamentos);
-            orcamentoBO.persist(o);
+            OrcamentoSingleton.getInstance().getBo().persist(o);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e);
@@ -446,7 +436,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         try {
             if (procedimentoPadrao != null) {
                 if (getEntity().isBconvenio()) {
-                    ConvenioProcedimento cp = convenioProcedimentoBO.findByConvenioAndProcedimento(paciente.getConvenio(), procedimentoPadrao);
+                    ConvenioProcedimento cp = ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(paciente.getConvenio(), procedimentoPadrao);
                     if (cp != null) {
                         valorProcedimentoOrtodontico = cp.getValor();
                     } else {

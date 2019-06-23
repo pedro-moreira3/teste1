@@ -61,7 +61,7 @@
     <div class="Container100 Responsive100 NoIndent">
         <div class="Container100 ui-fluid NoPadding">
             <div class="Card">
-                <p:panel id="pnPeriograma" styleClass="BordNone">
+                <p:outputPanel id="pnPeriograma" styleClass="BordNone">
                     <script>
                 google.charts.load('current', {packages: ['corechart', 'bar', 'gauge','line'], 'language': 'pt_br'});
                 google.charts.setOnLoadCallback(drawMultSeries);
@@ -377,22 +377,16 @@
                         </p:tab>
                     </p:tabView>
 
-                    <div class="Card ui-fluid">
-                        <div class="Container25 Responsive100">
-                            <p:commandButton id="persistPeriograma" icon="White fa fa-save White" value="Salvar" styleClass="GreenButton" process="pnPeriograma" update="pnPeriograma,dtPeriograma"
-                                actionListener="#{periogramaMB.actionPersist}" />
-                        </div>
-
-                        <div class="Container25 Responsive100">
-                            <p:commandButton id="newPeriograma" icon="White fa fa-file-o" value="Novo" actionListener="#{periogramaMB.actionNew}" update="pnPeriograma" process="@this" />
-                        </div>
-
-                        <div class="Container25 Responsive100">
-                            <p:commandButton icon="White fa fa-file-o" value="Comparar" update="pnComparar" process="@this"
-                                oncomplete="PF('dlgComparar').show();resize('#lume\\:tabView\\:dlgComparar');" />
-                        </div>
-                    </div>
-                </p:panel>
+                    
+                	<p:panelGrid columns="3" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente">
+                        <p:commandButton id="persistPeriograma" icon="White fa fa-save White" value="Salvar" styleClass="GreenButton" process="pnPeriograma" update="pnPeriograma,dtPeriograma"
+                        	actionListener="#{periogramaMB.actionPersist}" />
+                        <p:commandButton id="newPeriograma" icon="White fa fa-file-o" value="Novo" actionListener="#{periogramaMB.actionNew}" update="pnPeriograma" process="@this" />
+						<p:commandButton icon="White fa fa-file-o" value="Comparar" update="pnComparar" process="@this"
+							oncomplete="PF('dlgComparar').show();resize('#lume\\:tabView\\:dlgComparar');" />
+					</p:panelGrid>
+                </p:outputPanel>
 
                 <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPeriograma" value="#{periogramaMB.entityList}" paginatorAlwaysVisible="false" var="dto" rows="10" paginator="true"
                     selection="#{periogramaMB.entity}" selectionMode="single" rowKey="#{dto}" paginatorPosition="bottom">

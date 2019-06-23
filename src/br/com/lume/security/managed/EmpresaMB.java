@@ -10,9 +10,9 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UF;
-import br.com.lume.odonto.bo.PlanoBO;
 import br.com.lume.odonto.entity.Plano;
-import br.com.lume.security.bo.EmpresaBO;
+import br.com.lume.plano.PlanoSingleton;
+import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 
 @ManagedBean
@@ -23,18 +23,17 @@ public class EmpresaMB extends LumeManagedBean<Empresa> {
 
     private Logger log = Logger.getLogger(EmpresaMB.class);
 
-    private final EmpresaBO empresaBO = new EmpresaBO();
+  
 
     private List<Plano> planos;
 
-    private PlanoBO planoBO;
+  //  private PlanoBO planoBO;
 
     private List<Empresa> empresasPlano;
 
     public EmpresaMB() {
-        super(new EmpresaBO());
-        this.setClazz(Empresa.class);
-        this.planoBO = new PlanoBO();
+        super(EmpresaSingleton.getInstance().getBo());
+        this.setClazz(Empresa.class);        
         this.carregarEmpresasPlano();
         this.carregarPlano();
     }
@@ -46,7 +45,7 @@ public class EmpresaMB extends LumeManagedBean<Empresa> {
 
     private void carregarEmpresasPlano() {
         try {
-            this.empresasPlano = ((EmpresaBO) this.getbO()).listEmpresasPlano();
+            this.empresasPlano = EmpresaSingleton.getInstance().getBo().listEmpresasPlano();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -66,7 +65,7 @@ public class EmpresaMB extends LumeManagedBean<Empresa> {
 
     private void carregarPlano() {
         try {
-            this.planos = this.planoBO.listAll();
+            this.planos = PlanoSingleton.getInstance().getBo().listAll();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -79,7 +78,7 @@ public class EmpresaMB extends LumeManagedBean<Empresa> {
 
     @Override
     public List<Empresa> getEntityList() {
-        return this.empresaBO.getAllEmpresas(true);
+        return EmpresaSingleton.getInstance().getBo().getAllEmpresas(true);
     }
 
     @Override

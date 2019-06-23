@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.AgendamentoPlanoTratamentoProcedimentoBO;
+import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 
 @FacesConverter(forClass = AgendamentoPlanoTratamentoProcedimento.class, value = "agendamentoPlano")
@@ -20,7 +20,7 @@ public class AgendamentoPlanoTratamentoProcedimentoConverter implements Converte
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new AgendamentoPlanoTratamentoProcedimentoBO().find(id);
+                return AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -7,8 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.StatusDenteBO;
 import br.com.lume.odonto.entity.StatusDente;
+import br.com.lume.statusDente.StatusDenteSingleton;
 
 @FacesConverter(forClass = StatusDente.class, value = "statusDente")
 public class StatusDenteConverter implements Converter, Serializable {
@@ -21,7 +21,7 @@ public class StatusDenteConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new StatusDenteBO().find(id);
+                return StatusDenteSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,29 +1,29 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-
-                <p:tabView id="tabView" styleClass="NoPadding">
-
+    	<style>
+    	.ui-tabs .ui-tabs-panel {
+    		padding: 8px 14px !important;
+    	}
+    	</style>
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                <p:tabView id="tabView">
                     <p:ajax event="tabChange" listener="#{convenioProcedimentoMB.onTabChange}" update=":lume:tabView:dtRelatorioConvenioProcedimento" />
-
-
                     <p:tab title="Convênio-Procedimento">
-
-
-                        <div class="Card">
                             <h:inputHidden id="idConvenio" value="#{convenioProcedimentoMB.entity.id}" />
-                            <p:panel id="pnConvenio" styleClass="BordNone">
+                            <p:outputPanel id="pnConvenio" styleClass="BordNone">
 
-                                <h1 class="CardBigTopic">Convênio-Procedimento</h1>
+                                <h1>Convênio-Procedimento</h1>
                                 <div class="SeparatorFull"></div>
 
                                 <p:panelGrid id="pnDados" columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
                                     style="border:0px none; background-color:transparent;">
 
                                     <p:outputLabel for="convenio" value="Convênio : " />
-                                    <p:selectOneMenu id="convenio" value="#{convenioProcedimentoMB.entity.convenio}" converter="convenio">
+                                    <p:selectOneMenu id="convenio" value="#{convenioProcedimentoMB.entity.convenio}" converter="convenio"
+                                    	style="min-width: auto;">
                                         <p:ajax listener="#{convenioProcedimentoMB.carregarListaConveioProcedimento}" process="@this" update="dtConvenioProcedimento,dtConvenioProcedimentoFora" />
                                         <f:selectItem itemValue="#{null}" itemLabel="Escolha um Convênio " />
                                         <f:selectItems value="#{convenioProcedimentoMB.convenios}" var="convenio" itemValue="#{convenio}" itemLabel="#{convenio.dadosBasico.nome}" />
@@ -33,7 +33,7 @@
                                     <p:inputText id="procedimento" disabled="true" value="#{convenioProcedimentoMB.entity.procedimento.descricao}" />
 
                                     <p:outputLabel for="valorOriginal" value="Valor Original : " />
-                                    <p:inputText id="valorOriginal" disabled="true" value="#{convenioProcedimentoMB.entity.procedimento.valor}" class="Wid20">
+                                    <p:inputText id="valorOriginal" disabled="true" value="#{convenioProcedimentoMB.entity.procedimento.valor}">
                                         <f:convertNumber currencySymbol="" type="currency" locale="#{lumeSecurity.locale}" />
                                     </p:inputText>
 
@@ -48,43 +48,35 @@
 
                                     <p:outputLabel id="lbporcentagem" for="porcentagem" value="Porcentagem (%) : " rendered="#{convenioProcedimentoMB.tipoValor == 'P'}" />
                                     <p:inputNumber id="porcentagem" value="#{convenioProcedimentoMB.entity.porcentagem}" maxlength="6" maxValue="999.99" decimalSeparator="," thousandSeparator="."
-                                        symbol="" rendered="#{convenioProcedimentoMB.tipoValor == 'P'}" class="Wid20" />
+                                        symbol="" rendered="#{convenioProcedimentoMB.tipoValor == 'P'}" />
 
                                     <p:outputLabel id="lbvalorNovo" for="valorNovo" value="Valor : " rendered="#{convenioProcedimentoMB.tipoValor == 'V'}" />
                                     <p:inputNumber id="valorNovo" value="#{convenioProcedimentoMB.entity.valor}" maxlength="8" maxValue="99999.99" decimalSeparator="," thousandSeparator="." symbol=""
-                                        rendered="#{convenioProcedimentoMB.tipoValor == 'V'}" class="Wid20" />
+                                        rendered="#{convenioProcedimentoMB.tipoValor == 'V'}" />
 
                                     <p:outputLabel for="valorRepasse" value="Valor Repasse : " />
                                     <p:inputNumber id="valorRepasse" value="#{convenioProcedimentoMB.entity.valorRepasse}" maxlength="8" maxValue="99999.99" decimalSeparator="," thousandSeparator="."
-                                        symbol="" class="Wid20" />
+                                        symbol="" />
 
 
                                 </p:panelGrid>
 
                                 <div class="SeparatorFull"></div>
-                                <div class="Container20 Responsive100">
+                                <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                     <p:commandButton id="persist" icon="White fa fa-save" value="Vincular ao Convênio" actionListener="#{convenioProcedimentoMB.actionPersist}"
                                         update=":lume:tabView:pnConvenio" process=":lume:tabView:pnDados,@this" styleClass="GreenButton" oncomplete="PF('dtConvenioProcedimentoFora').filter()" />
-                                </div>
-                                <div class="Container20 Responsive100">
                                     <p:commandButton id="delete" icon="White fa fa-trash-o" value="Desvincular do Convênio" actionListener="#{convenioProcedimentoMB.actionRemove}"
                                         update=":lume:tabView:pnConvenio,@this" process="@this" disabled="#{convenioProcedimentoMB.entity.zeraId || convenioProcedimentoMB.entity.id == 0}"
                                         styleClass="RedButton" oncomplete="PF('dtConvenioProcedimento').filter()" />
-                                </div>
-                                <div class="Container20 Responsive100">
                                     <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{convenioProcedimentoMB.actionNew}" update=":lume:tabView:pnConvenio"
                                         immediate="true" />
-                                </div>
-                                <div class="Container20 Responsive100">
                                     <p:commandButton value="Exportar Não Vinculados" ajax="false" process="dtConvenioProcedimentoFora" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                         <p:dataExporter encoding="iso-8859-1" type="xls" target="dtConvenioProcedimentoFora" fileName="convenioProcedimentoFora" />
                                     </p:commandButton>
-                                </div>
-                                <div class="Container20 Responsive100">
                                     <p:commandButton value="Exportar Vinculados" ajax="false" process="dtConvenioProcedimento" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                         <p:dataExporter encoding="iso-8859-1" type="xls" target="dtConvenioProcedimento" fileName="convenioProcedimento" />
                                     </p:commandButton>
-                                </div>
+                                </p:panelGrid>
 
                                 <div class="EmptyBox20"></div>
 
@@ -162,11 +154,7 @@
                                 </p:dataTable>
 
 
-                            </p:panel>
-
-                        </div>
-
-
+                            </p:outputPanel>
                     </p:tab>
 
                     <p:tab title="Relatório">
@@ -194,18 +182,17 @@
                                     </p:selectOneMenu>
 
                                     <p:outputLabel for="ano" value="Ano : " />
-                                    <p:inputText id="ano" value="#{convenioProcedimentoMB.ano}" maxlength="4" onkeypress="validaNumeros(event)" required="true" styleClass="Wid30"/>
+                                    <p:inputText id="ano" value="#{convenioProcedimentoMB.ano}" maxlength="4" onkeypress="validaNumeros(event)" required="true"/>
 
                                 </p:panelGrid>
 
                                 <div class="SeparatorFull"></div>
-                                <div class="Container25 Responsive100">
+                                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                     <p:commandButton icon="White fa fa-search" value="Pesquisar" actionListener="#{convenioProcedimentoMB.carregarRelatorio}" update="dtRelatorioConvenioProcedimento"
                                         process="@this,mes,ano" styleClass="OrangeButton" />
-                                </div>
+                                </p:panelGrid>
                             </p:fieldset>
-                            <br /> <br />
-
+                            <br />
 
                             <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtRelatorioConvenioProcedimento" value="#{convenioProcedimentoMB.relatorioConvenioProcedimentos}" var="cp"
                                 paginatorPosition="bottom" rows="15" paginator="true">
@@ -232,16 +219,17 @@
                                     </h:outputText>
                                 </p:column>
                             </p:dataTable>
-
+							<br />
                             <div class="SeparatorFull"></div>
-                            <div class="Container20 Responsive100">
+                            <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                 <p:commandButton value="Exportar" ajax="false" process="dtRelatorioConvenioProcedimento" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                     <p:dataExporter encoding="iso-8859-1" type="xls" target="dtRelatorioConvenioProcedimento" fileName="convenioProcedimentos" />
                                 </p:commandButton>
-                            </div>
+                            </p:panelGrid>
                         </div>
                     </p:tab>
                 </p:tabView>
+                </div>
             </div>
         </div>
     </ui:define>

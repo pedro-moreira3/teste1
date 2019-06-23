@@ -8,10 +8,10 @@ import javax.faces.bean.RequestScoped;
 import javax.faces.event.ActionEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.odonto.bo.StatBO;
-import br.com.lume.odonto.bo.UserBO;
 import br.com.lume.odonto.entity.Stat;
 import br.com.lume.odonto.entity.User;
+import br.com.lume.stat.StatSingleton;
+import br.com.lume.user.UserSingleton;
 
 @ManagedBean(name = "testeMB")
 @RequestScoped
@@ -22,14 +22,9 @@ public class TesteMB extends LumeManagedBean<User> {
      */
     private static final long serialVersionUID = -5530392226749410446L;
 
-    private UserBO userBO;
-
-    private StatBO statBO;
-
     public TesteMB() {
-        super(new UserBO());
-        this.userBO = new UserBO();
-        this.statBO = new StatBO();
+        super(UserSingleton.getInstance().getBo());
+      
         this.setClazz(User.class);
     }
 
@@ -45,7 +40,7 @@ public class TesteMB extends LumeManagedBean<User> {
             System.out.println("=============================1");
             User u = new User();
             u.setId(30);
-            this.setEntity(this.userBO.find(u));
+            this.setEntity(UserSingleton.getInstance().getBo().find(u));
             System.out.println("=============================2");
             super.actionRemove(event);
             System.out.println("=============================3");
@@ -60,7 +55,7 @@ public class TesteMB extends LumeManagedBean<User> {
 
     public Stat getStatususStr() {
         try {
-            return this.statBO.find(this.getEntity().getStatus());
+            return StatSingleton.getInstance().getBo().find(this.getEntity().getStatus());
         } catch (Exception e) {
             return new Stat();
         }
@@ -76,7 +71,7 @@ public class TesteMB extends LumeManagedBean<User> {
 
     public List<Stat> getStatususs() {
         try {
-            this.Statususs = this.statBO.listAll();
+            this.Statususs = StatSingleton.getInstance().getBo().listAll();
         } catch (Exception e) {
             this.Statususs = new ArrayList<>();
         }

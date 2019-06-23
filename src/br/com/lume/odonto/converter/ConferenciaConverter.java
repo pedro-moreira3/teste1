@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.ConferenciaBO;
+import br.com.lume.conferencia.ConferenciaSingleton;
 import br.com.lume.odonto.entity.Conferencia;
 
 @FacesConverter(forClass = Conferencia.class, value = "conferencia")
@@ -21,7 +21,7 @@ public class ConferenciaConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new ConferenciaBO().find(id);
+                return ConferenciaSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

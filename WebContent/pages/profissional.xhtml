@@ -1,32 +1,46 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<style>
+.ui-tabs .ui-tabs-panel {
+	padding: 8px 14px !important;
+}
+</style>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<p:tabView id="tabView">
+						<p:tab id="tab1" title="Profissional">
+							<ui:include src="dadosProfissional.xhtml" />
+						</p:tab>
 
-    <ui:define name="content">
+						<p:tab id="tab4" title="Perfil"
+							disabled="#{profissionalMB.entity.id == null}">
+							<ui:include src="perfilProfissional.xhtml" />
+						</p:tab>
 
-        <p:tabView id="tabView" styleClass="NoPadding">
-            <p:tab id="tab1" title="Profissional">
-                <ui:include src="dadosProfissional.xhtml" />
-            </p:tab>
+						<p:tab id="tab2" title="Contrato"
+							disabled="#{profissionalMB.entity.id == null}">
+							<ui:include src="contrato.xhtml" />
+						</p:tab>
 
+						<p:tab id="tab3" title="Horas Úteis"
+							disabled="#{profissionalMB.entity.id == null}">
+							<ui:include src="horasUteisProfissional.xhtml" />
+						</p:tab>
 
-            <p:tab id="tab4" title="Perfil" disabled="#{profissionalMB.entity.id == null}">
-                <ui:include src="perfilProfissional.xhtml" />
-            </p:tab>
+						<p:tab id="tab5" title="Ponto"
+							disabled="#{profissionalMB.entity.id == null}">
+							<ui:include src="profissionalPonto.xhtml" />
+						</p:tab>
+					</p:tabView>
+				</div>
+			</div>
+		</div>
 
-            <p:tab id="tab2" title="Contrato" disabled="#{profissionalMB.entity.id == null}">
-                <ui:include src="contrato.xhtml" />
-            </p:tab>
-
-            <p:tab id="tab3" title="Horas Úteis" disabled="#{profissionalMB.entity.id == null}">
-                <ui:include src="horasUteisProfissional.xhtml" />
-            </p:tab>
-            
-             <p:tab id="tab5" title="Ponto" disabled="#{profissionalMB.entity.id == null}">
-                <ui:include src="profissionalPonto.xhtml" />
-            </p:tab>
-
-        </p:tabView>
-
-
-    </ui:define>
+	</ui:define>
 </ui:composition>

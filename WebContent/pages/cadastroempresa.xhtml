@@ -7,13 +7,12 @@
 }
 </style>
 
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
                     <h:inputHidden id="id" value="#{CadastroEmpresaMB.entity.id}" />
-                    <p:panel id="pnPrincipal" styleClass="BordNone">
-
-                        <h1 class="CardBigTopic">Cadastro da Clínica</h1>
+                    <p:outputPanel id="pnPrincipal" styleClass="BordNone">
+                        <h1>Cadastro da Clínica</h1>
                         <div class="SeparatorFull"></div>
 
                         <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
@@ -48,14 +47,14 @@
 
                             <p:outputLabel for="empChaCnpj" value="CNPJ: " rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
                             <p:inputMask id="empChaCnpj" value="#{cadastroEmpresaMB.entity.empChaCnpj}" mask="99.999.999/9999-99" rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}"
-                                required="true" validator="cnpjValidator" class="Wid40" />
+                                required="true" validator="cnpjValidator" />
 
                             <p:outputLabel for="empChaInsmunicipal" value="Inscrição Municipal: " rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
                             <p:inputText id="empChaInsmunicipal" value="#{cadastroEmpresaMB.entity.empChaInsmunicipal}" required="false" styleClass="" maxlength="20"
                                 rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
 
                             <p:outputLabel for="empChaCep" value="CEP : " />
-                            <p:inputMask id="empChaCep" value="#{cadastroEmpresaMB.entity.empChaCep}" maxlength="8" mask="99999-999" styleClass="Wid30 MarRight10">
+                            <p:inputMask id="empChaCep" value="#{cadastroEmpresaMB.entity.empChaCep}" maxlength="8" mask="99999-999">
                                 <f:validator validatorId="cepValidator" />
                             </p:inputMask>
 
@@ -63,25 +62,25 @@
                             <p:inputText id="empStrEndereco" value="#{cadastroEmpresaMB.entity.empStrEndereco}" required="true" maxlength="100" />
 
                             <p:outputLabel for="empChaNumEndereco" value="Número: " />
-                            <p:inputText id="empChaNumEndereco" value="#{cadastroEmpresaMB.entity.empChaNumEndereco}" required="true" maxlength="15" class="Wid20" />
+                            <p:inputText id="empChaNumEndereco" value="#{cadastroEmpresaMB.entity.empChaNumEndereco}" required="true" maxlength="15" />
 
                             <p:outputLabel for="empStrComplemento" value="Complemento: " />
                             <p:inputText id="empStrComplemento" value="#{cadastroEmpresaMB.entity.empStrComplemento}" required="false" maxlength="100" />
 
                             <p:outputLabel for="empStrBairro" value="Bairro: " />
-                            <p:inputText id="empStrBairro" value="#{cadastroEmpresaMB.entity.empStrBairro}" required="true" maxlength="50" class="Wid40" />
+                            <p:inputText id="empStrBairro" value="#{cadastroEmpresaMB.entity.empStrBairro}" required="true" maxlength="50" />
 
                             <p:outputLabel for="empStrCidade" value="Cidade: " />
-                            <p:inputText id="empStrCidade" value="#{cadastroEmpresaMB.entity.empStrCidade}" required="true" maxlength="50" class="Wid40" />
+                            <p:inputText id="empStrCidade" value="#{cadastroEmpresaMB.entity.empStrCidade}" required="true" maxlength="50" />
 
                             <p:outputLabel for="empChaUf" value="Estado: " />
-                            <p:selectOneMenu id="empChaUf" value="#{cadastroEmpresaMB.entity.empChaUf}" required="true" class="Wid40">
+                            <p:selectOneMenu id="empChaUf" value="#{cadastroEmpresaMB.entity.empChaUf}" required="true">
                                 <f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
                                 <f:selectItems value="#{cadastroEmpresaMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
                             </p:selectOneMenu>
 
                             <p:outputLabel for="empChaFone" value="Fone: " />
-                            <p:inputText id="empChaFone" value="#{cadastroEmpresaMB.entity.empChaFone}" required="true" maxlength="15" styleClass="telefone Wid30" onfocus="mascaraTelefone()" />
+                            <p:inputText id="empChaFone" value="#{cadastroEmpresaMB.entity.empChaFone}" required="true" maxlength="15" styleClass="telefone" onfocus="mascaraTelefone()" />
 
                             <p:outputLabel for="empStrEmail" value="E-Mail: " />
                             <p:inputText id="empStrEmail" value="#{cadastroEmpresaMB.entity.empStrEmail}" maxlength="100" required="true">
@@ -93,7 +92,7 @@
                                 rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
 
                             <p:outputLabel for="empChaCro" value="CRO do Responsável: " />
-                            <p:inputText id="empChaCro" value="#{cadastroEmpresaMB.entity.empChaCro}" required="false" maxlength="30" class="Wid40" />
+                            <p:inputText id="empChaCro" value="#{cadastroEmpresaMB.entity.empChaCro}" required="false" maxlength="30" />
                             
                              <p:outputLabel for="empStrTokenContify" value="Contify Token: " />
                             <p:inputText id="empStrTokenContify" value="#{cadastroEmpresaMB.entity.empStrTokenContify}" required="false" maxlength="300" />
@@ -122,7 +121,7 @@
                                     <p:fileUpload fileUploadListener="#{cadastroEmpresaMB.handleFotoUpload}" mode="advanced" update="foto" auto="true" sizeLimit="300000"
                                         allowTypes="/(\.|\/)(jpe?g|png)$/" label="Procurar" invalidFileMessage="Tipo de Arquivo inválido" invalidSizeMessage="Tamanho inválido" />
                                 </div>
-                                <p:graphicImage styleClass="profile-image Fleft" id="foto" value="#{cadastroEmpresaMB.entity.logo}" stream="false" />
+                                <p:graphicImage styleClass="profile-image Fleft" id="foto" value="#{lumeSecurity.logo}" stream="false" />
                             </h:panelGroup>
 
                             <p:outputLabel value="Dentista tem acesso administrativo? " />
@@ -136,11 +135,11 @@
 
                         <div class="SeparatorFull"></div>
 
-                        <div class="Container20 Responsive50">
+                        <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{cadastroEmpresaMB.actionPersist}" update="@all" process="pnPrincipal"
                                 styleClass="GreenButton" />
-                        </div>
-                    </p:panel>
+                        </p:panelGrid>
+                    </p:outputPanel>
                 </div>
             </div>
         </div>

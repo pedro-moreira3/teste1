@@ -5,22 +5,21 @@
     <div class="Container100 Responsive100 NoIndent">
         <div class="Container100 ui-fluid NoPadding">
             <div class="Card">
-                <p:panel id="pnAfastamento" styleClass="BordNone">
+            	<br />
+                <p:panel id="pnAfastamento" styleClass="BordNone" style="overflow: hidden;">
                     <p:panelGrid id="pgAfastamento" columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
                         style="border:0px none; background-color:transparent;">
 
                         <p:outputLabel for="inicioAfastamento" value="Inicio : " />
-                        <p:calendar id="inicioAfastamento" value="#{afastamentoMB.inicio}" mindate="01/01/00" minHour="00" pattern="dd/MM/yyyy HH:mm" locale="#{lumeSecurity.locale}" required="true"
-                            class="Wid30" mask="true">
+                        <p:calendar id="inicioAfastamento" value="#{afastamentoMB.inicio}" mindate="01/01/2000 00:00" minHour="00" pattern="dd/MM/yyyy HH:mm" locale="#{lumeSecurity.locale}" required="true" mask="true">
                         </p:calendar>
 
                         <p:outputLabel for="fimAfastamento" value="Fim : " />
-                        <p:calendar id="fimAfastamento" value="#{afastamentoMB.fim}" maxdate="31/12/2099" maxHour="23" pattern="dd/MM/yyyy HH:mm" locale="#{lumeSecurity.locale}" required="true"
-                            class="Wid30" mask="true">
+                        <p:calendar id="fimAfastamento" value="#{afastamentoMB.fim}" maxdate="31/12/2099 23:59" maxHour="23" pattern="dd/MM/yyyy HH:mm" locale="#{lumeSecurity.locale}" required="true" mask="true">
                         </p:calendar>
 
                         <p:outputLabel for="tipo" value="Tipo : " />
-                        <p:selectOneMenu id="tipo" value="#{afastamentoMB.dominioSelecionado}" converter="dominio" required="true" layout="grid" columns="3">
+                        <p:selectOneMenu id="tipo" value="#{afastamentoMB.dominioSelecionado}" converter="dominio" required="true">
                             <f:selectItem itemValue="#{null}" itemLabel="Selecione um tipo" />
                             <f:selectItems value="#{afastamentoMB.dominios}" var="tp" itemValue="#{tp}" itemLabel="#{tp.nome}" />
                         </p:selectOneMenu>
@@ -33,23 +32,21 @@
 
                     </p:panelGrid>
 
-                    <div class="SeparatorFull"></div>
+                    <p:separator styleClass="SeparatorFull" />
 
-                    <div class="Container25 Responsive100">
+					<p:panelGrid columns="3" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid">
                         <p:commandButton id="persistAfastamento" icon="White fa fa-save" value="Salvar" actionListener="#{afastamentoMB.actionPersist}" process="pnAfastamento"
                             update=":lume:pnAfastamento,:lume:dtAfastamento,:lume:pnAgnd" styleClass="GreenButton" oncomplete="handleDialogRequestAfastamento(xhr, status, args);" />
-                    </div>
-                    <div class="Container25 Responsive100">
                         <p:commandButton id="deletAfastamento" icon="White fa fa-trash-o" value="Excluir" actionListener="#{afastamentoMB.actionRemove}"
                             update=":lume:pnAfastamento,:lume:dtAfastamento" process="@this" disabled="#{afastamentoMB.entity.id == 0}" styleClass="RedButton"
                             oncomplete="handleDialogRequestAfastamento(xhr, status, args);" />
-                    </div>
-                    <div class="Container25 Responsive100">
                         <p:commandButton id="newAfastamento" icon="White fa fa-file-o" value="Novo" actionListener="#{afastamentoMB.actionNew}" update=":lume:pnAfastamento" immediate="true"
                             tabindex="1" process="@this,pnAfastamento" />
-                    </div>
+                    </p:panelGrid>
 
                 </p:panel>
+                <br />
 
                 <div class="EmptyBox20"></div>
 
@@ -57,8 +54,9 @@
                     selectionMode="single" rowKey="#{afa}" paginatorPosition="bottom">
                     <p:ajax event="rowSelect" update=":lume:pnAfastamento" listener="#{afastamentoMB.carregaTela}" process="@this" resetValues="true"/>
                     <f:facet name="header">Bloqueios</f:facet>
-                    <p:column headerText="Tipo" sortBy="#{afa.tipoAfastamentoStr}" filterBy="#{afa.tipoAfastamentoStr}" filterMatchMode="contains">
-                        <h:outputText value="#{afa.tipoAfastamentoStr}" />
+                    <p:column headerText="Tipo" sortBy="#{afastamentoMB.getAfastamentoTipoStr(afa)}"
+                    	filterBy="#{afastamentoMB.getAfastamentoTipoStr(afa)}" filterMatchMode="contains">
+                        <h:outputText value="#{afastamentoMB.getAfastamentoTipoStr(afa)}" />
                     </p:column>
                     <p:column headerText="Inicio" sortBy="#{afa.inicio}" filterBy="#{afa.inicioStr}" filterMatchMode="contains">
                         <h:outputText value="#{afa.inicioStr}" />

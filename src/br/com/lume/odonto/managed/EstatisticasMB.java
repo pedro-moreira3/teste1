@@ -3,12 +3,15 @@ package br.com.lume.odonto.managed;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
+import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.odonto.bo.AgendamentoBO;
-import br.com.lume.odonto.bo.PlanoBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+//import br.com.lume.odonto.bo.AgendamentoBO;
+//import br.com.lume.odonto.bo.PlanoBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Plano;
+import br.com.lume.plano.PlanoSingleton;
 import br.com.lume.security.bo.EmpresaBO;
 
 @ManagedBean
@@ -21,13 +24,13 @@ public class EstatisticasMB extends LumeManagedBean<Agendamento> {
     private static final long serialVersionUID = -7988996492630469795L;
 
     public EstatisticasMB() {
-        super(new AgendamentoBO());
+        super(AgendamentoSingleton.getInstance().getBo());
         this.setClazz(Agendamento.class);
     }
 
     public Integer getQuantidadeAgendamentosMesAtual() {
         try {
-            return ((AgendamentoBO) this.getbO()).findQuantidadeAgendamentosMesAtual(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+            return AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosMesAtual(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -36,7 +39,7 @@ public class EstatisticasMB extends LumeManagedBean<Agendamento> {
 
     public Integer getQuantidadeAgendamentosHoje() {
         try {
-            return ((AgendamentoBO) this.getbO()).findQuantidadeAgendamentosHoje(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+            return AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosHoje(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -45,8 +48,9 @@ public class EstatisticasMB extends LumeManagedBean<Agendamento> {
 
     public Integer getQuantidadeAgendamentosPlano() {
         try {
-            long idPlano = new EmpresaBO().find(ProfissionalBO.getProfissionalLogado().getIdEmpresa()).getIdPlano();
-            Plano p = new PlanoBO().find(idPlano);
+            long idPlano = new EmpresaBO().find(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()).getIdPlano();
+            new PlanoSingleton();
+            Plano p = PlanoSingleton.getInstance().getBo().find(idPlano);
             if (p != null) {
                 return p.getConsultas();
             }

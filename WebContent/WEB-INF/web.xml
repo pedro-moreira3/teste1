@@ -4,7 +4,7 @@
     <context-param>
         <param-name>primefaces.THEME</param-name>
         <!-- <param-value>redmond</param-value> -->
-        <param-value>olympos</param-value>
+        <param-value>ultima-#{guestPreferences.theme}</param-value>
     </context-param>
     <context-param>
         <param-name>SISTEMA_ATUAL</param-name>

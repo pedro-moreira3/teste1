@@ -7,8 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.PlanoTratamentoBO;
 import br.com.lume.odonto.entity.PlanoTratamento;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 
 @FacesConverter(forClass = PlanoTratamento.class, value = "planoTratamento")
 public class PlanoTratamentoConverter implements Converter, Serializable {
@@ -21,7 +21,7 @@ public class PlanoTratamentoConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new PlanoTratamentoBO().find(id);
+                return PlanoTratamentoSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

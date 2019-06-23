@@ -1,16 +1,15 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-                    <p:panel id="pnProcedimentoKit" styleClass="BordNone">
-
-                        <h1 class="CardBigTopic">Kits/Procedimentos</h1>
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <p:outputPanel id="pnProcedimentoKit" styleClass="BordNone">
+                        <h1>Kits/Procedimentos</h1>
                         <div class="SeparatorFull"></div>
                         <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
                             <p:outputLabel for="procedimento" value="Procedimento : " />
-                            <p:column>
+                            <p:column style="display: flex !important">
                                 <p:selectOneMenu id="procedimento" value="#{procedimentoKitMB.entity.procedimento}" required="true" converter="procedimento" styleClass="select50" filter="true"
                                     filterMatchMode="contains">
                                     <f:selectItem itemValue="#{null}" itemLabel="Selecione um procedimento" />
@@ -24,37 +23,32 @@
                             </p:column>
 
                             <p:outputLabel for="kit" value="Kit : " />
-                            <p:selectOneMenu id="kit" value="#{procedimentoKitMB.entity.kit}" required="true" converter="kit" styleClass="select50" filter="true" filterMatchMode="contains">
+                            <p:selectOneMenu id="kit" value="#{procedimentoKitMB.entity.kit}" required="true" converter="kit" filter="true" filterMatchMode="contains">
                                 <f:selectItem itemValue="#{null}" itemLabel="Selecione um kit" />
                                 <f:selectItems value="#{procedimentoKitMB.kits}" var="k" itemLabel="#{k.descricao} (#{k.tipo})" itemValue="#{k}" />
                             </p:selectOneMenu>
 
                             <p:outputLabel for="quantidade" value="Quantidade: " />
-                            <p:inputText id="quantidade" value="#{procedimentoKitMB.entity.quantidade}" maxlength="10" required="true" onkeypress="validaNumeros(event)" style="width:10%">
+                            <p:inputText id="quantidade" value="#{procedimentoKitMB.entity.quantidade}" maxlength="10" required="true" onkeypress="validaNumeros(event)">
                                 <f:convertNumber />
                             </p:inputText>
 
                         </p:panelGrid>
-
+						<br />
                         <div class="SeparatorFull"></div>
-                        <div class="Container25 Responsive100">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="persist2" icon="White fa fa-save" value="Salvar" actionListener="#{procedimentoKitMB.actionPersist}"
                                 update=":lume:pnProcedimentoKit, lume:tbProcedimentoKit" process=":lume:pnProcedimentoKit" styleClass="GreenButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="delete2" icon="White fa fa-trash-o" value="Excluir" actionListener="#{procedimentoKitMB.actionRemove}"
                                 update=":lume:pnProcedimentoKit, lume:tbProcedimentoKit" process="@this" disabled="#{procedimentoKitMB.entity.id == null}" styleClass="RedButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="new2" icon="White fa fa-file-o" value="Novo" actionListener="#{procedimentoKitMB.actionNew}" update=":lume:pnProcedimentoKit,:lume:tbProcedimentoKit"
                                 process="@this" />
-                        </div>
-
-                    </p:panel>
+                        </p:panelGrid>
+                    </p:outputPanel>
 
                     <div class="EmptyBox20"></div>
 
-                    <p:panel styleClass="BordNone">
+                    <p:outputPanel styleClass="BordNone">
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="tbProcedimentoKit" value="#{procedimentoKitMB.entityList}" var="p" rows="15" paginator="true" widgetVar="procedimentoTable"
                             selection="#{procedimentoKitMB.entity}" selectionMode="single" rowKey="#{p}" paginatorPosition="bottom">
                             <p:ajax event="rowSelect" update=":lume:pnProcedimentoKit" resetValues="true" />
@@ -78,7 +72,7 @@
                                 <h:outputText value="#{p.quantidade}" />
                             </p:column>
                         </p:dataTable>
-                    </p:panel>
+                    </p:outputPanel>
 
                 </div>
             </div>

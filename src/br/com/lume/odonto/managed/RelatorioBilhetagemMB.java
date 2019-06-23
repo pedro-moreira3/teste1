@@ -13,9 +13,10 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Utils;
-import br.com.lume.odonto.bo.RelatorioBilhetagemBO;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.RelatorioBilhetagem;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.relatorioBilhetagem.RelatorioBilhetagemSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -33,11 +34,8 @@ public class RelatorioBilhetagemMB extends LumeManagedBean<RelatorioBilhetagem> 
 
     private String status;
 
-    private RelatorioBilhetagemBO relatorioBilhetagemBO;
-
     public RelatorioBilhetagemMB() {
-        super(new RelatorioBilhetagemBO());
-        this.relatorioBilhetagemBO = new RelatorioBilhetagemBO();
+        super(RelatorioBilhetagemSingleton.getInstance().getBo());  
         this.setClazz(RelatorioBilhetagem.class);
         this.filtra();
     }
@@ -48,7 +46,9 @@ public class RelatorioBilhetagemMB extends LumeManagedBean<RelatorioBilhetagem> 
                 Calendar c = Calendar.getInstance();
                 c.setTime(this.fim);
                 c.add(Calendar.DAY_OF_MONTH, 1);
-                this.relatorioBilhetagens = this.relatorioBilhetagemBO.listAllByVigenciaAndStatus(this.inicio, c.getTime(), this.status);
+                this.relatorioBilhetagens = RelatorioBilhetagemSingleton.getInstance().getBo().listAllByVigenciaAndStatus(this.inicio, c.getTime(), this.status,
+                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                
                 this.somaQuantidade = 0;
                 for (RelatorioBilhetagem r : this.relatorioBilhetagens) {
                     this.somaQuantidade += r.getQuantidade();

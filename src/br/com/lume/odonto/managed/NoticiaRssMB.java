@@ -18,8 +18,8 @@ import org.primefaces.model.UploadedFile;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
-import br.com.lume.odonto.bo.NoticiaRssBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.noticiaRss.NoticiaRssSingleton;
 import br.com.lume.odonto.entity.NoticiaRss;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.xml.RSSBuilder;
@@ -36,13 +36,13 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
 
     private List<NoticiaRss> noticiasRss;
 
-    private NoticiaRssBO noticiaRssBO;
+  
 
     private Date dataAtual;
 
     public NoticiaRssMB() {
-        super(new NoticiaRssBO());
-        this.noticiaRssBO = new NoticiaRssBO();
+        super(NoticiaRssSingleton.getInstance().getBo());
+      
         this.setClazz(NoticiaRss.class);
         this.geraLista();
     }
@@ -50,7 +50,7 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.getbO().persist(this.getEntity());
             if (this.arquivo != null) {
                 this.salvaArquivo();
@@ -59,7 +59,7 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
             cal.setTime(new Date());
             cal.add(Calendar.DAY_OF_MONTH, -1);
             if (this.getEntity().getDataPublicacao().getTime() >= cal.getTime().getTime()) {
-                new RSSBuilder().createRSSFile(((NoticiaRssBO) this.getbO()).listByEmpresa());
+                new RSSBuilder().createRSSFile(NoticiaRssSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 this.geraLista();
             } else {
@@ -100,7 +100,7 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
 
     private void geraLista() {
         try {
-            this.noticiasRss = this.noticiaRssBO.listByEmpresa();
+            this.noticiasRss = NoticiaRssSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             e.printStackTrace();
         }

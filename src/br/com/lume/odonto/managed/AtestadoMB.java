@@ -13,23 +13,28 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 import org.primefaces.event.SelectEvent;
 
+import br.com.lume.atestado.AtestadoSingleton;
+import br.com.lume.cid.CidSingleton;
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.AtestadoBO;
-import br.com.lume.odonto.bo.CIDBO;
-import br.com.lume.odonto.bo.DocumentoBO;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.PacienteBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.documento.DocumentoSingleton;
+import br.com.lume.dominio.DominioSingleton;
+//import br.com.lume.odonto.bo.CIDBO;
+//import br.com.lume.odonto.bo.DocumentoBO;
+//import br.com.lume.odonto.bo.DominioBO;
+//import br.com.lume.odonto.bo.PacienteBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Atestado;
 import br.com.lume.odonto.entity.CID;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.Dominio;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.TagDocumento;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.paciente.PacienteSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -53,42 +58,42 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
 
     private Set<TagDocumento> tagDinamicas;
 
-    private CIDBO cidBO;
+  //  private CIDBO cidBO;
 
-    private DominioBO dominioBO;
+  //  private DominioBO dominioBO;
 
-    private DocumentoBO documentoBO;
+  //  private DocumentoBO documentoBO;
 
-    private AtestadoBO atestadoBO;
+   // private AtestadoBO atestadoBO;
 
-    private PacienteBO pacienteBO;
+ //   private PacienteBO pacienteBO;
 
     private Paciente paciente;
 
-    private ProfissionalBO profissionalBO;
+ //   private ProfissionalBO profissionalBO;
 
     private Profissional profissionalLogado;
 
     public AtestadoMB() {
-        super(new AtestadoBO());
-        profissionalBO = new ProfissionalBO();
-        dominioBO = new DominioBO();
-        documentoBO = new DocumentoBO();
-        atestadoBO = new AtestadoBO();
-        pacienteBO = new PacienteBO();
+        super(AtestadoSingleton.getInstance().getBo());
+     //   profissionalBO = new ProfissionalBO();
+     //   dominioBO = new DominioBO();
+      //  documentoBO = new DocumentoBO();
+    //    atestadoBO = new AtestadoBO();
+    //    pacienteBO = new PacienteBO();
         try {
-            Dominio dominio = dominioBO.findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "A");
-            documentos = documentoBO.listByTipoDocumento(dominio);
-            cidBO = new CIDBO();
-            cids = cidBO.listAll();
-            this.setPaciente(PacienteBO.getPacienteSelecionado());
+            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("documento", "tipo", "A");
+            documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(dominio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+          //  cidBO = new CIDBO();
+            cids = CidSingleton.getInstance().getBo().listAll();
+            this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
         } catch (Exception e) {
             this.addError(OdontoMensagens.getMensagem("documento.erro.documento.carregar"), "");
             e.printStackTrace();
         }
-        profissionalLogado = ProfissionalBO.getProfissionalLogado();
+        profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
         if (profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) || profissionalLogado.getPerfil().equals(
-                OdontoPerfil.RESPONSAVEL_TECNICO)) {
+                OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA)) {
             liberaBotao = true;
         }
         this.setClazz(Atestado.class);
@@ -102,10 +107,10 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
                 this.replaceDocumento();
                 visivel = true;
             }
-            this.getEntity().setProfissional(ProfissionalBO.getProfissionalLogado());
+            this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
             this.getEntity().setAtestadoGerado(documento);
             this.getEntity().setPaciente(paciente);
-            atestadoBO.persist(this.getEntity());
+            AtestadoSingleton.getInstance().getBo().persist(this.getEntity());
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             this.setCid(null);
         } catch (Exception e) {
@@ -129,7 +134,7 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
     public List<Atestado> getEntityList() {
         if (paciente != null) {
             try {
-                return atestadoBO.listByPaciente(paciente);
+                return AtestadoSingleton.getInstance().getBo().listByPaciente(paciente);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -146,7 +151,7 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
     public List<CID> geraSugestoes(String query) {
         List<CID> suggestions = new ArrayList<>();
         try {
-            cids = cidBO.listAll();
+            cids = CidSingleton.getInstance().getBo().listAll();
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS);
         }
@@ -171,7 +176,7 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
     }
 
     private void replaceDocumento() {
-        documento = documentoBO.replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento);
+        documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         if(dias != null && !dias.isEmpty()) {
             documento = documento.replaceAll("#dias", this.getDias());    
@@ -222,7 +227,7 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
     }
 
     public void setDocumentoSelecionado(Documento documentoSelecionado) {
-        tagDinamicas = documentoBO.getTagDinamicas(documentoSelecionado, this.documentoSelecionado, tagDinamicas,
+        tagDinamicas = DocumentoSingleton.getInstance().getBo().getTagDinamicas(documentoSelecionado, this.documentoSelecionado, tagDinamicas,
                 new String[] { "#dias", "#paciente", "#rg", "#datahoje", "#endereco_completo", "#profissional", "#cid", "#clinica_nome", "#clinica_cnpj", "#clinica_endereco", "#clinica_numero", "#clinica_complemento", "#clinica_bairro", "#clinica_cidade", "#clinica_estado", "#clinica_fone", "#clinica_email", "#clinica_cro_responsavel", "#clinica_logo" });
         this.documentoSelecionado = documentoSelecionado;
         visivel = true;
@@ -270,11 +275,11 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
     public void handleSelectPacienteSelecionado(SelectEvent event) {
         Object object = event.getObject();
         paciente = (Paciente) object;
-        PacienteBO.setPacienteSelecionado(paciente);
+        UtilsFrontEnd.setPacienteSelecionado(paciente);
     }
 
     public List<Paciente> geraSugestoesPaciente(String query) {
-        return pacienteBO.listSugestoesComplete(query);
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public boolean isLiberaBotao() {

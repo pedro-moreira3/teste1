@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.security.bo.UsuarioBO;
 import br.com.lume.security.entity.Usuario;
 
@@ -44,6 +45,6 @@ public class DesbloquearBloquearUsuarioMB extends LumeManagedBean<Usuario> {
     @Override
     public List<Usuario> getEntityList() {
         UsuarioBO usuarioBO = new UsuarioBO();
-        return usuarioBO.getAllUsuariosByEmpresa(this.getEntity().getEmpresa());
+        return usuarioBO.getAllUsuariosByEmpresa(UtilsFrontEnd.getEmpresaLogada());
     }
 }

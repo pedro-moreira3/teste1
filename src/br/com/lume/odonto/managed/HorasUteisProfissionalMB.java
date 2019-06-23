@@ -16,7 +16,8 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.HorasUteisProfissionalBO;
+import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
+//import br.com.lume.odonto.bo.HorasUteisProfissionalBO;
 import br.com.lume.odonto.entity.HorasUteisProfissional;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -45,11 +46,11 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
 
     public List<HorasUteisProfissional> horasUteisProfissional;
 
-    private HorasUteisProfissionalBO horasUteisProfissionalBO;
+   // private HorasUteisProfissionalBO horasUteisProfissionalBO;
 
     public HorasUteisProfissionalMB() {
-        super(new HorasUteisProfissionalBO());
-        this.horasUteisProfissionalBO = new HorasUteisProfissionalBO();
+        super(HorasUteisProfissionalSingleton.getInstance().getBo());
+      //  this.horasUteisProfissionalBO = new HorasUteisProfissionalBO();
         this.setClazz(HorasUteisProfissional.class);
     }
 
@@ -84,7 +85,7 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
                                 horasUteis.setProfissional(this.profissionalMB.getEntity());
                                 horasUteis.setHoraIni(this.setSegundos(this.getHoraIni()));
                                 horasUteis.setHoraFim(this.setSegundos(this.getHoraFim()));
-                                ((HorasUteisProfissionalBO) this.getbO()).persist(horasUteis);
+                                HorasUteisProfissionalSingleton.getInstance().getBo().persist(horasUteis);
                                 this.diasSelecionados = new ArrayList<>();
                             }
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -135,7 +136,7 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
             Profissional profissionalAtual = this.profissionalMB.getEntity();
             if (this.profissionalAnterior == null || this.profissionalAnterior.getId() != profissionalAtual.getId()) {
                 this.profissionalAnterior = profissionalAtual;
-                this.horasUteisProfissional = new HorasUteisProfissionalBO().listByProfissional(this.profissionalMB.getEntity());
+                this.horasUteisProfissional = HorasUteisProfissionalSingleton.getInstance().getBo().listByProfissional(this.profissionalMB.getEntity());
                 //horasUteisProfissional = horasUteisProfissionalBO.listByProfissional(profissionalMB.getEntity());
                 this.ordenaPorDiaDaSemana();
             }
@@ -147,7 +148,7 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
 
     public void ordenaPorDiaDaSemana() {
         for (HorasUteisProfissional hup : this.horasUteisProfissional) {
-            hup.setDiaDaSemanaInt(this.horasUteisProfissionalBO.getDiaDaSemana(hup.getDiaDaSemana()));
+            hup.setDiaDaSemanaInt(HorasUteisProfissionalSingleton.getInstance().getBo().getDiaDaSemana(hup.getDiaDaSemana()));
         }
         Collections.sort(this.horasUteisProfissional, new Comparator<HorasUteisProfissional>() {
 

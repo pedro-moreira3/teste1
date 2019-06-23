@@ -1,20 +1,14 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-
-
-                    <p:panel id="pnKit" styleClass="BordNone">
-
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <p:outputPanel id="pnKit" styleClass="BordNone">
                         <h:inputHidden id="id" value="#{kitMB.entity.id}" />
-                        <h1 class="CardBigTopic">Configuração de Kits</h1>
+                        <h1>Configuração de Kits</h1>
                         <div class="SeparatorFull"></div>
-
                         <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
-
-
                             <p:outputLabel for="descricao" value="Descrição : " />
                             <p:inputText id="descricao" value="#{kitMB.entity.descricao}" required="true" maxlength="100" />
 
@@ -30,17 +24,13 @@
                         </p:panelGrid>
 
                         <p:panel id="pnItens" header="Itens">
-
                             <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
-
-
                                 <h:outputLabel for="digitacao" value="Item : " />
                                 <p:column>
                                     <p:autoComplete queryDelay="1000" id="digitacao" value="#{kitMB.digitacao}" completeMethod="#{kitMB.filtraItem}" minQueryLength="3" styleClass="itembusca">
                                         <p:ajax event="itemSelect" listener="#{kitMB.handleSelect}" update=":lume:tbItemTree, :lume:quantidade2, :lume:pnItens" process="@this" />
                                     </p:autoComplete>
-
-
+                                    <br /><br />
                                     <p:tree value="#{kitMB.root}" var="item" style="height:300px;" id="tbItemTree" selection="#{kitMB.selectedItem}" selectionMode="single">
                                         <p:ajax event="select" listener="#{kitMB.onNodeSelect}" update=":lume:digitacao, :lume:quantidade2, :lume:pnItens" process="@this" />
                                         <p:ajax event="unselect" listener="#{kitMB.onNodeUnselect}" />
@@ -49,51 +39,36 @@
                                         </p:treeNode>
                                     </p:tree>
                                 </p:column>
-
-
                                 <p:outputLabel for="quantidade" value="Quantidade: " />
                                 <p:column>
-                                    <p:inputText id="quantidade" value="#{kitMB.quantidade}" maxlength="10" onkeypress="validaNumeros(event)" style="width:10%"
+                                    <p:inputText id="quantidade" value="#{kitMB.quantidade}" maxlength="10" onkeypress="validaNumeros(event)"
                                         required="#{kitMB.digitacao != null}">
                                         <f:convertNumber />
                                     </p:inputText>
-                                    <h:outputLabel id="quantidade2" value="#{kitMB.item.unidadeMedidaString}" styleClass="unidadeMedidaString" disabled="true" />
+                                    <h:outputLabel id="quantidade2" value="#{kitMB.getUnidadeString(kitMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
                                 </p:column>
-
                             </p:panelGrid>
-
-                            <div class="Separator"></div>
-
-
-
-                            <h:panelGroup rendered="#{kitMB.incluindo and kitMB.visivel}">
-                                <div class="Container25 Responsive100">
-                                    <p:commandButton id="adicionar" icon="fa fa-plus White" value="Adicionar" actionListener="#{kitMB.adicionar}" update=":lume:pnKit, :lume:pnItens"
+                            <div class="SeparatorFull"></div>
+							<br />
+							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<h:panelGroup rendered="#{kitMB.incluindo and kitMB.visivel}">
+                                	<p:commandButton id="adicionar" icon="fa fa-plus White" value="Adicionar" actionListener="#{kitMB.adicionar}" update=":lume:pnKit, :lume:pnItens"
                                         process=":lume:pnKit" styleClass="GreenButton" />
-                                </div>
-                            </h:panelGroup>
-
-                            <h:panelGroup rendered="#{!kitMB.incluindo and kitMB.visivel}">
-                                <div class="Container25 Responsive100">
+                            	</h:panelGroup>
+                            	<h:panelGroup rendered="#{!kitMB.incluindo and kitMB.visivel}">
                                     <p:commandButton id="remover" icon="fa fa-minus White" value="Remover" actionListener="#{kitMB.remover}" update=":lume:pnKit, :lume:pnItens" process="@this"
                                         styleClass="RedButton" />
-                                </div>
-                            </h:panelGroup>
-                            <h:panelGroup rendered="#{!kitMB.incluindo and kitMB.visivel}">
-                                <div class="Container25 Responsive100">
+                            	</h:panelGroup>
+                            	<h:panelGroup rendered="#{!kitMB.incluindo and kitMB.visivel}">
                                     <p:commandButton id="atualizar" icon="fa fa-check White" value="Atualizar" actionListener="#{kitMB.atualizar}" update=":lume:pnKit, :lume:pnItens"
                                         process=":lume:pnKit" styleClass="OrangeButton" />
-                                </div>
-                            </h:panelGroup>
-                            <h:panelGroup rendered="#{kitMB.visivel}">
-                                <div class="Container25 Responsive100">
+                            	</h:panelGroup>
+                            	<h:panelGroup rendered="#{kitMB.visivel}">
                                     <p:commandButton id="limpar" icon="fa fa-minus White" value="Limpar" actionListener="#{kitMB.limpar}" update=":lume:pnKit, :lume:pnItens, dtItens"
                                         process=":lume:pnKit, :lume:pnItens" />
-                                </div>
-                            </h:panelGroup>
+                            	</h:panelGroup>
+                            </p:panelGrid>
                             <div class="EmptyBox20"></div>
-
-
                             <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtItens" value="#{kitMB.kitItens}" var="kitItem" rows="15" paginator="true" selection="#{kitMB.kitItem}"
                                 selectionMode="single" rowKey="#{kitItem}" paginatorPosition="bottom">
                                 <p:ajax event="rowSelect" listener="#{kitMB.carregaTela}" update=":lume:pnKit" />
@@ -111,25 +86,19 @@
                             </p:dataTable>
 
                         </p:panel>
-
+						<br />
                         <div class="SeparatorFull"></div>
-
-
-                        <div class="Container25 Responsive100">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{kitMB.actionPersist}" update=":lume:pnKit, :lume:pnItens, :lume:dtKit"
                                 process=":lume:pnKit" rendered="#{kitMB.admin}" styleClass="GreenButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" oncomplete="PF('removeKit').show()" update=":lume:pnKit, :lume:pnItens, :lume:dtKit, confirmDialog"
                                 process="@this" disabled="#{kitMB.entity.id==0}" rendered="#{kitMB.admin}" styleClass="RedButton">
                             </p:commandButton>
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{kitMB.actionNew}" update=":lume:pnKit, :lume:pnItens, :lume:dtKit" immediate="true"
                                 rendered="#{kitMB.admin}" />
-                        </div>
+                        </p:panelGrid>
 
-                    </p:panel>
+                    </p:outputPanel>
 
                     <p:confirmDialog id="confirmDialog" width="400" header="Remover Kit" severity="info" widgetVar="removeKit" appendToBody="true">
                         <f:facet name="message">
@@ -143,7 +112,7 @@
 
                     <div class="EmptyBox20"></div>
 
-                    <p:panel styleClass="BordNone">
+                    <p:outputPanel styleClass="BordNone">
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtKit" value="#{kitMB.kits}" var="kit" rows="15" paginator="true" selection="#{kitMB.entity}" selectionMode="single"
                             rowKey="#{kit}" paginatorPosition="bottom">
                             <p:ajax event="rowSelect" update=":lume:pnKit" listener="#{kitMB.carregaTelaGeral}" />
@@ -159,7 +128,7 @@
                                 <h:outputText value="#{kit.dataStr}" />
                             </p:column>
                         </p:dataTable>
-                    </p:panel>
+                    </p:outputPanel>
                 </div>
             </div>
         </div>

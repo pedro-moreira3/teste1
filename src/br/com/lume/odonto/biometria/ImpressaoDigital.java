@@ -7,7 +7,7 @@ import com.nitgen.SDK.BSP.NBioBSPJNI.FIR_TEXTENCODE;
 import com.nitgen.SDK.BSP.NBioBSPJNI.INPUT_FIR;
 import com.nitgen.SDK.BSP.NBioBSPJNI.IndexSearch;
 
-import br.com.lume.odonto.bo.DominioBO;
+import br.com.lume.dominio.DominioSingleton;
 
 public class ImpressaoDigital {
 
@@ -40,7 +40,7 @@ public class ImpressaoDigital {
 
     public ImpressaoDigital() {
         try {
-            this.bdPath = new DominioBO().findByObjetoAndTipoAndValor("biometria", "banco", "BD").getNome();
+            this.bdPath = DominioSingleton.getInstance().getBo().findByObjetoAndTipoAndValor("biometria", "banco", "BD").getNome();
         } catch (Exception e) {
             e.printStackTrace();
         }

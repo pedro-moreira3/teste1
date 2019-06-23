@@ -18,31 +18,31 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
+import br.com.lume.agendamento.AgendamentoSingleton;
+import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.odonto.bo.AgendamentoBO;
-import br.com.lume.odonto.bo.AgendamentoPlanoTratamentoProcedimentoBO;
-import br.com.lume.odonto.bo.DominioBO;
-import br.com.lume.odonto.bo.KitBO;
-import br.com.lume.odonto.bo.PacienteBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
-import br.com.lume.odonto.bo.ReservaBO;
-import br.com.lume.odonto.bo.ReservaKitAgendamentoPlanoTratamentoProcedimentoBO;
-import br.com.lume.odonto.bo.ReservaKitBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.kit.KitSingleton;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Kit;
-import br.com.lume.odonto.entity.OdontoPerfil;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Reserva;
 import br.com.lume.odonto.entity.ReservaKit;
 import br.com.lume.odonto.entity.ReservaKitAgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.reserva.ReservaSingleton;
+import br.com.lume.reservaKit.ReservaKitSingleton;
+import br.com.lume.reservaKitAgendamentoPlanoTratamentoProcedimento.ReservaKitAgendamentoPlanoTratamentoProcedimentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -90,31 +90,10 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
 
     private boolean mostraLocalizacao;
 
-    private DominioBO dominioBO;
-
-    private ReservaKitAgendamentoPlanoTratamentoProcedimentoBO reservaKitAgendamentoPlanoTratamentoProcedimentoBO;
-
-    private ReservaKitBO reservaKitBO;
-
-    private KitBO kitBO;
-
-    private ProfissionalBO profissionalBO;
-
-    private AgendamentoBO agendamentoBO;
-
-    private AgendamentoPlanoTratamentoProcedimentoBO agendamentoPlanoTratamentoProcedimentoBO;
-
     private Date dataIni;
 
     public ReservaMB() {
-        super(new ReservaBO());
-        dominioBO = new DominioBO();
-        reservaKitAgendamentoPlanoTratamentoProcedimentoBO = new ReservaKitAgendamentoPlanoTratamentoProcedimentoBO();
-        reservaKitBO = new ReservaKitBO();
-        kitBO = new KitBO();
-        profissionalBO = new ProfissionalBO();
-        agendamentoBO = new AgendamentoBO();
-        agendamentoPlanoTratamentoProcedimentoBO = new AgendamentoPlanoTratamentoProcedimentoBO();
+        super(ReservaSingleton.getInstance().getBo());     
         this.setClazz(Reserva.class);
         this.setIncluindo(true);
         dataAtual = new Date();
@@ -123,7 +102,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
             c.add(Calendar.MONTH, -1);
             dataIni = c.getTime();
             this.getEntity().setPrazo(Calendar.getInstance().getTime());
-            this.setProfissionalSelecionado(ProfissionalBO.getProfissionalLogado());
+            this.setProfissionalSelecionado(UtilsFrontEnd.getProfissionalLogado());
             this.setRoot(new DefaultTreeNode("", null));
             Kit firstLevel = new Kit();
             firstLevel.setDescricao("RAIZ");
@@ -133,7 +112,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
         this.geraLista();
-        dominio = dominioBO.findByEmpresaAndObjetoAndTipoAndNome("reserva", "dias", "anterior");
+        dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("reserva", "dias", "anterior");
         if (dominio != null) {
             Calendar dayBefore = Calendar.getInstance();
             dayBefore.add(Calendar.DAY_OF_YEAR, (-1) * Integer.parseInt(dominio.getValor()));
@@ -144,9 +123,9 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     public void geraLista() {
         try {
             if (this.isAdmin()) {
-                this.setReservas(((ReservaBO) this.getbO()).listByData(dataIni));
+                this.setReservas(ReservaSingleton.getInstance().getBo().listByData(dataIni, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             } else {
-                this.setReservas(((ReservaBO) this.getbO()).listAtuais());
+                this.setReservas(ReservaSingleton.getInstance().getBo().listAtuais(UtilsFrontEnd.getProfissionalLogado()));
             }
             if (reservas != null) {
                 Collections.sort(reservas);
@@ -165,7 +144,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     }
 
     public String agendamentoPaciente(Agendamento agendamento) {
-        PacienteBO.setPacienteSelecionado(agendamento.getPaciente());
+        UtilsFrontEnd.setPacienteSelecionado(agendamento.getPaciente());
         return "paciente.jsf";
     }
 
@@ -179,7 +158,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        List<ReservaKitAgendamentoPlanoTratamentoProcedimento> rkaptps = reservaKitAgendamentoPlanoTratamentoProcedimentoBO.listByAgendamento(this.getAgendamento());
+        List<ReservaKitAgendamentoPlanoTratamentoProcedimento> rkaptps = ReservaKitAgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByAgendamento(this.getAgendamento());
         boolean ativo = false;
         if (rkaptps != null && !rkaptps.isEmpty()) {
             for (ReservaKitAgendamentoPlanoTratamentoProcedimento rkaptp : rkaptps) {
@@ -194,7 +173,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
                 }
                 if (!ativo) {
                     try {
-                        reservaKitAgendamentoPlanoTratamentoProcedimentoBO.remove(rkaptp);
+                        ReservaKitAgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().remove(rkaptp);
                     } catch (Exception e) {
                         this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
                     }
@@ -202,7 +181,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
                 ativo = false;
             }
         }
-        this.getEntity().setIdEmpresa(ProfissionalBO.getProfissionalLogado().getIdEmpresa());
+        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         this.getEntity().setData(new Date());
         this.getEntity().setProfissional(this.getProfissionalSelecionado());
         for (ReservaKit reskit : this.getReservaKits()) {
@@ -253,10 +232,10 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         }
     }
 
-    public void remover() {
+    public void remover() throws Exception {
         try {
             if (this.getEntity().getId() != 0) {
-                reservaKitBO.remove(this.getReservaKit());
+                ReservaKitSingleton.getInstance().getBo().remove(this.getReservaKit());
             }
         } catch (BusinessException e) {
             e.printStackTrace();
@@ -426,9 +405,9 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         this.setKits(new ArrayList<Kit>());
         try {
             if (this.getDigitacao() != null) {
-                this.setKits((kitBO.listByEmpresaAndDescricaoParcial(this.getDigitacao())));
+                this.setKits((KitSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa())));
             } else {
-                this.setKits(kitBO.listByEmpresa());
+                this.setKits(KitSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
             Collections.sort(kits);
         } catch (Exception e) {
@@ -441,7 +420,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = profissionalBO.listByEmpresaAndAtivo();
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresaAndAtivo(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").contains(
                         Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))) {
@@ -463,12 +442,20 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         this.setProfissionalSelecionado((Profissional) event.getObject());
     }
 
-    private void listaAgendamentos() {
-        agendamentos = agendamentoBO.listByProfissionalAndStatusAndDataLimite(profissionalSelecionado, this.getEntity().getPrazo());
+    private void listaAgendamentos() {        
+        List<Agendamento> agendamentosNew = AgendamentoSingleton.getInstance().getBo().listByProfissionalAndStatusAndDataLimite(profissionalSelecionado, this.getEntity().getPrazo());
+        for (Agendamento agendamento : agendamentosNew) {
+            if(agendamento.getStatusNovo().matches("P|S|N|E|A|I|O")) {
+                if(agendamentos == null) {
+                    agendamentos = new ArrayList<Agendamento>();
+                }
+                agendamentos.add(agendamento);                
+            }
+        }
     }
 
     public void carregaProcedimentos() {
-        agendamentoProcedimentos = agendamentoPlanoTratamentoProcedimentoBO.listByAgendamento(this.getEntity().getAgendamento());
+        agendamentoProcedimentos = AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByAgendamento(this.getEntity().getAgendamento());
         if (agendamentoProcedimentos != null && !agendamentoProcedimentos.isEmpty()) {
             procedimentoObrigatorio = true;
         } else {
@@ -642,7 +629,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     }
 
     public boolean isMostraLocalizacao() {
-        mostraLocalizacao = ProfissionalBO.getProfissionalLogado().getPerfil().equals(OdontoPerfil.DENTISTA);
+        mostraLocalizacao = UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.DENTISTA);
         return mostraLocalizacao;
     }
 

@@ -7,8 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.OdontogramaBO;
 import br.com.lume.odonto.entity.Odontograma;
+import br.com.lume.odontograma.OdontogramaSingleton;
 
 @FacesConverter(forClass = Odontograma.class, value = "odontograma")
 public class OdontogramaConverter implements Converter, Serializable {
@@ -21,7 +21,7 @@ public class OdontogramaConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new OdontogramaBO().find(id);
+                return OdontogramaSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,12 +1,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-                    <p:panel id="pnMateriais" styleClass="BordNone">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <p:outputPanel id="pnMateriais" styleClass="BordNone">
 
-                        <h1 class="CardBigTopic">Devolução Unitária</h1>
+                        <h1>Devolução Unitária</h1>
                         <div class="SeparatorFull"></div>
 
                         <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
@@ -30,30 +30,28 @@
                                 <h:outputText value="#{abastecimentoMB.entity.quantidade}" class="Wid30">
                                     <f:convertNumber />
                                 </h:outputText>
-                                <h:outputText value="#{abastecimentoMB.entity.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{abastecimentoMB.getUnidadeString(abastecimentoMB.entity.material.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
 
 
                             <p:outputLabel for="devolvida" value="Quantidade à devolver/lavar : " />
                             <p:column>
-                                <p:inputText id="devolvida" value="#{abastecimentoMB.quantidadeDevolvida}" maxlength="10" required="true" onkeypress="validaNumeros(event)" style="width:20%">
+                                <p:inputText id="devolvida" value="#{abastecimentoMB.quantidadeDevolvida}" maxlength="10" required="true" onkeypress="validaNumeros(event)">
                                     <f:convertNumber />
                                 </p:inputText>
-                                <h:outputText value="#{abastecimentoMB.entity.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{abastecimentoMB.getUnidadeString(abastecimentoMB.entity.material.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
                         </p:panelGrid>
 
                         <div class="SeparatorFull"></div>
-                        <div class="Container25 Responsive100">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="devolucao" icon="White fa fa-mail-reply" value="Devolução" actionListener="#{abastecimentoMB.actionDevolucaoMaterial}"
                                 disabled="#{!abastecimentoMB.enableDevolucao}" update=":lume:dtMateriais,:lume:devolucao,:lume:pnMateriais" process=":lume:dtMateriais,:lume:pnMateriais, @this"
                                 styleClass="OrangeButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="lavar" icon="fa fa-paint-brush White" value="Lavagem" actionListener="#{abastecimentoMB.actionLavagemMaterial}"
                                 disabled="#{!abastecimentoMB.enableLavagem}" update=":lume:dtMateriais,:lume:devolucao,:lume:pnMateriais" process=":lume:dtMateriais,:lume:pnMateriais, @this"
                                 styleClass="AquaButton" />
-                        </div>
+                        </p:panelGrid>
 
                         <div class="EmptyBox20"></div>
 
@@ -79,14 +77,14 @@
                                 <h:outputText value="#{abastecimento.quantidade}">
                                     <f:convertNumber />
                                 </h:outputText>
-                                <h:outputText value="#{abastecimento.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{abastecimentoMB.getUnidadeString(abastecimento.material.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
                             <p:column filterBy="#{abastecimento.dataEntregaStr}" filterMatchMode="contains" headerText="Data da Entrega" sortBy="#{abastecimento.dataEntrega}">
                                 <h:outputText value="#{abastecimento.dataEntregaStr}" />
                             </p:column>
 
                         </p:dataTable>
-                    </p:panel>
+                    </p:outputPanel>
                 </div>
             </div>
         </div>

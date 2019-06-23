@@ -14,8 +14,8 @@ import org.primefaces.model.TreeNode;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.ContaBO;
-import br.com.lume.odonto.bo.MotivoBO;
+import br.com.lume.conta.ContaSingleton;
+import br.com.lume.motivo.MotivoSingleton;
 import br.com.lume.odonto.entity.Conta;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Motivo;
@@ -36,11 +36,9 @@ public class MotivoMB extends LumeManagedBean<Motivo> {
 
     private String digitacao;
 
-    private ContaBO contaBO;
-
     public MotivoMB() {
-        super(new MotivoBO());
-        contaBO = new ContaBO();
+        super(MotivoSingleton.getInstance().getBo());
+
         this.geraLista();
         this.setClazz(Motivo.class);
         try {
@@ -54,8 +52,8 @@ public class MotivoMB extends LumeManagedBean<Motivo> {
 
     private void geraLista() {
         try {
-            motivos = ((MotivoBO) this.getbO()).listAll();
-            contas = contaBO.listAll();
+            motivos = MotivoSingleton.getInstance().getBo().listAll();
+            contas = ContaSingleton.getInstance().getBo().listAll();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);

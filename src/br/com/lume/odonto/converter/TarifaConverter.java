@@ -7,8 +7,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.TarifaBO;
 import br.com.lume.odonto.entity.Tarifa;
+import br.com.lume.tarifa.TarifaSingleton;
 
 @FacesConverter(forClass = Tarifa.class, value = "tarifa")
 public class TarifaConverter implements Converter, Serializable {
@@ -20,7 +20,7 @@ public class TarifaConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new TarifaBO().find(id);
+                return TarifaSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

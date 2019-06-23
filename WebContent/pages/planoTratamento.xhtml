@@ -8,10 +8,14 @@
 label.ui-helper-hidden {
     display: none !important;
 }
+
+.optionsPlanTrat .ui-panelgrid-cell {
+			padding: 12px 8px !important;
+		}
 </style>
                 <h:inputHidden id="idPlanoTratamento" value="#{planoTratamentoMB.entity.id}" />
 
-                <p:panel id="pnPlanoTratamento" styleClass="BordNone">
+                <p:outputPanel id="pnPlanoTratamento" styleClass="BordNone" style="margin-top: 20px !important;">
 
                     <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
 
@@ -23,7 +27,7 @@ label.ui-helper-hidden {
                         <p:column>
 
                             <p:selectOneMenu id="profissionalFinalizaProcedimento" value="#{planoTratamentoMB.profissionalFinalizaProcedimento}" converter="profissional"
-                                rendered="#{planoTratamentoMB.admin}" filter="true" filterMatchMode="contains" styleClass="MarRight10" style="width: 65% !important;float: left;">
+                                rendered="#{planoTratamentoMB.admin}" filter="true" filterMatchMode="contains">
                                 <p:ajax process="@this" />
                                 <f:selectItem itemValue="#{null}" itemLabel="Selecione um profissional" />
                                 <f:selectItems value="#{planoTratamentoMB.profissionais}" var="profissional" itemLabel="#{profissional.dadosBasico.prefixoNome}" itemValue="#{profissional}" />
@@ -53,7 +57,8 @@ label.ui-helper-hidden {
                                 <p:ajax event="rowEdit" />
                                 <p:column styleClass="TexAlCenter" width="40px;">
                                     <p:commandButton icon="fa fa-minus White" disabled="#{plano.finalizado || planoTratamentoMB.finalizado}"
-                                        actionListener="#{planoTratamentoMB.onProcedimentoRemove(plano)}" process="@this" update=":lume:tabView:dtProcedimentosSelecionadospt" />
+                                        actionListener="#{planoTratamentoMB.onProcedimentoRemove(plano)}" process="@this" update=":lume:tabView:dtProcedimentosSelecionadospt"
+                                        style="width: 33px !important" />
                                 </p:column>
                                 <p:column styleClass="TexAlCenter" sortBy="#{plano.sequencial}" headerText="Nr." width="50px;">
                                     <p:inputText value="#{plano.sequencial}" />
@@ -91,7 +96,7 @@ label.ui-helper-hidden {
                                     </p:selectManyCheckbox>
                                     <p:commandButton icon="White fa fa-gear" title="Finalizar Novamente" actionListener="#{planoTratamentoMB.actionFinalizarNovamente(plano)}"
                                         update=":lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento" process=":lume:tabView:pnPlanoTratamento,@this" styleClass="RedButton"
-                                        disabled="#{planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.existeProcedimentoFinalizado == false}" style="float: right;"
+                                        disabled="#{planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.existeProcedimentoFinalizado == false}" style="float: right; width: 33px !important;"
                                         rendered="#{planoTratamentoMB.admin and plano.finalizado}">
                                         <p:confirm header="Confirmação" message="Deseja realmente mudar o finalizador deste procedimento?" icon="fa fa-warning" />
                                     </p:commandButton>
@@ -115,55 +120,40 @@ label.ui-helper-hidden {
                         </p:fieldset>
                     </h:panelGroup>
 
-                    <div class="SeparatorFull"></div>
-
-                    <h:panelGroup>
-                        <div class="Container16 Responsive100">
-                            <p:commandButton id="persistPlanoTratamento" icon="White fa fa-save" value="Salvar" actionListener="#{planoTratamentoMB.actionPersist}"
+                    <p:separator styleClass="SeparatorFull" />
+                    
+                    <p:panelGrid columns="5" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPlanTrat">
+						<p:commandButton id="persistPlanoTratamento" icon="White fa fa-save" value="Salvar" actionListener="#{planoTratamentoMB.actionPersist}"
                                 oncomplete="handleDialogRequest(xhr, status, args);"
                                 update=":lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento,:lume:tabView:evolucao,:lume:tabView:dtPlanoTratamentoOrtodontia"
                                 process=":lume:tabView:pnPlanoTratamento,@this" styleClass="GreenButton" disabled="#{planoTratamentoMB.entity.id == null}" />
-                        </div>
-                    </h:panelGroup>
-
-                    <h:panelGroup rendered="#{planoTratamentoMB.admin}">
-                        <div class="Container16 Responsive100">
-                            <p:commandButton id="devolucao" icon="White fa fa-times-circle" onclick="PF('devolver').show();" value="Encerrar"
+                        <h:panelGroup rendered="#{planoTratamentoMB.admin}">
+                        	<p:commandButton id="devolucao" icon="White fa fa-times-circle" onclick="PF('devolver').show();" value="Encerrar"
                                 update=":lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento" process="@this"
                                 disabled="#{planoTratamentoMB.entity == null or planoTratamentoMB.entity.id == null or  planoTratamentoMB.finalizado}" styleClass="OrangeButton"
                                 rendered="#{planoTratamentoMB.admin}" />
-                        </div>
-                    </h:panelGroup>
-
-                    <h:panelGroup rendered="#{planoTratamentoMB.visivel}">
-                        <div class="Container16 Responsive100">
-                            <p:commandButton id="geraNegociacao" icon="White fa fa-list-ul" value="Orçamento" oncomplete="PF('dlg').show()" action="#{planoTratamentoMB.carregaTelaOrcamento}"
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{planoTratamentoMB.visivel}">
+                        	<p:commandButton id="geraNegociacao" icon="White fa fa-list-ul" value="Orçamento" oncomplete="PF('dlg').show()" action="#{planoTratamentoMB.carregaTelaOrcamento}"
                                 update=":lume:tabView:pnOrcamento,:lume:tabView:dtPlanoTratamento,:lume:tabView:pnOrcamento,:lume:tabView:persistOrcamento" process="@this"
                                 disabled="#{planoTratamentoMB.entity == null or planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.ortodontico}" styleClass="NavyButton" />
-                        </div>
-                    </h:panelGroup>
-
-                    <div class="Container16 Responsive100">
+                        </h:panelGroup>
                         <p:commandButton id="geraOrcamento" icon="White fa fa-money" value="Imprimir Orçamento" oncomplete="PF('dlgGerarOrcamento').show()"
                             update=":lume:tabView:pnConteudoImpressaoOrcamento,:lume:tabView:pnConteudoImpressaoOrcamento,:lume:tabView:persistOrcamento,:lume:tabView:dtOrcamento" process="@this"
                             disabled="#{planoTratamentoMB.entity == null or planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.ortodontico}" styleClass="OrangeButton" />
-                    </div>
-
-                    <h:panelGroup rendered="#{planoTratamentoMB.admin}">
-                        <div class="Container16 Responsive100">
-                            <p:commandButton id="ptinicial" icon="White fa fa-file-o" value="Criar P.T. Inicial" update=":lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento"
+                        <h:panelGroup rendered="#{planoTratamentoMB.admin}">
+                        	<p:commandButton id="ptinicial" icon="White fa fa-file-o" value="Criar P.T. Inicial" update=":lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento"
                                 process="@this" styleClass="PinkButton" rendered="#{planoTratamentoMB.admin}" actionListener="#{planoTratamentoMB.actionPTInicial}"
                                 disabled="#{planoTratamentoMB.paciente == null}" />
-                        </div>
-                    </h:panelGroup>
-
-
-                </p:panel>
+                        </h:panelGroup>
+					</p:panelGrid>
+                </p:outputPanel>
 
                 <div class="EmptyBox20"></div>
 
 
-                <p:panel id="tbPlanoTratamento">
+                <p:outputPanel id="tbPlanoTratamento">
                     <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtPlanoTratamento" value="#{planoTratamentoMB.planosTratamento}" var="planoTratamento" rows="10" paginator="true"
                         paginatorPosition="bottom" selection="#{planoTratamentoMB.entity}" selectionMode="single" rowKey="#{planoTratamento}">
                         <p:ajax event="rowSelect" update=":lume:tabView:pnPlanoTratamento" listener="#{planoTratamentoMB.atualizaTela}" />
@@ -215,7 +205,7 @@ label.ui-helper-hidden {
                             </h:outputText>
                         </p:column>
                     </p:dataTable>
-                </p:panel>
+                </p:outputPanel>
 
                 <p:dialog widgetVar="dlg" header="Orçamento" id="dlgOrcamento" resizable="true" modal="true" width="800">
                     <p:panel id="pnOrcamento" styleClass="BordNone">
@@ -329,7 +319,7 @@ label.ui-helper-hidden {
                 <p:dialog id="dlgGerarOrcamento" widgetVar="dlgGerarOrcamento" header="Orçamento" responsive="true" modal="true">
                     <div class="Container100 NoIndent Flex FlexWrap">
                         <p:panel id="pnConteudoImpressaoOrcamento" styleClass="BordNone">
-                            <p:graphicImage value="#{lumeSecurity.empresa.logo}" width="180px;" height="50px;" rendered="#{lumeSecurity.empresa.logo != null}" />
+                            <p:graphicImage value="#{lumeSecurity.logo}" width="180px;" height="50px;" rendered="#{lumeSecurity.logo != null}" />
 
                             <h1 class="CardBigTopic" align="center">
                                 <u> <h:outputText value="Orçamento" />

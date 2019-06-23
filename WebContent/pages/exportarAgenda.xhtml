@@ -188,23 +188,28 @@
                 <div class="Card ui-fluid">
 
                     <p:panel id="pnExportar" styleClass="BordNone">
-                        <h1 class="CardBigTopic">Exportar Consultas para o Google Agenda</h1>
-                        <div class="SeparatorFull"></div>
-                        <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
-                            <p:outputLabel for="periodo" value="Período: " />
-                            <p:selectOneMenu id="periodo" value="#{exportarAgendaMB.periodo}" required="true">
-                                <f:selectItem itemValue="#{null}" itemLabel="Selecione o período" />
-                                <f:selectItem itemValue="HOJE" itemLabel="Hoje" />
-                                <f:selectItem itemValue="AMANHA" itemLabel="Amanhã" />
-                                <f:selectItem itemValue="ESTA_SEMANA" itemLabel="Esta semana" />
-                                <f:selectItem itemValue="PROXIMA_SEMANA" itemLabel="Semana que vem" />
-                            </p:selectOneMenu>
-                            
-                            <p:outputLabel for="log" value="Log: " />
-                            <p:inputTextarea id="log" rows="10" cols="200"/>
+                        <h1>Exportar Consultas para o Google Agenda</h1>
+                        <p:separator styleClass="SeparatorFull" />
+                        <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+                        	<h:panelGroup class="md-combo" style="margin-top: 20px !important">
+	                            <p:selectOneMenu id="periodo" value="#{exportarAgendaMB.periodo}" required="true">
+	                                <f:selectItem itemValue="#{null}" itemLabel="Selecione o período" />
+	                                <f:selectItem itemValue="HOJE" itemLabel="Hoje" />
+	                                <f:selectItem itemValue="AMANHA" itemLabel="Amanhã" />
+	                                <f:selectItem itemValue="ESTA_SEMANA" itemLabel="Esta semana" />
+	                                <f:selectItem itemValue="PROXIMA_SEMANA" itemLabel="Semana que vem" />
+	                            </p:selectOneMenu>
+	                            <p:outputLabel for="periodo" value="Período" />
+	                            <p:message for="periodo" styleClass="msg" />
+	                        </h:panelGroup>
+                            <h:panelGroup class="md-inputfield">
+                            	<p:inputTextarea id="log" rows="10" cols="200" readonly="true" />
+                            	<p:outputLabel for="log" value="Log" />
+                            	<p:message for="log" styleClass="msg" />
+                            </h:panelGroup>
                         </p:panelGrid>
 
-                        <div class="SeparatorFull"></div>
+                        <p:separator styleClass="SeparatorFull" />
 
                         <div class="Container25 Responsive100">
                             <p:commandButton icon="White fa fa-calendar White" value="Exportar" oncomplete="exportarAgenda();" styleClass="RedButton" process="@this,periodo" />

@@ -1,215 +1,233 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
-    <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-                    <h1 class="CardBigTopic">Atualizações | #{odonto.version}.#{odonto.revision}</h1>
-                    <div class="SeparatorFull"></div>
-                    <p:tabView id="tabView">
-                        <p:tab title="Atualizações">
-                            <p:panelGrid style="margin-top:20px;width:100%;">
-                                <f:facet name="header">
-                                    <p:row>
-                                        <p:column>Data</p:column>
-                                        <p:column>Local</p:column>
-                                        <p:column>Descrição</p:column>
-                                    </p:row>
-                                </f:facet>
-                                <p:row>
-                                    <p:column>04/08/2018</p:column>
-                                    <p:column>Clínica > Paciente > Plano Tratamento > Orçamento</p:column>
-                                    <p:column>Orçamento reformulado.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>04/08/2018</p:column>
-                                    <p:column>Clínica > Paciente > Ortodontia</p:column>
-                                    <p:column>Ortodontia criado.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>18/07/2018</p:column>
-                                    <p:column>Clínica > Paciente > Odontograma</p:column>
-                                    <p:column>Odontograma reformulado.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>06/07/2018</p:column>
-                                    <p:column>Clínica > Plano de Tratamento</p:column>
-                                    <p:column>Plano de Tratamento reformulado.</p:column>
-                                </p:row>
-                                 <p:row>
-                                    <p:column>05/06/2018</p:column>
-                                    <p:column>Ajuste de Materiais</p:column>
-                                    <p:column>Coluna com quantidade Emprestada de materiais e dados detalhados onde estão.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>01/06/2018</p:column>
-                                    <p:column>Módulo de estoque</p:column>
-                                    <p:column>Opção para gerenciar o estoque de maneira simplificada, para aderir a este módulo, selecionar no Cadastro de Clínica a opção Módulo Estoque(Simplificado).</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>24/05/2018</p:column>
-                                    <p:column>Clínica > Paciente</p:column>
-                                    <p:column>Tirar e enviar foto do paciente.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>24/05/2018</p:column>
-                                    <p:column>Administrativo > Cadastro de Profissionais</p:column>
-                                    <p:column>Tirar e enviar foto do profissional.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>24/05/2018</p:column>
-                                    <p:column>Todo o sistema</p:column>
-                                    <p:column>Chat online.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>22/05/2018</p:column>
-                                    <p:column>Esterilização > Entrega para Lavagem Manual</p:column>
-                                    <p:column>Totalmente reformulado.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>16/05/2018</p:column>
-                                    <p:column>Clínica > Relatório de Planos de Tratamento</p:column>
-                                    <p:column>Totalmente reformulado. Possibilidade de Encerrar planos em aberto.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>16/05/2018</p:column>
-                                    <p:column>Clínica > Resumo de Atendimento</p:column>
-                                    <p:column>Nova tabela com os Pacientes que não foram atendidos no período.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>15/05/2018</p:column>
-                                    <p:column>Financeiro > Pagamentos/Recebimentos</p:column>
-                                    <p:column>Novas Categorias, Tipo Categoria e Motivos. Filtro por Forma.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>15/05/2018</p:column>
-                                    <p:column>Clínica > Resumo de Atendimento</p:column>
-                                    <p:column>Totalmente reformulado.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>15/05/2018</p:column>
-                                    <p:column>Clínica > Fila de Atendimento</p:column>
-                                    <p:column>Gráfico pizza reformulado. Novo gráfico com a programação dos pacientes do dia. Tabela de Agendamentos iterativa, possibilidade de mudar o status e datas.</p:column>
-                                </p:row>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<h1>Atualizações | #{odonto.version}.#{odonto.revision}</h1>
+					<div class="SeparatorFull"></div>
+					<br />
+					<p:tabView id="tabView">
+						<p:tab title="Atualizações">
+							<p:panelGrid style="margin-top:0px;width:100%;">
+								<f:facet name="header">
+									<p:row>
+										<p:column>Data</p:column>
+										<p:column>Local</p:column>
+										<p:column>Descrição</p:column>
+									</p:row>
+								</f:facet>
+								<p:row>
+									<p:column>04/08/2018</p:column>
+									<p:column>Clínica > Paciente > Plano Tratamento > Orçamento</p:column>
+									<p:column>Orçamento reformulado.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>04/08/2018</p:column>
+									<p:column>Clínica > Paciente > Ortodontia</p:column>
+									<p:column>Ortodontia criado.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>18/07/2018</p:column>
+									<p:column>Clínica > Paciente > Odontograma</p:column>
+									<p:column>Odontograma reformulado.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>06/07/2018</p:column>
+									<p:column>Clínica > Plano de Tratamento</p:column>
+									<p:column>Plano de Tratamento reformulado.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>05/06/2018</p:column>
+									<p:column>Ajuste de Materiais</p:column>
+									<p:column>Coluna com quantidade Emprestada de materiais e dados detalhados onde estão.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>01/06/2018</p:column>
+									<p:column>Módulo de estoque</p:column>
+									<p:column>Opção para gerenciar o estoque de maneira simplificada, para aderir a este módulo, selecionar no Cadastro de Clínica a opção Módulo Estoque(Simplificado).</p:column>
+								</p:row>
+								<p:row>
+									<p:column>24/05/2018</p:column>
+									<p:column>Clínica > Paciente</p:column>
+									<p:column>Tirar e enviar foto do paciente.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>24/05/2018</p:column>
+									<p:column>Administrativo > Cadastro de Profissionais</p:column>
+									<p:column>Tirar e enviar foto do profissional.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>24/05/2018</p:column>
+									<p:column>Todo o sistema</p:column>
+									<p:column>Chat online.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>22/05/2018</p:column>
+									<p:column>Esterilização > Entrega para Lavagem Manual</p:column>
+									<p:column>Totalmente reformulado.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>16/05/2018</p:column>
+									<p:column>Clínica > Relatório de Planos de Tratamento</p:column>
+									<p:column>Totalmente reformulado. Possibilidade de Encerrar planos em aberto.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>16/05/2018</p:column>
+									<p:column>Clínica > Resumo de Atendimento</p:column>
+									<p:column>Nova tabela com os Pacientes que não foram atendidos no período.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>15/05/2018</p:column>
+									<p:column>Financeiro > Pagamentos/Recebimentos</p:column>
+									<p:column>Novas Categorias, Tipo Categoria e Motivos. Filtro por Forma.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>15/05/2018</p:column>
+									<p:column>Clínica > Resumo de Atendimento</p:column>
+									<p:column>Totalmente reformulado.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>15/05/2018</p:column>
+									<p:column>Clínica > Fila de Atendimento</p:column>
+									<p:column>Gráfico pizza reformulado. Novo gráfico com a programação dos pacientes do dia. Tabela de Agendamentos iterativa, possibilidade de mudar o status e datas.</p:column>
+								</p:row>
 
-                                <p:row>
-                                    <p:column>12/04/2018</p:column>
-                                    <p:column>Clínica > Agendamento</p:column>
-                                    <p:column>Melhoria visual e exportar as consultas para o Google api(para isso liberar os pop-ups).</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>23/01/2018</p:column>
-                                    <p:column>Clínica > Agendamento</p:column>
-                                    <p:column>Agendamento e Reservas: Incluído o campo Observações.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>23/01/2018</p:column>
-                                    <p:column>Financeiro > Relatório de Resultados</p:column>
-                                    <p:column>Incluído novo relatório Financeiro/Relatório de Resultados.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>23/01/2018</p:column>
-                                    <p:column>Estoque > Relatório de Estoque</p:column>
-                                    <p:column>Melhorias no relatório de estoque.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>23/01/2018</p:column>
-                                    <p:column>Esterilização > Relatório de Esterilização</p:column>
-                                    <p:column>Incluídos os descartes no relatório de esterilização.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>23/01/2018</p:column>
-                                    <p:column>Administrativo > Configuração de Documentos</p:column>
-                                    <p:column>Criado novo tipo de documento: Recibo.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>23/01/2018</p:column>
-                                    <p:column>Financeiro > Repasse dos profissionais</p:column>
-                                    <p:column>Possibilidade de fazer reserva parcial no repasse dos profissionais, incluídas as informações de quais procedimentos foram finalizados, quantas parcelas foram pagas e quais dentistas devem ser pagos.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>23/01/2018</p:column>
-                                    <p:column>Administrativo > Configuração de Documentos</p:column>
-                                    <p:column>Incluída a logo da clínica na configuração de documentos.</p:column>
-                                </p:row>
+								<p:row>
+									<p:column>12/04/2018</p:column>
+									<p:column>Clínica > Agendamento</p:column>
+									<p:column>Melhoria visual e exportar as consultas para o Google api(para isso liberar os pop-ups).</p:column>
+								</p:row>
+								<p:row>
+									<p:column>23/01/2018</p:column>
+									<p:column>Clínica > Agendamento</p:column>
+									<p:column>Agendamento e Reservas: Incluído o campo Observações.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>23/01/2018</p:column>
+									<p:column>Financeiro > Relatório de Resultados</p:column>
+									<p:column>Incluído novo relatório Financeiro/Relatório de Resultados.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>23/01/2018</p:column>
+									<p:column>Estoque > Relatório de Estoque</p:column>
+									<p:column>Melhorias no relatório de estoque.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>23/01/2018</p:column>
+									<p:column>Esterilização > Relatório de Esterilização</p:column>
+									<p:column>Incluídos os descartes no relatório de esterilização.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>23/01/2018</p:column>
+									<p:column>Administrativo > Configuração de Documentos</p:column>
+									<p:column>Criado novo tipo de documento: Recibo.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>23/01/2018</p:column>
+									<p:column>Financeiro > Repasse dos profissionais</p:column>
+									<p:column>Possibilidade de fazer reserva parcial no repasse dos profissionais, incluídas as informações de quais procedimentos foram finalizados, quantas parcelas foram pagas e quais dentistas devem ser pagos.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>23/01/2018</p:column>
+									<p:column>Administrativo > Configuração de Documentos</p:column>
+									<p:column>Incluída a logo da clínica na configuração de documentos.</p:column>
+								</p:row>
 
-                                <p:row>
-                                    <p:column>20/12/2017</p:column>
-                                    <p:column>Administrativo > Cadastro de Profissionais.</p:column>
-                                    <p:column>Alteração da forma de remuneração do profissional, para permitir remuneração fixa, remuneração por procedimento ou remuneração por porcentagem. </p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>09/08/2017</p:column>
-                                    <p:column>Cadastro de novos clientes.</p:column>
-                                    <p:column>Mudança no cadastro.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>01/08/2017</p:column>
-                                    <p:column>Financeiro > Repasse dos profissionais.</p:column>
-                                    <p:column>Ordenações nas tabelas. Selecionar todos os registros à repassar.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>28/07/2017</p:column>
-                                    <p:column>Financeiro > Repasse dos profissionais.</p:column>
-                                    <p:column>Pagamento parcelado. Agora é preciso Reservar o dinheiro de pois Repassar. Imprimir mais de uma vez o Recibo.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>24/07/2017</p:column>
-                                    <p:column>Clínica > Fila de Atendimento</p:column>
-                                    <p:column>Mudança para retirar Domingo.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>24/07/2017</p:column>
-                                    <p:column>Financeiro > Relatório de Repasses</p:column>
-                                    <p:column>Mudança na estrutura do relatório.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>13/07/2017</p:column>
-                                    <p:column>Financeiro > Pagamentos/Recebimentos</p:column>
-                                    <p:column>Nova aba com o extrato, este relatório foi modificado já debitando as taxas/tarifas e conferido os valores.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>05/07/2017</p:column>
-                                    <p:column>Estoque > Empréstimo Unitário e Empréstimo de Kits</p:column>
-                                    <p:column>Possibilidade de selecionar mais de um material para compor a quantidade emprestada.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>05/07/2017</p:column>
-                                    <p:column>Estoque > Devolução Unitária</p:column>
-                                    <p:column>Agora quando devolve um material de custo direto, o valor do custo é alterado.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>05/07/2017</p:column>
-                                    <p:column>Financeiro > Repasse dos Profissionais</p:column>
-                                    <p:column>Nova janela com os detalhes dos custos, basta clicar em cima do valor do custo.</p:column>
-                                </p:row>
-                                <p:row>
-                                    <p:column>05/07/2017</p:column>
-                                    <p:column>Financeiro > Pagamentos/Recebimentos</p:column>
-                                    <p:column>Nova aba, Validação Lançamentos, aqui os valores dos lançamentos serão aprovados pelo responsável para que estes possam ser utilizados no repasse dos profissionais e listados no relatório financeiro.</p:column>
-                                </p:row>
+								<p:row>
+									<p:column>20/12/2017</p:column>
+									<p:column>Administrativo > Cadastro de Profissionais.</p:column>
+									<p:column>Alteração da forma de remuneração do profissional, para permitir remuneração fixa, remuneração por procedimento ou remuneração por porcentagem. </p:column>
+								</p:row>
+								<p:row>
+									<p:column>09/08/2017</p:column>
+									<p:column>Cadastro de novos clientes.</p:column>
+									<p:column>Mudança no cadastro.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>01/08/2017</p:column>
+									<p:column>Financeiro > Repasse dos profissionais.</p:column>
+									<p:column>Ordenações nas tabelas. Selecionar todos os registros à repassar.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>28/07/2017</p:column>
+									<p:column>Financeiro > Repasse dos profissionais.</p:column>
+									<p:column>Pagamento parcelado. Agora é preciso Reservar o dinheiro de pois Repassar. Imprimir mais de uma vez o Recibo.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>24/07/2017</p:column>
+									<p:column>Clínica > Fila de Atendimento</p:column>
+									<p:column>Mudança para retirar Domingo.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>24/07/2017</p:column>
+									<p:column>Financeiro > Relatório de Repasses</p:column>
+									<p:column>Mudança na estrutura do relatório.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>13/07/2017</p:column>
+									<p:column>Financeiro > Pagamentos/Recebimentos</p:column>
+									<p:column>Nova aba com o extrato, este relatório foi modificado já debitando as taxas/tarifas e conferido os valores.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>05/07/2017</p:column>
+									<p:column>Estoque > Empréstimo Unitário e Empréstimo de Kits</p:column>
+									<p:column>Possibilidade de selecionar mais de um material para compor a quantidade emprestada.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>05/07/2017</p:column>
+									<p:column>Estoque > Devolução Unitária</p:column>
+									<p:column>Agora quando devolve um material de custo direto, o valor do custo é alterado.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>05/07/2017</p:column>
+									<p:column>Financeiro > Repasse dos Profissionais</p:column>
+									<p:column>Nova janela com os detalhes dos custos, basta clicar em cima do valor do custo.</p:column>
+								</p:row>
+								<p:row>
+									<p:column>05/07/2017</p:column>
+									<p:column>Financeiro > Pagamentos/Recebimentos</p:column>
+									<p:column>Nova aba, Validação Lançamentos, aqui os valores dos lançamentos serão aprovados pelo responsável para que estes possam ser utilizados no repasse dos profissionais e listados no relatório financeiro.</p:column>
+								</p:row>
 
-                            </p:panelGrid>
+							</p:panelGrid>
 
-                        </p:tab>
-                        <p:tab title="Trocar Usuário" rendered="#{trocaUsuarioMB.administrador}">
-                            <h:panelGrid id="filtros" columns="2" cellpadding="4" style="margin:0 auto;">
+						</p:tab>
+						<p:tab title="Trocar Usuário"
+							rendered="#{trocaUsuarioMB.administrador}">
+							<h:panelGroup id="filtros">
+								<p:panelGrid columns="2" layout="grid"
+									styleClass="ui-panelgrid-blank form-group ui-fluid"
+									columnClasses="ui-g-4,ui-g-8">
+									<p:outputLabel value="Profissional : " for="profissional" />
+									<p:selectOneMenu id="profissional"
+										value="#{trocaUsuarioMB.profissionalTrocar}"
+										converter="profissional" required="true" filter="true"
+										filterMatchMode="contains">
+										<f:selectItem itemLabel="Selecione um profissional"
+											itemValue="#{null}" />
+										<f:selectItems value="#{trocaUsuarioMB.profissionais}"
+											var="profissional" itemValue="#{profissional}"
+											itemLabel="#{profissional.dadosBasico.nome}" />
+									</p:selectOneMenu>
 
-                                <p:outputLabel value="Profissional : " for="profissional" />
-                                <p:selectOneMenu id="profissional" value="#{trocaUsuarioMB.profissionalTrocar}" converter="profissional" required="true" filter="true" filterMatchMode="contains">
-                                    <f:selectItem itemLabel="Selecione um profissional" itemValue="#{null}" />
-                                    <f:selectItems value="#{trocaUsuarioMB.profissionais}" var="profissional" itemValue="#{profissional}" itemLabel="#{profissional.dadosBasico.nome}" />
-                                </p:selectOneMenu>
-
-                                <div class="Container25 Responsive100">
-                                    <p:commandButton id="trocar" icon="fa fa-refresh White" value="Trocar" actionListener="#{trocaUsuarioMB.actionTrocarUsuario}" update="@all" process="filtros" />
-                                </div>
-
-                            </h:panelGrid>
-                        </p:tab>
-                    </p:tabView>
-                </div>
-            </div>
-        </div>
-    </ui:define>
+								</p:panelGrid>
+								<p:panelGrid columns="1" layout="grid"
+									styleClass="ui-panelgrid-blank form-group ui-fluid">
+									<p:commandButton id="trocar" icon="fa fa-refresh White"
+										value="Trocar"
+										actionListener="#{trocaUsuarioMB.actionTrocarUsuario}"
+										update="@all" process="filtros" />
+								</p:panelGrid>
+							</h:panelGroup>
+						</p:tab>
+					</p:tabView>
+				</div>
+			</div>
+		</div>
+	</ui:define>
 </ui:composition>

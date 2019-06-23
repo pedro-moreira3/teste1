@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import br.com.lume.odonto.bo.CategoriaMotivoBO;
+import br.com.lume.categoriaMotivo.CategoriaMotivoSingleton;
 import br.com.lume.odonto.entity.CategoriaMotivo;
 
 @FacesConverter(forClass = CategoriaMotivo.class, value = "categoriamotivo")
@@ -20,7 +20,7 @@ public class CategoriaMotivoConverter implements Converter, Serializable {
         try {
             if (value != null && !value.trim().isEmpty()) {
                 final Long id = Long.parseLong(value);
-                return new CategoriaMotivoBO().find(id);
+                return CategoriaMotivoSingleton.getInstance().getBo().find(id);
             }
         } catch (Exception e) {
             e.printStackTrace();

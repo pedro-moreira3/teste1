@@ -16,13 +16,14 @@ import org.apache.log4j.Logger;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
-import br.com.lume.odonto.bo.ProfissionalBO;
-import br.com.lume.odonto.bo.RelatorioResultadoBO;
-import br.com.lume.odonto.bo.RelatorioResultadoDetalheBO;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RelatorioResultado;
 import br.com.lume.odonto.entity.RelatorioResultadoDetalhe;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.relatorioResultado.RelatorioResultadoSingleton;
+import br.com.lume.relatorioResultadoDetalhe.RelatorioResultadoDetalheSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -36,16 +37,12 @@ public class RelatorioResultadoMB extends LumeManagedBean<RelatorioResultado> {
 
     private List<RelatorioResultado> relatorioResultados = new ArrayList<>();
 
-    private ProfissionalBO profissionalBO = new ProfissionalBO();
-
     private Profissional profissional;
-
-    private RelatorioResultadoDetalheBO relatorioResultadoDetalheBO = new RelatorioResultadoDetalheBO();
-
+  
     private List<RelatorioResultadoDetalhe> detalhesMaterial;
 
     public RelatorioResultadoMB() {
-        super(new RelatorioResultadoBO());
+        super(RelatorioResultadoSingleton.getInstance().getBo());
         this.setClazz(RelatorioResultado.class);
         Calendar c = Calendar.getInstance();
         fim = c.getTime();
@@ -59,7 +56,7 @@ public class RelatorioResultadoMB extends LumeManagedBean<RelatorioResultado> {
             if ((inicio != null && fim != null) && (inicio.getTime() > fim.getTime())) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else {
-                relatorioResultados = ((RelatorioResultadoBO) getbO()).listAll(inicio, fim, profissional);
+                relatorioResultados = RelatorioResultadoSingleton.getInstance().getBo().listAll(inicio, fim, profissional, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             }
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -69,7 +66,7 @@ public class RelatorioResultadoMB extends LumeManagedBean<RelatorioResultado> {
 
     public void carregaDetalheValorMaterial(RelatorioResultado relatorioResultado) {
         try {
-            detalhesMaterial = relatorioResultadoDetalheBO.listDetalhe(relatorioResultado);
+            detalhesMaterial = RelatorioResultadoDetalheSingleton.getInstance().getBo().listDetalhe(relatorioResultado);
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
@@ -87,7 +84,7 @@ public class RelatorioResultadoMB extends LumeManagedBean<RelatorioResultado> {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = profissionalBO.listByEmpresa();
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
                 if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
                         Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {

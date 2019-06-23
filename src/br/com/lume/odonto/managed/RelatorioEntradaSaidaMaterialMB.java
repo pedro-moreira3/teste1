@@ -22,15 +22,16 @@ import org.primefaces.model.chart.LineChartSeries;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.odonto.bo.ItemBO;
-import br.com.lume.odonto.bo.LocalBO;
-import br.com.lume.odonto.bo.ProfissionalBO;
-import br.com.lume.odonto.bo.RelatorioEntradaSaidaMaterialBO;
+import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.item.ItemSingleton;
+import br.com.lume.local.LocalSingleton;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RelatorioEntradaSaidaMaterial;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.relatorioEntradaSaidaMaterial.RelatorioEntradaSaidaMaterialSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -58,19 +59,11 @@ public class RelatorioEntradaSaidaMaterialMB extends LumeManagedBean<RelatorioEn
 
     private boolean naoEncontrado = true;
 
-    private RelatorioEntradaSaidaMaterialBO relatorioEntradaSaidaMaterialBO;
-
-    private ItemBO itemBO;
-
-    private ProfissionalBO profissionalBO;
-
-    private LocalBO localBO;
+  
 
     public RelatorioEntradaSaidaMaterialMB() {
-        super(new RelatorioEntradaSaidaMaterialBO());
-        this.itemBO = new ItemBO();
-        this.profissionalBO = new ProfissionalBO();
-        this.localBO = new LocalBO();
+        super(RelatorioEntradaSaidaMaterialSingleton.getInstance().getBo());
+   
         this.setClazz(RelatorioEntradaSaidaMaterial.class);
         //actionFiltra();
         this.geraListas();
@@ -96,7 +89,7 @@ public class RelatorioEntradaSaidaMaterialMB extends LumeManagedBean<RelatorioEn
             }
             cal.add(Calendar.HOUR_OF_DAY, 23);
             this.periodoFinal = cal.getTime();
-            this.materiais = ((RelatorioEntradaSaidaMaterialBO) this.getbO()).listAllByFilterToReport(this.local, this.item, this.profissional);
+            this.materiais = RelatorioEntradaSaidaMaterialSingleton.getInstance().getBo().listAllByFilterToReport(this.local, this.item, this.profissional, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.naoEncontrado = true;
             if (this.materiais != null && !this.materiais.isEmpty()) {
                 for (RelatorioEntradaSaidaMaterial resm : this.materiais) {
@@ -195,9 +188,12 @@ public class RelatorioEntradaSaidaMaterialMB extends LumeManagedBean<RelatorioEn
 
     public void geraListas() {
         try {
-            this.itens = (this.itemBO.listByEmpresa());
-            this.profissionais = this.profissionalBO.listByEmpresa();
-            this.locais = (this.localBO.listByEmpresa());
+            
+            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+            
+            this.itens = (ItemSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada));
+            this.profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+            this.locais = (LocalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }

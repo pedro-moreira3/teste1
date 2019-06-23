@@ -1,113 +1,169 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
-    <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
 
-                    <p:panel id="pnMaterial" styleClass="BordNone">
-                        <h:inputHidden id="idMaterial" value="#{materialMB.entity.id}" />
+					<p:outputPanel id="pnMaterial" styleClass="BordNone">
+						<h:inputHidden id="idMaterial" value="#{materialMB.entity.id}" />
+						<h1>Movimentação de Materiais</h1>
+						<div class="SeparatorFull"></div>
+						<br />
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							id="dtMaterial" value="#{materialMB.materiais}" var="material"
+							rows="6" paginator="true" selection="#{materialMB.entity}"
+							selectionMode="single" rowKey="#{material}"
+							paginatorPosition="bottom">
+							<p:ajax event="rowSelect" update=":lume:pnMaterial"
+								listener="#{materialMB.carregaTela()}" />
+							<f:facet name="header">Materiais</f:facet>
+							<p:column filterBy="#{material.item.descricaoLimpa}"
+								sortBy="#{material.item.descricao}" filterMatchMode="contains"
+								headerText="Descrição">
+								<h:outputText value="#{material.item.descricao}"
+									title="#{material.id}" />
+							</p:column>
+							<p:column filterBy="#{material.quantidadeAtual}"
+								sortBy="#{material.quantidadeAtual}" filterMatchMode="contains"
+								headerText="Quantidade Atual">
+								<h:outputText value="#{material.quantidadeAtual}">
+									<f:convertNumber />
+								</h:outputText>
+								<h:outputText
+									value="#{materialMB.getUnidadeString(material.item)}"
+									styleClass="unidadeMedidaString" />
+							</p:column>
+							<p:column filterBy="#{material.marca.nome}"
+								sortBy="#{material.marca.nome}" filterMatchMode="contains"
+								headerText="Marca">
+								<h:outputText value="#{material.marca.nome}" />
+							</p:column>
+							<p:column filterBy="#{material.lote}" sortBy="#{material.lote}"
+								filterMatchMode="contains" headerText="Lote">
+								<h:outputText value="#{material.lote}" />
+							</p:column>
+							<p:column filterBy="#{material.dataValidadeStr}"
+								sortBy="#{material.validade}" filterMatchMode="contains"
+								headerText="Validade">
+								<h:outputText value="#{material.dataValidadeStr}" />
+							</p:column>
 
-                        <h1 class="CardBigTopic">Movimentação de Materiais</h1>
-                        <div class="SeparatorFull"></div>
+							<p:column filterBy="#{material.local.descricao}"
+								sortBy="#{material.local.descricao}" filterMatchMode="contains"
+								headerText="Local">
+								<h:outputText value="#{material.local.descricao}" />
+							</p:column>
 
-                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{materialMB.materiais}" var="material" rows="6" paginator="true" selection="#{materialMB.entity}"
-                            selectionMode="single" rowKey="#{material}" paginatorPosition="bottom">
-                            <p:ajax event="rowSelect" update=":lume:pnMaterial" listener="#{materialMB.carregaTela()}" />
-                            <f:facet name="header">Materiais</f:facet>
-                            <p:column filterBy="#{material.item.descricaoLimpa}" sortBy="#{material.item.descricao}" filterMatchMode="contains" headerText="Descrição">
-                                <h:outputText value="#{material.item.descricao}" title="#{material.id}" />
-                            </p:column>
-                            <p:column filterBy="#{material.quantidadeAtual}" sortBy="#{material.quantidadeAtual}" filterMatchMode="contains" headerText="Quantidade Atual">
-                                <h:outputText value="#{material.quantidadeAtual}">
-                                    <f:convertNumber />
-                                </h:outputText>
-                                <h:outputText value="#{material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
-                            </p:column>
-                            <p:column filterBy="#{material.marca.nome}" sortBy="#{material.marca.nome}" filterMatchMode="contains" headerText="Marca">
-                                <h:outputText value="#{material.marca.nome}" />
-                            </p:column>
-                            <p:column filterBy="#{material.lote}" sortBy="#{material.lote}" filterMatchMode="contains" headerText="Lote">
-                                <h:outputText value="#{material.lote}" />
-                            </p:column>
-                            <p:column filterBy="#{material.dataValidadeStr}" sortBy="#{material.validade}" filterMatchMode="contains" headerText="Validade">
-                                <h:outputText value="#{material.dataValidadeStr}" />
-                            </p:column>
+						</p:dataTable>
 
-                            <p:column filterBy="#{material.local.descricao}" sortBy="#{material.local.descricao}" filterMatchMode="contains" headerText="Local">
-                                <h:outputText value="#{material.local.descricao}" />
-                            </p:column>
+						<div class="EmptyBox20"></div>
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+							styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+							<h:outputLabel value="Item: " />
+							<h:outputLabel id="item" value="#{materialMB.item.descricao}" />
 
-                        </p:dataTable>
+							<h:outputLabel value="Local Origem: " />
+							<h:outputLabel id="localOrigem"
+								value="#{materialMB.entity.local.descricao}" />
 
-                        <div class="EmptyBox20"></div>
-                        <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
-                            <h:outputLabel value="Item: " />
-                            <h:outputLabel id="item" value="#{materialMB.item.descricao}" />
+							<h:outputLabel value="Local Destino: " />
+							<p:column>
+								<p:autoComplete queryDelay="1000" id="digitacaoLocal"
+									value="#{materialMB.digitacaoLocal}" minQueryLength="3"
+									completeMethod="#{materialMB.filtraLocal}"
+									styleClass="itembusca">
+									<p:ajax event="itemSelect"
+										listener="#{materialMB.handleSelectLocal}"
+										update=":lume:tbLocalTree" />
+								</p:autoComplete>
+								<br />
+								<br />
+								<p:tree value="#{materialMB.rootLocal}" var="local"
+									style="height:200px;" id="tbLocalTree"
+									selection="#{materialMB.selectedLocal}" selectionMode="single">
+									<p:ajax event="select"
+										listener="#{materialMB.onNodeSelectLocal}"
+										update=":lume:digitacaoLocal" process="@this" />
+									<p:ajax event="unselect"
+										listener="#{materialMB.onNodeUnselectLocal}" />
+									<p:treeNode>
+										<h:outputText value="#{local.descricao}" />
+									</p:treeNode>
+								</p:tree>
+							</p:column>
 
-                            <h:outputLabel value="Local Origem: " />
-                            <h:outputLabel id="localOrigem" value="#{materialMB.entity.local.descricao}" />
+							<p:outputLabel for="quantidadeMovimentada"
+								value="Quantidade a ser movimentada: " />
+							<p:column>
+								<p:inputText id="quantidadeMovimentada"
+									value="#{materialMB.quantidadeMovimentada}" maxlength="10"
+									required="true" onkeypress="validaNumeros(event)" />
+								<h:outputLabel
+									value="#{materialMB.getUnidadeString(materialMB.item)}"
+									styleClass="unidadeMedidaString" disabled="true"
+									style="vertical-align: down;" />
+							</p:column>
 
-                            <h:outputLabel value="Local Destino: " />
-                            <p:column>
-                                <p:autoComplete queryDelay="1000" id="digitacaoLocal" value="#{materialMB.digitacaoLocal}" minQueryLength="3" completeMethod="#{materialMB.filtraLocal}"
-                                    styleClass="itembusca">
-                                    <p:ajax event="itemSelect" listener="#{materialMB.handleSelectLocal}" update=":lume:tbLocalTree" />
-                                </p:autoComplete>
-                                <p:tree value="#{materialMB.rootLocal}" var="local" style="height:200px;" id="tbLocalTree" selection="#{materialMB.selectedLocal}" selectionMode="single">
-                                    <p:ajax event="select" listener="#{materialMB.onNodeSelectLocal}" update=":lume:digitacaoLocal" process="@this" />
-                                    <p:ajax event="unselect" listener="#{materialMB.onNodeUnselectLocal}" />
-                                    <p:treeNode>
-                                        <h:outputText value="#{local.descricao}" />
-                                    </p:treeNode>
-                                </p:tree>
-                            </p:column>
+							<h:outputLabel value="Quantidade Atual: " />
+							<p:column>
+								<h:outputText id="quantidadeAtual"
+									value="#{materialMB.entity.quantidadeAtual}" disabled="true"
+									styleClass="Wid20">
+									<f:convertNumber />
+								</h:outputText>
+								<h:outputText
+									value="#{materialMB.getUnidadeString(materialMB.item)}"
+									styleClass="unidadeMedidaString" />
+							</p:column>
 
-                            <p:outputLabel for="quantidadeMovimentada" value="Quantidade a ser movimentada: " />
-                            <p:column>
-                                <p:inputText id="quantidadeMovimentada" value="#{materialMB.quantidadeMovimentada}" maxlength="10" required="true" onkeypress="validaNumeros(event)"
-                                    style="width:10%" />
-                                <h:outputLabel value="#{materialMB.item.unidadeMedidaString}" styleClass="unidadeMedidaString" disabled="true" style="vertical-align: down;" />
-                            </p:column>
+							<h:outputLabel value="Valor Unitário: " />
+							<h:outputLabel id="valorUnitario"
+								value="#{materialMB.entity.valor}" disabled="true">
+								<f:convertNumber currencySymbol="R$" type="currency"
+									locale="#{lumeSecurity.locale}" />
+							</h:outputLabel>
 
-                            <h:outputLabel value="Quantidade Atual: " />
-                            <p:column>
-                                <h:outputText id="quantidadeAtual" value="#{materialMB.entity.quantidadeAtual}" disabled="true" styleClass="Wid20">
-                                    <f:convertNumber />
-                                </h:outputText>
-                                <h:outputText value="#{materialMB.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
-                            </p:column>
+							<h:outputLabel value="Marca: " />
+							<h:outputLabel id="marca" value="#{materialMB.entity.marca.nome}"
+								disabled="true" />
 
-                            <h:outputLabel value="Valor Unitário: " />
-                            <h:outputLabel id="valorUnitario" value="#{materialMB.entity.valor}" disabled="true">
-                                <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
-                            </h:outputLabel>
-
-                            <h:outputLabel value="Marca: " />
-                            <h:outputLabel id="marca" value="#{materialMB.entity.marca.nome}" disabled="true" />
-
-                            <h:outputLabel value="Lote: " />
-                            <h:outputLabel id="lote" value="#{materialMB.entity.lote}" disabled="true" />
+							<h:outputLabel value="Lote: " />
+							<h:outputLabel id="lote" value="#{materialMB.entity.lote}"
+								disabled="true" />
 
 
-                            <h:outputLabel value="Data de Cadastro: " />
-                            <h:outputLabel id="dataCadastro" value="#{materialMB.entity.dataCadastroStr}" disabled="true" />
+							<h:outputLabel value="Data de Cadastro: " />
+							<h:outputLabel id="dataCadastro"
+								value="#{materialMB.entity.dataCadastroStr}" disabled="true" />
 
-                            <h:outputLabel value="Data de Validade: " />
-                            <h:outputLabel id="dataValidade" value="#{materialMB.entity.dataValidadeStr}" disabled="true" />
+							<h:outputLabel value="Data de Validade: " />
+							<h:outputLabel id="dataValidade"
+								value="#{materialMB.entity.dataValidadeStr}" disabled="true" />
 
-                            <h:outputLabel value="Data de Movimentação: " />
-                            <h:outputLabel id="dataMovimentacao" value="#{materialMB.entity.dataMovimentacaoStr}" disabled="true" />
-                        </p:panelGrid>
-
-                        <div class="SeparatorFull"></div>
-                        <div class="Container25 Responsive100">
-                            <p:commandButton id="persist" icon="White fa fa-exchange" value="Movimentar" actionListener="#{materialMB.movimentar}" update=":lume:pnMaterial,:lume:dtMaterial"
-                                process=":lume:pnMaterial" disabled="#{materialMB.entity.id == 0}" styleClass="GreenButton" />
-                        </div>
-                    </p:panel>
-                </div>
-            </div>
-        </div>
-    </ui:define>
+							<h:outputLabel value="Data de Movimentação: " />
+							<h:outputLabel id="dataMovimentacao"
+								value="#{materialMB.entity.dataMovimentacaoStr}" disabled="true" />
+						</p:panelGrid>
+						<br />
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="persist" icon="White fa fa-exchange"
+								value="Movimentar" actionListener="#{materialMB.movimentar}"
+								update=":lume:pnMaterial,:lume:dtMaterial"
+								process=":lume:pnMaterial"
+								disabled="#{materialMB.entity.id == 0}" styleClass="GreenButton" />
+						</p:panelGrid>
+					</p:outputPanel>
+				</div>
+			</div>
+		</div>
+	</ui:define>
 </ui:composition>

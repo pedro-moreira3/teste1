@@ -1,19 +1,19 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-                    <p:panel id="pnPedido" styleClass="BordNone">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <p:outputPanel id="pnPedido" styleClass="BordNone">
 
                         <h:inputHidden id="id" value="#{abastecimentoMB.entity.id}" />
 
 
-                        <h1 class="CardBigTopic">Empréstimo Unitário</h1>
+                        <h1>Empréstimo Unitário</h1>
                         <div class="SeparatorFull"></div>
 
 
-                        <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;"
+                        <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;"
                             id="pnDados">
 
                             <p:outputLabel for="profissional" value="Profissional : " />
@@ -25,7 +25,8 @@
 
                             <p:outputLabel for="prazo" value="Data Utilização : " />
                             <p:calendar id="prazo" value="#{abastecimentoMB.data}" required="true" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}"
-                                timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-0:+1" class="Wid20" disabled="#{abastecimentoMB.entity.id != 0}">
+                                timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-0:+1"
+                                 disabled="#{abastecimentoMB.entity.id != 0}">
                                 <p:ajax event="dateSelect" listener="#{abastecimentoMB.handleSelectData}" update=":lume:profissional,:lume:agendamento" />
                             </p:calendar>
 
@@ -48,7 +49,7 @@
                                     styleClass="itembusca" disabled="#{abastecimentoMB.entity.id != 0}">
                                     <p:ajax event="itemSelect" listener="#{abastecimentoMB.handleSelect}" update=":lume:tbItemTree, :lume:quantidade2" />
                                 </p:autoComplete>
-
+								<br /><br />
                                 <p:tree value="#{abastecimentoMB.root}" var="item" id="tbItemTree" selection="#{abastecimentoMB.selectedItem}" selectionMode="single"
                                     rendered="#{abastecimentoMB.entity.id == 0}">
                                     <p:ajax event="select" listener="#{abastecimentoMB.onNodeSelect}" update=":lume:digitacao, :lume:quantidade2,:lume:dtMateriaisDisponiveis" process="@this" />
@@ -61,20 +62,19 @@
 
                             <p:outputLabel for="quantidade" value="Quantidade: " />
                             <p:column>                             
-                                <p:inputText id="quantidade" value="#{abastecimentoMB.quantidade}" maxlength="10" required="true" onkeypress="validaNumeros(event)" style="width:20%" rendered="#{abastecimentoMB.entity.id == 0}"/>
+                                <p:inputText id="quantidade" value="#{abastecimentoMB.quantidade}" maxlength="10" required="true" onkeypress="validaNumeros(event)" rendered="#{abastecimentoMB.entity.id == 0}"/>
                                 <h:outputText value="#{abastecimentoMB.quantidade}" rendered="#{abastecimentoMB.entity.id != 0}">
                                     <f:convertNumber />
                                 </h:outputText>
                                 
-                                <h:outputLabel id="quantidade2" value="#{abastecimentoMB.item.unidadeMedidaString}" styleClass="unidadeMedidaString" disabled="true" />
+                                <h:outputLabel id="quantidade2" value="#{abastecimentoMB.getUnidadeString(abastecimentoMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
                             </p:column>
                         </p:panelGrid>
                         <div class="SeparatorFull"></div>
-                        <div class="Container25 Responsive100">
-
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="busca" icon="White fa fa-search" value="Busca Itens" disabled="#{abastecimentoMB.entity.id!=0}" actionListener="#{abastecimentoMB.actionFindMateriais}"
                                 update=":lume:pnPedido, :lume:dtAbastecimento, :lume:dtMateriaisDisponiveis" process=":lume:pnPedido" styleClass="OrangeButton" />
-                        </div>
+                        </p:panelGrid>
 
                         <div class="EmptyBox20"></div>
 
@@ -96,7 +96,7 @@
                                 <h:outputText value="#{materiaisSelecionado.quantidadeAtual}">
                                     <f:convertNumber />
                                 </h:outputText>
-                                <h:outputText value="#{materiaisSelecionado.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{abastecimentoMB.getUnidadeString(materiaisSelecionado.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
                             <p:column filterBy="#{materiaisSelecionado.marca.nome}" sortBy="#{materiaisSelecionado.marca.nome}" filterMatchMode="contains" headerText="Marca">
                                 <h:outputText value="#{materiaisSelecionado.marca.nome}" />
@@ -111,20 +111,18 @@
                                 <h:outputText value="#{materiaisSelecionado.local.descricao}" />
                             </p:column>
                         </p:dataTable>
+                        <br />
                         <div class="SeparatorFull"></div>
-                        <div class="Container25 Responsive100">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{abastecimentoMB.actionPersist}"
                                 update=":lume:pnPedido,:lume:dtAbastecimento,:lume:pnDados, @this, :lume:dtMateriaisDisponiveis" process=":lume:pnPedido" styleClass="GreenButton"
                                 disabled="#{!abastecimentoMB.enableSalvar}" />
-                        </div>
-                        <div class="Container25 Responsive100">
                             <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{abastecimentoMB.actionNew}" update=":lume:pnPedido :lume:dtAbastecimento"
                                 immediate="true" />
-                        </div>
+                        </p:panelGrid>
                         <div class="EmptyBox20"></div>
-                    </p:panel>
+                    </p:outputPanel>
 
-                    <p:panel styleClass="BordNone">
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtAbastecimento" value="#{abastecimentoMB.abastecimentos}" var="abastecimento" rows="15" paginator="true"
                             selection="#{abastecimentoMB.entity}" selectionMode="single" rowKey="#{abastecimento}" paginatorPosition="bottom">
                             <p:ajax event="rowSelect" update=":lume:pnPedido, :lume:dtMateriaisDisponiveis, :lume:persist" listener="#{abastecimentoMB.carregaTelaGeral}" />
@@ -147,13 +145,12 @@
                                 <h:outputText value="#{abastecimento.quantidade}">
                                     <f:convertNumber pattern="#0.00" locale="pt_BR" />
                                 </h:outputText>
-                                <h:outputText value="#{abastecimento.material.item.unidadeMedidaString}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{abastecimentoMB.getUnidadeString(abastecimento.material.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
                             <p:column filterBy="#{abastecimento.dataEntregaStr}" filterMatchMode="contains" headerText="Data da Entrega" sortBy="#{abastecimento.dataEntrega}">
                                 <h:outputText value="#{abastecimento.dataEntregaStr}" />
                             </p:column>
                         </p:dataTable>
-                    </p:panel>
                 </div>
             </div>
         </div>

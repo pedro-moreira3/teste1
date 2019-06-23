@@ -1,73 +1,87 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
 
-    <div class="Container100 Responsive100 NoIndent">
-        <div class="Container100 ui-fluid NoPadding">
-            <div class="Card">
-                <p:panel id="pnPontoPrincipal" styleClass="BordNone">
-                    <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-                        style="border:0px none; background-color:transparent;">
+	<p:outputPanel id="pnPontoPrincipal" styleClass="BordNone">
+		<p:panelGrid columns="4"
+			columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+			layout="grid" styleClass="ui-panelgrid-blank"
+			style="border:0px none; background-color:transparent;">
 
-                        <p:outputLabel for="data" value="Data : " />
-                        <p:calendar id="data" value="#{profissionalPontoMB.entity.data}" pattern="dd/MM/yyyy" locale="#{lumeSecurity.locale}" required="true" class="Wid30" mask="true"
-                            showButtonPanel="true" />
+			<p:outputLabel for="data" value="Data : " />
+			<p:calendar id="data" value="#{profissionalPontoMB.entity.data}"
+				pattern="dd/MM/yyyy" locale="#{lumeSecurity.locale}" required="true"
+				class="Wid30" mask="true" showButtonPanel="true" />
 
-                        <p:column styleClass="NoPadding"></p:column>
-                        <p:column styleClass="NoPadding"></p:column>
+			<p:column styleClass="NoPadding"></p:column>
+			<p:column styleClass="NoPadding"></p:column>
 
-                        <p:outputLabel for="entrada" value="Entrada : " />
-                        <p:calendar id="entrada" value="#{profissionalPontoMB.entity.entrada}" timeOnly="true" pattern="HH:mm" locale="#{lumeSecurity.locale}" required="true" class="Wid30" mask="true"
-                            showButtonPanel="true" />
+			<p:outputLabel for="entrada" value="Entrada : " />
+			<p:calendar id="entrada"
+				value="#{profissionalPontoMB.entity.entrada}" timeOnly="true"
+				pattern="HH:mm" locale="#{lumeSecurity.locale}" required="true"
+				mask="true" showButtonPanel="true" />
 
-                        <p:outputLabel for="saida" value="Saída : " />
-                        <p:calendar id="saida" value="#{profissionalPontoMB.entity.saida}" timeOnly="true" pattern="HH:mm" locale="#{lumeSecurity.locale}" required="false" class="Wid30" mask="true"
-                            showButtonPanel="true" />
+			<p:outputLabel for="saida" value="Saída : " />
+			<p:calendar id="saida" value="#{profissionalPontoMB.entity.saida}"
+				timeOnly="true" pattern="HH:mm" locale="#{lumeSecurity.locale}"
+				required="false" mask="true" showButtonPanel="true" />
 
-                    </p:panelGrid>
-
-
-                    <div class="SeparatorFull"></div>
-
-                    <div class="Container25 Responsive100">
-                        <p:commandButton id="persistPonto" icon="White fa fa-save" value="Salvar" actionListener="#{profissionalPontoMB.actionPersist}" process=":lume:tabView:pnPontoPrincipal"
-                            update=":lume:tabView:pnPontoPrincipal,:lume:tabView:tbPontoPrincipal" styleClass="GreenButton" />
-                    </div>
-                    <div class="Container25 Responsive100">
-                        <p:commandButton id="newPonto" icon="White fa fa-file-o" value="Novo" actionListener="#{profissionalPontoMB.actionNew}"
-                            update=":lume:tabView:pnPontoPrincipal,:lume:tabView:tbPontoPrincipal" immedatate="true" tabindex="1" process="@this,:lume:tabView:pnPontoPrincipal" />
-                    </div>
-
-                    <div class="Container25 Responsive100">
-                        <p:commandButton value="Excel" ajax="false" process="dtPontoPrincipal" icon="White fa fa-file-excel-o" styleClass="GreenButton" immediate="true">
-                            <p:dataExporter encoding="iso-8859-1" type="xls" target="dtPontoPrincipal" fileName="pontos" />
-                        </p:commandButton>
-                    </div>
-
-                </p:panel>
+		</p:panelGrid>
 
 
+		<div class="SeparatorFull"></div>
 
-                <div class="EmptyBox20"></div>
+		<p:panelGrid columns="4" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid">
+			<p:commandButton id="persistPonto" icon="White fa fa-save"
+				value="Salvar" actionListener="#{profissionalPontoMB.actionPersist}"
+				process=":lume:tabView:pnPontoPrincipal"
+				update=":lume:tabView:pnPontoPrincipal,:lume:tabView:tbPontoPrincipal"
+				styleClass="GreenButton" />
+			<p:commandButton id="newPonto" icon="White fa fa-file-o" value="Novo"
+				actionListener="#{profissionalPontoMB.actionNew}"
+				update=":lume:tabView:pnPontoPrincipal,:lume:tabView:tbPontoPrincipal"
+				immedatate="true" tabindex="1"
+				process="@this,:lume:tabView:pnPontoPrincipal" />
+			<p:commandButton value="Excel" ajax="false"
+				process="dtPontoPrincipal" icon="White fa fa-file-excel-o"
+				styleClass="GreenButton" immediate="true">
+				<p:dataExporter encoding="iso-8859-1" type="xls"
+					target="dtPontoPrincipal" fileName="pontos" />
+			</p:commandButton>
+		</p:panelGrid>
 
-                <p:panel id="tbPontoPrincipal" styleClass="BordNone">
-                    <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtPontoPrincipal" value="#{profissionalPontoMB.entityList}" var="hup" rows="7" paginator="true"
-                        selection="#{profissionalPontoMB.entity}" selectionMode="single" rowKey="#{hup}" paginatorPosition="bottom">
-                        <p:ajax event="rowSelect" update=":lume:tabView:pnPontoPrincipal" />
-                        <f:facet name="header">Registros de ponto</f:facet>
+	</p:outputPanel>
 
-                        <p:column filterBy="#{hup.data}" sortBy="#{hup.dataStr}" filterMatchMode="contains" headerText="Data">
-                            <h:outputText value="#{hup.dataStr}" />
-                        </p:column>
-                        <p:column headerText="Entrada" sortBy="#{hup.entrada}" filterBy="#{hup.entradaStr}" filterMatchMode="contains">
-                            <h:outputText value="#{hup.entradaStr}" />
-                        </p:column>
-                        <p:column headerText="Saída" sortBy="#{hup.saida}" filterBy="#{hup.saidaStr}" filterMatchMode="contains">
-                            <h:outputText value="#{hup.saidaStr}" />
-                        </p:column>
-                    </p:dataTable>
-                </p:panel>
-            </div>
-        </div>
-    </div>
+
+
+	<div class="EmptyBox20"></div>
+
+	<p:outputPanel id="tbPontoPrincipal" styleClass="BordNone">
+		<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+			id="dtPontoPrincipal" value="#{profissionalPontoMB.entityList}"
+			var="hup" rows="7" paginator="true"
+			selection="#{profissionalPontoMB.entity}" selectionMode="single"
+			rowKey="#{hup}" paginatorPosition="bottom">
+			<p:ajax event="rowSelect" update=":lume:tabView:pnPontoPrincipal" />
+			<f:facet name="header">Registros de ponto</f:facet>
+
+			<p:column filterBy="#{hup.data}" sortBy="#{hup.dataStr}"
+				filterMatchMode="contains" headerText="Data">
+				<h:outputText value="#{hup.dataStr}" />
+			</p:column>
+			<p:column headerText="Entrada" sortBy="#{hup.entrada}"
+				filterBy="#{hup.entradaStr}" filterMatchMode="contains">
+				<h:outputText value="#{hup.entradaStr}" />
+			</p:column>
+			<p:column headerText="Saída" sortBy="#{hup.saida}"
+				filterBy="#{hup.saidaStr}" filterMatchMode="contains">
+				<h:outputText value="#{hup.saidaStr}" />
+			</p:column>
+		</p:dataTable>
+	</p:outputPanel>
 </ui:composition>
