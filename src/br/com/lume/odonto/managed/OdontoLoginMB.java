@@ -155,6 +155,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                 if (!Profissional.INATIVO.equals(profissional.getStatus())) {
                     perfilLogado = profissional.getPerfil();
                     userLogin = UsuarioSingleton.getInstance().getBo().find(profissional.getIdUsuario());
+                    UtilsFrontEnd.setPerfilLogado(perfilLogado);
                     UtilsFrontEnd.setProfissionalLogado(profissional);
                     UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()));                 
                 } else {
