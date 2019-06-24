@@ -343,11 +343,12 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                 retorno.setRetornar("A");
                                 RetornoSingleton.getInstance().getBo().persist(retorno);
                             }
-                            this.actionNew(event);
                             profissional = null;
                             carregarScheduleTarefas();
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                            this.actionNew(event);
                             PrimeFaces.current().ajax().addCallbackParam("dlg", dlg);
+                            //profissional = null;
                         } catch (BusinessException e) {
                             this.addError(OdontoMensagens.getMensagem("erro.agendamento.exclusao.procedimento.emprestimo"), "");
                             log.error("actionPersist", e);
@@ -371,8 +372,6 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 this.refreshEntity();
             }
             validaHabilitaSalvar();
-            this.actionNew(event);
-            profissional = null;
             carregarScheduleTarefas();
         } else {
             this.addError(OdontoMensagens.getMensagem("erro.agendamento.planotratamento.vazio"), "");
