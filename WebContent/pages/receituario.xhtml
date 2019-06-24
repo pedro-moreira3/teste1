@@ -38,7 +38,7 @@
 							<p:selectOneMenu id="tipoDocumentoReceituario" value="#{receituarioMB.documentoSelecionado}" converter="documento">
 								<f:selectItem itemLabel="Selecione um Documento" value="#{null}" />
 								<f:selectItems value="#{receituarioMB.documentos}" var="dc" itemValue="#{dc}" itemLabel="#{dc.descricao}" />
-								<p:ajax update="lume:pnReceituarioPrincipal, lume:pnReceituario" listener="#{receituarioMB.atualizaTela}" />
+								<p:ajax update="lume:pnReceituarioPrincipal, lume:pnReceituario" />
 							</p:selectOneMenu>
 						</p:panelGrid>
 						<ui:repeat var="tagDinamica" value="#{receituarioMB.tagDinamicasAsList}">

@@ -47,6 +47,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     public void listAll() {
         try {
             dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("documento", "tipo");
+            if(this.dominios != null && !this.dominios.isEmpty())
+                this.getEntity().setTipo(this.dominios.get(0));
             if (this.getEntity() != null && this.getEntity().getTipo() != null) {
                 documentos = DocumentoSingleton.getInstance().getBo().listByTipoDocumento(this.getEntity().getTipo(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             } else {
