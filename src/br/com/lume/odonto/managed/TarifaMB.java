@@ -32,6 +32,7 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
 
     public TarifaMB() {
         super(TarifaSingleton.getInstance().getBo());   
+        this.geraLista();
         this.setClazz(Tarifa.class);
     }
 
