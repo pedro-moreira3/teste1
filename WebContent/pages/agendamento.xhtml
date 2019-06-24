@@ -132,54 +132,55 @@ div.ui-selectoneradio label {
 		</h:panelGroup>
 
 		<p:dialog widgetVar="eventDialog" header="Agendamento"
-			resizable="false" responsive="true" width="calc(100% - 2px)" height="100%"
-			position="0,0" modal="true" style="position:absolute !important;"
-			appendToBody="true" focus="paciente">
-			
+			resizable="false" responsive="true" width="calc(100% - 2px)"
+			height="100%" position="0,0" modal="true"
+			style="position:absolute !important;" appendToBody="true"
+			focus="paciente">
+
 			<p:ajax event="close" listener="#{agendamentoMB.handleClose}"
 				update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
 				oncomplete="PF('myschedule').update();" />
-			
+
 
 			<div class="Container100 Responsive100 NoIndent">
 				<div class="Container100 ui-fluid NoPadding">
 					<div class="Card" style="margin-top: -35px">
-					
-					<p:outputPanel id="pnAgendamento">
+
+						<p:outputPanel id="pnAgendamento">
 
 
-						<ui:include src="dlgagendamento.xhtml" />
+							<ui:include src="dlgagendamento.xhtml" />
 
-						<p:separator styleClass="SeparatorFull" />
+							<p:separator styleClass="SeparatorFull" />
 
-						<p:panelGrid columns="4" layout="grid"
-							styleClass="ui-panelgrid-blank form-group ui-fluid"
-							id="botoesAgenda">
-							<p:commandButton id="persist" icon="White fa fa-save"
-								process="pnAgendamento" value="Salvar"
-								rendered="#{agendamentoMB.habilitaSalvar}"
-								actionListener="#{agendamentoMB.actionPersist}"
-								update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
-								oncomplete="PF('myschedule').update();handleDialogRequest(xhr, status, args);"
-								styleClass="GreenButton" />
-							<p:button id="whats" icon="White fa fa-whatsapp"
-								onclick="window.open('#{agendamentoMB.entity.whatsURL}');return false;"
-								value="Enviar Whatsapp" styleClass="GreenButton"
-								disable="#{agendamentoMB.entity.whatsURL == null}"
-								rendered="#{agendamentoMB.entity != null and agendamentoMB.entity.id > 0}" />
-							<p:commandButton icon="White fa fa-close" value="Fechar"
-								process="@this" onclick="PF('eventDialog').hide()"
-								actionListener="#{agendamentoMB.handleClose}"
-								update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
-								oncomplete="PF('myschedule').update();" />
-							<p:commandButton id="confirmarPreCadastro"
-								icon="White fa fa-save" process="pnAgendamento"
-								value="Confirmar Pré Agendamento"
-								update="pnAgendamento, btBloqueioAgenda"
-								oncomplete="PF('myschedule').update();"
-								actionListener="#{agendamentoMB.actionConfirmarPreCadastro}"
-								rendered="#{agendamentoMB.entity.statusNovo == 'P'}" />
-						</p:panelGrid>
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid"
+								id="botoesAgenda">
+								<p:commandButton id="persist" icon="White fa fa-save"
+									process="pnAgendamento" value="Salvar"
+									rendered="#{agendamentoMB.habilitaSalvar}"
+									actionListener="#{agendamentoMB.actionPersist}"
+									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
+									oncomplete="PF('myschedule').update();handleDialogRequest(xhr, status, args);"
+									styleClass="GreenButton" />
+								<p:button id="whats" icon="White fa fa-whatsapp"
+									onclick="window.open('#{agendamentoMB.entity.whatsURL}');return false;"
+									value="Enviar Whatsapp" styleClass="GreenButton"
+									disable="#{agendamentoMB.entity.whatsURL == null}"
+									rendered="#{agendamentoMB.entity != null and agendamentoMB.entity.id > 0}" />
+								<p:commandButton icon="White fa fa-close" value="Fechar"
+									process="@this" onclick="PF('eventDialog').hide()"
+									actionListener="#{agendamentoMB.handleClose}"
+									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
+									oncomplete="PF('myschedule').update();" />
+								<p:commandButton id="confirmarPreCadastro"
+									icon="White fa fa-save" process="pnAgendamento"
+									value="Confirmar Pré Agendamento"
+									update="pnAgendamento, btBloqueioAgenda"
+									oncomplete="PF('myschedule').update();"
+									actionListener="#{agendamentoMB.actionConfirmarPreCadastro}"
+									rendered="#{agendamentoMB.entity.statusNovo == 'P'}" />
+							</p:panelGrid>
 						</p:outputPanel>
 					</div>
 				</div>
@@ -400,39 +401,25 @@ div.ui-selectoneradio label {
 
 
 		<script type="text/javascript">
-			/*
-				if (PrimeFaces.widget.Schedule != undefined) {
-					PrimeFaces.widget.Schedule.prototype.init = function() {
-						this.cfg.titleFormat = {
-							month : 'MMMM yyyy',
-							week : "De d MMM [ yyyy]{ 'à' d [ MMM] 'de' yyyy}",
-							day : 'dddd, d MMM , yyyy'
-						};
-						this.cfg.columnFormat = {
-							month : 'ddd',
-							week : 'ddd d/M',
-							day : 'dddd M/d'
-						};
-						if (this.jq.is(':visible')) {
-							this.jqc.fullCalendar(this.cfg);
-							return true;
-						} else {
-							return false;
+			if (PrimeFaces.widget.Schedule != undefined) {
+				PrimeFaces.widget.Schedule.prototype._oldInit = PrimeFaces.widget.Schedule.prototype.init;
+				PrimeFaces.widget.Schedule.prototype.init = function(cfg) {
+					cfg.views = {
+				        month: {
+							columnFormat: 'ddd'
+						},
+						week: {
+							columnFormat: 'ddd D/MM'
+						},
+						day: {
+							columnFormat: 'dddd'
 						}
 					};
-				}
-			 */
-			 /*
-			PrimeFaces.widget.Schedule.prototype._oldInit = PrimeFaces.widget.Schedule.prototype.init;
-			PrimeFaces.widget.Schedule.prototype.init = function(cfg) {
-				cfg.columnFormat = {
-					month : 'ddd',
-					week : 'ddd D/M',
-					day : 'dddd D/M'
+					//cfg.displayEventTime = false;
+					console.log(this);
+					this._oldInit.apply(this, arguments);
 				};
-				this._oldInit.apply(this, arguments);
-			};
-			*/
+			}
 
 			function handleDialogRequest(xhr, status, args) {
 				console.debug('handleDialogRequest');
