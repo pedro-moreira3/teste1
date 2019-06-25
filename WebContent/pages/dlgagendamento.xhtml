@@ -38,7 +38,8 @@
 			
 			<h:panelGroup styleClass="md-inputfield">
 				<p:calendar id="inicio" value="#{agendamentoMB.inicio}"
-					pattern="dd/MM/yyyy HH:mm" mask="true">
+					pattern="dd/MM/yyyy HH:mm" mask="true" defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.inicio)}"
+					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.inicio)}">
 					<p:ajax event="dateSelect" process="@this" update="fim"
 						listener="#{agendamentoMB.validaHoraUtilProfissional}" />
 					<p:ajax event="dateSelect" process="@this" update="fim"
@@ -49,7 +50,8 @@
 			</h:panelGroup>
 			<h:panelGroup styleClass="md-inputfield">
 				<p:calendar id="fim" value="#{agendamentoMB.fim}"
-					pattern="dd/MM/yyyy HH:mm" mask="true">
+					pattern="dd/MM/yyyy HH:mm" mask="true" defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.fim)}"
+					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.fim)}">
 					<p:ajax event="dateSelect"
 						listener="#{agendamentoMB.validaHoraUtilProfissional}" />
 				</p:calendar>
@@ -68,20 +70,26 @@
 			
 			<h:panelGroup styleClass="md-inputfield">
 				<p:calendar id="chegouAs" value="#{agendamentoMB.entity.chegouAs}"
-					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" />
+					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
+					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.chegouAs)}"
+					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.chegouAs)}" />
 				<p:outputLabel for="chegouAs" value="Chegou às" />
 				<p:message styleClass="msg" for="chegouAs" />
 			</h:panelGroup>
 			<h:panelGroup styleClass="md-inputfield">
 				<p:calendar id="iniciouAs" value="#{agendamentoMB.entity.iniciouAs}"
-					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" />
+					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
+					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.iniciouAs)}"
+					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.iniciouAs)}" />
 				<p:outputLabel for="iniciouAs" value="Iniciou atend. às" />
 				<p:message styleClass="msg" for="iniciouAs" />
 			</h:panelGroup>
 			<h:panelGroup styleClass="md-inputfield">
 				<p:calendar id="finalizouAs"
 					value="#{agendamentoMB.entity.finalizouAs}"
-					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" />
+					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
+					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.finalizouAs)}"
+					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.finalizouAs)}" />
 				<p:outputLabel for="finalizouAs" value="Finalizou atend. às" />
 				<p:message styleClass="msg" for="finalizouAs" />
 			</h:panelGroup>
