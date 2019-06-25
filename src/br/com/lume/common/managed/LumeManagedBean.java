@@ -1,6 +1,8 @@
 package br.com.lume.common.managed;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -253,5 +255,21 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
 
     public boolean isAlmoxarifa() {
         return UtilsFrontEnd.getProfissionalLogado() != null ? UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ALMOXARIFA) : false;
+    }
+    
+    public Calendar getCalendarFromDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar;
+    }
+    
+    public int getDefaultHour(Date date) {
+        if(date == null) return 0;
+        return getCalendarFromDate(date).get(Calendar.HOUR);
+    }
+    
+    public int getDefaultMinute(Date date) {
+        if(date == null) return 0;
+        return getCalendarFromDate(date).get(Calendar.MINUTE);
     }
 }

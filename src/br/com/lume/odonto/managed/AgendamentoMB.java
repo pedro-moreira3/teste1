@@ -451,28 +451,42 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             if (this.validaHoraduplicadaPaciente(this.getEntity().getPaciente())) {
                                 if (this.validaIntervalo()) {
                                     dlg = true;
-                                    if (this.getEntity().getIniciouAs() == null && this.getEntity().getChegouAs() != null && (!this.getEntity().getStatusNovo().equals(
-                                            StatusAgendamentoUtil.CANCELADO.getSigla()) || !this.getEntity().getStatusNovo().equals(
-                                                    StatusAgendamentoUtil.REMARCADO.getSigla()) || !this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.ATENDIDO.getSigla()))) {
-                                        if (!this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.CLIENTE_NA_CLINICA.getSigla())) {
+                                    
+                                    if(this.getEntity().getStatusNovo().matches("S|N|I|O|A")) {
+                                         if(this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() != null && this.getEntity().getFinalizouAs() != null) {
+                                            this.getEntity().setStatusNovo("A");
+                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.atendido"), "");
+                                        }else if(this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() == null && this.getEntity().getFinalizouAs() == null) {
+                                            this.getEntity().setStatusNovo("I");
                                             this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.clientenaclinica"), "");
-                                        }
-                                        this.getEntity().setStatusNovo(StatusAgendamentoUtil.CLIENTE_NA_CLINICA.getSigla());
-                                    }
-                                    if (this.getEntity().getFinalizouAs() == null && this.getEntity().getIniciouAs() != null && (!this.getEntity().getStatusNovo().equals(
-                                            StatusAgendamentoUtil.CANCELADO.getSigla()) || !this.getEntity().getStatusNovo().equals(
-                                                    StatusAgendamentoUtil.REMARCADO.getSigla()) || !this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.ATENDIDO.getSigla()))) {
-                                        if (!this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.EM_ATENDIMENTO.getSigla())) {
+                                        }else if(this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() != null && this.getEntity().getFinalizouAs() == null) {
+                                            this.getEntity().setStatusNovo("O");
                                             this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.ematendimento"), "");
                                         }
-                                        this.getEntity().setStatusNovo(StatusAgendamentoUtil.EM_ATENDIMENTO.getSigla());
                                     }
-                                    if (this.getEntity().getFinalizouAs() != null) {
-                                        if (!this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.ATENDIDO.getSigla())) {
-                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.atendido"), "");
-                                        }
-                                        this.getEntity().setStatusNovo(StatusAgendamentoUtil.ATENDIDO.getSigla());
-                                    }
+                                    
+//                                    if (this.getEntity().getIniciouAs() == null && this.getEntity().getChegouAs() != null && (!this.getEntity().getStatusNovo().equals(
+//                                            StatusAgendamentoUtil.CANCELADO.getSigla()) || !this.getEntity().getStatusNovo().equals(
+//                                                    StatusAgendamentoUtil.REMARCADO.getSigla()) || !this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.ATENDIDO.getSigla()))) {
+//                                        if (!this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.CLIENTE_NA_CLINICA.getSigla())) {
+//                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.clientenaclinica"), "");
+//                                        }
+//                                        this.getEntity().setStatusNovo(StatusAgendamentoUtil.CLIENTE_NA_CLINICA.getSigla());
+//                                    }
+//                                    if (this.getEntity().getFinalizouAs() == null && this.getEntity().getIniciouAs() != null && (!this.getEntity().getStatusNovo().equals(
+//                                            StatusAgendamentoUtil.CANCELADO.getSigla()) || !this.getEntity().getStatusNovo().equals(
+//                                                    StatusAgendamentoUtil.REMARCADO.getSigla()) || !this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.ATENDIDO.getSigla()))) {
+//                                        if (!this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.EM_ATENDIMENTO.getSigla())) {
+//                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.ematendimento"), "");
+//                                        }
+//                                        this.getEntity().setStatusNovo(StatusAgendamentoUtil.EM_ATENDIMENTO.getSigla());
+//                                    }
+//                                    if (this.getEntity().getFinalizouAs() != null) {
+//                                        if (!this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.ATENDIDO.getSigla())) {
+//                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.atendido"), "");
+//                                        }
+//                                        this.getEntity().setStatusNovo(StatusAgendamentoUtil.ATENDIDO.getSigla());
+//                                    }
                                     if (this.validaData()) {
                                         return true;
                                     } else {

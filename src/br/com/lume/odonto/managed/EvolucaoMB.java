@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.evolucao.EvolucaoSingleton;
 //import br.com.lume.odonto.bo.EvolucaoBO;
 import br.com.lume.odonto.entity.Evolucao;
@@ -44,9 +45,9 @@ public class EvolucaoMB extends LumeManagedBean<Evolucao> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getEntity().setPaciente(this.pacienteMB.getEntity());
+            this.getEntity().setPaciente(this.pacienteMB.getEntity());         
+            this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
             EvolucaoSingleton.getInstance().getBo().persist(this.getEntity());
-
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             this.actionNew(event);
         } catch (Exception e) {

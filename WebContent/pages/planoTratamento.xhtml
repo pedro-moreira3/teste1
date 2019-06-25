@@ -323,9 +323,9 @@ label.ui-helper-hidden {
                     </p:panel>
                 </p:dialog>
 
-                <p:dialog id="dlgGerarOrcamento" widgetVar="dlgGerarOrcamento" header="Orçamento" responsive="true" modal="true">
-                    <div class="Container100 NoIndent Flex FlexWrap">
-                        <p:panel id="pnConteudoImpressaoOrcamento" styleClass="BordNone">
+                <p:dialog id="dlgGerarOrcamento" widgetVar="dlgGerarOrcamento" header="Orçamento" responsive="true" modal="true" width="90%">
+                	<p:panel>
+                        <p:outputPanel id="pnConteudoImpressaoOrcamento">
                             <p:graphicImage value="#{lumeSecurity.logo}" width="180px;" height="50px;" rendered="#{lumeSecurity.logo != null}" />
 
                             <h1 style="font-size: 18px !important;" align="center">
@@ -385,7 +385,8 @@ label.ui-helper-hidden {
                                 <h:outputText value="*Orçamento válido por 15 dias." styleClass="observacao-orcamento"/>
                             </div>
 
-                        </p:panel>
+                        </p:outputPanel>
+                       </p:panel>
                         <br />
                         <div class="SeparatorFull"></div>
 
@@ -395,8 +396,6 @@ label.ui-helper-hidden {
                                 <p:printer target="pnConteudoImpressaoOrcamento" />
                             </p:commandButton>
                         </p:panelGrid>
-                    </div>
-
                 </p:dialog>
 
 
