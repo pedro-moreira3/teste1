@@ -109,7 +109,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private List<Agendamento> historicoAgendamentos;
 
     public PacienteMB() {
-        super(PacienteSingleton.getInstance().getBo()); 
+        super(PacienteSingleton.getInstance().getBo());
+        this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
         this.setClazz(Paciente.class);
         pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(super.getEntity());
         if (profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) && UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false) {
@@ -129,7 +130,6 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.sortAnamneses();
             this.geraLista();
             convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            this.setEntity(UtilsFrontEnd.getPacienteLogado());
         } catch (TelefoneException te) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "");
             log.error(OdontoMensagens.getMensagem("erro.valida.telefone"));

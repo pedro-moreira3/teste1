@@ -12,6 +12,15 @@ label.ui-helper-hidden {
 .optionsPlanTrat .ui-panelgrid-cell {
 			padding: 12px 8px !important;
 		}
+		
+.firstRowBold td {
+	font-weight: bold !important;
+}
+.firstRowBold th {
+	font-weight: normal !important;
+}
+
+
 </style>
                 <h:inputHidden id="idPlanoTratamento" value="#{planoTratamentoMB.entity.id}" />
 
@@ -243,15 +252,13 @@ label.ui-helper-hidden {
                         </p:panelGrid>
                         <div class="SeparatorFull"></div>
 
-                        <div class="Container50 Responsive100">
+                        <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="simulaLancamento" icon="White fa fa-gear" value="Simular Orçamento" actionListener="#{planoTratamentoMB.actionSimulaLancamento}"
                                 process=":lume:tabView:pnOrcamento,:lume:tabView:dlgOrcamento" update=":lume:tabView:pnOrcamento,:lume:tabView:persistOrcamento" styleClass="OrangeButton" />
-                        </div>
-                        <div class="Container50 Responsive100">
                             <p:commandButton id="persistOrcamento" icon="White fa fa-save" value="Salvar" actionListener="#{planoTratamentoMB.actionPersistOrcamento}"
                                 process=":lume:tabView:dlgOrcamento" oncomplete="handleDialogRequest(xhr, status, args)" update=":lume:tabView:pnPlanoTratamento,:lume:tabView:tbPlanoTratamento"
                                 disabled="#{planoTratamentoMB.lancamento == null}" styleClass="GreenButton" />
-                        </div>
+                        </p:panelGrid>
 
                     </p:panel>
 
@@ -277,11 +284,11 @@ label.ui-helper-hidden {
                     </p:panelGrid>
 
                     <div class="SeparatorFull"></div>
-                    <div class="Container100 Responsive100">
+                    <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                         <p:commandButton id="persistDevolver" icon="White fa fa-save" value="Salvar" actionListener="#{planoTratamentoMB.actionFinalizar}"
                             update=":lume:tabView:justificativa,:lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento,:lume:tabView:pgFinalizar" process="@this, :lume:tabView:justificativa, :lume:tabView:retorno, :lume:tabView:observacoesretornopt"
                             oncomplete="handleDialogRequest(xhr, status, args)" styleClass="GreenButton" />
-                    </div>
+                    </p:panelGrid>
                 </p:dialog>
 
                 <p:dialog id="evolucao" widgetVar="evolucao" header="Evolução" responsive="true" modal="true">
@@ -321,54 +328,45 @@ label.ui-helper-hidden {
                         <p:panel id="pnConteudoImpressaoOrcamento" styleClass="BordNone">
                             <p:graphicImage value="#{lumeSecurity.logo}" width="180px;" height="50px;" rendered="#{lumeSecurity.logo != null}" />
 
-                            <h1 class="CardBigTopic" align="center">
+                            <h1 style="font-size: 18px !important;" align="center">
                                 <u> <h:outputText value="Orçamento" />
                                 </u>
                             </h1>
                             <div class="SeparatorFull"></div>
 
-                            <h1 class="CardBigTopic">
+                            <h1 style="font-size: 14px !important;margin: 0;margin-top:10px;font-weight:bold;">
                                 <h:outputText value="#{planoTratamentoMB.nomeClinica}" />
-                                <br />
                             </h1>
-                            <h1 class="CardSmallTopic">
+                            <h1 style="font-size: 12px !important;margin: 0;margin-top:-5px;margin-bottom:5px;">
                                 <h:outputText value="#{planoTratamentoMB.endTelefoneClinica}" />
-                                <br />
                             </h1>
 
                             <div class="SeparatorFull"></div>
+                            <br />
+                            
+                            <table style="width: 100%" class="firstRowBold">
+                            	<tr style="text-align: left; font-weight: normal;">
+                            		<th>Paciente</th>
+                            		<th>Data do Orçamento</th>
+                            		<th>Realizado Por</th>
+                            		<h:panelGroup rendered="#{planoTratamentoMB.entity.convenioValor == false}">
+                            			<th>Valor Total</th>
+                            		</h:panelGroup>
+                            	</tr>
+                            	<tr style="text-align: left;font-size: 18px !important;">
+                            		<td><h:outputText value="#{planoTratamentoMB.paciente.dadosBasico.nome}" /></td>
+                            		<td><h:outputText value="#{planoTratamentoMB.dataOrcamento}" /></td>
+                            		<td><h:outputText value="#{planoTratamentoMB.profissionalLogado}" /></td>
+                            		<h:panelGroup rendered="#{planoTratamentoMB.entity.convenioValor == false}">
+                            			<td><h:outputText value="#{planoTratamentoMB.subTotalDesconto}">
+                            					<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+                            				</h:outputText>
+                            			</td>
+                            		</h:panelGroup>
+                            	</tr>
+                            </table>
 
-                            <div class="Container25 Responsive25">
-                                <span class="FontLatoBold Fs14 Green DispBlock">Paciente</span>
-                                <div class="EmptyBox5"></div>
-                                <span class="FontLatoBold Fs20 Navy DispBlock"><h:outputText value="#{planoTratamentoMB.paciente.dadosBasico.nome}" /></span>
-                                <div class="EmptyBox5"></div>
-                            </div>
-                            <div class="Container25 Responsive25">
-                                <span class="FontLatoBold Fs14 Green DispBlock">Data do Orçamento</span>
-                                <div class="EmptyBox5"></div>
-                                <span class="FontLatoBold Fs20 Navy DispBlock"><h:outputText value="#{planoTratamentoMB.dataOrcamento}" /></span>
-                                <div class="EmptyBox5"></div>
-                            </div>
-
-                            <div class="Container25 Responsive25">
-                                <span class="FontLatoBold Fs14 Green DispBlock">Realizado por</span>
-                                <div class="EmptyBox5"></div>
-                                <span class="FontLatoBold Fs20 Navy DispBlock"><h:outputText value="#{planoTratamentoMB.profissionalLogado}" /></span>
-                                <div class="EmptyBox5"></div>
-                            </div>
-
-                            <h:panelGroup rendered="#{planoTratamentoMB.entity.convenioValor == false}">
-                                <div class="Container25 Responsive25">
-                                    <span class="FontLatoBold Fs14 Green DispBlock">Valor Total</span>
-                                    <div class="EmptyBox5"></div>
-                                    <span class="FontLatoBold Fs20 Navy DispBlock"><h:outputText value="#{planoTratamentoMB.subTotalDesconto}">
-                                            <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
-                                        </h:outputText></span>
-                                    <div class="EmptyBox5"></div>
-                                </div>
-                            </h:panelGroup>
-
+							<br />
                             <div class="Container100 Responsive100 Flex">
                                 <p:dataTable filterDelay="1500" emptyMessage="" var="plano" id="dtOrcamento" editable="true" value="#{planoTratamentoMB.planoTratamentoProcedimentos}">
                                     <f:facet name="header">
@@ -382,19 +380,21 @@ label.ui-helper-hidden {
                                     </p:column>
                                 </p:dataTable>
                             </div>
-                            <div class="Container100 Responsive100" align="right" style="margin-top: 25px">
+                            
+                            <div class="Container100 Responsive100" align="right">
                                 <h:outputText value="*Orçamento válido por 15 dias." styleClass="observacao-orcamento"/>
                             </div>
 
                         </p:panel>
+                        <br />
                         <div class="SeparatorFull"></div>
 
-                        <div class="Container25">
-                            <p:commandButton value="Imprimir" style="margin-left:8% !important" type="button" icon="White fa fa-print White" styleClass="NavyButton"
+                        <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                            <p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton"
                                 onclick="PF('dlgGerarOrcamento').hide()">
                                 <p:printer target="pnConteudoImpressaoOrcamento" />
                             </p:commandButton>
-                        </div>
+                        </p:panelGrid>
                     </div>
 
                 </p:dialog>

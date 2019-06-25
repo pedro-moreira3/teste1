@@ -55,7 +55,7 @@ import br.com.lume.retorno.RetornoSingleton;
 import br.com.lume.security.entity.Empresa;
 
 @ManagedBean
-@ViewScoped
+@ViewScoped 
 public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     private Logger log = Logger.getLogger(PlanoTratamentoMB.class);
