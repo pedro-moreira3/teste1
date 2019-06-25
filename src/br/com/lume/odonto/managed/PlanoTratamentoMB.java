@@ -669,7 +669,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             planoTratamentoProcedimentos = new ArrayList<>();
             for (PlanoTratamentoProcedimento ptp : aux) {
                 if (ptp.getExcluido().equals(Status.NAO)) {
-                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().refresh(ptp);
+                  //  PlanoTratamentoProcedimentoSingleton.getInstance().getBo().refresh(ptp);
                     ptp.setValorAnterior(ptp.getValorDesconto());
                     planoTratamentoProcedimentos.add(ptp);
                 }
