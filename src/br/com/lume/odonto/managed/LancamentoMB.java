@@ -342,7 +342,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
         }
 
     }
- 
+
     @Override
     public void actionPersist(ActionEvent event) {
         try {
