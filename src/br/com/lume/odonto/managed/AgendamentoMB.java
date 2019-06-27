@@ -344,7 +344,6 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                 RetornoSingleton.getInstance().getBo().persist(retorno);
                             }
                             profissional = null;
-                            carregarScheduleTarefas();
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                             this.actionNew(event);
                             PrimeFaces.current().ajax().addCallbackParam("dlg", dlg);
