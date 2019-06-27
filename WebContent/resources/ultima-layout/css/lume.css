@@ -1594,3 +1594,8 @@ body .md-combo .ui-outputlabel {
 	background-color: #4e7c73 !important;
 	color: #ffffff !important;
 }
+
+.layout-wrapper .topbar .topbar-right #topbar-menu-button {
+	top: 8px !important;
+	right: -25px !important;
+}
