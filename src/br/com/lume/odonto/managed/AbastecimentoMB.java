@@ -150,7 +150,6 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
             this.addInfo(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "");
         } else {
             try {
-
                 BigDecimal quantidadeUtilizada;
                 if (this.getEntity().getMaterial().getItem().getTipo().equals("I")) {
                     quantidadeDevolvida = this.getEntity().getQuantidade();
