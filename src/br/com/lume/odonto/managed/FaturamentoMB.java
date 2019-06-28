@@ -284,7 +284,13 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
                     RepasseLancamentoSingleton.getInstance().getBo().remove(rl);
                 }
                 this.getbO().persist(this.getEntity());
-                this.getbO().refresh(this.getEntity());
+                
+                // TODO - No código a seguir, estava estourando uma exceção de objeto não gerenciado no EntityManager, isso porquê o merge 
+                // torna o objeto não gerenciável, para evitar problemas ao retirar a atualização do objeto, foi implementado o código da linha a seguir. 
+                
+                this.setEntity(this.getbO().find(this.getEntity()));
+                //this.getbO().refresh(this.getEntity());
+                
                 this.actionFiltrar(event);
                 this.carregarLancamentos();
                 this.addInfo("Reserva removida com sucesso.", "");

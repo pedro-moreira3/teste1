@@ -44,7 +44,7 @@
         <div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-                    <p:outputPanel id="pnPrincipal" styleClass="BordNone">
+                    <p:outputPanel widgetvar="pnPrincipal" id="pnPrincipal" styleClass="BordNone">
                         <h1>Repasse dos Profissionais</h1>
                         <div class="SeparatorFull"></div>
 
@@ -80,36 +80,34 @@
                             <div class="SeparatorFull"></div>
                             <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                 <p:commandButton id="pesquisar" icon="White fa fa-search" value="Pesquisar" actionListener="#{faturamentoMB.actionFiltrar}"
-                                    update="dtPrincipal,pnPrincipal,dtProcedimentosRepassar,pnReservados" tabindex="1" process="@this,pnPrincipal" styleClass="OrangeButton" />
+                                    update="@this,:lume:dtPrincipal,:lume:pnPrincipal,:lume:dtProcedimentosRepassar,:lume:pnReservados" tabindex="1" 
+                                    process="@this,:lume:dtPrincipal,:lume:pnPrincipal" oncomplete="PF('dtPrincipal').filter()" styleClass="OrangeButton" />
                             </p:panelGrid>
                         </p:fieldset>
                         <br />
-                        <p:fieldset legend="Procedimentos à Reservar" toggleable="true" toggleSpeed="500" collapsed="false">
-                            <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtPrincipal" selection="#{faturamentoMB.entity}" selectionMode="single"
-                                value="#{faturamentoMB.planoTratamentoProcedimentos}" var="ptp" rows="5" paginator="true" rowKey="#{ptp}" paginatorPosition="bottom">
-                                <p:ajax event="rowSelect" update=":lume:pnPrincipal" listener="#{faturamentoMB.carregarLancamentos}" />
+                        <p:fieldset legend="Procedimentos à Reservar" toggleable="true" toggleSpeed="500" collapsed="false">                            
+                            <p:dataTable reflow="true" emptyMessage="Nenhum registro encontrado" widgetVar="dtPrincipal" id="dtPrincipal" 
+                            		selection="#{faturamentoMB.entity}" selectionMode="single" value="#{faturamentoMB.planoTratamentoProcedimentos}" 
+                            		var="ptp" rows="5" paginator="true" rowKey="#{ptp}" paginatorPosition="bottom" paginatorAlwaysVisible="true">
+                                <p:ajax event="rowSelect" update=":lume:pnPrincipal, :lume:dtPrincipal" listener="#{faturamentoMB.carregarLancamentos}" />
                                 <p:column filterBy="#{ptp.planoTratamento.descricao}" styleClass="cabecalho" sortBy="#{ptp.planoTratamento.descricao}" filterMatchMode="contains">
                                     <f:facet name="header">
                                         <h:outputText styleClass="cabecalho" value="Plano de Tratamento" width="10%" />
                                     </f:facet>
-                                    <h:outputText value="#{ptp.planoTratamento.descricao}" title="#{ptp.id}" />
+                                    <h:outputText value="#{ptp.planoTratamento.descricao}"/>
                                 </p:column>
-                                <p:column filterBy="#{ptp.descricaoCompleta}" sortBy="#{ptp.descricaoCompleta}" width="15%">
-                                    <f:facet name="header">
-                                        <h:outputText value="Procedimento" />
-                                    </f:facet>
+                                <p:column filterBy="#{ptp.descricaoCompleta}" filterMatchMode="contains" 
+                                		sortBy="#{ptp.descricaoCompleta}" width="15%" headerText="Procedimento">
                                     <h:outputText value="#{ptp.descricaoCompleta}" />
                                 </p:column>
-                                <p:column filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nomeStr}" sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}">
-                                    <f:facet name="header">
-                                        <h:outputText value="Paciente" />
-                                    </f:facet>
+                                <p:column filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nomeStr}" filterMatchMode="contains" 
+                                		sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}" headerText="Paciente">
                                     <h:outputText value="#{ptp.planoTratamento.paciente.dadosBasico.nome}" />
                                 </p:column>
-                                <p:column styleClass="cabecalho" headerText="Data de Finalização" filterBy="#{ptp.dataFinalizadoStr}" sortBy="#{ptp.dataFinalizado}">
+                                <p:column styleClass="cabecalho" headerText="Data de Finalização" filterMatchMode="contains" filterBy="#{ptp.dataFinalizadoStr}" sortBy="#{ptp.dataFinalizado}">
                                     <h:outputText value="#{ptp.dataFinalizadoStr}" />
                                 </p:column>
-                                <p:column filterBy="#{ptp.valorDesconto}" sortBy="#{ptp.valorDesconto}">
+                                <p:column filterBy="#{ptp.valorDesconto}" filterMatchMode="contains" sortBy="#{ptp.valorDesconto}">
                                     <f:facet name="header">
                                         <h:outputText value="Valor " />
                                     </f:facet>
@@ -117,7 +115,7 @@
                                         <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
                                     </h:outputText>
                                 </p:column>
-                                <p:column filterBy="#{ptp.custos}" sortBy="#{ptp.custos}">
+                                <p:column filterBy="#{ptp.custos}" filterMatchMode="contains" sortBy="#{ptp.custos}">
                                     <f:facet name="header">
                                         <h:outputText value="Custo" />
                                     </f:facet>
@@ -188,7 +186,7 @@
                                 </p:column>
                             </p:dataTable>
                             <br />
-                            <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtLancamentos" selection="#{faturamentoMB.lancamento}" selectionMode="single"
+                            <p:dataTable widgetvar="dtLancamentos" filterDelay="1500" reflow="true" emptyMessage="Nenhum registro encontrado" id="dtLancamentos" selection="#{faturamentoMB.lancamento}" selectionMode="single"
                                 value="#{faturamentoMB.lancamentos}" var="lancamento" rows="5" paginator="true" rowKey="#{lancamento}" paginatorPosition="bottom">
                                 <f:facet name="header">Recebimentos com crédito</f:facet>
                                 <p:ajax event="rowSelect" update=":lume:pnPrincipal" listener="#{faturamentoMB.actionVerificaTarifa}" />
