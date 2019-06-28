@@ -434,7 +434,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private void refreshEntity() {
         if (this.getEntity().getId() != 0) {
             try {
-                AgendamentoSingleton.getInstance().getBo().refresh(this.getEntity());
+                this.setEntity(AgendamentoSingleton.getInstance().getBo().find(this.getEntity()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
