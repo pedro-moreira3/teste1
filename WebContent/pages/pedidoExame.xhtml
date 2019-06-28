@@ -4,22 +4,24 @@
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-					<p:outputPanel id="pnPedidoExame" rendered="#{pedidoExameMB.visivel}" styleClass="BordNone">
-						<h1>Pedido de Exames</h1>
-						<div class="SeparatorFull"></div>
-
-						<p:fieldset legend="Documento" toggleable="true">
-							<h:outputText id="documentoImprimir3" value="#{pedidoExameMB.documento}" escape="false" />
-						</p:fieldset>
-
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton">
-								<p:printer target="documentoImprimir3" />
-							</p:commandButton>
-						</p:panelGrid>
-						<div class="SeparatorFull"></div>
-
-						<div class="EmptyBox20"></div>
+					<p:outputPanel id="pnPedidoExame">
+						<p:outputPanel rendered="#{pedidoExameMB.visivel}" styleClass="BordNone">
+							<h1>Pedido de Exames</h1>
+							<div class="SeparatorFull"></div>
+	
+							<p:fieldset legend="Documento" toggleable="true">
+								<h:outputText id="documentoImprimir3" value="#{pedidoExameMB.documento}" escape="false" />
+							</p:fieldset>
+	
+							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton">
+									<p:printer target="documentoImprimir3" />
+								</p:commandButton>
+							</p:panelGrid>
+							<div class="SeparatorFull"></div>
+	
+							<div class="EmptyBox20"></div>
+						</p:outputPanel>
 					</p:outputPanel>
 
 					<p:outputPanel id="pnPedidoExamePrincipal" styleClass="BordNone">
