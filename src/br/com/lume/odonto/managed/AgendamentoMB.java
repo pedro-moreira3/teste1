@@ -446,7 +446,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             if (this.getProfissional() != null || this.getEntity().getId() != 0) {
                 if (this.getEntity().getPaciente() != null) {
                     if (GenericValidator.validarRangeData(this.getInicio(), this.getFim(), true)) {
-                        if (this.validaHoraduplicadaProfissional(profissional)) {
+                      //  if (this.validaHoraduplicadaProfissional(this.getEntity())) {
                             if (this.validaHoraduplicadaPaciente(this.getEntity().getPaciente())) {
                                 if (this.validaIntervalo()) {
                                     dlg = true;
@@ -500,10 +500,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                 this.addError(OdontoMensagens.getMensagem("agendamento.paciente.horamarcada"), "");
                                 dlg = false;
                             }
-                        } else {
-                            this.addError(OdontoMensagens.getMensagem("agendamento.horario.utilizado"), "");
-                            dlg = false;
-                        }
+//                        } else {
+//                            this.addError(OdontoMensagens.getMensagem("agendamento.horario.utilizado"), "");
+//                            dlg = false;
+//                        }
                     } else {
                         this.addError(OdontoMensagens.getMensagem("agendamento.intervalo.incorreto"), "");
                         dlg = false;
@@ -586,27 +586,32 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
     }
 
-    public boolean validaHoraduplicadaProfissional(Profissional profissional) {
+    public boolean validaHoraduplicadaProfissional(Agendamento agendamento) {
         try {
-            if (profissional == null && this.getEntity().getProfissional() != null) {
-                profissional = this.getEntity().getProfissional();
+            if (agendamento == null) {
+            return false;
             }
-            List<Agendamento> agendamentosValidaHoraDuplicadaProfissional = AgendamentoSingleton.getInstance().getBo().listByProfissional(profissional);
-            for (Agendamento agnd : agendamentosValidaHoraDuplicadaProfissional) {
-                if ((this.getInicio().after(agnd.getInicio()) && this.getInicio().before(agnd.getFim()) || this.getFim().after(agnd.getInicio()) && this.getFim().before(
-                        agnd.getFim()) || (this.getFim().getTime() == (agnd.getFim().getTime()) || (this.getInicio().getTime() == agnd.getInicio().getTime()) || agnd.getInicio().after(
-                                this.getInicio()) && agnd.getInicio().before(this.getFim()) || agnd.getFim().after(
-                                        this.getInicio()) && agnd.getFim().before(this.getFim()))) && agnd.getId() != this.getEntity().getId()) {
-                    if ((Status.SIM.equals(this.getEntity().getEncaixe())) || (agnd.getStatusNovo().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) || (this.getEntity().getStatusNovo().equals(
-                            StatusAgendamentoUtil.REMARCADO.getSigla())) || (this.getEntity().getStatusNovo().equals(
-                                    StatusAgendamentoUtil.CANCELADO.getSigla())) || (agnd.getStatusNovo().equals(StatusAgendamentoUtil.ERRO_AGENDAMENTO.getSigla())) ||
-                            (agnd.getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla())) || (Status.SIM.equals(agnd.getEncaixe()))) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            }
+            boolean dataInicioValida = AgendamentoSingleton.getInstance().getBo().verificaDataNaoDisponivelParaProfissional(agendamento,this.getInicio());
+            boolean dataFimValida = AgendamentoSingleton.getInstance().getBo().verificaDataNaoDisponivelParaProfissional(agendamento,this.getFim());
+             if(dataInicioValida && dataFimValida) {
+                 return false;
+             }
+             return true;
+//            for (Agendamento agnd : agendamentosValidaHoraDuplicadaProfissional) {
+//                if ((this.getInicio().after(agnd.getInicio()) && this.getInicio().before(agnd.getFim()) || this.getFim().after(agnd.getInicio()) && this.getFim().before(
+//                        agnd.getFim()) || (this.getFim().getTime() == (agnd.getFim().getTime()) || (this.getInicio().getTime() == agnd.getInicio().getTime()) || agnd.getInicio().after(
+//                                this.getInicio()) && agnd.getInicio().before(this.getFim()) || agnd.getFim().after(
+//                                        this.getInicio()) && agnd.getFim().before(this.getFim()))) && agnd.getId() != this.getEntity().getId()) {
+//                    if ((Status.SIM.equals(this.getEntity().getEncaixe())) || (agnd.getStatusNovo().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) || (this.getEntity().getStatusNovo().equals(
+//                            StatusAgendamentoUtil.REMARCADO.getSigla())) || (this.getEntity().getStatusNovo().equals(
+//                                    StatusAgendamentoUtil.CANCELADO.getSigla())) || (agnd.getStatusNovo().equals(StatusAgendamentoUtil.ERRO_AGENDAMENTO.getSigla())) ||
+//                            (agnd.getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla())) || (Status.SIM.equals(agnd.getEncaixe()))) {
+//                        return true;
+//                    } else {
+//                        return false;
+//                    }
+//                }
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }

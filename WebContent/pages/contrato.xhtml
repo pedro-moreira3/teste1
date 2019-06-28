@@ -11,36 +11,38 @@
 	width: 26% !important;
 }
 </style>
-	<p:outputPanel id="pnContrato" rendered="#{contratoMB.visivel}"
-		styleClass="BordNone">
-		<h1>Contrato</h1>
-		<div class="SeparatorFull"></div>
-		<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8"
-			layout="grid" styleClass="ui-panelgrid-blank"
-			style="border:0px none; background-color:transparent;">
-			<h:outputLabel for="nomeAtestado" value="Profissional : " />
-			<p:inputText id="nomeAtestado"
-				value="#{profissionalMB.entity.dadosBasico.prefixoNome}"
-				readonly="true" disabled="true" />
-		</p:panelGrid>
-
-		<p:fieldset legend="Documento" toggleable="true">
-			<h:outputText id="documentoImprimir" value="#{contratoMB.documento}"
-				escape="false" />
-		</p:fieldset>
-
-		<p:panelGrid columns="4" layout="grid"
-			styleClass="ui-panelgrid-blank form-group ui-fluid">
-			<p:commandButton value="Imprimir" type="button"
-				icon="White fa fa-print White" styleClass="NavyButton">
-				<p:printer target="documentoImprimir" />
-			</p:commandButton>
-		</p:panelGrid>
-		<div class="SeparatorFull"></div>
-
-
-		<div class="EmptyBox20"></div>
-
+	<p:outputPanel id="pnContrato">
+		<p:outputPanel rendered="#{contratoMB.visivel}"
+			styleClass="BordNone">
+			<h1>Contrato</h1>
+			<div class="SeparatorFull"></div>
+			<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8"
+				layout="grid" styleClass="ui-panelgrid-blank"
+				style="border:0px none; background-color:transparent;">
+				<h:outputLabel for="nomeAtestado" value="Profissional : " />
+				<p:inputText id="nomeAtestado"
+					value="#{profissionalMB.entity.dadosBasico.prefixoNome}"
+					readonly="true" disabled="true" />
+			</p:panelGrid>
+	
+			<p:fieldset legend="Documento" toggleable="true">
+				<h:outputText id="documentoImprimir" value="#{contratoMB.documento}"
+					escape="false" />
+			</p:fieldset>
+	
+			<p:panelGrid columns="4" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid">
+				<p:commandButton value="Imprimir" type="button"
+					icon="White fa fa-print White" styleClass="NavyButton">
+					<p:printer target="documentoImprimir" />
+				</p:commandButton>
+			</p:panelGrid>
+			<div class="SeparatorFull"></div>
+	
+	
+			<div class="EmptyBox20"></div>
+	
+		</p:outputPanel>
 	</p:outputPanel>
 	<p:outputPanel id="pnContratoPrincipal" styleClass="BordNone">
 		<h1>Contrato</h1>
