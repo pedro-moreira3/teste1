@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<link rel="shortcut icon" href="../resources/images/favicon.ico"
+		type="image/x-icon"></link>
+	<link rel="icon" href="../resources/images/favicon.ico"
+		type="image/x-icon"></link>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+	</f:facet>
+	<title>Recuperar Senha Intelidente</title>
+	<h:outputScript name="js/ripple.js" library="ultima-layout" />
+	<h:outputScript name="js/layout.js" library="ultima-layout" />
+
+	<h:outputStylesheet name="css/ripple.css" library="ultima-layout" />
+	<h:outputStylesheet name="css/lume.css" library="ultima-layout" />
+	<h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css"
+		library="ultima-layout" />
+	<style type="text/css">
+body .ui-messages .ui-messages-error-icon {
+	color: #FFFFFF;
+}
+
+.login-panel {
+	padding: 10px;
+}
+
+body .ui-messages ul {
+	display: block;
+}
+</style>
+
+</h:head>
+
+
+<h:body styleClass="login-body">
+
+
+
+
+	<p:dialog modal="true" widgetVar="loading" draggable="false"
+		closable="false" showHeader="false" resizable="false"
+		responsive="true" styleClass="dialogLoader">
+		<div style="margin: 25% !important">
+			<div class="loader"></div>
+		</div>
+	</p:dialog>
+
+	<h:form id="lume">
+
+		<div class="email-panel card ui-fluid" style="width:50%;display: block; margin: 0px auto;">
+			<div class="ui-g">
+				
+					<div class="ui-g-12 ui-lg-12">
+    					<h:graphicImage name="logo_idente.png" styleClass="MarAuto Wid100" library="images" style="width:50%;display: block; margin: 0px auto;"/>
+    				</div>
+				
+				<div class="ui-g-12 ui-lg-12">
+					<h:panelGroup styleClass="md-inputfield"
+						rendered="#{validaremailMB.mostrarSomenteErro}">
+						<p:outputLabel id="email" style="font-weight:bold"
+							value="Seu email para acesso será: #{validaremailMB.usuarioLogando.usuStrLogin.toLowerCase()}" />
+					</h:panelGroup>
+				</div>
+				<div class="ui-g-12 ui-lg-12">
+					<h:panelGroup styleClass="md-inputfield"
+						rendered="#{validaremailMB.mostrarSomenteErro}">
+					</h:panelGroup>
+				</div>
+				<div class="ui-g-12 ui-lg-12">
+					<h:panelGroup styleClass="md-inputfield"
+						rendered="#{validaremailMB.mostrarSomenteErro}">
+						<p:outputLabel id="textosenha"
+							value="Abaixo informe sua senha para acesso:" />
+						<br />
+					</h:panelGroup>
+				</div>
+				<div class="ui-g-12 ui-lg-12">
+					<h:panelGroup styleClass="md-inputfield"
+						rendered="#{validaremailMB.mostrarSomenteErro}">
+					</h:panelGroup>
+				</div>
+
+				<div class="ui-g-12 ui-lg-12">
+					<h:panelGroup styleClass="md-inputfield"
+						rendered="#{validaremailMB.mostrarSomenteErro}">
+						<p:password id="login" value="#{validaremailMB.usuSenha}"
+							feedback="false" />
+						<label>Senha</label>
+					</h:panelGroup>
+				</div>
+				<div class="ui-g-12 ui-lg-12">
+					<h:panelGroup styleClass="md-inputfield"
+						rendered="#{validaremailMB.mostrarSomenteErro}">
+						<p:password id="senha" value="#{validaremailMB.usuRepetirSenha}"
+							feedback="false" />
+						<label>Repetir Senha</label>
+					</h:panelGroup>
+				</div>
+				<div class="ui-g-12 ui-lg-12">
+					<h:panelGroup styleClass="md-inputfield"
+						rendered="#{validaremailMB.mostrarSomenteErro}">
+						<br />
+					</h:panelGroup>
+				</div>
+				<div class="ui-g-12 ui-lg-12">
+					<p:commandButton rendered="#{validaremailMB.mostrarSomenteErro}"
+						id="btnLogin" value="Login" action="#{validaremailMB.actionLogin}"
+						ajax="true" onstart="PF('loading').show();"
+						oncomplete="PF('loading').hide();" />
+				</div>
+				<div class="ui-g-12 ui-lg-12" style="padding: 0px">
+					<p:messages id="mensagens" showDetail="false" globalOnly="true">
+						<p:autoUpdate />
+					</p:messages>
+				</div>
+			</div>
+		</div>
+        
+        <div class="EmptyBox30"></div>
+
+		<script type="text/javascript">
+            $("#lume\\:login").change(function() {
+                if ($("#lume\\:login").val() != "") {
+                    $("#lume\\:login").addClass("ui-state-filled");
+                    $("#lume\\:senha").addClass("ui-state-filled");
+                }
+            });
+        
+            $("#lume\\:senha").change(function() {
+                if ($("#lume\\:senha").val() != "") {
+                    $("#lume\\:login").addClass("ui-state-filled");
+                    $("#lume\\:senha").addClass("ui-state-filled");
+                }
+            });
+        
+            function limpaMenu() {
+                $.removeCookie('ultima_expandeditems', {
+                    path : '/'
+                });
+                $.removeCookie('ultima_inlineprofile_expanded', {
+                    path : '/'
+                });
+            }
+        </script>
+	</h:form>
+</h:body>
+</html>

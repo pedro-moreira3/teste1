@@ -31,7 +31,8 @@ public class AuthorizationListener implements PhaseListener {
 
     private Logger log = Logger.getLogger(AuthorizationListener.class);
 
-    public static final String[] PAGINAS_SEM_RESTRICAO = new String[] { "chat.", "meuplano.", "confirmacao.", "cadastroWeb.", "login.", "retornos.", "cadastroPagamento.", "preCadastro.", "motivo.", "cadastroPagamentoDesenv.", "loginmulti.", "tutorial." };
+    public static final String[] PAGINAS_SEM_RESTRICAO = new String[] { "chat.", "meuplano.", "confirmacao.", "cadastroWeb.", "login.", "retornos.", 
+            "cadastroPagamento.", "preCadastro.", "motivo.", "cadastroPagamentoDesenv.", "loginmulti.", "tutorial.","validaremail." };
 
     @Override
     public void beforePhase(PhaseEvent event) {

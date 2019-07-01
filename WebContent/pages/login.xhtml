@@ -151,6 +151,23 @@
 			</h:outputText>
 			Lume Tecnologia - v.#{odonto.version}.#{odonto.revision}
 		</div>
+		<p:confirmDialog id="confirmDialog"
+			message="Digite seu e-mail para recuperar sua senha. Você recebera um e-mail com as instruções."
+			header="Esqueci minha Senha" severity="alert"
+			widgetVar="confirmation" appendToBody="true">
+  			<div class="Card ui-fluid ShadowEffect InteliBack">
+                        <div class="Container100">
+                            <p:inputText id="confirmacaoEmail" placeholder="Email" style="padding:15px !important;" value="#{loginMB.confirmacaoEmail}" />
+                        </div>                     
+                    </div>
+			<br />
+			<p:commandButton id="confirm" value="Enviar e-mail" styleClass="NavyButton" style="background-color: #607D8B;color: #ffffff" 
+				oncomplete="PF('confirmation').hide()"
+				action="#{loginMB.actionResetSenha}"/>
+			<p:commandButton id="decline" value="Cancelar"
+				onclick="PF('confirmation').hide()" type="button"
+				 />
+		</p:confirmDialog>
 
 		<ui:remove>
         <div class="LoginDiv MarAuto">
@@ -198,13 +215,13 @@
                 </div>
             </div>
         </div>
-        </ui:remove>
+        
 
         <p:confirmDialog id="confirmDialog" message="Você tem certeza que deseja resetar a sua senha?" header="Esqueci minha Senha" severity="alert" widgetVar="confirmation" appendToBody="true">
             <p:commandButton id="confirm" value="Sim" oncomplete="PF('confirmation').hide()" action="#{odontoLoginMB.actionResetSenha}"/>
             <p:commandButton id="decline" value="Não" onclick="PF('confirmation').hide()" type="button" />
         </p:confirmDialog>
-
+</ui:remove>
     </h:form>
 
     <h:outputStylesheet name="css/core-layout.css" library="ultima-layout" />
