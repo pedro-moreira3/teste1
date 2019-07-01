@@ -265,7 +265,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     
     public int getDefaultHour(Date date) {
         if(date == null) return 0;
-        return getCalendarFromDate(date).get(Calendar.HOUR);
+        return getCalendarFromDate(date).get(Calendar.HOUR_OF_DAY);
     }
     
     public int getDefaultMinute(Date date) {

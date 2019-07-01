@@ -315,10 +315,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 } else {
                     // Trocou o email
                     Usuario usuarioAtual = UsuarioSingleton.getInstance().getBo().find(getEntity().getIdUsuario());
-                    if (!getEntity().getDadosBasico().getEmail().equals(usuarioAtual.getUsuStrEml())) {
-                        if (usuario == null || usuario.getUsuIntCod() == 0) {
-                            UsuarioSingleton.getInstance().getBo().alterarEmailUsuario(usuarioAtual, getEntity().getDadosBasico().getEmail().toUpperCase(), UtilsFrontEnd.getEmpresaLogada());
-                            usuario = usuarioAtual;
+                    if(usuarioAtual != null && usuarioAtual.getUsuStrEml() != null && getEntity() != null && getEntity().getDadosBasico() != null && getEntity().getDadosBasico().getEmail() != null) {
+                        if (!getEntity().getDadosBasico().getEmail().equals(usuarioAtual.getUsuStrEml())) {
+                            if (usuario == null || usuario.getUsuIntCod() == 0) {
+                                UsuarioSingleton.getInstance().getBo().alterarEmailUsuario(usuarioAtual, getEntity().getDadosBasico().getEmail().toUpperCase(), UtilsFrontEnd.getEmpresaLogada());
+                                usuario = usuarioAtual;
+                            }
                         }
                     }
                 }
