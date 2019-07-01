@@ -10,9 +10,28 @@
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 	</f:facet>
 	<title>INTELIDENTE</title>
+	
+	<p:cache region="jscache" key="ultimalayout">
+		<script type="text/javascript"
+			src="https://maps.googleapis.com/maps/api/js"></script>
+
+		<h:outputScript name="js/nanoscroller.js" library="ultima-layout" />
+		<h:outputScript name="js/layout.js" library="ultima-layout" />
+		<h:outputScript name="js/ripple.js" library="ultima-layout" />
+		<h:outputScript name="js/swipe.js" library="ultima-layout" />
+		<h:outputScript name="js/nfe.js" library="ultima-layout" />
+		<h:outputScript name="js/emoticon.js" library="ultima-layout" />
+
+		<h:outputScript name="js/jquery.maskedinput.js"
+			library="ultima-layout" />
+		<h:outputScript name="js/odonto.js" library="ultima-layout" />
+		<h:outputScript name="js/sweetalert.min.js" library="ultima-layout" />
+		<h:outputScript name="jquery.cookie.js" library="joyride" />
+		<h:outputScript name="modernizr.mq.js" library="joyride" />
+		<h:outputScript name="jquery.joyride-2.1.js" library="joyride" />
+	</p:cache>
+	
 	<ui:insert name="head" />
-	<h:outputScript name="js/ripple.js" library="ultima-layout" />
-	<h:outputScript name="js/layout.js" library="ultima-layout" />
 	<h:outputStylesheet name="css/ripple.css" library="ultima-layout" />
 	<h:outputStylesheet name="css/lume.css" library="ultima-layout" />
 	<h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css" library="ultima-layout" />
