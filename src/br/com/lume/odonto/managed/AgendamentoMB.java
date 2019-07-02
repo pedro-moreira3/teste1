@@ -591,8 +591,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             if (agendamento == null) {
             return false;
             }
-            boolean dataInicioValida = AgendamentoSingleton.getInstance().getBo().verificaDataNaoDisponivelParaProfissional(agendamento,this.getInicio());
-            boolean dataFimValida = AgendamentoSingleton.getInstance().getBo().verificaDataNaoDisponivelParaProfissional(agendamento,this.getFim());
+            boolean dataInicioValida = AgendamentoSingleton.getInstance().getBo().verificaDataDisponivelParaProfissional(agendamento,profissional,this.getInicio());
+            boolean dataFimValida = AgendamentoSingleton.getInstance().getBo().verificaDataDisponivelParaProfissional(agendamento,profissional,this.getFim());
              if(dataInicioValida && dataFimValida) {
                  return false;
              }
