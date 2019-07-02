@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import com.google.gson.GsonBuilder;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dente.DenteSingleton;
 import br.com.lume.odonto.entity.Dente;
@@ -436,8 +438,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     public void actionExcluirOdontograma() {
         try {
-            Odontograma odontograma = getEntity();
-            OdontogramaSingleton.getInstance().getBo().remove(odontograma);
+            OdontogramaSingleton.getInstance().excluiOdontograma(getEntity(), UtilsFrontEnd.getProfissionalLogado());
             setEntity(null);
             actionSelecionarOdontograma();
             carregarOdontogramas();
@@ -449,7 +450,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     public void actionExcluirPT() {
         try {
-            PlanoTratamentoSingleton.getInstance().getBo().remove(planoTratamento);
+            PlanoTratamentoSingleton.getInstance().excluiPlanoTratamento(planoTratamento, UtilsFrontEnd.getProfissionalLogado());
             planoTratamento = null;
             actionCarregarPTOdontograma();
             carregarOdontogramas();
