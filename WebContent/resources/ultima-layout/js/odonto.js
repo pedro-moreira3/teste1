@@ -17,7 +17,25 @@ function confirmDialog(titulo, texto, tipo) {
 }
 
 function message(title, text, type) {
-	swal(title, text, type);
+	message(title, text, type, false);
+}
+
+function message(title, text, type, fechaSozinho) {
+	//swal(title, text, type);
+	if(fechaSozinho) {
+		swal({
+	        title   : title,
+	        text    : text,
+	        icon	: type,
+	        timer 	: 1500
+	    });
+	} else {
+		swal({
+	        title   : title,
+	        text    : text,
+	        icon	: type
+	    });
+	}
 }
 
 function fechaMenu() {

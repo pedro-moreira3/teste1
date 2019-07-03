@@ -772,7 +772,7 @@ img {
 
 @media ( min-width : 901px) and (max-width: 1280px) {
     .AlertaPayPal {
-        margin: 0.9rem 5rem 0px 0px !important;
+        margin: -0.9rem -0.38em 0px 0px !important;
         font-size: 1.4rem !important;
     }
     .Contrato {
@@ -1342,7 +1342,7 @@ input {
 
 @media ( min-width : 1281px) and (max-width: 1700px) {
     .AlertaPayPal {
-        margin: 0.9rem 5rem 0px 0px !important;
+        margin: -0.8rem 3em 0px 0px !important;
         font-size: 1.4rem !important;
     }
     .Contrato {
@@ -1397,7 +1397,7 @@ input {
 
 @media ( min-width : 1701px) {
     .AlertaPayPal {
-        margin: 0.9rem 5rem 0px 0px !important;
+        margin: -0.8rem 3em 0px 0px !important;
         font-size: 1.4rem !important;
     }
     .Contrato {
