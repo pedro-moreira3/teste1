@@ -4,7 +4,7 @@
 <center>
 	<table style="width: 600px; padding-right: 30px; padding-left: 30px;">
 		<tr>
-			<td><a href="http://www.intelidente.com" target="_blank"><img src="http://www.intelidente.com/images/email/header.jpg" /></a></td>
+			<td><a href="http://www.intelidente.com" target="_blank"><img src="http://sistema.intelidente.com/intelidente/javax.faces.resource/logo_idente_pequeno.png.jsf?ln=images" /></a></td>
 		</tr>
 
 		<tr>
@@ -12,17 +12,16 @@
 				<p style="font-family: Verdana, Geneva, sans-serif; font-size: 14px; font-weight: light; text-align: left; color: #58585b;">
 
 					<strong>Saudações da Equipe do Intelidente!</strong>!<br /> <br /> <br /> 
-					Provavelmente você teve problemas de acesso ao Intelidente e solicitou um reset de senha. Segue abaixo o link para criar uma nova senha.					
+					Provavelmente você teve problemas de acesso ao Intelidente e solicitou um reset de senha. Segue abaixo o link para criar uma nova senha.<br/>					
 					 <a
-						href="http://sistema.intelidente.com/pages/validaremail.jsf?token=#token" class="button" target="_blank"
+						href="http://sistema.intelidente.com/intelidente/pages/validaremail.jsf?token=#token" class="button" target="_blank"
 						style="margin: 0; padding: 0; font-size: 100%; font-family: 'Avenir Next', 'Helvetica Neue', 'Helvetica', 'Helvetica', 'Arial', 'sans-serif'; line-height: 1.65; color: white; text-decoration: none; display: inline-block; background: #FF8500; border: solid #FF8500; border-width: 10px 20px 8px; font-weight: bold; border-radius: 4px;">Clique
 						aqui para trocar sua senha</a><br /> <br /> Qualquer dúvida, não hesite em nos enviar um email: <strong>contato@intelidente.com</strong><br /> <br /> <br />
 					Até logo!<br /> <strong>Equipe Intelidente.</strong>
 				</p>
 			</td>
 		</tr>
-		<tr>
-			<td><a href="http://www.intelidente.com" target="_blank"><img src="http://www.intelidente.com/images/email/footer3.jpg" /></a></td>
+		<tr>			
 		</tr>
 	</table>
 </center>
