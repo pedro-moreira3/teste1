@@ -3,19 +3,32 @@
     <div style="width: 445px;">
         <ui:repeat var="g" value="#{grupo}">
             <div class="dente">
-
                 <div style="text-align: center;">
-
-                    <p:commandLink oncomplete="resize('#lume\\:tabView\\:dlgProcedimento');PF('dlgProcedimento').show();" process="@this" action="#{odontogramaMB.carregaProcedimentos}" value="#{g}"
-                        rendered="#{odontogramaMB.planoTratamento != null and odontogramaMB.planoTratamento.id != 0 and odontogramaMB.entity.id != 0}" update=":lume:tabView:pgProcedimento">
-                        <f:param name="dente" value="#{g}" />
-                    </p:commandLink>
-
-                    <h:outputText value="#{g}" rendered="#{odontogramaMB.planoTratamento == null or odontogramaMB.planoTratamento.id == 0}" />
+                	<p:outputPanel rendered="#{odontogramaMB.planoTratamento == null or odontogramaMB.planoTratamento.id == 0}">
+                		<h:outputText value="#{g}" />
+                	</p:outputPanel>
+                	<p:outputPanel rendered="#{odontogramaMB.planoTratamento != null and odontogramaMB.planoTratamento.id != 0 and odontogramaMB.entity.id != 0}">
+                		<p:commandLink oncomplete="resize('#lume\\:tabView\\:dlgProcedimento');PF('dlgProcedimento').show();" process="@this"
+                			action="#{odontogramaMB.carregaProcedimentos}" value="#{g}" update=":lume:tabView:pgProcedimento">
+	                        <f:param name="dente" value="#{g}" />
+	                    </p:commandLink>
+                	</p:outputPanel>
                 </div>
-
                 <div class="numero">
-                    <div style="background: url(../images/odontograma/#{g}.png) no-repeat; height: 120px; background-position: top;"><h:outputText escape="false" value="#{odontogramaMB.diagnosticosDente(g,'')}"/></div>
+                	<p:outputPanel rendered="#{odontogramaMB.planoTratamento == null or odontogramaMB.planoTratamento.id == 0}">
+                		<div style="background: url(../images/odontograma/#{g}.png) no-repeat; height: 120px; background-position: top;">
+                			<h:outputText escape="false" value="#{odontogramaMB.diagnosticosDente(g,'')}"/>
+                		</div>
+                	</p:outputPanel>
+                	<p:outputPanel rendered="#{odontogramaMB.planoTratamento != null and odontogramaMB.planoTratamento.id != 0 and odontogramaMB.entity.id != 0}">
+                		<p:commandLink oncomplete="resize('#lume\\:tabView\\:dlgProcedimento');PF('dlgProcedimento').show();" process="@this"
+                			action="#{odontogramaMB.carregaProcedimentos}" update=":lume:tabView:pgProcedimento">
+	                		<div style="background: url(../images/odontograma/#{g}.png) no-repeat; height: 120px; background-position: top;">
+	                			<h:outputText escape="false" value="#{odontogramaMB.diagnosticosDente(g,'')}"/>
+	                		</div>
+	                		<f:param name="dente" value="#{g}" />
+	                	</p:commandLink>
+                	</p:outputPanel>
                 </div>
             </div>
         </ui:repeat>

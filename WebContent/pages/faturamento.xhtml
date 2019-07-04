@@ -536,7 +536,8 @@
 	                                           	</div>
 	                                        </div>
 	                                        <br />
-                                                <p:dataTable filterDelay="1500" emptyMessage="" value="#{faturamentoMB.repasseItens}" var="ptp">
+                                                <p:dataTable filterDelay="1500" emptyMessage="" value="#{faturamentoMB.repasseItens}" var="ptp"
+                                                	class="changeOnPrint">
                                                     <f:facet name="header">Procedimentos</f:facet>
 
                                                     <p:column>
@@ -591,14 +592,18 @@
                                                 	style="color: #1f3b59 !important; font-size: 15px !important; font-weight: bold;">______________________________________</span>
                                                 <div class="EmptyBox5"></div>
                                                 <span class="FontLatoBold DispBlock"
-                                                	style="color: #1f3b59 !important; font-size: 15px !important; font-weight: bold;"><h:outputText value="#{faturamentoMB.profissional.dadosBasico.nome}" /> (CPF <h:outputText
-                                                        value="#{faturamentoMB.profissional.dadosBasico.documento}" />)</span>
+                                                	style="color: #1f3b59 !important; font-size: 15px !important; font-weight: bold;">
+                                                		<h:outputText value="#{faturamentoMB.profissional.dadosBasico.nome}" /> (CPF <h:outputText value="#{faturamentoMB.profissional.dadosBasico.documento}" />)
+                                                </span>
                                             </div>
 
                                         </p:outputPanel>
                                         <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-                                            <p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton">
-                                                <p:printer target="pnConteudoImpressao" />
+                                            <p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton"
+                                            	onclick="printData(); return false;">
+                                            	<ui:remove>
+                                            		<p:printer target="pnConteudoImpressao" />
+                                            	</ui:remove>
                                             </p:commandButton>
                                         </p:panelGrid>
 								</p:outputPanel>
@@ -867,11 +872,69 @@
             </div>
         </div>
         <script type="text/javascript">
-									function handleDialogRequest(xhr, status, args) {
-										if (args.dlgReservaParcial == true) {
-											PF('dlgReservaParcial').hide()
-										}
-									}
-								</script>
+			//<![CDATA[
+			function handleDialogRequest(xhr, status, args) {
+				if (args.dlgReservaParcial == true) {
+					PF('dlgReservaParcial').hide()
+				}
+			}
+									
+			function printData() {
+				var div = document.getElementById("lume:pnConteudoImpressao");
+				var divToPrint = div.cloneNode(true);
+				divToPrint.style.fontFamily = "sans-serif";
+				
+				var title = divToPrint.getElementsByClassName("changeOnPrint")[0].children[0];
+				title.style.textAlign = "center";
+				title.style.fontWeight = "bold";
+				title.style.padding = "10px";
+				title.style.borderLeft = "solid 1px black";
+				title.style.borderTop = "solid 1px black";
+				title.style.borderRight = "solid 1px black";
+				
+				var separators = divToPrint.getElementsByClassName("SeparatorFull");
+				for(var i = 0; i < separators.length; i++) {
+					separators[i].style.border = "none";
+					separators[i].style.borderBottom = "dashed 1px #ccc";
+					separators[i].style.width = "100%";
+					if(i == 0)
+						separators[i].style.marginBottom = "15px";
+					else if(i == 1)
+						separators[i].style.marginTop = "15px";
+				}
+									   
+				var table = divToPrint.getElementsByClassName("changeOnPrint")[0].children[1].children[0];
+				table.setAttribute("cellspacing", "0");
+				table.style.borderCollapse = "collapse";
+				var allTr = table.getElementsByTagName("tr");
+				for(var i = 0; i < allTr.length; i++) {
+					var tr = allTr[i];
+					if(i > 0)
+						tr.style.fontSize = "14px";
+					tr.style.border = "1px solid black";
+					for(var j = 0; j < tr.children.length; j++) {
+						var tdTh = tr.children[j];
+						if(j < (tr.children.length - 1))
+							tdTh.style.borderRight = "1px solid black";
+						tdTh.style.textAlign = "center";
+					}
+				}
+				
+				var emptyBox5List = divToPrint.getElementsByClassName("EmptyBox5");
+				for(var i = 0; i < emptyBox5List.length; i++)
+					emptyBox5List[i].style.height = "5px";
+				var emptyBox20List = divToPrint.getElementsByClassName("EmptyBox20");
+				for(var i = 0; i < emptyBox20List.length; i++)
+					emptyBox20List[i].style.height = "20px";
+									   
+				newWin = window.open("");
+				newWin.document.write(divToPrint.outerHTML);
+				newWin.document.close();
+				newWin.focus();
+				newWin.print();
+				newWin.close();
+			}
+			//]]>
+		</script>
     </ui:define>
 </ui:composition>
