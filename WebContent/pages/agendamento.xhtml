@@ -358,9 +358,8 @@ div.ui-selectoneradio label {
 
 									<p:panelGrid columns="3" layout="grid"
 										styleClass="ui-panelgrid-blank form-group ui-fluid">
-										<p:commandButton value="Imprimir" type="button"
+										<p:commandButton value="Imprimir" type="button" onclick="printSchedule()"
 											icon="White fa fa-print" styleClass="NavyButton">
-											<p:printer target="schedule" />
 										</p:commandButton>
 										<p:commandButton id="btBloqueioAgenda"
 											value="Bloqueio de Agenda" icon="White fa fa-calendar White"
@@ -400,23 +399,113 @@ div.ui-selectoneradio label {
 		</div>
 
 
-		<script type="text/javascript">
+		<script type="text/javascript">		
+			//<![CDATA[
 			if (PrimeFaces.widget.Schedule != undefined) {
 				PrimeFaces.widget.Schedule.prototype._oldInit = PrimeFaces.widget.Schedule.prototype.init;
 				PrimeFaces.widget.Schedule.prototype.init = function(cfg) {
 					cfg.views = {
-				        month: {
-							columnFormat: 'ddd'
+						month : {
+							columnFormat : 'ddd'
 						},
-						week: {
-							columnFormat: 'ddd D/MM'
+						week : {
+							columnFormat : 'ddd D/MM'
 						},
-						day: {
-							columnFormat: 'dddd'
+						day : {
+							columnFormat : 'dddd'
 						}
 					};
 					this._oldInit.apply(this, arguments);
 				};
+			}
+			
+			function printSchedule() {
+				String.prototype.replaceAll = String.prototype.replaceAll || function(needle, replacement) {
+				    return this.split(needle).join(replacement);
+				};
+				
+				var elm = document.getElementById("lume:schedule");
+				var toPrint = elm.cloneNode(true);
+				toPrint.style.fontFamily = "sans-serif";
+				
+				var header = toPrint.getElementsByClassName("fc-header-toolbar")[0];
+				header.style.fontSize = ".7em";
+				header.style.borderLeft = "solid 1px black";
+				header.style.borderTop = "solid 1px black";
+				header.style.borderRight = "solid 1px black";
+				header.style.marginBottom = "0";
+				var header2Del = header.getElementsByClassName("fc-left")[0];
+				header2Del.parentNode.removeChild(header2Del);
+				header2Del = header.getElementsByClassName("fc-right")[0];
+				header2Del.parentNode.removeChild(header2Del);
+				header2Del = header.getElementsByClassName("fc-clear")[0];
+				header2Del.parentNode.removeChild(header2Del);
+				var header2Change = header.getElementsByClassName("fc-center")[0];
+				header2Change.style.margin = ".5em";
+				
+				var monthButton = document.getElementsByClassName("fc-month-button")[0];
+				if(!monthButton.classList.contains("ui-state-active")) {									
+					var horasColumn = toPrint.getElementsByClassName("fc-slats")[0].getElementsByTagName("tr");
+					for(var i = 0; i < horasColumn.length; i++) {
+						var nowStr = "" + new Date().getTime();
+						horasColumn[i].setAttribute("id", nowStr + i);
+					}
+					
+					var divHeight = toPrint.getElementsByClassName("fc-body")[0].getElementsByClassName("fc-scroller")[0];
+					divHeight.style.removeProperty("height");
+					divHeight.style.transform = "scale(1, .71) translateY(-275px)";
+					divHeight.style.marginBottom = "-389.76px";
+				}
+				
+				var newWin = window.open("");
+				newWin.document.write("<link href=\"http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.5/fullcalendar.css\" rel=\"stylesheet\" type=\"text/css\" \/>");
+				//newWin.document.write("<link href=\"http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.5/fullcalendar.print.css\" rel=\"stylesheet\" type=\"text/css\" media=\"print\" \/>");
+				//newWin.document.write("<script src=\"http://cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.2.5/fullcalendar.min.js\"><\/script>");
+				//newWin.document.write("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js\"><\/script>");
+				//newWin.document.write("<script src=\"https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js\"><\/script>");
+				newWin.document.write(toPrint.outerHTML);
+				newWin.document.close();
+				newWin.focus();
+				
+				var monthButton = document.getElementsByClassName("fc-month-button")[0];
+				if(!monthButton.classList.contains("ui-state-active")) {
+					var divsAg = newWin.document.getElementsByClassName("fc-content-skeleton")[0].getElementsByClassName("fc-time-grid-event");
+					var horasColumn = newWin.document.getElementsByClassName("fc-slats")[0].getElementsByTagName("tr");
+					var horaHeight = 24; //horasColumn[0].children[0].offsetHeight;
+					var horaInit = parseInt(horasColumn[0].children[0].innerText.split(":")[0]);
+					for(var i = 0; i < divsAg.length; i++) {
+						var divAg = divsAg[i];
+						var title = divAg.getElementsByClassName("fc-title")[0];
+						title.style.color = "#000";
+						var time = divAg.getElementsByClassName("fc-time")[0];
+						time.style.color = "#000";
+						
+						console.log("====================================================================");
+						var horaElm = time.children[0];
+						// 1 hora dividido em 4 quadros de 15 minutos cada com 24 de altura = (24 * 4) / 60
+						var stepMinute = (horaHeight * 4) / 60;
+						var horaFull = horaElm.innerText;
+						horaFull = horaFull.split(" ")[0];
+						
+						var hora = horaFull.split(":")[0];
+						var minuto = horaFull.split(":")[1];
+						
+						var topFuturo = ((hora - horaInit) * horaHeight) * 4;
+						topFuturo += minuto * stepMinute;
+						
+						var topAtual = Math.abs(divAg.style.top.replaceAll("px", ""));
+						var bottomAtual = Math.abs(divAg.style.bottom.replaceAll("px", ""));
+						
+						var diff = Math.abs(bottomAtual / topAtual);
+						divAg.style.top = topFuturo + "px";
+						divAg.style.bottom = ((topFuturo * diff) * (-1)) + "px";
+					}
+				}
+				
+				setTimeout(function() {
+					newWin.print();
+					newWin.close();
+				}, 0);
 			}
 
 			function handleDialogRequest(xhr, status, args) {
@@ -438,6 +527,7 @@ div.ui-selectoneradio label {
 					window.scrollTo(0, 0);
 				}
 			}
+			//]]>
 		</script>
 
 		<p:confirmDialog id="confirmDialog"
