@@ -202,6 +202,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     @Override
     public void actionNew(ActionEvent arg0) {
+        UtilsFrontEnd.setPacienteSelecionado(null);
         super.actionNew(arg0);
     }
 
