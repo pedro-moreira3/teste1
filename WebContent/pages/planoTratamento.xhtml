@@ -322,7 +322,8 @@ label.ui-helper-hidden {
                     </p:panel>
                 </p:dialog>
 
-                <p:dialog id="dlgGerarOrcamento" widgetVar="dlgGerarOrcamento" header="Orçamento" responsive="true" modal="true" width="90%">
+                <p:dialog id="dlgGerarOrcamento" widgetVar="dlgGerarOrcamento" header="Orçamento" responsive="true" modal="true"
+                	onHide="PF('dlgGerarOrcamento').toggleMaximize();" onShow="PF('dlgGerarOrcamento').toggleMaximize();">
                 	<p:panel>
                         <p:outputPanel id="pnConteudoImpressaoOrcamento">
                             <p:graphicImage value="#{lumeSecurity.logo}" width="180px;" height="50px;" rendered="#{lumeSecurity.logo != null}" />
