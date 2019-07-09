@@ -117,6 +117,12 @@ div.ui-selectoneradio label {
 .ggl-tooltip span {
   font-weight: bold;
 }
+
+.chartCadeiras > div, .chartProfissionais > div {
+	max-width: 100%;
+	overflow: auto;
+	overflow-y: hidden;
+}
 </style>
 		<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 		<script>
@@ -436,10 +442,10 @@ div.ui-selectoneradio label {
 							</p:schedule>
 						</p:outputPanel>
 						<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'C'}">
-							<div id="chartCadeiras"  style="max-width: 100%"></div>
+							<div id="chartCadeiras"  class="chartCadeiras"></div>
 						</p:outputPanel>
 						<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'P'}">
-							<div id="chartAtendimentos" style="max-width: 100%"></div>
+							<div id="chartAtendimentos" class="chartProfissionais"></div>
 						</p:outputPanel>
 					</p:outputPanel>
 					<p:remoteCommand name="updateVisualizacao" update=":lume:agendamentoVisualizacao" />
