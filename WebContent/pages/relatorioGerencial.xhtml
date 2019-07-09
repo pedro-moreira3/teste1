@@ -301,7 +301,7 @@
                                 <h:outputText value="#{paciente.statusProximoAgendamento}" />
                             </p:column>                            
                             <p:column headerText="Whats">
-                                <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{paciente.whatsURL}');return false;" styleClass="GreenButton" disable="#{paciente.whatsURL == null}" style="width: 33px !important;" />
+                                <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{paciente.whatsURL}');return false;" styleClass="GreenButton" disable="#{paciente.whatsURL == null}" />
                             </p:column>
                         </p:dataTable>
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">

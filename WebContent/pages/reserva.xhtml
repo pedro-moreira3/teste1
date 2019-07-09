@@ -148,7 +148,7 @@
 									<p:calendar value="#{reservaMB.dataIni}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true"
                                         yearRange="-100:+1" style="margin-right: 15px; margin-left: 15px;" />
                                     <p:commandButton id="pesquisar" icon="fa fa-search White" actionListener="#{reservaMB.geraLista}" update="@form" tabindex="1" process=":lume:dtReserva:filtro"
-                                        styleClass="OrangeButton" style="width: 33px !important;" />
+                                        styleClass="OrangeButton" />
                                 </h:panelGroup>
                             </f:facet>
 

@@ -87,29 +87,29 @@
                             <h:outputText value="#{exame.descricao}" />
                         </p:column>
                         <p:column headerText="Download" styleClass="TexAlCenter">
-                            <p:commandButton ajax="false" icon="White fa fa-download " immediate="true" style="width: 33px !important;">
+                            <p:commandButton ajax="false" icon="White fa fa-download " immediate="true">
                                 <p:fileDownload value="#{exame.arquivo}" />
                             </p:commandButton>
                         </p:column>
                         <p:column headerText="Arquivo Original" styleClass="TexAlCenter">
                             <p:commandButton action="#{exameMB.actionEditFile}" icon="White fa fa-save" process="@this" immediate="true" oncomplete="PF('viewDialogResponsivo').show();PF('viewDialogResponsivo').toggleMaximize();"
-                                update=":lume:tabView:pnResponsivo" rendered="#{!exameMB.validaPdf(exame)}" style="width: 33px !important;">
+                                update=":lume:tabView:pnResponsivo" rendered="#{!exameMB.validaPdf(exame)}">
                                 <f:setPropertyActionListener target="#{exameMB.entity}" value="#{exame}" />
                             </p:commandButton>
                             <p:commandButton action="#{exameMB.actionEditFile}" icon="White fa fa-search" process="@this" immediate="true" oncomplete="carregaPdf();"
-                                update=":lume:tabView:media,:lume:tabView:dlgPdf" rendered="#{exameMB.validaPdf(exame)}" style="width: 33px !important;">
+                                update=":lume:tabView:media,:lume:tabView:dlgPdf" rendered="#{exameMB.validaPdf(exame)}">
                                 <f:setPropertyActionListener target="#{exameMB.entity}" value="#{exame}" />
                             </p:commandButton>
                         </p:column>
                         <p:column headerText="Arquivo Editado" styleClass="TexAlCenter BotaoExame">
                             <p:commandButton action="#{exameMB.actionEditFile2}" icon="White fa fa-save" process="@this" immediate="true" oncomplete="doView();PF('viewDialog').show();"
-                                update=":lume:tabView:view,:lume:tabView:viewArquivoBase64" disabled="#{exameMB.validaPdf(exame)}" style="width: 33px !important;">
+                                update=":lume:tabView:view,:lume:tabView:viewArquivoBase64" disabled="#{exameMB.validaPdf(exame)}">
                                 <f:setPropertyActionListener target="#{exameMB.entity}" value="#{exame}" />
                             </p:commandButton>
                         </p:column>
                         <p:column headerText="Editar" styleClass="TexAlCenter BotaoExame">
                             <p:commandButton action="#{exameMB.actionEditFile}" disabled="#{exameMB.validaPdf(exame)}" icon="fa fa-pencil White" process="@this" immediate="true"
-                                update=":lume:tabView:paint,:lume:tabView:arquivoBase64" oncomplete="doPaint();PF('editDialog').show();" style="width: 33px !important;">
+                                update=":lume:tabView:paint,:lume:tabView:arquivoBase64" oncomplete="doPaint();PF('editDialog').show();">
                                 <f:setPropertyActionListener target="#{exameMB.entity}" value="#{exame}" />
                             </p:commandButton>
                         </p:column>

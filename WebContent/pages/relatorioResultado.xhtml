@@ -48,7 +48,7 @@
                         <p:column exportable="false" width="45">                       
                         	<p:commandButton oncomplete="PF('dlgValorMaterial').show();" process="@this"
                         		action="#{relatorioResultadoMB.carregaDetalheValorMaterial(m)}"
-								update=":lume:dtValorMaterial" style="width: 33px !important" styleClass="BlueButton"
+								update=":lume:dtValorMaterial" styleClass="BlueButton"
 								disabled="#{m.valorMaterial.doubleValue() == 0}" icon="fa fa-search" />
                         </p:column>
                         <p:column filterBy="#{m.profissional.dadosBasico.nome}" sortBy="#{m.profissional.dadosBasico.nome}" filterMatchMode="contains">

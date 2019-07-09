@@ -257,14 +257,12 @@
 							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
 							icon="fa fa-plus White"
 							update="pnNovoPaciente, :lume:pnBtpaciente" immediate="true"
-							actionListener="#{agendamentoMB.novoPaciente}"
-							style="width: 33px !important" />
+							actionListener="#{agendamentoMB.novoPaciente}" />
 						<p:commandButton id="cancelarNovoPaciente"
 							rendered="#{agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
 							icon="fa fa-minus White"
 							update="pnNovoPaciente, :lume:pnBtpaciente" immediate="true"
-							actionListener="#{agendamentoMB.cancelarNovoPaciente}"
-							style="width: 33px !important" />
+							actionListener="#{agendamentoMB.cancelarNovoPaciente}" />
 					</p:outputPanel>
 				</p:outputPanel>
 

@@ -34,7 +34,7 @@
 								<p:calendar id="empDtmExpiracao" value="#{empresa.empDtmExpiracao}" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}"
 									timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+5" mask="true" />
 								<p:commandButton icon="White fa fa-save" actionListener="#{empresaMB.actionAlterarDataExpiracao(empresa)}" process="@this,empDtmExpiracao"
-									styleClass="GreenButton" style="width: 33px !important; margin-left: 5px;" />
+									styleClass="GreenButton" style="margin-left: 5px;" />
 							</h:panelGroup>
 						</p:column>
 

@@ -125,9 +125,8 @@
 
                             <p:column rendered="#{relatorioPlanoTratamentoMB.status == 'N'}" exportable="false">
                                 <p:commandButton icon="White fa fa-times-circle" onclick="PF('devolver').show();" title="Encerrar" process="@this" styleClass="OrangeButton"
-                                    action="#{planoTratamentoMB.setEntity(m)}" style="width: 33px !important;" />
-                                <p:button icon="White fa fa-eye" title="Visualizar" onclick="window.open('paciente.jsf?idpt=#{m.id}'); return false;"
-                                	style="width: 33px !important;" />
+                                    action="#{planoTratamentoMB.setEntity(m)}" />
+                                <p:button icon="White fa fa-eye" title="Visualizar" onclick="window.open('paciente.jsf?idpt=#{m.id}'); return false;" />
                             </p:column>
 
                         </p:dataTable>

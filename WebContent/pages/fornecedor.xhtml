@@ -29,7 +29,7 @@
 									<f:validator validatorId="cepValidator" />
 								</p:inputMask>
 								<p:commandButton id="cepsearch" icon="White fa fa-search White" actionListener="#{fornecedorMB.actionBuscaCep}"
-									update=":lume:endereco,:lume:bairro,:lume:cidade,:lume:estado" process="@this,:lume:cep" style="width: 33px !important" />
+									update=":lume:endereco,:lume:bairro,:lume:cidade,:lume:estado" process="@this,:lume:cep" />
 							</h:panelGroup>
 
 							<p:outputLabel for="endereco" value="Endereço : " />

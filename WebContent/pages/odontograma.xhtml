@@ -271,7 +271,7 @@
 								</p:selectOneMenu>
 								<p:commandButton id="adicionarStatusDente" icon="White fa fa-plus White" actionListener="#{odontogramaMB.actionAdicionarStatusDente}"
 									update=":lume:tabView:pnDenteOdontograma,:lume:tabView:dtStatusDenteSelecionados,:lume:tabView:procedimentosOdontograma,:lume:tabView:problema,@this"
-		                            process="@this" style="margin-left: 5px;width: 33px !important;" disabled="#{odontogramaMB.statusDenteDenteSelecionado == null}" />
+		                            process="@this" style="margin-left: 5px;" disabled="#{odontogramaMB.statusDenteDenteSelecionado == null}" />
 							</h:panelGroup>
 						</p:panelGrid>
 						<div class="SeparatorFull"></div>
@@ -291,7 +291,7 @@
 	                        <p:column width="10%">
 	                        	<p:commandButton icon="White fa fa-minus White" actionListener="#{odontogramaMB.actionRemoverStatusDente(regiao)}"
 	                            	update=":lume:tabView:pnDenteOdontograma,:lume:tabView:dtStatusDenteSelecionados,:lume:tabView:procedimentosOdontograma,:lume:tabView:problema,@this"
-	                                process="@this" style="width: 33px !important" />
+	                                process="@this" />
 	                        </p:column>
 						</p:dataTable>
 						<br />
@@ -307,7 +307,7 @@
 								</p:autoComplete>
 	                            <p:commandButton id="adicionarPtp" icon="White fa fa-plus White" actionListener="#{odontogramaMB.actionAdicionarProcedimento}"
 	                            	update=":lume:tabView:dtProcedimentosSelecionados,:lume:tabView:procedimentosOdontograma,procedimento,@this" process="@this"
-	                                style="margin-right: 5px;width: 33px !important" disabled="#{odontogramaMB.procedimentoSelecionado == null}" />
+	                                style="margin-right: 5px;" disabled="#{odontogramaMB.procedimentoSelecionado == null}" />
                             </h:panelGroup>
 						</p:panelGrid>
 						<div class="SeparatorFull"></div>

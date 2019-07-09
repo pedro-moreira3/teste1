@@ -66,8 +66,7 @@ label.ui-helper-hidden {
                                 <p:ajax event="rowEdit" />
                                 <p:column styleClass="TexAlCenter" width="40px;">
                                     <p:commandButton icon="fa fa-minus White" disabled="#{plano.finalizado || planoTratamentoMB.finalizado}"
-                                        actionListener="#{planoTratamentoMB.onProcedimentoRemove(plano)}" process="@this" update=":lume:tabView:dtProcedimentosSelecionadospt"
-                                        style="width: 33px !important" />
+                                        actionListener="#{planoTratamentoMB.onProcedimentoRemove(plano)}" process="@this" update=":lume:tabView:dtProcedimentosSelecionadospt" />
                                 </p:column>
                                 <p:column styleClass="TexAlCenter" sortBy="#{plano.sequencial}" headerText="Nr." width="50px;">
                                     <p:inputText value="#{plano.sequencial}" />
@@ -105,7 +104,7 @@ label.ui-helper-hidden {
                                     </p:selectManyCheckbox>
                                     <p:commandButton icon="White fa fa-gear" title="Finalizar Novamente" actionListener="#{planoTratamentoMB.actionFinalizarNovamente(plano)}"
                                         update=":lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento" process=":lume:tabView:pnPlanoTratamento,@this" styleClass="RedButton"
-                                        disabled="#{planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.existeProcedimentoFinalizado == false}" style="float: right; width: 33px !important;"
+                                        disabled="#{planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.existeProcedimentoFinalizado == false}" style="float: right;"
                                         rendered="#{planoTratamentoMB.admin and plano.finalizado}">
                                         <p:confirm header="Confirmação" message="Deseja realmente mudar o finalizador deste procedimento?" icon="fa fa-warning" />
                                     </p:commandButton>

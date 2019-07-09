@@ -55,9 +55,9 @@ height: 100%;
 		                                            update=":lume:tv:tipocategoria, :lume:tv:categoria, :lume:tv:motivo" />
 		                                    </p:autoComplete>
 		                                    <p:commandButton id="novoOrigem" rendered="#{!lancamentoContabilMB.visivel}" icon="fa fa-plus White" update="pnNovoOrigem, :lume:tv:pnBtorigem" immediate="true"
-		                                        actionListener="#{lancamentoContabilMB.novoOrigem}" style="width: 33px !important; margin-left: 5px;" />
+		                                        actionListener="#{lancamentoContabilMB.novoOrigem}" style="margin-left: 5px;" />
 		                                    <p:commandButton id="cancelarNovoOrigem" rendered="#{lancamentoContabilMB.visivel}" icon="fa fa-minus White" update="pnNovoOrigem, :lume:tv:pnBtorigem"
-		                                        immediate="true" actionListener="#{lancamentoContabilMB.cancelarNovoOrigem}" style="width: 33px !important; margin-left: 5px;" />
+		                                        immediate="true" actionListener="#{lancamentoContabilMB.cancelarNovoOrigem}" style="margin-left: 5px;" />
 		                                </h:panelGroup>
 	                                    <p:panel id="pnNovoOrigem" visible="#{lancamentoContabilMB.visivel}" styleClass="BordNone">
 		                                    <h:panelGroup styleClass="lumeField">
@@ -218,7 +218,7 @@ height: 100%;
                                 </p:column>
                                 <p:column headerText="Conferência" width="100">
                                     <p:commandButton icon="White fa fa-thumbs-o-up" actionListener="#{lancamentoContabilMB.actionValidarLancamento(lc)}" update=":lume:tv:dtLancamentoValidar"
-                                        process="@this,dtCreditoLancamento" styleClass="GreenButton" style="width: 33px !important" />
+                                        process="@this,dtCreditoLancamento" styleClass="GreenButton" />
                                 </p:column>
                             </p:dataTable>
                     </div>
