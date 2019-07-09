@@ -683,12 +683,14 @@ div.ui-selectoneradio label {
 				
 				var divChangeScale = newWin.document.getElementById(id).children[0].children[0];
 				var atualWidth = divChangeScale.style.width.replaceAll("px", "");
-				var relacao = 1452 / atualWidth;
-				var distanciaY = (Math.abs(atualWidth - 1452) / 2) + 11;
-				divChangeScale.style.transform = "scale(" + relacao + ") translate(-" + distanciaY + "px, -15px)";
+				if(atualWidth > 1452) {
+					var relacao = 1452 / atualWidth;
+					var distanciaY = (Math.abs(atualWidth - 1452) / 2) + 11;
+					divChangeScale.style.transform = "scale(" + relacao + ") translate(-" + distanciaY + "px, -15px)";
+				}
 				
-				newWin.print();
-				newWin.close();
+				//newWin.print();
+				//newWin.close();
 			}
 
 			function handleDialogRequest(xhr, status, args) {
