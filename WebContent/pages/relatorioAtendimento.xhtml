@@ -183,7 +183,53 @@ div.ui-selectoneradio label {
                     								
                     				</p:dataTable>
                     		</h:panelGroup>
-                    	</p:fieldset>                    		
+                    	</p:fieldset>
+                    	
+                    	<p:fieldset		legend="Agendamento" id="tgAgendamento" toggleable="true" toggleSpeed="400"
+                    					style="margin-top:20px;margin-bottom:10px">
+                    						
+                    		<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    		    <h:panelGroup>
+                    		    	<h:outputText	value="Agendado por"/>
+                    		    	<p:inputText		readonly="true" value="#{relatorioAtendimentoMB.entity.agendador.dadosBasico.nome}"/>
+                    		    </h:panelGroup>
+                    		    
+                    		    <h:panelGroup>
+                    		    	<h:outputText	value="Data agendamento"/>
+                    		    	<p:calendar		readonly="true" value="#{relatorioAtendimentoMB.entity.dataAgendamento}"/>
+                    		    </h:panelGroup>
+                    		    
+                    		    <h:panelGroup>
+                    		    	<h:outputText	value="Status do agendamento" />
+                    		    	<p:inputText		readonly="true" value="#{relatorioAtendimentoMB.entity.statusAgendamento.descricao}"/>
+                    		    </h:panelGroup>                    		    
+                    		</p:panelGrid>
+                    		
+                    		<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    		    <h:panelGroup>
+                    		    	<h:outputText	value="Origem do agendamento" />
+                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.origemAgendamento.descricao}"/>
+                    		    </h:panelGroup>
+                    		    
+                    		    <h:panelGroup>
+                    		    	<h:outputText	value="Finalidade do agendamento" />
+                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.finalidadeAgendamento.descricao}"/>
+                    		    </h:panelGroup>
+                    		    
+                    		    <h:panelGroup>
+                    		    	<h:outputText	value="Útilma alteração realizada por" />
+                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.profissionalUltAlteracao.dadosBasico.nome}"/>
+                    		    </h:panelGroup>
+                    		</p:panelGrid>
+                    		
+                    		<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    		    <h:panelGroup>
+                    		    	<h:outputText	value="Motivo do agendamento" />
+                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.motivoStatusAgendamento.descricao}"/>
+                    		    </h:panelGroup>
+                    		</p:panelGrid>
+                    	</p:fieldset>
+                    	                    		
                     </p:dialog>
                     
                 </div>
