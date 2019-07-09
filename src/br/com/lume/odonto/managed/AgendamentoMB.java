@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -67,6 +68,7 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Reserva;
 import br.com.lume.odonto.entity.Retorno;
+import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
@@ -166,6 +168,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private Retorno retorno;
 
     private Date initialDate;
+    
+    //S - Scheduler, C - Cadeiras, P - Profissional
+    private String visualizacao = "S";
 
     public AgendamentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
@@ -1264,5 +1269,68 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public void setInitialDate(Date initialDate) {
         this.initialDate = initialDate;
     }
+    
+    public String getAtendimentosChart() {
+        StringBuilder sb = new StringBuilder();
+        Calendar hojeCedo = Calendar.getInstance();
+        hojeCedo.setTime(initialDate);
+        hojeCedo.set(Calendar.HOUR_OF_DAY, 0);
+        hojeCedo.set(Calendar.MINUTE, 0);
+        hojeCedo.set(Calendar.SECOND, 0);
+        Calendar hojeTarde = Calendar.getInstance();
+        hojeTarde.setTime(initialDate);
+        hojeTarde.set(Calendar.HOUR_OF_DAY, 23);
+        hojeTarde.set(Calendar.MINUTE, 59);
+        hojeTarde.set(Calendar.SECOND, 59);
+        List<Agendamento> agendamentosHoje = AgendamentoSingleton.getInstance().getBo().listByDataTodosProfissionais(hojeCedo.getTime(), hojeTarde.getTime(), UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+        List<String> classesCss = new ArrayList<>();
+        HashSet<String> profissionaisAgendamentoHoje = new HashSet<>();
+        removerFiltrosAgendamento(agendamentosHoje);
+        if (agendamentosHoje != null && !agendamentosHoje.isEmpty()) {
+            for (Agendamento agendamento : agendamentosHoje) {
+                String classCss = StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getStyleCss();
+                String siglaStatus = StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getSigla();
+                if(!classesCss.contains(siglaStatus + ": " + classCss))
+                    classesCss.add(siglaStatus + ": '" + classCss + "'");
+                
+                Calendar c = Calendar.getInstance();
+                c.setTime(agendamento.getInicio());
+                String hora1 = c.get(Calendar.HOUR_OF_DAY) + "";
+                hora1 += "," + c.get(Calendar.MINUTE);
+
+                c.setTime(agendamento.getFim());
+                String hora2 = c.get(Calendar.HOUR_OF_DAY) + "";
+                hora2 += "," + c.get(Calendar.MINUTE);
+                sb.append(
+                        "[ '" + agendamento.getProfissional().getDadosBasico().getNome() + "', '" + siglaStatus + "', '" + agendamento.getPaciente().getDadosBasico().getNome() + "', new Date(0,0,0," + hora1 + ",0), new Date(0,0,0," + hora2 + ",0), 'Cadeira " + agendamento.getCadeira() +  "' ],");
+                profissionaisAgendamentoHoje.add(agendamento.getProfissional().getDadosBasico().getNome());
+            }
+            String jsonFull = "{ classes: {";
+            for(String regraCategoria: classesCss)
+                jsonFull += regraCategoria + ", ";
+            jsonFull += "}, dados: [" + sb.toString() + "]";
+            jsonFull += ", length: " + (profissionaisAgendamentoHoje != null ? profissionaisAgendamentoHoje.toArray().length : 0);
+            jsonFull += "}";
+            return jsonFull;
+        }
+        return "[]";
+    }
+    
+    public void loadChartProfissionais() {
+        PrimeFaces.current().executeScript("google.charts.setOnLoadCallback(drawChartProfissionais(" + getAtendimentosChart() + "));");
+    }
+    
+    public void loadChartCadeiras() {
+        PrimeFaces.current().executeScript("google.charts.setOnLoadCallback(drawChartCadeiras(" + getAtendimentosChart() + "));");
+    }
+
+    public String getVisualizacao() {
+        return visualizacao;
+    }
+
+    
+    public void setVisualizacao(String visualizacao) {
+        this.visualizacao = visualizacao;
+    }    
 
 }
