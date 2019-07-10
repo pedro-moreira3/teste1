@@ -482,6 +482,7 @@ div.ui-selectoneradio label {
                     dataTable.addColumn({ type: 'date', id: 'Inicio' });
                     dataTable.addColumn({ type: 'date', id: 'Fim' });
                     dataTable.addColumn({ type: 'string', id: 'Cadeira' });
+                    dataTable.addColumn({ type: 'string', id: 'Telefone' });
                     dataTable.addRows(backendValue.dados);
                      
                     var colors = [];
@@ -521,15 +522,16 @@ div.ui-selectoneradio label {
 					      // build tooltip
 					      var dateBegin = dt.getValue(row, 3);
 					      var dateEnd = dt.getValue(row, 4);
-					      var oneHour = (60 * 60 * 1000);
-					      var duration = (dateEnd.getTime() - dateBegin.getTime()) / oneHour;
+					      var oneMinute = (60 * 1000);
+					      var duration = (dateEnd.getTime() - dateBegin.getTime()) / oneMinute;
 
 					      var tooltip = '<div>';
 					      tooltip += '<div class="ggl-tooltip"><span>Profissional:</span>&nbsp;' + dt.getValue(row, 0) + "<br />";
-					      tooltip += '<span>Paciente:</span>&nbsp;' + dt.getValue(row, 2) + "</div>";
+					      tooltip += '<span>Paciente:</span>&nbsp;' + dt.getValue(row, 2) + "<br />";
+					      tooltip += '<span>Telefone:</span>&nbsp;' + dt.getValue(row, 6) + "</div>";
 					      tooltip += '<div class="ggl-tooltip"><span>Início:</span>&nbsp;' + formatTime.formatValue(dateBegin) + ' - ';
 					      tooltip += '<span>Fim:</span>&nbsp;' + formatTime.formatValue(dateEnd) + '<br />';
-					      tooltip += '<span>Duração:</span>&nbsp;' + duration.toFixed(0) + ' horas</div></div>';
+					      tooltip += '<span>Duração:</span>&nbsp;' + duration.toFixed(0) + ' minutos</div></div>';
 					      tooltip += '<div class="ggl-tooltip"><span>Cadeira: </span>' + dt.getValue(row, 5).replaceAll("Cadeira ", "") + '</div></div>';
 
 					      return tooltip;
