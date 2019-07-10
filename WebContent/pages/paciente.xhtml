@@ -43,7 +43,7 @@
 									listener="#{odontogramaMB.atualizaOdontograma}" />
 							</p:autoComplete>							
 							<p:message styleClass="msg" for="pacienteChoice" />
-							<p:commandButton id="pesquisar" icon="White fa fa-eraser" style="width: 33px !important"
+							<p:commandButton id="pesquisar" icon="White fa fa-eraser"
 								onstart="PF('loading').show();" oncomplete="PF('loading').hide()"
 								actionListener="#{pacienteMB.actionNew}"
 								update=":lume" process="@this" />

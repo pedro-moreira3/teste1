@@ -95,7 +95,15 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            if (getEntity().getInicio().before(getEntity().getFim())) {
+            
+            Calendar cal1 = Calendar.getInstance();
+            Calendar cal2 = Calendar.getInstance();
+            cal1.setTime(getEntity().getInicio());
+            cal2.setTime(getEntity().getFim());
+            boolean sameDay = cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
+                              cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
+            
+            if (getEntity().getInicio().before(getEntity().getFim()) || sameDay) {
                 boolean novoPlano = getEntity().getId() == null || getEntity().getId() == 0;
 
                 if (novoPlano) {
@@ -113,7 +121,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                 this.actionNew(event);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             } else {
-                this.addInfo("Data inválida.", "");
+                this.addError("Data de fim de previsão de fim de tratamento não pode ser antes da data de início do tratamento", "");
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
