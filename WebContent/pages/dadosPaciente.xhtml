@@ -347,19 +347,20 @@
 							actionListener="#{pacienteMB.actionNew}" update=":lume"
 							process="@this" />
 
-						<p:commandButton id="reenviarSenha" icon="White fa fa-lock"
-							value="Reenviar Senha"
-							actionListener="#{pacienteMB.actionReenviarSenha}" update=":lume"
-							disabled="#{pacienteMB.entity.id == null || pacienteMB.entity.dadosBasico.email == ''}"
-							process=":lume:tabView:pnPrincipal" styleClass="NavyButton" />
-
-						<p:commandButton value="Imprimir Senha" process="@this"
-							update=":lume:tabView:pnPrincipal, :lume:tabView:imprimirSenha"
-							actionListener="#{pacienteMB.actionImprimeSenha}"
-							oncomplete="PF('senha').show()" icon="White fa fa-print White"
-							disabled="#{pacienteMB.entity.id == null || pacienteMB.entity.dadosBasico.email == ''}"
-							styleClass="NavyButton" />
-
+						<ui:remove>
+							 <p:commandButton id="reenviarSenha" icon="White fa fa-lock"
+								value="Reenviar Senha"
+								actionListener="#{pacienteMB.actionReenviarSenha}" update=":lume"
+								disabled="#{pacienteMB.entity.id == null || pacienteMB.entity.dadosBasico.email == ''}"
+								process=":lume:tabView:pnPrincipal" styleClass="NavyButton" />
+	
+							<p:commandButton value="Imprimir Senha" process="@this"
+								update=":lume:tabView:pnPrincipal, :lume:tabView:imprimirSenha"
+								actionListener="#{pacienteMB.actionImprimeSenha}"
+								oncomplete="PF('senha').show()" icon="White fa fa-print White"
+								disabled="#{pacienteMB.entity.id == null || pacienteMB.entity.dadosBasico.email == ''}"
+								styleClass="NavyButton" />
+						</ui:remove>
 						<h:panelGroup rendered="#{pacienteMB.entity.status=='A'}">
 							<p:commandButton id="persistInativar"
 								icon="White fa fa-chain-broken" value="Inativar"
