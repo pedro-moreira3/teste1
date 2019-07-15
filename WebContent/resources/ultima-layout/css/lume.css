@@ -154,7 +154,7 @@ li.MENULABEL [href="#"] span {
     width: auto !important;
 }
 
-.ui-fluid .ui-button {
+.ui-fluid button.ui-button:not(.ui-button-icon-only) {
     width: 100% !important;
 }
 

@@ -137,7 +137,7 @@ li.orcamento-li {
 									icon="White fa fa-plus White"
 									actionListener="#{ortodontiaMB.actionAdicionarDiagnostico}"
 									update=":lume:tabView:dtDiagnosticos,@this"
-									process="diagnostico,@this" style="width: 33px !important;"
+									process="diagnostico,@this"
 									disabled="#{ortodontiaMB.diagnosticoSelecionado == null}" />
 							</h:panelGroup>
 
@@ -157,7 +157,7 @@ li.orcamento-li {
 									icon="White fa fa-plus White"
 									actionListener="#{ortodontiaMB.actionAdicionarAparelho}"
 									update=":lume:tabView:dtAparelhos,@this"
-									process="aparelho,@this" style="width: 33px !important;"
+									process="aparelho,@this"
 									disabled="#{ortodontiaMB.aparelhoSelecionado == null}" />
 							</h:panelGroup>
 
@@ -170,7 +170,7 @@ li.orcamento-li {
 									<h:outputText value="#{d.diagnosticoOrtodontico.descricao}" />
 								</p:column>
 								<p:column width="33px">
-									<p:commandButton icon="White fa fa-minus White" style="width: 33px !important;"
+									<p:commandButton icon="White fa fa-minus White"
 										actionListener="#{ortodontiaMB.actionRemoverDiagnostico(d)}"
 										update=":lume:tabView:dtDiagnosticos" process="@this" />
 								</p:column>
@@ -185,7 +185,7 @@ li.orcamento-li {
 									<h:outputText value="#{d.aparelhoOrtodontico.descricao}" />
 								</p:column>
 								<p:column width="33px">
-									<p:commandButton icon="White fa fa-minus White" style="width: 33px !important;"
+									<p:commandButton icon="White fa fa-minus White"
 										actionListener="#{ortodontiaMB.actionRemoverAparelho(d)}"
 										update=":lume:tabView:dtAparelhos" process="@this" />
 								</p:column>
@@ -234,7 +234,6 @@ li.orcamento-li {
 										actionListener="#{ortodontiaMB.actionAdicionarProcedimentoExtra}"
 										update=":lume:tabView:dtProcedimentosOrtodontia,:lume:tabView:dtOrcamentosOrtodontia,:lume:tabView:dtOrcamentosOrtodontia,:lume:tabView:pgTotaisOrtodontia,@this"
 										process="valorProcedimentoExtra,@this"
-										style="width: 33px !important"
 										disabled="#{ortodontiaMB.procedimentoExtra == null or ortodontiaMB.entity.id == null or ortodontiaMB.entity.id == 0}" />
 								</h:panelGroup>
 								<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""

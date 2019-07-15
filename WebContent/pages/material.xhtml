@@ -121,9 +121,9 @@
                                             <p:ajax event="itemSelect" listener="#{materialMB.handleSelectMarca}" update=":lume:marca" />
                                         </p:autoComplete>
                                         <p:commandButton id="novaMarca" disabled="#{materialMB.entity.id != 0}" rendered="#{!materialMB.novaMarca}" icon="fa fa-plus White"
-                                            update="lblNovaMarca, valueNovaMarca, :lume:pnBtmarca" immediate="true" actionListener="#{materialMB.novo}" style="width: 33px !important" />
+                                            update="lblNovaMarca, valueNovaMarca, :lume:pnBtmarca" immediate="true" actionListener="#{materialMB.novo}" />
                                         <p:commandButton id="cancelarNovoMarca" disabled="#{materialMB.entity.id != 0}" rendered="#{materialMB.novaMarca}" icon="fa fa-minus White"
-                                            update="lblNovaMarca, valueNovaMarca, :lume:pnBtmarca" immediate="true" actionListener="#{materialMB.cancelaNovo}" style="width: 33px !important" />
+                                            update="lblNovaMarca, valueNovaMarca, :lume:pnBtmarca" immediate="true" actionListener="#{materialMB.cancelaNovo}" />
                                     </h:panelGroup>
                                 </p:column>
 
@@ -137,7 +137,7 @@
 		                            <p:outputPanel style="display: flex !important;" rendered="#{materialMB.novaMarca}">
 										<p:inputText id="nomeMarca" value="#{materialMB.nomeMarca}" disabled="#{materialMB.entity.id != 0}" maxlength="200" required="#{materialMB.novaMarca}" />
 		                                <p:commandButton id="persistMarca" icon="White fa fa-save" process="lblNovaMarca, valueNovaMarca" update="lblNovaMarca, valueNovaMarca, :lume:marca"
-		                                	disabled="#{materialMB.entity.id != 0}" actionListener="#{materialMB.actionPersistMarca}" style="width: 33px !important" />
+		                                	disabled="#{materialMB.entity.id != 0}" actionListener="#{materialMB.actionPersistMarca}" />
 									</p:outputPanel>
 								</p:outputPanel>
 

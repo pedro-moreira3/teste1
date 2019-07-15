@@ -66,7 +66,7 @@
 								<p:calendar value="#{retornoMB.dataFim}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true"
                                     yearRange="-100:+1" style="width: 95px !important;margin-left: 5px;" />
                                 <p:commandButton id="pesquisar" icon="fa fa-search White" actionListener="#{retornoMB.geraLista}" update="@form" tabindex="1" process=":lume:dtRetorno:filtro"
-                                    styleClass="OrangeButton" style="margin-left: 10px; width: 33px !important" />
+                                    styleClass="OrangeButton" style="margin-left: 10px;" />
                             </h:panelGroup>
                         </f:facet>
                         <p:column filterBy="#{retorno.paciente.dadosBasico.nomeStr}" sortBy="#{retorno.paciente.dadosBasico.nome}" filterMatchMode="contains" headerText="Paciente">
@@ -77,11 +77,10 @@
                         </p:column>
                         <p:column headerText="Agendar" width="50">
                             <p:commandButton icon="White fa fa-book White" oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');" process="@this"
-                                action="#{agendamentoMB.retorno(retorno)}" update="lume:pnAgendamento" style="width: 33px !important" />
+                                action="#{agendamentoMB.retorno(retorno)}" update="lume:pnAgendamento" />
                         </p:column>
                         <p:column headerText="Whats" width="50">
-                            <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{retorno.whatsURL}');return false;" styleClass="GreenButton" disable="#{a.whatsURL == null}"
-                            	style="width: 33px !important" />
+                            <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{retorno.whatsURL}');return false;" styleClass="GreenButton" disable="#{a.whatsURL == null}" />
                         </p:column>
 
                         <p:column filterBy="#{retorno.paciente.convenio.dadosBasico.nome}" sortBy="#{retorno.paciente.convenio.dadosBasico.nome}" filterMatchMode="contains" headerText="Convênio">

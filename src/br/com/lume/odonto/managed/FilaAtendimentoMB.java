@@ -27,7 +27,7 @@ import br.com.lume.reserva.ReservaSingleton;
 //necessario mudar o nome dessa classe, verificar permissoes e objetos, e demais relacoes.
 @ManagedBean
 @ViewScoped
-public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
+public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private static final long serialVersionUID = 1L;
 
@@ -35,13 +35,9 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private PieChartModel pieModel;
 
-    private List<Agendamento> listaAtendimentos;
-
     private List<Agendamento> agendamentos;
     
     private String filtro = "CURRENT_DATE";
-    private Date dataInicio, dataFim;
-    private Date dataInicioTratamento, dataFimTratamento;
 
     private Calendar c = Calendar.getInstance();
 
@@ -51,11 +47,11 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private List<Integer> cadeiras;
 
-    public RelatorioAtendimentoMB() {
+    public FilaAtendimentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
         pieModel = new PieChartModel();
         this.setClazz(Agendamento.class);
-        this.popularLista();
+        this.carregaLista();
         dia = c.get(Calendar.DAY_OF_WEEK);
     }
 
@@ -97,29 +93,12 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         }
     }
 
-//    public void carregaLista() {
-//        try {
-//           
-//            agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosByDate(filtro, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-//            carregarCadeiras();
-//        } catch (Exception e) {
-//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-//            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-//        }
-//    }
-    
-    public void popularLista() {
-        try{
-            
-            if(getDataInicio() == null && getDataFim() == null) {
-                Calendar calendario = new GregorianCalendar();
-                this.setDataInicio(calendario.getTime());
-                this.setDataFim(calendario.getTime());
-            }
-            this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataTodosProfissionaisNaoExcluidos(getDataInicio(), getDataFim(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+    public void carregaLista() {
+        try {
+           
+            agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosByDate(filtro, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             carregarCadeiras();
-            
-        }catch(Exception e) {
+        } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
@@ -227,46 +206,6 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public void setCadeiras(List<Integer> cadeiras) {
         this.cadeiras = cadeiras;
-    }
-
-    public List<Agendamento> getListaAtendimentos() {
-        return listaAtendimentos;
-    }
-
-    public void setListaAtendimentos(List<Agendamento> listAtendimentos) {
-        this.listaAtendimentos = listAtendimentos;
-    }
-
-    public Date getDataInicio() {
-        return dataInicio;
-    }
-
-    public void setDataInicio(Date dataInicio) {
-        this.dataInicio = dataInicio;
-    }
-
-    public Date getDataFim() {
-        return dataFim;
-    }
-
-    public void setDataFim(Date dataFim) {
-        this.dataFim = dataFim;
-    }
-
-    public Date getDataInicioTratamento() {
-        return dataInicioTratamento;
-    }
-
-    public void setDataInicioTratamento(Date dataInicioTratamento) {
-        this.dataInicioTratamento = dataInicioTratamento;
-    }
-
-    public Date getDataFimTratamento() {
-        return dataFimTratamento;
-    }
-
-    public void setDataFimTratamento(Date dataFimTratamento) {
-        this.dataFimTratamento = dataFimTratamento;
     }
 
 }

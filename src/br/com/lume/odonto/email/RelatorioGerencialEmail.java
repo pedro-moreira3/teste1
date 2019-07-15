@@ -67,7 +67,7 @@ public class RelatorioGerencialEmail implements Job {
                         // TODO TIRAR ISSO
                         //email = "faruk.zahra@lumetec.com.br";
 
-                        EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", email, "Intelidente - Resumo diário - " + Utils.dateToString(hoje, "dd/MM/yyyy"),
+                        EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", email, "Intelidente - " + empresa.getEmpStrNme() + " - Resumo diário - " + Utils.dateToString(hoje, "dd/MM/yyyy"),
                                 EnviaEmail.buscarTemplate(valores, EnviaEmail.RESUMO_DIARIO), Mensagens.getMensagemOffLine("email.smtpHost.prod"));
                     }
                 }
