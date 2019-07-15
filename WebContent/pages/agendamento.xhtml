@@ -245,7 +245,7 @@ div.ui-selectoneradio label {
 												minQueryLength="3" style="margin-top:10px;margin-bottom:10px">
 												<p:ajax event="itemSelect"
 													listener="#{agendamentoMB.handleSelectPacienteSelecionado}"
-													update="planoTratamento,procedimentos, profissional, :lume:schedule"
+													update="planoTratamento,procedimentos, profissional"
 													process="@this" oncomplete="atualizaGraficos();" />
 											</p:autoComplete>
 											<p:outputLabel for="pacienteSelecionado"
@@ -260,7 +260,7 @@ div.ui-selectoneradio label {
 												timeZone="#{lumeSecurity.timeZone}" navigator="true"
 												yearRange="-100:+0"
 												style="margin-top:10px;margin-bottom:10px;display: inline-block;">
-												<p:ajax event="dateSelect" update=":lume:schedule"
+												<p:ajax event="dateSelect"
 													oncomplete="atualizaGraficos();" process="@this" />
 											</p:calendar>
 											<p:outputLabel for="initialDate" value="Data" />
@@ -276,7 +276,7 @@ div.ui-selectoneradio label {
 											timeZone="#{lumeSecurity.timeZone}" navigator="true"
 											yearRange="-100:+0"
 											style="margin-top:10px;margin-bottom:10px;display: inline-block;">
-											<p:ajax event="dateSelect" update=":lume:schedule"
+											<p:ajax event="dateSelect"
 												oncomplete="atualizaGraficos();" process="@this" />
 										</p:calendar>
 										<p:outputLabel for="initialDateSolo" value="Data" />
@@ -296,7 +296,7 @@ div.ui-selectoneradio label {
 												itemValue="#{profissional}" />
 											<p:ajax listener="#{agendamentoMB.limpaPacienteSelecionado}"
 												oncomplete="atualizaGraficos();" process="@this"
-												update="pacienteSelecionado,:lume:pnAgnd,:lume:schedule" />
+												update="pacienteSelecionado,:lume:pnAgnd" />
 										</p:selectOneMenu>
 									</h:panelGroup>
 									<p:outputLabel value="Disponibilidade : "
@@ -338,7 +338,7 @@ div.ui-selectoneradio label {
 									<h:outputLabel value="Mostrar os agendamentos : " />
 									<p:selectManyCheckbox value="#{agendamentoMB.filtroAgendamento}"
 										layout="grid" columns="4">
-										<p:ajax process="@this" update=":lume:schedule"
+										<p:ajax process="@this"
 											oncomplete="atualizaGraficos();" />
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoAfastamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Bloqueio&lt;/div&gt;"
@@ -416,7 +416,7 @@ div.ui-selectoneradio label {
 						<f:selectItem itemLabel="Calendário" itemValue="S" />
 						<f:selectItem itemLabel="Ag/Cadeira" itemValue="C" />
 						<f:selectItem itemLabel="Ag/Profissional" itemValue="P" />
-						<p:ajax update=":lume:agendamentoVisualizacao, :lume:filtrosShow, :lume:schedule"
+						<p:ajax update=":lume:agendamentoVisualizacao, :lume:filtrosShow"
 							oncomplete="atualizaGraficos();" process=":lume:selectVisualizacao" />
 					</p:selectOneButton>
 					<p:separator styleClass="SeparatorFull" />
@@ -427,7 +427,7 @@ div.ui-selectoneradio label {
 								style="width:100%;heigth:100%;margin: 0 auto;display: inline-block;"
 								slotMinutes="15" widgetVar="myschedule" locale="pt"
 								timeZone="#{lumeSecurity.timeZone}" firstHour="8"
-								view="agendaWeek" timeFormat="HH:mm" minTime="07:00"
+								view="agendaDay" timeFormat="HH:mm" minTime="07:00"
 								maxTime="21:00" allDaySlot="false" draggable="false"
 								resizable="false" initialDate="#{agendamentoMB.initialDate}">
 								<p:ajax event="dateSelect"
@@ -555,11 +555,10 @@ div.ui-selectoneradio label {
 					loadProfissionaisChart();
 				else if(value == 'C')
 					loadCadeirasChart();
-				//else if(value == 'S')
-					//updateVisualizacao();
-				if(PF('myschedule')) {
+				else if(value == 'S')
+					updateVisualizacao();
+				if(PF('myschedule'))
 					PF('myschedule').update();
-				}
 			}
 			
 			if (PrimeFaces.widget.Schedule != undefined) {
