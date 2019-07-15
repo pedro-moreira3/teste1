@@ -13,32 +13,46 @@
 			}).resize();
 		}
 	</script>
-	<!-- LAYOUT TOPBAR COVER -->
-	<div id="layout-topbar-cover">
-		<div id="layout-topbar-row">
-			<div id="layout-topbar-left">
-				<a href="#" id="logo"><h:graphicImage name="logo_branco.png" id="logo" library="images" /></a>
-			</div>
-			<div id="layout-topbar-right">
-
-				<div id="search-bar">
-					<p:commandLink class="topbar-link Animated03 Fleft" onclick="PF('helpDialog').show();resizeHelp();">
-						<i class="fa fa-question-circle" title="Help"></i>
-					</p:commandLink>
-				</div>
-
-
-			</div>
+	<style>
+		.ui-lg-12 {
+			width: calc(100% - 16px) !important;
+		}
+	</style>
+	
+	<div class="topbar clearfix">
+		<div class="topbar-left">
+			<a href="#" id="logo"><h:graphicImage name="logo_branco.png" library="images" /></a>
 		</div>
 	</div>
-	<p:dialog widgetVar="helpDialog" header="Help" id="dgHelp" responsive="true" modal="true" position="10,10" appendToBody="true"
-		style="position:absolute;overflow:auto;">
-		<h:outputText value="#{odontoMenuMB.mostraAjudaInteliDente}" escape="false" />
-
-		<div class="SeparatorFull"></div>
-
-		<p:commandButton id="fechar" icon="White fa fa-close" value="Fechar" process="@this" styleClass="RedButton" oncomplete="PF('helpDialog').hide()" />
-
-	</p:dialog>
+	
+	<ui:remove>
+		<!-- LAYOUT TOPBAR COVER -->
+		<div id="layout-topbar-cover">
+			<div id="layout-topbar-row">
+				<div id="layout-topbar-left">
+					<a href="#" id="logo"><h:graphicImage name="logo_branco.png" id="logo" library="images" /></a>
+				</div>
+				<div id="layout-topbar-right">
+	
+					<div id="search-bar">
+						<p:commandLink class="topbar-link Animated03 Fleft" onclick="PF('helpDialog').show();resizeHelp();">
+							<i class="fa fa-question-circle" title="Help"></i>
+						</p:commandLink>
+					</div>
+	
+	
+				</div>
+			</div>
+		</div>
+		<p:dialog widgetVar="helpDialog" header="Help" id="dgHelp" responsive="true" modal="true" position="10,10" appendToBody="true"
+			style="position:absolute;overflow:auto;">
+			<h:outputText value="#{odontoMenuMB.mostraAjudaInteliDente}" escape="false" />
+	
+			<div class="SeparatorFull"></div>
+	
+			<p:commandButton id="fechar" icon="White fa fa-close" value="Fechar" process="@this" styleClass="RedButton" oncomplete="PF('helpDialog').hide()" />
+	
+		</p:dialog>
+	</ui:remove>
 
 </ui:composition>

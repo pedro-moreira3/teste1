@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
 
 <h:head>
 	<f:facet name="first">
@@ -9,6 +12,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<link rel="shortcut icon" type="image/x-icon" href="#{request.contextPath}/images/favicon.ico" />
+		<meta name="theme-color"
+			content="#{guestPreferences.themeColors[guestPreferences.theme]}" />
 	</f:facet>
 	<title>INTELIDENTE</title>
 
@@ -22,26 +27,23 @@
 	<ui:insert name="head" />
 </h:head>
 
-<h:body styleClass="BlueTopbar">
-	<ui:include src="topbarexterno.xhtml" />
-
-
-	<!-- LAYOUT CONTAINER -->
-
-	<div id="layout-container">
-
+<h:body
+	styleClass="main-body #{guestPreferences.compact ? 'layout-compact' : null}">
+	
+	<div class="layout-wrapper #{guestPreferences.menuLayout}">
+		<ui:include src="topbarexterno.xhtml" />
 		<h:form id="lume">
-			<p:ajaxStatus onstart="PF('loading').show();" onsuccess="PF('loading').hide();" />
-			<p:dialog modal="true" widgetVar="loading" draggable="false" closable="false" showHeader="false" resizable="false">
-				<p:graphicImage value="/images/loading.gif" />
-			</p:dialog>
-			<ui:insert name="content">
-	             Template
-            </ui:insert>
+			<div style="margin-left: 0px !important; width: 80% !important; margin: auto; padding: 95px 0px 0px 10%">
+				<p:ajaxStatus onstart="PF('loading').show();" onsuccess="PF('loading').hide();" />
+				<p:dialog modal="true" widgetVar="loading" draggable="false" closable="false" showHeader="false" resizable="false">
+					<p:graphicImage value="/images/loading.gif" />
+				</p:dialog>
+				<ui:insert name="content">
+		             Template
+	            </ui:insert>
+	            <ui:include src="footer.xhtml" />
+			</div>
 		</h:form>
-
-		<ui:include src="footer.xhtml" />
-
 	</div>
 
 	<h:outputStylesheet name="css/animate.css" library="ultima-layout" />
@@ -49,5 +51,7 @@
 	<h:outputStylesheet name="css/font-awesome.css" library="ultima-layout" />
 	<h:outputStylesheet name="css/core-layout.css" library="ultima-layout" />
 	<h:outputStylesheet name="css/lume.css" library="ultima-layout" />
+	<h:outputStylesheet name="css/layout-#{guestPreferences.theme}.css"
+		library="ultima-layout" />
 </h:body>
 </html>
