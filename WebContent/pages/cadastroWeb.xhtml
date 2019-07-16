@@ -1,244 +1,381 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/templateexterno.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
-    <ui:define name="content">
-        <style>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	template="/WEB-INF/templateexterno.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<style>
 .ui-fluid .ui-button {
-    width: 40% !important;
+	width: 40% !important;
+}
+
+.removeSides .ui-panelgrid-cell {
+	padding-left: 0px !important;
+	padding-right: 0px !important;
+}
+
+body .ui-wizard .ui-wizard-content {
+	border: 1px solid #c8c8c8;
+	padding: 0.571em 1em;
+	margin-bottom: 10px !important;
 }
 </style>
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-                    <p:panel id="pnInicial" styleClass="BordNone" rendered="#{cadastroWebMB.pnInicialVisivel}">
-                        <h1 class="CardBigTopic">Cadastro</h1>
-                        <div class="Separator"></div>
-                        <p:wizard id="wizard" widgetVar="wiz" flowListener="#{cadastroWebMB.onFlowProcess}" nextLabel="Próximo" backLabel="Voltar">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<p:outputPanel id="pnInicial">
+						<p:outputPanel styleClass="BordNone"
+							rendered="#{cadastroWebMB.pnInicialVisivel}">
+							<h1 style="margin-bottom: 10px !important; text-align: center">Cadastro</h1>
 
-                            <p:tab id="empresa" title="Clínica">
-                                <div class="Separator"></div>
-                                <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-                                    style="border:0px none; background-color:transparent;" id="pnEmpresa">
+							<p:wizard id="wizard" widgetVar="wiz"
+								flowListener="#{cadastroWebMB.onFlowProcess}"
+								nextLabel="Próximo" backLabel="Voltar">
+								<p:tab id="empresa" title="Clínica">
+									<p:panelGrid columns="4"
+										columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+										layout="grid" styleClass="ui-panelgrid-blank"
+										style="border:0px none; background-color:transparent;"
+										id="pnEmpresa">
 
-                                    <p:outputLabel for="empChaTipo" value="Tipo de Pessoa: " />
-                                    <p:selectOneRadio id="empChaTipo" value="#{cadastroWebMB.entity.empChaTipo}" columns="4">
-                                        <f:selectItem itemLabel="Juridica" itemValue="J" />
-                                        <f:selectItem itemLabel="Física" itemValue="F" />
-                                        <p:ajax update=":lume:pnEmpresa,:lume:pnConfDadosClinica,:lume:preencherauto,:lume:preencherautolabel" />
-                                    </p:selectOneRadio>
-                                    <p:column></p:column>
-                                    <p:column></p:column>
+										<p:outputLabel for="empChaTipo" value="Tipo de Pessoa: " />
+										<p:selectOneRadio id="empChaTipo"
+											value="#{cadastroWebMB.entity.empChaTipo}" columns="4">
+											<f:selectItem itemLabel="Juridica" itemValue="J" />
+											<f:selectItem itemLabel="Física" itemValue="F" />
+											<p:ajax
+												update=":lume:pnEmpresa,:lume:pnConfDadosClinica,:lume:preencherauto,:lume:preencherautolabel" />
+										</p:selectOneRadio>
+										<p:column></p:column>
+										<p:column></p:column>
 
-                                    <p:outputLabel for="empStrNme" value="Nome da Clínica: " rendered="#{cadastroWebMB.entity.empChaTipo == 'J'}" />
-                                    <p:inputText id="empStrNme" value="#{cadastroWebMB.entity.empStrNme}" required="true" styleClass="" maxlength="100"
-                                        rendered="#{cadastroWebMB.entity.empChaTipo == 'J'}" />
+										<p:outputLabel for="empStrNme" value="Nome da Clínica: "
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'J'}" />
+										<p:inputText id="empStrNme"
+											value="#{cadastroWebMB.entity.empStrNme}" required="true"
+											styleClass="" maxlength="100"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'J'}" />
 
-                                    <p:outputLabel for="empStrDent" value="Cir. Dentista: " rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
-                                    <p:inputText id="empStrDent" value="#{cadastroWebMB.entity.empStrNme}" required="true" styleClass="" maxlength="100"
-                                        rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
+										<p:outputLabel for="empStrDent" value="Cir. Dentista: "
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
+										<p:inputText id="empStrDent"
+											value="#{cadastroWebMB.entity.empStrNme}" required="true"
+											styleClass="" maxlength="100"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
 
-                                    <p:outputLabel for="empChaCpf" value="CPF: " rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
-                                    <p:inputMask id="empChaCpf" value="#{cadastroWebMB.entity.empChaCpf}" mask="999.999.999-99" rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" required="true"
-                                        validator="cpfValidator" class="Wid30" />
+										<p:outputLabel for="empChaCpf" value="CPF: "
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
+										<p:inputMask id="empChaCpf"
+											value="#{cadastroWebMB.entity.empChaCpf}"
+											mask="999.999.999-99"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}"
+											required="true" validator="cpfValidator" />
 
-                                    <p:outputLabel for="empChaRg" value="RG: " rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
-                                    <p:inputText id="empChaRg" value="#{cadastroWebMB.entity.empChaRg}" rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" required="true" class="Wid30" />
+										<p:outputLabel for="empChaRg" value="RG: "
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
+										<p:inputText id="empChaRg"
+											value="#{cadastroWebMB.entity.empChaRg}"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}"
+											required="true" />
 
-                                    <p:outputLabel for="empStrExpedidor" value="Orgão Expedidor: " rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
-                                    <p:inputText id="empStrExpedidor" value="#{cadastroWebMB.entity.empStrExpedidor}" rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" required="true" class="Wid20" />
+										<p:outputLabel for="empStrExpedidor" value="Orgão Expedidor: "
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
+										<p:inputText id="empStrExpedidor"
+											value="#{cadastroWebMB.entity.empStrExpedidor}"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}"
+											required="true" />
 
-                                    <p:outputLabel for="empChaCnpj" value="CNPJ: " rendered="#{cadastroWebMB.entity.empChaTipo == 'J'}" />
-                                    <p:inputMask id="empChaCnpj" value="#{cadastroWebMB.entity.empChaCnpj}" mask="99.999.999/9999-99" rendered="#{cadastroWebMB.entity.empChaTipo == 'J'}"
-                                        required="true" validator="cnpjValidator" class="Wid30" />
+										<p:outputLabel for="empChaCnpj" value="CNPJ: "
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'J'}" />
+										<p:inputMask id="empChaCnpj"
+											value="#{cadastroWebMB.entity.empChaCnpj}"
+											mask="99.999.999/9999-99"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'J'}"
+											required="true" validator="cnpjValidator" />
 
-                                    <p:outputLabel for="empChaCep" value="CEP : " />
-                                    <p:inputMask id="empChaCep" value="#{cadastroWebMB.entity.empChaCep}" maxlength="8" mask="99999-999" styleClass="Wid30 MarRight10">
-                                        <f:validator validatorId="cepValidator" />
-                                    </p:inputMask>
+										<p:outputLabel for="empChaCep" value="CEP : " />
+										<p:inputMask id="empChaCep"
+											value="#{cadastroWebMB.entity.empChaCep}" maxlength="8"
+											mask="99999-999">
+											<f:validator validatorId="cepValidator" />
+										</p:inputMask>
 
-                                    <p:outputLabel for="empStrEndereco" value="Endereço: " />
-                                    <p:inputText id="empStrEndereco" value="#{cadastroWebMB.entity.empStrEndereco}" required="true" maxlength="100" />
+										<p:outputLabel for="empStrEndereco" value="Endereço: " />
+										<p:inputText id="empStrEndereco"
+											value="#{cadastroWebMB.entity.empStrEndereco}"
+											required="true" maxlength="100" />
 
-                                    <p:outputLabel for="empChaNumEndereco" value="Número: " />
-                                    <p:inputText id="empChaNumEndereco" value="#{cadastroWebMB.entity.empChaNumEndereco}" required="true" maxlength="15" class="Wid20" />
+										<p:outputLabel for="empChaNumEndereco" value="Número: " />
+										<p:inputText id="empChaNumEndereco"
+											value="#{cadastroWebMB.entity.empChaNumEndereco}"
+											required="true" maxlength="15" />
 
-                                    <p:outputLabel for="empStrComplemento" value="Complemento: " />
-                                    <p:inputText id="empStrComplemento" value="#{cadastroWebMB.entity.empStrComplemento}" required="false" maxlength="100" />
+										<p:outputLabel for="empStrComplemento" value="Complemento: " />
+										<p:inputText id="empStrComplemento"
+											value="#{cadastroWebMB.entity.empStrComplemento}"
+											required="false" maxlength="100" />
 
-                                    <p:outputLabel for="empStrBairro" value="Bairro: " />
-                                    <p:inputText id="empStrBairro" value="#{cadastroWebMB.entity.empStrBairro}" required="true" maxlength="50" class="Wid40" />
+										<p:outputLabel for="empStrBairro" value="Bairro: " />
+										<p:inputText id="empStrBairro"
+											value="#{cadastroWebMB.entity.empStrBairro}" required="true"
+											maxlength="50" />
 
-                                    <p:outputLabel for="empStrCidade" value="Cidade: " />
-                                    <p:inputText id="empStrCidade" value="#{cadastroWebMB.entity.empStrCidade}" required="true" maxlength="50" class="Wid40" />
+										<p:outputLabel for="empStrCidade" value="Cidade: " />
+										<p:inputText id="empStrCidade"
+											value="#{cadastroWebMB.entity.empStrCidade}" required="true"
+											maxlength="50" />
 
-                                    <p:outputLabel for="empChaUf" value="Estado: " />
-                                    <p:selectOneMenu id="empChaUf" value="#{cadastroWebMB.entity.empChaUf}" required="true" styleClass="Wid40">
-                                        <f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
-                                        <f:selectItems value="#{cadastroWebMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
-                                    </p:selectOneMenu>
+										<p:outputLabel for="empChaUf" value="Estado: " />
+										<p:selectOneMenu id="empChaUf"
+											value="#{cadastroWebMB.entity.empChaUf}" required="true">
+											<f:selectItem itemValue="#{null}"
+												itemLabel="Selecione um Estado" />
+											<f:selectItems value="#{cadastroWebMB.listUF}" var="uf"
+												itemValue="#{uf}" itemLabel="#{uf.nome}" />
+										</p:selectOneMenu>
 
-                                    <p:outputLabel for="empChaFone" value="Fone: " />
-                                    <p:inputText id="empChaFone" value="#{cadastroWebMB.entity.empChaFone}" required="true" maxlength="15" styleClass="telefone Wid30" onfocus="mascaraTelefone()" />
+										<p:outputLabel for="empChaFone" value="Fone: " />
+										<p:inputText id="empChaFone"
+											value="#{cadastroWebMB.entity.empChaFone}" required="true"
+											maxlength="15" styleClass="telefone"
+											onfocus="mascaraTelefone()" />
 
-                                    <p:outputLabel for="empStrEmail" value="E-Mail: " />
-                                    <p:inputText id="empStrEmail" value="#{cadastroWebMB.entity.empStrEmail}" maxlength="100" required="true">
-                                        <f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" />
-                                    </p:inputText>
+										<p:outputLabel for="empStrEmail" value="E-Mail: " />
+										<p:inputText id="empStrEmail"
+											value="#{cadastroWebMB.entity.empStrEmail}" maxlength="100"
+											required="true">
+											<f:validateRegex
+												pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" />
+										</p:inputText>
 
-                                    <p:outputLabel for="empChaCro" value="CRO do Responsável: " />
-                                    <p:inputText id="empChaCro" value="#{cadastroWebMB.entity.empChaCro}" required="false" maxlength="30" class="Wid40" />
+										<p:outputLabel for="empChaCro" value="CRO do Responsável: " />
+										<p:inputText id="empChaCro"
+											value="#{cadastroWebMB.entity.empChaCro}" required="false"
+											maxlength="30" />
 
-                                    <p:outputLabel for="estadoConselho" value="Estado conselho: " />
-                                    <p:selectOneMenu id="estadoConselho" required="false" value="#{cadastroWebMB.entity.empStrEstadoConselho}" styleClass="Wid60">
-                                        <f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
-                                        <f:selectItems value="#{cadastroWebMB.listUF}" var="uf" itemValue="#{uf}" itemLabel="#{uf.nome}" />
-                                    </p:selectOneMenu>
-
-
-                                    <p:outputLabel for="empIntCadeira" value="Quantidade de cadeiras: " />
-                                    <p:spinner id="empIntCadeira" value="#{cadastroWebMB.entity.empIntCadeira}" min="1" />
-                                </p:panelGrid>
-
-                                <div class="Separator"></div>
-                            </p:tab>
-
-                            <p:tab id="profissional" title="Administrador">
-                                <div class="Separator"></div>
-                                <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-                                    style="border:0px none; background-color:transparent;">
-
-                                    <p:outputLabel for="nome" value="Nome :" />
-                                    <p:inputText id="nome" value="#{cadastroWebMB.profissional.dadosBasico.nome}" required="true" maxlength="200" />
-
-                                    <p:outputLabel for="email" value="E-Mail :" />
-                                    <p:inputText id="email" value="#{cadastroWebMB.profissional.dadosBasico.email}" required="true" maxlength="100" validatorMessage="Email Inválido">
-                                        <f:validateRegex pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" />
-                                    </p:inputText>
-
-                                    <p:outputLabel value="Preencher automaticamente :" id="preencherautolabel" rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
-                                    <p:selectBooleanCheckbox value="#{cadastroWebMB.dadosClinica}" rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" id="preencherauto">
-                                        <p:ajax update="email,nome" listener="#{cadastroWebMB.actionPreencherDadosFisica}" process="@this" />
-                                    </p:selectBooleanCheckbox>
-
-
-                                    <p:outputLabel for="telCelular" value="Telefone Celular: " />
-                                    <p:inputText id="telCelular" value="#{cadastroWebMB.profissional.dadosBasico.celular}" styleClass="telefone" onfocus="mascaraTelefone()" />
-
-                                </p:panelGrid>
-                                <div class="Separator"></div>
-                            </p:tab>
-
-                            <p:tab id="adesao" title="Termos e Condições de Uso">
-                                <div class="Separator"></div>
-                                <p:panelGrid columns="1" columnClasses="ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank Contrato">
-                                    <p:scrollPanel styleClass="ContratoScroll">
-                                        <ui:include src="contratoCadastro.xhtml" />
-                                    </p:scrollPanel>
-                                </p:panelGrid>
-                                <br />
-                                <p:selectBooleanCheckbox id="concordoAdesao" value="#{cadastroWebMB.concordoAdesao}" />
-                                <p:outputLabel for="concordoAdesao" value="Li e concordo" />
-                                <div class="Separator"></div>
-                            </p:tab>
-
-                            <p:tab id="confirmacao" title="Confirmação">
-                                <div class="Separator"></div>
-                                <h1 class="CardBigTopic">Dados Clínica</h1>
-                                <div class="Separator"></div>
-                                <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-                                    style="border:0px none; background-color:transparent;" id="pnConfDadosClinica">
-                                    <h:outputLabel value="Nome da Clínica: " style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empStrNme}" readonly="true" />
-
-                                    <h:outputLabel value="CPF: " style="font-weight: bold;" rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empChaCpf}" readonly="true" rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
-
-                                    <h:outputLabel value="RG: " style="font-weight: bold;" rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empChaRg}" readonly="true" rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
-
-                                    <h:outputLabel value="Orgão Expedidor: " style="font-weight: bold;" rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empStrExpedidor}" readonly="true" rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
-
-                                    <h:outputLabel value="CNPJ: " style="font-weight: bold;" rendered="#{cadastroWebMB.entity.empChaTipo == 'J'}" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empChaCnpj}" readonly="true" rendered="#{cadastroWebMB.entity.empChaTipo == 'J'}" />
-
-                                    <h:outputLabel value="CEP: " style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empChaCep}" readonly="true" />
-
-                                    <h:outputLabel value="Endereço: " style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empStrEndereco}" readonly="true" />
-
-                                    <h:outputLabel value="Número: " style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empChaNumEndereco}" readonly="true" />
-
-                                    <h:outputLabel value="Complemento: " style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empStrComplemento}" readonly="true" />
-
-                                    <h:outputLabel value="Bairro: " style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empStrBairro}" readonly="true" />
-
-                                    <h:outputLabel value="Cidade: " style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empStrCidade}" readonly="true" />
-
-                                    <h:outputLabel value="Estado: " style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empChaUf}" readonly="true" />
-
-                                    <h:outputLabel value="Fone: " style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empChaFone}" readonly="true" />
-
-                                    <h:outputLabel value="E-mail: " style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empStrEmail}" readonly="true" />
-
-                                    <h:outputLabel value="CRO do Responsável: " style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empChaCro}" readonly="true" />
-
-                                    <h:outputLabel value="Quantidade de cadeiras: " style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.entity.empIntCadeira}" readonly="true" />
+										<p:outputLabel for="estadoConselho" value="Estado conselho: " />
+										<p:selectOneMenu id="estadoConselho" required="false"
+											value="#{cadastroWebMB.entity.empStrEstadoConselho}">
+											<f:selectItem itemValue="#{null}"
+												itemLabel="Selecione um Estado" />
+											<f:selectItems value="#{cadastroWebMB.listUF}" var="uf"
+												itemValue="#{uf}" itemLabel="#{uf.nome}" />
+										</p:selectOneMenu>
 
 
-                                </p:panelGrid>
-                                <div class="Separator"></div>
-                                <h1 class="CardBigTopic">Dados Administrador</h1>
-                                <div class="Separator"></div>
-                                <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-                                    style="border:0px none; background-color:transparent;">
-                                    <h:outputLabel value="Nome/Razão Social :" style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.profissional.dadosBasico.nome}" readonly="true" />
+										<p:outputLabel for="empIntCadeira"
+											value="Quantidade de cadeiras: " />
+										<p:spinner id="empIntCadeira"
+											value="#{cadastroWebMB.entity.empIntCadeira}" min="1" />
+									</p:panelGrid>
+								</p:tab>
 
-                                    <h:outputLabel value="E-Mail :" style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.profissional.dadosBasico.email}" readonly="true" />
+								<p:tab id="profissional" title="Administrador">
+									<p:panelGrid columns="4"
+										columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+										layout="grid" styleClass="ui-panelgrid-blank"
+										style="border:0px none; background-color:transparent;">
 
-                                    <h:outputLabel value="Telefone Celular: " style="font-weight: bold;" />
-                                    <p:inputText value="#{cadastroWebMB.profissional.dadosBasico.celular}" readonly="true" />
-                                </p:panelGrid>
+										<p:outputLabel for="nome" value="Nome :" />
+										<p:inputText id="nome"
+											value="#{cadastroWebMB.profissional.dadosBasico.nome}"
+											required="true" maxlength="200" />
 
+										<p:outputLabel for="email" value="E-Mail :" />
+										<p:inputText id="email"
+											value="#{cadastroWebMB.profissional.dadosBasico.email}"
+											required="true" maxlength="100"
+											validatorMessage="Email Inválido">
+											<f:validateRegex
+												pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" />
+										</p:inputText>
 
-                                <div class="Separator"></div>
-
-                                <div class="Container25 Responsive50">
-                                    <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" action="#{cadastroWebMB.actionPersist}" style="width:100% !important;" styleClass="GreenButton"
-                                        update="@all" process="@this" />
-                                </div>
-
-                                <div class="EmptyBox20"></div>
-
-                            </p:tab>
-                        </p:wizard>
-                    </p:panel>
-
-                    <p:panel styleClass="BordNone" rendered="#{!cadastroWebMB.pnInicialVisivel}" id="pnExterno">
-                        <p:messages globalOnly="true" life="10000" escape="false">
-                        	<p:autoUpdate />
-                        </p:messages>
-                        <div class="Container25 Responsive50">
-                            <p:commandButton icon="White fa fa-lock" value="Ir para o Login" action="login.jsf?faces-redirect=true" style="width:100% !important;" styleClass="NavyButton" ajax="false"
-                                immediate="true" />
-                        </div>
-                    </p:panel>
+										<p:outputLabel value="Preencher automaticamente :"
+											id="preencherautolabel"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
+										<p:selectBooleanCheckbox value="#{cadastroWebMB.dadosClinica}"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}"
+											id="preencherauto">
+											<p:ajax update="email,nome"
+												listener="#{cadastroWebMB.actionPreencherDadosFisica}"
+												process="@this" />
+										</p:selectBooleanCheckbox>
 
 
+										<p:outputLabel for="telCelular" value="Telefone Celular: " />
+										<p:inputText id="telCelular"
+											value="#{cadastroWebMB.profissional.dadosBasico.celular}"
+											styleClass="telefone" onfocus="mascaraTelefone()" />
 
-                </div>
-            </div>
-        </div>
-    </ui:define>
+									</p:panelGrid>
+								</p:tab>
+
+								<p:tab id="adesao" title="Termos e Condições de Uso">
+									<p:panelGrid columns="1" layout="grid"
+										styleClass="ui-panelgrid-blank Contrato removeSides">
+										<p:scrollPanel styleClass="ContratoScroll">
+											<ui:include src="contratoCadastro.xhtml" />
+										</p:scrollPanel>
+										<h:panelGroup>
+											<p:selectBooleanCheckbox id="concordoAdesao"
+												value="#{cadastroWebMB.concordoAdesao}" />
+											<p:outputLabel for="concordoAdesao" value="Li e concordo" />
+										</h:panelGroup>
+									</p:panelGrid>
+									<br />
+								</p:tab>
+
+								<p:tab id="confirmacao" title="Confirmação">
+									<h1>Dados Clínica</h1>
+									<p:panelGrid columns="4"
+										columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+										layout="grid" styleClass="ui-panelgrid-blank"
+										style="border:0px none; background-color:transparent;"
+										id="pnConfDadosClinica">
+										<h:outputLabel value="Nome da Clínica: "
+											style="font-weight: bold;" />
+										<p:inputText value="#{cadastroWebMB.entity.empStrNme}"
+											readonly="true" />
+
+										<h:outputLabel value="CPF: " style="font-weight: bold;"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
+										<p:inputText value="#{cadastroWebMB.entity.empChaCpf}"
+											readonly="true"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
+
+										<h:outputLabel value="RG: " style="font-weight: bold;"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
+										<p:inputText value="#{cadastroWebMB.entity.empChaRg}"
+											readonly="true"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
+
+										<h:outputLabel value="Orgão Expedidor: "
+											style="font-weight: bold;"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
+										<p:inputText value="#{cadastroWebMB.entity.empStrExpedidor}"
+											readonly="true"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'F'}" />
+
+										<h:outputLabel value="CNPJ: " style="font-weight: bold;"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'J'}" />
+										<p:inputText value="#{cadastroWebMB.entity.empChaCnpj}"
+											readonly="true"
+											rendered="#{cadastroWebMB.entity.empChaTipo == 'J'}" />
+
+										<h:outputLabel value="CEP: " style="font-weight: bold;" />
+										<p:inputText value="#{cadastroWebMB.entity.empChaCep}"
+											readonly="true" />
+
+										<h:outputLabel value="Endereço: " style="font-weight: bold;" />
+										<p:inputText value="#{cadastroWebMB.entity.empStrEndereco}"
+											readonly="true" />
+
+										<h:outputLabel value="Número: " style="font-weight: bold;" />
+										<p:inputText value="#{cadastroWebMB.entity.empChaNumEndereco}"
+											readonly="true" />
+
+										<h:outputLabel value="Complemento: "
+											style="font-weight: bold;" />
+										<p:inputText value="#{cadastroWebMB.entity.empStrComplemento}"
+											readonly="true" />
+
+										<h:outputLabel value="Bairro: " style="font-weight: bold;" />
+										<p:inputText value="#{cadastroWebMB.entity.empStrBairro}"
+											readonly="true" />
+
+										<h:outputLabel value="Cidade: " style="font-weight: bold;" />
+										<p:inputText value="#{cadastroWebMB.entity.empStrCidade}"
+											readonly="true" />
+
+										<h:outputLabel value="Estado: " style="font-weight: bold;" />
+										<p:inputText value="#{cadastroWebMB.entity.empChaUf}"
+											readonly="true" />
+
+										<h:outputLabel value="Fone: " style="font-weight: bold;" />
+										<p:inputText value="#{cadastroWebMB.entity.empChaFone}"
+											readonly="true" />
+
+										<h:outputLabel value="E-mail: " style="font-weight: bold;" />
+										<p:inputText value="#{cadastroWebMB.entity.empStrEmail}"
+											readonly="true" />
+
+										<h:outputLabel value="CRO do Responsável: "
+											style="font-weight: bold;" />
+										<p:inputText value="#{cadastroWebMB.entity.empChaCro}"
+											readonly="true" />
+
+										<h:outputLabel value="Quantidade de cadeiras: "
+											style="font-weight: bold;" />
+										<p:inputText value="#{cadastroWebMB.entity.empIntCadeira}"
+											readonly="true" />
+
+
+									</p:panelGrid>
+
+									<br />
+									<div class="SeparatorFull"></div>
+									<br />
+
+									<h1>Dados Administrador</h1>
+									<p:panelGrid columns="4"
+										columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+										layout="grid" styleClass="ui-panelgrid-blank"
+										style="border:0px none; background-color:transparent;">
+										<h:outputLabel value="Nome/Razão Social :"
+											style="font-weight: bold;" />
+										<p:inputText
+											value="#{cadastroWebMB.profissional.dadosBasico.nome}"
+											readonly="true" />
+
+										<h:outputLabel value="E-Mail :" style="font-weight: bold;" />
+										<p:inputText
+											value="#{cadastroWebMB.profissional.dadosBasico.email}"
+											readonly="true" />
+
+										<h:outputLabel value="Telefone Celular: "
+											style="font-weight: bold;" />
+										<p:inputText
+											value="#{cadastroWebMB.profissional.dadosBasico.celular}"
+											readonly="true" />
+									</p:panelGrid>
+
+									<br />
+
+									<p:panelGrid columns="1" layout="grid"
+										styleClass="ui-panelgrid-blank removeSideGridPadding">
+										<p:commandButton id="persist" icon="White fa fa-save"
+											value="Salvar" action="#{cadastroWebMB.actionPersist}"
+											style="width:100% !important;" styleClass="GreenButton"
+											update=":lume:pnInicial, :lume:pnExterno" process="@this" />
+									</p:panelGrid>
+
+								</p:tab>
+							</p:wizard>
+						</p:outputPanel>
+					</p:outputPanel>
+
+					<p:outputPanel id="pnExterno">
+						<p:outputPanel styleClass="BordNone"
+							rendered="#{!cadastroWebMB.pnInicialVisivel}">
+							<p:messages globalOnly="true" life="10000" escape="false">
+								<p:autoUpdate />
+							</p:messages>
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank removeSideGridPadding">
+								<p:commandButton icon="White fa fa-lock" value="Ir para o Login"
+									action="login.jsf?faces-redirect=true"
+									style="width:100% !important;" styleClass="NavyButton"
+									ajax="false" immediate="true" />
+							</p:panelGrid>
+						</p:outputPanel>
+					</p:outputPanel>
+
+
+
+				</div>
+			</div>
+		</div>
+	</ui:define>
 </ui:composition>

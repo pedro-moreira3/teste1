@@ -154,7 +154,7 @@ li.MENULABEL [href="#"] span {
     width: auto !important;
 }
 
-.ui-fluid button.ui-button:not(.ui-button-icon-only) {
+.ui-fluid button.ui-button:not(.ui-button-icon-only):not(.ui-wizard-nav-back):not(.ui-wizard-nav-next) {
     width: 100% !important;
 }
 
@@ -1598,4 +1598,229 @@ body .md-combo .ui-outputlabel {
 .layout-wrapper .topbar .topbar-right #topbar-menu-button {
 	top: 8px !important;
 	right: -25px !important;
+}
+
+.tableButtons ~ .ui-datatable {
+	margin-top: -20px;
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrud.MargemZero
+	{
+	margin: 0px !important;
+	left: 0px !important;
+	bottom: 0px !important;
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrudEdit:hover {
+	-webkit-transform: scale(1.2) !important;
+	-moz-transform: scale(1.2) !important;
+	-o-transform: scale(1.2) !important;
+	-ms-transform: scale(1.2) !important;
+	transform: scale(1.2) !important;
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrudEdit {
+	width: 25px !important;
+	height: 28px !important;
+	-moz-border-radius: 50% !important;
+	-webkit-border-radius: 50% !important;
+	border-radius: 50% !important;
+	-moz-transition: all 0.3s !important;
+	-o-transition: all 0.3s !important;
+	-webkit-transition: all 0.3s !important;
+	transition: all 0.3s !important;
+	-webkit-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px
+		rgba(0, 0, 0, 0.16) !important;
+	-moz-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px
+		rgba(0, 0, 0, 0.16) !important;
+	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px
+		rgba(0, 0, 0, 0.16) !important;
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrudEdit .ui-icon
+	{
+	width: 20px !important;
+	height: 20px !important;
+	left: 18px !important;
+	top: 18px !important;
+	font-size: 22px !important;
+	margin-top: -15px !important;
+	margin-left: -15px !important;
+	color: black !important;
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrudCalculator:hover {
+	-webkit-transform: scale(1.2);
+	-moz-transform: scale(1.2);
+	-o-transform: scale(1.2);
+	-ms-transform: scale(1.2);
+	transform: scale(1.2);
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrudCalculator {
+	width: 36px;
+	height: 36px;
+	bottom: -10px;
+	left: 16px;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+	-moz-transition: all 0.3s;
+	-o-transition: all 0.3s;
+	-webkit-transition: all 0.3s;
+	transition: all 0.3s;
+	-webkit-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px
+		rgba(0, 0, 0, 0.16);
+	-moz-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px
+		rgba(0, 0, 0, 0.16);
+	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px
+		rgba(0, 0, 0, 0.16)
+}
+
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrudCalculator .ui-icon {
+    width: 20px;
+    height: 20px;  
+    font-size: 22px;
+    margin-top: -11px;
+    margin-left: -11px;
+    color: black;
+}
+
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrudEdit.MargemZero
+	{
+	margin: 0px !important;
+	left: 0px !important;
+	bottom: 0px !important;
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrudZeroTop:hover
+	{
+	-webkit-transform: scale(1.2) !important;
+	-moz-transform: scale(1.2) !important;
+	-o-transform: scale(1.2) !important;
+	-ms-transform: scale(1.2) !important;
+	transform: scale(1.2) !important;
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrudZeroTop {
+	width: 36px !important;
+	height: 36px !important;
+	left: 16px !important;
+	-moz-border-radius: 50% !important;
+	-webkit-border-radius: 50% !important;
+	border-radius: 50% !important;
+	-moz-transition: all 0.3s !important;
+	-o-transition: all 0.3s !important;
+	-webkit-transition: all 0.3s !important;
+	transition: all 0.3s !important;
+	-webkit-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px
+		rgba(0, 0, 0, 0.16) !important;
+	-moz-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px
+		rgba(0, 0, 0, 0.16) !important;
+	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px
+		rgba(0, 0, 0, 0.16) !important;
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrudZeroTop .ui-icon
+	{
+	width: 20px !important;
+	height: 20px !important;
+	font-size: 30px !important;
+	margin-top: -15px !important;
+	margin-left: -15px !important;
+	color: black !important;
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrudZeroTop.MargemZero
+	{
+	margin: 0px !important;
+	left: 0px !important;
+	bottom: 0px !important;
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrud:hover {
+	-webkit-transform: scale(1.2);
+	-moz-transform: scale(1.2);
+	-o-transform: scale(1.2);
+	-ms-transform: scale(1.2);
+	transform: scale(1.2);
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrud {
+	width: 36px;
+	height: 36px;
+	bottom: -10px;
+	left: 6px;
+	-moz-border-radius: 50%;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+	-moz-transition: all 0.3s;
+	-o-transition: all 0.3s;
+	-webkit-transition: all 0.3s;
+	transition: all 0.3s;
+	-webkit-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px
+		rgba(0, 0, 0, 0.16);
+	-moz-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px
+		rgba(0, 0, 0, 0.16);
+	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px
+		rgba(0, 0, 0, 0.16)
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrud.Exportar .ui-icon
+	{
+	width: 20px;
+	height: 20px;
+	font-size: 25px;
+	margin-top: -12px;
+	margin-left: -10px;
+	color: white;
+}
+
+body.layout-compact .ui-button.ui-button-icon-only.BotaoCrud .ui-icon {
+	width: 20px;
+	height: 20px;
+	font-size: 30px;
+	margin-top: -15px;
+	margin-left: -15px;
+	color: black;
+}
+
+body .removeSideGridPadding .ui-panelgrid-cell:first-child {
+	padding-left: 0px !important;
+}
+body .removeSideGridPadding .ui-panelgrid-cell:last-child {
+	padding-right: 0px !important;
+}
+body .removeSideAltGridPadding .ui-grid-row:first-child .ui-panelgrid-cell {
+	padding-top: 0px !important;
+}
+body .removeSideAltGridPadding .ui-grid-row:last-child .ui-panelgrid-cell {
+	padding-bottom: 0px !important;
+}
+
+body span.ui-autocomplete.tallerAutoComplete {
+	margin-right: 10px;
+}
+body span.ui-autocomplete.tallerAutoComplete input, body span.ui-input.tallerAutoComplete input {
+	height: 100%;
+}
+body span.ui-autocomplete.tallerAutoComplete .ui-autocomplete-dropdown {
+	margin-top: 8px !important;
+}
+
+body .fullFlex {
+	display: flex !important;
+	width: 100%;
+}
+body .forceSpaceBetweenCell .ui-panelgrid-cell:first-child {
+	padding-right: 5px !important;
+}
+body .forceSpaceBetweenCell .ui-panelgrid-cell:last-child {
+	padding-left: 5px !important;
+}
+body .forceSpaceBetweenCell .ui-panelgrid-cell:not(:first-child):not(:last-child) {
+	padding-right: 5px !important;
+	padding-left: 5px !important;
 }
