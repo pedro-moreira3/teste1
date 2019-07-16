@@ -113,7 +113,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     private List<PlanoTratamento> planoTratamentos;
 
-    private boolean visivel = false, horaUtilValida, dlg, responsavel = false, mostraFinalizados = false;
+    private boolean visivel = false, horaUtilValida, dlg, responsavel = false, mostraFinalizados = false,telefonesVisiveis = false;
 
     private DualListModel<AgendamentoPlanoTratamentoProcedimento> procedimentosPickList = new DualListModel<>();
 
@@ -980,10 +980,19 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public void novoPaciente(ActionEvent event) {
         visivel = true;
     }
-
+    
     public void cancelarNovoPaciente(ActionEvent event) {
         visivel = false;
-    }
+    }    
+    
+    public void mostrarTelefones(ActionEvent event) {
+        telefonesVisiveis = true;
+    }  
+    public void cancelarMostrarTelefones(ActionEvent event) {
+        telefonesVisiveis = false;
+    }        
+
+
 
     public ScheduleModel getSchedule() {
         return schedule;
@@ -1344,6 +1353,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     
     public void setVisualizacao(String visualizacao) {
         this.visualizacao = visualizacao;
+    }
+
+    
+    public boolean isTelefonesVisiveis() {
+        return telefonesVisiveis;
+    }
+
+    
+    public void setTelefonesVisiveis(boolean telefonesVisiveis) {
+        this.telefonesVisiveis = telefonesVisiveis;
     }    
 
 }
