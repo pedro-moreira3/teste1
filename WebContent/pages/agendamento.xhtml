@@ -226,7 +226,7 @@ div.ui-selectoneradio label {
 						<p:fieldset id="filtrosShow"
 							legend="#{agendamentoMB.dentista ? 'Legenda' : 'Filtro'}"
 							toggleable="true" toggleSpeed="500"
-							collapsed="#{agendamentoMB.profissional == null}">
+							collapsed="#{agendamentoMB.profissional == null and agendamentoMB.paciente == null}">
 							<p:panelGrid columns="1" layout="grid"
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 								style="border:0px none; background-color:transparent;">
@@ -235,21 +235,21 @@ div.ui-selectoneradio label {
 										styleClass="ui-panelgrid-blank ui-fluid form-group filtroFirst"
 										style="border:0px none; background-color:transparent;"
 										rendered="#{!agendamentoMB.dentista}">
-										<h:panelGroup styleClass="md-inputfield">
-											<p:autoComplete queryDelay="1000" size="35"
-												value="#{agendamentoMB.pacientePesquisado}"
-												id="pacienteSelecionado"
-												completeMethod="#{agendamentoMB.geraSugestoes}" var="p"
-												itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-												converter="paciente" forceSelection="true" scrollHeight="400"
-												minQueryLength="3" style="margin-top:10px;margin-bottom:10px">
-												<p:ajax event="itemSelect"
-													listener="#{agendamentoMB.handleSelectPacienteSelecionado}"
-													update="planoTratamento,procedimentos, profissional, :lume:schedule"
-													process="@this" oncomplete="atualizaGraficos();" />
-											</p:autoComplete>
-											<p:outputLabel for="pacienteSelecionado"
-												value="#{dominioMB.cliente}" />
+										<h:panelGroup styleClass="md-combo">
+											<p:outputLabel for="pacienteSelecionado" value="Paciente" />
+											<p:selectOneMenu id="pacienteSelecionado"
+												value="#{agendamentoMB.pacientePesquisado}" converter="paciente"
+												filter="true" filterMatchMode="contains"
+												style="margin-top:10px;margin-bottom:10px">
+												<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+												<f:selectItems value="#{agendamentoMB.pacientes}"
+													var="p"
+													itemLabel="#{p.dadosBasico.nome}"
+													itemValue="#{p}" />
+													<p:ajax listener="#{agendamentoMB.limpaPacienteSelecionado}"
+													oncomplete="atualizaGraficos();" process="@this"
+													update="pacienteSelecionado,:lume:pnAgnd,:lume:schedule" />													
+											</p:selectOneMenu>						
 											<p:message for="pacienteSelecionado" styleClass="msg" />
 										</h:panelGroup>
 										<h:panelGroup styleClass="md-inputfield">
@@ -328,7 +328,7 @@ div.ui-selectoneradio label {
 											timeZone="#{lumeSecurity.timeZone}" navigator="true"
 											yearRange="-100:+0"
 											style="margin-top:10px;margin-bottom:10px;display: inline-block;">
-											<p:ajax event="dateSelect" process="@this"
+											<p:ajax event="dateSelect" process="@this" update=":lume:schedule"
 												oncomplete="atualizaGraficos();" />
 										</p:calendar>
 										<p:outputLabel for="initialDateSolo1" value="Data" />
@@ -416,7 +416,7 @@ div.ui-selectoneradio label {
 						<f:selectItem itemLabel="Calendário" itemValue="S" />
 						<f:selectItem itemLabel="Ag/Cadeira" itemValue="C" />
 						<f:selectItem itemLabel="Ag/Profissional" itemValue="P" />
-						<p:ajax update=":lume:agendamentoVisualizacao, :lume:filtrosShow, :lume:schedule"
+						<p:ajax update=":lume:agendamentoVisualizacao, :lume:filtrosShow,:lume:schedule"
 							oncomplete="atualizaGraficos();" process=":lume:selectVisualizacao" />
 					</p:selectOneButton>
 					<p:separator styleClass="SeparatorFull" />
@@ -556,10 +556,9 @@ div.ui-selectoneradio label {
 				else if(value == 'C')
 					loadCadeirasChart();
 				//else if(value == 'S')
-					//updateVisualizacao();
-				if(PF('myschedule')) {
+				//	updateVisualizacao();
+				if(PF('myschedule'))
 					PF('myschedule').update();
-				}
 			}
 			
 			if (PrimeFaces.widget.Schedule != undefined) {
@@ -662,7 +661,7 @@ div.ui-selectoneradio label {
 				
 				setTimeout(function() {
 					newWin.print();
-					newWin.close();
+					//newWin.close();
 				}, 200);
 			}
 			
