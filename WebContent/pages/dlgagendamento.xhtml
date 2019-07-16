@@ -319,15 +319,7 @@
 					<f:selectItem itemLabel="Não" itemValue="false" itemDisabled="true"/>
 				</p:selectOneRadio>
 			</h:panelGroup>				
-			<h:panelGroup styleClass="lumeField labelInline">
-				<p:outputLabel for="mostraFinalizados"
-					value="Mostra procedimentos finalizados? " />
-				<p:selectOneRadio id="mostraFinalizados"
-					value="#{agendamentoMB.mostraFinalizados}">
-					<p:ajax update="procedimentos" process="@this" />
-					<f:selectItem itemLabel="Sim" itemValue="true" />
-					<f:selectItem itemLabel="Não" itemValue="false" />
-				</p:selectOneRadio>
+			<h:panelGroup styleClass="lumeField labelInline">				
 			</h:panelGroup>						
 		</p:panelGrid>	
 		<p:panelGrid columns="2" layout="grid"
@@ -348,6 +340,27 @@
 				<p:message for="planoTratamento" styleClass="msg" />
 			</h:panelGroup>		
 			<h:panelGroup>
+				
+			</h:panelGroup>				
+		</p:panelGrid>	
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid">	
+					<h:panelGroup styleClass="lumeField labelInline">
+				<p:outputLabel for="mostraFinalizados"
+					value="Mostra procedimentos finalizados? " />
+				<p:selectOneRadio id="mostraFinalizados"
+					value="#{agendamentoMB.mostraFinalizados}">
+					<p:ajax update="procedimentos" process="@this" />
+					<f:selectItem itemLabel="Sim" itemValue="true" />
+					<f:selectItem itemLabel="Não" itemValue="false" />
+				</p:selectOneRadio>
+			</h:panelGroup>	
+			<h:panelGroup>				
+			</h:panelGroup>					
+		</p:panelGrid>		
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid">		
+			<h:panelGroup>
 				<h:panelGroup styleClass="lumeField" id="pgProcedimentos">
 					<p:outputLabel for="procedimentos"
 						value="Selecione um Procedimento : " />
@@ -362,8 +375,10 @@
 						<f:facet name="targetCaption">Selecionados</f:facet>
 					</p:pickList>
 				</h:panelGroup>
-			</h:panelGroup>				
-		</p:panelGrid>	
+			</h:panelGroup>	
+			<h:panelGroup>				
+			</h:panelGroup>					
+		</p:panelGrid>
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid">
 				<h:panelGroup styleClass="lumeField labelInline">
@@ -374,13 +389,21 @@
 						<f:selectItem itemLabel="Não" itemValue="false" />
 					</p:selectOneRadio>				
 				</h:panelGroup>			
+				<h:panelGroup styleClass="lumeField labelInline">
+				
+				</h:panelGroup>	
+		</p:panelGrid>		
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid">	
 				<h:panelGroup styleClass="lumeField labelInline" id="pnDescricao">
 					<p:outputLabel for="descricao" value="Observações : " />
 					<p:inputTextarea id="descricao"
 						value="#{agendamentoMB.entity.descricao}" maxlength="200" cols="20" />
 					<p:message for="descricao" styleClass="msg" />
 				</h:panelGroup>	
-		</p:panelGrid>		
+				<h:panelGroup styleClass="lumeField labelInline">				
+				</h:panelGroup>						
+		</p:panelGrid>			
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid">	
 			<h:panelGroup styleClass="md-inputfield"
