@@ -226,7 +226,7 @@ div.ui-selectoneradio label {
 						<p:fieldset id="filtrosShow"
 							legend="#{agendamentoMB.dentista ? 'Legenda' : 'Filtro'}"
 							toggleable="true" toggleSpeed="500"
-							collapsed="#{agendamentoMB.profissional == null}">
+							collapsed="#{agendamentoMB.profissional == null and agendamentoMB.paciente == null}">
 							<p:panelGrid columns="1" layout="grid"
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 								style="border:0px none; background-color:transparent;">
@@ -235,6 +235,7 @@ div.ui-selectoneradio label {
 										styleClass="ui-panelgrid-blank ui-fluid form-group filtroFirst"
 										style="border:0px none; background-color:transparent;"
 										rendered="#{!agendamentoMB.dentista}">
+<<<<<<< Upstream, based on origin/backend
 										<h:panelGroup styleClass="md-inputfield">
 											<p:autoComplete queryDelay="1000" size="35"
 												value="#{agendamentoMB.pacientePesquisado}"
@@ -250,6 +251,23 @@ div.ui-selectoneradio label {
 											</p:autoComplete>
 											<p:outputLabel for="pacienteSelecionado"
 												value="#{dominioMB.cliente}" />
+=======
+										<h:panelGroup styleClass="md-combo">
+											<p:outputLabel for="pacienteSelecionado" value="Paciente" />
+											<p:selectOneMenu id="pacienteSelecionado"
+												value="#{agendamentoMB.pacientePesquisado}" converter="paciente"
+												filter="true" filterMatchMode="contains"
+												style="margin-top:10px;margin-bottom:10px">
+												<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+												<f:selectItems value="#{agendamentoMB.pacientes}"
+													var="p"
+													itemLabel="#{p.dadosBasico.nome}"
+													itemValue="#{p}" />
+													<p:ajax listener="#{agendamentoMB.limpaPacienteSelecionado}"
+													oncomplete="atualizaGraficos();" process="@this"
+													update="pacienteSelecionado,:lume:pnAgnd,:lume:schedule" />													
+											</p:selectOneMenu>						
+>>>>>>> a39fd5f Correçoes de filtros de agendamento
 											<p:message for="pacienteSelecionado" styleClass="msg" />
 										</h:panelGroup>
 										<h:panelGroup styleClass="md-inputfield">
@@ -328,7 +346,7 @@ div.ui-selectoneradio label {
 											timeZone="#{lumeSecurity.timeZone}" navigator="true"
 											yearRange="-100:+0"
 											style="margin-top:10px;margin-bottom:10px;display: inline-block;">
-											<p:ajax event="dateSelect" process="@this"
+											<p:ajax event="dateSelect" process="@this" update=":lume:schedule"
 												oncomplete="atualizaGraficos();" />
 										</p:calendar>
 										<p:outputLabel for="initialDateSolo1" value="Data" />
@@ -416,7 +434,11 @@ div.ui-selectoneradio label {
 						<f:selectItem itemLabel="Calendário" itemValue="S" />
 						<f:selectItem itemLabel="Ag/Cadeira" itemValue="C" />
 						<f:selectItem itemLabel="Ag/Profissional" itemValue="P" />
+<<<<<<< Upstream, based on origin/backend
 						<p:ajax update=":lume:agendamentoVisualizacao, :lume:filtrosShow, :lume:schedule"
+=======
+						<p:ajax update=":lume:agendamentoVisualizacao, :lume:filtrosShow,:lume:schedule"
+>>>>>>> a39fd5f Correçoes de filtros de agendamento
 							oncomplete="atualizaGraficos();" process=":lume:selectVisualizacao" />
 					</p:selectOneButton>
 					<p:separator styleClass="SeparatorFull" />
@@ -556,8 +578,13 @@ div.ui-selectoneradio label {
 				else if(value == 'C')
 					loadCadeirasChart();
 				//else if(value == 'S')
+<<<<<<< Upstream, based on origin/backend
 					//updateVisualizacao();
 				if(PF('myschedule')) {
+=======
+				//	updateVisualizacao();
+				if(PF('myschedule'))
+>>>>>>> a39fd5f Correçoes de filtros de agendamento
 					PF('myschedule').update();
 				}
 			}

@@ -150,8 +150,7 @@
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid">
 
-			<h:panelGroup styleClass="md-combo"
-				rendered="#{agendamentoMB.entity.id != 0 or agendamentoMB.profissional == null}"
+			<h:panelGroup styleClass="md-combo"				
 				title="#{agendamentoMB.entity.id}">
 				<p:outputLabel for="profissionalAgend" value="Profissional" />
 				<p:selectOneMenu id="profissionalAgend"
