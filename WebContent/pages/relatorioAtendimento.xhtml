@@ -35,32 +35,155 @@ div.ui-selectoneradio label {
 				}).resize();
 			}
         </script>
-        <div class="ui-g ui-fluid">
-			<div class="ui-g-12 ui-lg-12">
-				<div class="card card-w-title">
+        <div	class="ui-g ui-fluid">
+			<div	class="ui-g-12 ui-lg-12">
+				<div	class="card card-w-title">
 					<h1>Relatório de Atendimento</h1>
+                    
                     <p:separator styleClass="SeparatorFull" />
                     
-                    <p:panelGrid		columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-						<h:panelGroup>
+                    <p:fieldset	id="filtroRelatorio" header="Filtro"
+								toggleable="true" toggleSpeed="500">
 							
-							<p:outputLabel 	for="dataInicial" value="Data inicial:" />
-        					<p:calendar 	id="dataInicial" value="#{relatorioAtendimentoMB.dataInicio}" />
-        					
-						</h:panelGroup>
+							<p:panelGrid	columns="1" layout="grid"
+											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+											style="border:0px none; background-color:transparent;">
+								
+								<p:outputPanel>
+								
+									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+									
+										<h:panelGroup>							
+											<h:outputText 	for="dataInicial" value="Data inicial:" />
+        									<p:calendar 	id="dataInicial" value="#{relatorioAtendimentoMB.dataInicio}" />
+										</h:panelGroup>
         				
-        				<h:panelGroup>
-        					
-        					<p:outputLabel 	for="dataFinal" value="Data final:" />
-        					<p:calendar 	id="dataFinal" value="#{relatorioAtendimentoMB.dataFim}" />
-        				
-        				</h:panelGroup>
-                    	
-                    	<p:commandButton id="filtrarPorData" value="Filtrar" actionListener="#{relatorioAtendimentoMB.popularLista}" update="dtRelAtendimento"/>
+        								<h:panelGroup>
+        									<h:outputText 	for="dataFinal" value="Data final:" />
+        									<p:calendar 	id="dataFinal" value="#{relatorioAtendimentoMB.dataFim}" />
+        								</h:panelGroup>
+        								
+        								<h:panelGroup>
+        									<h:outputText 	for="filtroPaciente" value="Paciente:" />
+        									<p:autoComplete	id="filtroPaciente" value="#{relatorioAtendimentoMB.filtroPorPaciente}"
+        													completeMethod="#{relatorioAtendimentoMB.sugestoesPacientes}"
+        													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+															converter="paciente" forceSelection="true" scrollHeight="400"
+															minQueryLength="3" >
+												
+												<p:ajax	event="itemSelect" listener="#{relatorioAtendimentoMB.popularLista}" update=":lume:dtRelAtendimento"/>
+        									</p:autoComplete>
+        								</h:panelGroup>
+									
+									</p:panelGrid>
+									
+									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+										
+										<h:panelGroup>
+        									<h:outputText 	for="filtroProfissional" value="Profissional:" />
+        									<p:autoComplete	id="filtroProfissional" value="#{relatorioAtendimentoMB.filtroPorProfissional}"
+        													completeMethod="#{relatorioAtendimentoMB.sugestoesProfissionais}"
+        													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+															converter="profissional" forceSelection="true" scrollHeight="400">
+															
+												<p:ajax	event="itemSelect" listener="#{relatorioAtendimentoMB.popularLista}" update=":lume:dtRelAtendimento"/>
+												
+												</p:autoComplete>
+        								</h:panelGroup>
+        								
+        								<h:panelGroup>
+        									<h:outputText 	for="filtroProfissionalUltAlteracao" value="Ultima alteração realizada por:" />
+        									<p:autoComplete	id="filtroProfissionalUltAlteracao" value="#{relatorioAtendimentoMB.filtroPorProfissionalUltAlteracao}" completeMethod="#{relatorioAtendimentoMB.sugestoesProfissionalUltAlteracao}"
+        													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+															converter="profissional" forceSelection="true" scrollHeight="400">
+												
+												<p:ajax	event="itemSelect" listener="#{relatorioAtendimentoMB.popularLista}" update=":lume:dtRelAtendimento"/>
+											</p:autoComplete>
+        								</h:panelGroup>
+        								
+        								<h:panelGroup>
+        									<h:outputText 	for="filtroConvenio" value="Convênio:" />
+        									<p:autoComplete	id="filtroConvenio" value="#{relatorioAtendimentoMB.filtroPorConvenio}" completeMethod="#{relatorioAtendimentoMB.sugestoesConvenios}"
+        													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+															converter="convenio" forceSelection="true" scrollHeight="400">
+											</p:autoComplete>
+        								</h:panelGroup>
+
+									</p:panelGrid>
+								
+								</p:outputPanel>
+								
+								<p:outputPanel>
+								
+									<h:outputLabel	value="Mostrar os agendamentos : " />
+									<p:selectManyCheckbox	value="#{relatorioAtendimentoMB.filtroAtendimento}"
+															layout="grid" columns="4" >
+										
+										<p:ajax	listener="#{relatorioAtendimentoMB.popularLista}" update=":lume:dtRelAtendimento" />
+										
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoAfastamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Bloqueio&lt;/div&gt;"
+											itemValue="F" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Atendidos&lt;/div&gt;"
+											itemValue="A" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoConsultaInicial legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Consulta Inicial&lt;/div&gt;"
+											itemValue="G" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
+											itemValue="C" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoErroAgendamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Erro de Agendamento&lt;/div&gt;"
+											itemValue="D" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='clienteNaClinica legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cliente na Clínica&lt;/div&gt;"
+											itemValue="I" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoConfirmado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Confirmados&lt;/div&gt;"
+											itemValue="S" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='emAtendimento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Em Atendimento&lt;/div&gt;"
+											itemValue="O" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoEncaixe legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Encaixe&lt;/div&gt;"
+											itemValue="E" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoEncaixeAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Encaixe Atendido&lt;/div&gt;"
+											itemValue="H" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoFalta legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Falta&lt;/div&gt;"
+											itemValue="B" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoNaoConfirmado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Não Confirmado&lt;/div&gt;"
+											itemValue="N" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoPrecadastro legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Agendado pelo Paciente&lt;/div&gt;"
+											itemValue="P" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoRemarcado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Remarcado&lt;/div&gt;"
+											itemValue="R" itemEscaped="false" />
+									</p:selectManyCheckbox>
+									
+								</p:outputPanel>
+								
+								<p:outputPanel>
+									
+									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+										
+										<h:panelGroup>
+        									<p:commandButton	value="Pesquisar"  listener="#{relatorioAtendimnentoMB.popularLista}" update=":lume:dtRelAtendimento"/>
+        								</h:panelGroup>
+										
+									</p:panelGrid>
+									
+								</p:outputPanel>
+							</p:panelGrid>
+							
+					</p:fieldset>
                     
-                    </p:panelGrid>
-                    
-                    <h:panelGroup>                    	
+                    <h:panelGroup>
+
                     	<p:dataTable	id="dtRelAtendimento" widgetVar="dtRelAtendimento" value="#{relatorioAtendimentoMB.listaAtendimentos}" 
                     					var="atendimento" rowKey="#{atendimento}" rows="10" paginator="true" paginatorPosition="bottom" reflow="true" 
                     					emptyMessage="Nenhum registro encontrado" selection="#{relatorioAtendimentoMB.entity}" selectionMode="single" >
@@ -68,175 +191,393 @@ div.ui-selectoneradio label {
                     		<f:facet name="header">Relatório de atendimentos</f:facet>
                     		
                     		<p:column 	filterBy="#{atendimento.paciente.dadosBasico.nome}" sortBy="#{atendimento.paciente.dadosBasico.nome}" 
-                    					filterMatchMode="contains" headerText="Paciente" width="30%">
+                    					filterMatchMode="contains" headerText="Paciente" >
                             	<h:outputText value="#{atendimento.paciente.dadosBasico.nome}" />
                         	</p:column>
                         	
                         	<p:column 	filterBy="#{atendimento.profissional.dadosBasico.nome}" sortBy="#{atendimento.profissional.dadosBasico.nome}" 
-                        				filterMatchMode="contains" headerText="Profissional responsável" width="30%">
+                        				filterMatchMode="contains" headerText="Profissional responsável">
                             	<h:outputText value="#{atendimento.profissional.dadosBasico.nome}" />
                         	</p:column>
                         	
+                        	<p:column 	filterBy="#{atendimento.dataAgendamento}" sortBy="#{atendimento.dataAgendamento}" 
+                        				filterMatchMode="contains" headerText="Data do agendamento" >
+                            	<h:outputText value="#{relatorioAtendimentoMB.formatarData(atendimento.dataAgendamento)}" />
+                        	</p:column>
+                        	
                         	<p:column 	filterBy="#{atendimento.statusAgendamento.descricao}" sortBy="#{atendimento.statusAgendamento.descricao}" 
-                        				filterMatchMode="contains" headerText="Status" width="30%">
+                        				filterMatchMode="contains" headerText="Status" >
                             	<h:outputText value="#{atendimento.statusAgendamento.descricao}" />
                         	</p:column>
                         	
-                        	<p:ajax event="rowSelect" oncomplete="PF('dlgRelAtendimento').show();" update=":lume:dlgRelAtendimento"/>
+                        	<p:column>
+                            	<p:commandButton	icon="White fa fa-eye" oncomplete="PF('dlgRelAtendimento').show();" update=":lume:dlgRelAtendimento,:lume:dlgGerarRelatorio" width="5%">
+                            		<f:setPropertyActionListener	value="#{atendimento}" target="#{relatorioAtendimentoMB.entity}" />
+                            	</p:commandButton>
+                        	</p:column>
                         	
                     	</p:dataTable>
                     </h:panelGroup>
                     
-                    <p:dialog	id="dlgRelAtendimento" widgetVar="dlgRelAtendimento" header="Paciente" modal="true"
+                    <p:dialog	id="dlgRelAtendimento" widgetVar="dlgRelAtendimento" header="Relatório do Agendamento" modal="true"
                     			onHide="PF('dlgRelAtendimento').toggleMaximize();" onShow="PF('dlgRelAtendimento').toggleMaximize();">
+						
+						<p:outputPanel>
+							
+							<p:fieldset		legend="Agendamento" id="tgAgendamento" toggleable="true" toggleSpeed="400"
+                    						style="margin-top:20px;margin-bottom:10px">
+                    						
+                    			<p:panelGrid	class="gridPaciente" columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Agendado por"/>
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.agendador.dadosBasico.nome}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Data agendamento"/>
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.dataAgendamento)}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Status do agendamento" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.statusAgendamento.descricao}"/>
+                    		    	</h:panelGroup>                    		    
+                    			</p:panelGrid>
+                    		
+                    			<p:panelGrid	class="gridPaciente" columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Origem do agendamento" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.origemAgendamento.descricao}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Finalidade do agendamento" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.finalidadeAgendamento.descricao}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Útilma alteração realizada por" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.profissionalUltAlteracao.dadosBasico.nome}"/>
+                    		    	</h:panelGroup>
+                    			</p:panelGrid>
+                    		
+                    			<p:panelGrid	class="gridPaciente" columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Motivo do agendamento" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.motivoStatusAgendamento.descricao}"/>
+                    		    	</h:panelGroup>
+                    			</p:panelGrid>
+                    		</p:fieldset>
 
-                    	<p:fieldset		legend="Dados paciente" id="tgPaciente" toggleable="true" toggleSpeed="500"
-                    					style="margin-top:20px;margin-bottom:10px;">
+                    		<p:fieldset		legend="Dados do paciente" id="tgPaciente" toggleable="true" toggleSpeed="500"
+                    						style="margin-top:20px;margin-bottom:10px;" action="printData();">
                     						
-                    		<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Paciente"/>
-                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.dadosBasico.nome}"/>
-                    		    </h:panelGroup>
+                    			<p:panelGrid	class="gridPaciente" columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Paciente"/>
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.dadosBasico.nome}"/>
+                    		    	</h:panelGroup>
                     		    
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Profissional responsável" />
-                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.profissional.dadosBasico.nome}"/>
-                    		    </h:panelGroup>
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Profissional responsável" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.profissional.dadosBasico.nome}"/>
+                    		    	</h:panelGroup>
                     		    
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Convênio" />
-                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.convenio.dadosBasico.nome}"/>
-                    		    </h:panelGroup>
-                    		</p:panelGrid>
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Convênio" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.convenio.dadosBasico.nome}"/>
+                    		    	</h:panelGroup>
+                    			</p:panelGrid>
                     		
-                    		<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    			<h:panelGroup>
-                    		    	<h:outputText	value="Titular"/>
-                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.titular.dadosBasico.nome}"/>
-                    		    </h:panelGroup>
+                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    				<h:panelGroup>
+                    		    		<h:outputText	value="Titular"/>
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.titular.dadosBasico.nome}"/>
+                    		    	</h:panelGroup>
                     		    
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Plano" />
-                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.plano.nome}"/>
-                    		    </h:panelGroup>
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Plano" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.plano.nome}"/>
+                    		    	</h:panelGroup>
                     		    
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Data da última alteração" />
-                    		    	<p:calendar		readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.dataUltimaAlteracao}"/>
-                    		    </h:panelGroup>
-                    		</p:panelGrid>
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Data da última alteração" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.paciente.dataUltimaAlteracao)}"/>
+                    		    	</h:panelGroup>
+                    			</p:panelGrid>
                     		
-                    	</p:fieldset>
+                    		</p:fieldset>
                     	
-                    	<p:fieldset		legend="Plano de tratamento" id="tgPlano" toggleable="true" toggleSpeed="400"
-                    					style="margin-top:20px;margin-bottom:10px">
+                    		<p:fieldset		legend="Plano de tratamento" id="tgPlano" toggleable="true" toggleSpeed="400"
+                    						style="margin-top:20px;margin-bottom:10px">
                     						
-                    		<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Inicio do tratamento"/>
-                    		    	<p:calendar		readonly="true" value="#{relatorioAtendimentoMB.entity.planoTratamento.inicio}"/>
-                    		    </h:panelGroup>
+                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Inicio do tratamento"/>
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.planoTratamento.inicio)}"/>
+                    		    	</h:panelGroup>
                     		    
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Término do tramento" />
-                    		    	<p:calendar		readonly="true" value="#{relatorioAtendimentoMB.entity.planoTratamento.fim}"/>
-                    		    </h:panelGroup>
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Término do tramento" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.planoTratamento.fim)}"/>
+                    		    	</h:panelGroup>
                     		    
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Valor total" />
-                    		    	<p:inputText	readonly="true" value="R$ #{relatorioAtendimentoMB.entity.planoTratamento.valorTotal}"/>
-                    		    </h:panelGroup>
-                    		</p:panelGrid>
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Valor total" />
+                    		    		<p:inputText	readonly="true" value="R$ #{relatorioAtendimentoMB.entity.planoTratamento.valorTotal}"/>
+                    		    	</h:panelGroup>
+                    			</p:panelGrid>
                     		
-                    		<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    				<h:panelGroup>
+                    		    		<h:outputText	value="Valor total do desconto"/>
+                    		    		<p:inputText	readonly="true" value="R$ #{relatorioAtendimentoMB.entity.planoTratamento.valorTotalDesconto}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Plano" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.plano.nome}"/>
+                    		    	</h:panelGroup>                    		
+                    			</p:panelGrid>
+                    		
                     			<h:panelGroup>
-                    		    	<h:outputText	value="Valor total do desconto"/>
-                    		    	<p:inputText	readonly="true" value="R$ #{relatorioAtendimentoMB.entity.planoTratamento.valorTotalDesconto}"/>
-                    		    </h:panelGroup>
-                    		    
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Plano" />
-                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.plano.nome}"/>
-                    		    </h:panelGroup>                    		
-                    		</p:panelGrid>
-                    		
-                    		<h:panelGroup>
-                    				<p:dataTable	id="dtProcedimentos" widgetVar="dtProcedimentos" 
-                    								value="#{relatorioAtendimentoMB.entity.planoTratamento.planoTratamentoProcedimentos}" 
-                    								var="procedimento" rowKey="#{procedimento}" rows="5" paginator="true" paginatorPosition="bottom" 
-                    								reflow="true" emptyMessage="Nenhum registro encontrado" selectionMode="single" >
+                    					<p:dataTable	id="dtProcedimentos" widgetVar="dtProcedimentos" 
+                    									value="#{relatorioAtendimentoMB.entity.planoTratamento.planoTratamentoProcedimentos}" 
+                    									var="procedimento" rowKey="#{procedimento}" rows="5" paginator="true" paginatorPosition="bottom" headerText="Procedimento"
+                    									reflow="true" emptyMessage="Nenhum registro encontrado" selectionMode="single" >
                     								
-                    					<f:facet	name="procedimentos">Procedimentos</f:facet>
+                    						<f:facet	name="procedimentos">Procedimentos</f:facet>
                     								
-                    					<p:column 	filterBy="#{procedimento.procedimento.descricao}" 
-                    								sortBy="#{procedimento.procedimento.descricao}" 
-                        							filterMatchMode="contains" headerText="Descrição" width="30%">
-                            				<h:outputText value="#{procedimento.procedimento.descricao}" />
-                        				</p:column>
+                    						<p:column 	filterBy="#{procedimento.procedimento.descricao}" 
+                    									sortBy="#{procedimento.procedimento.descricao}" 
+                        								filterMatchMode="contains" headerText="Descrição">
+                            					<h:outputText value="#{procedimento.procedimento.descricao}" />
+                        					</p:column>
                         							
-                        				<p:column 	filterBy="#{procedimento.procedimento.valor}" 
-                    								sortBy="#{procedimento.procedimento.valor}" 
-                        							filterMatchMode="contains" headerText="Valor" width="30%">
-                            				<h:outputText value="#{procedimento.procedimento.valor}" />
-                        				</p:column>
-                    								
-                    				</p:dataTable>
-                    		</h:panelGroup>
-                    	</p:fieldset>
-                    	
-                    	<p:fieldset		legend="Agendamento" id="tgAgendamento" toggleable="true" toggleSpeed="400"
-                    					style="margin-top:20px;margin-bottom:10px">
-                    						
-                    		<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Agendado por"/>
-                    		    	<p:inputText		readonly="true" value="#{relatorioAtendimentoMB.entity.agendador.dadosBasico.nome}"/>
-                    		    </h:panelGroup>
-                    		    
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Data agendamento"/>
-                    		    	<p:calendar		readonly="true" value="#{relatorioAtendimentoMB.entity.dataAgendamento}"/>
-                    		    </h:panelGroup>
-                    		    
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Status do agendamento" />
-                    		    	<p:inputText		readonly="true" value="#{relatorioAtendimentoMB.entity.statusAgendamento.descricao}"/>
-                    		    </h:panelGroup>                    		    
-                    		</p:panelGrid>
-                    		
-                    		<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Origem do agendamento" />
-                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.origemAgendamento.descricao}"/>
-                    		    </h:panelGroup>
-                    		    
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Finalidade do agendamento" />
-                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.finalidadeAgendamento.descricao}"/>
-                    		    </h:panelGroup>
-                    		    
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Útilma alteração realizada por" />
-                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.profissionalUltAlteracao.dadosBasico.nome}"/>
-                    		    </h:panelGroup>
-                    		</p:panelGrid>
-                    		
-                    		<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    <h:panelGroup>
-                    		    	<h:outputText	value="Motivo do agendamento" />
-                    		    	<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.motivoStatusAgendamento.descricao}"/>
-                    		    </h:panelGroup>
-                    		</p:panelGrid>
-                    	</p:fieldset>
-                    	                    		
+                        					<p:column 	filterBy="#{procedimento.procedimento.valor}" 
+                    									sortBy="#{procedimento.procedimento.valor}" 
+                        								filterMatchMode="contains" headerText="Valor">
+                            					<h:outputText value="#{procedimento.procedimento.valor}" />
+                        					</p:column>
+                    					
+                    					</p:dataTable>
+                    			</h:panelGroup>
+                    		</p:fieldset>
+						</p:outputPanel>
+						
+						<h:panelGroup	update=":lume:dlgGerarRelatorio" process=":lume:dlgGerarRelatorio">
+        					<p:commandButton	value="Imprimir">
+        						<p:printer target="relatorio" />
+        					</p:commandButton>
+        				</h:panelGroup>
+						
                     </p:dialog>
                     
+                    <p:dialog	id="dlgGerarRelatorio" widgetVar="dlgGerarRelatorio" header="Relatório" responsive="true" modal="true"
+                				onHide="PF('dlgGerarRelatorio').toggleMaximize();" onShow="PF('dlgGerarRelatorio').toggleMaximize();">
+                		
+                		<p:panel>
+                        	<p:outputPanel	id="relatorio">
+
+                            	<h1	style="font-size: 20px !important;" align="center">
+                                	<h:outputText value="RELATÓRIO" />
+                            	</h1>
+                            
+                          		<div class="SeparatorFull"></div>
+								
+								<br />
+								
+                            	<h1 style="font-size: 18px !important;margin: 0;margin-top:10px;margin-bottom:10px;font-weight:bold;">
+                                	<h:outputText value="#{relatorioAtendimentoMB.nomeClinica()}" />
+                            	</h1>
+                            	
+                            	<h1 style="font-size: 14px !important;margin: 0;margin-top:-5px;margin-bottom:5px;">
+                                	<h:outputText value="#{relatorioAtendimentoMB.telefoneClinica()}" />
+                            	</h1>
+								
+								<br />
+                            	
+                            	<div class="SeparatorFull"></div>
+                            	<br />
+                            	
+                            	<table	style="width: 100%" class="firstRowBold">
+                            		
+                            		<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
+                            		
+                            			<h2 	style="text-align: left;font-size: 16px !important;margin: 0;margin-top:10px;
+                            					margin-bottom:10px;font-weight:bold;">
+                            				AGENDAMENTO
+                            			</h2>
+                            		
+                            			<th>Agendado por:			</th>
+                            			<th>Data do agendamento:	</th>
+                            			<th>Status do agendamento:	</th>
+
+                            		</tr>
+
+                            		<tr	style="text-align: left;font-size: 14px !important;">
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.agendador.dadosBasico.nome}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.dataAgendamento)}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.statusAgendamento.descricao}" />
+                            			</td>
+
+                            		</tr>
+
+                            		<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
+
+                            			<th>Origem do agendamento:		</th>
+                            			<th>Finalidade do agendamento:	</th>
+                            			<th>Última alteração realizada por:	</th>
+
+                            		</tr>
+                            		
+                            		<tr	style="text-align: left;font-size: 14px !important;">
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.origemAgendamento.descricao}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.finalidadeAgendamento.descricao}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.profissionalUltAlteracao.dadosBasico.nome}" />
+                            			</td>
+
+                            		</tr>
+                            	</table>
+                            	
+                            	<div class="SeparatorFull" style="margin-bottom:40px !important;margin-top:40px !important;"></div>
+                            	
+                            	<table	style="width: 100%" class="firstRowBold">
+                            		<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
+                            		
+                            			<h2 	style="text-align: left;font-size: 16px !important;margin: 0;margin-top:10px;
+                            					margin-bottom:10px;font-weight:bold;">
+                            				DADOS PACIENTE
+                            			</h2>
+                            		
+                            			<th>Paciente:</th>
+                            			<th>Profissional responsável:</th>
+                            			<th>Convênio:	</th>
+
+                            		</tr>
+                            		
+                            		<tr	style="text-align: left;font-size: 14px !important;">
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.paciente.dadosBasico.nome}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.profissional.dadosBasico.nome}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.paciente.convenio.dadosBasico.nome}" />
+                            			</td>
+
+                            		</tr>
+                            		
+                            		<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
+                            		
+                            			<th>Titular:</th>
+                            			<th>Plano:	</th>
+                            			<th>Data da última alteração:</th>
+
+                            		</tr>
+                            		
+                            		<tr	style="text-align: left;font-size: 14px !important;">
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.paciente.titular.dadosBasico.nome}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.paciente.plano.nome}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.paciente.dataUltimaAlteracao)}" />
+                            			</td>
+
+                            		</tr>
+                            	</table>
+                            	
+                            	<div class="SeparatorFull" style="margin-bottom:40px !important;margin-top:40px !important;"></div>
+                            	
+                            	<table	style="width: 100%" class="firstRowBold">
+                            		<tr style="text-align: left; font-weight: normal;">
+                            		
+                            			<h2 	style="text-align: left;font-size: 16px !important;margin: 0;margin-top:10px;
+                            					margin-bottom:10px;font-weight:bold;">
+                            				PLANO DE TRATAMENTO
+                            			</h2>
+                            		
+                            			<th>Início do tratamento:</th>
+                            			<th>Término do tratamento:</th>
+                            			<th>Valor total:	</th>
+
+                            		</tr>
+                            		
+                            		<tr	style="text-align: left;font-size: 14px !important;">
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.planoTratamento.inicio)}" /><br />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.planoTratamento.fim)}" /><br />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.planoTratamento.valorTotal}" /><br />
+                            			</td>
+
+                            		</tr>
+                            		
+                            		<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
+                            		
+                            			<th>Valor total do desconto:</th>
+                            			<th>Plano:	</th>
+
+                            		</tr>
+                            		
+                            		<tr	style="text-align: left;font-size: 14px !important;">
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.planoTratamento.valorTotalDesconto}" /><br />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.paciente.plano.nome}" /><br />
+                            			</td>
+
+                            		</tr>
+                            		
+                            	</table>
+
+								<br />
+                        	</p:outputPanel>
+                        </p:panel>
+                            	
+                	</p:dialog>
+
                 </div>
             </div>
         </div> 
         
         <script type="text/javascript">
+      //<![CDATA[
 			function handleDialogRequest(xhr, status, args) {
 				console.debug('handleDialogRequest');
 				console.debug(args);
@@ -246,6 +587,7 @@ div.ui-selectoneradio label {
 					window.scrollTo(0, 0);
 				}
 			}
+			//]]>
 		</script>
         
     </ui:define>
