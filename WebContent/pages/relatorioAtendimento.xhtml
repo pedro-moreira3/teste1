@@ -223,6 +223,8 @@ div.ui-selectoneradio label {
         									<p:autoComplete	id="filtroConvenio" value="#{relatorioAtendimentoMB.filtroPorConvenio}" completeMethod="#{relatorioAtendimentoMB.sugestoesConvenios}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 															converter="convenio" forceSelection="true" scrollHeight="400">
+															
+												<p:ajax	event="itemSelect" listener="#{relatorioAtendimentoMB.popularLista}" update=":lume:dtRelAtendimento"/>
 											</p:autoComplete>
         								</h:panelGroup>
 
