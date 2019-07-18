@@ -21,6 +21,123 @@
 div.ui-selectoneradio label {
     width: auto !important;
 }
+.labelInlineParent {
+	padding-top: 0px !important;
+	padding-bottom: 20px !important;
+}
+
+.labelInline label {
+	display: inline !important;
+}
+
+.ui-dialog {
+	overflow: auto !important;
+}
+
+.ui-picklist .ui-picklist-list {
+	height: 100px;
+}
+
+.fc-time-grid-container {
+	height: auto !important;
+}
+
+.ui-growl {
+	z-index: 999999 !important;
+}
+
+div.ui-selectoneradio label {
+	width: auto !important;
+}
+
+.fc-time-grid-event>.fc-content {
+	text-align: left !important;
+}
+
+.fc-toolbar {
+	padding: 0 !important;
+}
+
+.fc .fc-left, .fc .fc-left .fc-button-group, .fc .fc-right .fc-button-group
+	{
+	display: inline-flex !important;
+}
+
+.fc .fc-right .fc-button-group button {
+	width: 100px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell {
+	padding: 0px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:first-child {
+	padding-right: 7px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:last-child {
+	padding-left: 7px !important;
+}
+
+.removeSecondPadding>.ui-panelgrid-content .ui-grid-row .ui-panelgrid-cell:nth-child(1)
+	{
+	padding-top: 0px !important;
+}
+
+.ui-selectmanycheckbox tr td {
+	position: relative;
+	display: inline-flex !important;
+	width: 238px !important
+}
+
+.ui-selectmanycheckbox tr td>div>div:last-child {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.ui-selectmanycheckbox tr td label {
+	position: relative;
+	display: inline-flex !important;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child {
+	position: relative;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child div {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.NoChildPadding>div {
+	padding: 0px !important;
+}
+
+.ui-fluid .ui-buttonset.ui-buttonset-3 .ui-button {
+	width: 33.3% !important;
+}
+
+.ggl-tooltip {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  font-family: Arial, Helvetica;
+  font-size: 14px;
+  padding: 8px;
+}
+
+.ggl-tooltip span {
+  font-weight: bold;
+}
+
+.chartCadeiras > div, .chartProfissionais > div {
+	max-width: 100%;
+	overflow: auto;
+	overflow-y: hidden;
+}
 </style>
         <script>
 			function resize(dialog) {
@@ -115,9 +232,9 @@ div.ui-selectoneradio label {
 								
 								<p:outputPanel>
 								
-									<h:outputLabel	value="Mostrar os agendamentos : " />
+									<h:outputLabel	value="Mostrar os agendamentos: " />
 									<p:selectManyCheckbox	value="#{relatorioAtendimentoMB.filtroAtendimento}"
-															layout="grid" columns="4" >
+															layout="grid" columns="4">
 										
 										<p:ajax	listener="#{relatorioAtendimentoMB.popularLista}" update=":lume:dtRelAtendimento" />
 										
@@ -164,7 +281,7 @@ div.ui-selectoneradio label {
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoRemarcado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Remarcado&lt;/div&gt;"
 											itemValue="R" itemEscaped="false" />
 									</p:selectManyCheckbox>
-									
+
 								</p:outputPanel>
 								
 								<p:outputPanel>
@@ -172,7 +289,7 @@ div.ui-selectoneradio label {
 									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
 										
 										<h:panelGroup>
-        									<p:commandButton	value="Pesquisar"  listener="#{relatorioAtendimnentoMB.popularLista}" update=":lume:dtRelAtendimento"/>
+        									<p:commandButton	value="Pesquisar"  action="#{relatorioAtendimentoMB.popularLista}" update=":lume:dtRelAtendimento"/>
         								</h:panelGroup>
 										
 									</p:panelGrid>
@@ -188,7 +305,7 @@ div.ui-selectoneradio label {
                     					var="atendimento" rowKey="#{atendimento}" rows="10" paginator="true" paginatorPosition="bottom" reflow="true" 
                     					emptyMessage="Nenhum registro encontrado" selection="#{relatorioAtendimentoMB.entity}" selectionMode="single" >
                     		
-                    		<f:facet name="header">Relatório de atendimentos</f:facet>
+                    		<f:facet	name="header">Relatório de atendimentos</f:facet>
                     		
                     		<p:column 	filterBy="#{atendimento.paciente.dadosBasico.nome}" sortBy="#{atendimento.paciente.dadosBasico.nome}" 
                     					filterMatchMode="contains" headerText="Paciente" >
@@ -203,6 +320,11 @@ div.ui-selectoneradio label {
                         	<p:column 	filterBy="#{atendimento.dataAgendamento}" sortBy="#{atendimento.dataAgendamento}" 
                         				filterMatchMode="contains" headerText="Data do agendamento" >
                             	<h:outputText value="#{relatorioAtendimentoMB.formatarData(atendimento.dataAgendamento)}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{atendimento.dataUltAlteracao}" sortBy="#{atendimento.dataUltAlteracao}" 
+                        				filterMatchMode="contains" headerText="Data última alteração" >
+                            	<h:outputText value="#{relatorioAtendimentoMB.formatarData(atendimento.dataUltAlteracao)}" />
                         	</p:column>
                         	
                         	<p:column 	filterBy="#{atendimento.statusAgendamento.descricao}" sortBy="#{atendimento.statusAgendamento.descricao}" 
@@ -227,7 +349,7 @@ div.ui-selectoneradio label {
 							<p:fieldset		legend="Agendamento" id="tgAgendamento" toggleable="true" toggleSpeed="400"
                     						style="margin-top:20px;margin-bottom:10px">
                     						
-                    			<p:panelGrid	class="gridPaciente" columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
                     		    	<h:panelGroup>
                     		    		<h:outputText	value="Agendado por"/>
                     		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.agendador.dadosBasico.nome}"/>
@@ -239,19 +361,19 @@ div.ui-selectoneradio label {
                     		    	</h:panelGroup>
                     		    
                     		    	<h:panelGroup>
-                    		    		<h:outputText	value="Status do agendamento" />
+                    		    		<h:outputText	value="Status" />
                     		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.statusAgendamento.descricao}"/>
                     		    	</h:panelGroup>                    		    
                     			</p:panelGrid>
                     		
-                    			<p:panelGrid	class="gridPaciente" columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
                     		    	<h:panelGroup>
-                    		    		<h:outputText	value="Origem do agendamento" />
+                    		    		<h:outputText	value="Origem" />
                     		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.origemAgendamento.descricao}"/>
                     		    	</h:panelGroup>
                     		    
                     		    	<h:panelGroup>
-                    		    		<h:outputText	value="Finalidade do agendamento" />
+                    		    		<h:outputText	value="Finalidade" />
                     		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.finalidadeAgendamento.descricao}"/>
                     		    	</h:panelGroup>
                     		    
@@ -261,18 +383,32 @@ div.ui-selectoneradio label {
                     		    	</h:panelGroup>
                     			</p:panelGrid>
                     		
-                    			<p:panelGrid	class="gridPaciente" columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
                     		    	<h:panelGroup>
-                    		    		<h:outputText	value="Motivo do agendamento" />
+                    		    		<h:outputText	value="Motivo" />
                     		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.motivoStatusAgendamento.descricao}"/>
                     		    	</h:panelGroup>
+                    		    	
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Situação do atendimento" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.verificarSituacaoAgendamento(relatorioAtendimentoMB.entity)}"/>
+                    		    	</h:panelGroup>
+                    		    	
+                    		    	<h:panelGroup	rendered="#{relatorioAtendimentoMB.entity.excluido == status.SIM}">
+                    		    		<h:outputText	value="Agendamento excluído por:" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.excluidoPorProfissional.dadosBasico.nome}"/>
+                    		    	</h:panelGroup>
+                    		    	
                     			</p:panelGrid>
+                    			
+                    			
+                    			
                     		</p:fieldset>
 
                     		<p:fieldset		legend="Dados do paciente" id="tgPaciente" toggleable="true" toggleSpeed="500"
                     						style="margin-top:20px;margin-bottom:10px;" action="printData();">
                     						
-                    			<p:panelGrid	class="gridPaciente" columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
                     		    	<h:panelGroup>
                     		    		<h:outputText	value="Paciente"/>
                     		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.dadosBasico.nome}"/>

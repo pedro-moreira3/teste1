@@ -118,7 +118,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     }
     
     public List<Convenio> sugestoesConvenios(String query) {
-        return null;//return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
     
     private void removerFiltrosAgendamento(List<Agendamento> agendamentos) {     
