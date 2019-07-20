@@ -450,7 +450,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     private boolean validacoes() {
         if (GenericValidator.validarRangeData(this.getEntity().getChegouAs(), this.getEntity().getFinalizouAs(), false)) {
-            if (this.getProfissionalDentroAgenda() != null && this.getEntity().getId() != 0) {
+            if (this.getProfissionalDentroAgenda() != null && this.getEntity() != null) {
                 if (this.getEntity().getPaciente() != null) {
                     if (GenericValidator.validarRangeData(this.getInicio(), this.getFim(), true)) {
                       //  if (this.validaHoraduplicadaProfissional(this.getEntity())) {
