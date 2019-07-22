@@ -434,6 +434,7 @@ div.ui-selectoneradio label {
 								view="agendaDay" timeFormat="HH:mm" minTime="07:00"
 								maxTime="21:00" allDaySlot="false" draggable="false"
 								resizable="false" initialDate="#{agendamentoMB.initialDate}">
+								<p:ajax event="viewChange" process="@this" />
 								<p:ajax event="dateSelect"
 									update=":lume:pnAgendamento,:lume:botoesAgenda"
 									listener="#{agendamentoMB.onDateSelect}"
