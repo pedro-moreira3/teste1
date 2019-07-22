@@ -647,6 +647,7 @@ body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 				//	updateVisualizacao();
 				if (PF('myschedule'))
 					PF('myschedule').update();
+				updateSchedule();
 			}
 
 			if (PrimeFaces.widget.Schedule != undefined) {
@@ -828,6 +829,9 @@ body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 					updateSchedule();
 				});
 				$('.fc-next-button').click(function() {
+					updateSchedule();
+				});
+				$('.fc-today-button').click(function() {
 					updateSchedule();
 				});
 			});
