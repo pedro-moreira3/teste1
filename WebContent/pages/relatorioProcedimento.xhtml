@@ -1,0 +1,311 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <style>
+.ui-picklist .ui-picklist-list {
+    height: 100px;
+}
+
+.fc-time-grid-container {
+    height: auto !important;
+}
+
+.ui-growl {
+    z-index: 999999 !important;
+}
+
+.ui-dialog {
+    overflow: auto !important;
+}
+
+div.ui-selectoneradio label {
+    width: auto !important;
+}
+.labelInlineParent {
+	padding-top: 0px !important;
+	padding-bottom: 20px !important;
+}
+
+.labelInline label {
+	display: inline !important;
+}
+
+.ui-dialog {
+	overflow: auto !important;
+}
+
+.ui-picklist .ui-picklist-list {
+	height: 100px;
+}
+
+.fc-time-grid-container {
+	height: auto !important;
+}
+
+.ui-growl {
+	z-index: 999999 !important;
+}
+
+div.ui-selectoneradio label {
+	width: auto !important;
+}
+
+.fc-time-grid-event>.fc-content {
+	text-align: left !important;
+}
+
+.fc-toolbar {
+	padding: 0 !important;
+}
+
+.fc .fc-left, .fc .fc-left .fc-button-group, .fc .fc-right .fc-button-group
+	{
+	display: inline-flex !important;
+}
+
+.fc .fc-right .fc-button-group button {
+	width: 100px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell {
+	padding: 0px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:first-child {
+	padding-right: 7px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:last-child {
+	padding-left: 7px !important;
+}
+
+.removeSecondPadding>.ui-panelgrid-content .ui-grid-row .ui-panelgrid-cell:nth-child(1)
+	{
+	padding-top: 0px !important;
+}
+
+.ui-selectmanycheckbox tr td {
+	position: relative;
+	display: inline-flex !important;
+	width: 238px !important
+}
+
+.ui-selectmanycheckbox tr td>div>div:last-child {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.ui-selectmanycheckbox tr td label {
+	position: relative;
+	display: inline-flex !important;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child {
+	position: relative;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child div {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.NoChildPadding>div {
+	padding: 0px !important;
+}
+
+.ui-fluid .ui-buttonset.ui-buttonset-3 .ui-button {
+	width: 33.3% !important;
+}
+
+.ggl-tooltip {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  font-family: Arial, Helvetica;
+  font-size: 14px;
+  padding: 8px;
+}
+
+.ggl-tooltip span {
+  font-weight: bold;
+}
+
+.chartCadeiras > div, .chartProfissionais > div {
+	max-width: 100%;
+	overflow: auto;
+	overflow-y: hidden;
+}
+</style>
+        <script>
+			function resize(dialog) {
+			//'#lume\\:pnAgendamento'
+				$(window).resize(function() {
+					$(dialog).css({
+						'width' : $(window).width(),
+						'height' : $(window).height(),
+						'left' : '0px',
+						'top' : '0px'
+					});
+				}).resize();
+			}
+        </script>
+        <div	class="ui-g ui-fluid">
+			<div	class="ui-g-12 ui-lg-12">
+				<div	class="card card-w-title">
+					<h1>Relatório de Procedimentos</h1>
+                    
+                    <p:separator styleClass="SeparatorFull" />
+                    
+                    <p:fieldset	id="filtroRelatorio" header="Filtro"
+								toggleable="false" toggleSpeed="500">
+							
+							<p:panelGrid	columns="1" layout="grid"
+											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+											style="border:0px none; background-color:transparent;">
+								
+								<p:outputPanel>
+								
+									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+									
+										<h:panelGroup>							
+											<h:outputText 	for="dataInicial" value="Data inicial:" />
+        									<p:calendar 	id="dataInicial" value="#{relatorioProcedimentoMB.dataInicio}" />
+										</h:panelGroup>
+        				
+        								<h:panelGroup>
+        									<h:outputText 	for="dataFinal" value="Data final:" />
+        									<p:calendar 	id="dataFinal" value="#{relatorioProcedimentoMB.dataFim}" />
+        								</h:panelGroup>
+        								
+        								<h:panelGroup>
+        									<h:outputText 	for="filtroPaciente" value="Paciente:" />
+        									<p:autoComplete	id="filtroPaciente" value="#{relatorioProcedimentoMB.filtroPorPaciente}"
+        													completeMethod="#{relatorioProcedimentoMB.sugestoesPacientes}"
+        													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+															converter="paciente" forceSelection="true" scrollHeight="400"
+															minQueryLength="3" >
+												
+												<p:ajax	event="itemSelect" listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+        									</p:autoComplete>
+        								</h:panelGroup>
+									
+									</p:panelGrid>
+									
+									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+										
+										<h:panelGroup>
+        									<h:outputText 	for="filtroProfissional" value="Profissional:" />
+        									<p:autoComplete	id="filtroProfissional" value="#{relatorioProcedimentoMB.filtroPorProfissional}"
+        													completeMethod="#{relatorioProcedimentoMB.sugestoesProfissionais}"
+        													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+															converter="profissional" forceSelection="true" scrollHeight="400">
+															
+												<p:ajax	event="itemSelect" listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+												
+												</p:autoComplete>
+        								</h:panelGroup>
+        								
+        								<h:panelGroup>
+        									<h:outputText 	for="filtroProfissionalUltAlteracao" value="Ultima alteração realizada por:" />
+        									<p:autoComplete	id="filtroProfissionalUltAlteracao" value="#{relatorioProcedimentoMB.filtroPorProfissionalUltAlteracao}" completeMethod="#{relatorioProcedimentoMB.sugestoesProfissionalUltAlteracao}"
+        													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+															converter="profissional" forceSelection="true" scrollHeight="400">
+												
+												<p:ajax	event="itemSelect" listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+											</p:autoComplete>
+        								</h:panelGroup>
+        								
+        								<h:panelGroup>
+        									<h:outputText 	for="filtroConvenio" value="Convênio:" />
+        									<p:autoComplete	id="filtroConvenio" value="#{relatorioProcedimentoMB.filtroPorConvenio}" completeMethod="#{relatorioProcedimentoMB.sugestoesConvenios}"
+        													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+															converter="convenio" forceSelection="true" scrollHeight="400">
+															
+												<p:ajax	event="itemSelect" listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+											</p:autoComplete>
+        								</h:panelGroup>
+
+									</p:panelGrid>
+								
+								</p:outputPanel>
+								
+								<p:outputPanel>
+									
+									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+										
+										<h:panelGroup>
+        									<p:commandButton	value="Pesquisar"  action="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+        								</h:panelGroup>
+										
+									</p:panelGrid>
+									
+								</p:outputPanel>
+							</p:panelGrid>
+							
+					</p:fieldset>
+					
+					 <p:outputPanel>
+
+                    	<p:dataTable	id="dtRelProcedimento" widgetVar="dtRelProcedimento" value="#{relatorioProcedimentoMB.listaPlanosTratamento}" 
+                    					var="planoTratamento" rowKey="#{planoTratamento}" rows="10" paginator="true" paginatorPosition="bottom" reflow="true" 
+                    					emptyMessage="Nenhum registro encontrado" selection="#{relatorioProcedimentoMB.entity}" selectionMode="single" >
+                    		
+                    		<f:facet	name="header">Relatório de Procedimentos</f:facet>
+                    		
+                    		<p:column 	filterBy="#{planoTratamento.paciente.dadosBasico.nome}" sortBy="#{planoTratamento.paciente.dadosBasico.nome}" 
+                    					filterMatchMode="contains" headerText="Paciente" >
+                            	<h:outputText value="#{planoTratamento.paciente.dadosBasico.nome}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{planoTratamento.profissional.dadosBasico.nome}" sortBy="#{planoTratamento.profissional.dadosBasico.nome}" 
+                        				filterMatchMode="contains" headerText="Profissional responsável">
+                            	<h:outputText value="#{planoTratamento.profissional.dadosBasico.nome}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{planoTratamento.dataAgendamento}" sortBy="#{planoTratamento.dataAgendamento}" 
+                        				filterMatchMode="contains" headerText="Inicio do tratamento" >
+                            	<h:outputText value="#{relatorioProcedimentoMB.formatarData(planoTratamento.inicio)}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{planoTratamento.dataUltAlteracao}" sortBy="#{planoTratamento.dataUltAlteracao}" 
+                        				filterMatchMode="contains" headerText="Data última alteração" >
+                            	<h:outputText value="#{relatorioProcedimentoMB.formatarData(planoTratamento.dataUltAlteracao)}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{planoTratamento.statusAgendamento.descricao}" sortBy="#{planoTratamento.statusAgendamento.descricao}" 
+                        				filterMatchMode="contains" headerText="Status" >
+                            	<h:outputText value="#{planoTratamento.statusAgendamento.descricao}" />
+                        	</p:column>
+                        	
+                        	<p:column>
+                            	<p:commandButton	icon="White fa fa-eye" oncomplete="PF('dlgRelAtendimento').show();" update=":lume:dlgRelAtendimento,:lume:dlgGerarRelatorio" width="5%">
+                            		<f:setPropertyActionListener	value="#{atendimento}" target="#{relatorioAtendimentoMB.entity}" />
+                            	</p:commandButton>
+                        	</p:column>
+                        	
+                    	</p:dataTable>
+                    </p:outputPanel>
+					
+                </div>
+            </div>
+        </div> 
+        
+        <script type="text/javascript">
+      //<![CDATA[
+			function handleDialogRequest(xhr, status, args) {
+				console.debug('handleDialogRequest');
+				console.debug(args);
+				if (args.dlg == true) {
+					PF('eventDialog').hide();
+				} else {
+					window.scrollTo(0, 0);
+				}
+			}
+			//]]>
+		</script>
+        
+    </ui:define>
+</ui:composition>
