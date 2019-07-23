@@ -36,6 +36,8 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     private Logger log = Logger.getLogger(RelatorioProcedimentoMB.class);
     
     private List<PlanoTratamentoProcedimento> listaProcedimentos;
+    
+    private List<String> filtroProcedimento;
 
     
     // ATRIBUTOS USADOS COMO FILTRO PARA PESQUISA DOS PROCEDIMENTOS
@@ -48,6 +50,8 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     public RelatorioProcedimentoMB() {
         super(PlanoTratamentoProcedimentoSingleton.getInstance().getBo());
         this.setClazz(PlanoTratamentoProcedimento.class);
+        
+        popularLista();
     }
     
     public void popularLista() {
@@ -62,9 +66,8 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
                 
             }
             
-            this.listaProcedimentos = PlanoTratamentoSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(this.dataInicio, this.dataFim, this.filtroPorPaciente, 
+            this.listaProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(this.dataInicio, this.dataFim, this.filtroPorPaciente, 
                     this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.filtroPorConvenio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            
         }catch(Exception e){
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -92,6 +95,10 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     
     public List<Convenio> sugestoesConvenios(String query) {
         return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    }
+    
+    public List<PlanoTratamento> sugestoesPlanoTratamento(String query){
+        return PlanoTratamentoSingleton.getInstance().getBo().listSugestoesComplete(query);
     }
 
     public Profissional getFiltroPorProfissional() {
@@ -149,5 +156,15 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     public void setFiltroPorPlanoTratamento(PlanoTratamento filtroPorPlanoTratamento) {
         this.filtroPorPlanoTratamento = filtroPorPlanoTratamento;
     }
+
+    public List<String> getFiltroProcedimento() {
+        return filtroProcedimento;
+    }
+
+    public void setFiltroProcedimento(List<String> filtroProcedimento) {
+        this.filtroProcedimento = filtroProcedimento;
+    }
+
+    
 
 }
