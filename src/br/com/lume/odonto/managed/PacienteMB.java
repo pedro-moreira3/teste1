@@ -227,14 +227,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     }
 
     public void validaIdade() {
-        Calendar dataNasc = Calendar.getInstance();
-        dataNasc.add(Calendar.YEAR, -18);
-        Calendar dataAtual = Calendar.getInstance();
-        dataAtual.setTime(this.getEntity().getDadosBasico().getDataNascimento());
-        if (dataNasc.before(dataAtual)) {
-            responsavel = true;
-        } else {
-            responsavel = false;
+        responsavel = false;
+        if (this.getEntity().getDadosBasico() != null && this.getEntity().getDadosBasico().getDataNascimento() != null) {
+            Calendar dataNasc = Calendar.getInstance();
+            dataNasc.add(Calendar.YEAR, -18);
+            Calendar dataAtual = Calendar.getInstance();
+            dataAtual.setTime(this.getEntity().getDadosBasico().getDataNascimento());
+            if (dataNasc.before(dataAtual)) {
+                responsavel = true;
+            }
         }
     }
 
