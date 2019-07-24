@@ -346,6 +346,16 @@ div.ui-selectoneradio label {
                     <p:dialog	id="dlgRelAtendimento" widgetVar="dlgRelAtendimento" header="Relatório do Agendamento" modal="true"
                     			onHide="PF('dlgRelAtendimento').toggleMaximize();" onShow="PF('dlgRelAtendimento').toggleMaximize();">
 						
+						<f:facet	name="header" >
+							<h:panelGroup	update=":lume:dlgGerarRelatorio" process=":lume:dlgGerarRelatorio" style="display:inline-block;">
+        					
+        						<p:commandButton	icon="fa fa-fw fa-print" value="Imprimir">
+        							<p:printer target="relatorio" />
+        						</p:commandButton>
+        					
+        					</h:panelGroup>
+						</f:facet>
+						
 						<p:outputPanel>
 							
 							<p:fieldset		legend="Agendamento" id="tgAgendamento" toggleable="true" toggleSpeed="400"
@@ -502,12 +512,6 @@ div.ui-selectoneradio label {
                     			</h:panelGroup>
                     		</p:fieldset>
 						</p:outputPanel>
-						
-						<h:panelGroup	update=":lume:dlgGerarRelatorio" process=":lume:dlgGerarRelatorio">
-        					<p:commandButton	value="Imprimir">
-        						<p:printer target="relatorio" />
-        					</p:commandButton>
-        				</h:panelGroup>
 						
                     </p:dialog>
                     

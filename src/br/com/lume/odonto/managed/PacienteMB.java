@@ -12,8 +12,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.application.Application;
+import javax.faces.application.ViewHandler;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.component.UIViewRoot;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.imageio.stream.FileImageOutputStream;
 
@@ -226,15 +230,26 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
+    public void refresh() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        Application application = context.getApplication();
+        ViewHandler viewHandler = application.getViewHandler();
+        UIViewRoot viewRoot = viewHandler.createView(context, context.getViewRoot().getViewId());
+        context.setViewRoot(viewRoot);
+        context.renderResponse();
+    }
+    
     public void validaIdade() {
-        Calendar dataNasc = Calendar.getInstance();
-        dataNasc.add(Calendar.YEAR, -18);
-        Calendar dataAtual = Calendar.getInstance();
-        dataAtual.setTime(this.getEntity().getDadosBasico().getDataNascimento());
-        if (dataNasc.before(dataAtual)) {
-            responsavel = true;
-        } else {
-            responsavel = false;
+        refresh();
+        responsavel = false;
+        if (this.getEntity().getDadosBasico() != null && this.getEntity().getDadosBasico().getDataNascimento() != null) {
+            Calendar dataNasc = Calendar.getInstance();
+            dataNasc.add(Calendar.YEAR, -18);
+            Calendar dataAtual = Calendar.getInstance();
+            dataAtual.setTime(this.getEntity().getDadosBasico().getDataNascimento());
+            if (dataNasc.before(dataAtual)) {
+                responsavel = true;
+            }
         }
     }
 

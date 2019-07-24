@@ -1,90 +1,473 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
-	xmlns:pe="http://primefaces.org/ui/extensions">
-	<ui:define name="content">
-		<div class="ui-g ui-fluid">
-			<div class="ui-g-12 ui-lg-12">
-				<div class="card card-w-title">
-					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <style>
+.ui-picklist .ui-picklist-list {
+    height: 100px;
+}
 
-						<h1>Relatório de Procedimentos</h1>
-						<div class="SeparatorFull"></div>
+.fc-time-grid-container {
+    height: auto !important;
+}
 
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:outputLabel for="profissional" value="Finalizado por : " />
-							<p:autoComplete dropdown="true" queryDelay="1000" value="#{relatorioProcedimentoMB.profissional}" styleClass="profissional" id="profissional"
-								minQueryLength="3" completeMethod="#{relatorioProcedimentoMB.geraSugestoesProfissional}" var="profissional"
-								itemLabel="#{profissional.dadosBasico.prefixoNome}" itemValue="#{profissional}" converter="profissional" forceSelection="true">
-							</p:autoComplete>
+.ui-growl {
+    z-index: 999999 !important;
+}
 
-							<p:column></p:column>
-							<p:column></p:column>
+.ui-dialog {
+    overflow: auto !important;
+}
 
-							<p:outputLabel for="inicio" value="Dt.Inicial Finalização : " />
-							<p:calendar id="inicio" value="#{relatorioProcedimentoMB.inicio}" pattern="dd/MM/yyyy" mask="true" required="true" />
+div.ui-selectoneradio label {
+    width: auto !important;
+}
+.labelInlineParent {
+	padding-top: 0px !important;
+	padding-bottom: 20px !important;
+}
 
-							<p:outputLabel for="fim" value="Dt.Final Finalização : " />
-							<p:calendar id="fim" value="#{relatorioProcedimentoMB.fim}" pattern="dd/MM/yyyy" mask="true" required="true" />
-						</p:panelGrid>
+.labelInline label {
+	display: inline !important;
+}
 
-						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioProcedimentoMB.filtra}"
-								update="dtPrincipal" tabindex="1" process="@this,pnPrincipal" styleClass="OrangeButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioProcedimentoMB.actionNew}"
-								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1" />
-							<p:commandButton value="Excel" ajax="false" icon="White fa fa-file-pdf-o" styleClass="GreenButton">
-								<p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="procedimento" />
-							</p:commandButton>
-						</p:panelGrid>
+.ui-dialog {
+	overflow: auto !important;
+}
 
-					</p:outputPanel>
+.ui-picklist .ui-picklist-list {
+	height: 100px;
+}
 
-					<div class="EmptyBox20"></div>
+.fc-time-grid-container {
+	height: auto !important;
+}
 
-					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioProcedimentoMB.relatorioProcedimentos}" var="m" rows="20"
-						paginator="true" rowKey="#{m}" paginatorPosition="bottom">
-						<f:facet name="header">Procedimentos</f:facet>
-						<p:column filterBy="#{m.procedimento.descricaoLimpa}" sortBy="#{m.procedimento.descricao}" filterMatchMode="contains">
-							<f:facet name="header">
-								<h:outputText value="Procedimento" />
-							</f:facet>
-							<h:outputText value="#{m.procedimento.descricao}" title="#{m.id}" />
-						</p:column>
-						<p:column filterBy="#{m.finalizadoPorProfissional.dadosBasico.nome}" sortBy="#{m.finalizadoPorProfissional.dadosBasico.nome}" filterMatchMode="contains">
-							<f:facet name="header">
-								<h:outputText value="Finalizado por" />
-							</f:facet>
-							<h:outputText value="#{m.finalizadoPorProfissional.dadosBasico.nome}" />
-						</p:column>
-						<p:column filterBy="#{m.planoTratamento.paciente.dadosBasico.nomeStr}" sortBy="#{m.planoTratamento.paciente.dadosBasico.nome}" filterMatchMode="contains">
-							<f:facet name="header">
-								<h:outputText value="Paciente" />
-							</f:facet>
-							<h:outputText value="#{m.planoTratamento.paciente.dadosBasico.nome}" />
-						</p:column>						
-						<p:column filterBy="#{m.valorDesconto}" sortBy="#{m.valorDesconto}" filterMatchMode="contains" style="text-align:right">
-							<f:facet name="header">
-								<h:outputText value="Valor c/ Desconto(R$)" />
-							</f:facet>
-							<h:outputText value="#{m.valorDesconto}">
-								<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
-							</h:outputText>
-							<f:facet name="footer">
-								<h:outputText value="#{relatorioProcedimentoMB.totalValor}">
-									<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
-								</h:outputText>
-							</f:facet>
-						</p:column>
-						<p:column filterBy="#{m.dataFinalizadoStr}" sortBy="#{m.dataFinalizado}" filterMatchMode="contains">
-							<f:facet name="header">
-								<h:outputText value="Data Finalização" />
-							</f:facet>
-							<h:outputText value="#{m.dataFinalizadoStr}" />
-						</p:column>
-					</p:dataTable>
-				</div>
-			</div>
-		</div>
-	</ui:define>
+.ui-growl {
+	z-index: 999999 !important;
+}
+
+div.ui-selectoneradio label {
+	width: auto !important;
+}
+
+.fc-time-grid-event>.fc-content {
+	text-align: left !important;
+}
+
+.fc-toolbar {
+	padding: 0 !important;
+}
+
+.fc .fc-left, .fc .fc-left .fc-button-group, .fc .fc-right .fc-button-group
+	{
+	display: inline-flex !important;
+}
+
+.fc .fc-right .fc-button-group button {
+	width: 100px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell {
+	padding: 0px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:first-child {
+	padding-right: 7px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:last-child {
+	padding-left: 7px !important;
+}
+
+.removeSecondPadding>.ui-panelgrid-content .ui-grid-row .ui-panelgrid-cell:nth-child(1)
+	{
+	padding-top: 0px !important;
+}
+
+.ui-selectmanycheckbox tr td {
+	position: relative;
+	display: inline-flex !important;
+	width: 238px !important
+}
+
+.ui-selectmanycheckbox tr td>div>div:last-child {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.ui-selectmanycheckbox tr td label {
+	position: relative;
+	display: inline-flex !important;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child {
+	position: relative;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child div {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.NoChildPadding>div {
+	padding: 0px !important;
+}
+
+.ui-fluid .ui-buttonset.ui-buttonset-3 .ui-button {
+	width: 33.3% !important;
+}
+
+.ggl-tooltip {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  font-family: Arial, Helvetica;
+  font-size: 14px;
+  padding: 8px;
+}
+
+.ggl-tooltip span {
+  font-weight: bold;
+}
+
+.chartCadeiras > div, .chartProfissionais > div {
+	max-width: 100%;
+	overflow: auto;
+	overflow-y: hidden;
+}
+</style>
+        <script>
+			function resize(dialog) {
+			//'#lume\\:pnAgendamento'
+				$(window).resize(function() {
+					$(dialog).css({
+						'width' : $(window).width(),
+						'height' : $(window).height(),
+						'left' : '0px',
+						'top' : '0px'
+					});
+				}).resize();
+			}
+        </script>
+        <div	class="ui-g ui-fluid">
+			<div	class="ui-g-12 ui-lg-12">
+				<div	class="card card-w-title">
+					<h1>Relatório de Procedimentos</h1>
+                    
+                    <p:separator styleClass="SeparatorFull" />
+                    
+                    <p:fieldset	id="filtroRelatorio" header="Filtro"
+								toggleable="false" toggleSpeed="500">
+							
+							<p:panelGrid	columns="1" layout="grid"
+											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+											style="border:0px none; background-color:transparent;">
+								
+								<p:outputPanel>
+								
+									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+									
+										<h:panelGroup>							
+											<h:outputText 	for="dataInicial" value="Data inicial:" />
+        									<p:calendar 	id="dataInicial" value="#{relatorioProcedimentoMB.dataInicio}" />
+										</h:panelGroup>
+        				
+        								<h:panelGroup>
+        									<h:outputText 	for="dataFinal" value="Data final:" />
+        									<p:calendar 	id="dataFinal" value="#{relatorioProcedimentoMB.dataFim}" />
+        								</h:panelGroup>
+        								
+        								<h:panelGroup>
+        									<h:outputText 	for="filtroPaciente" value="Paciente:" />
+        									<p:autoComplete	id="filtroPaciente" value="#{relatorioProcedimentoMB.filtroPorPaciente}"
+        													completeMethod="#{relatorioProcedimentoMB.sugestoesPacientes}"
+        													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+															converter="paciente" forceSelection="true" scrollHeight="400"
+															minQueryLength="3" >
+												
+												<p:ajax	event="itemSelect" listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+        									</p:autoComplete>
+        								</h:panelGroup>
+									
+									</p:panelGrid>
+									
+									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+										
+										<h:panelGroup>
+        									<h:outputText 	for="filtroProfissional" value="Profissional:" />
+        									<p:autoComplete	id="filtroProfissional" value="#{relatorioProcedimentoMB.filtroPorProfissional}"
+        													completeMethod="#{relatorioProcedimentoMB.sugestoesProfissionais}"
+        													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+															converter="profissional" forceSelection="true" scrollHeight="400">
+															
+												<p:ajax	event="itemSelect" listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+												
+												</p:autoComplete>
+        								</h:panelGroup>
+        								
+        								<h:panelGroup>
+        									<h:outputText 	for="filtroPlanoTratamento" value="Plano tratamento:" />
+        									<p:autoComplete	id="filtroPlanoTratamento" value="#{relatorioProcedimentoMB.filtroPorPlanoTratamento}"
+        													completeMethod="#{relatorioProcedimentoMB.sugestoesPlanoTratamento}"
+        													var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
+															converter="planoTratamento" forceSelection="true" scrollHeight="400">
+															
+												<p:ajax	event="itemSelect" listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+												
+												</p:autoComplete>
+        								</h:panelGroup>
+        								
+        								<h:panelGroup>
+        									<h:outputText 	for="filtroConvenio" value="Convênio:" />
+        									<p:autoComplete	id="filtroConvenio" value="#{relatorioProcedimentoMB.filtroPorConvenio}" completeMethod="#{relatorioProcedimentoMB.sugestoesConvenios}"
+        													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+															converter="convenio" forceSelection="true" scrollHeight="400">
+															
+												<p:ajax	event="itemSelect" listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+											</p:autoComplete>
+        								</h:panelGroup>
+
+									</p:panelGrid>
+								
+								</p:outputPanel>
+								
+								<p:outputPanel>
+								
+									<h:outputLabel	value="Mostrar os procedimentos: " />
+									<p:selectManyCheckbox	value="#{relatorioProcedimentoMB.filtroProcedimento}"
+															layout="grid" columns="4">
+										
+										<p:ajax	listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento" />
+										
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Finalizados&lt;/div&gt;"
+											itemValue="F" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
+											itemValue="A" itemEscaped="false" />
+									</p:selectManyCheckbox>
+
+								</p:outputPanel>
+								
+								<p:outputPanel>
+									
+									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+										
+										<h:panelGroup>
+        									<p:commandButton	value="Pesquisar"  action="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+        								</h:panelGroup>
+										
+									</p:panelGrid>
+									
+								</p:outputPanel>
+								
+							</p:panelGrid>
+							
+					</p:fieldset>
+					
+					 <p:outputPanel>
+
+                    	<p:dataTable	id="dtRelProcedimento" widgetVar="dtRelProcedimento" value="#{relatorioProcedimentoMB.listaProcedimentos}" 
+                    					var="procedimento" rowKey="#{procedimento}" rows="10" paginator="true" paginatorPosition="bottom" reflow="true" 
+                    					emptyMessage="Nenhum registro encontrado" selection="#{relatorioProcedimentoMB.entity}" selectionMode="single" >
+                    		
+                    		<f:facet	name="header">Relatório de Procedimentos</f:facet>
+                    		
+                    		<p:column 	filterBy="#{procedimento.planoTratamento.paciente.dadosBasico.nome}" sortBy="#{procedimento.planoTratamento.paciente.dadosBasico.nome}" 
+                    					filterMatchMode="contains" headerText="Paciente" >
+                            	<h:outputText value="#{procedimento.planoTratamento.paciente.dadosBasico.nome}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{procedimento.planoTratamento.profissional.dadosBasico.nome}" sortBy="#{procedimento.planoTratamento.profissional.dadosBasico.nome}" 
+                        				filterMatchMode="contains" headerText="Profissional responsável">
+                            	<h:outputText value="#{procedimento.planoTratamento.profissional.dadosBasico.nome}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{procedimento.planoTratamento.statusAgendamento.descricao}" sortBy="#{procedimento.procedimento.descricao}" 
+                        				filterMatchMode="contains" headerText="Procedimento" >
+                            	<h:outputText value="#{procedimento.procedimento.descricao}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{procedimento.planoTratamento.inicio}" sortBy="#{procedimento.planoTratamento.inicio}" 
+                        				filterMatchMode="contains" headerText="Inicio do tratamento" >
+                            	<h:outputText value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.inicio)}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{procedimento.planoTratamento.fim}" sortBy="#{procedimento.planoTratamento.fim}" 
+                        				filterMatchMode="contains" headerText="Término do tratamento" >
+                            	<h:outputText value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.fim)}" />
+                        	</p:column>
+                        	
+                        	<p:column>
+                            	<p:commandButton	icon="White fa fa-eye" oncomplete="PF('dlgRelProcedimento').show();" update=":lume:dlgRelProcedimento,:lume:dlgGerarRelatorio" width="5%">
+                            		<f:setPropertyActionListener	value="#{procedimento}" target="#{relatorioProcedimentoMB.entity}" />
+                            	</p:commandButton>
+                        	</p:column>
+                        	
+                    	</p:dataTable>
+                    </p:outputPanel>
+					
+					<p:dialog	id="dlgRelProcedimento" widgetVar="dlgRelProcedimento" header="Relatório do Procedimento" modal="true"
+                    			onHide="PF('dlgRelProcedimento').toggleMaximize();" onShow="PF('dlgRelProcedimento').toggleMaximize();">
+					
+					<f:facet	name="header" >
+						<h:panelGroup	update=":lume:dlgGerarRelatorio" process=":lume:dlgGerarRelatorio" style="display:inline-block;">
+        					
+        					<p:commandButton	icon="fa fa-fw fa-print" value="Imprimir">
+        						<p:printer target="relatorio" />
+        					</p:commandButton>
+        					
+        				</h:panelGroup>
+					</f:facet>
+					
+					<p:outputPanel>
+						<p:fieldset		legend="Procedimento" id="tgProcedimento" toggleable="true" toggleSpeed="400"
+                    					style="margin-top:20px;margin-bottom:10px">
+                    						
+                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Procedimento"/>
+                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.procedimento.descricao}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Inicio do tratamento"/>
+                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.formatarData(relatorioProcedimentoMB.entity.planoTratamento.inicio)}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Término do tratamento" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.formatarData(relatorioProcedimentoMB.entity.planoTratamento.fim)}"/>
+                    		    	</h:panelGroup>                    		    
+                    			</p:panelGrid>
+                    		
+                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Finalidade" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.finalidadeAgendamento.descricao}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Útilma alteração realizada por" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.profissionalUltAlteracao.dadosBasico.nome}"/>
+                    		    	</h:panelGroup>
+                    		    	
+                    		    	<h:panelGroup	rendered="#{!relatorioProcedimentoMB.entity.planoTratamentoProcedimentoFaces.isEmpty()}">
+                    		    		
+                    		    		<p:dataTable	id="dtFaces" widgetVar="dtFaces" value="#{relatorioProcedimentoMB.entity.planoTratamentoProcedimentoFaces}" 
+                    									var="face" rowKey="#{face}" rows="10" paginator="true" paginatorPosition="bottom" reflow="true" 
+                    									emptyMessage="Nenhum registro encontrado" selectionMode="single">
+                    		    			<p:column>
+                    		    				<h:outputText	value="#{face.face}" />
+                    		    			</p:column>
+                    		    		</p:dataTable>
+                    		    	</h:panelGroup>
+                    		    	
+                    			</p:panelGrid>
+                    		
+                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    		    	
+                    		    	
+                    			</p:panelGrid>
+                    		</p:fieldset>
+                    		
+                    		<p:fieldset		legend="Dados do paciente" id="tgPaciente" toggleable="true" toggleSpeed="500"
+                    						style="margin-top:20px;margin-bottom:10px;" >
+                    						
+                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Paciente"/>
+                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.planoTratamento.paciente.dadosBasico.nome}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Profissional responsável" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.planoTratamento.profissional.dadosBasico.nome}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Convênio" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.planoTratamento.paciente.convenio.dadosBasico.nome}"/>
+                    		    	</h:panelGroup>
+                    			</p:panelGrid>
+                    		
+                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    				<h:panelGroup>
+                    		    		<h:outputText	value="Titular"/>
+                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.planoTratamento.paciente.titular.dadosBasico.nome}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Plano" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.planoTratamento.paciente.plano.nome}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Data da última alteração" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.formatarData(relatorioProcedimentoMB.entity.planoTratamento.paciente.dataUltimaAlteracao)}"/>
+                    		    	</h:panelGroup>
+                    			</p:panelGrid>
+                    		
+                    		</p:fieldset>
+                    	
+                    		<p:fieldset		legend="Orçamento" id="tgOrcamento" toggleable="true" toggleSpeed="400"
+                    						style="margin-top:20px;margin-bottom:10px">
+                    						
+                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                    		    	
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Valor do Procedimento"/>
+                    		    		<p:inputText	readonly="true" value="R$ #{relatorioProcedimentoMB.entity.valor}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Valor do desconto:" />
+                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.valorDesconto}"/>
+                    		    	</h:panelGroup>
+                    		    
+                    		    	<h:panelGroup>
+                    		    		<h:outputText	value="Tipo de remuneração do profissional" />
+                    		    		<p:inputText	readonly="true" value="R$ #{relatorioProcedimentoMB.entity.tipoRemuneracaoProfissionalCalc}"/>
+                    		    	</h:panelGroup>
+
+                    			</p:panelGrid>
+
+                    		</p:fieldset>
+						</p:outputPanel>
+					
+					</p:dialog>
+					
+					<p:dialog	id="dlgGerarRelatorio" widgetVar="dlgGerarRelatorio" header="Relatório do Procedimento" modal="true"
+                    			onHide="PF('dlgRelProcedimento').toggleMaximize();" onShow="PF('dlgRelProcedimento').toggleMaximize();">
+					
+						<p:outputPanel	id="relatorio">
+						
+						
+						
+						</p:outputPanel>
+					</p:dialog>
+					
+                </div>
+            </div>
+        </div> 
+        
+        <script type="text/javascript">
+      //<![CDATA[
+			function handleDialogRequest(xhr, status, args) {
+				console.debug('handleDialogRequest');
+				console.debug(args);
+				if (args.dlg == true) {
+					PF('eventDialog').hide();
+				} else {
+					window.scrollTo(0, 0);
+				}
+			}
+			//]]>
+		</script>
+        
+    </ui:define>
 </ui:composition>
