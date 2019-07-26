@@ -56,12 +56,16 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private List<Integer> cadeiras;
     
+    private String dataProximoAgendamentoPaciente;
+    
     // ATRIBUTOS USADOS COMO FILTRO PARA PESQUISA DOS AGENDAMENTOS
     private Profissional filtroPorProfissional;
     private Profissional filtroPorProfissionalUltAlteracao;
     private Paciente filtroPorPaciente;
     private Date dataInicio, dataFim;
     private Convenio filtroPorConvenio;
+    private boolean checkFiltro = false;
+    
 
     public RelatorioAtendimentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
@@ -74,22 +78,26 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         
         filtroAtendimento.addAll(Arrays.asList("F", "A", "I", "S", "O", "E", "B", "N", "P", "G", "H"));
         
+        if(getDataInicio() == null && getDataFim() == null) {
+            Calendar calendario = Calendar.getInstance();
+            this.setDataFim(calendario.getTime());
+            calendario.add(Calendar.DAY_OF_MONTH, -7);
+            this.setDataInicio(calendario.getTime());
+        }
+        
         this.popularLista();
     }
     
     public void popularLista() {
         try{
             
-            if(getDataInicio() == null && getDataFim() == null) {
-                Calendar calendario = Calendar.getInstance();
-                this.setDataFim(calendario.getTime());
-                calendario.add(Calendar.DAY_OF_MONTH, -7);
-                this.setDataInicio(calendario.getTime());
-            }
             this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(getDataInicio(), getDataFim(),
                     getFiltroPorProfissional(), getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), getFiltroPorConvenio(),
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            this.removerFiltrosAgendamento(this.getListaAtendimentos());
+            
+            if(!this.filtroAtendimento.isEmpty())
+                this.removerFiltrosAgendamento(this.getListaAtendimentos());
+            
             carregarCadeiras();
             
         }catch(Exception e) {
@@ -153,6 +161,14 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         cadeiras = new ArrayList<>();
         for (int i = 1; i <= UtilsFrontEnd.getEmpresaLogada().getEmpIntCadeira(); i++) {
             cadeiras.add(i);
+        }
+    }
+    
+    public void marcarFiltros() {
+        if(this.checkFiltro) {
+            this.filtroAtendimento.addAll(Arrays.asList("F", "A", "G", "C", "D", "I", "S", "O", "E", "H", "B", "N", "P", "R"));
+        }else {
+            this.filtroAtendimento.removeAll(Arrays.asList("F", "A", "G", "C", "D", "I", "S", "O", "E", "H", "B", "N", "P", "R"));
         }
     }
 
@@ -313,4 +329,19 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         this.filtroPorConvenio = filtroPorConvenio;
     }
 
+    public boolean isCheckFiltro() {
+        return checkFiltro;
+    }
+
+    public void setCheckFiltro(boolean checkFiltro) {
+        this.checkFiltro = checkFiltro;
+    }
+
+    public String getDataProximoAgendamentoPaciente() {
+        return this.getEntity().getDataProximoAgendamentoPaciente();
+    }
+
+    public void setDataProximoAgendamentoPaciente() {
+        this.dataProximoAgendamentoPaciente = this.getEntity().getDataProximoAgendamentoPaciente();
+    }
 }

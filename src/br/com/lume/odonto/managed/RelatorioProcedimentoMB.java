@@ -3,6 +3,7 @@ package br.com.lume.odonto.managed;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -17,6 +18,7 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
+import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
@@ -51,6 +53,12 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         super(PlanoTratamentoProcedimentoSingleton.getInstance().getBo());
         this.setClazz(PlanoTratamentoProcedimento.class);
         
+        if(filtroProcedimento == null) {
+            this.filtroProcedimento = new ArrayList<String>();
+        }
+        
+        filtroProcedimento.addAll(Arrays.asList(""));
+        
         popularLista();
     }
     
@@ -68,6 +76,10 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
             
             this.listaProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(this.dataInicio, this.dataFim, this.filtroPorPaciente, 
                     this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.filtroPorConvenio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            
+            if(!this.filtroProcedimento.isEmpty())
+                removerFiltrosProcedimento(this.listaProcedimentos);
+            
         }catch(Exception e){
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -97,10 +109,29 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
     
+    public String nomeClinica() {
+        return UtilsFrontEnd.getEmpresaLogada().getEmpStrNmefantasia();
+    }
+    
+    public String telefoneClinica() {
+        return UtilsFrontEnd.getEmpresaLogada().getEmpChaFone();
+    }
+    
     public List<PlanoTratamento> sugestoesPlanoTratamento(String query){
         return PlanoTratamentoSingleton.getInstance().getBo().listSugestoesComplete(query);
     }
-
+    
+    private void removerFiltrosProcedimento(List<PlanoTratamentoProcedimento> procedimentos) {     
+        List<PlanoTratamentoProcedimento> listaAux = new ArrayList<>(procedimentos);
+        for(PlanoTratamentoProcedimento procedimento : listaAux) {
+            
+            if(!(this.filtroProcedimento.contains("F") && procedimento.isFinalizado()))
+                procedimentos.remove(procedimento);
+            if(!(this.filtroProcedimento.contains("C") && procedimento.isFinalizado() && procedimento.getPlanoTratamento().getJustificativa() != null))
+                procedimentos.remove(procedimento);
+        }
+    }
+    
     public Profissional getFiltroPorProfissional() {
         return filtroPorProfissional;
     }
