@@ -307,6 +307,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 this.getEntity().setStatusNovo(status);
             }
             if (this.validacoes()) {
+                getEntity().setCadeira(cadeiraDentroAgenda);
                 if (this.getEntity().getId() == 0) {
                     this.getEntity().setProfissional(profissionalDentroAgenda);
                     this.getEntity().setDataAgendamento(new Date());
@@ -539,8 +540,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
     
     public boolean validaCadeira() {
-        if(this.getEntity().getId() == 0 || this.getInicio() != getEntity().getInicio() || this.getFim() != getEntity().getFim() || this.getCadeiraDentroAgenda() != getEntity().getCadeira()) {
-            return !AgendamentoSingleton.getInstance().getBo().existeAgendamentoDaCadeira(this.getInicio(), this.getFim(), this.getEntity().getCadeira(),
+        if(this.getEntity().getId() == 0 || !this.getInicio().equals(getEntity().getInicio()) || !this.getFim().equals(getEntity().getFim()) || this.getCadeiraDentroAgenda() != getEntity().getCadeira()) {
+            return !AgendamentoSingleton.getInstance().getBo().existeAgendamentoDaCadeira(this.getEntity(), this.getInicio(), this.getFim(), this.getEntity().getCadeira(),
                     UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
         } else
             return true;
@@ -884,6 +885,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         Agendamento agendamento = (Agendamento) ((ScheduleEvent) selectEvent.getObject()).getData();
         // profissional = agendamento.getProfissional();
         profissionalDentroAgenda = agendamento.getProfissional();
+        cadeiraDentroAgenda = agendamento.getCadeira();
 
         UtilsFrontEnd.setPacienteSelecionado(agendamento.getPaciente());
         this.setEntity(agendamento);
