@@ -60,12 +60,12 @@
 									rendered="#{pacienteMB.visivelDadosPaciente}" />
 								<p:inputText id="email"
 									value="#{pacienteMB.entity.dadosBasico.email}" maxlength="200"
-									rendered="#{pacienteMB.visivelDadosPaciente}" required="true">
+									rendered="#{pacienteMB.visivelDadosPaciente}" required="false">
 								</p:inputText>
 
 								<p:outputLabel id="lblDocumento" for="documento" value="CPF : "
 									rendered="#{pacienteMB.visivelDadosPaciente}" />
-								<p:inputMask id="documento" required="true"
+								<p:inputMask id="documento" required="false"
 									validatorMessage="CPF inválido"
 									value="#{pacienteMB.entity.dadosBasico.documento}"
 									mask="999.999.999-99"
@@ -242,10 +242,10 @@
 
 								<p:outputLabel id="lblCPFResponsavel" for="cpfresponsavel"
 									value="CPF do Responsável :" />
-								<p:inputMask id="cpfresponsavel" required="true"
+								<p:inputMask id="cpfresponsavel"
 									validatorMessage="CPF inválido"
 									value="#{pacienteMB.entity.dadosBasico.cpfresponsavel}"
-									mask="999.999.999-99">
+									mask="999.999.999-99" required="false">
 									<f:validator validatorId="documentoValidator"
 										disabled="#{!pacienteMB.responsavel}" />
 								</p:inputMask>
