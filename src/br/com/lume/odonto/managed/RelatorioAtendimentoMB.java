@@ -338,10 +338,12 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public String getDataProximoAgendamentoPaciente() {
-        return this.getEntity().getDataProximoAgendamentoPaciente();
+        return null;
+       // return this.getEntity().getDataProximoAgendamentoPaciente();
     }
 
     public void setDataProximoAgendamentoPaciente() {
-        this.dataProximoAgendamentoPaciente = this.getEntity().getDataProximoAgendamentoPaciente();
+      //  this.dataProximoAgendamentoPaciente = this.getEntity().getDataProximoAgendamentoPaciente();
+       this.dataProximoAgendamentoPaciente =null;
     }
 }
