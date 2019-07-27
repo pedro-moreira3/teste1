@@ -96,6 +96,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private ScheduleModel schedule;
 
     private Profissional profissional, profissionalDentroAgenda;
+    private int cadeiraDentroAgenda;
 
     private List<Profissional> profissionais;
 
@@ -306,6 +307,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 this.getEntity().setStatusNovo(status);
             }
             if (this.validacoes()) {
+                getEntity().setCadeira(cadeiraDentroAgenda);
                 if (this.getEntity().getId() == 0) {
                     this.getEntity().setProfissional(profissionalDentroAgenda);
                     this.getEntity().setDataAgendamento(new Date());
@@ -458,8 +460,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                         //  if (this.validaHoraduplicadaProfissional(this.getEntity())) {
                         if (this.validaHoraduplicadaPaciente(this.getEntity().getPaciente())) {
                             if (this.validaIntervalo()) {
-                                if (!AgendamentoSingleton.getInstance().getBo().existeAgendamentoDaCadeira(this.getInicio(), this.getFim(), this.getEntity().getCadeira(),
-                                        UtilsFrontEnd.getEmpresaLogada().getEmpIntCod())) {
+                                if (validaCadeira()) {
                                     dlg = true;
 
                                     if (this.getEntity().getStatusNovo().matches("S|N|I|O|A")) {
@@ -536,6 +537,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             dlg = false;
         }
         return false;
+    }
+    
+    public boolean validaCadeira() {
+        if(this.getEntity().getId() == 0 || !this.getInicio().equals(getEntity().getInicio()) || !this.getFim().equals(getEntity().getFim()) || this.getCadeiraDentroAgenda() != getEntity().getCadeira()) {
+            return !AgendamentoSingleton.getInstance().getBo().existeAgendamentoDaCadeira(this.getEntity(), this.getInicio(), this.getFim(), this.getEntity().getCadeira(),
+                    UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+        } else
+            return true;
     }
 
     public boolean validaIntervalo() {
@@ -876,6 +885,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         Agendamento agendamento = (Agendamento) ((ScheduleEvent) selectEvent.getObject()).getData();
         // profissional = agendamento.getProfissional();
         profissionalDentroAgenda = agendamento.getProfissional();
+        cadeiraDentroAgenda = agendamento.getCadeira();
 
         UtilsFrontEnd.setPacienteSelecionado(agendamento.getPaciente());
         this.setEntity(agendamento);
@@ -1376,5 +1386,17 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public void setTelefonesVisiveis(boolean telefonesVisiveis) {
         this.telefonesVisiveis = telefonesVisiveis;
     }
+
+    
+    public int getCadeiraDentroAgenda() {
+        return cadeiraDentroAgenda;
+    }
+
+    
+    public void setCadeiraDentroAgenda(int cadeiraDentroAgenda) {
+        this.cadeiraDentroAgenda = cadeiraDentroAgenda;
+    }
+    
+    
 
 }
