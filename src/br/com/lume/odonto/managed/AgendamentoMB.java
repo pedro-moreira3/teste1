@@ -772,7 +772,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     private void geraAgendamentoAfastamento(Date start, Date end, Profissional profissional) {
-        agendamentosAfastamento = new ArrayList<>();
+        agendamentosAfastamento = geraAgendamentoAfastamentoByProfissional(start, end, profissional);
+    }
+
+    private List<Agendamento> geraAgendamentoAfastamentoByProfissional(Date start, Date end, Profissional profissional) {
+        List<Agendamento> agendamentos = new ArrayList<>();
         try {
             List<Afastamento> afastamentos = null;
             if (profissional != null) {
@@ -795,12 +799,13 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                     agendamento.setPaciente(pacienteAfastamento);
                     agendamento.setStatusAgendamento(null);
                     agendamento.setDescricao(afastamento.getObservacao());
-                    agendamentosAfastamento.add(agendamento);
+                    agendamentos.add(agendamento);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return agendamentos;
     }
 
     public void onDateSelect(SelectEvent selectEvent) {
@@ -826,18 +831,17 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public boolean validaData() {
-        if (agendamentosAfastamento == null || agendamentosAfastamento.isEmpty()) {
-            Calendar c = Calendar.getInstance();
-            c.setTime(getInicio());
-            c.set(Calendar.DAY_OF_MONTH, -1);
-            Date start = c.getTime();
+        Calendar c = Calendar.getInstance();
+        c.setTime(getInicio());
+        c.set(Calendar.DAY_OF_MONTH, -1);
+        Date start = c.getTime();
 
-            c.setTime(getFim());
-            c.set(Calendar.DAY_OF_MONTH, +1);
-            Date end = c.getTime();
-            geraAgendamentoAfastamento(start, end, profissional);
-        }
-        for (Agendamento agnd : agendamentosAfastamento) {
+        c.setTime(getFim());
+        c.set(Calendar.DAY_OF_MONTH, +1);
+        Date end = c.getTime();
+
+        List<Agendamento> agendamentoBloqueado = geraAgendamentoAfastamentoByProfissional(start, end, profissionalDentroAgenda);
+        for (Agendamento agnd : agendamentoBloqueado) {
             if (this.getInicio().after(agnd.getInicio()) && this.getInicio().before(agnd.getFim()) || this.getFim().after(agnd.getInicio()) && this.getFim().before(
                     agnd.getFim()) || this.getFim().getTime() == agnd.getFim().getTime() || this.getInicio().getTime() == agnd.getInicio().getTime() || agnd.getInicio().after(
                             this.getInicio()) && agnd.getInicio().before(this.getFim()) || agnd.getFim().after(this.getInicio()) && agnd.getFim().before(this.getFim())) {
