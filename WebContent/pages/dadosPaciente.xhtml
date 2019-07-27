@@ -60,12 +60,12 @@
 									rendered="#{pacienteMB.visivelDadosPaciente}" />
 								<p:inputText id="email"
 									value="#{pacienteMB.entity.dadosBasico.email}" maxlength="200"
-									rendered="#{pacienteMB.visivelDadosPaciente}" required="false">
+									rendered="#{pacienteMB.visivelDadosPaciente}" required="true">
 								</p:inputText>
 
 								<p:outputLabel id="lblDocumento" for="documento" value="CPF : "
 									rendered="#{pacienteMB.visivelDadosPaciente}" />
-								<p:inputMask id="documento" required="false"
+								<p:inputMask id="documento" required="true"
 									validatorMessage="CPF inválido"
 									value="#{pacienteMB.entity.dadosBasico.documento}"
 									mask="999.999.999-99"
@@ -155,7 +155,7 @@
 								</h:panelGroup>
 
 								<p:outputLabel for="dtNascimento" value="Data de Nascimento : " />
-								<p:calendar id="dtNascimento" required="true"
+								<p:calendar id="dtNascimento" required="false"
 									value="#{pacienteMB.entity.dadosBasico.dataNascimento}"
 									pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
 									locale="#{lumeSecurity.locale}"
@@ -242,7 +242,7 @@
 
 								<p:outputLabel id="lblCPFResponsavel" for="cpfresponsavel"
 									value="CPF do Responsável :" />
-								<p:inputMask id="cpfresponsavel" required="false"
+								<p:inputMask id="cpfresponsavel" required="true"
 									validatorMessage="CPF inválido"
 									value="#{pacienteMB.entity.dadosBasico.cpfresponsavel}"
 									mask="999.999.999-99">
