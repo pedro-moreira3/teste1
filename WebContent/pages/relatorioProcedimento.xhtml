@@ -1,5 +1,5 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jstl/core" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
         <style>
 .ui-picklist .ui-picklist-list {
@@ -247,7 +247,7 @@ div.ui-selectoneradio label {
 											itemValue="F" itemEscaped="false" />
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
-											itemValue="A" itemEscaped="false" />
+											itemValue="C" itemEscaped="false" />
 									</p:selectManyCheckbox>
 
 								</p:outputPanel>
@@ -257,7 +257,7 @@ div.ui-selectoneradio label {
 									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
 										
 										<h:panelGroup>
-        									<p:commandButton	value="Pesquisar"  action="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+        									<p:commandButton	value="Filtrar"  action="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
         								</h:panelGroup>
 										
 									</p:panelGrid>
@@ -345,19 +345,8 @@ div.ui-selectoneradio label {
                     			</p:panelGrid>
                     		
                     			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Finalidade" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.finalidadeAgendamento.descricao}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Útilma alteração realizada por" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.profissionalUltAlteracao.dadosBasico.nome}"/>
-                    		    	</h:panelGroup>
                     		    	
                     		    	<h:panelGroup	rendered="#{!relatorioProcedimentoMB.entity.planoTratamentoProcedimentoFaces.isEmpty()}">
-                    		    		
                     		    		<p:dataTable	id="dtFaces" widgetVar="dtFaces" value="#{relatorioProcedimentoMB.entity.planoTratamentoProcedimentoFaces}" 
                     									var="face" rowKey="#{face}" rows="10" paginator="true" paginatorPosition="bottom" reflow="true" 
                     									emptyMessage="Nenhum registro encontrado" selectionMode="single">
@@ -443,12 +432,150 @@ div.ui-selectoneradio label {
 					
 					<p:dialog	id="dlgGerarRelatorio" widgetVar="dlgGerarRelatorio" header="Relatório do Procedimento" modal="true"
                     			onHide="PF('dlgRelProcedimento').toggleMaximize();" onShow="PF('dlgRelProcedimento').toggleMaximize();">
-					
-						<p:outputPanel	id="relatorio">
+						<p:panel>
+							<p:outputPanel	id="relatorio">
 						
+								<h1	style="font-size: 20px !important;" align="center">
+                                	<h:outputText value="RELATÓRIO DE PROCEDIMENTOS" />
+                            	</h1>
+                            
+                          		<div class="SeparatorFull"></div>
+								
+								<br />
+								
+                            	<h1 style="font-size: 18px !important;margin: 0;margin-top:10px;margin-bottom:10px;font-weight:bold;">
+                                	<h:outputText value="#{relatorioProcedimentoMB.nomeClinica()}" />
+                            	</h1>
+                            	
+                            	<h1 style="font-size: 14px !important;margin: 0;margin-top:-5px;margin-bottom:5px;">
+                                	<h:outputText value="#{relatorioProcedimentoMB.telefoneClinica()}" />
+                            	</h1>
+								
+								<br />
+                            	
+                            	<div class="SeparatorFull"></div>
+                            	<br />
+                            	
+                            	<table	style="width: 100%" class="firstRowBold">
+                            		
+                            		<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
+                            		
+                            			<h2 	style="text-align: left;font-size: 16px !important;margin: 0;margin-top:10px;
+                            					margin-bottom:10px;font-weight:bold;">
+                            				DADOS DO PROCEDIMENTO
+                            			</h2>
+                            		
+                            			<th>Procedimento:			</th>
+                            			<th>Inicio do tratamento:	</th>
+                            			<th>Término do tratamento:	</th>
+
+                            		</tr>
+
+                            		<tr	style="text-align: left;font-size: 14px !important;">
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioProcedimentoMB.entity.procedimento.descricao}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioProcedimentoMB.formatarData(relatorioProcedimentoMB.entity.planoTratamento.inicio)}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioProcedimentoMB.formatarData(relatorioProcedimentoMB.entity.planoTratamento.fim)}" />
+                            			</td>
+
+                            		</tr>
+
+                            	</table>
+                            	
+                            	<div class="SeparatorFull" style="margin-bottom:40px !important;margin-top:40px !important;"></div>
+							
 						
+								<table	style="width: 100%" class="firstRowBold">
+                            		<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
+                            		
+                            			<h2 	style="text-align: left;font-size: 16px !important;margin: 0;margin-top:10px;
+                            					margin-bottom:10px;font-weight:bold;">
+                            				DADOS PACIENTE
+                            			</h2>
+                            		
+                            			<th>Paciente:</th>
+                            			<th>Profissional responsável:</th>
+                            			<th>Convênio:	</th>
+
+                            		</tr>
+                            		
+                            		<tr	style="text-align: left;font-size: 14px !important;">
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioProcedimentoMB.entity.planoTratamento.paciente.dadosBasico.nome}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioProcedimentoMB.entity.planoTratamento.profissional.dadosBasico.nome}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioProcedimentoMB.entity.planoTratamento.paciente.convenio.dadosBasico.nome}" />
+                            			</td>
+
+                            		</tr>
+                            		
+                            		<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
+                            		
+                            			<th>Titular:</th>
+                            			<th>Plano:	</th>
+                            			<th>Data da última alteração:</th>
+
+                            		</tr>
+                            		
+                            		<tr	style="text-align: left;font-size: 14px !important;">
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioProcedimentoMB.entity.planoTratamento.paciente.titular.dadosBasico.nome}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioProcedimentoMB.entity.planoTratamento.paciente.plano.nome}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioProcedimentoMB.formatarData(relatorioProcedimentoMB.entity.planoTratamento.paciente.dataUltimaAlteracao)}" />
+                            			</td>
+
+                            		</tr>
+                            	</table>
+                            	
+                            	<table	style="width: 100%" class="firstRowBold">
+                            		<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
+                            		
+                            			<h2 	style="text-align: left;font-size: 16px !important;margin: 0;margin-top:10px;
+                            					margin-bottom:10px;font-weight:bold;">
+                            				ORÇAMENTO
+                            			</h2>
+                            		
+                            			<th>Valor do procedimento:</th>
+                            			<th>valor do desconto:</th>
+
+                            		</tr>
+                            		
+                            		<tr	style="text-align: left;font-size: 14px !important;">
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioProcedimentoMB.entity.valor}" />
+                            			</td>
+                            			
+                            			<td>
+                            				<h:outputText	value="#{relatorioProcedimentoMB.entity.valorDesconto}" />
+                            			</td>
+
+                            		</tr>
+                            	
+                            	</table>
 						
-						</p:outputPanel>
+							</p:outputPanel>
+						</p:panel>
 					</p:dialog>
 					
                 </div>
