@@ -138,7 +138,7 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
             }
         }
         for (Afastamento afastamento : AfastamentoSingleton.getInstance().getBo().listByProfissional((agendamentoMB.getProfissional()))) {
-            if (((afastamento.getInicio().getTime() <= this.getInicio().getTime()) && (afastamento.getFim().getTime() >= this.getInicio().getTime())) || ((afastamento.getInicio().getTime() <= this.getFim().getTime()) && (afastamento.getFim().getTime() >= this.getFim().getTime())) || ((this.getInicio().getTime() >= afastamento.getInicio().getTime()) && (this.getFim().getTime() <= afastamento.getFim().getTime())) || ((this.getInicio().getTime() <= afastamento.getInicio().getTime()) && (this.getFim().getTime() >= afastamento.getFim().getTime()))) {
+            if (((afastamento.getInicio().getTime() < this.getInicio().getTime()) && (afastamento.getFim().getTime() > this.getInicio().getTime())) || ((afastamento.getInicio().getTime() < this.getFim().getTime()) && (afastamento.getFim().getTime() >= this.getFim().getTime())) || ((this.getInicio().getTime() >= afastamento.getInicio().getTime()) && (this.getFim().getTime() <= afastamento.getFim().getTime())) || ((this.getInicio().getTime() <= afastamento.getInicio().getTime()) && (this.getFim().getTime() > afastamento.getFim().getTime()))) {
                 if (afastamento.getId() != this.getEntity().getId()) {
                     throw new DataDuplicadaException();
                 }
