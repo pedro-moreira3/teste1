@@ -829,6 +829,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.setFim(cal.getTime());
         //profissional = null;
         profissionalDentroAgenda = null;
+        cadeiraDentroAgenda = 1;
         this.validaHoraUtilProfissional(profissionalDentroAgenda);
         this.validaAfastamento();
         PrimeFaces.current().ajax().addCallbackParam("hora", horaUtilValida);
