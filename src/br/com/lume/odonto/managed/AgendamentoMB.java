@@ -354,7 +354,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             profissionalDentroAgenda = null;
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                             this.actionNew(event);
-                            PrimeFaces.current().ajax().addCallbackParam("dlg", dlg);
+                            PrimeFaces.current().ajax().addCallbackParam("dlg", true);
                             //profissional = null;
                         } catch (BusinessException e) {
                             this.addError(OdontoMensagens.getMensagem("erro.agendamento.exclusao.procedimento.emprestimo"), "");
@@ -369,7 +369,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             AgendamentoSingleton.getInstance().getBo().persist(this.getEntity());
                             this.actionNew(event);
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                            PrimeFaces.current().ajax().addCallbackParam("dlg", dlg);
+                            PrimeFaces.current().ajax().addCallbackParam("dlg", true);
                         } catch (Exception e) {
                             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
                             log.error("actionPersist", e);
