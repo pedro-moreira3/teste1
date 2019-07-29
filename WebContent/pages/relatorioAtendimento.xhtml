@@ -853,6 +853,57 @@ div.ui-selectoneradio label {
 
                             			</tr>
                             		</table>
+                            										
+									<p:outputLabel	value="Agendamentos: " />
+
+									<br />
+									
+									<p:selectManyCheckbox	value="#{relatorioAtendimentoMB.filtroAtendimento}" style="font-size:10px !important;"
+															layout="grid" columns="4">
+										
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoAfastamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Bloqueio&lt;/div&gt;"
+											itemValue="F" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Atendidos&lt;/div&gt;"
+											itemValue="A" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoConsultaInicial legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Consulta Inicial&lt;/div&gt;"
+											itemValue="G" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
+											itemValue="C" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoErroAgendamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Erro de Agendamento&lt;/div&gt;"
+											itemValue="D" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='clienteNaClinica legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cliente na Clínica&lt;/div&gt;"
+											itemValue="I" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoConfirmado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Confirmados&lt;/div&gt;"
+											itemValue="S" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='emAtendimento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Em Atendimento&lt;/div&gt;"
+											itemValue="O" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoEncaixe legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Encaixe&lt;/div&gt;"
+											itemValue="E" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoEncaixeAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Encaixe Atendido&lt;/div&gt;"
+											itemValue="H" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoFalta legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Falta&lt;/div&gt;"
+											itemValue="B" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoNaoConfirmado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Não Confirmado&lt;/div&gt;"
+											itemValue="N" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoPrecadastro legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Agendado pelo Paciente&lt;/div&gt;"
+											itemValue="P" itemEscaped="false" />
+										<f:selectItem
+											itemLabel="&lt;div&gt;&lt;div class='agendamentoRemarcado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Remarcado&lt;/div&gt;"
+											itemValue="R" itemEscaped="false" />
+									</p:selectManyCheckbox>
                             	
                             	</p:outputPanel>
                             	
