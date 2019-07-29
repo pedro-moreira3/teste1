@@ -37,7 +37,7 @@
 
 	<p:fieldset legend="" toggleable="true" collapsed="false"
 		style="margin-top: 20px !important">
-
+		
 		<p:panelGrid columns="6" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid fieldsZeroPadd">
 
@@ -46,10 +46,8 @@
 					pattern="dd/MM/yyyy HH:mm" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.inicio)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.inicio)}">
-					<p:ajax event="dateSelect" process="@this" update="fim"
-						listener="#{agendamentoMB.validaHoraUtilProfissional}" />
-					<p:ajax event="dateSelect" process="@this" update="fim"
-						listener="#{agendamentoMB.calculaDataFim}" />
+					<p:ajax event="close" listener="#{agendamentoMB.onCalendarAgChange}"
+						process="@this" update=":lume:fim" />
 				</p:calendar>
 				<p:outputLabel for="inicio" value="Data/Hora Inicial" />
 				<p:message styleClass="msg" for="inicio" />
@@ -59,8 +57,8 @@
 					pattern="dd/MM/yyyy HH:mm" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.fim)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.fim)}">
-					<p:ajax event="dateSelect"
-						listener="#{agendamentoMB.validaHoraUtilProfissional}" />
+					<p:ajax event="close" listener="#{agendamentoMB.onCalendarAgChange}"
+						process="@this" />
 				</p:calendar>
 				<p:outputLabel for="fim" value="Data/Hora Final" />
 				<p:message styleClass="msg" for="fim" />
@@ -68,8 +66,10 @@
 			<h:panelGroup styleClass="md-combo">
 				<p:selectOneMenu id="cadeira"
 					value="#{agendamentoMB.cadeiraDentroAgenda}">
+					<f:selectItem itemValue="#{null}" itemLabel="Nenhuma" />
 					<f:selectItems value="#{agendamentoMB.cadeiras}" var="c"
 						itemLabel="#{c}" itemValue="#{c}" />
+					<p:ajax event="change" process="@this" listener="#{agendamentoMB.atualizaCadeiraSelecionada}" />
 				</p:selectOneMenu>
 				<p:outputLabel for="cadeira" value="Cadeira" />
 				<p:message styleClass="msg" for="cadeira" />

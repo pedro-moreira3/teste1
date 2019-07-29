@@ -178,6 +178,9 @@
 
 		<div class="layout-main">
 			<h:form id="lume">
+				<p:growl id="view-log" showDetail="true" escape="false" globalOnly="true" life="4000">
+					<p:autoUpdate />
+				</p:growl>
 				<p:ajaxStatus onstart="PF('loading').show();"
 					onsuccess="PF('loading').hide();" onerror="PF('loading').hide();"/>
 				<p:dialog modal="true" widgetVar="loading" draggable="false"

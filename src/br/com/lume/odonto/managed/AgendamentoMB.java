@@ -96,7 +96,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private ScheduleModel schedule;
 
     private Profissional profissional, profissionalDentroAgenda;
-    private int cadeiraDentroAgenda;
+    private Integer cadeiraDentroAgenda;
 
     private List<Profissional> profissionais;
 
@@ -540,7 +540,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
     
     public boolean validaCadeira() {
-        if(this.getEntity().getId() == 0 || !this.getInicio().equals(getEntity().getInicio()) || !this.getFim().equals(getEntity().getFim()) || this.getCadeiraDentroAgenda() != getEntity().getCadeira()) {
+        if((this.getEntity().getId() == 0 || !this.getInicio().equals(getEntity().getInicio()) || !this.getFim().equals(getEntity().getFim()) || this.getCadeiraDentroAgenda() != getEntity().getCadeira()) && this.getCadeiraDentroAgenda() != null) {
             return !AgendamentoSingleton.getInstance().getBo().existeAgendamentoDaCadeira(this.getEntity(), this.getInicio(), this.getFim(), this.getCadeiraDentroAgenda(),
                     UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
         } else
@@ -557,16 +557,35 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             return true;
         }
     }
+    
+    public void atualizaCadeiraSelecionada() {
+        if(getCadeiraDentroAgenda() != null && AgendamentoSingleton.getInstance().getBo().existeAgendamentoDaCadeira(this.getEntity(), this.getInicio(), this.getFim(), this.getCadeiraDentroAgenda(),
+                UtilsFrontEnd.getEmpresaLogada().getEmpIntCod())) {
+            addError("", "Cadeira já está em uso para este horário.", true);
+        }
+    }
+    
+    public void validaProfissionalEmAgendamento() {
+        List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndProfissional(profissionalDentroAgenda, this.getInicio(), this.getFim());
+        if(agendamentos != null && !agendamentos.isEmpty()) {
+            addWarn("", "Profissional já está atendendo neste horário.", true);
+        }
+    }
 
     public void validaHoraUtilProfissionalCombo() {
         validaHoraUtilProfissional(profissionalDentroAgenda);
         if (horaUtilValida == false) {
-            addError("Profissional não está cadastrado para atender nesse horário.", "");
+            addWarn("", "Profissional não está cadastrado para atender nesse horário.", true);
         }
+        validaProfissionalEmAgendamento();
     }
 
     public void validaHoraUtilProfissional() {
         validaHoraUtilProfissional(profissionalDentroAgenda);
+        if (horaUtilValida == false) {
+            addWarn("", "Profissional não está cadastrado para atender nesse horário.", true);
+        }
+        validaProfissionalEmAgendamento();
     }
 
     public void validaHoraUtilProfissional(Profissional profissional) {
@@ -829,7 +848,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.setFim(cal.getTime());
         //profissional = null;
         profissionalDentroAgenda = null;
-        cadeiraDentroAgenda = 1;
+        cadeiraDentroAgenda = null;
         this.validaHoraUtilProfissional(profissionalDentroAgenda);
         this.validaAfastamento();
         PrimeFaces.current().ajax().addCallbackParam("hora", horaUtilValida);
@@ -1148,6 +1167,12 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
         return retorno;
     }
+    
+    public void onCalendarAgChange() {
+        calculaDataFim();
+        atualizaCadeiraSelecionada();
+        validaHoraUtilProfissional();
+    }
 
     public void setProcedimentosPickList(DualListModel<AgendamentoPlanoTratamentoProcedimento> procedimentosPickList) {
         this.procedimentosPickList = procedimentosPickList;
@@ -1389,12 +1414,12 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     
-    public int getCadeiraDentroAgenda() {
+    public Integer getCadeiraDentroAgenda() {
         return cadeiraDentroAgenda;
     }
 
     
-    public void setCadeiraDentroAgenda(int cadeiraDentroAgenda) {
+    public void setCadeiraDentroAgenda(Integer cadeiraDentroAgenda) {
         this.cadeiraDentroAgenda = cadeiraDentroAgenda;
     }
     
