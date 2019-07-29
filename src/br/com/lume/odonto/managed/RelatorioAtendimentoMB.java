@@ -56,16 +56,15 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private List<Integer> cadeiras;
     
-    private String dataProximoAgendamentoPaciente;
-    
     // ATRIBUTOS USADOS COMO FILTRO PARA PESQUISA DOS AGENDAMENTOS
     private Profissional filtroPorProfissional;
     private Profissional filtroPorProfissionalUltAlteracao;
     private Paciente filtroPorPaciente;
     private Date dataInicio, dataFim;
     private Convenio filtroPorConvenio;
-    private boolean checkFiltro = false;
     
+    private boolean checkFiltro = false;
+    private boolean imprimirCabecalho = true;
 
     public RelatorioAtendimentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
@@ -337,13 +336,11 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         this.checkFiltro = checkFiltro;
     }
 
-    public String getDataProximoAgendamentoPaciente() {
-        return null;
-       // return this.getEntity().getDataProximoAgendamentoPaciente();
+    public boolean isImprimirCabecalho() {
+        return imprimirCabecalho;
     }
 
-    public void setDataProximoAgendamentoPaciente() {
-      //  this.dataProximoAgendamentoPaciente = this.getEntity().getDataProximoAgendamentoPaciente();
-       this.dataProximoAgendamentoPaciente =null;
+    public void setImprimirCabecalho(boolean imprimirCabecalho) {
+        this.imprimirCabecalho = imprimirCabecalho;
     }
 }

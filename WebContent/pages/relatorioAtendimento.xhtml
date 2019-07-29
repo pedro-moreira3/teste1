@@ -208,7 +208,8 @@ div.ui-selectoneradio label {
         								
         								<h:panelGroup>
         									<h:outputText 	for="filtroProfissionalUltAlteracao" value="Ultima alteração realizada por:" />
-        									<p:autoComplete	id="filtroProfissionalUltAlteracao" value="#{relatorioAtendimentoMB.filtroPorProfissionalUltAlteracao}" completeMethod="#{relatorioAtendimentoMB.sugestoesProfissionalUltAlteracao}"
+        									<p:autoComplete	id="filtroProfissionalUltAlteracao" value="#{relatorioAtendimentoMB.filtroPorProfissionalUltAlteracao}"
+        													completeMethod="#{relatorioAtendimentoMB.sugestoesProfissionalUltAlteracao}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 															converter="profissional" forceSelection="true" scrollHeight="400">
 												<p:ajax	event="itemSelect" process="@this" />															
@@ -217,7 +218,8 @@ div.ui-selectoneradio label {
         								
         								<h:panelGroup>
         									<h:outputText 	for="filtroConvenio" value="Convênio:" />
-        									<p:autoComplete	id="filtroConvenio" value="#{relatorioAtendimentoMB.filtroPorConvenio}" completeMethod="#{relatorioAtendimentoMB.sugestoesConvenios}"
+        									<p:autoComplete	id="filtroConvenio" value="#{relatorioAtendimentoMB.filtroPorConvenio}"
+        													completeMethod="#{relatorioAtendimentoMB.sugestoesConvenios}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 															converter="convenio" forceSelection="true" scrollHeight="400" >
 												<p:ajax	event="itemSelect" process="@this" />
@@ -297,12 +299,18 @@ div.ui-selectoneradio label {
 									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
 										
 										<h:panelGroup>
-        									<p:commandButton	value="Filtrar"  action="#{relatorioAtendimentoMB.popularLista}" update=":lume:dtRelAtendimento"/>
+        									<p:commandButton	value="Filtrar"  action="#{relatorioAtendimentoMB.popularLista}" update=":lume:dtRelAtendimento,:lume:dlgGerarRelatorioTabela"/>
+        								</h:panelGroup>
+        								
+        								<h:panelGroup>
+        									<p:commandButton	value="Imprimir"  oncomplete="PF('dlgConfirmarImpCabecalho').show();" 
+        														update=":lume:dlgGerarRelatorioTabela,:lume:dlgConfirmarImpCabecalho" process="@this,:lume:dlgConfirmarImpCabecalho"/>
         								</h:panelGroup>
 										
 									</p:panelGrid>
 									
 								</p:outputPanel>
+								
 							</p:panelGrid>
 							
 					</p:fieldset>
@@ -737,6 +745,31 @@ div.ui-selectoneradio label {
                             	
                 	</p:dialog>
                 	
+                	<p:dialog	id="dlgConfirmarImpCabecalho" widgetVar="dlgConfirmarImpCabecalho" responsive="true" icon="pi pi-exclamation-triangle" width="300px"
+                				modal="true" draggable="false" blockScroll="true" positionTop="0" positionLeft="0" style="overflow:hidden !important;">
+						
+						<h:panelGroup	style="margin:16px;">
+								<p:selectBooleanCheckbox	id="cabecalho" value="#{relatorioAtendimentoMB.imprimirCabecalho}">
+            						<p:ajax	event="change" update=":lume:dlgGerarRelatorioTabela" />
+        						</p:selectBooleanCheckbox>
+        						<p:outputLabel	for="cabecalho" value="Imprimir cabeçalho" />
+						</h:panelGroup>
+						
+						<p:panelGrid	columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+							
+							<h:panelGroup>
+								<p:commandButton	value="Fechar" oncomplete="PF('dlgConfirmarImpCabecalho').hide();"/>
+							</h:panelGroup>
+							
+							<h:panelGroup>
+								<p:commandButton	value="Confirmar" process="@this">
+									<p:printer	target="relatorioTabela"/>
+								</p:commandButton>
+							</h:panelGroup>						
+						</p:panelGrid>
+						
+                	</p:dialog>
+                	
                 	<p:dialog	id="dlgGerarRelatorioTabela" widgetVar="dlgGerarRelatorioTabela" header="Relatório" responsive="true" modal="true"
                 				onHide="PF('dlgGerarRelatorioTabela').toggleMaximize();" onShow="PF('dlgGerarRelatorioTabela').toggleMaximize();">
                 		
@@ -751,7 +784,7 @@ div.ui-selectoneradio label {
 								
 								<br />
 								
-                            	<h1 style="font-size: 18px !important;margin: 0;margin-top:10px;margin-bottom:10px;font-weight:bold;">
+                            	<h1 style="font-size: 16px !important;margin: 0;margin-top:10px;margin-bottom:10px;font-weight:bold;">
                                 	<h:outputText value="#{relatorioAtendimentoMB.nomeClinica()}" />
                             	</h1>
                             	
@@ -764,75 +797,98 @@ div.ui-selectoneradio label {
                             	<div class="SeparatorFull"></div>
                             	<br />
                             	
-                            	<table	style="width: 100%" class="firstRowBold">
+                            	<p:outputPanel	rendered="#{relatorioAtendimentoMB.imprimirCabecalho}">
+                            		<table	style="width: 100%;font-size:12px;" class="firstRowBold">
                             		
-                            		<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
+                            			<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
                             		
-                            			<h2 	style="text-align: left;font-size: 16px !important;margin: 0;margin-top:10px;
-                            					margin-bottom:10px;font-weight:bold;">
-                            			RLATÓRIO DO ATENDIMENTO
-                            			</h2>
+                            				<h2 	style="text-align: left;font-size: 14px !important;margin: 0;margin-top:10px;
+                            						margin-bottom:10px;font-weight:bold;">
+                            				ATENDIMENTO
+                            				</h2>
                             		
-                            			<th>Data inicial:</th>
-                            			<th>Data final:	</th>
-                            			<th>Paciente:	</th>
+                            				<th>Data inicial:</th>
+                            				<th>Data final:	</th>
+                            				<th>Paciente:	</th>
 
-                            		</tr>
+                            			</tr>
 
-                            		<tr	style="text-align: left;font-size: 14px !important;">
+                            			<tr	style="text-align: left;">
                             			
-                            			<td>
-                            				<h:outputText	value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.inicio)}" />
-                            			</td>
+                            				<td>
+                            					<h:outputText	value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.dataInicio)}" />
+                            				</td>
                             			
-                            			<td>
-                            				<h:outputText	value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.fim)}" />
-                            			</td>
+                            				<td>
+                            					<h:outputText	value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.dataFim)}" />
+                            				</td>
                             			
-                            			<td>
-                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.paciente.dadosBasico.nome}" />
-                            			</td>
+                            				<td>
+                            					<h:outputText	value="#{relatorioAtendimentoMB.filtroPorPaciente.dadosBasico.nome}" />
+                            				</td>
 
-                            		</tr>
+                            			</tr>
 
-                            		<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
+                            			<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
 
-                            			<th>Profissional:		</th>
-                            			<th>Última alteração realizada por:	</th>
-                            			<th>Convênio:	</th>
+                            				<th>Profissional:		</th>
+                            				<th>Última alteração realizada por:	</th>
+                            				<th>Convênio:	</th>
 
-                            		</tr>
+                            			</tr>
                             		
-                            		<tr	style="text-align: left;font-size: 14px !important;">
+                            			<tr	style="text-align: left;font-size: 14px !important;">
                             			
-                            			<td>
-                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.profissional.dadosBasico.nome}" />
-                            			</td>
+                            				<td>
+                            					<h:outputText	value="#{relatorioAtendimentoMB.filtroPorProfissional.dadosBasico.nome}" />
+                            				</td>
                             			
-                            			<td>
-                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.profissionalUltAlteracao.dadosBasico.nome}" />
-                            			</td>
+                            				<td>
+                            					<h:outputText	value="#{relatorioAtendimentoMB.filtroPorProfissionalUltAlteracao.dadosBasico.nome}" />
+                            				</td>
                             			
-                            			<td>
-                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.paciente.convenio.dadosBasico.nome}" />
-                            			</td>
+                            				<td>
+                            					<h:outputText	value="#{relatorioAtendimentoMB.filtroPorConvenio.dadosBasico.nome}" />
+                            				</td>
 
-                            		</tr>
-                            	</table>
+                            			</tr>
+                            		</table>
+                            	
+                            	</p:outputPanel>
                             	
                             	<br />
                             	
-                            	<table	style="width: 100%;border:1px solid;" class="firstRowBold">
-                            	
+                            	<table	style="width: 100%;font-size:10px;textalign:left;">
+                            			
+                            		<tr	style="text-align:center;margin:5px;">
+                            			<th	style="border:1px solid;">Paciente</th>
+                            			<th	style="border:1px solid;">Celular</th>
+                            			<th	style="border:1px solid;">Profissional responsável</th>
+                            			<th	style="border:1px solid;">Data do agendamento</th>
+                            			<th	style="border:1px solid;">Data do próximo agendamento</th>
+                            			<th	style="border:1px solid;">Status</th>
+                            		</tr>
+                            		
                             		<c:forEach	var="atendimento" items="#{relatorioAtendimentoMB.listaAtendimentos}">
                             			<tr>
-                            				<td>#{atendimento.paciente.dadosBasico.nome}</td>
-                            				<td>#{atendimento.profissional.dadosBasico.nome}</td>
-                            				<td></td>
-                            				<td></td>
-                            				<td></td>
-                            				<td></td>
-                            				<td></td>
+                            				<td>
+                            					<h:outputText	value="#{atendimento.paciente.dadosBasico.nome}" />
+                            				</td>
+                            				<td>
+                            					<h:outputText	value="#{atendimento.paciente.dadosBasico.celular}"/>
+                            				</td>
+                            				<td>
+                            					<h:outputText	value="#{atendimento.profissional.dadosBasico.nome}"/>
+                            				</td>
+                            				<td>
+                            					<h:outputText	value="#{relatorioAtendimentoMB.formatarData(atendimento.dataAgendamento)}"/>
+                            				</td>
+                            				<td>
+                            					<h:outputText	value="#{atendimento.dataProximoAgendamentoPaciente}"/>
+                            				</td>
+                            				<td>
+                            					<h:outputText	value="#{atendimento.statusAgendamento.descricao}"/>
+                            				</td>
                             			</tr>
                             		</c:forEach>
                             		
