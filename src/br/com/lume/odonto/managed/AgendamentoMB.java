@@ -542,10 +542,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
     
     public boolean validaCadeira() {
-        if((this.getEntity().getId() == 0 || !this.getInicio().equals(getEntity().getInicio()) || !this.getFim().equals(getEntity().getFim()) || this.getCadeiraDentroAgenda() != getEntity().getCadeira()) && this.getCadeiraDentroAgenda() != null) {
-            return !AgendamentoSingleton.getInstance().getBo().existeAgendamentoDaCadeira(this.getEntity(), this.getInicio(), this.getFim(), this.getCadeiraDentroAgenda(),
-                    UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
-        } else
+        //if((this.getEntity().getId() == 0 || !this.getInicio().equals(getEntity().getInicio()) || !this.getFim().equals(getEntity().getFim()) || this.getCadeiraDentroAgenda() != getEntity().getCadeira()) && this.getCadeiraDentroAgenda() != null) {
+        //    return !AgendamentoSingleton.getInstance().getBo().existeAgendamentoDaCadeira(this.getEntity(), this.getInicio(), this.getFim(), this.getCadeiraDentroAgenda(),
+        //            UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+        //} else
             return true;
     }
 
