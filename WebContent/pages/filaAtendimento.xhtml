@@ -21,6 +21,10 @@
 div.ui-selectoneradio label {
     width: auto !important;
 }
+
+.marginTop8 .ui-calendar input {
+	margin-top: 8px;
+}
 </style>
         <script>
                                     function resize(dialog) {
@@ -41,18 +45,25 @@ div.ui-selectoneradio label {
 					<h1>Fila de Atendimento</h1>
                     <p:separator styleClass="SeparatorFull" />
 
-                    <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                        <p:outputLabel for="filtro" value="Dia : " />
-                        <p:selectOneMenu id="filtro" value="#{filaAtendimentoMB.filtro}" rendered="#{filaAtendimentoMB.dia != 7}">
-                            <f:selectItem itemValue="CURRENT_DATE" itemLabel="HOJE" />
-                            <f:selectItem itemValue="CURRENT_DATE +1" itemLabel="AMANHÃ" />
-                            <p:ajax listener="#{filaAtendimentoMB.carregaLista}" process="@this" update="dtAtendimento" />
-                        </p:selectOneMenu>
-                        <p:selectOneMenu id="filtroSegunda" value="#{filaAtendimentoMB.filtro}" rendered="#{filaAtendimentoMB.dia == 7}">
-                            <f:selectItem itemValue="#{null}" itemLabel="HOJE" />
-                            <f:selectItem itemValue="CURRENT_DATE +2" itemLabel="SEGUNDA" />
-                            <p:ajax listener="#{filaAtendimentoMB.carregaLista}" process="@this" update="dtAtendimento" />
-                        </p:selectOneMenu>
+                    <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group marginTop8">
+                    	<p:outputPanel style="margin-top: 8px;">
+                        	<h:outputText value="Dia : " />
+                        </p:outputPanel>
+                        <ui:remove>
+	                        <p:selectOneMenu id="filtro" value="#{filaAtendimentoMB.filtro}" rendered="#{filaAtendimentoMB.dia != 7}">
+	                            <f:selectItem itemValue="CURRENT_DATE" itemLabel="HOJE" />
+	                            <f:selectItem itemValue="CURRENT_DATE +1" itemLabel="AMANHÃ" />
+	                            <p:ajax listener="#{filaAtendimentoMB.carregaLista}" process="@this" update="dtAtendimento" />
+	                        </p:selectOneMenu>
+	                        <p:selectOneMenu id="filtroSegunda" value="#{filaAtendimentoMB.filtro}" rendered="#{filaAtendimentoMB.dia == 7}">
+	                            <f:selectItem itemValue="#{null}" itemLabel="HOJE" />
+	                            <f:selectItem itemValue="CURRENT_DATE +2" itemLabel="SEGUNDA" />
+	                            <p:ajax listener="#{filaAtendimentoMB.carregaLista}" process="@this" update="dtAtendimento" />
+	                        </p:selectOneMenu>
+	                    </ui:remove>
+	                    <p:calendar value="#{filaAtendimentoMB.dateFilter}" pattern="dd/MM/yyyy" mask="true">
+	                    	<p:ajax event="close" listener="#{filaAtendimentoMB.carregaLista}" process="@this" update=":lume:dtAtendimento" />
+	                    </p:calendar>
                         <p:commandButton value="Novo Agendamento" icon="White fa fa-book White" oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
                             action="#{agendamentoMB.filaAtendimento(a)}" update="lume:pnAgendamento" process="@this" />
                     </p:panelGrid>
@@ -117,19 +128,19 @@ div.ui-selectoneradio label {
                         </p:column>                        
                         <p:column filterBy="#{a.chegouAsStr}" sortBy="#{a.chegouAsStrOrd}" filterMatchMode="contains" headerText="Chegou às" width="8%">
                             <p:calendar value="#{a.chegouAs}" pattern="HH:mm" mask="true" showButtonPanel="true"
-                                disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtro == 'CURRENT_DATE +1'}" timeOnly="true">
+                                disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow}" timeOnly="true">
                                 <p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}" process="@this" update="@form" />
                             </p:calendar>
                         </p:column>
                         <p:column filterBy="#{a.iniciouAsStr}" sortBy="#{a.iniciouAsStrOrd}" filterMatchMode="contains" headerText="Ini. Atend. às" width="8%">
                             <p:calendar value="#{a.iniciouAs}" pattern="HH:mm" mask="true" showButtonPanel="true"
-                                disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtro == 'CURRENT_DATE +1'}" timeOnly="true">
+                                disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow}" timeOnly="true">
                                 <p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}" process="@this" update="@form" />
                             </p:calendar>
                         </p:column>
                         <p:column filterBy="#{a.finalizouAsStr}" sortBy="#{a.finalizouAsStrOrd}" filterMatchMode="contains" headerText="Fim Atend. às" width="8%">
                             <p:calendar value="#{a.finalizouAs}" pattern="HH:mm" mask="true" showButtonPanel="true"
-                                disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtro == 'CURRENT_DATE +1'}" timeOnly="true">
+                                disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow}" timeOnly="true">
                                 <p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}" process="@this" update="@form" />
                             </p:calendar>
                         </p:column>
