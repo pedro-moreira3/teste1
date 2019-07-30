@@ -71,6 +71,7 @@ import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.origemAgendamento.OrigemAgendamentoSingleton;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
@@ -409,6 +410,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 agendamento.setAgendador(this.getEntity().getAgendador());
                 agendamento.setFim(this.getFim());
                 agendamento.setInicio(this.getInicio());
+                agendamento.setOrigemAgendamento(OrigemAgendamentoSingleton.getInstance().getBo().findByDescricao("Remarcacao"));
                 agendamento.setDataAgendamento(this.getEntity().getDataAgendamento());
                 agendamento.setPaciente(this.getEntity().getPaciente());
                 agendamento.setProfissional(this.getEntity().getProfissional());
