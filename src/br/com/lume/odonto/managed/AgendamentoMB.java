@@ -1377,7 +1377,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 String telefone = agendamento.getPaciente().getDadosBasico().getTelefoneStr();
                 telefone = (telefone == null || telefone.trim().isEmpty() ? agendamento.getPaciente().getDadosBasico().getCelular() : telefone);
                 sb.append(
-                        "[ '" + agendamento.getProfissional().getDadosBasico().getNome() + "', '" + siglaStatus + "', '" + agendamento.getPaciente().getDadosBasico().getNome() + "', new Date(0,0,0," + hora1 + ",0), new Date(0,0,0," + hora2 + ",0), 'Cadeira " + agendamento.getCadeira() + "', '" + telefone + "' ],");
+                        "[ '" + agendamento.getProfissional().getDadosBasico().getNome() + "', '" + siglaStatus + "', '" + agendamento.getPaciente().getDadosBasico().getNome() + "', new Date(0,0,0," + hora1 + ",0), new Date(0,0,0," + hora2 + ",0), '" + (agendamento.getCadeira() != null ? "Cadeira " + agendamento.getCadeira() : "Sem Cadeira") + "', '" + telefone + "' ],");
                 profissionaisAgendamentoHoje.add(agendamento.getProfissional().getDadosBasico().getNome());
             }
             String jsonFull = "{ classes: {";
