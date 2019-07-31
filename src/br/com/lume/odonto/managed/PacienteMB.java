@@ -310,12 +310,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void actionPersist(ActionEvent event) {
         Usuario usuario = null;
         try {
-            if (Utils.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
+            if (getEntity().getDadosBasico().getDataNascimento() != null && Utils.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
                 addError("Data de nascimento inválida.", "");
                 return;
             }
             DadosBasicoSingleton.getInstance().getBo().validaTelefonePaciente(this.getEntity().getDadosBasico());
-            DadosBasicoSingleton.getInstance().getBo().validaDataNascimento(this.getEntity().getDadosBasico());
+            if(getEntity().getDadosBasico().getDataNascimento() != null) {
+                DadosBasicoSingleton.getInstance().getBo().validaDataNascimento(this.getEntity().getDadosBasico());    
+            }
+            
             PacienteSingleton.getInstance().getBo().validaPacienteDuplicadoEmpresa(this.getEntity(),UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 

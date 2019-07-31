@@ -242,7 +242,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         try {
             carregarObjetosProfissional();
             
-            if (Utils.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
+            if (getEntity().getDadosBasico().getDataNascimento() != null && Utils.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
                 addError("Data de nascimento inválida.", "");
                 return;
             }

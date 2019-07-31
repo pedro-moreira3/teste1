@@ -957,7 +957,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 pacienteSelecionado = pacienteExistente;
                 return;
             }
-            if (Utils.validaDataNascimento(paciente.getDadosBasico().getDataNascimento()) == false) {
+            if (paciente.getDadosBasico().getDataNascimento() != null && Utils.validaDataNascimento(paciente.getDadosBasico().getDataNascimento()) == false) {
                 addError("Data de nascimento inválida.", "");
                 return;
             }
