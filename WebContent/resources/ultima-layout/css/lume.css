@@ -1590,7 +1590,7 @@ body .md-combo .ui-outputlabel {
 	width: 100%;
 }
 
-body *:not(.ui-growl) .ui-state-active, body *:not(.ui-growl) .ui-state-highlight {
+.body *:not(.ui-growl) .ui-state-active, body *:not(.ui-growl) .ui-state-highlight {
 	background-color: #4e7c73 !important;
 	color: #ffffff !important;
 }
