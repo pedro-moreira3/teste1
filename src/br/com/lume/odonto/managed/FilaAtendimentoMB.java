@@ -4,13 +4,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.model.chart.PieChartModel;
 
@@ -38,6 +38,8 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
     private List<Agendamento> agendamentos;
     
     private String filtro = "CURRENT_DATE";
+    private Date dateFilter;
+    private SimpleDateFormat dateFilterFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private Calendar c = Calendar.getInstance();
 
@@ -49,6 +51,7 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public FilaAtendimentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
+        this.dateFilter = new Date();
         pieModel = new PieChartModel();
         this.setClazz(Agendamento.class);
         this.carregaLista();
@@ -95,7 +98,7 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public void carregaLista() {
         try {
-           
+            filtro = "'" + this.dateFilterFormat.format((dateFilter == null ? new Date() : dateFilter)) + "'";
             agendamentos = AgendamentoSingleton.getInstance().getBo().listAgendmantosValidosByDate(filtro, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             carregarCadeiras();
         } catch (Exception e) {
@@ -206,6 +209,18 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public void setCadeiras(List<Integer> cadeiras) {
         this.cadeiras = cadeiras;
+    }
+    
+    public Date getDateFilter() {
+        return this.dateFilter;
+    }
+    
+    public void setDateFilter(Date dateFilter) {
+        this.dateFilter = dateFilter;
+    }
+    
+    public boolean isFiltroTomorrow() {
+        return DateUtils.isSameDay(getDateFilter(), new Date());
     }
 
 }

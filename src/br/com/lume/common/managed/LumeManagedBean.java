@@ -170,13 +170,21 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     public void addInfo(String summary, String detail) {
         this.addMessage(FacesMessage.SEVERITY_INFO, summary, detail, MessageType.TYPE_INFO);
     }
-
+    
     public void addWarn(String summary, String detail) {
-        this.addMessage(FacesMessage.SEVERITY_WARN, summary, detail, MessageType.TYPE_WARNING);
+        addWarn(summary, detail, false);
+    }
+
+    public void addWarn(String summary, String detail, boolean sendPrimefacesError) {
+        this.addMessage(FacesMessage.SEVERITY_WARN, summary, detail, MessageType.TYPE_WARNING, sendPrimefacesError);
     }
 
     public void addError(String summary, String detail) {
-        this.addMessage(FacesMessage.SEVERITY_ERROR, summary, detail, MessageType.TYPE_ERROR);
+        addError(summary, detail, false);
+    }
+
+    public void addError(String summary, String detail, boolean sendPrimefacesError) {
+        this.addMessage(FacesMessage.SEVERITY_ERROR, summary, detail, MessageType.TYPE_ERROR, sendPrimefacesError);
     }
 
     public void addFatal(String summary, String detail) {
@@ -184,11 +192,18 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     }
 
     private void addMessage(Severity severity, String summary, String detail, String type) {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
-        if(severity == FacesMessage.SEVERITY_ERROR || severity == FacesMessage.SEVERITY_FATAL)
-            PrimeFaces.current().executeScript("message('', '" + summary + " " + detail + "', '" + type + "')");
-        else
-            PrimeFaces.current().executeScript("message('', '" + summary + " " + detail + "', '" + type + "', true)");
+        addMessage(severity, summary, detail, type, false);
+    }
+
+    private void addMessage(Severity severity, String summary, String detail, String type, boolean sendPrimefacesError) {
+        if (sendPrimefacesError)
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
+        else {
+            if (severity == FacesMessage.SEVERITY_ERROR || severity == FacesMessage.SEVERITY_FATAL)
+                PrimeFaces.current().executeScript("message('', '" + summary + " " + detail + "', '" + type + "')");
+            else
+                PrimeFaces.current().executeScript("message('', '" + summary + " " + detail + "', '" + type + "', true)");
+        }
     }
 
     public BO<E> getbO() {
@@ -199,17 +214,16 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         // return ProfissionalBO.getProfissionalLogado() != null && getLumeSecurity().getUsuario() != null &&
         // getLumeSecurity().getUsuario().getEmpresa() != null ? getLumeSecurity().getUsuario().getEmpresa().getEmpChaTrial().equals("S") &&
         // ProfissionalBO.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ADMINISTRADOR): false;
-        
+
         Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
         Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
-        
-        if  (profissionalLogado != null && this.getLumeSecurity().getUsuario() != null && empresaLogada != null) {
+
+        if (profissionalLogado != null && this.getLumeSecurity().getUsuario() != null && empresaLogada != null) {
             return empresaLogada.getEmpChaTrial().equals("S") && profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR);
         } else {
             return false;
         }
-    }    
-    
+    }
 
     public boolean isAdmin() {
         return this.isAuxiliarAdministrativo() || this.isAdministrador() || this.isResponsavelTecnico() || isAdministradorClinica() || ((isDentista() && UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin()));
@@ -259,20 +273,22 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     public boolean isAlmoxarifa() {
         return UtilsFrontEnd.getProfissionalLogado() != null ? UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ALMOXARIFA) : false;
     }
-    
+
     public Calendar getCalendarFromDate(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         return calendar;
     }
-    
+
     public int getDefaultHour(Date date) {
-        if(date == null) return 0;
+        if (date == null)
+            return 0;
         return getCalendarFromDate(date).get(Calendar.HOUR_OF_DAY);
     }
-    
+
     public int getDefaultMinute(Date date) {
-        if(date == null) return 0;
+        if (date == null)
+            return 0;
         return getCalendarFromDate(date).get(Calendar.MINUTE);
     }
 }

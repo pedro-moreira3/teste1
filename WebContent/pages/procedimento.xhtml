@@ -64,7 +64,7 @@
                         <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
                             <p:outputLabel for="filtro" value="Filtro de Procedimento : " />
                             <p:inputText id="filtro" value="#{procedimentoMB.filtroTable}">
-                                <p:ajax event="keyup" process="@this" update=":lume:tbProcedimento" />
+                                <p:ajax event="keyup" process="@this" update=":lume:tbProcedimento" delay="1000" />
                             </p:inputText>
                         </p:panelGrid>
 
