@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 import org.primefaces.model.chart.PieChartModel;
@@ -19,7 +19,6 @@ import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
-import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.odonto.entity.Agendamento;
@@ -28,7 +27,6 @@ import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
-import br.com.lume.reserva.ReservaSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -47,8 +45,6 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     private List<Agendamento> agendamentos;
     
     private String filtro = "CURRENT_DATE";
-
-    private Calendar c = Calendar.getInstance();
 
     private int dia;
 
@@ -107,7 +103,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     
     public String formatarData(Date data) {
         if(data != null) {
-            return new SimpleDateFormat("dd/MM/yyyy").format(data);
+            return new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format(data);
         }
         return "";
     }
@@ -128,11 +124,11 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
     
-    private void removerFiltrosAgendamento(List<Agendamento> agendamentos) {     
+    private void removerFiltrosAgendamento(List<Agendamento> agendamentos) {
         List<Agendamento> agentamentoAux = new ArrayList<>(agendamentos);
         for (Agendamento agendamento : agentamentoAux) {
             if(!filtroAtendimento.contains(agendamento.getStatusNovo())) {
-                agendamentos.remove(agendamento);    
+                agendamentos.remove(agendamento);
             }
         }
     }
@@ -169,6 +165,19 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         }else {
             this.filtroAtendimento.removeAll(Arrays.asList("F", "A", "G", "C", "D", "I", "S", "O", "E", "H", "B", "N", "P", "R"));
         }
+    }
+    
+    public String getStatusDescricao(Agendamento agendamento) {
+        try {
+            return StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getDescricao();
+        }catch(Exception e) {
+            
+        }
+        return "";
+    }
+    
+    public void carregarTelaAgendamento(Agendamento agendamento) {
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("agendamento", agendamento);
     }
 
     public String getPacientesAgendamento() {
