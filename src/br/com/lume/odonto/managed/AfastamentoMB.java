@@ -31,6 +31,7 @@ import br.com.lume.odonto.exception.DataDuplicadaException;
 import br.com.lume.odonto.exception.DataIgualException;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.security.validator.GenericValidator;
+import br.com.lume.statusAgendamento.StatusAgendamentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -133,7 +134,7 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
         for (Agendamento agendamento : agendamentos) {
             if ((!((agendamento.getStatusNovo().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) || (agendamento.getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) || (agendamento.getStatusNovo().equals(
                     StatusAgendamentoUtil.CANCELADO.getSigla())) || (agendamento.getStatusNovo().equals(
-                            StatusAgendamentoUtil.ATENDIDO.getSigla())))) && (((agendamento.getInicio().getTime() <= this.getInicio().getTime()) && (agendamento.getFim().getTime() >= this.getInicio().getTime())) || ((agendamento.getInicio().getTime() <= this.getFim().getTime()) && (agendamento.getFim().getTime() >= this.getFim().getTime())) || ((this.getInicio().getTime() >= agendamento.getInicio().getTime()) && (this.getFim().getTime() <= agendamento.getFim().getTime())) || ((this.getInicio().getTime() <= agendamento.getInicio().getTime()) && (this.getFim().getTime() >= agendamento.getFim().getTime())))) {
+                            StatusAgendamentoUtil.ATENDIDO.getSigla())) || (agendamento.getStatusNovo().equals(StatusAgendamentoUtil.ERRO_AGENDAMENTO.getSigla())))) && (((agendamento.getInicio().getTime() <= this.getInicio().getTime()) && (agendamento.getFim().getTime() >= this.getInicio().getTime())) || ((agendamento.getInicio().getTime() <= this.getFim().getTime()) && (agendamento.getFim().getTime() >= this.getFim().getTime())) || ((this.getInicio().getTime() >= agendamento.getInicio().getTime()) && (this.getFim().getTime() <= agendamento.getFim().getTime())) || ((this.getInicio().getTime() <= agendamento.getInicio().getTime()) && (this.getFim().getTime() >= agendamento.getFim().getTime())))) {
                 throw new DataComAgendamentosException();
             }
         }

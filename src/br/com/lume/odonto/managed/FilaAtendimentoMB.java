@@ -222,5 +222,9 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
     public boolean isFiltroTomorrow() {
         return DateUtils.isSameDay(getDateFilter(), new Date());
     }
+    
+    public StatusAgendamentoUtil[] getStatusAgendamentoUtil() {
+        return StatusAgendamentoUtil.values();
+    }
 
 }

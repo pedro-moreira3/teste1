@@ -344,6 +344,11 @@ div.ui-selectoneradio label {
                             	<h:outputText value="#{atendimento.origemAgendamento.descricao}" />
                         	</p:column>
                         	
+                        	<p:column 	filterBy="#{atendimento.motivoStatusAgendamento.descricao}" sortBy="#{atendimento.motivoStatusAgendamento.descricao}"
+                        				filterMatchMode="contains" headerText="Motivo do agendamento">
+                            	<h:outputText value="#{atendimento.motivoStatusAgendamento.descricao}" />
+                        	</p:column>
+                        	
                         	<p:column 	filterBy="#{atendimento.dataAgendamento}" sortBy="#{atendimento.dataAgendamento}"
                         				filterMatchMode="contains" headerText="Data do agendamento" >
                             	<h:outputText value="#{relatorioAtendimentoMB.formatarData(atendimento.dataAgendamento)}" />
@@ -357,15 +362,10 @@ div.ui-selectoneradio label {
                         	
                         	<p:column 	filterBy="#{atendimento.proximoAgendamentoPaciente.dataAgendamento}" sortBy="#{atendimento.proximoAgendamentoPaciente.dataAgendamento}"
                         				filterMatchMode="contains" headerText="Data do próximo agendamento" >
-                            	<h:outputText value="#{relatorioAtendimentoMB.formatarData(atendimento.proximoAgendamentoPaciente.dataAgendamento)}" />
-                            	<ui:rmeove>
-                            	<p:commandButton	id="btnViewProximo" icon="White fa fa-edit" update=":lume:dlgRelAtendimento,:lume:filtroRelatorio,:lume:dlgGerarRelatorio"
-                            						width="5%" rendered="#{atendimento.proximoAgendamentoPaciente == null}"
-                            						action="agendamento.xhtml?faces-redirect=true" actionListener="#{relatorioAtendimentoMB.carregarTelaAgendamento(atendimento)}">
-                            						
-                            		<p:tooltip	for="btnViewProximo" value="Agendar"/>
-                            	</p:commandButton>
-                            	</ui:rmeove>
+                            	
+                            	<h:outputText	value="#{relatorioAtendimentoMB.formatarData(atendimento.proximoAgendamentoPaciente.dataAgendamento)}" />
+                            	
+                            	
                         	</p:column>
                         	
                         	<p:column 	filterBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" sortBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" 
@@ -420,7 +420,7 @@ div.ui-selectoneradio label {
                     		    
                     		    	<h:panelGroup>
                     		    		<h:outputText	value="Status" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.statusAgendamento.descricao}"/>
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.getStatusDescricao(relatorioAtendimentoMB.entity)}"/>
                     		    	</h:panelGroup>                    		    
                     			</p:panelGrid>
                     		
@@ -614,7 +614,7 @@ div.ui-selectoneradio label {
                             			</td>
                             			
                             			<td>
-                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.statusAgendamento.descricao}" />
+                            				<h:outputText	value="#{relatorioAtendimentoMB.getStatusDescricao(relatorioAtendimentoMB.entity)}" />
                             			</td>
 
                             		</tr>
@@ -978,7 +978,7 @@ div.ui-selectoneradio label {
                         </div>
                             	
                 	</p:dialog>
-                	
+
                 </div>
             </div>
         </div> 
@@ -993,19 +993,7 @@ div.ui-selectoneradio label {
 					window.scrollTo(0, 0);
 				}
 			}
-			
-			
-			function resize(dialog) {
-				//'#lume\\:pnAgendamento'
-					$(window).resize(function() {
-						$(dialog).css({
-							'width' : $(window).width(),
-							'height' : $(window).height(),
-							'left' : '0px',
-							'top' : '0px'
-						});
-					}).resize();
-				}
+
 			function imprimirTabela(){
 				var toPrint = document.getElementById("lume:relatorioTabela");
 				var newWin = window.open("");
@@ -1030,6 +1018,6 @@ div.ui-selectoneradio label {
 			}
 			
 			//]]>
-		</script>
+		</script>		
     </ui:define>
 </ui:composition>

@@ -100,13 +100,7 @@ div.ui-selectoneradio label {
                             <p:selectOneMenu value="#{a.statusNovo}" disabled="#{!filaAtendimentoMB.liberaEdicao}">
                                 <p:ajax process="@this" listener="#{filaAtendimentoMB.persistAgendamento(a)}" update="@form" />
 
-                                <f:selectItem itemLabel="Não confirmado" itemValue="N" />
-                                <f:selectItem itemLabel="Confirmado" itemValue="S" />
-                                <f:selectItem itemLabel="Cliente na clínica" itemValue="I" />
-                                <f:selectItem itemLabel="Em atendimento" itemValue="O" />
-                                <f:selectItem itemLabel="Atendido" itemValue="A" />
-                                <f:selectItem itemLabel="Falta" itemValue="B" />
-                                <f:selectItem itemLabel="Cancelado" itemValue="C" />
+                                <f:selectItems value="#{filaAtendimentoMB.getStatusAgendamentoUtil()}" var="teste" itemLabel="#{teste.descricao}" itemvalue="#{teste.sigla}"/>
 
                             </p:selectOneMenu>
                         </p:column>
