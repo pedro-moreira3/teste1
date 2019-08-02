@@ -225,7 +225,12 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public StatusAgendamentoUtil[] getStatusAgendamentoUtil() {
-        return StatusAgendamentoUtil.values();
+        List<StatusAgendamentoUtil> status = Arrays.asList(StatusAgendamentoUtil.values());
+        List<StatusAgendamentoUtil> result = new ArrayList<>();
+        for(StatusAgendamentoUtil statusUtil: status)
+            if(!"P".equals(statusUtil.getSigla()) && !"F".equals(statusUtil.getSigla()))
+                result.add(statusUtil);
+        return  result.toArray(new StatusAgendamentoUtil[result.size()]);
     }
 
 }
