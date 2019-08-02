@@ -130,7 +130,7 @@ div.ui-selectoneradio label {
 							sortBy="#{a.statusDescricao}" filterMatchMode="contains"
 							headerText="Status" width="15%">
 							<p:selectOneMenu value="#{a.statusNovo}"
-								disabled="#{!filaAtendimentoMB.liberaEdicao or a.statusAgendamento.descricao != 'Agendado'}">
+								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.isDisableFieldsAg(a)}">
 								<p:ajax process="@this"
 									listener="#{filaAtendimentoMB.persistAgendamento(a)}"
 									update=":lume:dtAtendimento" />
@@ -143,7 +143,7 @@ div.ui-selectoneradio label {
 						<p:column filterBy="#{a.auxiliarStr}" sortBy="#{a.auxiliarStr}"
 							filterMatchMode="contains" headerText="Auxiliar?" width="8%">
 							<p:selectOneMenu id="auxiliar" value="#{a.auxiliar}"
-								disabled="#{!filaAtendimentoMB.liberaEdicao}">
+								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.isDisableFieldsAg(a)}">
 								<p:ajax process="@this"
 									listener="#{filaAtendimentoMB.persistAgendamento(a)}"
 									update="@form" />
@@ -153,7 +153,7 @@ div.ui-selectoneradio label {
 						</p:column>
 						<p:column filterBy="#{a.cadeira}" sortBy="#{a.cadeira}"
 							filterMatchMode="contains" headerText="Cadeira" width="8%">
-							<p:selectOneMenu id="cadeira" value="#{a.cadeira}">
+							<p:selectOneMenu id="cadeira" value="#{a.cadeira}" disabled="#{filaAtendimentoMB.isDisableFieldsAg(a)}">
 								<p:ajax process="@this"
 									listener="#{filaAtendimentoMB.persistAgendamento(a)}"
 									update="@form" />
@@ -170,7 +170,7 @@ div.ui-selectoneradio label {
 							filterMatchMode="contains" headerText="Chegou às" width="8%">
 							<p:calendar value="#{a.chegouAs}" pattern="HH:mm" mask="true"
 								showButtonPanel="true"
-								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow}"
+								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
 								<p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}"
 									process="@this" update="@form" />
@@ -181,7 +181,7 @@ div.ui-selectoneradio label {
 							headerText="Ini. Atend. às" width="8%">
 							<p:calendar value="#{a.iniciouAs}" pattern="HH:mm" mask="true"
 								showButtonPanel="true"
-								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow}"
+								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
 								<p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}"
 									process="@this" update="@form" />
@@ -192,7 +192,7 @@ div.ui-selectoneradio label {
 							headerText="Fim Atend. às" width="8%">
 							<p:calendar value="#{a.finalizouAs}" pattern="HH:mm" mask="true"
 								showButtonPanel="true"
-								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow}"
+								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
 								<p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}"
 									process="@this" update="@form" />

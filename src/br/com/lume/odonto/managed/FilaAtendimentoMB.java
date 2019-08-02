@@ -233,5 +233,9 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
                 result.add(statusUtil);
         return  result.toArray(new StatusAgendamentoUtil[result.size()]);
     }
+    
+    public boolean isDisableFieldsAg(Agendamento agendamento) {
+        return !"Agendado".equals(agendamento.getStatusAgendamento().getDescricao());
+    }
 
 }
