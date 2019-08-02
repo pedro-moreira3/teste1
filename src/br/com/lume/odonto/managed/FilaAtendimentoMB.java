@@ -2,6 +2,7 @@ package br.com.lume.odonto.managed;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -228,7 +229,7 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
         List<StatusAgendamentoUtil> status = Arrays.asList(StatusAgendamentoUtil.values());
         List<StatusAgendamentoUtil> result = new ArrayList<>();
         for(StatusAgendamentoUtil statusUtil: status)
-            if(!"P".equals(statusUtil.getSigla()) && !"F".equals(statusUtil.getSigla()))
+            if(!"F".equals(statusUtil.getSigla()))
                 result.add(statusUtil);
         return  result.toArray(new StatusAgendamentoUtil[result.size()]);
     }
