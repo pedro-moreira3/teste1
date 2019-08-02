@@ -2,6 +2,7 @@ package br.com.lume.odonto.managed;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -23,8 +24,8 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.reserva.ReservaSingleton;
 
-//TODO esse menu é fila de atendimento e não um relatorio,
-//necessario mudar o nome dessa classe, verificar permissoes e objetos, e demais relacoes.
+// TODO esse menu é fila de atendimento e não um relatorio,
+// necessario mudar o nome dessa classe, verificar permissoes e objetos, e demais relacoes.
 @ManagedBean
 @ViewScoped
 public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
@@ -36,7 +37,7 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
     private PieChartModel pieModel;
 
     private List<Agendamento> agendamentos;
-    
+
     private String filtro = "CURRENT_DATE";
     private Date dateFilter;
     private SimpleDateFormat dateFilterFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -66,7 +67,6 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
                 a.setIniciouAs(Utils.getDataAtual(a.getIniciouAs()));
                 a.setFinalizouAs(Utils.getDataAtual(a.getFinalizouAs()));
 
-             
                 if (a.getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || a.getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) {
                     ReservaSingleton.getInstance().getBo().cancelaReservas(a, UtilsFrontEnd.getProfissionalLogado());
                 }
@@ -106,7 +106,7 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
-    
+
     public boolean isLiberaEdicao() {
         return isAdmin() || isSecretaria();
     }
@@ -120,10 +120,10 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public String getPacientesAgendamento() {
         if (filtro.equals("CURRENT_DATE")) {
-            
+
             StringBuilder sb = new StringBuilder();
             long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
-         
+
             Long countByAtendidos = AgendamentoSingleton.getInstance().getBo().countByAtendidos(idEmpresaLogada);
             sb.append("['Atendidos', " + countByAtendidos + "],");
 
@@ -210,21 +210,28 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
     public void setCadeiras(List<Integer> cadeiras) {
         this.cadeiras = cadeiras;
     }
-    
+
     public Date getDateFilter() {
         return this.dateFilter;
     }
-    
+
     public void setDateFilter(Date dateFilter) {
         this.dateFilter = dateFilter;
     }
-    
+
     public boolean isFiltroTomorrow() {
-        return DateUtils.isSameDay(getDateFilter(), new Date());
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, 1);
+        return DateUtils.isSameDay(getDateFilter(), cal.getTime());
     }
-    
+
     public StatusAgendamentoUtil[] getStatusAgendamentoUtil() {
-        return StatusAgendamentoUtil.values();
+        List<StatusAgendamentoUtil> status = Arrays.asList(StatusAgendamentoUtil.values());
+        List<StatusAgendamentoUtil> result = new ArrayList<>();
+        for(StatusAgendamentoUtil statusUtil: status)
+            if(!"P".equals(statusUtil.getSigla()) && !"F".equals(statusUtil.getSigla()))
+                result.add(statusUtil);
+        return  result.toArray(new StatusAgendamentoUtil[result.size()]);
     }
 
 }
