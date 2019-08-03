@@ -140,12 +140,14 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
                 Paciente pac = PacienteSingleton.getInstance().getBo().find(Long.parseLong(idpaciente));
                 if (pac != null) {
                     UtilsFrontEnd.setPacienteLogado(pac);
+                    this.setPaciente(pac);
                 }
+            } else {
+                this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
             }
             // descontos = descontoBO.listByEmpresa();
             dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma");
             pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            this.setPaciente(UtilsFrontEnd.getPacienteSelecionado());
             this.setValorAgregadoExcedido(BigDecimal.ZERO);
             if (paciente == null) {
                 this.addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "");

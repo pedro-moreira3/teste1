@@ -338,7 +338,7 @@ div.ui-selectoneradio label {
                         				filterMatchMode="contains" headerText="Última alteração realizada por">
                             	<h:outputText value="#{atendimento.profissionalUltAlteracao.dadosBasico.nome}" />
                         	</p:column>
-                        	
+                        	<ui:remove>
                         	<p:column 	filterBy="#{atendimento.origemAgendamento.descricao}" sortBy="#{atendimento.origemAgendamento.descricao}"
                         				filterMatchMode="contains" headerText="Origem do agendamento">
                             	<h:outputText value="#{atendimento.origemAgendamento.descricao}" />
@@ -348,6 +348,7 @@ div.ui-selectoneradio label {
                         				filterMatchMode="contains" headerText="Motivo do agendamento">
                             	<h:outputText value="#{atendimento.motivoStatusAgendamento.descricao}" />
                         	</p:column>
+                        	</ui:remove>
                         	
                         	<p:column 	filterBy="#{atendimento.dataAgendamento}" sortBy="#{atendimento.dataAgendamento}"
                         				filterMatchMode="contains" headerText="Data do agendamento" >
