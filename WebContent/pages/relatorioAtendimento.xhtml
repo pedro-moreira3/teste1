@@ -2,13 +2,6 @@
     xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jstl/core" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
         <style>
-.ui-picklist .ui-picklist-list {
-    height: 100px;
-}
-
-.fc-time-grid-container {
-    height: auto !important;
-}
 
 .ui-growl {
     z-index: 999999 !important;
@@ -32,10 +25,6 @@ div.ui-selectoneradio label {
 
 .ui-dialog {
 	overflow: auto !important;
-}
-
-.ui-picklist .ui-picklist-list {
-	height: 100px;
 }
 
 .fc-time-grid-container {
@@ -138,20 +127,8 @@ div.ui-selectoneradio label {
 	overflow: auto;
 	overflow-y: hidden;
 }
+
 </style>
-        <script>
-			function resize(dialog) {
-			//'#lume\\:pnAgendamento'
-				$(window).resize(function() {
-					$(dialog).css({
-						'width' : $(window).width(),
-						'height' : $(window).height(),
-						'left' : '0px',
-						'top' : '0px'
-					});
-				}).resize();
-			}
-        </script>
         <div	class="ui-g ui-fluid">
 			<div	class="ui-g-12 ui-lg-12">
 				<div	class="card card-w-title">
@@ -246,7 +223,9 @@ div.ui-selectoneradio label {
 									<br />
 									
 									<p:selectManyCheckbox	value="#{relatorioAtendimentoMB.filtroAtendimento}"
-															layout="grid" columns="4">
+															layout="grid" columns="4" process="@this" update=":lume:filtroRelatorio">
+										
+										<p:ajax	process="@this" update=":lume:filtroRelatorio"/>
 										
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoAfastamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Bloqueio&lt;/div&gt;"
@@ -299,12 +278,14 @@ div.ui-selectoneradio label {
 									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
 										
 										<h:panelGroup>
-        									<p:commandButton	value="Filtrar"  action="#{relatorioAtendimentoMB.popularLista}" update=":lume:dtRelAtendimento,:lume:dlgGerarRelatorioTabela"/>
+        									<p:commandButton	value="Filtrar"  action="#{relatorioAtendimentoMB.popularLista}" 
+        														update=":lume:dtRelAtendimento,:lume:dlgGerarRelatorioTabela,:lume:filtroRelatorio"
+        														process="@this,:lume:filtroRelatorio"/>
         								</h:panelGroup>
         								
         								<h:panelGroup>
         									<p:commandButton	value="Imprimir"  oncomplete="PF('dlgConfirmarImpCabecalho').show();" 
-        														update=":lume:dlgGerarRelatorioTabela,:lume:dlgConfirmarImpCabecalho" process="@this,:lume:dlgConfirmarImpCabecalho"/>
+        														update=":lume:dlgGerarRelatorioTabela,:lume:dlgConfirmarImpCabecalho" process="@this,:lume:dlgConfirmarImpCabecalho,:lume:filtroRelatorio"/>
         								</h:panelGroup>
 										
 									</p:panelGrid>
@@ -338,19 +319,14 @@ div.ui-selectoneradio label {
                             	<h:outputText value="#{atendimento.paciente.dadosBasico.telefone}" />
                         	</p:column>
                         	
+                        	<p:column 	filterBy="#{atendimento.paciente.convenio.dadosBasico.nome}" sortBy="#{atendimento.paciente.convenio.dadosBasico.nome}" 
+                        				filterMatchMode="contains" headerText="Convênio">
+                            	<h:outputText value="#{atendimento.paciente.convenio.dadosBasico.nome}" />
+                        	</p:column>
+                        	
                         	<p:column 	filterBy="#{atendimento.profissional.dadosBasico.nome}" sortBy="#{atendimento.profissional.dadosBasico.nome}" 
                         				filterMatchMode="contains" headerText="Profissional responsável">
                             	<h:outputText value="#{atendimento.profissional.dadosBasico.nome}" />
-                        	</p:column>
-                        	
-                        	<p:column 	filterBy="#{atendimento.dataAgendamento}" sortBy="#{atendimento.dataAgendamento}" 
-                        				filterMatchMode="contains" headerText="Data do agendamento" >
-                            	<h:outputText value="#{relatorioAtendimentoMB.formatarData(atendimento.dataAgendamento)}" />
-                        	</p:column>
-                        	
-                        	<p:column 	filterBy="#{atendimento.dataProximoAgendamentoPaciente}" sortBy="#{atendimento.dataProximoAgendamentoPaciente}"
-                        				filterMatchMode="contains" headerText="Data próximo agendamento" >
-                            	<h:outputText value="#{atendimento.dataProximoAgendamentoPaciente}" />
                         	</p:column>
                         	
                         	<p:column 	filterBy="#{atendimento.dataUltAlteracao}" sortBy="#{atendimento.dataUltAlteracao}" 
@@ -358,16 +334,55 @@ div.ui-selectoneradio label {
                             	<h:outputText value="#{relatorioAtendimentoMB.formatarData(atendimento.dataUltAlteracao)}" />
                         	</p:column>
                         	
-                        	<p:column 	filterBy="#{atendimento.statusAgendamento.descricao}" sortBy="#{atendimento.statusAgendamento.descricao}" 
-                        				filterMatchMode="contains" headerText="Status" >
-                            	<h:outputText value="#{atendimento.statusAgendamento.descricao}" />
+                        	<p:column 	filterBy="#{atendimento.profissionalUltAlteracao.dadosBasico.nome}" sortBy="#{atendimento.profissionalUltAlteracao.dadosBasico.nome}" 
+                        				filterMatchMode="contains" headerText="Última alteração realizada por">
+                            	<h:outputText value="#{atendimento.profissionalUltAlteracao.dadosBasico.nome}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{atendimento.origemAgendamento.descricao}" sortBy="#{atendimento.origemAgendamento.descricao}"
+                        				filterMatchMode="contains" headerText="Origem do agendamento">
+                            	<h:outputText value="#{atendimento.origemAgendamento.descricao}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{atendimento.motivoStatusAgendamento.descricao}" sortBy="#{atendimento.motivoStatusAgendamento.descricao}"
+                        				filterMatchMode="contains" headerText="Motivo do agendamento">
+                            	<h:outputText value="#{atendimento.motivoStatusAgendamento.descricao}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{atendimento.dataAgendamento}" sortBy="#{atendimento.dataAgendamento}"
+                        				filterMatchMode="contains" headerText="Data do agendamento" >
+                            	<h:outputText value="#{relatorioAtendimentoMB.formatarData(atendimento.dataAgendamento)}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}"
+                        				sortBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}"
+                        				filterMatchMode="contains" headerText="Status do agendamento" >
+                            	<h:outputText value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{atendimento.proximoAgendamentoPaciente.dataAgendamento}" sortBy="#{atendimento.proximoAgendamentoPaciente.dataAgendamento}"
+                        				filterMatchMode="contains" headerText="Data do próximo agendamento" >
+                            	
+                            	<h:outputText	value="#{relatorioAtendimentoMB.formatarData(atendimento.proximoAgendamentoPaciente.dataAgendamento)}" />
+                            	
+                            	
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" sortBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" 
+                        				filterMatchMode="contains" headerText="Status do próximo agendamento" >
+                            	<h:outputText value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" />
                         	</p:column>
                         	
                         	<p:column>
-                            	<p:commandButton	icon="White fa fa-eye" oncomplete="PF('dlgRelAtendimento').show();" update=":lume:dlgRelAtendimento,:lume:dlgGerarRelatorio" width="5%">
+                            	<p:commandButton	id="btnView" icon="White fa fa-eye" oncomplete="PF('dlgRelAtendimento').show();" 
+                            						update=":lume:dlgRelAtendimento,:lume:filtroRelatorio,:lume:dlgGerarRelatorio" width="5%">
                             		<f:setPropertyActionListener	value="#{atendimento}" target="#{relatorioAtendimentoMB.entity}" />
+                            		<p:tooltip	for="btnView" value="Visualizar"/>
                             	</p:commandButton>
-                            	<p:button	id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{atendimento.paciente.whatsURL}');return false;" styleClass="GreenButton" disable="#{atendimento.paciente.whatsURL == null}" />
+                            	
+                            	<p:button	id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{atendimento.paciente.whatsURL}');return false;" 
+                            				styleClass="GreenButton" disable="#{atendimento.paciente.whatsURL == null}" />
+                            	<p:tooltip	for="whats" value="Enviar mensagem"/>
                         	</p:column>
                         	                        	
                     	</p:dataTable>
@@ -405,7 +420,7 @@ div.ui-selectoneradio label {
                     		    
                     		    	<h:panelGroup>
                     		    		<h:outputText	value="Status" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.statusAgendamento.descricao}"/>
+                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.getStatusDescricao(relatorioAtendimentoMB.entity)}"/>
                     		    	</h:panelGroup>                    		    
                     			</p:panelGrid>
                     		
@@ -599,7 +614,7 @@ div.ui-selectoneradio label {
                             			</td>
                             			
                             			<td>
-                            				<h:outputText	value="#{relatorioAtendimentoMB.entity.statusAgendamento.descricao}" />
+                            				<h:outputText	value="#{relatorioAtendimentoMB.getStatusDescricao(relatorioAtendimentoMB.entity)}" />
                             			</td>
 
                             		</tr>
@@ -743,7 +758,7 @@ div.ui-selectoneradio label {
                         	</p:outputPanel>
                         </p:panel>
                             	
-                	</p:dialog>
+                	</p:dialog>                	
                 	
                 	<p:dialog	id="dlgConfirmarImpCabecalho" widgetVar="dlgConfirmarImpCabecalho" responsive="true" icon="pi pi-exclamation-triangle" width="300px"
                 				modal="true" draggable="false" blockScroll="true" positionTop="0" positionLeft="0" style="overflow:hidden !important;">
@@ -762,25 +777,21 @@ div.ui-selectoneradio label {
 							</h:panelGroup>
 							
 							<h:panelGroup>
-								<p:commandButton	value="Confirmar" process="@this">
-									<p:printer	target="relatorioTabela"/>
-								</p:commandButton>
-							</h:panelGroup>						
+								<p:commandButton value="Confirmar" onstart="imprimirTabela();" oncomplete="PF('dlgConfirmarImpCabecalho').hide();" />
+							</h:panelGroup>
+												
 						</p:panelGrid>
 						
                 	</p:dialog>
                 	
-                	<p:dialog	id="dlgGerarRelatorioTabela" widgetVar="dlgGerarRelatorioTabela" header="Relatório" responsive="true" modal="true"
-                				onHide="PF('dlgGerarRelatorioTabela').toggleMaximize();" onShow="PF('dlgGerarRelatorioTabela').toggleMaximize();">
+                	<p:dialog	id="dlgGerarRelatorioTabela" widgetVar="dlgGerarRelatorioTabela" header="Relatório" responsive="true" modal="true">
                 		
-                		<p:panel>
+                		<div	class="table">
                         	<p:outputPanel	id="relatorioTabela">
 
-                            	<h1	style="font-size: 20px !important;" align="center">
+                            	<h1	style="font-size: 20px !important;">
                                 	<h:outputText value="RELATÓRIO" />
                             	</h1>
-                            
-                          		<div class="SeparatorFull"></div>
 								
 								<br />
 								
@@ -791,13 +802,11 @@ div.ui-selectoneradio label {
                             	<h1 style="font-size: 14px !important;margin: 0;margin-top:-5px;margin-bottom:5px;">
                                 	<h:outputText value="#{relatorioAtendimentoMB.telefoneClinica()}" />
                             	</h1>
-								
-								<br />
-                            	
-                            	<div class="SeparatorFull"></div>
-                            	<br />
                             	
                             	<p:outputPanel	rendered="#{relatorioAtendimentoMB.imprimirCabecalho}">
+                            	    
+                            	    <br />
+                            	
                             		<table	style="width: 100%;font-size:12px;" class="firstRowBold">
                             		
                             			<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
@@ -853,17 +862,20 @@ div.ui-selectoneradio label {
 
                             			</tr>
                             		</table>
+                            		
+                            		<br />
                             										
-									<p:outputLabel	value="Agendamentos: " />
-
-									<br />
+									<h2 	style="text-align: left;font-size: 14px !important;margin: 0;margin-top:10px;
+                            						margin-bottom:10px;font-weight:bold;">
+                            				AGENDAMENTOS
+                            		</h2>
 									
-									<p:selectManyCheckbox	value="#{relatorioAtendimentoMB.filtroAtendimento}" style="font-size:10px !important;"
+									<p:selectManyCheckbox	value="#{relatorioAtendimentoMB.filtroAtendimento}" style="font-size:12px !important;"
 															layout="grid" columns="4">
 										
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoAfastamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Bloqueio&lt;/div&gt;"
-											itemValue="F" itemEscaped="false" />
+											itemValue="F" itemEscaped="false"/>
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Atendidos&lt;/div&gt;"
 											itemValue="A" itemEscaped="false" />
@@ -909,15 +921,19 @@ div.ui-selectoneradio label {
                             	
                             	<br />
                             	
-                            	<table	style="width: 100%;font-size:10px;textalign:left;">
+                            	<table	style="width: 100%;font-size:10px;text-align:left;">
                             			
                             		<tr	style="text-align:center;margin:5px;">
                             			<th	style="border:1px solid;">Paciente</th>
                             			<th	style="border:1px solid;">Celular</th>
+                            			<th	style="border:1px solid;">Telefone</th>
+                            			<th	style="border:1px solid;">Convênio</th>
                             			<th	style="border:1px solid;">Profissional responsável</th>
+                            			<th	style="border:1px solid;">Origem do agendamento</th>
                             			<th	style="border:1px solid;">Data do agendamento</th>
+                            			<th	style="border:1px solid;">Satus do agendamento</th>
                             			<th	style="border:1px solid;">Data do próximo agendamento</th>
-                            			<th	style="border:1px solid;">Status</th>
+                            			<th	style="border:1px solid;">Status do próximo agendamento</th>
                             		</tr>
                             		
                             		<c:forEach	var="atendimento" items="#{relatorioAtendimentoMB.listaAtendimentos}">
@@ -929,16 +945,28 @@ div.ui-selectoneradio label {
                             					<h:outputText	value="#{atendimento.paciente.dadosBasico.celular}"/>
                             				</td>
                             				<td>
+                            					<h:outputText	value="#{atendimento.paciente.dadosBasico.telefone}" />
+                            				</td>
+                            				<td>
+                            					<h:outputText	value="#{atendimento.paciente.convenio.dadosBasico.nome}" />
+                            				</td>
+                            				<td>
                             					<h:outputText	value="#{atendimento.profissional.dadosBasico.nome}"/>
+                            				</td>
+                            				<td>
+                            					<h:outputText	value="#{atendimento.origemAgendamento.descricao}" />
                             				</td>
                             				<td>
                             					<h:outputText	value="#{relatorioAtendimentoMB.formatarData(atendimento.dataAgendamento)}"/>
                             				</td>
                             				<td>
-                            					<h:outputText	value="#{atendimento.dataProximoAgendamentoPaciente}"/>
+                            					<h:outputText	value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}"/>
                             				</td>
                             				<td>
-                            					<h:outputText	value="#{atendimento.statusAgendamento.descricao}"/>
+                            					<h:outputText	value="#{relatorioAtendimentoMB.formatarData(atendimento.proximoAgendamentoPaciente.dataAgendamento)}"/>
+                            				</td>
+                            				<td>
+                            					<h:outputText	value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}"/>
                             				</td>
                             			</tr>
                             		</c:forEach>
@@ -947,14 +975,13 @@ div.ui-selectoneradio label {
 
 								<br />
                         	</p:outputPanel>
-                        </p:panel>
+                        </div>
                             	
                 	</p:dialog>
-                	
+
                 </div>
             </div>
         </div> 
-        
         <script type="text/javascript">
       //<![CDATA[
 			function handleDialogRequest(xhr, status, args) {
@@ -966,23 +993,31 @@ div.ui-selectoneradio label {
 					window.scrollTo(0, 0);
 				}
 			}
-			
-			function createTable(idTabela,obj){
 
-				var table = document.getElementById(idTabela);
+			function imprimirTabela(){
+				var toPrint = document.getElementById("lume:relatorioTabela");
+				var newWin = window.open("");
+				newWin.visible = false;
+				newWin.document.write("<style type=\"text/css\" media=\"print\"> @page { size: landscape; }" + 
+						".ui-selectmanycheckbox tr td {position: relative;	display: inline-flex !important;width: 238px !important;}"+
+						".ui-selectmanycheckbox tr td>div>div:last-child {display: inline-block;position: relative;top: 50%;transform: translateY(-50%);}"+
+						".ui-selectmanycheckbox tr td label {position: relative;display: inline-flex !important;}"+
+						".ui-selectmanycheckbox tr td label div:first-child {position: relative;}"+
+						".ui-selectmanycheckbox tr td label div:first-child div {display: inline-block;position: relative;top: 50%;transform: translateY(-50%);}</style>")
 
-				var linha = "<tr>";
-				linha += "<th style="font-weight:bold;font-size:12px;">Paciente</th>";
-				linha += "<th style="font-weight:bold;font-size:12px;">Celular</th>";
-				linha += "<th style="font-weight:bold;font-size:12px;">Profissional responsável</th>";
-				linha += "<th style="font-weight:bold;font-size:12px;">Data do agendamento</th>";
-				linha += "<th style="font-weight:bold;font-size:12px;">Data última alteração</th>";
-				linha += "<th style="font-weight:bold;font-size:12px;">Status</th>";
+				newWin.document.write(toPrint.outerHTML);
+				newWin.document.close();
 				
-				table.append(linha);
+				newWin.print();
+				newWin.close();
+				
 			}
+			
+			function novoAgendamento(){
+				
+			}
+			
 			//]]>
-		</script>
-        
+		</script>		
     </ui:define>
 </ui:composition>
