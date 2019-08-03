@@ -350,9 +350,9 @@ div.ui-selectoneradio label {
                         	</p:column>
                         	</ui:remove>
                         	
-                        	<p:column 	filterBy="#{atendimento.dataAgendamento}" sortBy="#{atendimento.dataAgendamento}"
+                        	<p:column 	filterBy="#{atendimento.inicio}" sortBy="#{atendimento.inicio}"
                         				filterMatchMode="contains" headerText="Data do agendamento" >
-                            	<h:outputText value="#{relatorioAtendimentoMB.formatarData(atendimento.dataAgendamento)}" />
+                            	<h:outputText value="#{relatorioAtendimentoMB.formatarData(atendimento.inicio)}" />
                         	</p:column>
                         	
                         	<p:column 	filterBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}"
@@ -361,10 +361,10 @@ div.ui-selectoneradio label {
                             	<h:outputText value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}" />
                         	</p:column>
                         	
-                        	<p:column 	filterBy="#{atendimento.proximoAgendamentoPaciente.dataAgendamento}" sortBy="#{atendimento.proximoAgendamentoPaciente.dataAgendamento}"
+                        	<p:column 	filterBy="#{atendimento.proximoAgendamentoPaciente.inicio}" sortBy="#{atendimento.proximoAgendamentoPaciente.inicio}"
                         				filterMatchMode="contains" headerText="Data do próximo agendamento" >
                             	
-                            	<h:outputText	value="#{relatorioAtendimentoMB.formatarData(atendimento.proximoAgendamentoPaciente.dataAgendamento)}" />
+                            	<h:outputText	value="#{relatorioAtendimentoMB.formatarData(atendimento.proximoAgendamentoPaciente.inicio)}" />
                             	
                             	
                         	</p:column>
