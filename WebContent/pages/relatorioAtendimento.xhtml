@@ -453,9 +453,7 @@ div.ui-selectoneradio label {
                     		    	</h:panelGroup>
                     		    	
                     			</p:panelGrid>
-                    			
-                    			
-                    			
+
                     		</p:fieldset>
 
                     		<p:fieldset		legend="Dados do paciente" id="tgPaciente" toggleable="true" toggleSpeed="500"
@@ -774,11 +772,10 @@ div.ui-selectoneradio label {
 								<p:commandButton 	id="persist" icon="White fa fa-save"
 													process="pnAgendamento" value="Salvar"
 													actionListener="#{agendamentoMB.actionPersist}"
-													oncomplete="btBloqueioAgenda();PF('novoAgendamento').hide();"
-													styleClass="GreenButton"/>
+													styleClass="GreenButton" update=":lume:dtRelAtendimento,:lume:filtroRelatorio"/>
 							</h:panelGroup>
 							<p:commandButton 	icon="White fa fa-close" value="Fechar"
-												process="@this,:lume:dtRelAtendimento" update=":lume:dtRelAtendimento,:lume:filtroRelatorio" onclick="PF('novoAgendamento').hide()" />
+												process="@this,:lume:filtroRelatorio" update=":lume:dtRelAtendimento,:lume:filtroRelatorio" onclick="PF('novoAgendamento').hide()" />
 						</p:panelGrid>
 					</p:dialog>
                 	

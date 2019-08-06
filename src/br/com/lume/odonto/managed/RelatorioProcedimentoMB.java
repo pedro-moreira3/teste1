@@ -132,6 +132,22 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         }
     }
     
+    public String statusPagamento(Character status) {
+        switch(status) {
+            case 'P':
+                return "Pendente";
+            case 'G':
+                return "Pago";
+            case 'R':
+                return "Reservado";
+        }
+        return "";
+    }
+    
+    public String statusProcedimento(String status) {
+        return (status.equals("F") ? "Finalizado" : "");
+    }
+    
     public Profissional getFiltroPorProfissional() {
         return filtroPorProfissional;
     }

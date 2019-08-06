@@ -899,11 +899,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public boolean validaData() {
         Calendar c = Calendar.getInstance();
         c.setTime(getInicio());
-        c.set(Calendar.DAY_OF_MONTH, -1);
+        c.add(Calendar.DAY_OF_MONTH, -1);
         Date start = c.getTime();
 
         c.setTime(getFim());
-        c.set(Calendar.DAY_OF_MONTH, +1);
+        c.add(Calendar.DAY_OF_MONTH, +1);
         Date end = c.getTime();
 
         List<Agendamento> agendamentoBloqueado = geraAgendamentoAfastamentoByProfissional(start, end, profissionalDentroAgenda);
@@ -962,6 +962,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     private void validaAfastamento() {
         boolean afastamento = true;
+        
+        // TODO - O Afastamento representa o bloqueio de agenda do profissional, o motivo da ausência do profissional é salvo em um agendamento.
+        // Isso deve ser corrigido assim que possível.
+        
         for (Agendamento agendamento : agendamentosAfastamento) {
             if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.AFASTAMENTO.getSigla()) || this.getInicio().after(agendamento.getInicio()) && this.getInicio().before(
                     agendamento.getFim()) || this.getInicio().getTime() == agendamento.getInicio().getTime()) {

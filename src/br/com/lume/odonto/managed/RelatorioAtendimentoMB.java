@@ -103,8 +103,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                     getFiltroPorProfissional(), getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), getFiltroPorConvenio(),
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             
-            if(!this.filtroAtendimento.isEmpty())
-                this.removerFiltrosAgendamento(this.getListaAtendimentos());
+            this.removerFiltrosAgendamento(this.getListaAtendimentos());
             
             carregarCadeiras();
             
