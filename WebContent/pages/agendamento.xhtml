@@ -303,6 +303,7 @@ body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 										<h:panelGroup styleClass="md-combo"
 											rendered="#{!agendamentoMB.dentista}">
 											<p:outputLabel for="profissional" value="Profissional" />
+											
 											<p:selectOneMenu id="profissional"
 												value="#{agendamentoMB.profissional}"
 												converter="profissional" filter="true"
@@ -317,6 +318,7 @@ body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 													oncomplete="atualizaGraficos();" process="@this"
 													update="pacienteSelecionado,:lume:pnAgnd,:lume:schedule" />
 											</p:selectOneMenu>
+											
 										</h:panelGroup>
 										<p:outputLabel value="Disponibilidade : "
 											rendered="#{agendamentoMB.horasUteisProfissional != null}" />
@@ -463,11 +465,11 @@ body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 									update=":lume:pnAgendamento,:lume:botoesAgenda"
 									listener="#{agendamentoMB.onDateSelect}"
 									oncomplete="handleDialogRequest(xhr, status, args);"
-									resetValues="true" />
+									resetValues="true"/>
 								<p:ajax event="eventSelect"
 									update=":lume:pnAgendamento,:lume:botoesAgenda"
 									listener="#{agendamentoMB.onEventSelect}"
-									oncomplete="handleDialogRequest(xhr, status, args);" />
+									oncomplete="handleDialogRequest(xhr, status, args);"/>
 							</p:schedule>
 						</p:outputPanel>
 						<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'C'}">

@@ -11,12 +11,15 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.context.PrimeFacesContext;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
@@ -27,7 +30,6 @@ import org.primefaces.model.ScheduleModel;
 
 import br.com.lume.afastamento.AfastamentoSingleton;
 import br.com.lume.agendamento.AgendamentoSingleton;
-import br.com.lume.agendamento.bo.AgendamentoBO;
 import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.BusinessException;
@@ -41,7 +43,6 @@ import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
@@ -68,7 +69,6 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Reserva;
 import br.com.lume.odonto.entity.Retorno;
-import br.com.lume.odonto.entity.StatusAgendamento;
 import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.origemAgendamento.OrigemAgendamentoSingleton;
@@ -193,6 +193,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             carregarCadeiras();
             filtroAgendamento.addAll(Arrays.asList("F", "A", "I", "S", "O", "E", "B", "N", "P", "G", "H"));
             initialDate = Calendar.getInstance().getTime();
+            
         } catch (Exception e) {
             log.error(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -205,11 +206,45 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
         carregarScheduleTarefas();
     }
+    
+    public void iniciarNovoAgendamento(Agendamento ag) {
+        
+        Agendamento agendamento = ag;
+        agendamento.setId(0);
+        this.setEntity(agendamento);
+        profissionalDentroAgenda = this.getEntity().getProfissional();
+        cadeiraDentroAgenda = this.getEntity().getCadeira();
+
+        UtilsFrontEnd.setPacienteSelecionado(this.getEntity().getPaciente());
+        this.setEntity(this.getEntity());
+        this.setInicio(this.getEntity().getInicio());
+        this.setFim(this.getEntity().getFim());
+        geraAgendamentoAfastamento(this.getEntity().getInicio(), this.getEntity().getFim(), profissionalDentroAgenda);
+        this.setPacienteSelecionado(this.getEntity().getPaciente());
+        this.setJustificativa(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("agendamento", "justificativa", this.getEntity().getJustificativa()));
+        this.setStatus(this.getEntity().getStatusNovo());
+        this.validaAfastamento();
+        
+        if (this.getEntity().getPlanoTratamentoProcedimentosAgendamento() != null && this.getEntity().getPlanoTratamentoProcedimentosAgendamento().size() > 0) {
+            this.setPlanoTratamentoSelecionado(this.getEntity().getPlanoTratamentoProcedimentosAgendamento().get(0).getPlanoTratamentoProcedimento().getPlanoTratamento());
+        }
+        
+        validaHabilitaSalvar();
+        this.validaHoraUtilProfissional(profissionalDentroAgenda);
+        
+    }
 
     public void retorno(Retorno r) {
         if (r != null) {
             pacienteSelecionado = r.getPaciente();
             retorno = r;
+            profissional = null;
+        }
+    }
+    
+    public void relatorio(Agendamento agendamento) {
+        if (agendamento != null) {
+            pacienteSelecionado = agendamento.getPaciente();
             profissional = null;
         }
     }
@@ -864,11 +899,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public boolean validaData() {
         Calendar c = Calendar.getInstance();
         c.setTime(getInicio());
-        c.set(Calendar.DAY_OF_MONTH, -1);
+        c.add(Calendar.DAY_OF_MONTH, -1);
         Date start = c.getTime();
 
         c.setTime(getFim());
-        c.set(Calendar.DAY_OF_MONTH, +1);
+        c.add(Calendar.DAY_OF_MONTH, +1);
         Date end = c.getTime();
 
         List<Agendamento> agendamentoBloqueado = geraAgendamentoAfastamentoByProfissional(start, end, profissionalDentroAgenda);
@@ -927,6 +962,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     private void validaAfastamento() {
         boolean afastamento = true;
+        
+        // TODO - O Afastamento representa o bloqueio de agenda do profissional, o motivo da ausência do profissional é salvo em um agendamento.
+        // Isso deve ser corrigido assim que possível.
+        
         for (Agendamento agendamento : agendamentosAfastamento) {
             if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.AFASTAMENTO.getSigla()) || this.getInicio().after(agendamento.getInicio()) && this.getInicio().before(
                     agendamento.getFim()) || this.getInicio().getTime() == agendamento.getInicio().getTime()) {
@@ -1425,6 +1464,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.cadeiraDentroAgenda = cadeiraDentroAgenda;
     }
     
-    
+    public void setEntity(Agendamento agendamento) {
+        super.setEntity(agendamento);
+    }
 
 }

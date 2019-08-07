@@ -281,14 +281,29 @@ div.ui-selectoneradio label {
                             	<h:outputText value="#{procedimento.planoTratamento.paciente.dadosBasico.nome}" />
                         	</p:column>
                         	
+                        	<p:column 	filterBy="#{procedimento.planoTratamento.paciente.convenio.dadosBasico.nome}" sortBy="#{procedimento.planoTratamento.paciente.convenio.dadosBasico.nome}" 
+                        				filterMatchMode="contains" headerText="Convênio" >
+                            	<h:outputText value="#{procedimento.planoTratamento.paciente.convenio.dadosBasico.nome}" />
+                        	</p:column>
+                        	
                         	<p:column 	filterBy="#{procedimento.planoTratamento.profissional.dadosBasico.nome}" sortBy="#{procedimento.planoTratamento.profissional.dadosBasico.nome}" 
                         				filterMatchMode="contains" headerText="Profissional responsável">
                             	<h:outputText value="#{procedimento.planoTratamento.profissional.dadosBasico.nome}" />
                         	</p:column>
                         	
-                        	<p:column 	filterBy="#{procedimento.planoTratamento.statusAgendamento.descricao}" sortBy="#{procedimento.procedimento.descricao}" 
+                        	<p:column 	filterBy="#{procedimento.planoTratamento.descricao}" sortBy="#{procedimento.planoTratamento.descricao}" 
+                        				filterMatchMode="contains" headerText="Plano de tratamento" >
+                            	<h:outputText value="#{procedimento.planoTratamento.descricao}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{procedimento.procedimento.descricao}" sortBy="#{procedimento.procedimento.descricao}" 
                         				filterMatchMode="contains" headerText="Procedimento" >
                             	<h:outputText value="#{procedimento.procedimento.descricao}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}" sortBy="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}" 
+                        				filterMatchMode="contains" headerText="Status do pagamento" >
+                            	<h:outputText value="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}" />
                         	</p:column>
                         	
                         	<p:column 	filterBy="#{procedimento.planoTratamento.inicio}" sortBy="#{procedimento.planoTratamento.inicio}" 
@@ -299,6 +314,11 @@ div.ui-selectoneradio label {
                         	<p:column 	filterBy="#{procedimento.planoTratamento.fim}" sortBy="#{procedimento.planoTratamento.fim}" 
                         				filterMatchMode="contains" headerText="Término do tratamento" >
                             	<h:outputText value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.fim)}" />
+                        	</p:column>
+                        	
+                        	<p:column 	filterBy="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}" sortBy="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}" 
+                        				filterMatchMode="contains" headerText="Satus do procedimento" >
+                            	<h:outputText value="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}" />
                         	</p:column>
                         	
                         	<p:column>

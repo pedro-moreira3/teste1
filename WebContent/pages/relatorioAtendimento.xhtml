@@ -300,7 +300,7 @@ div.ui-selectoneradio label {
 
                     	<p:dataTable	id="dtRelAtendimento" widgetVar="dtRelAtendimento" value="#{relatorioAtendimentoMB.listaAtendimentos}" 
                     					var="atendimento" rowKey="#{atendimento}" rows="10" paginator="true" paginatorPosition="bottom" reflow="true" 
-                    					emptyMessage="Nenhum registro encontrado" selection="#{relatorioAtendimentoMB.entity}" selectionMode="single" >
+                    					emptyMessage="Nenhum registro encontrado" selection="#{relatorioAtendimentoMB.entity}" selectionMode="single" lazy="true">
                     		
                     		<f:facet	name="header">Relatório de atendimentos</f:facet>
                     		
@@ -338,18 +338,12 @@ div.ui-selectoneradio label {
                         				filterMatchMode="contains" headerText="Última alteração realizada por">
                             	<h:outputText value="#{atendimento.profissionalUltAlteracao.dadosBasico.nome}" />
                         	</p:column>
-                        	<ui:remove>
-                        	<p:column 	filterBy="#{atendimento.origemAgendamento.descricao}" sortBy="#{atendimento.origemAgendamento.descricao}"
-                        				filterMatchMode="contains" headerText="Origem do agendamento">
-                            	<h:outputText value="#{atendimento.origemAgendamento.descricao}" />
-                        	</p:column>
                         	
-                        	<p:column 	filterBy="#{atendimento.motivoStatusAgendamento.descricao}" sortBy="#{atendimento.motivoStatusAgendamento.descricao}"
-                        				filterMatchMode="contains" headerText="Motivo do agendamento">
-                            	<h:outputText value="#{atendimento.motivoStatusAgendamento.descricao}" />
+                        	<p:column 	filterBy="#{atendimento.finalidadeAgendamento.descricao}" sortBy="#{atendimento.finalidadeAgendamento.descricao}" 
+                        				filterMatchMode="contains" headerText="Consulta inicial">
+                            	<h:outputText value="#{atendimento.finalidadeAgendamento.descricao}" />
                         	</p:column>
-                        	</ui:remove>
-                        	
+                        	                        	
                         	<p:column 	filterBy="#{atendimento.inicio}" sortBy="#{atendimento.inicio}"
                         				filterMatchMode="contains" headerText="Data do agendamento" >
                             	<h:outputText value="#{relatorioAtendimentoMB.formatarData(atendimento.inicio)}" />
@@ -363,25 +357,25 @@ div.ui-selectoneradio label {
                         	
                         	<p:column 	filterBy="#{atendimento.proximoAgendamentoPaciente.inicio}" sortBy="#{atendimento.proximoAgendamentoPaciente.inicio}"
                         				filterMatchMode="contains" headerText="Data do próximo agendamento" >
-                            	
+                        		<p:commandButton	rendered="#{atendimento.proximoAgendamentoPaciente.inicio == nul}" action="#{agendamentoMB.iniciarNovoAgendamento(atendimento)}"
+                        							icon="fa fa fa-calendar" process="@this" oncomplete="PF('novoAgendamento').show();" update=":lume:pnAgendamento"/>
                             	<h:outputText	value="#{relatorioAtendimentoMB.formatarData(atendimento.proximoAgendamentoPaciente.inicio)}" />
-                            	
-                            	
                         	</p:column>
                         	
-                        	<p:column 	filterBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" sortBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" 
+                        	<p:column 	filterBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}"
+                        				sortBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}"
                         				filterMatchMode="contains" headerText="Status do próximo agendamento" >
                             	<h:outputText value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" />
                         	</p:column>
                         	
                         	<p:column>
-                            	<p:commandButton	id="btnView" icon="White fa fa-eye" oncomplete="PF('dlgRelAtendimento').show();" 
-                            						update=":lume:dlgRelAtendimento,:lume:filtroRelatorio,:lume:dlgGerarRelatorio" width="5%">
-                            		<f:setPropertyActionListener	value="#{atendimento}" target="#{relatorioAtendimentoMB.entity}" />
+                            	<p:commandButton	id="btnView" icon="White fa fa-eye" oncomplete="PF('dlgRelAtendimento').show();"
+                            						update=":lume:dlgRelAtendimento,:lume:filtroRelatorio,:lume:dlgGerarRelatorio" width="5%"
+                            						action="#{relatorioAtendimentoMB.setEntity(atendimento)}" process="@this">
                             		<p:tooltip	for="btnView" value="Visualizar"/>
                             	</p:commandButton>
                             	
-                            	<p:button	id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{atendimento.paciente.whatsURL}');return false;" 
+                            	<p:button	id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{atendimento.paciente.whatsURL}');return false;"
                             				styleClass="GreenButton" disable="#{atendimento.paciente.whatsURL == null}" />
                             	<p:tooltip	for="whats" value="Enviar mensagem"/>
                         	</p:column>
@@ -459,9 +453,7 @@ div.ui-selectoneradio label {
                     		    	</h:panelGroup>
                     		    	
                     			</p:panelGrid>
-                    			
-                    			
-                    			
+
                     		</p:fieldset>
 
                     		<p:fieldset		legend="Dados do paciente" id="tgPaciente" toggleable="true" toggleSpeed="500"
@@ -759,7 +751,33 @@ div.ui-selectoneradio label {
                         	</p:outputPanel>
                         </p:panel>
                             	
-                	</p:dialog>                	
+                	</p:dialog>
+                	
+                	<p:dialog	widgetVar="novoAgendamento" header="Agendamento"
+								resizable="false" id="pnAgendamento" responsive="true"
+								modal="true" appendTo=":lume"
+								onHide="PF('novoAgendamento').toggleMaximize();"
+								onShow="PF('novoAgendamento').toggleMaximize();">
+					
+						<p:outputPanel	style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+							<p:scrollPanel 	mode="native"
+											style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
+								<ui:include src="dlgagendamento.xhtml" />
+							</p:scrollPanel>
+						</p:outputPanel>
+						
+						<p:panelGrid 	columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+							<h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
+								<p:commandButton 	id="persist" icon="White fa fa-save"
+													process="pnAgendamento" value="Salvar"
+													actionListener="#{agendamentoMB.actionPersist}"
+													styleClass="GreenButton" update=":lume:dtRelAtendimento,:lume:filtroRelatorio"/>
+							</h:panelGroup>
+							<p:commandButton 	icon="White fa fa-close" value="Fechar"
+												process="@this,:lume:filtroRelatorio" update=":lume:dtRelAtendimento,:lume:filtroRelatorio" onclick="PF('novoAgendamento').hide()" />
+						</p:panelGrid>
+					</p:dialog>
                 	
                 	<p:dialog	id="dlgConfirmarImpCabecalho" widgetVar="dlgConfirmarImpCabecalho" responsive="true" icon="pi pi-exclamation-triangle" width="300px"
                 				modal="true" draggable="false" blockScroll="true" positionTop="0" positionLeft="0" style="overflow:hidden !important;">
