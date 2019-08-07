@@ -3,13 +3,17 @@ package br.com.lume.common.util;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
+import javax.faces.component.UISelectItem;
 import javax.faces.component.html.HtmlInputText;
 import javax.faces.context.FacesContext;
 
+import org.primefaces.component.calendar.Calendar;
 import org.primefaces.component.commandbutton.CommandButton;
+import org.primefaces.component.inputmask.InputMask;
 import org.primefaces.component.inputnumber.InputNumber;
 import org.primefaces.component.inputtext.InputText;
 import org.primefaces.component.inputtextarea.InputTextarea;
+import org.primefaces.component.radiobutton.RadioButton;
 import org.primefaces.component.selectbooleancheckbox.SelectBooleanCheckbox;
 import org.primefaces.component.selectonemenu.SelectOneMenu;
 
@@ -52,7 +56,6 @@ public class UtilsPrimefaces {
 
             } else if (component instanceof SelectBooleanCheckbox) {
                 ((SelectBooleanCheckbox) component).setDisabled(true);
-
             } else if (component instanceof CommandButton) {
                 ((CommandButton) component).setDisabled(true);
             }
@@ -69,7 +72,21 @@ public class UtilsPrimefaces {
     public static void readOnlyUIComponent(String uiComponentName) {
         UIComponent component = FacesContext.getCurrentInstance().getViewRoot().findComponent(uiComponentName);
         if (component != null) {
-            readOnlyAll(component.getChildren());
+            readOnlyAll(component.getChildren(), true);
+        }
+    }
+
+    /**
+     * Read Only all the children components
+     * 
+     * @param uiComponentName
+     * @param readOnly
+     *            - Boolean that represents new value for readOnly, default is true.
+     */
+    public static void readOnlyUIComponent(String uiComponentName, boolean readOnly) {
+        UIComponent component = FacesContext.getCurrentInstance().getViewRoot().findComponent(uiComponentName);
+        if (component != null) {
+            readOnlyAll(component.getChildren(), readOnly);
         }
     }
 
@@ -79,30 +96,31 @@ public class UtilsPrimefaces {
      * @param components
      *            Widget PD list
      */
-    private static void readOnlyAll(List<UIComponent> components) {
+    private static void readOnlyAll(List<UIComponent> components, boolean readOnly) {
 
         for (UIComponent component : components) {
             if (component instanceof InputText) {
-                ((InputText) component).setReadonly(true);
+                ((InputText) component).setReadonly(readOnly);
+            } else if (component instanceof Calendar) {
+                ((Calendar) component).setDisabled(readOnly);
             } else if (component instanceof InputNumber) {
-                ((InputNumber) component).setReadonly(true);
-
+                ((InputNumber) component).setReadonly(readOnly);
             } else if (component instanceof InputTextarea) {
-                ((InputTextarea) component).setReadonly(true);
-
+                ((InputTextarea) component).setReadonly(readOnly);
+            } else if (component instanceof InputMask) {
+                ((InputMask) component).setReadonly(readOnly);
             } else if (component instanceof HtmlInputText) {
-                ((HtmlInputText) component).setReadonly(true);
-
+                ((HtmlInputText) component).setReadonly(readOnly);
             } else if (component instanceof SelectOneMenu) {
-                ((SelectOneMenu) component).setReadonly(true);
-
+                ((SelectOneMenu) component).setDisabled(readOnly);
             } else if (component instanceof SelectBooleanCheckbox) {
-                ((SelectBooleanCheckbox) component).setReadonly(true);
-
+                ((SelectBooleanCheckbox) component).setDisabled(readOnly);
             } else if (component instanceof CommandButton) {
-                ((CommandButton) component).setReadonly(true);
+                ((CommandButton) component).setDisabled(readOnly);
+            } else if (component instanceof UISelectItem) {
+                ((UISelectItem) component).setItemDisabled(readOnly);
             }
-            readOnlyAll(component.getChildren());
+            readOnlyAll(component.getChildren(), readOnly);
         }
 
     }
