@@ -18,8 +18,9 @@
                         <h:outputText value="#{a.fimStr}" />
                     </p:column>
 
-                    <p:column filterBy="#{a.statusDescricao}" sortBy="#{a.statusDescricao}" filterMatchMode="contains" headerText="Status" width="15%">
-                        <h:outputText value="#{a.statusDescricao}" />
+                    <p:column 	filterBy="#{pacienteMB.getStatusDescricao(a)}" sortBy="#{pacienteMB.getStatusDescricao(a)}"
+                    			filterMatchMode="contains" headerText="Status" width="15%">
+                        <h:outputText value="#{pacienteMB.getStatusDescricao(a)}" />
                     </p:column>
 
                 </p:dataTable>

@@ -40,6 +40,7 @@ import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
@@ -686,6 +687,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             e.printStackTrace();
         }
         return null;
+    }
+    
+    public String getStatusDescricao(Agendamento agendamento) {
+        try {
+            return StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getDescricao();
+        }catch(Exception e) {
+            
+        }
+        return "";
     }
 
     public boolean isPlanoRender() {
