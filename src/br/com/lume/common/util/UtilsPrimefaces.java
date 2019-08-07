@@ -13,6 +13,7 @@ import org.primefaces.component.inputmask.InputMask;
 import org.primefaces.component.inputnumber.InputNumber;
 import org.primefaces.component.inputtext.InputText;
 import org.primefaces.component.inputtextarea.InputTextarea;
+import org.primefaces.component.picklist.PickList;
 import org.primefaces.component.radiobutton.RadioButton;
 import org.primefaces.component.selectbooleancheckbox.SelectBooleanCheckbox;
 import org.primefaces.component.selectonemenu.SelectOneMenu;
@@ -44,7 +45,8 @@ public class UtilsPrimefaces {
                 ((InputText) component).setDisabled(true);
             } else if (component instanceof InputNumber) {
                 ((InputNumber) component).setDisabled(true);
-
+            } else if (component instanceof PickList) {
+                ((PickList) component).setDisabled(true);
             } else if (component instanceof InputTextarea) {
                 ((InputTextarea) component).setDisabled(true);
 
@@ -103,6 +105,8 @@ public class UtilsPrimefaces {
                 ((InputText) component).setReadonly(readOnly);
             } else if (component instanceof Calendar) {
                 ((Calendar) component).setDisabled(readOnly);
+            } else if (component instanceof PickList) {
+                ((PickList) component).setDisabled(readOnly);
             } else if (component instanceof InputNumber) {
                 ((InputNumber) component).setReadonly(readOnly);
             } else if (component instanceof InputTextarea) {
