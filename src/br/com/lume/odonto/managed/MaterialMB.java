@@ -25,6 +25,7 @@ import org.primefaces.model.TreeNode;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.item.ItemSingleton;
@@ -32,6 +33,7 @@ import br.com.lume.local.LocalSingleton;
 import br.com.lume.marca.MarcaSingleton;
 import br.com.lume.material.MaterialSingleton;
 import br.com.lume.materialLog.MaterialLogSingleton;
+import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Item;
@@ -61,7 +63,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     private List<Local> locais;
 
-    private String digitacao, digitacaoLocal, nomeMarca;
+    private String digitacao, digitacaoLocal, nomeMarca, nomeFornecedor;
 
     private TreeNode root, rootLocal, selectedItem, selectedLocal;
 
@@ -71,18 +73,13 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     private List<Material> materiais = new ArrayList<>();
 
-    private boolean caixa, novaMarca;
+    private boolean caixa, novaMarca, novoFornecedor;
 
     private Dominio justificativa;
 
     private List<Dominio> dominios;
 
-    private BigDecimal valorTotal = new BigDecimal(0), quantidadeMovimentada, quantidade, quantidadeMovimentacao;
-
-
-    private List<Fornecedor> fornecedores;
-
-
+    private BigDecimal valorTotal = new BigDecimal(0),valorUnitario = new BigDecimal(0), quantidadeMovimentada, quantidade, quantidadeMovimentacao;
 
     private List<MaterialLog> materialLogs;
 
@@ -106,7 +103,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             firstLevelLocal.setDescricao("RAIZ");
             this.chargeTreeLocal(new DefaultTreeNode(firstLevelLocal, this.getRootLocal()));
             dateHoje = new Date();
-            fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+         
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
@@ -123,10 +120,14 @@ public class MaterialMB extends LumeManagedBean<Material> {
         }
     }
 
-    public void atualizaQuantidadeTotal() {
+    public void atualizaQuantidades() {
         BigDecimal quantidadeTotal = this.getEntity().getQuantidade().multiply(this.getEntity().getTamanhoUnidade());
         this.getEntity().setQuantidadeTotal(quantidadeTotal);
         this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeTotal());
+        if(this.getEntity().getQuantidade() != null && this.getEntity().getValorUnidadeInformado() != null) {
+            valorUnitario = this.getEntity().getValorUnidadeInformado().divide(this.getEntity().getQuantidade(), 2, RoundingMode.HALF_UP);    
+        }
+        
     }
 
     public void chargeTree(TreeNode root) {
@@ -208,6 +209,25 @@ public class MaterialMB extends LumeManagedBean<Material> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
+    public void carregarEntity(Material material) {
+        setEntity(material);
+    }
+    public void carregarEditar(Material material) {
+        setEntity(material);
+    //    rootLocal
+    //    root
+        this.digitacaoLocal = this.getEntity().getLocal().getDescricao();
+        this.digitacao = this.getEntity().getItem().getDescricao();
+        this.setItem(this.getEntity().getItem());
+        this.setLocal(this.getEntity().getLocal());
+        try {
+            this.procedencia = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO, this.getEntity().getProcedencia());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }           
+    }      
+        
 
     public void chargeTreeLocal(TreeNode root) {
         List<TreeNode> nodes = new ArrayList<>();
@@ -256,7 +276,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
         for (Local local : locaisRestantes) {
             anotherLevel = true;
             for (TreeNode node : nodes) {
-                if ((local.getIdLocal() == null) || (local.getIdLocal().equals(node.getData()))) {
+                if ((local.getLocalPai() == null) || (local.getLocalPai().equals(node.getData()))) {
                     (new DefaultTreeNode(local, node)).setExpanded(true);
                     anotherLevel = false;
                     break;
@@ -272,17 +292,18 @@ public class MaterialMB extends LumeManagedBean<Material> {
     public void actionDevolver(ActionEvent event) {
         try {
             if (this.getEntity().getQuantidadeAtual().intValue() >= quantidade.intValue()) {
-                this.getbO().refresh(getEntity());
+                //this.getbO().refresh(getEntity());
                 this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeAtual().subtract(quantidade));
-                this.getbO().persist(this.getEntity());
                 if (justificativa != null) {
                     this.getEntity().setJustificativa(justificativa.getNome());
-                }
+                }                
+                MaterialSingleton.getInstance().getBo().persist(this.getEntity());
                 MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidade.multiply(new BigDecimal(-1)), getEntity().getQuantidadeAtual(),
                         MaterialLog.ENTRADA_MATERIAL_DEVOLVER));
                 this.actionNew(event);
                 this.geraLista();
                 PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
+                this.addInfo("Devolução concluída com sucesso!", "");
             } else {
                 this.addError(OdontoMensagens.getMensagem("material.quantidade.maior"), "");
             }
@@ -291,6 +312,11 @@ public class MaterialMB extends LumeManagedBean<Material> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
 
+    }
+    
+    public void actionPersistFechar(ActionEvent event){
+        this.actionPersist(event);
+        PrimeFaces.current().executeScript("PF('dlgEntrada').hide();");
     }
 
     @Override
@@ -314,7 +340,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             if (this.getValorTotal() != null && this.getEntity().getQuantidadeTotal() != null) {
                 this.getEntity().setValor(this.getValorTotal().divide(this.getEntity().getQuantidadeTotal(), 2, RoundingMode.HALF_UP));
             }
-            this.atualizaQuantidadeTotal();
+            this.atualizaQuantidades();
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (this.getEntity().getStatus() == null) {
                 this.getEntity().setStatus(ATIVO);
@@ -357,16 +383,16 @@ public class MaterialMB extends LumeManagedBean<Material> {
                             if (novo) {
                                 MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), getEntity().getQuantidadeAtual(),
                                         getEntity().getQuantidadeAtual(), MaterialLog.ENTRADA_MATERIAL_CADASTRO));
+                                this.setEntity(new Material());
+                                this.getEntity().setFornecedor(null);
+                                this.getEntity().setMarca(null);
+                                valorTotal = new BigDecimal(0);
+                                valorUnitario = new BigDecimal(0);                            
+                                this.setSelectedItem(null);
+                                digitacao = null;
+                                digitacaoLocal = null;                            
                             }
-                            //actionNew(event);
-                            Fornecedor f = this.getEntity().getFornecedor();
-                            Marca m = this.getEntity().getMarca();
-                            this.setEntity(new Material());
-                            this.getEntity().setFornecedor(f);
-                            this.getEntity().setMarca(m);
-                            valorTotal = null;
-                            this.setSelectedItem(null);
-                            digitacao = null;
+
                             this.geraLista();
                         }
                     } else {
@@ -537,9 +563,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
     }
 
     public List<String> filtraItem(String digitacao) {
-        this.setDigitacao(digitacao);
-        this.filtraItens();
-        return this.convert(this.getItens());
+        this.setDigitacao(digitacao);        
+        this.filtraItens();     
+        return this.convert(this.getItens());                 
     }
 
     public List<String> filtraLocal(String digitacao) {
@@ -590,17 +616,17 @@ public class MaterialMB extends LumeManagedBean<Material> {
         return strings;
     }
 
-    public void handleSelect() {
-        this.filtraItem(this.getDigitacao());
-        this.setItem(null);
-        this.setSelected();
-    }
+   // public void handleSelect() {
+    //    this.filtraItem(this.getDigitacao());
+   //     this.setItem(null);
+    //    this.setSelected();
+   // }
 
-    public void handleSelectLocal() {
-        this.filtraLocal(this.getDigitacaoLocal());
-        this.setLocal(null);
-        this.setSelectedLocal();
-    }
+   // public void handleSelectLocal() {
+      //  this.filtraLocal(this.getDigitacaoLocal());
+       // this.setLocal(null);
+      //  this.setSelectedLocal();
+  //  }
 
     public void setSelected() {
         List<TreeNode> nodes = new ArrayList<>();
@@ -730,10 +756,33 @@ public class MaterialMB extends LumeManagedBean<Material> {
         }
         return sugestoes;
     }
-
     public void handleSelectMarca(SelectEvent event) {
         this.getEntity().setMarca((Marca) event.getObject());
     }
+    
+    public List<Fornecedor> geraSugestoesFornecedores(String query) {
+        List<Fornecedor> sugestoes = new ArrayList<>();
+        List<Fornecedor> fornecedores = new ArrayList<>();
+        try {          
+            fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            for (Fornecedor m : fornecedores) {
+                if (Normalizer.normalize(m.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").contains(
+                        Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))) {
+                    sugestoes.add(m);
+                }
+            }
+            Collections.sort(sugestoes);
+        } catch (Exception e) {
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS);
+        }
+        return sugestoes;
+    }    
+
+    public void handleSelectFornecedor(SelectEvent event) {
+        this.getEntity().setFornecedor((Fornecedor) event.getObject());
+    }
+    
+    
 
     public List<Dominio> getJustificativas() {
         List<Dominio> justificativas = new ArrayList<>();
@@ -752,6 +801,14 @@ public class MaterialMB extends LumeManagedBean<Material> {
     public void cancelaNovo(ActionEvent event) {
         this.setNovaMarca(false);
     }
+    
+    public void novoFornecedor() {
+        this.setNovoFornecedor(true);
+    }
+
+    public void cancelaNovoFornecedor(ActionEvent event) {
+        this.setNovoFornecedor(false);
+    }    
 
     public void actionPersistMarca(ActionEvent event) {
         this.getEntity().setMarca(new Marca());
@@ -779,6 +836,34 @@ public class MaterialMB extends LumeManagedBean<Material> {
             this.geraLista();
         }
     }
+    public void actionPersistFornecedor(ActionEvent event) {
+        this.getEntity().setFornecedor(new Fornecedor());
+        this.getEntity().getFornecedor().setDadosBasico(new DadosBasico());
+        this.getEntity().getFornecedor().getDadosBasico().setNome(this.getNomeFornecedor());
+        this.getEntity().getFornecedor().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()); 
+        this.getEntity().getFornecedor().setExcluido("N");
+        Fornecedor fornecedor = FornecedorSingleton.getInstance().getBo().findByNomeandEmpresa(this.getEntity().getFornecedor());
+        if (fornecedor != null) {
+            if (fornecedor.getId() != this.getEntity().getFornecedor().getId() && fornecedor.getDadosBasico().getNome().equals(this.getEntity().getFornecedor().getDadosBasico().getNome())) {
+                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "");
+                try {
+                    this.getbO().refresh(this.getEntity());
+                } catch (Exception e) {
+                    log.error("refresh" + e);
+                }
+            }
+        } else {
+            try {
+                DadosBasicoSingleton.getInstance().getBo().persist(this.getEntity().getFornecedor().getDadosBasico());
+                FornecedorSingleton.getInstance().getBo().persist(this.getEntity().getFornecedor());
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            } catch (Exception e) {
+                log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO);
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            }
+            this.geraLista();
+        }
+    }    
 
     public Dominio getProcedencia() {
         return procedencia;
@@ -886,16 +971,27 @@ public class MaterialMB extends LumeManagedBean<Material> {
         return valorTotal;
     }
 
-    public void valorTotal() {
-        this.atualizaQuantidadeTotal();
+    public void setValorUnitario(BigDecimal valorUnitario) {
+        this.valorUnitario = valorUnitario;
+    }
+    
+    public BigDecimal getValorUnitario() {
         if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
-            valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getQuantidade());
+            valorUnitario = this.getEntity().getValorUnidadeInformado().divide(this.getEntity().getQuantidade(), 2, RoundingMode.HALF_UP);
         }
+        return valorUnitario;
     }
 
     public void setValorTotal(BigDecimal valorTotal) {
         this.valorTotal = valorTotal;
-    }
+    }    
+    
+     public void valorTotal() {
+         this.atualizaQuantidades();
+         if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
+             valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getQuantidade());
+         }
+     }
 
     public BigDecimal getQuantidade() {
         return quantidade;
@@ -903,14 +999,6 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public void setQuantidade(BigDecimal quantidade) {
         this.quantidade = quantidade;
-    }
-
-    public List<Fornecedor> getFornecedores() {
-        return fornecedores;
-    }
-
-    public void setFornecedores(List<Fornecedor> fornecedores) {
-        this.fornecedores = fornecedores;
     }
 
     public List<MaterialLog> getMaterialLogs() {
@@ -937,4 +1025,25 @@ public class MaterialMB extends LumeManagedBean<Material> {
         this.quantidadeMovimentacao = quantidadeMovimentacao;
     }
 
+    
+    public boolean isNovoFornecedor() {
+        return novoFornecedor;
+    }
+
+    
+    public void setNovoFornecedor(boolean novoFornecedor) {
+        this.novoFornecedor = novoFornecedor;
+    }
+
+    
+    public String getNomeFornecedor() {
+        return nomeFornecedor;
+    }
+
+    
+    public void setNomeFornecedor(String nomeFornecedor) {
+        this.nomeFornecedor = nomeFornecedor;
+    }
+
 }
+

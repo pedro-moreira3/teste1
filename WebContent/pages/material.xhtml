@@ -10,176 +10,27 @@
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
                     <h:inputHidden id="idMaterial" value="#{materialMB.entity.id}" />
-                    <p:outputPanel id="pnMaterial" styleClass="BordNone">
-                        <h1>Entrada de Materiais</h1>
-                        <div class="SeparatorFull"></div>
-                        <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
-                            <p:column rendered="#{materialMB.estoqueCompleto}">
-                                <h:outputLabel value="Local : " />
-                                <p:autoComplete queryDelay="1000" id="digitacaoLocal" minQueryLength="3" disabled="#{materialMB.entity.id != 0}" value="#{materialMB.digitacaoLocal}"
-                                    completeMethod="#{materialMB.filtraLocal}">
-                                    <p:ajax event="itemSelect" listener="#{materialMB.handleSelectLocal}" update=":lume:tbLocalTree" />
-                                </p:autoComplete>
-                                <br /><br />
-                                <p:tree value="#{materialMB.rootLocal}" var="local" rendered="#{materialMB.entity.id == 0}" id="tbLocalTree" selection="#{materialMB.selectedLocal}"
-                                    selectionMode="single">
-                                    <p:ajax event="select" listener="#{materialMB.onNodeSelectLocal}" update=":lume:digitacaoLocal" process="@this" />
-                                    <p:ajax event="unselect" listener="#{materialMB.onNodeUnselectLocal}" />
-                                    <p:treeNode>
-                                        <h:outputText value="#{local.descricao}" />
-                                    </p:treeNode>
-                                </p:tree>
-                            </p:column>
-
-                            <p:column>
-                                <h:outputLabel value="Item: " />
-                                <p:autoComplete queryDelay="1000" id="digitacao" value="#{materialMB.digitacao}" disabled="#{materialMB.entity.id != 0}" completeMethod="#{materialMB.filtraItem}"
-                                    minQueryLength="3">
-                                    <p:ajax event="itemSelect" listener="#{materialMB.handleSelect}" update=":lume:tbItemTree, :lume:quantidadeAtual2" />
-                                </p:autoComplete>
-                                <br /><br />
-                                <p:tree value="#{materialMB.root}" var="item" rendered="#{materialMB.entity.id == 0}" id="tbItemTree" selection="#{materialMB.selectedItem}" selectionMode="single">
-                                    <p:ajax event="select" listener="#{materialMB.onNodeSelect}" update=":lume:digitacao, :lume:quantidadeAtual2" process="@this" />
-                                    <p:ajax event="unselect" listener="#{materialMB.onNodeUnselect}" />
-                                    <p:treeNode>
-                                        <h:outputText value="#{item.descricao}" />
-                                    </p:treeNode>
-                                </p:tree>
-                            </p:column>
-                        </p:panelGrid>
-                        <br />
-                        <p:fieldset legend="Entrada" id="pnEntrada">
-                            <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"
-                            	columnClasses="ui-g-2, ui-g-4, ui-g-2, ui-g-4"
-                                style="border:0px none; background-color:transparent;" id="pgEntrada">
-                                <p:outputLabel for="quantidade" value="Quantidade de volumes: " />
-                                <p:inputText id="quantidade" value="#{materialMB.entity.quantidade}" maxlength="10" onkeypress="validaNumeros(event)" required="true"
-                                    rendered="#{materialMB.entity.id == 0}">
-                                    <p:ajax update=":lume:pgEntrada" process=":lume:quantidadeUnidade,@this" listener="#{materialMB.valorTotal}" />
-                                </p:inputText>
-                                <h:outputText value="#{materialMB.entity.quantidade}" rendered="#{materialMB.entity.id != 0}">
-                                    <f:convertNumber />
-                                </h:outputText>
-
-                                <p:outputLabel for="quantidadeUnidade" value="Quantidade dentro do volume: " />
-                                <p:inputText id="quantidadeUnidade" value="#{materialMB.entity.tamanhoUnidade}" maxlength="10" onkeypress="validaNumeros(event)" required="true"
-                                    rendered="#{materialMB.entity.id == 0}">
-                                    <p:ajax update=":lume:pgEntrada" process=":lume:quantidade,@this" listener="#{materialMB.valorTotal}" />
-                                </p:inputText>
-                                <h:outputText value="#{materialMB.entity.tamanhoUnidade}" rendered="#{materialMB.entity.id != 0}">
-                                    <f:convertNumber />
-                                </h:outputText>
-
-                                <p:outputLabel for="quantidadeAtual" value="Quantidade Atual: " />
-                                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-                                    <h:outputText id="quantidadeAtual" value="#{materialMB.entity.quantidadeAtual}">
-                                        <f:convertNumber />
-                                    </h:outputText>
-                                    <h:outputLabel id="quantidadeAtual2" value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
-                                </p:panelGrid>
-
-                                <p:column rendered="#{materialMB.estoqueCompleto}"></p:column>
-                                <p:column rendered="#{materialMB.estoqueCompleto}"></p:column>
-
-                                <p:outputLabel for="valor" value="Valor do volume:" rendered="#{materialMB.estoqueCompleto}" />
-                                <p:inputNumber id="valor" value="#{materialMB.entity.valorUnidadeInformado}" required="true" maxlength="13" maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
-                                    thousandSeparator="." rendered="#{materialMB.estoqueCompleto and materialMB.entity.id == 0}">
-                                    <p:ajax update=":lume:pgEntrada" process=":lume:pgEntrada" listener="#{materialMB.valorTotal}" />
-                                </p:inputNumber>
-                                <h:outputText value="#{materialMB.entity.valorUnidadeInformado}" rendered="#{materialMB.estoqueCompleto and materialMB.entity.id != 0}">
-                                    <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
-                                </h:outputText>
-
-                                <p:outputLabel for="valorTotal" value="Valor Total: " rendered="#{materialMB.estoqueCompleto}" />
-                                <h:outputText id="valorTotal" value="#{materialMB.valorTotal}" rendered="#{materialMB.estoqueCompleto}">
-                                    <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
-                                </h:outputText>
-
-                                <p:outputLabel for="procedencia" value="Procedência" rendered="#{materialMB.estoqueCompleto}" />
-                                <p:selectOneMenu id="procedencia" value="#{materialMB.procedencia}" converter="dominio" required="true" rendered="#{materialMB.estoqueCompleto}">
-                                    <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
-                                    <f:selectItems value="#{materialMB.procedencias}" var="procedencia" itemLabel="#{procedencia.nome}" itemValue="#{procedencia}" />
-                                </p:selectOneMenu>
-
-                                <p:outputLabel for="fornecedor" value="Fornecedor: " rendered="#{materialMB.estoqueCompleto}" />
-                                <p:selectOneMenu id="fornecedor" value="#{materialMB.entity.fornecedor}" converter="fornecedor" required="true" class="Wid50 Min-Width-100" filter="true"
-                                    filterMatchMode="contains" rendered="#{materialMB.estoqueCompleto}">
-                                    <f:selectItem itemValue="#{null}" itemLabel="Selecione um fornecedor" />
-                                    <f:selectItems value="#{materialMB.fornecedores}" var="f" itemLabel="#{f.dadosBasico.nome}" itemValue="#{f}" />
-                                </p:selectOneMenu>
-
-                                <p:outputLabel for="validade" value="Data Validade: " rendered="#{materialMB.estoqueCompleto}" />
-                                <p:calendar id="validade" value="#{materialMB.entity.validade}" pattern="dd/MM/yyyy" mindate="#{materialMB.dateHoje}" mask="true"
-                                    rendered="#{materialMB.estoqueCompleto}" />
-
-                                <p:outputLabel for="marca" value="Marca : " rendered="#{materialMB.estoqueCompleto}" />
-                                <p:column rendered="#{materialMB.estoqueCompleto}">
-                                    <h:panelGroup id="pnBtmarca" style="display: flex !important;" styleClass="autoComplete">
-                                        <p:autoComplete queryDelay="1000" value="#{materialMB.entity.marca}" id="marca" minQueryLength="3" completeMethod="#{materialMB.geraSugestoes}" var="marca"
-                                            itemLabel="#{marca.nome}" itemValue="#{marca}" converter="marca" forceSelection="true" required="true" dropdown="true" style="margin-right: 5px"
-                                            scrollHeight="400">
-                                            <p:ajax event="itemSelect" listener="#{materialMB.handleSelectMarca}" update=":lume:marca" />
-                                        </p:autoComplete>
-                                        <p:commandButton id="novaMarca" disabled="#{materialMB.entity.id != 0}" rendered="#{!materialMB.novaMarca}" icon="fa fa-plus White"
-                                            update="lblNovaMarca, valueNovaMarca, :lume:pnBtmarca" immediate="true" actionListener="#{materialMB.novo}" />
-                                        <p:commandButton id="cancelarNovoMarca" disabled="#{materialMB.entity.id != 0}" rendered="#{materialMB.novaMarca}" icon="fa fa-minus White"
-                                            update="lblNovaMarca, valueNovaMarca, :lume:pnBtmarca" immediate="true" actionListener="#{materialMB.cancelaNovo}" />
-                                    </h:panelGroup>
-                                </p:column>
-
-                                <p:outputLabel for="lote" value="Lote : " rendered="#{materialMB.estoqueCompleto}" />
-                                <p:inputText id="lote" value="#{materialMB.entity.lote}" maxlength="100" rendered="#{materialMB.estoqueCompleto}" />
-
-								<p:outputPanel id="lblNovaMarca">
-									<p:outputLabel for="nomeMarca" value="Nome : " rendered="#{materialMB.novaMarca}" />
-								</p:outputPanel>
-								<p:outputPanel id="valueNovaMarca">
-		                            <p:outputPanel style="display: flex !important;" rendered="#{materialMB.novaMarca}">
-										<p:inputText id="nomeMarca" value="#{materialMB.nomeMarca}" disabled="#{materialMB.entity.id != 0}" maxlength="200" required="#{materialMB.novaMarca}" />
-		                                <p:commandButton id="persistMarca" icon="White fa fa-save" process="lblNovaMarca, valueNovaMarca" update="lblNovaMarca, valueNovaMarca, :lume:marca"
-		                                	disabled="#{materialMB.entity.id != 0}" actionListener="#{materialMB.actionPersistMarca}" />
-									</p:outputPanel>
-								</p:outputPanel>
-
-                            </p:panelGrid>
-
-                        </p:fieldset>
-
-                        <p:fieldset legend="Movimentação" id="pnMovimentacao" rendered="#{!materialMB.estoqueCompleto and materialMB.entity.id != 0}" style="margin-top: 15px;">
-                            <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-                                style="border:0px none; background-color:transparent;">
-                                <p:outputLabel for="tipoMovimentacao" value="Movimentação de: " />
-                                <p:selectOneRadio id="tipoMovimentacao" value="#{materialMB.tipoMovimentacao}" columns="2" required="true">
-                                    <f:selectItem itemLabel="Entrada" itemValue="E" />
-                                    <f:selectItem itemLabel="Saída" itemValue="S" />
-                                </p:selectOneRadio>
-                                <p:outputLabel for="quantidadeMovimentacao" value="Quantidade: " />
-                                <p:column>
-                                    <p:inputText id="quantidadeMovimentacao" value="#{materialMB.quantidadeMovimentacao}" maxlength="10" required="true" onkeypress="validaNumeros(event)"
-                                        style="width:20%" />
-                                    <h:outputLabel id="quantidadeMovimentacao2" value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
-                                </p:column>
-                            </p:panelGrid>
-                        </p:fieldset>
-                        <br />
-
-                        <div class="SeparatorFull"></div>
-                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-                            <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{materialMB.actionPersist}" update=":lume:pnMaterial,:lume:dtMaterial"
-                                process=":lume:pnMaterial" styleClass="GreenButton" />
-							<p:commandButton id="devolucao" icon="White fa fa-mail-forward" onclick="PF('dlg').show();" value="Devolver" rendered="#{materialMB.estoqueCompleto}"
-								update=":lume:pnMaterial,:lume:dtMaterial,:lume:pnJustificativa" process="@this" disabled="#{materialMB.entity.id == 0}" styleClass="OrangeButton" />
-                            <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{materialMB.actionNew}" update=":lume:pnMaterial,:lume:dtMaterial" immediate="true" />
-                        </p:panelGrid>
-
-                    </p:outputPanel>
-
-                    <br />
-
+     				<h1>Entrada de Materiais no Estoque</h1>
+                     <div class="SeparatorFull"></div>                  
+                      <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+                      <p:commandButton id="new" icon="White fa fa-file-o" value="Inserir itens no estoque " oncomplete="PF('dlgEntrada').show();" actionListener="#{materialMB.actionNew}" update=":lume:pnMaterial,:lume:dtMaterial" immediate="true" />						
+                      </p:panelGrid>  
+                      	<div class="SeparatorFull"></div>
                     <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{materialMB.materiais}" var="material" rows="15" paginator="true" selection="#{materialMB.entity}"
                         selectionMode="single" rowKey="#{material}" paginatorPosition="bottom">
                         <p:ajax event="rowSelect" update=":lume:pnMaterial" listener="#{materialMB.carregaTela}" oncomplete="topPage();" />
                         <f:facet name="header">Materiais</f:facet>
+						 <p:column headerText="Ações" width="12%">
+						 	<p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlgEntrada').show();" update=":lume:pnEntradaDlg" title="Editar" process="@this"
+                                actionListener="#{materialMB.carregarEditar(material)}" style="width:33px !important" />
+                            <p:commandButton class="GreenButton" icon="White fa fa-mail-forward" oncomplete="PF('dlg').show();" process="@this"
+                                actionListener="#{materialMB.carregarEntity(material)}" style="width:33px !important" title="Devolver"/>
+       						<p:commandButton  icon="White fa fa-search" oncomplete="PF('dlgMaterialLog').show();" update=":lume:dtMaterialLog" title="Log" process="@this"
+                                actionListener="#{materialMB.carregarMaterialLog(material)}" style="width:33px !important" />                                                                
+                        </p:column>
+						<p:column style="width:16px">
+							<p:rowToggler />
+						</p:column>                                              
                         <p:column filterBy="#{material.item.descricaoLimpa}" sortBy="#{material.item.descricao}" filterMatchMode="contains" width="20%" headerText="Descrição">
                             <h:outputText value="#{material.item.descricao}" title="#{material.id}" />
                         </p:column>
@@ -187,7 +38,7 @@
                             rendered="#{materialMB.estoqueCompleto}">
                             <h:outputText value="#{material.local.descricao}" />
                         </p:column>
-                        <p:column filterBy="#{material.quantidadeAtual}" sortBy="#{material.quantidadeAtual}" width="10%" filterMatchMode="contains" headerText="Quantidade Atual">
+                        <p:column filterBy="#{material.quantidadeAtual}" sortBy="#{material.quantidadeAtual}" width="10%" filterMatchMode="contains" headerText="Quantidade">
                             <h:outputText value="#{material.quantidadeAtual}">
                                 <f:convertNumber />
                             </h:outputText>
@@ -199,22 +50,11 @@
                                 <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
                             </h:outputText>
                         </p:column>
-                        <p:column filterBy="#{material.marca.nome}" sortBy="#{material.marca.nome}" filterMatchMode="contains" width="7%" headerText="Marca" rendered="#{materialMB.estoqueCompleto}">
-                            <h:outputText value="#{material.marca.nome}" />
-                        </p:column>
-                        <p:column filterBy="#{material.lote}" sortBy="#{material.lote}" filterMatchMode="contains" width="5%" headerText="Lote" rendered="#{materialMB.estoqueCompleto}">
-                            <h:outputText value="#{material.lote}" />
-                        </p:column>
-                        <p:column filterBy="#{material.validadeStr}" sortBy="#{material.validade}" filterMatchMode="contains" width="7%" headerText="Validade" rendered="#{materialMB.estoqueCompleto}">
-                            <h:outputText value="#{material.validadeStr}" />
-                        </p:column>
-                        <p:column filterBy="#{material.procedenciaString}" sortBy="#{material.procedenciaString}" width="8%" filterMatchMode="contains" headerText="Procedência"
+                       <p:column filterBy="#{material.valorTotal}" sortBy="#{material.valorTotal}" width="11%" style="text-align:right" filterMatchMode="contains" headerText="Valor Total(R$)"
                             rendered="#{materialMB.estoqueCompleto}">
-                            <h:outputText value="#{material.procedenciaString}" />
-                        </p:column>
-                        <p:column filterBy="#{material.fornecedor.dadosBasico.nome}" sortBy="#{material.fornecedor.dadosBasico.nome}" width="8%" filterMatchMode="contains" headerText="Fornecedor"
-                            rendered="#{materialMB.estoqueCompleto}">
-                            <h:outputText value="#{material.fornecedor.dadosBasico.nome}" />
+                            <h:outputText value="#{material.valorTotal}">
+                                <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
+                            </h:outputText>
                         </p:column>
                         <p:column filterBy="#{material.dataCadastroStr}" sortBy="#{material.dataCadastroStrOrd}" width="9%" filterMatchMode="contains" headerText="Dt. Cadastro">
                             <h:outputText value="#{material.dataCadastroStr}" />
@@ -223,25 +63,239 @@
                             rendered="#{!materialMB.estoqueCompleto}">
                             <h:outputText value="#{material.dataMovimentacaoStr}" />
                         </p:column>
-                        <p:column headerText="Log" width="5%">
-                            <p:commandButton icon="White fa fa-search" oncomplete="PF('dlgMaterialLog').show();" update=":lume:dtMaterialLog" process="@this"
-                                actionListener="#{materialMB.carregarMaterialLog(material)}" style="width:33px !important" />
-                        </p:column>
-                    </p:dataTable>
-                    <p:dialog id="dlg" widgetVar="dlg" header="Devolver" responsive="true" modal="true" width="90%">
+                        <p:rowExpansion>
+                        	<p:panelGrid columns="5" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"		                            	
+		                                style="border:0px none; background-color:transparent;">
+								<h:panelGroup styleClass="md-combo">		                                
+		                        	<h:outputLabel value="Marca: " />
+				                    <h:outputText value="#{material.marca.nome}"></h:outputText>
+				                </h:panelGroup>
+				                <h:panelGroup styleClass="md-combo">
+				                    <h:outputLabel value="Fornecedor: " />
+				                    <h:outputText value="#{material.fornecedor.dadosBasico.nome}"></h:outputText>
+				                </h:panelGroup>
+				                <h:panelGroup styleClass="md-combo">
+									<h:outputLabel value="Procedência: " />
+				                    <h:outputText value="#{material.procedenciaString}"></h:outputText>
+				                </h:panelGroup>				             
+				                <h:panelGroup styleClass="md-combo">       
+				                    <h:outputLabel value="Lote: " />
+				                    <h:outputText value="#{material.lote}"></h:outputText>
+				                </h:panelGroup>
+				                <h:panelGroup styleClass="md-combo">
+				                    <h:outputLabel value="Validade: " />
+				                    <h:outputText value="#{material.validadeStr}"></h:outputText>
+				                </h:panelGroup>
+		                    </p:panelGrid>
+                        </p:rowExpansion>                      
+                    </p:dataTable>                  
+                    
+                    <p:dialog id="dlgEntrada" widgetVar="dlgEntrada" header="Entrada de materias no Estoque" responsive="true" modal="true" onHide="PF('dlgEntrada').toggleMaximize();"
+						onShow="PF('dlgEntrada').toggleMaximize();" >                    	
+						<p:outputPanel id="pnEntradaDlg" >
+							<p:scrollPanel  mode="native" style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;"> 
+							<h:outputLabel value="Selecione o local e o item para dar entrada no material: " />                     									                   	                      
+      						<p:outputPanel id="pnMaterial" styleClass="BordNone">              		     
+                    		    <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+		                            <p:column rendered="#{materialMB.estoqueCompleto}">       
+		                                <p:tree filterBy="#{local.descricao}" required="true" filterMatchMode="contains" value="#{materialMB.rootLocal}" var="local" rendered="#{materialMB.entity.id == 0}" id="tbLocalTree" selection="#{materialMB.selectedLocal}"
+		                                    selectionMode="single">
+		                                    <p:ajax event="select" listener="#{materialMB.onNodeSelectLocal}" update=":lume:localText" process="@this" />
+		                                    <p:ajax event="unselect" listener="#{materialMB.onNodeUnselectLocal}" />
+		                                    <p:treeNode>
+		                                        <h:outputText value="#{local.descricao}" />
+		                                    </p:treeNode>
+		                                </p:tree>
+		                                <br/>
+            							<h:outputLabel value="Local: " />
+		                                <h:outputText id="localText" value="#{materialMB.digitacaoLocal}"></h:outputText>		                                
+		                            </p:column>
+		                            <p:column>
+		                                <p:tree filterBy="#{item.descricao}" required="true" filterMatchMode="contains" value="#{materialMB.root}" var="item" rendered="#{materialMB.entity.id == 0}" id="tbItemTree" selection="#{materialMB.selectedItem}" 
+		                                selectionMode="single">
+		                                    <p:ajax event="select" listener="#{materialMB.onNodeSelect}" update=":lume:itemText" process="@this" />
+		                                    <p:ajax event="unselect" listener="#{materialMB.onNodeUnselect}" />
+		                                    <p:treeNode>
+		                                        <h:outputText value="#{item.descricao}" />
+		                                    </p:treeNode>
+		                                </p:tree>
+		                                 <br/>
+		                                <h:outputLabel value="Item: " />
+		                                <h:outputText id="itemText" value="#{materialMB.digitacao}"></h:outputText>	
+		                            </p:column>
+                      		  </p:panelGrid>
+								<p:fieldset legend="Entrada" id="pnEntrada">
+									<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"		                            	
+		                                style="border:0px none; background-color:transparent;">
+		                                <h:panelGroup styleClass="md-combo">
+   											<p:outputLabel for="quantidade" value="Quantidade de volumes: " />
+		                                	<p:inputText id="quantidade" value="#{materialMB.entity.quantidade}" maxlength="10" onkeypress="validaNumeros(event)" required="true"
+		                                    	rendered="#{materialMB.entity.id == 0}">
+		                                    	<p:ajax update=":lume:pnEntrada" process=":lume:quantidadeUnidade,@this" listener="#{materialMB.valorTotal}" />
+		                                	</p:inputText>
+		                                	<h:outputText value="#{materialMB.entity.quantidade}" rendered="#{materialMB.entity.id != 0}">
+		                                    	<f:convertNumber />
+		                                	</h:outputText>		                                	
+		                                </h:panelGroup>
+		                                <h:panelGroup styleClass="md-combo">
+			                                <p:outputLabel for="quantidadeUnidade" value="Quantidade dentro do volume: " />
+			                                <p:inputText id="quantidadeUnidade" value="#{materialMB.entity.tamanhoUnidade}" maxlength="10" onkeypress="validaNumeros(event)" required="true"
+			                                    rendered="#{materialMB.entity.id == 0}">
+			                                    <p:ajax update=":lume:pnEntrada" process=":lume:quantidade,@this" listener="#{materialMB.valorTotal}" />
+			                                </p:inputText>
+			                                <h:outputText value="#{materialMB.entity.tamanhoUnidade}" rendered="#{materialMB.entity.id != 0}">
+			                                    <f:convertNumber />
+			                                </h:outputText>		                                
+		                                </h:panelGroup>
+		                                <h:panelGroup styleClass="md-combo">
+			                                <p:outputLabel for="quantidadeAtual" value="Quantidade Total: " />
+			                                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+			                                    <h:outputText id="quantidadeAtual" value="#{materialMB.entity.quantidadeAtual}">
+			                                        <f:convertNumber />
+			                                    </h:outputText>
+			                                    <h:outputLabel id="quantidadeAtual2" value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
+			                                </p:panelGrid>		                                
+		                                </h:panelGroup>		                                
+									</p:panelGrid>                 		       
+									<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"		                            	
+		                                style="border:0px none; background-color:transparent;">
+		                                <h:panelGroup styleClass="md-combo">
+			                                <p:outputLabel for="valor" value="Valor do volume:" rendered="#{materialMB.estoqueCompleto}" />
+			                                <p:inputNumber id="valor" value="#{materialMB.entity.valorUnidadeInformado}" required="true" maxlength="13" maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+			                                    thousandSeparator="." rendered="#{materialMB.estoqueCompleto and materialMB.entity.id == 0}">			                                    	
+			                                    <p:ajax update=":lume:pnEntrada" process=":lume:valor,@this" listener="#{materialMB.valorTotal}" />		                                    
+			                                </p:inputNumber>
+			                                <h:outputText value="#{materialMB.entity.valorUnidadeInformado}" rendered="#{materialMB.estoqueCompleto and materialMB.entity.id != 0}">
+			                                    <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
+			                                </h:outputText>		                                
+		                                </h:panelGroup>
+		                                <h:panelGroup styleClass="md-combo">
+			                                <p:outputLabel for="valorUnitario" value="Valor Unitário: " rendered="#{materialMB.estoqueCompleto}" />
+			                                <h:outputText id="valorUnitario" value="#{materialMB.valorUnitario}" rendered="#{materialMB.estoqueCompleto}">
+			                                    <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
+			                                </h:outputText>
+		                                </h:panelGroup>	
+		                                <h:panelGroup styleClass="md-combo">
+			                                <p:outputLabel for="valorTotal" value="Valor Total: " rendered="#{materialMB.estoqueCompleto}" />
+			                                <h:outputText id="valorTotal" value="#{materialMB.valorTotal}" rendered="#{materialMB.estoqueCompleto}" >
+			                                    <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
+			                                </h:outputText>	                                
+		                                </h:panelGroup>		                                		                                
+	                                </p:panelGrid> 
+									<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"		                            	
+		                                style="border:0px none;border-top:10px; background-color:transparent;">	      
+		                                <h:panelGroup styleClass="md-combo"> 
+			                                <p:outputLabel for="procedencia" value="Procedência" rendered="#{materialMB.estoqueCompleto}" />
+			                                <p:selectOneMenu id="procedencia" value="#{materialMB.procedencia}" converter="dominio" required="true" rendered="#{materialMB.estoqueCompleto}">
+			                                    <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
+			                                    <f:selectItems value="#{materialMB.procedencias}" var="procedencia" itemLabel="#{procedencia.nome}" itemValue="#{procedencia}" />
+			                                </p:selectOneMenu>			                                  
+		                                </h:panelGroup>
+		                                <h:panelGroup styleClass="md-combo">   
+		                                <p:outputLabel for="validade" value="Data Validade: " rendered="#{materialMB.estoqueCompleto}" />
+		                                <p:calendar id="validade" value="#{materialMB.entity.validade}" pattern="dd/MM/yyyy" mindate="#{materialMB.dateHoje}" mask="true"
+		                                    rendered="#{materialMB.estoqueCompleto}" />		                                
+		                                </h:panelGroup>
+		                                <h:panelGroup styleClass="md-combo">   
+											<p:outputLabel for="lote" value="Lote: " rendered="#{materialMB.estoqueCompleto}" />
+			                                <p:inputText id="lote" value="#{materialMB.entity.lote}" maxlength="100" rendered="#{materialMB.estoqueCompleto}" />		                                
+		                                </h:panelGroup>		                                		                                                                      		       
+                 		       		</p:panelGrid>                  		       		
+		                            <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"
+		                            	columnClasses="ui-g-2, ui-g-4, ui-g-2, ui-g-4"
+		                                style="border:0px none; background-color:transparent;" id="pgEntrada"> 
+
+		                                <p:outputLabel for="marca" value="Marca : " rendered="#{materialMB.estoqueCompleto}" />
+		                                <p:column rendered="#{materialMB.estoqueCompleto}">
+		                                    <h:panelGroup id="pnBtmarca" style="display: flex !important;" styleClass="autoComplete">
+		                                        <p:autoComplete queryDelay="1000" value="#{materialMB.entity.marca}" id="marca" minQueryLength="3" completeMethod="#{materialMB.geraSugestoes}" var="marca"
+		                                            itemLabel="#{marca.nome}" itemValue="#{marca}" converter="marca" forceSelection="true" required="true" dropdown="true" style="margin-right: 5px"
+		                                            scrollHeight="400">
+		                                            <p:ajax event="itemSelect" listener="#{materialMB.handleSelectMarca}" update=":lume:marca" />
+		                                        </p:autoComplete>
+		                                        <p:commandButton id="novaMarca" disabled="#{materialMB.entity.id != 0}" rendered="#{!materialMB.novaMarca}" icon="fa fa-plus White"
+		                                            update="lblNovaMarca, valueNovaMarca, :lume:pnBtmarca" immediate="true" actionListener="#{materialMB.novo}" />
+		                                        <p:commandButton id="cancelarNovoMarca" disabled="#{materialMB.entity.id != 0}" rendered="#{materialMB.novaMarca}" icon="fa fa-minus White"
+		                                            update="lblNovaMarca, valueNovaMarca, :lume:pnBtmarca" immediate="true" actionListener="#{materialMB.cancelaNovo}" />
+		                                    </h:panelGroup>
+		                                </p:column>
+		                                <p:outputLabel for="fornecedor" value="Fornecedor: " rendered="#{materialMB.estoqueCompleto}" />
+		                                <p:column rendered="#{materialMB.estoqueCompleto}">
+		                                    <h:panelGroup id="pnBtFornecedor" style="display: flex !important;" styleClass="autoComplete">
+		                                        <p:autoComplete queryDelay="1000" value="#{materialMB.entity.fornecedor}" id="fornecedor" minQueryLength="3" completeMethod="#{materialMB.geraSugestoesFornecedores}" var="f"
+		                                            itemLabel="#{f.dadosBasico.nome}" itemValue="#{f}" converter="fornecedor" forceSelection="true" required="true" dropdown="true" style="margin-right: 5px"
+		                                            scrollHeight="400">
+		                                            <p:ajax event="itemSelect" listener="#{materialMB.handleSelectFornecedor}" update=":lume:fornecedor" />
+		                                        </p:autoComplete>	
+				                                
+		                                        <p:commandButton id="novoFornecedor" disabled="#{materialMB.entity.id != 0}" rendered="#{!materialMB.novoFornecedor}" icon="fa fa-plus White"
+		                                            update="lblNovoFornecedor, valueNovoFornecedor, :lume:pnBtFornecedor" immediate="true" actionListener="#{materialMB.novoFornecedor}" />
+		                                        <p:commandButton id="cancelarNovoFornecedor" disabled="#{materialMB.entity.id != 0}" rendered="#{materialMB.novoFornecedor}" icon="fa fa-minus White"
+		                                            update="lblNovoFornecedor, valueNovoFornecedor, :lume:pnBtFornecedor" immediate="true" actionListener="#{materialMB.cancelaNovoFornecedor}" />
+		                                    </h:panelGroup>
+		                                </p:column>	
+		                               <p:outputPanel id="lblNovaMarca">
+											<p:outputLabel for="nomeMarca" value="Nome : " rendered="#{materialMB.novaMarca}" />
+										</p:outputPanel>
+										<p:outputPanel id="valueNovaMarca">
+				                            <p:outputPanel style="display: flex !important;" rendered="#{materialMB.novaMarca}">
+												<p:inputText id="nomeMarca" value="#{materialMB.nomeMarca}" disabled="#{materialMB.entity.id != 0}" maxlength="200" required="#{materialMB.novaMarca}" />
+				                                <p:commandButton id="persistMarca" icon="White fa fa-save" process="lblNovaMarca, valueNovaMarca" update="lblNovaMarca, valueNovaMarca, :lume:marca"
+				                                	disabled="#{materialMB.entity.id != 0}" actionListener="#{materialMB.actionPersistMarca}" />
+											</p:outputPanel>
+										</p:outputPanel>
+		                                
+										<p:outputPanel id="lblNovoFornecedor">
+											<p:outputLabel for="nomeFornecedor" value="Nome : " rendered="#{materialMB.novoFornecedor}" />
+										</p:outputPanel>
+										<p:outputPanel id="valueNovoFornecedor">
+				                            <p:outputPanel style="display: flex !important;" rendered="#{materialMB.novoFornecedor}">
+												<p:inputText id="nomeFornecedor" value="#{materialMB.nomeFornecedor}" disabled="#{materialMB.entity.id != 0}" maxlength="200" required="#{materialMB.novoFornecedor}" />
+				                                <p:commandButton id="persistFornecedor" icon="White fa fa-save" process="lblNovoFornecedor, valueNovoFornecedor" update="lblNovoFornecedor, valueNovoFornecedor, :lume:fornecedor"
+				                                	disabled="#{materialMB.entity.id != 0}" actionListener="#{materialMB.actionPersistFornecedor}" />
+											</p:outputPanel>
+										</p:outputPanel>		                                
+										<p:outputPanel>
+										</p:outputPanel>
+
+		
+
+		
+		                            </p:panelGrid>
+		
+		                        </p:fieldset>
+		
+		                    </p:outputPanel>                   
+                            
+						</p:scrollPanel>
+						<div class="EmptyBox20"></div>
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">		                    
+							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar e Continuar" actionListener="#{materialMB.actionPersist}" update=":lume:pnEntradaDlg,:lume:dtMaterial"
+		                    	process=":lume:pnEntradaDlg" styleClass="GreenButton" />
+							<p:commandButton id="persistFechar" icon="White fa fa-save" value="Salvar e Fechar" actionListener="#{materialMB.actionPersistFechar}" update=":lume:pnEntradaDlg,:lume:dtMaterial"
+		                    	process=":lume:pnEntradaDlg" styleClass="GreenButton" />		                              
+							<p:commandButton id="fecharSalvar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlgEntrada').hide();" immediate="true" />
+		                          
+		                      </p:panelGrid>  
+						</p:outputPanel>                       
+                    </p:dialog>                    
+                    <p:dialog id="dlg" widgetVar="dlg" header="Devolver" responsive="true" modal="true" width="35%">
                         <p:panel id="pnJustificativa" styleClass="BordNone">
-                            <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
                                 <p:outputLabel for="quantidadeDevolvida" value="Quantidade à ser devolvida: " />
                                 <p:column>
-                                    <p:inputMask id="quantidadeDevolvida" value="#{materialMB.quantidade}" maxlength="8" mask="9?99999" required="true" styleClass="Wid50">
-                                    </p:inputMask>
+                                    
+									<p:inputNumber maxValue="99999999.9999" minValue="0.0000" id="quantidadeDevolvida" value="#{materialMB.quantidade}" required="true" >						
+							</p:inputNumber>                                    
+                                    
+                                    
                                     <h:outputLabel value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
                                 </p:column>
 
                                 <p:outputLabel for="justificativa" value="Justificativa : " />
                                 <p:selectOneMenu id="justificativa" required="true" value="#{materialMB.justificativa}" converter="dominio">
-                                    <f:selectItem itemValue="#{null}" itemLabel="Selecione uma justificativa" />
+                                    <f:selectItem itemValue="#{null}" itemLabel="Selecione" />
                                     <f:selectItems value="#{materialMB.justificativas}" var="justificativa" itemLabel="#{justificativa.nome}" itemValue="#{justificativa}" />
                                 </p:selectOneMenu>
                             </p:panelGrid>
