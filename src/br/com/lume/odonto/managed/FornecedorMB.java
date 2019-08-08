@@ -19,6 +19,7 @@ import br.com.lume.fornecedor.FornecedorSingleton;
 //import br.com.lume.odonto.bo.FornecedorBO;
 //import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Fornecedor;
+import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.exception.CpfCnpjDuplicadoException;
 import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -56,8 +57,11 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
             log.error("Erro no setEntity", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
-
     }
+    
+    public void carregarEditar(Fornecedor fornecedor) {
+        setEntity(fornecedor);      
+    }     
 
     @Override
     public void actionPersist(ActionEvent event) {
