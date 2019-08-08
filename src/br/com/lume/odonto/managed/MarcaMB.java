@@ -15,6 +15,7 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.marca.MarcaSingleton;
+import br.com.lume.odonto.entity.Fornecedor;
 //import br.com.lume.odonto.bo.MarcaBO;
 //import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Marca;
@@ -45,6 +46,10 @@ public class MarcaMB extends LumeManagedBean<Marca> {
         }
         Collections.sort(this.marcas);
     }
+    
+    public void carregarEditar(Marca marca) {
+        setEntity(marca);      
+    }    
 
     @Override
     public void actionPersist(ActionEvent event) {

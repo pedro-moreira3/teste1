@@ -5,37 +5,55 @@
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
+					<p:confirmDialog id="confirmDialog"
+						message=" Você tem certeza que deseja excluir essa marca?"
+						header="Excluir marca?" severity="alert"
+						widgetVar="confirmation" appendToBody="true">
+						<p:commandButton id="confirm" value="Sim"
+							update=":lume:pnMarca,:lume:dtMarca"							
+							actionListener="#{marcaMB.actionRemove}" process="@this" oncomplete="PF('confirmation').hide()"/>
+						<p:commandButton id="decline" value="Não"
+							onclick="PF('confirmation').hide()" type="button" />
+					</p:confirmDialog>				
+					<p:dialog id="dlg" widgetVar="dlg" header="Nova Marca" responsive="true" modal="true" width="50%">
+						<p:panel id="pnDlg" styleClass="BordNone">							
+							<p:panelGrid columns="1"  layout="grid" styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;">
+								<p:outputPanel id="pnMarca" styleClass="BordNone">								
+									<p:panelGrid columns="1"  layout="grid" styleClass="ui-panelgrid-blank"
+										style="border:0px none; background-color:transparent;">
+										<p:outputLabel for="nome" value="Descrição : " />
+										<p:inputText id="nome" value="#{marcaMB.entity.nome}" required="true" maxlength="100" />
+									</p:panelGrid>															
+								</p:outputPanel>						
+							</p:panelGrid>	
+							<div class="SeparatorFull"></div>
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{marcaMB.actionPersist}"
+								update=":lume:pnDlg,:lume:dtMarca" process=":lume:pnDlg"  styleClass="GreenButton" oncomplete="PF('dlg').hide();"/>
+								<p:commandButton id="fechar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlg').hide();" immediate="true" />											
+							</p:panelGrid>
+							<div class="EmptyBox20"></div>
+						</p:panel>
+					</p:dialog>	
 					<h:inputHidden id="idMarca" value="#{marcaMB.entity.id}" />
-					<p:outputPanel id="pnMarca" styleClass="BordNone">
-						<h1>Marca</h1>
-						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
-							style="border:0px none; background-color:transparent;">
-
-
-							<p:outputLabel for="nome" value="Descrição : " />
-							<p:inputText id="nome" value="#{marcaMB.entity.nome}" required="true" maxlength="100" />
-
-						</p:panelGrid>
-						<br />
-						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{marcaMB.actionPersist}"
-								 update=":lume:pnMarca,:lume:dtMarca" process=":lume:pnMarca" styleClass="GreenButton" />
-							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{marcaMB.actionRemove}"
-								update=":lume:pnMarca,:lume:dtMarca" process="@this" disabled="#{marcaMB.entity.id == 0}" 
-								styleClass="RedButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{marcaMB.actionNew}"
-								 update=":lume:pnMarca,:lume:dtMarca" immediate="true" />
-						</p:panelGrid>
-					</p:outputPanel>
+							<h1>Marca</h1>	
 					<div class="EmptyBox20"></div>
-
+					<div class="SeparatorFull"></div>
+									<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">	
+										<p:commandButton id="new" icon="White fa fa-file-o" value="Inserir nova marca" actionListener="#{marcaMB.actionNew}"
+										update=":lume:pnDlg" immediate="true" oncomplete="PF('dlg').show();"/>
+									</p:panelGrid>
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMarca" value="#{marcaMB.marcas}" var="marca" rows="15" paginator="true"
 						selection="#{marcaMB.entity}" selectionMode="single" rowKey="#{marca}" paginatorPosition="bottom">
 						<p:ajax event="rowSelect" update=":lume:pnMarca" />
 						<f:facet name="header">Marcas</f:facet>
-
+ 						<p:column headerText="Ações" width="20%">
+ 							<p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlg').show();" update=":lume:pnDlg" title="Editar" process="@this"
+							actionListener="#{marcaMB.carregarEditar(marca)}" style="width:33px !important" />
+							<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmation').show();" update=":lume:pnDlg,:lume:dtMarca" title="Remover" process="@this"
+                           style="width:33px !important" actionListener="#{marcaMB.carregarEditar(marca)}"/>
+                  		</p:column>		
 						<p:column filterBy="#{marca.nome}" sortBy="#{marca.nome}" filterMatchMode="contains" headerText="Descrição">
 							<h:outputText value="#{marca.nome}" title="#{marca.id}" />
 						</p:column>
