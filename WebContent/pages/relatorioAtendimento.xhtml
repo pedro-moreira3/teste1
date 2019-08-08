@@ -163,7 +163,7 @@ div.ui-selectoneradio label {
         													completeMethod="#{relatorioAtendimentoMB.sugestoesPacientes}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 															converter="paciente" forceSelection="true" scrollHeight="400"
-															minQueryLength="3">
+															minQueryLength="3" queryDelay="1000">
 												<p:ajax	event="itemSelect" process="@this" />
 											</p:autoComplete>
         								</h:panelGroup>
@@ -177,7 +177,7 @@ div.ui-selectoneradio label {
         									<p:autoComplete	id="filtroProfissional" value="#{relatorioAtendimentoMB.filtroPorProfissional}"
         													completeMethod="#{relatorioAtendimentoMB.sugestoesProfissionais}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-															converter="profissional" forceSelection="true" scrollHeight="400">
+															converter="profissional" forceSelection="true" scrollHeight="400" queryDelay="1000">
 												<p:ajax	event="itemSelect" process="@this" />
 											
 											</p:autoComplete>
@@ -188,7 +188,7 @@ div.ui-selectoneradio label {
         									<p:autoComplete	id="filtroProfissionalUltAlteracao" value="#{relatorioAtendimentoMB.filtroPorProfissionalUltAlteracao}"
         													completeMethod="#{relatorioAtendimentoMB.sugestoesProfissionalUltAlteracao}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-															converter="profissional" forceSelection="true" scrollHeight="400">
+															converter="profissional" forceSelection="true" scrollHeight="400" queryDelay="1000">
 												<p:ajax	event="itemSelect" process="@this" />															
 											</p:autoComplete>
         								</h:panelGroup>
@@ -198,7 +198,7 @@ div.ui-selectoneradio label {
         									<p:autoComplete	id="filtroConvenio" value="#{relatorioAtendimentoMB.filtroPorConvenio}"
         													completeMethod="#{relatorioAtendimentoMB.sugestoesConvenios}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-															converter="convenio" forceSelection="true" scrollHeight="400" >
+															converter="convenio" forceSelection="true" scrollHeight="400" queryDelay="1000">
 												<p:ajax	event="itemSelect" process="@this" />
 											</p:autoComplete>
         								</h:panelGroup>
@@ -301,7 +301,8 @@ div.ui-selectoneradio label {
 
                     	<p:dataTable	id="dtRelAtendimento" widgetVar="dtRelAtendimento" value="#{relatorioAtendimentoMB.listaAtendimentos}" 
                     					var="atendimento" rowKey="#{atendimento}" rows="10" paginator="true" paginatorPosition="bottom" reflow="true" 
-                    					emptyMessage="Nenhum registro encontrado" selection="#{relatorioAtendimentoMB.entity}" selectionMode="single" lazy="true">
+                    					emptyMessage="Nenhum registro encontrado" selection="#{relatorioAtendimentoMB.entity}" selectionMode="single"
+                    					filterDelay="1000">
                     		
                     		<f:facet	name="header">Relatório de atendimentos</f:facet>
                     		
@@ -358,7 +359,9 @@ div.ui-selectoneradio label {
                         	
                         	<p:column 	filterBy="#{atendimento.proximoAgendamentoPaciente.inicio}" sortBy="#{atendimento.proximoAgendamentoPaciente.inicio}"
                         				filterMatchMode="contains" headerText="Data do agendamento futuro" >
-                        		<p:commandButton	id="btnNovoAgendamento" rendered="#{atendimento.proximoAgendamentoPaciente.inicio == nul}" action="#{agendamentoMB.popularAgendamento(atendimento)}"
+                        		<p:commandButton	id="btnNovoAgendamento"
+                        							rendered="#{relatorioAtendimentoMB.verificarStatusAgendamentoFuturo(atendimento)}" 
+                        							action="#{agendamentoMB.popularAgendamento(atendimento)}"
                         							icon="fa fa fa-calendar" process="@this" oncomplete="PF('dlgAgendamento').show();" update=":lume:pnAgendamento">
                         			<p:ajax	listener="#{relatorioAtendimentoMB.setNovoAgendamento(true)}"/>
                         			<p:ajax	listener="#{relatorioAtendimentoMB.verificarNovoAgendamento()}"/>
@@ -878,10 +881,6 @@ div.ui-selectoneradio label {
 				
 				newWin.print();
 				newWin.close();
-				
-			}
-			
-			function edicaoAgendamento(){
 				
 			}
 			

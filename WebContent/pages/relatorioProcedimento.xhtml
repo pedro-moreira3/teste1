@@ -186,9 +186,9 @@ div.ui-selectoneradio label {
         													completeMethod="#{relatorioProcedimentoMB.sugestoesPacientes}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 															converter="paciente" forceSelection="true" scrollHeight="400"
-															minQueryLength="3" >
+															minQueryLength="3" queryDelay="1000">
 												
-												<p:ajax	event="itemSelect" listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+												<p:ajax	event="itemSelect" process="@this"/>
         									</p:autoComplete>
         								</h:panelGroup>
 									
@@ -201,9 +201,9 @@ div.ui-selectoneradio label {
         									<p:autoComplete	id="filtroProfissional" value="#{relatorioProcedimentoMB.filtroPorProfissional}"
         													completeMethod="#{relatorioProcedimentoMB.sugestoesProfissionais}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-															converter="profissional" forceSelection="true" scrollHeight="400">
+															converter="profissional" forceSelection="true" scrollHeight="400" queryDelay="1000">
 															
-												<p:ajax	event="itemSelect" listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+												<p:ajax	event="itemSelect" process="@this"/>
 												
 												</p:autoComplete>
         								</h:panelGroup>
@@ -213,9 +213,9 @@ div.ui-selectoneradio label {
         									<p:autoComplete	id="filtroPlanoTratamento" value="#{relatorioProcedimentoMB.filtroPorPlanoTratamento}"
         													completeMethod="#{relatorioProcedimentoMB.sugestoesPlanoTratamento}"
         													var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
-															converter="planoTratamento" forceSelection="true" scrollHeight="400">
+															converter="planoTratamento" forceSelection="true" scrollHeight="400" queryDelay="1000">
 															
-												<p:ajax	event="itemSelect" listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+												<p:ajax	event="itemSelect" process="@this"/>
 												
 												</p:autoComplete>
         								</h:panelGroup>
@@ -224,9 +224,9 @@ div.ui-selectoneradio label {
         									<h:outputText 	for="filtroConvenio" value="Convênio:" />
         									<p:autoComplete	id="filtroConvenio" value="#{relatorioProcedimentoMB.filtroPorConvenio}" completeMethod="#{relatorioProcedimentoMB.sugestoesConvenios}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-															converter="convenio" forceSelection="true" scrollHeight="400">
+															converter="convenio" forceSelection="true" scrollHeight="400" queryDelay="1000">
 															
-												<p:ajax	event="itemSelect" listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento"/>
+												<p:ajax	event="itemSelect" process="@this"/>
 											</p:autoComplete>
         								</h:panelGroup>
 
@@ -238,9 +238,9 @@ div.ui-selectoneradio label {
 								
 									<h:outputLabel	value="Mostrar os procedimentos: " />
 									<p:selectManyCheckbox	value="#{relatorioProcedimentoMB.filtroProcedimento}"
-															layout="grid" columns="4">
+															layout="grid" columns="4" update=":lume:filtroRelatorio">
 										
-										<p:ajax	listener="#{relatorioProcedimentoMB.popularLista}" update=":lume:dtRelProcedimento" />
+										<p:ajax	process="@this"/>
 										
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Finalizados&lt;/div&gt;"
@@ -258,12 +258,13 @@ div.ui-selectoneradio label {
 										
 										<h:panelGroup>
         									<p:commandButton	value="Filtrar" icon="White fa fa fa-search" action="#{relatorioProcedimentoMB.popularLista}"
-        														update=":lume:dtRelProcedimento"/>
+        														update=":lume:dtRelProcedimento" process="@this,:lume:filtroRelatorio"/>
         								</h:panelGroup>
         								
         								<h:panelGroup>
-        									<p:commandButton	value="Imprimir" icon="White fa fa fa-print" styleClass="RedButton"
-        														update=":lume:dtRelProcedimento"/>
+        									<p:commandButton	value="Imprimir"  oncomplete="PF('dlgConfirmarImpCabecalho').show();" icon="White fa fa-print"
+        														update=":lume:dlgGerarRelatorioTabela,:lume:dlgConfirmarImpCabecalho" styleClass="RedButton"
+        														process="@this"/>
         								</h:panelGroup>
 										
 									</p:panelGrid>
@@ -278,7 +279,7 @@ div.ui-selectoneradio label {
 
                     	<p:dataTable	id="dtRelProcedimento" widgetVar="dtRelProcedimento" value="#{relatorioProcedimentoMB.listaProcedimentos}" 
                     					var="procedimento" rowKey="#{procedimento}" rows="10" paginator="true" paginatorPosition="bottom" reflow="true" 
-                    					emptyMessage="Nenhum registro encontrado" selection="#{relatorioProcedimentoMB.entity}" selectionMode="single" >
+                    					emptyMessage="Nenhum registro encontrado" selection="#{relatorioProcedimentoMB.entity}" selectionMode="single" filterDelay="1000">
                     		
                     		<f:facet	name="header">Relatório de Procedimentos</f:facet>
                     		
@@ -326,138 +327,18 @@ div.ui-selectoneradio label {
                         				filterMatchMode="contains" headerText="Satus do procedimento" >
                             	<h:outputText value="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}" />
                         	</p:column>
-                        	
+                        	<ui:remove>
                         	<p:column>
-                            	<p:commandButton	icon="White fa fa-eye" oncomplete="PF('dlgRelProcedimento').show();" update=":lume:dlgRelProcedimento,:lume:dlgGerarRelatorio" width="5%">
+                            	<p:commandButton	icon="White fa fa-eye"  width="5%">
                             		<f:setPropertyActionListener	value="#{procedimento}" target="#{relatorioProcedimentoMB.entity}" />
                             	</p:commandButton>
                         	</p:column>
-                        	
+                        	</ui:remove>
                     	</p:dataTable>
                     </p:outputPanel>
 					
-					<p:dialog	id="dlgRelProcedimento" widgetVar="dlgRelProcedimento" header="Relatório do Procedimento" modal="true"
-                    			onHide="PF('dlgRelProcedimento').toggleMaximize();" onShow="PF('dlgRelProcedimento').toggleMaximize();">
-					
-					<f:facet	name="header" >
-						<h:panelGroup	update=":lume:dlgGerarRelatorio" process=":lume:dlgGerarRelatorio" style="display:inline-block;">
-        					
-        					<p:commandButton	icon="fa fa-fw fa-print" value="Imprimir">
-        						<p:printer target="relatorio" />
-        					</p:commandButton>
-        					
-        				</h:panelGroup>
-					</f:facet>
-					
-					<p:outputPanel>
-						<p:fieldset		legend="Procedimento" id="tgProcedimento" toggleable="true" toggleSpeed="400"
-                    					style="margin-top:20px;margin-bottom:10px">
-                    						
-                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Procedimento"/>
-                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.procedimento.descricao}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Inicio do tratamento"/>
-                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.formatarData(relatorioProcedimentoMB.entity.planoTratamento.inicio)}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Término do tratamento" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.formatarData(relatorioProcedimentoMB.entity.planoTratamento.fim)}"/>
-                    		    	</h:panelGroup>                    		    
-                    			</p:panelGrid>
-                    		
-                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    	
-                    		    	<h:panelGroup	rendered="#{!relatorioProcedimentoMB.entity.planoTratamentoProcedimentoFaces.isEmpty()}">
-                    		    		<p:dataTable	id="dtFaces" widgetVar="dtFaces" value="#{relatorioProcedimentoMB.entity.planoTratamentoProcedimentoFaces}" 
-                    									var="face" rowKey="#{face}" rows="10" paginator="true" paginatorPosition="bottom" reflow="true" 
-                    									emptyMessage="Nenhum registro encontrado" selectionMode="single">
-                    		    			<p:column>
-                    		    				<h:outputText	value="#{face.face}" />
-                    		    			</p:column>
-                    		    		</p:dataTable>
-                    		    	</h:panelGroup>
-                    		    	
-                    			</p:panelGrid>
-                    		
-                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    	
-                    		    	
-                    			</p:panelGrid>
-                    		</p:fieldset>
-                    		
-                    		<p:fieldset		legend="Dados do paciente" id="tgPaciente" toggleable="true" toggleSpeed="500"
-                    						style="margin-top:20px;margin-bottom:10px;" >
-                    						
-                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Paciente"/>
-                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.planoTratamento.paciente.dadosBasico.nome}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Profissional responsável" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.planoTratamento.profissional.dadosBasico.nome}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Convênio" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.planoTratamento.paciente.convenio.dadosBasico.nome}"/>
-                    		    	</h:panelGroup>
-                    			</p:panelGrid>
-                    		
-                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    				<h:panelGroup>
-                    		    		<h:outputText	value="Titular"/>
-                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.planoTratamento.paciente.titular.dadosBasico.nome}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Plano" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.planoTratamento.paciente.plano.nome}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Data da última alteração" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.formatarData(relatorioProcedimentoMB.entity.planoTratamento.paciente.dataUltimaAlteracao)}"/>
-                    		    	</h:panelGroup>
-                    			</p:panelGrid>
-                    		
-                    		</p:fieldset>
-                    	
-                    		<p:fieldset		legend="Orçamento" id="tgOrcamento" toggleable="true" toggleSpeed="400"
-                    						style="margin-top:20px;margin-bottom:10px">
-                    						
-                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    	
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Valor do Procedimento"/>
-                    		    		<p:inputText	readonly="true" value="R$ #{relatorioProcedimentoMB.entity.valor}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Valor do desconto:" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioProcedimentoMB.entity.valorDesconto}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Tipo de remuneração do profissional" />
-                    		    		<p:inputText	readonly="true" value="R$ #{relatorioProcedimentoMB.entity.tipoRemuneracaoProfissionalCalc}"/>
-                    		    	</h:panelGroup>
-
-                    			</p:panelGrid>
-
-                    		</p:fieldset>
-						</p:outputPanel>
-					
-					</p:dialog>
-					
-					<p:dialog	id="dlgGerarRelatorio" widgetVar="dlgGerarRelatorio" header="Relatório do Procedimento" modal="true"
-                    			onHide="PF('dlgRelProcedimento').toggleMaximize();" onShow="PF('dlgRelProcedimento').toggleMaximize();">
+					<p:dialog	id="dlgGerarRelatorio" widgetVar="dlgGerarRelatorio" header="Relatório do Procedimento">
+						
 						<p:panel>
 							<p:outputPanel	id="relatorio">
 						
@@ -625,7 +506,6 @@ div.ui-selectoneradio label {
 							</h:panelGroup>
 												
 						</p:panelGrid>
-						
                 	</p:dialog>
                 	
                 	<p:dialog	id="dlgGerarRelatorioTabela" widgetVar="dlgGerarRelatorioTabela" header="Relatório" responsive="true" modal="true">
@@ -669,11 +549,11 @@ div.ui-selectoneradio label {
                             			<tr	style="text-align: left;">
                             			
                             				<td>
-                            					<h:outputText	value="#{relatorioProcedimentoMBMB.formatarData(relatorioAtendimentoMB.dataInicio)}" />
+                            					<h:outputText	value="#{relatorioProcedimentoMB.formatarData(relatorioAtendimentoMB.dataInicio)}" />
                             				</td>
                             			
                             				<td>
-                            					<h:outputText	value="#{relatorioProcedimentoMBMB.formatarData(relatorioAtendimentoMB.dataFim)}" />
+                            					<h:outputText	value="#{relatorioProcedimentoMB.formatarData(relatorioAtendimentoMB.dataFim)}" />
                             				</td>
                             			
                             				<td>
@@ -685,7 +565,7 @@ div.ui-selectoneradio label {
                             			<tr style="text-align: left; font-weight: bold; margin-top: 20px !important;">
 
                             				<th>Profissional:		</th>
-                            				<th>Última alteração realizada por:	</th>
+                            				<th>Plano de tratamento:	</th>
                             				<th>Convênio:	</th>
 
                             			</tr>
@@ -697,7 +577,7 @@ div.ui-selectoneradio label {
                             				</td>
                             			
                             				<td>
-                            					<h:outputText	value="#{relatorioProcedimentoMB.filtroPorProfissionalUltAlteracao.dadosBasico.nome}" />
+                            					<h:outputText	value="#{relatorioProcedimentoMB.filtroPorPlanoTratamento.descricao}" />
                             				</td>
                             			
                             				<td>
@@ -739,14 +619,37 @@ div.ui-selectoneradio label {
                             			<th	style="border:1px solid;">Status do procedimento</th>
                             		</tr>
                             		
-                            		<c:forEach	var="procedimento" items="#{relatorioProcedimentoMB.listaAtendimentos}">
+                            		<c:forEach	var="procedimento" items="#{relatorioProcedimentoMB.listaProcedimentos}">
                             			<tr>
                             				<td>
-                            					<h:outputText	value="" />
+                            					<h:outputText	value="#{procedimento.planoTratamento.paciente.dadosBasico.nome}" />
+                            				</td>
+                            				<td>
+                            					<h:outputText	value="#{procedimento.planoTratamento.paciente.convenio.dadosBasico.nome}" />
+                            				</td>
+                            				<td>
+                            					<h:outputText	value="#{procedimento.planoTratamento.profissional.dadosBasico.nome}" />
+                            				</td>
+                            				<td>
+                            					<h:outputText	value="#{procedimento.planoTratamento.descricao}" />
+                            				</td>
+                            				<td>
+                            					<h:outputText	value="#{procedimento.procedimento.descricao}" />
+                            				</td>
+                            				<td>
+                            					<h:outputText	value="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}" />
+                            				</td>
+                            				<td>
+												<h:outputText	value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.inicio)}" />
+                            				</td>
+                            				<td>
+												<h:outputText	value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.fim)}" />
+                            				</td>
+                            				<td>
+												<h:outputText	value="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}" />
                             				</td>
                             			</tr>
                             		</c:forEach>
-                            		
                             	</table>
 
 								<br />
@@ -771,6 +674,26 @@ div.ui-selectoneradio label {
 					window.scrollTo(0, 0);
 				}
 			}
+			
+			function imprimirTabela(){
+				var toPrint = document.getElementById("lume:relatorioTabela");
+				var newWin = window.open("");
+				newWin.visible = false;
+				newWin.document.write("<style type=\"text/css\" media=\"print\"> @page { size: landscape; }" + 
+						".ui-selectmanycheckbox tr td {position: relative;	display: inline-flex !important;width: 238px !important;}"+
+						".ui-selectmanycheckbox tr td>div>div:last-child {display: inline-block;position: relative;top: 50%;transform: translateY(-50%);}"+
+						".ui-selectmanycheckbox tr td label {position: relative;display: inline-flex !important;}"+
+						".ui-selectmanycheckbox tr td label div:first-child {position: relative;}"+
+						".ui-selectmanycheckbox tr td label div:first-child div {display: inline-block;position: relative;top: 50%;transform: translateY(-50%);}</style>")
+
+				newWin.document.write(toPrint.outerHTML);
+				newWin.document.close();
+				
+				newWin.print();
+				newWin.close();
+				
+			}
+			
 			//]]>
 		</script>
         

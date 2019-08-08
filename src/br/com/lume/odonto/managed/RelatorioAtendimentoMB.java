@@ -20,6 +20,7 @@ import org.primefaces.model.chart.PieChartModel;
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.UtilsPrimefaces;
@@ -180,6 +181,15 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         }else {
             UtilsPrimefaces.readOnlyUIComponent(":lume:pnDlgAgendamento",true);
         }
+    }
+    
+    public boolean verificarStatusAgendamentoFuturo(Agendamento agendamento) {
+        if(agendamento.getInicio().after(Calendar.getInstance().getTime())) {
+            return false;
+        }else if(agendamento.getProximoAgendamentoPaciente() != null) {
+            return false;
+        }
+        return true;
     }
 
     public PieChartModel getPieModel() {
