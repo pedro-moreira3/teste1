@@ -7,9 +7,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
@@ -20,6 +22,7 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.common.util.UtilsPrimefaces;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Convenio;
@@ -61,6 +64,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     
     private boolean checkFiltro = false;
     private boolean imprimirCabecalho = true;
+    private boolean novoAgendamento = true;
 
     public RelatorioAtendimentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
@@ -85,27 +89,12 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     
     public void popularLista() {
         try{
-            Calendar dateFim = Calendar.getInstance();
-            dateFim.setTime(getDataFim());
-            dateFim.set(Calendar.HOUR_OF_DAY, 23);
-            dateFim.set(Calendar.MINUTE, 59);
-            dateFim.set(Calendar.SECOND, 59);
-            setDataFim(dateFim.getTime());
-            
-            Calendar dateInicio = Calendar.getInstance();
-            dateInicio.setTime(getDataInicio());
-            dateInicio.set(Calendar.HOUR_OF_DAY, 0);
-            dateInicio.set(Calendar.MINUTE, 0);
-            dateInicio.set(Calendar.SECOND, 0);
-            setDataInicio(dateInicio.getTime());
             
             this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(getDataInicio(), getDataFim(),
                     getFiltroPorProfissional(), getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), getFiltroPorConvenio(),
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             
             this.removerFiltrosAgendamento(this.getListaAtendimentos());
-            
-            carregarCadeiras();
             
         }catch(Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -115,7 +104,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     
     public String formatarData(Date data) {
         if(data != null) {
-            return new SimpleDateFormat("dd/MM/yyyy hh:mm:ss").format(data);
+            return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",new Locale("PT BR")).format(data);
         }
         return "";
     }
@@ -163,13 +152,6 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     public String telefoneClinica() {
         return UtilsFrontEnd.getEmpresaLogada().getEmpChaFone();
     }
-
-    private void carregarCadeiras() {
-        cadeiras = new ArrayList<>();
-        for (int i = 1; i <= UtilsFrontEnd.getEmpresaLogada().getEmpIntCadeira(); i++) {
-            cadeiras.add(i);
-        }
-    }
     
     public void marcarFiltros() {
         if(this.checkFiltro) {
@@ -191,54 +173,13 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     public void carregarTelaAgendamento(Agendamento agendamento) {
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("agendamento", agendamento);
     }
-
-    public String getPacientesAgendamento() {
-        if (filtro.equals("CURRENT_DATE")) {
-            
-            StringBuilder sb = new StringBuilder();
-            long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
-         
-            Long countByAtendidos = AgendamentoSingleton.getInstance().getBo().countByAtendidos(idEmpresaLogada);
-            sb.append("['Atendidos', " + countByAtendidos + "],");
-
-            Long countByEmAtendimento = AgendamentoSingleton.getInstance().getBo().countByEmAtendimento(idEmpresaLogada);
-            sb.append("['Em Atendimento', " + countByEmAtendimento + "],");
-
-            Long countByAtrasado = AgendamentoSingleton.getInstance().getBo().countByAtrasado(idEmpresaLogada);
-            sb.append("['Atrasados', " + countByAtrasado + "],");
-
-            Long countByClienteNaClinica = AgendamentoSingleton.getInstance().getBo().countByClienteNaClinica(idEmpresaLogada);
-            sb.append("['Na Clínica', " + countByClienteNaClinica + "],");
-
-            Long countByPacienteNaoChegou = AgendamentoSingleton.getInstance().getBo().countByPacienteNaoChegou(idEmpresaLogada);
-            sb.append("['Consultas restantes', " + countByPacienteNaoChegou + "],");
-            return sb.toString();
-        } else {
-            return "['','']";
+    
+    public void verificarNovoAgendamento() {
+        if(this.novoAgendamento) {
+            UtilsPrimefaces.readOnlyUIComponent(":lume:pnDlgAgendamento",false);
+        }else {
+            UtilsPrimefaces.readOnlyUIComponent(":lume:pnDlgAgendamento",true);
         }
-
-    }
-
-    public String getAtendimentosChart() {
-        StringBuilder sb = new StringBuilder();
-        profissionaisAgendamento = new HashSet<>();
-        if (agendamentos != null && !agendamentos.isEmpty()) {
-            for (Agendamento agendamento : agendamentos) {
-                Calendar c = Calendar.getInstance();
-                c.setTime(agendamento.getInicio());
-                String hora1 = c.get(Calendar.HOUR_OF_DAY) + "";
-                hora1 += "," + c.get(Calendar.MINUTE);
-
-                c.setTime(agendamento.getFim());
-                String hora2 = c.get(Calendar.HOUR_OF_DAY) + "";
-                hora2 += "," + c.get(Calendar.MINUTE);
-                sb.append(
-                        "[ '" + agendamento.getProfissional().getDadosBasico().getNome() + "', '" + agendamento.getPaciente().getDadosBasico().getNome() + "', new Date(0,0,0," + hora1 + ",0), new Date(0,0,0," + hora2 + ",0) ],");
-                profissionaisAgendamento.add(agendamento.getProfissional().getDadosBasico().getNome());
-            }
-            return sb.toString();
-        }
-        return "[]";
     }
 
     public PieChartModel getPieModel() {
@@ -363,5 +304,13 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public void setImprimirCabecalho(boolean imprimirCabecalho) {
         this.imprimirCabecalho = imprimirCabecalho;
+    }
+
+    public boolean isNovoAgendamento() {
+        return novoAgendamento;
+    }
+
+    public void setNovoAgendamento(boolean novoAgendamento) {
+        this.novoAgendamento = novoAgendamento;
     }
 }
