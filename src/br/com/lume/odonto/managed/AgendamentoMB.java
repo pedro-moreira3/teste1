@@ -210,7 +210,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         carregarScheduleTarefas();
     }
 
-    public void iniciarNovoAgendamento(Agendamento ag) {
+    public void popularAgendamento(Agendamento ag) {
 
         Agendamento agendamento = ag;
         agendamento.setId(0);
@@ -220,8 +220,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
         UtilsFrontEnd.setPacienteSelecionado(this.getEntity().getPaciente());
         this.setEntity(this.getEntity());
-        this.setInicio(this.getEntity().getInicio());
-        this.setFim(this.getEntity().getFim());
+        this.setInicio(Calendar.getInstance().getTime());
+        this.setFim(Calendar.getInstance().getTime());
         geraAgendamentoAfastamento(this.getEntity().getInicio(), this.getEntity().getFim(), profissionalDentroAgenda);
         this.setPacienteSelecionado(this.getEntity().getPaciente());
         this.setJustificativa(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("agendamento", "justificativa", this.getEntity().getJustificativa()));
