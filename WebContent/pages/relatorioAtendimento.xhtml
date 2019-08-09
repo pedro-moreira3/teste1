@@ -163,7 +163,7 @@ div.ui-selectoneradio label {
         													completeMethod="#{relatorioAtendimentoMB.sugestoesPacientes}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 															converter="paciente" forceSelection="true" scrollHeight="400"
-															minQueryLength="3">
+															minQueryLength="3" queryDelay="1000">
 												<p:ajax	event="itemSelect" process="@this" />
 											</p:autoComplete>
         								</h:panelGroup>
@@ -177,7 +177,7 @@ div.ui-selectoneradio label {
         									<p:autoComplete	id="filtroProfissional" value="#{relatorioAtendimentoMB.filtroPorProfissional}"
         													completeMethod="#{relatorioAtendimentoMB.sugestoesProfissionais}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-															converter="profissional" forceSelection="true" scrollHeight="400">
+															converter="profissional" forceSelection="true" scrollHeight="400" queryDelay="1000">
 												<p:ajax	event="itemSelect" process="@this" />
 											
 											</p:autoComplete>
@@ -188,7 +188,7 @@ div.ui-selectoneradio label {
         									<p:autoComplete	id="filtroProfissionalUltAlteracao" value="#{relatorioAtendimentoMB.filtroPorProfissionalUltAlteracao}"
         													completeMethod="#{relatorioAtendimentoMB.sugestoesProfissionalUltAlteracao}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-															converter="profissional" forceSelection="true" scrollHeight="400">
+															converter="profissional" forceSelection="true" scrollHeight="400" queryDelay="1000">
 												<p:ajax	event="itemSelect" process="@this" />															
 											</p:autoComplete>
         								</h:panelGroup>
@@ -198,7 +198,7 @@ div.ui-selectoneradio label {
         									<p:autoComplete	id="filtroConvenio" value="#{relatorioAtendimentoMB.filtroPorConvenio}"
         													completeMethod="#{relatorioAtendimentoMB.sugestoesConvenios}"
         													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-															converter="convenio" forceSelection="true" scrollHeight="400" >
+															converter="convenio" forceSelection="true" scrollHeight="400" queryDelay="1000">
 												<p:ajax	event="itemSelect" process="@this" />
 											</p:autoComplete>
         								</h:panelGroup>
@@ -207,7 +207,7 @@ div.ui-selectoneradio label {
 								
 								</p:outputPanel>
 								
-								<p:outputPanel>
+								<p:outputPanel	id="pnFiltroStatus">
 								
 									<p:outputLabel	value="Mostrar os agendamentos: " />
 									
@@ -215,7 +215,7 @@ div.ui-selectoneradio label {
 									
 									<h:panelGroup	style="display:block;margin-left:3px;">
 										<p:selectBooleanCheckbox	id="checkFiltro" value="#{relatorioAtendimentoMB.checkFiltro}">
-            								<p:ajax	event="change" update=":lume:filtroRelatorio" listener="#{relatorioAtendimentoMB.marcarFiltros}" />
+            								<p:ajax	event="change" process="@this" update=":lume:pnFiltroStatus" listener="#{relatorioAtendimentoMB.marcarFiltros}" />
         								</p:selectBooleanCheckbox>
         								<p:outputLabel	for="checkFiltro" value="Marcar todos" />
 									</h:panelGroup>
@@ -225,7 +225,7 @@ div.ui-selectoneradio label {
 									<p:selectManyCheckbox	value="#{relatorioAtendimentoMB.filtroAtendimento}"
 															layout="grid" columns="4" process="@this" update=":lume:filtroRelatorio">
 										
-										<p:ajax	process="@this" update=":lume:filtroRelatorio"/>
+										<p:ajax	process="@this"/>
 										
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoAfastamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Bloqueio&lt;/div&gt;"
@@ -278,14 +278,15 @@ div.ui-selectoneradio label {
 									<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
 										
 										<h:panelGroup>
-        									<p:commandButton	value="Filtrar"  action="#{relatorioAtendimentoMB.popularLista}" 
+        									<p:commandButton	value="Filtrar"  action="#{relatorioAtendimentoMB.popularLista}" icon="White fa fa-search"
         														update=":lume:dtRelAtendimento,:lume:dlgGerarRelatorioTabela,:lume:filtroRelatorio"
         														process="@this,:lume:filtroRelatorio"/>
         								</h:panelGroup>
         								
         								<h:panelGroup>
-        									<p:commandButton	value="Imprimir"  oncomplete="PF('dlgConfirmarImpCabecalho').show();" 
-        														update=":lume:dlgGerarRelatorioTabela,:lume:dlgConfirmarImpCabecalho" process="@this,:lume:dlgConfirmarImpCabecalho,:lume:filtroRelatorio"/>
+        									<p:commandButton	value="Imprimir"  oncomplete="PF('dlgConfirmarImpCabecalho').show();" icon="White fa fa-print"
+        														update=":lume:dlgGerarRelatorioTabela,:lume:dlgConfirmarImpCabecalho" styleClass="RedButton"
+        														process="@this,:lume:dlgConfirmarImpCabecalho,:lume:filtroRelatorio"/>
         								</h:panelGroup>
 										
 									</p:panelGrid>
@@ -300,7 +301,8 @@ div.ui-selectoneradio label {
 
                     	<p:dataTable	id="dtRelAtendimento" widgetVar="dtRelAtendimento" value="#{relatorioAtendimentoMB.listaAtendimentos}" 
                     					var="atendimento" rowKey="#{atendimento}" rows="10" paginator="true" paginatorPosition="bottom" reflow="true" 
-                    					emptyMessage="Nenhum registro encontrado" selection="#{relatorioAtendimentoMB.entity}" selectionMode="single" lazy="true">
+                    					emptyMessage="Nenhum registro encontrado" selection="#{relatorioAtendimentoMB.entity}" selectionMode="single"
+                    					filterDelay="1000">
                     		
                     		<f:facet	name="header">Relatório de atendimentos</f:facet>
                     		
@@ -345,7 +347,7 @@ div.ui-selectoneradio label {
                         	</p:column>
                         	                        	
                         	<p:column 	filterBy="#{atendimento.inicio}" sortBy="#{atendimento.inicio}"
-                        				filterMatchMode="contains" headerText="Data do agendamento" >
+                        				filterMatchMode="contains" headerText="Data agendada" >
                             	<h:outputText value="#{relatorioAtendimentoMB.formatarData(atendimento.inicio)}" />
                         	</p:column>
                         	
@@ -356,22 +358,32 @@ div.ui-selectoneradio label {
                         	</p:column>
                         	
                         	<p:column 	filterBy="#{atendimento.proximoAgendamentoPaciente.inicio}" sortBy="#{atendimento.proximoAgendamentoPaciente.inicio}"
-                        				filterMatchMode="contains" headerText="Data do próximo agendamento" >
-                        		<p:commandButton	rendered="#{atendimento.proximoAgendamentoPaciente.inicio == nul}" action="#{agendamentoMB.iniciarNovoAgendamento(atendimento)}"
-                        							icon="fa fa fa-calendar" process="@this" oncomplete="PF('novoAgendamento').show();" update=":lume:pnAgendamento"/>
+                        				filterMatchMode="contains" headerText="Data do agendamento futuro" >
+                        		<p:commandButton	id="btnNovoAgendamento"
+                        							rendered="#{relatorioAtendimentoMB.verificarStatusAgendamentoFuturo(atendimento)}" 
+                        							action="#{agendamentoMB.popularAgendamento(atendimento)}"
+                        							icon="fa fa fa-calendar" process="@this" oncomplete="PF('dlgAgendamento').show();" update=":lume:pnAgendamento">
+                        			<p:ajax	listener="#{relatorioAtendimentoMB.setNovoAgendamento(true)}"/>
+                        			<p:ajax	listener="#{relatorioAtendimentoMB.verificarNovoAgendamento()}"/>
+                        		</p:commandButton>
+                        		<p:tooltip	for="btnNovoAgendamento" value="Agendar"/>
                             	<h:outputText	value="#{relatorioAtendimentoMB.formatarData(atendimento.proximoAgendamentoPaciente.inicio)}" />
                         	</p:column>
                         	
                         	<p:column 	filterBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}"
                         				sortBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}"
-                        				filterMatchMode="contains" headerText="Status do próximo agendamento" >
+                        				filterMatchMode="contains" headerText="Status do agendamento futuro" >
                             	<h:outputText value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" />
                         	</p:column>
                         	
                         	<p:column>
-                            	<p:commandButton	id="btnView" icon="White fa fa-eye" oncomplete="PF('dlgRelAtendimento').show();"
-                            						update=":lume:dlgRelAtendimento,:lume:filtroRelatorio,:lume:dlgGerarRelatorio" width="5%"
-                            						action="#{relatorioAtendimentoMB.setEntity(atendimento)}" process="@this">
+                            	<p:commandButton	id="btnView" icon="White fa fa-eye" oncomplete="PF('dlgAgendamento').show();"
+                            						update=":lume:dlgGerarRelatorio,:lume:pnAgendamento" width="5%"
+                            						action="#{agendamentoMB.setEntity(atendimento)}" process="@this">
+                            		<p:ajax	listener="#{relatorioAtendimentoMB.verificarNovoAgendamento()}"/>
+                            		<p:ajax	listener="#{relatorioAtendimentoMB.setEntity(atendimento)}"/>
+                            		<p:ajax	listener="#{relatorioAtendimentoMB.setNovoAgendamento(false)}"/>
+                            		<p:ajax	listener="#{agendamentoMB.popularAgendamento(atendimento)}"/>
                             		<p:tooltip	for="btnView" value="Visualizar"/>
                             	</p:commandButton>
                             	
@@ -384,181 +396,12 @@ div.ui-selectoneradio label {
                     	
                     </h:panelGroup>
                     
-                    <p:dialog	id="dlgRelAtendimento" widgetVar="dlgRelAtendimento" header="Relatório do Agendamento" modal="true"
-                    			onHide="PF('dlgRelAtendimento').toggleMaximize();" onShow="PF('dlgRelAtendimento').toggleMaximize();">
-						
-						<f:facet	name="header" >
-							<h:panelGroup	update=":lume:dlgGerarRelatorio" process=":lume:dlgGerarRelatorio" style="display:inline-block;">
-        					
-        						<p:commandButton	icon="fa fa-fw fa-print" value="Imprimir">
-        							<p:printer target="relatorio" />
-        						</p:commandButton>
-        					
-        					</h:panelGroup>
-						</f:facet>
-						
-						<p:outputPanel>
-							
-							<p:fieldset		legend="Agendamento" id="tgAgendamento" toggleable="true" toggleSpeed="400"
-                    						style="margin-top:20px;margin-bottom:10px">
-                    						
-                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Agendado por"/>
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.agendador.dadosBasico.nome}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Data agendamento"/>
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.dataAgendamento)}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Status" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.getStatusDescricao(relatorioAtendimentoMB.entity)}"/>
-                    		    	</h:panelGroup>                    		    
-                    			</p:panelGrid>
-                    		
-                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Origem" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.origemAgendamento.descricao}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Finalidade" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.finalidadeAgendamento.descricao}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Útilma alteração realizada por" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.profissionalUltAlteracao.dadosBasico.nome}"/>
-                    		    	</h:panelGroup>
-                    			</p:panelGrid>
-                    		
-                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Motivo" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.motivoStatusAgendamento.descricao}"/>
-                    		    	</h:panelGroup>
-                    		    	
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Situação do atendimento" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.verificarSituacaoAgendamento(relatorioAtendimentoMB.entity)}"/>
-                    		    	</h:panelGroup>
-                    		    	
-                    		    	<h:panelGroup	rendered="#{relatorioAtendimentoMB.entity.excluido == status.SIM}">
-                    		    		<h:outputText	value="Agendamento excluído por:" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.excluidoPorProfissional.dadosBasico.nome}"/>
-                    		    	</h:panelGroup>
-                    		    	
-                    			</p:panelGrid>
-
-                    		</p:fieldset>
-
-                    		<p:fieldset		legend="Dados do paciente" id="tgPaciente" toggleable="true" toggleSpeed="500"
-                    						style="margin-top:20px;margin-bottom:10px;" action="printData();">
-                    						
-                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Paciente"/>
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.dadosBasico.nome}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Profissional responsável" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.profissional.dadosBasico.nome}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Convênio" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.convenio.dadosBasico.nome}"/>
-                    		    	</h:panelGroup>
-                    			</p:panelGrid>
-                    		
-                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    				<h:panelGroup>
-                    		    		<h:outputText	value="Titular"/>
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.titular.dadosBasico.nome}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Plano" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.plano.nome}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Data da última alteração" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.paciente.dataUltimaAlteracao)}"/>
-                    		    	</h:panelGroup>
-                    			</p:panelGrid>
-                    		
-                    		</p:fieldset>
-                    	
-                    		<p:fieldset		legend="Plano de tratamento" id="tgPlano" toggleable="true" toggleSpeed="400"
-                    						style="margin-top:20px;margin-bottom:10px">
-                    						
-                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Inicio do tratamento"/>
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.planoTratamento.inicio)}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Término do tramento" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.planoTratamento.fim)}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Valor total" />
-                    		    		<p:inputText	readonly="true" value="R$ #{relatorioAtendimentoMB.entity.planoTratamento.valorTotal}"/>
-                    		    	</h:panelGroup>
-                    			</p:panelGrid>
-                    		
-                    			<p:panelGrid	columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                    				<h:panelGroup>
-                    		    		<h:outputText	value="Valor total do desconto"/>
-                    		    		<p:inputText	readonly="true" value="R$ #{relatorioAtendimentoMB.entity.planoTratamento.valorTotalDesconto}"/>
-                    		    	</h:panelGroup>
-                    		    
-                    		    	<h:panelGroup>
-                    		    		<h:outputText	value="Plano" />
-                    		    		<p:inputText	readonly="true" value="#{relatorioAtendimentoMB.entity.paciente.plano.nome}"/>
-                    		    	</h:panelGroup>                    		
-                    			</p:panelGrid>
-                    		
-                    			<h:panelGroup>
-                    					<p:dataTable	id="dtProcedimentos" widgetVar="dtProcedimentos" 
-                    									value="#{relatorioAtendimentoMB.entity.planoTratamento.planoTratamentoProcedimentos}" 
-                    									var="procedimento" rowKey="#{procedimento}" rows="5" paginator="true" paginatorPosition="bottom" headerText="Procedimento"
-                    									reflow="true" emptyMessage="Nenhum registro encontrado" selectionMode="single" >
-                    								
-                    						<f:facet	name="procedimentos">Procedimentos</f:facet>
-                    								
-                    						<p:column 	filterBy="#{procedimento.procedimento.descricao}" 
-                    									sortBy="#{procedimento.procedimento.descricao}" 
-                        								filterMatchMode="contains" headerText="Descrição">
-                            					<h:outputText value="#{procedimento.procedimento.descricao}" />
-                        					</p:column>
-                        							
-                        					<p:column 	filterBy="#{procedimento.procedimento.valor}" 
-                    									sortBy="#{procedimento.procedimento.valor}" 
-                        								filterMatchMode="contains" headerText="Valor">
-                            					<h:outputText value="#{procedimento.procedimento.valor}" />
-                        					</p:column>
-                    					
-                    					</p:dataTable>
-                    			</h:panelGroup>
-                    		</p:fieldset>
-						</p:outputPanel>
-						
-                    </p:dialog>
-                    
+                                        
                     <p:dialog	id="dlgGerarRelatorio" widgetVar="dlgGerarRelatorio" header="Relatório" responsive="true" modal="true"
                 				onHide="PF('dlgGerarRelatorio').toggleMaximize();" onShow="PF('dlgGerarRelatorio').toggleMaximize();">
                 		
                 		<p:panel>
-                        	<p:outputPanel	id="relatorio">
+                        	<p:outputPanel	id="relatorioAgendamento">
 
                             	<h1	style="font-size: 20px !important;" align="center">
                                 	<h:outputText value="RELATÓRIO" />
@@ -603,7 +446,7 @@ div.ui-selectoneradio label {
                             			</td>
                             			
                             			<td>
-                            				<h:outputText	value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.dataAgendamento)}" />
+                            				<h:outputText	value="#{relatorioAtendimentoMB.formatarData(relatorioAtendimentoMB.entity.inicio)}" />
                             			</td>
                             			
                             			<td>
@@ -753,29 +596,38 @@ div.ui-selectoneradio label {
                             	
                 	</p:dialog>
                 	
-                	<p:dialog	widgetVar="novoAgendamento" header="Agendamento"
+                	<p:dialog	widgetVar="dlgAgendamento" header="Agendamento"
 								resizable="false" id="pnAgendamento" responsive="true"
 								modal="true" appendTo=":lume"
-								onHide="PF('novoAgendamento').toggleMaximize();"
-								onShow="PF('novoAgendamento').toggleMaximize();">
+								onHide="PF('dlgAgendamento').toggleMaximize();"
+								onShow="PF('dlgAgendamento').toggleMaximize();">
 					
-						<p:outputPanel	style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+						<p:outputPanel	id="pnDlgAgendamento" style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
 							<p:scrollPanel 	mode="native"
 											style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
 								<ui:include src="dlgagendamento.xhtml" />
 							</p:scrollPanel>
 						</p:outputPanel>
 						
-						<p:panelGrid 	columns="2" layout="grid"
+						<p:panelGrid 	columns="3" layout="grid"
 										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-							<h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
+							
+							<h:panelGroup	rendered="#{(agendamentoMB.habilitaSalvar) and (relatorioAtendimentoMB.novoAgendamento)}">
 								<p:commandButton 	id="persist" icon="White fa fa-save"
 													process="pnAgendamento" value="Salvar"
 													actionListener="#{agendamentoMB.actionPersist}"
 													styleClass="GreenButton" update=":lume:dtRelAtendimento,:lume:filtroRelatorio"/>
 							</h:panelGroup>
+							
+							<p:commandButton 	id="imprimirRelatorio" icon="White fa fa-print" value="Imprimir"
+												rendered="#{!relatorioAtendimentoMB.novoAgendamento}" styleClass="RedButton" 
+												process="@this,:lume:dlgGerarRelatorio" update=":lume:dlgGerarRelatorio">
+								<p:printer	target="relatorioAgendamento"/>
+							</p:commandButton>
+
 							<p:commandButton 	icon="White fa fa-close" value="Fechar"
-												process="@this,:lume:filtroRelatorio" update=":lume:dtRelAtendimento,:lume:filtroRelatorio" onclick="PF('novoAgendamento').hide()" />
+												process="@this" update=":lume:dtRelAtendimento,:lume:filtroRelatorio"
+												onclick="PF('dlgAgendamento').hide()" />
 						</p:panelGrid>
 					</p:dialog>
                 	
@@ -976,7 +828,7 @@ div.ui-selectoneradio label {
                             					<h:outputText	value="#{atendimento.origemAgendamento.descricao}" />
                             				</td>
                             				<td>
-                            					<h:outputText	value="#{relatorioAtendimentoMB.formatarData(atendimento.dataAgendamento)}"/>
+                            					<h:outputText	value="#{relatorioAtendimentoMB.formatarData(atendimento.inicio)}"/>
                             				</td>
                             				<td>
                             					<h:outputText	value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}"/>
@@ -1029,10 +881,6 @@ div.ui-selectoneradio label {
 				
 				newWin.print();
 				newWin.close();
-				
-			}
-			
-			function novoAgendamento(){
 				
 			}
 			
