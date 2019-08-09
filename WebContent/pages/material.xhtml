@@ -23,8 +23,10 @@
 						 <p:column headerText="Ações" width="12%">
 						 	<p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlgEntrada').show();" update=":lume:pnEntradaDlg" title="Editar" process="@this"
                                 actionListener="#{materialMB.carregarEditar(material)}" style="width:33px !important" />
+							<h:outputText value="&#160;" /><h:outputText value="&#160;" />                                
                             <p:commandButton class="GreenButton" icon="White fa fa-mail-forward" oncomplete="PF('dlg').show();" process="@this"
                                 actionListener="#{materialMB.carregarEntity(material)}" style="width:33px !important" title="Devolver"/>
+							<h:outputText value="&#160;" /><h:outputText value="&#160;" />                                
        						<p:commandButton  icon="White fa fa-search" oncomplete="PF('dlgMaterialLog').show();" update=":lume:dtMaterialLog" title="Log" process="@this"
                                 actionListener="#{materialMB.carregarMaterialLog(material)}" style="width:33px !important" />                                                                
                         </p:column>
