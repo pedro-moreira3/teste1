@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -437,6 +438,13 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
         }
     }
 
+    public String formatarData(Date data) {
+        if(data != null) {
+            return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",new Locale("PT BR")).format(data);
+        }
+        return "";
+    }
+    
     private void verificaExisteRepasseEmAberto() {
         try {
             existeRepasseEmAberto = RepasseProfissionalSingleton.getInstance().getBo().existeRepasseEmAberto(profissional.getId());

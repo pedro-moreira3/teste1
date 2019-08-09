@@ -399,8 +399,11 @@
 
                                 <br />
 
-                                <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtReservados" value="#{faturamentoMB.repasseItens}" var="ptp" rows="5" paginator="true"
-                                    paginatorPosition="bottom">
+                                <p:dataTable	id="dtReservados" widgetVar="dtRelAtendimento" value="#{faturamentoMB.repasseItens}" 
+                    							var="ptp" rowKey="#{repasse}" rows="5" paginator="true" paginatorPosition="bottom" reflow="true" 
+                    							emptyMessage="Nenhum registro encontrado"
+                    							filterDelay="1500">
+                                    
                                     <p:column filterBy="#{ptp.planoTratamentoProcedimento.planoTratamento.descricao}" styleClass="cabecalho"
                                         sortBy="#{ptp.planoTratamentoProcedimento.planoTratamento.descricao}">
                                         <f:facet name="header">
@@ -421,9 +424,9 @@
                                         </f:facet>
                                         <h:outputText value="#{ptp.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}" />
                                     </p:column>
-                                    <p:column styleClass="cabecalho" headerText="Data de Finalização" filterBy="#{ptp.planoTratamentoProcedimento.dataFinalizadoStr}"
-                                        sortBy="#{ptp.planoTratamentoProcedimento.dataFinalizadoStr}">
-                                        <h:outputText value="#{ptp.planoTratamentoProcedimento.dataFinalizadoStr}" />
+                                    <p:column styleClass="cabecalho" headerText="Data de Finalização" filterBy="#{ptp.planoTratamentoProcedimento.dataFinalizado}"
+                                        sortBy="#{ptp.planoTratamentoProcedimento.dataFinalizado}" filterMatchMode="contains">
+                                        <h:outputText value="#{faturamentoMB.formatarData(ptp.planoTratamentoProcedimento.dataFinalizado)}" />
                                     </p:column>
                                     <p:column filterBy="#{ptp.planoTratamentoProcedimento.valorCalc}" sortBy="#{ptp.planoTratamentoProcedimento.valorCalc}">
                                         <f:facet name="header">
