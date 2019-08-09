@@ -36,7 +36,6 @@ import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.exception.techinical.TechnicalException;
-import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.GeradorSenha;
 import br.com.lume.common.util.Mensagens;
@@ -111,8 +110,6 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private Date inicio, fim;
 
     private Paciente pacienteSelecionado, pacientePesquisado, paciente = new Paciente();
-    private Paciente pacienteConflito;
-    private List<Paciente> pacientesConflito;
 
     private PlanoTratamento planoTratamentoSelecionado;
 
@@ -196,7 +193,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             carregarCadeiras();
             filtroAgendamento.addAll(Arrays.asList("F", "A", "I", "S", "O", "E", "B", "N", "P", "G", "H"));
             initialDate = Calendar.getInstance().getTime();
-
+            
         } catch (Exception e) {
             log.error(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -209,9 +206,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
         carregarScheduleTarefas();
     }
-
-    public void popularAgendamento(Agendamento ag) {
-
+    
+    public void iniciarNovoAgendamento(Agendamento ag) {
+        
         Agendamento agendamento = ag;
         agendamento.setId(0);
         this.setEntity(agendamento);
@@ -220,21 +217,21 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
         UtilsFrontEnd.setPacienteSelecionado(this.getEntity().getPaciente());
         this.setEntity(this.getEntity());
-        this.setInicio(Calendar.getInstance().getTime());
-        this.setFim(Calendar.getInstance().getTime());
+        this.setInicio(this.getEntity().getInicio());
+        this.setFim(this.getEntity().getFim());
         geraAgendamentoAfastamento(this.getEntity().getInicio(), this.getEntity().getFim(), profissionalDentroAgenda);
         this.setPacienteSelecionado(this.getEntity().getPaciente());
         this.setJustificativa(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("agendamento", "justificativa", this.getEntity().getJustificativa()));
         this.setStatus(this.getEntity().getStatusNovo());
         this.validaAfastamento();
-
+        
         if (this.getEntity().getPlanoTratamentoProcedimentosAgendamento() != null && this.getEntity().getPlanoTratamentoProcedimentosAgendamento().size() > 0) {
             this.setPlanoTratamentoSelecionado(this.getEntity().getPlanoTratamentoProcedimentosAgendamento().get(0).getPlanoTratamentoProcedimento().getPlanoTratamento());
         }
-
+        
         validaHabilitaSalvar();
         this.validaHoraUtilProfissional(profissionalDentroAgenda);
-
+        
     }
 
     public void retorno(Retorno r) {
@@ -244,7 +241,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             profissional = null;
         }
     }
-
+    
     public void relatorio(Agendamento agendamento) {
         if (agendamento != null) {
             pacienteSelecionado = agendamento.getPaciente();
@@ -578,13 +575,13 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
         return false;
     }
-
+    
     public boolean validaCadeira() {
         //if((this.getEntity().getId() == 0 || !this.getInicio().equals(getEntity().getInicio()) || !this.getFim().equals(getEntity().getFim()) || this.getCadeiraDentroAgenda() != getEntity().getCadeira()) && this.getCadeiraDentroAgenda() != null) {
         //    return !AgendamentoSingleton.getInstance().getBo().existeAgendamentoDaCadeira(this.getEntity(), this.getInicio(), this.getFim(), this.getCadeiraDentroAgenda(),
         //            UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
         //} else
-        return true;
+            return true;
     }
 
     public boolean validaIntervalo() {
@@ -597,17 +594,17 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             return true;
         }
     }
-
+    
     public void atualizaCadeiraSelecionada() {
-        if (getCadeiraDentroAgenda() != null && AgendamentoSingleton.getInstance().getBo().existeAgendamentoDaCadeira(this.getEntity(), this.getInicio(), this.getFim(), this.getCadeiraDentroAgenda(),
+        if(getCadeiraDentroAgenda() != null && AgendamentoSingleton.getInstance().getBo().existeAgendamentoDaCadeira(this.getEntity(), this.getInicio(), this.getFim(), this.getCadeiraDentroAgenda(),
                 UtilsFrontEnd.getEmpresaLogada().getEmpIntCod())) {
             addError("", "Cadeira já está em uso para este horário.", true);
         }
     }
-
+    
     public void validaProfissionalEmAgendamento() {
         List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndProfissional(profissionalDentroAgenda, this.getInicio(), this.getFim());
-        if (agendamentos != null && !agendamentos.isEmpty()) {
+        if(agendamentos != null && !agendamentos.isEmpty()) {
             addWarn("", "Profissional já está atendendo neste horário.", true);
         }
     }
@@ -965,10 +962,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     private void validaAfastamento() {
         boolean afastamento = true;
-
+        
         // TODO - O Afastamento representa o bloqueio de agenda do profissional, o motivo da ausência do profissional é salvo em um agendamento.
         // Isso deve ser corrigido assim que possível.
-
+        
         for (Agendamento agendamento : agendamentosAfastamento) {
             if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.AFASTAMENTO.getSigla()) || this.getInicio().after(agendamento.getInicio()) && this.getInicio().before(
                     agendamento.getFim()) || this.getInicio().getTime() == agendamento.getInicio().getTime()) {
@@ -994,6 +991,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public void actionPersistPaciente(ActionEvent event) {
         Usuario usuario = null;
         try {
+            Paciente pacienteExistente = PacienteSingleton.getInstance().getBo().findByNome(paciente.getDadosBasico().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            if (pacienteExistente != null) {
+                pacienteSelecionado = pacienteExistente;
+                return;
+            }
             if (paciente.getDadosBasico().getDataNascimento() != null && Utils.validaDataNascimento(paciente.getDadosBasico().getDataNascimento()) == false) {
                 addError("Data de nascimento inválida.", "");
                 return;
@@ -1206,7 +1208,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
         return retorno;
     }
-
+    
     public void onCalendarAgChange() {
         calculaDataFim();
         atualizaCadeiraSelecionada();
@@ -1436,32 +1438,6 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         PrimeFaces.current().executeScript("google.charts.setOnLoadCallback(drawChartCadeiras(" + getAtendimentosChart() + "));");
     }
 
-    public void actionCancelConflitoPaciente() {
-        cancelarNovoPaciente(null);
-        paciente = new Paciente();
-    }
-
-    public void actionPersistConflitoPaciente() {
-        actionPersistPaciente(null);
-        PrimeFaces.current().executeScript("PF('dlgPacienteConflito').hide()");
-    }
-
-    public void actionPersistPacienteVerificaConflito() {
-        try {
-            List<Paciente> pacienteExistente = PacienteSingleton.getInstance().getBo().findByNomeList(paciente.getDadosBasico().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            if (pacienteExistente != null && !pacienteExistente.isEmpty()) {
-                this.pacientesConflito = pacienteExistente;
-                this.pacienteConflito = null;
-                PrimeFaces.current().executeScript("PF('dlgPacienteConflito').show()");
-            } else {
-                actionPersistPaciente(null);
-            }
-        } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog(e);
-            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
-        }
-    }
-
     public String getVisualizacao() {
         return visualizacao;
     }
@@ -1478,32 +1454,18 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.telefonesVisiveis = telefonesVisiveis;
     }
 
+    
     public Integer getCadeiraDentroAgenda() {
         return cadeiraDentroAgenda;
     }
 
+    
     public void setCadeiraDentroAgenda(Integer cadeiraDentroAgenda) {
         this.cadeiraDentroAgenda = cadeiraDentroAgenda;
     }
-
+    
     public void setEntity(Agendamento agendamento) {
         super.setEntity(agendamento);
-    }
-
-    public List<Paciente> getPacientesConflito() {
-        return pacientesConflito;
-    }
-
-    public void setPacientesConflito(List<Paciente> pacientesConflito) {
-        this.pacientesConflito = pacientesConflito;
-    }
-
-    public Paciente getPacienteConflito() {
-        return pacienteConflito;
-    }
-
-    public void setPacienteConflito(Paciente pacienteConflito) {
-        this.pacienteConflito = pacienteConflito;
     }
 
 }
