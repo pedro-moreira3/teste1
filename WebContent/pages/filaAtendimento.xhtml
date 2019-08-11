@@ -104,7 +104,7 @@ div.ui-selectoneradio label {
 							<h:outputText value="#{a.paciente.dadosBasico.nome}" />
 						</p:column>
 						<p:column headerText="Agendar c/ mesmo profissional">
-							<p:commandButton icon="White fa fa-book White"
+							<p:commandButton icon="fa fa fa-calendar"
 								oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
 								process="@this" action="#{agendamentoMB.filaAtendimento(a)}"
 								update="lume:pnAgendamento" style="width: 33px !important" />

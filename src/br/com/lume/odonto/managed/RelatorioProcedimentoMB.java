@@ -48,6 +48,9 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     private Paciente filtroPorPaciente;
     private Date dataInicio, dataFim;
     private Convenio filtroPorConvenio;
+    private Profissional filtroPorProfissionalUltAlteracao;
+    
+    private boolean imprimirCabecalho = true;
 
     public RelatorioProcedimentoMB() {
         super(PlanoTratamentoProcedimentoSingleton.getInstance().getBo());
@@ -132,6 +135,22 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         }
     }
     
+    public String statusPagamento(Character status) {
+        switch(status) {
+            case 'P':
+                return "Pendente";
+            case 'G':
+                return "Pago";
+            case 'R':
+                return "Reservado";
+        }
+        return "";
+    }
+    
+    public String statusProcedimento(String status) {
+        return (status.equals("F") ? "Finalizado" : "Não finalizado");
+    }
+    
     public Profissional getFiltroPorProfissional() {
         return filtroPorProfissional;
     }
@@ -194,6 +213,22 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
 
     public void setFiltroProcedimento(List<String> filtroProcedimento) {
         this.filtroProcedimento = filtroProcedimento;
+    }
+
+    public boolean isImprimirCabecalho() {
+        return imprimirCabecalho;
+    }
+
+    public void setImprimirCabecalho(boolean imprimirCabecalho) {
+        this.imprimirCabecalho = imprimirCabecalho;
+    }
+
+    public Profissional getFiltroPorProfissionalUltAlteracao() {
+        return filtroPorProfissionalUltAlteracao;
+    }
+
+    public void setFiltroPorProfissionalUltAlteracao(Profissional filtroPorProfissionalUltAlteracao) {
+        this.filtroPorProfissionalUltAlteracao = filtroPorProfissionalUltAlteracao;
     }
 
     
