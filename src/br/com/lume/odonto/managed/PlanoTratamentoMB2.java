@@ -899,8 +899,7 @@ public class PlanoTratamentoMB2 extends LumeManagedBean<PlanoTratamento> {
                     this.getEntity().getPaciente().getDadosBasico().getDataNascimento())) {
                 this.addError(OdontoMensagens.getMensagem("procedimento.idade.maxima"), "");
             } else {
-
-                PlanoTratamentoProcedimento planoTratamentoProcedimento = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().carregaProcedimento(getEntity(), procedimento, getEntity().getPaciente());
+                PlanoTratamentoProcedimento planoTratamentoProcedimento = PlanoTratamentoProcedimentoSingleton.getInstance().carregaProcedimento(getEntity(), procedimento, getEntity().getPaciente());
                 planoTratamentoProcedimentos.add(planoTratamentoProcedimento);
                 subTotalDesconto = subTotalDesconto.add(this.getValorProcedimento(planoTratamentoProcedimento, true));
             }

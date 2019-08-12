@@ -1,476 +1,569 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui" xmlns:f="http://java.sun.com/jsf/core"
-    xmlns:ui="http://java.sun.com/jsf/facelets">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
 
-    <style>
+	<style>
 .periograma .ui-grid .ui-grid-row {
-    height: 50px !important;
+	height: 50px !important;
 }
 
 .labelPeriograma {
-    width: 150px;
+	width: 150px;
 }
 
 .inputPeriograma {
-    width: 30px !important;
-    font-size: 12px;
+	width: 30px !important;
+	font-size: 12px;
 }
 
 .sangramento .ui-chkbox-box .ui-icon-check {
-    background-color: red;
+	background-color: red;
 }
 
 #brand_vestibular18ate11 {
-    background: url('../images/1.png') no-repeat;
+	background: url('../images/1.png') no-repeat;
 }
 
 #brand_vestibular21ate28 {
-    background: url('../images/2.png') no-repeat;
+	background: url('../images/2.png') no-repeat;
 }
 
 #brand_lingual41ate48 {
-    background: url('../images/1.png') no-repeat;
+	background: url('../images/1.png') no-repeat;
 }
 
 #brand_lingual31ate38 {
-    background: url('../images/2.png') no-repeat;
+	background: url('../images/2.png') no-repeat;
 }
 
 #brand_palatina18ate11 {
-    background: url('../images/1b.png') no-repeat;
+	background: url('../images/1b.png') no-repeat;
 }
 
 #brand_palatina21ate28 {
-    background: url('../images/2b.png') no-repeat;
+	background: url('../images/2b.png') no-repeat;
 }
 
 #brand_vestibular41ate48 {
-    background: url('../images/1b.png') no-repeat;
+	background: url('../images/1b.png') no-repeat;
 }
 
 #brand_vestibular31ate38 {
-    background: url('../images/2b.png') no-repeat;
+	background: url('../images/2b.png') no-repeat;
 }
 </style>
 
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">
-    </script>
+	<script type="text/javascript"
+		src="https://www.gstatic.com/charts/loader.js">
+	</script>
+	<script>                
+		google.charts.load('current', {packages: ['corechart', 'bar', 'gauge','line'], 'language': 'pt_br'});
+	</script>
 
+	<div class="ui-g ui-fluid">
+		<div class="ui-g-12 ui-lg-12">
+			<p:outputPanel id="periogramaMainView">
+				<p:panelGrid columns="3" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+					<p:commandButton icon="White fa fa-file-o" value="Novo"
+						actionListener="#{periogramaMB.actionNew}" process="@this"
+						update=":lume:tabView:pnPeriogramaView, :lume:tabView:pnPeriogramaViewHeader"
+						oncomplete="PF('dlgPeriogramaView').show()" />
+					<p:commandButton icon="White fa fa-file-o" value="Comparar"
+						process="@this" actionListener="#{periogramaMB.carregaComparacao}"
+						update=":lume:tabView:compararView, :lume:tabView:compararViewHeader"
+						oncomplete="PF('dlgComparar').show();resize('#lume\\:tabView\\:dlgComparar');" />
+					<p:commandButton icon="White fa fa-trash" value="Excluir"
+						process="@this" actionListener="#{periogramaMB.actionRemove}"
+						update=":lume:tabView:periogramaMainView" styleClass="RedButton"
+						disabled="#{periogramaMB.entity.id == null or periogramaMB.entity.id == 0}" />
+				</p:panelGrid>
 
+				<p:dataTable filterDelay="1500" reflow="true"
+					emptyMessage="Nenhum Periograma Encontrado" id="dtPeriograma"
+					value="#{periogramaMB.entityList}" paginatorAlwaysVisible="true"
+					var="dto" rows="10" paginator="true"
+					selection="#{periogramaMB.entity}" selectionMode="single"
+					rowKey="#{dto}" paginatorPosition="bottom">
+					<f:facet name="header">Periograma</f:facet>
+					<p:ajax event="rowSelect" update=":lume:tabView:periogramaMainView" />
 
-    <div class="Container100 Responsive100 NoIndent">
-        <div class="Container100 ui-fluid NoPadding">
-            <div class="Card">
-                <p:outputPanel id="pnPeriograma" styleClass="BordNone">
-                    <script>
-                google.charts.load('current', {packages: ['corechart', 'bar', 'gauge','line'], 'language': 'pt_br'});
-                google.charts.setOnLoadCallback(drawMultSeries);
-                
-                function drawMultSeries() {
-                	drawPeriogramaChartVestibular18ate11();
-                	drawPeriogramaChartPalatina18ate11();
-                	drawPeriogramaChartVestibular21ate28();
-                	drawPeriogramaChartPalatina21ate28();
-                	drawPeriogramaChartLingual41ate48();
-                	drawPeriogramaChartVestibular41ate48();
-                	drawPeriogramaChartLingual31ate38();
-                	drawPeriogramaChartVestibular31ate38();
-                }
-                
-                function drawPeriogramaChartVestibular18ate11() {
-                    var data = google.visualization.arrayToDataTable([
-                         ['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
-                         #{periogramaMB.periogramaVestibular18ate11}
-                       ]);
-                
-                    var options = {
-                        title: '', 
-                        legend: {position: 'right'},
-                        width: 700,
-                        height: 300,
-                        curveType: 'function',
-                        backgroundColor: 'none', 
-                        legend: 'none',
-                        vAxis: {
-                            ticks: [-10,-5,0,5,10,15,20]
-                   		}
-                     };
-                
-                    var chart = new google.visualization.LineChart(document.getElementById('periogramaChartVestibular18ate11'));
-                    chart.draw(data, options);
-                    
-                    var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
-                    $('#brand_vestibular18ate11').css('background-position',"110px 68px").css('background-size', "490px 180px");
-                 }
-                
-                function drawPeriogramaChartPalatina18ate11() {
-                    var data = google.visualization.arrayToDataTable([
-                         ['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
-                         #{periogramaMB.periogramaChartPalatina18ate11}
-                       ]);
-                
-                    var options = {
-                        title: '', 
-                        legend: {position: 'right'},
-                        width: 700,
-                        height: 300,
-                        curveType: 'function',
-                        backgroundColor: 'none', 
-                        legend: 'none',
-                        vAxis: {
-                            ticks: [-20,-15,-10,-5,0,5,10]
-                   		}
-                     };
-                
-                    var chart = new google.visualization.LineChart(document.getElementById('periogramaChartPalatina18ate11'));
-                    chart.draw(data, options);
-                    var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
-                    $('#brand_palatina18ate11').css('background-position',"110px 68px").css('background-size', "490px 180px");
-                 }
-                
-                function drawPeriogramaChartVestibular21ate28() {
-                    var data = google.visualization.arrayToDataTable([
-                         ['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
-                         #{periogramaMB.periogramaChartVestibular21ate28}
-                       ]);
-                
-                    var options = {
-                        title: '', 
-                        legend: {position: 'right'},
-                        width: 700,
-                        height: 300,
-                        curveType: 'function',
-                        backgroundColor: 'none', 
-                        legend: 'none',
-                        vAxis: {
-                            ticks: [-10,-5,0,5,10,15,20]
-                   		}
-                     };
-                
-                    var chart = new google.visualization.LineChart(document.getElementById('periogramaChartVestibular21ate28'));
-                    chart.draw(data, options);
-                    
-                    var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
-                    $('#brand_vestibular21ate28').css('background-position',"110px 68px").css('background-size', "490px 180px");
-                 }
-                
-                
-                function drawPeriogramaChartPalatina21ate28() {
-                    var data = google.visualization.arrayToDataTable([
-                         ['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
-                         #{periogramaMB.periogramaChartPalatina21ate28}
-                       ]);
-                
-                    var options = {
-                        title: '', 
-                        legend: {position: 'right'},
-                        width: 700,
-                        height: 300,
-                        backgroundColor: 'none', 
-                        legend: 'none',
-                        curveType: 'function',
-                        vAxis: {
-                            ticks: [-20,-15,-10,-5,0,5,10]
-                   		}
-                     };
-                
-                    var chart = new google.visualization.LineChart(document.getElementById('periogramaChartPalatina21ate28'));
-                    chart.draw(data, options);
-                    
-                    var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
-                    $('#brand_palatina21ate28').css('background-position',"110px 68px").css('background-size', "490px 180px");
-                 }
-                
-                
-                function drawPeriogramaChartLingual41ate48() {
-                    var data = google.visualization.arrayToDataTable([
-                         ['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
-                         #{periogramaMB.periogramaChartLingual41ate48}
-                       ]);
-                
-                    var options = {
-                        title: '', 
-                        legend: {position: 'right'},
-                        width: 700,
-                        height: 300,
-                        backgroundColor: 'none', 
-                        legend: 'none',
-                        curveType: 'function',
-                        vAxis: {
-                            ticks: [-10,-5,0,5,10,15,20]
-                   		}
-                     };
-                
-                    var chart = new google.visualization.LineChart(document.getElementById('periogramaChartLingual41ate48'));
-                    chart.draw(data, options);
-                    
-                    var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
-                    $('#brand_lingual41ate48').css('background-position',"110px 68px").css('background-size', "490px 180px");
-                 }
-                
-                function drawPeriogramaChartVestibular41ate48() {
-                    var data = google.visualization.arrayToDataTable([
-                         ['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
-                         #{periogramaMB.periogramaChartVestibular41ate48}
-                       ]);
-                
-                    var options = {
-                        title: '', 
-                        legend: {position: 'right'},
-                        width: 700,
-                        height: 300,
-                        backgroundColor: 'none', 
-                        legend: 'none',
-                        curveType: 'function',
-                        vAxis: {
-                            ticks: [-20,-15,-10,-5,0,5,10]
-                   		}
-                     };
-                
-                    var chart = new google.visualization.LineChart(document.getElementById('periogramaChartVestibular41ate48'));
-                    chart.draw(data, options);
-                    
-                    var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
-                    $('#brand_vestibular41ate48').css('background-position',"110px 68px").css('background-size', "490px 180px");
-                 }
-                
-                function drawPeriogramaChartLingual31ate38() {
-                    var data = google.visualization.arrayToDataTable([
-                         ['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
-                         #{periogramaMB.periogramaChartLingual31ate38}
-                       ]);
-                
-                    var options = {
-                        title: '', 
-                        legend: {position: 'right'},
-                        width: 700,
-                        height: 300,
-                        backgroundColor: 'none', 
-                        legend: 'none',
-                        curveType: 'function',
-                        vAxis: {
-                            ticks: [-10,-5,0,5,10,15,20]
-                   		}
-                     };
-                
-                    var chart = new google.visualization.LineChart(document.getElementById('periogramaChartLingual31ate38'));
-                    chart.draw(data, options);
-                    
-                    var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
-                    $('#brand_lingual31ate38').css('background-position',"110px 68px").css('background-size', "490px 180px");
-                 }
-                
-                
-                function drawPeriogramaChartVestibular31ate38() {
-                    var data = google.visualization.arrayToDataTable([
-                         ['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
-                         #{periogramaMB.periogramaChartVestibular31ate38}
-                       ]);
-                
-                    var options = {
-                        title: '', 
-                        legend: {position: 'right'},
-                        width: 700,
-                        height: 300,
-                        backgroundColor: 'none', 
-                        legend: 'none',
-                        curveType: 'function',
-                        vAxis: {
-                            ticks: [-20,-15,-10,-5,0,5,10]
-                   		}
-                     };
-                
-                    var chart = new google.visualization.LineChart(document.getElementById('periogramaChartVestibular31ate38'));
-                    chart.draw(data, options);
-                    
-                    var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
-                    $('#brand_vestibular31ate38').css('background-position',"110px 68px").css('background-size', "490px 180px");
-                 }                
-                
-                
-                </script>
+					<p:column headerText="Ações" style="width:140px">
+						<p:commandButton styleClass="NavyButton" icon="fa fa-search"
+							oncomplete="PF('dlgPeriogramaView').show()"
+							update=":lume:tabView:periogramaMainView, :lume:tabView:pnPeriogramaViewHeader, :lume:tabView:pnPeriogramaView"
+							actionListener="#{periogramaMB.actionSelecionarPeriograma(dto)}"
+							title="Gerenciar Periograma" process="@this">
+						</p:commandButton>
+					</p:column>
+					<p:column sortBy="#{dto.dataCadastroStrOrd}"
+						filterBy="#{dto.dataCadastroStr}" filterMatchMode="contains"
+						headerText="Data Cadastro">
+						<h:outputText value="#{dto.dataCadastroStr}" title="#{dto.id}" />
+					</p:column>
+				</p:dataTable>
+			</p:outputPanel>
+		</div>
+	</div>
 
-                    <p:tabView styleClass="NoPadding">
-                        <p:tab title="18-11">
-                            <p:tabView styleClass="NoPadding">
-                                <p:tab title="Vestibular">
-                                    <ui:include src="periogramaDentes.xhtml">
-                                        <ui:param name="dentes" value="#{periogramaMB.vestibular18ate11}" />
-                                    </ui:include>
-                                    <div id='brand_vestibular18ate11'>
-                                        <div id="periogramaChartVestibular18ate11"></div>
-                                    </div>
-                                </p:tab>
+	<p:dialog id="periogramaView" widgetVar="dlgPeriogramaView"
+		responsive="true" modal="true" appendTo=":lume"
+		onHide="PF('dlgPeriogramaView').toggleMaximize();"
+		onShow="PF('dlgPeriogramaView').toggleMaximize();">
+		<f:facet name="header">
+			<p:outputPanel id="pnPeriogramaViewHeader">
+				<h:outputText
+					value="Periograma do paciente #{periogramaMB.paciente.dadosBasico.nome}" />
+			</p:outputPanel>
+		</f:facet>
 
-                                <p:tab title="Palatina">
-                                    <ui:include src="periogramaDentes.xhtml">
-                                        <ui:param name="dentes" value="#{periogramaMB.palatina18ate11}" />
-                                    </ui:include>
-                                    <div id='brand_palatina18ate11'>
-                                        <div id="periogramaChartPalatina18ate11"></div>
-                                    </div>
-                                </p:tab>
-                            </p:tabView>
-                        </p:tab>
-                        <p:tab title="21-28">
-                            <p:tabView styleClass="NoPadding">
-                                <p:tab title="Vestibular">
-                                    <ui:include src="periogramaDentes.xhtml">
-                                        <ui:param name="dentes" value="#{periogramaMB.vestibular21ate28}" />
-                                    </ui:include>
-                                    <div id='brand_vestibular21ate28'>
-                                        <div id="periogramaChartVestibular21ate28"></div>
-                                    </div>
-                                </p:tab>
+		<p:outputPanel id="pnPeriogramaView"
+			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+			<script>
+				function drawMultSeries() {
+		        	drawPeriogramaChartVestibular18ate11();
+		            drawPeriogramaChartPalatina18ate11();
+		            drawPeriogramaChartVestibular21ate28();
+		            drawPeriogramaChartPalatina21ate28();
+		            drawPeriogramaChartLingual41ate48();
+		            drawPeriogramaChartVestibular41ate48();
+		            drawPeriogramaChartLingual31ate38();
+		            drawPeriogramaChartVestibular31ate38();
+				}
+		                
+				function drawPeriogramaChartVestibular18ate11() {
+					var data = google.visualization.arrayToDataTable([
+						['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
+						#{periogramaMB.periogramaVestibular18ate11}
+					]);
+					console.log(#{periogramaMB.periogramaVestibular18ate11});
+		                
+		            var options = {
+		            	title: '', 
+		                legend: {position: 'right'},
+		                width: 700,
+		                height: 300,
+		                curveType: 'function',
+		                backgroundColor: 'none', 
+		                legend: 'none',
+		                vAxis: {
+		                	ticks: [-10,-5,0,5,10,15,20]
+		                }
+					};
+		                
+					var chart = new google.visualization.LineChart(document.getElementById('periogramaChartVestibular18ate11'));
+		            chart.draw(data, options);
+		                    
+		            var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
+		            $('#brand_vestibular18ate11').css('background-position',"110px 68px").css('background-size', "490px 180px");
+				}
+		                
+				function drawPeriogramaChartPalatina18ate11() {
+		        	var data = google.visualization.arrayToDataTable([
+		            	['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
+		                #{periogramaMB.periogramaChartPalatina18ate11}
+					]);
+		                
+		            var options = {
+		            	title: '', 
+		                legend: {position: 'right'},
+		                width: 700,
+		                height: 300,
+		                curveType: 'function',
+		                backgroundColor: 'none', 
+		                legend: 'none',
+		                vAxis: {
+		                	ticks: [-20,-15,-10,-5,0,5,10]
+						}
+					};
+		                
+					var chart = new google.visualization.LineChart(document.getElementById('periogramaChartPalatina18ate11'));
+		           	chart.draw(data, options);
+		        	var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
+		            $('#brand_palatina18ate11').css('background-position',"110px 68px").css('background-size', "490px 180px");
+				}
+		                
+				function drawPeriogramaChartVestibular21ate28() {
+		        	var data = google.visualization.arrayToDataTable([
+		            	['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
+		                #{periogramaMB.periogramaChartVestibular21ate28}
+					]);
+		                
+		            var options = {
+		            	title: '', 
+		                legend: {position: 'right'},
+		                width: 700,
+		                height: 300,
+		                curveType: 'function',
+		                backgroundColor: 'none', 
+		                legend: 'none',
+		                vAxis: {
+		                	ticks: [-10,-5,0,5,10,15,20]
+						}
+					};
+		                
+		            var chart = new google.visualization.LineChart(document.getElementById('periogramaChartVestibular21ate28'));
+		            chart.draw(data, options);
+		                    
+		            var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
+		            $('#brand_vestibular21ate28').css('background-position',"110px 68px").css('background-size', "490px 180px");
+				}
+		                
+				function drawPeriogramaChartPalatina21ate28() {
+			        var data = google.visualization.arrayToDataTable([
+						['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
+			            #{periogramaMB.periogramaChartPalatina21ate28}
+					]);
+			                
+			        var options = {
+			        	title: '', 
+			            legend: {position: 'right'},
+			            width: 700,
+			            height: 300,
+			            backgroundColor: 'none', 
+			            legend: 'none',
+			            curveType: 'function',
+			            vAxis: {
+			            	ticks: [-20,-15,-10,-5,0,5,10]
+						}
+					};
+			                
+			        var chart = new google.visualization.LineChart(document.getElementById('periogramaChartPalatina21ate28'));
+			        chart.draw(data, options);
+			                    
+			        var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
+			        $('#brand_palatina21ate28').css('background-position',"110px 68px").css('background-size', "490px 180px");
+		        }
+		                
+				function drawPeriogramaChartLingual41ate48() {
+		        	var data = google.visualization.arrayToDataTable([
+		            	['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
+		                #{periogramaMB.periogramaChartLingual41ate48}
+					]);
+		                
+		            var options = {
+		            	title: '', 
+		                legend: {position: 'right'},
+		                width: 700,
+		                height: 300,
+		                backgroundColor: 'none', 
+		                legend: 'none',
+		                curveType: 'function',
+		                vAxis: {
+		                	ticks: [-10,-5,0,5,10,15,20]
+						}
+					};
+		                
+					var chart = new google.visualization.LineChart(document.getElementById('periogramaChartLingual41ate48'));
+		            chart.draw(data, options);
+		                    
+		            var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
+		            $('#brand_lingual41ate48').css('background-position',"110px 68px").css('background-size', "490px 180px");
+				}
+		                
+		        function drawPeriogramaChartVestibular41ate48() {
+		        	var data = google.visualization.arrayToDataTable([
+		            	['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
+		                #{periogramaMB.periogramaChartVestibular41ate48}
+					]);
+		                
+		            var options = {
+		            	title: '', 
+		                legend: {position: 'right'},
+		                width: 700,
+		                height: 300,
+		                backgroundColor: 'none', 
+		                legend: 'none',
+		                curveType: 'function',
+		                vAxis: {
+		                	ticks: [-20,-15,-10,-5,0,5,10]
+						}
+					};
+		                
+		            var chart = new google.visualization.LineChart(document.getElementById('periogramaChartVestibular41ate48'));
+		            chart.draw(data, options);
+		                    
+		            var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
+		            $('#brand_vestibular41ate48').css('background-position',"110px 68px").css('background-size', "490px 180px");
+				}
+		                
+		        function drawPeriogramaChartLingual31ate38() {
+		        	var data = google.visualization.arrayToDataTable([
+		            	['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
+		                #{periogramaMB.periogramaChartLingual31ate38}
+					]);
+		                
+		            var options = {
+		            	title: '', 
+		                legend: {position: 'right'},
+		                width: 700,
+		                height: 300,
+		                backgroundColor: 'none', 
+		                legend: 'none',
+		                curveType: 'function',
+		                vAxis: {
+		                	ticks: [-10,-5,0,5,10,15,20]
+						}
+					};
+		                
+		            var chart = new google.visualization.LineChart(document.getElementById('periogramaChartLingual31ate38'));
+		            chart.draw(data, options);
+		                    
+		            var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
+		            $('#brand_lingual31ate38').css('background-position',"110px 68px").css('background-size', "490px 180px");
+				}
+		                
+				function drawPeriogramaChartVestibular31ate38() {
+		        	var data = google.visualization.arrayToDataTable([
+		            	['Dente', 'Profundidade de Sondagem', 'Margem Gengival'],
+		                #{periogramaMB.periogramaChartVestibular31ate38}
+					]);
+		                
+		            var options = {
+			            title: '', 
+			            legend: {position: 'right'},
+			            width: 700,
+			            height: 300,
+			            backgroundColor: 'none', 
+			            legend: 'none',
+			            curveType: 'function',
+			            vAxis: {
+			            	ticks: [-20,-15,-10,-5,0,5,10]
+			            }
+		            };
+		                
+					var chart = new google.visualization.LineChart(document.getElementById('periogramaChartVestibular31ate38'));
+		            chart.draw(data, options);
+		                    
+		            var boundingBox = chart.getChartLayoutInterface().getChartAreaBoundingBox(); 
+		            $('#brand_vestibular31ate38').css('background-position',"110px 68px").css('background-size', "490px 180px");
+				}
+			</script>
 
-                                <p:tab title="Palatina">
-                                    <ui:include src="periogramaDentes.xhtml">
-                                        <ui:param name="dentes" value="#{periogramaMB.palatina21ate28}" />
-                                    </ui:include>
-                                    <div id='brand_palatina21ate28'>
-                                        <div id="periogramaChartPalatina21ate28"></div>
-                                    </div>
-                                </p:tab>
-                            </p:tabView>
-                        </p:tab>
-                        <p:tab title="48-41">
-                            <p:tabView styleClass="NoPadding">
-                                <p:tab title="Lingual">
-                                    <ui:include src="periogramaDentes.xhtml">
-                                        <ui:param name="dentes" value="#{periogramaMB.lingual41ate48}" />
-                                    </ui:include>
-                                    <div id='brand_lingual41ate48'>
-                                        <div id="periogramaChartLingual41ate48"></div>
-                                    </div>
-                                </p:tab>
+			<p:scrollPanel mode="native"
+				style="position: relative; width: 100%; height: 100%;">
+				<div class="ui-g ui-fluid">
+					<div class="ui-g-12 ui-lg-12">
+						<p:tabView styleClass="NoPadding">
+							<p:tab title="18-11">
+								<p:tabView styleClass="NoPadding">
+									<p:tab title="Vestibular">
+										<ui:include src="periogramaDentes.xhtml">
+											<ui:param name="dentes"
+												value="#{periogramaMB.vestibular18ate11}" />
+										</ui:include>
+										<div id='brand_vestibular18ate11'>
+											<div id="periogramaChartVestibular18ate11"></div>
+										</div>
+									</p:tab>
 
-                                <p:tab title="Vestibular">
-                                    <ui:include src="periogramaDentes.xhtml">
-                                        <ui:param name="dentes" value="#{periogramaMB.vestibular41ate48}" />
-                                    </ui:include>
-                                    <div id='brand_vestibular41ate48'>
-                                        <div id="periogramaChartVestibular41ate48"></div>
-                                    </div>
-                                </p:tab>
-                            </p:tabView>
-                        </p:tab>
-                        <p:tab title="31-38">
-                            <p:tabView styleClass="NoPadding">
-                                <p:tab title="Lingual">
-                                    <ui:include src="periogramaDentes.xhtml">
-                                        <ui:param name="dentes" value="#{periogramaMB.lingual31ate38}" />
-                                    </ui:include>
-                                    <div id='brand_lingual31ate38'>
-                                        <div id="periogramaChartLingual31ate38"></div>
-                                    </div>
-                                </p:tab>
+									<p:tab title="Palatina">
+										<ui:include src="periogramaDentes.xhtml">
+											<ui:param name="dentes"
+												value="#{periogramaMB.palatina18ate11}" />
+										</ui:include>
+										<div id='brand_palatina18ate11'>
+											<div id="periogramaChartPalatina18ate11"></div>
+										</div>
+									</p:tab>
+								</p:tabView>
+							</p:tab>
+							<p:tab title="21-28">
+								<p:tabView styleClass="NoPadding">
+									<p:tab title="Vestibular">
+										<ui:include src="periogramaDentes.xhtml">
+											<ui:param name="dentes"
+												value="#{periogramaMB.vestibular21ate28}" />
+										</ui:include>
+										<div id='brand_vestibular21ate28'>
+											<div id="periogramaChartVestibular21ate28"></div>
+										</div>
+									</p:tab>
 
-                                <p:tab title="Vestibular">
-                                    <ui:include src="periogramaDentes.xhtml">
-                                        <ui:param name="dentes" value="#{periogramaMB.vestibular31ate38}" />
-                                    </ui:include>
-                                    <div id='brand_vestibular31ate38'>
-                                        <div id="periogramaChartVestibular31ate38"></div>
-                                    </div>
-                                </p:tab>
-                            </p:tabView>
-                        </p:tab>
-                    </p:tabView>
+									<p:tab title="Palatina">
+										<ui:include src="periogramaDentes.xhtml">
+											<ui:param name="dentes"
+												value="#{periogramaMB.palatina21ate28}" />
+										</ui:include>
+										<div id='brand_palatina21ate28'>
+											<div id="periogramaChartPalatina21ate28"></div>
+										</div>
+									</p:tab>
+								</p:tabView>
+							</p:tab>
+							<p:tab title="48-41">
+								<p:tabView styleClass="NoPadding">
+									<p:tab title="Lingual">
+										<ui:include src="periogramaDentes.xhtml">
+											<ui:param name="dentes"
+												value="#{periogramaMB.lingual41ate48}" />
+										</ui:include>
+										<div id='brand_lingual41ate48'>
+											<div id="periogramaChartLingual41ate48"></div>
+										</div>
+									</p:tab>
 
-                    
-                	<p:panelGrid columns="3" layout="grid"
-						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente">
-                        <p:commandButton id="persistPeriograma" icon="White fa fa-save White" value="Salvar" styleClass="GreenButton" process="pnPeriograma" update="pnPeriograma,dtPeriograma"
-                        	actionListener="#{periogramaMB.actionPersist}" />
-                        <p:commandButton id="newPeriograma" icon="White fa fa-file-o" value="Novo" actionListener="#{periogramaMB.actionNew}" update="pnPeriograma" process="@this" />
-						<p:commandButton icon="White fa fa-file-o" value="Comparar" update="pnComparar" process="@this"
-							oncomplete="PF('dlgComparar').show();resize('#lume\\:tabView\\:dlgComparar');" />
-					</p:panelGrid>
-                </p:outputPanel>
+									<p:tab title="Vestibular">
+										<ui:include src="periogramaDentes.xhtml">
+											<ui:param name="dentes"
+												value="#{periogramaMB.vestibular41ate48}" />
+										</ui:include>
+										<div id='brand_vestibular41ate48'>
+											<div id="periogramaChartVestibular41ate48"></div>
+										</div>
+									</p:tab>
+								</p:tabView>
+							</p:tab>
+							<p:tab title="31-38">
+								<p:tabView styleClass="NoPadding">
+									<p:tab title="Lingual">
+										<ui:include src="periogramaDentes.xhtml">
+											<ui:param name="dentes"
+												value="#{periogramaMB.lingual31ate38}" />
+										</ui:include>
+										<div id='brand_lingual31ate38'>
+											<div id="periogramaChartLingual31ate38"></div>
+										</div>
+									</p:tab>
 
-                <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPeriograma" value="#{periogramaMB.entityList}" paginatorAlwaysVisible="false" var="dto" rows="10" paginator="true"
-                    selection="#{periogramaMB.entity}" selectionMode="single" rowKey="#{dto}" paginatorPosition="bottom">
-                    <f:facet name="header">Periograma</f:facet>
-                    <p:ajax event="rowSelect" update=":lume:tabView:pnPeriograma" listener="#{periogramaMB.actionSelecionarPeriograma}" process="@this" />
+									<p:tab title="Vestibular">
+										<ui:include src="periogramaDentes.xhtml">
+											<ui:param name="dentes"
+												value="#{periogramaMB.vestibular31ate38}" />
+										</ui:include>
+										<div id='brand_vestibular31ate38'>
+											<div id="periogramaChartVestibular31ate38"></div>
+										</div>
+									</p:tab>
+								</p:tabView>
+							</p:tab>
+						</p:tabView>
+					</div>
+				</div>
+			</p:scrollPanel>
+		</p:outputPanel>
 
-                    <p:column sortBy="#{dto.dataCadastroStrOrd}" filterBy="#{dto.dataCadastroStr}" filterMatchMode="contains" headerText="Data Cadastro">
-                        <h:outputText value="#{dto.dataCadastroStr}" title="#{dto.id}" />
-                    </p:column>
-                </p:dataTable>
+		<p:panelGrid columns="3" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton id="persistPeriograma" icon="White fa fa-save White"
+				value="Salvar" styleClass="GreenButton"
+				oncomplete="drawMultSeries();"
+				process="@this, :lume:tabView:pnPeriogramaView"
+				update=":lume:tabView:pnPeriogramaView, :lume:tabView:periogramaMainView"
+				actionListener="#{periogramaMB.actionPersist}" />
+			<p:commandButton icon="White fa fa-file-o" value="Comparar"
+				process="@this"
+				update=":lume:tabView:compararView, :lume:tabView:compararViewHeader"
+				oncomplete="PF('dlgComparar').show();resize('#lume\\:tabView\\:dlgComparar');"
+				actionListener="#{periogramaMB.carregaComparacaoPeriogramaA}" />
+			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+				oncomplete="PF('dlgPeriogramaView').hide()" />
+		</p:panelGrid>
+	</p:dialog>
 
+	<p:dialog id="comparar" widgetVar="dlgComparar" responsive="true"
+		modal="true" appendTo=":lume"
+		onHide="PF('dlgComparar').toggleMaximize();"
+		onShow="PF('dlgComparar').toggleMaximize();">
+		<f:facet name="header">
+			<p:outputPanel id="compararViewHeader">
+				<h:outputText
+					value="Periograma do paciente #{periogramaMB.paciente.dadosBasico.nome}" />
+			</p:outputPanel>
+		</f:facet>
 
-                <p:dialog id="dlgComparar" header="Comparar Periograma" widgetVar="dlgComparar" modal="true">
-                    <h:panelGroup id="pnComparar">
-                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+		<p:outputPanel id="compararView"
+			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+			<script>	                        
+	            function drawMultSeriesDialog() {
+	            	drawPeriogramaChartVestibular28ate11();
+				}
+	                        
+	            function drawPeriogramaChartVestibular28ate11() {
+	            	var data = google.visualization.arrayToDataTable([
+	                	['Dente', 'Prof. de Sond. A', 'Mar. Gen. A', 'Prof. de Sond. B', 'Mar. Gen. B'],
+	                    #{periogramaMB.periogramaVestibular28ate11}
+					]);
+	                        
+	                var options = {
+	                	title: '', 
+	                    legend: {position: 'top'},                  
+	                    chartArea: {
+	                    	width: 1300,
+	                    	height: 500
+						},
+						width: 1300,
+						height: 600,
+						curveType: 'function',
+						vAxis: {
+							ticks: [-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10]
+						},
+						series: {
+							0: { color: '#0000ff' },
+							1: { color: '#ff0000' },
+							2: { color: '#6dc2ff' },
+							3: { color: '#e27171' }                                  
+						}
+					};
+						                        
+					var chart = new google.visualization.LineChart(document.getElementById('periogramaChartVestibular28ate11'));
+					chart.draw(data, options);
+					
+					var container = document.getElementById('periogramaChartVestibular28ate11');
+					var width = container.children[0].children[0].style.width;
+					container.children[0].style.marginLeft = "calc((100% - " + width + ") / 2)";
+				}
+			</script>
+			
+			<p:scrollPanel mode="native"
+				style="position: relative; width: 100%; height: 100%;">
+				<div class="ui-g ui-fluid">
+					<div class="ui-g-12 ui-lg-12">
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank" columnClasses="ui-g-5,ui-g-5,ui-g-2,ui-g-2"
+							style="border:0px none; background-color:transparent; margin-top: 15px;">
 
-                            <p:outputLabel value="Periograma A : " />
+							<h:panelGroup styleClass="md-combo">
+								<p:outputLabel value="Periograma A" for="perioACompare" />
+								<p:selectOneMenu value="#{periogramaMB.periogramaA}"
+									converter="periograma" id="perioACompare">
+									<p:ajax process="@this" />
+									<f:selectItem itemValue="#{null}"
+										itemLabel="Selecione um Periograma" />
+									<f:selectItems value="#{periogramaMB.entityList}" var="p"
+										itemValue="#{p}" itemLabel="#{p.dataCadastroStr}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
 
-                            <p:selectOneMenu value="#{periogramaMB.periogramaA}" converter="periograma">
-                                <p:ajax process="@this" update="pnComparar" />
-                                <f:selectItem itemValue="#{null}" itemLabel="Selecione um Periograma" />
-                                <f:selectItems value="#{periogramaMB.entityList}" var="p" itemValue="#{p}" itemLabel="#{p.dataCadastroStr}" />
-                            </p:selectOneMenu>
+							<h:panelGroup styleClass="md-combo">
+								<p:outputLabel value="Periograma B" for="perioBCompare" />
+								<p:selectOneMenu value="#{periogramaMB.periogramaB}"
+									converter="periograma" id="perioBCompare">
+									<p:ajax process="@this" />
+									<f:selectItem itemValue="#{null}"
+										itemLabel="Selecione um Periograma" />
+									<f:selectItems value="#{periogramaMB.entityList}" var="p"
+										itemValue="#{p}" itemLabel="#{p.dataCadastroStr}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							
+							<p:commandButton value="Comparar" process="@this" oncomplete="drawMultSeriesDialog();" update=":lume:tabView:compararView" />
+						</p:panelGrid>
+						
+						<div id="periogramaChartVestibular28ate11"></div>
+					</div>
+				</div>
+			</p:scrollPanel>
+		</p:outputPanel>
 
-                            <p:outputLabel value="Periograma B : " />
-
-                            <p:selectOneMenu value="#{periogramaMB.periogramaB}" converter="periograma">
-                                <p:ajax process="@this" update="pnComparar" />
-                                <f:selectItem itemValue="#{null}" itemLabel="Selecione um Periograma" />
-                                <f:selectItems value="#{periogramaMB.entityList}" var="p" itemValue="#{p}" itemLabel="#{p.dataCadastroStr}" />
-                            </p:selectOneMenu>
-
-                        </p:panelGrid>
-                        <script>
-                        google.charts.load('current', {packages: ['corechart', 'bar', 'gauge','line'], 'language': 'pt_br'});
-                        google.charts.setOnLoadCallback(drawMultSeriesDialog);
-                        
-                        function drawMultSeriesDialog() {
-                            drawPeriogramaChartVestibular28ate11();
-                        }
-                        
-                        function drawPeriogramaChartVestibular28ate11() {
-                            var data = google.visualization.arrayToDataTable([
-                                 ['Dente', 'Prof. de Sond. A', 'Mar. Gen. A', 'Prof. de Sond. B', 'Mar. Gen. B'],
-                                 #{periogramaMB.periogramaVestibular28ate11}
-                               ]);
-                        
-                            var options = {
-                                title: '', 
-                                legend: {position: 'top'},                  
-                                chartArea: {
-                                    width: 1300,
-                                    height: 500
-                                },
-                                width: 1300,
-                                height: 600,
-                                curveType: 'function',
-                                vAxis: {
-                                    ticks: [-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10]
-                                },
-                                series: {
-                                    0: { color: '#0000ff' },
-                                    1: { color: '#ff0000' },
-                                    2: { color: '#6dc2ff' },
-                                    3: { color: '#e27171' }                                  
-                                  }
-                             };
-                        
-                            var chart = new google.visualization.LineChart(document.getElementById('periogramaChartVestibular28ate11'));
-                            chart.draw(data, options);
-                         }
-                        </script>
-
-                        <div id="periogramaChartVestibular28ate11"></div>
-                    </h:panelGroup>
-                </p:dialog>
-
-
-
-            </div>
-        </div>
-    </div>
-
-
-
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+				oncomplete="PF('dlgComparar').hide()" />
+		</p:panelGrid>
+	</p:dialog>
 
 </ui:composition>

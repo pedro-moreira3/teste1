@@ -325,17 +325,15 @@
 					</p:autoComplete>
 
 					<p:outputPanel id="pnBtpaciente" style="display:inline-flex">
-						<ui:remove>
-							<p:commandButton id="cadastroPaciente"
-								rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
-								process="@this"
-								disabled="#{agendamentoMB.pacienteSelecionado == null}"
-								update=":lume:dadosPacienteDlgFields"
-								actionListener="#{pacienteMB.abreReadOnly(agendamentoMB.pacienteSelecionado, 'dadosPacienteDlgFields')}"
-								icon="fa fa-eye White" immediate="true"
-								title="Cadastro do Paciente"
-								oncomplete="PF('dlgDadosPacienteAg').show()" />
-						</ui:remove>
+						<p:commandButton id="cadastroPaciente"
+							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
+							process="@this"
+							disabled="#{agendamentoMB.pacienteSelecionado == null}"
+							update=":lume:dadosPacienteDlgFields"
+							actionListener="#{pacienteMB.abreReadOnly(agendamentoMB.pacienteSelecionado, 'dadosPacienteDlgFields')}"
+							icon="fa fa-eye White" immediate="true"
+							title="Cadastro do Paciente"
+							oncomplete="PF('dlgDadosPacienteAg').show()" />
 						<p:commandButton id="novoPaciente"
 							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
 							icon="fa fa-plus White" title="Novo Paciente"
@@ -373,7 +371,7 @@
 					</h:panelGroup>
 					<h:panelGroup styleClass="md-inputfield">
 						<p:outputLabel for="dtNascimentoPaciente"
-							value="Data de Nascimento : " />
+							value="Data de Nascimento" />
 						<p:calendar id="dtNascimentoPaciente"
 							value="#{agendamentoMB.paciente.dadosBasico.dataNascimento}"
 							pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
@@ -385,9 +383,10 @@
 					</h:panelGroup>
 					<h:panelGroup styleClass="md-inputfield">
 						<p:outputLabel for="responsavelPaciente"
-							value="Nome do Responsável : " />
+							value="Nome do Responsável" />
 						<p:inputText id="responsavelPaciente"
-							value="#{agendamentoMB.paciente.dadosBasico.responsavel}" maxlength="100" />
+							value="#{agendamentoMB.paciente.dadosBasico.responsavel}"
+							maxlength="100" />
 					</h:panelGroup>
 					<p:separator styleClass="SeparatorFull" />
 					<div class="Container25 Responsive100 Fnone">
