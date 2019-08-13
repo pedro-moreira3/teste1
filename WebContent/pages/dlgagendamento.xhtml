@@ -35,6 +35,24 @@
 		});
 	</script>
 
+	<p:dialog widgetVar="dlgDadosPacienteAg" resizable="false"
+		onHide="PF('dlgDadosPacienteAg').toggleMaximize();"
+		onShow="PF('dlgDadosPacienteAg').toggleMaximize();" appendTo=":lume"
+		header="Cadastro de Paciente" responsive="true" modal="true">
+		<p:ajax event="close" resetValues="true" />
+		<p:outputPanel id="dadosPacienteDlgFields"
+			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+			<p:scrollPanel mode="native" style="width: 100%; height: 100%;">
+				<ui:include src="dadosPaciente.xhtml"></ui:include>
+			</p:scrollPanel>
+		</p:outputPanel>
+		<p:panelGrid columns="3" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+				oncomplete="PF('dlgDadosPacienteAg').hide()" />
+		</p:panelGrid>
+	</p:dialog>
+
 	<p:dialog widgetVar="dlgPacienteConflito" resizable="false"
 		onHide="PF('dlgPacienteConflito').toggleMaximize();"
 		onShow="PF('dlgPacienteConflito').toggleMaximize();" appendTo=":lume"
@@ -387,7 +405,8 @@
 						<p:outputLabel for="responsavelPaciente"
 							value="Nome do Responsável : " />
 						<p:inputText id="responsavelPaciente"
-							value="#{agendamentoMB.paciente.dadosBasico.responsavel}" maxlength="100" />
+							value="#{agendamentoMB.paciente.dadosBasico.responsavel}"
+							maxlength="100" />
 					</h:panelGroup>
 					<p:separator styleClass="SeparatorFull" />
 					<div class="Container25 Responsive100 Fnone">
