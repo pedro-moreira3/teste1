@@ -129,11 +129,6 @@ div.ui-selectoneradio label {
 	width: calc(50% - 30px) !important;
 }
 
-body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
-	{
-	margin-top: 0px !important;
-}
-
 .ui-selectonemenu-label {
 	margin: 0px !important;
 }
@@ -156,6 +151,13 @@ body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 					});
 				}).resize();
 			}
+
+			PrimeFaces.widget.SelectOneMenu.prototype.init0 = PrimeFaces.widget.SelectOneMenu.prototype.init;
+			PrimeFaces.widget.SelectOneMenu.prototype.init = function(cfg) {
+				this.init0(cfg);
+				this.isLazyLoaded = false;
+				console.log(this)
+			};
 		</script>
 
 
@@ -303,7 +305,7 @@ body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 										<h:panelGroup styleClass="md-combo"
 											rendered="#{!agendamentoMB.dentista}">
 											<p:outputLabel for="profissional" value="Profissional" />
-											
+
 											<p:selectOneMenu id="profissional"
 												value="#{agendamentoMB.profissional}"
 												converter="profissional" filter="true"
@@ -318,7 +320,7 @@ body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 													oncomplete="atualizaGraficos();" process="@this"
 													update="pacienteSelecionado,:lume:pnAgnd,:lume:schedule" />
 											</p:selectOneMenu>
-											
+
 										</h:panelGroup>
 										<p:outputLabel value="Disponibilidade : "
 											rendered="#{agendamentoMB.horasUteisProfissional != null}" />
@@ -450,8 +452,8 @@ body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 					<p:separator styleClass="SeparatorFull" />
 					<p:outputPanel id="agendamentoVisualizacao">
 						<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'S'}">
-							<p:remoteCommand name="updateSchedule" update=":lume:dadosFiltroAg"
-								process=":lume:schedule" />
+							<p:remoteCommand name="updateSchedule"
+								update=":lume:dadosFiltroAg" process=":lume:schedule" />
 							<p:schedule id="schedule" value="#{agendamentoMB.schedule}"
 								axisFormat="HH:mm" slotEventOverlap="false"
 								style="width:100%;heigth:100%;margin: 0 auto;display: inline-block;"
@@ -460,16 +462,17 @@ body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 								view="agendaDay" timeFormat="HH:mm" minTime="07:00"
 								maxTime="21:00" allDaySlot="false" draggable="false"
 								resizable="false" initialDate="#{agendamentoMB.initialDate}">
-								<p:ajax event="viewChange" process="@this" update=":lume:dadosFiltroAg" />
+								<p:ajax event="viewChange" process="@this"
+									update=":lume:dadosFiltroAg" />
 								<p:ajax event="dateSelect"
 									update=":lume:pnAgendamento,:lume:botoesAgenda"
 									listener="#{agendamentoMB.onDateSelect}"
 									oncomplete="handleDialogRequest(xhr, status, args);"
-									resetValues="true"/>
+									resetValues="true" />
 								<p:ajax event="eventSelect"
 									update=":lume:pnAgendamento,:lume:botoesAgenda"
 									listener="#{agendamentoMB.onEventSelect}"
-									oncomplete="handleDialogRequest(xhr, status, args);"/>
+									oncomplete="handleDialogRequest(xhr, status, args);" />
 							</p:schedule>
 						</p:outputPanel>
 						<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'C'}">

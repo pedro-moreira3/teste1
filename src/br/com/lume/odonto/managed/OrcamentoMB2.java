@@ -98,7 +98,6 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
         dataCredito = null;
         lancamentos = new ArrayList<>();
         valorTotal = valorTotalOriginal;
-        planoTratamentoMB.zeraTotais();
         porcentagem = new BigDecimal(0);
     }
 
