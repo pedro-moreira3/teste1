@@ -12,8 +12,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import javax.faces.application.Application;
+import javax.faces.application.ViewHandler;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.component.UIViewRoot;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.imageio.stream.FileImageOutputStream;
 
@@ -34,9 +38,9 @@ import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.UtilsPrimefaces;
@@ -220,7 +224,17 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
+    public void refresh() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        Application application = context.getApplication();
+        ViewHandler viewHandler = application.getViewHandler();
+        UIViewRoot viewRoot = viewHandler.createView(context, context.getViewRoot().getViewId());
+        context.setViewRoot(viewRoot);
+        context.renderResponse();
+    }
+    
     public void validaIdade() {
+        refresh();
         responsavel = false;
         if (this.getEntity().getDadosBasico() != null && this.getEntity().getDadosBasico().getDataNascimento() != null) {
             Calendar dataNasc = Calendar.getInstance();
@@ -231,6 +245,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 responsavel = true;
             }
         }
+    }
+    
+    public String getStatusDescricao(Agendamento agendamento) {
+        try {
+            return StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getDescricao();
+        }catch(Exception e) {
+            
+        }
+        return "";
     }
 
     public void actionInativar(ActionEvent event) {

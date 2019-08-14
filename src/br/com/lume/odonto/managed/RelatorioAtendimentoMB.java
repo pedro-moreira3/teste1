@@ -11,7 +11,6 @@ import java.util.Locale;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
@@ -20,7 +19,6 @@ import org.primefaces.model.chart.PieChartModel;
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.UtilsPrimefaces;
