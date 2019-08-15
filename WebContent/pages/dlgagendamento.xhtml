@@ -514,6 +514,7 @@
 					responsive="true" required="false" converter="agendamentoPlanoDash">
 					<f:facet name="sourceCaption">Disponíveis</f:facet>
 					<f:facet name="targetCaption">Selecionados</f:facet>
+					<p:ajax event="transfer" process="@this, :lume:procedimentos" />
 				</p:pickList>
 			</h:panelGroup>
 

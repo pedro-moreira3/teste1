@@ -151,13 +151,6 @@ div.ui-selectoneradio label {
 					});
 				}).resize();
 			}
-
-			PrimeFaces.widget.SelectOneMenu.prototype.init0 = PrimeFaces.widget.SelectOneMenu.prototype.init;
-			PrimeFaces.widget.SelectOneMenu.prototype.init = function(cfg) {
-				this.init0(cfg);
-				this.isLazyLoaded = false;
-				console.log(this)
-			};
 		</script>
 
 
@@ -201,8 +194,8 @@ div.ui-selectoneradio label {
 								styleClass="ui-panelgrid-blank form-group ui-fluid"
 								id="botoesAgenda">
 								<p:commandButton id="persist" icon="White fa fa-save"
-									process="pnAgendamento" value="Salvar"
-									rendered="#{agendamentoMB.habilitaSalvar}"
+									process=":lume:pnAgendamento, @this" value="Salvar"
+									rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
 									actionListener="#{agendamentoMB.actionPersist}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
 									oncomplete="PF('myschedule').update();handleDialogRequest(xhr, status, args);"

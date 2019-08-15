@@ -66,7 +66,6 @@ import br.com.lume.regiaoDente.RegiaoDenteSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.statusDente.StatusDenteSingleton;
-import net.sf.trugger.message.Messages;
 
 @ManagedBean
 @ViewScoped
@@ -80,7 +79,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     private String evolucaoProcedimento = " ";
 
-    private Evolucao evolucao = new Evolucao();
+    private Evolucao evolucao;
 
     private Date retorno;
 
@@ -199,8 +198,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     }
                 }
 
-                getEntity().setPlanoTratamentoProcedimentos(planoTratamentoProcedimentos);
-                if (finalizaProcedimento() && finalizaAutomatico()) {
+                setPlanoTratamentoProcedimentosEntity(planoTratamentoProcedimentos, planoTratamentoProcedimentosExcluidos);
+                if (finalizaProcedimento()) {
                     for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
                         PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
                     }
@@ -241,7 +240,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         planoTratamentoProcedimentosExcluidos = new ArrayList<>();
         setEntity(null);
         carregarPlanosTratamento();
-        evolucao = new Evolucao();
         justificativa = null;
         retorno = null;
         observacoesRetorno = null;
@@ -257,6 +255,36 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
             }
         }
+    }
+    
+    public void actionCancelFinalizar() {
+        PrimeFaces.current().executeScript("PF('devolver').hide()");
+        actionPersistEvolucao();
+    }
+    
+    public void iniciaFinalizacaoPT() throws Exception {
+        iniciaFinalizacaoPT(null);
+    }
+    
+    public void iniciaFinalizacaoPT(PlanoTratamento pt) throws Exception {
+        if(pt != null) {
+            setEntity(pt);
+            carregarPlanoTratamentoProcedimentos();
+        }
+        if(temProcedimentosAbertos()) {
+            this.addError("Finalize os procedimentos antes de encerrar o plano de tratamento!", "");
+        } else {
+            PrimeFaces.current().executeScript("PF('devolver').show();");
+        }
+    }
+    
+    public boolean temProcedimentosAbertos() throws Exception {
+        if(this.planoTratamentoProcedimentos == null)
+            return false;
+        for(PlanoTratamentoProcedimento ptp: this.planoTratamentoProcedimentos)
+            if("N".equals(ptp.getExcluido()) && !"F".equals(ptp.getStatus()))
+                return true;
+        return false;
     }
 
     public void actionFinalizar(ActionEvent event) {
@@ -385,6 +413,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                         evoPro += " <br/> " + "  Dente : " + ptp.getDenteObj().getDescricao() + "    Face : " + ptpf.getFace();
                     }
                 }
+                evolucao = new Evolucao();
                 evolucaoProcedimento += evoPro;
                 evolucoes.add(evoPro.replaceAll("<br/>", ""));
                 this.planoTratamentoProcedimentoSelecionado = ptp;
@@ -403,6 +432,25 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void salvaProcedimento(PlanoTratamentoProcedimento ptp) throws Exception {
         actionPersistFaces(ptp);
         PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
+    }
+    
+    public void abreJustificativaRemove(PlanoTratamentoProcedimento planoTratamentoProcedimentoRemove) {
+        planoTratamentoProcedimentoSelecionado = planoTratamentoProcedimentoRemove;
+        PrimeFaces.current().executeScript("PF('dlgJustificativaRemove').show()");
+    }
+    
+    public void salvaJustificativaRemove() throws Exception {
+        if(planoTratamentoProcedimentoSelecionado.getJustificativaExclusao() == null) {
+            addInfo("É preciso selecionar uma justificativa!", "");
+            return;
+        }
+            
+        onProcedimentoRemove(planoTratamentoProcedimentoSelecionado);
+        PrimeFaces.current().executeScript("PF('dlgJustificativaRemove').hide()");
+    }
+    
+    public void fechaJustifivaticaRemove() {
+        planoTratamentoProcedimentoSelecionado = null;
     }
 
     public void onProcedimentoRemove(PlanoTratamentoProcedimento planoTratamentoProcedimentoRemove) throws Exception {
@@ -502,7 +550,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (getEntity().getPlanoTratamentoProcedimentos() != null) {
             BigDecimal valorTotal = new BigDecimal(0);
             for (PlanoTratamentoProcedimento ptp : getEntity().getPlanoTratamentoProcedimentos()) {
-                valorTotal = valorTotal.add(ptp.getValor());
+                if("N".equals(ptp.getExcluido()))
+                    valorTotal = valorTotal.add(ptp.getValor());
             }
             getEntity().setValorTotal(valorTotal);
             getEntity().setValorTotalDesconto(valorTotal);
@@ -698,6 +747,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         try {
             if (evolucao != null) {
                 evolucao.setPaciente(getPaciente());
+                //if(evolucao.getDescricao() == null || evolucao.getDescricao().isEmpty())
+                //    evolucao.setDescricao("Finalizado Plano de Tratamento '" + getEntity().getDescricao() + "'. Justificativa: " + this.getJustificativa().getNome());
                 EvolucaoSingleton.getInstance().getBo().persist(evolucao);
                 for (String evolucao : evolucoes) {
                     Evolucao evo = new Evolucao();
@@ -736,6 +787,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     // =============================================== EVOLUCAO ============================================== //
 
     // ============================================= AGENDAMENTOS ============================================ //
+    public void carregaAgendamentosProcedimento(PlanoTratamentoProcedimento ptp) {
+        setPlanoTratamentoProcedimentoSelecionado(ptp);
+    }
+    
+    public void limpaAgendamentosProcedimento() {
+        setPlanoTratamentoProcedimentoSelecionado(null);
+    }
+    
     public void cancelaAgendamentos() {
         try {
             List<AgendamentoPlanoTratamentoProcedimento> aptps = AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoProcedimento(planoTratamentoProcedimentos);
@@ -780,6 +839,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.orcamentoSelecionado.setProcedimentos(new ArrayList<>());
         if (orcamentoSelecionado.getPlanoTratamento().getPlanoTratamentoProcedimentos() != null) {
             for (PlanoTratamentoProcedimento ptProcedimento : orcamentoSelecionado.getPlanoTratamento().getPlanoTratamentoProcedimentos()) {
+                if("S".equals(ptProcedimento.getExcluido()))
+                    continue;
                 OrcamentoProcedimento orcamentoProcedimento = new OrcamentoProcedimento();
                 orcamentoProcedimento.setDescricao(ptProcedimento.getProcedimento().getDescricao());
                 orcamentoProcedimento.setValor(ptProcedimento.getValor());
@@ -1018,7 +1079,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void carregaTelaOdontograma() {
         try {
             procedimentosDente = new ArrayList<>();
-            getEntity().setPlanoTratamentoProcedimentos(planoTratamentoProcedimentos);
+            setPlanoTratamentoProcedimentosEntity(planoTratamentoProcedimentos, planoTratamentoProcedimentosExcluidos);
 
             PrimeFaces.current().executeScript("PF('dlgOdontogramaPT').show()");
         } catch (Exception e) {
@@ -1697,6 +1758,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.regiaoSelecionada = regiaoSelecionada;
     }
     
-    
+    public void setPlanoTratamentoProcedimentosEntity(List<PlanoTratamentoProcedimento> procedimentos, List<PlanoTratamentoProcedimento> excluidos) {
+        List<PlanoTratamentoProcedimento> procedimentosTotais = new ArrayList<>();
+        for(PlanoTratamentoProcedimento ptp: procedimentos)
+            procedimentosTotais.add(ptp);
+        for(PlanoTratamentoProcedimento ptp: excluidos)
+            procedimentosTotais.add(ptp);
+        getEntity().setPlanoTratamentoProcedimentos(procedimentosTotais);
+    }
 
 }
