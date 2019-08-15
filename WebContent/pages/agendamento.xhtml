@@ -160,21 +160,6 @@ div.ui-selectoneradio label {
 			};
 		</script>
 
-
-		<p:dialog id="dlgGoogleAgenda" widgetVar="dlgGoogleAgenda"
-			header="Google Agenda" responsive="true" modal="true"
-			appendToBody="true">
-			<ui:include src="exportarAgenda.xhtml" />
-		</p:dialog>
-
-		<h:panelGroup id="pnBloqueio">
-			<p:dialog id="dlgBloqueio" widgetVar="dlgBloqueio"
-				header="Bloqueio de Agenda" responsive="true" modal="true"
-				appendToBody="true">
-				<ui:include src="afastamento.xhtml" />
-			</p:dialog>
-		</h:panelGroup>
-
 		<ui:remove>
 			<p:dialog widgetVar="dlgDadosPacienteAg" resizable="false"
 				onHide="PF('dlgDadosPacienteAg').toggleMaximize();"
@@ -194,6 +179,20 @@ div.ui-selectoneradio label {
 				</p:panelGrid>
 			</p:dialog>
 		</ui:remove>
+
+		<p:dialog id="dlgGoogleAgenda" widgetVar="dlgGoogleAgenda"
+			header="Google Agenda" responsive="true" modal="true"
+			appendToBody="true">
+			<ui:include src="exportarAgenda.xhtml" />
+		</p:dialog>
+
+		<h:panelGroup id="pnBloqueio">
+			<p:dialog id="dlgBloqueio" widgetVar="dlgBloqueio"
+				header="Bloqueio de Agenda" responsive="true" modal="true"
+				appendToBody="true">
+				<ui:include src="afastamento.xhtml" />
+			</p:dialog>
+		</h:panelGroup>
 
 		<p:dialog widgetVar="eventDialog" header="Agendamento"
 			resizable="false" responsive="true" width="calc(100% - 2px)"
