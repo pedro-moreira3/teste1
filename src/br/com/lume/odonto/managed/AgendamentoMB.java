@@ -211,6 +211,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void popularAgendamento(Agendamento ag) {
+        
         Agendamento agendamento = ag;
         agendamento.setId(0);
         this.setEntity(agendamento);
@@ -226,14 +227,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.setJustificativa(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("agendamento", "justificativa", this.getEntity().getJustificativa()));
         this.setStatus(this.getEntity().getStatusNovo());
         this.validaAfastamento();
-
+        
         if (this.getEntity().getPlanoTratamentoProcedimentosAgendamento() != null && this.getEntity().getPlanoTratamentoProcedimentosAgendamento().size() > 0) {
             this.setPlanoTratamentoSelecionado(this.getEntity().getPlanoTratamentoProcedimentosAgendamento().get(0).getPlanoTratamentoProcedimento().getPlanoTratamento());
         }
-
+        
         validaHabilitaSalvar();
         this.validaHoraUtilProfissional(profissionalDentroAgenda);
-
+        
     }
 
     public void retorno(Retorno r) {
