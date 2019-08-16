@@ -494,7 +494,16 @@ div.ui-selectoneradio label {
 						return this.split(needle).join(replacement);
 					};
 			function getRuleFromSelectorIncludes(selector) {
-				var lumeCss = document.styleSheets[13];
+				var lumeCss = undefined;
+				for(var i = 0; i < document.styleSheets.length; i++) {
+					if(document.styleSheets[i].href && document.styleSheets[i].href.includes("lume.css")) {
+						lumeCss = document.styleSheets[i];
+						break;
+					}					
+				}
+				if(lumeCss == undefined)
+					return null;
+				
 				var rules = lumeCss.cssRules ? lumeCss.cssRules : lumeCss.rules;
 				for (i = 0; i < rules.length; i++) {
 					if (rules[i].selectorText.includes("." + selector)) {
