@@ -40,7 +40,7 @@ build:
    - echo 'Clean no projeto e package do WAR'
    - mvn $MAVEN_OPTS clean package $paramsDeploy
    - echo 'Realizar deploy do arquivo gerado.'
-   - mvn $MAVEN_OPTS wildfly:deploy-only -P $profile
+   # - mvn $MAVEN_OPTS wildfly:deploy-only -P $profile
    - 'if [ -f "$targetPath/$warFile" ]; then mv $targetPath/$warFile $outPath/$warLatest; fi'
    - echo 'Aguardando reinicio do servidor'
    - sleep 30
