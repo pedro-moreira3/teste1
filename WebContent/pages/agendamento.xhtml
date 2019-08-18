@@ -520,11 +520,22 @@ div.ui-selectoneradio label {
 						return this.split(needle).join(replacement);
 					};
 			function getRuleFromSelectorIncludes(selector) {
-				var lumeCss = document.styleSheets[13];
+				var lumeCss = undefined;
+				for(var i = 0; i < document.styleSheets.length; i++) {
+					if(document.styleSheets[i].href && document.styleSheets[i].href.includes("lume.css")) {
+						lumeCss = document.styleSheets[i];
+						break;
+					}					
+				}
+				if(lumeCss == undefined)
+					return null;
+				
 				var rules = lumeCss.cssRules ? lumeCss.cssRules : lumeCss.rules;
-				for (i = 0; i < rules.length; i++) {
-					if (rules[i].selectorText.includes("." + selector)) {
-						return rules[i];
+				for (var i = 0; i < rules.length; i++) {
+					if (rules[i].cssText && !rules[i].cssText.includes("@media")) {
+						if (rules[i].selectorText.includes("." + selector)) {
+							return rules[i];
+						}
 					}
 				}
 				return null;
@@ -573,7 +584,7 @@ div.ui-selectoneradio label {
 						colors.push(rule.style.backgroundColor);
 					}
 
-					var rowHeight = 41;
+					var rowHeight = 45;
 					var chartHeight = (dataTable.getNumberOfRows() + 1)
 							* rowHeight;
 
