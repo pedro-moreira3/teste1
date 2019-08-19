@@ -4,12 +4,12 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
-	
+
 	<style>
-		.optionsPaciente .ui-panelgrid-cell {
-			padding: 12px 8px !important;
-		}
-	</style>
+.optionsPaciente .ui-panelgrid-cell {
+	padding: 12px 8px !important;
+}
+</style>
 
 	<div class="Container100 Responsive100 NoIndent">
 		<div class="Container100 ui-fluid NoPadding">
@@ -78,16 +78,18 @@
 								<p:inputText id="rg" value="#{pacienteMB.entity.dadosBasico.rg}"
 									maxlength="12" rendered="#{pacienteMB.visivelDadosPaciente}" />
 
-									<p:outputLabel for="cep" value="CEP : "
-										rendered="#{pacienteMB.visivelDadosPaciente}" />
-								<h:panelGroup style="display: flex !important;" rendered="#{pacienteMB.visivelDadosPaciente}">
+								<p:outputLabel for="cep" value="CEP : "
+									rendered="#{pacienteMB.visivelDadosPaciente}" />
+								<h:panelGroup style="display: flex !important;"
+									rendered="#{pacienteMB.visivelDadosPaciente}">
 									<p:inputMask id="cep"
 										value="#{pacienteMB.entity.dadosBasico.cep}" maxlength="8"
 										mask="99999-999">
 										<f:validator validatorId="cepValidator" />
 									</p:inputMask>
 									<p:commandButton id="cepsearch" icon="White fa fa-search White"
-										actionListener="#{pacienteMB.actionBuscaCep}" style="width: 33px !important;"
+										actionListener="#{pacienteMB.actionBuscaCep}"
+										style="width: 33px !important;"
 										update=":lume:tabView:endereco,:lume:tabView:bairro,:lume:tabView:cidade,:lume:tabView:estado"
 										process="@this,:lume:tabView:cep" />
 								</h:panelGroup>
@@ -143,7 +145,8 @@
 
 								<p:outputLabel for="telCelular" value="Celular : "
 									rendered="#{pacienteMB.visivelDadosPaciente}" />
-								<h:panelGroup style="display: flex !important;" rendered="#{pacienteMB.visivelDadosPaciente}">
+								<h:panelGroup style="display: flex !important;"
+									rendered="#{pacienteMB.visivelDadosPaciente}">
 									<p:inputText id="telCelular"
 										value="#{pacienteMB.entity.dadosBasico.celular}"
 										onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}"
@@ -242,8 +245,7 @@
 
 								<p:outputLabel id="lblCPFResponsavel" for="cpfresponsavel"
 									value="CPF do Responsável :" />
-								<p:inputMask id="cpfresponsavel"
-									validatorMessage="CPF inválido"
+								<p:inputMask id="cpfresponsavel" validatorMessage="CPF inválido"
 									value="#{pacienteMB.entity.dadosBasico.cpfresponsavel}"
 									mask="999.999.999-99" required="false">
 									<f:validator validatorId="documentoValidator"
@@ -289,6 +291,17 @@
 									converter="paciente" size="46" forceSelection="true"
 									scrollHeight="400" maxlength="200"
 									rendered="#{pacienteMB.visivelDadosPaciente}">
+
+									<p:column headerText="Nome">
+										<h:outputText value="#{p.dadosBasico.nome}" />
+									</p:column>
+									<p:column headerText="Celular">
+										<h:outputText value="#{p.dadosBasico.celular}" />
+									</p:column>
+									<p:column headerText="Nome da Mãe">
+										<h:outputText value="#{p.nomeMae}" />
+									</p:column>
+
 								</p:autoComplete>
 
 								<p:outputLabel for="indicacao" value="Indicação externa : "
@@ -348,12 +361,13 @@
 							process="@this" />
 
 						<ui:remove>
-							 <p:commandButton id="reenviarSenha" icon="White fa fa-lock"
+							<p:commandButton id="reenviarSenha" icon="White fa fa-lock"
 								value="Reenviar Senha"
-								actionListener="#{pacienteMB.actionReenviarSenha}" update=":lume"
+								actionListener="#{pacienteMB.actionReenviarSenha}"
+								update=":lume"
 								disabled="#{pacienteMB.entity.id == null || pacienteMB.entity.dadosBasico.email == ''}"
 								process=":lume:tabView:pnPrincipal" styleClass="NavyButton" />
-	
+
 							<p:commandButton value="Imprimir Senha" process="@this"
 								update=":lume:tabView:pnPrincipal, :lume:tabView:imprimirSenha"
 								actionListener="#{pacienteMB.actionImprimeSenha}"
