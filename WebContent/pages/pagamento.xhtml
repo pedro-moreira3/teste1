@@ -1,12 +1,16 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
 		<style>
-		body .ui-selectoneradio td label {
-			width: calc(100% - 44px) !important;
-			margin-top: 10% !important;
-		}
-		</style>
+body .ui-selectoneradio td label {
+	width: calc(100% - 44px) !important;
+	margin-top: 10% !important;
+}
+</style>
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -17,25 +21,50 @@
 						<div class="SeparatorFull"></div>
 
 						<p:outputPanel id="pnFiltros" styleClass="BordNone">
-							<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+							<p:panelGrid columns="4"
+								columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+								layout="grid" styleClass="ui-panelgrid-blank"
 								style="border:0px none; background-color:transparent;">
 								<p:outputLabel for="paciente" value="#{dominioMB.cliente} : " />
-								<p:autoComplete dropdown="true" queryDelay="1000" minQueryLength="3" value="#{lancamentoMB.paciente}" id="paciente" completeMethod="#{lancamentoMB.geraSugestoes}" var="p"
-									itemLabel="#{p.dadosBasico.nomeDocumento}" itemValue="#{p}" converter="paciente" required="true" scrollHeight="400">
-									<p:ajax event="itemSelect" listener="#{lancamentoMB.handleSelect}" process="paciente" update=":lume:pnFiltros,:lume:dtLancamento" />
+								<p:autoComplete dropdown="true" queryDelay="1000"
+									minQueryLength="3" value="#{lancamentoMB.paciente}"
+									id="paciente" completeMethod="#{lancamentoMB.geraSugestoes}"
+									var="p" itemLabel="#{p.dadosBasico.nomeDocumento}"
+									itemValue="#{p}" converter="paciente" required="true"
+									scrollHeight="400">
+
+									<p:column headerText="Nome">
+										<h:outputText value="#{p.dadosBasico.nome}" />
+									</p:column>
+									<p:column headerText="Celular">
+										<h:outputText value="#{p.dadosBasico.celular}" />
+									</p:column>
+									<p:column headerText="Nome da Mãe">
+										<h:outputText value="#{p.nomeMae}" />
+									</p:column>
+
+
+									<p:ajax event="itemSelect"
+										listener="#{lancamentoMB.handleSelect}" process="paciente"
+										update=":lume:pnFiltros,:lume:dtLancamento" />
 								</p:autoComplete>
 
 								<p:outputLabel value="Plano de Tratamento : " for="pt" />
-								<p:selectCheckboxMenu id="pt" value="#{lancamentoMB.listPtSelecionados}" converter="planoTratamento">
-									<f:selectItems value="#{lancamentoMB.listPt}" var="plt" itemValue="#{plt}" itemLabel="#{plt.descricao}" />
+								<p:selectCheckboxMenu id="pt"
+									value="#{lancamentoMB.listPtSelecionados}"
+									converter="planoTratamento">
+									<f:selectItems value="#{lancamentoMB.listPt}" var="plt"
+										itemValue="#{plt}" itemLabel="#{plt.descricao}" />
 									<p:ajax process="@this" />
 									<p:ajax event="toggleSelect" process="@this" />
 								</p:selectCheckboxMenu>
 
 								<p:outputLabel for="status" value="Status : " />
 								<p:selectOneMenu id="status" value="#{lancamentoMB.status}">
-									<f:selectItem itemValue="#{null}" itemLabel="Selecione um Status" />
-									<f:selectItems value="#{lancamentoMB.statuss}" var="status" itemLabel="#{status}" itemValue="#{status}" />
+									<f:selectItem itemValue="#{null}"
+										itemLabel="Selecione um Status" />
+									<f:selectItems value="#{lancamentoMB.statuss}" var="status"
+										itemLabel="#{status}" itemValue="#{status}" />
 									<p:ajax process="@this" />
 								</p:selectOneMenu>
 
@@ -43,125 +72,204 @@
 								<p:column></p:column>
 
 								<p:outputLabel for="inicio" value="Inicio : " />
-								<p:calendar id="inicio" value="#{lancamentoMB.inicio}" pattern="dd/MM/yyyy" mask="true" />
+								<p:calendar id="inicio" value="#{lancamentoMB.inicio}"
+									pattern="dd/MM/yyyy" mask="true" />
 
 								<p:outputLabel for="fim" value="Fim : " />
-								<p:calendar id="fim" value="#{lancamentoMB.fim}" pattern="dd/MM/yyyy" mask="true" />
+								<p:calendar id="fim" value="#{lancamentoMB.fim}"
+									pattern="dd/MM/yyyy" mask="true" />
 
 							</p:panelGrid>
 						</p:outputPanel>
 						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="filtrar" icon="White fa fa-search" value="Filtrar" update=":lume:dtLancamento,:lume:pnFiltros" process="@this,:lume:pnFiltros"
-								actionListener="#{lancamentoMB.carregaTela}" styleClass="OrangeButton" />
-							<p:commandButton id="limpar" icon="White fa fa-file-o" value="Limpar" update=":lume:pnFiltros,:lume:dtLancamento" process="@this"
-								actionListener="#{lancamentoMB.actionLimpar}" />
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="filtrar" icon="White fa fa-search"
+								value="Filtrar" update=":lume:dtLancamento,:lume:pnFiltros"
+								process="@this,:lume:pnFiltros"
+								actionListener="#{lancamentoMB.carregaTela}"
+								styleClass="OrangeButton" />
+							<p:commandButton id="limpar" icon="White fa fa-file-o"
+								value="Limpar" update=":lume:pnFiltros,:lume:dtLancamento"
+								process="@this" actionListener="#{lancamentoMB.actionLimpar}" />
 						</p:panelGrid>
 						<div class="EmptyBox20"></div>
-						<p:dataTable filterDelay="1500"  reflow="true" var="lancamento" value="#{lancamentoMB.lancamentoDataModel}" paginator="true" rows="6" paginatorPosition="bottom" id="dtLancamento" emptyMessage=""
-							selection="#{lancamentoMB.entity}" rowKey="#{lancamento}" selectionMode="single">
+						<p:dataTable filterDelay="1500" reflow="true" var="lancamento"
+							value="#{lancamentoMB.lancamentoDataModel}" paginator="true"
+							rows="6" paginatorPosition="bottom" id="dtLancamento"
+							emptyMessage="" selection="#{lancamentoMB.entity}"
+							rowKey="#{lancamento}" selectionMode="single">
 							<f:facet name="header">Lançamentos</f:facet>
-							<p:ajax event="rowSelect" update=":lume:pnLancamento,:lume:pnProduto" listener="#{lancamentoMB.carregarValorAPagar}" />
+							<p:ajax event="rowSelect"
+								update=":lume:pnLancamento,:lume:pnProduto"
+								listener="#{lancamentoMB.carregarValorAPagar}" />
 
-							<p:column headerText="Plano de Tratamento" sortBy="#{lancamento.orcamento.planoTratamento.descricao}" filterBy="#{lancamento.orcamento.planoTratamento.descricao}"
+							<p:column headerText="Plano de Tratamento"
+								sortBy="#{lancamento.orcamento.planoTratamento.descricao}"
+								filterBy="#{lancamento.orcamento.planoTratamento.descricao}"
 								filterMatchMode="contains">
-								<h:outputText value="#{lancamento.orcamento.planoTratamento.descricao}" title="#{lancamento.id}"/>
+								<h:outputText
+									value="#{lancamento.orcamento.planoTratamento.descricao}"
+									title="#{lancamento.id}" />
 							</p:column>
 
-							<p:column headerText="Status" sortBy="#{lancamento.status}" filterBy="#{lancamento.status}" filterMatchMode="contains">
+							<p:column headerText="Status" sortBy="#{lancamento.status}"
+								filterBy="#{lancamento.status}" filterMatchMode="contains">
 								<h:outputText value="#{lancamento.status}" />
 							</p:column>
 
-							<p:column sortBy="#{lancamento.orcamento.planoTratamento.paciente.dadosBasico.nome}" headerText="Paciente"
-								filterBy="#{lancamento.orcamento.planoTratamento.paciente.dadosBasico.nome}" filterMatchMode="contains">
-								<h:outputText value="#{lancamento.orcamento.planoTratamento.paciente.dadosBasico.nome}" />
+							<p:column
+								sortBy="#{lancamento.orcamento.planoTratamento.paciente.dadosBasico.nome}"
+								headerText="Paciente"
+								filterBy="#{lancamento.orcamento.planoTratamento.paciente.dadosBasico.nome}"
+								filterMatchMode="contains">
+								<h:outputText
+									value="#{lancamento.orcamento.planoTratamento.paciente.dadosBasico.nome}" />
 							</p:column>
 
-							<p:column sortBy="#{lancamento.numeroParcela}" style="text-align:center" headerText="Parcela" filterBy="#{lancamento.numeroParcela}" filterMatchMode="contains">
+							<p:column sortBy="#{lancamento.numeroParcela}"
+								style="text-align:center" headerText="Parcela"
+								filterBy="#{lancamento.numeroParcela}"
+								filterMatchMode="contains">
 								<h:outputText value="#{lancamento.numeroParcela}" />
 							</p:column>
-							<p:column headerText="Data do Pagamento" sortBy="#{lancamento.dataPagamento}" filterBy="#{lancamento.dataPagamentoStr}" filterMatchMode="contains">
+							<p:column headerText="Data do Pagamento"
+								sortBy="#{lancamento.dataPagamento}"
+								filterBy="#{lancamento.dataPagamentoStr}"
+								filterMatchMode="contains">
 								<h:outputText value="#{lancamento.dataPagamentoStr}" />
 							</p:column>
-							<p:column headerText="Data de Crédito" sortBy="#{lancamento.dataCredito}" filterBy="#{lancamento.dataCreditoStr}" filterMatchMode="contains">
+							<p:column headerText="Data de Crédito"
+								sortBy="#{lancamento.dataCredito}"
+								filterBy="#{lancamento.dataCreditoStr}"
+								filterMatchMode="contains">
 								<h:outputText value="#{lancamento.dataCreditoStr}" />
 							</p:column>
-							<p:column headerText="Forma de Pagamento" sortBy="#{lancamento.formaPagamentoStr}" filterBy="#{lancamento.formaPagamentoStr}" filterMatchMode="contains">
+							<p:column headerText="Forma de Pagamento"
+								sortBy="#{lancamento.formaPagamentoStr}"
+								filterBy="#{lancamento.formaPagamentoStr}"
+								filterMatchMode="contains">
 								<h:outputText value="#{lancamento.formaPagamentoStr}" />
 							</p:column>
-							<p:column headerText="Valor(R$)" sortBy="#{lancamento.valor}" style="text-align:right" filterBy="#{lancamento.valor}" filterMatchMode="contains">
+							<p:column headerText="Valor(R$)" sortBy="#{lancamento.valor}"
+								style="text-align:right" filterBy="#{lancamento.valor}"
+								filterMatchMode="contains">
 								<h:outputText value="#{lancamento.valor}">
-									<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 							</p:column>
 						</p:dataTable>
 
 						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="persist" value="Pagar" icon="White fa fa-money" onclick="PF('pagar').show()"
-								update=":lume:pnLancamento,:lume:persist2,:lume:pnTipo,:lume:pnJustificativa,:lume:pnProduto,:lume:pnPagar" process=":lume:dtLancamento,@this" styleClass="GreenButton"
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="persist" value="Pagar"
+								icon="White fa fa-money" onclick="PF('pagar').show()"
+								update=":lume:pnLancamento,:lume:persist2,:lume:pnTipo,:lume:pnJustificativa,:lume:pnProduto,:lume:pnPagar"
+								process=":lume:dtLancamento,@this" styleClass="GreenButton"
 								disabled="#{lancamentoMB.liberaPagamento != true}" />
-							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{lancamentoMB.actionRemove}" update=":lume:pnLancamento,:lume:dtLancamento"
-								process="@this" disabled="#{lancamentoMB.entity.id == 0}" rendered="#{lancamentoMB.admin}" styleClass="RedButton" />
+							<p:commandButton id="delete" icon="White fa fa-trash-o"
+								value="Excluir" actionListener="#{lancamentoMB.actionRemove}"
+								update=":lume:pnLancamento,:lume:dtLancamento" process="@this"
+								disabled="#{lancamentoMB.entity.id == 0}"
+								rendered="#{lancamentoMB.admin}" styleClass="RedButton" />
 						</p:panelGrid>
 
 					</p:outputPanel>
 
-					<p:remoteCommand name="fechaDialog" process="@this" update="dtLancamento" actionListener="#{lancamentoMB.fechaDialog}" />
-					<p:remoteCommand name="openDialog" process="@this" update="dtCredito" actionListener="#{lancamentoMB.openDialog}" />
+					<p:remoteCommand name="fechaDialog" process="@this"
+						update="dtLancamento" actionListener="#{lancamentoMB.fechaDialog}" />
+					<p:remoteCommand name="openDialog" process="@this"
+						update="dtCredito" actionListener="#{lancamentoMB.openDialog}" />
 
-					<p:dialog id="pagar" widgetVar="pagar" header="Pagamento" responsive="true" modal="true" onHide="fechaDialog()" onShow="openDialog()">
-						<p:ajax event="close" listener="#{lancamentoMB.handleClose}" resetValues="true" update="@this,:lume:pnLancamento,:lume:persist" />
+					<p:dialog id="pagar" widgetVar="pagar" header="Pagamento"
+						responsive="true" modal="true" onHide="fechaDialog()"
+						onShow="openDialog()">
+						<p:ajax event="close" listener="#{lancamentoMB.handleClose}"
+							resetValues="true"
+							update="@this,:lume:pnLancamento,:lume:persist" />
 						<p:outputPanel id="pnPagar" styleClass="BordNone">
 							<h:panelGroup styleClass="lumeField" id="pnTipo">
 								<p:outputLabel for="tipo" value="Forma : " />
-								<p:selectOneRadio id="tipo" value="#{lancamentoMB.formaPagamento}" required="true" layout="grid" columns="3">
-									<p:ajax update=":lume:pnPagar" process="@this,:lume:pnTipo,:lume:valorAPagar" listener="#{lancamentoMB.atualizaProduto}" />
-									<f:selectItems value="#{lancamentoMB.dominios}" var="tp" itemValue="#{tp.valor}" itemLabel="#{tp.nome}" />
+								<p:selectOneRadio id="tipo"
+									value="#{lancamentoMB.formaPagamento}" required="true"
+									layout="grid" columns="3">
+									<p:ajax update=":lume:pnPagar"
+										process="@this,:lume:pnTipo,:lume:valorAPagar"
+										listener="#{lancamentoMB.atualizaProduto}" />
+									<f:selectItems value="#{lancamentoMB.dominios}" var="tp"
+										itemValue="#{tp.valor}" itemLabel="#{tp.nome}" />
 								</p:selectOneRadio>
 								<p:message styleClass="msg" for="tipo" />
 							</h:panelGroup>
 							<h:panelGroup styleClass="lumeField" id="pnProduto">
-								<p:outputLabel for="produto" value="Produto : " rendered="#{lancamentoMB.produto}" />
-								<p:selectOneMenu id="produto" value="#{lancamentoMB.tarifa}" converter="tarifa" required="#{lancamentoMB.produto}" rendered="#{lancamentoMB.produto}">
-									<p:ajax listener="#{lancamentoMB.atualizaDataCredito}" process="@this" update="dtCredito,pnPagar,pnParcelas" />
-									<f:selectItem itemLabel="Selecione um Produto" itemValue="#{null}" />
-									<f:selectItems value="#{lancamentoMB.tarifas}" var="tp" itemValue="#{tp}" itemLabel="#{tp.produtoStr}" />
+								<p:outputLabel for="produto" value="Produto : "
+									rendered="#{lancamentoMB.produto}" />
+								<p:selectOneMenu id="produto" value="#{lancamentoMB.tarifa}"
+									converter="tarifa" required="#{lancamentoMB.produto}"
+									rendered="#{lancamentoMB.produto}">
+									<p:ajax listener="#{lancamentoMB.atualizaDataCredito}"
+										process="@this" update="dtCredito,pnPagar,pnParcelas" />
+									<f:selectItem itemLabel="Selecione um Produto"
+										itemValue="#{null}" />
+									<f:selectItems value="#{lancamentoMB.tarifas}" var="tp"
+										itemValue="#{tp}" itemLabel="#{tp.produtoStr}" />
 								</p:selectOneMenu>
-								<p:message for="produto" styleClass="msg" rendered="#{lancamentoMB.produto}" />
+								<p:message for="produto" styleClass="msg"
+									rendered="#{lancamentoMB.produto}" />
 							</h:panelGroup>
-                            <h:panelGroup styleClass="lumeField" id="pnParcelas" rendered="#{lancamentoMB.formaPagamento == 'CC' and lancamentoMB.tarifa != null}">
-                                <p:outputLabel for="parcela" value="Parcelas :"  />
-                                <p:selectOneMenu id="parcela" value="#{lancamentoMB.parcela}" filter="true" filterMatchMode="startsWith">
-                                    <f:selectItems value="#{lancamentoMB.parcelas}" var="p" itemValue="#{p}" itemLabel="#{p}" />
-                                </p:selectOneMenu>
-                                <p:message for="parcela" styleClass="msg" />
-                            </h:panelGroup>
+							<h:panelGroup styleClass="lumeField" id="pnParcelas"
+								rendered="#{lancamentoMB.formaPagamento == 'CC' and lancamentoMB.tarifa != null}">
+								<p:outputLabel for="parcela" value="Parcelas :" />
+								<p:selectOneMenu id="parcela" value="#{lancamentoMB.parcela}"
+									filter="true" filterMatchMode="startsWith">
+									<f:selectItems value="#{lancamentoMB.parcelas}" var="p"
+										itemValue="#{p}" itemLabel="#{p}" />
+								</p:selectOneMenu>
+								<p:message for="parcela" styleClass="msg" />
+							</h:panelGroup>
 							<h:panelGroup styleClass="lumeField" id="pnValorAPagar">
 								<p:outputLabel for="valorAPagar" value="Valor : " />
-								<p:inputNumber id="valorAPagar" value="#{lancamentoMB.valorAPagar}" required="true" maxlength="13" maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
-									thousandSeparator=".">
+								<p:inputNumber id="valorAPagar"
+									value="#{lancamentoMB.valorAPagar}" required="true"
+									maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+									symbol="R$ " thousandSeparator=".">
 								</p:inputNumber>
 							</h:panelGroup>
 							<h:panelGroup styleClass="lumeField" id="pnJustificativa">
 								<p:outputLabel for="validade" value="Data Pagamento : " />
-								<p:calendar id="validade" value="#{lancamentoMB.dataPagamento}" required="true" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}"
-									timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-10:+10" >
-									<p:ajax event="dateSelect" listener="#{lancamentoMB.handleSelectPagamento}" process="@this" update="dtCredito" />
-									</p:calendar>									
+								<p:calendar id="validade" value="#{lancamentoMB.dataPagamento}"
+									required="true" pattern="dd/MM/yyyy" showWeeksBar="false"
+									locale="#{lumeSecurity.locale}"
+									timeZone="#{lumeSecurity.timeZone}" navigator="true"
+									yearRange="-10:+10">
+									<p:ajax event="dateSelect"
+										listener="#{lancamentoMB.handleSelectPagamento}"
+										process="@this" update="dtCredito" />
+								</p:calendar>
 								<p:message for="validade" styleClass="msg" />
 							</h:panelGroup>
 							<h:panelGroup styleClass="lumeField">
 								<p:outputLabel for="dtCredito" value="Data Crédito :" />
-								<p:calendar id="dtCredito" value="#{lancamentoMB.entity.dataCredito}" required="true" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}"
-									timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-10:+10"  disabled="#{!lancamentoMB.administrador}" />
-									
+								<p:calendar id="dtCredito"
+									value="#{lancamentoMB.entity.dataCredito}" required="true"
+									pattern="dd/MM/yyyy" showWeeksBar="false"
+									locale="#{lumeSecurity.locale}"
+									timeZone="#{lumeSecurity.timeZone}" navigator="true"
+									yearRange="-10:+10" disabled="#{!lancamentoMB.administrador}" />
+
 								<p:message for="dtCredito" styleClass="msg" />
 							</h:panelGroup>
 							<div class="SeparatorFull"></div>
-							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-								<p:commandButton id="persist2" value="Salvar" icon="White fa fa-save" actionListener="#{lancamentoMB.actionPersist}" update=":lume:pnPagar,:lume:pnLancamento"
-									process=":lume:pnPagar" styleClass="GreenButton" oncomplete="handleDialogRequest(xhr, status, args)" />
+							<p:panelGrid columns="1" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton id="persist2" value="Salvar"
+									icon="White fa fa-save"
+									actionListener="#{lancamentoMB.actionPersist}"
+									update=":lume:pnPagar,:lume:pnLancamento"
+									process=":lume:pnPagar" styleClass="GreenButton"
+									oncomplete="handleDialogRequest(xhr, status, args)" />
 							</p:panelGrid>
 						</p:outputPanel>
 					</p:dialog>

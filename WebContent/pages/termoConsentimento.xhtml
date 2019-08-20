@@ -1,61 +1,104 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 					<p:outputPanel id="pnTermoConsentimento">
-						<p:outputPanel rendered="#{termoConsentimentoMB.visivel}" styleClass="BordNone">
+						<p:outputPanel rendered="#{termoConsentimentoMB.visivel}"
+							styleClass="BordNone">
 							<h1>Consentimento</h1>
 							<div class="SeparatorFull"></div>
-	
+
 							<p:fieldset legend="Documento" toggleable="true">
-								<h:outputText id="documentoImprimirTermo" value="#{termoConsentimentoMB.documento}" escape="false" />
+								<h:outputText id="documentoImprimirTermo"
+									value="#{termoConsentimentoMB.documento}" escape="false" />
 							</p:fieldset>
-	
-							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-								<p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton">
+
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton value="Imprimir" type="button"
+									icon="White fa fa-print White" styleClass="NavyButton">
 									<p:printer target="documentoImprimirTermo" />
 								</p:commandButton>
 							</p:panelGrid>
 							<div class="SeparatorFull"></div>
-	
+
 							<div class="EmptyBox20"></div>
 						</p:outputPanel>
 					</p:outputPanel>
 
-					<p:outputPanel id="pnTermoConsentimentoPrincipal" styleClass="BordNone">
+					<p:outputPanel id="pnTermoConsentimentoPrincipal"
+						styleClass="BordNone">
 
 						<h1>Termo de Consentimento</h1>
 						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
-							<p:outputLabel for="pacienteSelecionado" value="#{dominioMB.cliente} :" />
-							<p:autoComplete dropdown="true" queryDelay="1000" value="#{termoConsentimentoMB.paciente}" id="pacienteSelecionado" minQueryLength="3"
-								completeMethod="#{termoConsentimentoMB.geraSugestoes}" var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}" converter="paciente" forceSelection="true"
-								scrollHeight="400">
-								<p:ajax event="itemSelect" listener="#{termoConsentimentoMB.handleSelectPacienteSelecionado}"
-									update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo,:lume:pnTermoConsentimento" process="@this" />
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
+							styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="pacienteSelecionado"
+								value="#{dominioMB.cliente} :" />
+							<p:autoComplete dropdown="true" queryDelay="1000"
+								value="#{termoConsentimentoMB.paciente}"
+								id="pacienteSelecionado" minQueryLength="3"
+								completeMethod="#{termoConsentimentoMB.geraSugestoes}" var="p"
+								itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+								converter="paciente" forceSelection="true" scrollHeight="400">
+
+								<p:column headerText="Nome">
+									<h:outputText value="#{p.dadosBasico.nome}" />
+								</p:column>
+								<p:column headerText="Celular">
+									<h:outputText value="#{p.dadosBasico.celular}" />
+								</p:column>
+								<p:column headerText="Nome da Mãe">
+									<h:outputText value="#{p.nomeMae}" />
+								</p:column>
+
+
+								<p:ajax event="itemSelect"
+									listener="#{termoConsentimentoMB.handleSelectPacienteSelecionado}"
+									update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo,:lume:pnTermoConsentimento"
+									process="@this" />
 							</p:autoComplete>
 
 							<p:outputLabel for="tipoDocumentoTermo" value="Documento : " />
 							<f:ajax render="planoTratamento">
-								<p:selectOneMenu id="tipoDocumentoTermo" value="#{termoConsentimentoMB.documentoSelecionado}" converter="documento">
-									<f:selectItem itemLabel="Selecione um Documento" value="#{null}" />
-									<f:selectItems value="#{termoConsentimentoMB.documentos}" var="dc" itemValue="#{dc}" itemLabel="#{dc.descricao}" />
-									<p:ajax update="pnTermoConsentimentoPrincipal,pnTermoConsentimento" />
+								<p:selectOneMenu id="tipoDocumentoTermo"
+									value="#{termoConsentimentoMB.documentoSelecionado}"
+									converter="documento">
+									<f:selectItem itemLabel="Selecione um Documento"
+										value="#{null}" />
+									<f:selectItems value="#{termoConsentimentoMB.documentos}"
+										var="dc" itemValue="#{dc}" itemLabel="#{dc.descricao}" />
+									<p:ajax
+										update="pnTermoConsentimentoPrincipal,pnTermoConsentimento" />
 								</p:selectOneMenu>
 							</f:ajax>
 
 							<p:outputLabel for="planoTratamento" value="Plano : " />
-							<p:selectOneMenu id="planoTratamento" value="#{termoConsentimentoMB.entity.planoTratamento}" converter="planoTratamento">
+							<p:selectOneMenu id="planoTratamento"
+								value="#{termoConsentimentoMB.entity.planoTratamento}"
+								converter="planoTratamento">
 								<f:selectItem itemValue="#{null}" itemLabel="Selecione um plano" />
-								<f:selectItems value="#{termoConsentimentoMB.planoTratamentos}" var="planoTratamento" itemLabel="#{planoTratamento.descricao} - #{planoTratamento.dataHoraStr}"
+								<f:selectItems value="#{termoConsentimentoMB.planoTratamentos}"
+									var="planoTratamento"
+									itemLabel="#{planoTratamento.descricao} - #{planoTratamento.dataHoraStr}"
 									itemValue="#{planoTratamento}" />
 							</p:selectOneMenu>
 						</p:panelGrid>
 
-						<ui:repeat var="tagDinamica" value="#{termoConsentimentoMB.tagDinamicasAsList}">
-							<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+						<ui:repeat var="tagDinamica"
+							value="#{termoConsentimentoMB.tagDinamicasAsList}">
+							<p:panelGrid columns="2"
+								columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
+								styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;">
 								<p:column>
 									<h:outputLabel value="#{tagDinamica.tag}" />
 								</p:column>
@@ -67,30 +110,45 @@
 
 
 						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<h:panelGroup rendered="#{termoConsentimentoMB.liberaBotao}">
-								<p:commandButton id="persistTermo" icon="White fa fa-save" value="Gerar Termo" actionListener="#{termoConsentimentoMB.actionPersist}"
-									update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo" process=":lume:pnTermoConsentimentoPrincipal"
-									disabled="#{termoConsentimentoMB.entity.id != null}" styleClass="GreenButton" />
+								<p:commandButton id="persistTermo" icon="White fa fa-save"
+									value="Gerar Termo"
+									actionListener="#{termoConsentimentoMB.actionPersist}"
+									update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo"
+									process=":lume:pnTermoConsentimentoPrincipal"
+									disabled="#{termoConsentimentoMB.entity.id != null}"
+									styleClass="GreenButton" />
 							</h:panelGroup>
-							<p:commandButton id="newTermo" icon="White fa fa-file-o" value="Novo" actionListener="#{termoConsentimentoMB.actionNew}"
-								update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo" immediate="true" tabindex="1" process="@this" />
+							<p:commandButton id="newTermo" icon="White fa fa-file-o"
+								value="Novo" actionListener="#{termoConsentimentoMB.actionNew}"
+								update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo"
+								immediate="true" tabindex="1" process="@this" />
 						</p:panelGrid>
 
 						<div class="EmptyBox20"></div>
 
 					</p:outputPanel>
-					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtTermo" value="#{termoConsentimentoMB.entityList}" var="tct" rows="7" paginator="true"
-						selection="#{termoConsentimentoMB.entity}" selectionMode="single" rowKey="#{tct}" paginatorPosition="bottom">
-						<p:ajax event="rowSelect" update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo" listener="#{termoConsentimentoMB.atualizaTela}" />
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						id="dtTermo" value="#{termoConsentimentoMB.entityList}" var="tct"
+						rows="7" paginator="true"
+						selection="#{termoConsentimentoMB.entity}" selectionMode="single"
+						rowKey="#{tct}" paginatorPosition="bottom">
+						<p:ajax event="rowSelect"
+							update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo"
+							listener="#{termoConsentimentoMB.atualizaTela}" />
 						<f:facet name="header">Termos de Consentimento</f:facet>
-						<p:column headerText="Data" sortBy="#{tct.dataHora}" filterBy="#{tct.dataHora}" filterMatchMode="contains">
+						<p:column headerText="Data" sortBy="#{tct.dataHora}"
+							filterBy="#{tct.dataHora}" filterMatchMode="contains">
 							<h:outputText value="#{tct.dataHora}" title="#{tct.id}">
 								<f:convertDateTime ptctern="dd/MM/yyyy HH:mm" locale="pt_BR" />
 							</h:outputText>
 						</p:column>
-						<p:column filterBy="#{tct.profissional.dadosBasico.prefixoNome}" sortBy="#{tct.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains" headerText="Profissional">
-							<h:outputText value="#{tct.profissional.dadosBasico.prefixoNome}"  />
+						<p:column filterBy="#{tct.profissional.dadosBasico.prefixoNome}"
+							sortBy="#{tct.profissional.dadosBasico.prefixoNome}"
+							filterMatchMode="contains" headerText="Profissional">
+							<h:outputText value="#{tct.profissional.dadosBasico.prefixoNome}" />
 						</p:column>
 					</p:dataTable>
 				</div>

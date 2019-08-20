@@ -1,25 +1,33 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 					<p:outputPanel id="pnAtestado">
-						<p:outputPanel rendered="#{atestadoMB.visivel}" styleClass="BordNone">
+						<p:outputPanel rendered="#{atestadoMB.visivel}"
+							styleClass="BordNone">
 							<h1>Atestado</h1>
 							<div class="SeparatorFull"></div>
-	
+
 							<p:fieldset legend="Documento" toggleable="true">
-								<h:outputText id="documentoImprimir" value="#{atestadoMB.documento}" escape="false" />
+								<h:outputText id="documentoImprimir"
+									value="#{atestadoMB.documento}" escape="false" />
 							</p:fieldset>
-	
-							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-								<p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton">
+
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton value="Imprimir" type="button"
+									icon="White fa fa-print White" styleClass="NavyButton">
 									<p:printer target="documentoImprimir" />
 								</p:commandButton>
 							</p:panelGrid>
 							<div class="SeparatorFull"></div>
-	
+
 							<div class="EmptyBox20"></div>
 						</p:outputPanel>
 					</p:outputPanel>
@@ -29,25 +37,53 @@
 						<h1>Atestado</h1>
 						<div class="SeparatorFull"></div>
 
-						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
+							styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
 
-							<p:outputLabel for="pacienteSelecionado" value="#{dominioMB.cliente} :" />
-							<p:autoComplete dropdown="true" queryDelay="1000" value="#{atestadoMB.paciente}" id="pacienteSelecionado" completeMethod="#{atestadoMB.geraSugestoesPaciente}" var="p"
-								itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}" converter="paciente" forceSelection="true" scrollHeight="400" minQueryLength="3">
-								<p:ajax event="itemSelect" listener="#{atestadoMB.handleSelectPacienteSelecionado}" update=":lume:pnAtestado,:lume:pnAtestadoPrincipal,:lume:dtAtestado" process="@this" />
+							<p:outputLabel for="pacienteSelecionado"
+								value="#{dominioMB.cliente} :" />
+							<p:autoComplete dropdown="true" queryDelay="1000"
+								value="#{atestadoMB.paciente}" id="pacienteSelecionado"
+								completeMethod="#{atestadoMB.geraSugestoesPaciente}" var="p"
+								itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+								converter="paciente" forceSelection="true" scrollHeight="400"
+								minQueryLength="3">
+
+								<p:column headerText="Nome">
+									<h:outputText value="#{p.dadosBasico.nome}" />
+								</p:column>
+								<p:column headerText="Celular">
+									<h:outputText value="#{p.dadosBasico.celular}" />
+								</p:column>
+								<p:column headerText="Nome da Mãe">
+									<h:outputText value="#{p.nomeMae}" />
+								</p:column>
+
+
+								<p:ajax event="itemSelect"
+									listener="#{atestadoMB.handleSelectPacienteSelecionado}"
+									update=":lume:pnAtestado,:lume:pnAtestadoPrincipal,:lume:dtAtestado"
+									process="@this" />
 							</p:autoComplete>
 
 							<p:outputLabel for="tipoDocumento" value="Documento : " />
-							<p:selectOneMenu id="tipoDocumento" value="#{atestadoMB.documentoSelecionado}" converter="documento" required="true">
+							<p:selectOneMenu id="tipoDocumento"
+								value="#{atestadoMB.documentoSelecionado}" converter="documento"
+								required="true">
 								<f:selectItem itemLabel="Selecione um Documento" value="#{null}" />
-								<f:selectItems value="#{atestadoMB.documentos}" var="dc" itemValue="#{dc}" itemLabel="#{dc.descricao}" />
+								<f:selectItems value="#{atestadoMB.documentos}" var="dc"
+									itemValue="#{dc}" itemLabel="#{dc.descricao}" />
 								<p:ajax update="pnAtestadoPrincipal, pnAtestado" />
 							</p:selectOneMenu>
 
 							<p:outputLabel for="cid" value="CID : " />
 
-							<p:autoComplete queryDelay="1000" value="#{atestadoMB.cid}" id="cid" completeMethod="#{atestadoMB.geraSugestoes}" var="c" itemLabel="#{c.label}" itemValue="#{c}"
-								converter="cid" forceSelection="true" scrollHeight="500" minQueryLength="3">
+							<p:autoComplete queryDelay="1000" value="#{atestadoMB.cid}"
+								id="cid" completeMethod="#{atestadoMB.geraSugestoes}" var="c"
+								itemLabel="#{c.label}" itemValue="#{c}" converter="cid"
+								forceSelection="true" scrollHeight="500" minQueryLength="3">
 								<p:ajax event="itemSelect" listener="#{atestadoMB.handleSelect}" />
 							</p:autoComplete>
 
@@ -56,8 +92,12 @@
 
 						</p:panelGrid>
 
-						<ui:repeat var="tagDinamica" value="#{atestadoMB.tagDinamicasAsList}">
-							<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+						<ui:repeat var="tagDinamica"
+							value="#{atestadoMB.tagDinamicasAsList}">
+							<p:panelGrid columns="2"
+								columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
+								styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;">
 								<p:column>
 									<h:outputLabel value="#{tagDinamica.tag}" />
 								</p:column>
@@ -69,25 +109,40 @@
 
 						<div class="SeparatorFull"></div>
 
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<h:panelGroup rendered="#{atestadoMB.liberaBotao}">
-									<p:commandButton id="persist3" icon="White fa fa-save" value="Gerar Atestado" actionListener="#{atestadoMB.actionPersist}"
-										update=":lume:pnAtestado,:lume:pnAtestadoPrincipal,:lume:dtAtestado" process=":lume:pnAtestadoPrincipal" disabled="#{atestadoMB.entity.id != 0}" styleClass="GreenButton" />
+								<p:commandButton id="persist3" icon="White fa fa-save"
+									value="Gerar Atestado"
+									actionListener="#{atestadoMB.actionPersist}"
+									update=":lume:pnAtestado,:lume:pnAtestadoPrincipal,:lume:dtAtestado"
+									process=":lume:pnAtestadoPrincipal"
+									disabled="#{atestadoMB.entity.id != 0}"
+									styleClass="GreenButton" />
 							</h:panelGroup>
-							<p:commandButton id="new3" icon="White fa fa-file-o" value="Novo" actionListener="#{atestadoMB.actionNew}"
-								update=":lume:pnAtestado,:lume:pnAtestadoPrincipal,:lume:dtAtestado" immediate="true" tabindex="1" process="@this" />
+							<p:commandButton id="new3" icon="White fa fa-file-o" value="Novo"
+								actionListener="#{atestadoMB.actionNew}"
+								update=":lume:pnAtestado,:lume:pnAtestadoPrincipal,:lume:dtAtestado"
+								immediate="true" tabindex="1" process="@this" />
 						</p:panelGrid>
 						<div class="EmptyBox20"></div>
 
 					</p:outputPanel>
-					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtAtestado" value="#{atestadoMB.entityList}" var="att" rows="7" paginator="true" selection="#{atestadoMB.entity}"
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						id="dtAtestado" value="#{atestadoMB.entityList}" var="att"
+						rows="7" paginator="true" selection="#{atestadoMB.entity}"
 						selectionMode="single" rowKey="#{att}" paginatorPosition="bottom">
-						<p:ajax event="rowSelect" update=":lume:pnAtestado,:lume:pnAtestadoPrincipal" listener="#{atestadoMB.atualizaTela}" />
+						<p:ajax event="rowSelect"
+							update=":lume:pnAtestado,:lume:pnAtestadoPrincipal"
+							listener="#{atestadoMB.atualizaTela}" />
 						<f:facet name="header">Atestados</f:facet>
-						<p:column headerText="Data" sortBy="#{att.dataHoraStr}" filterBy="#{att.dataHoraStrOrd}" filterMatchMode="contains">
-							<h:outputText value="#{att.dataHoraStr}" title="#{att.id}"/>
+						<p:column headerText="Data" sortBy="#{att.dataHoraStr}"
+							filterBy="#{att.dataHoraStrOrd}" filterMatchMode="contains">
+							<h:outputText value="#{att.dataHoraStr}" title="#{att.id}" />
 						</p:column>
-						<p:column filterBy="#{att.profissional.dadosBasico.prefixoNome}" sortBy="#{att.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains" headerText="Profissional">
+						<p:column filterBy="#{att.profissional.dadosBasico.prefixoNome}"
+							sortBy="#{att.profissional.dadosBasico.prefixoNome}"
+							filterMatchMode="contains" headerText="Profissional">
 							<h:outputText value="#{att.profissional.dadosBasico.prefixoNome}" />
 						</p:column>
 					</p:dataTable>

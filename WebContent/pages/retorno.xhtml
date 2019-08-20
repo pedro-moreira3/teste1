@@ -28,6 +28,17 @@
 								converter="paciente" required="true" size="46"
 								scrollHeight="400"
 								disabled="#{retornoMB.entity.paciente != null}">
+
+								<p:column headerText="Nome">
+									<h:outputText value="#{p.dadosBasico.nome}" />
+								</p:column>
+								<p:column headerText="Celular">
+									<h:outputText value="#{p.dadosBasico.celular}" />
+								</p:column>
+								<p:column headerText="Nome da Mãe">
+									<h:outputText value="#{p.nomeMae}" />
+								</p:column>
+
 							</p:autoComplete>
 
 							<h:outputLabel value="Status : " />
@@ -120,8 +131,8 @@
 						</p:column>
 						<p:column headerText="Agendar" width="50">
 							<p:commandButton icon="White fa fa-book White"
-								oncomplete="PF('eventDialog').show();"
-								process="@this" action="#{agendamentoMB.retorno(retorno)}"
+								oncomplete="PF('eventDialog').show();" process="@this"
+								action="#{agendamentoMB.retorno(retorno)}"
 								update="lume:pnAgendamento" />
 						</p:column>
 						<p:column headerText="Whats" width="50">
@@ -189,9 +200,8 @@
 			process="@this" />
 
 		<p:dialog widgetVar="eventDialog" header="Agendamento"
-			resizable="false" id="pnAgendamento" responsive="true"
-			modal="true" appendTo=":lume"
-			onHide="PF('eventDialog').toggleMaximize();"
+			resizable="false" id="pnAgendamento" responsive="true" modal="true"
+			appendTo=":lume" onHide="PF('eventDialog').toggleMaximize();"
 			onShow="PF('eventDialog').toggleMaximize();">
 			<p:outputPanel
 				style="max-height: calc(100% - 54px); height: calc(100% - 54px);">

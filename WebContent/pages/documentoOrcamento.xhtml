@@ -1,21 +1,27 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
 		<div class="Container100 Responsive100 NoIndent">
 			<div class="Container100 ui-fluid NoPadding">
 				<div class="Card">
 
-					<p:panel id="pnDocumentoOrcamento" visible="#{documentoOrcamentoMB.visivel}" styleClass="BordNone">
+					<p:panel id="pnDocumentoOrcamento"
+						visible="#{documentoOrcamentoMB.visivel}" styleClass="BordNone">
 						<h1 class="CardBigTopic">Orçamentos</h1>
 						<div class="SeparatorFull"></div>
 
 						<p:fieldset legend="Documento" toggleable="true">
-							<h:outputText id="documentoImprimir4" value="#{documentoOrcamentoMB.documento}" escape="false" />
+							<h:outputText id="documentoImprimir4"
+								value="#{documentoOrcamentoMB.documento}" escape="false" />
 						</p:fieldset>
 
 						<div class="Container25 Responsive100">
-							<p:commandButton value="Imprimir" type="button" icon="White fa fa-print White" styleClass="NavyButton">
+							<p:commandButton value="Imprimir" type="button"
+								icon="White fa fa-print White" styleClass="NavyButton">
 								<p:printer target="documentoImprimir4" />
 							</p:commandButton>
 						</div>
@@ -29,35 +35,69 @@
 						<h1 class="CardBigTopic">Orçamento</h1>
 						<div class="SeparatorFull"></div>
 
-						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
+							styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
 
-							<p:outputLabel for="pacienteSelecionado" value="#{dominioMB.cliente} :" />
-							<p:autoComplete dropdown="true" queryDelay="1000" size="48" value="#{documentoOrcamentoMB.paciente}" id="pacienteSelecionado"
-								completeMethod="#{documentoOrcamentoMB.geraSugestoes}" var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}" converter="paciente"
-								forceSelection="true" scrollHeight="400" minQueryLength="3" styleClass="Wid50">
-								<p:ajax event="itemSelect" listener="#{documentoOrcamentoMB.handleSelectPacienteSelecionado}"
-									update=":lume:pnDocumentoOrcamento,:lume:pnDocumentoOrcamentoPrincipal,:lume:dtDocumentoOrcamento" process="@this" />
+							<p:outputLabel for="pacienteSelecionado"
+								value="#{dominioMB.cliente} :" />
+							<p:autoComplete dropdown="true" queryDelay="1000" size="48"
+								value="#{documentoOrcamentoMB.paciente}"
+								id="pacienteSelecionado"
+								completeMethod="#{documentoOrcamentoMB.geraSugestoes}" var="p"
+								itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+								converter="paciente" forceSelection="true" scrollHeight="400"
+								minQueryLength="3" styleClass="Wid50">
+
+								<p:column headerText="Nome">
+									<h:outputText value="#{p.dadosBasico.nome}" />
+								</p:column>
+								<p:column headerText="Celular">
+									<h:outputText value="#{p.dadosBasico.celular}" />
+								</p:column>
+								<p:column headerText="Nome da Mãe">
+									<h:outputText value="#{p.nomeMae}" />
+								</p:column>
+
+
+								<p:ajax event="itemSelect"
+									listener="#{documentoOrcamentoMB.handleSelectPacienteSelecionado}"
+									update=":lume:pnDocumentoOrcamento,:lume:pnDocumentoOrcamentoPrincipal,:lume:dtDocumentoOrcamento"
+									process="@this" />
 							</p:autoComplete>
 
-							<p:outputLabel for="tipoDocumentoDocumentoOrcamento" value="Documento : " />
-							<p:selectOneMenu id="tipoDocumentoDocumentoOrcamento" value="#{documentoOrcamentoMB.documentoSelecionado}" converter="documento"
-								styleClass="Wid50">
+							<p:outputLabel for="tipoDocumentoDocumentoOrcamento"
+								value="Documento : " />
+							<p:selectOneMenu id="tipoDocumentoDocumentoOrcamento"
+								value="#{documentoOrcamentoMB.documentoSelecionado}"
+								converter="documento" styleClass="Wid50">
 								<f:selectItem itemLabel="Selecione um Documento" value="#{null}" />
-								<f:selectItems value="#{documentoOrcamentoMB.documentos}" var="dc" itemValue="#{dc}" itemLabel="#{dc.descricao}" />
-								<p:ajax update="pnDocumentoOrcamentoPrincipal,pnDocumentoOrcamento" />
+								<f:selectItems value="#{documentoOrcamentoMB.documentos}"
+									var="dc" itemValue="#{dc}" itemLabel="#{dc.descricao}" />
+								<p:ajax
+									update="pnDocumentoOrcamentoPrincipal,pnDocumentoOrcamento" />
 							</p:selectOneMenu>
 
-							<p:outputLabel for="planoDeTratamento" value="#{dominioMB.planoTratamento} : " />
-							<p:selectOneMenu id="planoDeTratamento" required="true" converter="planoTratamento" value="#{documentoOrcamentoMB.planoDeTratamento}"
+							<p:outputLabel for="planoDeTratamento"
+								value="#{dominioMB.planoTratamento} : " />
+							<p:selectOneMenu id="planoDeTratamento" required="true"
+								converter="planoTratamento"
+								value="#{documentoOrcamentoMB.planoDeTratamento}"
 								styleClass="Wid50">
-								<f:selectItem itemValue="#{null}" itemLabel="Selecione um #{dominioMB.planoTratamento}" />
-								<f:selectItems value="#{documentoOrcamentoMB.planoDeTratamentos}" var="pt" itemValue="#{pt}" itemLabel="#{pt.dataHoraDescStr}" />
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione um #{dominioMB.planoTratamento}" />
+								<f:selectItems
+									value="#{documentoOrcamentoMB.planoDeTratamentos}" var="pt"
+									itemValue="#{pt}" itemLabel="#{pt.dataHoraDescStr}" />
 							</p:selectOneMenu>
 						</p:panelGrid>
 
-						<ui:repeat var="tagDinamica" value="#{documentoOrcamentoMB.tagDinamicasAsList}">
-							<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+						<ui:repeat var="tagDinamica"
+							value="#{documentoOrcamentoMB.tagDinamicasAsList}">
+							<p:panelGrid columns="2"
+								columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
+								styleClass="ui-panelgrid-blank"
 								style="border:0px none; background-color:transparent;">
 								<p:column>
 									<h:outputLabel value="#{tagDinamica.tag}" />
@@ -72,31 +112,41 @@
 						<div class="SeparatorFull"></div>
 
 						<div class="Container25 Responsive100">
-							<p:commandButton id="persist6" icon="White fa fa-save" value="Gerar Documento" actionListener="#{documentoOrcamentoMB.actionPersist}"
+							<p:commandButton id="persist6" icon="White fa fa-save"
+								value="Gerar Documento"
+								actionListener="#{documentoOrcamentoMB.actionPersist}"
 								update=":lume:pnDocumentoOrcamento,:lume:pnDocumentoOrcamentoPrincipal,:lume:dtDocumentoOrcamento"
-								process=":lume:pnDocumentoOrcamentoPrincipal" disabled="#{documentoOrcamentoMB.entity.id != 0}" 
+								process=":lume:pnDocumentoOrcamentoPrincipal"
+								disabled="#{documentoOrcamentoMB.entity.id != 0}"
 								styleClass="GreenButton" />
 						</div>
 						<div class="Container25 Responsive100">
-							<p:commandButton id="new6" icon="White fa fa-file-o" value="Novo" actionListener="#{documentoOrcamentoMB.actionNew}"
-								update=":lume:pnDocumentoOrcamento,:lume:pnDocumentoOrcamentoPrincipal,:lume:dtDocumentoOrcamento" immediate="true" tabindex="1"
-								process="@this"  />
+							<p:commandButton id="new6" icon="White fa fa-file-o" value="Novo"
+								actionListener="#{documentoOrcamentoMB.actionNew}"
+								update=":lume:pnDocumentoOrcamento,:lume:pnDocumentoOrcamentoPrincipal,:lume:dtDocumentoOrcamento"
+								immediate="true" tabindex="1" process="@this" />
 						</div>
 
 						<div class="EmptyBox20"></div>
 
 					</p:panel>
 
-					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtDocumentoOrcamento" value="#{documentoOrcamentoMB.entityList}" var="rct" rows="7"
-						paginator="true" selection="#{documentoOrcamentoMB.entity}" selectionMode="single" rowKey="#{rct}" paginatorPosition="bottom">
-						<p:ajax event="rowSelect" update=":lume:pnDocumentoOrcamento,:lume:pnDocumentoOrcamentoPrincipal"
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						id="dtDocumentoOrcamento"
+						value="#{documentoOrcamentoMB.entityList}" var="rct" rows="7"
+						paginator="true" selection="#{documentoOrcamentoMB.entity}"
+						selectionMode="single" rowKey="#{rct}" paginatorPosition="bottom">
+						<p:ajax event="rowSelect"
+							update=":lume:pnDocumentoOrcamento,:lume:pnDocumentoOrcamentoPrincipal"
 							listener="#{documentoOrcamentoMB.atualizaTela}" />
 						<f:facet name="header">Orçamentos</f:facet>
-						<p:column headerText="Data" sortBy="#{rct.dataHoraStrOrd}" filterBy="#{rct.dataHoraStr}" filterMatchMode="contains">
+						<p:column headerText="Data" sortBy="#{rct.dataHoraStrOrd}"
+							filterBy="#{rct.dataHoraStr}" filterMatchMode="contains">
 							<h:outputText value="#{rct.dataHoraStr}" />
 						</p:column>
-						<p:column filterBy="#{rct.profissional.dadosBasico.prefixoNome}" sortBy="#{rct.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains"
-							headerText="Profissional">
+						<p:column filterBy="#{rct.profissional.dadosBasico.prefixoNome}"
+							sortBy="#{rct.profissional.dadosBasico.prefixoNome}"
+							filterMatchMode="contains" headerText="Profissional">
 							<h:outputText value="#{rct.profissional.dadosBasico.prefixoNome}" />
 						</p:column>
 

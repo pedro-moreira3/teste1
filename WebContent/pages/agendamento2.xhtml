@@ -1,473 +1,690 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
-    <ui:define name="content">
-        <style>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<style>
 .ui-picklist .ui-picklist-list {
-    height: 100px;
+	height: 100px;
 }
 
 .fc-time-grid-container {
-    height: auto !important;
+	height: auto !important;
 }
 
 .ui-growl {
-    z-index: 999999 !important;
+	z-index: 999999 !important;
 }
 
 .ui-dialog {
-    overflow: auto !important;
+	overflow: auto !important;
 }
 
 div.ui-selectoneradio label {
-    width: auto !important;
+	width: auto !important;
 }
 </style>
-        <script>
-									function resize(dialog) {
-										//'#lume\\:pnAgendamento'
-										$(window).resize(function() {
-											$(dialog).css({
-												'width' : $(window).width(),
-												'height' : $(window).height(),
-												'left' : '0px',
-												'top' : '0px'
-											});
-										}).resize();
-									}
-								</script>
+		<script>
+			function resize(dialog) {
+				//'#lume\\:pnAgendamento'
+				$(window).resize(function() {
+					$(dialog).css({
+						'width' : $(window).width(),
+						'height' : $(window).height(),
+						'left' : '0px',
+						'top' : '0px'
+					});
+				}).resize();
+			}
+		</script>
 
 
-        <p:dialog id="dlgGoogleAgenda" widgetVar="dlgGoogleAgenda" header="Google Agenda" responsive="true" modal="true" appendToBody="true">
-            <ui:include src="exportarAgenda.xhtml" />
-        </p:dialog>
+		<p:dialog id="dlgGoogleAgenda" widgetVar="dlgGoogleAgenda"
+			header="Google Agenda" responsive="true" modal="true"
+			appendToBody="true">
+			<ui:include src="exportarAgenda.xhtml" />
+		</p:dialog>
 
-        <h:panelGroup id="pnBloqueio">
-            <p:dialog id="dlgBloqueio" widgetVar="dlgBloqueio" header="Bloqueio de Agenda" responsive="true" modal="true" appendToBody="true">
-                <ui:include src="afastamento.xhtml" />
-            </p:dialog>
-        </h:panelGroup>
+		<h:panelGroup id="pnBloqueio">
+			<p:dialog id="dlgBloqueio" widgetVar="dlgBloqueio"
+				header="Bloqueio de Agenda" responsive="true" modal="true"
+				appendToBody="true">
+				<ui:include src="afastamento.xhtml" />
+			</p:dialog>
+		</h:panelGroup>
 
-        <p:dialog widgetVar="eventDialog" header="Agendamento" resizable="false" id="pnAgendamento" responsive="true" position="10,10" modal="true" style="position:absolute !important;"
-            appendToBody="true">
-            <p:growl id="messageDlg" globalOnly="true" />
+		<p:dialog widgetVar="eventDialog" header="Agendamento"
+			resizable="false" id="pnAgendamento" responsive="true"
+			position="10,10" modal="true" style="position:absolute !important;"
+			appendToBody="true">
+			<p:growl id="messageDlg" globalOnly="true" />
 
-            <p:ajax event="close" listener="#{agendamentoMB.handleClose}" />
-            <div class="Container100 Responsive100 NoIndent">
-                <div class="Container100 ui-fluid NoPadding">
-                    <div class="Card" style="margin-top: -35px">
-                        <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid" styleClass="ui-panelgrid-blank">
+			<p:ajax event="close" listener="#{agendamentoMB.handleClose}" />
+			<div class="Container100 Responsive100 NoIndent">
+				<div class="Container100 ui-fluid NoPadding">
+					<div class="Card" style="margin-top: -35px">
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid"
+							styleClass="ui-panelgrid-blank">
 
-                            <h:panelGroup styleClass="lumeField">
-                                <p:outputLabel for="profissionalAgend" value="Profissional : " rendered="#{agendamentoMB.entity.id != 0 or agendamentoMB.profissional == null}"
-                                    title="#{agendamentoMB.entity.id}" />
-                                <p:selectOneMenu id="profissionalAgend" value="#{agendamentoMB.profissionalDentroAgenda}" converter="profissional"
-                                    rendered="#{agendamentoMB.entity.id != 0 or agendamentoMB.profissional == null}" filter="true" filterMatchMode="contains">
-                                    <p:ajax listener="#{agendamentoMB.validaHoraUtilProfissionalCombo}" process="@this" />
-                                    <f:selectItem itemValue="#{null}" itemLabel="Selecione um profissional" />
-                                    <f:selectItems value="#{agendamentoMB.profissionais}" var="profissional" itemLabel="#{profissional.dadosBasico.prefixoNome}" itemValue="#{profissional}" />
-                                </p:selectOneMenu>
-                            </h:panelGroup>
+							<h:panelGroup styleClass="lumeField">
+								<p:outputLabel for="profissionalAgend" value="Profissional : "
+									rendered="#{agendamentoMB.entity.id != 0 or agendamentoMB.profissional == null}"
+									title="#{agendamentoMB.entity.id}" />
+								<p:selectOneMenu id="profissionalAgend"
+									value="#{agendamentoMB.profissionalDentroAgenda}"
+									converter="profissional"
+									rendered="#{agendamentoMB.entity.id != 0 or agendamentoMB.profissional == null}"
+									filter="true" filterMatchMode="contains">
+									<p:ajax
+										listener="#{agendamentoMB.validaHoraUtilProfissionalCombo}"
+										process="@this" />
+									<f:selectItem itemValue="#{null}"
+										itemLabel="Selecione um profissional" />
+									<f:selectItems value="#{agendamentoMB.profissionais}"
+										var="profissional"
+										itemLabel="#{profissional.dadosBasico.prefixoNome}"
+										itemValue="#{profissional}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
 
-                            <h:panelGroup styleClass="lumeField">
-                                <h:outputLabel value="Agendador : " rendered="#{agendamentoMB.entity.id != 0}" title="#{agendamentoMB.entity.id}" />
-                                <p:inputText value="#{agendamentoMB.entity.agendador.dadosBasico.nome} às #{agendamentoMB.entity.dataAgendamentoStr}" rendered="#{agendamentoMB.entity.id != 0}"
-                                    styleClass="FontNormal Opac100" readonly="true" />
-                            </h:panelGroup>
+							<h:panelGroup styleClass="lumeField">
+								<h:outputLabel value="Agendador : "
+									rendered="#{agendamentoMB.entity.id != 0}"
+									title="#{agendamentoMB.entity.id}" />
+								<p:inputText
+									value="#{agendamentoMB.entity.agendador.dadosBasico.nome} às #{agendamentoMB.entity.dataAgendamentoStr}"
+									rendered="#{agendamentoMB.entity.id != 0}"
+									styleClass="FontNormal Opac100" readonly="true" />
+							</h:panelGroup>
 
-                            <h:panelGroup styleClass="lumeField">
-                                <h:outputLabel value="Telefone : " rendered="#{agendamentoMB.entity.id != 0}" />
-                                <p:inputText value="#{agendamentoMB.entity.paciente.dadosBasico.telefone}" rendered="#{agendamentoMB.entity.id != 0}" styleClass="FontNormal Opac100" readonly="true" />
-                            </h:panelGroup>
+							<h:panelGroup styleClass="lumeField">
+								<h:outputLabel value="Telefone : "
+									rendered="#{agendamentoMB.entity.id != 0}" />
+								<p:inputText
+									value="#{agendamentoMB.entity.paciente.dadosBasico.telefone}"
+									rendered="#{agendamentoMB.entity.id != 0}"
+									styleClass="FontNormal Opac100" readonly="true" />
+							</h:panelGroup>
 
-                            <h:panelGroup styleClass="lumeField">
-                                <h:outputLabel value="Celular : " rendered="#{agendamentoMB.entity.id != 0}" />
-                                <p:inputText value="#{agendamentoMB.entity.paciente.dadosBasico.celular}" rendered="#{agendamentoMB.entity.id != 0}" styleClass="FontNormal Opac100" readonly="true" />
-                            </h:panelGroup>
+							<h:panelGroup styleClass="lumeField">
+								<h:outputLabel value="Celular : "
+									rendered="#{agendamentoMB.entity.id != 0}" />
+								<p:inputText
+									value="#{agendamentoMB.entity.paciente.dadosBasico.celular}"
+									rendered="#{agendamentoMB.entity.id != 0}"
+									styleClass="FontNormal Opac100" readonly="true" />
+							</h:panelGroup>
 
-                            <h:panelGroup styleClass="lumeField">
-                                <h:outputLabel value="Nome Preferência : " rendered="#{agendamentoMB.entity.id != 0 and agendamentoMB.entity.paciente.dadosBasico.nomePreferencial != null}" />
-                                <p:inputText value="#{agendamentoMB.entity.paciente.dadosBasico.nomePreferencial}"
-                                    rendered="#{agendamentoMB.entity.id != 0 and agendamentoMB.entity.paciente.dadosBasico.nomePreferencial != null}" styleClass="FontNormal Opac100" readonly="true" />
-                            </h:panelGroup>
+							<h:panelGroup styleClass="lumeField">
+								<h:outputLabel value="Nome Preferência : "
+									rendered="#{agendamentoMB.entity.id != 0 and agendamentoMB.entity.paciente.dadosBasico.nomePreferencial != null}" />
+								<p:inputText
+									value="#{agendamentoMB.entity.paciente.dadosBasico.nomePreferencial}"
+									rendered="#{agendamentoMB.entity.id != 0 and agendamentoMB.entity.paciente.dadosBasico.nomePreferencial != null}"
+									styleClass="FontNormal Opac100" readonly="true" />
+							</h:panelGroup>
 
-                            <h:panelGroup styleClass="lumeField">
-                                <p:outputLabel for="reserva" value="Fez reserva?: " rendered="#{agendamentoMB.entity.id != 0}" />
-                                <p:selectOneRadio id="reserva" value="#{agendamentoMB.reserva}" readonly="true" rendered="#{agendamentoMB.entity.id != 0}">
-                                    <f:selectItem itemLabel="Sim" itemValue="true" />
-                                    <f:selectItem itemLabel="Não" itemValue="false" />
-                                </p:selectOneRadio>
-                            </h:panelGroup>
-                        </p:panelGrid>
+							<h:panelGroup styleClass="lumeField">
+								<p:outputLabel for="reserva" value="Fez reserva?: "
+									rendered="#{agendamentoMB.entity.id != 0}" />
+								<p:selectOneRadio id="reserva" value="#{agendamentoMB.reserva}"
+									readonly="true" rendered="#{agendamentoMB.entity.id != 0}">
+									<f:selectItem itemLabel="Sim" itemValue="true" />
+									<f:selectItem itemLabel="Não" itemValue="false" />
+								</p:selectOneRadio>
+							</h:panelGroup>
+						</p:panelGrid>
 
-                        <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid" styleClass="ui-panelgrid-blank">
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid"
+							styleClass="ui-panelgrid-blank">
 
-                            <h:panelGroup>
-                                <h:panelGroup styleClass="lumeField" id="pnBtpaciente">
-                                    <p:outputLabel for="paciente" value="#{dominioMB.cliente} :" />
+							<h:panelGroup>
+								<h:panelGroup styleClass="lumeField" id="pnBtpaciente">
+									<p:outputLabel for="paciente" value="#{dominioMB.cliente} :" />
 
-                                    <p:autoComplete dropdown="true" queryDelay="1000" value="#{agendamentoMB.pacienteSelecionado}" id="paciente" minQueryLength="3"
-                                        completeMethod="#{agendamentoMB.geraSugestoes}" var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}" converter="paciente" forceSelection="true"
-                                        disabled="#{agendamentoMB.entity.id != 0}" required="#{!agendamentoMB.visivel}" styleClass="paciente MarRight5 Wid70" style="width:70% !important">
-                                        <p:ajax event="itemSelect" listener="#{agendamentoMB.handleSelect}" update="planoTratamento, pgProcedimentos" />
-                                    </p:autoComplete>
-                                    <p:commandButton id="novoPaciente" rendered="#{!agendamentoMB.visivel}" icon="fa fa-plus White" update="pnNovoPaciente, :lume:pnBtpaciente" immediate="true"
-                                        actionListener="#{agendamentoMB.novoPaciente}" />
-                                    <p:commandButton id="cancelarNovoPaciente" rendered="#{agendamentoMB.visivel}" icon="fa fa-minus White" update="pnNovoPaciente, :lume:pnBtpaciente" immediate="true"
-                                        actionListener="#{agendamentoMB.cancelarNovoPaciente}" />
-                                </h:panelGroup>
+									<p:autoComplete dropdown="true" queryDelay="1000"
+										value="#{agendamentoMB.pacienteSelecionado}" id="paciente"
+										minQueryLength="3"
+										completeMethod="#{agendamentoMB.geraSugestoes}" var="p"
+										itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+										converter="paciente" forceSelection="true"
+										disabled="#{agendamentoMB.entity.id != 0}"
+										required="#{!agendamentoMB.visivel}"
+										styleClass="paciente MarRight5 Wid70"
+										style="width:70% !important">
 
-                                <p:panel id="pnNovoPaciente" visible="#{agendamentoMB.visivel}">
-                                    <h:panelGroup styleClass="lumeField">
-                                        <p:outputLabel for="nomePaciente" value="Nome : " />
-                                        <p:inputText id="nomePaciente" value="#{agendamentoMB.paciente.dadosBasico.nome}" maxlength="200" required="#{agendamentoMB.visivel}" />
-                                        <p:message for="nomePaciente" styleClass="msg" />
-                                    </h:panelGroup>
-                                    <h:panelGroup styleClass="lumeField">
-                                        <p:outputLabel for="emailPaciente" value="Email : " />
-                                        <p:inputText id="emailPaciente" value="#{agendamentoMB.paciente.dadosBasico.email}" maxlength="200" />
-                                        <p:message for="emailPaciente" styleClass="msg" />
-                                    </h:panelGroup>
-                                    <h:panelGroup styleClass="lumeField">
-                                        <p:outputLabel for="telResidencia" value="Telefone Residencial : " />
-                                        <p:inputMask id="telResidencia" value="#{agendamentoMB.paciente.dadosBasico.telefone}" maxlength="15" mask="(99) 9999-9999">
+										<p:column headerText="Nome">
+											<h:outputText value="#{p.dadosBasico.nome}" />
+										</p:column>
+										<p:column headerText="Celular">
+											<h:outputText value="#{p.dadosBasico.celular}" />
+										</p:column>
+										<p:column headerText="Nome da Mãe">
+											<h:outputText value="#{p.nomeMae}" />
+										</p:column>
 
-                                        </p:inputMask>
-                                        <p:message for="telResidencia" styleClass="msg" />
-                                    </h:panelGroup>
-                                    <h:panelGroup styleClass="lumeField">
-                                        <p:outputLabel for="telCelular" value="Telefone Celular : " />
-                                        <p:inputMask id="telCelular" value="#{agendamentoMB.paciente.dadosBasico.celular}" maxlength="15" mask="(99) 99999-9999">
-                                        </p:inputMask>
-                                        <p:message for="telCelular" styleClass="msg" />
-                                    </h:panelGroup>
-                                    <h:panelGroup styleClass="lumeField">
-                                        <p:outputLabel for="dtNascimento" value="Data de Nascimento : " />
-                                        <p:calendar id="dtNascimento" required="#{agendamentoMB.visivel}" value="#{agendamentoMB.paciente.dadosBasico.dataNascimento}" pattern="dd/MM/yyyy"
-                                            showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" maxdate="#{odontoMB.sysdate}"
-                                            class="Wid20" mask="true">
-                                            <p:ajax event="dateSelect" update="pgResponsavel" listener="#{agendamentoMB.validaIdade}" />
-                                        </p:calendar>
-                                        <p:message for="dtNascimento" styleClass="msg" />
-                                    </h:panelGroup>
-                                    <h:panelGroup styleClass="lumeField" id="pgResponsavel">
-                                        <p:outputLabel for="responsavel" value="Responsável : " />
-                                        <p:inputText id="responsavel" value="#{agendamentoMB.paciente.dadosBasico.responsavel}" required="#{agendamentoMB.responsavel and agendamentoMB.visivel}"
-                                            maxlength="200" />
-                                        <p:message for="responsavel" styleClass="msg" />
-                                    </h:panelGroup>
-                                    <p:separator />
-                                    <div class="Container25 Responsive100 Fnone">
-                                        <p:commandButton id="persistPaciente" icon="White fa fa-save" process="pnAgendamento" value="Salvar"
-                                            update=":lume:pnNovoPaciente, :lume:paciente, planoTratamento,procedimentos,:lume:messages" actionListener="#{agendamentoMB.actionPersistPaciente}"
-                                            styleClass="GreenButton" />
-                                    </div>
-                                </p:panel>
-                            </h:panelGroup>
+										<p:ajax event="itemSelect"
+											listener="#{agendamentoMB.handleSelect}"
+											update="planoTratamento, pgProcedimentos" />
+									</p:autoComplete>
+									<p:commandButton id="novoPaciente"
+										rendered="#{!agendamentoMB.visivel}" icon="fa fa-plus White"
+										update="pnNovoPaciente, :lume:pnBtpaciente" immediate="true"
+										actionListener="#{agendamentoMB.novoPaciente}" />
+									<p:commandButton id="cancelarNovoPaciente"
+										rendered="#{agendamentoMB.visivel}" icon="fa fa-minus White"
+										update="pnNovoPaciente, :lume:pnBtpaciente" immediate="true"
+										actionListener="#{agendamentoMB.cancelarNovoPaciente}" />
+								</h:panelGroup>
 
-                            <h:panelGroup styleClass="lumeField">
-                                <p:outputLabel for="planoTratamento" value="Plano : " />
-                                <p:selectOneMenu id="planoTratamento" value="#{agendamentoMB.planoTratamentoSelecionado}" converter="planoTratamento">
-                                    <f:selectItem itemValue="#{null}" itemLabel="Selecione um Plano" />
-                                    <f:selectItems value="#{agendamentoMB.planoTratamentos}" var="planoTratamento" itemLabel="#{planoTratamento.dataHoraDescStr}" itemValue="#{planoTratamento}" />
-                                    <p:ajax update=":lume:pgProcedimentos" process=":lume:planoTratamento,:lume:procedimentos" />
-                                </p:selectOneMenu>
-                                <p:message for="planoTratamento" styleClass="msg" />
-                            </h:panelGroup>
-                            <h:panelGroup>
-                                <h:panelGroup styleClass="lumeField">
-                                    <p:outputLabel for="mostraFinalizados" value="Mostra procedimentos finalizados? " />
-                                    <p:selectOneRadio id="mostraFinalizados" value="#{agendamentoMB.mostraFinalizados}">
-                                        <p:ajax update="procedimentos" process="@this" />
-                                        <f:selectItem itemLabel="Sim" itemValue="true" />
-                                        <f:selectItem itemLabel="Não" itemValue="false" />
-                                    </p:selectOneRadio>
-                                </h:panelGroup>
+								<p:panel id="pnNovoPaciente" visible="#{agendamentoMB.visivel}">
+									<h:panelGroup styleClass="lumeField">
+										<p:outputLabel for="nomePaciente" value="Nome : " />
+										<p:inputText id="nomePaciente"
+											value="#{agendamentoMB.paciente.dadosBasico.nome}"
+											maxlength="200" required="#{agendamentoMB.visivel}" />
+										<p:message for="nomePaciente" styleClass="msg" />
+									</h:panelGroup>
+									<h:panelGroup styleClass="lumeField">
+										<p:outputLabel for="emailPaciente" value="Email : " />
+										<p:inputText id="emailPaciente"
+											value="#{agendamentoMB.paciente.dadosBasico.email}"
+											maxlength="200" />
+										<p:message for="emailPaciente" styleClass="msg" />
+									</h:panelGroup>
+									<h:panelGroup styleClass="lumeField">
+										<p:outputLabel for="telResidencia"
+											value="Telefone Residencial : " />
+										<p:inputMask id="telResidencia"
+											value="#{agendamentoMB.paciente.dadosBasico.telefone}"
+											maxlength="15" mask="(99) 9999-9999">
 
-                                <h:panelGroup styleClass="lumeField" id="pgProcedimentos">
-                                    <p:outputLabel for="procedimentos" value="Selecione um Procedimento : " />
-                                    <p:pickList id="procedimentos" style="height:100px;" value="#{agendamentoMB.procedimentosPickList}" var="procedimentosPickList"
-                                        itemLabel="#{procedimentosPickList.planoTratamentoProcedimento.descricaoCompleta}" itemValue="#{procedimentosPickList}" effect="fade" iconOnly="true"
-                                        responsive="true" required="false" converter="agendamentoPlanoDash">
-                                        <f:facet name="sourceCaption">Disponíveis</f:facet>
-                                        <f:facet name="targetCaption">Selecionados</f:facet>
-                                    </p:pickList>
-                                </h:panelGroup>
-                            </h:panelGroup>
-                            <h:panelGroup styleClass="lumeField" id="pnDescricao">
+										</p:inputMask>
+										<p:message for="telResidencia" styleClass="msg" />
+									</h:panelGroup>
+									<h:panelGroup styleClass="lumeField">
+										<p:outputLabel for="telCelular" value="Telefone Celular : " />
+										<p:inputMask id="telCelular"
+											value="#{agendamentoMB.paciente.dadosBasico.celular}"
+											maxlength="15" mask="(99) 99999-9999">
+										</p:inputMask>
+										<p:message for="telCelular" styleClass="msg" />
+									</h:panelGroup>
+									<h:panelGroup styleClass="lumeField">
+										<p:outputLabel for="dtNascimento"
+											value="Data de Nascimento : " />
+										<p:calendar id="dtNascimento"
+											required="#{agendamentoMB.visivel}"
+											value="#{agendamentoMB.paciente.dadosBasico.dataNascimento}"
+											pattern="dd/MM/yyyy" showWeeksBar="false"
+											locale="#{lumeSecurity.locale}"
+											timeZone="#{lumeSecurity.timeZone}" navigator="true"
+											yearRange="-100:+0" maxdate="#{odontoMB.sysdate}"
+											class="Wid20" mask="true">
+											<p:ajax event="dateSelect" update="pgResponsavel"
+												listener="#{agendamentoMB.validaIdade}" />
+										</p:calendar>
+										<p:message for="dtNascimento" styleClass="msg" />
+									</h:panelGroup>
+									<h:panelGroup styleClass="lumeField" id="pgResponsavel">
+										<p:outputLabel for="responsavel" value="Responsável : " />
+										<p:inputText id="responsavel"
+											value="#{agendamentoMB.paciente.dadosBasico.responsavel}"
+											required="#{agendamentoMB.responsavel and agendamentoMB.visivel}"
+											maxlength="200" />
+										<p:message for="responsavel" styleClass="msg" />
+									</h:panelGroup>
+									<p:separator />
+									<div class="Container25 Responsive100 Fnone">
+										<p:commandButton id="persistPaciente" icon="White fa fa-save"
+											process="pnAgendamento" value="Salvar"
+											update=":lume:pnNovoPaciente, :lume:paciente, planoTratamento,procedimentos,:lume:messages"
+											actionListener="#{agendamentoMB.actionPersistPaciente}"
+											styleClass="GreenButton" />
+									</div>
+								</p:panel>
+							</h:panelGroup>
 
-                                <p:outputLabel for="auxiliar" value="Necessita de auxiliar? : " />
-                                <p:selectOneRadio id="auxiliar" value="#{agendamentoMB.entity.auxiliar}">
-                                    <f:selectItem itemLabel="Sim" itemValue="true" />
-                                    <f:selectItem itemLabel="Não" itemValue="false" />
-                                </p:selectOneRadio>
+							<h:panelGroup styleClass="lumeField">
+								<p:outputLabel for="planoTratamento" value="Plano : " />
+								<p:selectOneMenu id="planoTratamento"
+									value="#{agendamentoMB.planoTratamentoSelecionado}"
+									converter="planoTratamento">
+									<f:selectItem itemValue="#{null}"
+										itemLabel="Selecione um Plano" />
+									<f:selectItems value="#{agendamentoMB.planoTratamentos}"
+										var="planoTratamento"
+										itemLabel="#{planoTratamento.dataHoraDescStr}"
+										itemValue="#{planoTratamento}" />
+									<p:ajax update=":lume:pgProcedimentos"
+										process=":lume:planoTratamento,:lume:procedimentos" />
+								</p:selectOneMenu>
+								<p:message for="planoTratamento" styleClass="msg" />
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="mostraFinalizados"
+										value="Mostra procedimentos finalizados? " />
+									<p:selectOneRadio id="mostraFinalizados"
+										value="#{agendamentoMB.mostraFinalizados}">
+										<p:ajax update="procedimentos" process="@this" />
+										<f:selectItem itemLabel="Sim" itemValue="true" />
+										<f:selectItem itemLabel="Não" itemValue="false" />
+									</p:selectOneRadio>
+								</h:panelGroup>
 
-                                <p:outputLabel for="descricao" value="Observações : " />
-                                <p:inputTextarea id="descricao" value="#{agendamentoMB.entity.descricao}" maxlength="200" cols="20" />
-                                <p:message for="descricao" styleClass="msg" />
-                            </h:panelGroup>
+								<h:panelGroup styleClass="lumeField" id="pgProcedimentos">
+									<p:outputLabel for="procedimentos"
+										value="Selecione um Procedimento : " />
+									<p:pickList id="procedimentos" style="height:100px;"
+										value="#{agendamentoMB.procedimentosPickList}"
+										var="procedimentosPickList"
+										itemLabel="#{procedimentosPickList.planoTratamentoProcedimento.descricaoCompleta}"
+										itemValue="#{procedimentosPickList}" effect="fade"
+										iconOnly="true" responsive="true" required="false"
+										converter="agendamentoPlanoDash">
+										<f:facet name="sourceCaption">Disponíveis</f:facet>
+										<f:facet name="targetCaption">Selecionados</f:facet>
+									</p:pickList>
+								</h:panelGroup>
+							</h:panelGroup>
+							<h:panelGroup styleClass="lumeField" id="pnDescricao">
 
+								<p:outputLabel for="auxiliar" value="Necessita de auxiliar? : " />
+								<p:selectOneRadio id="auxiliar"
+									value="#{agendamentoMB.entity.auxiliar}">
+									<f:selectItem itemLabel="Sim" itemValue="true" />
+									<f:selectItem itemLabel="Não" itemValue="false" />
+								</p:selectOneRadio>
 
-                            <h:panelGroup>
-                                <div class="Container33 Responsive100">
-                                    <h:panelGroup styleClass="lumeField">
-                                        <p:outputLabel for="inicio" value="Data Inicial: " />
-                                        <p:calendar id="inicio" value="#{agendamentoMB.inicio}" pattern="dd/MM/yyyy HH:mm" mask="true">
-                                            <p:ajax event="dateSelect" process="@this" update="fim" listener="#{agendamentoMB.validaHoraUtilProfissional}"
-                                                oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');" />
-                                        </p:calendar>
-                                    </h:panelGroup>
-                                </div>
-                                <div class="Container33 Responsive100">
-                                    <h:panelGroup styleClass="lumeField">
-                                        <p:outputLabel for="fim" value="Data Final: " />
-                                        <p:calendar id="fim" value="#{agendamentoMB.fim}" pattern="dd/MM/yyyy HH:mm" mask="true">
-                                            <p:ajax event="dateSelect" listener="#{agendamentoMB.validaHoraUtilProfissional}" oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');" />
-                                        </p:calendar>
-                                    </h:panelGroup>
-                                </div>
-                                <div class="Container33 Responsive100">
-                                    <h:panelGroup styleClass="lumeField">
-                                        <p:outputLabel for="cadeira" value="Cadeira: " />
-                                        <p:selectOneMenu id="cadeira" value="#{agendamentoMB.entity.cadeira}">
-                                            <f:selectItems value="#{agendamentoMB.cadeiras}" var="c" itemLabel="#{c}" itemValue="#{c}" />
-                                        </p:selectOneMenu>
-                                    </h:panelGroup>
-                                </div>
-                            </h:panelGroup>
-
-                            <h:panelGroup>
-                                <div class="Container33 Responsive100">
-                                    <h:panelGroup styleClass="lumeField">
-                                        <p:outputLabel for="chegouAs" value="Chegou às: " />
-                                        <p:calendar id="chegouAs" value="#{agendamentoMB.entity.chegouAs}" pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" />
-                                        <p:message styleClass="msg" for="chegouAs" />
-                                    </h:panelGroup>
-                                </div>
-                                <div class="Container33 Responsive100">
-                                    <h:panelGroup styleClass="lumeField">
-                                        <p:outputLabel for="iniciouAs" value="Iniciou atend. às: " />
-                                        <p:calendar id="iniciouAs" value="#{agendamentoMB.entity.iniciouAs}" pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" />
-                                        <p:message styleClass="msg" for="iniciouAs" />
-                                    </h:panelGroup>
-                                </div>
-                                <div class="Container33 Responsive100">
-                                    <h:panelGroup styleClass="lumeField">
-                                        <p:outputLabel for="finalizouAs" value="Finalizou atend. às: " />
-                                        <p:calendar id="finalizouAs" value="#{agendamentoMB.entity.finalizouAs}" pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" />
-                                        <p:message styleClass="msg" for="finalizouAs" />
-                                    </h:panelGroup>
-                                </div>
-                            </h:panelGroup>
-
-
-
-                        </p:panelGrid>
-                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank">
-
-                            <h:panelGroup styleClass="lumeField" id="pnStatus">
-                                <p:outputLabel for="confirmado" value="Status: " />
-                                <p:selectOneRadio id="confirmado" value="#{agendamentoMB.entity.status}" layout="responsive" columns="4">
-                                    <p:ajax update="pnStatus" process="inicio,@this" />
-                                    <f:selectItem itemLabel="Pré agendado" itemValue="P" />
-                                    <f:selectItem itemLabel="Confirmado" itemValue="S" />
-                                    <f:selectItem itemLabel="Não confirmado" itemValue="N" />
-                                    <f:selectItem itemLabel="Encaixe" itemValue="E" />
-                                    <f:selectItem itemLabel="Atendido" itemValue="A" />
-                                    <f:selectItem itemLabel="Falta" itemValue="B" />
-                                    <f:selectItem itemLabel="Cancelado" itemValue="C" />
-                                    <f:selectItem itemLabel="Remarcado" itemValue="R" itemDisabled="#{agendamentoMB.entity.id ==0 }" />
-                                    <f:selectItem itemLabel="Em atendimento" itemValue="O" />
-                                    <f:selectItem itemLabel="Cliente na clínica" itemValue="I" />
-                                </p:selectOneRadio>
-                                <h:panelGroup styleClass="lumeField" id="cancelado">
-                                    <p:outputLabel for="justificativa" value="Justificativa: " rendered="#{agendamentoMB.entity.status == 'C'}" />
-
-                                    <p:selectOneMenu id="justificativa" value="#{agendamentoMB.justificativa}" converter="dominio" styleClass="Wid50" rendered="#{agendamentoMB.entity.status == 'C'}">
-                                        <f:selectItem itemValue="#{null}" itemLabel="Selecione uma justificativa" />
-                                        <f:selectItems value="#{agendamentoMB.justificativas}" var="justificativa" itemLabel="#{justificativa.nome}" itemValue="#{justificativa}" />
-                                    </p:selectOneMenu>
-
-                                    <p:message styleClass="msg" for="justificativa" />
-                                </h:panelGroup>
-                            </h:panelGroup>
-                        </p:panelGrid>
-
-                        <p:separator />
-                        <div class="Container25 Responsive100">
-                            <p:commandButton id="persist" icon="White fa fa-save" process="pnAgendamento" value="Salvar" actionListener="#{agendamentoMB.actionPersist}"
-                                update=":lume:messages,:lume:pnAgendamento, messageDlg, :lume:profissional" oncomplete="PF('myschedule').update();" styleClass="GreenButton"
-                                disabled="#{agendamentoMB.entity.status == 'C' or agendamentoMB.entity.status == 'R'}" />
-                        </div>
-                        <div class="Container25 Responsive100">
-                            <p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" onclick="PF('confirmation').show()"
-                                disabled="#{agendamentoMB.entity.id == 0 or agendamentoMB.entity.status == 'C' or agendamentoMB.entity.status == 'R'}" styleClass="RedButton" />
-                        </div>
-                        <div class="Container25 Responsive100">
-                            <p:commandButton icon="White fa fa-close" value="Fechar" process="@this" onclick="PF('eventDialog').hide()" />
-                        </div>
-                        <div class="Container25 Responsive100">
-                            <p:commandButton id="confirmarPreCadastro" icon="White fa fa-save" process="pnAgendamento" value="Confirmar Pré Agendamento" update=":lume:messages,pnAgendamento"
-                                oncomplete="PF('myschedule').update();" actionListener="#{agendamentoMB.actionConfirmarPreCadastro}" rendered="#{agendamentoMB.entity.status == 'P'}" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </p:dialog>
-        <p:poll interval="60" oncomplete="PF('myschedule').update();" id="poll" immediate="true" async="true" global="false" process="@this" />
-
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 NoPadding">
-                <div class="Card">
-
-                    <p:panel id="pnAgnd" style="margin: 0 auto; margin-bottom: 10px;border: none">
-
-                        <div class="Container100">
-                            <h1 class="CardBigTopic">Agendamento</h1>
-                            <div class="SeparatorFull"></div>
-                            <div class="Container10 Responsive100"></div>
-                            <div class="Container100 Responsive100 ui-fluid">
-                                <p:fieldset legend="#{agendamentoMB.dentista ? 'Legenda' : 'Filtro'}" toggleable="true" toggleSpeed="500" collapsed="#{agendamentoMB.profissional == null}">
-                                    <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid" styleClass="ui-panelgrid-blank"
-                                        style="border:0px none; background-color:transparent;">
-
-                                        <p:column>
-                                            <p:outputLabel for="profissional" value="Profissional : " rendered="#{!agendamentoMB.dentista}" />
-                                            <p:selectOneMenu id="profissional" value="#{agendamentoMB.profissional}" converter="profissional" rendered="#{!agendamentoMB.dentista}" filter="true"
-                                                filterMatchMode="contains" style="margin-top:10px;margin-bottom:10px">
-                                                <f:selectItem itemValue="#{null}" itemLabel="Todos" />
-                                                <f:selectItems value="#{agendamentoMB.profissionais}" var="profissional" itemLabel="#{profissional.dadosBasico.prefixoNome}" itemValue="#{profissional}" />
-                                                <p:ajax listener="#{agendamentoMB.limpaPacienteSelecionado}" oncomplete="PF('myschedule').update();" process="@this"
-                                                    update="pacienteSelecionado,:lume:pnAgnd" />
-                                            </p:selectOneMenu>
-
-                                            <p:outputLabel value="Disponibilidade : " rendered="#{agendamentoMB.horasUteisProfissional != null}" />
-                                            <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtHorasUteisPrincipal" value="#{agendamentoMB.horasUteisProfissional}" var="hup" rowKey="#{hup}"
-                                                rendered="#{agendamentoMB.horasUteisProfissional != null}" style="margin-top:10px;margin-bottom:10px">
-
-                                                <p:column headerText="Dia">
-                                                    <h:outputText value="#{hup.diaDaSemana}" />
-                                                </p:column>
-                                                <p:column headerText="Hora Inicial">
-                                                    <h:outputText value="#{hup.horaIniStr}" />
-                                                </p:column>
-                                                <p:column headerText="Hora Final">
-                                                    <h:outputText value="#{hup.horaFimStr}" />
-                                                </p:column>
-                                            </p:dataTable>
-
-                                            <p:outputLabel for="pacienteSelecionado" value="#{dominioMB.cliente} :" rendered="#{!agendamentoMB.dentista}" />
-                                            <p:autoComplete queryDelay="1000" size="35" value="#{agendamentoMB.pacientePesquisado}" id="pacienteSelecionado"
-                                                completeMethod="#{agendamentoMB.geraSugestoes}" var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}" converter="paciente" forceSelection="true"
-                                                scrollHeight="400" minQueryLength="3" rendered="#{!agendamentoMB.dentista}" style="margin-top:10px;margin-bottom:10px">
-                                                <p:ajax event="itemSelect" listener="#{agendamentoMB.handleSelectPacienteSelecionado}" update="planoTratamento,procedimentos, profissional"
-                                                    process="@this" oncomplete="PF('myschedule').update();" />
-                                            </p:autoComplete>
-                                        </p:column>
-
-                                        <p:column>
-                                            <h:outputLabel value="Legenda : " />
-                                            <div class="my-legend" style="margin-top: 10px; margin-bottom: 10px">
-                                                <div class="legend-scale">
-                                                    <ul class="legend-labels">
-                                                        <li><span class="agendamentoPrecadastro"></span>Pré Agendado</li>
-                                                        <li><span class="agendamentoConfirmado"></span>Confirmado</li>
-                                                        <li><span class="agendamentoNaoConfirmado"></span>Não Confirmado</li>
-                                                        <li><span class="agendamentoAtendido"></span>Atendido</li>
-                                                        <li><span class="agendamentoCancelado"></span>Cancelado</li>
-                                                        <li><span class="agendamentoFalta"></span>Falta</li>
-                                                        <li><span class="agendamentoAfastamento"></span>Bloqueio</li>
-                                                        <li><span class="agemdamentoEncaixe"></span>Encaixe</li>
-                                                        <li><span class="agendamentoRemarcado"></span>Remarcado</li>
-                                                        <li><span class="clienteNaClinica"></span>Cliente na Clínica</li>
-                                                        <li><span class="emAtendimento"></span>Cliente em Atendimento</li>
-
-                                                    </ul>
-
-                                                </div>
-                                            </div>
-                                        </p:column>
-                                    </p:panelGrid>
-                                    <div class="Container33 Responsive100">
-                                        <p:commandButton value="Imprimir" type="button" icon="White fa fa-print" styleClass="NavyButton">
-                                            <p:printer target="schedule" />
-                                        </p:commandButton>
-                                    </div>
-                                    <div class="Container33 Responsive100">
-                                        <p:commandButton id="btBloqueioAgenda" value="Bloqueio de Agenda" icon="White fa fa-calendar White" styleClass="RedButton"
-                                            onclick="resize('#lume\\:dlgBloqueio');PF('dlgBloqueio').show();" disabled="#{agendamentoMB.profissional == null}" update=":lume:dtAfastamento" />
-                                    </div>
-                                    <div class="Container33 Responsive100">
-                                        <p:commandButton value="Exportar para Google Agenda" type="button" icon="White fa fa-google White"
-                                            onclick="handleClientLoad();resize('#lume\\:dlgGoogleAgenda');PF('dlgGoogleAgenda').show();" />
-                                    </div>
-                                </p:fieldset>
-                            </div>
-                        </div>
+								<p:outputLabel for="descricao" value="Observações : " />
+								<p:inputTextarea id="descricao"
+									value="#{agendamentoMB.entity.descricao}" maxlength="200"
+									cols="20" />
+								<p:message for="descricao" styleClass="msg" />
+							</h:panelGroup>
 
 
-                    </p:panel>
-                    <p:growl id="messages" globalOnly="true" />
-                    <p:schedule id="schedule" value="#{agendamentoMB.schedule}" axisFormat="HH:mm" style="width:100%;heigth:100%;margin: 0 auto;display: inline-block;" slotMinutes="15"
-                        widgetVar="myschedule" locale="pt" timeZone="#{lumeSecurity.timeZone}" firstHour="8" view="agendaWeek" timeFormat="HH:mm" minTime="07:00" maxTime="21:00" allDaySlot="false"
-                        columnFormat="ddd D/M" draggable="false" resizable="false">
-                        <p:ajax event="dateSelect" update="pnAgendamento" listener="#{agendamentoMB.onDateSelect}" oncomplete="handleDialogRequest(xhr, status, args);" resetValues="true" />
-                        <p:ajax event="eventSelect" update="pnAgendamento" listener="#{agendamentoMB.onEventSelect}" oncomplete="handleDialogRequest(xhr, status, args);" />
-                    </p:schedule>
-                </div>
-            </div>
-        </div>
+							<h:panelGroup>
+								<div class="Container33 Responsive100">
+									<h:panelGroup styleClass="lumeField">
+										<p:outputLabel for="inicio" value="Data Inicial: " />
+										<p:calendar id="inicio" value="#{agendamentoMB.inicio}"
+											pattern="dd/MM/yyyy HH:mm" mask="true">
+											<p:ajax event="dateSelect" process="@this" update="fim"
+												listener="#{agendamentoMB.validaHoraUtilProfissional}"
+												oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');" />
+										</p:calendar>
+									</h:panelGroup>
+								</div>
+								<div class="Container33 Responsive100">
+									<h:panelGroup styleClass="lumeField">
+										<p:outputLabel for="fim" value="Data Final: " />
+										<p:calendar id="fim" value="#{agendamentoMB.fim}"
+											pattern="dd/MM/yyyy HH:mm" mask="true">
+											<p:ajax event="dateSelect"
+												listener="#{agendamentoMB.validaHoraUtilProfissional}"
+												oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');" />
+										</p:calendar>
+									</h:panelGroup>
+								</div>
+								<div class="Container33 Responsive100">
+									<h:panelGroup styleClass="lumeField">
+										<p:outputLabel for="cadeira" value="Cadeira: " />
+										<p:selectOneMenu id="cadeira"
+											value="#{agendamentoMB.entity.cadeira}">
+											<f:selectItems value="#{agendamentoMB.cadeiras}" var="c"
+												itemLabel="#{c}" itemValue="#{c}" />
+										</p:selectOneMenu>
+									</h:panelGroup>
+								</div>
+							</h:panelGroup>
+
+							<h:panelGroup>
+								<div class="Container33 Responsive100">
+									<h:panelGroup styleClass="lumeField">
+										<p:outputLabel for="chegouAs" value="Chegou às: " />
+										<p:calendar id="chegouAs"
+											value="#{agendamentoMB.entity.chegouAs}"
+											pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" />
+										<p:message styleClass="msg" for="chegouAs" />
+									</h:panelGroup>
+								</div>
+								<div class="Container33 Responsive100">
+									<h:panelGroup styleClass="lumeField">
+										<p:outputLabel for="iniciouAs" value="Iniciou atend. às: " />
+										<p:calendar id="iniciouAs"
+											value="#{agendamentoMB.entity.iniciouAs}"
+											pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" />
+										<p:message styleClass="msg" for="iniciouAs" />
+									</h:panelGroup>
+								</div>
+								<div class="Container33 Responsive100">
+									<h:panelGroup styleClass="lumeField">
+										<p:outputLabel for="finalizouAs" value="Finalizou atend. às: " />
+										<p:calendar id="finalizouAs"
+											value="#{agendamentoMB.entity.finalizouAs}"
+											pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" />
+										<p:message styleClass="msg" for="finalizouAs" />
+									</h:panelGroup>
+								</div>
+							</h:panelGroup>
 
 
-        <script type="text/javascript">
-									function handleDialogRequest(xhr, status, args) {
-										console.debug('handleDialogRequest');
-										console.debug(args);
-										if (args.remarcado == true) {
-											PF('remarcado').show();
-										}
-										if (args.afastamento == true) {
-											PF('eventDialog').show();
-											resize('#lume\\:pnAgendamento');
-										}
-										if (args.hora == false) {
-											PF('insertConfirmation').show()
-										}
-										if (args.dlg == true) {
-											PF('eventDialog').hide();
-										} else {
-											PF('eventDialog').show();
-											resize('#lume\\:pnAgendamento');
-										}
-									}
-								</script>
 
-        <p:confirmDialog id="confirmDialog" message=" Você tem certeza que deseja excluir o agendamento?" header="Excluir agendamento?" severity="alert" widgetVar="confirmation" appendToBody="true">
-            <p:commandButton id="confirm" value="Sim" update=":lume:messages,:lume:pnAgendamento" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" onclick="PF('confirmation').hide();"
-                actionListener="#{agendamentoMB.actionRemove}" process="@this" />
-            <p:commandButton id="decline" value="Não" onclick="PF('confirmation').hide()" type="button" />
-        </p:confirmDialog>
-        <p:confirmDialog id="confirmInsertDialog" message="" header="Incluir agendamento?" severity="alert" widgetVar="insertConfirmation">
-            <f:facet name="message">
-                <h:outputText value="Profissional não está cadastrado para atender nesse horário." />
-                <br />
-                <h:outputText value="Você tem certeza que deseja incluir o agendamento?" />
-            </f:facet>
-            <p:commandButton id="confirmInsert" value="Sim" onclick="PF('insertConfirmation').hide();" type="button" />
-            <p:commandButton id="declineInsert" value="Não" onclick="PF('insertConfirmation').hide();PF('eventDialog').hide(); " type="button" />
-        </p:confirmDialog>
-        <p:confirmDialog id="confirmDialogSair" message=" Você tem certeza que deseja sair sem salvar?" header="Deseja sair sem salvar?" severity="alert" widgetVar="sairConfirmation"
-            appendToBody="true">
-            <p:commandButton id="confirm2" value="Sim" update=":lume:messages" onclick="PF('sairConfirmation').hide();PF('eventDialog').hide()" process="@this" />
-            <p:commandButton id="decline3" value="Não" onclick="PF('sairConfirmation').hide();PF('eventDialog').show()" type="button" />
+						</p:panelGrid>
+						<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
+							layout="grid" styleClass="ui-panelgrid-blank">
 
-        </p:confirmDialog>
+							<h:panelGroup styleClass="lumeField" id="pnStatus">
+								<p:outputLabel for="confirmado" value="Status: " />
+								<p:selectOneRadio id="confirmado"
+									value="#{agendamentoMB.entity.status}" layout="responsive"
+									columns="4">
+									<p:ajax update="pnStatus" process="inicio,@this" />
+									<f:selectItem itemLabel="Pré agendado" itemValue="P" />
+									<f:selectItem itemLabel="Confirmado" itemValue="S" />
+									<f:selectItem itemLabel="Não confirmado" itemValue="N" />
+									<f:selectItem itemLabel="Encaixe" itemValue="E" />
+									<f:selectItem itemLabel="Atendido" itemValue="A" />
+									<f:selectItem itemLabel="Falta" itemValue="B" />
+									<f:selectItem itemLabel="Cancelado" itemValue="C" />
+									<f:selectItem itemLabel="Remarcado" itemValue="R"
+										itemDisabled="#{agendamentoMB.entity.id ==0 }" />
+									<f:selectItem itemLabel="Em atendimento" itemValue="O" />
+									<f:selectItem itemLabel="Cliente na clínica" itemValue="I" />
+								</p:selectOneRadio>
+								<h:panelGroup styleClass="lumeField" id="cancelado">
+									<p:outputLabel for="justificativa" value="Justificativa: "
+										rendered="#{agendamentoMB.entity.status == 'C'}" />
 
-        <p:confirmDialog id="remarcado" message=" Você tem certeza que deseja remarcar o agendamento?" header="Remarcadar" severity="alert" widgetVar="remarcado" appendToBody="true">
-            <p:commandButton id="confirmRemarcado" value="Sim" update=":lume:messages" onclick="PF('remarcado').hide();" process="@this" />
-            <p:commandButton id="declineRemarcado" value="Não" onclick="PF('remarcado').hide();PF('eventDialog').hide()" type="button" />
+									<p:selectOneMenu id="justificativa"
+										value="#{agendamentoMB.justificativa}" converter="dominio"
+										styleClass="Wid50"
+										rendered="#{agendamentoMB.entity.status == 'C'}">
+										<f:selectItem itemValue="#{null}"
+											itemLabel="Selecione uma justificativa" />
+										<f:selectItems value="#{agendamentoMB.justificativas}"
+											var="justificativa" itemLabel="#{justificativa.nome}"
+											itemValue="#{justificativa}" />
+									</p:selectOneMenu>
 
-        </p:confirmDialog>
+									<p:message styleClass="msg" for="justificativa" />
+								</h:panelGroup>
+							</h:panelGroup>
+						</p:panelGrid>
 
-    </ui:define>
+						<p:separator />
+						<div class="Container25 Responsive100">
+							<p:commandButton id="persist" icon="White fa fa-save"
+								process="pnAgendamento" value="Salvar"
+								actionListener="#{agendamentoMB.actionPersist}"
+								update=":lume:messages,:lume:pnAgendamento, messageDlg, :lume:profissional"
+								oncomplete="PF('myschedule').update();" styleClass="GreenButton"
+								disabled="#{agendamentoMB.entity.status == 'C' or agendamentoMB.entity.status == 'R'}" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="delete" icon="White fa fa-trash-o"
+								value="Excluir" onclick="PF('confirmation').show()"
+								disabled="#{agendamentoMB.entity.id == 0 or agendamentoMB.entity.status == 'C' or agendamentoMB.entity.status == 'R'}"
+								styleClass="RedButton" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton icon="White fa fa-close" value="Fechar"
+								process="@this" onclick="PF('eventDialog').hide()" />
+						</div>
+						<div class="Container25 Responsive100">
+							<p:commandButton id="confirmarPreCadastro"
+								icon="White fa fa-save" process="pnAgendamento"
+								value="Confirmar Pré Agendamento"
+								update=":lume:messages,pnAgendamento"
+								oncomplete="PF('myschedule').update();"
+								actionListener="#{agendamentoMB.actionConfirmarPreCadastro}"
+								rendered="#{agendamentoMB.entity.status == 'P'}" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</p:dialog>
+		<p:poll interval="60" oncomplete="PF('myschedule').update();"
+			id="poll" immediate="true" async="true" global="false"
+			process="@this" />
+
+		<div class="Container100 Responsive100 NoIndent">
+			<div class="Container100 NoPadding">
+				<div class="Card">
+
+					<p:panel id="pnAgnd"
+						style="margin: 0 auto; margin-bottom: 10px;border: none">
+
+						<div class="Container100">
+							<h1 class="CardBigTopic">Agendamento</h1>
+							<div class="SeparatorFull"></div>
+							<div class="Container10 Responsive100"></div>
+							<div class="Container100 Responsive100 ui-fluid">
+								<p:fieldset
+									legend="#{agendamentoMB.dentista ? 'Legenda' : 'Filtro'}"
+									toggleable="true" toggleSpeed="500"
+									collapsed="#{agendamentoMB.profissional == null}">
+									<p:panelGrid columns="2"
+										columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid"
+										styleClass="ui-panelgrid-blank"
+										style="border:0px none; background-color:transparent;">
+
+										<p:column>
+											<p:outputLabel for="profissional" value="Profissional : "
+												rendered="#{!agendamentoMB.dentista}" />
+											<p:selectOneMenu id="profissional"
+												value="#{agendamentoMB.profissional}"
+												converter="profissional"
+												rendered="#{!agendamentoMB.dentista}" filter="true"
+												filterMatchMode="contains"
+												style="margin-top:10px;margin-bottom:10px">
+												<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+												<f:selectItems value="#{agendamentoMB.profissionais}"
+													var="profissional"
+													itemLabel="#{profissional.dadosBasico.prefixoNome}"
+													itemValue="#{profissional}" />
+												<p:ajax listener="#{agendamentoMB.limpaPacienteSelecionado}"
+													oncomplete="PF('myschedule').update();" process="@this"
+													update="pacienteSelecionado,:lume:pnAgnd" />
+											</p:selectOneMenu>
+
+											<p:outputLabel value="Disponibilidade : "
+												rendered="#{agendamentoMB.horasUteisProfissional != null}" />
+											<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+												id="dtHorasUteisPrincipal"
+												value="#{agendamentoMB.horasUteisProfissional}" var="hup"
+												rowKey="#{hup}"
+												rendered="#{agendamentoMB.horasUteisProfissional != null}"
+												style="margin-top:10px;margin-bottom:10px">
+
+												<p:column headerText="Dia">
+													<h:outputText value="#{hup.diaDaSemana}" />
+												</p:column>
+												<p:column headerText="Hora Inicial">
+													<h:outputText value="#{hup.horaIniStr}" />
+												</p:column>
+												<p:column headerText="Hora Final">
+													<h:outputText value="#{hup.horaFimStr}" />
+												</p:column>
+											</p:dataTable>
+
+											<p:outputLabel for="pacienteSelecionado"
+												value="#{dominioMB.cliente} :"
+												rendered="#{!agendamentoMB.dentista}" />
+											<p:autoComplete queryDelay="1000" size="35"
+												value="#{agendamentoMB.pacientePesquisado}"
+												id="pacienteSelecionado"
+												completeMethod="#{agendamentoMB.geraSugestoes}" var="p"
+												itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+												converter="paciente" forceSelection="true"
+												scrollHeight="400" minQueryLength="3"
+												rendered="#{!agendamentoMB.dentista}"
+												style="margin-top:10px;margin-bottom:10px">
+												<p:ajax event="itemSelect"
+													listener="#{agendamentoMB.handleSelectPacienteSelecionado}"
+													update="planoTratamento,procedimentos, profissional"
+													process="@this" oncomplete="PF('myschedule').update();" />
+											</p:autoComplete>
+										</p:column>
+
+										<p:column>
+											<h:outputLabel value="Legenda : " />
+											<div class="my-legend"
+												style="margin-top: 10px; margin-bottom: 10px">
+												<div class="legend-scale">
+													<ul class="legend-labels">
+														<li><span class="agendamentoPrecadastro"></span>Pré
+															Agendado</li>
+														<li><span class="agendamentoConfirmado"></span>Confirmado</li>
+														<li><span class="agendamentoNaoConfirmado"></span>Não
+															Confirmado</li>
+														<li><span class="agendamentoAtendido"></span>Atendido</li>
+														<li><span class="agendamentoCancelado"></span>Cancelado</li>
+														<li><span class="agendamentoFalta"></span>Falta</li>
+														<li><span class="agendamentoAfastamento"></span>Bloqueio</li>
+														<li><span class="agemdamentoEncaixe"></span>Encaixe</li>
+														<li><span class="agendamentoRemarcado"></span>Remarcado</li>
+														<li><span class="clienteNaClinica"></span>Cliente na
+															Clínica</li>
+														<li><span class="emAtendimento"></span>Cliente em
+															Atendimento</li>
+
+													</ul>
+
+												</div>
+											</div>
+										</p:column>
+									</p:panelGrid>
+									<div class="Container33 Responsive100">
+										<p:commandButton value="Imprimir" type="button"
+											icon="White fa fa-print" styleClass="NavyButton">
+											<p:printer target="schedule" />
+										</p:commandButton>
+									</div>
+									<div class="Container33 Responsive100">
+										<p:commandButton id="btBloqueioAgenda"
+											value="Bloqueio de Agenda" icon="White fa fa-calendar White"
+											styleClass="RedButton"
+											onclick="resize('#lume\\:dlgBloqueio');PF('dlgBloqueio').show();"
+											disabled="#{agendamentoMB.profissional == null}"
+											update=":lume:dtAfastamento" />
+									</div>
+									<div class="Container33 Responsive100">
+										<p:commandButton value="Exportar para Google Agenda"
+											type="button" icon="White fa fa-google White"
+											onclick="handleClientLoad();resize('#lume\\:dlgGoogleAgenda');PF('dlgGoogleAgenda').show();" />
+									</div>
+								</p:fieldset>
+							</div>
+						</div>
+
+
+					</p:panel>
+					<p:growl id="messages" globalOnly="true" />
+					<p:schedule id="schedule" value="#{agendamentoMB.schedule}"
+						axisFormat="HH:mm"
+						style="width:100%;heigth:100%;margin: 0 auto;display: inline-block;"
+						slotMinutes="15" widgetVar="myschedule" locale="pt"
+						timeZone="#{lumeSecurity.timeZone}" firstHour="8"
+						view="agendaWeek" timeFormat="HH:mm" minTime="07:00"
+						maxTime="21:00" allDaySlot="false" columnFormat="ddd D/M"
+						draggable="false" resizable="false">
+						<p:ajax event="dateSelect" update="pnAgendamento"
+							listener="#{agendamentoMB.onDateSelect}"
+							oncomplete="handleDialogRequest(xhr, status, args);"
+							resetValues="true" />
+						<p:ajax event="eventSelect" update="pnAgendamento"
+							listener="#{agendamentoMB.onEventSelect}"
+							oncomplete="handleDialogRequest(xhr, status, args);" />
+					</p:schedule>
+				</div>
+			</div>
+		</div>
+
+
+		<script type="text/javascript">
+			function handleDialogRequest(xhr, status, args) {
+				console.debug('handleDialogRequest');
+				console.debug(args);
+				if (args.remarcado == true) {
+					PF('remarcado').show();
+				}
+				if (args.afastamento == true) {
+					PF('eventDialog').show();
+					resize('#lume\\:pnAgendamento');
+				}
+				if (args.hora == false) {
+					PF('insertConfirmation').show()
+				}
+				if (args.dlg == true) {
+					PF('eventDialog').hide();
+				} else {
+					PF('eventDialog').show();
+					resize('#lume\\:pnAgendamento');
+				}
+			}
+		</script>
+
+		<p:confirmDialog id="confirmDialog"
+			message=" Você tem certeza que deseja excluir o agendamento?"
+			header="Excluir agendamento?" severity="alert"
+			widgetVar="confirmation" appendToBody="true">
+			<p:commandButton id="confirm" value="Sim"
+				update=":lume:messages,:lume:pnAgendamento"
+				oncomplete="PF('myschedule').update();PF('eventDialog').hide();"
+				onclick="PF('confirmation').hide();"
+				actionListener="#{agendamentoMB.actionRemove}" process="@this" />
+			<p:commandButton id="decline" value="Não"
+				onclick="PF('confirmation').hide()" type="button" />
+		</p:confirmDialog>
+		<p:confirmDialog id="confirmInsertDialog" message=""
+			header="Incluir agendamento?" severity="alert"
+			widgetVar="insertConfirmation">
+			<f:facet name="message">
+				<h:outputText
+					value="Profissional não está cadastrado para atender nesse horário." />
+				<br />
+				<h:outputText
+					value="Você tem certeza que deseja incluir o agendamento?" />
+			</f:facet>
+			<p:commandButton id="confirmInsert" value="Sim"
+				onclick="PF('insertConfirmation').hide();" type="button" />
+			<p:commandButton id="declineInsert" value="Não"
+				onclick="PF('insertConfirmation').hide();PF('eventDialog').hide(); "
+				type="button" />
+		</p:confirmDialog>
+		<p:confirmDialog id="confirmDialogSair"
+			message=" Você tem certeza que deseja sair sem salvar?"
+			header="Deseja sair sem salvar?" severity="alert"
+			widgetVar="sairConfirmation" appendToBody="true">
+			<p:commandButton id="confirm2" value="Sim" update=":lume:messages"
+				onclick="PF('sairConfirmation').hide();PF('eventDialog').hide()"
+				process="@this" />
+			<p:commandButton id="decline3" value="Não"
+				onclick="PF('sairConfirmation').hide();PF('eventDialog').show()"
+				type="button" />
+
+		</p:confirmDialog>
+
+		<p:confirmDialog id="remarcado"
+			message=" Você tem certeza que deseja remarcar o agendamento?"
+			header="Remarcadar" severity="alert" widgetVar="remarcado"
+			appendToBody="true">
+			<p:commandButton id="confirmRemarcado" value="Sim"
+				update=":lume:messages" onclick="PF('remarcado').hide();"
+				process="@this" />
+			<p:commandButton id="declineRemarcado" value="Não"
+				onclick="PF('remarcado').hide();PF('eventDialog').hide()"
+				type="button" />
+
+		</p:confirmDialog>
+
+	</ui:define>
 
 </ui:composition>

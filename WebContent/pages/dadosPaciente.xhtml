@@ -277,6 +277,18 @@
 							converter="paciente" size="46" forceSelection="true"
 							scrollHeight="400" maxlength="200"
 							rendered="#{pacienteMB.visivelDadosPaciente}">
+
+							<p:column headerText="Nome">
+								<h:outputText value="#{p.dadosBasico.nome}" />
+							</p:column>
+							<p:column headerText="Celular">
+								<h:outputText value="#{p.dadosBasico.celular}" />
+							</p:column>
+							<p:column headerText="Nome da Mãe">
+								<h:outputText value="#{p.nomeMae}" />
+							</p:column>
+
+
 						</p:autoComplete>
 
 						<p:outputLabel for="indicacao" value="Indicação externa : "

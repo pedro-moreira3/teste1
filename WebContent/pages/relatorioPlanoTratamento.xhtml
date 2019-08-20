@@ -1,26 +1,31 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
-    <ui:define name="content">
-        <style>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<style>
 .ui-picklist .ui-picklist-list {
-    height: 100px;
+	height: 100px;
 }
 
 .fc-time-grid-container {
-    height: auto !important;
+	height: auto !important;
 }
 
 .ui-growl {
-    z-index: 999999 !important;
+	z-index: 999999 !important;
 }
 
 .ui-dialog {
-    overflow: auto !important;
+	overflow: auto !important;
 }
 
 div.ui-selectoneradio label {
-    width: auto !important;
+	width: auto !important;
 }
+
 .labelInlineParent {
 	padding-top: 0px !important;
 	padding-bottom: 20px !important;
@@ -122,244 +127,324 @@ div.ui-selectoneradio label {
 }
 
 .ggl-tooltip {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  font-family: Arial, Helvetica;
-  font-size: 14px;
-  padding: 8px;
+	background-color: #ffffff;
+	border: 1px solid #e0e0e0;
+	font-family: Arial, Helvetica;
+	font-size: 14px;
+	padding: 8px;
 }
 
 .ggl-tooltip span {
-  font-weight: bold;
+	font-weight: bold;
 }
 
-.chartCadeiras > div, .chartProfissionais > div {
+.chartCadeiras>div, .chartProfissionais>div {
 	max-width: 100%;
 	overflow: auto;
 	overflow-y: hidden;
 }
 </style>
-        <div class="ui-g ui-fluid">
+		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-                    <p:outputPanel id="pnPrincipal" styleClass="BordNone">
+					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
 
-                        <h1>Relatório de Planos de Tratamento</h1>
-                        
-                        <p:separator styleClass="SeparatorFull" />
-                        
-						<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">			
-							<h:panelGroup styleClass="md-combo">	
-								<h:outputText for="filtroPeriodo" value="Período de criação do plano:" />
-							    <p:selectOneMenu id="filtroPeriodo" value="#{relatorioPlanoTratamentoMB.filtroPeriodo}" >
-	                                <p:ajax process="@this" update="@form" listener="#{relatorioPlanoTratamentoMB.actionTrocaDatasCriacao}" />
-	                                <f:selectItem itemValue="" itemLabel="Selecione" />
-	                                <f:selectItem itemValue="O" itemLabel="Ontem" />
-	                                <f:selectItem itemValue="H" itemLabel="Hoje" />
-	                                <f:selectItem itemValue="M" itemLabel="Mês Atual" />
-	                                <f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
-	                                <f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
-	                                <f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
-	                                <f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
-	                            </p:selectOneMenu>
-							</h:panelGroup>   				
-							<h:panelGroup>							
+						<h1>Relatório de Planos de Tratamento</h1>
+
+						<p:separator styleClass="SeparatorFull" />
+
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodo"
+									value="Período de criação do plano:" />
+								<p:selectOneMenu id="filtroPeriodo"
+									value="#{relatorioPlanoTratamentoMB.filtroPeriodo}">
+									<p:ajax process="@this" update="@form"
+										listener="#{relatorioPlanoTratamentoMB.actionTrocaDatasCriacao}" />
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="O" itemLabel="Ontem" />
+									<f:selectItem itemValue="H" itemLabel="Hoje" />
+									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							<h:panelGroup>
 								<h:outputText for="inicio" value="Data de criação de:" />
-     								<p:calendar	id="inicio" value="#{relatorioPlanoTratamentoMB.inicio}" />
-							</h:panelGroup>     				
-    						<h:panelGroup>
-    							<h:outputText for="fim" value="Data de criação até:" />
-    							<p:calendar 	id="fim" value="#{relatorioPlanoTratamentoMB.fim}" />
-    						</h:panelGroup>					
-						</p:panelGrid> 
-						<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-							<h:panelGroup styleClass="md-combo">	
-								<h:outputText for="filtroPeriodoFinalizacao" value="Período de finalização do plano:" />
-							    <p:selectOneMenu id="filtroPeriodoFinalizacao" value="#{relatorioPlanoTratamentoMB.filtroPeriodoFinalizacao}">
-	                                <p:ajax process="@this" update="@form" listener="#{relatorioPlanoTratamentoMB.actionTrocaDatasFinal}" />
-	                                <f:selectItem itemValue="" itemLabel="Selecione" />
-	                                <f:selectItem itemValue="O" itemLabel="Ontem" />
-	                                <f:selectItem itemValue="H" itemLabel="Hoje" />
-	                                <f:selectItem itemValue="M" itemLabel="Mês Atual" />
-	                                <f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
-	                                <f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
-	                                <f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
-	                                <f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
-	                            </p:selectOneMenu>
-							</h:panelGroup>  												
-							<h:panelGroup>							
-								<h:outputText for="inicioFinalizacao" value="Data de finalização de:" />
-     								<p:calendar	id="inicioFinalizacao" value="#{relatorioPlanoTratamentoMB.inicioFinalizacao}" />
-							</h:panelGroup>     				
-    						<h:panelGroup>
-    							<h:outputText for="fimFinalizacao" value="Data de finalização até:" />
-    							<p:calendar 	id="fimFinalizacao" value="#{relatorioPlanoTratamentoMB.fimFinalizacao}" />
-    						</h:panelGroup>				
-						</p:panelGrid> 	
-						<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-    						<h:panelGroup>
-  								<h:outputText 	for="filtroPaciente" value="Paciente:" />
-  								<p:autoComplete	id="filtroPaciente" value="#{relatorioPlanoTratamentoMB.paciente}"
-  											completeMethod="#{relatorioPlanoTratamentoMB.sugestoesPacientes}"
-  											var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+								<p:calendar id="inicio"
+									value="#{relatorioPlanoTratamentoMB.inicio}" />
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="fim" value="Data de criação até:" />
+								<p:calendar id="fim" value="#{relatorioPlanoTratamentoMB.fim}" />
+							</h:panelGroup>
+						</p:panelGrid>
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodoFinalizacao"
+									value="Período de finalização do plano:" />
+								<p:selectOneMenu id="filtroPeriodoFinalizacao"
+									value="#{relatorioPlanoTratamentoMB.filtroPeriodoFinalizacao}">
+									<p:ajax process="@this" update="@form"
+										listener="#{relatorioPlanoTratamentoMB.actionTrocaDatasFinal}" />
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="O" itemLabel="Ontem" />
+									<f:selectItem itemValue="H" itemLabel="Hoje" />
+									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="inicioFinalizacao"
+									value="Data de finalização de:" />
+								<p:calendar id="inicioFinalizacao"
+									value="#{relatorioPlanoTratamentoMB.inicioFinalizacao}" />
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="fimFinalizacao"
+									value="Data de finalização até:" />
+								<p:calendar id="fimFinalizacao"
+									value="#{relatorioPlanoTratamentoMB.fimFinalizacao}" />
+							</h:panelGroup>
+						</p:panelGrid>
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup>
+								<h:outputText for="filtroPaciente" value="Paciente:" />
+								<p:autoComplete id="filtroPaciente"
+									value="#{relatorioPlanoTratamentoMB.paciente}"
+									completeMethod="#{relatorioPlanoTratamentoMB.sugestoesPacientes}"
+									var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 									converter="paciente" forceSelection="true" scrollHeight="400"
-									minQueryLength="3" >									
-  								</p:autoComplete>
-  							</h:panelGroup>	
-  							<h:panelGroup>
-     							<h:outputText 	for="filtroProfissional" value="Profissional:" />
-     							<p:autoComplete	id="filtroProfissional" value="#{relatorioPlanoTratamentoMB.profissional}"
-     								completeMethod="#{relatorioPlanoTratamentoMB.sugestoesProfissionais}"
-     								var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-									converter="profissional" forceSelection="true" scrollHeight="400">
-								</p:autoComplete>
-     						</h:panelGroup>	
-						</p:panelGrid>																	
-                        
+									minQueryLength="3">
 
-                        <p:panelGrid id="filtro" columns="2" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank"
-                            style="border:0px none; background-color:transparent;">
-                          
-   							<h:panelGroup>
-	                            <p:outputLabel value="Finalizado? : " />	
-	                            <p:selectOneRadio value="#{relatorioPlanoTratamentoMB.status}" >
-	                            	<f:selectItem itemValue="" itemLabel="Todos" />
-	                                <f:selectItem itemValue="S" itemLabel="Sim" />
-	                                <f:selectItem itemValue="N" itemLabel="Não" />
-                            	</p:selectOneRadio>
-                            </h:panelGroup>                           
-  							<h:panelGroup>
-     							<h:outputText 	for="filtroConvenio" value="Convênio:" />
-     							<p:autoComplete	id="filtroConvenio" value="#{relatorioPlanoTratamentoMB.convenio}"
-     								completeMethod="#{relatorioPlanoTratamentoMB.sugestoesConvenios}"
-     								var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+									<p:column headerText="Nome">
+										<h:outputText value="#{p.dadosBasico.nome}" />
+									</p:column>
+									<p:column headerText="Celular">
+										<h:outputText value="#{p.dadosBasico.celular}" />
+									</p:column>
+									<p:column headerText="Nome da Mãe">
+										<h:outputText value="#{p.nomeMae}" />
+									</p:column>
+
+								</p:autoComplete>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="filtroProfissional" value="Profissional:" />
+								<p:autoComplete id="filtroProfissional"
+									value="#{relatorioPlanoTratamentoMB.profissional}"
+									completeMethod="#{relatorioPlanoTratamentoMB.sugestoesProfissionais}"
+									var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+									converter="profissional" forceSelection="true"
+									scrollHeight="400">
+								</p:autoComplete>
+							</h:panelGroup>
+						</p:panelGrid>
+
+
+						<p:panelGrid id="filtro" columns="2"
+							columnClasses="ui-grid-col-12" layout="grid"
+							styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+							<h:panelGroup>
+								<p:outputLabel value="Finalizado? : " />
+								<p:selectOneRadio value="#{relatorioPlanoTratamentoMB.status}">
+									<f:selectItem itemValue="" itemLabel="Todos" />
+									<f:selectItem itemValue="S" itemLabel="Sim" />
+									<f:selectItem itemValue="N" itemLabel="Não" />
+								</p:selectOneRadio>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="filtroConvenio" value="Convênio:" />
+								<p:autoComplete id="filtroConvenio"
+									value="#{relatorioPlanoTratamentoMB.convenio}"
+									completeMethod="#{relatorioPlanoTratamentoMB.sugestoesConvenios}"
+									var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 									converter="convenio" forceSelection="true" scrollHeight="400">
 								</p:autoComplete>
-     						</h:panelGroup>	
+							</h:panelGroup>
 
-                        </p:panelGrid>
+						</p:panelGrid>
 
-                        <div class="EmptyBox5"></div>
+						<div class="EmptyBox5"></div>
 
-                        <div class="SeparatorFull"></div>
+						<div class="SeparatorFull"></div>
 
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank ui-fluid form-group">
-                            <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioPlanoTratamentoMB.actionFiltrar}" update="dtPrincipal" tabindex="1"
-                                process="@this,pnPrincipal" styleClass="OrangeButton" />
-                            <p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioPlanoTratamentoMB.actionNew}" update="dtPrincipal,pnPrincipal"
-                                immediate="true" tabindex="1" />
-                            <p:commandButton immediate="true" value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
-                                <p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="planoTratamento" />
-                            </p:commandButton>
-                        </p:panelGrid>
+							<p:commandButton id="pesquisar" icon="fa fa-search White"
+								value="Pesquisar"
+								actionListener="#{relatorioPlanoTratamentoMB.actionFiltrar}"
+								update="dtPrincipal" tabindex="1" process="@this,pnPrincipal"
+								styleClass="OrangeButton" />
+							<p:commandButton id="new" icon="White fa fa-file-o"
+								value="Limpar"
+								actionListener="#{relatorioPlanoTratamentoMB.actionNew}"
+								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1" />
+							<p:commandButton immediate="true" value="Excel" ajax="false"
+								icon="White fa fa-file-excel-o" styleClass="GreenButton">
+								<p:dataExporter encoding="iso-8859-1" type="xls"
+									target="dtPrincipal" fileName="planoTratamento" />
+							</p:commandButton>
+						</p:panelGrid>
 
-                        <div class="EmptyBox20"></div>
+						<div class="EmptyBox20"></div>
 
 
-                        <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioPlanoTratamentoMB.planoTratamentos}" var="m" rows="20" paginator="true"
-                            rowKey="#{m}" paginatorPosition="bottom">
-                            <f:facet name="header">Planos de Tratamentos</f:facet>
-                            <p:column filterBy="#{m.paciente.dadosBasico.nomeStr}" sortBy="#{m.paciente.dadosBasico.nome}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Paciente" />
-                                </f:facet>
-                                <h:outputText value="#{m.paciente.dadosBasico.nome}" title="#{m.id}" />
-                            </p:column>
-                            <p:column filterBy="#{m.profissional.dadosBasico.nomeStr}" sortBy="#{m.profissional.dadosBasico.nome}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Profissional" />
-                                </f:facet>
-                                <h:outputText value="#{m.profissional.dadosBasico.nome}" title="#{m.id}" />
-                            </p:column>                            
-                            <p:column filterBy="#{m.descricao}" sortBy="#{m.descricao}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Plano de Tratamento" />
-                                </f:facet>
-                                <h:outputText value="#{m.descricao}" />
-                            </p:column>
-                            <p:column filterBy="#{m.dataHoraStr}" sortBy="#{m.dataHoraStrOrd}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Data de Início" />
-                                </f:facet>
-                                <h:outputText value="#{m.dataHoraStr}" />
-                            </p:column>
-                            <p:column filterBy="#{m.dataHoraFinalizadoStr}" sortBy="#{m.dataHoraFinalizadoStrOrd}" filterMatchMode="contains" rendered="#{relatorioPlanoTratamentoMB.status == 'S'}">
-                                <f:facet name="header">
-                                    <h:outputText value="Data de Fim" />
-                                </f:facet>
-                                <h:outputText value="#{m.dataHoraFinalizadoStr}" />
-                            </p:column>                            
-                            <p:column filterBy="#{m.valorTotal}" sortBy="#{m.valorTotal}" filterMatchMode="contains" style="text-align:right">
-                                <f:facet name="header">
-                                    <h:outputText value="Valor Total" />
-                                </f:facet>
-                                <h:outputText value="#{m.valorTotal}">
-                                    <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
-                                </h:outputText>
-                            </p:column>
-                            <p:column filterBy="#{m.valorTotalOrcamento}" sortBy="#{m.valorTotalOrcamento}" filterMatchMode="contains" style="text-align:right">
-                                <f:facet name="header">
-                                    <h:outputText value="Valor Total c/ Desc)" />
-                                </f:facet>
-                                <h:outputText value="#{m.valorTotalOrcamento}">
-                                    <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
-                                </h:outputText>
-                            </p:column>
-                            <p:column filterBy="#{m.valorPagar}" sortBy="#{m.valorPagar}" filterMatchMode="contains" style="text-align:right">
-                                <f:facet name="header">
-                                    <h:outputText value="Valor Restante à Pagar" />
-                                </f:facet>
-                                <h:outputText value="#{m.valorPagar}">
-                                    <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
-                                </h:outputText>
-                            </p:column>
-                            <p:column filterBy="#{m.convenio.dadosBasico.nomeStr}" sortBy="#{m.convenio.dadosBasico.nome}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Convênio" />
-                                </f:facet>
-                                <h:outputText value="#{m.convenio.dadosBasico.nome}" title="#{m.id}" />
-                            </p:column>   
-                            <p:column rendered="#{relatorioPlanoTratamentoMB.status == 'N'}" exportable="false">
-                                <p:commandButton icon="White fa fa-times-circle" onclick="PF('devolver').show();" title="Encerrar" process="@this" styleClass="OrangeButton"
-                                    action="#{planoTratamentoMB.setEntity(m)}" />
-                                <p:button icon="White fa fa-eye" title="Visualizar" onclick="window.open('paciente.jsf?idpt=#{m.id}'); return false;" />
-                            </p:column>
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							id="dtPrincipal"
+							value="#{relatorioPlanoTratamentoMB.planoTratamentos}" var="m"
+							rows="20" paginator="true" rowKey="#{m}"
+							paginatorPosition="bottom">
+							<f:facet name="header">Planos de Tratamentos</f:facet>
+							<p:column filterBy="#{m.paciente.dadosBasico.nomeStr}"
+								sortBy="#{m.paciente.dadosBasico.nome}"
+								filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Paciente" />
+								</f:facet>
+								<h:outputText value="#{m.paciente.dadosBasico.nome}"
+									title="#{m.id}" />
+							</p:column>
+							<p:column filterBy="#{m.profissional.dadosBasico.nomeStr}"
+								sortBy="#{m.profissional.dadosBasico.nome}"
+								filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Profissional" />
+								</f:facet>
+								<h:outputText value="#{m.profissional.dadosBasico.nome}"
+									title="#{m.id}" />
+							</p:column>
+							<p:column filterBy="#{m.descricao}" sortBy="#{m.descricao}"
+								filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Plano de Tratamento" />
+								</f:facet>
+								<h:outputText value="#{m.descricao}" />
+							</p:column>
+							<p:column filterBy="#{m.dataHoraStr}"
+								sortBy="#{m.dataHoraStrOrd}" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Data de Início" />
+								</f:facet>
+								<h:outputText value="#{m.dataHoraStr}" />
+							</p:column>
+							<p:column filterBy="#{m.dataHoraFinalizadoStr}"
+								sortBy="#{m.dataHoraFinalizadoStrOrd}"
+								filterMatchMode="contains"
+								rendered="#{relatorioPlanoTratamentoMB.status == 'S'}">
+								<f:facet name="header">
+									<h:outputText value="Data de Fim" />
+								</f:facet>
+								<h:outputText value="#{m.dataHoraFinalizadoStr}" />
+							</p:column>
+							<p:column filterBy="#{m.valorTotal}" sortBy="#{m.valorTotal}"
+								filterMatchMode="contains" style="text-align:right">
+								<f:facet name="header">
+									<h:outputText value="Valor Total" />
+								</f:facet>
+								<h:outputText value="#{m.valorTotal}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
+								</h:outputText>
+							</p:column>
+							<p:column filterBy="#{m.valorTotalOrcamento}"
+								sortBy="#{m.valorTotalOrcamento}" filterMatchMode="contains"
+								style="text-align:right">
+								<f:facet name="header">
+									<h:outputText value="Valor Total c/ Desc)" />
+								</f:facet>
+								<h:outputText value="#{m.valorTotalOrcamento}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
+								</h:outputText>
+							</p:column>
+							<p:column filterBy="#{m.valorPagar}" sortBy="#{m.valorPagar}"
+								filterMatchMode="contains" style="text-align:right">
+								<f:facet name="header">
+									<h:outputText value="Valor Restante à Pagar" />
+								</f:facet>
+								<h:outputText value="#{m.valorPagar}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
+								</h:outputText>
+							</p:column>
+							<p:column filterBy="#{m.convenio.dadosBasico.nomeStr}"
+								sortBy="#{m.convenio.dadosBasico.nome}"
+								filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Convênio" />
+								</f:facet>
+								<h:outputText value="#{m.convenio.dadosBasico.nome}"
+									title="#{m.id}" />
+							</p:column>
+							<p:column rendered="#{relatorioPlanoTratamentoMB.status == 'N'}"
+								exportable="false">
+								<p:commandButton icon="White fa fa-times-circle"
+									onclick="PF('devolver').show();" title="Encerrar"
+									process="@this" styleClass="OrangeButton"
+									action="#{planoTratamentoMB.setEntity(m)}" />
+								<p:button icon="White fa fa-eye" title="Visualizar"
+									onclick="window.open('paciente.jsf?idpt=#{m.id}'); return false;" />
+							</p:column>
 
-                        </p:dataTable>
-                    </p:outputPanel>
+						</p:dataTable>
+					</p:outputPanel>
 
-                    <p:dialog id="devolver" widgetVar="devolver" header="Finalizar" responsive="true" modal="true">
-                        <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+					<p:dialog id="devolver" widgetVar="devolver" header="Finalizar"
+						responsive="true" modal="true">
+						<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
+							layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
 
-                            <p:outputLabel for="justificativa" value="Justificativa : " />
-                            <p:selectOneMenu id="justificativa" value="#{planoTratamentoMB.justificativa}" converter="dominio" required="true">
-                                <f:selectItem itemValue="#{null}" itemLabel="Selecione uma justificativa" />
-                                <f:selectItems value="#{planoTratamentoMB.justificativas}" var="justificativa" itemLabel="#{justificativa.nome}" itemValue="#{justificativa}" />
-                            </p:selectOneMenu>
+							<p:outputLabel for="justificativa" value="Justificativa : " />
+							<p:selectOneMenu id="justificativa"
+								value="#{planoTratamentoMB.justificativa}" converter="dominio"
+								required="true">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione uma justificativa" />
+								<f:selectItems value="#{planoTratamentoMB.justificativas}"
+									var="justificativa" itemLabel="#{justificativa.nome}"
+									itemValue="#{justificativa}" />
+							</p:selectOneMenu>
 
-                            <p:outputLabel for="retorno" value="Data retorno : " />
-                            <p:calendar id="retorno" value="#{planoTratamentoMB.retorno}" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}" navigator="true" yearRange="-0:+1"
-                                mindate="#{odontoMB.sysdate}" mask="true">
-                            </p:calendar>
-                        </p:panelGrid>
+							<p:outputLabel for="retorno" value="Data retorno : " />
+							<p:calendar id="retorno" value="#{planoTratamentoMB.retorno}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}" navigator="true"
+								yearRange="-0:+1" mindate="#{odontoMB.sysdate}" mask="true">
+							</p:calendar>
+						</p:panelGrid>
 
-                        <div class="SeparatorFull"></div>
-                        <div class="Container100 Responsive100">
-                            <p:commandButton id="persistDevolver" icon="White fa fa-save" value="Salvar" actionListener="#{planoTratamentoMB.actionFinalizar}" process="@this, :lume:justificativa"
-                                oncomplete="handleDialogRequest(xhr, status, args)" styleClass="GreenButton" />
-                        </div>
-                    </p:dialog>
-                </div>
-            </div>
-        </div>
-        <script type="text/javascript">
-									function handleDialogRequest(xhr, status, args) {
-										if (args.justificativa == true) {
-											PF('devolver').hide();
-											carregarDados();
-										}
-									}
-								</script>
-    </ui:define>
+						<div class="SeparatorFull"></div>
+						<div class="Container100 Responsive100">
+							<p:commandButton id="persistDevolver" icon="White fa fa-save"
+								value="Salvar"
+								actionListener="#{planoTratamentoMB.actionFinalizar}"
+								process="@this, :lume:justificativa"
+								oncomplete="handleDialogRequest(xhr, status, args)"
+								styleClass="GreenButton" />
+						</div>
+					</p:dialog>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			function handleDialogRequest(xhr, status, args) {
+				if (args.justificativa == true) {
+					PF('devolver').hide();
+					carregarDados();
+				}
+			}
+		</script>
+	</ui:define>
 </ui:composition>
