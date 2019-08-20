@@ -11,15 +11,20 @@
 	width: auto !important;
 }
 </style>
-		<div class="ui-g ui-fluid">
-			<div class="ui-g-12 ui-lg-12">
-				<div class="card card-w-title">
-					<h:inputHidden id="idRetorno" value="#{retornoMB.entity.id}" />
-					<h1>Retorno</h1>
-					<p:separator styleClass="SeparatorFull" />
-					<p:outputPanel id="pnRetorno" styleClass="BordNone">
+
+		<p:dialog appendTo=":lume" maximizable="false" modal="true"
+			minimizable="false" resizable="false" responsive="true"
+			widgetVar="dlgViewRetorno">
+			<f:facet name="header">
+				<p:outputPanel id="viewRetornoHeader">
+					#{(retornoMB.entity.id == 0 ? 'Cadastro' : 'Alteração')} de retorno
+				</p:outputPanel>
+			</f:facet>
+			<p:outputPanel id="viewRetorno">
+				<div class="ui-g ui-fluid">
+					<div class="ui-g-12 ui-lg-12">
 						<p:panelGrid columns="4" layout="grid"
-							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 							<h:outputLabel value="Paciente : " />
 							<p:autoComplete dropdown="true" queryDelay="1000"
 								minQueryLength="3" value="#{retornoMB.entity.paciente}"
@@ -28,7 +33,6 @@
 								converter="paciente" required="true" size="46"
 								scrollHeight="400"
 								disabled="#{retornoMB.entity.paciente != null}">
-
 								<p:column headerText="Nome">
 									<h:outputText value="#{p.dadosBasico.nome}" />
 								</p:column>
@@ -38,57 +42,91 @@
 								<p:column headerText="Nome da Mãe">
 									<h:outputText value="#{p.nomeMae}" />
 								</p:column>
-
 							</p:autoComplete>
-
 							<h:outputLabel value="Status : " />
 							<p:selectOneMenu value="#{retornoMB.entity.retornar}">
 								<f:selectItem itemLabel="Pendente" itemValue="P" />
 								<f:selectItem itemLabel="Agendado" itemValue="A" />
 								<f:selectItem itemLabel="Cancelado" itemValue="C" />
 							</p:selectOneMenu>
-
 							<p:outputLabel value="Data Contato : " for="dtContato" />
 							<p:calendar id="dtContato" required="true"
 								value="#{retornoMB.entity.dataRetorno}" pattern="dd/MM/yyyy"
 								mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}"
 								timeZone="#{lumeSecurity.timeZone}" navigator="true"
 								yearRange="-100:+1" styleClass="dtContato" />
-
 							<p:outputLabel for="observacoesretornocadastro"
 								value="Observações : " />
 							<p:inputTextarea id="observacoesretornocadastro" rows="3"
 								cols="33" value="#{retornoMB.entity.observacoes}"
 								maxlength="200" />
-
 							<h:outputLabel value="Plano de Tratamento : " />
 							<h:outputText
 								value="#{retornoMB.entity.planoTratamento.descricao}" />
-
 							<h:outputLabel value="Data Finalização Plano de Tratamento : " />
 							<h:outputText
 								value="#{retornoMB.entity.planoTratamento.dataFinalizadoStr}" />
-
-
 						</p:panelGrid>
+					</div>
+				</div>
+			</p:outputPanel>
+			<p:separator styleClass="SeparatorFull" />
+			<p:panelGrid columns="1" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton icon="White fa fa-save" value="Salvar"
+					actionListener="#{retornoMB.actionPersist}"
+					update=":lume:pnRetorno" process=":lume:viewRetorno"
+					styleClass="GreenButton" />
+				<p:commandButton icon="White fa fa-close" value="Fechar"
+					styleClass="NavyButton" oncomplete="PF('dlgViewRetorno').hide()" />
+			</p:panelGrid>
+		</p:dialog>
 
-						<p:separator styleClass="SeparatorFull" />
-
-						<p:panelGrid columns="3" layout="grid"
-							styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton icon="White fa fa-save" value="Salvar"
-								actionListener="#{retornoMB.actionPersist}"
-								update=":lume:pnRetorno,:lume:dtRetorno"
-								process=":lume:pnRetorno" styleClass="GreenButton" />
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<h:inputHidden id="idRetorno" value="#{retornoMB.entity.id}" />
+					<h1>Retorno</h1>
+					<p:separator styleClass="SeparatorFull" />
+					<p:fieldset collapsed="true" legend="Filtro" toggleable="true">
+						<p:panelGrid columns="4" layout="grid" id="filtroRetorno"
+							columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+							<p:outputLabel value="Data Início" />
+							<p:calendar value="#{retornoMB.dataIni}" pattern="dd/MM/yyyy"
+								mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-100:+1"
+								style="width: 95px !important;margin-right: 5px;" />
+							<p:outputLabel value="Data Fim" />
+							<p:calendar value="#{retornoMB.dataFim}" pattern="dd/MM/yyyy"
+								mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-100:+1"
+								style="width: 95px !important;margin-left: 5px;" />
+							<p:commandButton id="pesquisar" icon="fa fa-search White"
+								actionListener="#{retornoMB.geraLista}" update=":lume:pnRetorno"
+								tabindex="1" process=":lume:filtroRetorno" value="Pesquisar"
+								styleClass="NavyButton" />
+						</p:panelGrid>
+					</p:fieldset>
+					<p:separator styleClass="SeparatorFull" />
+					<p:outputPanel id="pnRetorno" styleClass="BordNone">
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+							<p:commandButton icon="White fa fa-file-o" value="Novo"
+								actionListener="#{retornoMB.actionNew}" process="@this"
+								immediate="true" oncomplete="PF('dlgViewRetorno').show()"
+								update=":lume:viewRetorno, :lume:viewRetornoHeader" />
+							<p:commandButton icon="White fa fa-pencil" value="Editar"
+								process="@this" oncomplete="PF('dlgViewRetorno').show()"
+								update=":lume:viewRetorno, :lume:viewRetornoHeader"
+								disabled="#{retornoMB.entity.id == 0}" styleClass="NavyButton" />
 							<p:commandButton icon="White fa fa-trash-o" value="Excluir"
 								actionListener="#{retornoMB.actionRemove}"
-								update=":lume:pnRetorno,:lume:dtRetorno" process="@this"
+								update=":lume:pnRetorno" process="@this"
 								disabled="#{retornoMB.entity.id == 0}" styleClass="RedButton" />
-							<p:commandButton icon="White fa fa-file-o" value="Novo"
-								actionListener="#{retornoMB.actionNew}"
-								update=":lume:pnRetorno,:lume:dtRetorno" immediate="true" />
 						</p:panelGrid>
-
 						<div class="EmptyBox20"></div>
 					</p:outputPanel>
 
@@ -99,24 +137,7 @@
 						paginatorPosition="bottom" styleClass="tableRetorno">
 						<p:ajax event="rowSelect" update=":lume:pnRetorno" />
 						<f:facet name="header">
-							<h:panelGroup id="filtro" styleClass="dataRetorno">
-								<p:calendar value="#{retornoMB.dataIni}" pattern="dd/MM/yyyy"
-									mask="true" showWeeksBar="false"
-									locale="#{lumeSecurity.locale}"
-									timeZone="#{lumeSecurity.timeZone}" navigator="true"
-									yearRange="-100:+1"
-									style="width: 95px !important;margin-right: 5px;" /> até
-								<p:calendar value="#{retornoMB.dataFim}" pattern="dd/MM/yyyy"
-									mask="true" showWeeksBar="false"
-									locale="#{lumeSecurity.locale}"
-									timeZone="#{lumeSecurity.timeZone}" navigator="true"
-									yearRange="-100:+1"
-									style="width: 95px !important;margin-left: 5px;" />
-								<p:commandButton id="pesquisar" icon="fa fa-search White"
-									actionListener="#{retornoMB.geraLista}" update="@form"
-									tabindex="1" process=":lume:dtRetorno:filtro"
-									styleClass="OrangeButton" style="margin-left: 10px;" />
-							</h:panelGroup>
+							Retornos cadastrados
 						</f:facet>
 						<p:column filterBy="#{retorno.paciente.dadosBasico.nomeStr}"
 							sortBy="#{retorno.paciente.dadosBasico.nome}"
