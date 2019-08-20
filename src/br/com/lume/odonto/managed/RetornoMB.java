@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -81,6 +82,8 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     @Override
     public void actionPersist(ActionEvent event) {
         super.actionPersist(event);
+        PrimeFaces.current().executeScript("PF('dlgViewRetorno').hide()");
+        PrimeFaces.current().executeScript("PF('dtRetorno').filter()");
         this.geraLista();
     }
 
