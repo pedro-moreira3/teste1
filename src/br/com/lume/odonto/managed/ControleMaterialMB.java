@@ -32,8 +32,13 @@ import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.KitItem;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialLog;
+import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.PlanoTratamento;
+import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ReservaKit;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.reservaKit.ReservaKitSingleton;
 
 @ManagedBean
@@ -67,11 +72,13 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
     private boolean enableLavagem;
 
     private Dominio justificativa;
-
  
     private List<ControleMaterial> disponibilizados;
 
- 
+    //filtros
+    private Date dataInicio, dataFim;
+    private Profissional filtroPorProfissional;
+    private Paciente filtroPorPaciente; 
 
     public ControleMaterialMB() {
         super(ControleMaterialSingleton.getInstance().getBo());
@@ -80,14 +87,30 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
         this.setEnableDevolucao(false);
         this.setEnableLavagem(false);
         this.setEnableNaoUtilizado(true);
+        dataInicio = new Date();
+        dataFim = new Date();
+        Calendar c = Calendar.getInstance();
+        c.setTime(dataFim);
+        c.add(Calendar.DATE, 1);
+        dataFim = c.getTime();        
         this.geraLista();
+        
     }
+    
+    public List<Paciente> sugestoesPacientes(String query) {
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    }
+    
+    public List<Profissional> sugestoesProfissionais(String query) {
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    } 
 
-    private void geraLista() {
+    public void geraLista() {
         try {
             this.setMateriaisUnitario(ControleMaterialSingleton.getInstance().getBo().listByEmpresaAndStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             this.setKitsDisponibilizados(ReservaKitSingleton.getInstance().getBo().listKitsDevolucao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            this.setKitsPendentes(ReservaKitSingleton.getInstance().getBo().listByStatusAndReserva(ControleMaterial.PENDENTE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            this.setKitsPendentes(ReservaKitSingleton.getInstance().getBo().listByStatusReservaDataProfissionalPaciente(ControleMaterial.PENDENTE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.dataInicio, this.dataFim, this.filtroPorProfissional, this.filtroPorPaciente));
+            
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -695,6 +718,38 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
 
     public void setDisponibilizados(List<ControleMaterial> disponibilizados) {
         this.disponibilizados = disponibilizados;
+    }
+    
+    public Date getDataInicio() {
+        return dataInicio;
+    }
+    
+    public void setDataInicio(Date dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+    
+    public Date getDataFim() {
+        return dataFim;
+    }
+    
+    public void setDataFim(Date dataFim) {
+        this.dataFim = dataFim;
+    }
+    
+    public Profissional getFiltroPorProfissional() {
+        return filtroPorProfissional;
+    }
+    
+    public void setFiltroPorProfissional(Profissional filtroPorProfissional) {
+        this.filtroPorProfissional = filtroPorProfissional;
+    }
+    
+    public Paciente getFiltroPorPaciente() {
+        return filtroPorPaciente;
+    }
+    
+    public void setFiltroPorPaciente(Paciente filtroPorPaciente) {
+        this.filtroPorPaciente = filtroPorPaciente;
     }
 
 }

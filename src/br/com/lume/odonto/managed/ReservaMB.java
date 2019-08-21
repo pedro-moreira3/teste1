@@ -12,6 +12,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.event.SelectEvent;
@@ -32,6 +33,7 @@ import br.com.lume.kit.KitSingleton;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Kit;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
@@ -96,7 +98,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         super(ReservaSingleton.getInstance().getBo());     
         this.setClazz(Reserva.class);
         this.setIncluindo(true);
-        dataAtual = new Date();
+        dataAtual = new Date();        
         try {
             Calendar c = Calendar.getInstance();
             c.add(Calendar.MONTH, -1);
@@ -117,7 +119,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
             Calendar dayBefore = Calendar.getInstance();
             dayBefore.add(Calendar.DAY_OF_YEAR, (-1) * Integer.parseInt(dominio.getValor()));
             prazo = dayBefore.getTime();
-        }
+        }      
     }
 
     public void geraLista() {
@@ -153,6 +155,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         this.getEntity().setPrazo(Calendar.getInstance().getTime());
         this.setProfissionalSelecionado(agendamento.getProfissional());
         this.getEntity().setAgendamento(agendamento);
+        listaAgendamentos();
         return "reserva.jsf";
     }
 
@@ -181,11 +184,12 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
                 ativo = false;
             }
         }
+        this.getEntity().setDescricao("Reserva manual de agendamento");
         this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         this.getEntity().setData(new Date());
         this.getEntity().setProfissional(this.getProfissionalSelecionado());
         for (ReservaKit reskit : this.getReservaKits()) {
-            if (reskit.getId() == 0 || !this.getEntity().getReservaKits().contains(reskit)) {
+            if (reskit.getId() != null && reskit.getId() == 0 || !this.getEntity().getReservaKits().contains(reskit)) {
                 this.getEntity().getReservaKits().add(reskit);
             }
         }
@@ -198,12 +202,14 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
             cal.add(Calendar.DAY_OF_MONTH, (-1) * (Integer.parseInt(dominio.getValor()) + 1));
             if (this.getEntity().getPrazo().getTime() >= cal.getTime().getTime()) {
                 super.actionPersist(event);
+                this.limpar();
+                this.geraLista();
+                PrimeFaces.current().executeScript("PF('dlg').hide();");      
             } else {
                 this.addError(OdontoMensagens.getMensagem("reserva.prazo.erro"), "");
             }
         }
-        this.limpar();
-        this.geraLista();
+
     }
 
     @Override
@@ -223,7 +229,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
             if (this.getReservaKits() == null) {
                 this.setReservaKits(new ArrayList<ReservaKit>());
             }
-            reservaKit.setId(new Long(0));
+                 
             reservaKit.setStatus(Reserva.PENDENTE);
             this.getReservaKits().add(reservaKit);
             if (this.getEntity().getReservaKits() == null) {
@@ -232,6 +238,19 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         }
     }
 
+    public void carregarEditar(Reserva reserva) {
+        setEntity(reserva);      
+    } 
+    
+    public void carregarEditarItem(ReservaKit reservaKit) {
+        this.reservaKit = reservaKit;      
+    }
+    
+    public void removeItem(ReservaKit reservaKit) {
+        this.getReservaKits().remove(reservaKit);      
+    }     
+    
+    
     public void remover() throws Exception {
         try {
             if (this.getEntity().getId() != 0) {
@@ -289,6 +308,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     public void handleSelect() {
         this.filtraKit(this.getDigitacao());
         this.setSelected();
+        this.listaAgendamentos();
     }
 
     public boolean validaKit() {
@@ -434,24 +454,22 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         return sugestoes;
     }
 
-    public void selectAgendamentos() {
-        this.listaAgendamentos();
-    }
 
     public void handleSelectProfissional(SelectEvent event) {
         this.setProfissionalSelecionado((Profissional) event.getObject());
     }
 
-    private void listaAgendamentos() {        
+    public void listaAgendamentos() {     
+        this.agendamentos = new ArrayList<Agendamento>();
         List<Agendamento> agendamentosNew = AgendamentoSingleton.getInstance().getBo().listByProfissionalAndStatusAndDataLimite(profissionalSelecionado, this.getEntity().getPrazo());
         for (Agendamento agendamento : agendamentosNew) {
-            if(agendamento.getStatusNovo().matches("P|S|N|E|A|I|O")) {
-                if(agendamentos == null) {
-                    agendamentos = new ArrayList<Agendamento>();
+            if("Agendado".equals(agendamento.getStatusAgendamento().getDescricao())) {           
+                if(!this.agendamentos.contains(agendamento)) {
+                    this.agendamentos.add(agendamento);       
                 }
-                agendamentos.add(agendamento);                
             }
         }
+        carregaProcedimentos();
     }
 
     public void carregaProcedimentos() {

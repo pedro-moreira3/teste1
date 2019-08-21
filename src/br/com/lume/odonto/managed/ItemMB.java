@@ -9,6 +9,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.model.DefaultTreeNode;
@@ -23,11 +24,8 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.material.MaterialSingleton;
-//import br.com.lume.odonto.bo.DominioBO;
-//import br.com.lume.odonto.bo.ItemBO;
-//import br.com.lume.odonto.bo.MaterialBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -62,22 +60,16 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     private List<Item> listByPai = new ArrayList<>();
 
- //   private ItemBO itemBO;
-
-  //  private DominioBO dominioBO;
-
     List<TreeNode> nodes, nodesAux;
 
-//    private MaterialBO materialBO = new MaterialBO();
 
     public ItemMB() {
         super(ItemSingleton.getInstance().getBo());
-     //   itemBO = new ItemBO();
-    //    dominioBO = new DominioBO();
+
         this.setClazz(Item.class);
-        categoria = "S";
+        categoria = "N";
         this.setDisable(false);
-        this.setDisableItem(true);
+
         try {
             this.setFormasArmazenamento(this.getDominios(FORMA_ARMAZENAMENTO));
             this.setUtilizacoes(this.getDominios(UTILIZACAO));
@@ -93,6 +85,30 @@ public class ItemMB extends LumeManagedBean<Item> {
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
+    }
+    
+    public void carregarEditar(Item item) {
+        setEntity(item);
+        this.setItem(null);
+        if(item.getIdItemPai() != null) {
+            setDigitacao(item.getIdItemPai().getDescricao());    
+        }
+        setCategoria(item.getCategoria());
+        setDescricao(item.getDescricao());
+        setParametros();
+
+        if (item.getIdItemPai() != null) {
+            this.setDigitacao(item.getIdItemPai().getDescricao());
+        } else {
+            this.setDigitacao(null);
+        }
+        this.setSelected();
+        
+        PrimeFaces.current().executeScript("PF('dlg').show();");
+    }   
+    
+    public void carregarExcluir(Item item) {
+        setEntity(item);
     }
 
     @Override
@@ -158,10 +174,10 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     public void removeItens() {
         try {
-            for (Item item : listByPai) {
-                this.removeRecursivo(item);
-                ItemSingleton.getInstance().getBo().remove(item);
-            }
+           // for (Item item : listByPai) {
+             //   this.removeRecursivo(item);
+            //    ItemSingleton.getInstance().getBo().remove(item);
+          //  }
             ItemSingleton.getInstance().getBo().remove(this.getEntity());
             this.actionNew(null);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
@@ -170,19 +186,19 @@ public class ItemMB extends LumeManagedBean<Item> {
         }
     }
 
-    private void removeRecursivo(Item item) throws Exception {
-        List<Item> listByPaiAux = ItemSingleton.getInstance().getBo().listByPai(item.getId(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        if (listByPaiAux != null && !listByPaiAux.isEmpty()) {
-            for (Item itemAux : listByPaiAux) {
-                this.removeRecursivo(itemAux);
-            }
-            for (Item itemAux : listByPaiAux) {
-                ItemSingleton.getInstance().getBo().remove(item);
-            }
-        } else {
-            ItemSingleton.getInstance().getBo().remove(item);
-        }
-    }
+//    private void removeRecursivo(Item item) throws Exception {
+//        List<Item> listByPaiAux = ItemSingleton.getInstance().getBo().listByPai(item.getId(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//        if (listByPaiAux != null && !listByPaiAux.isEmpty()) {
+//            for (Item itemAux : listByPaiAux) {
+//                this.removeRecursivo(itemAux);
+//            }
+//            for (Item itemAux : listByPaiAux) {
+//                ItemSingleton.getInstance().getBo().remove(item);
+//            }
+//        } else {
+//            ItemSingleton.getInstance().getBo().remove(item);
+//        }
+//    }
 
     @Override
     public void actionRemove(ActionEvent arg0) {

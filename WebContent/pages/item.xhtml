@@ -10,10 +10,22 @@
         <div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-                    <p:outputPanel id="pnItem" styleClass="BordNone">
-                        <h:inputHidden id="id" value="#{itemMB.entity.id}" />
-                        <h1>Item</h1>
-                        <div class="SeparatorFull"></div>
+				
+                    <p:confirmDialog id="confirmDialog" width="500" header="Remover item"  widgetVar="confirmDialog" appendToBody="true">
+                       <f:facet name="message">
+                            <h:outputText value="Você tem certeza que deseja remover este Item?" />
+                    	</f:facet>
+                        <p:commandButton style="color:#ffffff !important" id="confirm" icon="fa fa-trash-o" value="Confirmar" oncomplete="PF('confirmDialog').hide()" process="@this" update=":lume:tbItemTree, :lume:pnItem" 
+                        actionListener="#{itemMB.removeItens}"  styleClass="GreenButton" />
+                        <p:commandButton style="color:#ffffff !important" value="Cancelar" oncomplete="PF('confirmDialog').hide()" icon="White fa fa-file-o" styleClass="RedButton">
+								
+
+
+                        </p:commandButton>
+                    </p:confirmDialog>								
+					<p:dialog id="dlg" widgetVar="dlg" header="Novo Item" responsive="true" modal="true" width="80%">
+						<p:panel id="pnDlg" styleClass="BordNone">
+						<br/>
                         <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
                             style="border:0px none; background-color:transparent;">
 
@@ -35,77 +47,86 @@
                             <p:column></p:column>
                             <p:column></p:column>
 
-                            <h:outputLabel value="Categoria: " />
+                            <h:outputLabel value="É uma categoria?" />
                             <p:selectOneMenu id="categoria" value="#{itemMB.categoria}" disabled="#{not empty itemMB.entity.itensFilho}">
-                                <p:ajax event="change" listener="#{itemMB.alteraCategoria}" update=":lume:pnItem" process="@this" />
+                                <p:ajax event="change" listener="#{itemMB.alteraCategoria}" update=":lume:pnItem,:lume:pnDlg" process="@this" />
                                 <f:selectItem itemValue="N" itemLabel="Não" />
                                 <f:selectItem itemValue="S" itemLabel="Sim" />
                             </p:selectOneMenu>
 
-                            <p:outputLabel for="descricao" value="Item: " />
+                            <p:outputLabel for="descricao" value="Descrição: " />
                             <p:inputText id="descricao" value="#{itemMB.descricao}" required="true" maxlength="100" />
 
                             <p:outputLabel for="estoqueMinimo" value="Estoque Mínimo: " />
-                            <p:inputText id="estoqueMinimo" value="#{itemMB.entity.estoqueMinimo}" maxlength="10" onkeypress="validaNumeros(event)" disable="#{itemMB.disableItem}" />
+                            <p:inputText id="estoqueMinimo" value="#{itemMB.entity.estoqueMinimo}" maxlength="10" onkeypress="validaNumeros(event)" disabled="#{itemMB.disableItem}"/>
 
-                            <h:outputLabel value="Forma de Armazenamento" />
-                            <p:selectOneMenu id="formaArmazenamento" value="#{itemMB.formaArmazenamento}" converter="dominio" disabled="#{itemMB.disableItem}">
+                 <h:outputLabel value="Forma de Armazenamento" />
+                            <p:selectOneMenu id="formaArmazenamento" value="#{itemMB.formaArmazenamento}" converter="dominio" >
                                 <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
-                                <f:selectItems value="#{itemMB.formasArmazenamento}" var="formaArmazenamento" itemLabel="#{formaArmazenamento.nome}" itemValue="#{formaArmazenamento}" />
+                                <f:selectItems value="#{itemMB.formasArmazenamento}" var="formaArmazenamento" itemLabel="#{formaArmazenamento.nome}" itemValue="#{formaArmazenamento}" itemDisabled="#{itemMB.disableItem}"/>
                             </p:selectOneMenu>
 
                             <h:outputLabel value="Utilização" />
-                            <p:selectOneMenu id="utilizacao" value="#{itemMB.utilizacao}" converter="dominio" disabled="#{itemMB.disableItem}">
+                            <p:selectOneMenu id="utilizacao" value="#{itemMB.utilizacao}" converter="dominio" >
                                 <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
-                                <f:selectItems value="#{itemMB.utilizacoes}" var="utilizacao" itemLabel="#{utilizacao.nome}" itemValue="#{utilizacao}" />
+                                <f:selectItems value="#{itemMB.utilizacoes}" var="utilizacao" itemLabel="#{utilizacao.nome}" itemValue="#{utilizacao}" itemDisabled="#{itemMB.disableItem}"/>
                             </p:selectOneMenu>
 
-                            <h:outputLabel value="Fração Unitária" />
-                            <p:selectOneMenu id="fracaoUnitaria" value="#{itemMB.fracaoUnitaria}" converter="dominio" required="true" disabled="#{itemMB.disableItem}">
+                            <h:outputLabel for="fracaoUnitaria" value="Fração Unitária" />
+                            <p:selectOneMenu id="fracaoUnitaria" value="#{itemMB.fracaoUnitaria}" converter="dominio" >
                                 <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
-                                <f:selectItems value="#{itemMB.fracoesUnitarias}" var="fracaoUnitaria" itemLabel="#{fracaoUnitaria.nome}" itemValue="#{fracaoUnitaria}" />
+                                <f:selectItems value="#{itemMB.fracoesUnitarias}" var="fracaoUnitaria" itemLabel="#{fracaoUnitaria.nome}" itemValue="#{fracaoUnitaria}" itemDisabled="#{itemMB.disableItem}"/>
                             </p:selectOneMenu>
 
-                            <h:outputLabel value="Unidade de Medidas" />
-                            <p:selectOneMenu id="unidadeMedida" value="#{itemMB.unidadeMedida}" converter="dominio" required="true" disabled="#{itemMB.disableItem}">
+                            <h:outputLabel for ="unidadeMedida" value="Unidade de Medidas" />
+                            <p:selectOneMenu id="unidadeMedida" value="#{itemMB.unidadeMedida}" converter="dominio" >
                                 <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
-                                <f:selectItems value="#{itemMB.unidadesMedida}" var="unidadeMedida" itemLabel="#{unidadeMedida.nome}" itemValue="#{unidadeMedida}" />
+                                <f:selectItems value="#{itemMB.unidadesMedida}" var="unidadeMedida" itemLabel="#{unidadeMedida.nome}" itemValue="#{unidadeMedida}" itemDisabled="#{itemMB.disableItem}"/>
                             </p:selectOneMenu>
 
 
                             <p:outputLabel for="tipo" value="Tipo: " />
                             <p:selectOneRadio id="tipo" value="#{itemMB.entity.tipo}" required="true">
-                                <f:selectItem itemLabel="Instrumental" itemValue="I" />
-                                <f:selectItem itemLabel="Consumo" itemValue="C" />
+                                <f:selectItem itemLabel="Instrumental" itemValue="I" itemDisabled="#{itemMB.disableItem}"/>
+                                <f:selectItem itemLabel="Consumo" itemValue="C" itemDisabled="#{itemMB.disableItem}"/>
                             </p:selectOneRadio>
 
                             <p:outputLabel for="aplicacao" value="Aplicação: " />
                             <p:selectOneRadio id="aplicacao" value="#{itemMB.entity.aplicacao}" required="true">
-                                <f:selectItem itemLabel="Indireta" itemValue="I" />
-                                <f:selectItem itemLabel="Direta" itemValue="D" />
+                                <f:selectItem itemLabel="Indireta" itemValue="I" itemDisabled="#{itemMB.disableItem}"/>
+                                <f:selectItem itemLabel="Direta" itemValue="D" itemDisabled="#{itemMB.disableItem}"/>
                             </p:selectOneRadio>
-                        </p:panelGrid>
+                        </p:panelGrid>							
+							<br />
+							<div class="SeparatorFull"></div>
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{itemMB.actionPersist}"
+											update=":lume:pnItem,:lume:pnDlg,:lume:pnItemTree" process=":lume:pnDlg"  styleClass="GreenButton" oncomplete="PF('dlg').hide();"/>	
+								<p:commandButton id="fechar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlg').hide();" immediate="true" />											
+								</p:panelGrid>
+								<div class="EmptyBox20"></div>
+						</p:panel>
+					</p:dialog>								
+                    <p:outputPanel id="pnItem" styleClass="BordNone">
+                        <h:inputHidden id="id" value="#{itemMB.entity.id}" />
+                        <h1>Item</h1>
                         <div class="SeparatorFull"></div>
-                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-                            <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{itemMB.actionPersist}" update=":lume:pnItem,:lume:pnItemTree" process=":lume:pnItem"
-                                styleClass="GreenButton" />
-                            <p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{itemMB.actionRemove}" oncomplete="handleDialogRequest(xhr, status, args);"
-                                update=":lume:pnItem,:lume:pnItemTree" process="@this" disabled="#{!itemMB.disable}" styleClass="RedButton" />
-                            <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{itemMB.actionNew}" update=":lume:pnItem,:lume:pnItemTree" immediate="true" />
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">                        
+                           	<p:commandButton id="new" icon="White fa fa-file-o" value="Inserir novo item" 
+							oncomplete="PF('dlg').show();" actionListener="#{itemMB.actionNew}"  update=":lume:pnDlg" immediate="true" />	
                         </p:panelGrid>
 
                         <br />
                         <p:outputPanel id="pnItemTree" styleClass="BordNone">
                             <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
                                 style="border:0px none; background-color:transparent;">
-                                <p:outputLabel for="filtro" value="Filtro : " />
+                                <p:outputLabel for="filtro" value="Pesquisar: " />
                                 <p:inputText id="filtro" value="#{itemMB.filtroTable}">
                                 </p:inputText>
                                 <p:commandButton id="todos" icon="White fa fa-search" value="Pesquisar" actionListener="#{itemMB.actionTodos}" update=":lume:pnItem,:lume:pnItemTree"
                                     process=":lume:pnItemTree" styleClass="OrangeButton" />
                             </p:panelGrid>
-                            <p:treeTable value="#{itemMB.root}" var="item" id="tbItemTree" selection="#{itemMB.selectedItem}" selectionMode="single" style="white-space: normal;">
-                                <p:ajax event="select" listener="#{itemMB.carregaTela()}" update=":lume:pnItem" />
+                            <p:treeTable value="#{itemMB.root}" var="item" id="tbItemTree" selection="#{itemMB.selectedItem}" selectionMode="single" style="white-space: normal;">                              
                                 <f:facet name="header">Itens</f:facet>
                                 <p:column headerText="Item" style="width: 25%; white-space: normal;" priority="1">
                                     <h:outputText value="#{item.descricao}" title="#{item.id}" />
@@ -125,20 +146,18 @@
                                 <p:column headerText="Armazenamento" style="width: 14%; white-space: normal;" priority="2">
                                     <h:outputText value="#{item.formaArmazenamentoString}" />
                                 </p:column>
+								<p:column headerText="Ações" width="20%" rendered="#{item.descricao ne 'RAIZ'}" style="text-align:center !important">
+									<p:commandButton class="OrangeButton" icon="fa fa-pencil" update=":lume:pnDlg" title="Editar" process="@this"
+									actionListener="#{itemMB.carregarEditar(item)}" style="width:33px !important" />
+									<h:outputText value="&#160;" /><h:outputText value="&#160;" />
+									<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmDialog').show();" update="" title="Remover" process="@this"
+									style="width:33px !important" actionListener="#{itemMB.carregarExcluir(item)}"/>
+								</p:column>	                                
                             </p:treeTable>
                         </p:outputPanel>
                     </p:outputPanel>
 
-                    <p:confirmDialog id="confirmDialog" width="400" header="Remover item" severity="info" widgetVar="senha" appendToBody="true">
-                        <f:facet name="message">
-                            <h:outputText value="Você tem certeza que deseja remover este Item? Ele contem vínculo com outros itens que serão excluidos juntamente" />
-                        </f:facet>
-                        <p:commandButton id="confirm" value="Ok" oncomplete="PF('senha').hide()" process="@this" update=":lume:tbItemTree, :lume:pnItem" actionListener="#{itemMB.removeItens}"
-                            styleClass="GreenButton" />
-                        <p:commandButton value="Cancelar" oncomplete="PF('senha').hide()" styleClass="RedButton">
 
-                        </p:commandButton>
-                    </p:confirmDialog>
                     <script type="text/javascript">
 																					function handleDialogRequest(xhr, status, args) {
 

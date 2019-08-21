@@ -1,17 +1,18 @@
 package br.com.lume.odonto.managed;
 
+<<<<<<< Upstream, based on origin/backend
+=======
+
+>>>>>>> 9f7f66e reserva, item, relatorio e reserva
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-
 import org.apache.log4j.Logger;
-
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;

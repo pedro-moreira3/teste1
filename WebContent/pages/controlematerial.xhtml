@@ -8,6 +8,57 @@
 
                         <h1>Empréstimo de Kits</h1>
                         <div class="SeparatorFull"></div>
+                      	<p:outputPanel>
+						
+							<p:panelGrid id="filtroRelatorio" columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+							
+								<h:panelGroup>							
+									<h:outputText 	for="dataInicial" value="Data inicial de utilização:" />
+      									<p:calendar 	id="dataInicial" value="#{controleMaterialMB.dataInicio}" />
+								</h:panelGroup>
+      				
+      								<h:panelGroup>
+      									<h:outputText 	for="dataFinal" value="Data final de utilização:" />
+      									<p:calendar 	id="dataFinal" value="#{controleMaterialMB.dataFim}" />
+      								</h:panelGroup>
+      								
+      								<h:panelGroup>
+      									<h:outputText 	for="filtroPaciente" value="Paciente:" />
+      									<p:autoComplete	id="filtroPaciente" value="#{controleMaterialMB.filtroPorPaciente}"
+      													completeMethod="#{controleMaterialMB.sugestoesPacientes}"
+      													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+													converter="paciente" forceSelection="true" scrollHeight="400"
+													minQueryLength="3" queryDelay="1000">
+										
+										<p:ajax	event="itemSelect" process="@this"/>
+      									</p:autoComplete>
+      								</h:panelGroup>
+									<h:panelGroup>
+      									<h:outputText 	for="filtroProfissional" value="Profissional:" />
+      									<p:autoComplete	id="filtroProfissional" value="#{controleMaterialMB.filtroPorProfissional}"
+      													completeMethod="#{controleMaterialMB.sugestoesProfissionais}"
+      													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+													converter="profissional" forceSelection="true" scrollHeight="400" queryDelay="1000">
+													
+										<p:ajax	event="itemSelect" process="@this"/>
+										
+										</p:autoComplete>
+      								</h:panelGroup>      								
+							
+							</p:panelGrid>
+							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+								
+								<h:panelGroup>
+      								<p:commandButton value="Filtrar" icon="White fa fa fa-search" action="#{controleMaterialMB.geraLista}"
+      														update=":lume:dtKitsPendentes" process="@this,:lume:filtroRelatorio"/>
+      							</h:panelGroup>      								
+      							<h:panelGroup></h:panelGroup>
+      							<h:panelGroup></h:panelGroup>
+								<h:panelGroup></h:panelGroup>
+							</p:panelGrid>
+						
+						</p:outputPanel>
+						<div class="SeparatorFull"></div>								
 
                         <p:fieldset legend="Kits">
 
@@ -45,10 +96,10 @@
                                 <p:column filterBy="#{reservaKit.reserva.agendamento.inicioStr}" sortBy="#{reservaKit.reserva.agendamento.inicio}" filterMatchMode="contains" headerText="Agendamento">
                                     <h:outputText value="#{reservaKit.reserva.agendamento.inicioStr}" />
                                 </p:column>
-                                <p:column filterBy="#{reservaKit.quantidade}" sortBy="#{reservaKit.quantidade}" filterMatchMode="contains" headerText="Quantidade">
+                                <p:column filterBy="#{reservaKit.quantidade}" sortBy="#{reservaKit.quantidade}" filterMatchMode="contains" headerText="Qtde">
                                     <h:outputText value="#{reservaKit.quantidade}" />
                                 </p:column>
-                                <p:column headerText="Disponibilizados">
+                                <p:column width="12%" headerText="Disponibilizados">
                                     <p:commandButton icon="White fa fa-search" oncomplete="PF('dlgDisponibilizados').show();" update=":lume:dtDisponibilizados" process="@this"
                                         actionListener="#{controleMaterialMB.carregarItensDisponibilizados(reservaKit)}" />
                                 </p:column>
