@@ -42,7 +42,7 @@ import br.com.lume.materialLog.MaterialLogSingleton;
 import br.com.lume.odonto.entity.Abastecimento;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
-import br.com.lume.odonto.entity.ControleMaterial;
+import br.com.lume.odonto.entity.EmprestimoKit;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialLog;
@@ -167,7 +167,7 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
                     // Atualizado material utilizado
                     this.getEntity().setQuantidade(quantidadeUtilizada);
                 }
-                this.getEntity().setStatus(ControleMaterial.UTILIZADO_UNITARIO);
+                this.getEntity().setStatus(EmprestimoKit.UTILIZADO_UNITARIO);
                 this.getbO().persist(this.getEntity());
                 if (quantidadeDevolvida.doubleValue() != 0d && this.getEntity().getMaterial().getItem().getAplicacao().equals(Item.APLICACAO_DIRETA)) {
                     this.devolveCusto(quantidadeUtilizada);
@@ -213,7 +213,7 @@ public class AbastecimentoMB extends LumeManagedBean<Abastecimento> {
                     MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, getEntity(), getEntity().getMaterial(), UtilsFrontEnd.getProfissionalLogado(), quantidadeDevolver,
                             getEntity().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_UNITARIA_LAVAGEM));
                 }
-                this.getEntity().setStatus(ControleMaterial.UTILIZADO_UNITARIO);
+                this.getEntity().setStatus(EmprestimoKit.UTILIZADO_UNITARIO);
                 if (quantidadeDevolvida.compareTo(BigDecimal.ZERO) > 0) {
                     new LavagemMB().lavar(this.getEntity(), quantidadeDevolvida.longValue());
                 }

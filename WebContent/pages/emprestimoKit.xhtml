@@ -14,18 +14,18 @@
 							
 								<h:panelGroup>							
 									<h:outputText 	for="dataInicial" value="Data inicial de utilização:" />
-      									<p:calendar 	id="dataInicial" value="#{controleMaterialMB.dataInicio}" />
+      									<p:calendar 	id="dataInicial" value="#{emprestimoKitMB.dataInicio}" />
 								</h:panelGroup>
       				
       								<h:panelGroup>
       									<h:outputText 	for="dataFinal" value="Data final de utilização:" />
-      									<p:calendar 	id="dataFinal" value="#{controleMaterialMB.dataFim}" />
+      									<p:calendar 	id="dataFinal" value="#{emprestimoKitMB.dataFim}" />
       								</h:panelGroup>
       								
       								<h:panelGroup>
       									<h:outputText 	for="filtroPaciente" value="Paciente:" />
-      									<p:autoComplete	id="filtroPaciente" value="#{controleMaterialMB.filtroPorPaciente}"
-      													completeMethod="#{controleMaterialMB.sugestoesPacientes}"
+      									<p:autoComplete	id="filtroPaciente" value="#{emprestimoKitMB.filtroPorPaciente}"
+      													completeMethod="#{emprestimoKitMB.sugestoesPacientes}"
       													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 													converter="paciente" forceSelection="true" scrollHeight="400"
 													minQueryLength="3" queryDelay="1000">
@@ -35,8 +35,8 @@
       								</h:panelGroup>
 									<h:panelGroup>
       									<h:outputText 	for="filtroProfissional" value="Profissional:" />
-      									<p:autoComplete	id="filtroProfissional" value="#{controleMaterialMB.filtroPorProfissional}"
-      													completeMethod="#{controleMaterialMB.sugestoesProfissionais}"
+      									<p:autoComplete	id="filtroProfissional" value="#{emprestimoKitMB.filtroPorProfissional}"
+      													completeMethod="#{emprestimoKitMB.sugestoesProfissionais}"
       													var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 													converter="profissional" forceSelection="true" scrollHeight="400" queryDelay="1000">
 													
@@ -49,7 +49,7 @@
 							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
 								
 								<h:panelGroup>
-      								<p:commandButton value="Filtrar" icon="White fa fa fa-search" action="#{controleMaterialMB.geraLista}"
+      								<p:commandButton value="Filtrar" icon="White fa fa fa-search" action="#{emprestimoKitMB.geraLista}"
       														update=":lume:dtKitsPendentes" process="@this,:lume:filtroRelatorio"/>
       							</h:panelGroup>      								
       							<h:panelGroup></h:panelGroup>
@@ -62,11 +62,11 @@
 
                         <p:fieldset legend="Kits">
 
-                            <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtKitsPendentes" value="#{controleMaterialMB.kitsPendentes}" var="reservaKit" rows="7" paginator="true"
-                                selection="#{controleMaterialMB.reservaKit}" selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom">
+                            <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtKitsPendentes" value="#{emprestimoKitMB.kitsPendentes}" var="reservaKit" rows="7" paginator="true"
+                                selection="#{emprestimoKitMB.reservaKit}" selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom">
                                 <f:facet name="header">Kits Pendentes</f:facet>
-                                <p:ajax event="rowSelect" listener="#{controleMaterialMB.limpaMateriais}"
-                                    update=":lume:dtMateriaisDisponiveis, :lume:disponibiliza, :lume:dtItensPendentes, :lume:dtKitsPendentes, :lume:entregar,:lume:naoUtilizado" process="@this" />
+                                <p:ajax event="rowSelect" listener="#{emprestimoKitMB.limpaMateriais}"
+                                    update=":lume:dtMateriaisDisponiveis, :lume:disponibiliza, :lume:dtItensPendentes, :lume:entregar,:lume:naoUtilizado" process="@this" />
                                 <p:column filterBy="#{reservaKit.reserva.descricao}" sortBy="#{reservaKit.reserva.descricao}" filterMatchMode="contains" headerText="Reserva">
                                     <h:outputText value="#{reservaKit.reserva.descricao}" title="#{reservaKit.id}" />
                                 </p:column>
@@ -101,35 +101,35 @@
                                 </p:column>
                                 <p:column width="12%" headerText="Disponibilizados">
                                     <p:commandButton icon="White fa fa-search" oncomplete="PF('dlgDisponibilizados').show();" update=":lume:dtDisponibilizados" process="@this"
-                                        actionListener="#{controleMaterialMB.carregarItensDisponibilizados(reservaKit)}" />
+                                        actionListener="#{emprestimoKitMB.carregarItensDisponibilizados(reservaKit)}" />
                                 </p:column>
                             </p:dataTable>
                         </p:fieldset>
                         <br />
                         <p:fieldset legend="Materiais">
-                            <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtItensPendentes" value="#{controleMaterialMB.kitItensPendentes}" var="kitItemSelecionado" rows="7" paginator="true"
-                                selection="#{controleMaterialMB.kitItemSelecionado}" selectionMode="single" rowKey="#{kitItemSelecionado}" paginatorPosition="bottom">
-                                <p:ajax event="rowSelect" update=":lume:dtMateriaisDisponiveis, :lume:dtItensPendentes, :lume:disponibiliza" listener="#{controleMaterialMB.carregaItem}"
+                            <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtItensPendentes" value="#{emprestimoKitMB.kitItensPendentes}" var="kitItemSelecionado" rows="7" paginator="true"
+                                selection="#{emprestimoKitMB.kitItemSelecionado}" selectionMode="single" rowKey="#{kitItemSelecionado}" paginatorPosition="bottom">
+                                <p:ajax event="rowSelect" update=":lume:dtMateriaisDisponiveis, :lume:disponibiliza" listener="#{emprestimoKitMB.carregaItem}"
                                     process="@this" />
                                 <f:facet name="header">Itens Pendentes</f:facet>
                                 <p:column filterBy="#{kitItemSelecionado.item.descricaoLimpa}" sortBy="#{kitItemSelecionado.item.descricao}" filterMatchMode="contains" headerText="Descrição">
                                     <h:outputText value="#{kitItemSelecionado.item.descricao}" title="#{kitItemSelecionado.id}" />
                                 </p:column>
-                                <p:column filterBy="#{kitItemSelecionado.quantidade * controleMaterialMB.quantidadeReservaKit}"
-                                    sortBy="#{kitItemSelecionado.quantidade * controleMaterialMB.quantidadeReservaKit}" filterMatchMode="contains" headerText="Quantidade">
-                                    <h:outputText value="#{kitItemSelecionado.quantidade * controleMaterialMB.quantidadeReservaKit}" />
-                                    <h:outputText value="#{controleMaterialMB.getUnidadeString(kitItemSelecionado.item)}" styleClass="unidadeMedidaString" />
+                                <p:column filterBy="#{kitItemSelecionado.quantidade * emprestimoKitMB.quantidadeReservaKit}"
+                                    sortBy="#{kitItemSelecionado.quantidade * emprestimoKitMB.quantidadeReservaKit}" filterMatchMode="contains" headerText="Quantidade">
+                                    <h:outputText value="#{kitItemSelecionado.quantidade * emprestimoKitMB.quantidadeReservaKit}" />
+                                    <h:outputText value="#{emprestimoKitMB.getUnidadeString(kitItemSelecionado.item)}" styleClass="unidadeMedidaString" />
                                 </p:column>
                             </p:dataTable>
                             <br />
 
-                            <p:dataTable filterDelay="1500"  reflow="true" emptyMessage=" " id="dtMateriaisDisponiveis" value="#{controleMaterialMB.materiaisDisponiveis}" var="materiaisSelecionado" rows="7"
-                                paginator="true" selection="#{controleMaterialMB.materiaisSelecionado}" paginatorPosition="bottom" rowKey="#{materiaisSelecionado.id}">
+                            <p:dataTable filterDelay="1500"  reflow="true" emptyMessage=" " id="dtMateriaisDisponiveis" value="#{emprestimoKitMB.materiaisDisponiveis}" var="materiaisSelecionado" rows="7"
+                                paginator="true" selection="#{emprestimoKitMB.materiaisSelecionado}" paginatorPosition="bottom" rowKey="#{materiaisSelecionado.id}">
 
-                                <p:ajax event="rowSelect" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{controleMaterialMB.actionVerificaDisponibiliza}" />
-                                <p:ajax event="rowSelectCheckbox" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{controleMaterialMB.actionVerificaDisponibiliza}" />
-                                <p:ajax event="rowUnselectCheckbox" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{controleMaterialMB.actionVerificaDisponibiliza}" />
-                                <p:ajax event="toggleSelect" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{controleMaterialMB.actionVerificaDisponibiliza}" />
+                                <p:ajax event="rowSelect" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{emprestimoKitMB.actionVerificaDisponibiliza}" />
+                                <p:ajax event="rowSelectCheckbox" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{emprestimoKitMB.actionVerificaDisponibiliza}" />
+                                <p:ajax event="rowUnselectCheckbox" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{emprestimoKitMB.actionVerificaDisponibiliza}" />
+                                <p:ajax event="toggleSelect" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{emprestimoKitMB.actionVerificaDisponibiliza}" />
 
                                 <p:column selectionMode="multiple" style="width:16px;text-align:center" />
 
@@ -141,7 +141,7 @@
                                     <h:outputText value="#{materiaisSelecionado.quantidadeAtual}">
                                         <f:convertNumber />
                                     </h:outputText>
-                                    <h:outputText value="#{controleMaterialMB.getUnidadeString(materiaisSelecionado.item)}" styleClass="unidadeMedidaString" />
+                                    <h:outputText value="#{emprestimoKitMB.getUnidadeString(materiaisSelecionado.item)}" styleClass="unidadeMedidaString" />
                                 </p:column>
                                 <p:column filterBy="#{materiaisSelecionado.marca.nome}" sortBy="#{materiaisSelecionado.marca.nome}" filterMatchMode="contains" headerText="Marca">
                                     <h:outputText value="#{materiaisSelecionado.marca.nome}" />
@@ -160,28 +160,28 @@
                             <div class="SeparatorFull"></div>
                             <p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid">
-                                <p:commandButton id="disponibiliza" icon="White fa fa-mail-forward" value="Disponibilizar" actionListener="#{controleMaterialMB.actionDisponibilizar}"
-                                    disabled="#{!controleMaterialMB.enableDisponibilizar}"
+                                <p:commandButton id="disponibiliza" icon="White fa fa-mail-forward" value="Disponibilizar" actionListener="#{emprestimoKitMB.actionDisponibilizar}"
+                                    disabled="#{!emprestimoKitMB.enableDisponibilizar}"
                                     update=":lume:dtMateriaisDisponiveis, :lume:dtItensPendentes, :lume:dtKitsPendentes, :lume:disponibiliza , :lume:entregar,:lume:naoUtilizado"
                                     process=":lume:dtMateriaisDisponiveis, @this" styleClass="GreenButton" />
-                                <p:commandButton id="entregar" icon="White fa fa-sign-out" value="Entregar" disabled="#{!controleMaterialMB.enableEntregar}"
-                                    actionListener="#{controleMaterialMB.actionEntregar}"
+                                <p:commandButton id="entregar" icon="White fa fa-sign-out" value="Entregar" disabled="#{!emprestimoKitMB.enableEntregar}"
+                                    actionListener="#{emprestimoKitMB.actionEntregar}"
                                     update=":lume:dtMateriaisDisponiveis,:lume:dtItensPendentes,:lume:dtKitsPendentes,:lume:disponibiliza,:lume:entregar,:lume:naoUtilizado"
                                     process=":lume:dtMateriaisDisponiveis, @this" />
-                                <p:commandButton id="naoUtilizado" icon="White fa fa-times-circle" value="Cancelar" onclick="PF('dlg').show();" disabled="#{controleMaterialMB.reservaKit.id == null}"
+                                <p:commandButton id="naoUtilizado" icon="White fa fa-times-circle" value="Cancelar" onclick="PF('dlg').show();" disabled="#{emprestimoKitMB.reservaKit.id == null}"
                                     styleClass="RedButton" />
                             </p:panelGrid>
                         </p:fieldset>
                         <p:dialog id="dlg" widgetVar="dlg" header="Cancelar" responsive="true" modal="true">
                             <h:panelGroup styleClass="lumeField">
                                 <p:outputLabel for="justificativa" value="Justificativa : " />
-                                <p:selectOneMenu id="justificativa" value="#{controleMaterialMB.justificativa}" converter="dominio">
+                                <p:selectOneMenu id="justificativa" value="#{emprestimoKitMB.justificativa}" converter="dominio">
                                     <f:selectItem itemValue="#{null}" itemLabel="Selecione uma justificativa" />
-                                    <f:selectItems value="#{controleMaterialMB.justificativas}" var="justificativa" itemLabel="#{justificativa.nome}" itemValue="#{justificativa}" />
+                                    <f:selectItems value="#{emprestimoKitMB.justificativas}" var="justificativa" itemLabel="#{justificativa.nome}" itemValue="#{justificativa}" />
                                 </p:selectOneMenu>
                             </h:panelGroup>
                             <div class="SeparatorFull"></div>
-                            <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{controleMaterialMB.actionCancela}"
+                            <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{emprestimoKitMB.actionCancela}"
                                 update=":lume:dtMateriaisDisponiveis,:lume:dtItensPendentes,:lume:dtKitsPendentes,:lume:disponibiliza,:lume:entregar,:lume:naoUtilizado" process="@this,justificativa"
                                 oncomplete="PF('dlg').hide();" />
                         </p:dialog>
@@ -191,8 +191,8 @@
         </div>
         <h:panelGroup id="pgDisponibilizados">
             <p:dialog id="dlgDisponibilizados" widgetVar="dlgDisponibilizados" header="Disponibilizados" modal="true" width="90%">
-                <p:dataTable filterDelay="1500"  id="dtDisponibilizados" reflow="true" emptyMessage="" value="#{controleMaterialMB.disponibilizados}" var="cm" rows="7" paginator="true" paginatorPosition="bottom">
-                    <p:ajax event="rowSelect" update=":lume:dtMateriaisDisponiveis, :lume:dtItensPendentes, :lume:disponibiliza" listener="#{controleMaterialMB.carregaItem}" process="@this" />
+                <p:dataTable filterDelay="1500"  id="dtDisponibilizados" reflow="true" emptyMessage="" value="#{emprestimoKitMB.disponibilizados}" var="cm" rows="7" paginator="true" paginatorPosition="bottom">
+                    <p:ajax event="rowSelect" update=":lume:dtMateriaisDisponiveis, :lume:dtItensPendentes, :lume:disponibiliza" listener="#{emprestimoKitMB.carregaItem}" process="@this" />
                     <f:facet name="header">Itens Disponibilizados</f:facet>
                     <p:column filterBy="#{cm.material.item.descricaoLimpa}" sortBy="#{cm.material.item.descricao}" filterMatchMode="contains" headerText="Descrição">
                         <h:outputText value="#{cm.material.item.descricao}" title="#{cm.id}" />

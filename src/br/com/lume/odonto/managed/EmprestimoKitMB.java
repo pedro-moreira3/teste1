@@ -20,13 +20,13 @@ import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
-import br.com.lume.controleMaterial.ControleMaterialSingleton;
+import br.com.lume.emprestimoKit.EmprestimoKitSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.kitItem.KitItemSingleton;
 import br.com.lume.material.MaterialSingleton;
 import br.com.lume.materialLog.MaterialLogSingleton;
-import br.com.lume.odonto.entity.ControleMaterial;
+import br.com.lume.odonto.entity.EmprestimoKit;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.KitItem;
@@ -43,11 +43,11 @@ import br.com.lume.reservaKit.ReservaKitSingleton;
 
 @ManagedBean
 @ViewScoped
-public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
+public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
 
     private static final long serialVersionUID = 1L;
 
-    private Logger log = Logger.getLogger(ControleMaterialMB.class);
+    private Logger log = Logger.getLogger(EmprestimoKitMB.class);
 
     private boolean enableDisponibilizar, enableDevolucao, enableEntregar, enableNaoUtilizado;
 
@@ -61,11 +61,11 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
 
     private List<Material> materiaisDisponiveis;
 
-    private List<ControleMaterial> materiais, materiaisUnitario;
+    private List<EmprestimoKit> materiais, materiaisUnitario;
 
     private List<Material> materiaisSelecionado;
 
-    private ControleMaterial material;
+    private EmprestimoKit material;
 
     private ReservaKit reservaKit;
 
@@ -73,16 +73,16 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
 
     private Dominio justificativa;
  
-    private List<ControleMaterial> disponibilizados;
+    private List<EmprestimoKit> disponibilizados;
 
     //filtros
     private Date dataInicio, dataFim;
     private Profissional filtroPorProfissional;
     private Paciente filtroPorPaciente; 
 
-    public ControleMaterialMB() {
-        super(ControleMaterialSingleton.getInstance().getBo());
-        this.setClazz(ControleMaterial.class);     
+    public EmprestimoKitMB() {
+        super(EmprestimoKitSingleton.getInstance().getBo());
+        this.setClazz(EmprestimoKit.class);     
         this.setEnableDisponibilizar(false);
         this.setEnableDevolucao(false);
         this.setEnableLavagem(false);
@@ -107,9 +107,9 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
 
     public void geraLista() {
         try {
-            this.setMateriaisUnitario(ControleMaterialSingleton.getInstance().getBo().listByEmpresaAndStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            this.setMateriaisUnitario(EmprestimoKitSingleton.getInstance().getBo().listByEmpresaAndStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             this.setKitsDisponibilizados(ReservaKitSingleton.getInstance().getBo().listKitsDevolucao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            this.setKitsPendentes(ReservaKitSingleton.getInstance().getBo().listByStatusReservaDataProfissionalPaciente(ControleMaterial.PENDENTE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.dataInicio, this.dataFim, this.filtroPorProfissional, this.filtroPorPaciente));
+            this.setKitsPendentes(ReservaKitSingleton.getInstance().getBo().listByStatusReservaDataProfissionalPaciente(EmprestimoKit.PENDENTE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.dataInicio, this.dataFim, this.filtroPorProfissional, this.filtroPorPaciente));
             
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -143,7 +143,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
             this.devolveMateriais(event, false);
             // atualiza a reserva para finalizada;
             this.getReservaKit().setDevolvidoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
-            this.getReservaKit().setStatus(ControleMaterial.FINALIZADO);
+            this.getReservaKit().setStatus(EmprestimoKit.FINALIZADO);
             this.getReservaKit().setDataFinalizado(new Date());
             ReservaKitSingleton.getInstance().getBo().persist(this.getReservaKit());
             this.setReservaKit(null);
@@ -170,7 +170,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
                     MaterialSingleton.getInstance().getBo().persist(this.getEntity().getMaterial());// Atualizando estoque
                     this.getEntity().setQuantidade(this.getEntity().getQuantidadeDevolvida());
                 }
-                this.getEntity().setStatus(ControleMaterial.LAVAGEM_UNITARIO);
+                this.getEntity().setStatus(EmprestimoKit.LAVAGEM_UNITARIO);
                 if (this.getEntity().getQuantidadeDevolvida().compareTo(BigDecimal.ZERO) > 0) {
                     new LavagemMB().lavar(this.getEntity(), this.getEntity().getQuantidadeDevolvida().longValue());
                 }
@@ -192,7 +192,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
             this.lavaMateriais(event);
             // atualiza a reserva para finalizada;
             this.getReservaKit().setDevolvidoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
-            this.getReservaKit().setStatus(ControleMaterial.FINALIZADO);
+            this.getReservaKit().setStatus(EmprestimoKit.FINALIZADO);
             this.getReservaKit().setDataFinalizado(new Date());
             ReservaKitSingleton.getInstance().getBo().persist(this.getReservaKit());
             this.actionNew(event);
@@ -206,7 +206,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
     }
 
     private void devolveMateriais(ActionEvent event, boolean naoUtilizado) throws BusinessException, TechnicalException, Exception {
-        for (ControleMaterial cm : this.getMateriais()) {
+        for (EmprestimoKit cm : this.getMateriais()) {
             BigDecimal quantidadeUtilizada;
             BigDecimal qtdDevolvida;
             if (naoUtilizado || cm.getMaterial().getItem().getTipo().equals("I")) {
@@ -225,10 +225,10 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
             }
             String acao = "";
             if (naoUtilizado) {
-                cm.setStatus(ControleMaterial.NAOUTILIZADO);
+                cm.setStatus(EmprestimoKit.NAOUTILIZADO);
                 acao = MaterialLog.DEVOLUCAO_KIT_NAO_UTILIZADO;
             } else {
-                cm.setStatus(ControleMaterial.UTILIZADO_KIT);
+                cm.setStatus(EmprestimoKit.UTILIZADO_KIT);
                 acao = MaterialLog.DEVOLUCAO_KIT_FINALIZAR;
             }
             this.setEntity(cm);
@@ -239,7 +239,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
     }
 
     private void lavaMateriais(ActionEvent event) throws Exception {
-        for (ControleMaterial cm : this.getMateriais()) {
+        for (EmprestimoKit cm : this.getMateriais()) {
             BigDecimal quantidadeDevolver;
             quantidadeDevolver = cm.getQuantidade().subtract(cm.getQuantidadeDevolvida());
             if (cm.getQuantidadeDevolvida().compareTo(cm.getQuantidade()) != 0) {// Foi solicitado material e devolvido alguma coisa
@@ -250,7 +250,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
                 MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, cm.getMaterial(), UtilsFrontEnd.getProfissionalLogado(), quantidadeDevolver, cm.getMaterial().getQuantidadeAtual(),
                         MaterialLog.DEVOLUCAO_KIT_LAVAGEM));
             }
-            cm.setStatus(ControleMaterial.UTILIZADO_KIT);
+            cm.setStatus(EmprestimoKit.UTILIZADO_KIT);
             if (cm.getQuantidadeDevolvida().compareTo(BigDecimal.ZERO) > 0) {
                 new LavagemMB().lavar(cm, cm.getQuantidadeDevolvida().longValue());
             }
@@ -262,7 +262,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
 
     public void actionEntregar(ActionEvent event) throws Exception {
         this.getReservaKit().setDataEntrega(new Date());
-        this.getReservaKit().setStatus(ControleMaterial.ENTREGUE);
+        this.getReservaKit().setStatus(EmprestimoKit.ENTREGUE);
         try {
             ReservaKitSingleton.getInstance().getBo().persist(this.getReservaKit());
             this.actionNew(event);
@@ -318,7 +318,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
                 this.actionPersistLowProfile(event);
             }
             MaterialLogSingleton.getInstance().getBo().persistBatch(logs);
-            this.setEntity(new ControleMaterial());
+            this.setEntity(new EmprestimoKit());
         } catch (Exception e) {
             log.info(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -353,7 +353,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
     public void actionNaoUtilizado(ActionEvent event) throws Exception {
         try {
             this.devolveMateriais(event, true);
-            this.getReservaKit().setStatus(ControleMaterial.NAOUTILIZADO);
+            this.getReservaKit().setStatus(EmprestimoKit.NAOUTILIZADO);
             this.getReservaKit().setJustificativa(justificativa.getValor());
             this.getReservaKit().setDataFinalizado(new Date());
             ReservaKitSingleton.getInstance().getBo().persist(this.getReservaKit());
@@ -373,14 +373,14 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
         try {
             if (this.getReservaKit() != null) {
                 try {
-                    this.setMateriais(ControleMaterialSingleton.getInstance().getBo().listByReservaKit(this.getReservaKit()));
+                    this.setMateriais(EmprestimoKitSingleton.getInstance().getBo().listByReservaKit(this.getReservaKit()));
                 } catch (Exception e) {
                     this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
                     log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
                 }
             }
             if (this.getMateriais() != null) {
-                for (ControleMaterial cm : this.getMateriais()) {
+                for (EmprestimoKit cm : this.getMateriais()) {
                     BigDecimal quantidadeDevolvida = cm.getQuantidade();
                     // devolvendo o material    
                     MaterialSingleton.getInstance().getBo().refresh(cm.getMaterial());
@@ -388,7 +388,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
                     MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, cm.getMaterial(), UtilsFrontEnd.getProfissionalLogado(), quantidadeDevolvida, cm.getMaterial().getQuantidadeAtual(),
                             MaterialLog.EMPRESTIMO_KIT_CANCELAR));
                     MaterialSingleton.getInstance().getBo().persist(cm.getMaterial());
-                    cm.setStatus(ControleMaterial.NAOUTILIZADO);
+                    cm.setStatus(EmprestimoKit.NAOUTILIZADO);
                     this.setEntity(cm);
                     try {
                         this.getbO().persist(this.getEntity());
@@ -399,7 +399,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
                 }
             }
             // atualiza reservakit
-            reservaKit.setStatus(ControleMaterial.NAOUTILIZADO);
+            reservaKit.setStatus(EmprestimoKit.NAOUTILIZADO);
             reservaKit.setJustificativa(justificativa.getValor());
             reservaKit.setDataFinalizado(new Date());
             ReservaKitSingleton.getInstance().getBo().persist(reservaKit);
@@ -444,8 +444,8 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
     public void habilitaDevolucao() {
         if (this.getReservaKit() != null) {
             try {
-                this.setMateriais(ControleMaterialSingleton.getInstance().getBo().listByReservaKitAndStatusEntregue(this.getReservaKit()));
-                for (ControleMaterial cm : materiais) {
+                this.setMateriais(EmprestimoKitSingleton.getInstance().getBo().listByReservaKitAndStatusEntregue(this.getReservaKit()));
+                for (EmprestimoKit cm : materiais) {
                     if (cm.getReservaKit().getKit().getTipo().equals("Instrumental")) {
                         cm.setQuantidadeDevolvida(cm.getQuantidade());
                         this.setEnableLavagem(true);
@@ -525,7 +525,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
         return materiaisDisponiveis;
     }
 
-    public List<ControleMaterial> getMateriais() {
+    public List<EmprestimoKit> getMateriais() {
         return materiais;
     }
 
@@ -533,7 +533,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
         this.actionNew(null);
         this.reservaKit = reservaKit;
         this.limpaMateriais();
-        return "controlematerial.jsf";
+        return "emprestimokit.jsf";
     }
 
     public void limpaMateriais() {
@@ -546,7 +546,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
     }
 
     public void carregarItensDisponibilizados(ReservaKit rk) {
-        disponibilizados = ControleMaterialSingleton.getInstance().getBo().listByReservaKit(rk);
+        disponibilizados = EmprestimoKitSingleton.getInstance().getBo().listByReservaKit(rk);
     }
 
     private void geraItensPendentes() {
@@ -562,7 +562,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
 
     private void validaEntrega() {
         try {
-            if (!ControleMaterialSingleton.getInstance().getBo().listByReservaKit(this.getReservaKit()).isEmpty()) {
+            if (!EmprestimoKitSingleton.getInstance().getBo().listByReservaKit(this.getReservaKit()).isEmpty()) {
                 this.setEnableEntregar(true);
             }
         } catch (Exception e) {
@@ -581,7 +581,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
         this.materiaisDisponiveis = materiaisDisponiveis;
     }
 
-    public void setMateriais(List<ControleMaterial> materiais) {
+    public void setMateriais(List<EmprestimoKit> materiais) {
         this.materiais = materiais;
     }
 
@@ -597,7 +597,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
         this.materiaisSelecionado = materiaisSelecionado;
     }
 
-    public ControleMaterial getMaterial() {
+    public EmprestimoKit getMaterial() {
         return material;
     }
 
@@ -609,7 +609,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
         this.enableDisponibilizar = enableDisponibilizar;
     }
 
-    public void setMaterial(ControleMaterial material) {
+    public void setMaterial(EmprestimoKit material) {
         if (material != null) {
             this.setEnableDevolucao(true);
         }
@@ -657,7 +657,7 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
     }
 
     public void validaCampo(RowEditEvent event) {
-        material = (ControleMaterial) event.getObject();
+        material = (EmprestimoKit) event.getObject();
         if (material.getQuantidade().doubleValue() < material.getQuantidadeDevolvida().doubleValue()) {
             this.addError(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "");
             this.setEnableDevolucao(false);
@@ -672,11 +672,11 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
         }
     }
 
-    public List<ControleMaterial> getMateriaisUnitario() {
+    public List<EmprestimoKit> getMateriaisUnitario() {
         return materiaisUnitario;
     }
 
-    public void setMateriaisUnitario(List<ControleMaterial> materiaisUnitario) {
+    public void setMateriaisUnitario(List<EmprestimoKit> materiaisUnitario) {
         this.materiaisUnitario = materiaisUnitario;
     }
 
@@ -712,11 +712,11 @@ public class ControleMaterialMB extends LumeManagedBean<ControleMaterial> {
         return this.getReservaKit() != null && this.getReservaKit().getQuantidade() != null ? this.getReservaKit().getQuantidade().intValue() : 0;
     }
 
-    public List<ControleMaterial> getDisponibilizados() {
+    public List<EmprestimoKit> getDisponibilizados() {
         return disponibilizados;
     }
 
-    public void setDisponibilizados(List<ControleMaterial> disponibilizados) {
+    public void setDisponibilizados(List<EmprestimoKit> disponibilizados) {
         this.disponibilizados = disponibilizados;
     }
     
