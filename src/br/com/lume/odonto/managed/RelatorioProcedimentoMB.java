@@ -57,7 +57,11 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
             this.filtroProcedimento = new ArrayList<String>();
         }
         
-        filtroProcedimento.addAll(Arrays.asList(""));
+        //filtroProcedimento.addAll(Arrays.asList(""));
+        Calendar calendario = Calendar.getInstance();
+        this.setDataFim(calendario.getTime());
+        calendario.add(Calendar.DAY_OF_MONTH, -7);
+        this.setDataInicio(calendario.getTime());
         
         popularLista();
     }
@@ -65,14 +69,12 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     public void popularLista() {
         try{
             
-            if(getDataInicio() == null && getDataFim() == null) {
-                
+            /*if(getDataInicio() == null && getDataFim() == null) {
                 Calendar calendario = Calendar.getInstance();
                 this.setDataFim(calendario.getTime());
                 calendario.add(Calendar.DAY_OF_MONTH, -7);
                 this.setDataInicio(calendario.getTime());
-                
-            }
+            }*/
             
             this.listaProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(this.dataInicio, this.dataFim, this.filtroPorPaciente, 
                     this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.filtroPorConvenio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
@@ -124,10 +126,10 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     private void removerFiltrosProcedimento(List<PlanoTratamentoProcedimento> procedimentos) {     
         List<PlanoTratamentoProcedimento> listaAux = new ArrayList<>(procedimentos);
         for(PlanoTratamentoProcedimento procedimento : listaAux) {
+            boolean isCancelado = procedimento.isCancelado();
+            boolean isFinalizado = procedimento.isFinalizado();
             
-            if(!(this.filtroProcedimento.contains("F") && procedimento.isFinalizado()))
-                procedimentos.remove(procedimento);
-            if(!(this.filtroProcedimento.contains("C") && procedimento.isFinalizado() && procedimento.getPlanoTratamento().getJustificativa() != null))
+            if(!(this.filtroProcedimento.contains("C") && isCancelado) && !(this.filtroProcedimento.contains("F") && isFinalizado))
                 procedimentos.remove(procedimento);
         }
     }

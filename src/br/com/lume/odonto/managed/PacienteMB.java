@@ -234,7 +234,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     }
     
     public void validaIdade() {
-        refresh();
+        //refresh();
         responsavel = false;
         if (this.getEntity().getDadosBasico() != null && this.getEntity().getDadosBasico().getDataNascimento() != null) {
             Calendar dataNasc = Calendar.getInstance();

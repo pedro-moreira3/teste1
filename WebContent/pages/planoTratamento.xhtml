@@ -870,7 +870,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<f:facet name="header">
 			<p:outputPanel id="pnlJustificativaRemoveHeader">
 				<h:outputText
-					value="Justificativa de exclusão do procedimento '#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.descricao}'" />
+					value="Justificativa de exclusão do procedimento '#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.procedimento.descricao}'" />
 			</p:outputPanel>
 		</f:facet>
 		<p:outputPanel id="pnlJustificativaRemove">
@@ -880,14 +880,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						columnClasses="ui-g-2,ui-g-10"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding justificativaExclusao">
 						<h:outputText style="margin-top: 8px" value="Justificativa: " />
-						<p:selectOneMenu
-							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.justificativaExclusao}">
+						<p:selectOneMenu rendered="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado != null}"
+							converter="dominio"
+							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.justificativaExclusaoDominio}">
 							<f:selectItem itemValue="#{null}" itemLabel="Selecione..." />
-							<f:selectItem itemValue="Cadastro de procedimento errado"
-								itemLabel="Cadastro de procedimento errado" />
-							<f:selectItem
-								itemValue="Paciente solicitou que o procedimento não fosse realizado"
-								itemLabel="Paciente solicitou que o procedimento não fosse realizado" />
+							<f:selectItems value="#{planoTratamentoMB.justificativasCancelamento}" var="cancelamento"
+								itemLabel="#{cancelamento.nome}" itemValue="#{cancelamento}" />
 						</p:selectOneMenu>
 					</p:panelGrid>
 				</div>

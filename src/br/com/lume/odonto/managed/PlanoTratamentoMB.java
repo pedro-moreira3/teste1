@@ -100,6 +100,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     private List<PlanoTratamento> planosTratamento;
 
+    private List<Dominio> justificativasCancelamento;
+
     /// ORCAMENTO ///
 
     private List<Orcamento> orcamentos;
@@ -152,6 +154,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
             profissionalFinalizaProcedimento = profissionalLogado;
             atualizaTela();
+            
+            justificativasCancelamento = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("planotratamentoprocedimento", "justificativa");
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
@@ -256,33 +260,33 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
         }
     }
-    
+
     public void actionCancelFinalizar() {
         PrimeFaces.current().executeScript("PF('devolver').hide()");
         actionPersistEvolucao();
     }
-    
+
     public void iniciaFinalizacaoPT() throws Exception {
         iniciaFinalizacaoPT(null);
     }
-    
+
     public void iniciaFinalizacaoPT(PlanoTratamento pt) throws Exception {
-        if(pt != null) {
+        if (pt != null) {
             setEntity(pt);
             carregarPlanoTratamentoProcedimentos();
         }
-        if(temProcedimentosAbertos()) {
+        if (temProcedimentosAbertos()) {
             this.addError("Finalize os procedimentos antes de encerrar o plano de tratamento!", "");
         } else {
             PrimeFaces.current().executeScript("PF('devolver').show();");
         }
     }
-    
+
     public boolean temProcedimentosAbertos() throws Exception {
-        if(this.planoTratamentoProcedimentos == null)
+        if (this.planoTratamentoProcedimentos == null)
             return false;
-        for(PlanoTratamentoProcedimento ptp: this.planoTratamentoProcedimentos)
-            if("N".equals(ptp.getExcluido()) && !"F".equals(ptp.getStatus()))
+        for (PlanoTratamentoProcedimento ptp : this.planoTratamentoProcedimentos)
+            if ("N".equals(ptp.getExcluido()) && !"F".equals(ptp.getStatus()))
                 return true;
         return false;
     }
@@ -433,22 +437,22 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         actionPersistFaces(ptp);
         PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
     }
-    
+
     public void abreJustificativaRemove(PlanoTratamentoProcedimento planoTratamentoProcedimentoRemove) {
         planoTratamentoProcedimentoSelecionado = planoTratamentoProcedimentoRemove;
         PrimeFaces.current().executeScript("PF('dlgJustificativaRemove').show()");
     }
-    
+
     public void salvaJustificativaRemove() throws Exception {
-        if(planoTratamentoProcedimentoSelecionado.getJustificativaExclusao() == null) {
+        if (planoTratamentoProcedimentoSelecionado.getJustificativaExclusaoDominio() == null) {
             addInfo("É preciso selecionar uma justificativa!", "");
             return;
         }
-            
+
         onProcedimentoRemove(planoTratamentoProcedimentoSelecionado);
         PrimeFaces.current().executeScript("PF('dlgJustificativaRemove').hide()");
     }
-    
+
     public void fechaJustifivaticaRemove() {
         planoTratamentoProcedimentoSelecionado = null;
     }
@@ -469,15 +473,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             planoTratamentoProcedimentoRemove.setExcluido(Status.SIM);
             planoTratamentoProcedimentoRemove.setDataExclusao(new Date());
             planoTratamentoProcedimentoRemove.setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
+            planoTratamentoProcedimentoRemove.setStatus("C");
             planoTratamentoProcedimentosExcluidos.add(planoTratamentoProcedimentoRemove);
             planoTratamentoProcedimentos.remove(planoTratamentoProcedimentoRemove);
             ordenaListas();
             actionPersist(null);
         } else {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            String erro = "<br>";
+            String erro = "\n";
             for (AgendamentoPlanoTratamentoProcedimento a : agenda) {
-                erro += a.getAgendamento().getProfissional().getDadosBasico().getNome() + " " + sdf.format(a.getAgendamento().getInicio()) + "<br>";
+                erro += a.getAgendamento().getProfissional().getDadosBasico().getNome() + "\nAgendado: " + sdf.format(a.getAgendamento().getInicio()) + "\n";
             }
             log.error("Erro no actionRemove" + OdontoMensagens.getMensagem("erro.procedimento.utilizado"));
             addError(OdontoMensagens.getMensagem("erro.procedimento.utilizado") + erro, "");
@@ -550,7 +555,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (getEntity().getPlanoTratamentoProcedimentos() != null) {
             BigDecimal valorTotal = new BigDecimal(0);
             for (PlanoTratamentoProcedimento ptp : getEntity().getPlanoTratamentoProcedimentos()) {
-                if("N".equals(ptp.getExcluido()))
+                if ("N".equals(ptp.getExcluido()))
                     valorTotal = valorTotal.add(ptp.getValor());
             }
             getEntity().setValorTotal(valorTotal);
@@ -592,7 +597,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 } else {
                     carregarProcedimentos(denteSelecionado);
                 }
-                
+
                 carregarPlanoTratamentoProcedimentos();
                 getEntity().setPlanoTratamentoProcedimentos(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(getEntity().getId()));
                 procedimentoSelecionado = null;
@@ -790,11 +795,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void carregaAgendamentosProcedimento(PlanoTratamentoProcedimento ptp) {
         setPlanoTratamentoProcedimentoSelecionado(ptp);
     }
-    
+
     public void limpaAgendamentosProcedimento() {
         setPlanoTratamentoProcedimentoSelecionado(null);
     }
-    
+
     public void cancelaAgendamentos() {
         try {
             List<AgendamentoPlanoTratamentoProcedimento> aptps = AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoProcedimento(planoTratamentoProcedimentos);
@@ -839,7 +844,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.orcamentoSelecionado.setProcedimentos(new ArrayList<>());
         if (orcamentoSelecionado.getPlanoTratamento().getPlanoTratamentoProcedimentos() != null) {
             for (PlanoTratamentoProcedimento ptProcedimento : orcamentoSelecionado.getPlanoTratamento().getPlanoTratamentoProcedimentos()) {
-                if("S".equals(ptProcedimento.getExcluido()))
+                if ("S".equals(ptProcedimento.getExcluido()))
                     continue;
                 OrcamentoProcedimento orcamentoProcedimento = new OrcamentoProcedimento();
                 orcamentoProcedimento.setDescricao(ptProcedimento.getProcedimento().getDescricao());
@@ -1748,23 +1753,29 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.statusDenteDenteSelecionado = statusDenteDenteSelecionado;
     }
 
-    
     public String getRegiaoSelecionada() {
         return regiaoSelecionada;
     }
 
-    
     public void setRegiaoSelecionada(String regiaoSelecionada) {
         this.regiaoSelecionada = regiaoSelecionada;
     }
-    
+
     public void setPlanoTratamentoProcedimentosEntity(List<PlanoTratamentoProcedimento> procedimentos, List<PlanoTratamentoProcedimento> excluidos) {
         List<PlanoTratamentoProcedimento> procedimentosTotais = new ArrayList<>();
-        for(PlanoTratamentoProcedimento ptp: procedimentos)
+        for (PlanoTratamentoProcedimento ptp : procedimentos)
             procedimentosTotais.add(ptp);
-        for(PlanoTratamentoProcedimento ptp: excluidos)
+        for (PlanoTratamentoProcedimento ptp : excluidos)
             procedimentosTotais.add(ptp);
         getEntity().setPlanoTratamentoProcedimentos(procedimentosTotais);
+    }
+
+    public List<Dominio> getJustificativasCancelamento() {
+        return justificativasCancelamento;
+    }
+
+    public void setJustificativasCancelamento(List<Dominio> justificativasCancelamento) {
+        this.justificativasCancelamento = justificativasCancelamento;
     }
 
 }

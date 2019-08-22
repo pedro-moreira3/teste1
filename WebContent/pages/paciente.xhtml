@@ -77,8 +77,8 @@
 						selectionMode="single" rowKey="#{paciente}"
 						paginatorPosition="bottom" widgetVar="dtPrincipal">
 
-						<p:ajax event="rowSelect"
-							update=":lume:botoes, :lume:botoesLong, :lume:dtPrincipal" />
+						<p:ajax event="rowSelect" process="@this"
+							update=":lume:botoes, :lume:botoesLong" />
 
 						<f:facet name="header">#{dominioMB.cliente}
 						<h:panelGroup styleClass="pesquisa">

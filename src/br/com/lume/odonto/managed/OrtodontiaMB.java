@@ -110,6 +110,8 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         carregarTela();
     }
 
+    
+    //TODO - Estudar o início/fim para planos de tratamento não ortodônticos também.
     @Override
     public void actionPersist(ActionEvent event) {
         try {
