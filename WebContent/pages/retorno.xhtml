@@ -10,6 +10,11 @@
 	 ) input {
 	width: auto !important;
 }
+
+.input95 input {
+	width: 95px !important;
+	margin-right: 5px;
+}
 </style>
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
@@ -104,14 +109,12 @@
 									mask="true" showWeeksBar="false"
 									locale="#{lumeSecurity.locale}"
 									timeZone="#{lumeSecurity.timeZone}" navigator="true"
-									yearRange="-100:+1"
-									style="width: 95px !important;margin-right: 5px;" /> até
+									yearRange="-100:+1" styleClass="input95" /> até
 								<p:calendar value="#{retornoMB.dataFim}" pattern="dd/MM/yyyy"
 									mask="true" showWeeksBar="false"
 									locale="#{lumeSecurity.locale}"
 									timeZone="#{lumeSecurity.timeZone}" navigator="true"
-									yearRange="-100:+1"
-									style="width: 95px !important;margin-left: 5px;" />
+									yearRange="-100:+1" styleClass="input95" />
 								<p:commandButton id="pesquisar" icon="fa fa-search White"
 									actionListener="#{retornoMB.geraLista}" update="@form"
 									tabindex="1" process=":lume:dtRetorno:filtro"
