@@ -87,19 +87,19 @@
                             <div class="SeparatorFull"></div>
 							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 	                            <h:panelGroup rendered="#{reservaMB.incluindo}">
-	                                <p:commandButton id="adicionar" icon="fa fa-plus White" value="Adicionar" actionListener="#{reservaMB.adicionar}" update=":lume:pnReserva, :lume:dtKits"
-	                                    process=":lume:pnReserva" styleClass="GreenButton" />
+	                                <p:commandButton id="adicionar" icon="fa fa-plus White" value="Adicionar" actionListener="#{reservaMB.adicionar}" update=":lume:pnItens, :lume:dtKits"
+	                                    process="@this, :lume:pnItens" styleClass="GreenButton" />
 	                            </h:panelGroup>
 	                            <h:panelGroup rendered="#{!reservaMB.incluindo}">
-									<p:commandButton id="remover" icon="fa fa-minus White" value="Remover" actionListener="#{reservaMB.remover}" update=":lume:pnReserva, :lume:dtKits" process="@this"
+									<p:commandButton id="remover" icon="fa fa-minus White" value="Remover" actionListener="#{reservaMB.remover}" update=":lume:pnItens, :lume:dtKits" process="@this"
 	                                	styleClass="RedButton" />
 	                            </h:panelGroup>
 	                            <h:panelGroup rendered="#{!reservaMB.incluindo}">
-									<p:commandButton id="atualizar" icon="fa fa-check White" value="Atualizar" actionListener="#{reservaMB.atualizar}" update=":lume:pnReserva, :lume:dtKits"
-	                                	process=":lume:pnReserva" styleClass="OrangeButton" />
+									<p:commandButton id="atualizar" icon="fa fa-check White" value="Atualizar" actionListener="#{reservaMB.atualizar}" update=":lume:pnItens, :lume:dtKits"
+	                                	process="@this, :lume:pnItens" styleClass="OrangeButton" />
 	                            </h:panelGroup>
-								<p:commandButton id="limpar" icon="fa fa-minus White" value="Limpar" actionListener="#{reservaMB.limpar}" update=":lume:pnReserva, :lume:dtKits"
-	                            	process=":lume:pnReserva, :lume:dtKits" />
+								<p:commandButton id="limpar" icon="fa fa-minus White" value="Limpar" actionListener="#{reservaMB.limpar}" update=":lume:pnReserva"
+	                            	process="@this" />
                             </p:panelGrid>
 
                             <div class="EmptyBox20"></div>
