@@ -204,12 +204,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void actionEvolucao(ActionEvent event) {
         try {
             this.finalizaAutomatico();
+            evolucao.setProfissional(UtilsFrontEnd.getProfissionalLogado());
             evolucao.setPaciente(paciente);
             EvolucaoSingleton.getInstance().getBo().persist(evolucao);
             for (String evolucao : evolucoes) {
                 Evolucao evo = new Evolucao();
                 evo.setDescricao(evolucao);
                 evo.setPaciente(paciente);
+                evo.setProfissional(UtilsFrontEnd.getProfissionalLogado());
                 EvolucaoSingleton.getInstance().getBo().persist(evo);
             }
             this.getEntity().setValorTotalDesconto(subTotalDesconto);

@@ -542,8 +542,8 @@ div.ui-selectoneradio label {
 			}
 			function montaTimeline(backendValue, indexPrincipal, containerName) {
 				var tamanho = new Array(backendValue.dados);
-				if (tamanho[0][0] != '') {
-					var container = document.getElementById(containerName);
+				var container = document.getElementById(containerName);
+				if (tamanho[0]) {
 					var chart = new google.visualization.Timeline(container);
 					var dataTable = new google.visualization.DataTable();
 					dataTable.addColumn({
@@ -662,6 +662,8 @@ div.ui-selectoneradio label {
 									}, 3, 4 ]);
 
 					chart.draw(view.toDataTable(), options);
+				} else {
+					container.innerHTML = "<br /><p align=\"center\">Não há registros deste período para serem mostrados.</p>";
 				}
 			}
 			function drawChartProfissionais(backendValue) {
