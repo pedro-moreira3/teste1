@@ -8,9 +8,11 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 
+import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
@@ -112,6 +114,10 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     public void setDataFim(Date dataFim) {
         this.dataFim = dataFim;
+    }
+    
+    public Agendamento getProximoAgendamentoPaciente(Retorno retorno) {
+        return AgendamentoSingleton.getInstance().getBo().findDataProximoAgendamentoPaciente(retorno.getPaciente(), Calendar.getInstance().getTime());
     }
 
     public String getStatusDescricao(Agendamento agendamento) {

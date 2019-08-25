@@ -177,23 +177,23 @@
 							</p:column>
 
 							<p:column
-								filterBy="#{retorno.agendamento.proximoAgendamentoPaciente.inicio}"
-								sortBy="#{retorno.agendamento.proximoAgendamentoPaciente.inicio}"
+								filterBy="#{retornoMB.getProximoAgendamentoPaciente(retorno).inicio}"
+								sortBy="#{retornoMB.getProximoAgendamentoPaciente(retorno).inicio}"
 								filterMatchMode="contains"
 								headerText="Data do agendamento futuro">
 								<h:outputText
-									value="#{retorno.agendamento.proximoAgendamentoPaciente.inicio}">
+									value="#{retornoMB.getProximoAgendamentoPaciente(retorno).inicio}">
 									<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 								</h:outputText>
 							</p:column>
 
 							<p:column
-								filterBy="#{relatorioAtendimentoMB.getStatusDescricao(retorno.agendamento.proximoAgendamentoPaciente)}"
-								sortBy="#{relatorioAtendimentoMB.getStatusDescricao(retorno.agendamento.proximoAgendamentoPaciente)}"
+								filterBy="#{relatorioAtendimentoMB.getStatusDescricao(retornoMB.getProximoAgendamentoPaciente(retorno))}"
+								sortBy="#{relatorioAtendimentoMB.getStatusDescricao(retornoMB.getProximoAgendamentoPaciente(retorno))}"
 								filterMatchMode="contains"
 								headerText="Status do agendamento futuro">
 								<h:outputText
-									value="#{retornoMB.getStatusDescricao(retorno.agendamento.proximoAgendamentoPaciente)}" />
+									value="#{retornoMB.getStatusDescricao(retornoMB.getProximoAgendamentoPaciente(retorno))}" />
 							</p:column>
 							
 							<p:column filterBy="#{retorno.retornar}"
