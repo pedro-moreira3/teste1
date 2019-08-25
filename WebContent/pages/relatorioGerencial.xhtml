@@ -135,7 +135,7 @@
                 var data = google.visualization.arrayToDataTable([
                     ['', ''],     
                     ['Ocupado',#{relatorioGerencialMB.taxaDeOcupacao}],         
-                    ['Ociosa', 100-#{relatorioGerencialMB.taxaDeOcupacao}],
+                    ['Ociosa', 100-#{(relatorioGerencialMB.taxaDeOcupacao > 100 ? 100 : relatorioGerencialMB.taxaDeOcupacao)}],
                   ]);
             
                   var options = {
