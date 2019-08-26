@@ -174,7 +174,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
                 if (this.getEntity().getQuantidadeDevolvida().compareTo(BigDecimal.ZERO) > 0) {
                     new LavagemMB().lavar(this.getEntity(), this.getEntity().getQuantidadeDevolvida().longValue());
                 }
-                this.getbO().persist(this.getEntity());// Atualizando abastecimento
+                this.getbO().persist(this.getEntity());// Atualizando emprestimo unitario
                 this.actionNew(event);
                 this.geraLista();
                 this.setEnableDevolucao(false);
@@ -289,7 +289,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
         if (materiaisSelecionado != null && !materiaisSelecionado.isEmpty()) {
             BigDecimal total = new BigDecimal(0);
             for (Material m : materiaisSelecionado) {
-                MaterialSingleton.getInstance().getBo().refresh(m);
+            //    MaterialSingleton.getInstance().getBo().refresh(m);
                 total = total.add(m.getQuantidadeAtual());
             }
             if (total.doubleValue() >= materiaisSelecionado.get(0).getQuantidadeRetirada().doubleValue()) {
@@ -330,7 +330,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
         List<MaterialLog> logs = new ArrayList<>();
         for (Material m : materiaisSelecionado) {
             if (quantidadeRetirar.doubleValue() != 0d) {
-                MaterialSingleton.getInstance().getBo().refresh(m);
+              //  MaterialSingleton.getInstance().getBo().refresh(m);
                 BigDecimal quantidadeRetirada = new BigDecimal(0d);
                 if (m.getQuantidadeAtual().doubleValue() >= quantidadeRetirar.doubleValue()) {
                     m.setQuantidadeAtual(m.getQuantidadeAtual().subtract(quantidadeRetirar));

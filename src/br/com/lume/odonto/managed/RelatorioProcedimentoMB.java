@@ -1,9 +1,5 @@
 package br.com.lume.odonto.managed;
 
-<<<<<<< Upstream, based on origin/backend
-=======
-
->>>>>>> 9f7f66e reserva, item, relatorio e reserva
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;

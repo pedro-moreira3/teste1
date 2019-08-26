@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 
-import br.com.lume.abastecimento.AbastecimentoSingleton;
+import br.com.lume.emprestimoUnitario.EmprestimoUnitarioSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
@@ -29,7 +29,7 @@ import br.com.lume.lavagem.LavagemSingleton;
 import br.com.lume.lavagemKit.LavagemKitSingleton;
 import br.com.lume.material.MaterialSingleton;
 import br.com.lume.materialLog.MaterialLogSingleton;
-import br.com.lume.odonto.entity.Abastecimento;
+import br.com.lume.odonto.entity.EmprestimoUnitario;
 import br.com.lume.odonto.entity.EmprestimoKit;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Esterilizacao;
@@ -228,13 +228,13 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
             if (this.getLavagemKitSelecionada().getLavagem().getClinica()) {
                 this.getLavagemKitSelecionada().setQuantidade(this.getLavagemKitSelecionada().getQuantidade() - this.getQuantidadeDescarte());
                 LavagemKitSingleton.getInstance().getBo().persist(this.getLavagemKitSelecionada());
-                Abastecimento a = this.getLavagemKitSelecionada().getAbastecimento();
+                EmprestimoUnitario a = this.getLavagemKitSelecionada().getEmprestimoUnitario();
                 EmprestimoKit cm = this.getLavagemKitSelecionada().getEmprestimoKit();
                 Material m;
                 if (a != null) {
                     m = a.getMaterial();
                     a.setQuantidade(a.getQuantidade().subtract(new BigDecimal(this.getQuantidadeDescarte())));
-                    AbastecimentoSingleton.getInstance().getBo().persist(a);
+                    EmprestimoUnitarioSingleton.getInstance().getBo().persist(a);
                     MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, a, m, profissionalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
                             MaterialLog.DEVOLUCAO_LAVAGEM_DESCARTAR));
                 } else if (cm != null) {
@@ -345,14 +345,14 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                             MaterialSingleton.getInstance().getBo().persist(lk.getEmprestimoKit().getMaterial());// Atualizando estoque
                             MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(lk.getEmprestimoKit(), null, lk.getEmprestimoKit().getMaterial(), profisionalLogado,
                                     new BigDecimal(lk.getQuantidade()), lk.getEmprestimoKit().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_LAVAGEM_FINALIZAR));
-                        } else if (lk.getAbastecimento() != null) {
-                            lk.getAbastecimento().setQuantidade(lk.getAbastecimento().getQuantidade().subtract(new BigDecimal(lk.getQuantidade())));
-                            AbastecimentoSingleton.getInstance().getBo().persist(lk.getAbastecimento());// Atualizando estoque
-                            MaterialSingleton.getInstance().getBo().refresh(lk.getAbastecimento().getMaterial());
-                            lk.getAbastecimento().getMaterial().setQuantidadeAtual(lk.getAbastecimento().getMaterial().getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
-                            MaterialSingleton.getInstance().getBo().persist(lk.getAbastecimento().getMaterial());// Atualizando estoque
-                            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, lk.getAbastecimento(), lk.getAbastecimento().getMaterial(), profisionalLogado,
-                                    new BigDecimal(lk.getQuantidade()), lk.getAbastecimento().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_LAVAGEM_FINALIZAR));
+                        } else if (lk.getEmprestimoUnitario() != null) {
+                            lk.getEmprestimoUnitario().setQuantidade(lk.getEmprestimoUnitario().getQuantidade().subtract(new BigDecimal(lk.getQuantidade())));
+                            EmprestimoUnitarioSingleton.getInstance().getBo().persist(lk.getEmprestimoUnitario());// Atualizando estoque
+                            MaterialSingleton.getInstance().getBo().refresh(lk.getEmprestimoUnitario().getMaterial());
+                            lk.getEmprestimoUnitario().getMaterial().setQuantidadeAtual(lk.getEmprestimoUnitario().getMaterial().getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
+                            MaterialSingleton.getInstance().getBo().persist(lk.getEmprestimoUnitario().getMaterial());// Atualizando estoque
+                            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, lk.getEmprestimoUnitario(), lk.getEmprestimoUnitario().getMaterial(), profisionalLogado,
+                                    new BigDecimal(lk.getQuantidade()), lk.getEmprestimoUnitario().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_LAVAGEM_FINALIZAR));
                         } else {
                             List<Material> material = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(lk.getItem(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                             if (!material.isEmpty()) {
@@ -395,8 +395,8 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                     esterilizacaoKit.setItem(lk.getItem());
                     esterilizacaoKit.setKit(lk.getKit());
                     esterilizacaoKit.setQuantidade(lk.getQuantidade());
-                    if (lk.getAbastecimento() != null) {
-                        esterilizacaoKit.setAbastecimento(lk.getAbastecimento());
+                    if (lk.getEmprestimoUnitario() != null) {
+                        esterilizacaoKit.setEmprestimoUnitario(lk.getEmprestimoUnitario());
                     }
                     if (lk.getEmprestimoKit() != null) {
                         esterilizacaoKit.setEmprestimoKit(lk.getEmprestimoKit());
@@ -479,13 +479,13 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
         return lavagemKitsSolicitados;
     }
 
-    public void lavar(Abastecimento abastecimento, long quantidade) throws Exception {
+    public void lavar(EmprestimoUnitario emprestimoUnitario, long quantidade) throws Exception {
         for (int i = 0; i < quantidade; i++) {
             List<LavagemKit> lavagemKits = new ArrayList<>();
             Lavagem lavagem = this.lavar();
             LavagemKit lavagemKit = new LavagemKit();
-            lavagemKit.setItem(abastecimento.getMaterial().getItem());
-            lavagemKit.setAbastecimento(abastecimento);
+            lavagemKit.setItem(emprestimoUnitario.getMaterial().getItem());
+            lavagemKit.setEmprestimoUnitario(emprestimoUnitario);
             lavagemKit.setQuantidade(1L);
             lavagemKit.setLavagem(lavagem);
             lavagemKits.add(lavagemKit);
