@@ -16,9 +16,9 @@
                       <p:commandButton id="new" icon="White fa fa-file-o" value="Inserir itens no estoque " oncomplete="PF('dlgEntrada').show();" actionListener="#{materialMB.actionNew}" update=":lume:pnMaterial,:lume:dtMaterial" immediate="true" />						
                       </p:panelGrid>  
                       	<div class="SeparatorFull"></div>
-                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{materialMB.materiais}" var="material" rows="15" paginator="true" selection="#{materialMB.entity}"
-                        selectionMode="single" rowKey="#{material}" paginatorPosition="bottom">
-                        <p:ajax event="rowSelect" update=":lume:pnMaterial" listener="#{materialMB.carregaTela}" oncomplete="topPage();" />
+                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{materialMB.materiais}" var="material" rows="15" paginator="true" 
+                        rowKey="#{material}" paginatorPosition="bottom">
+                      
                         <f:facet name="header">Materiais</f:facet>
 						 <p:column headerText="Ações" width="12%">
 						 	<p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlgEntrada').show();" update=":lume:pnEntradaDlg" title="Editar" process="@this"

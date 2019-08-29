@@ -7,23 +7,15 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
-import javax.persistence.PersistenceException;
 
 import org.apache.log4j.Logger;
-import org.eclipse.persistence.exceptions.DatabaseException;
-import org.postgresql.util.PSQLException;
+
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
-import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.local.LocalSingleton;
-//import br.com.lume.odonto.bo.DominioBO;
-//import br.com.lume.odonto.bo.LocalBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
-import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Local;
-import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.util.OdontoMensagens;
 
 @ManagedBean
@@ -74,7 +66,7 @@ public class LocalMB extends LumeManagedBean<Local> {
         for (Local local : this.getLocais()) {
             if ((this.getEntity().getId() != local.getId() && local.getDescricao().equalsIgnoreCase(this.getDescricao()))) {
                 this.log.error("erro.categoria.duplicidade");
-                this.addError(OdontoMensagens.getMensagem("erro.local.duplicidade"), "");
+                this.addError(OdontoMensagens.getMensagem("erro.local.duplicidade"), "",true);
                 error = true;
                 break;
             }
@@ -82,7 +74,7 @@ public class LocalMB extends LumeManagedBean<Local> {
         if (!error) {
             if (this.getEntity().equals(this.getEntity().getLocalPai())) {
                 this.log.error("erro.pai.filho.iguais");
-                this.addError(OdontoMensagens.getMensagem("erro.pai.filho.iguais"), "");
+                this.addError(OdontoMensagens.getMensagem("erro.pai.filho.iguais"), "",true);
             } else {
                 this.getEntity().setDescricao(this.descricao);
                 this.getEntity().setTipo(this.tipo);
@@ -106,7 +98,7 @@ public class LocalMB extends LumeManagedBean<Local> {
         for (Local local : this.getLocais()) {
             if ((local.getLocalPai() != null) && (this.getEntity().getId() == local.getLocalPai().getId())) {
                 this.log.error("erro.excluir.pai.filho.iguais");
-                this.addError(OdontoMensagens.getMensagem("erro.excluir.pai.filho.iguais"), "");
+                this.addError(OdontoMensagens.getMensagem("erro.excluir.pai.filho.iguais"), "",true);
                 remove = false;
                 break;
             }
@@ -156,7 +148,7 @@ public class LocalMB extends LumeManagedBean<Local> {
             }
             Collections.sort(locais);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
         return locais;

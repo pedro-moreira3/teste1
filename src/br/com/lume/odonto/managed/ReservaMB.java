@@ -133,7 +133,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
                 Collections.sort(reservas);
             }
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -178,7 +178,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
                     try {
                         ReservaKitAgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().remove(rkaptp);
                     } catch (Exception e) {
-                        this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+                        this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
                     }
                 }
                 ativo = false;
@@ -195,7 +195,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         }
         if ((this.getReservaKits() == null) || (this.getReservaKits().size() < 1)) {
             log.error(OdontoMensagens.getMensagem("error.reservakits.vazio"));
-            this.addError(OdontoMensagens.getMensagem("error.reservakits.vazio"), "");
+            this.addError(OdontoMensagens.getMensagem("error.reservakits.vazio"), "",true);
         } else {
             Calendar cal = Calendar.getInstance();
             cal.setTime(new Date());
@@ -206,7 +206,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
                 this.geraLista();
                 PrimeFaces.current().executeScript("PF('dlg').hide();");      
             } else {
-                this.addError(OdontoMensagens.getMensagem("reserva.prazo.erro"), "");
+                this.addError(OdontoMensagens.getMensagem("reserva.prazo.erro"), "",true);
             }
         }
 
@@ -314,11 +314,11 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     public boolean validaKit() {
         if (this.getSelectedKit() == null) {
             log.error(OdontoMensagens.getMensagem("erro.kit.obrigatorio"));
-            this.addError(OdontoMensagens.getMensagem("erro.kit.obrigatorio"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.kit.obrigatorio"), "",true);
             return false;
         } else if (this.getQuantidade() == 0 || this.getQuantidade() < 1) {
             log.error(OdontoMensagens.getMensagem("erro.quantidade.obrigatorio"));
-            this.addError(OdontoMensagens.getMensagem("erro.quantidade.obrigatorio"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.quantidade.obrigatorio"), "",true);
             return false;
         }
         return true;
@@ -431,7 +431,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
             }
             Collections.sort(kits);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }

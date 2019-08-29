@@ -55,7 +55,7 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
             }
         } catch (Exception e) {
             log.error("Erro no setEntity", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
         }
     }
     
@@ -72,14 +72,14 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
             super.actionPersist(event);
             this.carregaLista();
         } catch (TelefoneException te) {
-            this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "",true);
             log.error(OdontoMensagens.getMensagem("erro.valida.telefone"));
         } catch (CpfCnpjDuplicadoException cd) {
-            this.addError(OdontoMensagens.getMensagem("erro.cpf.duplicado"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.cpf.duplicado"), "",true);
             log.error(OdontoMensagens.getMensagem("erro.cpf.duplicado"));
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
         }
     }
 

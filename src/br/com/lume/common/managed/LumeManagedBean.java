@@ -171,6 +171,11 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         this.addMessage(FacesMessage.SEVERITY_INFO, summary, detail, MessageType.TYPE_INFO);
     }
     
+    public void addInfo(String summary, String detail, boolean sendPrimefacesError) {
+        this.addMessage(FacesMessage.SEVERITY_INFO, summary, detail, MessageType.TYPE_INFO, sendPrimefacesError);
+    }    
+    
+    
     public void addWarn(String summary, String detail) {
         addWarn(summary, detail, false);
     }

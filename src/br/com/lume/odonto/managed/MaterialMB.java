@@ -106,7 +106,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
          
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-            this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
+            this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "",true);
         }
     }
 
@@ -115,7 +115,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             materiais = MaterialSingleton.getInstance().getBo().listAtivosByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             Collections.sort(materiais);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -162,7 +162,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             this.setSelectedItem();
             this.setSelectedLocal();
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -205,7 +205,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
         try {
             materialLogs = MaterialLogSingleton.getInstance().getBo().listByMaterial(material);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -303,13 +303,13 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 this.actionNew(event);
                 this.geraLista();
                 PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
-                this.addInfo("Devolução concluída com sucesso!", "");
+                this.addInfo("Devolução concluída com sucesso!", "",true);
             } else {
-                this.addError(OdontoMensagens.getMensagem("material.quantidade.maior"), "");
+                this.addError(OdontoMensagens.getMensagem("material.quantidade.maior"), "",true);
             }
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
         }
 
     }
@@ -354,10 +354,10 @@ public class MaterialMB extends LumeManagedBean<Material> {
             this.getEntity().setDataCadastro(new Date());
             if ((this.getItem() == null) || (this.getItem().getDescricao().equals("RAIZ")) || // RAIZ
                     (this.getItem().getCategoria().equals("S"))) {
-                this.addError(OdontoMensagens.getMensagem("erro.item.material.raiz"), "");
+                this.addError(OdontoMensagens.getMensagem("erro.item.material.raiz"), "",true);
             } else {
                 if (isEstoqueCompleto() && (this.getLocal() == null || this.getLocal().getDescricao().equals("RAIZ"))) {
-                    this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "");
+                    this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "",true);
                 } else {
                     this.getEntity().setItem(this.getItem());
                     if (this.getLocal() == null) {
@@ -376,9 +376,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
                         }
                         if (this.getbO().persist(this.getEntity())) {
                             if (this.getEntity().getStatus().equals(DEVOLVIDO)) {
-                                this.addInfo(OdontoMensagens.getMensagem("material.salvo.devolvido"), "");
+                                this.addInfo(OdontoMensagens.getMensagem("material.salvo.devolvido"), "",true);
                             } else {
-                                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
                             }
                             if (novo) {
                                 MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), getEntity().getQuantidadeAtual(),
@@ -396,22 +396,22 @@ public class MaterialMB extends LumeManagedBean<Material> {
                             this.geraLista();
                         }
                     } else {
-                        this.addError(OdontoMensagens.getMensagem("material.validade.erro"), "");
+                        this.addError(OdontoMensagens.getMensagem("material.validade.erro"), "",true);
                     }
 
                 }
             }
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
         }
     }
 
     public void actionMovimentacaoEstoqueSimplificado(ActionEvent event) {
         if (quantidadeMovimentacao.equals(new BigDecimal(0))) {
-            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "",true);
         } else if (tipoMovimentacao.equals(Material.MOVIMENTACAO_SAIDA) && getEntity().getQuantidadeAtual().doubleValue() < quantidadeMovimentacao.doubleValue()) {
-            this.addError("Não é possível retirar mais quantidade do que a quantidade atual.", "");
+            this.addError("Não é possível retirar mais quantidade do que a quantidade atual.", "",true);
         } else {
             try {
                 this.getbO().refresh(getEntity());
@@ -427,25 +427,25 @@ public class MaterialMB extends LumeManagedBean<Material> {
                         MaterialLog.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA));
                 this.getbO().persist(this.getEntity());
 
-                this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "");
+                this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "",true);
                 this.actionNew(event);
                 this.geraLista();
             } catch (Exception e) {
                 log.error("Erro no actionPersist", e);
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
             }
         }
     }
 
     public void movimentar(ActionEvent event) {
         if (quantidadeMovimentada.equals(new BigDecimal(0))) {
-            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "",true);
         } else if (this.getEntity().getQuantidadeAtual().doubleValue() < quantidadeMovimentada.doubleValue()) {
-            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade"), "",true);
         } else if ((this.getLocal() == null)) {
-            this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "",true);
         } else if (this.getEntity().getLocal().getDescricao().equals(this.getDigitacaoLocal())) {
-            this.addError(OdontoMensagens.getMensagem("erro.local.material.inalterado"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.local.material.inalterado"), "",true);
         } else {
 
             try {
@@ -468,12 +468,12 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentada, getEntity().getQuantidadeAtual(),
                         MaterialLog.MOVIMENTACAO_MATERIAL_MOVIMENTAR));
 
-                this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "");
+                this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "",true);
                 this.actionNew(event);
                 this.geraLista();
             } catch (Exception e) {
                 log.error("Erro no actionPersist", e);
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
             }
         }
     }
@@ -584,7 +584,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             }
             Collections.sort(this.getLocais());
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -599,7 +599,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             }
             Collections.sort(itens);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -816,7 +816,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
         Marca marca = MarcaSingleton.getInstance().getBo().findByNomeAndEmpresa(this.getEntity().getMarca().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (marca != null) {
             if (marca.getId() != this.getEntity().getMarca().getId() && marca.getNome().equals(this.getEntity().getMarca().getNome())) {
-                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "");
+                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "",true);
                 try {
                     this.getbO().refresh(this.getEntity());
                 } catch (Exception e) {
@@ -828,10 +828,10 @@ public class MaterialMB extends LumeManagedBean<Material> {
             this.getEntity().getMarca().setDataCadastro(Calendar.getInstance().getTime());
             try {
                 MarcaSingleton.getInstance().getBo().persist(this.getEntity().getMarca());
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
             } catch (Exception e) {
                 log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO);
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
             }
             this.geraLista();
         }
@@ -845,7 +845,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
         Fornecedor fornecedor = FornecedorSingleton.getInstance().getBo().findByNomeandEmpresa(this.getEntity().getFornecedor());
         if (fornecedor != null) {
             if (fornecedor.getId() != this.getEntity().getFornecedor().getId() && fornecedor.getDadosBasico().getNome().equals(this.getEntity().getFornecedor().getDadosBasico().getNome())) {
-                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "");
+                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "",true);
                 try {
                     this.getbO().refresh(this.getEntity());
                 } catch (Exception e) {
@@ -856,10 +856,10 @@ public class MaterialMB extends LumeManagedBean<Material> {
             try {
                 DadosBasicoSingleton.getInstance().getBo().persist(this.getEntity().getFornecedor().getDadosBasico());
                 FornecedorSingleton.getInstance().getBo().persist(this.getEntity().getFornecedor());
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
             } catch (Exception e) {
                 log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO);
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
             }
             this.geraLista();
         }
