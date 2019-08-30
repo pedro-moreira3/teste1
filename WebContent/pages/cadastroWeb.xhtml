@@ -100,6 +100,8 @@ body .ui-wizard .ui-wizard-content {
 											value="#{cadastroWebMB.entity.empChaCep}" maxlength="8"
 											mask="99999-999">
 											<f:validator validatorId="cepValidator" />
+											<p:ajax	event="blur" process="@this" listener="#{cadastroWebMB.buscaCep()}"
+													update=":lume:wizard"/>	
 										</p:inputMask>
 
 										<p:outputLabel for="empStrEndereco" value="Endereço: " />
@@ -128,7 +130,7 @@ body .ui-wizard .ui-wizard-content {
 											maxlength="50" />
 
 										<p:outputLabel for="empChaUf" value="Estado: " />
-										<p:selectOneMenu id="empChaUf"
+										<p:selectOneMenu id="empChaUf" binding="#{cadastroWebMB.estados}"
 											value="#{cadastroWebMB.entity.empChaUf}" required="true">
 											<f:selectItem itemValue="#{null}"
 												itemLabel="Selecione um Estado" />
@@ -266,7 +268,8 @@ body .ui-wizard .ui-wizard-content {
 
 										<h:outputLabel value="CEP: " style="font-weight: bold;" />
 										<p:inputText value="#{cadastroWebMB.entity.empChaCep}"
-											readonly="true" />
+											readonly="true" >
+										</p:inputText>
 
 										<h:outputLabel value="Endereço: " style="font-weight: bold;" />
 										<p:inputText value="#{cadastroWebMB.entity.empStrEndereco}"
