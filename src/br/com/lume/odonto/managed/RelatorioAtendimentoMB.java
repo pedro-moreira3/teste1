@@ -29,7 +29,7 @@ import org.primefaces.model.chart.PieChartModel;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.common.util.Exportacoes;
+//import br.com.lume.common.util.Exportacoes;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
@@ -206,17 +206,17 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     
     public void exportarTabela() {
         
-        Exportacoes.exportarTabelaExcel(tabelaAgendamento);
+        //Exportacoes.exportarTabelaExcel(tabelaAgendamento);
         
 //        UIViewRoot tela = PrimeFacesContext.getCurrentInstance().getViewRoot();
 //        DataTable tabela =  (DataTable) tela.findComponent(":lume:dtRelAtendimento");
-//        
-//        List<UIColumn> colunas = tabelaAgendamento.getColumns();
-//        
-//        Map<String, Object> teste = tabelaAgendamento.getFilters();
-//        
-//        for(UIColumn column : colunas) {
-//
+        
+        List<UIColumn> colunas = tabelaAgendamento.getColumns();
+        
+        //Map<String, Object> teste = tabelaAgendamento.getFilters();
+        
+        for(UIColumn column : colunas) {
+
 //            column.getChildren().spliterator();
 //            
 //            column.getFilterMatchMode();
@@ -226,12 +226,12 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 //            tabelaAgendamento.getRowData("telefone");
 //            
 //            Columns t = new Columns();
-//            
-//            column.getSortBy();
-//            Object str = column.getSortBy();
-//            column.getHeaderText();
-//        }
-//        
+            
+            column.getSortBy();
+            Object str = column.getSortBy();
+            column.getHeaderText();
+        }
+        
 //        List<Agendamento> dadosTabela =  (List<Agendamento>) tabela.getValue();
 //        tabela.getChildren();
 //        tabela.getRowData(String.valueOf(tabela.getRowCount()));
