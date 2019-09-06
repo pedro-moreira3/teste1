@@ -8,19 +8,29 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIComponentBase;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
+import org.primefaces.component.api.DynamicColumn;
+import org.primefaces.component.api.UIColumn;
+import org.primefaces.component.columns.Columns;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.context.PrimeFacesContext;
+import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.chart.PieChartModel;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.Exportacoes;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.UtilsPrimefaces;
@@ -55,6 +65,8 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     private HashSet<String> profissionaisAgendamento;
 
     private List<Integer> cadeiras;
+    
+    private DataTable tabelaAgendamento;
     
     // ATRIBUTOS USADOS COMO FILTRO PARA PESQUISA DOS AGENDAMENTOS
     private Profissional filtroPorProfissional;
@@ -111,19 +123,19 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     }
     
     public List<Paciente> sugestoesPacientes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesCompleteTodos(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
     
     public List<Profissional> sugestoesProfissionais(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteTodos(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
     
     public List<Profissional> sugestoesProfissionalUltAlteracao(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteTodos(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
     
     public List<Convenio> sugestoesConvenios(String query) {
-        return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return ConvenioSingleton.getInstance().getBo().listSugestoesCompleteTodos(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
     
     private void removerFiltrosAgendamento(List<Agendamento> agendamentos) {
@@ -191,7 +203,40 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         }
         return true;
     }
-
+    
+    public void exportarTabela() {
+        
+        Exportacoes.exportarTabelaExcel(tabelaAgendamento);
+        
+//        UIViewRoot tela = PrimeFacesContext.getCurrentInstance().getViewRoot();
+//        DataTable tabela =  (DataTable) tela.findComponent(":lume:dtRelAtendimento");
+//        
+//        List<UIColumn> colunas = tabelaAgendamento.getColumns();
+//        
+//        Map<String, Object> teste = tabelaAgendamento.getFilters();
+//        
+//        for(UIColumn column : colunas) {
+//
+//            column.getChildren().spliterator();
+//            
+//            column.getFilterMatchMode();
+//            column.getColumnKey();
+//            column.getExportFunction();
+//            
+//            tabelaAgendamento.getRowData("telefone");
+//            
+//            Columns t = new Columns();
+//            
+//            column.getSortBy();
+//            Object str = column.getSortBy();
+//            column.getHeaderText();
+//        }
+//        
+//        List<Agendamento> dadosTabela =  (List<Agendamento>) tabela.getValue();
+//        tabela.getChildren();
+//        tabela.getRowData(String.valueOf(tabela.getRowCount()));
+    }
+    
     public PieChartModel getPieModel() {
         return pieModel;
     }
@@ -322,5 +367,13 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public void setNovoAgendamento(boolean novoAgendamento) {
         this.novoAgendamento = novoAgendamento;
+    }
+
+    public DataTable getTabelaAgendamento() {
+        return tabelaAgendamento;
+    }
+
+    public void setTabelaAgendamento(DataTable tabelaAgendamento) {
+        this.tabelaAgendamento = tabelaAgendamento;
     }
 }

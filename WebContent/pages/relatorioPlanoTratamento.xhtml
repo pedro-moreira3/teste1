@@ -223,7 +223,7 @@ div.ui-selectoneradio label {
 									completeMethod="#{relatorioPlanoTratamentoMB.sugestoesPacientes}"
 									var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 									converter="paciente" forceSelection="true" scrollHeight="400"
-									minQueryLength="3">
+									minQueryLength="3" queryDelay="1000">
 
 									<p:column headerText="Nome">
 										<h:outputText value="#{p.dadosBasico.nome}" />
@@ -244,7 +244,7 @@ div.ui-selectoneradio label {
 									completeMethod="#{relatorioPlanoTratamentoMB.sugestoesProfissionais}"
 									var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 									converter="profissional" forceSelection="true"
-									scrollHeight="400">
+									scrollHeight="400" queryDelay="1000">
 								</p:autoComplete>
 							</h:panelGroup>
 						</p:panelGrid>
@@ -269,7 +269,7 @@ div.ui-selectoneradio label {
 									value="#{relatorioPlanoTratamentoMB.convenio}"
 									completeMethod="#{relatorioPlanoTratamentoMB.sugestoesConvenios}"
 									var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-									converter="convenio" forceSelection="true" scrollHeight="400">
+									converter="convenio" forceSelection="true" scrollHeight="400" queryDelay="1000">
 								</p:autoComplete>
 							</h:panelGroup>
 
