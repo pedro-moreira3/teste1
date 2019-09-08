@@ -130,12 +130,12 @@
 									<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"		                            	
 		                                style="border:0px none; background-color:transparent;">
 		                                <h:panelGroup styleClass="md-combo">
-   											<p:outputLabel for="quantidade" value="Quantidade de volumes: " />
-		                                	<p:inputText id="quantidade" value="#{materialMB.entity.quantidade}" maxlength="10" onkeypress="validaNumeros(event)" required="true"
+   											<p:outputLabel for="quantidadePacotes" value="Quantidade de volumes: " />
+		                                	<p:inputText id="quantidadePacotes" value="#{materialMB.entity.quantidadePacotes}" maxlength="10" onkeypress="validaNumeros(event)" required="true"
 		                                    	rendered="#{materialMB.entity.id == 0}">
 		                                    	<p:ajax update=":lume:pnEntrada" process=":lume:quantidadeUnidade,@this" listener="#{materialMB.valorTotal}" />
 		                                	</p:inputText>
-		                                	<h:outputText value="#{materialMB.entity.quantidade}" rendered="#{materialMB.entity.id != 0}">
+		                                	<h:outputText value="#{materialMB.entity.quantidadePacotes}" rendered="#{materialMB.entity.id != 0}">
 		                                    	<f:convertNumber />
 		                                	</h:outputText>		                                	
 		                                </h:panelGroup>
@@ -143,7 +143,7 @@
 			                                <p:outputLabel for="quantidadeUnidade" value="Quantidade dentro do volume: " />
 			                                <p:inputText id="quantidadeUnidade" value="#{materialMB.entity.tamanhoUnidade}" maxlength="10" onkeypress="validaNumeros(event)" required="true"
 			                                    rendered="#{materialMB.entity.id == 0}">
-			                                    <p:ajax update=":lume:pnEntrada" process=":lume:quantidade,@this" listener="#{materialMB.valorTotal}" />
+			                                    <p:ajax update=":lume:pnEntrada" process=":lume:quantidadePacotes,@this" listener="#{materialMB.valorTotal}" />
 			                                </p:inputText>
 			                                <h:outputText value="#{materialMB.entity.tamanhoUnidade}" rendered="#{materialMB.entity.id != 0}">
 			                                    <f:convertNumber />
@@ -173,7 +173,7 @@
 		                                </h:panelGroup>
 		                                <h:panelGroup styleClass="md-combo">
 			                                <p:outputLabel for="valorUnitario" value="Valor Unitário: " rendered="#{materialMB.estoqueCompleto}" />
-			                                <h:outputText id="valorUnitario" value="#{materialMB.valorUnitario}" rendered="#{materialMB.estoqueCompleto}">
+			                                <h:outputText id="valorUnitario" value="#{materialMB.entity.valor}" rendered="#{materialMB.estoqueCompleto}">
 			                                    <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
 			                                </h:outputText>
 		                                </h:panelGroup>	
@@ -288,7 +288,7 @@
                                 <p:outputLabel for="quantidadeDevolvida" value="Quantidade à ser devolvida: " />
                                 <p:column>
                                     
-									<p:inputNumber maxValue="99999999.9999" minValue="0.0000" id="quantidadeDevolvida" value="#{materialMB.quantidade}" required="true" >						
+									<p:inputNumber maxValue="99999999.9999" minValue="0.0000" id="quantidadeDevolvida" value="#{materialMB.quantidadePacotes}" required="true" >						
 							</p:inputNumber>                                    
                                     
                                     

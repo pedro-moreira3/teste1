@@ -235,10 +235,10 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
                 m2.setFornecedor(m.getFornecedor());
                 m2.setExcluidoPorProfissional(profisisonalLogado.getId());
                 m2.setQuantidadeAtual(new BigDecimal(this.getQuantidadeDescarte()));
-                m2.setQuantidade(new BigDecimal(this.getQuantidadeDescarte()));
+              //  m2.setQuantidade(new BigDecimal(this.getQuantidadeDescarte()));
                 m2.setValor(m.getValor());
                 m2.setTamanhoUnidade(m.getTamanhoUnidade());
-                m2.setQuantidadeUnidade(m.getQuantidadeUnidade());
+               // m2.setQuantidadeUnidade(m.getQuantidadeUnidade());
                 m2.setIdEmpresa(m.getIdEmpresa());
                 m2.setConsignacao(m.getConsignacao());
 
@@ -279,9 +279,9 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
         mNew.setNotaFiscal(m.getNotaFiscal());
         mNew.setProcedencia(m.getProcedencia());
         mNew.setQuantidadeAtual(m.getQuantidadeAtual());
-        mNew.setQuantidade(m.getQuantidade());
+       // mNew.setQuantidade(m.getQuantidade());
         mNew.setConsignacao(m.getConsignacao());
-        mNew.setQuantidadeUnidade(m.getQuantidadeUnidade());
+       // mNew.setQuantidadeUnidade(m.getQuantidadeUnidade());
         mNew.setStatus(m.getStatus());
         mNew.setTamanhoUnidade(m.getTamanhoUnidade());
         mNew.setValidade(m.getValidade());

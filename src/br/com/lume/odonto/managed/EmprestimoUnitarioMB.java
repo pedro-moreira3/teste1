@@ -159,7 +159,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
                 if (!quantidadeUtilizada.equals(this.getEntity().getQuantidade())) {// Foi solicitado material e devolvido uma parte ou o total
                     // Devolvendo sobras
                     // Material material = materialBO.find(cm.getMaterial());
-                    MaterialSingleton.getInstance().getBo().refresh(getEntity().getMaterial());
+                  //  MaterialSingleton.getInstance().getBo().refresh(getEntity().getMaterial());
                     this.getEntity().getMaterial().setQuantidadeAtual(this.getEntity().getMaterial().getQuantidadeAtual().add(quantidadeDevolvida));
                     MaterialSingleton.getInstance().getBo().persist(this.getEntity().getMaterial());
                     // Atualizado material utilizado
@@ -195,7 +195,8 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
 //        }
 //    }
 
-    public void actionLavagemMaterial(ActionEvent event) {
+    public void actionLavagemMaterial(EmprestimoUnitario emprestimo) {
+        this.setEntity(emprestimo);
         if (this.getEntity().getQuantidade().longValue() < this.getQuantidadeDevolvida().longValue()) {
             this.addWarn(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "",true);
         } else {
@@ -216,7 +217,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
                     new LavagemMB().lavar(this.getEntity(), quantidadeDevolvida.longValue());
                 }
                 this.getbO().persist(this.getEntity());// Atualizando emprestimoUnitario
-                super.actionNew(event);
+                //super.actionNew(event);
                 this.geraLista();
                 this.setEnableDevolucao(false);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
@@ -502,7 +503,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
         try {
             List<Material> materiais = MaterialSingleton.getInstance().getBo().listByItem(this.getItem());
             for (Material material : materiais) {
-                quantidadeTotal = quantidadeTotal.add(material.getTamanhoUnidade().multiply(material.getQuantidade().multiply(material.getTamanhoUnidade())));
+                quantidadeTotal = quantidadeTotal.add(material.getTamanhoUnidade().multiply(material.getQuantidadeAtual().multiply(material.getTamanhoUnidade())));
             }
         } catch (Exception e) {
             e.printStackTrace();

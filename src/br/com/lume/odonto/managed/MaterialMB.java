@@ -27,14 +27,17 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.estoque.EstoqueSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.local.LocalSingleton;
 import br.com.lume.marca.MarcaSingleton;
 import br.com.lume.material.MaterialSingleton;
+import br.com.lume.material.bo.MaterialBO;
 import br.com.lume.materialLog.MaterialLogSingleton;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.Estoque;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Local;
@@ -79,7 +82,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     private List<Dominio> dominios;
 
-    private BigDecimal valorTotal = new BigDecimal(0),valorUnitario = new BigDecimal(0), quantidadeMovimentada, quantidade, quantidadeMovimentacao;
+    private BigDecimal valorTotal = new BigDecimal(0), quantidadeMovimentada, quantidadePacotes, quantidadeMovimentacao;
 
     private List<MaterialLog> materialLogs;
 
@@ -103,6 +106,20 @@ public class MaterialMB extends LumeManagedBean<Material> {
             firstLevelLocal.setDescricao("RAIZ");
             this.chargeTreeLocal(new DefaultTreeNode(firstLevelLocal, this.getRootLocal()));
             dateHoje = new Date();
+            
+//para inserir estoque inicial            
+//            MaterialBO bo = MaterialSingleton.getInstance().getBo();
+//            int count = 0;
+//            for (Material material : bo.listAll()) {
+//                count++;
+//                Estoque estoque = new Estoque();
+//                estoque.setLocal(material.getLocal());
+//                estoque.setMaterial(material);
+//                estoque.setQuantidade(material.getQuantidadeAtual());
+//                EstoqueSingleton.getInstance().getBo().persist(estoque);    
+//                System.out.println(count);
+//            }
+            
          
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -121,11 +138,11 @@ public class MaterialMB extends LumeManagedBean<Material> {
     }
 
     public void atualizaQuantidades() {
-        BigDecimal quantidadeTotal = this.getEntity().getQuantidade().multiply(this.getEntity().getTamanhoUnidade());
-        this.getEntity().setQuantidadeTotal(quantidadeTotal);
-        this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeTotal());
-        if(this.getEntity().getQuantidade() != null && this.getEntity().getValorUnidadeInformado() != null) {
-            valorUnitario = this.getEntity().getValorUnidadeInformado().divide(this.getEntity().getQuantidade(), 2, RoundingMode.HALF_UP);    
+        BigDecimal quantidadeTotal = this.getEntity().getQuantidadePacotes().multiply(this.getEntity().getTamanhoUnidade());
+       // this.getEntity().setQuantidadeTotal(quantidadeTotal);
+        this.getEntity().setQuantidadeAtual(quantidadeTotal);
+        if(this.getEntity().getQuantidadeAtual() != null && this.getEntity().getValorUnidadeInformado() != null && this.getEntity().getQuantidadeAtual().compareTo(BigDecimal.ZERO) != 0) {
+            getEntity().setValor(this.getEntity().getValorUnidadeInformado().divide(this.getEntity().getQuantidadeAtual(), 2, RoundingMode.HALF_UP));    
         }
         
     }
@@ -291,14 +308,14 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public void actionDevolver(ActionEvent event) {
         try {
-            if (this.getEntity().getQuantidadeAtual().intValue() >= quantidade.intValue()) {
+            if (this.getEntity().getQuantidadeAtual().intValue() >= quantidadePacotes.intValue()) {
                 //this.getbO().refresh(getEntity());
-                this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeAtual().subtract(quantidade));
+                this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeAtual().subtract(quantidadePacotes));
                 if (justificativa != null) {
                     this.getEntity().setJustificativa(justificativa.getNome());
                 }                
                 MaterialSingleton.getInstance().getBo().persist(this.getEntity());
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidade.multiply(new BigDecimal(-1)), getEntity().getQuantidadeAtual(),
+                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadePacotes.multiply(new BigDecimal(-1)), getEntity().getQuantidadeAtual(),
                         MaterialLog.ENTRADA_MATERIAL_DEVOLVER));
                 this.actionNew(event);
                 this.geraLista();
@@ -337,9 +354,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 }
             }
 
-            if (this.getValorTotal() != null && this.getEntity().getQuantidadeTotal() != null) {
-                this.getEntity().setValor(this.getValorTotal().divide(this.getEntity().getQuantidadeTotal(), 2, RoundingMode.HALF_UP));
-            }
+         //   if (this.getValorTotal() != null && this.getEntity().getQuantidadeTotal() != null) {
+         //       this.getEntity().setValor(this.getValorTotal().divide(this.getEntity().getQuantidadeTotal(), 2, RoundingMode.HALF_UP));
+         //   }
             this.atualizaQuantidades();
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (this.getEntity().getStatus() == null) {
@@ -387,7 +404,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                                 this.getEntity().setFornecedor(null);
                                 this.getEntity().setMarca(null);
                                 valorTotal = new BigDecimal(0);
-                                valorUnitario = new BigDecimal(0);                            
+                                                
                                 this.setSelectedItem(null);
                                 digitacao = null;
                                 digitacaoLocal = null;                            
@@ -421,7 +438,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                     this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeAtual().subtract(quantidadeMovimentacao));
                     quantidadeMovimentacao = quantidadeMovimentacao.multiply(new BigDecimal(-1));
                 }
-                this.getEntity().setQuantidadeTotal(this.getEntity().getQuantidadeAtual());
+               // this.getEntity().setQuantidadeTotal(this.getEntity().getQuantidadeAtual());
                 this.getEntity().setDataMovimentacao(Calendar.getInstance().getTime());
                 MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentacao, getEntity().getQuantidadeAtual(),
                         MaterialLog.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA));
@@ -457,7 +474,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 Material material = new Material();
                 PropertyUtils.copyProperties(material, this.getEntity());
                 material.setQuantidadeAtual(quantidadeMovimentada);
-                material.setQuantidadeTotal(quantidadeMovimentada);
+               // material.setQuantidadeTotal(quantidadeMovimentada);
                 material.setId(0);
                 material.setLocal(this.getLocal());
                 this.setEntity(material);
@@ -966,21 +983,14 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public BigDecimal getValorTotal() {
         if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
-            valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getQuantidade());
+            valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getQuantidadeAtual());
         }
         return valorTotal;
     }
 
-    public void setValorUnitario(BigDecimal valorUnitario) {
-        this.valorUnitario = valorUnitario;
-    }
+
     
-    public BigDecimal getValorUnitario() {
-        if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
-            valorUnitario = this.getEntity().getValorUnidadeInformado().divide(this.getEntity().getQuantidade(), 2, RoundingMode.HALF_UP);
-        }
-        return valorUnitario;
-    }
+  
 
     public void setValorTotal(BigDecimal valorTotal) {
         this.valorTotal = valorTotal;
@@ -989,16 +999,16 @@ public class MaterialMB extends LumeManagedBean<Material> {
      public void valorTotal() {
          this.atualizaQuantidades();
          if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
-             valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getQuantidade());
+             valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getQuantidadeAtual());
          }
      }
 
-    public BigDecimal getQuantidade() {
-        return quantidade;
+    public BigDecimal getQuantidadePacotes() {
+        return quantidadePacotes;
     }
 
-    public void setQuantidade(BigDecimal quantidade) {
-        this.quantidade = quantidade;
+    public void setQuantidadePacotes(BigDecimal quantidadePacotes) {
+        this.quantidadePacotes = quantidadePacotes;
     }
 
     public List<MaterialLog> getMaterialLogs() {

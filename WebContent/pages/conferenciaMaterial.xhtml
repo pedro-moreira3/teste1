@@ -15,75 +15,75 @@
 						<div class="SeparatorFull"></div>
 						<br />
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-							id="dtMaterial" value="#{conferenciaMB.materiais}" var="material"
-							rows="6" paginator="true" selection="#{conferenciaMB.material}"
-							selectionMode="single" rowKey="#{material}"
+							id="dtMaterial" value="#{conferenciaMB.estoques}" var="estoque"
+							rows="6" paginator="true" selection="#{conferenciaMB.estoque}"
+							selectionMode="single" rowKey="estoque"
 							paginatorPosition="bottom">
 							<p:ajax event="rowSelect" update=":lume:pnMaterial"
 								listener="#{conferenciaMB.carregaTela}" />
 							<f:facet name="header">Materiais</f:facet>
-							<p:column filterBy="#{material.item.descricaoLimpa}"
-								sortBy="#{material.item.descricao}" filterMatchMode="contains">
+							<p:column filterBy="#{estoque.material.item.descricaoLimpa}"
+								sortBy="#{estoque.material.item.descricao}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Material" />
 								</f:facet>
-								<h:outputText value="#{material.item.descricao}"
-									title="#{material.id}" />
+								<h:outputText value="#{estoque.material.item.descricao}"
+									title="#{estoque.material.id}" />
 							</p:column>
-							<p:column filterBy="#{material.local.descricao}"
-								sortBy="#{material.local.descricao}" filterMatchMode="contains">
+							<p:column filterBy="#{estoque.material.local.descricao}"
+								sortBy="#{estoque.material.local.descricao}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Local" />
 								</f:facet>
-								<h:outputText value="#{material.local.descricao}" />
+								<h:outputText value="#{estoque.material.local.descricao}" />
 							</p:column>
-							<p:column filterBy="#{material.quantidadeAtual}"
-								sortBy="#{material.quantidadeAtual}" filterMatchMode="contains">
+							<p:column filterBy="#{estoque.quantidade}"
+								sortBy="#{estoque.quantidade}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Quantidade Disponível" />
 								</f:facet>
-								<h:outputText value="#{material.quantidadeAtual}">
+								<h:outputText value="#{estoque.quantidade}">
 									<f:convertNumber />
 								</h:outputText>
 								<h:outputLabel
-									value="#{conferenciaMB.getUnidadeString(material.item)}"
+									value="#{conferenciaMB.getUnidadeString(estoque.material.item)}"
 									styleClass="unidadeMedidaString" disabled="true" />
 							</p:column>
 
-							<p:column filterBy="#{material.quantidadeEmprestada}"
-								sortBy="#{material.quantidadeEmprestada}"
+							<p:column filterBy="#{estoque.material.quantidadeEmprestada}"
+								sortBy="#{estoque.material.quantidadeEmprestada}"
 								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Quantidade Emprestada" />
 								</f:facet>
 
 								<p:commandButton
-									action="#{conferenciaMB.carregaMaterialEmprestado(material)}"
+									action="#{conferenciaMB.carregaMaterialEmprestado(estoque.material)}"
 									oncomplete="PF('dlgMaterialEmprestado').show();"
 									process="@this" update=":lume:pgMaterialEmprestado"
 									icon="White fa fa-search" />
 
 							</p:column>
-							<p:column filterBy="#{material.marca.nome}"
-								sortBy="#{material.marca.nome}" filterMatchMode="contains">
+							<p:column filterBy="#{estoque.material.marca.nome}"
+								sortBy="#{estoque.material.marca.nome}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Marca" />
 								</f:facet>
-								<h:outputText value="#{material.marca.nome}" />
+								<h:outputText value="#{estoque.material.marca.nome}" />
 							</p:column>
-							<p:column filterBy="#{material.lote}" sortBy="#{material.lote}"
+							<p:column filterBy="#{estoque.material.lote}" sortBy="#{estoque.material.lote}"
 								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Lote" />
 								</f:facet>
-								<h:outputText value="#{material.lote}" />
+								<h:outputText value="#{estoque.material.lote}" />
 							</p:column>
-							<p:column filterBy="#{material.dataValidadeStr}"
-								sortBy="#{material.dataValidadeStr}" filterMatchMode="contains">
+							<p:column filterBy="#{estoque.material.dataValidadeStr}"
+								sortBy="#{estoque.material.dataValidadeStr}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Data de Validade" />
 								</f:facet>
-								<h:outputText value="#{material.dataValidadeStr}" />
+								<h:outputText value="#{estoque.material.dataValidadeStr}" />
 							</p:column>
 						</p:dataTable>
 						<br />
