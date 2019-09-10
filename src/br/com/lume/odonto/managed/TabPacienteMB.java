@@ -93,32 +93,32 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
-    public void refreshDadosPaciente() {
-        try {
-            if (pacienteMB.getEntity() != null && pacienteMB.getEntity().getId() != null && pacienteMB.getEntity().getId() > 0) {
-                Paciente paciente = getbO().find(pacienteMB.getEntity().getId());
-                getbO().refresh(paciente);
-                pacienteMB.setEntity(paciente);
-                List<PlanoTratamento> planosTratamento = planoTratamentoMB.getPlanosTratamento();
-                refreshPlanoTratamento(planosTratamento);
-                planosTratamento = odontogramaMB.getPlanosTratamento();
-                refreshPlanoTratamento(planosTratamento);
-                planosTratamento = ortodontiaMB.getPlanosTratamento();
-                refreshPlanoTratamento(planosTratamento);
-            }
-        } catch (Exception e) {
-            log.error("Erro no refreshDadosPaciente", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-        }
-    }
+//    public void refreshDadosPaciente() {
+//        try {
+//            if (pacienteMB.getEntity() != null && pacienteMB.getEntity().getId() != null && pacienteMB.getEntity().getId() > 0) {
+//                Paciente paciente = getbO().find(pacienteMB.getEntity().getId());
+//                getbO().refresh(paciente);
+//                pacienteMB.setEntity(paciente);
+//                List<PlanoTratamento> planosTratamento = planoTratamentoMB.getPlanosTratamento();
+//                refreshPlanoTratamento(planosTratamento);
+//                planosTratamento = odontogramaMB.getPlanosTratamento();
+//                refreshPlanoTratamento(planosTratamento);
+//                planosTratamento = ortodontiaMB.getPlanosTratamento();
+//                refreshPlanoTratamento(planosTratamento);
+//            }
+//        } catch (Exception e) {
+//            log.error("Erro no refreshDadosPaciente", e);
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+//        }
+//    }
 
-    private void refreshPlanoTratamento(List<PlanoTratamento> planosTratamento) throws Exception {
-        if (planosTratamento != null && !planosTratamento.isEmpty()) {
-            for (PlanoTratamento planoTratamento : planosTratamento) {
-                PlanoTratamentoSingleton.getInstance().getBo().refresh(planoTratamento);
-            }
-        }
-    }
+//    private void refreshPlanoTratamento(List<PlanoTratamento> planosTratamento) throws Exception {
+//        if (planosTratamento != null && !planosTratamento.isEmpty()) {
+//            for (PlanoTratamento planoTratamento : planosTratamento) {
+//                PlanoTratamentoSingleton.getInstance().getBo().refresh(planoTratamento);
+//            }
+//        }
+//    }
 
     public PacienteMB getPacienteMB() {
         return pacienteMB;

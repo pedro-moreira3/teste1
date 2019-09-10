@@ -22,6 +22,7 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.documentoFaturamento.DocumentoFaturamentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Documento;
 import br.com.lume.odonto.entity.DocumentoFaturamento;
 import br.com.lume.odonto.entity.Dominio;
@@ -129,7 +130,8 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
     public void carregarDados() {
         if (this.profissional != null) {
             try {
-                this.faturamentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listAllByPacienteAndProfissionalAndPeriodoAndProcedimento(null, this.profissional, this.inicio, this.fim, null, "Pagos", UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                this.faturamentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listAllByPacienteAndProfissionalAndPeriodoAndProcedimento(null, this.profissional, this.inicio, this.fim,
+                        null, "Pagos", UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 this.documentosFaturamento = DocumentoFaturamentoSingleton.getInstance().getBo().listByProfissional(this.profissional);
             } catch (Exception e) {
                 this.log.error("Erro no carregarDados", e);
@@ -156,17 +158,16 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
     public List<Lancamento> listLancamentos(PlanoTratamentoProcedimento ptp) {
         Orcamento orcamento = null;
         for (Orcamento o : OrcamentoSingleton.getInstance().getBo().listByPlanoTratamento(ptp.getPlanoTratamento())) {
-            if (!o.getExcluido().equals("S")) {
+            if (o.isAtivo()) {
                 orcamento = o;
                 break;
             }
         }
-        return orcamento.getLancamentos();
+        return LancamentoSingleton.getInstance().getBo().listLancamentosFromOrcamento(orcamento);
     }
 
     private void replaceDocumento() {
-        this.documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(this.tagDinamicas, this.profissional.getDadosBasico(), this.documento,
-                UtilsFrontEnd.getProfissionalLogado());
+        this.documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(this.tagDinamicas, this.profissional.getDadosBasico(), this.documento, UtilsFrontEnd.getProfissionalLogado());
         this.documento = this.documento.replaceAll("#periodo", this.getInicioStr() + " à " + this.getFimStr());
         // String finalizacao = "<br><br><br><br><br><br><br>";// Cabeçalho e Rodapé
         String faturamento = INICIO_TABELA;
@@ -186,7 +187,8 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
         BigDecimal valorRepassadoRestanteTotal = BigDecimal.ZERO;
         BigDecimal valorProfissionalTotal = BigDecimal.ZERO;
         for (PlanoTratamentoProcedimento ptp : this.faturamentos) {
-            valor = ptp.getValorProporcional();
+            // TODO - Estrutura mudada, nao foi alterado aqui pois o MB não é mais usado
+            //valor = ptp.getValorProporcional();
             custos = ptp.getCustos();
             liquido = valor.subtract(custos);
             percentualTributo = ptp.getTributo();
@@ -197,7 +199,8 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
                             false) + TDf + TDd + this.format(ptp.getValorProfissional(), true) + TDf + TDd + this.format(ptp.getValoresRepassados(this.inicio, this.fim),
                                     true) + TDf + TDd + this.format(ptp.getValoresRepassados().subtract(ptp.getValoresRepassados(this.inicio, this.fim)),
                                             true) + TDf + TDd + this.format(ptp.getValorRestante(), true) + TDf + TRf;
-            valorTotal = valorTotal.add(ptp.getValorProporcional());
+            // TODO - Estrutura mudada, nao foi alterado aqui pois o MB não é mais usado
+            //valorTotal = valorTotal.add(ptp.getValorProporcional());
             custoTotal = custoTotal.add(ptp.getCustos());
             liquidoTotal = liquidoTotal.add(liquido);
             tributoTotal = tributoTotal.add(valorTributo);
@@ -245,7 +248,8 @@ public class DocumentoFaturamentoMB extends LumeManagedBean<DocumentoFaturamento
     }
 
     public void setDocumentoSelecionado(Documento documentoSelecionado) {
-        this.tagDinamicas = DocumentoSingleton.getInstance().getBo().getTagDinamicas(documentoSelecionado, this.documentoSelecionado, this.tagDinamicas, new String[] { "#profissional", "#periodo", "#faturamento" });
+        this.tagDinamicas = DocumentoSingleton.getInstance().getBo().getTagDinamicas(documentoSelecionado, this.documentoSelecionado, this.tagDinamicas,
+                new String[] { "#profissional", "#periodo", "#faturamento" });
         this.documentoSelecionado = documentoSelecionado;
         this.visivel = true;
         this.documento = documentoSelecionado.getModelo();

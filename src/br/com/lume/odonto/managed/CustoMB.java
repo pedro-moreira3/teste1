@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
@@ -149,7 +150,11 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
         }      
         UtilsFrontEnd.setPacienteLogado(paciente);
         this.setPlanoTratamento(null);
-        this.setPlanoTratamentos(PlanoTratamentoSingleton.getInstance().getBo() .listByPaciente(paciente));
+        try {
+            this.setPlanoTratamentos(PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(paciente));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
         this.carregaListaCusto();
     }
 
@@ -195,7 +200,11 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
 
     public Paciente getPaciente() {
         paciente = UtilsFrontEnd.getPacienteSelecionado();
-        this.setPlanoTratamentos(PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(paciente));
+        try {
+            this.setPlanoTratamentos(PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(paciente));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
         this.carregaListaCusto();
         return paciente;
     }

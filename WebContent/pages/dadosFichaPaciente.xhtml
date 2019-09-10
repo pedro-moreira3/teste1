@@ -5,9 +5,11 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:pe="http://primefaces.org/ui/extensions">
-	
-	<h:inputHidden id="activeIndexFicha" value="#{tabPacienteMB.activeIndex}" />
-	<p:tabView id="tabView" style="padding: 0 15px 15px 15px; min-height: calc(100% - 17px)"
+
+	<h:inputHidden id="activeIndexFicha"
+		value="#{tabPacienteMB.activeIndex}" />
+	<p:tabView id="tabView"
+		style="padding: 0 15px 15px 15px; min-height: calc(100% - 17px)"
 		activeIndex="#{tabPacienteMB.activeIndex}">
 
 		<p:ajax event="tabChange" listener="#{tabPacienteMB.onTabChange}"
@@ -19,10 +21,10 @@
 		</p:tab>
 
 		<ui:remove>
-		<p:tab id="tab3" title="Odontograma"
-			disabled="#{pacienteMB.entity.id == null}">
-			<ui:include src="odontograma.xhtml" />
-		</p:tab>
+			<p:tab id="tab3" title="Odontograma"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="odontograma.xhtml" />
+			</p:tab>
 		</ui:remove>
 
 		<p:tab id="tab9" title="Plano Ortodôntico"

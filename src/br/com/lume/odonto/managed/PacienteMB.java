@@ -111,8 +111,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public PacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
-        this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
         this.setClazz(Paciente.class);
+        this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
         pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(super.getEntity());
         if (profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) && UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false) {
             visivelDadosPaciente = false;
@@ -232,7 +232,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         context.setViewRoot(viewRoot);
         context.renderResponse();
     }
-    
+
     public void validaIdade() {
         //refresh();
         responsavel = false;
@@ -246,12 +246,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             }
         }
     }
-    
+
     public String getStatusDescricao(Agendamento agendamento) {
         try {
             return StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getDescricao();
-        }catch(Exception e) {
-            
+        } catch (Exception e) {
+
         }
         return "";
     }
@@ -384,9 +384,13 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void actionAnamneseNew(ActionEvent event) {
         this.pacienteAnamnese = null;
-        Especialidade generica = EspecialidadeSingleton.getInstance().getBo().findByDescricaoAndEmpresa(GENERICA, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         especialidadeSelecionada = new ArrayList<>();
-        especialidadeSelecionada.add(generica);
+        if (getEntity() != null) {
+            if (getEntity().getId() != null && getEntity().getId().longValue() != 0l) {
+                Especialidade generica = EspecialidadeSingleton.getInstance().getBo().findByDescricaoAndEmpresa(GENERICA, getEntity().getIdEmpresa());
+                especialidadeSelecionada.add(generica);
+            }
+        }
         this.actionAtualizaPerguntasPorAnamnese();
     }
 

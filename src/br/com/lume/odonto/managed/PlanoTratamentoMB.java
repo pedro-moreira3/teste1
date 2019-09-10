@@ -42,10 +42,8 @@ import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Dente;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Evolucao;
-import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Odontograma;
 import br.com.lume.odonto.entity.Orcamento;
-import br.com.lume.odonto.entity.OrcamentoProcedimento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
@@ -112,7 +110,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     private List<SelectItem> dentes = new ArrayList<SelectItem>();
 
-    private PlanoTratamentoProcedimento planoTratamentoProcedimentoSelecionado;
+    private PlanoTratamentoProcedimento planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
     private Procedimento procedimentoSelecionado;
 
     private Odontograma odontogramaSelecionado;
@@ -154,7 +152,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
             profissionalFinalizaProcedimento = profissionalLogado;
             atualizaTela();
-            
+
             justificativasCancelamento = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("planotratamentoprocedimento", "justificativa");
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -250,14 +248,19 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void carregarPlanosTratamento() {
-        planosTratamento = new ArrayList<>();
-        if (getPaciente() != null) {
-            planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(getPaciente());
-            for (PlanoTratamento pt : planosTratamento) {
-                if (pt.getFinalizado().equals(Status.SIM) && contemPlanoTratamentoProcedimentoAberto(pt.getPlanoTratamentoProcedimentos())) {
-                    pt.setValor(BigDecimal.ZERO);
+        try {
+            planosTratamento = new ArrayList<>();
+            if (getPaciente() != null) {
+                planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(getPaciente());
+                for (PlanoTratamento pt : planosTratamento) {
+                    if (pt.getFinalizado().equals(Status.SIM) && contemPlanoTratamentoProcedimentoAberto(pt.getPlanoTratamentoProcedimentos())) {
+                        pt.setValor(BigDecimal.ZERO);
+                    }
                 }
             }
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
         }
     }
 
@@ -454,7 +457,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void fechaJustifivaticaRemove() {
-        planoTratamentoProcedimentoSelecionado = null;
+        planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
     }
 
     public void onProcedimentoRemove(PlanoTratamentoProcedimento planoTratamentoProcedimentoRemove) throws Exception {
@@ -541,7 +544,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
             PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
             carregarPlanoTratamentoProcedimentos();
-            this.planoTratamentoProcedimentoSelecionado = null;
+            this.planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
 
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             PrimeFaces.current().executeScript("PF('dlgNovoProcedimento').hide()");
@@ -629,6 +632,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         atualizaTela(false);
     }
 
+    @SuppressWarnings("unused")
     public void atualizaTela(boolean validaOrcamento) throws Exception {
         carregarProfissionais();
         carregarPlanoTratamentoProcedimentos();
@@ -636,7 +640,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         carregarPlanosTratamento();
         atualizaValorTotal();
         carregarDadosCabecalho();
-        if (validaOrcamento)
+        if (validaOrcamento && false)
             validaValoresOrcamentoPlanoTratamento();
     }
 
@@ -786,7 +790,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             mensagemEncerrarPT = null;
             evolucao = null;
         }
-        this.planoTratamentoProcedimentoSelecionado = null;
+        this.planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
         carregarPlanoTratamentoProcedimentos();
     }
     // =============================================== EVOLUCAO ============================================== //
@@ -838,39 +842,22 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     // ============================================= AGENDAMENTOS ============================================ //
 
     //============================================== FINANCEIRO ============================================== //
+    public BigDecimal calculaTotalOrcamento() {
+        return OrcamentoSingleton.getInstance().getTotalOrcamento(this.orcamentoSelecionado);
+    }
+
     public void actionNewOrcamento() {
-        this.orcamentoSelecionado = new Orcamento();
-        this.orcamentoSelecionado.setPlanoTratamento(getEntity());
-        this.orcamentoSelecionado.setProcedimentos(new ArrayList<>());
-        if (orcamentoSelecionado.getPlanoTratamento().getPlanoTratamentoProcedimentos() != null) {
-            for (PlanoTratamentoProcedimento ptProcedimento : orcamentoSelecionado.getPlanoTratamento().getPlanoTratamentoProcedimentos()) {
-                if ("S".equals(ptProcedimento.getExcluido()))
-                    continue;
-                OrcamentoProcedimento orcamentoProcedimento = new OrcamentoProcedimento();
-                orcamentoProcedimento.setDescricao(ptProcedimento.getProcedimento().getDescricao());
-                orcamentoProcedimento.setValor(ptProcedimento.getValor());
-                orcamentoProcedimento.setValorOriginal(ptProcedimento.getValor());
-                orcamentoProcedimento.setIncluso(true);
-                orcamentoProcedimento.setOrcamento(this.orcamentoSelecionado);
-                this.orcamentoSelecionado.getProcedimentos().add(orcamentoProcedimento);
-            }
-        }
-        this.orcamentoSelecionado.setValorTotal(calculaTotalOrcamento());
-        this.orcamentoSelecionado.setValorPago(getTotalPago());
+        this.orcamentoSelecionado = OrcamentoSingleton.getInstance().preparaOrcamentoFromPT(getEntity());
+        this.orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
     }
 
     public void cancelaLancamentos() throws Exception {
-        for (Orcamento o : this.getEntity().getOrcamentos())
+        for (Orcamento o : OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(getEntity()))
             cancelaLancamentos(o);
     }
 
-    public void cancelaLancamentos(Orcamento orcamento) throws Exception {
-        for (Lancamento l : orcamento.getLancamentos()) {
-            if (l.getDataPagamento() == null && l.getExcluido().equals(Status.NAO)) {
-                l.setExcluido(Status.SIM);
-                LancamentoSingleton.getInstance().getBo().remove(l);
-            }
-        }
+    public void cancelaLancamentos(Orcamento o) throws Exception {
+        OrcamentoSingleton.getInstance().inativaOrcamento(o, UtilsFrontEnd.getProfissionalLogado());
     }
 
     private void validaValoresOrcamentoPlanoTratamento() {
@@ -898,13 +885,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public BigDecimal getTotalPago() {
-        BigDecimal totalPago = new BigDecimal(0);
-        for (Lancamento lan : LancamentoSingleton.getInstance().getBo().listByPlanoTratamentoOrcamentoNaoExcluido(getEntity())) {
-            if (lan.getDataPagamento() != null) {
-                totalPago = totalPago.add(lan.getValor());
-            }
-        }
-        return totalPago;
+        return LancamentoSingleton.getInstance().getTotalLancamentoPorOrcamento(this.orcamentoSelecionado, true);
     }
 
     public void carregaTelaOrcamento(PlanoTratamento planoTratamento) {
@@ -919,19 +900,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void carregaOrcamentos() {
-        orcamentos = OrcamentoSingleton.getInstance().getBo().listByPlanoTratamento(getEntity());
-    }
-
-    public BigDecimal calculaTotalOrcamento() {
-        BigDecimal valorTotalOrcamento = new BigDecimal(0);
-        if (orcamentoSelecionado != null && orcamentoSelecionado.getProcedimentos() != null) {
-            for (OrcamentoProcedimento ordemProcedimento : orcamentoSelecionado.getProcedimentos()) {
-                if (!ordemProcedimento.isIncluso())
-                    continue;
-                valorTotalOrcamento = valorTotalOrcamento.add(ordemProcedimento.getValor());
-            }
-        }
-        return valorTotalOrcamento;
+        orcamentos = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(getEntity());
     }
 
     public BigDecimal getValorOrcamentoAPagar() {
@@ -954,12 +923,19 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         return new BigDecimal(0);
     }
 
+    public void actionRemoveOrcamento(Orcamento orcamento) {
+        try {
+            OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado());
+            carregaOrcamentos();
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+    }
+
     public void actionSimulaLancamento() {
         try {
-            orcamentoSelecionado.setValorTotal(calculaTotalOrcamento());
-            orcamentoSelecionado.setDataAprovacao(new Date());
-            orcamentoSelecionado.setQuantidadeParcelas(1);
-
             BigDecimal orcamentoPerc = new BigDecimal(0);
             if ("P".equals(orcamentoSelecionado.getDescontoTipo()))
                 orcamentoPerc = orcamentoSelecionado.getDescontoValor();
@@ -978,29 +954,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
                 this.addError(OdontoMensagens.getMensagem("erro.orcamento.desconto.maior"), "");
                 return;
-            } else {
-                addInfo("Simulação com " + orcamentoPerc + "% de desconto aplicado!", "");
             }
 
-            OrcamentoSingleton.getInstance().getBo().persist(orcamentoSelecionado);
+            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamento(orcamentoSelecionado, false));
+            orcamentoSelecionado.setQuantidadeParcelas(1);
+            OrcamentoSingleton.getInstance().aprovaOrcamento(orcamentoSelecionado, null, UtilsFrontEnd.getProfissionalLogado());
+            addInfo("Aprovação com " + orcamentoPerc + "% de desconto aplicado!", "");
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionPersist OrcamentoMB", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             return;
-        }
-
-        try {
-            Lancamento lancamento = new Lancamento();
-            lancamento.setNumeroParcela(1);
-            lancamento.setDataCredito(new Date());
-            lancamento.setValor(orcamentoSelecionado.getValorComDesconto());
-            lancamento.setValorOriginal(orcamentoSelecionado.getValorTotal());
-            lancamento.setOrcamento(orcamentoSelecionado);
-            lancamento.setValorDesconto(lancamento.getValorOriginal().subtract(lancamento.getValor()));
-            LancamentoSingleton.getInstance().getBo().persist(lancamento);
-        } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog("Erro no actionPersist OrcamentoMB", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
 
@@ -1012,13 +975,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void actionRemoveOrcamento(ActionEvent event) {
         try {
             cancelaLancamentos(this.orcamentoSelecionado);
-            this.orcamentoSelecionado.setExcluido(Status.SIM);
-            this.orcamentoSelecionado.setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
-            this.orcamentoSelecionado.setDataExclusao(new Date());
-            OrcamentoSingleton.getInstance().getBo().persist(orcamentoSelecionado);
+            OrcamentoSingleton.getInstance().inativaOrcamento(this.orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
 
             this.addError(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
-            carregaTelaOrcamento(this.orcamentoSelecionado.getPlanoTratamento());
+            carregaTelaOrcamento(getEntity());
             this.orcamentoSelecionado = null;
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -1028,23 +988,23 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionPersistOrcamento(ActionEvent event) {
         try {
-            orcamentoSelecionado.setValorTotal(calculaTotalOrcamento());
-            orcamentoSelecionado.setProfissional(UtilsFrontEnd.getProfissionalLogado());
+            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamento(orcamentoSelecionado, false));
+            orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
             orcamentoSelecionado.setDataCriacao(new Date());
             OrcamentoSingleton.getInstance().getBo().persist(orcamentoSelecionado);
 
-            List<Lancamento> lancamentosNaoPagos = LancamentoSingleton.getInstance().getBo().listLancamentosNaoPagos(orcamentoSelecionado);
-            if (lancamentosNaoPagos != null) {
-                for (Lancamento l : lancamentosNaoPagos) {
-                    LancamentoSingleton.getInstance().getBo().remove(l);
-                }
-            }
+//            List<Lancamento> lancamentosNaoPagos = LancamentoSingleton.getInstance().getBo().listLancamentosNaoPagos(orcamentoSelecionado);
+//            if (lancamentosNaoPagos != null) {
+//                for (Lancamento l : lancamentosNaoPagos) {
+//                    LancamentoSingleton.getInstance().getBo().remove(l);
+//                }
+//            }
 
             calculaRepasses();
             //actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             PrimeFaces.current().executeScript("PF('dlg').hide()");
-            carregaTelaOrcamento(this.orcamentoSelecionado.getPlanoTratamento());
+            carregaTelaOrcamento(getEntity());
             //this.orcamentoSelecionado = null;
         } catch (Exception e) {
             log.error("Erro no actionPersist OrcamentoMB", e);
@@ -1257,6 +1217,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     //============================================== PERMISSOES ============================================== //
 
     // ================================================= TELA ================================================ //
+    @SuppressWarnings("unused")
     private void atualizaRowTable(UIData tabela) {
         atualizaRowTable(tabela, null);
     }
@@ -1272,6 +1233,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add(id);
     }
 
+    @SuppressWarnings("unused")
     private void atualizaRowsTable(UIData tabela) {
         if (tabela == null)
             return;

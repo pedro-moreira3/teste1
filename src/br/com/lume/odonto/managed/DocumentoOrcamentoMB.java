@@ -195,11 +195,12 @@ public class DocumentoOrcamentoMB extends LumeManagedBean<DocumentoOrcamento> {
             orcamento += "</td></td>";
         }
         BigDecimal valorOrcamento = BigDecimal.ZERO;
-        for (Orcamento o : planoDeTratamento.getOrcamentos()) {
-            if (o.getExcluido() != Status.NAO) {
-                valorOrcamento = o.getValorTotal();
-            }
-        }
+        // TODO - Estrutura mudada, nao foi alterado aqui pois o MB não é mais usado
+//        for (Orcamento o : planoDeTratamento.getOrcamentos()) {
+//            if (o.isAtivo()) {
+//                valorOrcamento = o.getValorTotal();
+//            }
+//        }
         BigDecimal desconto = valorOrcamento.compareTo(BigDecimal.ZERO) == 0 ? valorOrcamento : planoDeTratamento.getValorTotal().subtract(valorOrcamento);
         BigDecimal valorTotal = planoDeTratamento.getValorTotalDesconto().subtract((valorPS));
         orcamento += "<tr><td>&nbsp;</td></tr><tr><td><b> Total</b></td><td><b>" + this.formataValor(planoDeTratamento.getValorTotal().subtract(valorPS)) + "</b></td></tr>";

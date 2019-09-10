@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.event.SelectEvent;
 
 import br.com.lume.common.OdontoPerfil;
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
@@ -202,7 +203,11 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
 
     public List<PlanoTratamento> getPlanoTratamentos() {
         if (paciente != null) {
-            planoTratamentos = PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(paciente);
+            try {
+                planoTratamentos = PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(paciente);
+            } catch (Exception e) {
+                LogIntelidenteSingleton.getInstance().makeLog(e);
+            }
         }
         return planoTratamentos;
     }

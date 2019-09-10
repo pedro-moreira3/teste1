@@ -58,8 +58,6 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
 
     private boolean porProcedimento, ciclico;
 
-  
-
     private String nomeClinica;
 
     private String endTelefoneClinica;
@@ -70,14 +68,11 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
 
     public OrcamentoMB2() {
         super(OrcamentoSingleton.getInstance().getBo());
-     
+
         this.setClazz(Orcamento.class);
         Empresa empresalogada = UtilsFrontEnd.getEmpresaLogada();
         nomeClinica = empresalogada.getEmpStrNme() != null ? empresalogada.getEmpStrNme() : "";
-        endTelefoneClinica = (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() + " - " : "") +
-                (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() + "/" : "") +
-                (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() + " - " : "") +
-                (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
+        endTelefoneClinica = (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() + " - " : "") + (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() + "/" : "") + (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() + " - " : "") + (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
         try {
             porcentagem = new BigDecimal(0);
             formasPagamento = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma");
@@ -150,9 +145,9 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
 
     public void simulaLancamento() {
         if (porcentagem != null) {
-            
+
             Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
-            
+
             if (!isDentistaAdmin() && profissionalLogado.getDesconto() == null || profissionalLogado.getDesconto().doubleValue() < porcentagem.doubleValue()) {
                 porcentagem = profissionalLogado.getDesconto() != null ? profissionalLogado.getDesconto() : new BigDecimal(0);
                 this.addError(OdontoMensagens.getMensagem("erro.orcamento.desconto.maior"), "");
@@ -167,7 +162,8 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
         cal.setTime(new Date());
         cal.add(Calendar.DAY_OF_MONTH, -1);
         this.getEntity().setDataAprovacao(new java.util.Date());
-        this.getEntity().setPlanoTratamento(planoTratamentoMB.getEntity());
+        // TODO - Estrutura mudada, nao foi alterado aqui pois o MB não é mais usado
+        //this.getEntity().setPlanoTratamento(planoTratamentoMB.getEntity());
         this.getEntity().setQuantidadeParcelas(numeroParcelas);
         this.getEntity().setValorTotal(valorTotal);
         lancamentos = new ArrayList<>();
@@ -206,10 +202,11 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
                 }
             }
         } else {
-            if (this.getEntity().getPlanoTratamento().getPlanoTratamentoProcedimentos().get(0).getProcedimento().isCiclicoBoo()) {
-                // if (lancamentos == null || lancamentos.isEmpty())
-                lancamentos = LancamentoSingleton.getInstance().getBo().listLancamentosNaoPagos(this.getEntity());
-            }
+            // TODO - Estrutura mudada, nao foi alterado aqui pois o MB não é mais usado
+            //if (this.getEntity().getPlanoTratamento().getPlanoTratamentoProcedimentos().get(0).getProcedimento().isCiclicoBoo()) {
+            // // if (lancamentos == null || lancamentos.isEmpty())
+            //lancamentos = LancamentoSingleton.getInstance().getBo().listLancamentosNaoPagos(this.getEntity());
+            //}
             parcela = lancamentos.size() + 1;
             for (; parcela <= numeroParcelas; parcela++) {
                 if (parcela != 1) {
@@ -227,11 +224,12 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
                 } else {
                     valor = (this.getEntity().getValorTotal().divide(new BigDecimal(numeroParcelas), 2, BigDecimal.ROUND_DOWN));
                 }
-                if (!this.getEntity().getPlanoTratamento().getPlanoTratamentoProcedimentos().get(0).getProcedimento().isCiclicoBoo()) {
-                    if (!this.checkMinMaxOptions(numeroParcelas, valor)) {
-                        return;
-                    }
-                }
+                // TODO - Estrutura mudada, nao foi alterado aqui pois o MB não é mais usado
+                //if (!this.getEntity().getPlanoTratamento().getPlanoTratamentoProcedimentos().get(0).getProcedimento().isCiclicoBoo()) {
+                //if (!this.checkMinMaxOptions(numeroParcelas, valor)) {
+                //return;
+                //}
+                //}
                 lancamento = new Lancamento();
                 lancamento.setNumeroParcela(parcela);
                 lancamento.setDataCredito(dataCredito);
@@ -249,12 +247,13 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
     public BigDecimal checkTotal() {
         BigDecimal total = BigDecimal.ZERO;
         List<Procedimento> ps = new ArrayList<>();
-        for (PlanoTratamentoProcedimento ptp : this.getEntity().getPlanoTratamento().getPlanoTratamentoProcedimentos()) {
-            if (!ps.contains(ptp.getProcedimento())) {
-                total = total.add(ptp.getValorDesconto());
-                ps.add(ptp.getProcedimento());
-            }
-        }
+        // TODO - Estrutura mudada, nao foi alterado aqui pois o MB não é mais usado
+        //for (PlanoTratamentoProcedimento ptp : this.getEntity().getPlanoTratamento().getPlanoTratamentoProcedimentos()) {
+        //if (!ps.contains(ptp.getProcedimento())) {
+        //total = total.add(ptp.getValorDesconto());
+        //ps.add(ptp.getProcedimento());
+        //}
+        //}
         return total;
     }
 
@@ -335,11 +334,12 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
             if (this.validaTotalLancamento()) {
                 PlanoTratamentoProcedimento ptp = planoTratamentoMB.getPlanoTratamentoProcedimentos().get(0);
                 this.getEntity().setDataAprovacao(new Date());
-                this.getEntity().setPlanoTratamento(planoTratamentoMB.getEntity());
+                // TODO - Estrutura mudada, nao foi alterado aqui pois o MB não é mais usado
+                //this.getEntity().setPlanoTratamento(planoTratamentoMB.getEntity());
                 this.getEntity().setQuantidadeParcelas(numeroParcelas);
                 BigDecimal desconto = valorTotalPlano.subtract(valorTotal.add(totalPago));
                 this.getEntity().setValorTotal(valorTotalPlano.subtract(desconto));
-                this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
+                this.getEntity().setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
                 for (Lancamento l : lancamentos) {
                     if (l.getValor().compareTo(l.getValorOriginal()) != 0) {
                         l.setValorOriginal(l.getValor());
@@ -353,14 +353,15 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
                     }
                 }
                 for (Lancamento lancamento : lancamentos) {
-                    lancamento.setOrcamento(this.getEntity());
+                    //lancamento.setOrcamento(this.getEntity());
                     LancamentoSingleton.getInstance().getBo().persist(lancamento);
                 }
-                PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().find(this.getEntity().getPlanoTratamento());
-                pt.setValorTotal(valorTotalPlano);
-                pt.setValorTotalDesconto(valorTotalDesconto);
-                pt.setDesconto(porcentagem);
-                PlanoTratamentoSingleton.getInstance().getBo().persist(pt);
+                // TODO - Estrutura mudada, nao foi alterado aqui pois o MB não é mais usado
+                //PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().find(this.getEntity().getPlanoTratamento());
+                //pt.setValorTotal(valorTotalPlano);
+                //pt.setValorTotalDesconto(valorTotalDesconto);
+                //pt.setDesconto(porcentagem);
+                //PlanoTratamentoSingleton.getInstance().getBo().persist(pt);
                 List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos = planoTratamentoMB.getPlanoTratamentoProcedimentos();
                 for (PlanoTratamentoProcedimento planoTratamentoProcedimento : planoTratamentoProcedimentos) {
                     planoTratamentoProcedimento.setValorAnterior(planoTratamentoProcedimento.getValorDesconto());
@@ -373,7 +374,8 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
                     }
                     PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(planoTratamentoProcedimento);
                 }
-                calculaRepasses(pt);
+                // TODO - Estrutura mudada, nao foi alterado aqui pois o MB não é mais usado
+                //calculaRepasses(pt);
                 planoTratamentoMB.actionNew(null);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 PrimeFaces.current().ajax().addCallbackParam("orcamento", true);

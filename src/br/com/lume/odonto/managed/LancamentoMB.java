@@ -19,6 +19,7 @@ import org.primefaces.event.SelectEvent;
 
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
@@ -38,10 +39,13 @@ import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Motivo;
 import br.com.lume.odonto.entity.Orcamento;
+import br.com.lume.odonto.entity.OrcamentoItem;
+import br.com.lume.odonto.entity.OrcamentoProcedimento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.orcamento.OrcamentoSingleton;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.tarifa.TarifaSingleton;
 
@@ -79,7 +83,8 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
 
     private Desconto desconto;
 
-    private BigDecimal valorDesconto, valor, novoValor, somaValores, valorAgregado, valorAgregadoProporcional, valorAgregadoExcedido, valorPago, valorRestante;
+    private BigDecimal valorDesconto, valor, novoValor, somaValores, valorAgregado, valorAgregadoProporcional, valorAgregadoExcedido, valorRestante;
+    //private BigDecimal valorPago;
 
     private String recibo;
 
@@ -110,7 +115,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     private BigDecimal valorAPagar;
 
     public LancamentoMB() {
-        super(LancamentoSingleton.getInstance().getBo());       
+        super(LancamentoSingleton.getInstance().getBo());
         statuss = new ArrayList<>();
         statuss.add(Lancamento.AGENDADO);
         statuss.add(Lancamento.ATIVO);
@@ -184,11 +189,10 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     public void actionRemove(ActionEvent event) {
         try {
             // for (Lancamento l : lancamentosSelecionados) {
-            this.getEntity().setExcluido(Status.SIM);
             this.getEntity().setDataPagamento(null);
             this.getEntity().setFormaPagamento(null);
-            this.getEntity().setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
-            this.getbO().persist(this.getEntity());
+            LancamentoSingleton.getInstance().inativaLancamento(getEntity(), UtilsFrontEnd.getProfissionalLogado());
+
             List<LancamentoContabil> lancamentosContabeis = LancamentoContabilSingleton.getInstance().getBo().listByLancamento(this.getEntity(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (LancamentoContabil lc : lancamentosContabeis) {
                 lc.setExcluido(Status.SIM);
@@ -377,7 +381,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
         lancamento.setValor(novoValor);
         lancamento.setValorOriginal(novoValor);
         lancamento.setPlanoTratamentoProcedimento(this.getEntity().getPlanoTratamentoProcedimento());
-        lancamento.setOrcamento(this.getEntity().getOrcamento());
+        lancamento.setFaturaItem(getEntity().getFaturaItem());
         LancamentoSingleton.getInstance().getBo().persist(lancamento);
     }
 
@@ -401,8 +405,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
                 persist(l);
                 data.add(Calendar.MONTH, 1);
             }
-            getEntity().setExcluido("S");
-            LancamentoSingleton.getInstance().getBo().persist(getEntity());
+            LancamentoSingleton.getInstance().inativaLancamento(getEntity(), UtilsFrontEnd.getProfissionalLogado());
         } else {
             pagarParcelaUnitaria(valorAPagar, dataPagamento);
         }
@@ -431,7 +434,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
         l.setFormaPagamento(this.getEntity().getFormaPagamento());
         l.setDataPagamento(this.getEntity().getDataPagamento());
         l.setNumeroParcela(this.getEntity().getNumeroParcela());
-        l.setOrcamento(this.getEntity().getOrcamento());
+        l.setFaturaItem(getEntity().getFaturaItem());
         l.setPlanoTratamentoProcedimento(this.getEntity().getPlanoTratamentoProcedimento());
         l.setRecibo(this.getEntity().getRecibo());
         l.setTributo(this.getEntity().getTributo());
@@ -452,10 +455,18 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
 
     public int getProximaParcela(Lancamento lancamento) {
         int ultimaParcela = 0;
-        for (Lancamento l : lancamento.getOrcamento().getLancamentos()) {
-            if (ultimaParcela < l.getNumeroParcela()) {
-                ultimaParcela = l.getNumeroParcela();
+        try {
+            if (lancamento.getFaturaItem() == null || lancamento.getFaturaItem().getOrigemOrcamento() != null)
+                throw new Exception("Lançamento não está relacionado à um orçamento.");
+            Orcamento orcamento = OrcamentoSingleton.getInstance().getBo().getOrcamentoFromLancamento(lancamento);
+
+            for (Lancamento l : LancamentoSingleton.getInstance().getBo().listLancamentosFromOrcamento(orcamento)) {
+                if (ultimaParcela < l.getNumeroParcela()) {
+                    ultimaParcela = l.getNumeroParcela();
+                }
             }
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
         return ultimaParcela + 1;
     }
@@ -476,8 +487,16 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
             return true;
         }
         for (Lancamento l : lancamentosSelecionados) {
-            if (l.getDataPagamento() != null || !l.getExcluido().equals("N") || !l.getOrcamento().getExcluido().equals("N")) {
-                return true;
+            try {
+                if (l.getFaturaItem() == null || l.getFaturaItem().getOrigemOrcamento() != null)
+                    throw new Exception("Lançamento não está relacionado à um orçamento.");
+                Orcamento orcamento = OrcamentoSingleton.getInstance().getBo().getOrcamentoFromLancamento(l);
+
+                if (l.getDataPagamento() != null || !l.isAtivo() || !orcamento.isAtivo()) {
+                    return true;
+                }
+            } catch (Exception e) {
+                LogIntelidenteSingleton.getInstance().makeLog(e);
             }
         }
         return false;
@@ -522,7 +541,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void handleSelect(SelectEvent event) {
@@ -542,17 +561,27 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     }
 
     public void carregarFiltros() {
-        boolean encontrou = false;
+        //boolean encontrou = false;
         listPt = new ArrayList<>();
         for (Lancamento l : lancamentos) {
-            encontrou = false;
-            for (PlanoTratamento lpt : listPt) {
-                if (l.getOrcamento().getPlanoTratamento() == lpt) {
-                    encontrou = true;
+            try {
+                if (l.getFaturaItem() == null || l.getFaturaItem().getOrigemOrcamento() != null)
+                    throw new Exception("Lançamento não está relacionado à um orçamento.");
+                Orcamento orcamento = OrcamentoSingleton.getInstance().getBo().getOrcamentoFromLancamento(l);
+
+                //encontrou = false;
+                for (PlanoTratamento lpt : listPt) {
+                    for (OrcamentoItem oi : orcamento.getItens()) {
+                        OrcamentoProcedimento op = oi.getOrigemProcedimento();
+                        if (op.getPlanoTratamentoProcedimento() == null || op.getPlanoTratamentoProcedimento().getPlanoTratamento() == null)
+                            continue;
+                        PlanoTratamento pt = op.getPlanoTratamentoProcedimento().getPlanoTratamento();
+                        if (pt.getId().longValue() == lpt.getId().longValue() && !listPt.contains(pt))
+                            listPt.add(pt);
+                    }
                 }
-            }
-            if (!encontrou) {
-                listPt.add(l.getOrcamento().getPlanoTratamento());
+            } catch (Exception e) {
+                LogIntelidenteSingleton.getInstance().makeLog(e);
             }
         }
     }
