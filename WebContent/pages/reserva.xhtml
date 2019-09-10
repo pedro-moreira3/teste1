@@ -160,8 +160,8 @@
                         <div class="EmptyBox20"></div>
                     </p:outputPanel>
 						<br />
-                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtReserva" value="#{reservaMB.reservas}" var="reserva" rows="15" paginator="true" selection="#{reservaMB.entity}"
-                            selectionMode="single" rowKey="#{reserva}" paginatorPosition="bottom">
+                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtReserva" value="#{reservaMB.reservas}" var="reserva" rows="15" paginator="true"
+                            rowKey="#{reserva}" paginatorPosition="bottom">
                             <p:ajax event="rowSelect"  listener="#{reservaMB.carregaTelaGeral}" />
                             <f:facet name="header">
                                 <h:panelGroup id="filtro" rendered="#{reservaMB.admin}">

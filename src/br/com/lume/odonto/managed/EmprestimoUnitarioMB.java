@@ -13,6 +13,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.event.SelectEvent;
@@ -101,6 +102,8 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
     public static String PENDENTE = "PE";
 
     public static String FINALIZADO = "FI";
+    
+    private boolean fecharDialog;
 
   //  private MaterialBO materialBO;
 
@@ -117,6 +120,8 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
  //   private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
 
     private boolean enableSalvar;
+    
+    private boolean editar;
 
 //    private MaterialLogBO materialLogBO = new MaterialLogBO();
 
@@ -140,7 +145,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
 
     public void actionDevolucaoMaterial(ActionEvent event) {
         if (this.getEntity().getQuantidade().longValue() < this.getQuantidadeDevolvida().longValue()) {
-            this.addInfo(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "");
+            this.addInfo(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "",true);
         } else {
             try {
                 BigDecimal quantidadeUtilizada;
@@ -170,9 +175,9 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
                 super.actionNew(event);
                 this.geraLista();
                 this.setEnableDevolucao(false);
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
             } catch (Exception e) {
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
                 log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
             }
         }
@@ -192,7 +197,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
 
     public void actionLavagemMaterial(ActionEvent event) {
         if (this.getEntity().getQuantidade().longValue() < this.getQuantidadeDevolvida().longValue()) {
-            this.addWarn(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "");
+            this.addWarn(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "",true);
         } else {
             try {
                 // O que não vai pra lavagem é devolvido
@@ -214,9 +219,9 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
                 super.actionNew(event);
                 this.geraLista();
                 this.setEnableDevolucao(false);
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
             } catch (Exception e) {
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
                 log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
             }
         }
@@ -235,14 +240,21 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
         this.setQuantidadeDevolvida(this.getEntity().getQuantidade());
     }
 
+    public void actionPersistFechar(ActionEvent event) {
+      this.fecharDialog = true;
+      actionPersist(event);
+    }
+    
     @Override
     public void actionPersist(ActionEvent event) {
-        try {
+        try {         
             if (this.existeMaterialAplicacaoDireta() && (planoTratamentoProcedimentoAgendamentos == null || planoTratamentoProcedimentoAgendamentos.isEmpty())) {
-                this.addError("Material do tipo direto, é obrigatório selecionar o agendamento e procedimento.", "");
+                this.addError("Material do tipo direto, é obrigatório selecionar o agendamento e procedimento.", "",true);
             } else if (this.existeMaterialAplicacaoDireta() && planoTratamentoProcedimentoAgendamentos != null && planoTratamentoProcedimentoAgendamentos.size() > 1) {
-                this.addError("Material do tipo direto, é obrigatório selecionar apenas um procedimento por agendamento.", "");
-            } else {
+                this.addError("Material do tipo direto, é obrigatório selecionar apenas um procedimento por agendamento.", "",true);
+            } else  if(materiaisSelecionado == null) {
+                this.addError("Selecione um item na tabela de Materias Disponíveis", "",true);   
+            }else {
                 if (this.getEntity().getId() == 0) {
                     agendamento = this.getEntity().getAgendamento();
                     List<MaterialLog> logs = this.retiraQuantidade();
@@ -252,8 +264,14 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
                     this.getEntity().setProfissional(profissional);
                     this.getEntity().setMaterial(materiaisSelecionado.get(materiaisSelecionado.size() - 1));
                     this.getEntity().setStatus(ENTREGUE);
-                    this.getEntity().setAgendamento(agendamento);
-                    this.getEntity().setPlanoTratamentoProcedimentosAgendamentos(planoTratamentoProcedimentoAgendamentos);
+                    if(agendamento != null) {
+                        this.getEntity().setAgendamento(agendamento);    
+                    }
+                    if(planoTratamentoProcedimentoAgendamentos != null) {
+                        this.getEntity().setPlanoTratamentoProcedimentosAgendamentos(planoTratamentoProcedimentoAgendamentos);    
+                    }
+                    
+                   
                     this.getEntity().setQuantidade(this.getQuantidade());
                     this.getbO().persist(this.getEntity());
                     MaterialLogSingleton.getInstance().getBo().persistBatch(logs);
@@ -267,15 +285,40 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
                 this.setMateriaisSelecionado(null);
                 this.setMateriaisDisponiveis(null);
                 this.setEnableSalvar(false);
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                setData(null);
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
+                this.actionNew(event);
+                if(this.fecharDialog) {
+                    PrimeFaces.current().executeScript("PF('dlg').hide();");
+                    this.fecharDialog = false;
+                }
             }
         } catch (Exception e) {
             log.error("Erro no actionPersist do " + this.getEntity().getClass().getName(), e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
         }
     }
+    
+    public void carregarEditar(EmprestimoUnitario emprestimoUnitario) {
+        this.editar = true;
+        setEntity(emprestimoUnitario);
+        setProfissional(emprestimoUnitario.getProfissional());        
+        setDigitacao(emprestimoUnitario.getMaterial().getItem().getDescricao());
+        setQuantidade(emprestimoUnitario.getQuantidade());
+        setData(emprestimoUnitario.getDataEntrega());
+        if(this.materiaisSelecionado == null && emprestimoUnitario.getMaterial() != null) {
+            this.materiaisSelecionado = new ArrayList<Material>();
+            this.materiaisSelecionado.add(emprestimoUnitario.getMaterial());    
+        }
+        listaAgendamentos();
+        carregaProcedimentos();
+        setPlanoTratamentoProcedimentoAgendamentos(emprestimoUnitario.getPlanoTratamentoProcedimentosAgendamentos());     
+    } 
 
     private boolean existeMaterialAplicacaoDireta() {
+        if(materiaisSelecionado == null) {
+            return false;
+        }
         for (Material m : materiaisSelecionado) {
             if (m.getItem().getAplicacao().equals(Item.APLICACAO_DIRETA)) {
                 return true;
@@ -284,7 +327,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
         return false;
     }
 
-    private void actionNewCopiaAntigo() {
+    private void actionNewCopiaAntigo() {       
         this.setEntity(new EmprestimoUnitario());
         this.getEntity().setAgendamento(agendamento);
         digitacao = null;
@@ -293,12 +336,18 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
 
     @Override
     public void actionNew(ActionEvent event) {
+        this.editar = false;
         this.setEntity(null);
         this.setEnableSalvar(false);
         profissional = null;
         agendamento = null;
         agendamentos = null;
-        agendamentoProcedimentos = null;
+        agendamentoProcedimentos = null;       
+        setProfissional(null);
+        setPlanoTratamentoProcedimentoAgendamentos(null);
+        setDigitacao(null);
+        setQuantidade(null);
+        
     }
 
     public void actionVerificaSalvar() {
@@ -374,11 +423,11 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
             if (quantidade.intValue() != 0) {
                 materiaisDisponiveis = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(item, quantidade.intValue(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 if (materiaisDisponiveis.isEmpty() || materiaisDisponiveis == null) {
-                    this.addWarn(OdontoMensagens.getMensagem("emprestimoUnitario.materiais.vazio"), "");
+                    this.addWarn(OdontoMensagens.getMensagem("emprestimoUnitario.materiais.vazio"), "",true);
                 }
             } else {
                 materiaisDisponiveis = new ArrayList<>();
-                this.addWarn(OdontoMensagens.getMensagem("emprestimoUnitario.quantidade.vazio"), "");
+                this.addWarn(OdontoMensagens.getMensagem("emprestimoUnitario.quantidade.vazio"), "",true);
             }
         } catch (Exception e) {
             log.error("Erro no listByEmpresa", e);
@@ -428,20 +477,20 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
     public boolean validaItem() {
         if (this.getItem() == null) {
             log.error(OdontoMensagens.getMensagem("erro.item.obrigatorio"));
-            this.addError(OdontoMensagens.getMensagem("erro.item.obrigatorio"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.item.obrigatorio"), "",true);
             return false;
         } else if (this.getQuantidade().intValue() == 0 || this.getQuantidade().intValue() < 1) {
             log.error(OdontoMensagens.getMensagem("erro.quantidade.obrigatorio"));
-            this.addError(OdontoMensagens.getMensagem("erro.quantidade.obrigatorio"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.quantidade.obrigatorio"), "",true);
             return false;
         } else if (this.getItem().getCategoria().equalsIgnoreCase("S")) {
             log.error(OdontoMensagens.getMensagem("erro.categoria.proibido"));
-            this.addError(OdontoMensagens.getMensagem("erro.categoria.proibido"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.categoria.proibido"), "",true);
             return false;
         } else if ((this.getItem().getEstoqueMaximo() - this.quantidadeTotal().longValue()) < 0) {
             {
                 log.error(OdontoMensagens.getMensagem("erro.quantidade.acima"));
-                this.addError(OdontoMensagens.getMensagem("erro.quantidade.acima"), "");
+                this.addError(OdontoMensagens.getMensagem("erro.quantidade.acima"), "",true);
                 return false;
             }
         }
@@ -551,7 +600,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
                 // Collections.sort(itens);
             }
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -689,9 +738,17 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
         cal.set(Calendar.HOUR_OF_DAY, 0);
         cal.set(Calendar.MINUTE, 0);        
         List<Agendamento> agendamentosNew = AgendamentoSingleton.getInstance().getBo().listByProfissionalAndStatusAndDataLimite(profissional, cal.getTime());
-        for (Agendamento agendamento : agendamentosNew) {
-            if(agendamento.getStatusNovo().matches("P|S|N|E|A|I|O")) {
-                agendamentos.add(agendamento);                
+        if(agendamentosNew != null) {
+            for (Agendamento agendamento : agendamentosNew) {
+                if(agendamento.getStatusNovo().matches("P|S|N|E|A|I|O")) {
+                    if(agendamentos == null) {
+                        agendamentos = new ArrayList<Agendamento>();
+                    }
+                    if(!agendamentos.contains(agendamento)) {
+                        agendamentos.add(agendamento);    
+                    }
+                                    
+                }
             }
         }
     }
@@ -815,5 +872,25 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
 
     public void setMateriaisSelecionado(List<Material> materiaisSelecionado) {
         this.materiaisSelecionado = materiaisSelecionado;
+    }
+
+    
+    public boolean isEditar() {
+        return editar;
+    }
+
+    
+    public void setEditar(boolean editar) {
+        this.editar = editar;
+    }
+
+    
+    public boolean isFecharDialog() {
+        return fecharDialog;
+    }
+
+    
+    public void setFecharDialog(boolean fecharDialog) {
+        this.fecharDialog = fecharDialog;
     }
 }

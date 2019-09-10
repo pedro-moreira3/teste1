@@ -134,7 +134,7 @@ public class ItemMB extends LumeManagedBean<Item> {
             } else {
                 if (this.getItem().getCategoria().equals(Status.NAO)) {
                     log.error("erro.categoria.item");
-                    this.addError(OdontoMensagens.getMensagem("erro.categoria.item"), "");
+                    this.addError(OdontoMensagens.getMensagem("erro.categoria.item"), "",true);
                     error = true;
                 }
                 if (!this.getItem().getTipo().equals(this.getEntity().getTipo())) {
@@ -148,7 +148,7 @@ public class ItemMB extends LumeManagedBean<Item> {
         for (Item item : this.getItens()) {
             if (item.getDescricao().equalsIgnoreCase(this.getDescricao()) && item.getId() != this.getEntity().getId()) {
                 log.error("erro.categoria.duplicidade");
-                this.addError(OdontoMensagens.getMensagem("erro.categoria.duplicidade"), "");
+                this.addError(OdontoMensagens.getMensagem("erro.categoria.duplicidade"), "",true);
                 error = true;
                 break;
             }
@@ -157,7 +157,7 @@ public class ItemMB extends LumeManagedBean<Item> {
         if (!error) {
             if (this.getEntity().equals(this.getEntity().getIdItemPai())) {
                 log.error("erro.pai.filho.itens.iguais");
-                this.addError(OdontoMensagens.getMensagem("erro.pai.filho.itens.iguais"), "");
+                this.addError(OdontoMensagens.getMensagem("erro.pai.filho.itens.iguais"), "",true);
             } else {
                 this.getEntity().setDescricao(this.getDescricao());
                 this.getEntity().setExcluido(Status.NAO);
@@ -180,7 +180,7 @@ public class ItemMB extends LumeManagedBean<Item> {
           //  }
             ItemSingleton.getInstance().getBo().remove(this.getEntity());
             this.actionNew(null);
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "",true);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -205,18 +205,18 @@ public class ItemMB extends LumeManagedBean<Item> {
         try {
             listByPai = ItemSingleton.getInstance().getBo().listByPai(this.getEntity().getId(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (listByPai != null && !listByPai.isEmpty()) {
-                this.addError("Não é possível excluir itens com itens filhos, remova-os antes.", "");
+                this.addError("Não é possível excluir itens com itens filhos, remova-os antes.", "",true);
             } else {
                 List<Material> materiais = MaterialSingleton.getInstance().getBo().listByItem(this.getEntity());
                 if (materiais != null && !materiais.isEmpty()) {
-                    this.addError("Não é possível excluir itens com materiais vinculados.", "");
+                    this.addError("Não é possível excluir itens com materiais vinculados.", "",true);
                 } else {
                     super.actionRemove(arg0);
                 }
             }
         } catch (Exception e) {
             log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
         }
     }
 
@@ -403,7 +403,7 @@ public class ItemMB extends LumeManagedBean<Item> {
             }
             Collections.sort(itens);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -418,7 +418,7 @@ public class ItemMB extends LumeManagedBean<Item> {
             }
             Collections.sort(itens);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }

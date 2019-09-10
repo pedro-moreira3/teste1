@@ -41,7 +41,7 @@ public class MarcaMB extends LumeManagedBean<Marca> {
         try {
             this.marcas = MarcaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
         Collections.sort(this.marcas);
@@ -56,7 +56,7 @@ public class MarcaMB extends LumeManagedBean<Marca> {
         Marca marca = MarcaSingleton.getInstance().getBo().findByNomeAndEmpresa(this.getEntity().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (marca != null) {
             if (marca.getId() != this.getEntity().getId() && marca.getNome().equals(this.getEntity().getNome())) {
-                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "");
+                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "",true);
                 try {
                     this.getbO().refresh(this.getEntity());
                 } catch (Exception e) {

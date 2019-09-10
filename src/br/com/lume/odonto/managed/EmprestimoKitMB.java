@@ -112,7 +112,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
             this.setKitsPendentes(ReservaKitSingleton.getInstance().getBo().listByStatusReservaDataProfissionalPaciente(EmprestimoKit.PENDENTE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.dataInicio, this.dataFim, this.filtroPorProfissional, this.filtroPorPaciente));
             
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -122,10 +122,10 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
         try {
             this.getbO().persist(this.getEntity());
             this.limpaMateriais();
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
         }
     }
 
@@ -134,7 +134,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
             this.getbO().persist(this.getEntity());
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
         }
     }
 
@@ -158,7 +158,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
 
     public void actionLavagemMaterial(ActionEvent event) {
         if (this.getEntity().getQuantidade().compareTo(this.getEntity().getQuantidadeDevolvida()) < 0) {
-            this.addError(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "");
+            this.addError(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "",true);
         } else {
             try {
                 // O que não vai pra lavagem é devolvido
@@ -179,9 +179,9 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
                 this.geraLista();
                 this.setEnableDevolucao(false);
                 this.setEnableLavagem(false);
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
             } catch (Exception e) {
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
                 log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
             }
         }
@@ -268,10 +268,10 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
             this.actionNew(event);
             this.geraLista();
             this.setEnableEntregar(false);
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
         }
     }
 
@@ -321,7 +321,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
             this.setEntity(new EmprestimoKit());
         } catch (Exception e) {
             log.info(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
         }
     }
 
@@ -375,7 +375,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
                 try {
                     this.setMateriais(EmprestimoKitSingleton.getInstance().getBo().listByReservaKit(this.getReservaKit()));
                 } catch (Exception e) {
-                    this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+                    this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
                     log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
                 }
             }
@@ -407,13 +407,13 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
             this.geraLista();
             this.setMateriais(null);
             this.setKitItensPendentes(null);
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
         } catch (BusinessException e) {
             log.error("Erro no actionCancela", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
         } catch (TechnicalException e) {
             log.error("Erro no actionCancela", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
         }
     }
 
@@ -464,7 +464,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
                     this.setEnableDevolucao(false);
                 }
             } catch (Exception e) {
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
                 log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             }
         }
@@ -511,11 +511,11 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
                 this.setMateriaisDisponiveis(materiais);
                 if (this.getMateriaisDisponiveis().isEmpty()) {
                     if (FacesContext.getCurrentInstance().getMessageList().isEmpty()) {
-                        this.addInfo(OdontoMensagens.getMensagem("devolucao.itens.vazio"), "");
+                        this.addInfo(OdontoMensagens.getMensagem("devolucao.itens.vazio"), "",true);
                     }
                 }
             } catch (Exception e) {
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
                 log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             }
         }
@@ -554,7 +554,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
             try {
                 this.setKitItensPendentes(KitItemSingleton.getInstance().getBo().listItensPendentesByReservaKit(this.getReservaKit()));
             } catch (Exception e) {
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
                 log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             }
         }
@@ -566,7 +566,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
                 this.setEnableEntregar(true);
             }
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -659,7 +659,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
     public void validaCampo(RowEditEvent event) {
         material = (EmprestimoKit) event.getObject();
         if (material.getQuantidade().doubleValue() < material.getQuantidadeDevolvida().doubleValue()) {
-            this.addError(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "");
+            this.addError(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "",true);
             this.setEnableDevolucao(false);
             this.setEnableLavagem(false);
         } else {

@@ -7,12 +7,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
+import org.primefaces.component.selectonemenu.SelectOneMenu;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.FlowEvent;
 import org.primefaces.model.DualListModel;
@@ -24,6 +28,7 @@ import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.ClienteViaCepWS;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.JSFHelper;
@@ -111,6 +116,8 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
     private boolean concordoAdesao, concordoPrivacidade;
 
     private boolean pnInicialVisivel;
+    
+    private SelectOneMenu estados;
 
     public CadastroWebMB() {
         super(EmpresaSingleton.getInstance().getBo());
@@ -351,6 +358,38 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
         }
         return dominios;
     }
+    
+    public void buscaCep() {
+        if (this.getEntity().getEmpChaCep() == null || this.getEntity().getEmpChaCep().trim().isEmpty())
+            return;
+
+        String cep = this.getEntity().getEmpChaCep().replace("-", "").trim();
+        cep = cep.replace("_", "");
+        if (!"".equals(cep) && cep.length() > 7) {
+            String json = ClienteViaCepWS.buscarCep(cep);
+
+            Map<String, String> mapa = new HashMap<>();
+
+            Matcher matcher = Pattern.compile("\"\\D.*?\": \".*?\"").matcher(json);
+            while (matcher.find()) {
+                String[] group = matcher.group().split(":");
+                mapa.put(group[0].replaceAll("\"", "").trim(), group[1].replaceAll("\"", "").trim());
+            }
+            if (!mapa.isEmpty()) {
+                this.getEntity().setEmpStrEndereco(mapa.get("logradouro"));
+                this.getEntity().setEmpStrBairro(mapa.get("bairro"));
+                this.getEntity().setEmpStrCidade(mapa.get("localidade"));
+                this.getEntity().setEmpStrEstadoConselho(mapa.get("uf"));
+                
+                getEstados().setValue(mapa.get("uf"));
+                getEstados().setSubmittedValue(mapa.get("uf").toString());
+                getEstados().setLocalValueSet(false);
+            }
+
+        }
+    }
+
+    
 
     public void setDominios(List<Dominio> dominios) {
         this.dominios = dominios;
@@ -438,6 +477,14 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
     public void setPnInicialVisivel(boolean pnInicialVisivel) {
         this.pnInicialVisivel = pnInicialVisivel;
+    }
+
+    public SelectOneMenu getEstados() {
+        return estados;
+    }
+
+    public void setEstados(SelectOneMenu estados) {
+        this.estados = estados;
     }
 
 }
