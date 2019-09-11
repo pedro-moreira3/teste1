@@ -40,8 +40,8 @@
                             rendered="#{materialMB.estoqueCompleto}">
                             <h:outputText value="#{material.local.descricao}" />
                         </p:column>
-                        <p:column filterBy="#{material.quantidadeAtual}" sortBy="#{material.quantidadeAtual}" width="10%" filterMatchMode="contains" headerText="Quantidade">
-                            <h:outputText value="#{material.quantidadeAtual}">
+                        <p:column filterBy="#{material.estoque.quantidade}" sortBy="#{material.estoque.quantidade}" width="10%" filterMatchMode="contains" headerText="Quantidade">
+                            <h:outputText value="#{material.estoque.quantidade}">
                                 <f:convertNumber />
                             </h:outputText>
                             <h:outputLabel value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
@@ -150,12 +150,12 @@
 			                                </h:outputText>		                                
 		                                </h:panelGroup>
 		                                <h:panelGroup styleClass="md-combo">
-			                                <p:outputLabel for="quantidadeAtual" value="Quantidade Total: " />
+			                                <p:outputLabel for="quantidade" value="Quantidade Total: " />
 			                                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-			                                    <h:outputText id="quantidadeAtual" value="#{materialMB.entity.quantidadeAtual}">
+			                                    <h:outputText id="quantidade" value="#{materialMB.estoque.quantidade}">
 			                                        <f:convertNumber />
 			                                    </h:outputText>
-			                                    <h:outputLabel id="quantidadeAtual2" value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
+			                                    <h:outputLabel  value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
 			                                </p:panelGrid>		                                
 		                                </h:panelGroup>		                                
 									</p:panelGrid>                 		       
@@ -317,8 +317,8 @@
                             <p:column filterBy="#{m.quantidadeAlterada}" sortBy="#{m.quantidadeAlterada}" filterMatchMode="contains" headerText="Qtd. Alterada">
                                 <h:outputText value="#{m.quantidadeAlterada}" title="#{m.id}" />
                             </p:column>
-                            <p:column filterBy="#{m.quantidadeAtual}" sortBy="#{m.quantidadeAtual}" filterMatchMode="contains" headerText="Qtd. Atual">
-                                <h:outputText value="#{m.quantidadeAtual}" />
+                            <p:column filterBy="#{m.estoque.quantidade}" sortBy="#{m.estoque.quantidade}" filterMatchMode="contains" headerText="Qtd. Atual">
+                                <h:outputText value="#{m.estoque.quantidade}" />
                             </p:column>
                             <p:column filterBy="#{m.acao}" sortBy="#{m.acao}" filterMatchMode="contains" headerText="Ação">
                                 <h:outputText value="#{m.acao}" />
