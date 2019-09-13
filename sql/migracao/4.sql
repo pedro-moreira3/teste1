@@ -45,13 +45,20 @@ CREATE TABLE ESTOQUE (
 	ID SERIAL PRIMARY KEY,
 	ID_LOCAL BIGINT REFERENCES LOCAL(ID),
 	ID_MATERIAL BIGINT REFERENCES MATERIAL(ID),
-	QUANTIDADE BIGINT
+	QUANTIDADE NUMERIC(10,2)
 );
+
+
+ALTER TABLE table_name
+ALTER COLUMN column_name [SET DATA] TYPE new_data_type;
+ 
 
 CREATE TABLE TRANSFERENCIA_ESTOQUE(
 	ID SERIAL PRIMARY KEY,
-	ID_ESTOQUE_ORIGEM BIGINT REFERENCES ESTOQUE(ID),
-	ID_ESTOQUE_DESTINO BIGINT REFERENCES ESTOQUE(ID),
+	ID_LOCAL_ORIGEM BIGINT REFERENCES LOCAL(ID),
+	ID_LOCAL_DESTINO BIGINT REFERENCES LOCAL(ID),
+	ID_MATERIAL BIGINT REFERENCES MATERIAL(ID),
+	ID_PROFISSIONAL BIGINT REFERENCES PROFISSIONAL(ID),
 	DESCRICAO varchar (500),
 	DATA timestamp without time zone,
 	QUANTIDADE BIGINT
@@ -77,6 +84,10 @@ insert into local (descricao, tipo, id_empresa, excluido) values ('DESCARTE','DE
 insert into local (descricao, tipo, id_empresa, excluido) values ('AJUSTE','AJ',41,'N');
 
 
+somente depois de rodar o construtor do materialmb
+alter table material drop column id_local
+alter table material drop column quantidade_atual
+
 
 
 ----TODO PENSAR COMO POPULAR MATERIAL PARA ESSES NOVOS LOCIS
@@ -88,6 +99,8 @@ insert into local (descricao, tipo, id_empresa, excluido) values ('AJUSTE','AJ',
 -- rodar mudanca pra estoque, esta em materialmb
 
 para novas empresas inserir todos os locais padrao
+
+
 
 
 

@@ -122,11 +122,11 @@
                             </f:facet>
                             <h:outputText value="#{i.item.descricao}" />
                         </p:column>                       
-                        <p:column filterBy="#{i.quantidadeAtual.intValue()}" sortBy="#{i.quantidadeAtual.intValue()}" filterMatchMode="contains">
+                        <p:column filterBy="#{i.estoque.quantidade.intValue()}" sortBy="#{i.estoque.quantidade.intValue()}" filterMatchMode="contains">
                             <f:facet name="header">
                                 <h:outputText value="Quantidade" />
                             </f:facet>
-                            <h:outputText value="#{i.quantidadeAtual.intValue()}" />
+                            <h:outputText value="#{i.estoque.quantidade.intValue()}" />
                         </p:column>
                         <p:column filterBy="#{i.dataCadastroStr}" sortBy="#{i.dataCadastro}" filterMatchMode="contains">
                             <f:facet name="header">

@@ -30,12 +30,12 @@
 								<h:outputText value="#{estoque.material.item.descricao}"
 									title="#{estoque.material.id}" />
 							</p:column>
-							<p:column filterBy="#{estoque.material.local.descricao}"
-								sortBy="#{estoque.material.local.descricao}" filterMatchMode="contains">
+							<p:column filterBy="#{estoque.material.estoque.local.descricao}"
+								sortBy="#{estoque.material.estoque.local.descricao}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Local" />
 								</f:facet>
-								<h:outputText value="#{estoque.material.local.descricao}" />
+								<h:outputText value="#{estoque.material.estoque.local.descricao}" />
 							</p:column>
 							<p:column filterBy="#{estoque.quantidade}"
 								sortBy="#{estoque.quantidade}" filterMatchMode="contains">
@@ -111,7 +111,7 @@
 
 							<h:outputLabel value="Quantidade Atual : " />
 							<p:column>
-								<h:outputText value="#{conferenciaMB.material.quantidadeAtual}"
+								<h:outputText value="#{conferenciaMB.material.estoque.quantidade}"
 									styleClass="FontItalic">
 									<f:convertNumber />
 								</h:outputText>
@@ -190,7 +190,7 @@
                         style="border:0px none; background-color:transparent;">
 
                         <h:outputLabel value="Quantidade Atual : " />
-                        <h:outputText value="#{conferenciaMB.material.quantidadeAtual}">
+                        <h:outputText value="#{conferenciaMB.material.estoque.quantidade}">
                             <f:convertNumber />
                         </h:outputText>
 

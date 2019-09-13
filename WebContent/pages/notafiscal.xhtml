@@ -69,12 +69,9 @@
 								<p:column filterBy="#{m.item.descricaoLimpa}" sortBy="#{m.item.descricao}" filterMatchMode="contains" headerText="Descrição">
 									<h:outputText value="#{m.item.descricao}" />
 								</p:column>
-								<p:column filterBy="#{m.local.descricao}" sortBy="#{m.local.descricao}" filterMatchMode="contains" headerText="Localização">
-									<h:outputText value="#{m.local.descricao}" />
-								</p:column>
-								<p:column filterBy="#{m.quantidadeTotal}" sortBy="#{m.quantidadeTotal}" filterMatchMode="contains" headerText="Quantidade Total">
-									<h:outputText value="#{m.quantidadeTotal}" />
-								</p:column>
+								<p:column filterBy="#{m.estoque.local.descricao}" sortBy="#{m.estoque.local.descricao}" filterMatchMode="contains" headerText="Localização">
+									<h:outputText value="#{m.estoque.local.descricao}" />
+								</p:column>								
 								<p:column filterBy="#{m.valor}" sortBy="#{m.valor}" filterMatchMode="contains" headerText="Valor Unitário">
 									<h:outputText value="#{m.valor}">
 										<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
@@ -166,8 +163,8 @@
 									<h:outputText value="#{m.item.descricao}" />
 								</p:column>
 
-								<p:column filterBy="#{m.local.descricao}" sortBy="#{m.local.descricao}" filterMatchMode="contains" headerText="Localização">
-									<h:outputText value="#{m.local.descricao}" />
+								<p:column filterBy="#{m.estoque.local.descricao}" sortBy="#{m.estoque.local.descricao}" filterMatchMode="contains" headerText="Localização">
+									<h:outputText value="#{m.estoque.local.descricao}" />
 								</p:column>
 								<p:column filterBy="#{m.quantidadeTotal}" sortBy="#{m.quantidadeTotal}" filterMatchMode="contains" headerText="Qtde Total">
 									<h:outputText value="#{m.quantidadeTotal}" />

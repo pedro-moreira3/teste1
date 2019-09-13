@@ -44,7 +44,9 @@ import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Marca;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialLog;
+import br.com.lume.odonto.entity.TransferenciaEstoque;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -84,11 +86,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     private BigDecimal valorTotal = new BigDecimal(0), quantidadeMovimentada, quantidadePacotes, quantidadeMovimentacao;
 
-    private List<MaterialLog> materialLogs;
+    private List<TransferenciaEstoque> listaTransferenciasEstoque;
 
     private String tipoMovimentacao;
-    
-    private Estoque estoque;
 
     public MaterialMB() {
         super(MaterialSingleton.getInstance().getBo());
@@ -108,7 +108,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             firstLevelLocal.setDescricao("RAIZ");
             this.chargeTreeLocal(new DefaultTreeNode(firstLevelLocal, this.getRootLocal()));
             dateHoje = new Date();
-            this.estoque = new Estoque();
+           
 //para inserir estoque inicial            
 //            MaterialBO bo = MaterialSingleton.getInstance().getBo();
 //            int count = 0;
@@ -142,6 +142,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
     public void atualizaQuantidades() {
         BigDecimal quantidadeTotal = this.getEntity().getQuantidadePacotes().multiply(this.getEntity().getTamanhoUnidade());
        // this.getEntity().setQuantidadeTotal(quantidadeTotal);
+        if(this.getEntity().getEstoque() == null) {
+            this.getEntity().setEstoque(new Estoque());
+        }
         this.getEntity().getEstoque().setQuantidade(quantidadeTotal);
         if(this.getEntity().getEstoque().getQuantidade() != null && this.getEntity().getValorUnidadeInformado() != null && this.getEntity().getEstoque().getQuantidade().compareTo(BigDecimal.ZERO) != 0) {
             getEntity().setValor(this.getEntity().getValorUnidadeInformado().divide(this.getEntity().getEstoque().getQuantidade(), 2, RoundingMode.HALF_UP));    
@@ -222,7 +225,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public void carregarMaterialLog(Material material) {
         try {
-            materialLogs = MaterialLogSingleton.getInstance().getBo().listByMaterial(material);
+            listaTransferenciasEstoque = TransferenciaEstoqueSingleton.getInstance().getBo().listByMaterial(material);               
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -312,7 +315,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
         try {
             if (this.getEntity().getEstoque().getQuantidade().intValue() >= quantidadePacotes.intValue()) {
                 //this.getbO().refresh(getEntity());
-                this.getEntity().getEstoque().setQuantidade(this.getEntity().getEstoque().getQuantidade().subtract(quantidadePacotes));
+                //this.getEntity().getEstoque().setQuantidade(this.getEntity().getEstoque().getQuantidade().subtract(quantidadePacotes));
                
                
                 if (justificativa != null) {
@@ -320,7 +323,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 }                
                 MaterialSingleton.getInstance().getBo().persist(this.getEntity());
                 
-                EstoqueSingleton.getInstance().subtrair( this.getEntity(),  this.getEntity().getEstoque().getLocal(),quantidadePacotes, EstoqueSingleton.DEVOLUCAO_KIT_NAO_UTILIZADO, UtilsFrontEnd.getProfissionalLogado());
+                EstoqueSingleton.getInstance().subtrair( this.getEntity(),  this.getEntity().getEstoque().getLocal(),quantidadePacotes, EstoqueSingleton.DEVOLUCAO_MATERIAL_PROBLEMA + "- " + justificativa.getNome(), UtilsFrontEnd.getProfissionalLogado());
                 
                 
                // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadePacotes.multiply(new BigDecimal(-1)), getEntity().getQuantidadeAtual(),
@@ -407,8 +410,8 @@ public class MaterialMB extends LumeManagedBean<Material> {
                                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
                             }
                             if (novo) {
-                                
-                                EstoqueSingleton.getInstance().adicionar(this.getEntity(), this.getEntity().getEstoque().getLocal(), this.estoque.getQuantidade(),  EstoqueSingleton.ENTRADA_MATERIAL_CADASTRO, UtilsFrontEnd.getProfissionalLogado());
+                               // this.getEntity().getEstoque().setMaterial(this.getEntity());
+                                EstoqueSingleton.getInstance().inserir(this.getEntity(), this.getEntity().getEstoque().getLocal(),  this.getEntity().getEstoque().getQuantidade(),  EstoqueSingleton.ENTRADA_MATERIAL_CADASTRO, UtilsFrontEnd.getProfissionalLogado());
                                                                 
                                // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), getEntity().getEstoque().getQuantidade(),
                                 //        getEntity().getEstoque().getQuantidade(), MaterialLog.ENTRADA_MATERIAL_CADASTRO));
@@ -1030,14 +1033,6 @@ public class MaterialMB extends LumeManagedBean<Material> {
         this.quantidadePacotes = quantidadePacotes;
     }
 
-    public List<MaterialLog> getMaterialLogs() {
-        return materialLogs;
-    }
-
-    public void setMaterialLogs(List<MaterialLog> materialLogs) {
-        this.materialLogs = materialLogs;
-    }
-
     public String getTipoMovimentacao() {
         return tipoMovimentacao;
     }
@@ -1075,13 +1070,13 @@ public class MaterialMB extends LumeManagedBean<Material> {
     }
 
     
-    public Estoque getEstoque() {
-        return estoque;
+    public List<TransferenciaEstoque> getListaTransferenciasEstoque() {
+        return listaTransferenciasEstoque;
     }
 
     
-    public void setEstoque(Estoque estoque) {
-        this.estoque = estoque;
+    public void setListaTransferenciasEstoque(List<TransferenciaEstoque> listaTransferenciasEstoque) {
+        this.listaTransferenciasEstoque = listaTransferenciasEstoque;
     }
 
 }
