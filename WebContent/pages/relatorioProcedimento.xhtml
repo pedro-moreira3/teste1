@@ -163,90 +163,116 @@ div.ui-selectoneradio label {
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 					<h1>Relatório de Procedimentos</h1>
+
 					<p:separator styleClass="SeparatorFull" />
-					<p:fieldset header="Filtro" toggleable="false" toggleSpeed="500">
 
-						<p:outputPanel id="filtroRelatorio">
-							<p:panelGrid columns="3" layout="grid"
-								styleClass="ui-panelgrid-blank ui-fluid form-group">
-								<h:panelGroup>
-									<h:outputText for="dataInicial" value="Data inicial:" />
-									<p:calendar id="dataInicial"
-										value="#{relatorioProcedimentoMB.dataInicio}" />
-								</h:panelGroup>
-								<h:panelGroup>
-									<h:outputText for="dataFinal" value="Data final:" />
-									<p:calendar id="dataFinal"
-										value="#{relatorioProcedimentoMB.dataFim}" />
-								</h:panelGroup>
-								<h:panelGroup>
-									<h:outputText for="filtroPaciente" value="Paciente:" />
-									<p:autoComplete id="filtroPaciente"
-										value="#{relatorioProcedimentoMB.filtroPorPaciente}"
-										completeMethod="#{relatorioProcedimentoMB.sugestoesPacientes}"
-										var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-										converter="paciente" forceSelection="true" scrollHeight="400"
-										minQueryLength="3" queryDelay="1000">
+					<p:fieldset id="filtroRelatorio" header="Filtro" toggleable="false"
+						toggleSpeed="500">
 
-										<p:column headerText="Nome">
-											<h:outputText value="#{p.dadosBasico.nome}" />
-										</p:column>
-										<p:column headerText="Celular">
-											<h:outputText value="#{p.dadosBasico.celular}" />
-										</p:column>
-										<p:column headerText="Nome da Mãe">
-											<h:outputText value="#{p.nomeMae}" />
-										</p:column>
+						<p:panelGrid columns="1" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+							style="border:0px none; background-color:transparent;">
 
-										<p:ajax event="itemSelect" process="@this" />
-									</p:autoComplete>
-								</h:panelGroup>
-								<h:panelGroup>
-									<h:outputText for="filtroProfissional" value="Profissional:" />
-									<p:autoComplete id="filtroProfissional"
-										value="#{relatorioProcedimentoMB.filtroPorProfissional}"
-										completeMethod="#{relatorioProcedimentoMB.sugestoesProfissionais}"
-										var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-										converter="profissional" forceSelection="true"
-										scrollHeight="400" queryDelay="1000">
-
-										<p:ajax event="itemSelect" process="@this" />
-
-									</p:autoComplete>
-								</h:panelGroup>
-								<h:panelGroup>
-									<h:outputText for="filtroPlanoTratamento"
-										value="Plano tratamento:" />
-									<p:autoComplete id="filtroPlanoTratamento"
-										value="#{relatorioProcedimentoMB.filtroPorPlanoTratamento}"
-										completeMethod="#{relatorioProcedimentoMB.sugestoesPlanoTratamento}"
-										var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
-										converter="planoTratamento" forceSelection="true"
-										scrollHeight="400" queryDelay="1000">
-
-										<p:ajax event="itemSelect" process="@this" />
-
-									</p:autoComplete>
-								</h:panelGroup>
-								<h:panelGroup>
-									<h:outputText for="filtroConvenio" value="Convênio:" />
-									<p:autoComplete id="filtroConvenio"
-										value="#{relatorioProcedimentoMB.filtroPorConvenio}"
-										completeMethod="#{relatorioProcedimentoMB.sugestoesConvenios}"
-										var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-										converter="convenio" forceSelection="true" scrollHeight="400"
-										queryDelay="1000">
-
-										<p:ajax event="itemSelect" process="@this" />
-									</p:autoComplete>
-								</h:panelGroup>
-							</p:panelGrid>
 							<p:outputPanel>
+
+								<p:panelGrid columns="3" layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+									<h:panelGroup>
+										<h:outputText for="dataInicial" value="Data inicial:" />
+										<p:calendar id="dataInicial"
+											value="#{relatorioProcedimentoMB.dataInicio}" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<h:outputText for="dataFinal" value="Data final:" />
+										<p:calendar id="dataFinal"
+											value="#{relatorioProcedimentoMB.dataFim}" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<h:outputText for="filtroPaciente" value="Paciente:" />
+										<p:autoComplete id="filtroPaciente"
+											value="#{relatorioProcedimentoMB.filtroPorPaciente}"
+											completeMethod="#{relatorioProcedimentoMB.sugestoesPacientes}"
+											var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+											converter="paciente" forceSelection="true" scrollHeight="400"
+											minQueryLength="3" queryDelay="1000">
+
+											<p:column headerText="Nome">
+												<h:outputText value="#{p.dadosBasico.nome}" />
+											</p:column>
+											<p:column headerText="Celular">
+												<h:outputText value="#{p.dadosBasico.celular}" />
+											</p:column>
+											<p:column headerText="Nome da Mãe">
+												<h:outputText value="#{p.nomeMae}" />
+											</p:column>
+
+											<p:ajax event="itemSelect" process="@this" />
+										</p:autoComplete>
+									</h:panelGroup>
+
+								</p:panelGrid>
+
+								<p:panelGrid columns="3" layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+									<h:panelGroup>
+										<h:outputText for="filtroProfissional" value="Profissional:" />
+										<p:autoComplete id="filtroProfissional"
+											value="#{relatorioProcedimentoMB.filtroPorProfissional}"
+											completeMethod="#{relatorioProcedimentoMB.sugestoesProfissionais}"
+											var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+											converter="profissional" forceSelection="true"
+											scrollHeight="400" queryDelay="1000">
+
+											<p:ajax event="itemSelect" process="@this" />
+
+										</p:autoComplete>
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<h:outputText for="filtroPlanoTratamento"
+											value="Plano tratamento:" />
+										<p:autoComplete id="filtroPlanoTratamento"
+											value="#{relatorioProcedimentoMB.filtroPorPlanoTratamento}"
+											completeMethod="#{relatorioProcedimentoMB.sugestoesPlanoTratamento}"
+											var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
+											converter="planoTratamento" forceSelection="true"
+											scrollHeight="400" queryDelay="1000">
+
+											<p:ajax event="itemSelect" process="@this" />
+
+										</p:autoComplete>
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<h:outputText for="filtroConvenio" value="Convênio:" />
+										<p:autoComplete id="filtroConvenio"
+											value="#{relatorioProcedimentoMB.filtroPorConvenio}"
+											completeMethod="#{relatorioProcedimentoMB.sugestoesConvenios}"
+											var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+											converter="convenio" forceSelection="true" scrollHeight="400"
+											queryDelay="1000">
+
+											<p:ajax event="itemSelect" process="@this" />
+										</p:autoComplete>
+									</h:panelGroup>
+
+								</p:panelGrid>
+
+							</p:outputPanel>
+
+							<p:outputPanel>
+
 								<h:outputLabel value="Mostrar os procedimentos: " />
 								<p:selectManyCheckbox
 									value="#{relatorioProcedimentoMB.filtroProcedimento}"
 									layout="grid" columns="4" update=":lume:filtroRelatorio">
+
 									<p:ajax process="@this" />
+
 									<f:selectItem
 										itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Finalizados&lt;/div&gt;"
 										itemValue="F" itemEscaped="false" />
@@ -254,112 +280,124 @@ div.ui-selectoneradio label {
 										itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
 										itemValue="C" itemEscaped="false" />
 								</p:selectManyCheckbox>
+
 							</p:outputPanel>
-						</p:outputPanel>
 
-						<p:panelGrid columns="3" layout="grid"
-							styleClass="ui-panelgrid-blank ui-fluid form-group">
-							<h:panelGroup>
-								<p:commandButton value="Filtrar" icon="White fa fa fa-search"
-									action="#{relatorioProcedimentoMB.popularLista}"
-									update=":lume:dtRelProcedimento"
-									process="@this,:lume:filtroRelatorio" />
-							</h:panelGroup>
-							<h:panelGroup>
-								<p:commandButton value="Imprimir"
-									oncomplete="PF('dlgConfirmarImpCabecalho').show();"
-									icon="White fa fa-print"
-									update=":lume:dlgGerarRelatorioTabela,:lume:dlgConfirmarImpCabecalho"
-									styleClass="RedButton" process="@this" />
-							</h:panelGroup>
+							<p:outputPanel>
+
+								<p:panelGrid columns="3" layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+									<h:panelGroup>
+										<p:commandButton value="Filtrar" icon="White fa fa fa-search"
+											action="#{relatorioProcedimentoMB.popularLista}"
+											update=":lume:dtRelProcedimento"
+											process="@this,:lume:filtroRelatorio" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<p:commandButton value="Imprimir"
+											oncomplete="PF('dlgConfirmarImpCabecalho').show();"
+											icon="White fa fa-print"
+											update=":lume:dlgGerarRelatorioTabela,:lume:dlgConfirmarImpCabecalho"
+											styleClass="RedButton" process="@this" />
+									</h:panelGroup>
+
+								</p:panelGrid>
+
+							</p:outputPanel>
+
 						</p:panelGrid>
+
 					</p:fieldset>
-					<br />
 
-					<p:dataTable id="dtRelProcedimento" widgetVar="dtRelProcedimento"
-						value="#{relatorioProcedimentoMB.listaProcedimentos}"
-						var="procedimento" rowKey="#{procedimento}" rows="10"
-						paginator="true" paginatorPosition="bottom" reflow="true"
-						emptyMessage="Nenhum registro encontrado"
-						selection="#{relatorioProcedimentoMB.entity}"
-						selectionMode="single" filterDelay="1000">
+					<p:outputPanel>
 
-						<f:facet name="header">Relatório de Procedimentos</f:facet>
+						<p:dataTable id="dtRelProcedimento" widgetVar="dtRelProcedimento"
+							value="#{relatorioProcedimentoMB.listaProcedimentos}"
+							var="procedimento" rowKey="#{procedimento}" rows="10"
+							paginator="true" paginatorPosition="bottom" reflow="true"
+							emptyMessage="Nenhum registro encontrado"
+							selection="#{relatorioProcedimentoMB.entity}"
+							selectionMode="single" filterDelay="1000">
 
-						<p:column
-							filterBy="#{procedimento.planoTratamento.paciente.dadosBasico.nome}"
-							sortBy="#{procedimento.planoTratamento.paciente.dadosBasico.nome}"
-							filterMatchMode="contains" headerText="Paciente">
-							<h:outputText
-								value="#{procedimento.planoTratamento.paciente.dadosBasico.nome}" />
-						</p:column>
+							<f:facet name="header">Relatório de Procedimentos</f:facet>
 
-						<p:column
-							filterBy="#{procedimento.planoTratamento.paciente.convenio.dadosBasico.nome}"
-							sortBy="#{procedimento.planoTratamento.paciente.convenio.dadosBasico.nome}"
-							filterMatchMode="contains" headerText="Convênio">
-							<h:outputText
-								value="#{procedimento.planoTratamento.paciente.convenio.dadosBasico.nome}" />
-						</p:column>
-
-						<p:column
-							filterBy="#{procedimento.planoTratamento.profissional.dadosBasico.nome}"
-							sortBy="#{procedimento.planoTratamento.profissional.dadosBasico.nome}"
-							filterMatchMode="contains" headerText="Profissional responsável">
-							<h:outputText
-								value="#{procedimento.planoTratamento.profissional.dadosBasico.nome}" />
-						</p:column>
-
-						<p:column filterBy="#{procedimento.planoTratamento.descricao}"
-							sortBy="#{procedimento.planoTratamento.descricao}"
-							filterMatchMode="contains" headerText="Plano de tratamento">
-							<h:outputText value="#{procedimento.planoTratamento.descricao}" />
-						</p:column>
-
-						<p:column filterBy="#{procedimento.procedimento.descricao}"
-							sortBy="#{procedimento.procedimento.descricao}"
-							filterMatchMode="contains" headerText="Procedimento">
-							<h:outputText value="#{procedimento.procedimento.descricao}" />
-						</p:column>
-
-						<p:column
-							filterBy="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}"
-							sortBy="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}"
-							filterMatchMode="contains" headerText="Status do pagamento">
-							<h:outputText
-								value="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}" />
-						</p:column>
-
-						<p:column filterBy="#{procedimento.planoTratamento.inicio}"
-							sortBy="#{procedimento.planoTratamento.inicio}"
-							filterMatchMode="contains" headerText="Inicio do tratamento">
-							<h:outputText
-								value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.inicio)}" />
-						</p:column>
-
-						<p:column filterBy="#{procedimento.planoTratamento.fim}"
-							sortBy="#{procedimento.planoTratamento.fim}"
-							filterMatchMode="contains" headerText="Término do tratamento">
-							<h:outputText
-								value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.fim)}" />
-						</p:column>
-
-						<p:column
-							filterBy="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}"
-							sortBy="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}"
-							filterMatchMode="contains" headerText="Satus do procedimento">
-							<h:outputText
-								value="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}" />
-						</p:column>
-						<ui:remove>
-							<p:column>
-								<p:commandButton icon="White fa fa-eye" width="5%">
-									<f:setPropertyActionListener value="#{procedimento}"
-										target="#{relatorioProcedimentoMB.entity}" />
-								</p:commandButton>
+							<p:column
+								filterBy="#{procedimento.planoTratamento.paciente.dadosBasico.nome}"
+								sortBy="#{procedimento.planoTratamento.paciente.dadosBasico.nome}"
+								filterMatchMode="contains" headerText="Paciente">
+								<h:outputText
+									value="#{procedimento.planoTratamento.paciente.dadosBasico.nome}" />
 							</p:column>
-						</ui:remove>
-					</p:dataTable>
+
+							<p:column
+								filterBy="#{procedimento.planoTratamento.paciente.convenio.dadosBasico.nome}"
+								sortBy="#{procedimento.planoTratamento.paciente.convenio.dadosBasico.nome}"
+								filterMatchMode="contains" headerText="Convênio">
+								<h:outputText
+									value="#{procedimento.planoTratamento.paciente.convenio.dadosBasico.nome}" />
+							</p:column>
+
+							<p:column
+								filterBy="#{procedimento.planoTratamento.profissional.dadosBasico.nome}"
+								sortBy="#{procedimento.planoTratamento.profissional.dadosBasico.nome}"
+								filterMatchMode="contains" headerText="Profissional responsável">
+								<h:outputText
+									value="#{procedimento.planoTratamento.profissional.dadosBasico.nome}" />
+							</p:column>
+
+							<p:column filterBy="#{procedimento.planoTratamento.descricao}"
+								sortBy="#{procedimento.planoTratamento.descricao}"
+								filterMatchMode="contains" headerText="Plano de tratamento">
+								<h:outputText value="#{procedimento.planoTratamento.descricao}" />
+							</p:column>
+
+							<p:column filterBy="#{procedimento.procedimento.descricao}"
+								sortBy="#{procedimento.procedimento.descricao}"
+								filterMatchMode="contains" headerText="Procedimento">
+								<h:outputText value="#{procedimento.procedimento.descricao}" />
+							</p:column>
+
+							<p:column
+								filterBy="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}"
+								sortBy="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}"
+								filterMatchMode="contains" headerText="Status do pagamento">
+								<h:outputText
+									value="#{relatorioProcedimentoMB.statusPagamento(procedimento.statusPagamento)}" />
+							</p:column>
+
+							<p:column filterBy="#{procedimento.planoTratamento.inicio}"
+								sortBy="#{procedimento.planoTratamento.inicio}"
+								filterMatchMode="contains" headerText="Inicio do tratamento">
+								<h:outputText
+									value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.inicio)}" />
+							</p:column>
+
+							<p:column filterBy="#{procedimento.planoTratamento.fim}"
+								sortBy="#{procedimento.planoTratamento.fim}"
+								filterMatchMode="contains" headerText="Término do tratamento">
+								<h:outputText
+									value="#{relatorioProcedimentoMB.formatarData(procedimento.planoTratamento.fim)}" />
+							</p:column>
+
+							<p:column
+								filterBy="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}"
+								sortBy="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}"
+								filterMatchMode="contains" headerText="Satus do procedimento">
+								<h:outputText
+									value="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}" />
+							</p:column>
+							<ui:remove>
+								<p:column>
+									<p:commandButton icon="White fa fa-eye" width="5%">
+										<f:setPropertyActionListener value="#{procedimento}"
+											target="#{relatorioProcedimentoMB.entity}" />
+									</p:commandButton>
+								</p:column>
+							</ui:remove>
+						</p:dataTable>
+					</p:outputPanel>
 
 					<p:dialog id="dlgGerarRelatorio" widgetVar="dlgGerarRelatorio"
 						header="Relatório do Procedimento">
