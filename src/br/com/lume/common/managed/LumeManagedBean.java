@@ -1,24 +1,37 @@
 package br.com.lume.common.managed;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.text.Normalizer;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.DefaultStreamedContent;
 
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.bo.BO;
+import br.com.lume.common.util.Exportacoes;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.MessageType;
@@ -47,6 +60,8 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     private List<E> entityList;
 
     private RestricaoBO restricaoBO;
+    
+    private Exportacoes exportacao;
 
     @PostConstruct
     public void init() {
@@ -291,5 +306,46 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         if (date == null)
             return 0;
         return getCalendarFromDate(date).get(Calendar.MINUTE);
+    }
+    
+    public DefaultStreamedContent exportarTabela(String header, DataTable tabela,String type) {
+        
+        FileInputStream arq;
+        try {
+            this.exportacao = Exportacoes.getInstance();
+            arq = new FileInputStream(this.exportacao.exportarTabela(header,tabela,type));
+            
+            if(type.equals("xls"))
+                return new DefaultStreamedContent(arq,"application/xls",header+"."+type);
+            else
+                return new DefaultStreamedContent(arq,"application/pdf",header+"."+type);
+            
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
+    
+    public boolean filtroSemAcento(Object value, Object filter, Locale locale) {
+        
+        String filterText = (filter == null) ? null : filter.toString().trim();
+        if(StringUtils.isBlank(filterText)) {
+            return true;
+        }
+         
+        if(value == null) {
+            return false;
+        }
+        
+        return StringUtils.containsIgnoreCase(removerAcentos((String) value), removerAcentos(filterText));
+    }
+    
+    private String removerAcentos(String str) {
+        String c;
+        c = Normalizer.normalize(str, Normalizer.Form.NFD);
+        c = c.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        return c;
     }
 }
