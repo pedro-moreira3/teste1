@@ -88,7 +88,7 @@
 						</p:outputPanel>        
 						<p:dataTable filterDelay="1500"  reflow="true" var="materiaisSelecionado" value="#{emprestimoUnitarioMB.materiaisDisponiveis}" paginator="true" rows="7" paginatorPosition="bottom"
                             id="dtMateriaisDisponiveis" emptyMessage="" selection="#{emprestimoUnitarioMB.materiaisSelecionado}" rowKey="#{materiaisSelecionado.id}">
-                            <f:facet name="header">Materiais Disponíveis</f:facet>
+                            <f:facet name="header">Materiais DisponÃ­veis</f:facet>
 
                             <p:column selectionMode="multiple" style="width:16px;text-align:center" />
 
@@ -100,8 +100,8 @@
                             <p:column filterBy="#{materiaisSelecionado.item.descricaoLimpa}" sortBy="#{materiaisSelecionado.item.descricao}" filterMatchMode="contains" headerText="Descrição">
                                 <h:outputText value="#{materiaisSelecionado.item.descricao}" title="#{materiaisSelecionado.id}" />
                             </p:column>
-                            <p:column filterBy="#{materiaisSelecionado.quantidadeAtual}" sortBy="#{materiaisSelecionado.quantidadeAtual}" filterMatchMode="contains" headerText="Quantidade Atual">
-                                <h:outputText value="#{materiaisSelecionado.quantidadeAtual}">
+                            <p:column filterBy="#{materiaisSelecionado.estoque.quantidade}" sortBy="#{materiaisSelecionado.estoque.quantidade}" filterMatchMode="contains" headerText="Quantidade Atual">
+                                <h:outputText value="#{materiaisSelecionado.estoque.quantidade}">
                                     <f:convertNumber />
                                 </h:outputText>
                                 <h:outputText value="#{emprestimoUnitarioMB.getUnidadeString(materiaisSelecionado.item)}" styleClass="unidadeMedidaString" />
@@ -115,8 +115,8 @@
                             <p:column filterBy="#{materiaisSelecionado.dataValidadeStr}" sortBy="#{materiaisSelecionado.dataValidade}" filterMatchMode="contains" headerText="Validade">
                                 <h:outputText value="#{materiaisSelecionado.dataValidadeStr}" />
                             </p:column>
-                            <p:column filterBy="#{materiaisSelecionado.local.descricao}" sortBy="#{materiaisSelecionado.local.descricao}" filterMatchMode="contains" headerText="Localização">
-                                <h:outputText value="#{materiaisSelecionado.local.descricao}" />
+                            <p:column filterBy="#{materiaisSelecionado.estoque.local.descricao}" sortBy="#{materiaisSelecionado.estoque.local.descricao}" filterMatchMode="contains" headerText="Localização">
+                                <h:outputText value="#{materiaisSelecionado.estoque.local.descricao}" />
                             </p:column>
                         </p:dataTable>
 						<p:panelGrid id="pnBotoesDlg" columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">		                    
@@ -155,7 +155,7 @@
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtEmprestimoUnitario" value="#{emprestimoUnitarioMB.emprestimoUnitarios}" var="emprestimoUnitario" rows="15" paginator="true"
                              rowKey="#{emprestimoUnitario}" paginatorPosition="bottom">                         
                             <f:facet name="header">Empréstimos Unitários</f:facet>
-							 <p:column headerText="Ações" width="10%">
+							 <p:column headerText="AçÃµes" width="10%">
 							 <p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlg').show();" update=":lume:pnDlg, :lume:pnBotoesDlg" title="Editar" process="@this"
                                 actionListener="#{emprestimoUnitarioMB.carregarEditar(emprestimoUnitario)}" style="width:33px !important" />
 	                        </p:column>		                         

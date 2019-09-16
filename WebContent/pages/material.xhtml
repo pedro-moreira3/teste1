@@ -36,12 +36,12 @@
                         <p:column filterBy="#{material.item.descricaoLimpa}" sortBy="#{material.item.descricao}" filterMatchMode="contains" width="20%" headerText="Descrição">
                             <h:outputText value="#{material.item.descricao}" title="#{material.id}" />
                         </p:column>
-                        <p:column filterBy="#{material.local.descricao}" sortBy="#{material.local.descricao}" filterMatchMode="contains" width="8%" headerText="Local"
+                        <p:column filterBy="#{material.estoque.local.descricao}" sortBy="#{material.estoque.local.descricao}" filterMatchMode="contains" width="8%" headerText="Local"
                             rendered="#{materialMB.estoqueCompleto}">
-                            <h:outputText value="#{material.local.descricao}" />
+                            <h:outputText value="#{material.estoque.local.descricao}" />
                         </p:column>
-                        <p:column filterBy="#{material.quantidadeAtual}" sortBy="#{material.quantidadeAtual}" width="10%" filterMatchMode="contains" headerText="Quantidade">
-                            <h:outputText value="#{material.quantidadeAtual}">
+                        <p:column filterBy="#{material.estoque.quantidade}" sortBy="#{material.estoque.quantidade}" width="10%" filterMatchMode="contains" headerText="Quantidade">
+                            <h:outputText value="#{material.estoque.quantidade}">
                                 <f:convertNumber />
                             </h:outputText>
                             <h:outputLabel value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
@@ -130,12 +130,12 @@
 									<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"		                            	
 		                                style="border:0px none; background-color:transparent;">
 		                                <h:panelGroup styleClass="md-combo">
-   											<p:outputLabel for="quantidade" value="Quantidade de volumes: " />
-		                                	<p:inputText id="quantidade" value="#{materialMB.entity.quantidade}" maxlength="10" onkeypress="validaNumeros(event)" required="true"
+   											<p:outputLabel for="quantidadePacotes" value="Quantidade de volumes: " />
+		                                	<p:inputText id="quantidadePacotes" value="#{materialMB.entity.quantidadePacotes}" maxlength="10" onkeypress="validaNumeros(event)" required="true"
 		                                    	rendered="#{materialMB.entity.id == 0}">
 		                                    	<p:ajax update=":lume:pnEntrada" process=":lume:quantidadeUnidade,@this" listener="#{materialMB.valorTotal}" />
 		                                	</p:inputText>
-		                                	<h:outputText value="#{materialMB.entity.quantidade}" rendered="#{materialMB.entity.id != 0}">
+		                                	<h:outputText value="#{materialMB.entity.quantidadePacotes}" rendered="#{materialMB.entity.id != 0}">
 		                                    	<f:convertNumber />
 		                                	</h:outputText>		                                	
 		                                </h:panelGroup>
@@ -143,19 +143,19 @@
 			                                <p:outputLabel for="quantidadeUnidade" value="Quantidade dentro do volume: " />
 			                                <p:inputText id="quantidadeUnidade" value="#{materialMB.entity.tamanhoUnidade}" maxlength="10" onkeypress="validaNumeros(event)" required="true"
 			                                    rendered="#{materialMB.entity.id == 0}">
-			                                    <p:ajax update=":lume:pnEntrada" process=":lume:quantidade,@this" listener="#{materialMB.valorTotal}" />
+			                                    <p:ajax update=":lume:pnEntrada" process=":lume:quantidadePacotes,@this" listener="#{materialMB.valorTotal}" />
 			                                </p:inputText>
 			                                <h:outputText value="#{materialMB.entity.tamanhoUnidade}" rendered="#{materialMB.entity.id != 0}">
 			                                    <f:convertNumber />
 			                                </h:outputText>		                                
 		                                </h:panelGroup>
 		                                <h:panelGroup styleClass="md-combo">
-			                                <p:outputLabel for="quantidadeAtual" value="Quantidade Total: " />
+			                                <p:outputLabel for="quantidade" value="Quantidade Total: " />
 			                                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-			                                    <h:outputText id="quantidadeAtual" value="#{materialMB.entity.quantidadeAtual}">
+			                                    <h:outputText id="quantidade" value="#{materialMB.entity.estoque.quantidade}">
 			                                        <f:convertNumber />
 			                                    </h:outputText>
-			                                    <h:outputLabel id="quantidadeAtual2" value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
+			                                    <h:outputLabel  value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
 			                                </p:panelGrid>		                                
 		                                </h:panelGroup>		                                
 									</p:panelGrid>                 		       
@@ -173,7 +173,7 @@
 		                                </h:panelGroup>
 		                                <h:panelGroup styleClass="md-combo">
 			                                <p:outputLabel for="valorUnitario" value="Valor Unitário: " rendered="#{materialMB.estoqueCompleto}" />
-			                                <h:outputText id="valorUnitario" value="#{materialMB.valorUnitario}" rendered="#{materialMB.estoqueCompleto}">
+			                                <h:outputText id="valorUnitario" value="#{materialMB.entity.valor}" rendered="#{materialMB.estoqueCompleto}">
 			                                    <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
 			                                </h:outputText>
 		                                </h:panelGroup>	
@@ -288,7 +288,7 @@
                                 <p:outputLabel for="quantidadeDevolvida" value="Quantidade à ser devolvida: " />
                                 <p:column>
                                     
-									<p:inputNumber maxValue="99999999.9999" minValue="0.0000" id="quantidadeDevolvida" value="#{materialMB.quantidade}" required="true" >						
+									<p:inputNumber maxValue="99999999.9999" minValue="0.0000" id="quantidadeDevolvida" value="#{materialMB.quantidadePacotes}" required="true" >						
 							</p:inputNumber>                                    
                                     
                                     
@@ -313,16 +313,19 @@
                         </p:panel>
                     </p:dialog>
                     <p:dialog id="dlgMaterialLog" widgetVar="dlgMaterialLog" header="Logs do Material" modal="true" width="90%">
-                        <p:dataTable filterDelay="1500"  id="dtMaterialLog" reflow="true" emptyMessage="" value="#{materialMB.materialLogs}" var="m" rows="20" paginator="true" paginatorPosition="bottom">
-                            <p:column filterBy="#{m.quantidadeAlterada}" sortBy="#{m.quantidadeAlterada}" filterMatchMode="contains" headerText="Qtd. Alterada">
-                                <h:outputText value="#{m.quantidadeAlterada}" title="#{m.id}" />
+                        <p:dataTable filterDelay="1500"  id="dtMaterialLog" reflow="true" emptyMessage="" value="#{materialMB.listaTransferenciasEstoque}" var="m" rows="20" paginator="true" paginatorPosition="bottom">
+                            <p:column filterBy="#{m.localOrigem.descricao}" sortBy="#{m.localOrigem.descricao}" filterMatchMode="contains" headerText="Local de origem">
+                                <h:outputText value="#{m.localOrigem.descricao}" title="#{m.localOrigem.descricao}" />
                             </p:column>
-                            <p:column filterBy="#{m.quantidadeAtual}" sortBy="#{m.quantidadeAtual}" filterMatchMode="contains" headerText="Qtd. Atual">
-                                <h:outputText value="#{m.quantidadeAtual}" />
+                            <p:column filterBy="#{m.localDestino.descricao}" sortBy="#{m.localDestino.descricao}" filterMatchMode="contains" headerText="Local de destino">
+                                <h:outputText value="#{m.localDestino.descricao}" />
                             </p:column>
-                            <p:column filterBy="#{m.acao}" sortBy="#{m.acao}" filterMatchMode="contains" headerText="Ação">
-                                <h:outputText value="#{m.acao}" />
+                            <p:column filterBy="#{m.descricao}" sortBy="#{m.descricao}" filterMatchMode="contains" headerText="Descrição">
+                                <h:outputText value="#{m.descricao}" />
                             </p:column>
+                            <p:column filterBy="#{m.quantidade}" sortBy="#{m.quantidade}" filterMatchMode="contains" headerText="Quantidade">
+                                <h:outputText value="#{m.quantidade}" />
+                            </p:column>                            
                             <p:column filterBy="#{m.profissional.dadosBasico.nome}" sortBy="#{m.profissional.dadosBasico.nome}" filterMatchMode="contains" headerText="Prof.">
                                 <h:outputText value="#{m.profissional.dadosBasico.nome}" />
                             </p:column>

@@ -22,11 +22,11 @@
 							</f:facet>
 							<h:outputText value="#{m.item}" title="#{m.id}"/>
 						</p:column>						
-						<p:column filterBy="#{m.somaQuantidadeAtual}" sortBy="#{m.somaQuantidadeAtual}" filterMatchMode="contains">
+						<p:column filterBy="#{m.unidadeMedidaStr}" sortBy="#{m.unidadeMedidaStr}" filterMatchMode="contains">
 							<f:facet name="header">
 								<h:outputText value="Quantidade Atual" />
 							</f:facet>
-							<h:outputText value="#{m.somaQuantidadeAtual}">
+							<h:outputText value="#{m.unidadeMedidaStr}">
 								<f:convertNumber locale="#{lumeSecurity.locale}" maxFractionDigits="2" />
 							</h:outputText>
 							<h:outputLabel value="#{m.unidadeMedidaStr}" disabled="true" />

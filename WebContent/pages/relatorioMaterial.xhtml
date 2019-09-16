@@ -12,6 +12,30 @@
                         </p:commandButton>
                     </p:panelGrid>
                     <div class="EmptyBox20"></div>
+
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{relatorioMaterialMB.estoques}" var="e" rows="20" paginator="true" rowKey="#{e}" paginatorPosition="bottom">
+                        <f:facet name="header">Materiais</f:facet>
+                        <p:column filterBy="#{e.local.descricao}" sortBy="#{e.local.descricao}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Local" />
+                            </f:facet>
+                            <h:outputText value="#{e.local.descricao}" title="#{e.id}" />
+                        </p:column>     
+                        <p:column filterBy="#{e.quantidade}" sortBy="#{e.quantidade}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Quantidade" />
+                            </f:facet>
+                            <h:outputText value="#{e.quantidade}" title="#{e.id}" />
+                        </p:column>      
+                        <p:column filterBy="#{e.material.item.descricao}" sortBy="#{e.material.item.descricao}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Item" />
+                            </f:facet>
+                            <h:outputText value="#{e.material.item.descricao}" title="#{e.id}" />
+                        </p:column>                                                                 
+                    </p:dataTable>                    
+                    
+                    <ui:remove>
                     <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{relatorioMaterialMB.materiais}" var="m" rows="20" paginator="true" rowKey="#{m}" paginatorPosition="bottom">
                         <f:facet name="header">Materiais</f:facet>
                         <p:column filterBy="#{m.item}" sortBy="#{m.item}" filterMatchMode="contains">
@@ -75,7 +99,7 @@
                             <h:outputText value="#{m.dataUltimaUtilizacaoStr}" />
                         </p:column>
                     </p:dataTable>
-
+					</ui:remove>
                 </div>
             </div>
         </div>

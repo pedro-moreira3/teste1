@@ -25,6 +25,7 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.estoque.EstoqueSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.material.MaterialSingleton;
 import br.com.lume.odonto.entity.Dominio;
@@ -266,7 +267,9 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
         try {
             List<Material> materiais = MaterialSingleton.getInstance().getBo().listByItem(this.getItem());
             for (Material material : materiais) {
-                quantidadeTotal = quantidadeTotal.add(material.getTamanhoUnidade().multiply(material.getQuantidade().multiply(material.getTamanhoUnidade())));
+                BigDecimal quantidade =  EstoqueSingleton.getInstance().getBo().findByMaterial(material).getQuantidade();
+                
+                quantidadeTotal = quantidadeTotal.add(material.getTamanhoUnidade().multiply(quantidade.multiply(material.getTamanhoUnidade())));
             }
         } catch (Exception e) {
             e.printStackTrace();

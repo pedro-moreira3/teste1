@@ -27,21 +27,26 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.estoque.EstoqueSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.local.LocalSingleton;
 import br.com.lume.marca.MarcaSingleton;
 import br.com.lume.material.MaterialSingleton;
+import br.com.lume.material.bo.MaterialBO;
 import br.com.lume.materialLog.MaterialLogSingleton;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.Estoque;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Marca;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialLog;
+import br.com.lume.odonto.entity.TransferenciaEstoque;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -79,9 +84,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     private List<Dominio> dominios;
 
-    private BigDecimal valorTotal = new BigDecimal(0),valorUnitario = new BigDecimal(0), quantidadeMovimentada, quantidade, quantidadeMovimentacao;
+    private BigDecimal valorTotal = new BigDecimal(0), quantidadeMovimentada, quantidadePacotes, quantidadeMovimentacao;
 
-    private List<MaterialLog> materialLogs;
+    private List<TransferenciaEstoque> listaTransferenciasEstoque;
 
     private String tipoMovimentacao;
 
@@ -103,6 +108,20 @@ public class MaterialMB extends LumeManagedBean<Material> {
             firstLevelLocal.setDescricao("RAIZ");
             this.chargeTreeLocal(new DefaultTreeNode(firstLevelLocal, this.getRootLocal()));
             dateHoje = new Date();
+           
+//para inserir estoque inicial            
+//            MaterialBO bo = MaterialSingleton.getInstance().getBo();
+//            int count = 0;
+//            for (Material material : bo.listAll()) {
+//                count++;
+//                Estoque estoque = new Estoque();
+//                estoque.setLocal(material.getLocal());
+//                estoque.setMaterial(material);
+//                estoque.setQuantidade(material.getQuantidadeAtual());
+//                EstoqueSingleton.getInstance().getBo().persist(estoque);    
+//                System.out.println(count);
+//            }
+            
          
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -121,11 +140,14 @@ public class MaterialMB extends LumeManagedBean<Material> {
     }
 
     public void atualizaQuantidades() {
-        BigDecimal quantidadeTotal = this.getEntity().getQuantidade().multiply(this.getEntity().getTamanhoUnidade());
-        this.getEntity().setQuantidadeTotal(quantidadeTotal);
-        this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeTotal());
-        if(this.getEntity().getQuantidade() != null && this.getEntity().getValorUnidadeInformado() != null) {
-            valorUnitario = this.getEntity().getValorUnidadeInformado().divide(this.getEntity().getQuantidade(), 2, RoundingMode.HALF_UP);    
+        BigDecimal quantidadeTotal = this.getEntity().getQuantidadePacotes().multiply(this.getEntity().getTamanhoUnidade());
+       // this.getEntity().setQuantidadeTotal(quantidadeTotal);
+        if(this.getEntity().getEstoque() == null) {
+            this.getEntity().setEstoque(new Estoque());
+        }
+        this.getEntity().getEstoque().setQuantidade(quantidadeTotal);
+        if(this.getEntity().getEstoque().getQuantidade() != null && this.getEntity().getValorUnidadeInformado() != null && this.getEntity().getEstoque().getQuantidade().compareTo(BigDecimal.ZERO) != 0) {
+            getEntity().setValor(this.getEntity().getValorUnidadeInformado().divide(this.getEntity().getEstoque().getQuantidade(), 2, RoundingMode.HALF_UP));    
         }
         
     }
@@ -154,8 +176,8 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public void carregaTela() {
         try {
-            this.setDigitacaoLocal(this.getEntity().getLocal().getDescricao());
-            this.setLocal(this.getEntity().getLocal());
+            this.setDigitacaoLocal(this.getEntity().getEstoque().getLocal().getDescricao());
+            this.setLocal(this.getEntity().getEstoque().getLocal());
             this.setProcedencia(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO, this.getEntity().getProcedencia()));
             this.setItem(this.getEntity().getItem());
             this.setDigitacao(this.getEntity().getItem().getDescricao());
@@ -203,7 +225,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public void carregarMaterialLog(Material material) {
         try {
-            materialLogs = MaterialLogSingleton.getInstance().getBo().listByMaterial(material);
+            listaTransferenciasEstoque = TransferenciaEstoqueSingleton.getInstance().getBo().listByMaterial(material);               
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -216,10 +238,10 @@ public class MaterialMB extends LumeManagedBean<Material> {
         setEntity(material);
     //    rootLocal
     //    root
-        this.digitacaoLocal = this.getEntity().getLocal().getDescricao();
+        this.digitacaoLocal = this.getEntity().getEstoque().getLocal().getDescricao();
         this.digitacao = this.getEntity().getItem().getDescricao();
         this.setItem(this.getEntity().getItem());
-        this.setLocal(this.getEntity().getLocal());
+        this.setLocal(this.getEntity().getEstoque().getLocal());
         try {
             this.procedencia = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO, this.getEntity().getProcedencia());
         } catch (Exception e) {
@@ -291,15 +313,22 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public void actionDevolver(ActionEvent event) {
         try {
-            if (this.getEntity().getQuantidadeAtual().intValue() >= quantidade.intValue()) {
+            if (this.getEntity().getEstoque().getQuantidade().intValue() >= quantidadePacotes.intValue()) {
                 //this.getbO().refresh(getEntity());
-                this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeAtual().subtract(quantidade));
+                //this.getEntity().getEstoque().setQuantidade(this.getEntity().getEstoque().getQuantidade().subtract(quantidadePacotes));
+               
+               
                 if (justificativa != null) {
                     this.getEntity().setJustificativa(justificativa.getNome());
                 }                
                 MaterialSingleton.getInstance().getBo().persist(this.getEntity());
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidade.multiply(new BigDecimal(-1)), getEntity().getQuantidadeAtual(),
-                        MaterialLog.ENTRADA_MATERIAL_DEVOLVER));
+                
+                EstoqueSingleton.getInstance().subtrair( this.getEntity(),  this.getEntity().getEstoque().getLocal(),quantidadePacotes, EstoqueSingleton.DEVOLUCAO_MATERIAL_PROBLEMA + "- " + justificativa.getNome(), UtilsFrontEnd.getProfissionalLogado());
+                
+                
+               // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadePacotes.multiply(new BigDecimal(-1)), getEntity().getQuantidadeAtual(),
+               //         MaterialLog.ENTRADA_MATERIAL_DEVOLVER));
+            
                 this.actionNew(event);
                 this.geraLista();
                 PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
@@ -308,7 +337,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 this.addError(OdontoMensagens.getMensagem("material.quantidade.maior"), "",true);
             }
         } catch (Exception e) {
-            log.error("Erro no actionPersist", e);
+            log.error("Erro no actionDevolver", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
         }
 
@@ -329,7 +358,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             } else if (!isEstoqueCompleto() && getEntity().getId() == 0) {
                 List<Material> mats = MaterialSingleton.getInstance().getBo().listByItem(getItem());
                 if (mats != null && !mats.isEmpty()) {
-                    quantidadeMovimentacao = getEntity().getQuantidadeAtual();
+                    quantidadeMovimentacao = getEntity().getEstoque().getQuantidade();
                     tipoMovimentacao = Material.MOVIMENTACAO_ENTRADA;
                     setEntity(mats.get(0));
                     actionMovimentacaoEstoqueSimplificado(event);
@@ -337,9 +366,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 }
             }
 
-            if (this.getValorTotal() != null && this.getEntity().getQuantidadeTotal() != null) {
-                this.getEntity().setValor(this.getValorTotal().divide(this.getEntity().getQuantidadeTotal(), 2, RoundingMode.HALF_UP));
-            }
+         //   if (this.getValorTotal() != null && this.getEntity().getQuantidadeTotal() != null) {
+         //       this.getEntity().setValor(this.getValorTotal().divide(this.getEntity().getQuantidadeTotal(), 2, RoundingMode.HALF_UP));
+         //   }
             this.atualizaQuantidades();
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (this.getEntity().getStatus() == null) {
@@ -361,9 +390,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 } else {
                     this.getEntity().setItem(this.getItem());
                     if (this.getLocal() == null) {
-                        this.getEntity().setLocal(LocalSingleton.getInstance().getBo().getLocalPadraoSistema(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                        this.getEntity().getEstoque().setLocal(LocalSingleton.getInstance().getBo().getLocalPadraoSistema(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                     } else {
-                        this.getEntity().setLocal(this.getLocal());
+                        this.getEntity().getEstoque().setLocal(this.getLocal());
                     }
 
                     Calendar cal = Calendar.getInstance();
@@ -381,17 +410,21 @@ public class MaterialMB extends LumeManagedBean<Material> {
                                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
                             }
                             if (novo) {
-                                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), getEntity().getQuantidadeAtual(),
-                                        getEntity().getQuantidadeAtual(), MaterialLog.ENTRADA_MATERIAL_CADASTRO));
+                               // this.getEntity().getEstoque().setMaterial(this.getEntity());
+                                EstoqueSingleton.getInstance().inserir(this.getEntity(), this.getEntity().getEstoque().getLocal(),  this.getEntity().getEstoque().getQuantidade(),  EstoqueSingleton.ENTRADA_MATERIAL_CADASTRO, UtilsFrontEnd.getProfissionalLogado());
+                                                                
+                               // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), getEntity().getEstoque().getQuantidade(),
+                                //        getEntity().getEstoque().getQuantidade(), MaterialLog.ENTRADA_MATERIAL_CADASTRO));
                                 this.setEntity(new Material());
                                 this.getEntity().setFornecedor(null);
                                 this.getEntity().setMarca(null);
                                 valorTotal = new BigDecimal(0);
-                                valorUnitario = new BigDecimal(0);                            
+                                                
                                 this.setSelectedItem(null);
                                 digitacao = null;
                                 digitacaoLocal = null;                            
                             }
+                        
 
                             this.geraLista();
                         }
@@ -410,21 +443,24 @@ public class MaterialMB extends LumeManagedBean<Material> {
     public void actionMovimentacaoEstoqueSimplificado(ActionEvent event) {
         if (quantidadeMovimentacao.equals(new BigDecimal(0))) {
             this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "",true);
-        } else if (tipoMovimentacao.equals(Material.MOVIMENTACAO_SAIDA) && getEntity().getQuantidadeAtual().doubleValue() < quantidadeMovimentacao.doubleValue()) {
+        } else if (tipoMovimentacao.equals(Material.MOVIMENTACAO_SAIDA) && getEntity().getEstoque().getQuantidade().doubleValue() < quantidadeMovimentacao.doubleValue()) {
             this.addError("Não é possível retirar mais quantidade do que a quantidade atual.", "",true);
         } else {
             try {
                 this.getbO().refresh(getEntity());
                 if (tipoMovimentacao.equals(Material.MOVIMENTACAO_ENTRADA)) {
-                    this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeAtual().add(quantidadeMovimentacao));
+                   // this.getEntity().setQuantidadeAtual(this.getEntity().getEstoque().getQuantidade().add(quantidadeMovimentacao));
+                    EstoqueSingleton.getInstance().adicionar(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentacao,  EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
+                                        
                 } else {
-                    this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeAtual().subtract(quantidadeMovimentacao));
+                    //this.getEntity().setQuantidadeAtual(this.getEntity().getEstoque().getQuantidade().subtract(quantidadeMovimentacao));
+                    EstoqueSingleton.getInstance().subtrair(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentacao,  EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
                     quantidadeMovimentacao = quantidadeMovimentacao.multiply(new BigDecimal(-1));
                 }
-                this.getEntity().setQuantidadeTotal(this.getEntity().getQuantidadeAtual());
+               // this.getEntity().setQuantidadeTotal(this.getEntity().getQuantidadeAtual());
                 this.getEntity().setDataMovimentacao(Calendar.getInstance().getTime());
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentacao, getEntity().getQuantidadeAtual(),
-                        MaterialLog.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA));
+               // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentacao, getEntity().getQuantidadeAtual(),
+                //        MaterialLog.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA));
                 this.getbO().persist(this.getEntity());
 
                 this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "",true);
@@ -440,33 +476,36 @@ public class MaterialMB extends LumeManagedBean<Material> {
     public void movimentar(ActionEvent event) {
         if (quantidadeMovimentada.equals(new BigDecimal(0))) {
             this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "",true);
-        } else if (this.getEntity().getQuantidadeAtual().doubleValue() < quantidadeMovimentada.doubleValue()) {
+        } else if (this.getEntity().getEstoque().getQuantidade().doubleValue() < quantidadeMovimentada.doubleValue()) {
             this.addError(OdontoMensagens.getMensagem("erro.material.quantidade"), "",true);
         } else if ((this.getLocal() == null)) {
             this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "",true);
-        } else if (this.getEntity().getLocal().getDescricao().equals(this.getDigitacaoLocal())) {
+        } else if (this.getEntity().getEstoque().getLocal().getDescricao().equals(this.getDigitacaoLocal())) {
             this.addError(OdontoMensagens.getMensagem("erro.local.material.inalterado"), "",true);
         } else {
 
             try {
                 this.getbO().refresh(getEntity());
-                this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeAtual().subtract(quantidadeMovimentada));
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentada.multiply(new BigDecimal(-1)),
-                        getEntity().getQuantidadeAtual(), MaterialLog.MOVIMENTACAO_MATERIAL_MOVIMENTAR));
+               // this.getEntity().setQuantidadeAtual(this.getEntity().getEstoque().getQuantidade().subtract(quantidadeMovimentada));
+               // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentada.multiply(new BigDecimal(-1)),
+               //         getEntity().getQuantidadeAtual(), MaterialLog.MOVIMENTACAO_MATERIAL_MOVIMENTAR));
                 this.getbO().persist(this.getEntity());
                 Material material = new Material();
                 PropertyUtils.copyProperties(material, this.getEntity());
-                material.setQuantidadeAtual(quantidadeMovimentada);
-                material.setQuantidadeTotal(quantidadeMovimentada);
+              //  material.setQuantidadeAtual(quantidadeMovimentada);
+               // material.setQuantidadeTotal(quantidadeMovimentada);
                 material.setId(0);
-                material.setLocal(this.getLocal());
+                material.getEstoque().setLocal(this.getLocal());
                 this.setEntity(material);
 
                 this.getEntity().setDataMovimentacao(new Date());
                 this.getbO().persist(this.getEntity());
 
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentada, getEntity().getQuantidadeAtual(),
-                        MaterialLog.MOVIMENTACAO_MATERIAL_MOVIMENTAR));
+                EstoqueSingleton.getInstance().subtrair(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentada,  EstoqueSingleton.DEVOLUCAO_KIT_NAO_UTILIZADO, UtilsFrontEnd.getProfissionalLogado());
+                
+                
+               // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentada, getEntity().getQuantidadeAtual(),
+               //         MaterialLog.MOVIMENTACAO_MATERIAL_MOVIMENTAR));
 
                 this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "",true);
                 this.actionNew(event);
@@ -966,21 +1005,14 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public BigDecimal getValorTotal() {
         if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
-            valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getQuantidade());
+            valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getEstoque().getQuantidade());
         }
         return valorTotal;
     }
 
-    public void setValorUnitario(BigDecimal valorUnitario) {
-        this.valorUnitario = valorUnitario;
-    }
+
     
-    public BigDecimal getValorUnitario() {
-        if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
-            valorUnitario = this.getEntity().getValorUnidadeInformado().divide(this.getEntity().getQuantidade(), 2, RoundingMode.HALF_UP);
-        }
-        return valorUnitario;
-    }
+  
 
     public void setValorTotal(BigDecimal valorTotal) {
         this.valorTotal = valorTotal;
@@ -989,24 +1021,16 @@ public class MaterialMB extends LumeManagedBean<Material> {
      public void valorTotal() {
          this.atualizaQuantidades();
          if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
-             valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getQuantidade());
+             valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getEstoque().getQuantidade());
          }
      }
 
-    public BigDecimal getQuantidade() {
-        return quantidade;
+    public BigDecimal getQuantidadePacotes() {
+        return quantidadePacotes;
     }
 
-    public void setQuantidade(BigDecimal quantidade) {
-        this.quantidade = quantidade;
-    }
-
-    public List<MaterialLog> getMaterialLogs() {
-        return materialLogs;
-    }
-
-    public void setMaterialLogs(List<MaterialLog> materialLogs) {
-        this.materialLogs = materialLogs;
+    public void setQuantidadePacotes(BigDecimal quantidadePacotes) {
+        this.quantidadePacotes = quantidadePacotes;
     }
 
     public String getTipoMovimentacao() {
@@ -1043,6 +1067,16 @@ public class MaterialMB extends LumeManagedBean<Material> {
     
     public void setNomeFornecedor(String nomeFornecedor) {
         this.nomeFornecedor = nomeFornecedor;
+    }
+
+    
+    public List<TransferenciaEstoque> getListaTransferenciasEstoque() {
+        return listaTransferenciasEstoque;
+    }
+
+    
+    public void setListaTransferenciasEstoque(List<TransferenciaEstoque> listaTransferenciasEstoque) {
+        this.listaTransferenciasEstoque = listaTransferenciasEstoque;
     }
 
 }

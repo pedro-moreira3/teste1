@@ -27,11 +27,11 @@
                             <p:column filterBy="#{conferencia.material.item.descricaoLimpa}" sortBy="#{conferencia.material.item.descricao}" filterMatchMode="contains" headerText="Material">
                                 <h:outputText value="#{conferencia.material.item.descricao}" />
                             </p:column>
-                            <p:column filterBy="#{conferencia.material.local.descricao}" sortBy="#{conferencia.material.local.descricao}" filterMatchMode="contains">
+                            <p:column filterBy="#{conferencia.material.estoque.local.descricao}" sortBy="#{conferencia.material.estoque.local.descricao}" filterMatchMode="contains">
                                 <f:facet name="header">
                                     <h:outputText value="Local" />
                                 </f:facet>
-                                <h:outputText value="#{conferencia.material.local.descricao}" />
+                                <h:outputText value="#{conferencia.material.estoque.local.descricao}" />
                             </p:column>
                             <p:column sortBy="#{conferencia.valorOriginal}" filterBy="#{conferencia.valorOriginal}" filterMatchMode="contains" headerText="Quantidade Original">
                                 <h:outputText value="#{conferencia.valorOriginal}">

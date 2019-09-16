@@ -24,9 +24,11 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.emprestimoKit.EmprestimoKitSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.esterilizacao.EsterilizacaoSingleton;
+import br.com.lume.estoque.EstoqueSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.lavagem.LavagemSingleton;
 import br.com.lume.lavagemKit.LavagemKitSingleton;
+import br.com.lume.local.LocalSingleton;
 import br.com.lume.material.MaterialSingleton;
 import br.com.lume.materialLog.MaterialLogSingleton;
 import br.com.lume.odonto.entity.EmprestimoUnitario;
@@ -37,6 +39,7 @@ import br.com.lume.odonto.entity.EsterilizacaoKit;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Lavagem;
 import br.com.lume.odonto.entity.LavagemKit;
+import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialLog;
 import br.com.lume.odonto.entity.Profissional;
@@ -152,9 +155,11 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
             //System.out.println(" m.getQuantidadeAtualBD() " + m.getQuantidadeAtualBD() + " m.getQuantidadeAtual() " + m.getQuantidadeAtual());
             MaterialSingleton.getInstance().getBo().refresh(m);
             //System.out.println(" m.getQuantidadeAtualBD() " + m.getQuantidadeAtualBD() + " m.getQuantidadeAtual() " + m.getQuantidadeAtual());
-            m.setQuantidadeAtual(m.getQuantidadeAtual().subtract(new BigDecimal(1)));
+            //m.setQuantidadeAtual(m.getQuantidadeAtual().subtract(new BigDecimal(1)));
+            EstoqueSingleton.getInstance().subtrair(m, m.getEstoque().getLocal(), new BigDecimal(1),  EstoqueSingleton.ENTREGA_LAVAGEM_MANUAL, UtilsFrontEnd.getProfissionalLogado());
+            
             MaterialSingleton.getInstance().getBo().persist(m);
-            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, m, UtilsFrontEnd.getProfissionalLogado(), new BigDecimal(-1), m.getQuantidadeAtual(), MaterialLog.ENTREGA_LAVAGEM_MANUAL));
+           // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, m, UtilsFrontEnd.getProfissionalLogado(), new BigDecimal(-1), m.getQuantidadeAtual(), MaterialLog.ENTREGA_LAVAGEM_MANUAL));
             return m;
         }
         return null;
@@ -235,40 +240,44 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                     m = a.getMaterial();
                     a.setQuantidade(a.getQuantidade().subtract(new BigDecimal(this.getQuantidadeDescarte())));
                     EmprestimoUnitarioSingleton.getInstance().getBo().persist(a);
-                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, a, m, profissionalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
-                            MaterialLog.DEVOLUCAO_LAVAGEM_DESCARTAR));
+                   // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, a, m, profissionalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
+                    //        MaterialLog.DEVOLUCAO_LAVAGEM_DESCARTAR));
                 } else if (cm != null) {
                     m = cm.getMaterial();
                     cm.setQuantidade(cm.getQuantidade().subtract(new BigDecimal(this.getQuantidadeDescarte())));
                     EmprestimoKitSingleton.getInstance().getBo().persist(cm);
-                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, m, profissionalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
-                            MaterialLog.DEVOLUCAO_LAVAGEM_DESCARTAR));
+                  //  MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, m, profissionalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
+                   //         MaterialLog.DEVOLUCAO_LAVAGEM_DESCARTAR));
                 } else {
                     m = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(this.getLavagemKitSelecionada().getItem(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()).get(0);
-                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, m, profissionalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
-                            MaterialLog.DEVOLUCAO_LAVAGEM_DESCARTAR));
+                  //  MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, m, profissionalLogado, new BigDecimal(getQuantidadeDescarte() * -1), m.getQuantidadeAtual(),
+                   //         MaterialLog.DEVOLUCAO_LAVAGEM_DESCARTAR));
                 }
 
-                Material m2 = new Material();
+                Local descarte = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),"DESCARTE");
+                EstoqueSingleton.getInstance().transferencia(m, m.getEstoque().getLocal(), descarte, new BigDecimal(this.getQuantidadeDescarte()), EstoqueSingleton.DESCARTAR_LAVAGEM, UtilsFrontEnd.getProfissionalLogado());
+                               
+                
+               // Material m2 = new Material();
 
-                m2.setItem(m.getItem());
-                m2.setLocal(m.getLocal());
-                m2.setMarca(m.getMarca());
-                m2.setDataCadastro(Calendar.getInstance().getTime());
-                m2.setLote(m.getLote());
-                m2.setFornecedor(m.getFornecedor());
-                m2.setExcluidoPorProfissional(profissionalLogado.getId());
-                m2.setQuantidadeAtual(new BigDecimal(this.getQuantidadeDescarte()));
-                m2.setQuantidade(new BigDecimal(this.getQuantidadeDescarte()));
-                m2.setValor(m.getValor());
-                m2.setTamanhoUnidade(m.getTamanhoUnidade());
-                m2.setQuantidadeUnidade(m.getQuantidadeUnidade());
-                m2.setIdEmpresa(m.getIdEmpresa());
-                m2.setConsignacao(m.getConsignacao());
+              //  m2.setItem(m.getItem());
+             //   m2.setLocal(m.getLocal());
+               // m2.setMarca(m.getMarca());
+              //  m2.setDataCadastro(Calendar.getInstance().getTime());
+              //  m2.setLote(m.getLote());
+             //   m2.setFornecedor(m.getFornecedor());
+             //   m2.setExcluidoPorProfissional(profissionalLogado.getId());
+             //   m2.setQuantidadeAtual(new BigDecimal(this.getQuantidadeDescarte()));
+              //  m2.setQuantidade(new BigDecimal(this.getQuantidadeDescarte()));
+             //   m2.setValor(m.getValor());
+              //  m2.setTamanhoUnidade(m.getTamanhoUnidade());
+               // m2.setQuantidadeUnidade(m.getQuantidadeUnidade());
+             //   m2.setIdEmpresa(m.getIdEmpresa());
+             //   m2.setConsignacao(m.getConsignacao());
 
-                m2.setStatus(MaterialMB.DESCARTE);
-                m2.setJustificativa(this.getJustificativa().getNome());
-                this.persist(m2);
+             //   m2.setStatus(MaterialMB.DESCARTE);
+             //   m2.setJustificativa(this.getJustificativa().getNome());
+            //    this.persist(m2);
 
                 boolean finalizar = true;
                 for (LavagemKit lk : getLavagemKitSelecionada().getLavagem().getLavagemKits()) {
@@ -307,27 +316,27 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
         justificativa = null;
     }
 
-    public void persist(Material m) throws Exception {
-        Material mNew = new Material();
-        mNew.setDataCadastro(Calendar.getInstance().getTime());
-        mNew.setIdEmpresa(m.getIdEmpresa());
-        mNew.setItem(m.getItem());
-        mNew.setJustificativa(m.getJustificativa());
-        mNew.setLocal(m.getLocal());
-        mNew.setLote(m.getLote());
-        mNew.setMarca(m.getMarca());
-        mNew.setNotaFiscal(m.getNotaFiscal());
-        mNew.setProcedencia(m.getProcedencia());
-        mNew.setQuantidadeAtual(m.getQuantidadeAtual());
-        mNew.setQuantidade(m.getQuantidade());
-        mNew.setConsignacao(m.getConsignacao());
-        mNew.setQuantidadeUnidade(m.getQuantidadeUnidade());
-        mNew.setStatus(m.getStatus());
-        mNew.setTamanhoUnidade(m.getTamanhoUnidade());
-        mNew.setValidade(m.getValidade());
-        mNew.setValor(m.getValor());
-        MaterialSingleton.getInstance().getBo().persist(mNew);
-    }
+//    public void persist(Material m) throws Exception {
+//        Material mNew = new Material();
+//        mNew.setDataCadastro(Calendar.getInstance().getTime());
+//        mNew.setIdEmpresa(m.getIdEmpresa());
+//        mNew.setItem(m.getItem());
+//        mNew.setJustificativa(m.getJustificativa());
+//        mNew.setLocal(m.getLocal());
+//        mNew.setLote(m.getLote());
+//        mNew.setMarca(m.getMarca());
+//        mNew.setNotaFiscal(m.getNotaFiscal());
+//        mNew.setProcedencia(m.getProcedencia());
+//        mNew.setQuantidadeAtual(m.getQuantidadeAtual());
+//      //  mNew.setQuantidade(m.getQuantidade());
+//        mNew.setConsignacao(m.getConsignacao());
+//     //   mNew.setQuantidadeUnidade(m.getQuantidadeUnidade());
+//        mNew.setStatus(m.getStatus());
+//        mNew.setTamanhoUnidade(m.getTamanhoUnidade());
+//        mNew.setValidade(m.getValidade());
+//        mNew.setValor(m.getValor());
+//        MaterialSingleton.getInstance().getBo().persist(mNew);
+//    }
 
     public void actionDevolucao(ActionEvent event) {
         try {
@@ -341,26 +350,36 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                             lk.getEmprestimoKit().setQuantidade(lk.getEmprestimoKit().getQuantidade().subtract(new BigDecimal(lk.getQuantidade())));
                             EmprestimoKitSingleton.getInstance().getBo().persist(lk.getEmprestimoKit());// Atualizando estoque
                             MaterialSingleton.getInstance().getBo().refresh(lk.getEmprestimoKit().getMaterial());
-                            lk.getEmprestimoKit().getMaterial().setQuantidadeAtual(lk.getEmprestimoKit().getMaterial().getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
+                            
+                            //lk.getEmprestimoKit().getMaterial().setQuantidadeAtual(lk.getEmprestimoKit().getMaterial().getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
+                            EstoqueSingleton.getInstance().adicionar(lk.getEmprestimoKit().getMaterial(), lk.getEmprestimoKit().getMaterial().getEstoque().getLocal(),
+                                    new BigDecimal(lk.getQuantidade()),  EstoqueSingleton.DEVOLUCAO_LAVAGEM_FINALIZAR, UtilsFrontEnd.getProfissionalLogado());
+                            
+                            
                             MaterialSingleton.getInstance().getBo().persist(lk.getEmprestimoKit().getMaterial());// Atualizando estoque
-                            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(lk.getEmprestimoKit(), null, lk.getEmprestimoKit().getMaterial(), profisionalLogado,
-                                    new BigDecimal(lk.getQuantidade()), lk.getEmprestimoKit().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_LAVAGEM_FINALIZAR));
+                           // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(lk.getEmprestimoKit(), null, lk.getEmprestimoKit().getMaterial(), profisionalLogado,
+                           //         new BigDecimal(lk.getQuantidade()), lk.getEmprestimoKit().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_LAVAGEM_FINALIZAR));
                         } else if (lk.getEmprestimoUnitario() != null) {
                             lk.getEmprestimoUnitario().setQuantidade(lk.getEmprestimoUnitario().getQuantidade().subtract(new BigDecimal(lk.getQuantidade())));
                             EmprestimoUnitarioSingleton.getInstance().getBo().persist(lk.getEmprestimoUnitario());// Atualizando estoque
                             MaterialSingleton.getInstance().getBo().refresh(lk.getEmprestimoUnitario().getMaterial());
-                            lk.getEmprestimoUnitario().getMaterial().setQuantidadeAtual(lk.getEmprestimoUnitario().getMaterial().getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
+                            //lk.getEmprestimoUnitario().getMaterial().setQuantidadeAtual(lk.getEmprestimoUnitario().getMaterial().getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
+                            EstoqueSingleton.getInstance().adicionar(lk.getEmprestimoUnitario().getMaterial(), lk.getEmprestimoUnitario().getMaterial().getEstoque().getLocal(),
+                                    new BigDecimal(lk.getQuantidade()),  EstoqueSingleton.DEVOLUCAO_LAVAGEM_FINALIZAR, UtilsFrontEnd.getProfissionalLogado());
+                            
                             MaterialSingleton.getInstance().getBo().persist(lk.getEmprestimoUnitario().getMaterial());// Atualizando estoque
-                            MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, lk.getEmprestimoUnitario(), lk.getEmprestimoUnitario().getMaterial(), profisionalLogado,
-                                    new BigDecimal(lk.getQuantidade()), lk.getEmprestimoUnitario().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_LAVAGEM_FINALIZAR));
+                           // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, lk.getEmprestimoUnitario(), lk.getEmprestimoUnitario().getMaterial(), profisionalLogado,
+                           //         new BigDecimal(lk.getQuantidade()), lk.getEmprestimoUnitario().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_LAVAGEM_FINALIZAR));
                         } else {
                             List<Material> material = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(lk.getItem(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                             if (!material.isEmpty()) {
                                 MaterialSingleton.getInstance().getBo().refresh(material.get(0));
-                                material.get(0).setQuantidadeAtual(material.get(0).getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
+                               // material.get(0).setQuantidadeAtual(material.get(0).getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
+                                EstoqueSingleton.getInstance().adicionar(material.get(0), material.get(0).getEstoque().getLocal(),
+                                        new BigDecimal(lk.getQuantidade()),  EstoqueSingleton.DEVOLUCAO_LAVAGEM_FINALIZAR, UtilsFrontEnd.getProfissionalLogado());                                
                                 MaterialSingleton.getInstance().getBo().persist(material.get(0));// Atualizando estoque
-                                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, material.get(0), profisionalLogado, new BigDecimal(lk.getQuantidade()),
-                                        material.get(0).getQuantidadeAtual(), MaterialLog.DEVOLUCAO_LAVAGEM_FINALIZAR));
+                               // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, material.get(0), profisionalLogado, new BigDecimal(lk.getQuantidade()),
+                               //         material.get(0).getQuantidadeAtual(), MaterialLog.DEVOLUCAO_LAVAGEM_FINALIZAR));
                             }
                         }
                     }
