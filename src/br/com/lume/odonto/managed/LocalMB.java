@@ -73,9 +73,9 @@ public class LocalMB extends LumeManagedBean<Local> {
         }
         if (this.selectedLocalPai != null) {
             if (((Local) this.selectedLocalPai.getData()).getDescricao().equals("RAIZ")) {
-                this.getEntity().setIdLocal(null);
+                this.getEntity().setLocalPai(null);
             } else {
-                this.getEntity().setIdLocal((Local) this.selectedLocalPai.getData());
+                this.getEntity().setLocalPai((Local) this.selectedLocalPai.getData());
             }
         }
         for (Local local : this.getLocais()) {
@@ -87,7 +87,7 @@ public class LocalMB extends LumeManagedBean<Local> {
             }
         }
         if (!error) {
-            if (this.getEntity().equals(this.getEntity().getIdLocal())) {
+            if (this.getEntity().equals(this.getEntity().getLocalPai())) {
                 this.log.error("erro.pai.filho.iguais");
                 this.addError(OdontoMensagens.getMensagem("erro.pai.filho.iguais"), "");
             } else {
@@ -107,7 +107,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     public void actionRemove(ActionEvent event) {
         boolean remove = true;
         for (Local local : this.getLocais()) {
-            if ((local.getIdLocal() != null) && (this.getEntity().getId() == local.getIdLocal().getId())) {
+            if ((local.getLocalPai() != null) && (this.getEntity().getId() == local.getLocalPai().getId())) {
                 this.log.error("erro.excluir.pai.filho.iguais");
                 this.addError(OdontoMensagens.getMensagem("erro.excluir.pai.filho.iguais"), "");
                 remove = false;
@@ -146,12 +146,12 @@ public class LocalMB extends LumeManagedBean<Local> {
                 Object localPai = node.getData();
                 Local local = (Local) this.selectedLocal.getData();
                 node.setSelected(false);
-                if ((((local.getIdLocal() != null)) && (localPai instanceof String) && (localPai.equals(local.getIdLocal().getDescricao()))) || // RAIZ?
-                        ((localPai instanceof Local) && (((Local) localPai).equals(local.getIdLocal()))) || // Encontrou o Node?
-                        ((localPai instanceof Local) && (local.getIdLocal() == null) && (((Local) localPai).getDescricao().equals("RAIZ")))) { // ROOT?
+                if ((((local.getLocalPai() != null)) && (localPai instanceof String) && (localPai.equals(local.getLocalPai().getDescricao()))) || // RAIZ?
+                        ((localPai instanceof Local) && (((Local) localPai).equals(local.getLocalPai()))) || // Encontrou o Node?
+                        ((localPai instanceof Local) && (local.getLocalPai() == null) && (((Local) localPai).getDescricao().equals("RAIZ")))) { // ROOT?
                     node.setSelected(true);
                     this.setSelectedLocalPai(node);
-                    if (!(local.getIdLocal() == null)) {
+                    if (!(local.getLocalPai() == null)) {
                         this.setDisable(true);
                     } else {
                         this.setDisable(false);
@@ -216,7 +216,7 @@ public class LocalMB extends LumeManagedBean<Local> {
         for (Local local : locaisRestantes) {
             anotherLevel = true;
             for (TreeNode node : nodes) {
-                if ((local.getIdLocal() == null) || (local.getIdLocal().equals(node.getData()))) {
+                if ((local.getLocalPai() == null) || (local.getLocalPai().equals(node.getData()))) {
                     (new DefaultTreeNode(local, node)).setExpanded(true);
                     anotherLevel = false;
                     break;
@@ -260,7 +260,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     public void onNodeSelect(NodeSelectEvent event) {
         try {
             Local local = (Local) (event.getTreeNode().getData());
-            if (local.getIdLocal() == null) {
+            if (local.getLocalPai() == null) {
                 this.setDisable(false);
             } else {
                 this.setDisable(true);

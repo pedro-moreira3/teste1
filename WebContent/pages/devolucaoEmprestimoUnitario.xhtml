@@ -1,0 +1,92 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <p:outputPanel id="pnMateriais" styleClass="BordNone">
+
+                        <h1>Devolução Unitária</h1>
+                        <div class="SeparatorFull"></div>
+
+                        <p:panelGrid id="pnCampos" columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                            style="border:0px none; background-color:transparent;">
+
+
+                            <h:outputLabel value="Profissional : " />
+                            <h:outputLabel value="#{emprestimoUnitarioMB.entity.profissional.dadosBasico.prefixoNome}" styleClass="FontItalic" />
+
+
+                            <h:outputLabel value="Descrição : " />
+                            <h:outputLabel value="#{emprestimoUnitarioMB.entity.material.item.descricao}" styleClass="FontItalic" />
+
+
+                            <h:outputLabel value="Marca : " />
+                            <h:outputLabel value="#{emprestimoUnitarioMB.entity.material.marca.nome}" styleClass="FontItalic" />
+
+
+                            <h:outputLabel value="Quantidade Disponibilizada : " />
+                            <p:column>
+                                <h:outputText value="#{emprestimoUnitarioMB.entity.quantidade}" class="Wid30">
+                                    <f:convertNumber />
+                                </h:outputText>
+                                <h:outputText value="#{emprestimoUnitarioMB.getUnidadeString(emprestimoUnitarioMB.entity.material.item)}" styleClass="unidadeMedidaString" />
+                            </p:column>
+
+
+                            <p:outputLabel for="devolvida" value="Quantidade à devolver/lavar : " />
+                            <p:column>
+                                <p:inputText id="devolvida" value="#{emprestimoUnitarioMB.quantidadeDevolvida}" maxlength="10" required="true" onkeypress="validaNumeros(event)">
+                                    <f:convertNumber />
+                                </p:inputText>
+                                <h:outputText value="#{emprestimoUnitarioMB.getUnidadeString(emprestimoUnitarioMB.entity.material.item)}" styleClass="unidadeMedidaString" />
+                            </p:column>
+                        </p:panelGrid>
+
+                        <div class="SeparatorFull"></div>
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                            <p:commandButton id="devolucao" icon="White fa fa-mail-reply" value="Devolução" actionListener="#{emprestimoUnitarioMB.actionDevolucaoMaterial}"
+                                disabled="#{!emprestimoUnitarioMB.enableDevolucao}" update=":lume:dtMateriais,:lume:devolucao,:lume:pnMateriais" process=":lume:dtMateriais,:lume:pnMateriais, @this"
+                                styleClass="OrangeButton" />
+                            <p:commandButton id="lavar" icon="fa fa-paint-brush White" value="Lavagem" actionListener="#{emprestimoUnitarioMB.actionLavagemMaterial}"
+                                disabled="#{!emprestimoUnitarioMB.enableLavagem}" update=":lume:dtMateriais,:lume:devolucao,:lume:pnMateriais" process=":lume:dtMateriais,:lume:pnMateriais, @this"
+                                styleClass="AquaButton" />
+                        </p:panelGrid>
+
+                        <div class="EmptyBox20"></div>
+
+                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMateriais" value="#{emprestimoUnitarioMB.emprestimoUnitariosDevolucao}" var="emprestimoUnitario" rows="15" paginator="true"
+                            rowKey="#{emprestimoUnitario}" selection="#{emprestimoUnitarioMB.entity}" selectionMode="single" paginatorPosition="bottom">
+                            <p:ajax event="rowSelect" update=":lume:devolucao,:lume:pnCampos" listener="#{emprestimoUnitarioMB.atualizaTela}" />
+                            <f:facet name="header">Materiais</f:facet>
+                            <p:column filterBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}" sortBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains"
+                                headerText="Profissional">
+                                <h:outputText value="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}" title="#{emprestimoUnitario.id}" />
+                            </p:column>
+                            <p:column filterBy="#{emprestimoUnitario.material.item.descricaoLimpa}" sortBy="#{emprestimoUnitario.material.item.descricao}" filterMatchMode="contains" headerText="Descrição">
+                                <h:outputText value="#{emprestimoUnitario.material.item.descricao}" title="#{emprestimoUnitario.material.id}" />
+                            </p:column>
+                            <p:column filterBy="#{emprestimoUnitario.agendamento.paciente.dadosBasico.nomeStr}" sortBy="#{emprestimoUnitario.agendamento.paciente.dadosBasico.nome}" filterMatchMode="contains"
+                                headerText="Paciente">
+                                <h:outputText value="#{emprestimoUnitario.agendamento.paciente.dadosBasico.nome}" />
+                            </p:column>
+                            <p:column filterBy="#{emprestimoUnitario.material.lote}" sortBy="#{emprestimoUnitario.material.lote}" filterMatchMode="contains" headerText="Lote">
+                                <h:outputText value="#{emprestimoUnitario.material.lote}" />
+                            </p:column>
+                            <p:column sortBy="#{emprestimoUnitario.quantidadeInt}" filterBy="#{emprestimoUnitario.quantidadeInt}" filterMatchMode="contains" headerText="Quantidade Disponibilizada">
+                                <h:outputText value="#{emprestimoUnitario.quantidade}">
+                                    <f:convertNumber />
+                                </h:outputText>
+                                <h:outputText value="#{emprestimoUnitarioMB.getUnidadeString(emprestimoUnitario.material.item)}" styleClass="unidadeMedidaString" />
+                            </p:column>
+                            <p:column filterBy="#{emprestimoUnitario.dataEntregaStr}" filterMatchMode="contains" headerText="Data da Entrega" sortBy="#{emprestimoUnitario.dataEntrega}">
+                                <h:outputText value="#{emprestimoUnitario.dataEntregaStr}" />
+                            </p:column>
+
+                        </p:dataTable>
+                    </p:outputPanel>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

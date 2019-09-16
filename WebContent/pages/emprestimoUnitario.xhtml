@@ -1,0 +1,190 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    	
+                    <p:dialog id="dlg" widgetVar="dlg" header="Empréstimo Unitário" responsive="true" modal="true" onHide="PF('dlg').toggleMaximize();"
+						onShow="PF('dlg').toggleMaximize();" >                    	
+						<p:outputPanel id="pnEntradaDlg" >
+						<p:scrollPanel id="pnDlg" mode="native" style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 0px 0px !important;"> 							
+							<br/>        
+                            
+                           	<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"		                            	
+	                                style="border:0px none; background-color:transparent; padding: 0px 0px !important;" id="pnDados" >
+								<p:outputPanel>
+		                            <p:outputLabel for="profissional" value="Profissional : " />
+		                            <p:autoComplete dropdown="true" queryDelay="1000" value="#{emprestimoUnitarioMB.profissional}" id="profissional" 
+		                            completeMethod="#{emprestimoUnitarioMB.geraSugestoes}" var="profissional" itemLabel="#{profissional.dadosBasico.prefixoNome}" 
+		                            itemValue="#{profissional}" converter="profissional" forceSelection="true" required="true"
+		                                minQueryLength="3" styleClass="profissional" disabled="#{emprestimoUnitarioMB.entity.id != 0}">
+		                                <p:ajax event="itemSelect" listener="#{emprestimoUnitarioMB.handleSelectProfissional}" update=":lume:profissional,:lume:agendamento" />
+		                            </p:autoComplete>
+								</p:outputPanel>
+								<p:outputPanel>								
+		                            <p:outputLabel for="prazo" value="Data Utilização : " />
+		                            <p:calendar id="prazo" value="#{emprestimoUnitarioMB.data}" required="true" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}"
+		                                timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-0:+1"
+		                                 disabled="#{emprestimoUnitarioMB.entity.id != 0}">
+		                                <p:ajax event="dateSelect" listener="#{emprestimoUnitarioMB.handleSelectData}" update=":lume:profissional,:lume:agendamento" />
+		                            </p:calendar>
+								</p:outputPanel>
+								<p:outputPanel>
+		                            <p:outputLabel for="agendamento" value="Agendamento : " />
+		                            <p:selectOneMenu id="agendamento" converter="agendamento" value="#{emprestimoUnitarioMB.entity.agendamento}">
+		                                <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
+		                                <f:selectItems value="#{emprestimoUnitarioMB.agendamentos}" var="a" itemLabel="#{a.dataPaciente}" itemValue="#{a}" />
+		                                <p:ajax update=":lume:agendamentoProcedimentos" process=":lume:agendamento" listener="#{emprestimoUnitarioMB.carregaProcedimentos}" />
+		                            </p:selectOneMenu>
+								</p:outputPanel>
+								<p:outputPanel>
+		                            <p:outputLabel for="agendamentoProcedimentos" value="Procedimentos : " />
+		                            <p:selectCheckboxMenu id="agendamentoProcedimentos" converter="agendamentoPlano" value="#{emprestimoUnitarioMB.planoTratamentoProcedimentoAgendamentos}"
+		                                label="Selecione o(s) procedimento(s)">
+		                                <f:selectItems value="#{emprestimoUnitarioMB.agendamentoProcedimentos}" var="ap" itemValue="#{ap}" itemLabel="#{ap.planoTratamentoProcedimento.procedimento.descricao}" />
+		                            </p:selectCheckboxMenu>
+								</p:outputPanel>
+ 							</p:panelGrid>	
+ 							<p:panelGrid  columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"		                            	
+	                                style="border:0px none; background-color:transparent; padding: 0px 0px !important;" >							
+	                            <p:outputLabel value="Item: " for="digitacao" />
+	                            <p:column style="padding: 0px 0px !important;">
+	                                <p:autoComplete queryDelay="1000" id="digitacao" required="true" value="#{emprestimoUnitarioMB.digitacao}" minQueryLength="3" completeMethod="#{emprestimoUnitarioMB.filtraItem}"
+	                                    styleClass="itembusca" disabled="#{emprestimoUnitarioMB.entity.id != 0}">
+	                                    <p:ajax event="itemSelect" listener="#{emprestimoUnitarioMB.handleSelect}" update=":lume:tbItemTree, :lume:quantidade2" />
+	                                </p:autoComplete>
+									<br /><br />
+	                                <p:tree style="width:50% !important;" value="#{emprestimoUnitarioMB.root}" var="item" id="tbItemTree" selection="#{emprestimoUnitarioMB.selectedItem}" selectionMode="single"
+	                                    rendered="#{emprestimoUnitarioMB.entity.id == 0}">
+	                                    <p:ajax event="select" listener="#{emprestimoUnitarioMB.onNodeSelect}" update=":lume:digitacao, :lume:quantidade2,:lume:dtMateriaisDisponiveis" process="@this" />
+	                                    <p:ajax event="unselect" listener="#{emprestimoUnitarioMB.onNodeUnselect}" />
+	                                    <p:treeNode>
+	                                        <h:outputText value="#{item.descricao}" />
+	                                    </p:treeNode>
+	                                </p:tree>
+	                            </p:column>
+	                            <p:outputLabel for="quantidade" value="Quantidade: " />
+	                            <p:column style="padding: 0px 0px !important;">                             
+	                                <p:inputText style="padding: 0px 0px !important;" id="quantidade" value="#{emprestimoUnitarioMB.quantidade}" maxlength="10" required="true" onkeypress="validaNumeros(event)" rendered="#{emprestimoUnitarioMB.entity.id == 0}"/>
+	                                <h:outputText value="#{emprestimoUnitarioMB.quantidade}" rendered="#{emprestimoUnitarioMB.entity.id != 0}">
+	                                    <f:convertNumber />
+	                                </h:outputText>	                                
+	                                <h:outputLabel id="quantidade2" value="#{emprestimoUnitarioMB.getUnidadeString(emprestimoUnitarioMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
+	                            </p:column>
+                            </p:panelGrid>	
+                       
+                        <div class="SeparatorFull"></div>
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid" style="padding: 0px 0px !important;">
+                            <p:commandButton id="busca" icon="White fa fa-search" value="Busca Itens" disabled="#{emprestimoUnitarioMB.entity.id!=0}" actionListener="#{emprestimoUnitarioMB.actionFindMateriais}"
+                                update=":lume:pnEntradaDlg, :lume:dtEmprestimoUnitario, :lume:dtMateriaisDisponiveis" process=":lume:pnEntradaDlg" styleClass="OrangeButton" />
+                        </p:panelGrid>					
+							<div class="EmptyBox20"></div>	
+						</p:scrollPanel>
+						<div class="EmptyBox20"></div>								
+									
+																		
+							
+						</p:outputPanel>        
+						<p:dataTable filterDelay="1500"  reflow="true" var="materiaisSelecionado" value="#{emprestimoUnitarioMB.materiaisDisponiveis}" paginator="true" rows="7" paginatorPosition="bottom"
+                            id="dtMateriaisDisponiveis" emptyMessage="" selection="#{emprestimoUnitarioMB.materiaisSelecionado}" rowKey="#{materiaisSelecionado.id}">
+                            <f:facet name="header">Materiais DisponÃ­veis</f:facet>
+
+                            <p:column selectionMode="multiple" style="width:16px;text-align:center" />
+
+                            <p:ajax event="rowSelect" update=":lume:persist,:lume:dtMateriaisDisponiveis" listener="#{emprestimoUnitarioMB.actionVerificaSalvar}" />
+                            <p:ajax event="rowSelectCheckbox" update=":lume:persist,:lume:dtMateriaisDisponiveis" listener="#{emprestimoUnitarioMB.actionVerificaSalvar}" />
+                            <p:ajax event="rowUnselectCheckbox" update=":lume:persist,:lume:dtMateriaisDisponiveis" listener="#{emprestimoUnitarioMB.actionVerificaSalvar}" />
+                            <p:ajax event="toggleSelect" update=":lume:persist,:lume:dtMateriaisDisponiveis" listener="#{emprestimoUnitarioMB.actionVerificaSalvar}" />
+
+                            <p:column filterBy="#{materiaisSelecionado.item.descricaoLimpa}" sortBy="#{materiaisSelecionado.item.descricao}" filterMatchMode="contains" headerText="Descrição">
+                                <h:outputText value="#{materiaisSelecionado.item.descricao}" title="#{materiaisSelecionado.id}" />
+                            </p:column>
+                            <p:column filterBy="#{materiaisSelecionado.estoque.quantidade}" sortBy="#{materiaisSelecionado.estoque.quantidade}" filterMatchMode="contains" headerText="Quantidade Atual">
+                                <h:outputText value="#{materiaisSelecionado.estoque.quantidade}">
+                                    <f:convertNumber />
+                                </h:outputText>
+                                <h:outputText value="#{emprestimoUnitarioMB.getUnidadeString(materiaisSelecionado.item)}" styleClass="unidadeMedidaString" />
+                            </p:column>
+                            <p:column filterBy="#{materiaisSelecionado.marca.nome}" sortBy="#{materiaisSelecionado.marca.nome}" filterMatchMode="contains" headerText="Marca">
+                                <h:outputText value="#{materiaisSelecionado.marca.nome}" />
+                            </p:column>
+                            <p:column filterBy="#{materiaisSelecionado.lote}" sortBy="#{materiaisSelecionado.lote}" filterMatchMode="contains" headerText="Lote">
+                                <h:outputText value="#{materiaisSelecionado.lote}" />
+                            </p:column>
+                            <p:column filterBy="#{materiaisSelecionado.dataValidadeStr}" sortBy="#{materiaisSelecionado.dataValidade}" filterMatchMode="contains" headerText="Validade">
+                                <h:outputText value="#{materiaisSelecionado.dataValidadeStr}" />
+                            </p:column>
+                            <p:column filterBy="#{materiaisSelecionado.estoque.local.descricao}" sortBy="#{materiaisSelecionado.estoque.local.descricao}" filterMatchMode="contains" headerText="Localização">
+                                <h:outputText value="#{materiaisSelecionado.estoque.local.descricao}" />
+                            </p:column>
+                        </p:dataTable>
+						<p:panelGrid id="pnBotoesDlg" columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">		                    
+							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar e Continuar" rendered="#{!emprestimoUnitarioMB.editar}" actionListener="#{emprestimoUnitarioMB.actionPersist}" 
+							update=":lume:pnDlg,:lume:dtEmprestimoUnitario,:lume:dtMateriaisDisponiveis"
+						                	process="@this,:lume:pnDlg" styleClass="GreenButton" />
+							<p:commandButton id="persistFechar" icon="White fa fa-save" value="Salvar e Fechar" actionListener="#{emprestimoUnitarioMB.actionPersistFechar}"
+							 update=":lume:pnDlg,:lume:dtEmprestimoUnitario"
+						                	process="@this,:lume:pnDlg" styleClass="GreenButton" />		                              
+							<p:commandButton id="fecharSalvar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlg').hide();" immediate="true" />
+						</p:panelGrid> 	                        
+                        <br />
+                    </p:dialog>
+                    <p:outputPanel id="pnPedido" styleClass="BordNone">
+
+                        <h:inputHidden id="id" value="#{emprestimoUnitarioMB.entity.id}" />
+
+
+                        <h1>Empréstimo Unitário</h1>                      
+
+                        <div class="EmptyBox20"></div>
+
+ 
+                        <div class="SeparatorFull"></div>
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                 
+             
+                 
+                            <p:commandButton id="new" oncomplete="PF('dlg').show();" icon="White fa fa-file-o" value="Fazer novo Empréstimo" actionListener="#{emprestimoUnitarioMB.actionNew}" 
+                            update=":lume:pnDlg, :lume:pnPedido :lume:dtEmprestimoUnitario,:lume:pnBotoesDlg"
+                                immediate="true" />
+                        </p:panelGrid>
+                        <div class="EmptyBox20"></div>
+                    </p:outputPanel>
+
+                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtEmprestimoUnitario" value="#{emprestimoUnitarioMB.emprestimoUnitarios}" var="emprestimoUnitario" rows="15" paginator="true"
+                             rowKey="#{emprestimoUnitario}" paginatorPosition="bottom">                         
+                            <f:facet name="header">Empréstimos Unitários</f:facet>
+							 <p:column headerText="AçÃµes" width="10%">
+							 <p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlg').show();" update=":lume:pnDlg, :lume:pnBotoesDlg" title="Editar" process="@this"
+                                actionListener="#{emprestimoUnitarioMB.carregarEditar(emprestimoUnitario)}" style="width:33px !important" />
+	                        </p:column>		                         
+                            <p:column filterBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}" sortBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains"
+                                headerText="Profissional">
+                                <h:outputText value="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}" title="#{emprestimoUnitario.id}" />
+                            </p:column>
+                            <p:column filterBy="#{emprestimoUnitario.material.item.descricaoLimpa}" sortBy="#{emprestimoUnitario.material.item.descricao}" filterMatchMode="contains" headerText="Descrição">
+                                <h:outputText value="#{emprestimoUnitario.material.item.descricao}" />
+                            </p:column>
+                            <p:column filterBy="#{emprestimoUnitario.agendamento.paciente.dadosBasico.nomeStr}" sortBy="#{emprestimoUnitario.agendamento.paciente.dadosBasico.nome}" filterMatchMode="contains"
+                                headerText="Paciente">
+                                <h:outputText value="#{emprestimoUnitario.agendamento.paciente.dadosBasico.nome}" />
+                            </p:column>
+                            <p:column filterBy="#{emprestimoUnitario.material.lote}" sortBy="#{emprestimoUnitario.material.lote}" filterMatchMode="contains" headerText="Lote">
+                                <h:outputText value="#{emprestimoUnitario.material.lote}" />
+                            </p:column>
+                            <p:column sortBy="#{emprestimoUnitario.quantidadeInt}" filterBy="#{emprestimoUnitario.quantidadeInt}" filterMatchMode="contains" headerText="Quantidade Disponibilizada">
+                                <h:outputText value="#{emprestimoUnitario.quantidade}">
+                                    <f:convertNumber pattern="#0.00" locale="pt_BR" />
+                                </h:outputText>
+                                <h:outputText value="#{emprestimoUnitarioMB.getUnidadeString(emprestimoUnitario.material.item)}" styleClass="unidadeMedidaString" />
+                            </p:column>
+                            <p:column filterBy="#{emprestimoUnitario.dataEntregaStr}" filterMatchMode="contains" headerText="Data da Entrega" sortBy="#{emprestimoUnitario.dataEntrega}">
+                                <h:outputText value="#{emprestimoUnitario.dataEntregaStr}" />
+                            </p:column>
+                        </p:dataTable>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

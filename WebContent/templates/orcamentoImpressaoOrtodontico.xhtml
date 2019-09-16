@@ -1,0 +1,218 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<p:remoteCommand name="attPrintOrcamentoO"
+		update=":lume:tabView:orcamentoViewPrintO, :lume:tabView:orcamentoViewPrintHeaderO" />
+	<p:dialog widgetVar="dlgPrintOrcamentoO" responsive="true" modal="true"
+		appendTo=":lume" resizable="false"
+		onHide="PF('dlgPrintOrcamentoO').toggleMaximize();"
+		onShow="PF('dlgPrintOrcamentoO').toggleMaximize();attPrintOrcamentoO();">
+		<f:facet name="header">
+			<h:outputText
+				id="orcamentoViewPrintHeaderO"
+				value="Orçamento do Plano de Tratamento '#{pt.descricao}'" />
+		</f:facet>
+		<p:outputPanel
+			id="orcamentoViewPrintO"
+			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+			<p:scrollPanel mode="native"
+				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
+
+				<p:outputPanel
+					id="orcamento2PrintInternoO"
+					style="font-family: sans-serif">
+					<div style="width: 100%; text-align: center;">
+						<span style="font-size: 18px;"><b>Orçamento</b></span>
+					</div>
+					<p:separator styleClass="SeparatorFull" />
+					<span style="font-size: 18px;"><b>#{orcamentoImpressaoMB.nomeClinica}</b></span>
+					<br />
+					<span style="font-size: 14px;">#{orcamentoImpressaoMB.infoClinica}</span>
+					<br />
+					<span style="font-size: 14px;">Paciente:
+						#{pt.paciente.dadosBasico.nome}</span>
+					<br />
+					<span style="font-size: 14px;">Plano de Tratamento:
+						#{pt.descricao}</span>
+					<p:outputPanel rendered="#{pt.ortodontico}">
+						<br />
+						<span style="font-size: 14px;">Duração Prevista:
+							#{pt.meses}</span>
+						<br />
+						<span style="font-size: 14px;">Início: #{pt.inicioStr}</span>
+						<br />
+						<span style="font-size: 14px;">Fim Previsto: #{pt.fimStr}</span>
+					</p:outputPanel>
+					<p:separator styleClass="SeparatorFull" />
+					<div style="width: 100%; display: flex">
+						<h:panelGroup
+							style="text-align: center; border: 1px solid #bdbdbd; width: 24.25%; padding: 12px 16px;">
+							<span> <b><h:outputText value="Valor Total" /></b>
+							</span>
+							<br />
+							<span> <h:outputText value="#{o.valorTotal}">
+									<f:convertNumber type="currency" currencySymbol="R$"
+										maxFractionDigits="2" />
+								</h:outputText>
+							</span>
+						</h:panelGroup>
+						<div style="width: 1%" />
+						<h:panelGroup
+							style="text-align: center; border: 1px solid #bdbdbd; width: 24.25%; padding: 12px 16px;">
+							<span> <b><h:outputText value="Valor Pago" /></b>
+							</span>
+							<br />
+							<span> <h:outputText
+									value="#{orcamentoImpressaoMB.getTotalPago(o)}">
+									<f:convertNumber type="currency" currencySymbol="R$"
+										maxFractionDigits="2" />
+								</h:outputText>
+							</span>
+						</h:panelGroup>
+						<div style="width: 1%" />
+						<h:panelGroup
+							style="text-align: center; border: 1px solid #bdbdbd; width: 24.25%; padding: 12px 16px;">
+							<span> <b><h:outputText value="Desconto" /></b>
+							</span>
+							<br />
+							<span> <h:outputText value="#{o.descontoValor}"
+									rendered="#{o.descontoTipo == 'V'}">
+									<f:convertNumber type="currency" currencySymbol="R$"
+										maxFractionDigits="2" />
+								</h:outputText> <h:outputText value="#{o.descontoValorDec}"
+									rendered="#{o.descontoTipo == 'P'}">
+									<f:convertNumber type="percent" maxFractionDigits="2" />
+								</h:outputText>
+							</span>
+						</h:panelGroup>
+						<div style="width: 1%" />
+						<h:panelGroup
+							style="text-align: center; border: 1px solid #bdbdbd; width: 24.25%; padding: 12px 16px;">
+							<span> <b><h:outputText value="Valor a Pagar" /></b>
+							</span>
+							<br />
+							<span> <h:outputText
+									value="#{orcamentoImpressaoMB.getValorOrcamentoAPagar(o)}">
+									<f:convertNumber type="currency" currencySymbol="R$"
+										maxFractionDigits="2" />
+								</h:outputText>
+							</span>
+						</h:panelGroup>
+					</div>
+					<p:separator styleClass="SeparatorFull" />
+					<p:outputPanel rendered="#{pt.ortodontico}"
+						style="margin-top: 10px; margin-bottom: 10px; display: flex">
+						<div style="width: 49.5%">
+							<div
+								style="border: 1px solid #bdbdbd; border-bottom: none; width: calc(100% - 12px); padding: 5px;">
+								<span><b>Diagnósticos</b></span>
+							</div>
+							<p:outputPanel
+								rendered="#{pt.diagnosticos != null and not empty pt.diagnosticos}">
+								<ul
+									style="border: 1px solid #bdbdbd; width: calc(100% - 12px); list-style: none; padding: 5px; margin: 0;">
+									<p:repeat value="#{ortodontiaMB.entity.diagnosticos}" var="d">
+										<li style="margin-left: 10px;"><span>#{d.diagnosticoOrtodontico.descricao}</span></li>
+									</p:repeat>
+								</ul>
+							</p:outputPanel>
+							<p:outputPanel
+								rendered="#{pt.diagnosticos == null or empty pt.diagnosticos}">
+								<div
+									style="border: 1px solid #bdbdbd; width: calc(100% - 12px); padding: 5px;">
+									<span>Não há diagnósticos registrados</span>
+								</div>
+							</p:outputPanel>
+						</div>
+						<div style="width: 1%" />
+						<div style="width: 49.5%;">
+							<div
+								style="border: 1px solid #bdbdbd; border-bottom: none; width: calc(100% - 12px); padding: 5px;">
+								<span><b>Aparelhos</b></span>
+							</div>
+							<p:outputPanel
+								rendered="#{pt.aparelhos != null and not empty pt.aparelhos}">
+								<ul
+									style="border: 1px solid #bdbdbd; width: calc(100% - 12px); list-style: none; padding: 5px; margin: 0;">
+									<p:repeat value="#{ortodontiaMB.entity.aparelhos}" var="d">
+										<li style="margin-left: 10px;"><span>#{d.aparelhoOrtodontico.descricao}</span></li>
+									</p:repeat>
+								</ul>
+							</p:outputPanel>
+							<p:outputPanel
+								rendered="#{pt.aparelhos == null or empty pt.aparelhos}">
+								<div
+									style="border: 1px solid #bdbdbd; width: calc(100% - 12px); padding: 5px;">
+									<span>Não há aparelhos registrados</span>
+								</div>
+							</p:outputPanel>
+						</div>
+					</p:outputPanel>
+					<table width="100%"
+						style="border: 1px solid #bdbdbd; border-collapse: collapse; margin-top: 10px;">
+						<caption
+							style="border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; font-weight: bold">
+							Procedimentos</caption>
+						<tr style="border: 1px solid #bdbdbd; border-bottom: none;">
+							<th
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Descrição</th>
+							<th
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Valor</th>
+							<th
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Incluso?</th>
+						</tr>
+						<p:outputPanel rendered="#{not empty o.itens}">
+							<c:forEach var="procedimento" items="#{o.itens}">
+								<tr>
+									<td
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: left; padding: 5px;">#{procedimento.descricao}</td>
+									<td
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px;"><h:outputText
+											value="#{procedimento.valor}">
+											<f:convertNumber type="currency" currencySymbol="R$"
+												maxFractionDigits="2" />
+										</h:outputText></td>
+									<td
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px;">#{(procedimento.incluso
+										? 'Sim' : 'Não')}</td>
+								</tr>
+							</c:forEach>
+						</p:outputPanel>
+					</table>
+					<p:separator styleClass="SeparatorFull" />
+					<div class="Container100 Responsive100" align="right">
+						<h:outputText
+							value="* Orçamento válido por 15 dias. Anualmente os valores são reajustados."
+							styleClass="observacao-orcamento" />
+						<br />
+						<h:outputText
+							value="** A quantidade de meses pode ser alterada dependendo da colaboração do paciente ou devido à alterações de tratamento, previamente discutidas com o paciente."
+							styleClass="observacao-orcamento" />
+					</div>
+					<br />
+					<br />
+					<h:outputText style="font-weight: bold;"
+						value="_______________________________________" />
+					<br />
+					<h:outputText style="font-weight: bold;"
+						value="#{pt.paciente.dadosBasico.nome}#{(pt.paciente.dadosBasico.documento != null and pt.paciente.dadosBasico.documento != '' ? ' - ' : '')}#{pt.paciente.dadosBasico.documento}" />
+				</p:outputPanel>
+
+			</p:scrollPanel>
+		</p:outputPanel>
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton icon="fa fa-print" value="Imprimir" process="@this">
+				<p:printer
+					target="lume:tabView:orcamento2PrintInternoO" />
+			</p:commandButton>
+			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+				oncomplete="PF('dlgPrintOrcamentoO').hide()" />
+		</p:panelGrid>
+	</p:dialog>
+
+</ui:composition>
