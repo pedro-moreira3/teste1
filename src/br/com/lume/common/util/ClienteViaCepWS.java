@@ -36,6 +36,7 @@ public class ClienteViaCepWS implements Serializable {
 
         return json;
     }
+    
 
     /*
      * Exemplo de uso public static void main(String[] args) throws IOException { String json = buscarCep("69046000"); System.out.println(json); Map<String, String> mapa = new HashMap<>(); Matcher
