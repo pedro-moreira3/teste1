@@ -381,7 +381,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
         lancamento.setValor(novoValor);
         lancamento.setValorOriginal(novoValor);
         lancamento.setPlanoTratamentoProcedimento(this.getEntity().getPlanoTratamentoProcedimento());
-        lancamento.setFaturaItem(getEntity().getFaturaItem());
+        lancamento.setFatura(getEntity().getFatura());
         LancamentoSingleton.getInstance().getBo().persist(lancamento);
     }
 
@@ -434,7 +434,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
         l.setFormaPagamento(this.getEntity().getFormaPagamento());
         l.setDataPagamento(this.getEntity().getDataPagamento());
         l.setNumeroParcela(this.getEntity().getNumeroParcela());
-        l.setFaturaItem(getEntity().getFaturaItem());
+        l.setFatura(getEntity().getFatura());
         l.setPlanoTratamentoProcedimento(this.getEntity().getPlanoTratamentoProcedimento());
         l.setRecibo(this.getEntity().getRecibo());
         l.setTributo(this.getEntity().getTributo());
@@ -456,10 +456,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     public int getProximaParcela(Lancamento lancamento) {
         int ultimaParcela = 0;
         try {
-            if (lancamento.getFaturaItem() == null || lancamento.getFaturaItem().getOrigemOrcamento() != null)
-                throw new Exception("Lançamento não está relacionado à um orçamento.");
             Orcamento orcamento = OrcamentoSingleton.getInstance().getBo().getOrcamentoFromLancamento(lancamento);
-
             for (Lancamento l : LancamentoSingleton.getInstance().getBo().listLancamentosFromOrcamento(orcamento)) {
                 if (ultimaParcela < l.getNumeroParcela()) {
                     ultimaParcela = l.getNumeroParcela();
@@ -488,10 +485,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
         }
         for (Lancamento l : lancamentosSelecionados) {
             try {
-                if (l.getFaturaItem() == null || l.getFaturaItem().getOrigemOrcamento() != null)
-                    throw new Exception("Lançamento não está relacionado à um orçamento.");
                 Orcamento orcamento = OrcamentoSingleton.getInstance().getBo().getOrcamentoFromLancamento(l);
-
                 if (l.getDataPagamento() != null || !l.isAtivo() || !orcamento.isAtivo()) {
                     return true;
                 }
@@ -565,10 +559,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
         listPt = new ArrayList<>();
         for (Lancamento l : lancamentos) {
             try {
-                if (l.getFaturaItem() == null || l.getFaturaItem().getOrigemOrcamento() != null)
-                    throw new Exception("Lançamento não está relacionado à um orçamento.");
                 Orcamento orcamento = OrcamentoSingleton.getInstance().getBo().getOrcamentoFromLancamento(l);
-
                 //encontrou = false;
                 for (PlanoTratamento lpt : listPt) {
                     for (OrcamentoItem oi : orcamento.getItens()) {

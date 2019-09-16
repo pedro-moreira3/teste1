@@ -248,6 +248,7 @@ li.orcamento-li {
 				actionListener="#{ortodontiaMB.actionAprovaOrcamento}"
 				process="@this, :lume:tabView:orcamentoPlanoOrtodontico"
 				styleClass="OrangeButton"
+				update=":lume:tabView:buttonsDlgOrcamentoOrtodonticoView, :lume:tabView:orcamentoPlanoOrtodontico, :lume:tabView:dtOrcamentosOrtodontia"
 				disabled="#{ortodontiaMB.entity.finalizado == 'S' or ortodontiaMB.orcamentoSelecionado.id == null or ortodontiaMB.orcamentoSelecionado.id == 0
 								or ortodontiaMB.orcamentoSelecionado.aprovado}" />
 			<p:commandButton icon="White fa fa-close" value="Fechar"
@@ -512,8 +513,7 @@ li.orcamento-li {
 														actionListener="#{ortodontiaMB.actionEditOrcamento(o)}"
 														update=":lume:tabView:orcamentoPlanoOrtodontico, :lume:tabView:orcamentoPlanoOrtodonticoHeader, :lume:tabView:buttonsDlgOrcamentoOrtodonticoView"
 														onclick="PF('dlgOrcamentoPlanoOrtodontico').show();"
-														styleClass="NavyButton" title="Editar Dados"
-														disabled="#{ortodontiaMB.orcamentoSelecionado.aprovado}" />
+														styleClass="NavyButton" title="Editar Dados" />
 													<p:commandButton icon="White fa fa-print" process="@this"
 														actionListener="#{ortodontiaMB.setOrcamentoSelecionado(o)}"
 														update=":lume:tabView:orcamentoIncludeOrtodontico"

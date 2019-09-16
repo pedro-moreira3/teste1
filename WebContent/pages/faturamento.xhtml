@@ -89,7 +89,7 @@
                             <p:dataTable reflow="true" emptyMessage="Nenhum registro encontrado" widgetVar="dtPrincipal" id="dtPrincipal" 
                             		selection="#{faturamentoMB.entity}" selectionMode="single" value="#{faturamentoMB.planoTratamentoProcedimentos}" 
                             		var="ptp" rows="5" paginator="true" rowKey="#{ptp}" paginatorPosition="bottom" paginatorAlwaysVisible="true">
-                                <p:ajax event="rowSelect" update=":lume:pnPrincipal, :lume:dtPrincipal" listener="#{faturamentoMB.carregarLancamentos}" />
+                                <p:ajax event="rowSelect" update=":lume:pnPrincipal, :lume:dtPrincipal, :lume:pgReservar" listener="#{faturamentoMB.carregarLancamentos}" />
                                 <p:column filterBy="#{ptp.planoTratamento.descricao}" styleClass="cabecalho" sortBy="#{ptp.planoTratamento.descricao}" filterMatchMode="contains">
                                     <f:facet name="header">
                                         <h:outputText styleClass="cabecalho" value="Plano de Tratamento" width="10%" />
@@ -230,7 +230,8 @@
                             </p:dataTable>
                             <br />
                             <div class="SeparatorFull"></div>
-                            <p:panelGrid id="pgReservar" columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid buttonsReservar">
+                            <p:outputPanel id="pgReservar">
+                            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid buttonsReservar">
                                     <p:commandButton id="reservar" icon="White fa fa-money" value="Reservar Tudo" disabled="#{!faturamentoMB.reservar}" actionListener="#{faturamentoMB.actionReservar}"
                                         update=":lume:pnPrincipal" process=":lume:pnPrincipal" styleClass="GreenButton"
                                         rendered="#{!faturamentoMB.existeRepasseEmAberto}" />
@@ -249,6 +250,7 @@
                                     actionListener="#{faturamentoMB.actionCarregarProcedimentosSemValor}" value="Procedimentos sem valor de Repasse" styleClass="PinkButton"
                                     update=":lume:pnProcedimentosSemValor" process="@this" />
                             </p:panelGrid>
+                            </p:outputPanel>
                         </p:fieldset>
                         <br />
                         <p:fieldset legend="Procedimentos à Repassar" toggleable="true" toggleSpeed="500" collapsed="false">
@@ -877,6 +879,7 @@
         <script type="text/javascript">
 			//<![CDATA[
 			function handleDialogRequest(xhr, status, args) {
+				console.log(args);
 				if (args.dlgReservaParcial == true) {
 					PF('dlgReservaParcial').hide()
 				}
