@@ -60,22 +60,18 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
             this.filtroProcedimento = new ArrayList<String>();
         }
         
-        filtroProcedimento.addAll(Arrays.asList(""));
+        if(getDataInicio() == null && getDataFim() == null) {
+            Calendar calendario = Calendar.getInstance();
+            this.setDataFim(calendario.getTime());
+            calendario.add(Calendar.DAY_OF_MONTH, -7);
+            this.setDataInicio(calendario.getTime());
+        }
         
-        popularLista();
+        this.popularLista();
     }
     
     public void popularLista() {
         try{
-            
-//            if(getDataInicio() == null && getDataFim() == null) {
-//                
-//                Calendar calendario = Calendar.getInstance();
-//                this.setDataFim(calendario.getTime());
-//                calendario.add(Calendar.DAY_OF_MONTH, -7);
-//                this.setDataInicio(calendario.getTime());
-//                
-//            }
             
             this.listaProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(this.dataInicio, this.dataFim, this.filtroPorPaciente, 
                     this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.filtroPorConvenio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());

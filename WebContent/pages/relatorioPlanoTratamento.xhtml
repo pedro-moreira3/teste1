@@ -308,6 +308,7 @@ div.ui-selectoneradio label {
 							<f:facet name="header">Planos de Tratamentos</f:facet>
 							<p:column filterBy="#{m.paciente.dadosBasico.nomeStr}"
 								sortBy="#{m.paciente.dadosBasico.nome}"
+								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
 								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Paciente" />
@@ -317,6 +318,7 @@ div.ui-selectoneradio label {
 							</p:column>
 							<p:column filterBy="#{m.profissional.dadosBasico.nomeStr}"
 								sortBy="#{m.profissional.dadosBasico.nome}"
+								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
 								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Profissional" />
@@ -380,6 +382,7 @@ div.ui-selectoneradio label {
 							</p:column>
 							<p:column filterBy="#{m.convenio.dadosBasico.nomeStr}"
 								sortBy="#{m.convenio.dadosBasico.nome}"
+								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
 								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Convênio" />
