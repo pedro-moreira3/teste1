@@ -5,11 +5,61 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
+	<style>
+.centerH {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.hrSaldo {
+	width: 90%;
+	top: 50px;
+}
+
+hr.hrSaldo {
+	border: 0;
+	height: 0;
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.divSaldo {
+	width: 300px;
+	height: 100px;
+	background-color: white;
+	text-align: center;
+	line-height: 100px;
+	font-size: 3rem;
+	font-weight: bold;
+}
+
+.divSaldoHeader {
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	font-size: 1rem;
+	color: black !important;
+	font-weight: normal !important;
+}
+</style>
+
 	<ui:include src="faturaView.xhtml" />
 
 	<br />
+	<div style="position: relative; width: 100%; height: 100px;">
+		<hr class="centerH hrSaldo" />
+		<div class="centerH divSaldo"
+			style="color: #{faturaPagtoMB.saldoPaciente eq 0 ? 'blue' : faturaPagtoMB.saldoPaciente lt 0 ? 'red' : 'green'}">
+			<div class="centerH divSaldoHeader">Saldo Atual</div>
+			<h:outputText value="#{faturaPagtoMB.saldoPaciente}">
+				<f:convertNumber currencySymbol="R$ " type="currency" />
+			</h:outputText>
+		</div>
+	</div>
 	<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-		id="dtPrincipal" value="#{faturaPagtoMB.entityList}" var="f" rows="20"
+		id="dtPrincipal" value="#{faturaPagtoMB.entityList}" var="f" rows="10"
 		paginator="true" rowKey="#{f}" paginatorPosition="bottom">
 		<f:facet name="header">Faturas</f:facet>
 		<p:column width="120" headerText="Detalhes">

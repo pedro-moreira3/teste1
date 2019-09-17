@@ -56,6 +56,11 @@
 			disabled="#{pacienteMB.entity.id == null}">
 			<ui:include src="historicoagendamentos.xhtml" />
 		</p:tab>
+		
+		<p:tab id="tab11" title="Financeiro"
+			disabled="#{pacienteMB.entity.id == null}">
+			<ui:include src="pacienteFinanceiro.xhtml" />
+		</p:tab>
 
 	</p:tabView>
 

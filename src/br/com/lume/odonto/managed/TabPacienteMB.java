@@ -1,7 +1,5 @@
 package br.com.lume.odonto.managed;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -20,6 +18,9 @@ import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 
+/**
+ * @author ricardo.poncio
+ */
 @ManagedBean
 @ViewScoped
 public class TabPacienteMB extends LumeManagedBean<Paciente> {
@@ -48,6 +49,9 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
 
     @ManagedProperty(value = "#{evolucaoMB}")
     private EvolucaoMB evolucaoMB;
+
+    @ManagedProperty(value = "#{faturaPagtoMB}")
+    private FaturaPagtoMB faturaPagtoMB;
 
     private Integer activeIndex;
 
@@ -90,6 +94,11 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
             exameMB.limpaExames();
         } else if ("Frequência".equals(event.getTab().getTitle())) {
             pacienteMB.carregarAgendamentos();
+        } else if ("Financeiro".equals(event.getTab().getTitle())) {
+            faturaPagtoMB.setPaciente(getPacienteMB().getEntity());
+            faturaPagtoMB.setInicio(null);
+            faturaPagtoMB.setFim(null);
+            faturaPagtoMB.pesquisar();
         }
     }
 
@@ -182,6 +191,14 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
 
     public void setPeriogramaMB(PeriogramaMB periogramaMB) {
         this.periogramaMB = periogramaMB;
+    }
+
+    public FaturaPagtoMB getFaturaPagtoMB() {
+        return faturaPagtoMB;
+    }
+
+    public void setFaturaPagtoMB(FaturaPagtoMB faturaPagtoMB) {
+        this.faturaPagtoMB = faturaPagtoMB;
     }
 
     public void openFicha(Paciente paciente) {
