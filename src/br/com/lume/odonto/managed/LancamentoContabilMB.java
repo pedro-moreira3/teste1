@@ -96,7 +96,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     private void carregarLancamentosValidar() {
         try {
-            lancamentosValidar = LancamentoSingleton.getInstance().getBo().listByPagamentoPacienteNaoValidado(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            lancamentosValidar = LancamentoSingleton.getInstance().getBo().listByPagamentoPacienteNaoValidado(UtilsFrontEnd.getEmpresaLogada());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -202,7 +202,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             if (l != null) {
                 Date data = Calendar.getInstance().getTime();
                 l.setDataValidado(data);
-                l.setValidadoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
+                l.setValidadoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
                 l.setValidado(Status.SIM);
                 LancamentoSingleton.getInstance().getBo().merge(l);
                 List<LancamentoContabil> lancamentosContabeis = l.getLancamentosContabeis();
