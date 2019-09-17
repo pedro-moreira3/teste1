@@ -192,9 +192,9 @@ height: 100%;
                             <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtLancamentoValidar" value="#{lancamentoContabilMB.lancamentosValidar}" var="lc" rows="50"
                                 paginator="true" paginatorPosition="bottom">
                                 <f:facet name="header">Lançamentos</f:facet>
-                                <p:column filterBy="#{lc.orcamento.planoTratamento.paciente.dadosBasico.nomeStr}" sortBy="#{lc.orcamento.planoTratamento.paciente.dadosBasico.nome}"
+                                <p:column filterBy="#{lc.fatura.paciente.dadosBasico.nomeStr}" sortBy="#{lc.fatura.paciente.dadosBasico.nome}"
                                     filterMatchMode="contains" headerText="Paciente">
-                                    <h:outputText value="#{lc.orcamento.planoTratamento.paciente.dadosBasico.nome}" title="#{lc.id}" />
+                                    <h:outputText value="#{lc.fatura.paciente.dadosBasico.nome}" title="#{lc.id}" />
                                 </p:column>
                                 <p:column filterBy="#{lc.formaPagamentoStr}" sortBy="#{lc.formaPagamentoStr}" filterMatchMode="contains" headerText="Forma">
                                     <h:outputText value="#{lc.formaPagamentoStr}" />
