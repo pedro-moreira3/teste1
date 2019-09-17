@@ -91,6 +91,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void cancelaLancamento(Lancamento l) {
         try {
             LancamentoSingleton.getInstance().inativaLancamento(l, UtilsFrontEnd.getProfissionalLogado());
+            this.addInfo("Sucesso", "Lançamento cancelado com sucesso!", true);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro na busca de dados!", "Falha ao buscar os lançamentos.", true);
@@ -99,6 +100,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void visualizaFatura(Fatura fatura) {
         setEntity(fatura);
+        setShowLancamentosCancelados(false);
     }
 
     public void pesquisar() {

@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<ui:include src="faturaView.xhtml" />
+
+	<br />
+	<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+		id="dtPrincipal" value="#{faturaPagtoMB.entityList}" var="f" rows="20"
+		paginator="true" rowKey="#{f}" paginatorPosition="bottom">
+		<f:facet name="header">Faturas</f:facet>
+		<p:column width="120" headerText="Detalhes">
+			<p:commandButton icon="fa fa-eye" process="@this"
+				actionListener="#{faturaPagtoMB.visualizaFatura(f)}"
+				update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
+				onclick="PF('dlgFaturaView').show();" styleClass="NavyButton"
+				title="Visualizar Fatura" />
+		</p:column>
+		<p:column filterBy="#{f.paciente.dadosBasico.nomeStr}"
+			sortBy="#{f.paciente.dadosBasico.nome}" filterMatchMode="contains">
+			<f:facet name="header">
+				<h:outputText value="Paciente" />
+			</f:facet>
+			<h:outputText value="#{f.paciente.dadosBasico.nome}" />
+		</p:column>
+		<p:column filterBy="#{f.dataCriacaoStr}" headerText="Data de Criação"
+			filterMatchMode="contains" sortBy="#{f.dataCriacaoStr}">
+			<h:outputText value="#{f.dataCriacaoStr}" />
+		</p:column>
+
+		<p:column filterBy="#{faturaPagtoMB.getTotal(f)}"
+			headerText="Valor total da fatura" filterMatchMode="contains"
+			sortBy="#{faturaPagtoMB.getTotal(f)}">
+			<h:outputText value="#{faturaPagtoMB.getTotal(f)}">
+				<f:convertNumber currencySymbol="R$ " type="currency" />
+			</h:outputText>
+		</p:column>
+
+	</p:dataTable>
+
+</ui:composition>
