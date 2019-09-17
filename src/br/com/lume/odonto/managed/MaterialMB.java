@@ -44,8 +44,10 @@ import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Marca;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialLog;
+import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.TransferenciaEstoque;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
 @ManagedBean
@@ -122,6 +124,12 @@ public class MaterialMB extends LumeManagedBean<Material> {
 //                System.out.println(count);
 //            }
             
+//para inserir contas dos profissionais            
+            int count = 0;
+            
+            for (Profissional profissional : ProfissionalSingleton.getInstance().getBo().listAll()) {
+                
+            }
          
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
