@@ -20,6 +20,7 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.conta.ContaSingleton;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
@@ -70,14 +71,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         try {
             Calendar daysAgo = Calendar.getInstance();
             daysAgo.add(Calendar.DAY_OF_MONTH, -7);
-            daysAgo.set(Calendar.HOUR_OF_DAY, 0);
-            daysAgo.set(Calendar.MINUTE, 0);
-            daysAgo.set(Calendar.SECOND, 0);
             setInicio(daysAgo.getTime());
             Calendar now = Calendar.getInstance();
-            now.set(Calendar.HOUR_OF_DAY, 23);
-            now.set(Calendar.MINUTE, 59);
-            now.set(Calendar.SECOND, 59);
             setFim(now.getTime());
             setFormasPagamento(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma"));
             setListaStatus(new ArrayList<>());
@@ -105,8 +100,25 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void pesquisar() {
         try {
+            Calendar inicio = null;
+            if (getInicio() != null) {
+                inicio = Calendar.getInstance();
+                inicio.setTime(getInicio());
+                inicio.set(Calendar.HOUR_OF_DAY, 0);
+                inicio.set(Calendar.MINUTE, 0);
+                inicio.set(Calendar.SECOND, 0);
+            }
+            Calendar fim = null;
+            if (getFim() != null) {
+                fim = Calendar.getInstance();
+                fim.setTime(getFim());
+                fim.set(Calendar.HOUR_OF_DAY, 23);
+                fim.set(Calendar.MINUTE, 59);
+                fim.set(Calendar.SECOND, 59);
+            }
+
             //setEntityList(FaturaSingleton.getInstance().getBo().findFaturasFilter(getPaciente(), getListaPt(), getInicio(), getFim()));
-            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasFilter(getPaciente(), null, getInicio(), getFim()));
+            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasFilter(getPaciente(), null, (inicio == null ? null : inicio.getTime()), (fim == null ? null : fim.getTime())));
             getEntityList().removeIf(fatura -> {
                 if (Lancamento.PAGO.equals(getStatus()) && this.getTotalRestante(fatura).compareTo(BigDecimal.ZERO) > 0)
                     return true;
@@ -254,13 +266,19 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
+    public BigDecimal getSaldoPaciente() {
+        if (getPaciente() != null)
+            return ContaSingleton.getInstance().getSaldoPaciente(getPaciente());
+        return BigDecimal.ZERO;
+    }
+
     public List<Lancamento> getLancamentos() {
         if (getEntity() == null || getEntity().getId() == null || getEntity().getId() == 0)
             return null;
         List<Lancamento> lancamentosSearch = new ArrayList<>();
         lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), true));
         lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), false));
-        if(showLancamentosCancelados) {
+        if (showLancamentosCancelados) {
             lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), true, false));
             lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), false, false));
         }

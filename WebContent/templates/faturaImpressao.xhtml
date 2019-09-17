@@ -1,0 +1,179 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<p:remoteCommand name="attPrintFatura"
+		update="faturaViewPrint, faturaViewPrintHeader" />
+	<p:dialog widgetVar="dlgPrintFatura" responsive="true" modal="true"
+		appendTo=":lume" resizable="false"
+		onHide="PF('dlgPrintFatura').toggleMaximize();"
+		onShow="PF('dlgPrintFatura').toggleMaximize();attPrintFatura();">
+		<f:facet name="header">
+			<h:outputText id="faturaViewPrintHeader"
+				value="Fatura '#{f.dataCriacaoStr}' do Paciente #{f.paciente.dadosBasico.nome}" />
+		</f:facet>
+		<p:outputPanel id="faturaViewPrint"
+			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+			<p:scrollPanel mode="native"
+				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
+
+				<p:outputPanel id="fatura2PrintInterno"
+					style="font-family: sans-serif">
+					<div style="width: 100%; text-align: center;">
+						<span style="font-size: 18px;"><b>Fatura</b></span>
+					</div>
+					<p:separator styleClass="SeparatorFull" />
+					<span style="font-size: 18px;"><b>#{orcamentoImpressaoMB.nomeClinica}</b></span>
+					<br />
+					<span style="font-size: 14px;">#{orcamentoImpressaoMB.infoClinica}</span>
+					<br />
+					<span style="font-size: 14px;">Paciente:
+						#{f.paciente.dadosBasico.nome}</span>
+					<br />
+					<span style="font-size: 14px;">Data de Criação:
+						#{f.dataCriacaoStr}</span>
+					<p:separator styleClass="SeparatorFull" />
+					<div style="width: 100%; display: flex">
+						<h:panelGroup
+							style="text-align: center; border: 1px solid #bdbdbd; width: 32.33%; padding: 12px 16px;">
+							<span> <b><h:outputText value="Valor Total" /></b>
+							</span>
+							<br />
+							<span> <h:outputText value="#{faturaPagtoMB.getTotal(f)}">
+									<f:convertNumber currencySymbol="R$ " type="currency" />
+								</h:outputText>
+							</span>
+						</h:panelGroup>
+						<div style="width: 1%" />
+						<h:panelGroup
+							style="text-align: center; border: 1px solid #bdbdbd; width: 32.33%; padding: 12px 16px;">
+							<span> <b><h:outputText value="Valor Pago" /></b>
+							</span>
+							<br />
+							<span> <h:outputText
+									value="#{faturaPagtoMB.getTotalPago(f)}">
+									<f:convertNumber currencySymbol="R$ " type="currency" />
+								</h:outputText>
+							</span>
+						</h:panelGroup>
+						<div style="width: 1%" />
+						<h:panelGroup
+							style="text-align: center; border: 1px solid #bdbdbd; width: 32.33%; padding: 12px 16px;">
+							<span> <b><h:outputText value="Valor Restante" /></b>
+							</span>
+							<br />
+							<span> <h:outputText
+									value="#{faturaPagtoMB.getTotalRestante(f)}">
+									<f:convertNumber currencySymbol="R$ " type="currency" />
+								</h:outputText>
+							</span>
+						</h:panelGroup>
+					</div>
+					<p:separator styleClass="SeparatorFull" />
+					<table width="100%"
+						style="border: 1px solid #bdbdbd; border-collapse: collapse; margin-top: 10px;">
+						<caption
+							style="border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; font-weight: bold">
+							Itens</caption>
+						<tr style="border: 1px solid #bdbdbd; border-bottom: none;">
+							<th
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Descrição</th>
+							<th
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 150px">Tipo
+								do Saldo</th>
+							<th
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 100px">Valor</th>
+						</tr>
+						<p:outputPanel rendered="#{not empty f.itens}">
+							<c:forEach var="item" items="#{f.itens}">
+								<tr>
+									<td
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: left; padding: 5px;">#{item.descricaoItem}</td>
+									<td
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px;">#{item.tipoSaldoStr}</td>
+									<td
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px;"><h:outputText
+											value="#{item.valorItem}">
+											<f:convertNumber type="currency" currencySymbol="R$"
+												maxFractionDigits="2" />
+										</h:outputText></td>
+								</tr>
+							</c:forEach>
+						</p:outputPanel>
+					</table>
+					<p:separator styleClass="SeparatorFull" />
+					<div
+						style="width: calc(100% - 22px); border: 1px solid #bdbdbd; padding: 10px;">
+						<p:selectBooleanCheckbox style="display: inline-flex; width: 100%;"
+							itemLabel="Mostrar lançamentos cancelados."
+							value="#{show}" disabled="true" />
+					</div>
+					<table width="100%"
+						style="border: 1px solid #bdbdbd; border-collapse: collapse; margin-top: 10px;">
+						<caption
+							style="border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; font-weight: bold">
+							Lançamentos</caption>
+						<tr style="border: 1px solid #bdbdbd; border-bottom: none;">
+							<th
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Forma
+								de Pagamento</th>
+							<th
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Valor</th>
+							<th
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 100px">Data
+								de Crédito</th>
+							<th
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 100px">Data
+								de Pagamento</th>
+							<th
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 100px">Validado?</th>
+							<th
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Validado
+								Por</th>
+							<th
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 200px">Status</th>
+						</tr>
+						<p:outputPanel rendered="#{not empty lancamentos}">
+							<c:forEach var="lanc" items="#{lancamentos}">
+								<tr>
+									<td
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px; #{lanc != null and !lanc.ativo ? 'color: red' : ''}">#{lanc.formaPagamentoStr}</td>
+									<td
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px; #{lanc != null and !lanc.ativo ? 'color: red' : ''}"><h:outputText
+											value="#{lanc.valor}">
+											<f:convertNumber type="currency" currencySymbol="R$"
+												maxFractionDigits="2" />
+										</h:outputText></td>
+									<td
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px; #{lanc != null and !lanc.ativo ? 'color: red' : ''}">#{lanc.dataCreditoStr}</td>
+									<td
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px; #{lanc != null and !lanc.ativo ? 'color: red' : ''}">#{lanc.dataPagamentoStr}</td>
+									<td
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px; #{lanc != null and !lanc.ativo ? 'color: red' : ''}">#{(lanc.validado
+										== 'S' ? 'Sim' : 'Não')}</td>
+									<td
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px; #{lanc != null and !lanc.ativo ? 'color: red' : ''}">#{lanc.validadoPorProfissional.dadosBasico.nome}</td>
+									<td
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px; #{lanc != null and !lanc.ativo ? 'color: red' : ''}">#{lanc.status}</td>
+								</tr>
+							</c:forEach>
+						</p:outputPanel>
+					</table>
+				</p:outputPanel>
+
+			</p:scrollPanel>
+		</p:outputPanel>
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton icon="fa fa-print" value="Imprimir" process="@this">
+				<p:printer target="@parent:fatura2PrintInterno" />
+			</p:commandButton>
+			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+				oncomplete="PF('dlgPrintFatura').hide()" />
+		</p:panelGrid>
+	</p:dialog>
+
+</ui:composition>

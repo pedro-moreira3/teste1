@@ -132,146 +132,149 @@ body .sideChkBox .ui-chkbox-label {
 					value="Visualização da Fatura - #{faturaPagtoMB.entity.dataCriacaoStr}" />
 			</p:outputPanel>
 		</f:facet>
-		<p:outputPanel id="pnlfaturaView"
+		<p:outputPanel
 			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
 			<p:scrollPanel mode="native"
 				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
-				<div class="ui-g ui-fluid">
-					<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlfaturaView">
+					<div class="ui-g ui-fluid">
+						<div class="ui-g-12 ui-lg-12">
 
-						<p:panelGrid columns="4" layout="grid"
-							columnClasses="ui-g-2, ui-g-4, ui-g-2, ui-g-4"
-							styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
-							<h:outputText for="paciente" value="Paciente:" />
-							<p:inputText id="paciente"
-								value="#{faturaPagtoMB.entity.paciente.dadosBasico.nome}"
-								readonly="true" />
-							<p:column />
-							<p:column />
-							<h:outputText for="dataCriacao" value="Data Criação:" />
-							<p:inputText id="dataCriacao"
-								value="#{faturaPagtoMB.entity.dataCriacaoStr}" readonly="true" />
-							<p:column />
-							<p:column />
-						</p:panelGrid>
+							<p:panelGrid columns="4" layout="grid"
+								columnClasses="ui-g-2, ui-g-4, ui-g-2, ui-g-4"
+								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
+								<h:outputText for="paciente" value="Paciente:" />
+								<p:inputText id="paciente"
+									value="#{faturaPagtoMB.entity.paciente.dadosBasico.nome}"
+									readonly="true" />
+								<p:column />
+								<p:column />
+								<h:outputText for="dataCriacao" value="Data Criação:" />
+								<p:inputText id="dataCriacao"
+									value="#{faturaPagtoMB.entity.dataCriacaoStr}" readonly="true" />
+								<p:column />
+								<p:column />
+							</p:panelGrid>
 
-						<p:panelGrid columns="3" layout="grid"
-							styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
-							<p:panel id="valorTotal" header="Valor Total">
-								<h:outputText
-									value="#{faturaPagtoMB.getTotal(faturaPagtoMB.entity)}">
-									<f:convertNumber currencySymbol="R$ " type="currency" />
-								</h:outputText>
+							<p:panelGrid columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
+								<p:panel id="valorTotal" header="Valor Total">
+									<h:outputText
+										value="#{faturaPagtoMB.getTotal(faturaPagtoMB.entity)}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:panel>
+								<p:panel id="valorPago" header="Valor Pago">
+									<h:outputText
+										value="#{faturaPagtoMB.getTotalPago(faturaPagtoMB.entity)}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:panel>
+								<p:panel id="valorRestante" header="Valor Restante">
+									<h:outputText
+										value="#{faturaPagtoMB.getTotalRestante(faturaPagtoMB.entity)}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:panel>
+							</p:panelGrid>
+							<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+								value="#{faturaPagtoMB.entity.itens}" var="fi" rows="20"
+								paginator="true" rowKey="#{fi}" paginatorPosition="bottom">
+								<f:facet name="header">Itens</f:facet>
+								<p:column sortBy="#{fi.descricaoItem}"
+									filterMatchMode="contains" filterBy="#{fi.descricaoItem}"
+									headerText="Descrição">
+									<h:outputText value="#{fi.descricaoItem}" style="float:left" />
+								</p:column>
+								<p:column sortBy="#{fi.tipoSaldoStr}" filterMatchMode="contains"
+									filterBy="#{fi.tipoSaldoStr}" headerText="Tipo do Saldo"
+									width="150">
+									<h:outputText value="#{fi.tipoSaldoStr}" />
+								</p:column>
+								<p:column sortBy="#{fi.valorItem}" filterMatchMode="contains"
+									filterBy="#{fi.valorItem}" headerText="Valor" width="100">
+									<h:outputText value="#{fi.valorItem}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:column>
+							</p:dataTable>
+							<p:separator styleClass="SeparatorFull" />
+							<p:panel>
+								<p:selectBooleanCheckbox styleClass="sideChkBox"
+									itemLabel="Mostrar lançamentos cancelados."
+									value="#{faturaPagtoMB.showLancamentosCancelados}">
+									<p:ajax process="@this" update="lancamentosFatura" />
+								</p:selectBooleanCheckbox>
 							</p:panel>
-							<p:panel id="valorPago" header="Valor Pago">
-								<h:outputText
-									value="#{faturaPagtoMB.getTotalPago(faturaPagtoMB.entity)}">
-									<f:convertNumber currencySymbol="R$ " type="currency" />
-								</h:outputText>
-							</p:panel>
-							<p:panel id="valorRestante" header="Valor Restante">
-								<h:outputText
-									value="#{faturaPagtoMB.getTotalRestante(faturaPagtoMB.entity)}">
-									<f:convertNumber currencySymbol="R$ " type="currency" />
-								</h:outputText>
-							</p:panel>
-						</p:panelGrid>
-						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-							value="#{faturaPagtoMB.entity.itens}" var="fi" rows="20"
-							paginator="true" rowKey="#{fi}" paginatorPosition="bottom">
-							<f:facet name="header">Itens</f:facet>
-							<p:column sortBy="#{fi.descricaoItem}" filterMatchMode="contains"
-								filterBy="#{fi.descricaoItem}" headerText="Descrição">
-								<h:outputText value="#{fi.descricaoItem}" style="float:left" />
-							</p:column>
-							<p:column sortBy="#{fi.tipoSaldoStr}" filterMatchMode="contains"
-								filterBy="#{fi.tipoSaldoStr}" headerText="Tipo do Saldo"
-								width="150">
-								<h:outputText value="#{fi.tipoSaldoStr}" />
-							</p:column>
-							<p:column sortBy="#{fi.valorItem}" filterMatchMode="contains"
-								filterBy="#{fi.valorItem}" headerText="Valor" width="100">
-								<h:outputText value="#{fi.valorItem}">
-									<f:convertNumber currencySymbol="R$ " type="currency" />
-								</h:outputText>
-							</p:column>
-						</p:dataTable>
-						<p:separator styleClass="SeparatorFull" />
-						<p:panel>
-							<p:selectBooleanCheckbox styleClass="sideChkBox"
-								itemLabel="Mostrar lançamentos cancelados."
-								value="#{faturaPagtoMB.showLancamentosCancelados}">
-								<p:ajax process="@this" update="lancamentosFatura" />
-							</p:selectBooleanCheckbox>
-						</p:panel>
-						<br />
-						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-							value="#{faturaPagtoMB.lancamentos}" var="l" rows="20"
-							paginator="true" rowKey="#{l}" paginatorPosition="bottom"
-							id="lancamentosFatura">
-							<f:facet name="header">Lançamentos da Fatura</f:facet>
-							<p:column headerText="Ações" width="100" exportable="false"
-								rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
-								<p:commandButton styleClass="RedButton" icon="fa fa-trash"
-									title="Cancelar lançamento" disabled="#{!l.ativo}"
-									update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
-									actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
-									process="@this">
-									<p:confirm header="Confirmação" icon="ui-icon-alert"
-										escape="false"
-										message="Você tem certeza que deseja cancelar este lançamento? &lt;br/&gt; &lt;b&gt;Se já foi confirmado&lt;/b&gt;, o saldo ficará disponível na &lt;b&gt;conta do paciente&lt;/b&gt;.">
-									</p:confirm>
-								</p:commandButton>
-							</p:column>
-							<p:column styleClass="cabecalho"
-								style="#{l != null and !l.ativo ? 'color: red' : ''}"
-								filterBy="#{l.formaPagamentoStr}"
-								headerText="Forma de Pagamento" sortBy="#{l.formaPagamentoStr}">
-								<h:outputText value="#{l.formaPagamentoStr}" />
-							</p:column>
-							<p:column sortBy="#{l.valor}" filterMatchMode="contains"
-								filterBy="#{l.valor}" headerText="Valor"
-								style="#{l != null and !l.ativo ? 'color: red' : ''}">
-								<h:outputText value="#{l.valor}">
-									<f:convertNumber currencySymbol="R$ " type="currency" />
-								</h:outputText>
-							</p:column>
-							<p:column sortBy="#{l.dataCreditoStr}" filterMatchMode="contains"
-								width="100" filterBy="#{l.dataCreditoStr}"
-								headerText="Data de Crédito"
-								style="#{l != null and !l.ativo ? 'color: red' : ''}">
-								<h:outputText value="#{l.dataCreditoStr}" />
-							</p:column>
-							<p:column sortBy="#{l.dataPagamentoStr}"
-								style="#{l != null and !l.ativo ? 'color: red' : ''}"
-								filterMatchMode="contains" filterBy="#{l.dataPagamentoStr}"
-								width="100" headerText="Data de Pagamento">
-								<h:outputText value="#{l.dataPagamentoStr}" />
-							</p:column>
-							<p:column sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
-								width="100" filterMatchMode="contains"
-								style="#{l != null and !l.ativo ? 'color: red' : ''}"
-								filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
-								headerText="Validado?">
-								<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
-							</p:column>
-							<p:column sortBy="#{l.validadoPorProfissional.dadosBasico.nome}"
-								filterMatchMode="contains"
-								style="#{l != null and !l.ativo ? 'color: red' : ''}"
-								filterBy="#{l.validadoPorProfissional.dadosBasico.nome}"
-								headerText="Validado Por">
-								<h:outputText
-									value="#{l.validadoPorProfissional.dadosBasico.nome}" />
-							</p:column>
-							<p:column headerText="Status" sortBy="#{l.status}" width="200"
-								style="#{l != null and !l.ativo ? 'color: red' : ''}"
-								filterMatchMode="containe" filterBy="#{l.status}">
-								<h:outputText value="#{l.status}" />
-							</p:column>
-						</p:dataTable>
+							<br />
+							<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+								value="#{faturaPagtoMB.lancamentos}" var="l" rows="20"
+								paginator="true" rowKey="#{l}" paginatorPosition="bottom"
+								id="lancamentosFatura">
+								<f:facet name="header">Lançamentos da Fatura</f:facet>
+								<p:column headerText="Ações" width="100" exportable="false"
+									rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
+									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
+										title="Cancelar lançamento" disabled="#{!l.ativo}"
+										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
+										actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
+										process="@this">
+										<p:confirm header="Confirmação" icon="ui-icon-alert"
+											escape="false"
+											message="Você tem certeza que deseja cancelar este lançamento? &lt;br/&gt; &lt;b&gt;Se já foi confirmado&lt;/b&gt;, o saldo ficará disponível na &lt;b&gt;conta do paciente&lt;/b&gt;.">
+										</p:confirm>
+									</p:commandButton>
+								</p:column>
+								<p:column styleClass="cabecalho"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}"
+									filterBy="#{l.formaPagamentoStr}"
+									headerText="Forma de Pagamento" sortBy="#{l.formaPagamentoStr}">
+									<h:outputText value="#{l.formaPagamentoStr}" />
+								</p:column>
+								<p:column sortBy="#{l.valor}" filterMatchMode="contains"
+									filterBy="#{l.valor}" headerText="Valor"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}">
+									<h:outputText value="#{l.valor}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column sortBy="#{l.dataCreditoStr}"
+									filterMatchMode="contains" width="100"
+									filterBy="#{l.dataCreditoStr}" headerText="Data de Crédito"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}">
+									<h:outputText value="#{l.dataCreditoStr}" />
+								</p:column>
+								<p:column sortBy="#{l.dataPagamentoStr}"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}"
+									filterMatchMode="contains" filterBy="#{l.dataPagamentoStr}"
+									width="100" headerText="Data de Pagamento">
+									<h:outputText value="#{l.dataPagamentoStr}" />
+								</p:column>
+								<p:column sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
+									width="100" filterMatchMode="contains"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}"
+									filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
+									headerText="Validado?">
+									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
+								</p:column>
+								<p:column sortBy="#{l.validadoPorProfissional.dadosBasico.nome}"
+									filterMatchMode="contains"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}"
+									filterBy="#{l.validadoPorProfissional.dadosBasico.nome}"
+									headerText="Validado Por">
+									<h:outputText
+										value="#{l.validadoPorProfissional.dadosBasico.nome}" />
+								</p:column>
+								<p:column headerText="Status" sortBy="#{l.status}" width="200"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}"
+									filterMatchMode="containe" filterBy="#{l.status}">
+									<h:outputText value="#{l.status}" />
+								</p:column>
+							</p:dataTable>
 
+						</div>
 					</div>
-				</div>
+				</p:outputPanel>
 			</p:scrollPanel>
 		</p:outputPanel>
 		<p:panelGrid columns="4" layout="grid" id="buttonViewFatura"
@@ -285,6 +288,9 @@ body .sideChkBox .ui-chkbox-label {
 				disabled="#{faturaPagtoMB.getTotalRestante(faturaPagtoMB.entity) le 0}"
 				actionListener="#{faturaPagtoMB.actionNewLancamento}"
 				oncomplete="PF('dlgNewLancamento').show()" />
+			<p:commandButton value="Visualizar Impressão" icon="fa fa-print"
+				styleClass="NavyButton" process="@this" oncomplete="PF('dlgPrintFatura').show()"
+				update="@parent:@parent:faturaInclude" />
 		</p:panelGrid>
 	</p:dialog>
 
@@ -294,5 +300,14 @@ body .sideChkBox .ui-chkbox-label {
 		<p:commandButton value="Não" type="button"
 			styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
 	</p:confirmDialog>
+
+	<p:outputPanel id="faturaInclude">
+		<ui:include src="/templates/faturaImpressao.xhtml">
+			<ui:param name="f" value="#{faturaPagtoMB.entity}" />
+			<ui:param name="show" value="#{faturaPagtoMB.showLancamentosCancelados}" />
+			<ui:param name="lancamentos" value="#{faturaPagtoMB.lancamentos}" />
+		</ui:include>
+	</p:outputPanel>
+
 
 </ui:composition>
