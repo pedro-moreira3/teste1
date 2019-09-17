@@ -25,6 +25,9 @@ import org.primefaces.model.TreeNode;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.conta.ContaSingleton;
+import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
+import br.com.lume.conta.ContaSingleton.TIPO_MOVIMENTACAO;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.estoque.EstoqueSingleton;
@@ -44,10 +47,12 @@ import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Marca;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialLog;
+import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.TransferenciaEstoque;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.security.entity.Empresa;
 import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
 @ManagedBean
@@ -127,9 +132,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
 //para inserir contas dos profissionais            
             int count = 0;
             
-            for (Profissional profissional : ProfissionalSingleton.getInstance().getBo().listAll()) {
-                
-            }
+//            for (Profissional profissional : ProfissionalSingleton.getInstance().getBo().listAll()) {
+//                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PROFISSIONAL,TIPO_MOVIMENTACAO.ENTRADA,valor,null,profissional,null);
+//            }
          
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
