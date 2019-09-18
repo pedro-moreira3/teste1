@@ -266,11 +266,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
-    public BigDecimal getSaldoPaciente() {
-        if (getPaciente() != null)
-            return ContaSingleton.getInstance().getSaldoPaciente(getPaciente());
-        return BigDecimal.ZERO;
-    }
+//    public BigDecimal getSaldoPaciente() {
+//        if (getPaciente() != null)
+//            return ContaSingleton.getInstance().getSaldoPaciente(getPaciente());
+//        return BigDecimal.ZERO;
+//    }
 
     public List<Lancamento> getLancamentos() {
         if (getEntity() == null || getEntity().getId() == null || getEntity().getId() == 0)

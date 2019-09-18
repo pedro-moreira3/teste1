@@ -131,15 +131,15 @@ public class MaterialMB extends LumeManagedBean<Material> {
 //            }
             
             //para inserir contas dos profissionais   
-            for (Profissional profissional : ProfissionalSingleton.getInstance().getBo().listAll()) {            
-                List<PlanoTratamentoProcedimento> planos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listAllByProfissional(profissional);
-                BigDecimal soma = new BigDecimal(0);
-                for (PlanoTratamentoProcedimento ptp : planos) {
-                    soma = soma.add(ptp.getValorRepassado());
-                } 
-                System.out.println("Prof: " + profissional.getDadosBasico().getNome() + "Soma: " + soma);
-                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PROFISSIONAL, profissional, soma, null, profissional, null); 
-            }
+//            for (Profissional profissional : ProfissionalSingleton.getInstance().getBo().listAll()) {            
+//                List<PlanoTratamentoProcedimento> planos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listAllByProfissional(profissional);
+//                BigDecimal soma = new BigDecimal(0);
+//                for (PlanoTratamentoProcedimento ptp : planos) {
+//                    soma = soma.add(ptp.getValorRepassado());
+//                } 
+//                System.out.println("Prof: " + profissional.getDadosBasico().getNome() + "Soma: " + soma);
+//                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PROFISSIONAL, profissional, soma, null, profissional, null);
+//            }
          
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
