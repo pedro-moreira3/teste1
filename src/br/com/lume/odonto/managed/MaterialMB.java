@@ -32,6 +32,7 @@ import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.estoque.EstoqueSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.item.ItemSingleton;
+import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.local.LocalSingleton;
 import br.com.lume.marca.MarcaSingleton;
 import br.com.lume.material.MaterialSingleton;
@@ -42,6 +43,9 @@ import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Estoque;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Item;
+import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.LancamentoContabil;
+import br.com.lume.odonto.entity.LancamentoContabilRelatorio;
 import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Marca;
 import br.com.lume.odonto.entity.Material;
@@ -53,6 +57,7 @@ import br.com.lume.odonto.entity.TransferenciaEstoque;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
@@ -140,6 +145,29 @@ public class MaterialMB extends LumeManagedBean<Material> {
 //                System.out.println("Prof: " + profissional.getDadosBasico().getNome() + "Soma: " + soma);
 //                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PROFISSIONAL, profissional, soma, null, profissional, null);
 //            }
+            
+            //para inserir saldo inicial de empresa
+            for(Empresa empresa : EmpresaSingleton.getInstance().getBo().listAll()) {
+                List<LancamentoContabil> lancamentoContabeis  = LancamentoContabilSingleton.getInstance().getBo().listAllByEmpresa(empresa.getEmpIntCod());
+                BigDecimal saldoFinal = new BigDecimal(0);
+                for (LancamentoContabil lc : lancamentoContabeis) {
+                    BigDecimal valor = lc.getValor();
+                    valor = valor.abs();
+                    if (lc.getTipo().equals("Pagar")) {
+                        valor = valor.multiply(new BigDecimal(-1));
+                    }
+                    Lancamento lancamento = lc.getLancamento();
+                    if (lancamento != null && lancamento.getTarifa() != null) {
+                        valor = lancamento.getValorComDesconto();
+                    }
+                    saldoFinal = saldoFinal.add(valor);
+                }
+                
+            }
+        
+            
+            
+            
          
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
