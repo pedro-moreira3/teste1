@@ -350,6 +350,7 @@ div.ui-selectoneradio label {
 
 							<p:column filterBy="#{atendimento.paciente.dadosBasico.nome}"
 								sortBy="#{atendimento.paciente.dadosBasico.nome}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Paciente">
 								<h:outputText value="#{atendimento.paciente.dadosBasico.nome}" />
 							</p:column>
@@ -371,6 +372,7 @@ div.ui-selectoneradio label {
 							<p:column
 								filterBy="#{atendimento.paciente.convenio.dadosBasico.nome}"
 								sortBy="#{atendimento.paciente.convenio.dadosBasico.nome}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Convênio">
 								<h:outputText
 									value="#{atendimento.paciente.convenio.dadosBasico.nome}" />
@@ -378,6 +380,7 @@ div.ui-selectoneradio label {
 
 							<p:column filterBy="#{atendimento.profissional.dadosBasico.nome}"
 								sortBy="#{atendimento.profissional.dadosBasico.nome}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Profissional responsável">
 								<h:outputText
 									value="#{atendimento.profissional.dadosBasico.nome}" />
@@ -393,6 +396,7 @@ div.ui-selectoneradio label {
 							<p:column
 								filterBy="#{atendimento.profissionalUltAlteracao.dadosBasico.nome}"
 								sortBy="#{atendimento.profissionalUltAlteracao.dadosBasico.nome}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains"
 								headerText="Última alteração realizada por">
 								<h:outputText
@@ -402,6 +406,7 @@ div.ui-selectoneradio label {
 							<p:column
 								filterBy="#{atendimento.finalidadeAgendamento.descricao}"
 								sortBy="#{atendimento.finalidadeAgendamento.descricao}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Consulta inicial">
 								<h:outputText
 									value="#{atendimento.finalidadeAgendamento.descricao}" />
@@ -409,6 +414,7 @@ div.ui-selectoneradio label {
 
 							<p:column filterBy="#{atendimento.inicio}"
 								sortBy="#{atendimento.inicio}" filterMatchMode="contains"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								headerText="Data agendada">
 								<h:outputText
 									value="#{relatorioAtendimentoMB.formatarData(atendimento.inicio)}" />
@@ -417,6 +423,7 @@ div.ui-selectoneradio label {
 							<p:column
 								filterBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}"
 								sortBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Status do agendamento">
 								<h:outputText
 									value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}" />
@@ -446,6 +453,7 @@ div.ui-selectoneradio label {
 							<p:column
 								filterBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}"
 								sortBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains"
 								headerText="Status do agendamento futuro">
 								<h:outputText

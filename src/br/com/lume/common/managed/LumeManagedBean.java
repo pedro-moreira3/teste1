@@ -1,9 +1,11 @@
 package br.com.lume.common.managed;
 
 import java.io.Serializable;
+import java.text.Normalizer;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -14,6 +16,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 
@@ -297,4 +300,26 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             return 0;
         return getCalendarFromDate(date).get(Calendar.MINUTE);
     }
+    
+    public boolean filtroSemAcento(Object value, Object filter, Locale locale) {
+        
+        String filterText = (filter == null) ? null : filter.toString().trim();
+        if(StringUtils.isBlank(filterText)) {
+            return true;
+        }
+         
+        if(value == null) {
+            return false;
+        }
+        
+        return StringUtils.containsIgnoreCase(removerAcentos((String) value), removerAcentos(filterText));
+    }
+    
+    private String removerAcentos(String str) {
+        String c;
+        c = Normalizer.normalize(str, Normalizer.Form.NFD);
+        c = c.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
+        return c;
+    }
+
 }
