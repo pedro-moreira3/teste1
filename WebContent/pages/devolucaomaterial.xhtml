@@ -15,27 +15,32 @@
                             <f:facet name="header">Kits Disponibilizados</f:facet>
                             <p:ajax event="rowSelect" listener="#{emprestimoKitMB.habilitaDevolucao}"
                                 update=":lume:dtMateriais, :lume:dtKitsDisponibilizados, :lume:devolucao , :lume:naoUtilizado, :lume:lavagem" process="@this" />
-                            <p:column filterBy="#{reservaKit.reserva.descricao}" sortBy="#{reservaKit.reserva.descricao}" filterMatchMode="contains" headerText="Descrição">
+                            <p:column filterBy="#{reservaKit.reserva.descricao}" sortBy="#{reservaKit.reserva.descricao}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Descrição">
                                 <h:outputText value="#{reservaKit.reserva.descricao}" title="#{reservaKit.id}" />
                             </p:column>
-                            <p:column filterBy="#{reservaKit.kit.descricao}" sortBy="#{reservaKit.kit.descricao}" filterMatchMode="contains" headerText="Kit">
+                            <p:column filterBy="#{reservaKit.kit.descricao}" sortBy="#{reservaKit.kit.descricao}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Kit">
                                 <h:outputText value="#{reservaKit.kit.descricao}" />
                             </p:column>
-                            <p:column filterBy="#{reservaKit.kit.tipo}" sortBy="#{reservaKit.kit.tipo}" filterMatchMode="contains" headerText="Tipo">
+                            <p:column filterBy="#{reservaKit.kit.tipo}" sortBy="#{reservaKit.kit.tipo}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Tipo">
                                 <h:outputText value="#{reservaKit.kit.tipo}" />
                             </p:column>
                             <p:column filterBy="#{reservaKit.reserva.profissional.dadosBasico.prefixoNome}" sortBy="#{reservaKit.reserva.profissional.dadosBasico.prefixoNome}"
-                                filterMatchMode="contains" headerText="Profissional">
+                                filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Profissional">
                                 <h:outputText value="#{reservaKit.reserva.profissional.dadosBasico.prefixoNome}" />
                             </p:column>
                             <p:column filterBy="#{reservaKit.reserva.agendamento.paciente.dadosBasico.prefixoNome}" sortBy="#{reservaKit.reserva.agendamento.paciente.dadosBasico.prefixoNome}"
-                                filterMatchMode="contains" headerText="#{dominioMB.cliente}">
+                                filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="#{dominioMB.cliente}">
                                 <h:outputText value="#{reservaKit.reserva.agendamento.paciente.dadosBasico.prefixoNome}" />
                             </p:column>
-                            <p:column filterBy="#{reservaKit.reserva.local.descricao}" sortBy="#{reservaKit.reserva.local.descricao}" filterMatchMode="contains" headerText="Destino">
+                            <p:column filterBy="#{reservaKit.reserva.local.descricao}" sortBy="#{reservaKit.reserva.local.descricao}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Destino">
                                 <h:outputText value="#{reservaKit.reserva.local.descricao}" />
                             </p:column>
-                            <p:column filterBy="#{reservaKit.reserva.dataStr}" sortBy="#{reservaKit.reserva.dataStrOrd}" filterMatchMode="contains" headerText="Data do Pedido">
+                            <p:column filterBy="#{reservaKit.reserva.dataStr}" sortBy="#{reservaKit.reserva.dataStrOrd}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Data do Pedido">
                                 <h:outputText value="#{reservaKit.reserva.dataStr}" />
                             </p:column>
                             <p:column filterBy="#{reservaKit.reserva.prazoStr}" sortBy="#{reservaKit.reserva.prazoStrOrd}" filterMatchMode="contains" headerText="Data da Utilização">
@@ -50,10 +55,12 @@
                             paginatorPosition="bottom">
                             <p:ajax event="rowEdit" listener="#{emprestimoKitMB.validaCampo}" update=":lume:devolucao , :lume:lavagem , :lume:naoUtilizado, @this" />
                             <f:facet name="header">Materiais</f:facet>
-                            <p:column filterBy="#{material.material.item.descricaoLimpa}" sortBy="#{material.material.item.descricao}" filterMatchMode="contains" headerText="Descrição">
+                            <p:column filterBy="#{material.material.item.descricaoLimpa}" sortBy="#{material.material.item.descricao}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Descrição">
                                 <h:outputText value="#{material.material.item.descricao}" title="#{material.material.id}" />
                             </p:column>
-                            <p:column filterBy="#{material.material.marca.nome}" sortBy="#{material.material.marca.nome}" filterMatchMode="contains" headerText="Marca">
+                            <p:column filterBy="#{material.material.marca.nome}" sortBy="#{material.material.marca.nome}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Marca">
                                 <h:outputText value="#{material.material.marca.nome}" />
                             </p:column>
                             <p:column sortBy="#{material.quantidade}" filterMatchMode="contains" headerText="Quantidade Disponibilizada" filterBy="#{material.quantidade}">

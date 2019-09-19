@@ -14,6 +14,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.chart.PieChartModel;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
@@ -54,6 +56,10 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private List<Integer> cadeiras;
     
+    private DataTable tabelaAgendamento;
+    
+    private StreamedContent arquivoDownload;
+    
     // ATRIBUTOS USADOS COMO FILTRO PARA PESQUISA DOS AGENDAMENTOS
     private Profissional filtroPorProfissional;
     private Profissional filtroPorProfissionalUltAlteracao;
@@ -73,8 +79,6 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         if(filtroAtendimento == null) {
             this.filtroAtendimento = new ArrayList<String>();
         }
-        
-        filtroAtendimento.addAll(Arrays.asList("F", "A", "I", "S", "O", "E", "B", "N", "P", "G", "H"));
         
         if(getDataInicio() == null && getDataFim() == null) {
             Calendar calendario = Calendar.getInstance();
@@ -109,19 +113,19 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     }
     
     public List<Paciente> sugestoesPacientes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
     }
     
     public List<Profissional> sugestoesProfissionais(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
     }
     
     public List<Profissional> sugestoesProfissionalUltAlteracao(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
     }
     
     public List<Convenio> sugestoesConvenios(String query) {
-        return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
     }
     
     private void removerFiltrosAgendamento(List<Agendamento> agendamentos) {
@@ -189,7 +193,11 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         }
         return true;
     }
-
+    
+    public void exportarTabela(String type) {
+        this.arquivoDownload = exportarTabela("Relatorio Agendamento", tabelaAgendamento, type);
+    }
+        
     public PieChartModel getPieModel() {
         return pieModel;
     }
@@ -320,5 +328,21 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public void setNovoAgendamento(boolean novoAgendamento) {
         this.novoAgendamento = novoAgendamento;
+    }
+
+    public DataTable getTabelaAgendamento() {
+        return tabelaAgendamento;
+    }
+
+    public void setTabelaAgendamento(DataTable tabelaAgendamento) {
+        this.tabelaAgendamento = tabelaAgendamento;
+    }
+
+    public StreamedContent getArquivoDownload() {
+        return arquivoDownload;
+    }
+
+    public void setArquivoDownload(StreamedContent arquivoDownload) {
+        this.arquivoDownload = arquivoDownload;
     }
 }

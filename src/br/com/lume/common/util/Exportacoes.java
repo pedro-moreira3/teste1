@@ -93,7 +93,7 @@ public class Exportacoes implements Serializable{
         
         try {
             
-            File arquivoXLS = new File("C:\\Users\\eduardo.tremarin\\Desktop\\Eduardo\\"+header+".xls");
+            File arquivoXLS = new File("C:\\Users\\Downloads\\"+header+".xls");
             FileOutputStream arq = new FileOutputStream(arquivoXLS);
             workbook.write(arq);
             
@@ -120,7 +120,7 @@ public class Exportacoes implements Serializable{
             
             Document documento = new Document(PageSize.A4.rotate(),30,30,30,30);
             
-            File arquivoPDF = new File("C:\\Users\\eduardo.tremarin\\Desktop\\Eduardo\\"+header+".pdf");
+            File arquivoPDF = new File("C:\\Users\\Downloads\\"+header+".pdf");
             FileOutputStream arq = new FileOutputStream(arquivoPDF);
             PdfWriter pdfWriter = PdfWriter.getInstance(documento, arq);
             

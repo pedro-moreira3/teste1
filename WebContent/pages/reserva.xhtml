@@ -178,18 +178,22 @@
 							 	<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmDialog').show();" update=":lume:pnDlg,:lume:dtReserva" title="Remover" process="@this"
 	                                 style="width:33px !important" actionListener="#{reservaMB.carregarEditar(reserva)}"/>
 	                        </p:column>		                            
-                            <p:column filterBy="#{reserva.descricao}" sortBy="#{reserva.descricao}" filterMatchMode="contains" headerText="Descrição">
+                            <p:column filterBy="#{reserva.descricao}" sortBy="#{reserva.descricao}" filterMatchMode="contains"
+                            		headerText="Descrição" filterFunction="#{reservaMB.filtroSemAcento}">
                                 <h:outputText value="#{reserva.descricao}" title="#{reserva.id}" />
                             </p:column>
-                            <p:column filterBy="#{reserva.profissional.dadosBasico.prefixoNome}" sortBy="#{reserva.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains"
+                            <p:column filterBy="#{reserva.profissional.dadosBasico.prefixoNome}" sortBy="#{reserva.profissional.dadosBasico.prefixoNome}"
+                            		filterMatchMode="contains" filterFunction="#{reservaMB.filtroSemAcento}"
                                 headerText="Profissional">
                                 <h:outputText value="#{reserva.profissional.dadosBasico.prefixoNome}" />
                             </p:column>
-                            <p:column filterBy="#{reserva.agendamento.paciente.dadosBasico.prefixoNome}" sortBy="#{reserva.agendamento.paciente.dadosBasico.prefixoNome}" filterMatchMode="contains"
+                            <p:column filterBy="#{reserva.agendamento.paciente.dadosBasico.prefixoNome}" sortBy="#{reserva.agendamento.paciente.dadosBasico.prefixoNome}"
+                            		filterMatchMode="contains" filterFunction="#{reservaMB.filtroSemAcento}"
                                 headerText="Paciente">
                                 <h:outputText value="#{reserva.agendamento.paciente.dadosBasico.prefixoNome}" />
                             </p:column>
-                            <p:column filterBy="#{reserva.agendamento.inicioStr}" sortBy="#{reserva.agendamento.inicioStr}" filterMatchMode="contains" headerText="Data de Agendamento">
+                            <p:column filterBy="#{reserva.agendamento.inicioStr}" sortBy="#{reserva.agendamento.inicioStr}"
+                            		filterMatchMode="contains" headerText="Data de Agendamento">
                                 <h:outputText value="#{reserva.agendamento.inicioStr}" />
                             </p:column>
                             <p:column filterBy="#{reserva.prazoStr}" sortBy="#{reserva.prazoStrOrd}" filterMatchMode="contains" headerText="Data da Utilização">

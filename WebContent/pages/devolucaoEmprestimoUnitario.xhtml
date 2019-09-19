@@ -59,18 +59,22 @@
                             rowKey="#{emprestimoUnitario}" selection="#{emprestimoUnitarioMB.entity}" selectionMode="single" paginatorPosition="bottom">
                             <p:ajax event="rowSelect" update=":lume:devolucao,:lume:pnCampos" listener="#{emprestimoUnitarioMB.atualizaTela}" />
                             <f:facet name="header">Materiais</f:facet>
-                            <p:column filterBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}" sortBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains"
+                            <p:column filterBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}" sortBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoUnitarioMB.filtroSemAcento}"
                                 headerText="Profissional">
                                 <h:outputText value="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}" title="#{emprestimoUnitario.id}" />
                             </p:column>
-                            <p:column filterBy="#{emprestimoUnitario.material.item.descricaoLimpa}" sortBy="#{emprestimoUnitario.material.item.descricao}" filterMatchMode="contains" headerText="Descrição">
+                            <p:column filterBy="#{emprestimoUnitario.material.item.descricaoLimpa}" sortBy="#{emprestimoUnitario.material.item.descricao}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoUnitarioMB.filtroSemAcento}" headerText="Descrição">
                                 <h:outputText value="#{emprestimoUnitario.material.item.descricao}" title="#{emprestimoUnitario.material.id}" />
                             </p:column>
-                            <p:column filterBy="#{emprestimoUnitario.agendamento.paciente.dadosBasico.nomeStr}" sortBy="#{emprestimoUnitario.agendamento.paciente.dadosBasico.nome}" filterMatchMode="contains"
+                            <p:column filterBy="#{emprestimoUnitario.agendamento.paciente.dadosBasico.nomeStr}" sortBy="#{emprestimoUnitario.agendamento.paciente.dadosBasico.nome}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoUnitarioMB.filtroSemAcento}"
                                 headerText="Paciente">
                                 <h:outputText value="#{emprestimoUnitario.agendamento.paciente.dadosBasico.nome}" />
                             </p:column>
-                            <p:column filterBy="#{emprestimoUnitario.material.lote}" sortBy="#{emprestimoUnitario.material.lote}" filterMatchMode="contains" headerText="Lote">
+                            <p:column filterBy="#{emprestimoUnitario.material.lote}" sortBy="#{emprestimoUnitario.material.lote}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoUnitarioMB.filtroSemAcento}" headerText="Lote">
                                 <h:outputText value="#{emprestimoUnitario.material.lote}" />
                             </p:column>
                             <p:column sortBy="#{emprestimoUnitario.quantidadeInt}" filterBy="#{emprestimoUnitario.quantidadeInt}" filterMatchMode="contains" headerText="Quantidade Disponibilizada">

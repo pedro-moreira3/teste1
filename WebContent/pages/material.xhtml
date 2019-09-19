@@ -33,32 +33,38 @@
 						<p:column style="width:16px">
 							<p:rowToggler />
 						</p:column>                                              
-                        <p:column filterBy="#{material.item.descricaoLimpa}" sortBy="#{material.item.descricao}" filterMatchMode="contains" width="20%" headerText="Descrição">
+                        <p:column filterBy="#{material.item.descricaoLimpa}" sortBy="#{material.item.descricao}"
+                        		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="20%" headerText="Descrição">
                             <h:outputText value="#{material.item.descricao}" title="#{material.id}" />
                         </p:column>
-                        <p:column filterBy="#{material.estoque.local.descricao}" sortBy="#{material.estoque.local.descricao}" filterMatchMode="contains" width="8%" headerText="Local"
+                        <p:column filterBy="#{material.estoque.local.descricao}" sortBy="#{material.estoque.local.descricao}"
+                        		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="8%" headerText="Local"
                             rendered="#{materialMB.estoqueCompleto}">
                             <h:outputText value="#{material.estoque.local.descricao}" />
                         </p:column>
-                        <p:column filterBy="#{material.estoque.quantidade}" sortBy="#{material.estoque.quantidade}" width="10%" filterMatchMode="contains" headerText="Quantidade">
+                        <p:column filterBy="#{material.estoque.quantidade}" sortBy="#{material.estoque.quantidade}" width="10%"
+                        	filterMatchMode="contains" headerText="Quantidade">
                             <h:outputText value="#{material.estoque.quantidade}">
                                 <f:convertNumber />
                             </h:outputText>
                             <h:outputLabel value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
                         </p:column>
-                        <p:column filterBy="#{material.valor}" sortBy="#{material.valor}" width="11%" style="text-align:right" filterMatchMode="contains" headerText="Valor da Unidade(R$)"
+                        <p:column filterBy="#{material.valor}" sortBy="#{material.valor}" width="11%" style="text-align:right"
+                        		filterMatchMode="contains" headerText="Valor da Unidade(R$)"
                             rendered="#{materialMB.estoqueCompleto}">
                             <h:outputText value="#{material.valor}">
                                 <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
                             </h:outputText>
                         </p:column>
-                       <p:column filterBy="#{material.valorTotal}" sortBy="#{material.valorTotal}" width="11%" style="text-align:right" filterMatchMode="contains" headerText="Valor Total(R$)"
+                       <p:column filterBy="#{material.valorTotal}" sortBy="#{material.valorTotal}" width="11%" style="text-align:right"
+                       			filterMatchMode="contains" headerText="Valor Total(R$)"
                             rendered="#{materialMB.estoqueCompleto}">
                             <h:outputText value="#{material.valorTotal}">
                                 <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
                             </h:outputText>
                         </p:column>
-                        <p:column filterBy="#{material.dataCadastroStr}" sortBy="#{material.dataCadastroStrOrd}" width="9%" filterMatchMode="contains" headerText="Dt. Cadastro">
+                        <p:column filterBy="#{material.dataCadastroStr}" sortBy="#{material.dataCadastroStrOrd}" width="9%"
+                        		filterMatchMode="contains" headerText="Dt. Cadastro">
                             <h:outputText value="#{material.dataCadastroStr}" />
                         </p:column>
                         <p:column filterBy="#{material.dataMovimentacaoStr}" sortBy="#{material.dataMovimentacao}" width="9%" filterMatchMode="contains" headerText="Dt. Últ. Movimentação"
