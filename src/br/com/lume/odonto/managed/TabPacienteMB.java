@@ -201,14 +201,17 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
         this.faturaPagtoMB = faturaPagtoMB;
     }
 
-    public void openFicha(Paciente paciente) {
+    public void openFicha() {
+        this.activeIndex = 0;
+        PrimeFaces.current().executeScript("PF('dlgFichaPaciente').show();");
+    }
+
+    public void loadPaciente(Paciente paciente) {
         try {
             this.pacienteMB.setEntity(paciente);
-            this.activeIndex = 0;
-            PrimeFaces.current().executeScript("PF('dlgFichaPaciente').show();");
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError("Erro ao abrir a ficha.", "Houve uma falha na busca pelos dados!");
+            this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
         }
     }
 

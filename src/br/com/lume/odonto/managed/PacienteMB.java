@@ -256,9 +256,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         return "";
     }
 
-    public void actionInativar(ActionEvent event) {
+    public void actionInativar(Paciente paciente2Inativar) {
         try {
-            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByTitular(this.getEntity(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByTitular(paciente2Inativar, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Paciente paciente : pacientes) {
                 if (paciente.getStatus().equals(Status.ATIVO)) {
                     paciente.setStatus(Status.INATIVO);
@@ -266,17 +266,19 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                     this.getbO().persist(paciente);
                 }
             }
-            this.getEntity().setStatus(Status.INATIVO);
-            this.actionPersist(event);
-            PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
+            paciente2Inativar.setStatus(Status.INATIVO);
+            PacienteSingleton.getInstance().getBo().persist(paciente2Inativar);
+            this.addInfo("Sucesso", "Paciente inativado com sucesso!", true);
+            //PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
         } catch (Exception e) {
             e.printStackTrace();
+            this.addError("Erro", "Falha ao inativar paciente!", true);
         }
     }
 
-    public void actionAtivar(ActionEvent event) {
+    public void actionAtivar(Paciente paciente2Ativar) {
         try {
-            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByTitular(this.getEntity(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByTitular(paciente2Ativar, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Paciente paciente : pacientes) {
                 if (paciente.getJustificativa().equals(this.getEntity().getJustificativa())) {
                     paciente.setJustificativa(null);
@@ -284,12 +286,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                     this.getbO().persist(paciente);
                 }
             }
-            this.getEntity().setJustificativa(null);
-            this.getEntity().setStatus(Status.ATIVO);
-            this.actionPersist(event);
-            PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
+            paciente2Ativar.setJustificativa(null);
+            paciente2Ativar.setStatus(Status.ATIVO);
+            PacienteSingleton.getInstance().getBo().persist(paciente2Ativar);
+            this.addInfo("Sucesso", "Paciente ativado com sucesso!", true);
+            //PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
         } catch (Exception e) {
             e.printStackTrace();
+            this.addError("Erro", "Falha ao inativar paciente!", true);
         }
     }
 
@@ -362,8 +366,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.getbO().persist(this.getEntity());
             this.geraLista();
             //    this.actionNew(event);
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-            PrimeFaces.current().executeScript("PF('dlgDadosPaciente').hide()");
+            this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), true);
+            //PrimeFaces.current().executeScript("PF('dlgDadosPaciente').hide()");
         } catch (DataNascimentoException dne) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.datanascimento"), "");
             log.error(OdontoMensagens.getMensagem("erro.valida.datanascimento"));
@@ -559,7 +563,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         // colocaPerguntasNovas();
         anamneses = new ArrayList<>(anamnesesPorEspecialidades.values());
         this.sortAnamneses();
-        if (pacienteAnamnese.getXmlAssinado() == null || pacienteAnamnese.getXmlAssinado().equals("")) {
+        if (pacienteAnamnese != null && (pacienteAnamnese.getXmlAssinado() == null || pacienteAnamnese.getXmlAssinado().equals(""))) {
             this.setReadonly(false);
         } else {
             this.setReadonly(true);

@@ -198,15 +198,17 @@
 
 			</p:scrollPanel>
 		</p:outputPanel>
-		<p:panelGrid columns="2" layout="grid"
+		<p:panelGrid columns="4" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
-				oncomplete="PF('dlgAnamnesePaciente').hide()" />
 			<p:commandButton id="persistAnamnese" icon="White fa fa-save White"
 				value="Salvar" actionListener="#{pacienteMB.actionAnamnesePersist}"
 				update=":lume:tabView:anamneseDoPaciente, :lume:tabView:dtAnamnese"
 				process=":lume:tabView:anamneseDoPaciente"
 				disabled="#{pacienteMB.readonly}" styleClass="GreenButton" />
+			<p:column />
+			<p:column />
+			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+				oncomplete="PF('dlgAnamnesePaciente').hide()" />
 		</p:panelGrid>
 	</p:dialog>
 
