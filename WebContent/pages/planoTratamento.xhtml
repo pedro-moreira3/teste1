@@ -527,16 +527,18 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					</p:panelGrid>
 				</p:outputPanel>
 				<p:separator styleClass="SeparatorFull" />
-				<p:panelGrid columns="2" layout="grid"
+				<p:panelGrid columns="4" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-					<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
-						oncomplete="PF('dlgEditaPlanoTratamento').hide()" />
 					<p:commandButton icon="fa fa-save" value="Salvar"
 						process="@this, :lume:tabView:pnEditaPlanoTratamento"
 						styleClass="GreenButton"
 						oncomplete="handleDialogRequest(xhr, status, args);"
 						update=":lume:tabView:pnViewPlanoTratamento, :lume:tabView:dtPlanoTratamento, :lume:tabView:evolucaoView"
 						actionListener="#{planoTratamentoMB.actionPersist}" />
+					<p:column />
+					<p:column />
+					<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+						oncomplete="PF('dlgEditaPlanoTratamento').hide()" />
 				</p:panelGrid>
 			</div>
 		</div>
@@ -854,8 +856,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				</div>
 			</p:scrollPanel>
 		</p:outputPanel>
-		<p:panelGrid columns="1" layout="grid"
+		<p:panelGrid columns="4" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:column />
+			<p:column />
+			<p:column />
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
 				oncomplete="PF('dlgViewPlanoTratamento').hide()" />
 		</p:panelGrid>
@@ -1064,7 +1069,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<p:outputPanel id="pgProcedimentoBotoes">
 			<p:panelGrid columns="2" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-				<p:commandButton icon="ui-icon-add"
+				<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
 					process="@this, :lume:tabView:pgProcedimento, :lume:tabView:mainViewPT, :lume:tabView:pnViewPlanoTratamento, :lume:tabView:pgProcedimentoBotoes"
 					value="#{(planoTratamentoMB.planoTratamentoProcedimentoSelecionado.id == 0 ? 'Adicionar Procedimento ao Plano de Tratamento' : 'Salvar Procedimento')}"
 					actionListener="#{planoTratamentoMB.actionAdicionarProcedimento}"
@@ -1146,8 +1151,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:outputPanel>
 		<br />
 		<div class="SeparatorFull"></div>
-		<p:panelGrid columns="1" layout="grid"
+		<p:panelGrid columns="4" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:column />
+			<p:column />
+			<p:column />
 			<p:commandButton icon="White fa fa-close" value="Fechar"
 				process="@this" onclick="PF('dlgOrcamentos').hide();"
 				styleClass="NavyButton" />

@@ -68,13 +68,15 @@
 			<h:outputText id="counter" />
 		</p:outputPanel>
 		<p:separator styleClass="SeparatorFull" />
-		<p:panelGrid columns="2" layout="grid"
+		<p:panelGrid columns="4" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="White fa fa-save White" value="Salvar"
 				actionListener="#{evolucaoMB.actionPersist}"
 				styleClass="GreenButton" update=":lume:tabView:viewEvolucao"
 				process="@this, :lume:tabView:pnEvolucao"
 				disabled="#{evolucaoMB.entity.excluido == 'S'}" />
+			<p:column />
+			<p:column />
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
 				oncomplete="PF('dlgEvolucao').hide()" />
 		</p:panelGrid>

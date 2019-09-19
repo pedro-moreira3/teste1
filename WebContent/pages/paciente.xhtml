@@ -13,6 +13,10 @@
 	padding-left: 0px;
 	padding-right: 0px;
 }
+
+.dialogDados .ui-dialog-content {
+	overflow: hidden;
+}
 </style>
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
@@ -22,46 +26,11 @@
 						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
 						<p:commandButton id="new" icon="ui-icon-add"
 							styleClass="BotaoCrud" actionListener="#{pacienteMB.actionNew}"
-							update=":lume:pnPrincipal" value="Novo" process="@this"
-							oncomplete="PF('dlgDadosPaciente').show()" />
-						<p:commandButton id="editar" icon="White fa fa-file-o"
-							value="Editar" process="@this" update=":lume:pnPrincipal"
-							oncomplete="PF('dlgDadosPaciente').show()"
-							disabled="#{pacienteMB.entity.id == null}">
-							<p:ajax listener="#{pacienteMB.validaIdade}" />
-						</p:commandButton>
-						<h:panelGroup rendered="#{pacienteMB.admin}">
-							<p:commandButton id="delete" icon="White fa fa-trash-o"
-								value="Excluir" actionListener="#{pacienteMB.actionRemove}"
-								update=":lume:dtPrincipal, :lume:view-log" process="@this"
-								disabled="#{pacienteMB.entity.id == null}"
-								rendered="#{pacienteMB.isAdmin()}" styleClass="RedButton" />
-						</h:panelGroup>
-						<h:panelGroup rendered="#{pacienteMB.entity.status=='A'}">
-							<p:commandButton id="persistInativar"
-								icon="White fa fa-chain-broken" value="Inativar"
-								actionListener="#{pacienteMB.actionInativar}"
-								update=":lume:dtPrincipal, :lume:view-log" process="@this"
-								styleClass="NavyButton"
-								disabled="#{pacienteMB.entity.id == null}" />
-						</h:panelGroup>
-						<h:panelGroup rendered="#{pacienteMB.entity.status=='I'}">
-							<p:commandButton id="persistAtivar"
-								icon="White fa fa-chain White" value="Ativar"
-								actionListener="#{pacienteMB.actionAtivar}"
-								update=":lume:dtPrincipal, :lume:view-log" process="@this"
-								styleClass="NavyButton"
-								disabled="#{pacienteMB.entity.id == null}" />
-						</h:panelGroup>
+							update=":lume:pnPrincipal" value="Novo"
+							oncomplete="PF('dlgDadosPaciente').show()" process="@this" />
 					</p:panelGrid>
 
 					<h:panelGroup id="botoes" styleClass="tableButtons">
-						<ui:remove>
-							<p:commandButton id="new" icon="ui-icon-add"
-								styleClass="BotaoCrud lime-btn"
-								actionListener="#{pacienteMB.actionNew}" update=":lume"
-								process="@this" oncomplete="PF('dlgDadosPaciente').show()" />
-						</ui:remove>
 						<p:commandButton icon="fa fa-file-excel-o" process="dtPrincipal"
 							styleClass="BotaoCrud Exportar green-btn" ajax="false"
 							id="btExporExcel" immediate="true">
@@ -73,12 +42,8 @@
 
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						id="dtPrincipal" value="#{pacienteMB.entityList}" var="paciente"
-						rows="7" paginator="true" selection="#{pacienteMB.entity}"
-						selectionMode="single" rowKey="#{paciente}"
+						rows="7" paginator="true" rowKey="#{paciente}"
 						paginatorPosition="bottom" widgetVar="dtPrincipal">
-
-						<p:ajax event="rowSelect" process="@this"
-							update=":lume:botoes, :lume:botoesLong" />
 
 						<f:facet name="header">#{dominioMB.cliente}
 						<h:panelGroup styleClass="pesquisa">
@@ -90,19 +55,30 @@
 							</h:panelGroup>
 						</f:facet>
 
-						<p:column headerText="Ficha" style="width:50px">
-							<p:commandButton styleClass="NavyButton" icon="fa fa-search"
-								process="@this" id="verFicha" title="Exibir ficha do Paciente"
-								actionListener="#{tabPacienteMB.openFicha(paciente)}"
-								update=":lume:dtPrincipal, :lume:botoes, :lume:botoesLong, :lume:fichaDoPaciente, :lume:pnPrincipalFicha">
-							</p:commandButton>
+						<p:column headerText="Ações" width="100">
+							<h:panelGroup rendered="#{paciente.status == 'A'}">
+								<p:commandButton id="persistInativar"
+									icon="White fa fa-chain-broken" title="Inativar"
+									actionListener="#{pacienteMB.actionInativar(paciente)}"
+									update=":lume:dtPrincipal" process="@this"
+									styleClass="NavyButton" />
+							</h:panelGroup>
+							<h:panelGroup rendered="#{paciente.status == 'I'}">
+								<p:commandButton id="persistAtivar"
+									icon="White fa fa-chain White" title="Ativar"
+									actionListener="#{pacienteMB.actionAtivar(paciente)}"
+									update=":lume:dtPrincipal" process="@this"
+									styleClass="NavyButton" />
+							</h:panelGroup>
 						</p:column>
-
 						<p:column sortBy="#{paciente.dadosBasico.nome}"
 							filterBy="#{paciente.dadosBasico.nomeStr}"
 							filterMatchMode="contains" headerText="Nome">
-							<h:outputText value="#{paciente.dadosBasico.nome}"
-								title="#{paciente.id}" />
+							<p:commandLink value="#{paciente.dadosBasico.nome}"
+								process="@this" title="#{paciente.id}"
+								actionListener="#{tabPacienteMB.loadPaciente(paciente)}"
+								oncomplete="PF('dlgDadosPaciente').show()"
+								update=":lume:pnPrincipal" />
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.email}"
 							filterBy="#{paciente.dadosBasico.email}"
@@ -141,30 +117,13 @@
 			</div>
 		</div>
 
-		<p:dialog widgetVar="dlgFichaPaciente" resizable="false"
-			onHide="PF('dlgFichaPaciente').toggleMaximize();"
-			onShow="PF('dlgFichaPaciente').toggleMaximize();"
-			header="Ficha do Paciente #{pacienteMB.entity.dadosBasico.nome}"
-			id="fichaDoPaciente" modal="true" appendTo=":lume">
-			<p:outputPanel id="pnPrincipalFicha"
-				style="max-height: calc(100% - 54px); height: calc(100% - 54px);"
-				styleClass="remove12ColPaddingSide">
-				<p:scrollPanel mode="native"
-					style="position: relative; width: 100%; height: 100%;">
-					<ui:include src="dadosFichaPaciente.xhtml"></ui:include>
-				</p:scrollPanel>
-			</p:outputPanel>
-			<p:panelGrid columns="1" layout="grid"
-				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
-					oncomplete="PF('dlgFichaPaciente').hide()" />
-			</p:panelGrid>
-		</p:dialog>
-
+		<p:remoteCommand name="updateButtons"
+			update=":lume:buttonsDadosPaciente" />
 		<p:dialog widgetVar="dlgDadosPaciente" resizable="false"
 			onHide="PF('dlgDadosPaciente').toggleMaximize();"
-			onShow="PF('dlgDadosPaciente').toggleMaximize();" appendTo=":lume"
-			header="Cadastro de Paciente" responsive="true" modal="true">
+			onShow="PF('dlgDadosPaciente').toggleMaximize();updateButtons()"
+			appendTo=":lume" header="Cadastro de Paciente" responsive="true"
+			modal="true" styleClass="dialogDados">
 			<p:ajax event="close" resetValues="true" update=":lume:pnPrincipal" />
 			<p:outputPanel id="pnPrincipal"
 				style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
@@ -172,16 +131,56 @@
 					<ui:include src="dadosPaciente.xhtml"></ui:include>
 				</p:scrollPanel>
 			</p:outputPanel>
-			<p:panelGrid columns="2" layout="grid"
+			<p:panelGrid columns="4" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 				<p:commandButton id="salvar" icon="fa fa-check" value="Salvar"
 					process="@this, :lume:pnPrincipal"
 					update=":lume:pnPrincipal, :lume:dtPrincipal, :lume:view-log"
 					styleClass="BotaoCrud GreenButton"
 					actionListener="#{pacienteMB.actionPersist}"
-					oncomplete="handleAjaxRequest(xhr, status, args);" />
+					oncomplete="handleAjaxRequest(xhr, status, args); updateButtons()" />
+				<h:panelGroup id="buttonsDadosPaciente">
+					<p:commandButton styleClass="OrangeButton" icon="fa fa-file-text-o"
+						process="@this" value="Exibir ficha do Paciente"
+						actionListener="#{tabPacienteMB.openFicha}"
+						disabled="#{pacienteMB.entity.id == null or pacienteMB.entity.id == 0}"
+						update=":lume:pnPrincipalFichaHeader, :lume:pnPrincipalFicha">
+					</p:commandButton>
+				</h:panelGroup>
+				<p:column />
 				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
 					oncomplete="PF('dlgDadosPaciente').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgFichaPaciente" resizable="false"
+			onHide="PF('dlgFichaPaciente').toggleMaximize();"
+			onShow="PF('dlgFichaPaciente').toggleMaximize();" modal="true"
+			appendTo=":lume">
+			<f:facet name="header">
+				<p:outputPanel id="pnPrincipalFichaHeader">
+					<h:outputText
+						value="Ficha do Paciente #{pacienteMB.entity.dadosBasico.nome}" />
+				</p:outputPanel>
+			</f:facet>
+			<p:outputPanel id="pnPrincipalFicha"
+				style="max-height: calc(100% - 54px); height: calc(100% - 54px);"
+				styleClass="remove12ColPaddingSide">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: 100%; height: 100%;">
+					<p:outputPanel
+						rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}">
+						<ui:include src="dadosFichaPaciente.xhtml"></ui:include>
+					</p:outputPanel>
+				</p:scrollPanel>
+			</p:outputPanel>
+			<p:panelGrid columns="4" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+					oncomplete="PF('dlgFichaPaciente').hide()" />
 			</p:panelGrid>
 		</p:dialog>
 

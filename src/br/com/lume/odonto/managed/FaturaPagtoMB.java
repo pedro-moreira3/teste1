@@ -266,10 +266,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
-    public BigDecimal getSaldoPaciente() {
-        if (getPaciente() != null)
-            return ContaSingleton.getInstance().getSaldoPaciente(getPaciente());
-        return BigDecimal.ZERO;
+    public String getStyleBySaldoPaciente() {
+        if (getPaciente() == null || getPaciente().getId() == null || getPaciente().getId().longValue() == 0)
+            return "";
+        BigDecimal saldo = getPaciente().getConta().getSaldo();
+        String color = (saldo.compareTo(BigDecimal.ZERO) == 0 ? "#17a2b8" : (saldo.compareTo(BigDecimal.ZERO) < 0 ? "#dc3545" : "#28a745"));
+        return (color != null && !color.isEmpty() ? "color: " + color : "");
     }
 
     public List<Lancamento> getLancamentos() {

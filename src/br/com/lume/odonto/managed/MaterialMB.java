@@ -25,6 +25,8 @@ import org.primefaces.model.TreeNode;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.conta.ContaSingleton;
+import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.estoque.EstoqueSingleton;
@@ -44,8 +46,14 @@ import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Marca;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialLog;
+import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
+import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.TransferenciaEstoque;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.security.entity.Empresa;
 import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
 @ManagedBean
@@ -122,6 +130,16 @@ public class MaterialMB extends LumeManagedBean<Material> {
 //                System.out.println(count);
 //            }
             
+            //para inserir contas dos profissionais   
+//            for (Profissional profissional : ProfissionalSingleton.getInstance().getBo().listAll()) {            
+//                List<PlanoTratamentoProcedimento> planos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listAllByProfissional(profissional);
+//                BigDecimal soma = new BigDecimal(0);
+//                for (PlanoTratamentoProcedimento ptp : planos) {
+//                    soma = soma.add(ptp.getValorRepassado());
+//                } 
+//                System.out.println("Prof: " + profissional.getDadosBasico().getNome() + "Soma: " + soma);
+//                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PROFISSIONAL, profissional, soma, null, profissional, null);
+//            }
          
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);

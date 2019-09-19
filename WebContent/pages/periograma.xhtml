@@ -446,7 +446,7 @@
 			</p:scrollPanel>
 		</p:outputPanel>
 
-		<p:panelGrid columns="3" layout="grid"
+		<p:panelGrid columns="4" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton id="persistPeriograma" icon="White fa fa-save White"
 				value="Salvar" styleClass="GreenButton"
@@ -459,6 +459,7 @@
 				update=":lume:tabView:compararView, :lume:tabView:compararViewHeader"
 				oncomplete="PF('dlgComparar').show();resize('#lume\\:tabView\\:dlgComparar');"
 				actionListener="#{periogramaMB.carregaComparacaoPeriogramaA}" />
+			<p:column />
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
 				oncomplete="PF('dlgPeriogramaView').hide()" />
 		</p:panelGrid>

@@ -578,7 +578,7 @@ li.orcamento-li {
 				</div>
 			</p:scrollPanel>
 		</p:outputPanel>
-		<p:panelGrid columns="3" layout="grid"
+		<p:panelGrid columns="4" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton value="Salvar"
 				process="@this, :lume:tabView:planoOrtodontico"
@@ -586,6 +586,8 @@ li.orcamento-li {
 				icon="White fa fa-save White" styleClass="GreenButton"
 				update=":lume:tabView:pnMainOrtodontia, :lume:tabView:planoOrtodontico">
 			</p:commandButton>
+			<p:column />
+			<p:column />
 			<p:commandButton value="Fechar" type="button" icon="fa fa-close"
 				styleClass="NavyButton" onclick="PF('dlgPlanoOrtodontico').hide()"
 				process="@this" />
