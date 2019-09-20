@@ -316,7 +316,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             arq = new FileInputStream(this.exportacao.exportarTabela(header,tabela,type));
             
             if(type.equals("xls"))
-                return new DefaultStreamedContent(arq,"application/vnd.ms-excel",header+"."+type);
+                return new DefaultStreamedContent(arq,"application/vnd.ms-excel",header+".xls");
             else
                 return new DefaultStreamedContent(arq,"application/pdf",header+"."+type);
             
