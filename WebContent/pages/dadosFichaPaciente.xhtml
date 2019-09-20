@@ -5,6 +5,12 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:pe="http://primefaces.org/ui/extensions">
+	
+	<style>
+		body div.ui-widget-content.ui-tabs {
+			border: none;
+		}
+	</style>
 
 	<h:inputHidden id="activeIndexFicha"
 		value="#{tabPacienteMB.activeIndex}" />
