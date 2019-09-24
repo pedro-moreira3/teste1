@@ -956,7 +956,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 return;
             }
 
-            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamento(orcamentoSelecionado, false));
+            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
             orcamentoSelecionado.setQuantidadeParcelas(1);
             OrcamentoSingleton.getInstance().aprovaOrcamento(orcamentoSelecionado, null, UtilsFrontEnd.getProfissionalLogado());
             addInfo("Aprovação com " + orcamentoPerc + "% de desconto aplicado!", "");
@@ -988,7 +988,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionPersistOrcamento(ActionEvent event) {
         try {
-            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamento(orcamentoSelecionado, false));
+            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
             orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
             orcamentoSelecionado.setDataCriacao(new Date());
             OrcamentoSingleton.getInstance().getBo().persist(orcamentoSelecionado);

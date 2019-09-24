@@ -149,42 +149,29 @@ public class MaterialMB extends LumeManagedBean<Material> {
             //para inserir saldo inicial de empresa
      
             
-            for(Empresa empresa : EmpresaSingleton.getInstance().getBo().listAll()) {
-                BigDecimal saldoInicial = new BigDecimal(0);
-                List<LancamentoContabilRelatorio> lcs = LancamentoContabilSingleton.getInstance().getBo().listByPeriodoAnteriorSemData("T", UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                for (LancamentoContabilRelatorio lc : lcs) {
-                    BigDecimal valor = lc.getValor();
-                    valor = valor.abs();
-                    if (lc.getTipo().equals("Pagar")) {
-                        valor = valor.multiply(new BigDecimal(-1));
-                    }
-                    Lancamento lancamento = lc.getLancamento();
-                    if (lancamento != null && lancamento.getTarifa() != null) {
-                        valor = lancamento.getValorComDesconto();
-                    }
-                    saldoInicial = saldoInicial.add(valor);
-                }
-                LancamentoContabil inicial = LancamentoContabilSingleton.getInstance().getBo().findByTipoInicial(empresa.getEmpIntCod());
-                if (inicial != null) {
-                    saldoInicial = saldoInicial.add(inicial.getValor());
-                }                
-                List<LancamentoContabilRelatorio> lancamentoContabeis  = LancamentoContabilSingleton.getInstance().getBo().listAllByEmpresa(empresa.getEmpIntCod());
-                BigDecimal saldoFinal = new BigDecimal(0);
-                for (LancamentoContabilRelatorio lc : lancamentoContabeis) {
-                    BigDecimal valor = lc.getValor();
-                    valor = valor.abs();
-                    if (lc.getTipo().equals("Pagar")) {
-                        valor = valor.multiply(new BigDecimal(-1));
-                    }
-                    Lancamento lancamento = lc.getLancamento();
-                    if (lancamento != null && lancamento.getTarifa() != null) {
-                        valor = lancamento.getValorComDesconto();
-                    }
-                    saldoFinal = saldoFinal.add(valor);                   
-                }
-                saldoFinal = saldoFinal.add(saldoInicial);
-                System.out.println(empresa.getEmpStrNme() + "saldo: " + saldoFinal);
-            }
+//            for(Empresa empresa : EmpresaSingleton.getInstance().getBo().listAll()) {      
+//                List<LancamentoContabilRelatorio> lancamentoContabeis = null;
+//               lancamentoContabeis  = LancamentoContabilSingleton.getInstance().getBo().listAllByEmpresa(empresa.getEmpIntCod());
+//                BigDecimal saldoFinal = new BigDecimal(0);
+//                for (LancamentoContabilRelatorio lc : lancamentoContabeis) {
+//                    BigDecimal valor = lc.getValor();
+//                    valor = valor.abs();
+//                    if (lc.getTipo().equals("Pagar")) {
+//                        valor = valor.multiply(new BigDecimal(-1));
+//                    }
+//                    Lancamento lancamento = lc.getLancamento();
+//                    if (lancamento != null && lancamento.getTarifa() != null) {
+//                        valor = lancamento.getValorComDesconto();
+//                    }
+//                    saldoFinal = saldoFinal.add(valor);                   
+//                }
+//            
+//                System.out.println(empresa.getEmpStrNme() + "saldo: " + saldoFinal);
+//               
+//                        ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.EMPRESA, null, saldoFinal, null, null, empresa);
+//               
+//                }
+   
         
             
             

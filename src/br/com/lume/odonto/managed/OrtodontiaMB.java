@@ -301,7 +301,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public BigDecimal getValorOrcamentoAPagar() {
-        BigDecimal totalOrcamento = OrcamentoSingleton.getInstance().getTotalOrcamento(getOrcamentoSelecionado(), false);
+        BigDecimal totalOrcamento = OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(getOrcamentoSelecionado());
         if(totalOrcamento == null)
             return BigDecimal.ZERO;
         BigDecimal valorPago = LancamentoSingleton.getInstance().getTotalLancamentoPorOrcamento(getOrcamentoSelecionado(), true);

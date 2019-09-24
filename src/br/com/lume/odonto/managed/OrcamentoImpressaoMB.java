@@ -54,7 +54,7 @@ public class OrcamentoImpressaoMB extends LumeManagedBean<Orcamento> {
     }
 
     public BigDecimal getValorOrcamentoAPagar(Orcamento orcamento) {
-        return OrcamentoSingleton.getInstance().getTotalOrcamento(orcamento, false);
+        return OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamento);
     }
     
     public boolean showPanel(Orcamento o, PlanoTratamento pt) {
