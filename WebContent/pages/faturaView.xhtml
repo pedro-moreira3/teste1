@@ -249,7 +249,7 @@ body .sideChkBox .ui-chkbox-label {
 								id="lancamentosFatura">
 								<f:facet name="header">Lançamentos da Fatura</f:facet>
 								<p:column headerText="Ações" width="100" exportable="false"
-									rendered="#{showNewLancamento != null and showNewLancamento == 'S'">
+									rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
 										title="Cancelar lançamento" disabled="#{!l.ativo}"
 										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
