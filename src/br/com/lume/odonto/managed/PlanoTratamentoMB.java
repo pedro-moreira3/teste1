@@ -191,7 +191,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
 
                 if (getEntity().getId() == null) {
-                    getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
+                    getEntity().setProfissional(profissionalLogado);
                 }
 
                 for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
@@ -907,7 +907,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (this.orcamentoSelecionado == null)
             return new BigDecimal(0);
 
-        BigDecimal valorTotal = this.orcamentoSelecionado.getValorTotal();
+        BigDecimal valorTotal = this.orcamentoSelecionado.getValorTotalSemDesconto();
         if (valorTotal == null)
             return new BigDecimal(0);
         BigDecimal valorAPagar = new BigDecimal(0);
@@ -956,7 +956,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 return;
             }
 
-            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamento(orcamentoSelecionado, false));
+            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
             orcamentoSelecionado.setQuantidadeParcelas(1);
             OrcamentoSingleton.getInstance().aprovaOrcamento(orcamentoSelecionado, null, UtilsFrontEnd.getProfissionalLogado());
             addInfo("Aprovação com " + orcamentoPerc + "% de desconto aplicado!", "");
@@ -988,7 +988,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionPersistOrcamento(ActionEvent event) {
         try {
-            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamento(orcamentoSelecionado, false));
+            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
             orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
             orcamentoSelecionado.setDataCriacao(new Date());
             OrcamentoSingleton.getInstance().getBo().persist(orcamentoSelecionado);
