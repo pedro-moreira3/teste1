@@ -1102,9 +1102,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				value="#{planoTratamentoMB.orcamentos}" rows="10" paginator="true"
 				paginatorPosition="bottom"
 				selection="#{planoTratamentoMB.orcamentoSelecionado}"
-				rowKey="#{orcamento}" selectionMode="single">
-				<p:ajax event="rowSelect" process="@this"
-					update=":lume:tabView:botoesOrcamentoPT" />
+				rowKey="#{orcamento}" >				
 				<f:facet name="header">
 					<h:outputText
 						value="Orçamentos do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
@@ -1120,10 +1118,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						oncomplete="PF('dlgPrintOrcamento').show()"
 						styleClass="NavyButton" />
 					<p:commandButton icon="fa fa-trash" process="@this"
-						actionListener="#{planoTratamentoMB.actionRemoveOrcamento(o)}"
+						actionListener="#{planoTratamentoMB.actionRemoveOrcamento(orcamento)}"
 						update=":lume:tabView:tbViewOrcamento" styleClass="NavyButton"
 						title="Cancelar Orçamento"
-						disabled="#{o.aprovado or planoTratamentoMB.entity.finalizado == 'S'}">
+						disabled="#{orcamento.aprovado or planoTratamentoMB.entity.finalizado == 'S'}">
 						<p:confirm header="Confirmação"
 							message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
 					</p:commandButton>
@@ -1181,7 +1179,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							</span>
 							<br />
 							<span> <h:outputText
-									value="#{planoTratamentoMB.orcamentoSelecionado.valorTotal}">
+									value="#{planoTratamentoMB.orcamentoSelecionado.valorTotalSemDesconto}">
 									<f:convertNumber type="currency" currencySymbol="R$"
 										maxFractionDigits="2" />
 								</h:outputText>

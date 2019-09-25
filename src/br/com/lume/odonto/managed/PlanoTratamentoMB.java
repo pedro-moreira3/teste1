@@ -907,7 +907,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (this.orcamentoSelecionado == null)
             return new BigDecimal(0);
 
-        BigDecimal valorTotal = this.orcamentoSelecionado.getValorTotal();
+        BigDecimal valorTotal = this.orcamentoSelecionado.getValorTotalSemDesconto();
         if (valorTotal == null)
             return new BigDecimal(0);
         BigDecimal valorAPagar = new BigDecimal(0);

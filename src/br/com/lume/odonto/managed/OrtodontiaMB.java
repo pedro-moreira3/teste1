@@ -301,13 +301,16 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public BigDecimal getValorOrcamentoAPagar() {
-        BigDecimal totalOrcamento = OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(getOrcamentoSelecionado());
-        if(totalOrcamento == null)
-            return BigDecimal.ZERO;
-        BigDecimal valorPago = LancamentoSingleton.getInstance().getTotalLancamentoPorOrcamento(getOrcamentoSelecionado(), true);
-        if(valorPago == null)
-            return BigDecimal.ZERO;
-        return totalOrcamento.subtract(valorPago);
+        if(getOrcamentoSelecionado() != null) {
+            BigDecimal totalOrcamento = getOrcamentoSelecionado().getValorTotalSemDesconto();
+            if(totalOrcamento == null)
+                return BigDecimal.ZERO;
+            BigDecimal valorPago = LancamentoSingleton.getInstance().getTotalLancamentoPorOrcamento(getOrcamentoSelecionado(), true);
+            if(valorPago == null)
+                return BigDecimal.ZERO;
+            return totalOrcamento.subtract(valorPago);
+        }
+        return null;
     }
 
     public void carregarTela() {

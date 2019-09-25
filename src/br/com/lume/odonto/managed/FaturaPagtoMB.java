@@ -301,9 +301,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             return total;
         for (FaturaItem item : fatura.getItens()) {
             if ("E".equals(item.getTipoSaldo()))
-                total = total.add(new BigDecimal(item.getValorItem()));
+                total = total.add(item.getValorComDesconto());
             else if ("S".equals(item.getTipoSaldo()))
-                total = total.subtract(new BigDecimal(item.getValorItem()));
+                total = total.subtract(item.getValorComDesconto());
         }
         return total;
     }
