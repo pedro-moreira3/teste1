@@ -262,20 +262,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public BigDecimal getTotal(Fatura fatura) {
-<<<<<<< HEAD
         return FaturaSingleton.getInstance().getTotal(fatura);
-=======
-        BigDecimal total = BigDecimal.ZERO;
-        if (fatura == null || fatura.getItens() == null)
-            return total;
-        for (FaturaItem item : fatura.getItens()) {
-            if ("E".equals(item.getTipoSaldo()))
-                total = total.add(item.getValorComDesconto());
-            else if ("S".equals(item.getTipoSaldo()))
-                total = total.subtract(item.getValorComDesconto());
-        }
-        return total;
->>>>>>> branch 'backend' of https://git.lumetec.com.br/intelidente/intelidente.git
     }
 
     public List<Paciente> sugestoesPacientes(String query) {

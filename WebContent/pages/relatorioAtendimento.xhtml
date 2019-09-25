@@ -327,25 +327,23 @@ div.ui-selectoneradio label {
 											styleClass="RedButton"
 											process="@this,:lume:dlgConfirmarImpCabecalho,:lume:filtroRelatorio"/>
 									</h:panelGroup>
-									<ui:remove>
+
 									<h:panelGroup>
 										<p:splitButton 	icon="White fa fa fa-file-excel-o" value="Exportar tabela para Excel" styleClass="GreenSplitButton"
-														oncomplete="downloadArq();" process="dtRelAtendimento,@this" immediate="true">
+														actionListener="#{relatorioAtendimentoMB.exportarTabela('xls')}" ajax="false"
+														process="dtRelAtendimento,@this" update="@this" immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 											
-											<p:menuitem	value="Exportar tabela para PDF" icon="fa fa fa-file-pdf-o" actionListener="#{relatorioAtendimentoMB.exportarTabela('pdf')}" ajax="false"
-														process="dtRelAtendimento,@this" immediate="true">
+											<p:fileDownload value="#{relatorioAtendimentoMB.arquivoDownload}" />
+											
+											<p:menuitem	value="Exportar tabela para PDF" icon="fa fa fa-file-pdf-o" 
+														actionListener="#{relatorioAtendimentoMB.exportarTabela('pdf')}" ajax="false"
+														process="dtRelAtendimento,@this" immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 												<p:fileDownload value="#{relatorioAtendimentoMB.arquivoDownload}"/>
-											</p:menuitem>
-															
+											</p:menuitem>											
 										</p:splitButton>
 									</h:panelGroup>
-									
-									<p:remoteCommand 	name="downloadArq" actionListener="#{relatorioAtendimentoMB.exportarTabela('xls')}" 
-														process="dtRelAtendimento,@this" immediate="true">
-														
-										<p:fileDownload value="#{relatorioAtendimentoMB.arquivoDownload}" contentDisposition="attachment"/>
-									</p:remoteCommand>
-									</ui:remove>
 									
 								</p:panelGrid>
 

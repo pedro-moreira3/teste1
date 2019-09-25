@@ -36,29 +36,35 @@
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioOrcamentoMB.relatorioOrcamentos}" var="m" rows="20"
 						paginator="true" rowKey="#{m}" paginatorPosition="bottom">
 						<f:facet name="header">Orçamentos</f:facet>
-						<p:column filterBy="#{m.profissional}" sortBy="#{m.profissional}" filterMatchMode="contains">
+						<p:column filterBy="#{m.profissionalAprovacao}" sortBy="#{m.profissionalAprovacao}" filterMatchMode="contains">
 							<f:facet name="header">
 								<h:outputText value="Profissional" />
 							</f:facet>
-							<h:outputText value="#{m.profissional}" title="#{m.id}"/>
+							<h:outputText value="#{m.profissionalAprovacao}" title="#{m.id}"/>
 						</p:column>
-						<p:column filterBy="#{m.paciente}" sortBy="#{m.paciente}" filterMatchMode="contains">
+						<p:column filterBy="#{m.paciente}" sortBy="#{m.paciente.dadosBasico.nome}" filterMatchMode="contains">
 							<f:facet name="header">
 								<h:outputText value="Paciente" />
 							</f:facet>
-							<h:outputText value="#{m.paciente}" />
+							<h:outputText value="#{m.paciente.dadosBasico.nome}" />
 						</p:column>
-						<p:column filterBy="#{m.dataStr}" sortBy="#{m.data}" filterMatchMode="contains">
+						<p:column filterBy="#{m.dataStr}" sortBy="#{m.dataCriacaoStr}" filterMatchMode="contains">
 							<f:facet name="header">
-								<h:outputText value="Data do Plano" />
+								<h:outputText value="Data de criação" />
 							</f:facet>
-							<h:outputText value="#{m.dataStr}" />
+							<h:outputText value="#{m.dataCriacaoStr}" />
 						</p:column>
-						<p:column filterBy="#{m.valorTotal}" sortBy="#{m.valorTotal}" filterMatchMode="contains">
+						<p:column filterBy="#{m.dataAprovacaoStr}" sortBy="#{m.dataAprovacaoStr}" filterMatchMode="contains">
+							<f:facet name="header">
+								<h:outputText value="Data de aprovação" />
+							</f:facet>
+							<h:outputText value="#{m.dataAprovacaoStr}" />
+						</p:column>						
+						<p:column filterBy="#{m.valorTotal}" sortBy="#{m.valorTotalSemDesconto}" filterMatchMode="contains">
 							<f:facet name="header">
 								<h:outputText value="Valor Total(R$)" />
 							</f:facet>
-							<h:outputText value="#{m.valorTotal}">
+							<h:outputText value="#{m.valorTotalSemDesconto}">
 								<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 							<f:facet name="footer">
@@ -67,11 +73,11 @@
 								</h:outputText>
 							</f:facet>
 						</p:column>
-						<p:column filterBy="#{m.valorTotalDesconto}" sortBy="#{m.valorTotalDesconto}" filterMatchMode="contains">
+						<p:column filterBy="#{m.valorTotalDesconto}" sortBy="#{m.valorTotalComDesconto}" filterMatchMode="contains">
 							<f:facet name="header">
 								<h:outputText value="Valor com Desconto(R$)" />
 							</f:facet>
-							<h:outputText value="#{m.valorTotalDesconto}">
+							<h:outputText value="#{m.valorTotalComDesconto}">
 								<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 							<f:facet name="footer">

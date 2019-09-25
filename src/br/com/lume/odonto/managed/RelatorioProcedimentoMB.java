@@ -54,7 +54,6 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
             this.filtroProcedimento = new ArrayList<String>();
         }
         
-        //filtroProcedimento.addAll(Arrays.asList(""));
         Calendar calendario = Calendar.getInstance();
         this.setDataFim(calendario.getTime());
         calendario.add(Calendar.DAY_OF_MONTH, -7);
@@ -64,15 +63,7 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     }
     
     public void popularLista() {
-        try{
-            
-            /*if(getDataInicio() == null && getDataFim() == null) {
-                Calendar calendario = Calendar.getInstance();
-                this.setDataFim(calendario.getTime());
-                calendario.add(Calendar.DAY_OF_MONTH, -7);
-                this.setDataInicio(calendario.getTime());
-            }*/
-            
+        try{            
             this.listaProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(this.dataInicio, this.dataFim, this.filtroPorPaciente, 
                     this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.filtroPorConvenio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             
@@ -93,19 +84,19 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     }
     
     public List<Paciente> sugestoesPacientes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
     }
     
     public List<Profissional> sugestoesProfissionais(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
     }
     
     public List<Profissional> sugestoesProfissionalUltAlteracao(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
     }
     
     public List<Convenio> sugestoesConvenios(String query) {
-        return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
     }
     
     public String nomeClinica() {
