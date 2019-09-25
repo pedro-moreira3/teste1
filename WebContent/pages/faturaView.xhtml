@@ -135,8 +135,8 @@ body .sideChkBox .ui-chkbox-label {
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 						<p:commandButton value="Salvar" icon="White fa fa-save"
 							actionListener="#{faturaPagtoMB.actionPersistTrocaItemProfissional}"
-							update="pnlTrocaLancamentoProfissional, pnlfaturaView"
-							process="@this, pnlTrocaLancamentoProfissional"
+							update="@parent:@parent:pnlTrocaItemProfissional, pnlfaturaView"
+							process="@this, @parent:@parent:pnlTrocaItemProfissional"
 							styleClass="GreenButton" />
 						<p:commandButton value="Fechar" icon="White fa fa-close"
 							oncomplete="PF('dlgTrocaItemProfissional').hide()"
