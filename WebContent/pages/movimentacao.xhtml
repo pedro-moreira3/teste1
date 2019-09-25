@@ -28,10 +28,10 @@
 								<h:outputText value="#{material.item.descricao}"
 									title="#{material.id}" />
 							</p:column>
-							<p:column filterBy="#{material.quantidadeAtual}"
-								sortBy="#{material.quantidadeAtual}" filterMatchMode="contains"
+							<p:column filterBy="#{material.estoque.quantidade}"
+								sortBy="#{material.estoque.quantidade}" filterMatchMode="contains"
 								headerText="Quantidade Atual">
-								<h:outputText value="#{material.quantidadeAtual}">
+								<h:outputText value="#{material.estoque.quantidade}">
 									<f:convertNumber />
 								</h:outputText>
 								<h:outputText
@@ -114,7 +114,7 @@
 							<h:outputLabel value="Quantidade Atual: " />
 							<p:column>
 								<h:outputText id="quantidadeAtual"
-									value="#{materialMB.entity.quantidadeAtual}" disabled="true"
+									value="#{materialMB.entity.estoque.quantidade}" disabled="true"
 									styleClass="Wid20">
 									<f:convertNumber />
 								</h:outputText>
