@@ -110,6 +110,22 @@
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
 						</p:column>
+						
+						<p:column filterBy="#{faturaPagtoMB.getTotalPago(f)}"
+							headerText="Valor total pago" filterMatchMode="contains"
+							sortBy="#{faturaPagtoMB.getTotalPago(f)}">
+							<h:outputText value="#{faturaPagtoMB.getTotalPago(f)}">
+								<f:convertNumber currencySymbol="R$ " type="currency" />
+							</h:outputText>
+						</p:column>
+						
+						<p:column filterBy="#{faturaPagtoMB.getTotalRestante(f)}"
+							headerText="Valor total restante" filterMatchMode="contains"
+							sortBy="#{faturaPagtoMB.getTotalRestante(f)}">
+							<h:outputText value="#{faturaPagtoMB.getTotalRestante(f)}">
+								<f:convertNumber currencySymbol="R$ " type="currency" />
+							</h:outputText>
+						</p:column>
 
 					</p:dataTable>
 				</div>

@@ -122,6 +122,31 @@ body .sideChkBox .ui-chkbox-label {
 		</div>
 	</p:dialog>
 
+	<p:dialog widgetVar="dlgTrocaItemProfissional"
+		header="Alteração de Profissional" responsive="true" modal="true"
+		appendTo=":lume">
+		<p:ajax event="close" resetValues="true"
+			update="pnlTrocaItemProfissional" />
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlTrocaItemProfissional">
+					<div class="SeparatorFull"></div>
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						<p:commandButton value="Salvar" icon="White fa fa-save"
+							actionListener="#{faturaPagtoMB.actionPersistTrocaItemProfissional}"
+							update="pnlTrocaLancamentoProfissional, pnlfaturaView"
+							process="@this, pnlTrocaLancamentoProfissional"
+							styleClass="GreenButton" />
+						<p:commandButton value="Fechar" icon="White fa fa-close"
+							oncomplete="PF('dlgTrocaItemProfissional').hide()"
+							styleClass="NavyButton" />
+					</p:panelGrid>
+				</p:outputPanel>
+			</div>
+		</div>
+	</p:dialog>
+
 	<p:dialog id="faturaView" appendTo=":lume" widgetVar="dlgFaturaView"
 		responsive="true" modal="true"
 		onHide="PF('dlgFaturaView').toggleMaximize();"
@@ -181,6 +206,16 @@ body .sideChkBox .ui-chkbox-label {
 								value="#{faturaPagtoMB.entity.itens}" var="fi" rows="20"
 								paginator="true" rowKey="#{fi}" paginatorPosition="bottom">
 								<f:facet name="header">Itens</f:facet>
+
+								<p:column headerText="Ações" width="100" exportable="false"
+									rendered="#{repasseProfissional != null and repasseProfissional == 'S'}">
+									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
+										title="Trocar Profissional" disabled="#{!l.ativo}" update=""
+										actionListener="#{faturaPagtoMB.abreTrocaItemProfissional(l)}"
+										process="@this">
+									</p:commandButton>
+								</p:column>
+
 								<p:column sortBy="#{fi.descricaoItem}"
 									filterMatchMode="contains" filterBy="#{fi.descricaoItem}"
 									headerText="Descrição">
@@ -199,7 +234,8 @@ body .sideChkBox .ui-chkbox-label {
 								</p:column>
 							</p:dataTable>
 							<p:separator styleClass="SeparatorFull" />
-							<p:panel>
+							<p:panel
+								rendered="#{repasseProfissional == null or repasseProfissional == 'N'}">
 								<p:selectBooleanCheckbox styleClass="sideChkBox"
 									itemLabel="Mostrar lançamentos cancelados."
 									value="#{faturaPagtoMB.showLancamentosCancelados}">
@@ -213,7 +249,7 @@ body .sideChkBox .ui-chkbox-label {
 								id="lancamentosFatura">
 								<f:facet name="header">Lançamentos da Fatura</f:facet>
 								<p:column headerText="Ações" width="100" exportable="false"
-									rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
+									rendered="#{showNewLancamento != null and showNewLancamento == 'S'">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
 										title="Cancelar lançamento" disabled="#{!l.ativo}"
 										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
@@ -289,7 +325,8 @@ body .sideChkBox .ui-chkbox-label {
 				actionListener="#{faturaPagtoMB.actionNewLancamento}"
 				oncomplete="PF('dlgNewLancamento').show()" />
 			<p:commandButton value="Visualizar Impressão" icon="fa fa-print"
-				styleClass="NavyButton" process="@this" oncomplete="PF('dlgPrintFatura').show()"
+				styleClass="NavyButton" process="@this"
+				oncomplete="PF('dlgPrintFatura').show()"
 				update="@parent:@parent:faturaInclude" />
 		</p:panelGrid>
 	</p:dialog>
@@ -304,7 +341,8 @@ body .sideChkBox .ui-chkbox-label {
 	<p:outputPanel id="faturaInclude">
 		<ui:include src="/templates/faturaImpressao.xhtml">
 			<ui:param name="f" value="#{faturaPagtoMB.entity}" />
-			<ui:param name="show" value="#{faturaPagtoMB.showLancamentosCancelados}" />
+			<ui:param name="show"
+				value="#{faturaPagtoMB.showLancamentosCancelados}" />
 			<ui:param name="lancamentos" value="#{faturaPagtoMB.lancamentos}" />
 		</ui:include>
 	</p:outputPanel>
