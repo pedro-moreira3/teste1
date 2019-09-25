@@ -760,16 +760,16 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:commandButton icon="fa fa-minus White"
 									disabled="#{plano.finalizado || planoTratamentoMB.finalizado}"
 									actionListener="#{planoTratamentoMB.abreJustificativaRemove(plano)}"
-									process="@this"
+									process="@this" title="Cancelar"
 									update=":lume:tabView:pnlJustificativaRemoveHeader, :lume:tabView:pnlJustificativaRemove" />
 								<p:commandButton icon="fa fa-pencil" process="@this"
 									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
-									oncomplete="PF('dlgNovoProcedimento').show()"
+									oncomplete="PF('dlgNovoProcedimento').show()" title="Editar"
 									disabled="#{plano.finalizado || planoTratamentoMB.finalizado}"
 									update=":lume:tabView:pnViewPlanoTratamento, :lume:tabView:pgProcedimento, :lume:tabView:pgProcedimentoBotoes" />
 								<p:commandButton icon="fa fa-clock-o" process="@this"
 									actionListener="#{planoTratamentoMB.carregaAgendamentosProcedimento(plano)}"
-									oncomplete="PF('dlgListaAgendamentoProcedimento').show()"
+									oncomplete="PF('dlgListaAgendamentoProcedimento').show()" title="Agendamentos"
 									update=":lume:tabView:pnlListaAgendamento, :lume:tabView:pnlListaAgendamentoHeader">
 								</p:commandButton>
 							</p:column>

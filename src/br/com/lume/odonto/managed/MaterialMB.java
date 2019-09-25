@@ -1023,7 +1023,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public BigDecimal getValorTotal() {
         if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
-            valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getEstoque().getQuantidade());
+            valorTotal = this.getEntity().getValor().multiply(this.getEntity().getEstoque().getQuantidade());
         }
         return valorTotal;
     }
