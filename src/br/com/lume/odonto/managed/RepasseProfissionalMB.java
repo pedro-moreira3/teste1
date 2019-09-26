@@ -98,10 +98,6 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
         return sugestoes;
     }
 
-    public void visualizaFatura(Fatura fatura) {
-        setEntity(fatura);
-    }
-
     public int getMes() {
         return mes;
     }

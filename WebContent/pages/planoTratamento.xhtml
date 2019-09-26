@@ -769,7 +769,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									update=":lume:tabView:pnViewPlanoTratamento, :lume:tabView:pgProcedimento, :lume:tabView:pgProcedimentoBotoes" />
 								<p:commandButton icon="fa fa-clock-o" process="@this"
 									actionListener="#{planoTratamentoMB.carregaAgendamentosProcedimento(plano)}"
-									oncomplete="PF('dlgListaAgendamentoProcedimento').show()" title="Agendamentos"
+									oncomplete="PF('dlgListaAgendamentoProcedimento').show()"
+									title="Agendamentos"
 									update=":lume:tabView:pnlListaAgendamento, :lume:tabView:pnlListaAgendamentoHeader">
 								</p:commandButton>
 							</p:column>
@@ -1117,7 +1118,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				value="#{planoTratamentoMB.orcamentos}" rows="10" paginator="true"
 				paginatorPosition="bottom"
 				selection="#{planoTratamentoMB.orcamentoSelecionado}"
-				rowKey="#{orcamento}" >				
+				rowKey="#{orcamento}">
 				<f:facet name="header">
 					<h:outputText
 						value="Orçamentos do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
@@ -1328,7 +1329,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:commandButton icon="White fa fa-gear" value="Aprovar Orçamento"
 				actionListener="#{planoTratamentoMB.actionSimulaLancamento}"
 				process="@this, :lume:tabView:pnViewOrcamento"
-				update=":lume:tabView:pnViewOrcamento, :lume:tabView:buttonsDlgOrcamentoView"
+				update=":lume:tabView:pnViewOrcamento, :lume:tabView:buttonsDlgOrcamentoView, :lume:tabView:orcamentoViewTable"
 				styleClass="OrangeButton"
 				disabled="#{planoTratamentoMB.entity.finalizado == 'S' or planoTratamentoMB.orcamentoSelecionado.id == null
 					or planoTratamentoMB.orcamentoSelecionado.id == 0 or planoTratamentoMB.orcamentoSelecionado.aprovado}" />

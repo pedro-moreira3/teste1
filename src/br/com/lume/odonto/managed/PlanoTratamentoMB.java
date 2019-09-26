@@ -960,6 +960,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             orcamentoSelecionado.setQuantidadeParcelas(1);
             OrcamentoSingleton.getInstance().aprovaOrcamento(orcamentoSelecionado, null, UtilsFrontEnd.getProfissionalLogado());
             addInfo("Aprovação com " + orcamentoPerc + "% de desconto aplicado!", "");
+            carregaOrcamentos();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionPersist OrcamentoMB", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
