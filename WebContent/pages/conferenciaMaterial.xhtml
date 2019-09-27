@@ -16,8 +16,8 @@
 						<br />
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtMaterial" value="#{conferenciaMB.estoques}" var="estoque"
-							rows="6" paginator="true" selection="#{conferenciaMB.estoque}"
-							selectionMode="single" rowKey="estoque"
+							rows="6" paginator="true" 
+							 rowKey="#{conferenciaMB.estoque}"
 							paginatorPosition="bottom">
 							<p:ajax event="rowSelect" update=":lume:pnMaterial"
 								listener="#{conferenciaMB.carregaTela}" />
@@ -105,19 +105,19 @@
 							</p:column>
 
 							<h:outputLabel value="Material : " />
-							<h:outputText value="#{conferenciaMB.material.item.descricao}"
+							<h:outputText value="#{conferenciaMB.estoque.material.item.descricao}"
 								styleClass="FontItalic" />
 
 
 							<h:outputLabel value="Quantidade Atual : " />
 							<p:column>
-								<h:outputText value="#{conferenciaMB.material.estoque.quantidade}"
+								<h:outputText value="#{conferenciaMB.estoque.material.estoque.quantidade}"
 									styleClass="FontItalic">
 									<f:convertNumber />
 								</h:outputText>
 
 								<h:outputText
-									value="#{conferenciaMB.getUnidadeString(conferenciaMB.material.item)}"
+									value="#{conferenciaMB.getUnidadeString(conferenciaMB.estoque.material.item)}"
 									styleClass="unidadeMedidaString" />
 							</p:column>
 
@@ -127,7 +127,7 @@
 									value="#{conferenciaMB.conferenciaMaterial.valorAlterado}"
 									maxlength="10" onkeypress="validaNumeros(event)" />
 								<h:outputText
-									value="#{conferenciaMB.getUnidadeString(conferenciaMB.material.item)}"
+									value="#{conferenciaMB.getUnidadeString(conferenciaMB.estoque.material.item)}"
 									styleClass="unidadeMedidaString" disabled="true" />
 							</p:column>
 
@@ -153,7 +153,7 @@
 								value="Salvar" actionListener="#{conferenciaMB.actionPersist}"
 								update=":lume:pnMaterial,:lume:dtMaterial"
 								process=":lume:pnMaterial"
-								disabled="#{conferenciaMB.material.id == 0}"
+								disabled="#{conferenciaMB.estoque.material.id == 0}"
 								styleClass="GreenButton" />
 							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo"
 								actionListener="#{conferenciaMB.actionNew}"
@@ -184,23 +184,23 @@
 		</div>
 		<h:panelGroup id="pgMaterialEmprestado">
             <p:dialog widgetVar="dlgMaterialEmprestado" modal="true" width="90%">
-                    <h1>#{conferenciaMB.material.item.descricao}</h1>
+                    <h1>#{conferenciaMB.estoque.material.item.descricao}</h1>
                     <div class="SeparatorFull"></div>
                     <p:panelGrid columns="6" columnClasses="ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2" layout="grid" styleClass="ui-panelgrid-blank"
                         style="border:0px none; background-color:transparent;">
 
                         <h:outputLabel value="Quantidade Atual : " />
-                        <h:outputText value="#{conferenciaMB.material.estoque.quantidade}">
+                        <h:outputText value="#{conferenciaMB.estoque.material.estoque.quantidade}">
                             <f:convertNumber />
                         </h:outputText>
 
                         <h:outputLabel value="Quantidade Emprestada : " />
-                        <h:outputText value="#{conferenciaMB.material.quantidadeEmprestada}">
+                        <h:outputText value="#{conferenciaMB.estoque.material.quantidadeEmprestada}">
                             <f:convertNumber />
                         </h:outputText>
 
                         <h:outputLabel value="Quantidade Total : " />
-                        <h:outputText value="#{conferenciaMB.material.quantidadeDisponivelEEmprestada}">
+                        <h:outputText value="#{conferenciaMB.estoque.material.quantidadeDisponivelEEmprestada}">
                             <f:convertNumber />
                         </h:outputText>
 
