@@ -130,19 +130,30 @@ body .sideChkBox .ui-chkbox-label {
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<p:outputPanel id="pnlTrocaItemProfissional">
-					<div class="SeparatorFull"></div>
-					<p:panelGrid columns="2" layout="grid"
-						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-						<p:commandButton value="Salvar" icon="White fa fa-save"
-							actionListener="#{faturaPagtoMB.actionPersistTrocaItemProfissional}"
-							update="@parent:@parent:pnlTrocaItemProfissional, pnlfaturaView"
-							process="@this, @parent:@parent:pnlTrocaItemProfissional"
-							styleClass="GreenButton" />
-						<p:commandButton value="Fechar" icon="White fa fa-close"
-							oncomplete="PF('dlgTrocaItemProfissional').hide()"
-							styleClass="NavyButton" />
-					</p:panelGrid>
+					<p:outputLabel for="novoProfissional" value="Novo profissional: " />
+					<p:selectOneMenu id="novoProfissional"
+						value="#{planoTratamentoMB.profissionalLogado}"
+						converter="profissional" filter="true" filterMatchMode="contains">
+						<f:selectItem itemValue="#{null}"
+							itemLabel="Selecione um profissional" />
+						<f:selectItems value="#{faturaPagtoMB.profissionais}"
+							var="profissional"
+							itemLabel="#{profissional.dadosBasico.prefixoNome}"
+							itemValue="#{profissional}" />
+					</p:selectOneMenu>
 				</p:outputPanel>
+				<div class="SeparatorFull"></div>
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+					<p:commandButton value="Salvar" icon="White fa fa-save"
+						actionListener="#{faturaPagtoMB.actionPersistTrocaItemProfissional}"
+						update="@parent:@parent:pnlTrocaItemProfissional, pnlfaturaView"
+						process="@this, @parent:@parent:pnlTrocaItemProfissional"
+						styleClass="GreenButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						oncomplete="PF('dlgTrocaItemProfissional').hide()"
+						styleClass="NavyButton" />
+				</p:panelGrid>
 			</div>
 		</div>
 	</p:dialog>
@@ -261,7 +272,7 @@ body .sideChkBox .ui-chkbox-label {
 								id="lancamentosFatura">
 								<f:facet name="header">Lançamentos da Fatura</f:facet>
 								<p:column headerText="Ações" width="100" exportable="false"
-									rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
+									rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.admin}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
 										title="Cancelar lançamento" disabled="#{!l.ativo}"
 										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
@@ -321,7 +332,8 @@ body .sideChkBox .ui-chkbox-label {
 								<p:column headerText="Fatura Item" width="500"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}">
-									<h:outputText value="Referente à '#{faturaPagtoMB.buscaProcedimentoOrigemRepasse(l)}'" />
+									<h:outputText
+										value="Referente à '#{faturaPagtoMB.buscaProcedimentoOrigemRepasse(l)}'" />
 								</p:column>
 							</p:dataTable>
 

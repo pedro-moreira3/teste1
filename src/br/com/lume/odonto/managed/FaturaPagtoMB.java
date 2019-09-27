@@ -12,6 +12,7 @@ import javax.faces.bean.ViewScoped;
 
 import org.primefaces.PrimeFaces;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -29,6 +30,7 @@ import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.tarifa.TarifaSingleton;
 
@@ -49,7 +51,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private boolean showLancamentosCancelados = false;
 
     private FaturaItem itemSelecionado;
+    private List<Profissional> profissionais;
     private Profissional profissionalTroca;
+    private String observacao;
 
     //Campos para 'Novo Lançamento'
     private boolean showProduto;
@@ -75,9 +79,17 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             getListaStatus().add(Lancamento.PAGO);
             getListaStatus().add(Lancamento.PENDENTE);
             setShowLancamentosCancelados(false);
+            carregarProfissionais();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
+    }
+
+    private void carregarProfissionais() throws Exception {
+        List<String> perfis = new ArrayList<>();
+        perfis.add(OdontoPerfil.DENTISTA);
+        perfis.add(OdontoPerfil.ADMINISTRADOR);
+        profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void abreTrocaItemProfissional(FaturaItem item) {
@@ -87,7 +99,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void actionPersistTrocaItemProfissional() {
         try {
-            FaturaItemSingleton.getInstance().trocaItemRepasseProfissional(getItemSelecionado(), getProfissionalTroca(), UtilsFrontEnd.getProfissionalLogado());
+            FaturaItemSingleton.getInstance().trocaItemRepasseProfissional(getItemSelecionado(), getObservacao(), getProfissionalTroca(), UtilsFrontEnd.getProfissionalLogado());
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
             PrimeFaces.current().executeScript("PF('dlgTrocaItemProfissional').hide()");
             pesquisar();
@@ -436,6 +448,22 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setProfissionalTroca(Profissional profissionalTroca) {
         this.profissionalTroca = profissionalTroca;
+    }
+
+    public String getObservacao() {
+        return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
+    }
+
+    public List<Profissional> getProfissionais() {
+        return profissionais;
+    }
+
+    public void setProfissionais(List<Profissional> profissionais) {
+        this.profissionais = profissionais;
     }
 
 }
