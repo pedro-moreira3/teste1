@@ -122,6 +122,31 @@ body .sideChkBox .ui-chkbox-label {
 		</div>
 	</p:dialog>
 
+	<p:dialog widgetVar="dlgTrocaItemProfissional"
+		header="Alteração de Profissional" responsive="true" modal="true"
+		appendTo=":lume">
+		<p:ajax event="close" resetValues="true"
+			update="pnlTrocaItemProfissional" />
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlTrocaItemProfissional">
+					<div class="SeparatorFull"></div>
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						<p:commandButton value="Salvar" icon="White fa fa-save"
+							actionListener="#{faturaPagtoMB.actionPersistTrocaItemProfissional}"
+							update="@parent:@parent:pnlTrocaItemProfissional, pnlfaturaView"
+							process="@this, @parent:@parent:pnlTrocaItemProfissional"
+							styleClass="GreenButton" />
+						<p:commandButton value="Fechar" icon="White fa fa-close"
+							oncomplete="PF('dlgTrocaItemProfissional').hide()"
+							styleClass="NavyButton" />
+					</p:panelGrid>
+				</p:outputPanel>
+			</div>
+		</div>
+	</p:dialog>
+
 	<p:dialog id="faturaView" appendTo=":lume" widgetVar="dlgFaturaView"
 		responsive="true" modal="true"
 		onHide="PF('dlgFaturaView').toggleMaximize();"
@@ -143,9 +168,21 @@ body .sideChkBox .ui-chkbox-label {
 							<p:panelGrid columns="4" layout="grid"
 								columnClasses="ui-g-2, ui-g-4, ui-g-2, ui-g-4"
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
-								<h:outputText for="paciente" value="Paciente:" />
-								<p:inputText id="paciente"
+								<h:outputText
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}"
+									for="paciente" value="Paciente:" />
+								<p:inputText
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}"
+									id="paciente"
 									value="#{faturaPagtoMB.entity.paciente.dadosBasico.nome}"
+									readonly="true" />
+								<h:outputText
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}"
+									for="profissionalDonoFatura" value="Profissional:" />
+								<p:inputText
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}"
+									id="profissionalDonoFatura"
+									value="#{faturaPagtoMB.entity.profissional.dadosBasico.nome}"
 									readonly="true" />
 								<p:column />
 								<p:column />
@@ -181,6 +218,16 @@ body .sideChkBox .ui-chkbox-label {
 								value="#{faturaPagtoMB.entity.itens}" var="fi" rows="20"
 								paginator="true" rowKey="#{fi}" paginatorPosition="bottom">
 								<f:facet name="header">Itens</f:facet>
+
+								<p:column headerText="Ações" width="100" exportable="false"
+									rendered="#{repasseProfissional != null and repasseProfissional == 'S'}">
+									<p:commandButton styleClass="RedButton" icon="fa fa-exchange"
+										title="Trocar Profissional" update=""
+										actionListener="#{faturaPagtoMB.abreTrocaItemProfissional(l)}"
+										process="@this">
+									</p:commandButton>
+								</p:column>
+
 								<p:column sortBy="#{fi.descricaoItem}"
 									filterMatchMode="contains" filterBy="#{fi.descricaoItem}"
 									headerText="Descrição">
@@ -199,7 +246,8 @@ body .sideChkBox .ui-chkbox-label {
 								</p:column>
 							</p:dataTable>
 							<p:separator styleClass="SeparatorFull" />
-							<p:panel>
+							<p:panel
+								rendered="#{repasseProfissional == null or repasseProfissional == 'N'}">
 								<p:selectBooleanCheckbox styleClass="sideChkBox"
 									itemLabel="Mostrar lançamentos cancelados."
 									value="#{faturaPagtoMB.showLancamentosCancelados}">
@@ -267,8 +315,13 @@ body .sideChkBox .ui-chkbox-label {
 								</p:column>
 								<p:column headerText="Status" sortBy="#{l.status}" width="200"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
-									filterMatchMode="containe" filterBy="#{l.status}">
+									filterMatchMode="contains" filterBy="#{l.status}">
 									<h:outputText value="#{l.status}" />
+								</p:column>
+								<p:column headerText="Fatura Item" width="500"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}"
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}">
+									<h:outputText value="Referente à '#{faturaPagtoMB.buscaProcedimentoOrigemRepasse(l)}'" />
 								</p:column>
 							</p:dataTable>
 
@@ -279,9 +332,6 @@ body .sideChkBox .ui-chkbox-label {
 		</p:outputPanel>
 		<p:panelGrid columns="4" layout="grid" id="buttonViewFatura"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton value="Fechar" icon="fa fa-close"
-				styleClass="NavyButton" onclick="PF('dlgFaturaView').hide()"
-				process="@this" />
 			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
 				process="@this" update="pnlNewLancamento" styleClass="OrangeButton"
 				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
@@ -289,8 +339,15 @@ body .sideChkBox .ui-chkbox-label {
 				actionListener="#{faturaPagtoMB.actionNewLancamento}"
 				oncomplete="PF('dlgNewLancamento').show()" />
 			<p:commandButton value="Visualizar Impressão" icon="fa fa-print"
-				styleClass="NavyButton" process="@this" oncomplete="PF('dlgPrintFatura').show()"
+				styleClass="NavyButton" process="@this"
+				oncomplete="PF('dlgPrintFatura').show()"
 				update="@parent:@parent:faturaInclude" />
+			<p:column
+				rendered="#{showNewLancamento == null or showNewLancamento != 'S'}" />
+			<p:column />
+			<p:commandButton value="Fechar" icon="fa fa-close"
+				styleClass="NavyButton" onclick="PF('dlgFaturaView').hide()"
+				process="@this" />
 		</p:panelGrid>
 	</p:dialog>
 
@@ -304,7 +361,8 @@ body .sideChkBox .ui-chkbox-label {
 	<p:outputPanel id="faturaInclude">
 		<ui:include src="/templates/faturaImpressao.xhtml">
 			<ui:param name="f" value="#{faturaPagtoMB.entity}" />
-			<ui:param name="show" value="#{faturaPagtoMB.showLancamentosCancelados}" />
+			<ui:param name="show"
+				value="#{faturaPagtoMB.showLancamentosCancelados}" />
 			<ui:param name="lancamentos" value="#{faturaPagtoMB.lancamentos}" />
 		</ui:include>
 	</p:outputPanel>

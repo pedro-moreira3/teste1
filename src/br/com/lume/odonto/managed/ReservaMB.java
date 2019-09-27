@@ -239,7 +239,9 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     }
 
     public void carregarEditar(Reserva reserva) {
-        setEntity(reserva);      
+        setEntity(reserva);  
+        this.setReservaKits(new ArrayList<ReservaKit>());
+        this.getReservaKits().addAll(reserva.getReservaKits());
     } 
     
     public void carregarEditarItem(ReservaKit reservaKit) {
