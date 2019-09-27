@@ -355,7 +355,7 @@
 						<p:commandButton id="novoPaciente"
 							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
 							icon="fa fa-plus White" title="Novo Paciente"
-							update="pnNovoPaciente, :lume:pnBtpaciente" immediate="true"
+							update=":lume:pnNovoPaciente, :lume:pnBtpaciente" immediate="true"
 							actionListener="#{agendamentoMB.novoPaciente}" />
 						<p:commandButton id="cancelarNovoPaciente"
 							rendered="#{agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
@@ -409,10 +409,11 @@
 					<p:separator styleClass="SeparatorFull" />
 					<div class="Container25 Responsive100 Fnone">
 						<p:commandButton id="persistPaciente" icon="White fa fa-save"
-							process="pnAgendamento" value="Salvar"
+							process="@this,:lume:pnNovoPaciente" value="Salvar"
 							update=":lume:pnNovoPaciente, :lume:paciente, :lume:planoTratamento, :lume:procedimentos, :lume:pnConflito"
-							actionListener="#{agendamentoMB.actionPersistPacienteVerificaConflito}"
-							styleClass="GreenButton" />
+							actionListener="#{agendamentoMB.actionPersistPacienteVerificaConflito}" oncomplete="PF()"
+							styleClass="GreenButton">
+						</p:commandButton>
 					</div>
 				</p:panel>
 			</p:panelGrid>

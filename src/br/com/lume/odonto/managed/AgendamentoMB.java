@@ -316,6 +316,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.actionNew(null);
         // profissional = null;
         profissionalDentroAgenda = null;
+        visivel = false;
     }
 
     @Override
@@ -1018,8 +1019,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             }
             PacienteSingleton.getInstance().getBo().persist(paciente);
             PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().persistPlano(paciente, UtilsFrontEnd.getProfissionalLogado());
+            
+            pacienteSelecionado = paciente;
+            this.getEntity().setPaciente(paciente);
             if (pt != null) {
-                pacienteSelecionado = paciente;
                 planoTratamentos = new ArrayList<>();
                 planoTratamentos.add(pt);
                 planoTratamentoSelecionado = pt;
@@ -1027,7 +1030,6 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             visivel = false;
             pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            pacienteSelecionado = paciente;
             paciente = new Paciente();
         } catch (TelefoneException te) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "");
