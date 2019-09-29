@@ -13,34 +13,35 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.UtilsFrontEnd;
-import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.RelatorioRecebimento;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.relatorioRecebimento.RelatorioRecebimentoSingleton;
 
 @ManagedBean
 @ViewScoped
-public class RelatorioLancamentoMB extends LumeManagedBean<Lancamento> {
+public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento> {
 
     private static final long serialVersionUID = 1L;
 
-    private Logger log = Logger.getLogger(LancamentoMB.class);
+    private Logger log = Logger.getLogger(RelatorioRecebimentoMB.class);
 
-    private List<Lancamento> Lancamentos = new ArrayList<>();
+   // private List<Lancamento> Lancamentos = new ArrayList<>();
+    
+    private List<RelatorioRecebimento> Lancamentos = new ArrayList<>();
 
     private Date inicio, fim;
 
     private String status;
 
-    private BigDecimal somaValor = new BigDecimal(0);
-
-   
+    private BigDecimal somaValor = new BigDecimal(0);   
 
     public final List<String> statuss;
 
-    public RelatorioLancamentoMB() {
-        super(LancamentoSingleton.getInstance().getBo());
+    public RelatorioRecebimentoMB() {
+        super(RelatorioRecebimentoSingleton.getInstance().getBo());
       
-        this.setClazz(Lancamento.class);
+        this.setClazz(RelatorioRecebimento.class);
         this.statuss = new ArrayList<>();
         this.statuss.add(Lancamento.AGENDADO);
         this.statuss.add(Lancamento.ATIVO);
@@ -57,9 +58,10 @@ public class RelatorioLancamentoMB extends LumeManagedBean<Lancamento> {
                 if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
                     this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
                 } else {
-                    this.Lancamentos = LancamentoSingleton.getInstance().getBo().listAllByPeriodoAndStatus(this.inicio, this.fim, this.status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                 //   this.Lancamentos = LancamentoSingleton.getInstance().getBo().listAllByPeriodoAndStatus(this.inicio, this.fim, this.status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                    this.Lancamentos = RelatorioRecebimentoSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), status, inicio, fim);
                     this.somaValor = new BigDecimal(0);
-                    for (Lancamento l : this.Lancamentos) {
+                    for (RelatorioRecebimento l : this.Lancamentos) {
                         this.somaValor = this.somaValor.add(l.getValor()).setScale(2, BigDecimal.ROUND_HALF_UP);
                     }
                     if (this.Lancamentos == null || this.Lancamentos.isEmpty()) {
@@ -97,11 +99,11 @@ public class RelatorioLancamentoMB extends LumeManagedBean<Lancamento> {
         this.fim = fim;
     }
 
-    public List<Lancamento> getLancamentos() {
+    public List<RelatorioRecebimento> getLancamentos() {
         return this.Lancamentos;
     }
 
-    public void setLancamentos(List<Lancamento> lancamentos) {
+    public void setLancamentos(List<RelatorioRecebimento> lancamentos) {
         this.Lancamentos = lancamentos;
     }
 
