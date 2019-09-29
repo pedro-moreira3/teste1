@@ -12,8 +12,8 @@
                         <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
                             style="border:0px none; background-color:transparent;">
                             <p:outputLabel for="profissional" value="Profissional : " />
-                            <p:autoComplete dropdown="true" queryDelay="1000" size="35" value="#{relatorioBalancoMB.profissional}" id="profissional" minQueryLength="3"
-                                completeMethod="#{relatorioBalancoMB.geraSugestoesProfissional}" var="profissional" itemLabel="#{profissional.dadosBasico.prefixoNome}" itemValue="#{profissional}"
+                            <p:autoComplete dropdown="true" queryDelay="1000" size="35" value="#{relatorioRepasseMB.profissional}" id="profissional" minQueryLength="3"
+                                completeMethod="#{relatorioRepasseMB.geraSugestoesProfissional}" var="profissional" itemLabel="#{profissional.dadosBasico.prefixoNome}" itemValue="#{profissional}"
                                 converter="profissional" forceSelection="true" required="true">
                             </p:autoComplete>
 
@@ -21,120 +21,121 @@
                             <p:column></p:column>
 
                             <p:outputLabel for="inicio" value="Inicio : " />
-                            <p:calendar id="inicio" value="#{relatorioBalancoMB.inicio}" pattern="dd/MM/yyyy" mask="true" required="true" />
+                            <p:calendar id="inicio" value="#{relatorioRepasseMB.inicio}" pattern="dd/MM/yyyy" mask="true" required="true" />
 
                             <p:outputLabel for="fim" value="Fim : " />
-                            <p:calendar id="fim" value="#{relatorioBalancoMB.fim}" pattern="dd/MM/yyyy" mask="true" required="true" />
+                            <p:calendar id="fim" value="#{relatorioRepasseMB.fim}" pattern="dd/MM/yyyy" mask="true" required="true" />
 
                             <p:outputLabel for="statusPagamento" value="Status : " />
-                            <p:selectOneMenu id="statusPagamento" value="#{relatorioBalancoMB.statusPagamento}">
-                                <f:selectItem itemValue="P" itemLabel="Pago Completo" />
-                                <f:selectItem itemValue="L" itemLabel="Pago Parcial" />
+                            <p:selectOneMenu id="statusPagamento" value="#{relatorioRepasseMB.statusPagamento}">
+                                <f:selectItem itemValue="PG" itemLabel="Pago Completo" />
+                                <f:selectItem itemValue="PC" itemLabel="Pago Parcial" />
+                                 <f:selectItem itemValue="PP" itemLabel="Pagamento Pendente" />
                             </p:selectOneMenu>
 
                         </p:panelGrid>
                         <div class="SeparatorFull"></div>
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-                            <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioBalancoMB.actionCarregarProcedimentos}"
-                                update="dtPlanoTratamentoProcedimentos" tabindex="1" process="@this,pnPrincipal" styleClass="OrangeButton" />
-                            <p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioBalancoMB.actionLimpar}"
-                                update="dtPlanoTratamentoProcedimentos, profissional, inicio, fim" process="@this" immediate="true" tabindex="1" />
+                            <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioRepasseMB.actionCarregarProcedimentos}"
+                                update="dtRelatorio" tabindex="1" process="@this,pnPrincipal" styleClass="OrangeButton" />
+                            <p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioRepasseMB.actionLimpar}"
+                                update="dtRelatorio, profissional, inicio, fim" process="@this" immediate="true" tabindex="1" />
                         </p:panelGrid>
                     </p:outputPanel>
 
                     <div class="EmptyBox20"></div>
 
 
-                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPlanoTratamentoProcedimentos" value="#{relatorioBalancoMB.planoTratamentoProcedimentos}" var="ptp" rows="50" paginator="true"
+                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtRelatorio" value="#{relatorioRepasseMB.relatorio}" var="rel" rows="50" paginator="true"
                         paginatorPosition="bottom">
                         <f:facet name="header">Procedimentos</f:facet>
 
 
 
-                        <p:column sortBy="#{ptp.planoTratamento.descricao}" filterBy="#{ptp.planoTratamento.descricao}" filterMatchMode="contains">
+                        <p:column sortBy="#{rel.descricaoPlanoTratamento}" filterBy="#{rel.descricaoPlanoTratamento}" filterMatchMode="contains">
                             <f:facet name="header">
                                 <h:outputText value="Plano de Tratamento" />
                             </f:facet>
-                            <h:outputText value="#{ptp.planoTratamento.descricao}" title="#{ptp.id}" />
+                            <h:outputText value="#{rel.descricaoPlanoTratamento}" title="#{rel.id}" />
                         </p:column>
 
-                        <p:column sortBy="#{ptp.descricaoCompleta}" filterBy="#{ptp.descricaoCompleta}" filterMatchMode="contains">
+                        <p:column sortBy="#{rel.descricaoProcedimento}" filterBy="#{rel.descricaoProcedimento}" filterMatchMode="contains">
                             <f:facet name="header">
                                 <h:outputText value="Procedimento" />
                             </f:facet>
-                            <h:outputText value="#{ptp.descricaoCompleta}" title="#{ptp.id}" />
+                            <h:outputText value="#{rel.descricaoProcedimento}" title="#{rel.id}" />
                         </p:column>
 
-                        <p:column sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}" filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}" filterMatchMode="contains">
+                        <p:column sortBy="#{rel.pacienteNome}" filterBy="#{rel.pacienteNome}" filterMatchMode="contains">
                             <f:facet name="header">
                                 <h:outputText value="Paciente" />
                             </f:facet>
-                            <h:outputText value="#{ptp.planoTratamento.paciente.dadosBasico.nome}" />
+                            <h:outputText value="#{rel.pacienteNome}" />
                         </p:column>
 
-                        <p:column sortBy="#{ptp.valorCalc}">
+                        <p:column sortBy="#{rel.valor}">
                             <f:facet name="header">
                                 <h:outputText value="Valor " />
                             </f:facet>
-                            <h:outputText value="#{ptp.valorCalc}">
+                            <h:outputText value="#{rel.valor}">
                                 <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
                             </h:outputText>
 
                         </p:column>
-                        <p:column sortBy="#{ptp.custoCalc}">
+                        <p:column sortBy="#{rel.custo}">
                             <f:facet name="header">
                                 <h:outputText value="Custo" />
                             </f:facet>
-                            <h:outputText value="#{ptp.custoCalc}">
+                            <h:outputText value="#{rel.custo}">
                                 <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
                             </h:outputText>
                         </p:column>
-                        <p:column sortBy="#{ptp.percentualCalc}">
+                        <p:column sortBy="#{rel.percentualRemuneracaoProfissional}">
                             <f:facet name="header">
                                 <h:outputText value="Remuneração" />
                             </f:facet>
-                            <h:outputText value="#{ptp.percentualCalc}%" />
+                            <h:outputText value="#{rel.percentualRemuneracaoProfissional}%" />
                         </p:column>
-                        <p:column sortBy="#{ptp.tributoCalc}">
+                        <p:column sortBy="#{rel.tributo}">
                             <f:facet name="header">
                                 <h:outputText value="Tributo" />
                             </f:facet>
-                            <h:outputText value="#{ptp.tributoCalc}">
+                            <h:outputText value="#{rel.tributo}">
                                 <f:convertNumber currencySymbol="" type="currency" locale="#{lumeSecurity.locale}" />
                             </h:outputText>
                             <h:outputText value="%" />
                         </p:column>
-                        <p:column sortBy="#{ptp.valorRepasse}">
+                        <p:column sortBy="#{rel.valorRepassar}">
                             <f:facet name="header">
                                 <h:outputText value="Valor Profissional" />
                             </f:facet>
-                            <h:outputText value="#{ptp.valorRepasse}">
+                            <h:outputText value="#{rel.valorRepassar}">
                                 <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
                             </h:outputText>
 
                         </p:column>
-                        <p:column sortBy="#{ptp.valorRepassado}">
+                        <p:column sortBy="#{rel.valorRepassado}">
                             <f:facet name="header">
                                 <h:outputText value="Valor Repassado" />
                             </f:facet>
-                            <h:outputText value="#{ptp.valorRepassado}">
+                            <h:outputText value="#{rel.valorRepassado}">
                                 <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
                             </h:outputText>
                             <f:facet name="footer">
-                                <h:outputText value="#{relatorioBalancoMB.planoTratamentoProcedimentos.stream().map(ptp-> ptp.valorRepassado).sum()}">
+                                <h:outputText value="#{relatorioRepasseMB.relatorio.stream().map(rel-> rel.valorRepassado).sum()}">
                                     <f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
                                 </h:outputText>
                             </f:facet>
                         </p:column>
-                        <p:column sortBy="#{ptp.valorRestante}">
+                        <p:column sortBy="#{rel.debitoRepasse}">
                             <f:facet name="header">
                                 <h:outputText value="Débito" />
                             </f:facet>
-                            <h:outputText value="#{ptp.valorRestante}">
+                            <h:outputText value="#{rel.debitoRepasse}">
                                 <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
                             </h:outputText>
                             <f:facet name="footer">
-                                <h:outputText value="#{relatorioBalancoMB.planoTratamentoProcedimentos.stream().map(ptp-> ptp.valorRestante).sum()}">
+                                <h:outputText value="#{relatorioRepasseMB.relatorio.stream().map(rel-> rel.debitoRepasse).sum()}">
                                     <f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
                                 </h:outputText>
                             </f:facet>
