@@ -20,8 +20,7 @@
 							<p:calendar id="fim" value="#{relatorioRecebimentoMB.fim}" autocomplete="off" pattern="dd/MM/yyyy" mask="true" required="true" />
 
 							<p:outputLabel for="status" value="Status : " />
-							<p:selectOneMenu id="status" value="#{relatorioRecebimentoMB.status}">
-								<f:selectItem itemLabel="Todos" itemValue="T" />
+							<p:selectOneMenu id="status" value="#{relatorioRecebimentoMB.status}">							
 								<f:selectItems value="#{relatorioRecebimentoMB.statuss}" var="status" itemLabel="#{status}" itemValue="#{status}" />
 							</p:selectOneMenu>
 
