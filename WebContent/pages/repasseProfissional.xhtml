@@ -15,6 +15,9 @@
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 
+					<p:remoteCommand name="pesquisarFaturasRepasse" global="true"
+						actionListener="#{repasseProfissionalMB.pesquisar}" oncomplete="PF('dtPrincipal').filter()"
+						update=":lume:dtPrincipal" process="@this, :lume:pnPrincipal" />
 					<p:outputPanel widgetvar="pnPrincipal" id="pnPrincipal"
 						styleClass="BordNone">
 						<h1>Repasse dos Profissionais</h1>
@@ -66,12 +69,8 @@
 							<p:panelGrid columns="1" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid">
 								<p:commandButton id="pesquisar" icon="White fa fa-search"
-									value="Pesquisar"
-									actionListener="#{repasseProfissionalMB.pesquisar}"
-									update="@this, :lume:dtPrincipal" tabindex="1"
-									process="@this, :lume:pnPrincipal"
-									oncomplete="PF('dtPrincipal').filter()"
-									styleClass="OrangeButton" />
+									value="Pesquisar" styleClass="OrangeButton"
+									oncomplete="pesquisarFaturasRepasse()" />
 							</p:panelGrid>
 						</p:fieldset>
 
@@ -82,8 +81,10 @@
 							<f:facet name="header">Faturas</f:facet>
 							<p:column width="120" headerText="Detalhes">
 								<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
-									title="Visualizar Fatura" oncomplete="PF('dlgFaturaView').show();"
-									actionListener="#{faturaPagtoMB.visualizaFatura(f)}" process="@this"
+									title="Visualizar Fatura"
+									oncomplete="PF('dlgFaturaView').show();"
+									actionListener="#{faturaPagtoMB.visualizaFatura(f)}"
+									process="@this"
 									update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 							</p:column>
 							<p:column filterBy="#{f.paciente.dadosBasico.nomeStr}"
@@ -135,7 +136,7 @@
 
 		<script type="text/javascript">
 			//<![CDATA[
-				
+
 			//]]>
 		</script>
 	</ui:define>

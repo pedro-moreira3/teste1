@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.inject.Inject;
 
 import org.primefaces.PrimeFaces;
 
@@ -18,7 +19,6 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
-import br.com.lume.faturamento.FaturaItemSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Dominio;
@@ -31,6 +31,7 @@ import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.tarifa.TarifaSingleton;
 
@@ -64,6 +65,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private List<Tarifa> tarifas = new ArrayList<>();
     private List<Integer> parcelas;
     private Integer parcela;
+
+    //FIXME - corrigir deixando mais bonito
+    @Inject
+    RepasseProfissionalMB repasseProfissionalMB;
 
     public FaturaPagtoMB() {
         super(FaturaSingleton.getInstance().getBo());
@@ -99,10 +104,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void actionPersistTrocaItemProfissional() {
         try {
-            FaturaItemSingleton.getInstance().trocaItemRepasseProfissional(getItemSelecionado(), getObservacao(), getProfissionalTroca(), UtilsFrontEnd.getProfissionalLogado());
+            RepasseFaturasItemSingleton.getInstance().trocaItemRepasseProfissional(getItemSelecionado(), getObservacao(), getProfissionalTroca(), UtilsFrontEnd.getProfissionalLogado());
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
             PrimeFaces.current().executeScript("PF('dlgTrocaItemProfissional').hide()");
-            pesquisar();
+
+            if (getEntity().getItensFiltered() == null || getEntity().getItensFiltered().isEmpty())
+                PrimeFaces.current().executeScript("PF('dlgFaturaView').hide()");
+
+            this.addInfo("Sucesso", "Troca realizada com sucesso, verifique a nova fatura em nome de " + getProfissionalTroca().getDadosBasico().getNome() + "!");
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Falha ao realizar a troca de profissionais!", true);
@@ -464,6 +473,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setProfissionais(List<Profissional> profissionais) {
         this.profissionais = profissionais;
+    }
+
+    public RepasseProfissionalMB getRepasseProfissionalMB() {
+        return repasseProfissionalMB;
+    }
+
+    public void setRepasseProfissionalMB(RepasseProfissionalMB repasseProfissionalMB) {
+        this.repasseProfissionalMB = repasseProfissionalMB;
     }
 
 }
