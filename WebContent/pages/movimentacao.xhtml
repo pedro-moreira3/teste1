@@ -53,10 +53,10 @@
 								<h:outputText value="#{material.dataValidadeStr}" />
 							</p:column>
 
-							<p:column filterBy="#{material.local.descricao}"
-								sortBy="#{material.local.descricao}" filterMatchMode="contains"
+							<p:column filterBy="#{material.estoque.local.descricao}"
+								sortBy="#{material.estoque.local.descricao}" filterMatchMode="contains"
 								headerText="Local">
-								<h:outputText value="#{material.local.descricao}" />
+								<h:outputText value="#{material.estoque.local.descricao}" />
 							</p:column>
 
 						</p:dataTable>
@@ -71,7 +71,7 @@
 
 							<h:outputLabel value="Local Origem: " />
 							<h:outputLabel id="localOrigem"
-								value="#{materialMB.entity.local.descricao}" />
+								value="#{materialMB.entity.estoque.local.descricao}" />
 
 							<h:outputLabel value="Local Destino: " />
 							<p:column>

@@ -1,0 +1,347 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<style>
+.ui-picklist .ui-picklist-list {
+	height: 100px;
+}
+
+.fc-time-grid-container {
+	height: auto !important;
+}
+
+.ui-growl {
+	z-index: 999999 !important;
+}
+
+.ui-dialog {
+	overflow: auto !important;
+}
+
+div.ui-selectoneradio label {
+	width: auto !important;
+}
+
+.labelInlineParent {
+	padding-top: 0px !important;
+	padding-bottom: 20px !important;
+}
+
+.labelInline label {
+	display: inline !important;
+}
+
+.ui-dialog {
+	overflow: auto !important;
+}
+
+.ui-picklist .ui-picklist-list {
+	height: 100px;
+}
+
+.fc-time-grid-container {
+	height: auto !important;
+}
+
+.ui-growl {
+	z-index: 999999 !important;
+}
+
+div.ui-selectoneradio label {
+	width: auto !important;
+}
+
+.fc-time-grid-event>.fc-content {
+	text-align: left !important;
+}
+
+.fc-toolbar {
+	padding: 0 !important;
+}
+
+.fc .fc-left, .fc .fc-left .fc-button-group, .fc .fc-right .fc-button-group
+	{
+	display: inline-flex !important;
+}
+
+.fc .fc-right .fc-button-group button {
+	width: 100px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell {
+	padding: 0px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:first-child {
+	padding-right: 7px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:last-child {
+	padding-left: 7px !important;
+}
+
+.removeSecondPadding>.ui-panelgrid-content .ui-grid-row .ui-panelgrid-cell:nth-child(1)
+	{
+	padding-top: 0px !important;
+}
+
+.ui-selectmanycheckbox tr td {
+	position: relative;
+	display: inline-flex !important;
+	width: 238px !important
+}
+
+.ui-selectmanycheckbox tr td>div>div:last-child {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.ui-selectmanycheckbox tr td label {
+	position: relative;
+	display: inline-flex !important;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child {
+	position: relative;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child div {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.NoChildPadding>div {
+	padding: 0px !important;
+}
+
+.ui-fluid .ui-buttonset.ui-buttonset-3 .ui-button {
+	width: 33.3% !important;
+}
+
+.ggl-tooltip {
+	background-color: #ffffff;
+	border: 1px solid #e0e0e0;
+	font-family: Arial, Helvetica;
+	font-size: 14px;
+	padding: 8px;
+}
+
+.ggl-tooltip span {
+	font-weight: bold;
+}
+
+.chartCadeiras>div, .chartProfissionais>div {
+	max-width: 100%;
+	overflow: auto;
+	overflow-y: hidden;
+}
+</style>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
+
+						<h1>Relatório de Faturas</h1>
+
+						<p:separator styleClass="SeparatorFull" />
+
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodo"
+									value="Período de criação:" />
+								<p:selectOneMenu id="filtroPeriodo"
+									value="#{relatorioFaturaMB.filtroPeriodo}">
+									<p:ajax process="@this" update="@form"
+										listener="#{relatorioFaturaMB.actionTrocaDatasCriacao}" />
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="O" itemLabel="Ontem" />
+									<f:selectItem itemValue="H" itemLabel="Hoje" />
+									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="inicio" value="Data de criação de:" />
+								<p:calendar id="inicio"
+									value="#{relatorioFaturaMB.inicio}" />
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="fim" value="Data de criação até:" />
+								<p:calendar id="fim" value="#{relatorioFaturaMB.fim}" />
+							</h:panelGroup>
+						</p:panelGrid>
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup>
+								<h:outputText for="filtroPaciente" value="Paciente:" />
+								<p:autoComplete id="filtroPaciente"
+									value="#{relatorioFaturaMB.paciente}"
+									completeMethod="#{relatorioFaturaMB.sugestoesPacientes}"
+									var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+									converter="paciente" forceSelection="true" scrollHeight="400"
+									minQueryLength="3">
+
+									<p:column headerText="Nome">
+										<h:outputText value="#{p.dadosBasico.nome}" />
+									</p:column>
+									<p:column headerText="Celular">
+										<h:outputText value="#{p.dadosBasico.celular}" />
+									</p:column>
+									<p:column headerText="Nome da Mãe">
+										<h:outputText value="#{p.nomeMae}" />
+									</p:column>
+
+								</p:autoComplete>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="filtroProfissional" value="Profissional:" />
+								<p:autoComplete id="filtroProfissional"
+									value="#{relatorioFaturaMB.profissional}"
+									completeMethod="#{relatorioFaturaMB.sugestoesProfissionais}"
+									var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+									converter="profissional" forceSelection="true"
+									scrollHeight="400">
+								</p:autoComplete>
+							</h:panelGroup>
+						</p:panelGrid>
+
+
+						<p:panelGrid id="filtro" columns="2"
+							columnClasses="ui-grid-col-12" layout="grid"
+							styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+							<h:panelGroup>
+								<p:outputLabel value="Tipo da Fatura : " />
+								<p:selectOneRadio value="#{relatorioFaturaMB.tipoFatura}">
+									<f:selectItem itemValue="" itemLabel="Todos" />
+									<f:selectItem itemValue="RP" itemLabel="Recebimento de paciente" />
+									<f:selectItem itemValue="PP" itemLabel="Pagamento de profissional" />
+								</p:selectOneRadio>
+							</h:panelGroup>
+						</p:panelGrid>
+
+						<div class="EmptyBox5"></div>
+
+						<div class="SeparatorFull"></div>
+
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<p:commandButton id="pesquisar" icon="fa fa-search White"
+								value="Pesquisar"
+								actionListener="#{relatorioFaturaMB.actionFiltrar}"
+								update="dtPrincipal" tabindex="1" process="@this,pnPrincipal"
+								styleClass="OrangeButton" />
+							<p:commandButton id="new" icon="White fa fa-file-o"
+								value="Limpar"
+								actionListener="#{relatorioFaturaMB.actionNew}"
+								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1" />
+							<p:commandButton immediate="true" value="Excel" ajax="false"
+								icon="White fa fa-file-excel-o" styleClass="GreenButton">
+								<p:dataExporter encoding="iso-8859-1" type="xls"
+									target="dtPrincipal" fileName="planoTratamento" />
+							</p:commandButton>
+						</p:panelGrid>
+
+						<div class="EmptyBox20"></div>
+
+
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							id="dtPrincipal"
+							value="#{relatorioFaturaMB.faturas}" var="m"
+							rows="20" paginator="true" rowKey="#{m}"
+							paginatorPosition="bottom">
+							<f:facet name="header">Faturas</f:facet>
+							<p:column filterBy="#{m.tipoFaturaStr}"
+								sortBy="#{m.tipoFaturaStr}"
+								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
+								filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Tipo da fatura" />
+								</f:facet>
+								<h:outputText value="#{m.tipoFaturaStr}"
+									/>
+							</p:column>								
+							<p:column filterBy="#{m.pacienteNome}"
+								sortBy="#{m.pacienteNome}"
+								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
+								filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Paciente" />
+								</f:facet>
+								<h:outputText value="#{m.pacienteNome}"
+									/>
+							</p:column>							
+							<p:column filterBy="#{m.profissionalNome}"
+								sortBy="#{m.profissionalNome}"
+								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
+								filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Profissional" />
+								</f:facet>
+								<h:outputText value="#{m.profissionalNome}"
+									/>
+							</p:column>
+							<p:column filterBy="#{m.descricaoPlanoTratamento}" sortBy="#{m.descricaoPlanoTratamento}"
+								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
+								filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Plano de Tratamento" />
+								</f:facet>
+								<h:outputText value="#{m.descricaoPlanoTratamento}" />
+							</p:column>
+							<p:column filterBy="#{m.dataCriacaoStr}"
+								sortBy="#{m.dataCriacaoStr}" filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Data de criação" />
+								</f:facet>
+								<h:outputText value="#{m.dataCriacaoStr}" />
+							</p:column>							
+							<p:column filterBy="#{m.valor}" sortBy="#{m.valor}"
+								filterMatchMode="contains" style="text-align:right">
+								<f:facet name="header">
+									<h:outputText value="Valor" />
+								</f:facet>
+								<h:outputText value="#{m.valor}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
+								</h:outputText>
+							</p:column>
+							<p:column filterBy="#{m.valorComDesconto}"
+								sortBy="#{m.valorComDesconto}" filterMatchMode="contains"
+								style="text-align:right">
+								<f:facet name="header">
+									<h:outputText value="Valor com desconto" />
+								</f:facet>
+								<h:outputText value="#{m.valorComDesconto}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+					</p:outputPanel>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			function handleDialogRequest(xhr, tipoFatura, args) {
+				if (args.justificativa == true) {
+					PF('devolver').hide();
+					carregarDados();
+				}
+			}
+		</script>
+	</ui:define>
+</ui:composition>

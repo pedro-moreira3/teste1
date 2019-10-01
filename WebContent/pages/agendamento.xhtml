@@ -351,12 +351,30 @@ div.ui-selectoneradio label {
 										</h:panelGroup>
 									</p:outputPanel>
 									<p:outputPanel>
+									
 										<h:outputLabel value="Mostrar os agendamentos : " />
+									
+										<br />
+										
+										<h:panelGroup style="display:block;margin-left:3px;">
+											<p:selectBooleanCheckbox id="checkFiltro"
+												value="#{agendamentoMB.checkFiltro}">
+												<p:ajax event="change" process="@this,:lume:dadosFiltroAg"
+													update=":lume:schedule,:lume:dadosFiltroAg" oncomplete="atualizaGraficos();"
+													listener="#{agendamentoMB.marcarFiltros}" />
+											</p:selectBooleanCheckbox>
+											<p:outputLabel for="checkFiltro" value="Marcar todos" />
+										</h:panelGroup>
+										
+										<br />
+
 										<p:selectManyCheckbox
 											value="#{agendamentoMB.filtroAgendamento}" layout="grid"
 											columns="4">
-											<p:ajax process="@this" update=":lume:schedule"
+											
+											<p:ajax process="@this" update=":lume:schedule,:lume:dadosFiltroAg"
 												oncomplete="atualizaGraficos();" />
+												
 											<f:selectItem
 												itemLabel="&lt;div&gt;&lt;div class='agendamentoAfastamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Bloqueio&lt;/div&gt;"
 												itemValue="F" itemEscaped="false" />

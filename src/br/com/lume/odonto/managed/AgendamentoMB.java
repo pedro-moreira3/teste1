@@ -173,6 +173,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     //S - Scheduler, C - Cadeiras, P - Profissional
     private String visualizacao = "S";
+    
+    private boolean checkFiltro = false;
 
     public AgendamentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
@@ -550,7 +552,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                 dlg = false;
                             }
                         } else {
-                            this.addError(OdontoMensagens.getMensagem("agendamento.paciente.horamarcada"), "");
+                            this.addError(OdontoMensagens.getMensagem("agendamento.paciente.horamarcada"), "",true);
                             dlg = false;
                         }
 //                        } else {
@@ -558,11 +560,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            dlg = false;
 //                        }
                     } else {
-                        this.addError(OdontoMensagens.getMensagem("agendamento.intervalo.incorreto"), "");
+                        this.addError(OdontoMensagens.getMensagem("agendamento.intervalo.incorreto"), "",true);
                         dlg = false;
                     }
                 } else {
-                    this.addError(OdontoMensagens.getMensagem("agendamento.paciente.obrigatorio"), "");
+                    this.addError(OdontoMensagens.getMensagem("agendamento.paciente.obrigatorio"), "",true);
                     dlg = false;
                 }
             } else {
@@ -1215,6 +1217,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         atualizaCadeiraSelecionada();
         validaHoraUtilProfissional();
     }
+    
+    public void marcarFiltros() {
+        if(this.checkFiltro) {
+            this.filtroAgendamento.addAll(Arrays.asList("F", "A", "G", "C", "D", "I", "S", "O", "E", "H", "B", "N", "P", "R"));
+        }else {
+            this.filtroAgendamento.removeAll(Arrays.asList("F", "A", "G", "C", "D", "I", "S", "O", "E", "H", "B", "N", "P", "R"));
+        }
+    }
 
     public void setProcedimentosPickList(DualListModel<AgendamentoPlanoTratamentoProcedimento> procedimentosPickList) {
         this.procedimentosPickList = procedimentosPickList;
@@ -1507,6 +1517,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     public void setPacienteConflito(Paciente pacienteConflito) {
         this.pacienteConflito = pacienteConflito;
+    }
+
+    public boolean isCheckFiltro() {
+        return checkFiltro;
+    }
+
+    public void setCheckFiltro(boolean checkFiltro) {
+        this.checkFiltro = checkFiltro;
     }
 
 }
