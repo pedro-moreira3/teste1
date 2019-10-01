@@ -9,6 +9,7 @@ import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
 
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.estoque.EstoqueSingleton;
@@ -23,9 +24,7 @@ public class RelatorioMaterialMB extends LumeManagedBean<RelatorioMaterial> {
     private static final long serialVersionUID = 1L;
 
     private Logger log = Logger.getLogger(RelatorioMaterialMB.class);
-
-   // private List<RelatorioMaterial> materiais = new ArrayList<>();
-
+  
     private BigDecimal somaValorTotal = new BigDecimal(0);
 
     private List<Estoque> estoques = new ArrayList<>();
@@ -35,26 +34,10 @@ public class RelatorioMaterialMB extends LumeManagedBean<RelatorioMaterial> {
         this.setClazz(RelatorioMaterial.class);
         try {
             estoques = EstoqueSingleton.getInstance().getBo().listAllByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (Exception e) {         
+            LogIntelidenteSingleton.getInstance().makeLog("Erro no RelatorioMaterialMB", e);
         }
-      //  materiais = RelatorioMaterialSingleton.getInstance().getBo().listAllByFilterToReport(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-       // somaValorTotal = new BigDecimal(0);
-       // if (materiais != null) {
-      //      for (RelatorioMaterial m : materiais) {
-      //          somaValorTotal = somaValorTotal.add(m.getValorTotal()).setScale(2, BigDecimal.ROUND_HALF_UP);
-      //      }
-     //   }
     }
-
-//    public List<RelatorioMaterial> getMateriais() {
-//        return materiais;
-//    }
-//
-//    public void setMateriais(List<RelatorioMaterial> materiais) {
-//        this.materiais = materiais;
-//    }
 
     public BigDecimal getSomaValorTotal() {
         return somaValorTotal;
