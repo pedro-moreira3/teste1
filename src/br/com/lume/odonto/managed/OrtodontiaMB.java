@@ -240,13 +240,20 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void actionNewOrcamento() {
-        setOrcamentoSelecionado(OrcamentoSingleton.getInstance().preparaOrcamentoFromPT(getEntity()));
-        getOrcamentoSelecionado().setOrtodontico(true);
-        getOrcamentoSelecionado().setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
-        getOrcamentoSelecionado().setValorProcedimentoOrtodontico(getEntity().getProcedimentoPadrao().getValor());
-        long qtd = getEntity().getMeses() - PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findQtdFinalizadosPTPOrtodontia(getEntity().getId());
-        qtd = (qtd > 12l ? 12 : qtd);
-        getOrcamentoSelecionado().setQuantidadeParcelas((int) qtd);
+        try {
+            setOrcamentoSelecionado(OrcamentoSingleton.getInstance().preparaOrcamentoFromPT(getEntity()));
+            getOrcamentoSelecionado().setOrtodontico(true);
+            getOrcamentoSelecionado().setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
+            getOrcamentoSelecionado().setValorProcedimentoOrtodontico(getEntity().getProcedimentoPadrao().getValor());
+            long qtd = getEntity().getMeses() - PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findQtdFinalizadosPTPOrtodontia(getEntity().getId());
+            qtd = (qtd > 12l ? 12 : qtd);
+            getOrcamentoSelecionado().setQuantidadeParcelas((int) qtd);
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+        
+        
     }
     
     public void actionPersistOrcamento() {
