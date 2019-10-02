@@ -116,7 +116,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             this.addInfo("Sucesso", "Troca realizada com sucesso.<br />Verifique a nova fatura em nome de " + getProfissionalTroca().getDadosBasico().getNome() + "!", true);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError("Erro", "Falha ao realizar a troca de profissionais!", true);
+            this.addError("Erro", "Falha ao realizar a troca!<br />" + e.getMessage(), true);
         }
     }
 
