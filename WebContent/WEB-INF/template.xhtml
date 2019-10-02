@@ -19,7 +19,7 @@
 	</f:facet>
 	<title>INTELIDENTE</title>
 
-	<p:cache region="jscache" key="ultimalayout">
+	<p:cache region="jscache" key="ultimalayout_v2">
 		<script type="text/javascript"
 			src="https://maps.googleapis.com/maps/api/js"></script>
 
@@ -37,10 +37,41 @@
 		<h:outputScript name="jquery.cookie.js" library="joyride" />
 		<h:outputScript name="modernizr.mq.js" library="joyride" />
 		<h:outputScript name="jquery.joyride-2.1.js" library="joyride" />
-	</p:cache>
-	<ui:insert name="head" />
 
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+		<script src="sweetalert2.all.min.js"></script>
+	</p:cache>
+
+	<ui:insert name="head" />
+	<style>
+.swal-custom-popup {
+	display: block !important;
+}
+
+.swal-custom-content #swal2-content {
+	text-align: left !important;
+	margin-top: 5px !important;
+}
+</style>
 	<script>
+		function messageJSFStyle(title, text, type) {
+			const Toast = Swal.mixin({
+				toast : true,
+				position : 'top-end',
+				showConfirmButton : false,
+				timer : 3000,
+				customClass : {
+					popup : 'swal-custom-popup',
+					content : 'swal-custom-content'
+				}
+			})
+			Toast.fire({
+				type : type,
+				title : title,
+				html : text
+			});
+		}
+
 		function chartExtender() {
 			this.cfg.seriesDefaults = {
 				renderer : $.jqplot.BarRenderer,
@@ -178,11 +209,12 @@
 
 		<div class="layout-main">
 			<h:form id="lume">
-				<p:growl id="view-log" showDetail="true" escape="false" globalOnly="true" life="4000">
+				<p:growl id="view-log" showDetail="true" escape="false"
+					globalOnly="true" life="4000">
 					<p:autoUpdate />
 				</p:growl>
 				<p:ajaxStatus onstart="PF('loading').show();"
-					onsuccess="PF('loading').hide();" onerror="PF('loading').hide();"/>
+					onsuccess="PF('loading').hide();" onerror="PF('loading').hide();" />
 				<p:dialog modal="true" widgetVar="loading" draggable="false"
 					closable="false" showHeader="false" resizable="false">
 					<p:graphicImage value="/images/loading.gif" />

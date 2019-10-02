@@ -55,7 +55,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     private List<E> entityList;
 
     private RestricaoBO restricaoBO;
-    
+
     private Exportacoes exportacao;
 
     @PostConstruct
@@ -180,12 +180,11 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     public void addInfo(String summary, String detail) {
         this.addMessage(FacesMessage.SEVERITY_INFO, summary, detail, MessageType.TYPE_INFO);
     }
-    
+
     public void addInfo(String summary, String detail, boolean sendPrimefacesError) {
         this.addMessage(FacesMessage.SEVERITY_INFO, summary, detail, MessageType.TYPE_INFO, sendPrimefacesError);
-    }    
-    
-    
+    }
+
     public void addWarn(String summary, String detail) {
         addWarn(summary, detail, false);
     }
@@ -211,9 +210,12 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     }
 
     private void addMessage(Severity severity, String summary, String detail, String type, boolean sendPrimefacesError) {
-        if (sendPrimefacesError)
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
-        else {
+        if (sendPrimefacesError) {
+            if (MessageType.TYPE_INFO.equals(type))
+                type = MessageType.TYPE_SUCCESS;
+            PrimeFaces.current().executeScript("messageJSFStyle('" + summary + "', '" + detail + "', '" + type + "')");
+            // FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
+        } else {
             summary = summary.replace("\n", "\\r\\n");
             if (severity == FacesMessage.SEVERITY_ERROR || severity == FacesMessage.SEVERITY_FATAL)
                 PrimeFaces.current().executeScript("message('', '" + summary + " " + detail + "', '" + type + "')");
@@ -307,41 +309,40 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             return 0;
         return getCalendarFromDate(date).get(Calendar.MINUTE);
     }
-    
-    public DefaultStreamedContent exportarTabela(String header, DataTable tabela,String type) {
-        
+
+    public DefaultStreamedContent exportarTabela(String header, DataTable tabela, String type) {
+
         FileInputStream arq;
         try {
             this.exportacao = Exportacoes.getInstance();
-            arq = new FileInputStream(this.exportacao.exportarTabela(header,tabela,type));
-            
-            if(type.equals("xls"))
-                return new DefaultStreamedContent(arq,"application/vnd.ms-excel",header+".xls");
+            arq = new FileInputStream(this.exportacao.exportarTabela(header, tabela, type));
+
+            if (type.equals("xls"))
+                return new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls");
             else
-                return new DefaultStreamedContent(arq,"application/pdf",header+"."+type);
-            
+                return new DefaultStreamedContent(arq, "application/pdf", header + "." + type);
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        
+
         return null;
     }
 
-    
     public boolean filtroSemAcento(Object value, Object filter, Locale locale) {
-        
+
         String filterText = (filter == null) ? null : filter.toString().trim();
-        if(StringUtils.isBlank(filterText)) {
+        if (StringUtils.isBlank(filterText)) {
             return true;
         }
-         
-        if(value == null) {
+
+        if (value == null) {
             return false;
         }
-        
+
         return StringUtils.containsIgnoreCase(removerAcentos((String) value), removerAcentos(filterText));
     }
-    
+
     private String removerAcentos(String str) {
         String c;
         c = Normalizer.normalize(str, Normalizer.Form.NFD);

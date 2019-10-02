@@ -106,12 +106,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         try {
             RepasseFaturasItemSingleton.getInstance().trocaItemRepasseProfissional(getItemSelecionado(), getObservacao(), getProfissionalTroca(), UtilsFrontEnd.getProfissionalLogado());
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
-            PrimeFaces.current().executeScript("PF('dlgTrocaItemProfissional').hide()");
 
-            if (getEntity().getItensFiltered() == null || getEntity().getItensFiltered().isEmpty())
+            if (getEntity().getItensFiltered() == null || getEntity().getItensFiltered().isEmpty()) {
                 PrimeFaces.current().executeScript("PF('dlgFaturaView').hide()");
+                setEntity(null);
+            }
 
-            this.addInfo("Sucesso", "Troca realizada com sucesso, verifique a nova fatura em nome de " + getProfissionalTroca().getDadosBasico().getNome() + "!");
+            getRepasseProfissionalMB().pesquisar();
+            this.addInfo("Sucesso", "Troca realizada com sucesso.<br />Verifique a nova fatura em nome de " + getProfissionalTroca().getDadosBasico().getNome() + "!", true);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Falha ao realizar a troca de profissionais!", true);

@@ -21,7 +21,7 @@ function message(title, text, type) {
 }
 
 function message(title, text, type, fechaSozinho) {
-	//swal(title, text, type);
+	// swal(title, text, type);
 	if(fechaSozinho) {
 		swal({
 	        title   : title,

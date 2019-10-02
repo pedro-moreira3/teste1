@@ -148,9 +148,10 @@ body .sideChkBox .ui-chkbox-label {
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 					<p:commandButton value="Salvar" icon="White fa fa-save"
 						actionListener="#{faturaPagtoMB.actionPersistTrocaItemProfissional}"
-						update="@parent:@parent:pnlTrocaItemProfissional, pnlfaturaView"
+						update="pnlfaturaView"
 						process="@this, @parent:@parent:pnlTrocaItemProfissional"
-						styleClass="GreenButton" oncomplete="pesquisarFaturasRepasse()" />
+						styleClass="GreenButton"
+						onsuccess="PF('dlgTrocaItemProfissional').hide(); pesquisarFaturasRepasse();" />
 					<p:commandButton value="Fechar" icon="White fa fa-close"
 						oncomplete="PF('dlgTrocaItemProfissional').hide()"
 						styleClass="NavyButton" />
@@ -176,7 +177,6 @@ body .sideChkBox .ui-chkbox-label {
 				<p:outputPanel id="pnlfaturaView">
 					<div class="ui-g ui-fluid">
 						<div class="ui-g-12 ui-lg-12">
-
 							<p:panelGrid columns="4" layout="grid"
 								columnClasses="ui-g-2, ui-g-4, ui-g-2, ui-g-4"
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">

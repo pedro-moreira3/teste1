@@ -15,9 +15,10 @@
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 
-					<p:remoteCommand name="pesquisarFaturasRepasse" global="true"
-						actionListener="#{repasseProfissionalMB.pesquisar}" oncomplete="PF('dtPrincipal').filter()"
-						update=":lume:dtPrincipal" process="@this, :lume:pnPrincipal" />
+					<p:remoteCommand name="pesquisarFaturasRepasse"
+						actionListener="#{repasseProfissionalMB.pesquisar}"
+						oncomplete="PF('dtPrincipal').filter()" update=":lume:dtPrincipal"
+						process="@this, :lume:pnPrincipal" />
 					<p:outputPanel widgetvar="pnPrincipal" id="pnPrincipal"
 						styleClass="BordNone">
 						<h1>Repasse dos Profissionais</h1>
