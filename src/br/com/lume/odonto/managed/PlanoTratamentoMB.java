@@ -44,6 +44,7 @@ import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Evolucao;
 import br.com.lume.odonto.entity.Odontograma;
 import br.com.lume.odonto.entity.Orcamento;
+import br.com.lume.odonto.entity.OrcamentoItem;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
@@ -847,8 +848,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void actionNewOrcamento() {
-        this.orcamentoSelecionado = OrcamentoSingleton.getInstance().preparaOrcamentoFromPT(getEntity());
-        this.orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
+        try {
+            this.orcamentoSelecionado = OrcamentoSingleton.getInstance().preparaOrcamentoFromPT(getEntity());
+            this.orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
+        } catch (Exception e) {
+            log.error("Erro no actionNewOrcamento", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }        
+        
     }
 
     public void cancelaLancamentos() throws Exception {
@@ -936,6 +943,26 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionSimulaLancamento() {
         try {
+            
+            List<OrcamentoItem> itemsJaAprovados = OrcamentoSingleton.getInstance().itensAprovadosNoOrcamento(orcamentoSelecionado);
+            
+            //verificando se os procedimentos ja estao aprovados em outro orcamento       
+            if (itemsJaAprovados != null && itemsJaAprovados.size() > 0){
+                List<String> procedimentos = new ArrayList<String>();
+                for (OrcamentoItem orcamentoItem : itemsJaAprovados) {
+                    procedimentos.add(orcamentoItem.getOrigemProcedimento().getPlanoTratamentoProcedimento().getProcedimento().getDescricao());
+                }                
+                String valoresSeparados = String.join(", ", procedimentos);
+                
+                this.addError("O(s) procedimento(s): " + valoresSeparados +
+                        " já está(ão) aprovado(s) em outro orçamento.", "");
+                return;
+            }
+            
+            
+      
+            
+            
             BigDecimal orcamentoPerc = new BigDecimal(0);
             if ("P".equals(orcamentoSelecionado.getDescontoTipo()))
                 orcamentoPerc = orcamentoSelecionado.getDescontoValor();
