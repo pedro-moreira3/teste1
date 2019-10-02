@@ -155,7 +155,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
             pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.setValorAgregadoExcedido(BigDecimal.ZERO);
             if (paciente == null) {
-                this.addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "");
+                this.addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "", true);
             }
             lancamentos = new ArrayList<>();
             if (paciente != null && paciente.getId() != null) {
