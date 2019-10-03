@@ -823,7 +823,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             String breakLine = "\r\n";
                             descricao += breakLine;
                             if (agendamento.getPlanoTratamentoProcedimentosAgendamento() != null && !agendamento.getPlanoTratamentoProcedimentosAgendamento().isEmpty()) {
-                                descricao += "Procedimentos: ";
+                                descricao += "P: ";
                                 for (AgendamentoPlanoTratamentoProcedimento ptpAgendamento : agendamento.getPlanoTratamentoProcedimentosAgendamento())
                                     descricao += ptpAgendamento.getPlanoTratamentoProcedimento().getProcedimento().getDescricao() + ", ";
                                 descricao = descricao.substring(0, descricao.length() - 2);
@@ -831,7 +831,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                     descricao += breakLine;
                             }
                             if (agendamento.getDescricao() != null && !agendamento.getDescricao().isEmpty())
-                                descricao += "Observações: " + agendamento.getDescricao();
+                                descricao += "Obs.: " + agendamento.getDescricao();
 
                         }
                         DefaultScheduleEvent event = new DefaultScheduleEvent(descricao, agendamento.getInicio(), agendamento.getFim(), agendamento);
