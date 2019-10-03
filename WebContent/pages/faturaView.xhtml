@@ -273,15 +273,27 @@ body .sideChkBox .ui-chkbox-label {
 								id="lancamentosFatura">
 								<f:facet name="header">Lançamentos da Fatura</f:facet>
 								<p:column headerText="Ações" width="100" exportable="false"
-									rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.admin}">
+									rendered="#{(showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.admin)
+											 or (repasseProfissional != null or repasseProfissional == 'S')}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
 										title="Cancelar lançamento" disabled="#{!l.ativo}"
 										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
 										actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
-										process="@this">
+										process="@this"
+										rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.admin}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											escape="false"
 											message="Você tem certeza que deseja cancelar este lançamento? &lt;br/&gt; &lt;b&gt;Se já foi confirmado&lt;/b&gt;, o saldo ficará disponível na &lt;b&gt;conta do paciente&lt;/b&gt;.">
+										</p:confirm>
+									</p:commandButton>
+									<p:commandButton styleClass="GreenButton" icon="fa fa-check"
+										title="Validar Lançamento" update="@parent:@parent"
+										actionListener="#{faturaPagtoMB.validaLancamentoRepasse(l)}"
+										process="@this"
+										rendered="#{repasseProfissional != null and repasseProfissional == 'S'}"
+										disabled="{l.validado == 'S'}">
+										<p:confirm header="Confirmação" icon="ui-icon-alert"
+											message="Você tem certeza que confirma o recebimento deste lançamento?">
 										</p:confirm>
 									</p:commandButton>
 								</p:column>

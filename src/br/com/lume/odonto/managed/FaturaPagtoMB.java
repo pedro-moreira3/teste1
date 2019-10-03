@@ -142,6 +142,15 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         return "N/A";
     }
 
+    public void validaLancamentoRepasse(Lancamento l) {
+        try {
+            RepasseFaturasLancamentoSingleton.getInstance().validaLancamentoRepasse(l, UtilsFrontEnd.getProfissionalLogado());
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro", "Falha ao validar o lançamento!", true);
+        }
+    }
+
     public void pesquisar() {
         try {
             Calendar inicio = null;
