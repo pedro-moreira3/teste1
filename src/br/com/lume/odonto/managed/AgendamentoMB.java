@@ -129,6 +129,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     public List<HorasUteisProfissional> horasUteisProfissional;
 
+    public String observacoes;
+
     //  private DominioBO dominioBO;
 
     //  private PacienteBO pacienteBO;
@@ -173,7 +175,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     //S - Scheduler, C - Cadeiras, P - Profissional
     private String visualizacao = "S";
-    
+
     private boolean checkFiltro = false;
 
     public AgendamentoMB() {
@@ -371,6 +373,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                         if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.ENCAIXE.getSigla())) {
                             this.getEntity().setEncaixe(Status.SIM);
                         }
+                        if (getObservacoes() != null && !getObservacoes().isEmpty())
+                            getEntity().setDescricao(getObservacoes());
                         try {
                             if (profissionalDentroAgenda.getId() != getEntity().getProfissional().getIdUsuario()) {
                                 getEntity().setProfissional(profissionalDentroAgenda);
@@ -552,7 +556,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                 dlg = false;
                             }
                         } else {
-                            this.addError(OdontoMensagens.getMensagem("agendamento.paciente.horamarcada"), "",true);
+                            this.addError(OdontoMensagens.getMensagem("agendamento.paciente.horamarcada"), "", true);
                             dlg = false;
                         }
 //                        } else {
@@ -560,11 +564,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            dlg = false;
 //                        }
                     } else {
-                        this.addError(OdontoMensagens.getMensagem("agendamento.intervalo.incorreto"), "",true);
+                        this.addError(OdontoMensagens.getMensagem("agendamento.intervalo.incorreto"), "", true);
                         dlg = false;
                     }
                 } else {
-                    this.addError(OdontoMensagens.getMensagem("agendamento.paciente.obrigatorio"), "",true);
+                    this.addError(OdontoMensagens.getMensagem("agendamento.paciente.obrigatorio"), "", true);
                     dlg = false;
                 }
             } else {
@@ -816,6 +820,19 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                 descricao = agendamento.getProfissional().getDadosBasico().getNomeAbreviado() + " - " + "[" + agendamento.getPaciente().getSiglaConvenio() + "] " + agendamento.getPaciente().getDadosBasico().getNome();
                             }
 
+                            String breakLine = "\r\n";
+                            descricao += breakLine;
+                            if (agendamento.getPlanoTratamentoProcedimentosAgendamento() != null && !agendamento.getPlanoTratamentoProcedimentosAgendamento().isEmpty()) {
+                                descricao += "Procedimentos: ";
+                                for (AgendamentoPlanoTratamentoProcedimento ptpAgendamento : agendamento.getPlanoTratamentoProcedimentosAgendamento())
+                                    descricao += ptpAgendamento.getPlanoTratamentoProcedimento().getProcedimento().getDescricao() + ", ";
+                                descricao = descricao.substring(0, descricao.length() - 2);
+                                if (agendamento.getDescricao() != null && !agendamento.getDescricao().isEmpty())
+                                    descricao += breakLine;
+                            }
+                            if (agendamento.getDescricao() != null && !agendamento.getDescricao().isEmpty())
+                                descricao += "Observações: " + agendamento.getDescricao();
+
                         }
                         DefaultScheduleEvent event = new DefaultScheduleEvent(descricao, agendamento.getInicio(), agendamento.getFim(), agendamento);
                         event.setStyleClass(StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getStyleCss());
@@ -1021,7 +1038,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             }
             PacienteSingleton.getInstance().getBo().persist(paciente);
             PlanoTratamento pt = PlanoTratamentoSingleton.getInstance().getBo().persistPlano(paciente, UtilsFrontEnd.getProfissionalLogado());
-            
+
             pacienteSelecionado = paciente;
             this.getEntity().setPaciente(paciente);
             if (pt != null) {
@@ -1217,11 +1234,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         atualizaCadeiraSelecionada();
         validaHoraUtilProfissional();
     }
-    
+
     public void marcarFiltros() {
-        if(this.checkFiltro) {
+        if (this.checkFiltro) {
             this.filtroAgendamento.addAll(Arrays.asList("F", "A", "G", "C", "D", "I", "S", "O", "E", "H", "B", "N", "P", "R"));
-        }else {
+        } else {
             this.filtroAgendamento.removeAll(Arrays.asList("F", "A", "G", "C", "D", "I", "S", "O", "E", "H", "B", "N", "P", "R"));
         }
     }
@@ -1525,6 +1542,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     public void setCheckFiltro(boolean checkFiltro) {
         this.checkFiltro = checkFiltro;
+    }
+
+    public String getObservacoes() {
+        return observacoes;
+    }
+
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
     }
 
 }
