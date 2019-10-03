@@ -2,6 +2,7 @@ package br.com.lume.odonto.managed;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -33,10 +34,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     private static final long serialVersionUID = 1L;
 
     private Logger log = Logger.getLogger(LocalMB.class);
-
-    private List<Dominio> tiposLocais;
-
-    private Dominio tipoLocal;
+    private String tipo;
 
     private String descricao;
 
@@ -52,7 +50,7 @@ public class LocalMB extends LumeManagedBean<Local> {
         this.setClazz(Local.class);
         this.setDisable(false);
         try {
-            this.setTiposLocais(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo(LOCAL, OBJETO));
+          //  this.setTiposLocais(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo(LOCAL, OBJETO));
             this.root = new DefaultTreeNode("", null);
             this.rootPai = new DefaultTreeNode("", null);
             Local firstLevel = new Local();
@@ -68,8 +66,8 @@ public class LocalMB extends LumeManagedBean<Local> {
     public void actionPersist(ActionEvent event) {
         boolean error = false;
         this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        if (this.tipoLocal != null) {
-            this.getEntity().setTipo(this.tipoLocal.getValor());
+        if (this.tipo != null && !this.tipo.equals("")) {
+            this.getEntity().setTipo(this.tipo);
         }
         if (this.selectedLocalPai != null) {
             if (((Local) this.selectedLocalPai.getData()).getDescricao().equals("RAIZ")) {
@@ -123,16 +121,10 @@ public class LocalMB extends LumeManagedBean<Local> {
         this.setSelectedPai();
         this.setEntity((Local) this.selectedLocal.getData());
         this.setDescricao(this.getEntity().getDescricao());
-        this.setTipoLocal();
+       this.tipo = "";
     }
 
-    public void setTipoLocal() {
-        try {
-            this.setTipoLocal(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(LOCAL, OBJETO, this.getEntity().getTipo()));
-        } catch (Exception e) {
-            this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-        }
-    }
+  
 
     public void setSelectedPai() {
         List<TreeNode> nodes = new ArrayList<>();
@@ -171,6 +163,7 @@ public class LocalMB extends LumeManagedBean<Local> {
         List<Local> locais = new ArrayList<>();
         try {
             locais = LocalSingleton.getInstance().getBo().listByEmpresaAndTipo(ESTOQUE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+          
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -237,18 +230,19 @@ public class LocalMB extends LumeManagedBean<Local> {
         this.disable = disable;
     }
 
+    public void carregarEditar(Local local) {
+        this.setEntity(local);
+        this.descricao = local.getDescricao();
+        this.tipo = getEntity().getTipo();
+    }
+    
     public List<Local> getLocais() {
         List<Local> locais = new ArrayList<>();
         try {
-            locais = LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            for (Local local : locais) {
-                for (Dominio dominio : this.tiposLocais) {
-                    if (local.getTipo().equals(dominio.getValor())) {
-                        local.setDescricaoTipo(dominio.getNome());
-                        break;
-                    }
-                }
-            }
+            locais = LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());  
+       
+            locais.removeIf(n -> (n.getDescricaoTipo() == null || n.getDescricaoTipo().equals(""))); 
+            
             Collections.sort(locais);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -265,7 +259,7 @@ public class LocalMB extends LumeManagedBean<Local> {
             } else {
                 this.setDisable(true);
                 this.getEntity().setTipo(local.getTipo());
-                this.setTipoLocal();
+                this.tipo = "";
             }
             this.getSelectedLocalPai().setSelected(false);
             this.setSelectedLocalPai(event.getTreeNode());
@@ -279,18 +273,10 @@ public class LocalMB extends LumeManagedBean<Local> {
         this.setDisable(false);
         try {
             this.getEntity().setTipo(((Local) this.getSelectedLocal().getData()).getTipo());
-            this.setTipoLocal();
+            this.tipo = "";
         } catch (Exception e) {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
-    }
-
-    public List<Dominio> getTiposLocais() {
-        return this.tiposLocais;
-    }
-
-    public void setTiposLocais(List<Dominio> tiposLocais) {
-        this.tiposLocais = tiposLocais;
     }
 
     public String getDescricao() {
@@ -301,12 +287,12 @@ public class LocalMB extends LumeManagedBean<Local> {
         this.descricao = descricao;
     }
 
-    public Dominio getTipoLocal() {
-        return this.tipoLocal;
+    public String getTipo() {
+        return this.tipo;
     }
 
-    public void setTipoLocal(Dominio tipoLocal) {
-        this.tipoLocal = tipoLocal;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
     public TreeNode getRoot() {

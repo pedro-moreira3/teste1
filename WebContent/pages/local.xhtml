@@ -33,14 +33,7 @@
 										<f:selectItem itemValue="PA" itemLabel="Patrimônio" />
 										<f:selectItem itemValue="SM" itemLabel="Sala de materiais" />
 									</p:selectOneMenu>				
-								</h:panelGroup>	
-								<h:panelGroup styleClass="md-combo"> 								
-									<p:outputLabel for="localPai" value="Local Pai: " />
-									<p:selectOneMenu id="localPai" value="#{localMB.localPai}" converter="local" disabled="#{localMB.disable}" filter="true" filterMatchMode="contains">
-										<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
-										<f:selectItems value="#{localMB.locais}" var="l" itemLabel="#{l.descricao}" itemValue="#{l}" />					
-									</p:selectOneMenu>		
-								</h:panelGroup>					                                		                                
+								</h:panelGroup>								                      	                                
 							</p:panelGrid> 				
 							<br />
 							<div class="SeparatorFull"></div>
@@ -66,8 +59,8 @@
 	                        selectionMode="single" rowKey="#{local}" paginatorPosition="bottom">	                        
 	                        <f:facet name="header">Locais</f:facet>
 							 <p:column headerText="Ações" width="20%">
-							 	<p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlg').show();" update=":lume:pnDlg" title="Editar" process="@this"
-	                                actionListener="#{localMB.carregarEditar(local)}" style="width:33px !important" />
+							 	<p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlg').show();" update=":lume:pnDlg,:lume:dtLocal" title="Editar" process="@this"
+	                                actionListener="#{localMB.carregarEditar(local)}" style="width:33px !important" immediate="true"/>
 								<h:outputText value="&#160;" /><h:outputText value="&#160;" />	                                
 							 	<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmation').show();" update=":lume:pnDlg" title="Remover" process="@this"
 	                                 style="width:33px !important" actionListener="#{localMB.carregarEditar(local)}"/>
@@ -78,10 +71,7 @@
 	                        <p:column filterBy="#{local.tipo}" sortBy="#{local.descricaoTipo}" filterMatchMode="contains" width="20%" headerText="Tipo"
 	                            >
 	                            <h:outputText value="#{local.descricaoTipo}" />
-	                        </p:column>
-	                        <p:column filterBy="#{local.localPai.descricao}" sortBy="#{local.localPai.descricao}" width="30%" filterMatchMode="contains" headerText="Local pai">
-	                            <h:outputText value="#{local.localPai.descricao}" />
-	                        </p:column>                      
+	                        </p:column>                     
 					</p:dataTable>                  							
 				</p:outputPanel>	
 				</div>						
