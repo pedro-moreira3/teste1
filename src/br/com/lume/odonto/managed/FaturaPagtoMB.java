@@ -147,7 +147,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             RepasseFaturasLancamentoSingleton.getInstance().validaLancamentoRepasse(l, UtilsFrontEnd.getProfissionalLogado());
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError("Erro", "Falha ao validar o lançamento!", true);
+            this.addError("Erro", "Falha ao validar o lançamento! " + e.getMessage().replace("'", "\\'"), true);
         }
     }
 
