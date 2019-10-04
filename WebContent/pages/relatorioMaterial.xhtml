@@ -19,19 +19,19 @@
                             <f:facet name="header">
                                 <h:outputText value="Local" />
                             </f:facet>
-                            <h:outputText value="#{e.local.descricao}" title="#{e.id}" />
+                            <h:outputText value="#{e.local.descricao}" title="#{e.local.descricao}" />
                         </p:column>     
                         <p:column filterBy="#{e.quantidade}" sortBy="#{e.quantidade}" filterMatchMode="contains">
                             <f:facet name="header">
                                 <h:outputText value="Quantidade" />
                             </f:facet>
-                            <h:outputText value="#{e.quantidade}" title="#{e.id}" />
+                            <h:outputText value="#{e.quantidade}" title="#{e.quantidade}" />
                         </p:column>      
                         <p:column filterBy="#{e.material.item.descricao}" sortBy="#{e.material.item.descricao}" filterMatchMode="contains">
                             <f:facet name="header">
                                 <h:outputText value="Item" />
                             </f:facet>
-                            <h:outputText value="#{e.material.item.descricao}" title="#{e.id}" />
+                            <h:outputText value="#{e.material.item.descricao}" title="#{e.material.item.descricao}" />
                         </p:column>                                                                 
                     </p:dataTable>                    
                     
@@ -42,7 +42,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Item" />
                             </f:facet>
-                            <h:outputText value="#{m.item}" title="#{m.id}" />
+                            <h:outputText value="#{m.item}"  />
                         </p:column>
                         <p:column filterBy="#{m.tipoStr}" sortBy="#{m.tipoStr}" filterMatchMode="contains">
                             <f:facet name="header">

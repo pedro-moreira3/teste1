@@ -684,7 +684,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
                         if (lk.getEmprestimoKit() != null) {
                             lk.getEmprestimoKit().setQuantidade(lk.getEmprestimoKit().getQuantidade().subtract(new BigDecimal(lk.getQuantidade())));
                             br.com.lume.emprestimoKit.EmprestimoKitSingleton.getInstance().getBo().persist(lk.getEmprestimoKit());// Atualizando estoque
-                            MaterialSingleton.getInstance().getBo().refresh(lk.getEmprestimoKit().getMaterial());
+                            //MaterialSingleton.getInstance().getBo().refresh(lk.getEmprestimoKit().getMaterial());
                             //lk.getEmprestimoKit().getMaterial().setQuantidadeAtual(lk.getEmprestimoKit().getMaterial().getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
                             
                             EstoqueSingleton.getInstance().adicionar(lk.getEmprestimoKit().getMaterial(), lk.getEmprestimoKit().getMaterial().getEstoque().getLocal(), 
