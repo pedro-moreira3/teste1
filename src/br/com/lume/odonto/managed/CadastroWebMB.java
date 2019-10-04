@@ -134,13 +134,14 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 //                pnInicialVisivel = false;
 //                return "";
 //            }
-            Usuario usu = UsuarioSingleton.getInstance().getBo().findByEmail(profissional.getDadosBasico().getEmail());
-            if (usu != null) {
-                UsuarioSingleton.getInstance().getBo().resetSenha(usu);
-                this.addError("Já existe um cadastro com este email, estamos renviando a senha para você!", "");
-                pnInicialVisivel = false;
-                return "";
-            }
+            
+            //Usuario usu = UsuarioSingleton.getInstance().getBo().findByEmail(profissional.getDadosBasico().getEmail());
+            //if (usu != null) {
+            //    UsuarioSingleton.getInstance().getBo().resetSenha(usu);
+            //    this.addError("Já existe um cadastro com este email, estamos renviando a senha para você!", "");
+            //    pnInicialVisivel = false;
+            //    return "";
+            //}
 
             this.getEntity().setEmpStrEstoque(Empresa.ESTOQUE_COMPLETO);
             this.getEntity().setEmpChaSts(Status.ATIVO);
