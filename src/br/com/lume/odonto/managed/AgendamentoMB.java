@@ -11,15 +11,12 @@ import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
-import org.primefaces.context.PrimeFacesContext;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
@@ -329,7 +326,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.setPacienteSelecionado(null);
         this.setPlanoTratamentos(null);
         this.setPlanoTratamentoSelecionado(null);
-        this.setProcedimentosPickList(null);
+        this.setProcedimentosPickList(new DualListModel<>());
     }
 
     @Override

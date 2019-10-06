@@ -123,6 +123,7 @@
 						</f:facet>
 						<p:column filterBy="#{retorno.paciente.dadosBasico.responsavel}"
 								sortBy="#{retorno.paciente.dadosBasico.responsavel}"
+								filterFunction="#{retornoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Responsável">
 								<h:outputText
 									value="#{retorno.paciente.dadosBasico.responsavel} #{retorno.paciente.dadosBasico.telefoneResponsavel}" />
@@ -130,6 +131,7 @@
 						
 							<p:column filterBy="#{retorno.paciente.dadosBasico.nomeStr}"
 								sortBy="#{retorno.paciente.dadosBasico.nome}"
+								filterFunction="#{retornoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Paciente">
 								<h:outputText value="#{retorno.paciente.dadosBasico.nome}"
 									title="#{retorno.id}" />
@@ -138,6 +140,7 @@
 							<p:column
 								filterBy="#{retorno.paciente.convenio.dadosBasico.nome}"
 								sortBy="#{retorno.paciente.convenio.dadosBasico.nome}"
+								filterFunction="#{retornoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Convênio">
 								<h:outputText
 									value="#{retorno.paciente.convenio.dadosBasico.nome}" />
@@ -163,6 +166,7 @@
 							
 							<p:column filterBy="#{retorno.observacoes}"
 								sortBy="#{retorno.observacoes}" filterMatchMode="contains"
+								filterFunction="#{retornoMB.filtroSemAcento}"
 								headerText="Observações">
 								<h:outputText value="#{retorno.observacoes}" />
 							</p:column>
@@ -190,6 +194,7 @@
 							<p:column
 								filterBy="#{relatorioAtendimentoMB.getStatusDescricao(retornoMB.getProximoAgendamentoPaciente(retorno))}"
 								sortBy="#{relatorioAtendimentoMB.getStatusDescricao(retornoMB.getProximoAgendamentoPaciente(retorno))}"
+								filterFunction="#{retornoMB.filtroSemAcento}"
 								filterMatchMode="contains"
 								headerText="Status do agendamento futuro">
 								<h:outputText

@@ -143,7 +143,7 @@ div.ui-selectoneradio label {
 
 					<p:fieldset id="filtroRelatorio" header="Filtro" toggleable="true"
 						toggleSpeed="500">
-
+						<p:outputPanel>
 						<p:panelGrid columns="1" layout="grid"
 							styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 							style="border:0px none; background-color:transparent;">
@@ -325,32 +325,53 @@ div.ui-selectoneradio label {
 											icon="White fa fa-print"
 											update=":lume:dlgGerarRelatorioTabela,:lume:dlgConfirmarImpCabecalho"
 											styleClass="RedButton"
-											process="@this,:lume:dlgConfirmarImpCabecalho,:lume:filtroRelatorio" />
+											process="@this,:lume:dlgConfirmarImpCabecalho,:lume:filtroRelatorio"/>
 									</h:panelGroup>
-
+									<ui:remove>
+									<h:panelGroup>
+										<p:splitButton 	icon="White fa fa fa-file-excel-o" value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+														oncomplete="downloadArq();" process="dtRelAtendimento,@this" immediate="true">
+											
+											<p:menuitem	value="Exportar tabela para PDF" icon="fa fa fa-file-pdf-o" actionListener="#{relatorioAtendimentoMB.exportarTabela('pdf')}" ajax="false"
+														process="dtRelAtendimento,@this" immediate="true">
+												<p:fileDownload value="#{relatorioAtendimentoMB.arquivoDownload}"/>
+											</p:menuitem>
+															
+										</p:splitButton>
+									</h:panelGroup>
+									
+									<p:remoteCommand 	name="downloadArq" actionListener="#{relatorioAtendimentoMB.exportarTabela('xls')}" 
+														process="dtRelAtendimento,@this" immediate="true">
+														
+										<p:fileDownload value="#{relatorioAtendimentoMB.arquivoDownload}" contentDisposition="attachment"/>
+									</p:remoteCommand>
+									</ui:remove>
+									
 								</p:panelGrid>
 
 							</p:outputPanel>
 
 						</p:panelGrid>
-
+					</p:outputPanel>
 					</p:fieldset>
 
 					<h:panelGroup>
-
+					
 						<p:dataTable id="dtRelAtendimento" widgetVar="dtRelAtendimento"
 							value="#{relatorioAtendimentoMB.listaAtendimentos}"
 							var="atendimento" rowKey="#{atendimento}" rows="10"
 							paginator="true" paginatorPosition="bottom" reflow="true"
-							emptyMessage="Nenhum registro encontrado"
+							emptyMessage="Nenhum registro encontrado" binding="#{relatorioAtendimentoMB.tabelaAgendamento}"
 							selection="#{relatorioAtendimentoMB.entity}"
 							selectionMode="single" filterDelay="1000">
 
-							<f:facet name="header">Relatório de atendimentos</f:facet>
+							<f:facet name="header">Relatório de atendimentos
+							</f:facet>
 
-							<p:column filterBy="#{atendimento.paciente.dadosBasico.nome}"
-								sortBy="#{atendimento.paciente.dadosBasico.nome}"
-								filterMatchMode="contains" headerText="Paciente">
+							<p:column 	filterBy="#{atendimento.paciente.dadosBasico.nome}"
+										sortBy="#{atendimento.paciente.dadosBasico.nome}"
+										filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
+								 		headerText="Paciente">
 								<h:outputText value="#{atendimento.paciente.dadosBasico.nome}" />
 							</p:column>
 
@@ -371,6 +392,7 @@ div.ui-selectoneradio label {
 							<p:column
 								filterBy="#{atendimento.paciente.convenio.dadosBasico.nome}"
 								sortBy="#{atendimento.paciente.convenio.dadosBasico.nome}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Convênio">
 								<h:outputText
 									value="#{atendimento.paciente.convenio.dadosBasico.nome}" />
@@ -378,6 +400,7 @@ div.ui-selectoneradio label {
 
 							<p:column filterBy="#{atendimento.profissional.dadosBasico.nome}"
 								sortBy="#{atendimento.profissional.dadosBasico.nome}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Profissional responsável">
 								<h:outputText
 									value="#{atendimento.profissional.dadosBasico.nome}" />
@@ -393,6 +416,7 @@ div.ui-selectoneradio label {
 							<p:column
 								filterBy="#{atendimento.profissionalUltAlteracao.dadosBasico.nome}"
 								sortBy="#{atendimento.profissionalUltAlteracao.dadosBasico.nome}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains"
 								headerText="Última alteração realizada por">
 								<h:outputText
@@ -402,6 +426,7 @@ div.ui-selectoneradio label {
 							<p:column
 								filterBy="#{atendimento.finalidadeAgendamento.descricao}"
 								sortBy="#{atendimento.finalidadeAgendamento.descricao}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Consulta inicial">
 								<h:outputText
 									value="#{atendimento.finalidadeAgendamento.descricao}" />
@@ -417,6 +442,7 @@ div.ui-selectoneradio label {
 							<p:column
 								filterBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}"
 								sortBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Status do agendamento">
 								<h:outputText
 									value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}" />
@@ -446,6 +472,7 @@ div.ui-selectoneradio label {
 							<p:column
 								filterBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}"
 								sortBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}"
+								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains"
 								headerText="Status do agendamento futuro">
 								<h:outputText
@@ -474,12 +501,12 @@ div.ui-selectoneradio label {
 									styleClass="GreenButton"
 									disable="#{atendimento.paciente.whatsURL == null}" />
 								<p:tooltip for="whats" value="Enviar mensagem" />
+								
 							</p:column>
 
 						</p:dataTable>
-
+					
 					</h:panelGroup>
-
 
 					<p:dialog id="dlgGerarRelatorio" widgetVar="dlgGerarRelatorio"
 						header="Relatório" responsive="true" modal="true"
