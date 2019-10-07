@@ -196,13 +196,36 @@ body .sideChkBox .ui-chkbox-label {
 									id="profissionalDonoFatura"
 									value="#{faturaPagtoMB.entity.profissional.dadosBasico.nome}"
 									readonly="true" />
-								<p:column />
-								<p:column />
+
+								<h:outputText
+									rendered="#{repasseProfissional != null and repasseProfissional == 'S'}"
+									for="planoTratamentoFatura"
+									value="Plano de Tratamento da fatura de origem:" />
+								<p:inputText
+									rendered="#{repasseProfissional != null and repasseProfissional == 'S'}"
+									id="planoTratamentoFatura" readonly="true"
+									value="#{faturaPagtoMB.getPTFromFaturaRepasse(faturaPagtoMB.entity).descricao}" />
+								<p:column
+									rendered="#{repasseProfissional == null or repasseProfissional != 'S'}" />
+								<p:column
+									rendered="#{repasseProfissional == null or repasseProfissional != 'S'}" />
+
 								<h:outputText for="dataCriacao" value="Data Criação:" />
 								<p:inputText id="dataCriacao"
 									value="#{faturaPagtoMB.entity.dataCriacaoStr}" readonly="true" />
-								<p:column />
-								<p:column />
+									
+								<h:outputText
+									rendered="#{repasseProfissional != null and repasseProfissional == 'S'}"
+									for="pacienteFaturaOrigem"
+									value="Paciente da fatura de origem:" />
+								<p:inputText
+									rendered="#{repasseProfissional != null and repasseProfissional == 'S'}"
+									id="pacienteFaturaOrigem" readonly="true"
+									value="#{faturaPagtoMB.getPTFromFaturaRepasse(faturaPagtoMB.entity).paciente.dadosBasico.nome}" />
+								<p:column
+									rendered="#{repasseProfissional == null or repasseProfissional != 'S'}" />
+								<p:column
+									rendered="#{repasseProfissional == null or repasseProfissional != 'S'}" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="3" layout="grid"

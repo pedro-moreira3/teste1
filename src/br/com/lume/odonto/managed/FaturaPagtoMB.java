@@ -26,10 +26,13 @@ import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
@@ -140,6 +143,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         if (repasse != null)
             return repasse.getFaturaItem().getDescricaoItem();
         return "N/A";
+    }
+
+    public PlanoTratamento getPTFromFaturaRepasse(Fatura fatura) {
+        return PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaRepasse(fatura);
     }
 
     public void validaLancamentoRepasse(Lancamento l) {
