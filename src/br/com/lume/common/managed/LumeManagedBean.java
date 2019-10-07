@@ -186,7 +186,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     }
 
     public void addWarn(String summary, String detail) {
-        addWarn(summary, detail, false);
+        addWarn(summary, detail, true);
     }
 
     public void addWarn(String summary, String detail, boolean sendPrimefacesError) {
@@ -194,7 +194,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     }
 
     public void addError(String summary, String detail) {
-        addError(summary, detail, false);
+        addError(summary, detail, true);
     }
 
     public void addError(String summary, String detail, boolean sendPrimefacesError) {
@@ -206,7 +206,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     }
 
     private void addMessage(Severity severity, String summary, String detail, String type) {
-        addMessage(severity, summary, detail, type, false);
+        addMessage(severity, summary, detail, type, true);
     }
 
     private void addMessage(Severity severity, String summary, String detail, String type, boolean sendPrimefacesError) {
