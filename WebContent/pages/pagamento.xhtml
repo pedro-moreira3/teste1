@@ -101,15 +101,15 @@ body .ui-selectoneradio td label {
 							rowKey="#{lancamento}" selectionMode="single">
 							<f:facet name="header">Lançamentos</f:facet>
 							<p:ajax event="rowSelect"
-								update=":lume:pnLancamento,:lume:pnProduto"
+								update=":lume:pnPagar, :lume:buttonsPagar"
 								listener="#{lancamentoMB.carregarValorAPagar}" />
 
 							<p:column headerText="Plano de Tratamento"
-								sortBy="#{lancamento.orcamento.planoTratamento.descricao}"
-								filterBy="#{lancamento.orcamento.planoTratamento.descricao}"
+								sortBy="#{lancamentoMB.getPTFromLancamento(lancamento).descricao}"
+								filterBy="#{lancamentoMB.getPTFromLancamento(lancamento).descricao}"
 								filterMatchMode="contains">
 								<h:outputText
-									value="#{lancamento.orcamento.planoTratamento.descricao}"
+									value="#{lancamentoMB.getPTFromLancamento(lancamento).descricao}"
 									title="#{lancamento.id}" />
 							</p:column>
 
@@ -119,12 +119,12 @@ body .ui-selectoneradio td label {
 							</p:column>
 
 							<p:column
-								sortBy="#{lancamento.orcamento.planoTratamento.paciente.dadosBasico.nome}"
+								sortBy="#{lancamentoMB.getPTFromLancamento(lancamento).paciente.dadosBasico.nome}"
 								headerText="Paciente"
-								filterBy="#{lancamento.orcamento.planoTratamento.paciente.dadosBasico.nome}"
+								filterBy="#{lancamentoMB.getPTFromLancamento(lancamento).paciente.dadosBasico.nome}"
 								filterMatchMode="contains">
 								<h:outputText
-									value="#{lancamento.orcamento.planoTratamento.paciente.dadosBasico.nome}" />
+									value="#{lancamentoMB.getPTFromLancamento(lancamento).paciente.dadosBasico.nome}" />
 							</p:column>
 
 							<p:column sortBy="#{lancamento.numeroParcela}"
@@ -162,13 +162,14 @@ body .ui-selectoneradio td label {
 						</p:dataTable>
 
 						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="4" layout="grid"
+						<p:panelGrid columns="4" layout="grid" id="buttonsPagar"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="persist" value="Pagar"
 								icon="White fa fa-money" onclick="PF('pagar').show()"
 								update=":lume:pnLancamento,:lume:persist2,:lume:pnTipo,:lume:pnJustificativa,:lume:pnProduto,:lume:pnPagar"
 								process=":lume:dtLancamento,@this" styleClass="GreenButton"
-								disabled="#{lancamentoMB.liberaPagamento != true}" />
+								disabled="#{lancamentoMB.liberaPagamento != true}"
+								rendered="false" />
 							<p:commandButton id="delete" icon="White fa fa-trash-o"
 								value="Excluir" actionListener="#{lancamentoMB.actionRemove}"
 								update=":lume:pnLancamento,:lume:dtLancamento" process="@this"

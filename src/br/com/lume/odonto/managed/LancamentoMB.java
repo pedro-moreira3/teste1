@@ -47,6 +47,7 @@ import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.orcamento.OrcamentoSingleton;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.tarifa.TarifaSingleton;
 
 @ManagedBean
@@ -158,11 +159,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
                 this.addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "", true);
             }
             lancamentos = new ArrayList<>();
-            if (paciente != null && paciente.getId() != null) {
-                this.carregaListaLancamento();
-            }
             if (this.getPaciente() != null) {
-                this.carregaCombos(this.getPaciente());
                 this.carregaTela();
             }
         } catch (Exception e) {
@@ -188,19 +185,8 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     @Override
     public void actionRemove(ActionEvent event) {
         try {
-            // for (Lancamento l : lancamentosSelecionados) {
-            this.getEntity().setDataPagamento(null);
-            this.getEntity().setFormaPagamento(null);
             LancamentoSingleton.getInstance().inativaLancamento(getEntity(), UtilsFrontEnd.getProfissionalLogado());
-
-            List<LancamentoContabil> lancamentosContabeis = LancamentoContabilSingleton.getInstance().getBo().listByLancamento(this.getEntity(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            for (LancamentoContabil lc : lancamentosContabeis) {
-                lc.setExcluido(Status.SIM);
-                lc.setDataExclusao(Calendar.getInstance().getTime());
-                lc.setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
-                LancamentoContabilSingleton.getInstance().getBo().persist(lc);
-            }
-            // }
+            carregaTela();
             this.actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
         } catch (Exception e) {
@@ -540,41 +526,23 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
 
     public void handleSelect(SelectEvent event) {
         Object object = event.getObject();
-        this.carregaCombos(object);
+        setPaciente((Paciente) object);
+        //UtilsFrontEnd.setPacienteSelecionado(getPaciente());
+        if (getPaciente() == null) {
+            this.addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "");
+        }
+        setListPt(PlanoTratamentoSingleton.getInstance().getBo().listAtivosByPaciente(getPaciente()));
+        setListPtSelecionados(new ArrayList<>());
+
         this.carregaTela();
     }
 
-    private void carregaCombos(Object object) {
-        paciente = (Paciente) object;
-        if (paciente == null) {
-            this.addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "");
-        }
-        UtilsFrontEnd.setPacienteSelecionado(paciente);
-        this.carregaListaLancamento();
-        this.carregarFiltros();
+    public PlanoTratamento getPTFromLancamento(Lancamento l) {
+        return PlanoTratamentoSingleton.getInstance().getBo().getPlanoTratamentoFromLancamento(l);
     }
 
-    public void carregarFiltros() {
-        //boolean encontrou = false;
-        listPt = new ArrayList<>();
-        for (Lancamento l : lancamentos) {
-            try {
-                Orcamento orcamento = OrcamentoSingleton.getInstance().getBo().getOrcamentoFromLancamento(l);
-                //encontrou = false;
-                for (PlanoTratamento lpt : listPt) {
-                    for (OrcamentoItem oi : orcamento.getItens()) {
-                        OrcamentoProcedimento op = oi.getOrigemProcedimento();
-                        if (op.getPlanoTratamentoProcedimento() == null || op.getPlanoTratamentoProcedimento().getPlanoTratamento() == null)
-                            continue;
-                        PlanoTratamento pt = op.getPlanoTratamentoProcedimento().getPlanoTratamento();
-                        if (pt.getId().longValue() == lpt.getId().longValue() && !listPt.contains(pt))
-                            listPt.add(pt);
-                    }
-                }
-            } catch (Exception e) {
-                LogIntelidenteSingleton.getInstance().makeLog(e);
-            }
-        }
+    public Orcamento getOrcamentoFromLancamento(Lancamento l) {
+        return OrcamentoSingleton.getInstance().getBo().getOrcamentoFromLancamento(l);
     }
 
     public void carregaTela() {
@@ -584,29 +552,6 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
             lancamentoDataModel = new LancamentoDataModel(lancamentos);
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    public void filtra() {
-        try {
-            lancamentosSelecionados = new Lancamento[10];
-            lancamentos = LancamentoSingleton.getInstance().getBo().listAllByPeriodoAndStatus(inicio, fim, status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            // lancamentoDataModel = new LancamentoDataModel(lancamentos);
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-        }
-    }
-
-    public void carregaListaLancamento() {
-        this.setEntity(null);
-        try {
-            lancamentosSelecionados = new Lancamento[10];
-            lancamentos = LancamentoSingleton.getInstance().getBo().listByPacienteAndDependentes(paciente, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            lancamentoDataModel = new LancamentoDataModel(lancamentos);
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
 

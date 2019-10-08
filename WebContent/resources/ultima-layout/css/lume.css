@@ -155,11 +155,40 @@ li.MENULABEL [href="#"] span {
 	width: auto !important;
 }
 
-.ui-fluid button.ui-button:not (.ui-button-icon-only ):not (.ui-wizard-nav-back
-	):not (.ui-wizard-nav-next ) {
-	width: 100% !important;
-}
+.ui-fluid
+ 
+button
+.ui-button
+:not
+ 
+(
+.ui-button-icon-only
+ 
+)
+:not
+ 
+(
+.ui-wizard-nav-back
 
+	
+)
+:not
+ 
+(
+.ui-wizard-nav-next
+ 
+)
+{
+width
+:
+ 
+100%
+!
+important
+;
+
+
+}
 .ui-fluid .ui-autocomplete .ui-button {
 	width: 24px !important;
 }
@@ -1592,8 +1621,8 @@ body .md-combo .ui-outputlabel {
 	width: 100%;
 }
 
-.body *:not (.ui-growl ) .ui-state-active, body *:not (.ui-growl ) .ui-state-highlight
-	{
+.body *:not (.ui-growl ) .ui-state-active, body *:not (.ui-growl )
+	.ui-state-highlight {
 	background-color: #4e7c73 !important;
 	color: #ffffff !important;
 }
@@ -1834,6 +1863,7 @@ body .removeSideAltGridPadding .ui-grid-row:last-child .ui-panelgrid-cell
 
 body span.ui-autocomplete.tallerAutoComplete {
 	margin-right: 10px;
+	height: 31px !important;
 }
 
 body span.ui-autocomplete.tallerAutoComplete input, body span.ui-input.tallerAutoComplete input
@@ -1841,7 +1871,8 @@ body span.ui-autocomplete.tallerAutoComplete input, body span.ui-input.tallerAut
 	height: 100%;
 }
 
-body span.ui-autocomplete.tallerAutoComplete .ui-autocomplete-dropdown.ui-button.ui-button-icon-only .ui-icon {
+body span.ui-autocomplete.tallerAutoComplete .ui-autocomplete-dropdown.ui-button.ui-button-icon-only .ui-icon
+	{
 	margin-top: -8px !important;
 }
 
@@ -1870,12 +1901,48 @@ body .forceSpaceBetweenCell .ui-panelgrid-cell:last-child {
 	padding-left: 5px !important;
 }
 
-body .forceSpaceBetweenCell .ui-panelgrid-cell:not (:first-child ):not (:last-child
-	) {
-	padding-right: 5px !important;
-	padding-left: 5px !important;
-}
+body
+ 
+.forceSpaceBetweenCell
+ 
+.ui-panelgrid-cell
+:not
+ 
+(
+:first-child
+ 
+)
+:not
+ 
+(
+:last-child
 
+	
+)
+{
+padding-right
+:
+ 
+5
+px
+ 
+!
+important
+;
+
+	
+padding-left
+:
+ 
+5
+px
+ 
+!
+important
+;
+
+
+}
 body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 	{
 	margin-top: 8px !important;

@@ -1,0 +1,215 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+
+		<p:dialog widgetVar="dlgTrocaItemProfissional"
+			header="Alteração de Profissional" responsive="true" modal="true"
+			appendTo=":lume">
+			<p:ajax event="close" resetValues="true"
+				update="pnlTrocaItemProfissional" />
+			<div class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-lg-12">
+					<p:outputPanel id="pnlTrocaItemProfissional">
+						<p:outputLabel for="novoProfissional" value="Novo profissional: " />
+						<p:autoComplete dropdown="true" queryDelay="1000" size="35"
+							value="#{repasseItensProfissionalMB.profissionalTroca}"
+							id="profissional" minQueryLength="3"
+							completeMethod="#{repasseItensProfissionalMB.geraSugestoesProfissional}"
+							var="profissional" styleClass="tallerAutoComplete"
+							itemLabel="#{profissional.dadosBasico.prefixoNome}"
+							itemValue="#{profissional}" converter="profissional"
+							forceSelection="true" required="true">
+						</p:autoComplete>
+					</p:outputPanel>
+					<br />
+					<div class="SeparatorFull"></div>
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						<p:commandButton value="Salvar" icon="White fa fa-save"
+							actionListener="#{repasseItensProfissionalMB.actionPersistTrocaItemProfissional}"
+							update="pnlfaturaView"
+							process="@this, @parent:@parent:pnlTrocaItemProfissional"
+							styleClass="GreenButton" />
+						<p:commandButton value="Fechar" icon="White fa fa-close"
+							oncomplete="PF('dlgTrocaItemProfissional').hide()"
+							styleClass="NavyButton" />
+					</p:panelGrid>
+				</div>
+			</div>
+		</p:dialog>
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+
+					<p:outputPanel widgetvar="pnPrincipal" id="pnPrincipal"
+						styleClass="BordNone">
+						<h1>Repasse de Itens aos Profissionais</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:fieldset legend="Filtros">
+							<p:outputPanel id="filtros">
+								<p:panelGrid columns="4"
+									columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+									layout="grid" styleClass="ui-panelgrid-blank"
+									style="border:0px none; background-color:transparent;">
+
+									<p:outputLabel for="profissional" value="Profissional : " />
+									<p:autoComplete dropdown="true" queryDelay="1000" size="35"
+										value="#{repasseItensProfissionalMB.profissional}"
+										id="profissional" minQueryLength="3"
+										completeMethod="#{repasseItensProfissionalMB.geraSugestoesProfissional}"
+										var="profissional" styleClass="tallerAutoComplete"
+										itemLabel="#{profissional.dadosBasico.prefixoNome}"
+										itemValue="#{profissional}" converter="profissional"
+										forceSelection="true" required="true">
+									</p:autoComplete>
+									<p:outputLabel for="procSemRepasse"
+										value="Incluir procedimentos sem repasse: " />
+									<p:selectBooleanCheckbox id="procSemRepasse"
+										value="#{repasseItensProfissionalMB.procSemRepasse}" />
+
+									<p:outputLabel for="paciente" value="Paciente: " />
+									<p:autoComplete dropdown="true" queryDelay="1000" size="35"
+										value="#{repasseItensProfissionalMB.paciente}" id="paciente"
+										minQueryLength="3" styleClass="tallerAutoComplete"
+										completeMethod="#{repasseItensProfissionalMB.geraSugestoesPaciente}"
+										var="paciente" itemLabel="#{paciente.dadosBasico.prefixoNome}"
+										itemValue="#{paciente}" converter="paciente"
+										forceSelection="true" required="true">
+										<p:ajax event="itemSelect" process="paciente"
+											update=":lume:ptPaciente" />
+										<p:ajax event="change" process="paciente"
+											update=":lume:ptPaciente" />
+									</p:autoComplete>
+									<p:outputLabel for="ptPaciente" value="Plano de Tratamento: " />
+									<p:selectCheckboxMenu id="ptPaciente"
+										value="#{repasseItensProfissionalMB.planosTratamentoSelecionados}"
+										converter="planoTratamento" styleClass="tallerCombo"
+										multiple="true">
+										<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+										<f:selectItems
+											value="#{repasseItensProfissionalMB.planosTratamento}"
+											var="pt" itemValue="#{pt}" itemLabel="#{pt.descricao}" />
+									</p:selectCheckboxMenu>
+
+									<p:outputLabel for="mes" value="Mês : " />
+									<p:selectOneMenu id="mes" styleClass="tallerCombo"
+										value="#{repasseItensProfissionalMB.mes}">
+										<f:selectItem itemValue="1" itemLabel="Janeiro" />
+										<f:selectItem itemValue="2" itemLabel="Fevereiro" />
+										<f:selectItem itemValue="3" itemLabel="Março" />
+										<f:selectItem itemValue="4" itemLabel="Abril" />
+										<f:selectItem itemValue="5" itemLabel="Maio" />
+										<f:selectItem itemValue="6" itemLabel="Junho" />
+										<f:selectItem itemValue="7" itemLabel="Julho" />
+										<f:selectItem itemValue="8" itemLabel="Agosto" />
+										<f:selectItem itemValue="9" itemLabel="Setembro" />
+										<f:selectItem itemValue="10" itemLabel="Outubro" />
+										<f:selectItem itemValue="11" itemLabel="Novembro" />
+										<f:selectItem itemValue="12" itemLabel="Dezembro" />
+									</p:selectOneMenu>
+								</p:panelGrid>
+								<p:panelGrid columns="2"
+									columnClasses="ui-grid-col-3,ui-grid-col-9" layout="grid"
+									styleClass="ui-panelgrid-blank">
+									<p:outputLabel for="mesesAnteriores"
+										value="Incluir finalizados em aberto dos meses anteriores : " />
+									<p:selectBooleanCheckbox id="mesesAnteriores"
+										value="#{repasseItensProfissionalMB.mesesAnteriores}" />
+								</p:panelGrid>
+							</p:outputPanel>
+
+							<div class="SeparatorFull"></div>
+							<p:panelGrid columns="1" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton id="pesquisar" icon="White fa fa-search"
+									value="Pesquisar" styleClass="OrangeButton"
+									actionListener="#{repasseItensProfissionalMB.pesquisar}"
+									process="@this, :lume:filtros" update=":lume:dtPrincipal" />
+							</p:panelGrid>
+						</p:fieldset>
+
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							id="dtPrincipal" value="#{repasseItensProfissionalMB.entityList}"
+							var="ptp" rows="20" paginator="true" rowKey="#{ptp}"
+							paginatorPosition="bottom" widgetVar="dtPrincipal">
+							<f:facet name="header">Repasse por Itens</f:facet>
+							<p:column width="120" headerText="Detalhes">
+								<p:commandButton styleClass="RedButton" icon="fa fa-exchange"
+									title="Trocar Profissional" update=":lume:pnPrincipal"
+									actionListener="#{repasseItensProfissionalMB.abreTrocaItemProfissional(ptp)}"
+									process="@this">
+								</p:commandButton>
+							</p:column>
+							<p:column
+								filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
+								sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
+								filterMatchMode="contains" headerText="Paciente">
+								<h:outputText
+									value="#{ptp.planoTratamento.paciente.dadosBasico.nome}" />
+							</p:column>
+							<p:column filterBy="#{ptp.planoTratamento.descricao}"
+								sortBy="#{ptp.planoTratamento.descricao}"
+								filterMatchMode="contains" headerText="Plano de Tratamento">
+								<h:outputText value="#{ptp.planoTratamento.descricao}" />
+							</p:column>
+							<p:column filterBy="#{ptp.procedimento.descricao}"
+								sortBy="#{ptp.procedimento.descricao}"
+								filterMatchMode="contains" headerText="Procedimento">
+								<h:outputText value="#{ptp.procedimento.descricao}" />
+							</p:column>
+							<p:column
+								filterBy="#{repasseItensProfissionalMB.getFaturaItemFromPTP(ptp).fatura.profissional.dadosBasico.nome}"
+								sortBy="#{repasseItensProfissionalMB.getFaturaItemFromPTP(ptp).fatura.profissional.dadosBasico.nome}"
+								filterMatchMode="contains" headerText="Profissional do Repasse">
+								<h:outputText
+									value="#{repasseItensProfissionalMB.getFaturaItemFromPTP(ptp).fatura.profissional.dadosBasico.nome}" />
+							</p:column>
+							<p:column headerText="Valor para Repasse"
+								filterBy="#{repasseItensProfissionalMB.getValorRepasseFromPTP(ptp)}"
+								filterMatchMode="contains"
+								sortBy="#{repasseItensProfissionalMB.getValorRepasseFromPTP(ptp)}">
+								<h:outputText
+									value="#{repasseItensProfissionalMB.getValorRepasseFromPTP(ptp)}">
+									<f:convertNumber currencySymbol="R$ " type="currency" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Valor Repassado"
+								filterBy="#{repasseItensProfissionalMB.getValorRepassado(ptp)}"
+								filterMatchMode="contains"
+								sortBy="#{repasseItensProfissionalMB.getValorRepassado(ptp)}">
+								<h:outputText
+									value="#{repasseItensProfissionalMB.getValorRepassado(ptp)}">
+									<f:convertNumber currencySymbol="R$ " type="currency" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Valor Repassado e Pago"
+								filterBy="#{repasseItensProfissionalMB.getValorRepassadoEValidado(ptp)}"
+								filterMatchMode="contains"
+								sortBy="#{repasseItensProfissionalMB.getValorRepassadoEValidado(ptp)}">
+								<h:outputText
+									value="#{repasseItensProfissionalMB.getValorRepassadoEValidado(ptp)}">
+									<f:convertNumber currencySymbol="R$ " type="currency" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+
+					</p:outputPanel>
+
+
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			//<![CDATA[
+
+			//]]>
+		</script>
+	</ui:define>
+</ui:composition>

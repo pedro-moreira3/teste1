@@ -213,7 +213,7 @@ body .sideChkBox .ui-chkbox-label {
 								<h:outputText for="dataCriacao" value="Data Criação:" />
 								<p:inputText id="dataCriacao"
 									value="#{faturaPagtoMB.entity.dataCriacaoStr}" readonly="true" />
-									
+
 								<h:outputText
 									rendered="#{repasseProfissional != null and repasseProfissional == 'S'}"
 									for="pacienteFaturaOrigem"
@@ -313,8 +313,8 @@ body .sideChkBox .ui-chkbox-label {
 										title="Validar Lançamento" update="@parent:@parent"
 										actionListener="#{faturaPagtoMB.validaLancamentoRepasse(l)}"
 										process="@this"
-										rendered="#{repasseProfissional != null and repasseProfissional == 'S'}"
-										disabled="{l.validado == 'S'}">
+										rendered="#{(repasseProfissional != null and repasseProfissional == 'S') or (showNewLancamento != null and showNewLancamento == 'S')}"
+										disabled="{l.validado == 'S' or !l.ativo}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											message="Você tem certeza que confirma o recebimento deste lançamento?">
 										</p:confirm>

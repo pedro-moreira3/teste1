@@ -19,7 +19,7 @@ public class PacienteConverter implements Converter, Serializable {
     public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
 
         try {
-            if (value != null && !value.trim().isEmpty()) {
+            if (value != null && !value.trim().isEmpty() && value.matches("\\d+")) {
                 final Long id = Long.parseLong(value);
                 return PacienteSingleton.getInstance().getBo().find(id);
             }
