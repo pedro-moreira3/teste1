@@ -76,6 +76,70 @@
 				html : text
 			});
 		}
+		
+		function mostraDialogo(titulo,mensagem, tipo, tempo) {
+
+			if ($("#message").is(":visible")) {
+				return false;
+			}
+			
+			var icon = "";
+			var color = "";
+
+			if (!tempo) {
+				var tempo = 3000;
+			}
+
+			if (!tipo) {
+				var tipo = "info";
+			}else if(tipo == 'success'){
+				icon = 'check_circle';
+				color = '#32CD32';
+			}else if(tipo == 'error'){
+				icon = 'error';
+				color = '#FF0000';
+			}else if(tipo == 'warning'){
+				icon = 'warning';
+				color = '#FFFF00';
+			}
+			else if(tipo == 'info'){
+				icon = 'info';
+				color = '#0000FF';
+			}
+			
+			var container = 'margin-top:10px !important;display: block !important;width: 400px !important;height: 60px !important;padding-left: 20px !important;background-color: '+color+' !important;color: black !important;opacity: 1 !important;position:fixed !important;right:0;transition: opacity 0.6s !important;top:0 !important;z-index:9999 !important;float:right !important;border-radius:8px;border:1px solid '+color+';';
+			var icone = 'display: inline-block !important;width: 30% !important;height: 100% !important;position: left !important;text-align:center;background-color:white;';
+			var subContainer = 'display: inline-block !important;width: 70% !important;height: 100% !important;background-color: white !important;float: right !important;';
+			var title = 'display: block !important;height: 40% !important;background-color: white !important;text-align:left;margin-top:10px;';
+			var message = 'display: block !important;height: 40% !important;background-color: white !important;text-align:left;margin-top:15px;margin-bottom:15px;';
+			
+			var dialogo="";
+			
+			dialogo += '<div id="container" style="'+container+'">';
+			dialogo += '	<div id="icone" style="'+icone+'">';
+			dialogo += '		<i class="topbar-icon material-icons" style="margin-top:15px;bottom:0;vertical-align:center;display:inline-block;margin-right:10px;">'+icon+'</i>';
+			dialogo += '	</div>';
+			dialogo += '	<div id="subContainer" style="'+subContainer+'">';
+			
+			dialogo += '		<div id="message" style="'+message+'">';
+			dialogo += mensagem+titulo;
+			dialogo += '		</div>';
+			dialogo += '	</div>';
+			dialogo += '</div>';
+
+			// adiciona ao body a mensagem com o efeito de fade
+			$("body").append(dialogo);
+			$("#container").hide();
+			$("#container").fadeIn(200);
+
+			// contador de tempo para a mensagem sumir
+			setTimeout(function() {
+				$('#container').fadeOut(300, function() {
+					$(this).remove();
+				});
+			}, tempo); // milliseconds
+
+		}
 
 		function chartExtender() {
 			this.cfg.seriesDefaults = {

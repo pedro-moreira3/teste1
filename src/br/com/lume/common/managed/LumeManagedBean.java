@@ -213,7 +213,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         if (sendPrimefacesError) {
             if (MessageType.TYPE_INFO.equals(type))
                 type = MessageType.TYPE_SUCCESS;
-            PrimeFaces.current().executeScript("messageJSFStyle('" + summary + "', '" + detail + "', '" + type + "')");
+            PrimeFaces.current().executeScript("mostraDialogo('" + summary + "', '" + detail + "', '" + type + "')");
             // FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
         } else {
             summary = summary.replace("\n", "\\r\\n");
