@@ -331,7 +331,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.setPacienteSelecionado(null);
         this.setPlanoTratamentos(null);
         this.setPlanoTratamentoSelecionado(null);
-        this.setProcedimentosPickList(null);
+        this.setProcedimentosPickList(new DualListModel<AgendamentoPlanoTratamentoProcedimento>());
     }
 
     @Override
