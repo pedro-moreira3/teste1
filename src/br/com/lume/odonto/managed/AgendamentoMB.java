@@ -975,6 +975,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         if (agendamento.getPlanoTratamentoProcedimentosAgendamento() != null && agendamento.getPlanoTratamentoProcedimentosAgendamento().size() > 0) {
             this.setPlanoTratamentoSelecionado(agendamento.getPlanoTratamentoProcedimentosAgendamento().get(0).getPlanoTratamentoProcedimento().getPlanoTratamento());
         }
+        this.setObservacoes(agendamento.getDescricao());
         this.validaHoraUtilProfissional(profissionalDentroAgenda);
         validaHabilitaSalvar();
     }
