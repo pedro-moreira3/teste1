@@ -910,6 +910,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.validaAfastamento();
         PrimeFaces.current().ajax().addCallbackParam("hora", horaUtilValida);
         validaHabilitaSalvar();
+        setObservacoes(null);
     }
 
     private void validaHabilitaSalvar() {
