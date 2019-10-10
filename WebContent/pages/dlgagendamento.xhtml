@@ -301,6 +301,8 @@
 					converter="profissional" filter="true" filterMatchMode="contains">
 					<p:ajax listener="#{agendamentoMB.validaHoraUtilProfissionalCombo}"
 						process="@this" />
+					<p:ajax listener="#{agendamentoMB.validarAfastamentoProfissional}"
+						process="@this" />
 					<p:ajax listener="#{agendamentoMB.calculaDataFim}" process="@this"
 						update="fim" />
 					<f:selectItem itemValue="#{null}"

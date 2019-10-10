@@ -492,6 +492,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             }
         } else {
             this.setEntity(null);
+            pacienteSelecionado = null;
         }
     }
 
@@ -997,6 +998,13 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
         PrimeFaces.current().ajax().addCallbackParam("afastamento", afastamento);
     }
+    
+    public void validarAfastamentoProfissional() {
+        if(!this.validaData()) {
+            this.addError(OdontoMensagens.getMensagem("agendamento.profissional.afastado"), "");
+            dlg = false;
+        }
+    }    
 
     private void criarUsuario(Usuario usuario, Paciente paciente) throws UsuarioDuplicadoException, ServidorEmailDesligadoException, Exception {
         usuario.setUsuStrNme(paciente.getDadosBasico().getNome());
