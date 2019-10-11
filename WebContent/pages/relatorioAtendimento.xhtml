@@ -219,16 +219,16 @@ div.ui-selectoneradio label {
 										</p:autoComplete>
 									</h:panelGroup>
 
-									<h:panelGroup>
-										<h:outputText for="filtroConvenio" value="Convênio:" />
-										<p:autoComplete id="filtroConvenio"
-											value="#{relatorioAtendimentoMB.filtroPorConvenio}"
-											completeMethod="#{relatorioAtendimentoMB.sugestoesConvenios}"
-											var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-											converter="convenio" forceSelection="true" scrollHeight="400"
-											queryDelay="1000">
-											<p:ajax event="itemSelect" process="@this" />
-										</p:autoComplete>
+									<h:panelGroup styleClass="md-combo">
+										
+										<p:outputLabel style="margin:0px;" for="filtroConvenio" value="Convênio" />
+																		 
+										 <p:selectOneMenu id="filtroConvenio" style="min-width:0px;margin-top:10px;margin-bottom:10px;" value="#{relatorioAtendimentoMB.filtroPorConvenioTeste}">
+											<f:selectItem 	itemLabel="Todos" itemValue="todos"/>
+											<f:selectItems 	value="#{relatorioAtendimentoMB.listaConvenios}" var="agendamento" 
+															itemLabel="#{agendamento}" itemValue="#{agendamento}"/>
+										 </p:selectOneMenu>
+
 									</h:panelGroup>
 
 								</p:panelGrid>
