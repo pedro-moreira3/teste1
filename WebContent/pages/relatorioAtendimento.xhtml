@@ -452,7 +452,7 @@ div.ui-selectoneradio label {
 								filterMatchMode="contains"
 								headerText="Data do agendamento futuro">
 								<p:commandButton id="btnNovoAgendamento"
-									rendered="#{relatorioAtendimentoMB.verificarStatusAgendamentoFuturo(atendimento)}"
+									rendered="#{!atendimento.getStatusNovo().equals('F') || relatorioAtendimentoMB.verificarStatusAgendamentoFuturo(atendimento)}"
 									action="#{agendamentoMB.popularAgendamento(atendimento)}"
 									icon="fa fa fa-calendar" process="@this"
 									oncomplete="PF('dlgAgendamento').show();"
