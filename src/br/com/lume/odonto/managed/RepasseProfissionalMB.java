@@ -36,6 +36,7 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
         try {
             Calendar now = Calendar.getInstance();
             setMes(now.get(Calendar.MONTH) + 1);
+            pesquisar();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
