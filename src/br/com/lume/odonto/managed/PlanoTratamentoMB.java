@@ -851,11 +851,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         try {
             this.orcamentoSelecionado = OrcamentoSingleton.getInstance().preparaOrcamentoFromPT(getEntity());
             this.orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
+            PrimeFaces.current().executeScript("PF('dlgViewOrcamento').show()");
         } catch (Exception e) {
             log.error("Erro no actionNewOrcamento", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-        }        
-        
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
+        }
+
     }
 
     public void cancelaLancamentos() throws Exception {
@@ -943,26 +944,21 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionSimulaLancamento() {
         try {
-            
+
             List<OrcamentoItem> itemsJaAprovados = OrcamentoSingleton.getInstance().itensAprovadosNoOrcamento(orcamentoSelecionado);
-            
+
             //verificando se os procedimentos ja estao aprovados em outro orcamento       
-            if (itemsJaAprovados != null && itemsJaAprovados.size() > 0){
+            if (itemsJaAprovados != null && itemsJaAprovados.size() > 0) {
                 List<String> procedimentos = new ArrayList<String>();
                 for (OrcamentoItem orcamentoItem : itemsJaAprovados) {
                     procedimentos.add(orcamentoItem.getOrigemProcedimento().getPlanoTratamentoProcedimento().getProcedimento().getDescricao());
-                }                
+                }
                 String valoresSeparados = String.join(", ", procedimentos);
-                
-                this.addError("O(s) procedimento(s): " + valoresSeparados +
-                        " já está(ão) aprovado(s) em outro orçamento.", "");
+
+                this.addError("O(s) procedimento(s): " + valoresSeparados + " já está(ão) aprovado(s) em outro orçamento.", "");
                 return;
             }
-            
-            
-      
-            
-            
+
             BigDecimal orcamentoPerc = new BigDecimal(0);
             if ("P".equals(orcamentoSelecionado.getDescontoTipo()))
                 orcamentoPerc = orcamentoSelecionado.getDescontoValor();

@@ -56,7 +56,7 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
 
     public void pesquisar() {
         try {
-            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasFilter(getProfissional(), getMes(), isMesesAnteriores()));
+            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getMes(), isMesesAnteriores()));
             if (isPagoTotalmente())
                 getEntityList().removeIf(fatura -> {
                     if (FaturaSingleton.getInstance().getTotalRestante(fatura).compareTo(BigDecimal.ZERO) <= 0)
