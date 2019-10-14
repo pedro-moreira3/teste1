@@ -1107,8 +1107,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				<p:commandButton id="newOrcamento" icon="ui-icon-add"
 					actionListener="#{planoTratamentoMB.actionNewOrcamento}"
 					update=":lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView"
-					onclick="PF('dlgViewOrcamento').show();" value="Novo"
-					process="@this" styleClass="NavyButton"
+					value="Novo" process="@this" styleClass="NavyButton"
 					disabled="#{planoTratamentoMB.entity.finalizado == 'S'}" />
 			</p:panelGrid>
 

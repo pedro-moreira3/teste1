@@ -106,10 +106,10 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                 } else {
                     //só salva
                 }
-                
+
                 getbO().persist(getEntity());
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                
+
                 carregarTela();
                 atualizaOrcamentos();
             } else {
@@ -232,10 +232,10 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
     }
-    
+
     public void atualizaOrcamentos() throws Exception {
         setOrcamentos(OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(getEntity(), true));
-        for(Orcamento orcamento: orcamentos)
+        for (Orcamento orcamento : orcamentos)
             OrcamentoSingleton.getInstance().recalculaValores(orcamento);
     }
 
@@ -248,14 +248,14 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             long qtd = getEntity().getMeses() - PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findQtdFinalizadosPTPOrtodontia(getEntity().getId());
             qtd = (qtd > 12l ? 12 : qtd);
             getOrcamentoSelecionado().setQuantidadeParcelas((int) qtd);
+            PrimeFaces.current().executeScript("PF('dlgOrcamentoPlanoOrtodontico').show()");
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e.getMessage());
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
-        
-        
+
     }
-    
+
     public void actionPersistOrcamento() {
         try {
             orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
@@ -284,11 +284,11 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
     }
-    
+
     public void actionAprovaOrcamento() {
         actionAprovaOrcamento(getOrcamentoSelecionado());
     }
-    
+
     public void actionAprovaOrcamento(Orcamento orcamento) {
         try {
             OrcamentoSingleton.getInstance().aprovaOrcamento(orcamento, null, UtilsFrontEnd.getProfissionalLogado());
@@ -308,12 +308,12 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public BigDecimal getValorOrcamentoAPagar() {
-        if(getOrcamentoSelecionado() != null) {
+        if (getOrcamentoSelecionado() != null) {
             BigDecimal totalOrcamento = getOrcamentoSelecionado().getValorTotalSemDesconto();
-            if(totalOrcamento == null)
+            if (totalOrcamento == null)
                 return BigDecimal.ZERO;
             BigDecimal valorPago = LancamentoSingleton.getInstance().getTotalLancamentoPorOrcamento(getOrcamentoSelecionado(), true);
-            if(valorPago == null)
+            if (valorPago == null)
                 return BigDecimal.ZERO;
             return totalOrcamento.subtract(valorPago);
         }

@@ -18,6 +18,8 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.conta.ContaSingleton;
+import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
@@ -32,7 +34,6 @@ import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
-import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
@@ -178,7 +179,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             }
 
             //setEntityList(FaturaSingleton.getInstance().getBo().findFaturasFilter(getPaciente(), getListaPt(), getInicio(), getFim()));
-            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasFilter(getPaciente(), null, (inicio == null ? null : inicio.getTime()), (fim == null ? null : fim.getTime())));
+            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), null, (inicio == null ? null : inicio.getTime()),
+                    (fim == null ? null : fim.getTime())));
             getEntityList().removeIf(fatura -> {
                 if (Lancamento.PAGO.equals(getStatus()) && this.getTotalRestante(fatura).compareTo(BigDecimal.ZERO) > 0)
                     return true;
@@ -280,9 +282,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
-    public String getStyleBySaldoPaciente() {
+    public String getStyleBySaldoPaciente() throws Exception {
         if (getPaciente() == null || getPaciente().getId() == null || getPaciente().getId().longValue() == 0)
             return "";
+        if (getPaciente().getConta() == null)
+            getPaciente().setConta(ContaSingleton.getInstance().criaConta(TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getPaciente(), null, null));
         BigDecimal saldo = getPaciente().getConta().getSaldo();
         String color = (saldo.compareTo(BigDecimal.ZERO) == 0 ? "#17a2b8" : (saldo.compareTo(BigDecimal.ZERO) < 0 ? "#dc3545" : "#28a745"));
         return (color != null && !color.isEmpty() ? "color: " + color : "");
