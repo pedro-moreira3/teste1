@@ -155,6 +155,153 @@
 	<p:fieldset legend="" toggleable="true" collapsed="false"
 		style="margin-top: 20px !important">
 
+		<p:panelGrid columns="4" layout="grid" columnClasses="ui-g-3, ui-g-6"
+			styleClass="ui-panelgrid-blank form-group ui-fluid">
+			<h:panelGroup styleClass="md-combo"
+				title="#{agendamentoMB.entity.id}">
+				<p:outputLabel for="profissionalAgend" value="Profissional" />
+				<p:selectOneMenu id="profissionalAgend" styleClass="tallerCombo"
+					value="#{agendamentoMB.profissionalDentroAgenda}"
+					converter="profissional" filter="true" filterMatchMode="contains">
+					<p:ajax listener="#{agendamentoMB.validarAfastamentoProfissional}"
+						process="@this" />
+					<p:ajax listener="#{agendamentoMB.validaHoraUtilProfissionalCombo}"
+						process="@this" />
+					<p:ajax listener="#{agendamentoMB.calculaDataFim}" process="@this"
+						update="fim" />
+					<f:selectItem itemValue="#{null}"
+						itemLabel="Selecione um profissional" />
+					<f:selectItems value="#{agendamentoMB.profissionais}"
+						var="profissional"
+						itemLabel="#{profissional.dadosBasico.prefixoNome}"
+						itemValue="#{profissional}" />
+				</p:selectOneMenu>
+				<p:message styleClass="msg" for="profissionalAgend" />
+			</h:panelGroup>
+			<p:panelGrid columns="1" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
+				<h:panelGroup style="display: flex;" styleClass="md-combo">
+					<p:outputLabel for="paciente" value="#{dominioMB.cliente}" />
+
+					<p:autoComplete dropdown="true" queryDelay="1000"
+						value="#{agendamentoMB.pacienteSelecionado}" id="paciente"
+						minQueryLength="3" scrollHeight="400"
+						completeMethod="#{agendamentoMB.geraSugestoes}" var="p"
+						itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+						converter="paciente" forceSelection="true"
+						disabled="#{agendamentoMB.entity.id != 0}"
+						required="#{!agendamentoMB.visivel}"
+						styleClass="paciente tallerAutoComplete">
+
+						<p:column headerText="Nome">
+							<h:outputText value="#{p.dadosBasico.nome}" />
+						</p:column>
+						<p:column headerText="Celular">
+							<h:outputText value="#{p.dadosBasico.celular}" />
+						</p:column>
+						<p:column headerText="Nome da Mãe">
+							<h:outputText value="#{p.nomeMae}" />
+						</p:column>
+
+						<p:ajax event="itemSelect"
+							listener="#{agendamentoMB.handleSelect}"
+							update="planoTratamento, pgProcedimentos, pnBtpaciente" />
+					</p:autoComplete>
+
+					<p:outputPanel id="pnBtpaciente" style="display:inline-flex">
+						<p:commandButton id="cadastroPaciente"
+							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
+							process="@this"
+							disabled="#{agendamentoMB.pacienteSelecionado == null}"
+							update=":lume:dadosPacienteDlgFields"
+							actionListener="#{pacienteMB.abreReadOnly(agendamentoMB.pacienteSelecionado, 'dadosPacienteDlgFields')}"
+							icon="fa fa-eye White" immediate="true"
+							title="Cadastro do Paciente"
+							oncomplete="PF('dlgDadosPacienteAg').show()" />
+						<p:commandButton id="novoPaciente"
+							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
+							icon="fa fa-plus White" title="Novo Paciente"
+							update=":lume:pnNovoPaciente, :lume:pnBtpaciente"
+							immediate="true" actionListener="#{agendamentoMB.novoPaciente}" />
+						<p:commandButton id="cancelarNovoPaciente"
+							rendered="#{agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
+							icon="fa fa-minus White" title="Cancelar"
+							update="pnNovoPaciente, :lume:pnBtpaciente" immediate="true"
+							actionListener="#{agendamentoMB.cancelarNovoPaciente}" />
+					</p:outputPanel>
+				</h:panelGroup>
+
+				<p:panel id="pnNovoPaciente" visible="#{agendamentoMB.visivel}">
+					<h:panelGroup styleClass="md-inputfield" style="margin-top: 20px">
+						<p:inputText id="nomePaciente"
+							value="#{agendamentoMB.paciente.dadosBasico.nome}"
+							maxlength="200" required="#{agendamentoMB.visivel}" />
+						<p:outputLabel for="nomePaciente" value="Nome" />
+						<p:message for="nomePaciente" styleClass="msg" />
+					</h:panelGroup>
+					<h:panelGroup styleClass="md-inputfield" id="pgResponsavel">
+						<p:inputText id="celular"
+							value="#{agendamentoMB.paciente.dadosBasico.celular}"
+							required="#{agendamentoMB.visivel}" maxlength="200" />
+						<p:outputLabel for="celular" value="Celular" />
+						<p:message for="celular" styleClass="msg" />
+					</h:panelGroup>
+					<h:panelGroup styleClass="md-inputfield">
+						<p:inputText id="emailPaciente"
+							value="#{agendamentoMB.paciente.dadosBasico.email}"
+							maxlength="200" />
+						<p:outputLabel for="emailPaciente" value="Email" />
+						<p:message for="emailPaciente" styleClass="msg" />
+					</h:panelGroup>
+					<h:panelGroup styleClass="md-inputfield">
+						<p:outputLabel for="dtNascimentoPaciente"
+							value="Data de Nascimento" />
+						<p:calendar id="dtNascimentoPaciente"
+							value="#{agendamentoMB.paciente.dadosBasico.dataNascimento}"
+							pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+							locale="#{lumeSecurity.locale}"
+							timeZone="#{lumeSecurity.timeZone}" navigator="true"
+							yearRange="-100:+0" maxdate="#{odontoMB.sysdate}">
+						</p:calendar>
+						<p:message for="dtNascimentoPaciente" styleClass="msg" />
+					</h:panelGroup>
+					<h:panelGroup styleClass="md-inputfield">
+						<p:outputLabel for="responsavelPaciente"
+							value="Nome do Responsável" />
+						<p:inputText id="responsavelPaciente"
+							value="#{agendamentoMB.paciente.dadosBasico.responsavel}"
+							maxlength="100" />
+					</h:panelGroup>
+					<p:separator styleClass="SeparatorFull" />
+					<div class="Container25 Responsive100 Fnone">
+						<p:commandButton id="persistPaciente" icon="White fa fa-save"
+							process="@this,:lume:pnNovoPaciente" value="Salvar"
+							update=":lume:pnNovoPaciente, :lume:paciente, :lume:planoTratamento, :lume:procedimentos, :lume:pnConflito"
+							actionListener="#{agendamentoMB.actionPersistPacienteVerificaConflito}"
+							oncomplete="PF()" styleClass="GreenButton">
+						</p:commandButton>
+					</div>
+				</p:panel>
+			</p:panelGrid>
+
+			<h:panelGroup styleClass="md-inputfield"
+				rendered="#{agendamentoMB.entity.id != 0 and agendamentoMB.visivelDadosPaciente}">
+				<p:inputText
+					value="#{agendamentoMB.entity.paciente.dadosBasico.celular}"
+					styleClass="FontNormal Opac100" readonly="true" id="celularAgend" />
+				<p:outputLabel value="Celular" for="celularAgend" />
+				<p:message styleClass="msg" for="celularAgend" />
+			</h:panelGroup>
+			<h:panelGroup styleClass="md-inputfield"
+				rendered="#{agendamentoMB.entity.id != 0 and agendamentoMB.visivelDadosPaciente}">
+				<p:inputText
+					value="#{agendamentoMB.entity.paciente.dadosBasico.telefone}"
+					styleClass="FontNormal Opac100" readonly="true" id="telefoneAgend" />
+				<p:outputLabel for="telefoneAgend" value="Telefone" />
+				<p:message styleClass="msg" for="telefoneAgend" />
+			</h:panelGroup>
+		</p:panelGrid>
+
 		<p:panelGrid columns="6" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid fieldsZeroPadd">
 
@@ -289,152 +436,6 @@
 				</p:panelGrid>
 
 
-			</h:panelGroup>
-		</p:panelGrid>
-		<p:panelGrid columns="4" layout="grid" columnClasses="ui-g-3, ui-g-6"
-			styleClass="ui-panelgrid-blank form-group ui-fluid">
-			<h:panelGroup styleClass="md-combo"
-				title="#{agendamentoMB.entity.id}">
-				<p:outputLabel for="profissionalAgend" value="Profissional" />
-				<p:selectOneMenu id="profissionalAgend" styleClass="tallerCombo"
-					value="#{agendamentoMB.profissionalDentroAgenda}"
-					converter="profissional" filter="true" filterMatchMode="contains">
-					<p:ajax listener="#{agendamentoMB.validaHoraUtilProfissionalCombo}"
-						process="@this" />
-					<p:ajax listener="#{agendamentoMB.validarAfastamentoProfissional}"
-						process="@this" />
-					<p:ajax listener="#{agendamentoMB.calculaDataFim}" process="@this"
-						update="fim" />
-					<f:selectItem itemValue="#{null}"
-						itemLabel="Selecione um profissional" />
-					<f:selectItems value="#{agendamentoMB.profissionais}"
-						var="profissional"
-						itemLabel="#{profissional.dadosBasico.prefixoNome}"
-						itemValue="#{profissional}" />
-				</p:selectOneMenu>
-				<p:message styleClass="msg" for="profissionalAgend" />
-			</h:panelGroup>
-			<p:panelGrid columns="1" layout="grid"
-				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
-				<h:panelGroup style="display: flex;" styleClass="md-combo">
-					<p:outputLabel for="paciente" value="#{dominioMB.cliente}" />
-
-					<p:autoComplete dropdown="true" queryDelay="1000"
-						value="#{agendamentoMB.pacienteSelecionado}" id="paciente"
-						minQueryLength="3" scrollHeight="400"
-						completeMethod="#{agendamentoMB.geraSugestoes}" var="p"
-						itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-						converter="paciente" forceSelection="true"
-						disabled="#{agendamentoMB.entity.id != 0}"
-						required="#{!agendamentoMB.visivel}"
-						styleClass="paciente tallerAutoComplete">
-
-						<p:column headerText="Nome">
-							<h:outputText value="#{p.dadosBasico.nome}" />
-						</p:column>
-						<p:column headerText="Celular">
-							<h:outputText value="#{p.dadosBasico.celular}" />
-						</p:column>
-						<p:column headerText="Nome da Mãe">
-							<h:outputText value="#{p.nomeMae}" />
-						</p:column>
-
-						<p:ajax event="itemSelect"
-							listener="#{agendamentoMB.handleSelect}"
-							update="planoTratamento, pgProcedimentos, pnBtpaciente" />
-					</p:autoComplete>
-
-					<p:outputPanel id="pnBtpaciente" style="display:inline-flex">
-						<p:commandButton id="cadastroPaciente"
-							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
-							process="@this"
-							disabled="#{agendamentoMB.pacienteSelecionado == null}"
-							update=":lume:dadosPacienteDlgFields"
-							actionListener="#{pacienteMB.abreReadOnly(agendamentoMB.pacienteSelecionado, 'dadosPacienteDlgFields')}"
-							icon="fa fa-eye White" immediate="true"
-							title="Cadastro do Paciente"
-							oncomplete="PF('dlgDadosPacienteAg').show()" />
-						<p:commandButton id="novoPaciente"
-							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
-							icon="fa fa-plus White" title="Novo Paciente"
-							update=":lume:pnNovoPaciente, :lume:pnBtpaciente"
-							immediate="true" actionListener="#{agendamentoMB.novoPaciente}" />
-						<p:commandButton id="cancelarNovoPaciente"
-							rendered="#{agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
-							icon="fa fa-minus White" title="Cancelar"
-							update="pnNovoPaciente, :lume:pnBtpaciente" immediate="true"
-							actionListener="#{agendamentoMB.cancelarNovoPaciente}" />
-					</p:outputPanel>
-				</h:panelGroup>
-
-				<p:panel id="pnNovoPaciente" visible="#{agendamentoMB.visivel}">
-					<h:panelGroup styleClass="md-inputfield" style="margin-top: 20px">
-						<p:inputText id="nomePaciente"
-							value="#{agendamentoMB.paciente.dadosBasico.nome}"
-							maxlength="200" required="#{agendamentoMB.visivel}" />
-						<p:outputLabel for="nomePaciente" value="Nome" />
-						<p:message for="nomePaciente" styleClass="msg" />
-					</h:panelGroup>
-					<h:panelGroup styleClass="md-inputfield" id="pgResponsavel">
-						<p:inputText id="celular"
-							value="#{agendamentoMB.paciente.dadosBasico.celular}"
-							required="#{agendamentoMB.visivel}" maxlength="200" />
-						<p:outputLabel for="celular" value="Celular" />
-						<p:message for="celular" styleClass="msg" />
-					</h:panelGroup>
-					<h:panelGroup styleClass="md-inputfield">
-						<p:inputText id="emailPaciente"
-							value="#{agendamentoMB.paciente.dadosBasico.email}"
-							maxlength="200" />
-						<p:outputLabel for="emailPaciente" value="Email" />
-						<p:message for="emailPaciente" styleClass="msg" />
-					</h:panelGroup>
-					<h:panelGroup styleClass="md-inputfield">
-						<p:outputLabel for="dtNascimentoPaciente"
-							value="Data de Nascimento" />
-						<p:calendar id="dtNascimentoPaciente"
-							value="#{agendamentoMB.paciente.dadosBasico.dataNascimento}"
-							pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
-							locale="#{lumeSecurity.locale}"
-							timeZone="#{lumeSecurity.timeZone}" navigator="true"
-							yearRange="-100:+0" maxdate="#{odontoMB.sysdate}">
-						</p:calendar>
-						<p:message for="dtNascimentoPaciente" styleClass="msg" />
-					</h:panelGroup>
-					<h:panelGroup styleClass="md-inputfield">
-						<p:outputLabel for="responsavelPaciente"
-							value="Nome do Responsável" />
-						<p:inputText id="responsavelPaciente"
-							value="#{agendamentoMB.paciente.dadosBasico.responsavel}"
-							maxlength="100" />
-					</h:panelGroup>
-					<p:separator styleClass="SeparatorFull" />
-					<div class="Container25 Responsive100 Fnone">
-						<p:commandButton id="persistPaciente" icon="White fa fa-save"
-							process="@this,:lume:pnNovoPaciente" value="Salvar"
-							update=":lume:pnNovoPaciente, :lume:paciente, :lume:planoTratamento, :lume:procedimentos, :lume:pnConflito"
-							actionListener="#{agendamentoMB.actionPersistPacienteVerificaConflito}"
-							oncomplete="PF()" styleClass="GreenButton">
-						</p:commandButton>
-					</div>
-				</p:panel>
-			</p:panelGrid>
-
-			<h:panelGroup styleClass="md-inputfield"
-				rendered="#{agendamentoMB.entity.id != 0 and agendamentoMB.visivelDadosPaciente}">
-				<p:inputText
-					value="#{agendamentoMB.entity.paciente.dadosBasico.celular}"
-					styleClass="FontNormal Opac100" readonly="true" id="celularAgend" />
-				<p:outputLabel value="Celular" for="celularAgend" />
-				<p:message styleClass="msg" for="celularAgend" />
-			</h:panelGroup>
-			<h:panelGroup styleClass="md-inputfield"
-				rendered="#{agendamentoMB.entity.id != 0 and agendamentoMB.visivelDadosPaciente}">
-				<p:inputText
-					value="#{agendamentoMB.entity.paciente.dadosBasico.telefone}"
-					styleClass="FontNormal Opac100" readonly="true" id="telefoneAgend" />
-				<p:outputLabel for="telefoneAgend" value="Telefone" />
-				<p:message styleClass="msg" for="telefoneAgend" />
 			</h:panelGroup>
 		</p:panelGrid>
 	</p:fieldset>
