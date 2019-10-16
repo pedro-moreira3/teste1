@@ -3,6 +3,7 @@ package br.com.lume.odonto.managed;
 import java.math.BigDecimal;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
@@ -87,7 +88,8 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
     public void pesquisar() {
         try {
             //Fatura.TipoFatura tipoFatura = (getTipoFatura() == null || getTipoFatura().isEmpty() ? null : Fatura.TipoFatura.getTipoFromRotulo(getTipoFatura()));
-            setEntityList(((PlanoTratamentoProcedimentoBO) this.getbO()).getPTPForRepasseFilters(getPaciente(), getProfissional(), getMes(), isMesesAnteriores(), isProcSemRepasse()));
+            setEntityList(((PlanoTratamentoProcedimentoBO) this.getbO()).getPTPForRepasseFilters(getPaciente(), Arrays.asList(getPlanosTratamentoSelecionados()), getProfissional(), getMes(),
+                    isMesesAnteriores(), isProcSemRepasse()));
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

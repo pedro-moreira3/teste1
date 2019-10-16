@@ -17,7 +17,7 @@
 						<p:outputLabel for="novoProfissional" value="Novo profissional: " />
 						<p:autoComplete dropdown="true" queryDelay="1000" size="35"
 							value="#{repasseItensProfissionalMB.profissionalTroca}"
-							id="profissional" minQueryLength="3"
+							id="novoProfissional" minQueryLength="3"
 							completeMethod="#{repasseItensProfissionalMB.geraSugestoesProfissional}"
 							var="profissional" styleClass="tallerAutoComplete"
 							itemLabel="#{profissional.dadosBasico.prefixoNome}"
@@ -31,7 +31,7 @@
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 						<p:commandButton value="Salvar" icon="White fa fa-save"
 							actionListener="#{repasseItensProfissionalMB.actionPersistTrocaItemProfissional}"
-							update="pnlfaturaView"
+							update="pnPrincipal"
 							process="@this, @parent:@parent:pnlTrocaItemProfissional"
 							styleClass="GreenButton" />
 						<p:commandButton value="Fechar" icon="White fa fa-close"
@@ -66,7 +66,7 @@
 										var="profissional" styleClass="tallerAutoComplete"
 										itemLabel="#{profissional.dadosBasico.prefixoNome}"
 										itemValue="#{profissional}" converter="profissional"
-										forceSelection="true" required="true">
+										forceSelection="true">
 									</p:autoComplete>
 									<p:outputLabel for="procSemRepasse"
 										value="Incluir procedimentos sem repasse: " />
@@ -80,7 +80,7 @@
 										completeMethod="#{repasseItensProfissionalMB.geraSugestoesPaciente}"
 										var="paciente" itemLabel="#{paciente.dadosBasico.prefixoNome}"
 										itemValue="#{paciente}" converter="paciente"
-										forceSelection="true" required="true">
+										forceSelection="true">
 										<p:ajax event="itemSelect" process="paciente"
 											update=":lume:ptPaciente" />
 										<p:ajax event="change" process="paciente"
@@ -128,7 +128,7 @@
 							<p:panelGrid columns="1" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid">
 								<p:commandButton id="pesquisar" icon="White fa fa-search"
-									value="Pesquisar" styleClass="OrangeButton"
+									value="Pesquisar" styleClass="OrangeButton" 
 									actionListener="#{repasseItensProfissionalMB.pesquisar}"
 									process="@this, :lume:filtros" update=":lume:dtPrincipal" />
 							</p:panelGrid>
