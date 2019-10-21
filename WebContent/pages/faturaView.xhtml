@@ -279,6 +279,12 @@ body .sideChkBox .ui-chkbox-label {
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:column>
+								<p:column sortBy="#{fi.valorComDesconto}" filterMatchMode="contains"
+									filterBy="#{fi.valorComDesconto}" headerText="Valor com desconto" width="100">
+									<h:outputText value="#{fi.valorComDesconto}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:column>
 							</p:dataTable>
 							<p:separator styleClass="SeparatorFull" />
 							<p:panel
@@ -395,7 +401,7 @@ body .sideChkBox .ui-chkbox-label {
 			<p:column />
 			<p:commandButton value="Fechar" icon="fa fa-close"
 				styleClass="NavyButton" onclick="PF('dlgFaturaView').hide()"
-				process="@this" />
+				process="@this" update=":lume:dtPrincipal"/>
 		</p:panelGrid>
 	</p:dialog>
 

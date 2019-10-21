@@ -234,7 +234,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         try {
             List<Afastamento> afastamentos = null;
             if (profissional != null) {
-                afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissional(profissional, start, end);
+                //afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissional(profissional, start, end);
             } else {
                 afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataValidos(start, end);
             }
