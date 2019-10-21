@@ -90,8 +90,8 @@
 									<p:selectCheckboxMenu id="ptPaciente"
 										value="#{repasseItensProfissionalMB.planosTratamentoSelecionados}"
 										converter="planoTratamento" styleClass="tallerCombo"
-										multiple="true">
-										<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+										multiple="true"
+										disabled="#{repasseItensProfissionalMB.planosTratamento == null or repasseItensProfissionalMB.planosTratamento.size() le 0}">
 										<f:selectItems
 											value="#{repasseItensProfissionalMB.planosTratamento}"
 											var="pt" itemValue="#{pt}" itemLabel="#{pt.descricao}" />
@@ -128,7 +128,7 @@
 							<p:panelGrid columns="1" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid">
 								<p:commandButton id="pesquisar" icon="White fa fa-search"
-									value="Pesquisar" styleClass="OrangeButton" 
+									value="Pesquisar" styleClass="OrangeButton"
 									actionListener="#{repasseItensProfissionalMB.pesquisar}"
 									process="@this, :lume:filtros" update=":lume:dtPrincipal" />
 							</p:panelGrid>
