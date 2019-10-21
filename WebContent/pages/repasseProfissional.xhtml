@@ -88,13 +88,21 @@
 									process="@this"
 									update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 							</p:column>
-							<p:column filterBy="#{f.paciente.dadosBasico.nomeStr}"
-								sortBy="#{f.paciente.dadosBasico.nome}"
+							<p:column filterBy="#{f.profissional.dadosBasico.getPrefixoNome()}"
+								sortBy="#{f.profissional.dadosBasico.getPrefixoNome()}"
 								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Profissional" />
 								</f:facet>
-								<h:outputText value="#{f.profissional.dadosBasico.nome}" />
+								<h:outputText value="#{f.profissional.dadosBasico.getPrefixoNome()}" />
+							</p:column>
+							<p:column filterBy="#{f.paciente.dadosBasico.nome}"
+								sortBy="#{f.paciente.dadosBasico.nome}"
+								filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Paciente" />
+								</f:facet>
+								<h:outputText value="#{f.paciente.dadosBasico.nome}" />
 							</p:column>
 							<p:column filterBy="#{f.dataCriacaoStr}"
 								headerText="Data de Criação" filterMatchMode="contains"

@@ -32,6 +32,7 @@ import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.odonto.entity.Tarifa;
+import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
@@ -153,6 +154,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void validaLancamentoRepasse(Lancamento l) {
         try {
             RepasseFaturasLancamentoSingleton.getInstance().validaLancamentoRepasse(l, UtilsFrontEnd.getProfissionalLogado());
+            addInfo("Sucesso", "Sucesso ao salvar o registro",true);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Falha ao validar o lançamento! " + e.getMessage().replace("'", "\\'"), true);
