@@ -279,10 +279,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             setEntity(pt);
             carregarPlanoTratamentoProcedimentos();
         }
-        if (temProcedimentosAbertos()) {
-            this.addError("Finalize os procedimentos antes de encerrar o plano de tratamento!", "");
-        } else {
+        
+        if(temProcedimentosAbertos()) {
             PrimeFaces.current().executeScript("PF('devolver').show();");
+        }else {
+            PrimeFaces.current().executeScript("PF('dlgConfirmarFinalizacao').show();");
         }
     }
 
@@ -298,17 +299,20 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void actionFinalizar(ActionEvent event) {
         mensagemEncerrarPT = null;
         try {
-            BigDecimal totalPagar = PlanoTratamentoSingleton.getInstance().getBo().findValorPagarByPlanoTratamento(this.getEntity().getId());
-            totalPagar = totalPagar == null ? new BigDecimal(0) : totalPagar;
-
-            BigDecimal totalPago = PlanoTratamentoSingleton.getInstance().getBo().findValorPagoByPlanoTratamento(this.getEntity().getId());
-            totalPago = totalPago == null ? new BigDecimal(0) : totalPago;
-
-            if (totalPago.doubleValue() < totalPagar.doubleValue()) {
-                log.error(OdontoMensagens.getMensagem("erro.encerramento.plano.nao.pago"));
-                this.addError(OdontoMensagens.getMensagem("erro.encerramento.plano.nao.pago").replaceFirst("\\{1\\}", Utils.stringToCurrency(totalPagar)).replaceFirst("\\{2\\}",
-                        Utils.stringToCurrency(totalPago)), "");
-            } else {
+//            BigDecimal totalPagar = PlanoTratamentoSingleton.getInstance().getBo().findValorPagarByPlanoTratamento(this.getEntity().getId());
+//            totalPagar = totalPagar == null ? new BigDecimal(0) : totalPagar;
+//
+//            BigDecimal totalPago = PlanoTratamentoSingleton.getInstance().getBo().findValorPagoByPlanoTratamento(this.getEntity().getId());
+//            totalPago = totalPago == null ? new BigDecimal(0) : totalPago;
+//
+//            if (totalPago.doubleValue() < totalPagar.doubleValue()) {
+//                log.error(OdontoMensagens.getMensagem("erro.encerramento.plano.nao.pago"));
+//                this.addError(OdontoMensagens.getMensagem("erro.encerramento.plano.nao.pago").replaceFirst("\\{1\\}", Utils.stringToCurrency(totalPagar)).replaceFirst("\\{2\\}",
+//                        Utils.stringToCurrency(totalPago)), "Plano não pago totalmente", true);
+//            } else {
+            
+            if(temProcedimentosAbertos()) {
+                
                 actionPersistEvolucao();
                 this.getEntity().setJustificativa(justificativa.getNome());
                 this.getEntity().setFinalizado(Status.SIM);
@@ -316,15 +320,29 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.getEntity().setFinalizadoPorProfissional(profissionalLogado);
                 this.criaRetorno();
                 cancelaAgendamentos();
-                cancelaLancamentos();
+                //cancelaLancamentos();
                 PlanoTratamentoSingleton.getInstance().getBo().persist(this.getEntity());
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 PrimeFaces.current().executeScript("PF('devolver').hide()");
                 atualizaTela();
+                
+            }else {
+                
+                actionPersistEvolucao();
+                this.getEntity().setJustificativa(null);
+                this.getEntity().setFinalizado(Status.SIM);
+                this.getEntity().setDataFinalizado(new Date());
+                this.getEntity().setFinalizadoPorProfissional(profissionalLogado);
+                //cancelaLancamentos();
+                PlanoTratamentoSingleton.getInstance().getBo().persist(this.getEntity());
+                this.addInfo("Sucesso",Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+                atualizaTela();
+                
             }
+
         } catch (Exception e) {
             log.error("Erro no actionFinalizar", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError("Erro",Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
         }
     }
 
@@ -368,13 +386,24 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (planoTratamentoProcedimentos == null || planoTratamentoProcedimentos.isEmpty())
             return true;
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
-            if (ptp.getStatus() == null || !ptp.getStatus().equals("F")) {
+            if (ptp.getStatus() == null || ptp.getStatus().equals("F")) {
                 if (ptp.getExcluido().equals(Status.NAO)) {
                     return true;
                 }
             }
         }
-        PrimeFaces.current().executeScript("PF('devolver').show();");
+        
+//        try {
+//            if(this.temProcedimentosAbertos())
+//                PrimeFaces.current().executeScript("PF('devolver').show();");
+//            else
+//                return true;
+//                
+//        } catch (Exception e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+        
         return false;
     }
 
@@ -779,6 +808,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 evolucao = null;
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 PrimeFaces.current().ajax().addCallbackParam("descEvolucao", true);
+                
+                iniciaFinalizacaoPT(this.getEntity());
             }
         } catch (Exception e) {
             log.error("Erro no actionPersistEvolucao", e);

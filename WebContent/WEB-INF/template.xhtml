@@ -80,8 +80,8 @@
 
 		function mostraDialogo(titulo, mensagem, tipo, tempo) {
 
-			if ($("#message").is(":visible")) {
-				return false;
+			if ($("#container").is(":visible")) {
+				return;
 			}
 
 			var icon = "";

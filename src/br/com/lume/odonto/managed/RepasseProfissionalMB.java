@@ -87,6 +87,12 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
         }
         return sugestoes;
     }
+    
+    public void popularTabela() {
+        
+        
+        
+    }
 
     public int getMes() {
         return mes;

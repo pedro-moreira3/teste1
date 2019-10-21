@@ -157,7 +157,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</ui:remove>
 						<h:panelGroup rendered="#{planoTratamentoMB.admin}">
 							<p:commandButton id="devolucao" icon="White fa fa-times-circle"
-								update=":lume:tabView:mainViewPT, :lume:tabView:pgFinalizar, :lume:tabView:botoesFinalizaPT"
+								update=":lume:tabView:mainViewPT, :lume:tabView:botoesFinalizaPT"
 								title="Encerrar Plano de Tratamento" process="@this"
 								styleClass="OrangeButton"
 								actionListener="#{planoTratamentoMB.iniciaFinalizacaoPT(planoTratamento)}"
@@ -1338,6 +1338,24 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:panelGrid>
 	</p:dialog>
 
+	<p:dialog 	id="dlgConfirmarFinalizacao" widgetVar="dlgConfirmarFinalizacao" style="width:80px; height: 60px;z-index:9999 !important;" 
+				header="Encerrar plano de tratamento" modal="true" appendTo=":lume">
+		<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+			<h:panelGroup>		
+				<p:outputLabel value="Todos os procedimentos do plano foram finalizados. Deseja encerrar o plano ?"/>
+			</h:panelGroup>
+			<h:panelGroup>
+				<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+					<p:commandButton 	icon="fa fa fa fa-check" styleClass="GreenButton" value="Encerrar" actionListener="#{planoTratamentoMB.actionFinalizar}"
+										process="@this" update=":lume:tabView:mainViewPT" oncomplete="PF('dlgConfirmarFinalizacao').hide();"/>
+					
+					<p:commandButton 	icon="fa fa fa fa-close" styleClass="RedButton" value="Cancelar" update=":lume:tabView:mainViewPT"
+										process="@this" oncomplete="PF('dlgConfirmarFinalizacao').hide();"/>
+				</p:panelGrid>
+			</h:panelGroup>
+		</p:panelGrid>
+	</p:dialog>
+
 	<p:dialog id="evolucao" widgetVar="evolucao"
 		header="Evolução - Finalizar procedimento" responsive="true"
 		modal="true" appendTo=":lume">
@@ -1389,7 +1407,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				update=":lume:tabView:evolucaoView, :lume:tabView:pnEditaPlanoTratamento, :lume:tabView:mainViewPT, :lume:tabView:dtProcedimentosSelecionadospt,
 					:lume:tabView:pgFinalizar, :lume:tabView:botoesFinalizaPT"
 				process="@this, :lume:tabView:evolucaoView"
-				oncomplete="handleDialogRequest(xhr, status, args)" />
+				oncomplete="handleDialogRequest(xhr, status, args);" />
 		</p:panelGrid>
 	</p:dialog>
 
