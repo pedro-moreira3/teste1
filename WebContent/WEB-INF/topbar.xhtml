@@ -92,12 +92,10 @@
 					</a>
 					<ul class="ultima-menu animated">
 						<li role="menuitem">
-							<p:commandLink
-								class="topbar-link Animated03 Fleft" title="Meu Plano"
-								action="meuplano.jsf" rendered="#{odontoLoginMB.administrador}">
-								<i class="fa fa-gear"></i>
-								<span>Meu Plano</span>
-							</p:commandLink>
+					<h:outputLink value="../pages/meuplano.jsf" rendered="#{odontoLoginMB.administrador}">
+						<i class="fa fa-gear"></i>
+						<span>Meu Plano</span>
+					</h:outputLink>
 						</li>
 					</ul>
 				</li>
@@ -107,10 +105,10 @@
 					</a>
 					<ul class="ultima-menu animated">
 						<li role="menuitem">
-							<p:commandLink class="topbar-link Animated03 Fleft" action="chat.jsf" title="Chat">
+							<h:outputLink value="../pages/chat.jsf">
 								<i class="fa fa-user" title="Chat Online"></i>
 								<span>Chat Online</span>
-							</p:commandLink>
+							</h:outputLink>	
 						</li>
 					</ul>
 				</li>
