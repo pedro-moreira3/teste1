@@ -52,7 +52,7 @@ public class OdontoMenuMB extends br.com.lume.security.managed.MenuMB {
             JSFHelper.redirect(nextPage);
     }
 
-    private void carregarTutorialImagens() {
+    public void carregarTutorialImagens() {
         String relativeWebPath = "/resources/images/tutorial/";
         ServletContext servletContext = (ServletContext) JSFHelper.getExternalContext().getContext();
         String absoluteDiskPath = servletContext.getRealPath(relativeWebPath);
