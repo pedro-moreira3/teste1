@@ -142,6 +142,13 @@
 							<p:column width="120" headerText="Detalhes">
 								<p:commandButton styleClass="RedButton" icon="fa fa-exchange"
 									title="Trocar Profissional" update=":lume:pnPrincipal"
+									rendered="#{!repasseItensProfissionalMB.filtroSemRepasse}"
+									actionListener="#{repasseItensProfissionalMB.abreTrocaItemProfissional(ptp)}"
+									process="@this">
+								</p:commandButton>
+								<p:commandButton styleClass="RedButton" icon="fa fa-user-plus"
+									title="Criar Repasse" update=":lume:pnPrincipal"
+									rendered="#{repasseItensProfissionalMB.filtroSemRepasse}"
 									actionListener="#{repasseItensProfissionalMB.abreTrocaItemProfissional(ptp)}"
 									process="@this">
 								</p:commandButton>

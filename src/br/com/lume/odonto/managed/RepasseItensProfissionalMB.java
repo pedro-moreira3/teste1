@@ -39,7 +39,7 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
     //private Logger log = Logger.getLogger(FaturaPagtoMB.class);
 
     private int mes;
-    private boolean mesesAnteriores, procSemRepasse;
+    private boolean mesesAnteriores, procSemRepasse, filtroSemRepasse;
     private Paciente paciente;
     private Profissional profissional, profissionalTroca;
     private List<PlanoTratamento> planosTratamento;
@@ -87,6 +87,7 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
 
     public void pesquisar() {
         try {
+            this.filtroSemRepasse = this.procSemRepasse;
             //Fatura.TipoFatura tipoFatura = (getTipoFatura() == null || getTipoFatura().isEmpty() ? null : Fatura.TipoFatura.getTipoFromRotulo(getTipoFatura()));
             setEntityList(((PlanoTratamentoProcedimentoBO) this.getbO()).getPTPForRepasseFilters(getPaciente(), Arrays.asList(getPlanosTratamentoSelecionados()), getProfissional(), getMes(),
                     isMesesAnteriores(), isProcSemRepasse()));
@@ -120,7 +121,11 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
 
     public void actionPersistTrocaItemProfissional() {
         try {
-            RepasseFaturasItemSingleton.getInstance().trocaItemRepasseProfissional(getItemTroca(), null, getProfissionalTroca(), UtilsFrontEnd.getProfissionalLogado());
+            if (!this.filtroSemRepasse)
+                RepasseFaturasItemSingleton.getInstance().trocaItemRepasseProfissional(getItemTroca(), null, getProfissionalTroca(), UtilsFrontEnd.getProfissionalLogado());
+            else
+                System.out.println("");
+            //criar repasse
             this.pesquisar();
             this.addInfo("Sucesso", "Troca realizada com sucesso.<br />Verifique a nova fatura em nome de " + getProfissionalTroca().getDadosBasico().getNome() + "!", true);
             PrimeFaces.current().executeScript("PF('dlgTrocaItemProfissional').hide();");
@@ -202,6 +207,14 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
 
     public void setProfissionalTroca(Profissional profissionalTroca) {
         this.profissionalTroca = profissionalTroca;
+    }
+
+    public boolean isFiltroSemRepasse() {
+        return filtroSemRepasse;
+    }
+
+    public void setFiltroSemRepasse(boolean filtroSemRepasse) {
+        this.filtroSemRepasse = filtroSemRepasse;
     }
 
 }
