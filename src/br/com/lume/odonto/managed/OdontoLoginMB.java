@@ -254,6 +254,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
         }
 
         if (!actionLoginRetorno.equals("")) {
+            goToTutorial = false;
             JSFHelper.redirect((goToTutorial ? "tutorial.jsf?next=" : "") + actionLoginRetorno);
         }
 
