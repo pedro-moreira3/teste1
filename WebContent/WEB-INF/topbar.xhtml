@@ -94,12 +94,10 @@
 					</a>
 					<ul class="ultima-menu animated">
 						<li role="menuitem">
-							<p:commandLink
-								class="topbar-link Animated03 Fleft" title="Meu Plano"
-								action="meuplano.jsf" rendered="#{odontoLoginMB.administrador}">
-								<i class="fa fa-gear"></i>
-								<span>Meu Plano</span>
-							</p:commandLink>
+					<h:outputLink value="../pages/meuplano.jsf" rendered="#{odontoLoginMB.administrador}">
+						<i class="fa fa-gear"></i>
+						<span>Meu Plano</span>
+					</h:outputLink>
 						</li>
 					</ul>
 				</li>
@@ -109,10 +107,10 @@
 					</a>
 					<ul class="ultima-menu animated">
 						<li role="menuitem">
-							<p:commandLink class="topbar-link Animated03 Fleft" action="chat.jsf" title="Chat">
+							<h:outputLink value="../pages/chat.jsf">
 								<i class="fa fa-user" title="Chat Online"></i>
 								<span>Chat Online</span>
-							</p:commandLink>
+							</h:outputLink>	
 						</li>
 					</ul>
 				</li>
@@ -208,7 +206,7 @@
 	<p:dialog widgetVar="tutorialDialog" header="Tutorial" id="dgTutorial" responsive="true" modal="true" position="10,10" appendToBody="true" visible="false" onShow="resize('#dgTutorial');">
 		<h:form>
 			<p:galleria showCaption="false" autoPlay="false" value="#{odontoMenuMB.tutorialImagens}" var="imagem" panelHeight="520" panelWidth="920" style="margin: 0 auto;">
-				<h:graphicImage name="#{imagem}" library="images/tutorial" styleClass="ImagemResponsiva" title="" alt="" height="520" panelWidth="920"/>
+				<h:graphicImage name="images/tutorial/#{imagem}" styleClass="ImagemResponsiva" title="" alt="" height="520" panelWidth="920"/>
 			</p:galleria>
 
 			<div class="SeparatorFull"></div>
