@@ -437,4 +437,13 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         this.procedimentoExtra = procedimentoExtra;
     }
 
+    public BigDecimal getValorProcedimentoExtra() {
+        return (this.procedimentoExtra == null ? null : this.procedimentoExtra.getValor());
+    }
+
+    public void setValorProcedimentoExtra(BigDecimal valorProcedimentoExtra) {
+        if (this.procedimentoExtra != null)
+            this.procedimentoExtra.setValor(valorProcedimentoExtra);
+    }
+
 }
