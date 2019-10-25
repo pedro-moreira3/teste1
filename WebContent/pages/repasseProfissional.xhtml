@@ -14,47 +14,103 @@
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-
-					<p:remoteCommand name="pesquisarFaturasRepasse"
-						actionListener="#{repasseProfissionalMB.pesquisar}"
-						oncomplete="PF('dtPrincipal').filter()" update=":lume:dtPrincipal"
-						process="@this, :lume:pnPrincipal" />
-					<p:outputPanel widgetvar="pnPrincipal" id="pnPrincipal"
-						styleClass="BordNone">
+						
+					<p:outputPanel id="pnPrincipal">	
 						<h1>Repasse dos Profissionais</h1>
+						
 						<div class="SeparatorFull"></div>
 
 						<p:fieldset legend="Filtros">
+						
 							<p:outputPanel id="filtros">
-								<p:panelGrid columns="4"
-									columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-1,ui-grid-col-5"
-									layout="grid" styleClass="ui-panelgrid-blank"
-									style="border:0px none; background-color:transparent;">
-									<p:outputLabel for="profissional" value="Profissional : " />
-									<p:autoComplete dropdown="true" queryDelay="1000" size="35"
-										value="#{repasseProfissionalMB.profissional}"
-										id="profissional" minQueryLength="3"
-										completeMethod="#{repasseProfissionalMB.geraSugestoesProfissional}"
-										var="profissional"
-										itemLabel="#{profissional.dadosBasico.prefixoNome}"
-										itemValue="#{profissional}" converter="profissional"
-										forceSelection="true" required="true">
-									</p:autoComplete>
-									<p:outputLabel for="mes" value="Mês : " />
-									<p:selectOneMenu id="mes" value="#{repasseProfissionalMB.mes}">
-										<f:selectItem itemValue="1" itemLabel="Janeiro" />
-										<f:selectItem itemValue="2" itemLabel="Fevereiro" />
-										<f:selectItem itemValue="3" itemLabel="Março" />
-										<f:selectItem itemValue="4" itemLabel="Abril" />
-										<f:selectItem itemValue="5" itemLabel="Maio" />
-										<f:selectItem itemValue="6" itemLabel="Junho" />
-										<f:selectItem itemValue="7" itemLabel="Julho" />
-										<f:selectItem itemValue="8" itemLabel="Agosto" />
-										<f:selectItem itemValue="9" itemLabel="Setembro" />
-										<f:selectItem itemValue="10" itemLabel="Outubro" />
-										<f:selectItem itemValue="11" itemLabel="Novembro" />
-										<f:selectItem itemValue="12" itemLabel="Dezembro" />
-									</p:selectOneMenu>
+							
+								<p:panelGrid 	columns="2" layout="grid" 
+												styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+												style="border:0px none; background-color:transparent;">
+									
+									<h:panelGroup>
+										<p:outputLabel for="dataInicio" value="Data inicial:"/>
+										<p:calendar id="dataInicio" value="#{repasseProfissionalMB.dataInicio}" autocomplete="false"/>
+									</h:panelGroup>
+									
+									<h:panelGroup>
+										<p:outputLabel for="dataFim" value="Data final:"/>
+										<p:calendar id="dataFim" value="#{repasseProfissionalMB.dataFim}" autocomplete="false"/>
+									</h:panelGroup>
+									
+									<h:panelGroup>
+										<p:outputLabel for="filtroPaciente" value="Paciente:"/>
+										<p:autoComplete dropdown="true" queryDelay="1000" size="35"
+														value="#{repasseProfissionalMB.paciente}"
+														id="filtroPaciente" minQueryLength="3"
+														completeMethod="#{repasseProfissionalMB.geraSugestoesPaciente}"
+														var="paciente"
+														itemLabel="#{paciente.dadosBasico.nome}"
+														itemValue="#{paciente}" converter="paciente"
+														forceSelection="true">
+											
+											<p:ajax event="itemSelect" process="@this"/>
+										</p:autoComplete>
+									</h:panelGroup>
+									
+									<h:panelGroup >
+										<p:outputLabel for="fitroProfissional" value="Profissional:" />
+										<p:autoComplete dropdown="true" queryDelay="1000" size="35"
+														value="#{repasseProfissionalMB.profissional}"
+														id="fitroProfissional" minQueryLength="3"
+														completeMethod="#{repasseProfissionalMB.geraSugestoesProfissional}"
+														var="profissional"
+														itemLabel="#{profissional.dadosBasico.prefixoNome}"
+														itemValue="#{profissional}" converter="profissional"
+														forceSelection="true">
+											
+											<p:ajax event="itemSelect" process="@this"/>
+										</p:autoComplete>
+									</h:panelGroup>
+
+									<ui:remove>
+										<h:panelGroup >
+											<p:outputLabel for="planoTratamento" value="Plano de tratamento:"/>
+											<p:autoComplete id="planoTratamento" queryDelay="1000" size="35"
+														value="#{repasseProfissionalMB.planoTratamento}"
+														dropdown="true" completeMethod="#{repasseProfissionalMB.geraSugestoesPlanoTratamento}"
+														var="planoTratamento" itemLabel="#{planoTratamento.descricao}"
+														itemValue="#{planoTratamento}" converter="planoTratamento"
+														forceSelection="true">
+														
+												<p:ajax event="itemSelect" process="@this"/>
+											</p:autoComplete>
+										</h:panelGroup>
+
+									
+										<p:outputLabel for="mes" value="Mês: " />
+										<p:selectOneMenu id="mes" value="#{repasseProfissionalMB.mes}">
+											<f:selectItem itemValue="1" itemLabel="Janeiro" />
+											<f:selectItem itemValue="2" itemLabel="Fevereiro" />
+											<f:selectItem itemValue="3" itemLabel="Março" />
+											<f:selectItem itemValue="4" itemLabel="Abril" />
+											<f:selectItem itemValue="5" itemLabel="Maio" />
+											<f:selectItem itemValue="6" itemLabel="Junho" />
+											<f:selectItem itemValue="7" itemLabel="Julho" />
+											<f:selectItem itemValue="8" itemLabel="Agosto" />
+											<f:selectItem itemValue="9" itemLabel="Setembro" />
+											<f:selectItem itemValue="10" itemLabel="Outubro" />
+											<f:selectItem itemValue="11" itemLabel="Novembro" />
+											<f:selectItem itemValue="12" itemLabel="Dezembro" />
+										</p:selectOneMenu>
+										
+										<p:outputLabel for="profissional" value="Profissional:" />
+										<p:autoComplete dropdown="true" queryDelay="1000" size="35"
+											value="#{repasseProfissionalMB.profissional}"
+											id="profissional" minQueryLength="3"
+											completeMethod="#{repasseProfissionalMB.geraSugestoesProfissional}"
+											var="profissional"
+											itemLabel="#{profissional.dadosBasico.prefixoNome}"
+											itemValue="#{profissional}" converter="profissional"
+											forceSelection="true" required="true">
+										</p:autoComplete>
+									</ui:remove>	
+										
 								</p:panelGrid>
 								<p:panelGrid columns="2"
 									columnClasses="ui-grid-col-3,ui-grid-col-9" layout="grid"
@@ -67,19 +123,25 @@
 							</p:outputPanel>
 
 							<div class="SeparatorFull"></div>
-							<p:panelGrid columns="1" layout="grid"
-								styleClass="ui-panelgrid-blank form-group ui-fluid">
-								<p:commandButton id="pesquisar" icon="White fa fa-search"
-									value="Pesquisar" styleClass="OrangeButton"
-									oncomplete="pesquisarFaturasRepasse()" />
+							
+							<p:panelGrid 	columns="3" layout="grid"
+											styleClass="ui-panelgrid-blank form-group ui-fluid">
+								
+								<p:commandButton	id="pesquisar" icon="White fa fa-search"
+													value="Pesquisar" styleClass="OrangeButton"
+													actionListener="#{repasseProfissionalMB.popularTabela}"
+													process="@this,:lume:filtros"
+													update=":lume:dtPrincipal"/>
 							</p:panelGrid>
 						</p:fieldset>
 
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-							id="dtPrincipal" value="#{repasseProfissionalMB.entityList}"
+							id="dtPrincipal" value="#{repasseProfissionalMB.faturas}"
 							var="f" rows="20" paginator="true" rowKey="#{f}"
 							paginatorPosition="bottom" widgetVar="dtPrincipal">
+							
 							<f:facet name="header">Faturas</f:facet>
+							
 							<p:column width="120" headerText="Detalhes">
 								<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
 									title="Visualizar Fatura"
@@ -96,13 +158,21 @@
 								</f:facet>
 								<h:outputText value="#{f.profissional.dadosBasico.getPrefixoNome()}" />
 							</p:column>
-							<p:column filterBy="#{f.paciente.dadosBasico.nome}"
-								sortBy="#{f.paciente.dadosBasico.nome}"
+							<p:column filterBy="#{repasseProfissionalMB.nomePaciente(f)}"
+								sortBy="#{repasseProfissionalMB.nomePaciente(f)}"
 								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Paciente" />
 								</f:facet>
-								<h:outputText value="#{f.paciente.dadosBasico.nome}" />
+								<h:outputText value="#{repasseProfissionalMB.nomePaciente(f)}" />
+							</p:column>
+							<p:column filterBy="#{repasseProfissionalMB.descricaoPlanoTratamento(f)}"
+								sortBy="#{repasseProfissionalMB.descricaoPlanoTratamento(f)}"
+								filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Plano de tratamento" />
+								</f:facet>
+								<h:outputText value="#{repasseProfissionalMB.descricaoPlanoTratamento(f)}" />
 							</p:column>
 							<p:column filterBy="#{f.dataCriacaoStr}"
 								headerText="Data de Criação" filterMatchMode="contains"
@@ -136,9 +206,7 @@
 							</p:column>
 
 						</p:dataTable>
-
 					</p:outputPanel>
-
 				</div>
 			</div>
 		</div>

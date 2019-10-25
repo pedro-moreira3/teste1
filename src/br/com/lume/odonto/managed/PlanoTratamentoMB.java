@@ -291,7 +291,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (this.planoTratamentoProcedimentos == null)
             return false;
         for (PlanoTratamentoProcedimento ptp : this.planoTratamentoProcedimentos)
-            if ("N".equals(ptp.getExcluido()) && !"F".equals(ptp.getStatus()))
+            if ("N".equals(ptp.getExcluido()) || !"F".equals(ptp.getStatus()))
                 return true;
         return false;
     }
