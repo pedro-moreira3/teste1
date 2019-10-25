@@ -1,19 +1,23 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
     xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
     <ui:define name="content">
-        <div class="Container100 Responsive100 NoIndent">
-            <div class="Container100 ui-fluid NoPadding">
-                <div class="Card">
-                    <h1 class="CardBigTopic">Extrato do Plano do Intelidente</h1>
-                    <div class="SeparatorFull"></div>
-
+      <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+    				 <p:outputPanel id="pnReserva" styleClass="BordNone">                       
+                        <h1>Extrato do Plano do Intelidente</h1>                       
+                        <br/>
+						<div class="SeparatorFull"></div>						
+                        <div class="EmptyBox20">                        
+                        </div>
+                    </p:outputPanel>
                     <p:fieldset legend="Consumo" toggleable="true">
                         <div class="Container25 Responsive100">
                             <div class="Card">
                                 <div class="EmptyBox10"></div>
                                 <div class="Container60 NoIndent Responsive100">
-                                    <span class="FontLatoBlack Black Opac80 Fleft Fs13 DispBlock">AGENDAMENTOS REALIZADOS ESTE MÊS</span><br /> <span
-                                        class="FontLatoRegular Green Fleft Fs40 DispBlock"> <h:outputText value="#{meuPlanoMB.agendamentosMes}">
+                                    <span class=" Black Opac80 Fleft Fs13 DispBlock">Agendamentos realizados este mês: </span> <span
+                                        class=" Green Fleft Fs40 DispBlock"> <h:outputText value="#{meuPlanoMB.agendamentosMes}">
                                             <f:convertNumber maxFractionDigits="2" />
                                         </h:outputText>
                                     </span>
@@ -21,11 +25,12 @@
                                 <div class="EmptyBox10"></div>
                             </div>
                         </div>
+                        <br/>
                         <div class="Container25 Responsive100">
                             <div class="Card">
                                 <div class="EmptyBox10"></div>
                                 <div class="Container60 NoIndent Responsive100">
-                                    <span class="FontLatoBlack Black Opac80 Fleft Fs13 DispBlock">TOTAL DE AGENDAMENTOS DO PLANO</span><br /> <span class="FontLatoRegular Green Fleft Fs40 DispBlock">
+                                    <span class=" Black Opac80 Fleft Fs13 DispBlock">Total de agendamentos do Plano:</span> <span class="FontLatoRegular Green Fleft Fs40 DispBlock">
                                         <h:outputText value="#{meuPlanoMB.agendamentosPlano}">
                                             <f:convertNumber maxFractionDigits="2" />
                                         </h:outputText>
@@ -34,11 +39,12 @@
                                 <div class="EmptyBox10"></div>
                             </div>
                         </div>
+                        <br/>
                         <div class="Container25 Responsive100">
                             <div class="Card">
                                 <div class="EmptyBox10"></div>
                                 <div class="Container60 NoIndent Responsive100">
-                                    <span class="FontLatoBlack Black Opac80 Fleft Fs13 DispBlock">TOTAL(%) UTILIZADO DO PLANO</span><br /> <span class="FontLatoRegular Green Fleft Fs40 DispBlock"><h:outputText
+                                    <span class=" Black Opac80 Fleft Fs13 DispBlock">Total(%) utilizados do plano:</span> <span class="FontLatoRegular Green Fleft Fs40 DispBlock"><h:outputText
                                             value="#{meuPlanoMB.porcentagemUtilizado}">
                                             <f:convertNumber currencySymbol="" type="currency" locale="#{lumeSecurity.locale}" />
                                         </h:outputText>%</span>
@@ -46,16 +52,18 @@
                                 <div class="EmptyBox10"></div>
                             </div>
                         </div>
+                        <br/>
                         <div class="Container25 Responsive100">
                             <div class="Card">
                                 <div class="EmptyBox10"></div>
                                 <div class="Container60 NoIndent Responsive100">
-                                    <span class="FontLatoBlack Black Opac80 Fleft Fs13 DispBlock">DATA DE VENCIMENTO DO PLANO</span><br /> <span class="FontLatoRegular Green Fleft Fs40 DispBlock"><h:outputText
+                                    <span class=" Black Opac80 Fleft Fs13 DispBlock">Data de vencimento do plano:</span> <span class="FontLatoRegular Green Fleft Fs40 DispBlock"><h:outputText
                                             value="#{meuPlanoMB.dataVencimentoPlano}" /></span>
                                 </div>
                                 <div class="EmptyBox10"></div>
                             </div>
                         </div>
+                         <br/>
                         <div class="Container100 Responsive100">
                             <div class="Card">
 
@@ -72,7 +80,7 @@
 
                                 <div class="Separator"></div>
 
-                                <div class="FontLatoBlack Black Opac80 Fleft Fs15 DispBlock">Para trocar de plano entre em contato com a nossa central de atendimento de segunda a sexta das 8:00
+                                <div class=" Black Opac80 Fleft Fs15 DispBlock">Para trocar de plano entre em contato com a nossa central de atendimento de segunda a sexta das 8:00
                                     as 18:00, pelo telefone: 41 3204-7149 ou pelo e-mail contato@intelidente.com.</div>
                             </div>
                         </div>
@@ -107,9 +115,10 @@
                                 </p:dataTable>
                             </div>
                         </div>
-                    </p:fieldset>
-                </div>
-            </div>
-        </div>
+                    </p:fieldset>                    
+				</div>
+			</div>
+		</div>    
+
     </ui:define>
 </ui:composition>
