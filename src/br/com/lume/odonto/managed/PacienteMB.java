@@ -23,7 +23,6 @@ import javax.imageio.stream.FileImageOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
 import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -95,7 +94,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     private List<Especialidade> especialidadeSelecionada;
 
-    public static final String GENERICA = "GENÉRICAS";
+    public static final String GENERICAS = "GENÉRICAS";
+    public static final String GENERICA = "GENÉRICA";
 
     private DefaultStreamedContent scFoto;
 
@@ -391,8 +391,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         especialidadeSelecionada = new ArrayList<>();
         if (getEntity() != null) {
             if (getEntity().getId() != null && getEntity().getId().longValue() != 0l) {
-                Especialidade generica = EspecialidadeSingleton.getInstance().getBo().findByDescricaoAndEmpresa(GENERICA, getEntity().getIdEmpresa());
-                especialidadeSelecionada.add(generica);
+                Especialidade generica = EspecialidadeSingleton.getInstance().getBo().findByDescricaoAndEmpresa(GENERICAS, UtilsFrontEnd.getEmpresaLogada());
+                if (generica == null)
+                    generica = EspecialidadeSingleton.getInstance().getBo().findByDescricaoAndEmpresa(GENERICA, UtilsFrontEnd.getEmpresaLogada());
+
+                if (generica != null)
+                    especialidadeSelecionada.add(generica);
             }
         }
         this.actionAtualizaPerguntasPorAnamnese();
