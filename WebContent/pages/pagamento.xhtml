@@ -92,13 +92,37 @@ body .ui-selectoneradio td label {
 							<p:commandButton id="limpar" icon="White fa fa-file-o"
 								value="Limpar" update=":lume:pnFiltros,:lume:dtLancamento"
 								process="@this" actionListener="#{lancamentoMB.actionLimpar}" />
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{lancamentoMB.exportarTabela('xls')}"
+									ajax="false" process="dtLancamento,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{lancamentoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{lancamentoMB.exportarTabela('pdf')}"
+										ajax="false" process="dtLancamento,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{lancamentoMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
 						</p:panelGrid>
 						<div class="EmptyBox20"></div>
 						<p:dataTable filterDelay="1500" reflow="true" var="lancamento"
 							value="#{lancamentoMB.lancamentoDataModel}" paginator="true"
 							rows="6" paginatorPosition="bottom" id="dtLancamento"
 							emptyMessage="" selection="#{lancamentoMB.entity}"
-							rowKey="#{lancamento}" selectionMode="single">
+							rowKey="#{lancamento}" selectionMode="single" binding="#{lancamentoMB.tabelaLancamento}">
 							<f:facet name="header">Lançamentos</f:facet>
 							<p:ajax event="rowSelect"
 								update=":lume:pnPagar, :lume:buttonsPagar"

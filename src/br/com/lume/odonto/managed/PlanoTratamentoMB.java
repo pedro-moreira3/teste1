@@ -251,6 +251,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         justificativa = null;
         retorno = null;
         observacoesRetorno = null;
+        if(!this.getEntity().isBconvenio())
+            this.getEntity().setBconvenio(true);
     }
 
     public void carregarPlanosTratamento() {

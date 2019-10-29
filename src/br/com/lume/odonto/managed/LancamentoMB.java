@@ -14,6 +14,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 
@@ -114,6 +115,9 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     private Integer parcela;
 
     private BigDecimal valorAPagar;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaLancamento;
 
     public LancamentoMB() {
         super(LancamentoSingleton.getInstance().getBo());
@@ -562,6 +566,10 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
             return true;
         }
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Recebimento dos pacientes", tabelaLancamento, type);
+    }
 
     public List<Lancamento> getLancamentos() {
         return lancamentos;
@@ -853,6 +861,14 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
 
     public void setValorAPagar(BigDecimal valorAPagar) {
         this.valorAPagar = valorAPagar;
+    }
+
+    public DataTable getTabelaLancamento() {
+        return tabelaLancamento;
+    }
+
+    public void setTabelaLancamento(DataTable tabelaLancamento) {
+        this.tabelaLancamento = tabelaLancamento;
     }
 
 }
