@@ -110,15 +110,31 @@
 									yearRange="-100:+1"
 									style="width: 95px !important;margin-left: 5px;" />
 							</p:panelGrid>
+							<br/>
 							<p:panelGrid columns="2" layout="grid"
 								columnClasses="ui-g-4,ui-g-8"
 								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+                                <h:panelGroup styleClass="md-combo"> 
+	                                <p:outputLabel for="status" value="Status de Retorno" />
+	                                <p:selectOneMenu id="status" value="#{retornoMB.retornar}">
+	                                    <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
+		                                <f:selectItem itemLabel="Pendente" itemValue="P" />
+										<f:selectItem itemLabel="Agendado" itemValue="A" />
+										<f:selectItem itemLabel="Aguardando Retorno" itemValue="R" />
+										<f:selectItem itemLabel="Não conseguimos Contato" itemValue="N" />
+										<f:selectItem itemLabel="Ligar Novamente" itemValue="L" />
+										<f:selectItem itemLabel="Cancelado" itemValue="C" />
+	                                </p:selectOneMenu>			                                  
+                                </h:panelGroup>
+							</p:panelGrid>							
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
 								<p:commandButton id="pesquisar" icon="fa fa-search White"
+									value="Pesquisar"
 									actionListener="#{retornoMB.geraLista}"
-									update=":lume:pnRetorno" tabindex="1"
-									process=":lume:filtroRetorno" value="Pesquisar"
-									styleClass="NavyButton" />
-							</p:panelGrid>
+									update="pnRetorno" tabindex="1" process="@this,pnRetorno"
+									styleClass="OrangeButton" />						
+							</p:panelGrid>							
 						</p:fieldset>
 						<p:separator styleClass="SeparatorFull" />
 						<p:outputPanel styleClass="BordNone">
@@ -156,6 +172,13 @@
 								<h:outputText value="#{retorno.paciente.dadosBasico.nome}"
 									title="#{retorno.id}" />
 							</p:column>
+							<p:column filterBy="#{retorno.paciente.dadosBasico.responsavel}"
+								sortBy="#{retorno.paciente.dadosBasico.responsavel}"
+								filterFunction="#{retornoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Responsável">
+								<h:outputText
+									value="#{retorno.paciente.dadosBasico.responsavel} #{retorno.paciente.dadosBasico.telefoneResponsavel}" />
+							</p:column>							
 							<p:column filterBy="#{retorno.paciente.dadosBasico.telefoneStr}"
 								sortBy="#{retorno.paciente.dadosBasico.telefoneStr}"
 								filterMatchMode="contains" headerText="Telefone">
@@ -192,32 +215,25 @@
 
 							<p:column filterBy="#{retorno.dataRetornoStr}"
 								sortBy="#{retorno.dataRetornoStrOrd}" filterMatchMode="contains"
-								headerText="Data Contato">
+								headerText="Data para Contato">
 								<h:outputText value="#{retorno.dataRetornoStr}" />
 							</p:column>
 
 							<p:column filterBy="#{retorno.retornar}"
 								sortBy="#{retorno.retornar}" filterMatchMode="contains"
-								headerText="Status">
+								headerText="Status de Retorno">
 								<p:selectOneMenu value="#{retorno.retornar}">
 									<p:ajax process="@this"
 										listener="#{retornoMB.persistRetorno(retorno)}" />
 									<f:selectItem itemLabel="Pendente" itemValue="P" />
 									<f:selectItem itemLabel="Agendado" itemValue="A" />
+									<f:selectItem itemLabel="Aguardando Retorno" itemValue="R" />
+									<f:selectItem itemLabel="Não conseguimos Contato" itemValue="N" />
+									<f:selectItem itemLabel="Ligar Novamente" itemValue="L" />
 									<f:selectItem itemLabel="Cancelado" itemValue="C" />
+									
 								</p:selectOneMenu>
 							</p:column>
-
-
-							<p:column filterBy="#{retorno.paciente.dadosBasico.responsavel}"
-								sortBy="#{retorno.paciente.dadosBasico.responsavel}"
-								filterFunction="#{retornoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Responsável">
-								<h:outputText
-									value="#{retorno.paciente.dadosBasico.responsavel} #{retorno.paciente.dadosBasico.telefoneResponsavel}" />
-							</p:column>
-
-
 							<p:column filterBy="#{retorno.agendamento.dataAgendamentoStr}"
 								sortBy="#{retorno.agendamento.dataAgendamento}"
 								filterMatchMode="contains" headerText="Agendamento">
@@ -251,10 +267,11 @@
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 				<h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
 					<p:commandButton id="persist" icon="White fa fa-save"
-						process="pnAgendamento" value="Salvar"
-						actionListener="#{agendamentoMB.actionPersist}"
-						oncomplete="btBloqueioAgenda();PF('eventDialog').hide();"
-						styleClass="GreenButton" />
+					process=":lume:pnAgendamento, @this" value="Salvar"
+					rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
+					actionListener="#{agendamentoMB.actionPersist}"
+					update=":lume:pnAgendamento, btBloqueioAgenda"									
+					styleClass="GreenButton" />			
 				</h:panelGroup>
 				<p:commandButton icon="White fa fa-close" value="Fechar"
 					process="@this" onclick="PF('eventDialog').hide()" />

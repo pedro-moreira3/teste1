@@ -18,6 +18,7 @@ import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Retorno;
+import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 
@@ -32,12 +33,14 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     private List<Retorno> retornos = new ArrayList<>();
 
     private Date dataIni, dataFim;
+    
+    private String retornar;
 
     public RetornoMB() {
         super(RetornoSingleton.getInstance().getBo());
-        Calendar cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();        
         dataIni = cal.getTime();
-        cal.add(Calendar.MONTH, 12);
+        cal.add(Calendar.DAY_OF_MONTH, 7);
         dataFim = cal.getTime();
         this.geraLista();
         this.setClazz(Retorno.class);
@@ -45,7 +48,11 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     public void geraLista() {
         try {
-            retornos = RetornoSingleton.getInstance().getBo().listByDate(dataIni, dataFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            if(dataFim.before(dataIni)) {
+                this.addError("Data de início antes da data fim!", "");
+            }else {
+                retornos = RetornoSingleton.getInstance().getBo().listByFiltros(dataIni, dataFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),retornar);
+            }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -113,6 +120,16 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     public void setDataFim(Date dataFim) {
         this.dataFim = dataFim;
+    }
+
+    
+    public String getRetornar() {
+        return retornar;
+    }
+
+    
+    public void setRetornar(String retornar) {
+        this.retornar = retornar;
     }
 
 }

@@ -41,6 +41,7 @@ import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
@@ -59,6 +60,7 @@ import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
 import br.com.lume.odonto.entity.Afastamento;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
+import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.HorasUteisProfissional;
 import br.com.lume.odonto.entity.Paciente;
@@ -98,11 +100,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private Integer cadeiraDentroAgenda;
 
     private List<Profissional> profissionais;
+    
+    private List<Convenio> convenios;
 
     private List<Paciente> pacientes;
 
     private Integer tempoConsulta;
-
+     
+    
     private List<Agendamento> agendamentos, agendamentosAfastamento = new ArrayList<>();
 
     private Date inicio, fim;
@@ -130,36 +135,6 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public List<HorasUteisProfissional> horasUteisProfissional;
 
     public String observacoes;
-
-    //  private DominioBO dominioBO;
-
-    //  private PacienteBO pacienteBO;
-
-    //  private RetornoBO retornoBO = new RetornoBO();
-
-    //   private AgendamentoBO agendamentoBO;
-
-    // private HorasUteisProfissionalBO horasUteisProfissionalBO;
-
-    //  private AgendamentoPlanoTratamentoProcedimentoBO agendamentoPlanoTratamentoProcedimentoBO;
-
-    //   private AfastamentoBO afastamentoBO;
-
-    //   private ProcedimentoBO procedimentoBO;
-
-    //   private PlanoTratamentoBO planoTratamentoBO;
-
-//    private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
-
-    //   private DadosBasicoBO dadosBasicoBO;
-
-    //private UsuarioBO usuarioBO;
-
-    //private PerfilBO perfilBO;
-
-    //   private ProfissionalBO profissionalBO;
-
-    //  private ReservaBO reservaBO;
 
     private List<Integer> cadeiras;
 
@@ -197,7 +172,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             carregarCadeiras();
             filtroAgendamento.addAll(Arrays.asList("F", "A", "I", "S", "O", "E", "B", "N", "P", "G", "H"));
             initialDate = Calendar.getInstance().getTime();
-
+            convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             log.error(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -345,11 +320,12 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             this.getEntity().setPlanoTratamento(planoTratamentoSelecionado);
             if (this.getEntity().getStatusNovo().equals("")) {
                 this.getEntity().setStatusNovo(status);
-            }
+            }            
             if (this.validacoes()) {
                 getEntity().setCadeira(cadeiraDentroAgenda);
                 if (this.getEntity().getId() == 0) {
                     this.getEntity().setProfissional(profissionalDentroAgenda);
+                    this.getEntity().setPaciente(pacienteSelecionado);
                     this.getEntity().setDataAgendamento(new Date());
                     this.getEntity().setAgendador(UtilsFrontEnd.getProfissionalLogado());
                 }
@@ -498,11 +474,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     private boolean validacoes() {
         if (GenericValidator.validarRangeData(this.getEntity().getChegouAs(), this.getEntity().getFinalizouAs(), false)) {
-            if (this.getProfissionalDentroAgenda() != null && this.getEntity() != null) {
-                if (this.getEntity().getPaciente() != null) {
+            if (this.getProfissionalDentroAgenda() != null && this.getEntity() != null) {                
+                if (this.pacienteSelecionado != null) {
                     if (GenericValidator.validarRangeData(this.getInicio(), this.getFim(), true)) {
                         //  if (this.validaHoraduplicadaProfissional(this.getEntity())) {
-                        if (this.validaHoraduplicadaPaciente(this.getEntity().getPaciente())) {
+                        if (this.validaHoraduplicadaPaciente(this.pacienteSelecionado)) {
                             if (this.validaIntervalo()) {
                                 if (validaCadeira()) {
                                     dlg = true;
@@ -1570,6 +1546,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     public void setObservacoes(String observacoes) {
         this.observacoes = observacoes;
+    }
+
+    
+    public List<Convenio> getConvenios() {
+        return convenios;
+    }
+
+    
+    public void setConvenios(List<Convenio> convenios) {
+        this.convenios = convenios;
     }
 
 }
