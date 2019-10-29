@@ -1293,7 +1293,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<h:outputText value="#{procedimento.descricao}" />
 						</p:column>
 						<p:column headerText="Valor" filterMatchMode="contains"
-							filterBy="#{procedimento.valor}" sortBy="#{procedimento.valor}">
+							style="width: 200px;" filterBy="#{procedimento.valor}"
+							sortBy="#{procedimento.valor}">
 							<p:inputNumber value="#{procedimento.valor}"
 								required="#{planoTratamentoMB.orcamentoSelecionado != null}"
 								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
@@ -1338,19 +1339,28 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:panelGrid>
 	</p:dialog>
 
-	<p:dialog 	id="dlgConfirmarFinalizacao" widgetVar="dlgConfirmarFinalizacao" style="width:80px; height: 60px;z-index:9999 !important;" 
-				header="Encerrar plano de tratamento" modal="true" appendTo=":lume">
-		<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-			<h:panelGroup>		
-				<p:outputLabel value="Todos os procedimentos do plano foram finalizados. Deseja encerrar o plano ?"/>
+	<p:dialog id="dlgConfirmarFinalizacao"
+		widgetVar="dlgConfirmarFinalizacao"
+		style="width:80px; height: 60px;z-index:9999 !important;"
+		header="Encerrar plano de tratamento" modal="true" appendTo=":lume">
+		<p:panelGrid columns="1" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid">
+			<h:panelGroup>
+				<p:outputLabel
+					value="Todos os procedimentos do plano foram finalizados. Deseja encerrar o plano ?" />
 			</h:panelGroup>
 			<h:panelGroup>
-				<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-					<p:commandButton 	icon="fa fa fa fa-check" styleClass="GreenButton" value="Encerrar" actionListener="#{planoTratamentoMB.actionFinalizar}"
-										process="@this" update=":lume:tabView:mainViewPT" oncomplete="PF('dlgConfirmarFinalizacao').hide();"/>
-					
-					<p:commandButton 	icon="fa fa fa fa-close" styleClass="RedButton" value="Cancelar" update=":lume:tabView:mainViewPT"
-										process="@this" oncomplete="PF('dlgConfirmarFinalizacao').hide();"/>
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid">
+					<p:commandButton icon="fa fa fa fa-check" styleClass="GreenButton"
+						value="Encerrar"
+						actionListener="#{planoTratamentoMB.actionFinalizar}"
+						process="@this" update=":lume:tabView:mainViewPT"
+						oncomplete="PF('dlgConfirmarFinalizacao').hide();" />
+
+					<p:commandButton icon="fa fa fa fa-close" styleClass="RedButton"
+						value="Cancelar" update=":lume:tabView:mainViewPT" process="@this"
+						oncomplete="PF('dlgConfirmarFinalizacao').hide();" />
 				</p:panelGrid>
 			</h:panelGroup>
 		</p:panelGrid>

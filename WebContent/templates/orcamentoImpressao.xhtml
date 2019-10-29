@@ -12,18 +12,15 @@
 		onHide="PF('dlgPrintOrcamento').toggleMaximize();"
 		onShow="PF('dlgPrintOrcamento').toggleMaximize();attPrintOrcamento();">
 		<f:facet name="header">
-			<h:outputText
-				id="orcamentoViewPrintHeader"
+			<h:outputText id="orcamentoViewPrintHeader"
 				value="Orçamento do Plano de Tratamento '#{pt.descricao}'" />
 		</f:facet>
-		<p:outputPanel
-			id="orcamentoViewPrint"
+		<p:outputPanel id="orcamentoViewPrint"
 			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
 			<p:scrollPanel mode="native"
 				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
 
-				<p:outputPanel
-					id="orcamento2PrintInterno"
+				<p:outputPanel id="orcamento2PrintInterno"
 					style="font-family: sans-serif">
 					<div style="width: 100%; text-align: center;">
 						<span style="font-size: 18px;"><b>Orçamento</b></span>
@@ -161,9 +158,9 @@
 							<th
 								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Descrição</th>
 							<th
-								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Valor</th>
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 200px;">Valor</th>
 							<th
-								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Incluso?</th>
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 100px;">Incluso?</th>
 						</tr>
 						<p:outputPanel rendered="#{not empty o.itens}">
 							<c:forEach var="procedimento" items="#{o.itens}">
@@ -207,8 +204,7 @@
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="fa fa-print" value="Imprimir" process="@this">
-				<p:printer
-					target=":lume:tabView:orcamento2PrintInterno" />
+				<p:printer target=":lume:tabView:orcamento2PrintInterno" />
 			</p:commandButton>
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
 				oncomplete="PF('dlgPrintOrcamento').hide()" />

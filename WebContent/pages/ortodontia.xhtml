@@ -212,7 +212,8 @@ li.orcamento-li {
 							<h:outputText value="#{procedimento.descricao}" />
 						</p:column>
 						<p:column headerText="Valor" filterMatchMode="contains"
-							filterBy="#{procedimento.valor}" sortBy="#{procedimento.valor}">
+							style="width: 200px;" filterBy="#{procedimento.valor}"
+							sortBy="#{procedimento.valor}">
 							<p:inputNumber value="#{procedimento.valor}"
 								required="#{planoTratamentoMB.orcamentoSelecionado != null}"
 								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
