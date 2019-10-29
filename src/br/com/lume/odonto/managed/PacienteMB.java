@@ -23,6 +23,7 @@ import javax.imageio.stream.FileImageOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -108,6 +109,11 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private boolean visivelDadosPaciente = true;
 
     private List<Agendamento> historicoAgendamentos;
+    
+  //EXPORTACAO TABELAS
+    private DataTable tabelaAnamnese;
+    private DataTable tabelaFrequencia;
+    private DataTable tabelaFinanceiro;
 
     public PacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
@@ -587,6 +593,20 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
+    //------EXPORTAÇÃO TABELAS------
+    
+    public void exportarTabelaAnamnese(String type) {
+        exportarTabela("Anamnese", tabelaAnamnese, type);
+    }
+    
+    public void exportarTabelaFrequencia(String type) {
+        exportarTabela("Frequência", tabelaFrequencia, type);
+    }
+    
+    public void exportarTabelaFinanceiro(String type) {
+        exportarTabela("Situação financeiro", tabelaFinanceiro, type);        
+    }
+    
     public void abreReadOnly(Paciente p, String namePanel) {
         setEntity(p);
         UtilsPrimefaces.readOnlyUIComponent(":lume:" + namePanel);
@@ -739,4 +759,28 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.historicoAgendamentos = historicoAgendamentos;
     }
 
+    public DataTable getTabelaAnamnese() {
+        return tabelaAnamnese;
+    }
+
+    public void setTabelaAnamnese(DataTable tabelaAnamnese) {
+        this.tabelaAnamnese = tabelaAnamnese;
+    }
+
+    public DataTable getTabelaFrequencia() {
+        return tabelaFrequencia;
+    }
+
+    public void setTabelaFrequencia(DataTable tabelaFrequencia) {
+        this.tabelaFrequencia = tabelaFrequencia;
+    }
+
+    public DataTable getTabelaFinanceiro() {
+        return tabelaFinanceiro;
+    }
+
+    public void setTabelaFinanceiro(DataTable tabelaFinanceiro) {
+        this.tabelaFinanceiro = tabelaFinanceiro;
+    }
+    
 }
