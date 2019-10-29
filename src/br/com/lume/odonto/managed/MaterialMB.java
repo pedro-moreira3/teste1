@@ -16,6 +16,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.event.SelectEvent;
@@ -25,40 +26,24 @@ import org.primefaces.model.TreeNode;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
-import br.com.lume.conta.ContaSingleton;
-import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.estoque.EstoqueSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.item.ItemSingleton;
-import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.local.LocalSingleton;
 import br.com.lume.marca.MarcaSingleton;
 import br.com.lume.material.MaterialSingleton;
-import br.com.lume.material.bo.MaterialBO;
-import br.com.lume.materialLog.MaterialLogSingleton;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Estoque;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Item;
-import br.com.lume.odonto.entity.Lancamento;
-import br.com.lume.odonto.entity.LancamentoContabil;
-import br.com.lume.odonto.entity.LancamentoContabilRelatorio;
 import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Marca;
 import br.com.lume.odonto.entity.Material;
-import br.com.lume.odonto.entity.MaterialLog;
-import br.com.lume.odonto.entity.Paciente;
-import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
-import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.TransferenciaEstoque;
 import br.com.lume.odonto.util.OdontoMensagens;
-import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
-import br.com.lume.profissional.ProfissionalSingleton;
-import br.com.lume.security.EmpresaSingleton;
-import br.com.lume.security.entity.Empresa;
 import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
 @ManagedBean
@@ -102,6 +87,10 @@ public class MaterialMB extends LumeManagedBean<Material> {
     private List<TransferenciaEstoque> listaTransferenciasEstoque;
 
     private String tipoMovimentacao;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaMaterial;
+    private DataTable tabelaMovimentacao;
 
     public MaterialMB() {
         super(MaterialSingleton.getInstance().getBo());
@@ -576,6 +565,14 @@ public class MaterialMB extends LumeManagedBean<Material> {
             return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
         return null;
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Entrada de Materiais", tabelaMaterial, type);
+    }
+    
+    public void exportarTabelaMovimentacao(String type) {
+        exportarTabela("Movimentação de materiais", tabelaMovimentacao, type);
+    }
 
     public List<Local> getLocais() {
         return locais;
@@ -956,7 +953,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             }
             this.geraLista();
         }
-    }    
+    }
 
     public Dominio getProcedencia() {
         return procedencia;
@@ -1062,11 +1059,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             valorTotal = this.getEntity().getValor().multiply(this.getEntity().getEstoque().getQuantidade());
         }
         return valorTotal;
-    }
-
-
-    
-  
+    }  
 
     public void setValorTotal(BigDecimal valorTotal) {
         this.valorTotal = valorTotal;
@@ -1131,6 +1124,22 @@ public class MaterialMB extends LumeManagedBean<Material> {
     
     public void setListaTransferenciasEstoque(List<TransferenciaEstoque> listaTransferenciasEstoque) {
         this.listaTransferenciasEstoque = listaTransferenciasEstoque;
+    }
+
+    public DataTable getTabelaMaterial() {
+        return tabelaMaterial;
+    }
+
+    public void setTabelaMaterial(DataTable tabelaMaterial) {
+        this.tabelaMaterial = tabelaMaterial;
+    }
+
+    public DataTable getTabelaMovimentacao() {
+        return tabelaMovimentacao;
+    }
+
+    public void setTabelaMovimentacao(DataTable tabelaMovimentacao) {
+        this.tabelaMovimentacao = tabelaMovimentacao;
     }
 
 }

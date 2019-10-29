@@ -303,6 +303,24 @@ div.ui-selectoneradio label {
 											styleClass="RedButton" process="@this" />
 									</h:panelGroup>
 
+									<h:panelGroup>
+										<p:splitButton 	icon="White fa fa fa-file-excel-o" value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+														actionListener="#{relatorioProcedimentoMB.exportarTabela('xls')}" ajax="false"
+														process="dtRelProcedimento,@this" update="@this" immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											
+											<p:fileDownload value="#{relatorioProcedimentoMB.arquivoDownload}" />
+											
+											<p:menuitem	value="Exportar tabela para PDF" icon="fa fa fa-file-pdf-o" 
+														actionListener="#{relatorioProcedimentoMB.exportarTabela('pdf')}" ajax="false"
+														process="dtRelProcedimento,@this" immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+												<p:fileDownload value="#{relatorioProcedimentoMB.arquivoDownload}"/>
+											</p:menuitem>											
+										</p:splitButton>
+										
+									</h:panelGroup>
+
 								</p:panelGrid>
 
 							</p:outputPanel>
@@ -342,12 +360,12 @@ div.ui-selectoneradio label {
 							</p:column>
 
 							<p:column
-								filterBy="#{procedimento.planoTratamento.profissional.dadosBasico.nome}"
-								sortBy="#{procedimento.planoTratamento.profissional.dadosBasico.nome}"
+								filterBy="#{procedimento.planoTratamento.finalizadoPorProfissional.dadosBasico.nome}"
+								sortBy="#{procedimento.planoTratamento.finalizadoPorProfissional.dadosBasico.nome}"
 								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Profissional responsável">
+								filterMatchMode="contains" headerText="Finalizado por">
 								<h:outputText
-									value="#{procedimento.planoTratamento.profissional.dadosBasico.nome}" />
+									value="#{procedimento.planoTratamento.finalizadoPorProfissional.dadosBasico.prefixoNome}" />
 							</p:column>
 
 							<p:column filterBy="#{procedimento.planoTratamento.descricao}"

@@ -8,6 +8,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
@@ -38,6 +39,9 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
    // private FornecedorBO fornecedorBO;
 
   //  private DadosBasicoBO dadosBasicoBO;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaFornecedor;
 
     public FornecedorMB() {
         super(FornecedorSingleton.getInstance().getBo());
@@ -94,6 +98,10 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
             this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());
         }
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Fornecedores", tabelaFornecedor, type);
+    }
 
     public List<UF> getListUF() {
         return UF.getList();
@@ -106,5 +114,13 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
 
     public void setFornecedores(List<Fornecedor> fornecedores) {
         this.fornecedores = fornecedores;
+    }
+
+    public DataTable getTabelaFornecedor() {
+        return tabelaFornecedor;
+    }
+
+    public void setTabelaFornecedor(DataTable tabelaFornecedor) {
+        this.tabelaFornecedor = tabelaFornecedor;
     }
 }

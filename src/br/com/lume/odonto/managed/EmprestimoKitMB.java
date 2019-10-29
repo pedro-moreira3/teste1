@@ -13,6 +13,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.RowEditEvent;
 
 import br.com.lume.common.exception.business.BusinessException;
@@ -20,21 +21,19 @@ import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.emprestimoKit.EmprestimoKitSingleton;
 import br.com.lume.estoque.EstoqueSingleton;
-import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.kitItem.KitItemSingleton;
 import br.com.lume.material.MaterialSingleton;
-import br.com.lume.materialLog.MaterialLogSingleton;
-import br.com.lume.odonto.entity.EmprestimoKit;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.EmprestimoKit;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.KitItem;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialLog;
 import br.com.lume.odonto.entity.Paciente;
-import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ReservaKit;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -79,7 +78,14 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
     //filtros
     private Date dataInicio, dataFim;
     private Profissional filtroPorProfissional;
-    private Paciente filtroPorPaciente; 
+    private Paciente filtroPorPaciente;
+    
+    //EXPORTAÇÃO TABELAS
+    private DataTable tabelaKit;
+    private DataTable tabelaItens;
+    private DataTable tabelaMateriais;
+    private DataTable tabelaDevolucaoKit;
+    private DataTable tabelaDevolucaoMateriais;
 
     public EmprestimoKitMB() {
         super(EmprestimoKitSingleton.getInstance().getBo());
@@ -596,6 +602,26 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
             return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
         return null;
     }
+    
+    public void exportarTabelaKit(String type) {
+        exportarTabela("Kits pendentes", tabelaKit, type);
+    }
+    
+    public void exportarTabelaItem(String type) {
+        exportarTabela("Itens pendentes", tabelaItens, type);
+    }
+    
+    public void exportarTabelaMaterial(String type) {
+        exportarTabela("Materiais disponiveis", tabelaMateriais, type);
+    }
+    
+    public void exportarTabelaDevolucaoKit(String type) {
+        exportarTabela("Kits disponibilizados", tabelaDevolucaoKit, type);
+    }
+    
+    public void exportarTabelaDevolucaoMateriais(String type) {
+        exportarTabela("Materiais disponibilizados", getTabelaDevolucaoMateriais(), type);
+    }
 
     public void setMateriaisDisponiveis(List<Material> materiaisDisponiveis) {
         this.materiaisDisponiveis = materiaisDisponiveis;
@@ -770,6 +796,46 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
     
     public void setFiltroPorPaciente(Paciente filtroPorPaciente) {
         this.filtroPorPaciente = filtroPorPaciente;
+    }
+
+    public DataTable getTabelaKit() {
+        return tabelaKit;
+    }
+
+    public void setTabelaKit(DataTable tabelaKit) {
+        this.tabelaKit = tabelaKit;
+    }
+
+    public DataTable getTabelaItens() {
+        return tabelaItens;
+    }
+
+    public void setTabelaItens(DataTable tabelaItens) {
+        this.tabelaItens = tabelaItens;
+    }
+
+    public DataTable getTabelaMateriais() {
+        return tabelaMateriais;
+    }
+
+    public void setTabelaMateriais(DataTable tabelaMateriais) {
+        this.tabelaMateriais = tabelaMateriais;
+    }
+
+    public DataTable getTabelaDevolucaoKit() {
+        return tabelaDevolucaoKit;
+    }
+
+    public void setTabelaDevolucaoKit(DataTable tabelaDevolucaoKit) {
+        this.tabelaDevolucaoKit = tabelaDevolucaoKit;
+    }
+
+    public DataTable getTabelaDevolucaoMateriais() {
+        return tabelaDevolucaoMateriais;
+    }
+
+    public void setTabelaDevolucaoMateriais(DataTable tabelaDevolucaoMateriais) {
+        this.tabelaDevolucaoMateriais = tabelaDevolucaoMateriais;
     }
 
 }

@@ -13,6 +13,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.event.SelectEvent;
@@ -33,7 +34,6 @@ import br.com.lume.kit.KitSingleton;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Dominio;
-import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Kit;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
@@ -93,6 +93,8 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     private boolean mostraLocalizacao;
 
     private Date dataIni;
+    
+    private DataTable tabelaReserva;
 
     public ReservaMB() {
         super(ReservaSingleton.getInstance().getBo());     
@@ -504,6 +506,10 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     public void onNodeUnselect(NodeUnselectEvent event) {
         this.setSelectedKit(null);
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Reserva de Materiais", tabelaReserva, type);
+    }
 
     public TreeNode getSelectedKit() {
         return selectedKit;
@@ -667,6 +673,14 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
 
     public void setDataIni(Date dataIni) {
         this.dataIni = dataIni;
+    }
+
+    public DataTable getTabelaReserva() {
+        return tabelaReserva;
+    }
+
+    public void setTabelaReserva(DataTable tabelaReserva) {
+        this.tabelaReserva = tabelaReserva;
     }
 
 }

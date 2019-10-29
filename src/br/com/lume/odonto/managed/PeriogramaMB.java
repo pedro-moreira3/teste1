@@ -12,6 +12,8 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.StreamedContent;
 
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -37,6 +39,9 @@ public class PeriogramaMB extends LumeManagedBean<Periograma> {
     private PacienteMB pacienteMB;
 
     private Periograma periogramaA, periogramaB;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaPeriograma;
 
     public PeriogramaMB() {
         super(PeriogramaSingleton.getInstance().getBo());
@@ -245,6 +250,10 @@ public class PeriogramaMB extends LumeManagedBean<Periograma> {
 
         return sb.toString();
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Periogramas", tabelaPeriograma, type);
+    }
 
     public List<DentePeriograma> getVestibular18ate11() {
         return vestibular18ate11;
@@ -336,6 +345,14 @@ public class PeriogramaMB extends LumeManagedBean<Periograma> {
 
     public Paciente getPaciente() {
         return pacienteMB.getEntity();
+    }
+
+    public DataTable getTabelaPeriograma() {
+        return tabelaPeriograma;
+    }
+
+    public void setTabelaPeriograma(DataTable tabelaPeriograma) {
+        this.tabelaPeriograma = tabelaPeriograma;
     }
 
 }

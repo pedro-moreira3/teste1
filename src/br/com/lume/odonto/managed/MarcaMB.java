@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -30,6 +31,9 @@ public class MarcaMB extends LumeManagedBean<Marca> {
     private Logger log = Logger.getLogger(MarcaMB.class);
 
     private List<Marca> marcas = new ArrayList<>();
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaMarca;
 
     public MarcaMB() {
         super(MarcaSingleton.getInstance().getBo());
@@ -71,11 +75,23 @@ public class MarcaMB extends LumeManagedBean<Marca> {
         }
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Marcas", tabelaMarca, type);
+    }
+    
     public List<Marca> getMarcas() {
         return this.marcas;
     }
 
     public void setMarcas(List<Marca> marcas) {
         this.marcas = marcas;
+    }
+
+    public DataTable getTabelaMarca() {
+        return tabelaMarca;
+    }
+
+    public void setTabelaMarca(DataTable tabelaMarca) {
+        this.tabelaMarca = tabelaMarca;
     }
 }

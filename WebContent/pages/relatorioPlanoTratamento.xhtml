@@ -263,6 +263,7 @@ div.ui-selectoneradio label {
 									<f:selectItem itemValue="N" itemLabel="Não" />
 								</p:selectOneRadio>
 							</h:panelGroup>
+							
 							<h:panelGroup>
 								<h:outputText for="filtroConvenio" value="Convênio:" />
 								<p:autoComplete id="filtroConvenio"
@@ -295,6 +296,29 @@ div.ui-selectoneradio label {
 								<p:dataExporter encoding="iso-8859-1" type="xls"
 									target="dtPrincipal" fileName="planoTratamento" />
 							</p:commandButton>
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{relatorioPlanoTratamentoMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{relatorioPlanoTratamentoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioPlanoTratamentoMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioPlanoTratamentoMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
 						</p:panelGrid>
 
 						<div class="EmptyBox20"></div>
@@ -304,7 +328,7 @@ div.ui-selectoneradio label {
 							id="dtPrincipal"
 							value="#{relatorioPlanoTratamentoMB.planoTratamentos}" var="m"
 							rows="20" paginator="true" rowKey="#{m}"
-							paginatorPosition="bottom">
+							paginatorPosition="bottom" binding="#{relatorioPlanoTratamentoMB.tabelaRelatorio}">
 							<f:facet name="header">Planos de Tratamentos</f:facet>
 							<p:column filterBy="#{m.paciente.dadosBasico.nomeStr}"
 								sortBy="#{m.paciente.dadosBasico.nome}"

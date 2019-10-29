@@ -154,14 +154,37 @@
                           
                                 
 						<p:commandButton id="new" icon="White fa fa-file-o" value="Fazer Nova Reserva" 
-							oncomplete="PF('dlg').show();" actionListener="#{reservaMB.actionNew}"  update=":lume:pnDlg" immediate="true" />                                
-                                
-                        </p:panelGrid>
+							oncomplete="PF('dlg').show();" actionListener="#{reservaMB.actionNew}"  update=":lume:pnDlg" immediate="true" />
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{reservaMB.exportarTabela('xls')}"
+									ajax="false" process="dtReserva,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{reservaMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{reservaMB.exportarTabela('pdf')}"
+										ajax="false" process="dtReserva,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{reservaMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
+						</p:panelGrid>
                         <div class="EmptyBox20"></div>
                     </p:outputPanel>
 						<br />
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtReserva" value="#{reservaMB.reservas}" var="reserva" rows="15" paginator="true"
-                            rowKey="#{reserva}" paginatorPosition="bottom">
+                            rowKey="#{reserva}" paginatorPosition="bottom" binding="#{reservaMB.tabelaReserva}">
                             <p:ajax event="rowSelect"  listener="#{reservaMB.carregaTelaGeral}" />
                             <f:facet name="header">
                                 <h:panelGroup id="filtro" rendered="#{reservaMB.admin}">

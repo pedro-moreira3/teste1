@@ -66,7 +66,7 @@
 	<div class="ui-g ui-fluid">
 		<div class="ui-g-12 ui-lg-12">
 			<p:outputPanel id="periogramaMainView">
-				<p:panelGrid columns="3" layout="grid"
+				<p:panelGrid columns="4" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
 					<p:commandButton icon="White fa fa-file-o" value="Novo"
 						actionListener="#{periogramaMB.actionNew}" process="@this"
@@ -80,12 +80,33 @@
 						process="@this" actionListener="#{periogramaMB.actionRemove}"
 						update=":lume:tabView:periogramaMainView" styleClass="RedButton"
 						disabled="#{periogramaMB.entity.id == null or periogramaMB.entity.id == 0}" />
+					
+					<h:panelGroup>
+						<p:splitButton icon="White fa fa fa-file-excel-o"
+							value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+							actionListener="#{periogramaMB.exportarTabela('xls')}"
+							ajax="false" process="dtPeriograma,@this" update="@this"
+							immediate="true"
+							onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+							<p:fileDownload value="#{periogramaMB.arquivoDownload}" />
+
+							<p:menuitem value="Exportar tabela para PDF"
+								icon="fa fa fa-file-pdf-o"
+								actionListener="#{periogramaMB.exportarTabela('pdf')}"
+								ajax="false" process="dtPeriograma,@this" immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+								<p:fileDownload
+									value="#{periogramaMB.arquivoDownload}" />
+							</p:menuitem>
+						</p:splitButton>
+					</h:panelGroup>
 				</p:panelGrid>
 
 				<p:dataTable filterDelay="1500" reflow="true"
 					emptyMessage="Nenhum Periograma Encontrado" id="dtPeriograma"
 					value="#{periogramaMB.entityList}" paginatorAlwaysVisible="true"
-					var="dto" rows="10" paginator="true"
+					var="dto" rows="10" paginator="true" binding="#{periogramaMB.tabelaPeriograma}"
 					selection="#{periogramaMB.entity}" selectionMode="single"
 					rowKey="#{dto}" paginatorPosition="bottom">
 					<f:facet name="header">Periograma</f:facet>

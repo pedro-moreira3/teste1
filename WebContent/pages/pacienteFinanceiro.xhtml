@@ -58,9 +58,37 @@ hr.hrSaldo {
 			</h:outputText>
 		</div>
 	</div>
+	
+	<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+			style="border:0px none; background-color:transparent;">
+
+		<h:panelGroup>
+			<p:splitButton icon="White fa fa fa-file-excel-o"
+				value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+				actionListener="#{pacienteMB.exportarTabelaFinanceiro('xls')}"
+				ajax="false" process="dtPrincipal,@this" update="@this"
+				immediate="true"
+				onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+				<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+
+				<p:menuitem value="Exportar tabela para PDF"
+					icon="fa fa fa-file-pdf-o"
+					actionListener="#{pacienteMB.exportarTabelaFinanceiro('pdf')}"
+					ajax="false" process="ddtPrincipal,@this" immediate="true"
+					onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+					<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+				</p:menuitem>
+			</p:splitButton>
+		</h:panelGroup>
+
+	</p:panelGrid>
+	
 	<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 		id="dtPrincipal" value="#{faturaPagtoMB.entityList}" var="f" rows="10"
-		paginator="true" rowKey="#{f}" paginatorPosition="bottom">
+		paginator="true" rowKey="#{f}" paginatorPosition="bottom"
+		binding="#{pacienteMB.tabelaFinanceiro}">
 		<f:facet name="header">Faturas</f:facet>
 		<p:column width="120" headerText="Detalhes">
 			<p:commandButton icon="fa fa-eye" process="@this"
@@ -70,7 +98,8 @@ hr.hrSaldo {
 				title="Visualizar Fatura" />
 		</p:column>
 		<p:column filterBy="#{f.paciente.dadosBasico.nomeStr}"
-			sortBy="#{f.paciente.dadosBasico.nome}" filterMatchMode="contains">
+			sortBy="#{f.paciente.dadosBasico.nome}" filterMatchMode="contains"
+			filterFunction="#{pacienteMB.filtroSemAcento}">
 			<f:facet name="header">
 				<h:outputText value="Paciente" />
 			</f:facet>

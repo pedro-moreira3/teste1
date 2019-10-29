@@ -7,6 +7,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.UtilsFrontEnd;
@@ -23,6 +24,8 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
 
     private List<RelatorioEstoqueMinimo> materiais = new ArrayList<>();
 
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaEstoque;
 
     public RelatorioEstoqueMinimoMB() {
         super(RelatorioEstoqueMinimoSingleton.getInstance().getBo());
@@ -31,6 +34,10 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
         this.filtra();
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Estoque mínimo", tabelaEstoque, type);
+    }
+    
     public void filtra() {
         this.materiais = RelatorioEstoqueMinimoSingleton.getInstance().getBo().listAllByFilterToReportGroupByItemFiltrado(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
@@ -41,5 +48,13 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
 
     public void setMateriais(List<RelatorioEstoqueMinimo> materiais) {
         this.materiais = materiais;
+    }
+
+    public DataTable getTabelaEstoque() {
+        return tabelaEstoque;
+    }
+
+    public void setTabelaEstoque(DataTable tabelaEstoque) {
+        this.tabelaEstoque = tabelaEstoque;
     }
 }

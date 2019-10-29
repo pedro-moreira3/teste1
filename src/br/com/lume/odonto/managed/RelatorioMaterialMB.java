@@ -8,6 +8,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -29,6 +30,9 @@ public class RelatorioMaterialMB extends LumeManagedBean<RelatorioMaterial> {
 
     private List<Estoque> estoques = new ArrayList<>();
     
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaMaterial;
+    
     public RelatorioMaterialMB() {
         super(RelatorioMaterialSingleton.getInstance().getBo());
         this.setClazz(RelatorioMaterial.class);
@@ -39,6 +43,10 @@ public class RelatorioMaterialMB extends LumeManagedBean<RelatorioMaterial> {
         }
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Relatório de estoque", tabelaMaterial, type);
+    }
+    
     public BigDecimal getSomaValorTotal() {
         return somaValorTotal;
     }
@@ -55,5 +63,13 @@ public class RelatorioMaterialMB extends LumeManagedBean<RelatorioMaterial> {
     
     public void setEstoques(List<Estoque> estoques) {
         this.estoques = estoques;
+    }
+
+    public DataTable getTabelaMaterial() {
+        return tabelaMaterial;
+    }
+
+    public void setTabelaMaterial(DataTable tabelaMaterial) {
+        this.tabelaMaterial = tabelaMaterial;
     }
 }

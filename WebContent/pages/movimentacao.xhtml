@@ -14,17 +14,47 @@
 						<h1>Movimentação de Materiais</h1>
 						<div class="SeparatorFull"></div>
 						<br />
+						
+						<p:panelGrid columns="4" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-10"
+							styleClass="ui-panelgrid-blank form-group ui-fluid"
+							style="border:0px none; background-color:transparent;">
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{materialMB.exportarTabelaMovimentacao('xls')}"
+									ajax="false" process="dtMaterial,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{materialMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{materialMB.exportarTabelaMovimentacao('pdf')}"
+										ajax="false" process="dtMaterial,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{materialMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
+						</p:panelGrid>
+						
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtMaterial" value="#{materialMB.materiais}" var="material"
 							rows="6" paginator="true" selection="#{materialMB.entity}"
 							selectionMode="single" rowKey="#{material}"
-							paginatorPosition="bottom">
+							paginatorPosition="bottom" binding="#{materialMB.tabelaMovimentacao}"">
 							<p:ajax event="rowSelect" update=":lume:pnMaterial"
 								listener="#{materialMB.carregaTela()}" />
 							<f:facet name="header">Materiais</f:facet>
 							<p:column filterBy="#{material.item.descricaoLimpa}"
 								sortBy="#{material.item.descricao}" filterMatchMode="contains"
-								headerText="Descrição">
+								headerText="Descrição" filterFunction="#{materialMB.filtroSemAcento}">
 								<h:outputText value="#{material.item.descricao}"
 									title="#{material.id}" />
 							</p:column>
@@ -40,6 +70,7 @@
 							</p:column>
 							<p:column filterBy="#{material.marca.nome}"
 								sortBy="#{material.marca.nome}" filterMatchMode="contains"
+								filterFunction="#{materialMB.filtroSemAcento}"
 								headerText="Marca">
 								<h:outputText value="#{material.marca.nome}" />
 							</p:column>
@@ -55,7 +86,7 @@
 
 							<p:column filterBy="#{material.estoque.local.descricao}"
 								sortBy="#{material.estoque.local.descricao}" filterMatchMode="contains"
-								headerText="Local">
+								headerText="Local" filterFunction="#{materialMB.filtroSemAcento}">
 								<h:outputText value="#{material.estoque.local.descricao}" />
 							</p:column>
 

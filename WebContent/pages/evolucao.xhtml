@@ -10,7 +10,7 @@
 		<div class="ui-g-12 ui-lg-12">
 
 			<p:outputPanel id="viewEvolucao">
-				<p:panelGrid columns="2" layout="grid" id="botoesEvolucao"
+				<p:panelGrid columns="3" layout="grid" id="botoesEvolucao"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 					<p:commandButton icon="White fa fa-file-o White"
 						oncomplete="PF('dlgEvolucao').show()" value="Novo"
@@ -21,18 +21,41 @@
 						actionListener="#{evolucaoMB.actionRemove}" process="@this"
 						update=":lume:tabView:viewEvolucao" styleClass="RedButton"
 						disabled="#{evolucaoMB.entity.id == 0 or evolucaoMB.entity.excluido == 'S'}" />
+
+					<h:panelGroup>
+						<p:splitButton icon="White fa fa fa-file-excel-o"
+							value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+							actionListener="#{evolucaoMB.exportarTabela('xls')}"
+							ajax="false" process="dtEvolucao,@this" update="@this"
+							immediate="true"
+							onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+							<p:fileDownload value="#{evolucaoMB.arquivoDownload}" />
+
+							<p:menuitem value="Exportar tabela para PDF"
+								icon="fa fa fa-file-pdf-o"
+								actionListener="#{evolucaoMB.exportarTabela('pdf')}"
+								ajax="false" process="dtEvolucao,@this" immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+								<p:fileDownload
+									value="#{evolucaoMB.arquivoDownload}" />
+							</p:menuitem>
+						</p:splitButton>
+					</h:panelGroup>
+
 				</p:panelGrid>
 
 				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 					id="dtEvolucao" value="#{evolucaoMB.entityList}" var="evolucao"
 					rows="15" paginator="true" paginatorPosition="bottom"
 					selection="#{evolucaoMB.entity}" selectionMode="single"
-					rowKey="#{evolucao}">
+					rowKey="#{evolucao}" binding="#{evolucaoMB.tabelaEvolucao}">
 					<p:ajax event="rowSelect" update=":lume:tabView:pnEvolucao" />
 					<f:facet name="header">Evolução</f:facet>
 					<p:column filterBy="#{evolucao.descricao}"
 						sortBy="#{evolucao.descricao}" filterMatchMode="contains"
-						width="70%" headerText="Descrição">
+						width="70%" headerText="Descrição"
+						filterFunction="#{evolucaoMB.filtroSemAcento}">
 						<h:outputText
 							value="#{evolucao.excluido=='S'?'[ REMOVIDO ]':''} #{evolucao.descricao}"
 							title="#{evolucao.id}"
@@ -40,7 +63,8 @@
 					</p:column>
 					<p:column filterBy="#{evolucao.profissional.dadosBasico.nome}"
 						sortBy="#{evolucao.profissional.dadosBasico.nome}"
-						filterMatchMode="contains" headerText="Profissional">
+						filterMatchMode="contains" headerText="Profissional"
+						filterFunction="#{evolucaoMB.filtroSemAcento}">
 						<h:outputText value="#{evolucao.profissional.dadosBasico.nome}" />
 					</p:column>
 					<p:column filterBy="#{evolucao.dataStr}"

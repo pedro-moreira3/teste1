@@ -133,6 +133,23 @@ div.ui-selectoneradio label {
 	overflow: auto;
 	overflow-y: hidden;
 }
+
+/*AJUSTE DO CAMPO FILTRO POR CONVENIO*/
+body .ui-selectonemenu{
+	margin:0px !important;
+	padding:0px !important;
+}
+ui-selectonemenu-label{
+	margin:0px !important;
+	padding:0px !important;
+}
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-label{
+	margin-top:2px !important;
+	padding:0px !important;
+}
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
+	margin-top:-12px !important;
+}
 </style>
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
@@ -220,15 +237,15 @@ div.ui-selectoneradio label {
 									</h:panelGroup>
 
 									<h:panelGroup>
-										<h:outputText for="filtroConvenio" value="Convênio:" />
-										<p:autoComplete id="filtroConvenio"
-											value="#{relatorioAtendimentoMB.filtroPorConvenio}"
-											completeMethod="#{relatorioAtendimentoMB.sugestoesConvenios}"
-											var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-											converter="convenio" forceSelection="true" scrollHeight="400"
-											queryDelay="1000">
-											<p:ajax event="itemSelect" process="@this" />
-										</p:autoComplete>
+										
+										<p:outputLabel style="margin:0px;" for="filtroConvenio" value="Convênio" />
+																		 
+										 <p:selectOneMenu id="filtroConvenio" style="min-width:0px;margin-top:10px;margin-bottom:10px;" value="#{relatorioAtendimentoMB.filtroPorConvenio}">
+											<f:selectItem 	itemLabel="Todos" itemValue="todos"/>
+											<f:selectItems 	value="#{relatorioAtendimentoMB.listaConvenios}" var="agendamento" 
+															itemLabel="#{agendamento}" itemValue="#{agendamento}"/>
+										 </p:selectOneMenu>
+
 									</h:panelGroup>
 
 								</p:panelGrid>
@@ -867,7 +884,7 @@ div.ui-selectoneradio label {
 											</td>
 
 											<td><h:outputText
-													value="#{relatorioAtendimentoMB.filtroPorConvenio.dadosBasico.nome}" />
+													value="#{relatorioAtendimentoMB.filtroPorConvenio}" />
 											</td>
 
 										</tr>

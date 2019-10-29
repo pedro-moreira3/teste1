@@ -14,11 +14,41 @@
 						<h1>Ajuste de Materiais</h1>
 						<div class="SeparatorFull"></div>
 						<br />
+						
+						<p:panelGrid columns="4" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-10"
+							styleClass="ui-panelgrid-blank form-group ui-fluid"
+							style="border:0px none; background-color:transparent;">
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{conferenciaMB.exportarTabela('xls')}"
+									ajax="false" process="dtMaterial,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{conferenciaMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{conferenciaMB.exportarTabela('pdf')}"
+										ajax="false" process="dtMaterial,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#conferenciaMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
+						</p:panelGrid>
+						
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtMaterial" value="#{conferenciaMB.estoques}" var="estoque"
 							rows="6" paginator="true" 
-							 rowKey="#{conferenciaMB.estoque}"
-							paginatorPosition="bottom">
+							rowKey="#{conferenciaMB.estoque}"
+							paginatorPosition="bottom" binding="#{conferenciaMB.tabelaConferencia}">
 							<p:ajax event="rowSelect" update=":lume:pnMaterial"
 								listener="#{conferenciaMB.carregaTela}" />
 							<f:facet name="header">Materiais</f:facet>

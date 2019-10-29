@@ -51,12 +51,35 @@
                             <p:commandButton id="lavar" icon="fa fa-paint-brush White" value="Lavagem" actionListener="#{emprestimoUnitarioMB.actionLavagemMaterial}"
                                 disabled="#{!emprestimoUnitarioMB.enableLavagem}" update=":lume:dtMateriais,:lume:devolucao,:lume:pnMateriais" process=":lume:dtMateriais,:lume:pnMateriais, @this"
                                 styleClass="AquaButton" />
-                        </p:panelGrid>
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{emprestimoUnitarioMB.exportarTabelaEmprestimoUnitario('xls')}"
+									ajax="false" process="dtMateriais,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{emprestimoUnitarioMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{emprestimoUnitarioMB.exportarTabelaEmprestimoUnitario('pdf')}"
+										ajax="false" process="dtMateriais,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{emprestimoUnitarioMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+						</p:panelGrid>
 
                         <div class="EmptyBox20"></div>
 
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMateriais" value="#{emprestimoUnitarioMB.emprestimoUnitariosDevolucao}" var="emprestimoUnitario" rows="15" paginator="true"
-                            rowKey="#{emprestimoUnitario}" selection="#{emprestimoUnitarioMB.entity}" selectionMode="single" paginatorPosition="bottom">
+                            rowKey="#{emprestimoUnitario}" selection="#{emprestimoUnitarioMB.entity}" selectionMode="single" paginatorPosition="bottom" binding="#{emprestimoUnitarioMB.tabelaEmprestimoUnitario}">
                             <p:ajax event="rowSelect" update=":lume:devolucao,:lume:pnCampos" listener="#{emprestimoUnitarioMB.atualizaTela}" />
                             <f:facet name="header">Materiais</f:facet>
                             <p:column filterBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}" sortBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}"

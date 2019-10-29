@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.model.DefaultTreeNode;
@@ -42,6 +43,9 @@ public class LocalMB extends LumeManagedBean<Local> {
 
     private boolean disable;
 
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaLocal;
+    
    // private DominioBO dominioBO;
 
     public LocalMB() {
@@ -278,6 +282,10 @@ public class LocalMB extends LumeManagedBean<Local> {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Locais", tabelaLocal, type);
+    }
 
     public String getDescricao() {
         return this.descricao;
@@ -325,6 +333,14 @@ public class LocalMB extends LumeManagedBean<Local> {
 
     public void setRootPai(TreeNode rootPai) {
         this.rootPai = rootPai;
+    }
+
+    public DataTable getTabelaLocal() {
+        return tabelaLocal;
+    }
+
+    public void setTabelaLocal(DataTable tabelaLocal) {
+        this.tabelaLocal = tabelaLocal;
     }
 
     private static final String CONSULTORIO = "CO";

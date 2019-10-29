@@ -13,6 +13,8 @@ import javax.faces.bean.ViewScoped;
 
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.chart.PieChartModel;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
@@ -25,7 +27,7 @@ import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.reserva.ReservaSingleton;
 
 // TODO esse menu é fila de atendimento e não um relatorio,
-// necessario mudar o nome dessa classe, verificar permissoes e objetos, e demais relacoes.
+// necessario mudar o nome dessa classe, verificar permissoes, objetos, e demais relacoes.
 @ManagedBean
 @ViewScoped
 public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
@@ -49,7 +51,10 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
     private HashSet<String> profissionaisAgendamento;
 
     private List<Integer> cadeiras;
-
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaAtendimento;
+    
     public FilaAtendimentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
         this.dateFilter = new Date();
@@ -166,6 +171,10 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
         }
         return "[]";
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Atendimentos", tabelaAtendimento, type);
+    }
 
     public PieChartModel getPieModel() {
         return pieModel;
@@ -236,6 +245,14 @@ public class FilaAtendimentoMB extends LumeManagedBean<Agendamento> {
     
     public boolean isDisableFieldsAg(Agendamento agendamento) {
         return !"Agendado".equals(agendamento.getStatusAgendamento().getDescricao());
+    }
+
+    public DataTable getTabelaAtendimento() {
+        return tabelaAtendimento;
+    }
+
+    public void setTabelaAtendimento(DataTable tabelaAtendimento) {
+        this.tabelaAtendimento = tabelaAtendimento;
     }
 
 }

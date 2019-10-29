@@ -52,11 +52,35 @@
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">	
 								<p:commandButton id="new" icon="White fa fa-file-o" value="Inserir novo local" 
-								oncomplete="PF('dlg').show();" actionListener="#{localMB.actionNew}" update=":lume:pnDlg" immediate="true" />	
+								oncomplete="PF('dlg').show();" actionListener="#{localMB.actionNew}" update=":lume:pnDlg" immediate="true" />
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{localMB.exportarTabela('xls')}"
+									ajax="false" process="dtLocal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{localMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{localMB.exportarTabela('pdf')}"
+										ajax="false" process="dtLocal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{localMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
 						</p:panelGrid>						
 													
 						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtLocal" value="#{localMB.locais}" var="local" rows="15" paginator="true" selection="#{localMB.entity}"
-	                        selectionMode="single" rowKey="#{local}" paginatorPosition="bottom">	                        
+	                        selectionMode="single" rowKey="#{local}" paginatorPosition="bottom" binding="#{localMB.tabelaLocal}">	                        
 	                        <f:facet name="header">Locais</f:facet>
 							 <p:column headerText="Ações" width="20%">
 							 	<p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlg').show();" update=":lume:pnDlg,:lume:dtLocal" title="Editar" process="@this"
@@ -65,11 +89,12 @@
 							 	<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmation').show();" update=":lume:pnDlg" title="Remover" process="@this"
 	                                 style="width:33px !important" actionListener="#{localMB.carregarEditar(local)}"/>
 	                        </p:column>								                                           
-	                        <p:column filterBy="#{local.descricao}" sortBy="#{local.descricao}" filterMatchMode="contains" width="30%" headerText="Descrição">
+	                        <p:column filterBy="#{local.descricao}" sortBy="#{local.descricao}" filterMatchMode="contains" width="30%" headerText="Descrição"
+	                        			filterFunction="#{localMB.filtroSemAcento}">
 	                            <h:outputText value="#{local.descricao}" title="#{local.id}" />
 	                        </p:column>
 	                        <p:column filterBy="#{local.tipo}" sortBy="#{local.descricaoTipo}" filterMatchMode="contains" width="20%" headerText="Tipo"
-	                            >
+	                            filterFunction="#{localMB.filtroSemAcento}">
 	                            <h:outputText value="#{local.descricaoTipo}" />
 	                        </p:column>                     
 					</p:dataTable>                  							

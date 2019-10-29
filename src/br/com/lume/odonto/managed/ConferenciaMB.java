@@ -12,6 +12,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -78,6 +79,10 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
     //private MaterialEmprestadoBO materialEmprestadoBO = new MaterialEmprestadoBO();
 
     private List<MaterialEmprestado> materiaisEmprestado;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaConferencia;
+    private DataTable tabela;
 
     public ConferenciaMB() {
         super(ConferenciaSingleton.getInstance().getBo());
@@ -183,6 +188,14 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
        // Collections.sort(estoques);
     }
     
+    public void exportarTabela(String type) {
+        exportarTabela("Ajuste de materiais", tabelaConferencia, type);
+    }
+    
+    public void exportarTabelaConferencia(String type) {
+        exportarTabela("Consulta de ajustes", getTabela(), type);
+    }
+    
     public String getUnidadeString(Item item) {
         if(item != null)
             return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
@@ -271,6 +284,22 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
     
     public void setEstoque(Estoque estoque) {
         this.estoque = estoque;
+    }
+
+    public DataTable getTabelaConferencia() {
+        return tabelaConferencia;
+    }
+
+    public void setTabelaConferencia(DataTable tabelaConferencia) {
+        this.tabelaConferencia = tabelaConferencia;
+    }
+
+    public DataTable getTabela() {
+        return tabela;
+    }
+
+    public void setTabela(DataTable tabela) {
+        this.tabela = tabela;
     }
 
 }

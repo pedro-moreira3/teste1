@@ -15,10 +15,34 @@
                                 <f:selectItems value="#{conferenciaMB.conferencias}" var="c" itemValue="#{c}" itemLabel="#{c.dataStr}" />
                                 <p:ajax update=":lume:pnConferencias" listener="#{conferenciaMB.pesquisa}" />
                             </p:selectOneMenu>
-                        </p:panelGrid>
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{conferenciaMB.exportarTabelaConferencia('xls')}"
+									ajax="false" process="dtConferencias,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{conferenciaMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{conferenciaMB.exportarTabelaConferencia('pdf')}"
+										ajax="false" process="dtConferencias,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{conferenciaMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
+						</p:panelGrid>
                         <div class="EmptyBox20"></div>
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtConferencias" value="#{conferenciaMB.conferenciasMaterial}" var="conferencia" rows="7" paginator="true" rowKey="#{conferencia}"
-                            paginatorPosition="bottom">
+                            paginatorPosition="bottom" binding="#{conferenciaMB.tabela}">
                             <f:facet name="header">Conferências</f:facet>
                             <p:column filterBy="#{conferencia.conferencia.profissional.dadosBasico.prefixoNome}" sortBy="#{conferencia.conferencia.profissional.dadosBasico.prefixoNome}"
                                 filterMatchMode="contains" headerText="Conferente">

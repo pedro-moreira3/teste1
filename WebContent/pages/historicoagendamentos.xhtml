@@ -7,14 +7,40 @@
 
 	<div class="ui-g ui-fluid">
 		<div class="ui-g-12 ui-lg-12">
+		
+			<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+					style="border:0px none; background-color:transparent;">
+				<h:panelGroup>
+					<p:splitButton icon="White fa fa fa-file-excel-o"
+						value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+						actionListener="#{pacienteMB.exportarTabelaFrequencia('xls')}"
+						ajax="false" process="dtHistoricoAgendamentos,@this" update="@this"
+						immediate="true"
+						onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+						<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+
+						<p:menuitem value="Exportar tabela para PDF"
+							icon="fa fa fa-file-pdf-o"
+							actionListener="#{pacienteMB.exportarTabelaFrequencia('pdf')}"
+							ajax="false" process="dtHistoricoAgendamentos,@this" immediate="true"
+							onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+							<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+						</p:menuitem>
+					</p:splitButton>
+				</h:panelGroup>
+			</p:panelGrid>
+			
 			<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 				id="dtHistoricoAgendamentos"
 				value="#{pacienteMB.historicoAgendamentos}" var="a" rows="50"
-				paginator="true" paginatorPosition="bottom">
+				paginator="true" paginatorPosition="bottom" binding="#{pacienteMB.tabelaFrequencia}">
 				<f:facet name="header">Agendamentos</f:facet>
 				<p:column filterBy="#{a.profissional.dadosBasico.nome}"
 					sortBy="#{a.profissional.dadosBasico.nome}"
-					filterMatchMode="contains" headerText="Profissional">
+					filterMatchMode="contains" headerText="Profissional"
+					filterFunction="#{pacienteMB.filtroSemAcento}">
 					<h:outputText value="#{a.profissional.dadosBasico.nome}" />
 				</p:column>
 
@@ -29,7 +55,8 @@
 
 				<p:column filterBy="#{a.statusDescricao}"
 					sortBy="#{a.statusDescricao}" filterMatchMode="contains"
-					headerText="Status" width="15%">
+					headerText="Status" width="15%"
+					filterFunction="#{pacienteMB.filtroSemAcento}">
 					<h:outputText value="#{a.statusDescricao}" />
 				</p:column>
 

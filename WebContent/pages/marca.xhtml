@@ -40,12 +40,38 @@
 							<h1>Marca</h1>	
 					<div class="EmptyBox20"></div>
 					<div class="SeparatorFull"></div>
-									<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">	
-										<p:commandButton id="new" icon="White fa fa-file-o" value="Inserir nova marca" actionListener="#{marcaMB.actionNew}"
-										update=":lume:pnDlg" immediate="true" oncomplete="PF('dlg').show();"/>
-									</p:panelGrid>
+					<p:panelGrid columns="4" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid">
+						<p:commandButton id="new" icon="White fa fa-file-o"
+							value="Inserir nova marca" actionListener="#{marcaMB.actionNew}"
+							update=":lume:pnDlg" immediate="true"
+							oncomplete="PF('dlg').show();" />
+
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{marcaMB.exportarTabela('xls')}"
+								ajax="false" process="dtMarca,@this" update="@this"
+								immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+								<p:fileDownload
+									value="#{marcaMB.arquivoDownload}" />
+
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{marcaMB.exportarTabela('pdf')}"
+									ajax="false" process="dtMarca,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload
+										value="#{marcaMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
+						</h:panelGroup>
+
+					</p:panelGrid>
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMarca" value="#{marcaMB.marcas}" var="marca" rows="15" paginator="true"
-						selection="#{marcaMB.entity}" selectionMode="single" rowKey="#{marca}" paginatorPosition="bottom">
+						selection="#{marcaMB.entity}" selectionMode="single" rowKey="#{marca}" paginatorPosition="bottom" binding="#{marcaMB.tabelaMarca}">
 						<p:ajax event="rowSelect" update=":lume:pnMarca" />
 						<f:facet name="header">Marcas</f:facet>
  						<p:column headerText="Ações" width="20%">
@@ -55,7 +81,7 @@
 							<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmation').show();" update=":lume:pnDlg,:lume:dtMarca" title="Remover" process="@this"
                            style="width:33px !important" actionListener="#{marcaMB.carregarEditar(marca)}"/>
                   		</p:column>		
-						<p:column filterBy="#{marca.nome}" sortBy="#{marca.nome}" filterMatchMode="contains" headerText="Descrição">
+						<p:column filterBy="#{marca.nome}" sortBy="#{marca.nome}" filterMatchMode="contains" headerText="Descrição" filterFunction="#{marcaMB.filtroSemAcento}">
 							<h:outputText value="#{marca.nome}" title="#{marca.id}" />
 						</p:column>
 						<p:column filterBy="#{marca.dataCadastroStr}" sortBy="#{marca.dataCadastroStrOrd}" filterMatchMode="contains" headerText="Data do Cadastro">

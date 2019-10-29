@@ -21,7 +21,9 @@ import javax.faces.model.SelectItemGroup;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
+import org.primefaces.model.StreamedContent;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
@@ -141,6 +143,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private List<StatusDente> statusDenteEmpresa;
     private StatusDente statusDenteSelecionado = new StatusDente();
     private StatusDente statusDenteDenteSelecionado = new StatusDente();
+    
+    //EXPORTACAO TABELA
+    private DataTable tabelaPlanoTratamento;
 
     @ManagedProperty(value = "#{pacienteMB}")
     private PacienteMB pacienteMB;
@@ -1440,6 +1445,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
     // ================================================= TELA ================================================ //
 
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Planos de Tratamento", tabelaPlanoTratamento, type);
+    }
+    
     public Profissional getProfissionalLogado() {
         return profissionalLogado;
     }
@@ -1793,6 +1803,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void setJustificativasCancelamento(List<Dominio> justificativasCancelamento) {
         this.justificativasCancelamento = justificativasCancelamento;
+    }
+
+    public DataTable getTabelaPlanoTratamento() {
+        return tabelaPlanoTratamento;
+    }
+
+    public void setTabelaPlanoTratamento(DataTable tabelaPlanoTratamento) {
+        this.tabelaPlanoTratamento = tabelaPlanoTratamento;
     }
 
 }

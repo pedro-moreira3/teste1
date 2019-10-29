@@ -73,7 +73,8 @@
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.nome}"
 							filterBy="#{paciente.dadosBasico.nomeStr}"
-							filterMatchMode="contains" headerText="Nome">
+							filterMatchMode="contains" headerText="Nome"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
 							<p:commandLink value="#{paciente.dadosBasico.nome}"
 								process="@this" title="#{paciente.id}"
 								actionListener="#{tabPacienteMB.loadPaciente(paciente)}"
@@ -83,7 +84,8 @@
 						<p:column sortBy="#{paciente.dadosBasico.email}"
 							filterBy="#{paciente.dadosBasico.email}"
 							filterMatchMode="contains" headerText="Email"
-							rendered="#{pacienteMB.visivelDadosPaciente}">
+							rendered="#{pacienteMB.visivelDadosPaciente}"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
 							<h:outputText value="#{paciente.dadosBasico.email}" />
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.dataNascimentoStrOrd}"

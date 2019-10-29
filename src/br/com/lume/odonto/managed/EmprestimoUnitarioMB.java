@@ -14,14 +14,13 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
-import br.com.lume.emprestimoUnitario.EmprestimoUnitarioSingleton;
-import br.com.lume.estoque.EstoqueSingleton;
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
 import br.com.lume.common.OdontoPerfil;
@@ -29,24 +28,20 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.emprestimoUnitario.EmprestimoUnitarioSingleton;
+import br.com.lume.estoque.EstoqueSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.material.MaterialSingleton;
-import br.com.lume.materialLog.MaterialLogSingleton;
-import br.com.lume.odonto.entity.EmprestimoUnitario;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.EmprestimoKit;
+import br.com.lume.odonto.entity.EmprestimoUnitario;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Material;
-import br.com.lume.odonto.entity.MaterialLog;
 import br.com.lume.odonto.entity.PedidoItem;
-import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
-import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoCusto;
 //import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoCusto;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
-import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
-import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
 //import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 
@@ -123,6 +118,10 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
     private boolean enableSalvar;
     
     private boolean editar;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaEmprestimo;
+    private DataTable tabelaEmprestimoUnitario;
 
 //    private MaterialLogBO materialLogBO = new MaterialLogBO();
 
@@ -788,6 +787,14 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
             e.printStackTrace();
         }
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Empréstimo unitário", tabelaEmprestimo, type);
+    }
+    
+    public void exportarTabelaEmprestimoUnitario(String type) {
+        exportarTabela("Materiais de devolução", getTabelaEmprestimoUnitario(), type);
+    }
 
     public BigDecimal getQuantidadeDevolvida() {
         return quantidadeDevolvida;
@@ -903,5 +910,21 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
     
     public void setFecharDialog(boolean fecharDialog) {
         this.fecharDialog = fecharDialog;
+    }
+
+    public DataTable getTabelaEmprestimo() {
+        return tabelaEmprestimo;
+    }
+
+    public void setTabelaEmprestimo(DataTable tabelaEmprestimo) {
+        this.tabelaEmprestimo = tabelaEmprestimo;
+    }
+
+    public DataTable getTabelaEmprestimoUnitario() {
+        return tabelaEmprestimoUnitario;
+    }
+
+    public void setTabelaEmprestimoUnitario(DataTable tabelaEmprestimoUnitario) {
+        this.tabelaEmprestimoUnitario = tabelaEmprestimoUnitario;
     }
 }

@@ -11,12 +11,35 @@
 						<p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
 							<p:dataExporter encoding="iso-8859-1" type="xls" target="dtMaterial" fileName="EstoqueMinimo" />
 						</p:commandButton>
+
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{relatorioEstoqueMinimoMB.exportarTabela('xls')}"
+								ajax="false" process="dtMaterial,@this" update="@this"
+								immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+								<p:fileDownload
+									value="#{relatorioEstoqueMinimoMB.arquivoDownload}" />
+
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{relatorioEstoqueMinimoMB.exportarTabela('pdf')}"
+									ajax="false" process="dtMaterial,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload
+										value="#{relatorioEstoqueMinimoMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
+						</h:panelGroup>
+
 					</p:panelGrid>
 					<div class="EmptyBox20"></div>
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{relatorioEstoqueMinimoMB.materiais}" var="m" rows="20" paginator="true"
-						rowKey="#{m}" paginatorPosition="bottom">
+						rowKey="#{m}" paginatorPosition="bottom" binding="#{relatorioEstoqueMinimoMB.tabelaEstoque}">
 						<f:facet name="header">Materiais</f:facet>
-						<p:column filterBy="#{m.item}" sortBy="#{m.item}" filterMatchMode="contains">
+						<p:column filterBy="#{m.item}" sortBy="#{m.item}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}">
 							<f:facet name="header">
 								<h:outputText value="Item" />
 							</f:facet>
@@ -64,7 +87,7 @@
 								<f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 						</p:column>
-                        <p:column filterBy="#{m.tipoStr}" sortBy="#{m.tipoStr}" filterMatchMode="contains">
+                        <p:column filterBy="#{m.tipoStr}" sortBy="#{m.tipoStr}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}">
                             <f:facet name="header">
                                 <h:outputText value="Tipo" />
                             </f:facet>

@@ -12,6 +12,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.StreamedContent;
 
 import br.com.lume.aparelhoOrtodontico.AparelhoOrtodonticoSingleton;
 import br.com.lume.common.log.LogIntelidenteSingleton;
@@ -54,6 +56,9 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     private AparelhoOrtodontico aparelhoSelecionado;
     private Procedimento procedimentoExtra;
 
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaPlanoOrtodontico;
+    
     @ManagedProperty(value = "#{pacienteMB}")
     private PacienteMB pacienteMB;
 
@@ -373,6 +378,19 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         return ProcedimentoSingleton.getInstance().getBo().listSugestoesCompleteOrtodontico(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Plano Ortodôntico", this.tabelaPlanoOrtodontico, type);
+    }
+    
+    public BigDecimal obterValorProcedimentoValor() {
+        BigDecimal valor = new BigDecimal(0);
+        
+        if(this.getEntity().getProcedimentoPadrao() != null)
+            valor = this.getEntity().getProcedimentoPadrao().getValor();
+        
+        return valor;
+    }
+    
     public PacienteMB getPacienteMB() {
         return pacienteMB;
     }
@@ -446,4 +464,11 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             this.procedimentoExtra.setValor(valorProcedimentoExtra);
     }
 
+    public DataTable getTabelaPlanoOrtodontico() {
+        return tabelaPlanoOrtodontico;
+    }
+
+    public void setTabelaPlanoOrtodontico(DataTable tabelaPlanoOrtodontico) {
+        this.tabelaPlanoOrtodontico = tabelaPlanoOrtodontico;
+    }
 }

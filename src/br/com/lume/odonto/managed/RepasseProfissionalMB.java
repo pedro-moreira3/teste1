@@ -57,6 +57,7 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
             popularTabela();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro", "Não foi possivel carregar a tela.",true);
         }
     }
 
@@ -83,7 +84,7 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
                 });
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError("Erro",Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
         }
     }
 
@@ -101,7 +102,7 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
             Collections.sort(sugestoes);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
+            this.addError("Erro",Mensagens.ERRO_AO_BUSCAR_REGISTROS,true);
         }
         return sugestoes;
     }
@@ -121,7 +122,7 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
             Collections.sort(pacientes);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
+            this.addError("Erro",Mensagens.ERRO_AO_BUSCAR_REGISTROS, true);
         }
         return pacientes;
         

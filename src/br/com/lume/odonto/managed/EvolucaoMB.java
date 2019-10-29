@@ -1,7 +1,5 @@
 package br.com.lume.odonto.managed;
 
-import java.util.List;
-
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
@@ -9,6 +7,8 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.model.StreamedContent;
 
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -16,7 +16,6 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.evolucao.EvolucaoSingleton;
 import br.com.lume.odonto.entity.Evolucao;
-import br.com.lume.odonto.entity.Paciente;
 
 @ManagedBean
 @ViewScoped
@@ -27,6 +26,9 @@ public class EvolucaoMB extends LumeManagedBean<Evolucao> {
 
     @ManagedProperty(value = "#{pacienteMB}")
     private PacienteMB pacienteMB;
+    
+    //EXPORTAÇÃO DA TABELA
+    private DataTable tabelaEvolucao;
 
     public EvolucaoMB() {
         super(EvolucaoSingleton.getInstance().getBo());
@@ -76,5 +78,16 @@ public class EvolucaoMB extends LumeManagedBean<Evolucao> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Evolução", tabelaEvolucao, type);
+    }
 
+    public DataTable getTabelaEvolucao() {
+        return tabelaEvolucao;
+    }
+
+    public void setTabelaEvolucao(DataTable tabelaEvolucao) {
+        this.tabelaEvolucao = tabelaEvolucao;
+    }
 }

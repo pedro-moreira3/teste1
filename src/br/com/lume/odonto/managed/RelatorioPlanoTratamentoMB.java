@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -48,6 +49,9 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
     
     private String status;
 
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaRelatorio;
+    
     public RelatorioPlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());      
         this.setClazz(PlanoTratamento.class);  
@@ -154,7 +158,6 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
         }
     }    
     
-
     @Override
     public void actionNew(ActionEvent arg0) {
         inicio = null;
@@ -162,6 +165,10 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
         super.actionNew(arg0);
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Relatório do Plano de Tratamento", tabelaRelatorio, type);
+    }
+    
     public Date getInicio() {
         return inicio;
     }
@@ -201,65 +208,61 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
     public void setStatus(String status) {
         this.status = status;
     }
-
     
     public Paciente getPaciente() {
         return paciente;
     }
-
     
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
     }
-
     
     public Profissional getProfissional() {
         return profissional;
     }
-
     
     public void setProfissional(Profissional profissional) {
         this.profissional = profissional;
     }
 
-    
     public Date getInicioFinalizacao() {
         return inicioFinalizacao;
     }
-
     
     public void setInicioFinalizacao(Date inicioFinalizacao) {
         this.inicioFinalizacao = inicioFinalizacao;
     }
-
     
     public Date getFimFinalizacao() {
         return fimFinalizacao;
     }
 
-    
     public void setFimFinalizacao(Date fimFinalizacao) {
         this.fimFinalizacao = fimFinalizacao;
     }
-
     
     public String getFiltroPeriodoFinalizacao() {
         return filtroPeriodoFinalizacao;
     }
 
-    
     public void setFiltroPeriodoFinalizacao(String filtroPeriodoFinalizacao) {
         this.filtroPeriodoFinalizacao = filtroPeriodoFinalizacao;
     }
-
     
     public Convenio getConvenio() {
         return convenio;
     }
-
     
     public void setConvenio(Convenio convenio) {
         this.convenio = convenio;
+    }
+
+    public DataTable getTabelaRelatorio() {
+        return tabelaRelatorio;
+    }
+
+    public void setTabelaRelatorio(DataTable tabelaRelatorio) {
+        this.tabelaRelatorio = tabelaRelatorio;
     }
 
 }

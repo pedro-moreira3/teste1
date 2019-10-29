@@ -7,7 +7,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<p:outputPanel id="mainViewAnamnese">
-		<p:panelGrid columns="2" layout="grid" id="botoesControleTbAnamnese"
+		<p:panelGrid columns="3" layout="grid" id="botoesControleTbAnamnese"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton id="newAnamnese" icon="ui-icon-add" value="Novo"
 				actionListener="#{pacienteMB.actionAnamneseNew}"
@@ -18,14 +18,34 @@
 				update=":lume:tabView:anamneseDoPaciente, :lume:tabView:dtAnamnese"
 				process="@this" disabled="#{pacienteMB.pacienteAnamnese.id == null}"
 				rendered="#{pacienteMB.admin}" styleClass="RedButton" />
+
+			<h:panelGroup>
+				<p:splitButton icon="White fa fa fa-file-excel-o"
+					value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+					actionListener="#{pacienteMB.exportarTabelaAnamnese('xls')}"
+					ajax="false" process="tabelaAnamnese,@this" update="@this"
+					immediate="true"
+					onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+					<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+
+					<p:menuitem value="Exportar tabela para PDF"
+						icon="fa fa fa-file-pdf-o"
+						actionListener="#{pacienteMB.exportarTabelaAnamnese('pdf')}"
+						ajax="false" process="tabelaAnamnese,@this" immediate="true"
+						onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+						<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+					</p:menuitem>
+				</p:splitButton>
+			</h:panelGroup>
 		</p:panelGrid>
 
 		<h:panelGroup id="dtAnamnese">
-			<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+			<p:dataTable id="tabelaAnamnese" filterDelay="1500" reflow="true" emptyMessage=""
 				value="#{pacienteMB.pacienteAnamneses}" var="pacienteAnamnese"
-				rows="10" paginator="true"
+				rows="10" paginator="true" widgetVar="tabelaAnamnese"
 				selection="#{pacienteMB.pacienteAnamnese}" selectionMode="single"
-				rowKey="#{pacienteAnamnese}" paginatorPosition="bottom">
+				rowKey="#{pacienteAnamnese}" paginatorPosition="bottom" binding="#{pacienteMB.tabelaAnamnese}">
 				<p:ajax event="rowSelect"
 					update=":lume:tabView:pnPrincipalAnamnese, :lume:tabView:botoesControleTbAnamnese" />
 				<f:facet name="header">Anamneses</f:facet>
@@ -46,7 +66,8 @@
 				<p:column
 					filterBy="#{pacienteAnamnese.profissional.dadosBasico.prefixoNome}"
 					sortBy="#{pacienteAnamnese.profissional.dadosBasico.prefixoNome}"
-					filterMatchMode="contains" headerText="Profissional">
+					filterMatchMode="contains" headerText="Profissional"
+					filterFunction="#{pacienteMB.filtroSemAcento}">
 					<h:outputText
 						value="#{pacienteAnamnese.profissional.dadosBasico.prefixoNome}"
 						rendered="#{pacienteAnamnese.profissional != null}" />
@@ -55,7 +76,8 @@
 				</p:column>
 				<p:column filterBy="#{pacienteAnamnese.dataHoraStr}"
 					sortBy="#{pacienteAnamnese.dataHoraStrOrd}"
-					filterMatchMode="contains" headerText="Data/Hora">
+					filterMatchMode="contains" headerText="Data/Hora"
+					filterFunction="#{pacienteMB.filtroSemAcento}">
 					<h:outputText value="#{pacienteAnamnese.dataHoraStr}" />
 				</p:column>
 				<p:column filterBy="#{pacienteAnamnese.especialidades}"

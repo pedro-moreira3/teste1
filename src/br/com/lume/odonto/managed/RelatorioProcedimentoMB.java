@@ -2,13 +2,16 @@ package br.com.lume.odonto.managed;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
+
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
@@ -45,6 +48,8 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     private Profissional filtroPorProfissionalUltAlteracao;
     
     private boolean imprimirCabecalho = true;
+    
+    private DataTable tabelaProcedimento;
 
     public RelatorioProcedimentoMB() {
         super(PlanoTratamentoProcedimentoSingleton.getInstance().getBo());
@@ -134,6 +139,10 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         return "";
     }
     
+    public void exportarTabela(String type) {
+        exportarTabela("Relatório de Procedimentos", tabelaProcedimento, type);
+    }
+    
     public String statusProcedimento(String status) {
         return (status.equals("F") ? "Finalizado" : "Não finalizado");
     }
@@ -216,6 +225,14 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
 
     public void setFiltroPorProfissionalUltAlteracao(Profissional filtroPorProfissionalUltAlteracao) {
         this.filtroPorProfissionalUltAlteracao = filtroPorProfissionalUltAlteracao;
+    }
+
+    public DataTable getTabelaProcedimento() {
+        return tabelaProcedimento;
+    }
+
+    public void setTabelaProcedimento(DataTable tabelaProcedimento) {
+        this.tabelaProcedimento = tabelaProcedimento;
     }
 
     

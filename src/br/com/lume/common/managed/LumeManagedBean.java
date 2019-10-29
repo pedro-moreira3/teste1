@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.bo.BO;
@@ -57,6 +58,8 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     private RestricaoBO restricaoBO;
 
     private Exportacoes exportacao;
+    
+    private StreamedContent arquivoDownload;
 
     @PostConstruct
     public void init() {
@@ -310,7 +313,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         return getCalendarFromDate(date).get(Calendar.MINUTE);
     }
 
-    public DefaultStreamedContent exportarTabela(String header, DataTable tabela, String type) {
+    public void exportarTabela(String header, DataTable tabela, String type) {
 
         FileInputStream arq;
         try {
@@ -318,15 +321,13 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             arq = new FileInputStream(this.exportacao.exportarTabela(header, tabela, type));
 
             if (type.equals("xls"))
-                return new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls");
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
             else
-                return new DefaultStreamedContent(arq, "application/pdf", header + "." + type);
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/pdf", header + "." + type));
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-        return null;
     }
 
     public boolean filtroSemAcento(Object value, Object filter, Locale locale) {
@@ -350,4 +351,11 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         return c;
     }
 
+    public StreamedContent getArquivoDownload() {
+        return arquivoDownload;
+    }
+
+    public void setArquivoDownload(StreamedContent arquivoDownload) {
+        this.arquivoDownload = arquivoDownload;
+    }
 }

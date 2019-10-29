@@ -82,6 +82,29 @@ div.ui-selectoneradio label {
 							oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
 							action="#{agendamentoMB.filaAtendimento(a)}"
 							update="lume:pnAgendamento" process="@this" />
+
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{filaAtendimentoMB.exportarTabela('xls')}"
+								ajax="false" process="dtAtendimento,@this" update="@this"
+								immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+								<p:fileDownload
+									value="#{filaAtendimentoMB.arquivoDownload}" />
+
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{filaAtendimentoMB.exportarTabela('pdf')}"
+									ajax="false" process="dtAtendimento,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload
+										value="#{filaAtendimentoMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
+						</h:panelGroup>
+
 					</p:panelGrid>
 
 
@@ -91,16 +114,18 @@ div.ui-selectoneradio label {
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						id="dtAtendimento" value="#{filaAtendimentoMB.agendamentos}"
 						var="a" rows="15" paginator="true" rowKey="#{a}"
-						paginatorPosition="bottom">
+						paginatorPosition="bottom" binding="#{filaAtendimentoMB.tabelaAtendimento}">
 						<f:facet name="header">Agendamentos</f:facet>
 						<p:column filterBy="#{a.profissional.dadosBasico.nome}"
 							sortBy="#{a.profissional.dadosBasico.nome}"
-							filterMatchMode="contains" headerText="Profissional">
+							filterMatchMode="contains" headerText="Profissional"
+							filterFunction="#{filaAtendimentoMB.filtroSemAcento}">
 							<h:outputText value="#{a.profissional.dadosBasico.nome}" />
 						</p:column>
 						<p:column filterBy="#{a.paciente.dadosBasico.nomeStr}"
 							sortBy="#{a.paciente.dadosBasico.nome}"
-							filterMatchMode="contains" headerText="#{dominioMB.cliente}">
+							filterMatchMode="contains" headerText="#{dominioMB.cliente}"
+							filterFunction="#{filaAtendimentoMB.filtroSemAcento}">
 							<h:outputText value="#{a.paciente.dadosBasico.nome}" />
 						</p:column>
 						<p:column headerText="Agendar c/ mesmo profissional">
@@ -128,7 +153,8 @@ div.ui-selectoneradio label {
 						</p:column>
 						<p:column filterBy="#{a.statusDescricao}"
 							sortBy="#{a.statusDescricao}" filterMatchMode="contains"
-							headerText="Status" width="15%">
+							headerText="Status" width="15%"
+							filterFunction="#{filaAtendimentoMB.filtroSemAcento}">
 							<p:selectOneMenu value="#{a.statusNovo}"
 								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.isDisableFieldsAg(a)}">
 								<p:ajax process="@this"

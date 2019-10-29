@@ -9,9 +9,34 @@
                         <h1>Devolução de Kits</h1>
                         <div class="SeparatorFull"></div>
                         <br />
+						
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{emprestimoKitMB.exportarTabelaDevolucaoKit('xls')}"
+									ajax="false" process="dtKitsDisponibilizados,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
+									<p:fileDownload
+										value="#{emprestimoKitMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{emprestimoKitMB.exportarTabelaDevolucaoKit('pdf')}"
+										ajax="false" process="dtKitsDisponibilizados,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{emprestimoKitMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+						</p:panelGrid>
+						
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtKitsDisponibilizados" value="#{emprestimoKitMB.kitsDisponibilizados}" var="reservaKit" rows="7" paginator="true"
-                            selection="#{emprestimoKitMB.reservaKit}" selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom">
+                            selection="#{emprestimoKitMB.reservaKit}" selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom" binding="#{emprestimoKitMB.tabelaDevolucaoKit}">
                             <f:facet name="header">Kits Disponibilizados</f:facet>
                             <p:ajax event="rowSelect" listener="#{emprestimoKitMB.habilitaDevolucao}"
                                 update=":lume:dtMateriais, :lume:dtKitsDisponibilizados, :lume:devolucao , :lume:naoUtilizado, :lume:lavagem" process="@this" />
@@ -51,8 +76,34 @@
                             </p:column>
                         </p:dataTable>
                         <br />
+                        
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{emprestimoKitMB.exportarTabelaDevolucaoMateriais('xls')}"
+									ajax="false" process="dtMateriais,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{emprestimoKitMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{emprestimoKitMB.exportarTabelaDevolucaoMateriais('pdf')}"
+										ajax="false" process="dtMateriais,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{emprestimoKitMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+						</p:panelGrid>
+                        
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMateriais" value="#{emprestimoKitMB.materiais}" editable="true" var="material" rows="7" paginator="true"
-                            paginatorPosition="bottom">
+                            paginatorPosition="bottom" binding="#{emprestimoKitMB.tabelaDevolucaoMateriais}">
                             <p:ajax event="rowEdit" listener="#{emprestimoKitMB.validaCampo}" update=":lume:devolucao , :lume:lavagem , :lume:naoUtilizado, @this" />
                             <f:facet name="header">Materiais</f:facet>
                             <p:column filterBy="#{material.material.item.descricaoLimpa}" sortBy="#{material.material.item.descricao}"

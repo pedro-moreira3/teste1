@@ -12,12 +12,35 @@
                     <h:inputHidden id="idMaterial" value="#{materialMB.entity.id}" />
      				<h1>Entrada de Materiais no Estoque</h1>
                      <div class="SeparatorFull"></div>                  
-                      <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-                      <p:commandButton id="new" icon="White fa fa-file-o" value="Inserir itens no estoque " oncomplete="PF('dlgEntrada').show();" actionListener="#{materialMB.actionNew}" update=":lume:pnMaterial,:lume:dtMaterial" immediate="true" />						
-                      </p:panelGrid>  
+                    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+                      	<p:commandButton id="new" icon="White fa fa-file-o" value="Inserir itens no estoque " oncomplete="PF('dlgEntrada').show();" actionListener="#{materialMB.actionNew}" update=":lume:pnMaterial,:lume:dtMaterial" immediate="true" />
+
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{materialMB.exportarTabela('xls')}"
+								ajax="false" process="dtMaterial,@this" update="@this"
+								immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+								<p:fileDownload
+									value="#{materialMB.arquivoDownload}" />
+
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{materialMB.exportarTabela('pdf')}"
+									ajax="false" process="dtMaterial,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload
+										value="#{materialMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
+						</h:panelGroup>
+
+					</p:panelGrid>  
                       	<div class="SeparatorFull"></div>
                     <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{materialMB.materiais}" var="material" rows="15" paginator="true" 
-                        rowKey="#{material}" paginatorPosition="bottom">
+                        rowKey="#{material}" paginatorPosition="bottom" binding="#{materialMB.tabelaMaterial}">
                       
                         <f:facet name="header">Materiais</f:facet>
 						 <p:column headerText="Ações" width="12%">

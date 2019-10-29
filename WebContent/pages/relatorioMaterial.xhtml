@@ -7,13 +7,39 @@
                     <h1>Relatório de Estoque</h1>
                     <div class="SeparatorFull"></div>
                     <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                        <ui:remove>
                         <p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                             <p:dataExporter encoding="iso-8859-1" type="xls" target="dtMaterial" fileName="Material" />
                         </p:commandButton>
-                    </p:panelGrid>
+                        </ui:remove>
+
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{relatorioMaterialMB.exportarTabela('xls')}"
+								ajax="false" process="dtMaterial,@this" update="@this"
+								immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+								<p:fileDownload
+									value="#{relatorioMaterialMB.arquivoDownload}" />
+
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{relatorioMaterialMB.exportarTabela('pdf')}"
+									ajax="false" process="dtMaterial,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload
+										value="#{relatorioMaterialMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
+						</h:panelGroup>
+
+					</p:panelGrid>
                     <div class="EmptyBox20"></div>
 
-					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{relatorioMaterialMB.estoques}" var="e" rows="20" paginator="true" rowKey="#{e}" paginatorPosition="bottom">
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{relatorioMaterialMB.estoques}" var="e" rows="20" paginator="true" rowKey="#{e}"
+							paginatorPosition="bottom" binding="#{relatorioMaterialMB.tabelaMaterial}">
                         <f:facet name="header">Materiais</f:facet>
                         <p:column filterBy="#{e.local.descricao}" sortBy="#{e.local.descricao}" filterMatchMode="contains">
                             <f:facet name="header">
@@ -27,7 +53,7 @@
                             </f:facet>
                             <h:outputText value="#{e.quantidade}" title="#{e.quantidade}" />
                         </p:column>      
-                        <p:column filterBy="#{e.material.item.descricao}" sortBy="#{e.material.item.descricao}" filterMatchMode="contains">
+                        <p:column filterBy="#{e.material.item.descricao}" sortBy="#{e.material.item.descricao}" filterMatchMode="contains" filterFunction="#{relatorioMaterialMB.filtroSemAcento}">
                             <f:facet name="header">
                                 <h:outputText value="Item" />
                             </f:facet>
