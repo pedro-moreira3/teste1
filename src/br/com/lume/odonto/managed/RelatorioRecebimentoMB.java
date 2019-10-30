@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.UtilsFrontEnd;
@@ -38,6 +39,9 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
 
     public final List<String> statuss;
 
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaRelatorio;
+    
     public RelatorioRecebimentoMB() {
         super(RelatorioRecebimentoSingleton.getInstance().getBo());
       
@@ -81,6 +85,10 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         this.fim = null;
         this.status = null;
         super.actionNew(arg0);
+    }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Relatório de recebimentos", tabelaRelatorio, type);
     }
 
     public Date getInicio() {
@@ -126,5 +134,13 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
     
     public List<String> getStatuss() {
         return statuss;
+    }
+
+    public DataTable getTabelaRelatorio() {
+        return tabelaRelatorio;
+    }
+
+    public void setTabelaRelatorio(DataTable tabelaRelatorio) {
+        this.tabelaRelatorio = tabelaRelatorio;
     }
 }

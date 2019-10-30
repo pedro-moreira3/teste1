@@ -107,6 +107,30 @@
 									update=":lume:pnReceituario,:lume:pnReceituarioPrincipal,:lume:dtReceituario"
 									immediate="true" tabindex="1" process="@this" />
 							</h:panelGroup>
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{receituarioMB.exportarTabela('xls')}"
+									ajax="false" process="dtReceituario,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{receituarioMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{receituarioMB.exportarTabela('pdf')}"
+										ajax="false" process="dtReceituario,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{receituarioMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
 						</p:panelGrid>
 
 						<div class="EmptyBox20"></div>
@@ -115,7 +139,7 @@
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						id="dtReceituario" value="#{receituarioMB.entityList}" var="rct"
 						rows="7" paginator="true" selection="#{receituarioMB.entity}"
-						selectionMode="single" rowKey="#{rct}" paginatorPosition="bottom">
+						selectionMode="single" rowKey="#{rct}" paginatorPosition="bottom" binding="#{receituarioMB.tabelaReceituario}">
 						<p:ajax event="rowSelect"
 							update=":lume:pnReceituario,:lume:pnReceituarioPrincipal"
 							listener="#{receituarioMB.atualizaTela}" />
@@ -126,7 +150,7 @@
 						</p:column>
 						<p:column filterBy="#{rct.profissional.dadosBasico.prefixoNome}"
 							sortBy="#{rct.profissional.dadosBasico.prefixoNome}"
-							filterMatchMode="contains" headerText="Profissional">
+							filterMatchMode="contains" headerText="Profissional" filterFunction="#{receituarioMB.filtroSemAcento}">
 							<h:outputText value="#{rct.profissional.dadosBasico.prefixoNome}" />
 						</p:column>
 					</p:dataTable>

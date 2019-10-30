@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
 
 import br.com.lume.common.OdontoPerfil;
@@ -49,6 +50,9 @@ public class ReceituarioMB extends LumeManagedBean<Receituario> {
     private Paciente paciente;
 
     private Profissional profissionalLogado;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaReceituario;
 
     public ReceituarioMB() {
         super(ReceituarioSingleton.getInstance().getBo());     
@@ -118,6 +122,10 @@ public class ReceituarioMB extends LumeManagedBean<Receituario> {
         documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         documento = documento.replaceAll("span", "div");
+    }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Receituários", tabelaReceituario, type);
     }
 
     public String getDocumento() {
@@ -194,5 +202,13 @@ public class ReceituarioMB extends LumeManagedBean<Receituario> {
 
     public void setLiberaBotao(boolean liberaBotao) {
         this.liberaBotao = liberaBotao;
+    }
+
+    public DataTable getTabelaReceituario() {
+        return tabelaReceituario;
+    }
+
+    public void setTabelaReceituario(DataTable tabelaReceituario) {
+        this.tabelaReceituario = tabelaReceituario;
     }
 }

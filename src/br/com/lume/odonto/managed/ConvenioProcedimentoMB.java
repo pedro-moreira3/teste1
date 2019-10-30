@@ -12,6 +12,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
@@ -57,6 +58,9 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
     private List<RelatorioConvenioProcedimento> relatorioConvenioProcedimentos;
 
     private Integer mes, ano;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaRelatorioConvenio;
 
     public ConvenioProcedimentoMB() {
         super(ConvenioProcedimentoSingleton.getInstance().getBo());
@@ -224,6 +228,10 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
             convenioProcedimentos = convenioProcedimentosAux;
         }
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Relatório procedimentos por convênio", tabelaRelatorioConvenio, type);
+    }
 
     public List<ConvenioProcedimento> getConvenioProcedimentos() {
         return convenioProcedimentos;
@@ -287,6 +295,14 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
 
     public void setAno(Integer ano) {
         this.ano = ano;
+    }
+
+    public DataTable getTabelaRelatorioConvenio() {
+        return tabelaRelatorioConvenio;
+    }
+
+    public void setTabelaRelatorioConvenio(DataTable tabelaRelatorioConvenio) {
+        this.tabelaRelatorioConvenio = tabelaRelatorioConvenio;
     }
 
 }

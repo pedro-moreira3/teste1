@@ -40,33 +40,54 @@
                                 update="dtRelatorio" tabindex="1" process="@this,pnPrincipal" styleClass="OrangeButton" />
                             <p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioRepasseMB.actionLimpar}"
                                 update="dtRelatorio, profissional, inicio, fim" process="@this" immediate="true" tabindex="1" />
-                        </p:panelGrid>
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{relatorioRepasseMB.exportarTabela('xls')}"
+									ajax="false" process="dtRelatorio,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{relatorioRepasseMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioRepasseMB.exportarTabela('pdf')}"
+										ajax="false" process="dtRelatorio,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioRepasseMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
+						</p:panelGrid>
                     </p:outputPanel>
 
                     <div class="EmptyBox20"></div>
 
-
                     <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtRelatorio" value="#{relatorioRepasseMB.relatorio}" var="rel" rows="50" paginator="true"
-                        paginatorPosition="bottom">
+                        paginatorPosition="bottom" binding="#{relatorioRepasseMB.tabelaRepasse}">
                         <f:facet name="header">Procedimentos</f:facet>
-
-
-
-                        <p:column sortBy="#{rel.descricaoPlanoTratamento}" filterBy="#{rel.descricaoPlanoTratamento}" filterMatchMode="contains">
+                        
+                        <p:column sortBy="#{rel.descricaoPlanoTratamento}" filterBy="#{rel.descricaoPlanoTratamento}" filterMatchMode="contains" filterFunction="#{relatorioRepasseMB.filtroSemAcento}">
                             <f:facet name="header">
                                 <h:outputText value="Plano de Tratamento" />
                             </f:facet>
                             <h:outputText value="#{rel.descricaoPlanoTratamento}" title="#{rel.id}" />
                         </p:column>
 
-                        <p:column sortBy="#{rel.descricaoProcedimento}" filterBy="#{rel.descricaoProcedimento}" filterMatchMode="contains">
+                        <p:column sortBy="#{rel.descricaoProcedimento}" filterBy="#{rel.descricaoProcedimento}" filterMatchMode="contains" filterFunction="#{relatorioRepasseMB.filtroSemAcento}">
                             <f:facet name="header">
                                 <h:outputText value="Procedimento" />
                             </f:facet>
                             <h:outputText value="#{rel.descricaoProcedimento}" title="#{rel.id}" />
                         </p:column>
 
-                        <p:column sortBy="#{rel.pacienteNome}" filterBy="#{rel.pacienteNome}" filterMatchMode="contains">
+                        <p:column sortBy="#{rel.pacienteNome}" filterBy="#{rel.pacienteNome}" filterMatchMode="contains" filterFunction="#{relatorioRepasseMB.filtroSemAcento}">
                             <f:facet name="header">
                                 <h:outputText value="Paciente" />
                             </f:facet>
@@ -141,8 +162,6 @@
                             </f:facet>
                         </p:column>
                     </p:dataTable>
-
-
 
                 </div>
             </div>

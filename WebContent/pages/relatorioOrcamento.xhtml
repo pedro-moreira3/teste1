@@ -23,18 +23,44 @@
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioOrcamentoMB.filtra}"
 								update="dtPrincipal,pnPrincipal" tabindex="1" process="@this,pnPrincipal" styleClass="OrangeButton" />
+							<ui:remove>
 							<p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
 								<p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="#{relatorioOrcamentoMB.vigencia}" />
 							</p:commandButton>
+							</ui:remove>
 							<p:commandButton id="limpar" icon="White fa fa-file-o" value="Limpar" update="inicio, fim, dtPrincipal" process="@this"
 								actionListener="#{relatorioOrcamentoMB.actionLimpar}" />
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{relatorioOrcamentoMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{relatorioOrcamentoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioOrcamentoMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioOrcamentoMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+							
 						</p:panelGrid>
 					</p:outputPanel>
 
 					<div class="EmptyBox20"></div>
 
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioOrcamentoMB.relatorioOrcamentos}" var="m" rows="20"
-						paginator="true" rowKey="#{m}" paginatorPosition="bottom">
+						paginator="true" rowKey="#{m}" paginatorPosition="bottom" binding="#{relatorioOrcamentoMB.tabelaRelatorio}">
 						<f:facet name="header">Orçamentos</f:facet>
 						<p:column filterBy="#{m.profissionalAprovacao}" sortBy="#{m.profissionalAprovacao}" filterMatchMode="contains">
 							<f:facet name="header">

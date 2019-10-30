@@ -217,7 +217,6 @@ div.ui-selectoneradio label {
 							</h:panelGroup>
 						</p:panelGrid>
 
-
 						<p:panelGrid id="filtro" columns="2"
 							columnClasses="ui-grid-col-12" layout="grid"
 							styleClass="ui-panelgrid-blank"
@@ -248,21 +247,44 @@ div.ui-selectoneradio label {
 								value="Limpar"
 								actionListener="#{relatorioFaturaMB.actionNew}"
 								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1" />
+							<ui:remove>
 							<p:commandButton immediate="true" value="Excel" ajax="false"
 								icon="White fa fa-file-excel-o" styleClass="GreenButton">
 								<p:dataExporter encoding="iso-8859-1" type="xls"
 									target="dtPrincipal" fileName="planoTratamento" />
 							</p:commandButton>
+							</ui:remove>
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{relatorioFaturaMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{relatorioFaturaMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioFaturaMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioFaturaMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
 						</p:panelGrid>
 
 						<div class="EmptyBox20"></div>
-
 
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtPrincipal"
 							value="#{relatorioFaturaMB.faturas}" var="m"
 							rows="20" paginator="true" rowKey="#{m}"
-							paginatorPosition="bottom">
+							paginatorPosition="bottom" binding="#{relatorioFaturaMB.tabelaFatura}">
 							<f:facet name="header">Faturas</f:facet>
 							<p:column filterBy="#{m.tipoFaturaStr}"
 								sortBy="#{m.tipoFaturaStr}"

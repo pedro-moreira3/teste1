@@ -84,19 +84,43 @@
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{convenioMB.actionRemove}" update=":lume:pnConvenio,:lume:dtConvenio"
 								process="@this" disabled="#{convenioMB.entity.id == 0}" styleClass="RedButton" />
 							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{convenioMB.actionNew}" update=":lume:pnConvenio,:lume:dtConvenio" immediate="true" />
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{convenioMB.exportarTabela('xls')}"
+									ajax="false" process="dtConvenio,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{convenioMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{convenioMB.exportarTabela('pdf')}"
+										ajax="false" process="dtConvenio,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{convenioMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
 						</p:panelGrid>
 
 						<div class="EmptyBox20"></div>
 					</p:outputPanel>
 
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtConvenio" value="#{convenioMB.convenios}" var="convenio" rows="7" paginator="true" selection="#{convenioMB.entity}"
-						selectionMode="single" rowKey="#{convenio}" paginatorPosition="bottom">
+						selectionMode="single" rowKey="#{convenio}" paginatorPosition="bottom" binding="#{convenioMB.tabelaConvenio}">
 						<p:ajax event="rowSelect" update=":lume:pnConvenio" />
 						<f:facet name="header">#{dominioMB.convenio}</f:facet>
-						<p:column filterBy="#{convenio.dadosBasico.nome}" sortBy="#{convenio.dadosBasico.nome}" filterMatchMode="contains" headerText="Nome/Razão">
+						<p:column filterBy="#{convenio.dadosBasico.nome}" sortBy="#{convenio.dadosBasico.nome}" filterMatchMode="contains" headerText="Nome/Razão" filterFunction="#{convenioMB.filtroSemAcento}">
 							<h:outputText value="#{convenio.dadosBasico.nome}" title="#{convenio.id}" />
 						</p:column>
-						<p:column filterBy="#{convenio.dadosBasico.email}" sortBy="#{convenio.dadosBasico.email}" filterMatchMode="contains" headerText="Email">
+						<p:column filterBy="#{convenio.dadosBasico.email}" sortBy="#{convenio.dadosBasico.email}" filterMatchMode="contains" headerText="Email" filterFunction="#{convenioMB.filtroSemAcento}">
 							<h:outputText value="#{convenio.dadosBasico.email}" />
 						</p:column>
 					</p:dataTable>

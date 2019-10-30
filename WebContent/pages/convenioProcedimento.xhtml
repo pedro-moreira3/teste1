@@ -187,15 +187,33 @@
                                 </p:panelGrid>
 
                                 <div class="SeparatorFull"></div>
-                                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                                <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                     <p:commandButton icon="White fa fa-search" value="Pesquisar" actionListener="#{convenioProcedimentoMB.carregarRelatorio}" update="dtRelatorioConvenioProcedimento"
                                         process="@this,mes,ano" styleClass="OrangeButton" />
+                                        
+                                    <h:panelGroup>
+										<p:splitButton 	icon="White fa fa fa-file-excel-o" value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+														actionListener="#{convenioProcedimentoMB.exportarTabela('xls')}" ajax="false"
+														process="dtRelatorioConvenioProcedimento,@this" update="@this" immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											
+											<p:fileDownload value="#{convenioProcedimentoMB.arquivoDownload}" />
+											
+											<p:menuitem	value="Exportar tabela para PDF" icon="fa fa fa-file-pdf-o" 
+														actionListener="#{convenioProcedimentoMB.exportarTabela('pdf')}" ajax="false"
+														process="dtRelatorioConvenioProcedimento,@this" immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+												<p:fileDownload value="#{convenioProcedimentoMB.arquivoDownload}"/>
+											</p:menuitem>											
+										</p:splitButton>
+									</h:panelGroup>
+                                        
                                 </p:panelGrid>
                             </p:fieldset>
                             <br />
 
                             <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtRelatorioConvenioProcedimento" value="#{convenioProcedimentoMB.relatorioConvenioProcedimentos}" var="cp"
-                                paginatorPosition="bottom" rows="15" paginator="true">
+                                paginatorPosition="bottom" rows="15" paginator="true" binding="#{convenioProcedimentoMB.tabelaRelatorioConvenio}">
                                 <f:facet name="header">Procedimentos por convênio</f:facet>
                                 <p:column filterBy="#{cp.descricao}" sortBy="#{cp.descricao}" filterMatchMode="contains" headerText="Procedimento">
                                     <h:outputText value="#{cp.descricao}" />

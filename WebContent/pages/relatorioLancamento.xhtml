@@ -27,21 +27,50 @@
 						</p:panelGrid>
 
 						<div class="SeparatorFull"></div>
+						
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioRecebimentoMB.filtra}"
 								update="dtPrincipal,pnPrincipal" process="@this,pnPrincipal,inicio,fim" styleClass="OrangeButton" />
+							
+							<ui:remove>
 							<p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
 								<p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="RelatorioLancamento" />
 							</p:commandButton>
+							</ui:remove>
+														
 							<p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioRecebimentoMB.actionNew}"
-								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1"  />
+								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1"/>
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{relatorioRecebimentoMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{relatorioRecebimentoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioRecebimentoMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioRecebimentoMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
 						</p:panelGrid>
 
 
 						<div class="EmptyBox20"></div>
 
 						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioRecebimentoMB.lancamentos}" var="lancamento" rows="10"
-							paginator="true" rowKey="#{lancamento}" paginatorPosition="bottom">
+							paginator="true" rowKey="#{lancamento}" paginatorPosition="bottom" binding="#{relatorioRecebimentoMB.tabelaRelatorio}">
 							<f:facet name="header">Lançamentos</f:facet>
 							<p:column filterBy="#{lancamento.dataPagamentoStr}" sortBy="#{lancamento.dataPagamentoStrOrd}" filterMatchMode="contains">
 								<f:facet name="header">

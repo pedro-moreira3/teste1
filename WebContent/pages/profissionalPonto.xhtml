@@ -47,12 +47,36 @@
 				update=":lume:tabView:pnPontoPrincipal,:lume:tabView:tbPontoPrincipal"
 				immedatate="true" tabindex="1"
 				process="@this,:lume:tabView:pnPontoPrincipal" />
+			
+			<ui:remove>
 			<p:commandButton value="Excel" ajax="false"
 				process="dtPontoPrincipal" icon="White fa fa-file-excel-o"
 				styleClass="GreenButton" immediate="true">
 				<p:dataExporter encoding="iso-8859-1" type="xls"
 					target="dtPontoPrincipal" fileName="pontos" />
 			</p:commandButton>
+			</ui:remove>
+
+			<h:panelGroup>
+				<p:splitButton icon="White fa fa fa-file-excel-o"
+					value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+					actionListener="#{profissionalPontoMB.exportarTabela('xls')}"
+					ajax="false" process="dtPontoPrincipal,@this" update="@this"
+					immediate="true"
+					onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+					<p:fileDownload value="#{profissionalPontoMB.arquivoDownload}" />
+
+					<p:menuitem value="Exportar tabela para PDF"
+						icon="fa fa fa-file-pdf-o"
+						actionListener="#{profissionalPontoMB.exportarTabela('pdf')}"
+						ajax="false" process="dtPontoPrincipal,@this" immediate="true"
+						onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+						<p:fileDownload value="#{profissionalPontoMB.arquivoDownload}" />
+					</p:menuitem>
+				</p:splitButton>
+			</h:panelGroup>
+
 		</p:panelGrid>
 
 	</p:outputPanel>
@@ -66,7 +90,7 @@
 			id="dtPontoPrincipal" value="#{profissionalPontoMB.entityList}"
 			var="hup" rows="7" paginator="true"
 			selection="#{profissionalPontoMB.entity}" selectionMode="single"
-			rowKey="#{hup}" paginatorPosition="bottom">
+			rowKey="#{hup}" paginatorPosition="bottom" binding="#{profissionalPontoMB.tabelaPonto}">
 			<p:ajax event="rowSelect" update=":lume:tabView:pnPontoPrincipal" />
 			<f:facet name="header">Registros de ponto</f:facet>
 

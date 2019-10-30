@@ -11,6 +11,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Utils;
@@ -35,6 +36,9 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     private List<Orcamento> relatorioOrcamentos = new ArrayList<>();
 
     private BigDecimal somaValorTotal = new BigDecimal(0), somaValorTotalDesconto = new BigDecimal(0);
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaRelatorio;
 
     public RelatorioOrcamentoMB() {
         super(OrcamentoSingleton.getInstance().getBo());     
@@ -79,6 +83,10 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
         this.inicio = null;
         this.fim = null;
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Relatório de Orçamentos", tabelaRelatorio, type);
+    }
 
     public String getVigencia() {
         return "Orçamento_" + Utils.dateToString(this.inicio, "dd/MM/yyyy") + "_" + Utils.dateToString(this.fim, "dd/MM/yyyy");
@@ -122,5 +130,13 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
 
     public void setSomaValorTotalDesconto(BigDecimal somaValorTotalDesconto) {
         this.somaValorTotalDesconto = somaValorTotalDesconto;
+    }
+
+    public DataTable getTabelaRelatorio() {
+        return tabelaRelatorio;
+    }
+
+    public void setTabelaRelatorio(DataTable tabelaRelatorio) {
+        this.tabelaRelatorio = tabelaRelatorio;
     }
 }

@@ -44,7 +44,7 @@
 							paginator="true" paginatorPosition="bottom" selection="#{especialidadeMB.entity}" selectionMode="single" rowKey="#{especialidade}">
 							<p:ajax event="rowSelect" update=":lume:pnEspecialidade" />
 							<f:facet name="header">Especialidades</f:facet>
-							<p:column filterBy="#{especialidade.descricaoLimpa}" sortBy="#{especialidade.descricao}" filterMatchMode="contains" headerText="Descrição">
+							<p:column filterBy="#{especialidade.descricaoLimpa}" sortBy="#{especialidade.descricao}" filterMatchMode="contains" headerText="Descrição" filterFunction="#{especialidadeMB.filtroSemAcento}">
 								<h:outputText value="#{especialidade.descricao}" />
 							</p:column>
 						</p:dataTable>

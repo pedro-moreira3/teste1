@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -48,6 +49,9 @@ public class RelatorioFaturaMB extends LumeManagedBean<RelatorioFatura> {
 
     private String tipoFatura;
 
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaFatura;
+    
     public RelatorioFaturaMB() {
         super(RelatorioFaturaSingleton.getInstance().getBo());      
         this.setClazz(RelatorioFatura.class);  
@@ -157,6 +161,10 @@ public class RelatorioFaturaMB extends LumeManagedBean<RelatorioFatura> {
         fim = null;
         super.actionNew(arg0);
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Relatório de faturas", tabelaFatura, type);
+    }
 
     public Date getInicio() {
         return inicio;
@@ -219,6 +227,14 @@ public class RelatorioFaturaMB extends LumeManagedBean<RelatorioFatura> {
     
     public void setFaturas(List<RelatorioFatura> faturas) {
         this.faturas = faturas;
+    }
+
+    public DataTable getTabelaFatura() {
+        return tabelaFatura;
+    }
+
+    public void setTabelaFatura(DataTable tabelaFatura) {
+        this.tabelaFatura = tabelaFatura;
     }
 
 }

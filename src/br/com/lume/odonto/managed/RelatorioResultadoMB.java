@@ -12,6 +12,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -40,6 +41,9 @@ public class RelatorioResultadoMB extends LumeManagedBean<RelatorioResultado> {
     private Profissional profissional;
   
     private List<RelatorioResultadoDetalhe> detalhesMaterial;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaRelatorio;
 
     public RelatorioResultadoMB() {
         super(RelatorioResultadoSingleton.getInstance().getBo());
@@ -103,6 +107,10 @@ public class RelatorioResultadoMB extends LumeManagedBean<RelatorioResultado> {
         inicio = null;
         fim = null;
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Relatório resultados", tabelaRelatorio, type);
+    }
 
     public String getVigencia() {
         return "Orçamento_" + Utils.dateToString(inicio, "dd/MM/yyyy") + "_" + Utils.dateToString(fim, "dd/MM/yyyy");
@@ -146,6 +154,14 @@ public class RelatorioResultadoMB extends LumeManagedBean<RelatorioResultado> {
 
     public void setDetalhesMaterial(List<RelatorioResultadoDetalhe> detalhesMaterial) {
         this.detalhesMaterial = detalhesMaterial;
+    }
+
+    public DataTable getTabelaRelatorio() {
+        return tabelaRelatorio;
+    }
+
+    public void setTabelaRelatorio(DataTable tabelaRelatorio) {
+        this.tabelaRelatorio = tabelaRelatorio;
     }
 
 }

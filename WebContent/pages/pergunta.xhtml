@@ -64,22 +64,46 @@
 								 styleClass="RedButton" />
 							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{perguntaMB.actionNew}"
 								update=":lume:pnPrincipal,:lume:dtPrincipal" immediate="true" tabindex="1"  />
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{perguntaMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{perguntaMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{perguntaMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{perguntaMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
 						</p:panelGrid>
 					</p:outputPanel>
 
 					<div class="EmptyBox20"></div>
 
 					<p:dataTable filterDelay="1500"  reflow="true"  id="dtPrincipal" emptyMessage="" value="#{perguntaMB.perguntas}" var="pergunta" rows="10" paginator="true"
-						selection="#{perguntaMB.entity}" selectionMode="single" rowKey="#{pergunta}" paginatorPosition="bottom" paginatorAlwaysVisible="false">
+						selection="#{perguntaMB.entity}" selectionMode="single" rowKey="#{pergunta}" paginatorPosition="bottom" paginatorAlwaysVisible="false" binding="#{perguntaMB.tabelaPergunta}">
 						<p:ajax event="rowSelect" update=":lume:pnPrincipal" />
 						<f:facet name="header">Perguntas</f:facet>
-						<p:column filterBy="#{pergunta.descricao}" sortBy="#{pergunta.descricao}" filterMatchMode="contains" headerText="Descrição">
+						<p:column filterBy="#{pergunta.descricao}" sortBy="#{pergunta.descricao}" filterMatchMode="contains" headerText="Descrição" filterFunction="#{perguntaMB.filtroSemAcento}">
 							<h:outputText value="#{pergunta.descricao}" title="#{pergunta.id}"/>
 						</p:column>
 						<p:column filterBy="#{pergunta.ordem}" filterMatchMode="contains" sortBy="#{pergunta.ordem}" headerText="Ordem">
 							<h:outputText value="#{pergunta.ordem}" />
 						</p:column>
-						<p:column filterBy="#{pergunta.tipoRespostaLabel}" sortBy="#{pergunta.tipoRespostaLabel}" filterMatchMode="contains" headerText="Tipo Resposta">
+						<p:column filterBy="#{pergunta.tipoRespostaLabel}" sortBy="#{pergunta.tipoRespostaLabel}" filterMatchMode="contains" headerText="Tipo Resposta" filterFunction="#{perguntaMB.filtroSemAcento}">
 							<h:outputText value="#{pergunta.tipoRespostaLabel}" />
 						</p:column>
 					</p:dataTable>
