@@ -132,13 +132,37 @@
 													actionListener="#{repasseProfissionalMB.popularTabela}"
 													process="@this,:lume:filtros"
 													update=":lume:dtPrincipal"/>
+
+								<h:panelGroup>
+									<p:splitButton icon="White fa fa fa-file-excel-o"
+										value="Exportar tabela para Excel"
+										styleClass="GreenSplitButton"
+										actionListener="#{repasseProfissionalMB.exportarTabela('xls')}"
+										ajax="false" process="dtPrincipal,@this" update="@this"
+										immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+										<p:fileDownload
+											value="#{repasseProfissionalMB.arquivoDownload}" />
+
+										<p:menuitem value="Exportar tabela para PDF"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{repasseProfissionalMB.exportarTabela('pdf')}"
+											ajax="false" process="dtPrincipal,@this"
+											immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload
+												value="#{repasseProfissionalMB.arquivoDownload}" />
+										</p:menuitem>
+									</p:splitButton>
+								</h:panelGroup>
 							</p:panelGrid>
 						</p:fieldset>
 
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtPrincipal" value="#{repasseProfissionalMB.faturas}"
 							var="f" rows="20" paginator="true" rowKey="#{f}"
-							paginatorPosition="bottom" widgetVar="dtPrincipal">
+							paginatorPosition="bottom" widgetVar="dtPrincipal" binding="#{repasseProfissionalMB.tabelaRepasse}">
 							
 							<f:facet name="header">Faturas</f:facet>
 							
@@ -152,7 +176,7 @@
 							</p:column>
 							<p:column filterBy="#{f.profissional.dadosBasico.getPrefixoNome()}"
 								sortBy="#{f.profissional.dadosBasico.getPrefixoNome()}"
-								filterMatchMode="contains">
+								filterMatchMode="contains" filterFunction="#{repasseProfissionalMB.filtroSemAcento}">
 								<f:facet name="header">
 									<h:outputText value="Profissional" />
 								</f:facet>
@@ -160,7 +184,7 @@
 							</p:column>
 							<p:column filterBy="#{repasseProfissionalMB.nomePaciente(f)}"
 								sortBy="#{repasseProfissionalMB.nomePaciente(f)}"
-								filterMatchMode="contains">
+								filterMatchMode="contains" filterFunction="#{repasseProfissionalMB.filtroSemAcento}">
 								<f:facet name="header">
 									<h:outputText value="Paciente" />
 								</f:facet>
@@ -168,7 +192,7 @@
 							</p:column>
 							<p:column filterBy="#{repasseProfissionalMB.descricaoPlanoTratamento(f)}"
 								sortBy="#{repasseProfissionalMB.descricaoPlanoTratamento(f)}"
-								filterMatchMode="contains">
+								filterMatchMode="contains" filterFunction="#{repasseProfissionalMB.filtroSemAcento}">
 								<f:facet name="header">
 									<h:outputText value="Plano de tratamento de origem" />
 								</f:facet>

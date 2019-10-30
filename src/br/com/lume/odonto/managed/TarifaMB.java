@@ -9,6 +9,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.techinical.TechnicalException;
@@ -29,6 +30,9 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
     private Logger log = Logger.getLogger(TarifaMB.class);
 
     private List<Tarifa> tarifas = new ArrayList<>();
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaTarifa;
 
     public TarifaMB() {
         super(TarifaSingleton.getInstance().getBo());   
@@ -65,6 +69,10 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
         super.actionPersist(event);
         this.geraLista();
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Tarifas", tabelaTarifa, type);
+    }
 
     public List<Tarifa> getTarifas() {
         return this.tarifas;
@@ -72,5 +80,13 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
 
     public void setTarifas(List<Tarifa> tarifas) {
         this.tarifas = tarifas;
+    }
+
+    public DataTable getTabelaTarifa() {
+        return tabelaTarifa;
+    }
+
+    public void setTabelaTarifa(DataTable tabelaTarifa) {
+        this.tabelaTarifa = tabelaTarifa;
     }
 }

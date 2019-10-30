@@ -115,7 +115,7 @@
 						value="#{custoMB.custos}" paginator="true" rows="20"
 						paginatorPosition="bottom" id="dtCusto" emptyMessage=""
 						selection="#{custoMB.custoSelecionado}" selectionMode="single"
-						rowKey="#{custo}">
+						rowKey="#{custo}" binding="#{custoMB.tabelaCusto}">
 						<p:ajax event="rowSelect" update=":lume:pnCusto,:lume:botoes"
 							listener="#{custoMB.carrega}" />
 						<f:facet name="header">Lançamentos</f:facet>
@@ -134,30 +134,35 @@
 						<p:column headerText="Paciente"
 							sortBy="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
 							filterBy="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
-							filterMatchMode="contains">
+							filterMatchMode="contains"
+							filterFunction="#{custoMB.filtroSemAcento}">
 							<h:outputText
 								value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}" />
 						</p:column>
 						<p:column headerText="Plano de Tratamento"
 							sortBy="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}"
 							filterBy="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}"
-							filterMatchMode="contains">
+							filterMatchMode="contains"
+							filterFunction="#{custoMB.filtroSemAcento}">
 							<h:outputText
 								value="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}" />
 						</p:column>
 						<p:column headerText="Procedimento"
 							sortBy="#{custo.planoTratamentoProcedimento.descricaoCompleta}"
 							filterBy="#{custo.planoTratamentoProcedimento.descricaoCompleta}"
-							filterMatchMode="contains">
+							filterMatchMode="contains"
+							filterFunction="#{custoMB.filtroSemAcento}">
 							<h:outputText
 								value="#{custo.planoTratamentoProcedimento.descricaoCompleta}" />
 						</p:column>
 						<p:column sortBy="#{custo.descricao}" headerText="Descrição"
-							filterBy="#{custo.descricao}">
+							filterBy="#{custo.descricao}"
+							filterFunction="#{custoMB.filtroSemAcento}">
 							<h:outputText value="#{custo.descricao}" />
 						</p:column>
 						<p:column sortBy="#{custo.valor}" style="text-align:center;"
-							headerText="Parcela" filterBy="#{custo.valor}">
+							headerText="Parcela" filterBy="#{custo.valor}"
+							filterFunction="#{custoMB.filtroSemAcento}">
 							<h:outputText value="#{custo.valor}" />
 						</p:column>
 					</p:dataTable>

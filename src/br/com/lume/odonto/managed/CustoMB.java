@@ -11,6 +11,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 
@@ -64,6 +65,9 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
   //  private PlanoTratamentoBO planoTratamentoBO;
 
  //   private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaCusto;
 
     public CustoMB() {
         super(CustoSingleton.getInstance().getBo());
@@ -209,6 +213,10 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
         return paciente;
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Custos diretos", tabelaCusto, type);
+    }
+    
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
         UtilsFrontEnd.setPacienteSelecionado(paciente);
@@ -276,6 +284,14 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
 
     public void setValor(BigDecimal valor) {
         this.valor = valor;
+    }
+
+    public DataTable getTabelaCusto() {
+        return tabelaCusto;
+    }
+
+    public void setTabelaCusto(DataTable tabelaCusto) {
+        this.tabelaCusto = tabelaCusto;
     }
 
 }

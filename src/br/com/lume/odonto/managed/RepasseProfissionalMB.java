@@ -11,6 +11,8 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
+import org.primefaces.component.datatable.DataTable;
+
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -46,6 +48,9 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
     private List<Fatura> faturas;
     private List<Orcamento> orcamentos;
     private List<PlanoTratamento> planosTratamento;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaRepasse;
 
     public RepasseProfissionalMB() {
         super(FaturaSingleton.getInstance().getBo());
@@ -208,6 +213,10 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
         
     }
     
+    public void exportarTabela(String type) {
+        exportarTabela("Repasse dos profissionais", tabelaRepasse, type);
+    }
+    
     public int getMes() {
         return mes;
     }
@@ -294,6 +303,14 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
 
     public void setPlanosTratamento(List<PlanoTratamento> planosTratamento) {
         this.planosTratamento = planosTratamento;
+    }
+
+    public DataTable getTabelaRepasse() {
+        return tabelaRepasse;
+    }
+
+    public void setTabelaRepasse(DataTable tabelaRepasse) {
+        this.tabelaRepasse = tabelaRepasse;
     }
 
 }

@@ -140,40 +140,66 @@ height: 100%;
                                         update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil" process="@this" disabled="#{lancamentoContabilMB.entity.id == 0}" styleClass="RedButton" />
                                     <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{lancamentoContabilMB.actionNew}"
                                         update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil" immediate="true" />
+                                    
+                                    <ui:remove>
                                     <p:commandButton value="Excel" ajax="false" immediate="true" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                         <p:dataExporter encoding="iso-8859-1" type="xls" target="dtLancamentoContabil" fileName="pagamentorecebimentos" />
                                     </p:commandButton>
+                                    </ui:remove>
+                                    
+                                    <h:panelGroup>
+										<p:splitButton 	icon="White fa fa fa-file-excel-o" value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+														actionListener="#{lancamentoContabilMB.exportarTabela('xls')}" ajax="false"
+														process="dtLancamentoContabil,@this" update="@this" immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											
+											<p:fileDownload value="#{lancamentoContabilMB.arquivoDownload}" />
+											
+											<p:menuitem	value="Exportar tabela para PDF" icon="fa fa fa-file-pdf-o" 
+														actionListener="#{lancamentoContabilMB.exportarTabela('pdf')}" ajax="false"
+														process="dtLancamentoContabil,@this" immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+												<p:fileDownload value="#{lancamentoContabilMB.arquivoDownload}"/>
+											</p:menuitem>											
+										</p:splitButton>
+									</h:panelGroup>
+                                    
                                 </p:panelGrid>
                             </p:outputPanel>
                             <div class="EmptyBox20"></div>
 
                             <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtLancamentoContabil" value="#{lancamentoContabilMB.lancamentoContabeis}" var="lc" rows="15"
-                                paginator="true" selection="#{lancamentoContabilMB.entity}" selectionMode="single" rowKey="#{lc}" paginatorPosition="bottom">
+                                paginator="true" selection="#{lancamentoContabilMB.entity}" selectionMode="single" rowKey="#{lc}" paginatorPosition="bottom" binding="#{lancamentoContabilMB.tabelaLancamento}">
                                 <p:ajax event="rowSelect" update=":lume:tv:pnLancamentoContabil" listener="#{lancamentoContabilMB.carregaTela}" />
                                 <f:facet name="header">Contas a Pagar/Receber</f:facet>
 
-                                <p:column filterBy="#{lc.dadosBasico.nome}" sortBy="#{lc.dadosBasico.nome}" filterMatchMode="contains" headerText="Origem/Destino">
+                                <p:column 	filterBy="#{lc.dadosBasico.nome}" sortBy="#{lc.dadosBasico.nome}" filterMatchMode="contains" headerText="Origem/Destino"
+                                			filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
                                     <h:outputText value="#{lc.dadosBasico.nome}" title="#{lc.id}" />
                                 </p:column>
-                                <p:column filterBy="#{lc.motivo.categoria.tipoCategoria.descricao}" sortBy="#{lc.motivo.categoria.tipoCategoria.descricao}" filterMatchMode="contains"
-                                    headerText="Tipo Categoria">
+                                <p:column 	filterBy="#{lc.motivo.categoria.tipoCategoria.descricao}" sortBy="#{lc.motivo.categoria.tipoCategoria.descricao}" filterMatchMode="contains"
+                                    		headerText="Tipo Categoria" filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
                                     <h:outputText value="#{lc.motivo.categoria.tipoCategoria.descricao}" />
                                 </p:column>
-                                <p:column filterBy="#{lc.motivo.categoria.descricao}" sortBy="#{lc.motivo.categoria.descricao}" filterMatchMode="contains" headerText="Categoria">
+                                <p:column 	filterBy="#{lc.motivo.categoria.descricao}" sortBy="#{lc.motivo.categoria.descricao}" filterMatchMode="contains" headerText="Categoria"
+                                			filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
                                     <h:outputText value="#{lc.motivo.categoria.descricao}" />
                                 </p:column>
-                                <p:column filterBy="#{lc.motivo.descricao}" sortBy="#{lc.motivo.descricao}" filterMatchMode="contains" headerText="Motivo">
+                                <p:column 	filterBy="#{lc.motivo.descricao}" sortBy="#{lc.motivo.descricao}" filterMatchMode="contains" headerText="Motivo"
+                                			filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
                                     <h:outputText value="#{lc.motivo.descricao}" />
                                 </p:column>
-                                <p:column filterBy="#{lc.valor}" sortBy="#{lc.valor}" style="text-align:right" filterMatchMode="contains" headerText="Valor(R$)">
+                                <p:column 	filterBy="#{lc.valor}" sortBy="#{lc.valor}" style="text-align:right" filterMatchMode="contains" headerText="Valor(R$)">
                                     <h:outputText value="#{lc.valor}">
                                         <f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
                                     </h:outputText>
                                 </p:column>
-                                <p:column headerText="Data" filterBy="#{lc.dataStr}" sortBy="#{lc.data}" filterMatchMode="contains">
+                                <p:column 	headerText="Data" filterBy="#{lc.dataStr}" sortBy="#{lc.data}" filterMatchMode="contains"
+                                			filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
                                     <h:outputText value="#{lc.dataStr}" />
                                 </p:column>
-                                <p:column filterBy="#{lc.tipo}" sortBy="#{lc.tipo}" filterMatchMode="contains" headerText="Tipo">
+                                <p:column 	filterBy="#{lc.tipo}" sortBy="#{lc.tipo}" filterMatchMode="contains" headerText="Tipo"
+                                			filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
                                     <h:outputText value="#{lc.tipo}" />
                                 </p:column>
                             </p:dataTable>

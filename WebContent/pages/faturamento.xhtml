@@ -85,26 +85,51 @@
                             </p:panelGrid>
                         </p:fieldset>
                         <br />
-                        <p:fieldset legend="Procedimentos à Reservar" toggleable="true" toggleSpeed="500" collapsed="false">                            
-                            <p:dataTable reflow="true" emptyMessage="Nenhum registro encontrado" widgetVar="dtPrincipal" id="dtPrincipal" 
-                            		selection="#{faturamentoMB.entity}" selectionMode="single" value="#{faturamentoMB.planoTratamentoProcedimentos}" 
-                            		var="ptp" rows="5" paginator="true" rowKey="#{ptp}" paginatorPosition="bottom" paginatorAlwaysVisible="true">
+                        <p:fieldset legend="Procedimentos à Reservar" toggleable="true" toggleSpeed="500" collapsed="false">
+
+							<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<h:panelGroup>
+									<p:splitButton icon="White fa fa fa-file-excel-o"
+										value="Exportar tabela para Excel"
+										styleClass="GreenSplitButton"
+										actionListener="#{faturamentoMB.exportarTabelaProcedimento('xls')}"
+										ajax="false" process="dtPrincipal,@this" update="@this"
+										immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+										<p:fileDownload value="#{faturamentoMB.arquivoDownload}" />
+
+										<p:menuitem value="Exportar tabela para PDF"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{faturamentoMB.exportarTabelaProcedimento('pdf')}"
+											ajax="false" process="dtPrincipal,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload value="#{faturamentoMB.arquivoDownload}" />
+										</p:menuitem>
+									</p:splitButton>
+								</h:panelGroup>
+							</p:panelGrid>
+
+							<p:dataTable reflow="true" emptyMessage="Nenhum registro encontrado" widgetVar="dtPrincipal" id="dtPrincipal"
+                            		selection="#{faturamentoMB.entity}" selectionMode="single" value="#{faturamentoMB.planoTratamentoProcedimentos}"
+                            		var="ptp" rows="5" paginator="true" rowKey="#{ptp}" paginatorPosition="bottom" paginatorAlwaysVisible="true" binding="#{faturamentoMB.tabelaProcedimento}">
                                 <p:ajax event="rowSelect" update=":lume:pnPrincipal, :lume:dtPrincipal, :lume:pgReservar" listener="#{faturamentoMB.carregarLancamentos}" />
-                                <p:column filterBy="#{ptp.planoTratamento.descricao}" styleClass="cabecalho" sortBy="#{ptp.planoTratamento.descricao}" filterMatchMode="contains">
+                                <p:column 	filterBy="#{ptp.planoTratamento.descricao}" styleClass="cabecalho" sortBy="#{ptp.planoTratamento.descricao}" filterMatchMode="contains"
+                                			filterFunction="#{faturamentoMB.filtroSemAcento}">
                                     <f:facet name="header">
                                         <h:outputText styleClass="cabecalho" value="Plano de Tratamento" width="10%" />
                                     </f:facet>
                                     <h:outputText value="#{ptp.planoTratamento.descricao}"/>
                                 </p:column>
                                 <p:column filterBy="#{ptp.descricaoCompleta}" filterMatchMode="contains" 
-                                		sortBy="#{ptp.descricaoCompleta}" width="15%" headerText="Procedimento">
+                                		sortBy="#{ptp.descricaoCompleta}" width="15%" headerText="Procedimento" filterFunction="#{faturamentoMB.filtroSemAcento}">
                                     <h:outputText value="#{ptp.descricaoCompleta}" />
                                 </p:column>
                                 <p:column filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nomeStr}" filterMatchMode="contains" 
-                                		sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}" headerText="Paciente">
+                                		sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}" headerText="Paciente" filterFunction="#{faturamentoMB.filtroSemAcento}">
                                     <h:outputText value="#{ptp.planoTratamento.paciente.dadosBasico.nome}" />
                                 </p:column>
-                                <p:column styleClass="cabecalho" headerText="Data de Finalização" filterMatchMode="contains" filterBy="#{ptp.dataFinalizadoStr}" sortBy="#{ptp.dataFinalizado}">
+                                <p:column 	styleClass="cabecalho" headerText="Data de Finalização" filterMatchMode="contains" filterBy="#{ptp.dataFinalizadoStr}" sortBy="#{ptp.dataFinalizado}">
                                     <h:outputText value="#{ptp.dataFinalizadoStr}" />
                                 </p:column>
                                 <p:column filterBy="#{ptp.valorDesconto}" filterMatchMode="contains" sortBy="#{ptp.valorDesconto}">
@@ -186,15 +211,39 @@
                                 </p:column>
                             </p:dataTable>
                             <br />
+                            
+                            <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<h:panelGroup>
+									<p:splitButton icon="White fa fa fa-file-excel-o"
+										value="Exportar tabela para Excel"
+										styleClass="GreenSplitButton"
+										actionListener="#{faturamentoMB.exportarTabelaRecebimento('xls')}"
+										ajax="false" process="dtPrincipal,@this" update="@this"
+										immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+										<p:fileDownload value="#{faturamentoMB.arquivoDownload}" />
+
+										<p:menuitem value="Exportar tabela para PDF"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{faturamentoMB.exportarTabelaRecebimento('pdf')}"
+											ajax="false" process="dtPrincipal,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload value="#{faturamentoMB.arquivoDownload}" />
+										</p:menuitem>
+									</p:splitButton>
+								</h:panelGroup>
+							</p:panelGrid>
+                            
                             <p:dataTable widgetvar="dtLancamentos" filterDelay="1500" reflow="true" emptyMessage="Nenhum registro encontrado" id="dtLancamentos" selection="#{faturamentoMB.lancamento}" selectionMode="single"
-                                value="#{faturamentoMB.lancamentos}" var="lancamento" rows="5" paginator="true" rowKey="#{lancamento}" paginatorPosition="bottom">
+                                value="#{faturamentoMB.lancamentos}" var="lancamento" rows="5" paginator="true" rowKey="#{lancamento}" paginatorPosition="bottom" binding="#{faturamentoMB.tabelaRecebimento}">
                                 <f:facet name="header">Recebimentos com crédito</f:facet>
                                 <p:ajax event="rowSelect" update=":lume:pnPrincipal" listener="#{faturamentoMB.actionVerificaTarifa}" />
                                 <p:column styleClass="cabecalho" headerText="Plano de Tratamento" filterBy="#{lancamento.orcamento.planoTratamento.descricao}"
-                                    sortBy="#{lancamento.orcamento.planoTratamento.descricao}">
+                                    sortBy="#{lancamento.orcamento.planoTratamento.descricao}" filterFunction="#{faturamentoMB.filtroSemAcento}">
                                     <h:outputText value="#{lancamento.orcamento.planoTratamento.descricao}" title="#{lancamento.id}" />
                                 </p:column>
-                                <p:column headerText="Status" filterBy="#{lancamento.status}" sortBy="#{lancamento.status}">
+                                <p:column headerText="Status" filterBy="#{lancamento.status}" sortBy="#{lancamento.status}" filterFunction="#{faturamentoMB.filtroSemAcento}">
                                     <h:outputText value="#{lancamento.status}" />
                                 </p:column>
                                 <p:column headerText="Data de Crédito" filterBy="#{lancamento.dataCreditoStr}" sortBy="#{lancamento.dataCreditoStrOrd}">
@@ -203,7 +252,7 @@
                                 <p:column styleClass="cabecalho" filterBy="#{lancamento.dataPagamentoStr}" headerText="Data do Pagamento" sortBy="#{lancamento.dataPagamentoStrOrd}">
                                     <h:outputText value="#{lancamento.dataPagamentoStr}" />
                                 </p:column>
-                                <p:column styleClass="cabecalho" filterBy="#{lancamento.formaPagamentoStr}" headerText="Forma de Pagamento" sortBy="#{lancamento.formaPagamentoStr}">
+                                <p:column styleClass="cabecalho" filterBy="#{lancamento.formaPagamentoStr}" headerText="Forma de Pagamento" sortBy="#{lancamento.formaPagamentoStr}" filterFunction="#{faturamentoMB.filtroSemAcento}">
                                     <h:outputText value="#{lancamento.formaPagamentoStr}" />
                                 </p:column>
                                 <p:column headerText="Valor" filterBy="#{lancamento.valor}" sortBy="#{lancamento.valor}">
@@ -255,26 +304,54 @@
                         <br />
                         <p:fieldset legend="Procedimentos à Repassar" toggleable="true" toggleSpeed="500" collapsed="false">
                             <h:panelGroup id="pnProcedimentosRepassar">
-                                <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtProcedimentosRepassar" value="#{faturamentoMB.procedimentosRepasse}"
-                                    selection="#{faturamentoMB.procedimentosRepasseSelecionados}" var="ptp" rows="5" paginator="true" rowKey="#{ptp}" paginatorPosition="bottom">
+
+								<p:panelGrid columns="4" layout="grid"
+									styleClass="ui-panelgrid-blank form-group ui-fluid">
+									<h:panelGroup>
+										<p:splitButton icon="White fa fa fa-file-excel-o"
+											value="Exportar tabela para Excel"
+											styleClass="GreenSplitButton"
+											actionListener="#{faturamentoMB.exportarTabelaProcedimentoRepasse('xls')}"
+											ajax="false" process="dtProcedimentosRepassar,@this" update="@this"
+											immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+											<p:fileDownload value="#{faturamentoMB.arquivoDownload}" />
+
+											<p:menuitem value="Exportar tabela para PDF"
+												icon="fa fa fa-file-pdf-o"
+												actionListener="#{faturamentoMB.exportarTabelaProcedimentoRepasse('pdf')}"
+												ajax="false" process="dtProcedimentosRepassar,@this" immediate="true"
+												onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+												<p:fileDownload value="#{faturamentoMB.arquivoDownload}" />
+											</p:menuitem>
+										</p:splitButton>
+									</h:panelGroup>
+								</p:panelGrid>
+
+								<p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtProcedimentosRepassar" value="#{faturamentoMB.procedimentosRepasse}"
+                                    selection="#{faturamentoMB.procedimentosRepasseSelecionados}" var="ptp" rows="5" paginator="true" rowKey="#{ptp}" paginatorPosition="bottom"
+                                    binding="#{faturamentoMB.tabelaProcedimentoRepasse}">
                                     <p:column selectionMode="multiple" style="padding: 0px;text-align: center;" width="3%" />
                                     <p:ajax event="rowSelect" update=":lume:repassar" />
                                     <p:ajax event="rowSelectCheckbox" update=":lume:repassar" />
                                     <p:ajax event="rowUnselectCheckbox" update=":lume:repassar" />
                                     <p:ajax event="toggleSelect" update=":lume:repassar,:lume:pnProcedimentosRepassar" listener="#{faturamentoMB.checkOrUncheckAllRepassar}" />
-                                    <p:column filterBy="#{ptp.planoTratamento.descricao}" styleClass="cabecalho" sortBy="#{ptp.planoTratamento.descricao}" filterMatchMode="contains">
+                                    <p:column 	filterBy="#{ptp.planoTratamento.descricao}" styleClass="cabecalho" sortBy="#{ptp.planoTratamento.descricao}" filterMatchMode="contains"
+                                    			filterFunction="#{faturamentoMB.filtroSemAcento}">
                                         <f:facet name="header">
                                             <h:outputText styleClass="cabecalho" value="Plano de Tratamento" />
                                         </f:facet>
                                         <h:outputText value="#{ptp.planoTratamento.descricao}" title="#{ptp.id}" />
                                     </p:column>
-                                    <p:column filterBy="#{ptp.descricaoCompleta}" sortBy="#{ptp.descricaoCompleta}" width="15%">
+                                    <p:column 	filterBy="#{ptp.descricaoCompleta}" sortBy="#{ptp.descricaoCompleta}" width="15%" filterFunction="#{faturamentoMB.filtroSemAcento}">
                                         <f:facet name="header">
                                             <h:outputText value="Procedimento" />
                                         </f:facet>
                                         <h:outputText value="#{ptp.descricaoCompleta}" />
                                     </p:column>
-                                    <p:column filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nomeStr}" sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}">
+                                    <p:column 	filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nomeStr}" sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
+                                    			filterFunction="#{faturamentoMB.filtroSemAcento}">
                                         <f:facet name="header">
                                             <h:outputText value="Paciente" />
                                         </f:facet>
@@ -291,7 +368,7 @@
                                             <f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
                                         </h:outputText>
                                     </p:column>
-                                    <p:column filterBy="#{ptp.custos}" sortBy="#{ptp.custos}">
+                                    <p:column>
                                         <f:facet name="header">
                                             <h:outputText value="Custo" />
                                         </f:facet>
@@ -373,9 +450,11 @@
                                         actionListener="#{faturamentoMB.actionRepassar}"
                                         update=":lume:pnProcedimentosRepassar,:lume:dtReservados,:lume:repasse,:lume:pgReservar,:lume:pnProcedimentosRepassar"
                                         process="@this,:lume:dtProcedimentosRepassar" styleClass="GreenButton" />
+                                    <ui:remove>
                                     <p:commandButton value="Excel" ajax="false" process="dtProcedimentosRepassar" icon="White fa fa-file-excel-o" styleClass="GreenButton" immediate="true">
                                         <p:dataExporter encoding="iso-8859-1" type="xls" target="dtProcedimentosRepassar" fileName="reservas" />
                                     </p:commandButton>
+                                    </ui:remove>
                                 </p:panelGrid>
 
                             </h:panelGroup>
@@ -401,26 +480,54 @@
 
                                 <br />
 
-                                <p:dataTable	id="dtReservados" widgetVar="dtRelAtendimento" value="#{faturamentoMB.repasseItens}" 
+								<p:panelGrid columns="4" layout="grid"
+									styleClass="ui-panelgrid-blank form-group ui-fluid">
+									<h:panelGroup>
+										<p:splitButton icon="White fa fa fa-file-excel-o"
+											value="Exportar tabela para Excel"
+											styleClass="GreenSplitButton"
+											actionListener="#{faturamentoMB.exportarTabelaRepasse('xls')}"
+											ajax="false" process="dtReservados,@this"
+											update="@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+											<p:fileDownload value="#{faturamentoMB.arquivoDownload}" />
+
+											<p:menuitem value="Exportar tabela para PDF"
+												icon="fa fa fa-file-pdf-o"
+												actionListener="#{faturamentoMB.exportarTabelaRepasse('pdf')}"
+												ajax="false" process="dtReservados,@this"
+												immediate="true"
+												onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+												<p:fileDownload value="#{faturamentoMB.arquivoDownload}" />
+											</p:menuitem>
+										</p:splitButton>
+									</h:panelGroup>
+								</p:panelGrid>
+
+
+								<p:dataTable	id="dtReservados" widgetVar="dtRelAtendimento" value="#{faturamentoMB.repasseItens}" 
                     							var="ptp" rowKey="#{repasse}" rows="5" paginator="true" paginatorPosition="bottom" reflow="true" 
                     							emptyMessage="Nenhum registro encontrado"
-                    							filterDelay="1500">
+                    							filterDelay="1500" binding="#{faturamentoMB.tabelaRepasse}">
                                     
                                     <p:column filterBy="#{ptp.planoTratamentoProcedimento.planoTratamento.descricao}" styleClass="cabecalho"
-                                        sortBy="#{ptp.planoTratamentoProcedimento.planoTratamento.descricao}">
+                                        sortBy="#{ptp.planoTratamentoProcedimento.planoTratamento.descricao}" filterFunction="#{faturamentoMB.filtroSemAcento}">
                                         <f:facet name="header">
                                             <h:outputText value="Plano de Tratamento" />
                                         </f:facet>
                                         <h:outputText value="#{ptp.planoTratamentoProcedimento.planoTratamento.descricao}" title="#{ptp.id}" />
                                     </p:column>
-                                    <p:column filterBy="#{ptp.planoTratamentoProcedimento.descricaoCompleta}" sortBy="#{ptp.planoTratamentoProcedimento.descricaoCompleta}" width="15%">
+                                    <p:column 	filterBy="#{ptp.planoTratamentoProcedimento.descricaoCompleta}" sortBy="#{ptp.planoTratamentoProcedimento.descricaoCompleta}" width="15%"
+                                    			filterFunction="#{faturamentoMB.filtroSemAcento}">
                                         <f:facet name="header">
                                             <h:outputText value="Procedimento" />
                                         </f:facet>
                                         <h:outputText value="#{ptp.planoTratamentoProcedimento.descricaoCompleta}" />
                                     </p:column>
                                     <p:column filterBy="#{ptp.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
-                                        sortBy="#{ptp.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}">
+                                        sortBy="#{ptp.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
+                                        filterFunction="#{faturamentoMB.filtroSemAcento}">
                                         <f:facet name="header">
                                             <h:outputText value="Paciente" />
                                         </f:facet>
@@ -498,8 +605,11 @@
 
                                     </p:column>
                                 </p:dataTable>
+                                
                                 <br />
+                                
                                 <div class="SeparatorFull"></div>
+                                
                                 <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                     <p:commandButton id="pagar" icon="White fa fa-money" value="Pagar" disabled="#{!faturamentoMB.pagar}" actionListener="#{faturamentoMB.actionPagar}"
                                         update="@this,:lume:pnReservados,:lume:btGerarDocumento,:lume:pgReservar" styleClass="GreenButton" process="@this" />

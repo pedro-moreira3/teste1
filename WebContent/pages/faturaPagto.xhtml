@@ -74,13 +74,36 @@
 						<p:commandButton actionListener="#{faturaPagtoMB.pesquisar}"
 							process="@this, :lume:filterFaturas" value="Pesquisar"
 							update=":lume:dtPrincipal" />
+
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{faturaPagtoMB.exportarTabela('xls')}"
+								ajax="false" process="dtPrincipal,@this" update="@this"
+								immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+								<p:fileDownload
+									value="#{faturaPagtoMB.arquivoDownload}" />
+
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{faturaPagtoMB.exportarTabela('pdf')}"
+									ajax="false" process="dtPrincipal,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload
+										value="#{faturaPagtoMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
+						</h:panelGroup>
+
 					</p:panelGrid>
 					<div class="SeparatorFull"></div>
 					<br />
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						id="dtPrincipal" value="#{faturaPagtoMB.entityList}" var="f"
 						rows="20" paginator="true" rowKey="#{f}"
-						paginatorPosition="bottom">
+						paginatorPosition="bottom" binding="#{faturaPagtoMB.tabelaFatura}">
 						<f:facet name="header">Faturas</f:facet>
 						<p:column width="120" headerText="Detalhes">
 							<p:commandButton icon="fa fa-eye" process="@this"
@@ -91,7 +114,7 @@
 						</p:column>
 						<p:column filterBy="#{f.paciente.dadosBasico.nomeStr}"
 							sortBy="#{f.paciente.dadosBasico.nome}"
-							filterMatchMode="contains">
+							filterMatchMode="contains" filterFunction="#{faturaPagtoMB.filtroSemAcento}">
 							<f:facet name="header">
 								<h:outputText value="Paciente" />
 							</f:facet>

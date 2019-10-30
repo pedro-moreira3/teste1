@@ -125,19 +125,43 @@
 							</p:outputPanel>
 
 							<div class="SeparatorFull"></div>
-							<p:panelGrid columns="1" layout="grid"
+							<p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid">
 								<p:commandButton id="pesquisar" icon="White fa fa-search"
 									value="Pesquisar" styleClass="OrangeButton"
 									actionListener="#{repasseItensProfissionalMB.pesquisar}"
 									process="@this, :lume:filtros" update=":lume:dtPrincipal" />
+
+								<h:panelGroup>
+									<p:splitButton icon="White fa fa fa-file-excel-o"
+										value="Exportar tabela para Excel"
+										styleClass="GreenSplitButton"
+										actionListener="#{repasseItensProfissionalMB.exportarTabela('xls')}"
+										ajax="false" process="dtPrincipal,@this" update="@this"
+										immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+										<p:fileDownload
+											value="#{repasseItensProfissionalMB.arquivoDownload}" />
+
+										<p:menuitem value="Exportar tabela para PDF"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{repasseItensProfissionalMB.exportarTabela('pdf')}"
+											ajax="false" process="dtPrincipal,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload
+												value="#{repasseItensProfissionalMB.arquivoDownload}" />
+										</p:menuitem>
+									</p:splitButton>
+								</h:panelGroup>
+
 							</p:panelGrid>
 						</p:fieldset>
 
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtPrincipal" value="#{repasseItensProfissionalMB.entityList}"
 							var="ptp" rows="20" paginator="true" rowKey="#{ptp}"
-							paginatorPosition="bottom" widgetVar="dtPrincipal">
+							paginatorPosition="bottom" widgetVar="dtPrincipal" binding="#{repasseItensProfissionalMB.tabelaRepasse}">
 							<f:facet name="header">Repasse por Itens</f:facet>
 							<p:column width="120" headerText="Detalhes">
 								<p:commandButton styleClass="RedButton" icon="fa fa-exchange"
@@ -156,24 +180,28 @@
 							<p:column
 								filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
 								sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
-								filterMatchMode="contains" headerText="Paciente">
+								filterMatchMode="contains" headerText="Paciente"
+								filterFunction="#{repasseItensProfissionalMB.filtroSemAcento}">
 								<h:outputText
 									value="#{ptp.planoTratamento.paciente.dadosBasico.nome}" />
 							</p:column>
 							<p:column filterBy="#{ptp.planoTratamento.descricao}"
 								sortBy="#{ptp.planoTratamento.descricao}"
-								filterMatchMode="contains" headerText="Plano de Tratamento">
+								filterMatchMode="contains" headerText="Plano de Tratamento"
+								filterFunction="#{repasseItensProfissionalMB.filtroSemAcento}">
 								<h:outputText value="#{ptp.planoTratamento.descricao}" />
 							</p:column>
 							<p:column filterBy="#{ptp.procedimento.descricao}"
 								sortBy="#{ptp.procedimento.descricao}"
-								filterMatchMode="contains" headerText="Procedimento">
+								filterMatchMode="contains" headerText="Procedimento"
+								filterFunction="#{repasseItensProfissionalMB.filtroSemAcento}">
 								<h:outputText value="#{ptp.procedimento.descricao}" />
 							</p:column>
 							<p:column
 								filterBy="#{repasseItensProfissionalMB.getFaturaItemFromPTP(ptp).fatura.profissional.dadosBasico.nome}"
 								sortBy="#{repasseItensProfissionalMB.getFaturaItemFromPTP(ptp).fatura.profissional.dadosBasico.nome}"
-								filterMatchMode="contains" headerText="Profissional do Repasse">
+								filterMatchMode="contains" headerText="Profissional do Repasse"
+								filterFunction="#{repasseItensProfissionalMB.filtroSemAcento}">
 								<h:outputText
 									value="#{repasseItensProfissionalMB.getFaturaItemFromPTP(ptp).fatura.profissional.dadosBasico.nome}" />
 							</p:column>

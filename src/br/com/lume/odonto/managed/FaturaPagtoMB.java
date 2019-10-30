@@ -12,6 +12,7 @@ import javax.faces.bean.ViewScoped;
 import javax.inject.Inject;
 
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.log.LogIntelidenteSingleton;
@@ -74,6 +75,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     //FIXME - corrigir deixando mais bonito
     @Inject
     RepasseProfissionalMB repasseProfissionalMB;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaFatura;
 
     public FaturaPagtoMB() {
         super(FaturaSingleton.getInstance().getBo());
@@ -322,6 +326,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public List<Paciente> sugestoesPacientes(String query) {
         return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Faturas", tabelaFatura, type);
+    }
 
     public Date getInicio() {
         return inicio;
@@ -505,6 +513,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setRepasseProfissionalMB(RepasseProfissionalMB repasseProfissionalMB) {
         this.repasseProfissionalMB = repasseProfissionalMB;
+    }
+
+    public DataTable getTabelaFatura() {
+        return tabelaFatura;
+    }
+
+    public void setTabelaFatura(DataTable tabelaFatura) {
+        this.tabelaFatura = tabelaFatura;
     }
 
 }

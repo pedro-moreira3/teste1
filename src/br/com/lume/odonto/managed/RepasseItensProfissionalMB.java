@@ -12,6 +12,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -45,6 +46,9 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
     private List<PlanoTratamento> planosTratamento;
     private PlanoTratamento[] planosTratamentoSelecionados;
     private FaturaItem itemTroca;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaRepasse;
 
     public RepasseItensProfissionalMB() {
         super(PlanoTratamentoProcedimentoSingleton.getInstance().getBo());
@@ -134,6 +138,10 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
             this.addError("Erro", "Falha ao realizar a troca!<br />" + e.getMessage(), true);
         }
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Repasse de itens aos profissionais", tabelaRepasse, type);
+    }
 
     public int getMes() {
         return mes;
@@ -215,6 +223,14 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
 
     public void setFiltroSemRepasse(boolean filtroSemRepasse) {
         this.filtroSemRepasse = filtroSemRepasse;
+    }
+
+    public DataTable getTabelaRepasse() {
+        return tabelaRepasse;
+    }
+
+    public void setTabelaRepasse(DataTable tabelaRepasse) {
+        this.tabelaRepasse = tabelaRepasse;
     }
 
 }
