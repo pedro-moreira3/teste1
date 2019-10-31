@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
 
 import br.com.lume.common.OdontoPerfil;
@@ -55,6 +56,9 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
     private Paciente paciente;
 
     private Profissional profissionalLogado = new Profissional();
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaTermo;
   
     public TermoConsentimentoMB() {
         super(TermoConsentimentoSingleton.getInstance().getBo());      
@@ -146,6 +150,10 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
         documento = documento.replaceAll("span", "div");
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Termos de consentimento", tabelaTermo, type);
+    }
+    
     public String getDocumento() {
         return documento;
     }
@@ -248,5 +256,13 @@ public class TermoConsentimentoMB extends LumeManagedBean<TermoConsentimento> {
 
     public void setLiberaBotao(boolean liberaBotao) {
         this.liberaBotao = liberaBotao;
+    }
+
+    public DataTable getTabelaTermo() {
+        return tabelaTermo;
+    }
+
+    public void setTabelaTermo(DataTable tabelaTermo) {
+        this.tabelaTermo = tabelaTermo;
     }
 }

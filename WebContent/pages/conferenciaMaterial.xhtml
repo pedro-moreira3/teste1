@@ -23,7 +23,7 @@
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"
 									styleClass="GreenSplitButton"
-									actionListener="#{conferenciaMB.exportarTabela('xls')}"
+									actionListener="#{conferenciaMB.exportarTabelaConferencia('xls')}"
 									ajax="false" process="dtMaterial,@this" update="@this"
 									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
@@ -33,7 +33,7 @@
 
 									<p:menuitem value="Exportar tabela para PDF"
 										icon="fa fa fa-file-pdf-o"
-										actionListener="#{conferenciaMB.exportarTabela('pdf')}"
+										actionListener="#{conferenciaMB.exportarTabelaConferencia('pdf')}"
 										ajax="false" process="dtMaterial,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 										<p:fileDownload
@@ -79,10 +79,7 @@
 									value="#{conferenciaMB.getUnidadeString(estoque.material.item)}"
 									styleClass="unidadeMedidaString" disabled="true" />
 							</p:column>
-
-							<p:column filterBy="#{estoque.material.quantidadeEmprestada}"
-								sortBy="#{estoque.material.quantidadeEmprestada}"
-								filterMatchMode="contains">
+							<p:column>
 								<f:facet name="header">
 									<h:outputText value="Quantidade Emprestada" />
 								</f:facet>

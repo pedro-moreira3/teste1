@@ -218,15 +218,14 @@ public class Exportacoes implements Serializable{
     }
     
     private String formatar(Object obj) {
-        
-        if(obj instanceof Date) {
+        if(obj == null){
+            return "";
+        }else if(obj instanceof Date) {
             Date data = (Date) obj;
             return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",new Locale("PT BR")).format(data);
         }else if(obj instanceof Number) {
             Number valor = (Number) obj;
             return String.valueOf(valor);
-        }else if(obj == null){
-            return "";
         }else {
             return String.valueOf(obj);
         }

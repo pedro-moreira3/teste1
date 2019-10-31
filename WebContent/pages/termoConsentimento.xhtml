@@ -125,6 +125,30 @@
 								value="Novo" actionListener="#{termoConsentimentoMB.actionNew}"
 								update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo"
 								immediate="true" tabindex="1" process="@this" />
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{termoConsentimentoMB.exportarTabela('xls')}"
+									ajax="false" process="dtTermo,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{termoConsentimentoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{termoConsentimentoMB.exportarTabela('pdf')}"
+										ajax="false" process="dtTermo,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{termoConsentimentoMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
 						</p:panelGrid>
 
 						<div class="EmptyBox20"></div>
@@ -134,7 +158,7 @@
 						id="dtTermo" value="#{termoConsentimentoMB.entityList}" var="tct"
 						rows="7" paginator="true"
 						selection="#{termoConsentimentoMB.entity}" selectionMode="single"
-						rowKey="#{tct}" paginatorPosition="bottom">
+						rowKey="#{tct}" paginatorPosition="bottom" binding="#{termoConsentimentoMB.tabelaTermo}">
 						<p:ajax event="rowSelect"
 							update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo"
 							listener="#{termoConsentimentoMB.atualizaTela}" />
@@ -147,7 +171,8 @@
 						</p:column>
 						<p:column filterBy="#{tct.profissional.dadosBasico.prefixoNome}"
 							sortBy="#{tct.profissional.dadosBasico.prefixoNome}"
-							filterMatchMode="contains" headerText="Profissional">
+							filterMatchMode="contains" headerText="Profissional"
+							filterFunction="#{termoConsentimentoMB.filtroSemAcento}">
 							<h:outputText value="#{tct.profissional.dadosBasico.prefixoNome}" />
 						</p:column>
 					</p:dataTable>

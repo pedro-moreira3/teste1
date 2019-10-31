@@ -113,6 +113,30 @@
 								actionListener="#{documentoGenericoMB.actionNew}"
 								update=":lume:pnDocumentoGenerico,:lume:pnDocumentoGenericoPrincipal,:lume:dtDocumentoGenerico"
 								immediate="true" tabindex="1" process="@this" />
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{documentoGenericoMB.exportarTabela('xls')}"
+									ajax="false" process="dtDocumentoGenerico,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{documentoGenericoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{documentoGenericoMB.exportarTabela('pdf')}"
+										ajax="false" process="dtDocumentoGenerico,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{documentoGenericoMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
 						</p:panelGrid>
 
 						<div class="EmptyBox20"></div>
@@ -123,7 +147,7 @@
 						id="dtDocumentoGenerico" value="#{documentoGenericoMB.entityList}"
 						var="rct" rows="7" paginator="true"
 						selection="#{documentoGenericoMB.entity}" selectionMode="single"
-						rowKey="#{rct}" paginatorPosition="bottom">
+						rowKey="#{rct}" paginatorPosition="bottom" binding="#{documentoGenericoMB.tabelaDocumento}">
 						<p:ajax event="rowSelect"
 							update=":lume:pnDocumentoGenerico,:lume:pnDocumentoGenericoPrincipal"
 							listener="#{documentoGenericoMB.atualizaTela}" />
@@ -134,7 +158,8 @@
 						</p:column>
 						<p:column filterBy="#{rct.profissional.dadosBasico.prefixoNome}"
 							sortBy="#{rct.profissional.dadosBasico.prefixoNome}"
-							filterMatchMode="contains" headerText="Profissional">
+							filterMatchMode="contains" headerText="Profissional"
+							filterFunction="#{documentoGenericoMB.filtroSemAcento}">
 							<h:outputText value="#{rct.profissional.dadosBasico.prefixoNome}" />
 						</p:column>
 

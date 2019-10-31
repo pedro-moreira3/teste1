@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
 
 import br.com.lume.common.OdontoPerfil;
@@ -63,6 +64,9 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
 
     private Profissional profissionalLogado;
 
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaDocumento;
+    
     public DocumentoGenericoMB() {
         super(DocumentoGenericoSingleton.getInstance().getBo());
 //        dominioBO = new DominioBO();
@@ -135,6 +139,10 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
         documento = DocumentoSingleton.getInstance().getBo().replaceDocumento(tagDinamicas, paciente.getDadosBasico(), documento, UtilsFrontEnd.getProfissionalLogado());
         documento = documento.replaceAll("#paciente", paciente.getDadosBasico().getNome());
         documento = documento.replaceAll("span", "div");
+    }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Contratos pacientes", tabelaDocumento, type);
     }
 
     public String getDocumento() {
@@ -211,5 +219,13 @@ public class DocumentoGenericoMB extends LumeManagedBean<DocumentoGenerico> {
 
     public void setLiberaBotao(boolean liberaBotao) {
         this.liberaBotao = liberaBotao;
+    }
+
+    public DataTable getTabelaDocumento() {
+        return tabelaDocumento;
+    }
+
+    public void setTabelaDocumento(DataTable tabelaDocumento) {
+        this.tabelaDocumento = tabelaDocumento;
     }
 }

@@ -114,6 +114,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private DataTable tabelaAnamnese;
     private DataTable tabelaFrequencia;
     private DataTable tabelaFinanceiro;
+    private DataTable tabelaPaciente;
 
     public PacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
@@ -607,6 +608,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         exportarTabela("Situação financeiro", tabelaFinanceiro, type);        
     }
     
+    public void exportarTabelaPaciente(String type) {
+        exportarTabela("Pacientes", getTabelaPaciente(), type);
+    }
+    
     public void abreReadOnly(Paciente p, String namePanel) {
         setEntity(p);
         UtilsPrimefaces.readOnlyUIComponent(":lume:" + namePanel);
@@ -781,6 +786,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void setTabelaFinanceiro(DataTable tabelaFinanceiro) {
         this.tabelaFinanceiro = tabelaFinanceiro;
+    }
+
+    public DataTable getTabelaPaciente() {
+        return tabelaPaciente;
+    }
+
+    public void setTabelaPaciente(DataTable tabelaPaciente) {
+        this.tabelaPaciente = tabelaPaciente;
     }
     
 }

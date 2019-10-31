@@ -20,7 +20,7 @@
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"
 									styleClass="GreenSplitButton"
-									actionListener="#{conferenciaMB.exportarTabelaConferencia('xls')}"
+									actionListener="#{conferenciaMB.exportarTabela('xls')}"
 									ajax="false" process="dtConferencias,@this" update="@this"
 									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
@@ -30,7 +30,7 @@
 
 									<p:menuitem value="Exportar tabela para PDF"
 										icon="fa fa fa-file-pdf-o"
-										actionListener="#{conferenciaMB.exportarTabelaConferencia('pdf')}"
+										actionListener="#{conferenciaMB.exportarTabela('pdf')}"
 										ajax="false" process="dtConferencias,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 										<p:fileDownload

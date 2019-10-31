@@ -28,6 +28,29 @@
 							styleClass="BotaoCrud" actionListener="#{pacienteMB.actionNew}"
 							update=":lume:pnPrincipal" value="Novo"
 							oncomplete="PF('dlgDadosPaciente').show()" process="@this" />
+
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{pacienteMB.exportarTabelaPaciente('xls')}"
+								ajax="false" process="dtPrincipal,@this" update="@this"
+								immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+								<p:fileDownload
+									value="#{pacienteMB.arquivoDownload}" />
+
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{pacienteMB.exportarTabelaPaciente('pdf')}"
+									ajax="false" process="dtPrincipal,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload
+										value="#{pacienteMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
+						</h:panelGroup>
+
 					</p:panelGrid>
 
 					<h:panelGroup id="botoes" styleClass="tableButtons">
@@ -43,7 +66,7 @@
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						id="dtPrincipal" value="#{pacienteMB.entityList}" var="paciente"
 						rows="7" paginator="true" rowKey="#{paciente}"
-						paginatorPosition="bottom" widgetVar="dtPrincipal">
+						paginatorPosition="bottom" widgetVar="dtPrincipal" binding="#{pacienteMB.tabelaPaciente}">
 
 						<f:facet name="header">#{dominioMB.cliente}
 						<h:panelGroup styleClass="pesquisa">

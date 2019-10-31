@@ -124,6 +124,30 @@
 								actionListener="#{atestadoMB.actionNew}"
 								update=":lume:pnAtestado,:lume:pnAtestadoPrincipal,:lume:dtAtestado"
 								immediate="true" tabindex="1" process="@this" />
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{atestadoMB.exportarTabela('xls')}"
+									ajax="false" process="dtAtestado,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{atestadoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{atestadoMB.exportarTabela('pdf')}"
+										ajax="false" process="dtAtestado,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{atestadoMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
 						</p:panelGrid>
 						<div class="EmptyBox20"></div>
 
@@ -131,7 +155,7 @@
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						id="dtAtestado" value="#{atestadoMB.entityList}" var="att"
 						rows="7" paginator="true" selection="#{atestadoMB.entity}"
-						selectionMode="single" rowKey="#{att}" paginatorPosition="bottom">
+						selectionMode="single" rowKey="#{att}" paginatorPosition="bottom" binding="#{atestadoMB.tabelaAtestado}">
 						<p:ajax event="rowSelect"
 							update=":lume:pnAtestado,:lume:pnAtestadoPrincipal"
 							listener="#{atestadoMB.atualizaTela}" />
@@ -142,7 +166,8 @@
 						</p:column>
 						<p:column filterBy="#{att.profissional.dadosBasico.prefixoNome}"
 							sortBy="#{att.profissional.dadosBasico.prefixoNome}"
-							filterMatchMode="contains" headerText="Profissional">
+							filterMatchMode="contains" headerText="Profissional"
+							filterFunction="#{atestadoMB.filtroSemAcento}">
 							<h:outputText value="#{att.profissional.dadosBasico.prefixoNome}" />
 						</p:column>
 					</p:dataTable>
