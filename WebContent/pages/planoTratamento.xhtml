@@ -1272,6 +1272,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removePaddingUp descontoFieldset">
 							<h:outputText value="Tipo do Desconto" />
 							<p:selectOneMenu
+								rendered="#{planoTratamentoMB.orcamentoSelecionado != null}"
 								disabled="#{planoTratamentoMB.entity.finalizado == 'S' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
 								value="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo}">
 								<f:selectItem itemValue="P" itemLabel="Porcentagem" />
@@ -1399,6 +1400,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				<h:panelGroup styleClass="lumeField">
 					<p:outputLabel for="evolucaoDescricao" value="Descrição : " />
 					<p:inputTextarea id="evolucaoDescricao" cols="60" rows="6"
+						rendered="#{planoTratamentoMB.evolucao != null}"
 						autoResize="false" value="#{planoTratamentoMB.evolucao.descricao}"
 						maxlength="2000" required="true" />
 					<p:message for="evolucaoDescricao" styleClass="msg" />
@@ -1659,6 +1661,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 					<p:outputLabel for="descricaoSD" value="Descrição : " />
 					<p:inputText id="descricaoSD"
+						rendered="#{planoTratamentoMB.statusDenteSelecionado != null}"
 						value="#{planoTratamentoMB.statusDenteSelecionado.descricao}"
 						required="true" maxlength="35" />
 
@@ -1668,6 +1671,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 					<p:outputLabel for="label" value="Label : " />
 					<p:inputText id="label"
+						rendered="#{planoTratamentoMB.statusDenteSelecionado != null}"
 						value="#{planoTratamentoMB.statusDenteSelecionado.label}"
 						required="true" maxlength="10" />
 

@@ -7,15 +7,15 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<p:outputPanel id="mainViewAnamnese">
-		<p:panelGrid columns="3" layout="grid" id="botoesControleTbAnamnese"
+		<p:panelGrid columns="2" layout="grid" id="botoesControleTbAnamnese"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton id="newAnamnese" icon="ui-icon-add" value="Novo"
 				actionListener="#{pacienteMB.actionAnamneseNew}"
-				update=":lume:tabView:anamneseDoPaciente, :lume:tabView:dtAnamnese"
+				update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade, :lume:tabView:dtAnamnese"
 				process="@this" oncomplete="PF('dlgAnamnesePaciente').show();" />
 			<p:commandButton id="deleteAnamnese" icon="White fa fa-trash-o White"
 				value="Excluir" actionListener="#{pacienteMB.actionAnamneseRemove}"
-				update=":lume:tabView:anamneseDoPaciente, :lume:tabView:dtAnamnese"
+				update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade, :lume:tabView:dtAnamnese"
 				process="@this" disabled="#{pacienteMB.pacienteAnamnese.id == null}"
 				rendered="#{pacienteMB.admin}" styleClass="RedButton" />
 
@@ -54,7 +54,7 @@
 						actionListener="#{pacienteMB.setPacienteAnamnese(pacienteAnamnese)}"
 						oncomplete="PF('dlgAnamnesePaciente').show();" process="@this"
 						title="Visualizar Anamnese"
-						update=":lume:tabView:anamneseDoPaciente, :lume:tabView:pnPrincipalAnamnese, :lume:tabView:mainViewAnamnese">
+						update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade">
 					</p:commandButton>
 				</p:column>
 				<p:column filterBy="#{pacienteAnamnese.id}"
@@ -121,95 +121,102 @@
 										<p:panelGrid columns="2" layout="grid"
 											styleClass="ui-panelgrid-blank"
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
-											style="border:0px none; background-color:transparent;">
-											<p:column>
-												<p:outputLabel for="texte"
-													value="#{anamnese.pergunta.descricao}"
-													rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTexto}" />
-											</p:column>
-											<p:column>
+											style="border:0px none; background-color:transparent;"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTexto}">
+											<p:outputLabel for="texte"
+												value="#{anamnese.pergunta.descricao}" />
+											<h:panelGroup>
 												<p:inputText id="texte" value="#{anamnese.resposta}"
 													disabled="#{pacienteMB.readonly}"
 													required="#{anamnese.pergunta.requerida}"
-													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
-													rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTexto}" />
-											</p:column>
+													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório" />
+												<p:message styleClass="msg" for="texte" />
+											</h:panelGroup>
 										</p:panelGrid>
-
+										
 										<p:panelGrid columns="2" layout="grid"
 											styleClass="ui-panelgrid-blank"
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
-											style="border:0px none; background-color:transparent;">
+											style="border:0px none; background-color:transparent;"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaUmaEmVarias}">
 											<p:outputLabel for="onMenu"
-												value="#{anamnese.pergunta.descricao}"
-												rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaUmaEmVarias}" />
-											<p:selectOneMenu id="onMenu" value="#{anamnese.resposta}"
-												style="width: 340px;" converter="resposta"
-												disabled="#{pacienteMB.readonly}"
-												required="#{anamnese.pergunta.requerida}"
-												requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
-												rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaUmaEmVarias}">
-												<f:selectItem itemValue="#{null}"
-													itemLabel="Selecione uma opção" />
-												<f:selectItems value="#{anamnese.pergunta.respostas}"
-													var="resposta" itemLabel="#{resposta.descricao}"
-													itemValue="#{resposta.descricao}" />
-											</p:selectOneMenu>
+												value="#{anamnese.pergunta.descricao}" />
+											<h:panelGroup>
+												<p:selectOneMenu id="onMenu" value="#{anamnese.resposta}"
+													style="width: 340px;" converter="resposta"
+													disabled="#{pacienteMB.readonly}"
+													required="#{anamnese.pergunta.requerida}"
+													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório">
+													<f:selectItem itemValue="#{null}"
+														itemLabel="Selecione uma opção" />
+													<f:selectItems value="#{anamnese.pergunta.respostas}"
+														var="resposta" itemLabel="#{resposta.descricao}"
+														itemValue="#{resposta.descricao}" />
+												</p:selectOneMenu>
+												<p:message styleClass="msg" for="onMenu" />
+											</h:panelGroup>
 										</p:panelGrid>
 
 										<p:panelGrid columns="2" layout="grid"
 											styleClass="ui-panelgrid-blank"
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
-											style="border:0px none; background-color:transparent;">
+											style="border:0px none; background-color:transparent;"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaVariasEmVarias}">
 											<p:outputLabel for="checkBox"
-												value="#{anamnese.pergunta.descricao}"
-												rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaVariasEmVarias}" />
-											<p:selectManyCheckbox id="checkBox"
-												value="#{anamnese.respostas}"
-												disabled="#{pacienteMB.readonly}"
-												required="#{anamnese.pergunta.requerida}"
-												requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
-												rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaVariasEmVarias}"
-												layout="responsive" columns="3">
-												<f:selectItems value="#{anamnese.pergunta.respostas}"
-													var="resposta" itemLabel="#{resposta.descricao}"
-													itemValue="#{resposta.descricao}" />
-											</p:selectManyCheckbox>
+												value="#{anamnese.pergunta.descricao}" />
+											<h:panelGroup>
+												<p:selectManyCheckbox id="checkBox"
+													value="#{anamnese.respostas}"
+													disabled="#{pacienteMB.readonly}"
+													required="#{anamnese.pergunta.requerida}"
+													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
+													layout="responsive" columns="3">
+													<f:selectItems value="#{anamnese.pergunta.respostas}"
+														var="resposta" itemLabel="#{resposta.descricao}"
+														itemValue="#{resposta.descricao}" />
+												</p:selectManyCheckbox>
+												<p:message styleClass="msg" for="checkBox" />
+											</h:panelGroup>
 										</p:panelGrid>
 
 										<p:panelGrid columns="2" layout="grid"
 											styleClass="ui-panelgrid-blank"
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
-											style="border:0px none; background-color:transparent;">
+											style="border:0px none; background-color:transparent;"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaSimOuNao}">
 											<p:outputLabel for="onRadio"
-												value="#{anamnese.pergunta.descricao}"
-												rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaSimOuNao}" />
-											<p:selectOneRadio id="onRadio" value="#{anamnese.resposta}"
-												disabled="#{pacienteMB.readonly}"
-												required="#{anamnese.pergunta.requerida}"
-												requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
-												rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaSimOuNao}">
-												<f:selectItem itemLabel="Sim" itemValue="Sim" />
-												<f:selectItem itemLabel="Não" itemValue="Não" />
-											</p:selectOneRadio>
+												value="#{anamnese.pergunta.descricao}" />
+											<h:panelGroup>
+												<p:selectOneRadio id="onRadio" value="#{anamnese.resposta}"
+													disabled="#{pacienteMB.readonly}"
+													required="#{anamnese.pergunta.requerida}"
+													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório">
+													<f:selectItem itemLabel="Sim" itemValue="Sim" />
+													<f:selectItem itemLabel="Não" itemValue="Não" />
+												</p:selectOneRadio>
+												<p:message styleClass="msg" for="onRadio" />
+											</h:panelGroup>
 										</p:panelGrid>
 
 										<p:panelGrid columns="2" layout="grid"
 											styleClass="ui-panelgrid-blank"
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
-											style="border:0px none; background-color:transparent;">
+											style="border:0px none; background-color:transparent;"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaQuantidade}">
 											<p:outputLabel for="numero"
-												value="#{anamnese.pergunta.descricao}"
-												rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaQuantidade}" />
-											<p:inputText value="#{anamnese.resposta}"
-												style="width: 340px;" disabled="#{pacienteMB.readonly}"
-												validatorMessage="Favor digitar um número." id="numero"
-												required="#{anamnese.pergunta.requerida}"
-												requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
-												rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaQuantidade}">
-												<f:validateRegex pattern="[0-9]*" />
-											</p:inputText>
+												value="#{anamnese.pergunta.descricao}" />
+											<h:panelGroup>
+												<p:inputText value="#{anamnese.resposta}"
+													style="width: 340px;" disabled="#{pacienteMB.readonly}"
+													validatorMessage="Favor digitar um número." id="numero"
+													required="#{anamnese.pergunta.requerida}"
+													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório">
+													<f:validateRegex pattern="[0-9]*" />
+												</p:inputText>
+												<p:message styleClass="msg" for="numero" />
+											</h:panelGroup>
 										</p:panelGrid>
+
 									</ui:repeat>
 								</p:fieldset>
 								<br />
@@ -224,9 +231,9 @@
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton id="persistAnamnese" icon="White fa fa-save White"
 				value="Salvar" actionListener="#{pacienteMB.actionAnamnesePersist}"
-				update=":lume:tabView:anamneseDoPaciente, :lume:tabView:dtAnamnese"
-				process=":lume:tabView:anamneseDoPaciente"
-				disabled="#{pacienteMB.readonly}" styleClass="GreenButton" />
+				update=":lume:tabView:especialidade, :lume:tabView:perguntasEspecialidade, :lume:tabView:dtAnamnese"
+				process="@this, :lume:tabView:especialidade, :lume:tabView:perguntasEspecialidade"
+				disabled="#{pacienteMB.readonly and false}" styleClass="GreenButton" />
 			<p:column />
 			<p:column />
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"

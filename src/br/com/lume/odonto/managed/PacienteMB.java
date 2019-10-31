@@ -434,6 +434,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             AnamneseSingleton.getInstance().getBo().persistByProfissional(UtilsFrontEnd.getProfissionalLogado(), this.getEntity(), pacienteAnamnese, anamneses);
             pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(this.getEntity());
             this.setReadonly(true);
+            PrimeFaces.current().executeScript("PF('dlgAnamnesePaciente').hide()");
             this.actionAnamneseNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (CertificadoInexistente ci) {
