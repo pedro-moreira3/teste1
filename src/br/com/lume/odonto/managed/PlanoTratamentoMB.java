@@ -953,16 +953,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (this.orcamentoSelecionado == null)
             return new BigDecimal(0);
 
-        BigDecimal valorTotal = this.orcamentoSelecionado.getValorTotalSemDesconto();
-        if (valorTotal == null)
-            return new BigDecimal(0);
-        BigDecimal valorAPagar = new BigDecimal(0);
-        if ("V".equals(this.orcamentoSelecionado.getDescontoTipo()))
-            valorAPagar = valorTotal.subtract(this.orcamentoSelecionado.getDescontoValor());
-        else if ("P".equals(this.orcamentoSelecionado.getDescontoTipo())) {
-            BigDecimal valorADescontar = valorTotal.multiply(this.orcamentoSelecionado.getDescontoValor().divide(new BigDecimal(100)));
-            valorAPagar = valorTotal.subtract(valorADescontar);
-        }
+        BigDecimal valorAPagar = OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(this.orcamentoSelecionado);
         BigDecimal valorPago = getTotalPago();
         if (valorAPagar.subtract(valorPago).doubleValue() > 0d)
             return valorAPagar.subtract(valorPago);
@@ -1050,10 +1041,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionPersistOrcamento(ActionEvent event) {
         try {
+            if (orcamentoSelecionado.getDataCriacao() == null) {
+                orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
+                orcamentoSelecionado.setDataCriacao(new Date());
+            }
             orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
-            orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
-            orcamentoSelecionado.setDataCriacao(new Date());
-            OrcamentoSingleton.getInstance().getBo().persist(orcamentoSelecionado);
+            setOrcamentoSelecionado(OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado));
 
 //            List<Lancamento> lancamentosNaoPagos = LancamentoSingleton.getInstance().getBo().listLancamentosNaoPagos(orcamentoSelecionado);
 //            if (lancamentosNaoPagos != null) {

@@ -58,7 +58,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaPlanoOrtodontico;
-    
+
     @ManagedProperty(value = "#{pacienteMB}")
     private PacienteMB pacienteMB;
 
@@ -263,9 +263,12 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionPersistOrcamento() {
         try {
-            orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
-            orcamentoSelecionado.setDataCriacao(new Date());
-            OrcamentoSingleton.getInstance().getBo().persist(orcamentoSelecionado);
+            if (orcamentoSelecionado.getDataCriacao() == null) {
+                orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
+                orcamentoSelecionado.setDataCriacao(new Date());
+            }
+            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
+            setOrcamentoSelecionado(OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado));
             OrcamentoSingleton.getInstance().recalculaValores(orcamentoSelecionado);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             atualizaOrcamentos();
@@ -314,13 +317,11 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     public BigDecimal getValorOrcamentoAPagar() {
         if (getOrcamentoSelecionado() != null) {
-            BigDecimal totalOrcamento = getOrcamentoSelecionado().getValorTotalSemDesconto();
+            BigDecimal totalOrcamento = OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(getOrcamentoSelecionado());
+            BigDecimal valorPago = LancamentoSingleton.getInstance().getTotalLancamentoPorOrcamento(getOrcamentoSelecionado(), true);
             if (totalOrcamento == null)
                 return BigDecimal.ZERO;
-            BigDecimal valorPago = LancamentoSingleton.getInstance().getTotalLancamentoPorOrcamento(getOrcamentoSelecionado(), true);
-            if (valorPago == null)
-                return BigDecimal.ZERO;
-            return totalOrcamento.subtract(valorPago);
+            return totalOrcamento.subtract((valorPago == null ? BigDecimal.ZERO : valorPago));
         }
         return null;
     }
@@ -381,16 +382,16 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     public void exportarTabela(String type) {
         exportarTabela("Plano Ortodôntico", this.tabelaPlanoOrtodontico, type);
     }
-    
+
     public BigDecimal obterValorProcedimentoValor() {
         BigDecimal valor = new BigDecimal(0);
-        
-        if(this.getEntity().getProcedimentoPadrao() != null)
+
+        if (this.getEntity().getProcedimentoPadrao() != null)
             valor = this.getEntity().getProcedimentoPadrao().getValor();
-        
+
         return valor;
     }
-    
+
     public PacienteMB getPacienteMB() {
         return pacienteMB;
     }
