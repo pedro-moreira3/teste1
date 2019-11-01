@@ -23,6 +23,7 @@ import javax.imageio.stream.FileImageOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.FileUploadEvent;
@@ -109,8 +110,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private boolean visivelDadosPaciente = true;
 
     private List<Agendamento> historicoAgendamentos;
-    
-  //EXPORTACAO TABELAS
+
+    //EXPORTACAO TABELAS
     private DataTable tabelaAnamnese;
     private DataTable tabelaFrequencia;
     private DataTable tabelaFinanceiro;
@@ -595,24 +596,24 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
-    //------EXPORTAÇÃO TABELAS------
-    
+//------EXPORTAÇÃO TABELAS------
+
     public void exportarTabelaAnamnese(String type) {
         exportarTabela("Anamnese", tabelaAnamnese, type);
     }
-    
+
     public void exportarTabelaFrequencia(String type) {
         exportarTabela("Frequência", tabelaFrequencia, type);
     }
-    
+
     public void exportarTabelaFinanceiro(String type) {
-        exportarTabela("Situação financeiro", tabelaFinanceiro, type);        
+        exportarTabela("Situação financeiro", tabelaFinanceiro, type);
     }
-    
+
     public void exportarTabelaPaciente(String type) {
         exportarTabela("Pacientes", getTabelaPaciente(), type);
     }
-    
+
     public void abreReadOnly(Paciente p, String namePanel) {
         setEntity(p);
         UtilsPrimefaces.readOnlyUIComponent(":lume:" + namePanel);
@@ -796,5 +797,5 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void setTabelaPaciente(DataTable tabelaPaciente) {
         this.tabelaPaciente = tabelaPaciente;
     }
-    
+
 }
