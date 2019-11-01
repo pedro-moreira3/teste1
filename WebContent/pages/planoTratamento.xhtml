@@ -513,7 +513,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<p:commandButton icon="White fa fa-save" value="Salvar"
 							styleClass="GreenButton" process="@this, :lume:tabView:pnCriarPT"
 							update=":lume:tabView:mainViewPT"
-							actionListener="#{planoTratamentoMB.actionPersist}" />
+							actionListener="#{planoTratamentoMB.actionPersist}"
+							oncomplete="PF('dlgViewPlanoTratamento').show();"/>
 					</p:panelGrid>
 				</div>
 			</div>
