@@ -217,7 +217,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
                     validaRepasse();
                     addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-
+                    PrimeFaces.current().executeScript("PF('dlgViewPlanoTratamento').show()");
                     PrimeFaces.current().executeScript("PF('dlgEditaPlanoTratamento').hide()");
                     atualizaTela();
                 }
@@ -298,7 +298,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (this.planoTratamentoProcedimentos == null)
             return false;
         for (PlanoTratamentoProcedimento ptp : this.planoTratamentoProcedimentos)
-            if ("N".equals(ptp.getExcluido()) || !"F".equals(ptp.getStatus()))
+            if ("N".equals(ptp.getExcluido()) && !"F".equals(ptp.getStatus()))
                 return true;
         return false;
     }

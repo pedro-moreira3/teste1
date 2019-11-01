@@ -168,6 +168,7 @@ li.orcamento-li {
 							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removePaddingUp descontoFieldset">
 							<h:outputText value="Tipo do Desconto" />
 							<p:selectOneMenu
+								rendered="#{ortodontiaMB.orcamentoSelecionado != null}"
 								disabled="#{ortodontiaMB.entity.finalizado == 'S' or ortodontiaMB.orcamentoSelecionado.aprovado}"
 								value="#{ortodontiaMB.orcamentoSelecionado.descontoTipo}">
 								<f:selectItem itemValue="P" itemLabel="Porcentagem" />
