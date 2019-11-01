@@ -4,10 +4,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.faces.component.html.HtmlOutputText;
+import javax.faces.component.html.HtmlPanelGroup;
+
+import org.apache.commons.logging.Log;
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -16,6 +22,8 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.primefaces.component.api.UIColumn;
+import org.primefaces.component.button.Button;
+import org.primefaces.component.commandbutton.CommandButton;
 import org.primefaces.component.datatable.DataTable;
 
 import com.lowagie.text.Document;
@@ -28,11 +36,14 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
+import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.security.entity.Empresa;
 
 public class Exportacoes implements Serializable{
     
     private static Exportacoes exportacao;
+    
+    private Logger log = Logger.getLogger(LumeManagedBean.class);
     
     private Exportacoes() {
         
@@ -51,6 +62,8 @@ public class Exportacoes implements Serializable{
     
     private File exportarTabelaExcel(String header,DataTable tabela) {
 
+        ArrayList<Integer> colunasValidas = validarColunas(tabela);
+        
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheetTabela = workbook.createSheet(header);
         
@@ -65,7 +78,7 @@ public class Exportacoes implements Serializable{
             
             Row linhaPlanilha = sheetTabela.createRow(i+1);
             
-            for(int j = 0; j < tabela.getColumnsCount(); j++) {
+            for(int j = 0; j < colunasValidas.size(); j++) {
                 
                 if(i == 0) {
                     
@@ -78,14 +91,14 @@ public class Exportacoes implements Serializable{
                     styleTitulo.setBorderTop(BorderStyle.THIN);
                     
                     Cell celula = cabecalho.createCell(j);
-                    celula.setCellValue(tabelaColunas.get(j).getHeaderText());
+                    celula.setCellValue(tabelaColunas.get(colunasValidas.get(j)).getHeaderText());
                     
                     celula.setCellStyle(styleTitulo);
                     
                 }
                 
                 Cell celula = linhaPlanilha.createCell(j);
-                celula.setCellValue(this.formatar(tabelaColunas.get(j).getSortBy()));
+                celula.setCellValue(this.formatar(tabelaColunas.get(colunasValidas.get(j)).getSortBy()));
                 
             }
             
@@ -105,7 +118,7 @@ public class Exportacoes implements Serializable{
             return arquivoXLS;
             
         }catch(Exception e) {
-            
+            this.log.error("Erro ao exportar Tabela Excel", e);
         }
         
         return null;
@@ -116,7 +129,9 @@ public class Exportacoes implements Serializable{
 
         try {
             
-            int qtdColunasTabela = validaColuna(table.getColumns());
+            //int qtdColunasTabela = validaColuna(table.getColumns());
+            
+            ArrayList<Integer> colunasValidas = validarColunas(table);
             
             Document documento = new Document(PageSize.A4.rotate(),30,30,30,30);
             
@@ -128,10 +143,10 @@ public class Exportacoes implements Serializable{
             
             documento.newPage();
             
-            PdfPTable tabelaPDF = new PdfPTable(qtdColunasTabela);
+            PdfPTable tabelaPDF = new PdfPTable(colunasValidas.size());
             tabelaPDF.setWidthPercentage(100f);
             
-            for(int i = 0; i < table.getRowCount() ; i++) {
+            for(int i = 0; i < table.getRowCount(); i++) {
                 
                 table.setRowIndex(i);
                 table.getRowData();
@@ -154,27 +169,40 @@ public class Exportacoes implements Serializable{
                     documento.add(new Paragraph(empresa.getEmpStrNmefantasia()));
                     documento.add(new Paragraph(string.toString()));
                     
-                    for(int j = 0; j < qtdColunasTabela; j++) {
+                    for(int j = 0; j < colunasValidas.size(); j++) {
                         
-                        String tituloTabela = tabelaColunas.get(j).getHeaderText();
+                        String tituloTabela = "";
+                        
+//                        List lista = tabelaColunas.get(colunasValidas.get(j)).getChildren();
+//                        if( (tabelaColunas.get(colunasValidas.get(j)).getHeaderText() == null) && (lista != null && !lista.isEmpty()) ) {
+//                            for(Object objeto : lista) {
+//                                if(objeto instanceof HtmlOutputText) {
+//                                    tituloTabela = this.formatar(((HtmlOutputText) objeto).getValue());
+//                                }
+//                            } 
+//                        }else {
+//                            tituloTabela = tabelaColunas.get(colunasValidas.get(j)).getHeaderText();
+//                        }
+                        
+                        tituloTabela = tabelaColunas.get(colunasValidas.get(j)).getHeaderText();
                         
                         Font fonte = new Font(Font.BOLD, 10, Font.BOLD);
                         
                         PdfPCell celula = new PdfPCell(new Phrase(tituloTabela,fonte));
                         celula.setHorizontalAlignment(Element.ALIGN_CENTER);
                         celula.setBorderWidth(1);
-                        celula.setColspan(tabelaColunas.get(j).getColspan());
+                        celula.setColspan(tabelaColunas.get(colunasValidas.get(j)).getColspan());
 
                         tabelaPDF.addCell(celula);
                             
                     }
                 }
                 
-                for(int j = 0; j < qtdColunasTabela; j++) {
+                for(int j = 0; j < colunasValidas.size(); j++) {
                     
                     Font fonte = new Font(5,10);
                     
-                    PdfPCell celula = new PdfPCell(new Phrase(this.formatar(tabelaColunas.get(j).getSortBy()), fonte));
+                    PdfPCell celula = new PdfPCell(new Phrase(this.formatar(tabelaColunas.get(colunasValidas.get(j)).getSortBy()), fonte));
                     celula.setHorizontalAlignment(Element.ALIGN_CENTER);
                     
                     tabelaPDF.addCell(celula);
@@ -190,7 +218,7 @@ public class Exportacoes implements Serializable{
             return arquivoPDF;
             
         }catch(Exception e) {
-            
+            this.log.error("Erro ao exportar Tabela Pdf", e);
         }
         
         return null;
@@ -201,20 +229,37 @@ public class Exportacoes implements Serializable{
         return null;
     }
     
-    private int validaColuna(List<UIColumn> colunas) {
+    private ArrayList<Integer> validarColunas(DataTable tabela) {
+
+        ArrayList<Integer> colunasValidas = new ArrayList<Integer>();
         
-        int c = 0;
+        int quantidadeLinhas = tabela.getRows();
         
-        for(int i = 0; i < colunas.size(); i++) {
-            
-            String t = colunas.get(i).getHeaderText();
-            
-            if(t != null && !t.isEmpty())
-                c++;
-            
+        if(quantidadeLinhas > 1) {
+            for(int i = 0; i < 1; i++) {
+                
+                tabela.setRowIndex(i);
+                tabela.getRowData();
+                
+                List<UIColumn> tabelaColunas = tabela.getColumns();
+                
+                for(int j = 0; j < tabelaColunas.size(); j++) {
+                    
+                    if(tabelaColunas.get(j).isExportable()) {
+                        
+                        if( !((tabelaColunas.get(j).getChildren().toString().contains("HtmlPanelGroup")) || (tabelaColunas.get(j).getChildren().toString().contains("CommandButton")) ||
+                                (tabelaColunas.get(j).getChildren().toString().contains("Button"))) ) {
+                            colunasValidas.add(j);
+                        }
+                        
+                    }
+                }
+                
+            }
         }
         
-        return c;
+        return colunasValidas;
+        
     }
     
     private String formatar(Object obj) {

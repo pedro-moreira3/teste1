@@ -113,11 +113,8 @@
 								title="Visualizar Fatura" />
 						</p:column>
 						<p:column filterBy="#{f.paciente.dadosBasico.nomeStr}"
-							sortBy="#{f.paciente.dadosBasico.nome}"
+							sortBy="#{f.paciente.dadosBasico.nome}" headerText="Paciente"
 							filterMatchMode="contains" filterFunction="#{faturaPagtoMB.filtroSemAcento}">
-							<f:facet name="header">
-								<h:outputText value="Paciente" />
-							</f:facet>
 							<h:outputText value="#{f.paciente.dadosBasico.nome}" />
 						</p:column>
 						<p:column filterBy="#{f.dataCriacaoStr}"
