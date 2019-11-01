@@ -37,16 +37,14 @@
 								immediate="true"
 								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-								<p:fileDownload
-									value="#{pacienteMB.arquivoDownload}" />
+								<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
 
 								<p:menuitem value="Exportar tabela para PDF"
 									icon="fa fa fa-file-pdf-o"
 									actionListener="#{pacienteMB.exportarTabelaPaciente('pdf')}"
 									ajax="false" process="dtPrincipal,@this" immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-									<p:fileDownload
-										value="#{pacienteMB.arquivoDownload}" />
+									<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
 								</p:menuitem>
 							</p:splitButton>
 						</h:panelGroup>
@@ -66,7 +64,8 @@
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						id="dtPrincipal" value="#{pacienteMB.entityList}" var="paciente"
 						rows="7" paginator="true" rowKey="#{paciente}"
-						paginatorPosition="bottom" widgetVar="dtPrincipal" binding="#{pacienteMB.tabelaPaciente}">
+						paginatorPosition="bottom" widgetVar="dtPrincipal"
+						binding="#{pacienteMB.tabelaPaciente}">
 
 						<f:facet name="header">#{dominioMB.cliente}
 						<h:panelGroup styleClass="pesquisa">
@@ -169,7 +168,7 @@
 						process="@this" value="Exibir ficha do Paciente"
 						actionListener="#{tabPacienteMB.openFicha}"
 						disabled="#{pacienteMB.entity.id == null or pacienteMB.entity.id == 0}"
-						update=":lume:pnPrincipalFichaHeader, :lume:pnPrincipalFicha">
+						update=":lume:pnPrincipalFichaHeader, :lume:pnPrincipalFicha, :lume:tabViewOutPanel">
 					</p:commandButton>
 				</h:panelGroup>
 				<p:column />
