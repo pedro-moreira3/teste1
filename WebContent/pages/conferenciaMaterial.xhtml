@@ -37,7 +37,7 @@
 										ajax="false" process="dtMaterial,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 										<p:fileDownload
-											value="#conferenciaMB.arquivoDownload}" />
+											value="#{conferenciaMB.arquivoDownload}" />
 									</p:menuitem>
 								</p:splitButton>
 							</h:panelGroup>
@@ -53,25 +53,16 @@
 								listener="#{conferenciaMB.carregaTela}" />
 							<f:facet name="header">Materiais</f:facet>
 							<p:column filterBy="#{estoque.material.item.descricaoLimpa}"
-								sortBy="#{estoque.material.item.descricao}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Material" />
-								</f:facet>
+								sortBy="#{estoque.material.item.descricao}" filterMatchMode="contains" headerText="Material">
 								<h:outputText value="#{estoque.material.item.descricao}"
 									title="#{estoque.material.id}" />
 							</p:column>
 							<p:column filterBy="#{estoque.material.estoque.local.descricao}"
-								sortBy="#{estoque.material.estoque.local.descricao}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Local" />
-								</f:facet>
+								sortBy="#{estoque.material.estoque.local.descricao}" filterMatchMode="contains" headerText="Local">
 								<h:outputText value="#{estoque.material.estoque.local.descricao}" />
 							</p:column>
 							<p:column filterBy="#{estoque.quantidade}"
-								sortBy="#{estoque.quantidade}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Quantidade Disponível" />
-								</f:facet>
+								sortBy="#{estoque.quantidade}" filterMatchMode="contains" headerText="Quantidade disponível">
 								<h:outputText value="#{estoque.quantidade}">
 									<f:convertNumber />
 								</h:outputText>
@@ -79,7 +70,7 @@
 									value="#{conferenciaMB.getUnidadeString(estoque.material.item)}"
 									styleClass="unidadeMedidaString" disabled="true" />
 							</p:column>
-							<p:column>
+							<p:column exportable="false">
 								<f:facet name="header">
 									<h:outputText value="Quantidade Emprestada" />
 								</f:facet>
@@ -92,24 +83,15 @@
 
 							</p:column>
 							<p:column filterBy="#{estoque.material.marca.nome}"
-								sortBy="#{estoque.material.marca.nome}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Marca" />
-								</f:facet>
+								sortBy="#{estoque.material.marca.nome}" filterMatchMode="contains" headerText="Marca">
 								<h:outputText value="#{estoque.material.marca.nome}" />
 							</p:column>
 							<p:column filterBy="#{estoque.material.lote}" sortBy="#{estoque.material.lote}"
-								filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Lote" />
-								</f:facet>
+								filterMatchMode="contains" headerText="Lote">
 								<h:outputText value="#{estoque.material.lote}" />
 							</p:column>
 							<p:column filterBy="#{estoque.material.dataValidadeStr}"
-								sortBy="#{estoque.material.dataValidadeStr}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Data de Validade" />
-								</f:facet>
+								sortBy="#{estoque.material.dataValidadeStr}" filterMatchMode="contains" headerText="Data de validade">
 								<h:outputText value="#{estoque.material.dataValidadeStr}" />
 							</p:column>
 						</p:dataTable>
