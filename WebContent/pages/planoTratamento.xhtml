@@ -136,8 +136,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								actionListener="#{planoTratamentoMB.exportarTabela('pdf')}"
 								ajax="false" process="dtPlanoTratamento,@this" immediate="true"
 								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-								<p:fileDownload
-									value="#{planoTratamentoMB.arquivoDownload}" />
+								<p:fileDownload value="#{planoTratamentoMB.arquivoDownload}" />
 							</p:menuitem>
 						</p:splitButton>
 					</h:panelGroup>
@@ -148,7 +147,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					value="#{planoTratamentoMB.planosTratamento}" var="planoTratamento"
 					rows="10" paginator="true" paginatorPosition="bottom"
 					selection="#{planoTratamentoMB.entity}" selectionMode="single"
-					rowKey="#{planoTratamento}" binding="#{planoTratamentoMB.tabelaPlanoTratamento}">
+					rowKey="#{planoTratamento}"
+					binding="#{planoTratamentoMB.tabelaPlanoTratamento}">
 					<p:ajax event="rowSelect" update=":lume:tabView:mainViewPT"
 						listener="#{planoTratamentoMB.atualizaTela}" />
 					<f:facet name="header">Planos de Tratamento</f:facet>
@@ -484,7 +484,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:outputLabel
 								value="Utilizar o convênio #{planoTratamentoMB.paciente.convenio.dadosBasico.nome} :"
 								rendered="#{planoTratamentoMB.paciente.convenio != null}" />
-							<p:selectBooleanCheckbox id="bconvenio" 
+							<p:selectBooleanCheckbox id="bconvenio"
 								value="#{planoTratamentoMB.entity.bconvenio}"
 								rendered="#{planoTratamentoMB.paciente.convenio != null}" />
 
@@ -1363,19 +1363,28 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:panelGrid>
 	</p:dialog>
 
-	<p:dialog 	id="dlgConfirmarFinalizacao" widgetVar="dlgConfirmarFinalizacao" style="width:80px; height: 60px;z-index:9999 !important;" 
-				header="Encerrar plano de tratamento" modal="true" appendTo=":lume">
-		<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-			<h:panelGroup>		
-				<p:outputLabel value="Todos os procedimentos do plano foram finalizados. Deseja encerrar o plano ?"/>
+	<p:dialog id="dlgConfirmarFinalizacao"
+		widgetVar="dlgConfirmarFinalizacao"
+		style="width:80px; height: 60px;z-index:9999 !important;"
+		header="Encerrar plano de tratamento" modal="true" appendTo=":lume">
+		<p:panelGrid columns="1" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid">
+			<h:panelGroup>
+				<p:outputLabel
+					value="Todos os procedimentos do plano foram finalizados. Deseja encerrar o plano ?" />
 			</h:panelGroup>
 			<h:panelGroup>
-				<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-					<p:commandButton 	icon="fa fa fa fa-check" styleClass="GreenButton" value="Encerrar" actionListener="#{planoTratamentoMB.actionFinalizar}"
-										process="@this" update=":lume:tabView:mainViewPT" oncomplete="PF('dlgConfirmarFinalizacao').hide();"/>
-					
-					<p:commandButton 	icon="fa fa fa fa-close" styleClass="RedButton" value="Cancelar" update=":lume:tabView:mainViewPT"
-										process="@this" oncomplete="PF('dlgConfirmarFinalizacao').hide();"/>
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid">
+					<p:commandButton icon="fa fa fa fa-check" styleClass="GreenButton"
+						value="Encerrar"
+						actionListener="#{planoTratamentoMB.actionFinalizar}"
+						process="@this" update=":lume:tabView:mainViewPT"
+						oncomplete="PF('dlgConfirmarFinalizacao').hide();" />
+
+					<p:commandButton icon="fa fa fa fa-close" styleClass="RedButton"
+						value="Cancelar" update=":lume:tabView:mainViewPT" process="@this"
+						oncomplete="PF('dlgConfirmarFinalizacao').hide();" />
 				</p:panelGrid>
 			</h:panelGroup>
 		</p:panelGrid>
