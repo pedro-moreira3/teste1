@@ -329,13 +329,22 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                //     agendamentoPlanosTratamentoExistentes.add(aptpNovo);
             //    }               
           //  }
-            
-            List<AgendamentoPlanoTratamentoProcedimento> temp = new ArrayList<>();
+            //items para adicionar
+            List<AgendamentoPlanoTratamentoProcedimento> paraInserir = new ArrayList<>();
             for (AgendamentoPlanoTratamentoProcedimento aptpNovo : this.insereAgendamento(procedimentosPickList.getTarget())) {
                 aptpNovo.setAgendamento(getEntity());     
-                temp.add(aptpNovo);
+                paraInserir.add(aptpNovo);
             }
-           this.getEntity().setPlanoTratamentoProcedimentosAgendamento(temp);
+            //itens para marcar como inativo
+            List<AgendamentoPlanoTratamentoProcedimento> agendamentoPlanosTratamentoExistentes =  this.getEntity().getPlanoTratamentoProcedimentosAgendamento();
+            for (AgendamentoPlanoTratamentoProcedimento aptpExistente : agendamentoPlanosTratamentoExistentes) {
+                if(!paraInserir.contains(aptpExistente)) {
+                    aptpExistente.setAtivo(false);
+                }
+                paraInserir.add(aptpExistente);
+            }
+            
+           this.getEntity().setPlanoTratamentoProcedimentosAgendamento(paraInserir);
            
             this.getEntity().setPlanoTratamento(planoTratamentoSelecionado);
             if (this.getEntity().getStatusNovo().equals("")) {
@@ -470,9 +479,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 AgendamentoSingleton.getInstance().getBo().persist(agendamento);
                 ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(), UtilsFrontEnd.getProfissionalLogado());
                 return true;
-            } else if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) {
-                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(), UtilsFrontEnd.getProfissionalLogado());
-            }
+            } //else if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) {
+             //   ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(), UtilsFrontEnd.getProfissionalLogado());
+            //}
         } catch (Exception e) {
             e.printStackTrace();
         }
