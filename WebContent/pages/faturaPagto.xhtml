@@ -5,7 +5,7 @@
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-	
+
 		<ui:include src="faturaView.xhtml">
 			<ui:param name="showNewLancamento" value="S" />
 		</ui:include>
@@ -27,10 +27,15 @@
 							<h:outputText for="filtroPaciente" value="Paciente:" />
 							<p:autoComplete id="filtroPaciente"
 								value="#{faturaPagtoMB.paciente}"
+								style="margin-top: 10px !important"
 								completeMethod="#{faturaPagtoMB.sugestoesPacientes}" var="p"
 								itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 								converter="paciente" forceSelection="true" scrollHeight="400"
 								minQueryLength="3" queryDelay="1000">
+								<p:ajax event="itemSelect" process="@this, filtroPaciente"
+									update=":lume:pt" listener="#{faturaPagtoMB.changePaciente}" />
+								<p:ajax event="change" process="@this, filtroPaciente"
+									update=":lume:pt" listener="#{faturaPagtoMB.changePaciente}" />
 
 								<p:column headerText="Nome">
 									<h:outputText value="#{p.dadosBasico.nome}" />
@@ -44,19 +49,15 @@
 
 							</p:autoComplete>
 						</h:panelGroup>
-						<ui:remove>
-							<h:panelGroup>
-								<p:outputLabel for="pt" value="Planos de Tratamento:" />
-								<p:selectCheckboxMenu id="pt"
-									value="#{faturaPagtoMB.ptSelecionados}"
-									converter="planoTratamento">
-									<f:selectItems value="#{faturaPagtoMB.listaPt}" var="plt"
-										itemValue="#{plt}" itemLabel="#{plt.descricao}" />
-									<p:ajax process="@this" />
-									<p:ajax event="toggleSelect" process="@this" />
-								</p:selectCheckboxMenu>
-							</h:panelGroup>
-						</ui:remove>
+						<h:panelGroup>
+							<p:outputLabel for="pt" value="Planos de Tratamento:" />
+							<p:selectCheckboxMenu id="pt" multiple="true"
+								value="#{faturaPagtoMB.ptSelecionados}"
+								converter="planoTratamento">
+								<f:selectItems value="#{faturaPagtoMB.listaPt}" var="plt"
+									itemValue="#{plt}" itemLabel="#{plt.descricao}" />
+							</p:selectCheckboxMenu>
+						</h:panelGroup>
 						<h:panelGroup>
 							<p:outputLabel for="status" value="Status: " />
 							<p:selectOneMenu id="status" value="#{faturaPagtoMB.status}">
@@ -67,7 +68,6 @@
 								<p:ajax process="@this" />
 							</p:selectOneMenu>
 						</h:panelGroup>
-
 					</p:panelGrid>
 					<p:panelGrid columns="4" layout="grid"
 						styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
@@ -83,16 +83,14 @@
 								immediate="true"
 								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-								<p:fileDownload
-									value="#{faturaPagtoMB.arquivoDownload}" />
+								<p:fileDownload value="#{faturaPagtoMB.arquivoDownload}" />
 
 								<p:menuitem value="Exportar tabela para PDF"
 									icon="fa fa fa-file-pdf-o"
 									actionListener="#{faturaPagtoMB.exportarTabela('pdf')}"
 									ajax="false" process="dtPrincipal,@this" immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-									<p:fileDownload
-										value="#{faturaPagtoMB.arquivoDownload}" />
+									<p:fileDownload value="#{faturaPagtoMB.arquivoDownload}" />
 								</p:menuitem>
 							</p:splitButton>
 						</h:panelGroup>
@@ -114,7 +112,8 @@
 						</p:column>
 						<p:column filterBy="#{f.paciente.dadosBasico.nomeStr}"
 							sortBy="#{f.paciente.dadosBasico.nome}" headerText="Paciente"
-							filterMatchMode="contains" filterFunction="#{faturaPagtoMB.filtroSemAcento}">
+							filterMatchMode="contains"
+							filterFunction="#{faturaPagtoMB.filtroSemAcento}">
 							<h:outputText value="#{f.paciente.dadosBasico.nome}" />
 						</p:column>
 						<p:column filterBy="#{f.dataCriacaoStr}"
@@ -130,7 +129,7 @@
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
 						</p:column>
-						
+
 						<p:column filterBy="#{faturaPagtoMB.getTotalPago(f)}"
 							headerText="Valor total pago" filterMatchMode="contains"
 							sortBy="#{faturaPagtoMB.getTotalPago(f)}">
@@ -138,7 +137,7 @@
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
 						</p:column>
-						
+
 						<p:column filterBy="#{faturaPagtoMB.getTotalRestante(f)}"
 							headerText="Valor total restante" filterMatchMode="contains"
 							sortBy="#{faturaPagtoMB.getTotalRestante(f)}">

@@ -3,6 +3,7 @@ package br.com.lume.odonto.managed;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -33,7 +34,6 @@ import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.odonto.entity.Tarifa;
-import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
@@ -51,8 +51,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private Date inicio, fim;
     private Paciente paciente;
     private List<Dominio> formasPagamento;
-    //private PlanoTratamento[] ptSelecionados;
-    //private List<PlanoTratamento> listaPt;
+    private PlanoTratamento[] ptSelecionados;
+    private List<PlanoTratamento> listaPt;
     private String status;
     private List<String> listaStatus;
     private boolean showLancamentosCancelados = false;
@@ -75,7 +75,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     //FIXME - corrigir deixando mais bonito
     @Inject
     RepasseProfissionalMB repasseProfissionalMB;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
 
@@ -158,7 +158,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void validaLancamentoRepasse(Lancamento l) {
         try {
             RepasseFaturasLancamentoSingleton.getInstance().validaLancamentoRepasse(l, UtilsFrontEnd.getProfissionalLogado());
-            addInfo("Sucesso", "Sucesso ao salvar o registro",true);
+            addInfo("Sucesso", "Sucesso ao salvar o registro", true);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Falha ao validar o lançamento! " + e.getMessage().replace("'", "\\'"), true);
@@ -184,9 +184,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 fim.set(Calendar.SECOND, 59);
             }
 
-            //setEntityList(FaturaSingleton.getInstance().getBo().findFaturasFilter(getPaciente(), getListaPt(), getInicio(), getFim()));
-            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), null, (inicio == null ? null : inicio.getTime()),
-                    (fim == null ? null : fim.getTime())));
+            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), Arrays.asList(getPtSelecionados()),
+                    (inicio == null ? null : inicio.getTime()), (fim == null ? null : fim.getTime())));
             getEntityList().removeIf(fatura -> {
                 if (Lancamento.PAGO.equals(getStatus()) && this.getTotalRestante(fatura).compareTo(BigDecimal.ZERO) > 0)
                     return true;
@@ -201,9 +200,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
-    //public void changePaciente() {
-    //    setListaPt(PlanoTratamentoSingleton.getInstance().getBo().listAtivosByPaciente(getPaciente()));
-    //}
+    public void changePaciente() {
+        setListaPt(PlanoTratamentoSingleton.getInstance().getBo().listAtivosByPaciente(getPaciente()));
+    }
 
     public void atualizaProduto() {
         if ("CC".equals(getFormaPagamento()) || "CD".equals(getFormaPagamento()) || "BO".equals(getFormaPagamento())) {
@@ -326,7 +325,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public List<Paciente> sugestoesPacientes(String query) {
         return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Faturas", tabelaFatura, type);
     }
@@ -435,21 +434,21 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.dataCredito = dataCredito;
     }
 
-    //public PlanoTratamento[] getPtSelecionados() {
-    //    return ptSelecionados;
-    //}
+    public PlanoTratamento[] getPtSelecionados() {
+        return ptSelecionados;
+    }
 
-    //public void setPtSelecionados(PlanoTratamento[] ptSelecionados) {
-    //    this.ptSelecionados = ptSelecionados;
-    //}
+    public void setPtSelecionados(PlanoTratamento[] ptSelecionados) {
+        this.ptSelecionados = ptSelecionados;
+    }
 
-    //public List<PlanoTratamento> getListaPt() {
-    //    return listaPt;
-    //}
+    public List<PlanoTratamento> getListaPt() {
+        return listaPt;
+    }
 
-    //public void setListaPt(List<PlanoTratamento> listaPt) {
-    //    this.listaPt = listaPt;
-    //}
+    public void setListaPt(List<PlanoTratamento> listaPt) {
+        this.listaPt = listaPt;
+    }
 
     public String getStatus() {
         return status;
