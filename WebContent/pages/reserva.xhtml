@@ -10,6 +10,11 @@
   height: 100px !important;
   
 }
+
+.red { color:red;}
+
+.none {}
+
 </style>
 
         <div class="ui-g ui-fluid">
@@ -184,7 +189,8 @@
                     </p:outputPanel>
 						<br />
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtReserva" value="#{reservaMB.reservas}" var="reserva" rows="15" paginator="true"
-                            rowKey="#{reserva}" paginatorPosition="bottom" binding="#{reservaMB.tabelaReserva}">
+                            rowKey="#{reserva}" paginatorPosition="bottom" binding="#{reservaMB.tabelaReserva}"                            
+                            >
                             <p:ajax event="rowSelect"  listener="#{reservaMB.carregaTelaGeral}" />
                             <f:facet name="header">
                                 <h:panelGroup id="filtro" rendered="#{reservaMB.admin}">
@@ -219,9 +225,10 @@
                             		filterMatchMode="contains" headerText="Data de Agendamento">
                                 <h:outputText value="#{reserva.agendamento.inicioStr}" />
                             </p:column>
-                            <p:column filterBy="#{reserva.agendamento.statusDescricao}" sortBy="#{reserva.agendamento.statusDescricao}"
+                            <p:column styleClass="#{(reserva.aviso)?'red':'none'}"
+                             filterBy="#{reserva.statusAgendamentoPlanoTratamentoProcedimento}" sortBy="#{reserva.statusAgendamentoPlanoTratamentoProcedimento}"
                             		filterMatchMode="contains" headerText="Status de Agendamento">
-                                <h:outputText value="#{reserva.agendamento.statusDescricao}" />
+                                <h:outputText value="#{reserva.statusAgendamentoPlanoTratamentoProcedimento}" />
                             </p:column>                            
                             <p:column filterBy="#{reserva.prazoStr}" sortBy="#{reserva.prazoStrOrd}" filterMatchMode="contains" headerText="Data da Utilização">
                                 <h:outputText value="#{reserva.prazoStr}" />
