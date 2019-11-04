@@ -412,7 +412,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									value="#{planoTratamentoMB.paciente.dadosBasico.nome}" /></td>
 							<td><h:outputText value="#{planoTratamentoMB.dataOrcamento}" /></td>
 							<td><h:outputText
-									value="#{planoTratamentoMB.profissionalLogado}" /></td>
+									value="#{planoTratamentoMB.entity.profissional}" /></td>
 
 							<ui:remove>
 								<h:panelGroup
@@ -492,7 +492,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								value="Profissional para finalizar o procedimento: "
 								rendered="#{planoTratamentoMB.admin}" />
 							<p:selectOneMenu id="profissionalFinalizaProcedimento_new"
-								value="#{planoTratamentoMB.profissionalLogado}"
+								value="#{planoTratamentoMB.entity.profissional}"
 								converter="profissional" rendered="#{planoTratamentoMB.admin}"
 								filter="true" filterMatchMode="contains">
 								<f:selectItem itemValue="#{null}"
@@ -512,9 +512,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 						<p:commandButton icon="White fa fa-save" value="Salvar"
 							styleClass="GreenButton" process="@this, :lume:tabView:pnCriarPT"
-							update=":lume:tabView:mainViewPT"
-							actionListener="#{planoTratamentoMB.actionPersist}"
-							oncomplete="PF('dlgViewPlanoTratamento').show();"/>
+							update=":lume:tabView:mainViewPT, :lume:tabView:pnViewPlanoTratamento"
+							actionListener="#{planoTratamentoMB.actionPersist}" />
 					</p:panelGrid>
 				</div>
 			</div>
@@ -540,7 +539,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							value="Profissional para finalizar o procedimento: "
 							rendered="#{planoTratamentoMB.admin}" />
 						<p:selectOneMenu id="profissionalFinalizaProcedimento"
-							value="#{planoTratamentoMB.profissionalLogado}"
+							value="#{planoTratamentoMB.entity.profissional}"
 							converter="profissional" rendered="#{planoTratamentoMB.admin}"
 							filter="true" filterMatchMode="contains">
 							<f:selectItem itemValue="#{null}"

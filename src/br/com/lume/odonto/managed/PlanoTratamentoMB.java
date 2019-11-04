@@ -76,8 +76,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     private Logger log = Logger.getLogger(PlanoTratamentoMB.class);
 
-    private Profissional profissionalLogado, profissionalFinalizaProcedimento;
-
     private String evolucaoProcedimento = " ";
 
     private Evolucao evolucao;
@@ -155,8 +153,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         setClazz(PlanoTratamento.class);
         try {
             justificativas = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("planotratamento", "justificativa");
-            profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
-            profissionalFinalizaProcedimento = profissionalLogado;
             atualizaTela();
 
             justificativasCancelamento = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("planotratamentoprocedimento", "justificativa");
@@ -196,10 +192,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     return;
                 }
 
-                if (getEntity().getId() == null) {
-                    getEntity().setProfissional(profissionalLogado);
-                }
-
                 for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
                     if (ptp.getValorAnterior() != null && ptp.getValorDesconto() != null && ptp.getValorAnterior().doubleValue() != ptp.getValorDesconto().doubleValue()) {
                         getEntity().setAlterouvaloresdesconto(true);
@@ -217,9 +209,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
                     validaRepasse();
                     addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                    PrimeFaces.current().executeScript("PF('dlgViewPlanoTratamento').show()");
+
                     PrimeFaces.current().executeScript("PF('dlgEditaPlanoTratamento').hide()");
-                    atualizaTela();
                 }
             } else {
                 getEntity().setPaciente(getPaciente());
@@ -233,6 +224,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
                 addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 PrimeFaces.current().executeScript("PF('dlgPt').hide()");
+
+                setEntity(PlanoTratamentoSingleton.getInstance().getBo().find(getEntity()));
+                carregaDlgProcedimentos(getEntity());
+                PrimeFaces.current().executeScript("PF('dlgViewPlanoTratamento').show()");
             }
 
             carregarPlanosTratamento();
@@ -324,7 +319,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.getEntity().setJustificativa(justificativa.getNome());
                 this.getEntity().setFinalizado(Status.SIM);
                 this.getEntity().setDataFinalizado(new Date());
-                this.getEntity().setFinalizadoPorProfissional(profissionalLogado);
+                this.getEntity().setFinalizadoPorProfissional(getEntity().getProfissional());
                 this.criaRetorno();
                 cancelaAgendamentos();
                 //cancelaLancamentos();
@@ -339,7 +334,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.getEntity().setJustificativa(null);
                 this.getEntity().setFinalizado(Status.SIM);
                 this.getEntity().setDataFinalizado(new Date());
-                this.getEntity().setFinalizadoPorProfissional(profissionalLogado);
+                this.getEntity().setFinalizadoPorProfissional(getEntity().getProfissional());
                 //cancelaLancamentos();
                 PlanoTratamentoSingleton.getInstance().getBo().persist(this.getEntity());
                 this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
@@ -451,7 +446,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (ptp.getStatus() != null && ptp.getStatus().equals("F")) {
             if (ptp.getFinalizadoPorProfissional() == null) {
                 String evoPro = " <br/> " + "Procedimento : " + ptp.getProcedimento().getDescricao() + " <br/> " + "    Finalizado : " + Utils.dateToString(
-                        new Date()) + " <br/> " + "   Por : " + profissionalFinalizaProcedimento.getDadosBasico().getNome();
+                        new Date()) + " <br/> " + "   Por : " + getEntity().getProfissional().getDadosBasico().getNome();
                 if (ptp.getDenteObj() != null && !ptp.getDenteObj().getDescricao().equals("")) {
                     for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {
                         evoPro += " <br/> " + "  Dente : " + ptp.getDenteObj().getDescricao() + "    Face : " + ptpf.getFace();
@@ -692,7 +687,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionFinalizarNovamente(PlanoTratamentoProcedimento ptp) {
         if (ptp.getStatus() != null && ptp.getStatus().equals("F")) {
-            ptp.setFinalizadoPorProfissional(profissionalFinalizaProcedimento);
+            ptp.setFinalizadoPorProfissional(getEntity().getProfissional());
             calculaRepasse(ptp);
         }
     }
@@ -1264,9 +1259,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     private boolean temPermissaoExtra(boolean orcamento) {
-        if (isDentistaAdmin() || profissionalLogado.getPerfil().equals(OdontoPerfil.ORCAMENTADOR) || profissionalLogado.getPerfil().equals(
-                OdontoPerfil.ADMINISTRADOR) || profissionalLogado.getPerfil().equals(
-                        OdontoPerfil.RESPONSAVEL_TECNICO) || profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR_CLINICA) || (orcamento && profissionalLogado.isFazOrcamento()))
+        if (isDentistaAdmin() || UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.ORCAMENTADOR) || UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(
+                OdontoPerfil.ADMINISTRADOR) || UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.RESPONSAVEL_TECNICO) || UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(
+                        OdontoPerfil.ADMINISTRADOR_CLINICA) || (orcamento && UtilsFrontEnd.getProfissionalLogado().isFazOrcamento()))
             return true;
         return false;
     }
@@ -1443,22 +1438,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void exportarTabela(String type) {
         exportarTabela("Planos de Tratamento", tabelaPlanoTratamento, type);
-    }
-
-    public Profissional getProfissionalLogado() {
-        return profissionalLogado;
-    }
-
-    public void setProfissionalLogado(Profissional profissionalLogado) {
-        this.profissionalLogado = profissionalLogado;
-    }
-
-    public Profissional getProfissionalFinalizaProcedimento() {
-        return profissionalFinalizaProcedimento;
-    }
-
-    public void setProfissionalFinalizaProcedimento(Profissional profissionalFinalizaProcedimento) {
-        this.profissionalFinalizaProcedimento = profissionalFinalizaProcedimento;
     }
 
     public String getEvolucaoProcedimento() {
