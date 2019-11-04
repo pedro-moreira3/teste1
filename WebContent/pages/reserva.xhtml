@@ -68,8 +68,8 @@
 								<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"		                            	
 		                                style="border:0px none; background-color:transparent;" >	
 		                           <p:outputPanel>		         
-	                                	<p:outputLabel for="quantidade" value="Quantidade: " />
-	                                	<p:inputText id="quantidade" value="#{reservaMB.quantidade}" required="true" maxlength="10" onkeypress="validaNumeros(event)" />
+	                                	<p:outputLabel for="quantidade" value="Quantidade: *" />
+	                                	<p:inputText id="quantidade" value="#{reservaMB.quantidade}" maxlength="10" onkeypress="validaNumeros(event)" />
 									</p:outputPanel>
 									<p:outputPanel>		                                                         
 	                                	<h:outputLabel for="digitacao" value="Kit: *" />
@@ -91,7 +91,7 @@
 									<p:outputPanel>		
 	                                	<p:outputLabel for="planoTratamentoProcedimentoAgendamento" value="Procedimentos: " />
 	                                	<p:selectCheckboxMenu id="planoTratamentoProcedimentoAgendamento" converter="agendamentoPlano" value="#{reservaMB.planoTratamentoProcedimentoAgendamentos}"
-		                                    label="Selecione o(s) procedimento(s)" required="#{reservaMB.procedimentoObrigatorio}">
+		                                    label="Selecione o(s) procedimento(s)" >
 		                                    <f:selectItems value="#{reservaMB.agendamentoProcedimentos}" var="ap" itemValue="#{ap}" itemLabel="#{ap.planoTratamentoProcedimento.descricaoCompleta}" />
 	                                	</p:selectCheckboxMenu>
 									</p:outputPanel>		                                	
@@ -138,7 +138,7 @@
 						<div class="EmptyBox20"></div>
 								<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 									<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{reservaMB.actionPersist}"
-												update=":lume:dtReserva,:lume:pnDlg,:lume:dtReserva" process="@this,:lume:pnDlg"  styleClass="GreenButton"/>
+												update=":lume:dtReserva,:lume:pnDlg,:lume:dtKits,:lume:pnItens" process="@this,:lume:pnDlg,:lume:dtKits,:lume:pnItens"  styleClass="GreenButton"/>
 									<p:commandButton id="fechar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlg').hide();" immediate="true" />											
 								</p:panelGrid>
 						</p:outputPanel>                       
@@ -219,6 +219,10 @@
                             		filterMatchMode="contains" headerText="Data de Agendamento">
                                 <h:outputText value="#{reserva.agendamento.inicioStr}" />
                             </p:column>
+                            <p:column filterBy="#{reserva.agendamento.statusDescricao}" sortBy="#{reserva.agendamento.statusDescricao}"
+                            		filterMatchMode="contains" headerText="Status de Agendamento">
+                                <h:outputText value="#{reserva.agendamento.statusDescricao}" />
+                            </p:column>                            
                             <p:column filterBy="#{reserva.prazoStr}" sortBy="#{reserva.prazoStrOrd}" filterMatchMode="contains" headerText="Data da Utilização">
                                 <h:outputText value="#{reserva.prazoStr}" />
                             </p:column>

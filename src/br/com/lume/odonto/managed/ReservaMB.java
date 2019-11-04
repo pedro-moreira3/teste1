@@ -44,6 +44,7 @@ import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.reserva.ReservaSingleton;
 import br.com.lume.reservaKit.ReservaKitSingleton;
+import br.com.lume.reservaKit.bo.ReservaKitBO;
 import br.com.lume.reservaKitAgendamentoPlanoTratamentoProcedimento.ReservaKitAgendamentoPlanoTratamentoProcedimentoSingleton;
 
 @ManagedBean
@@ -167,7 +168,12 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         boolean ativo = false;
         if (rkaptps != null && !rkaptps.isEmpty()) {
             for (ReservaKitAgendamentoPlanoTratamentoProcedimento rkaptp : rkaptps) {
-                if (this.getAgendamento().equals(this.getEntity().getAgendamento())) {
+                if (this.getAgendamento().equals(this.getEntity().getAgendamento())) {                    
+                    this.getEntity().setReservaKits(this.getReservaKits());                 
+                    if(this.getReservaKits() != null && !this.getReservaKits().isEmpty()) {
+                        ReservaKitSingleton.getInstance().getBo().removeByReserva(this.getEntity());    
+                    }
+                    
                     for (ReservaKit rk : this.getEntity().getReservaKits()) {
                         for (AgendamentoPlanoTratamentoProcedimento aptp : rk.getPlanoTratamentoProcedimentosAgendamentos()) {
                             if (rkaptp.getAgendamentoPlanoTratamentoProcedimento().equals(aptp)) {
@@ -190,6 +196,9 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         this.getEntity().setData(new Date());
         this.getEntity().setProfissional(this.getProfissionalSelecionado());
+        this.getEntity().setReservaKits(new ArrayList<ReservaKit>());
+        //ReservaKitSingleton.getInstance().getBo().removeByReserva(reserva);
+        //ReservaKitSingleton.getInstance().getBo().remove(entity)
         for (ReservaKit reskit : this.getReservaKits()) {
             if (reskit.getId() != null && reskit.getId() == 0 || !this.getEntity().getReservaKits().contains(reskit)) {
                 this.getEntity().getReservaKits().add(reskit);
@@ -222,6 +231,18 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     }
 
     public void adicionar() {
+        if(quantidade == null) {
+            this.addError("Informe a quantidade e o Kit", "",true);
+            return;
+        }
+        if(digitacao == null) {
+            this.addError("Informe o Kit", "",true);
+            return;
+        }
+        if(procedimentoObrigatorio && (planoTratamentoProcedimentoAgendamentos == null || planoTratamentoProcedimentoAgendamentos.isEmpty())) {
+            this.addError("Informe o Procedimento", "",true);
+            return;
+        }
         if (this.validaKit()) {
             ReservaKit reservaKit = new ReservaKit();
             reservaKit.setKit((Kit) (this.getSelectedKit().getData()));
@@ -241,9 +262,13 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     }
 
     public void carregarEditar(Reserva reserva) {
+        this.agendamentos.add(reserva.getAgendamento());
         setEntity(reserva);  
+        this.setAgendamento(reserva.getAgendamento());
+        getEntity().setAgendamento(reserva.getAgendamento());
         this.setReservaKits(new ArrayList<ReservaKit>());
         this.getReservaKits().addAll(reserva.getReservaKits());
+        
     } 
     
     public void carregarEditarItem(ReservaKit reservaKit) {
@@ -251,7 +276,9 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     }
     
     public void removeItem(ReservaKit reservaKit) {
-        this.getReservaKits().remove(reservaKit);      
+        this.getReservaKits().remove(reservaKit);  
+        //this.getEntity().getReservaKits().remove(reservaKit);  
+        this.getReservaKits();
     }     
     
     

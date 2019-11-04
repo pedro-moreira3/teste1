@@ -15,7 +15,7 @@
                        <f:facet name="message">
                             <h:outputText value="Você tem certeza que deseja remover este Item?" />
                     	</f:facet>
-                        <p:commandButton style="color:#ffffff !important" id="confirm" icon="fa fa-trash-o" value="Confirmar" oncomplete="PF('confirmDialog').hide()" process="@this" update=":lume:tbItemTree, :lume:pnItem" 
+                        <p:commandButton style="color:#ffffff !important" id="confirm" icon="fa fa-trash-o" value="Confirmar" oncomplete="PF('confirmDialog').hide()" process="@this" update=":lume:form:tbItemTree, :lume:pnItem" 
                         actionListener="#{itemMB.removeItens}"  styleClass="GreenButton" />
                         <p:commandButton style="color:#ffffff !important" value="Cancelar" oncomplete="PF('confirmDialog').hide()" icon="White fa fa-file-o" styleClass="RedButton">
 								
@@ -126,7 +126,8 @@
                                 <p:commandButton id="todos" icon="White fa fa-search" value="Pesquisar" actionListener="#{itemMB.actionTodos}" update=":lume:pnItem,:lume:pnItemTree"
                                     process=":lume:pnItemTree" styleClass="OrangeButton" />
                             </p:panelGrid>
-                            <p:treeTable value="#{itemMB.root}" var="item" id="tbItemTree" selection="#{itemMB.selectedItem}" selectionMode="single" style="white-space: normal;">                              
+                            <h:form id="form">
+                            <p:treeTable paginator="true" rows="30" value="#{itemMB.root}" var="item" id="tbItemTree" selection="#{itemMB.selectedItem}" selectionMode="single" style="white-space: normal;">                              
                                 <f:facet name="header">Itens</f:facet>
 								<p:column headerText="Ações" width="20%" rendered="#{item.descricao ne 'RAIZ'}" style="text-align:center !important">
 									<p:commandButton class="OrangeButton" icon="fa fa-pencil" update=":lume:pnDlg" title="Editar" process="@this"
@@ -154,6 +155,7 @@
                                     <h:outputText value="#{item.formaArmazenamentoString}" />
                                 </p:column>                              
                             </p:treeTable>
+                            </h:form>
                         </p:outputPanel>
                     </p:outputPanel>
 

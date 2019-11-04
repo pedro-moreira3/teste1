@@ -316,7 +316,27 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         //    profissional = profissionalDentroAgenda;
         //  }
         if ((procedimentosPickList.getSource().isEmpty() && procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado == null) || (!procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado != null)) {
-            this.getEntity().setPlanoTratamentoProcedimentosAgendamento(this.insereAgendamento(procedimentosPickList.getTarget()));
+           
+//            List<AgendamentoPlanoTratamentoProcedimento> agendamentoPlanosTratamentoExistentes =  this.getEntity().getPlanoTratamentoProcedimentosAgendamento();
+//            for (AgendamentoPlanoTratamentoProcedimento aptpExistente : agendamentoPlanosTratamentoExistentes) {
+//                if(!this.insereAgendamento(procedimentosPickList.getTarget()).contains(aptpExistente)) {
+//                    aptpExistente.setAtivo(false);
+//                }
+//            }
+           // for (AgendamentoPlanoTratamentoProcedimento aptpNovo : this.insereAgendamento(procedimentosPickList.getTarget())) {
+              //  if(!agendamentoPlanosTratamentoExistentes.contains(aptpNovo)) {
+               //     aptpNovo.setAgendamento(getEntity());
+               //     agendamentoPlanosTratamentoExistentes.add(aptpNovo);
+            //    }               
+          //  }
+            
+            List<AgendamentoPlanoTratamentoProcedimento> temp = new ArrayList<>();
+            for (AgendamentoPlanoTratamentoProcedimento aptpNovo : this.insereAgendamento(procedimentosPickList.getTarget())) {
+                aptpNovo.setAgendamento(getEntity());     
+                temp.add(aptpNovo);
+            }
+           this.getEntity().setPlanoTratamentoProcedimentosAgendamento(temp);
+           
             this.getEntity().setPlanoTratamento(planoTratamentoSelecionado);
             if (this.getEntity().getStatusNovo().equals("")) {
                 this.getEntity().setStatusNovo(status);
