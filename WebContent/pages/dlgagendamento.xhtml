@@ -253,7 +253,7 @@
 						<p:outputLabel for="emailPaciente" value="Email" />
 						<p:message for="emailPaciente" styleClass="msg" />
 					</h:panelGroup>
-					<h:panelGroup styleClass="md-inputfield">						
+					<h:panelGroup styleClass="md-inputfield">
 						<p:calendar id="dtNascimentoPaciente"
 							value="#{agendamentoMB.paciente.dadosBasico.dataNascimento}"
 							pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
@@ -261,36 +261,35 @@
 							timeZone="#{lumeSecurity.timeZone}" navigator="true"
 							yearRange="-100:+0" maxdate="#{odontoMB.sysdate}">
 						</p:calendar>
-						<p:outputLabel for="dtNascimentoPaciente" value="Data de Nascimento" />
+						<p:outputLabel for="dtNascimentoPaciente"
+							value="Data de Nascimento" />
 						<p:message for="dtNascimentoPaciente" styleClass="msg" />
 					</h:panelGroup>
-					<h:panelGroup styleClass="md-inputfield">						
+					<h:panelGroup styleClass="md-inputfield">
 						<p:inputText id="responsavelPaciente"
 							value="#{agendamentoMB.paciente.dadosBasico.responsavel}"
 							maxlength="100" />
 						<p:outputLabel for="responsavelPaciente"
 							value="Nome do Responsável" />
-					</h:panelGroup>					
-					<h:panelGroup styleClass="md-inputfield" style="margin-bottom:17px !important;margin-top:17px !important;">						
-							<p:selectOneMenu id="convenioRapido"
+					</h:panelGroup>
+					<h:panelGroup styleClass="md-inputfield"
+						style="margin-bottom:17px !important;margin-top:17px !important;">
+						<p:selectOneMenu id="convenioRapido"
 							value="#{agendamentoMB.paciente.convenio}" converter="convenio"
-							autoWidth="false" >
-							<f:selectItem itemValue="#{null}"
-								itemLabel="Sem convênio" />
+							autoWidth="false">
+							<f:selectItem itemValue="#{null}" itemLabel="Sem convênio" />
 							<f:selectItems value="#{agendamentoMB.convenios}" var="convenio"
 								itemValue="#{convenio}" itemLabel="#{convenio.dadosBasico.nome}" />
-						</p:selectOneMenu>					
+						</p:selectOneMenu>
 					</h:panelGroup>
-					
-					<h:panelGroup styleClass="md-inputfield">	
-						
+
+					<h:panelGroup styleClass="md-inputfield">
+
 						<p:inputText id="numeroPlanoRapido"
-							value="#{agendamentoMB.paciente.numeroPlano}" maxlength="50"
-							 />
+							value="#{agendamentoMB.paciente.numeroPlano}" maxlength="50" />
 						<p:outputLabel id="lblnumeroPlanoRapido" for="numeroPlano"
-							value="Carteira do Convênio : "
-							 />							 
-					</h:panelGroup>							
+							value="Carteira do Convênio : " />
+					</h:panelGroup>
 					<p:separator styleClass="SeparatorFull" />
 					<div class="Container25 Responsive100 Fnone">
 						<p:commandButton id="persistPaciente" icon="White fa fa-save"
@@ -364,10 +363,10 @@
 				<p:calendar id="chegouAs" value="#{agendamentoMB.entity.chegouAs}"
 					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.chegouAs)}"
-					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.chegouAs)}" >
-					<p:ajax event="dateSelect" process="@this" update="@this"/>
+					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.chegouAs)}">
+					<p:ajax event="dateSelect" process="@this" update="@this" />
 					<f:ajax event="change" execute="@this" render="lastDate" />
-					</p:calendar>
+				</p:calendar>
 				<p:outputLabel for="chegouAs" value="Chegou às" />
 				<p:message styleClass="msg" for="chegouAs" />
 			</h:panelGroup>
@@ -375,10 +374,10 @@
 				<p:calendar id="iniciouAs" value="#{agendamentoMB.entity.iniciouAs}"
 					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.iniciouAs)}"
-					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.iniciouAs)}" >
-					<p:ajax event="dateSelect" process="@this" update="@this"/>
+					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.iniciouAs)}">
+					<p:ajax event="dateSelect" process="@this" update="@this" />
 					<f:ajax event="change" execute="@this" render="lastDate" />
-					</p:calendar>
+				</p:calendar>
 				<p:outputLabel for="iniciouAs" value="Iniciou atend. às" />
 				<p:message styleClass="msg" for="iniciouAs" />
 			</h:panelGroup>
@@ -387,10 +386,10 @@
 					value="#{agendamentoMB.entity.finalizouAs}"
 					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.finalizouAs)}"
-					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.finalizouAs)}" >
-					<p:ajax event="dateSelect" process="@this" update="@this"/>
+					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.finalizouAs)}">
+					<p:ajax event="dateSelect" process="@this" update="@this" />
 					<f:ajax event="change" execute="@this" render="lastDate" />
-					</p:calendar>
+				</p:calendar>
 				<p:outputLabel for="finalizouAs" value="Finalizou atend. às" />
 				<p:message styleClass="msg" for="finalizouAs" />
 			</h:panelGroup>
@@ -486,7 +485,12 @@
 						var="planoTratamento"
 						itemLabel="#{planoTratamento.dataHoraDescStr}"
 						itemValue="#{planoTratamento}" />
-					<p:ajax update=":lume:pgProcedimentos"
+
+					<p:ajax update=":lume:pgProcedimentos" event="itemSelect"
+						listener="#{agendamentoMB.atualizaPickList}"
+						process=":lume:planoTratamento,:lume:procedimentos, @this" />
+					<p:ajax update=":lume:pgProcedimentos" event="change"
+						listener="#{agendamentoMB.atualizaPickList}"
 						process=":lume:planoTratamento,:lume:procedimentos, @this" />
 				</p:selectOneMenu>
 				<p:message for="planoTratamento" styleClass="msg" />
@@ -509,7 +513,9 @@
 					value="Mostra procedimentos finalizados? " />
 				<p:selectOneRadio id="mostraFinalizados"
 					value="#{agendamentoMB.mostraFinalizados}">
-					<p:ajax update="procedimentos" process="@this" />
+					<p:ajax update=":lume:pgProcedimentos" event="change"
+						process="@this" listener="#{agendamentoMB.atualizaPickList}" />
+
 					<f:selectItem itemLabel="Sim" itemValue="true" />
 					<f:selectItem itemLabel="Não" itemValue="false" />
 				</p:selectOneRadio>
@@ -546,7 +552,7 @@
 					responsive="true" required="false" converter="agendamentoPlanoDash">
 					<f:facet name="sourceCaption">Disponíveis</f:facet>
 					<f:facet name="targetCaption">Selecionados</f:facet>
-					<p:ajax event="transfer" process="@this, :lume:procedimentos" />
+					<p:ajax event="transfer" process="@this" />
 				</p:pickList>
 			</h:panelGroup>
 

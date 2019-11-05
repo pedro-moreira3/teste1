@@ -351,30 +351,32 @@ div.ui-selectoneradio label {
 										</h:panelGroup>
 									</p:outputPanel>
 									<p:outputPanel>
-									
+
 										<h:outputLabel value="Mostrar os agendamentos : " />
-									
+
 										<br />
-										
+
 										<h:panelGroup style="display:block;margin-left:3px;">
 											<p:selectBooleanCheckbox id="checkFiltro"
 												value="#{agendamentoMB.checkFiltro}">
 												<p:ajax event="change" process="@this,:lume:dadosFiltroAg"
-													update=":lume:schedule,:lume:dadosFiltroAg" oncomplete="atualizaGraficos();"
+													update=":lume:schedule,:lume:dadosFiltroAg"
+													oncomplete="atualizaGraficos();"
 													listener="#{agendamentoMB.marcarFiltros}" />
 											</p:selectBooleanCheckbox>
 											<p:outputLabel for="checkFiltro" value="Marcar todos" />
 										</h:panelGroup>
-										
+
 										<br />
 
 										<p:selectManyCheckbox
 											value="#{agendamentoMB.filtroAgendamento}" layout="grid"
 											columns="4">
-											
-											<p:ajax process="@this" update=":lume:schedule,:lume:dadosFiltroAg"
+
+											<p:ajax process="@this"
+												update=":lume:schedule,:lume:dadosFiltroAg"
 												oncomplete="atualizaGraficos();" />
-												
+
 											<f:selectItem
 												itemLabel="&lt;div&gt;&lt;div class='agendamentoAfastamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Bloqueio&lt;/div&gt;"
 												itemValue="F" itemEscaped="false" />
@@ -513,15 +515,17 @@ div.ui-selectoneradio label {
 					};
 			function getRuleFromSelectorIncludes(selector) {
 				var lumeCss = undefined;
-				for(var i = 0; i < document.styleSheets.length; i++) {
-					if(document.styleSheets[i].href && document.styleSheets[i].href.includes("lume.css")) {
+				for (var i = 0; i < document.styleSheets.length; i++) {
+					if (document.styleSheets[i].href
+							&& document.styleSheets[i].href
+									.includes("lume.css")) {
 						lumeCss = document.styleSheets[i];
 						break;
-					}					
+					}
 				}
-				if(lumeCss == undefined)
+				if (lumeCss == undefined)
 					return null;
-				
+
 				var rules = lumeCss.cssRules ? lumeCss.cssRules : lumeCss.rules;
 				for (i = 0; i < rules.length; i++) {
 					if (rules[i].selectorText.includes("." + selector)) {
