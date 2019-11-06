@@ -122,7 +122,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.setClazz(Paciente.class);
         this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
         pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(super.getEntity());
-        if (profissionalLogado.getPerfil().equals(OdontoPerfil.DENTISTA) && UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false) {
+        if ((profissionalLogado == null || profissionalLogado.getPerfil().equals(
+                OdontoPerfil.DENTISTA)) && (UtilsFrontEnd.getEmpresaLogada() == null || UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false)) {
             visivelDadosPaciente = false;
         }
         try {
@@ -131,10 +132,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 planoRender = true;
             }
             DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
-            especialidades = EspecialidadeSingleton.getInstance().getBo().listAnamnese(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            if (UtilsFrontEnd.getProfissionalLogado() != null)
+                especialidades = EspecialidadeSingleton.getInstance().getBo().listAnamnese(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.sortAnamneses();
             this.geraLista();
-            convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            if (UtilsFrontEnd.getProfissionalLogado() != null)
+                convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (TelefoneException te) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "");
             log.error(OdontoMensagens.getMensagem("erro.valida.telefone"));
@@ -307,7 +310,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     private void geraLista() {
         try {
-            setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            if (UtilsFrontEnd.getProfissionalLogado() != null)
+                setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -425,8 +429,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
         this.setReadonly(false);
         Map<String, List<Pergunta>> perguntas = new HashMap<>();
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
+            perguntas = PerguntaSingleton.getInstance().getBo().listByEspecialidade(especialidadeSelecionada, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        }
         anamneses = new ArrayList<>();
-        perguntas = PerguntaSingleton.getInstance().getBo().listByEspecialidade(especialidadeSelecionada, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         anamneses = ItemAnamneseSingleton.getInstance().getBo().perguntasAnamnese(perguntas);
     }
 
