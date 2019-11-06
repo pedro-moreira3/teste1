@@ -181,6 +181,13 @@
 										<p:fileDownload
 											value="#{reservaMB.arquivoDownload}" />
 									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{reservaMB.exportarTabela('csv')}"
+										ajax="false" process="dtReserva,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload value="#{reservaMB.arquivoDownload}" />
+									</p:menuitem>
 								</p:splitButton>
 							</h:panelGroup>
 

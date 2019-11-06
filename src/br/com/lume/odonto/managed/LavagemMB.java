@@ -15,14 +15,15 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
 
-import br.com.lume.emprestimoUnitario.EmprestimoUnitarioSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
-import br.com.lume.emprestimoKit.EmprestimoKitSingleton;
 import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.emprestimoKit.EmprestimoKitSingleton;
+import br.com.lume.emprestimoUnitario.EmprestimoUnitarioSingleton;
 import br.com.lume.esterilizacao.EsterilizacaoSingleton;
 import br.com.lume.estoque.EstoqueSingleton;
 import br.com.lume.item.ItemSingleton;
@@ -30,10 +31,9 @@ import br.com.lume.lavagem.LavagemSingleton;
 import br.com.lume.lavagemKit.LavagemKitSingleton;
 import br.com.lume.local.LocalSingleton;
 import br.com.lume.material.MaterialSingleton;
-import br.com.lume.materialLog.MaterialLogSingleton;
-import br.com.lume.odonto.entity.EmprestimoUnitario;
-import br.com.lume.odonto.entity.EmprestimoKit;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.EmprestimoKit;
+import br.com.lume.odonto.entity.EmprestimoUnitario;
 import br.com.lume.odonto.entity.Esterilizacao;
 import br.com.lume.odonto.entity.EsterilizacaoKit;
 import br.com.lume.odonto.entity.Item;
@@ -41,7 +41,6 @@ import br.com.lume.odonto.entity.Lavagem;
 import br.com.lume.odonto.entity.LavagemKit;
 import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Material;
-import br.com.lume.odonto.entity.MaterialLog;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.profissional.ProfissionalSingleton;
@@ -76,8 +75,10 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
 
     private Date dataAtual, dataValidade;
  
-
     private Item itemSelecionado;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaLavagem;
 
     public LavagemMB() {
         super(LavagemSingleton.getInstance().getBo());
@@ -568,6 +569,10 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
+    
+    public void exportarTabela(String type) {
+        this.exportarTabela("Lavagens", tabelaLavagem, type);
+    }
 
     public Date getDataAtual() {
         return dataAtual;
@@ -669,6 +674,14 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
 
     public void setItemSelecionado(Item itemSelecionado) {
         this.itemSelecionado = itemSelecionado;
+    }
+
+    public DataTable getTabelaLavagem() {
+        return tabelaLavagem;
+    }
+
+    public void setTabelaLavagem(DataTable tabelaLavagem) {
+        this.tabelaLavagem = tabelaLavagem;
     }
 
 }

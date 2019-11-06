@@ -39,6 +39,15 @@
 										<p:fileDownload
 											value="#{materialMB.arquivoDownload}" />
 									</p:menuitem>
+									
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{materialMB.exportarTabelaMovimentacao('csv')}"
+										ajax="false" process="dtMaterial,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{materialMB.arquivoDownload}" />
+									</p:menuitem>
 								</p:splitButton>
 							</h:panelGroup>
 
@@ -48,7 +57,7 @@
 							id="dtMaterial" value="#{materialMB.materiais}" var="material"
 							rows="6" paginator="true" selection="#{materialMB.entity}"
 							selectionMode="single" rowKey="#{material}"
-							paginatorPosition="bottom" binding="#{materialMB.tabelaMovimentacao}"">
+							paginatorPosition="bottom" binding="#{materialMB.tabelaMovimentacao}">
 							<p:ajax event="rowSelect" update=":lume:pnMaterial"
 								listener="#{materialMB.carregaTela()}" />
 							<f:facet name="header">Materiais</f:facet>

@@ -57,7 +57,7 @@
 										value="Exportar tabela para Excel"
 										styleClass="GreenSplitButton"
 										actionListener="#{emprestimoKitMB.exportarTabelaKit('xls')}"
-										ajax="false" process="dtKitsPendentes,@this" update="@this"
+										ajax="false" process=":lume:dtKitsPendentes,@this" update="@this"
 										immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
@@ -67,16 +67,21 @@
 										<p:menuitem value="Exportar tabela para PDF"
 											icon="fa fa fa-file-pdf-o"
 											actionListener="#{emprestimoKitMB.exportarTabelaKit('pdf')}"
-											ajax="false" process="dtKitsPendentes,@this"
+											ajax="false" process=":lume:dtKitsPendentes,@this"
 											immediate="true"
 											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 											<p:fileDownload
 												value="#{emprestimoKitMB.arquivoDownload}" />
 										</p:menuitem>
+										<p:menuitem value="Exportar tabela para CSV"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{emprestimoKitMB.exportarTabelaKit('csv')}"
+											ajax="false" process=":lume:dtKitsPendentes,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload value="#{emprestimoKitMB.arquivoDownload}" />
+										</p:menuitem>
 									</p:splitButton>
 								</h:panelGroup>
-								<h:panelGroup></h:panelGroup>
-								<h:panelGroup></h:panelGroup>
 							</p:panelGrid>
 						
 						</p:outputPanel>
@@ -84,8 +89,8 @@
 
                         <p:fieldset legend="Kits">
 
-                            <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtKitsPendentes" value="#{emprestimoKitMB.kitsPendentes}" var="reservaKit" rows="7" paginator="true"
-                                selection="#{emprestimoKitMB.reservaKit}" selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom" binding="#{emprestimoKitMB.tabelaKit}">
+                            <p:dataTable id="dtKitsPendentes" filterDelay="1500"  reflow="true" widgetVar="dtKitsPendentes" emptyMessage="" value="#{emprestimoKitMB.kitsPendentes}" var="reservaKit" rows="7" paginator="true"
+                                selection="#{emprestimoKitMB.reservaKit}" selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom" binding="#{emprestimoKitMB.tabelaKit}" >
                                 <f:facet name="header">Kits Pendentes</f:facet>
                                 <p:ajax event="rowSelect" listener="#{emprestimoKitMB.limpaMateriais}"
                                     update=":lume:dtMateriaisDisponiveis, :lume:disponibiliza, :lume:dtItensPendentes, :lume:entregar,:lume:naoUtilizado" process="@this" />
@@ -159,7 +164,7 @@
                         
                         <p:fieldset legend="Materiais">
                             <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtItensPendentes" value="#{emprestimoKitMB.kitItensPendentes}" var="kitItemSelecionado" rows="7" paginator="true"
-                                selection="#{emprestimoKitMB.kitItemSelecionado}" selectionMode="single" rowKey="#{kitItemSelecionado}" paginatorPosition="bottom" binding="#{emprestimoKitMB.tabelaKit}">
+                                selection="#{emprestimoKitMB.kitItemSelecionado}" selectionMode="single" rowKey="#{kitItemSelecionado}" paginatorPosition="bottom" binding="#{emprestimoKitMB.tabelaItens}">
                                 <p:ajax event="rowSelect" update=":lume:dtMateriaisDisponiveis, :lume:disponibiliza" listener="#{emprestimoKitMB.carregaItem}"
                                     process="@this" />
                                 <f:facet name="header">Itens Pendentes</f:facet>

@@ -39,6 +39,14 @@
 										<p:fileDownload
 											value="#{conferenciaMB.arquivoDownload}" />
 									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{conferenciaMB.exportarTabelaConferencia('csv')}"
+										ajax="false" process="dtMaterial,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{conferenciaMB.arquivoDownload}" />
+									</p:menuitem>
 								</p:splitButton>
 							</h:panelGroup>
 
