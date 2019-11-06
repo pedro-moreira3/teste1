@@ -1,11 +1,18 @@
 package br.com.lume.common.util;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.compress.utils.ByteUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -63,7 +71,7 @@ public class Exportacoes implements Serializable{
             
     }
     
-    private File exportarTabelaExcel(String header,DataTable tabela) {
+    private ByteArrayInputStream exportarTabelaExcel(String header,DataTable tabela) {
 
         ArrayList<Integer> colunasValidas = validarColunas(tabela);
         
@@ -109,16 +117,18 @@ public class Exportacoes implements Serializable{
         
         try {
             
-            File arquivoXLS = new File(header+".xls");
-            FileOutputStream arq = new FileOutputStream(arquivoXLS);
-            workbook.write(arq);
+            ByteArrayOutputStream outputData = new ByteArrayOutputStream();
             
-            arq.flush();
-            arq.close();
+            workbook.write(outputData);
+            
+            ByteArrayInputStream inputData = new ByteArrayInputStream(outputData.toByteArray());
+            
+            outputData.flush();
+            outputData.close();
             
             workbook.close();
             
-            return arquivoXLS;
+            return inputData;
             
         }catch(Exception e) {
             this.log.error("Erro ao exportar Tabela Excel", e);
@@ -128,19 +138,17 @@ public class Exportacoes implements Serializable{
         
     }
     
-    private File exportarTabelaPDF(String header, DataTable table) {
+    private ByteArrayInputStream exportarTabelaPDF(String header, DataTable table) {
 
         try {
-            
-            //int qtdColunasTabela = validaColuna(table.getColumns());
             
             ArrayList<Integer> colunasValidas = validarColunas(table);
             
             Document documento = new Document(PageSize.A4.rotate(),30,30,30,30);
             
-            File arquivoPDF = new File(header+".pdf");
-            FileOutputStream arq = new FileOutputStream(arquivoPDF);
-            PdfWriter pdfWriter = PdfWriter.getInstance(documento, arq);
+            ByteArrayOutputStream outputData = new ByteArrayOutputStream();            
+            
+            PdfWriter pdfWriter = PdfWriter.getInstance(documento, outputData);
             
             documento.open();
             
@@ -207,7 +215,12 @@ public class Exportacoes implements Serializable{
 
             documento.close();
             
-            return arquivoPDF;
+            ByteArrayInputStream inputData = new ByteArrayInputStream(outputData.toByteArray());
+            
+            outputData.flush();
+            outputData.close();
+            
+            return inputData;
             
         }catch(Exception e) {
             this.log.error("Erro ao exportar Tabela Pdf", e);
@@ -217,12 +230,11 @@ public class Exportacoes implements Serializable{
         
     }
     
-    private File exportarTabelaCSV(String header, DataTable tabela) {
+    private ByteArrayInputStream exportarTabelaCSV(String header, DataTable tabela) {
         
         ArrayList<Integer> colunasValidas = validarColunas(tabela);
-        File file = new File(header+".csv");
         
-        try(BufferedWriter buffer = new BufferedWriter(new FileWriter(file))) {
+        try(ByteArrayOutputStream outputData = new ByteArrayOutputStream();) {
             
             for(int i = 0; i < tabela.getRowCount(); i++) {
                 
@@ -235,24 +247,29 @@ public class Exportacoes implements Serializable{
                     
                     for(int j = 0; j < colunasValidas.size(); j++) {
                         
-                        buffer.write(tabelaColunas.get(colunasValidas.get(j)).getHeaderText() + ";");
-                            
+                        outputData.write((tabelaColunas.get(colunasValidas.get(j)).getHeaderText() + ";").getBytes());
+
                     }
                     
-                    buffer.write("\n");
+                    outputData.write(("\n").getBytes());
                 }
                 
                 for(int j = 0; j < colunasValidas.size(); j++) {
                     
-                    buffer.write(this.formatar(tabelaColunas.get(colunasValidas.get(j)).getFilterBy()) + ";");
+                    outputData.write((this.formatar(tabelaColunas.get(colunasValidas.get(j)).getFilterBy()) + ";").getBytes());
                     
                 }
                 
-                buffer.write("\n");
+                outputData.write(("\n").getBytes());
                 
             }
             
-            return file;
+            ByteArrayInputStream inputData = new ByteArrayInputStream(outputData.toByteArray());
+            
+            outputData.flush();
+            outputData.close();
+            
+            return inputData;
             
         } catch (Exception e) {
             this.log.error("Erro no ExportarTabelaCSV",e);
@@ -302,12 +319,14 @@ public class Exportacoes implements Serializable{
         }else if(obj instanceof Number) {
             Number valor = (Number) obj;
             return String.valueOf(valor);
-        }else {
-            return String.valueOf(obj);
+        }else if(obj instanceof String){
+            return (String) obj;
         }
+        
+        return "";
     }
     
-    public File exportarTabela(String header, DataTable table, String type) {
+    public ByteArrayInputStream exportarTabela(String header, DataTable table, String type) {
         if(header != null && table != null && type != null) {
             switch(type) {
                 case "xls":
@@ -323,35 +342,35 @@ public class Exportacoes implements Serializable{
         return null;
     }
     
-    public void alterarArquivo() {
-        
-        File file = new File("C:\\Users\\eduardo.tremarin\\Desktop\\Eduardo\\intelidente\\afastamento.xhtml");
-        
-        try(BufferedReader bReader = new BufferedReader(new FileReader(file));
-                BufferedWriter bWriter = new BufferedWriter(new FileWriter(file, true))){
-            
-            ArrayList<String> listaString = new ArrayList<String>();
-            StringBuilder sb = new StringBuilder();
-            
-            String idTabela = "";
-            String managedBean = "";
-            String metodoExportacao = "";
-            
-            String linha = "";
-            
-            while(bReader.ready()) {
-                
-                linha = bReader.readLine();
-                
-                
-                
-            }
-            
-        }catch (Exception e) {
-            this.log.error("Erro no alterarArquivo");
-        }
-        
-    }
+//    public void alterarArquivo() {
+//        
+//        File file = new File("C:\\Users\\eduardo.tremarin\\Desktop\\Eduardo\\intelidente\\afastamento.xhtml");
+//        
+//        try(BufferedReader bReader = new BufferedReader(new FileReader(file));
+//                BufferedWriter bWriter = new BufferedWriter(new FileWriter(file, true))){
+//            
+//            ArrayList<String> listaString = new ArrayList<String>();
+//            StringBuilder sb = new StringBuilder();
+//            
+//            String idTabela = "";
+//            String managedBean = "";
+//            String metodoExportacao = "";
+//            
+//            String linha = "";
+//            
+//            while(bReader.ready()) {
+//                
+//                linha = bReader.readLine();
+//                
+//                
+//                
+//            }
+//            
+//        }catch (Exception e) {
+//            this.log.error("Erro no alterarArquivo");
+//        }
+//        
+//    }
     
         
 }

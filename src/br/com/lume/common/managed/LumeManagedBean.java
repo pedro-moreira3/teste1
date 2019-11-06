@@ -1,7 +1,7 @@
 package br.com.lume.common.managed;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.ByteArrayInputStream;
+import java.io.PipedInputStream;
 import java.io.Serializable;
 import java.text.Normalizer;
 import java.util.Calendar;
@@ -315,11 +315,11 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
 
     public void exportarTabela(String header, DataTable tabela, String type) {
 
-        FileInputStream arq;
+        ByteArrayInputStream arq;
         try {
             this.exportacao = Exportacoes.getInstance();
-            arq = new FileInputStream(this.exportacao.exportarTabela(header, tabela, type));
-
+            arq = (this.exportacao.exportarTabela(header, tabela, type));
+            
             if (type.equals("xls"))
                 this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
             else if(type.equals("pdf"))
@@ -327,7 +327,9 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             else
                 this.setArquivoDownload(new DefaultStreamedContent(arq, "application/csv", header + "." + type));
 
-        } catch (FileNotFoundException e) {
+            arq.close();
+            
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
