@@ -109,7 +109,7 @@ public class Exportacoes implements Serializable{
         
         try {
             
-            File arquivoXLS = new File("../"+header+".xls");
+            File arquivoXLS = new File("/"+header+".xls");
             FileOutputStream arq = new FileOutputStream(arquivoXLS);
             workbook.write(arq);
             
@@ -138,7 +138,7 @@ public class Exportacoes implements Serializable{
             
             Document documento = new Document(PageSize.A4.rotate(),30,30,30,30);
             
-            File arquivoPDF = new File("../"+header+".pdf");
+            File arquivoPDF = new File("/"+header+".pdf");
             FileOutputStream arq = new FileOutputStream(arquivoPDF);
             PdfWriter pdfWriter = PdfWriter.getInstance(documento, arq);
             
@@ -220,7 +220,7 @@ public class Exportacoes implements Serializable{
     private File exportarTabelaCSV(String header, DataTable tabela) {
         
         ArrayList<Integer> colunasValidas = validarColunas(tabela);
-        File file = new File("../"+header+".csv");
+        File file = new File("/"+header+".csv");
         
         try(BufferedWriter buffer = new BufferedWriter(new FileWriter(file))) {
             
