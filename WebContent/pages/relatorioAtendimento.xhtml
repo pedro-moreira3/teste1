@@ -358,7 +358,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 														process="dtRelAtendimento,@this" immediate="true"
 														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 												<p:fileDownload value="#{relatorioAtendimentoMB.arquivoDownload}"/>
-											</p:menuitem>											
+											</p:menuitem>
+											<p:menuitem	value="Exportar tabela para CSV" icon="fa fa fa-file-pdf-o" 
+														actionListener="#{relatorioAtendimentoMB.exportarTabela('csv')}" ajax="false"
+														process="dtRelAtendimento,@this" immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+												<p:fileDownload value="#{relatorioAtendimentoMB.arquivoDownload}"/>
+											</p:menuitem>
 										</p:splitButton>
 									</h:panelGroup>
 									

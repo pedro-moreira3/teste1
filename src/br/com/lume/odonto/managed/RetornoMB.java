@@ -11,6 +11,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -35,6 +36,9 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     private Date dataIni, dataFim;
     
     private String retornar;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaRetorno;
 
     public RetornoMB() {
         super(RetornoSingleton.getInstance().getBo());
@@ -93,6 +97,10 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
         PrimeFaces.current().executeScript("PF('dtRetorno').filter()");
         this.geraLista();
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Retorno", tabelaRetorno, type);
+    }
 
     public List<Retorno> getRetornos() {
         return retornos;
@@ -130,6 +138,14 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     
     public void setRetornar(String retornar) {
         this.retornar = retornar;
+    }
+
+    public DataTable getTabelaRetorno() {
+        return tabelaRetorno;
+    }
+
+    public void setTabelaRetorno(DataTable tabelaRetorno) {
+        this.tabelaRetorno = tabelaRetorno;
     }
 
 }

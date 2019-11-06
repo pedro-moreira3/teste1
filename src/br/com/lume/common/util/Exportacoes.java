@@ -1,7 +1,11 @@
 package br.com.lume.common.util;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,10 +13,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import javax.faces.component.html.HtmlOutputText;
-import javax.faces.component.html.HtmlPanelGroup;
-
-import org.apache.commons.logging.Log;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -22,8 +22,6 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.primefaces.component.api.UIColumn;
-import org.primefaces.component.button.Button;
-import org.primefaces.component.commandbutton.CommandButton;
 import org.primefaces.component.datatable.DataTable;
 
 import com.lowagie.text.Document;
@@ -41,6 +39,11 @@ import br.com.lume.security.entity.Empresa;
 
 public class Exportacoes implements Serializable{
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     private static Exportacoes exportacao;
     
     private Logger log = Logger.getLogger(LumeManagedBean.class);
@@ -173,17 +176,6 @@ public class Exportacoes implements Serializable{
                         
                         String tituloTabela = "";
                         
-//                        List lista = tabelaColunas.get(colunasValidas.get(j)).getChildren();
-//                        if( (tabelaColunas.get(colunasValidas.get(j)).getHeaderText() == null) && (lista != null && !lista.isEmpty()) ) {
-//                            for(Object objeto : lista) {
-//                                if(objeto instanceof HtmlOutputText) {
-//                                    tituloTabela = this.formatar(((HtmlOutputText) objeto).getValue());
-//                                }
-//                            } 
-//                        }else {
-//                            tituloTabela = tabelaColunas.get(colunasValidas.get(j)).getHeaderText();
-//                        }
-                        
                         tituloTabela = tabelaColunas.get(colunasValidas.get(j)).getHeaderText();
                         
                         Font fonte = new Font(Font.BOLD, 10, Font.BOLD);
@@ -225,7 +217,47 @@ public class Exportacoes implements Serializable{
         
     }
     
-    private File exportarTabelaCSV(String header, DataTable table) {
+    private File exportarTabelaCSV(String header, DataTable tabela) {
+        
+        ArrayList<Integer> colunasValidas = validarColunas(tabela);
+        File file = new File("../"+header+".csv");
+        
+        try(BufferedWriter buffer = new BufferedWriter(new FileWriter(file))) {
+            
+            for(int i = 0; i < tabela.getRowCount(); i++) {
+                
+                tabela.setRowIndex(i);
+                tabela.getRowData();
+                
+                List<UIColumn> tabelaColunas = tabela.getColumns();
+                
+                if(i == 0) {
+                    
+                    for(int j = 0; j < colunasValidas.size(); j++) {
+                        
+                        buffer.write(tabelaColunas.get(colunasValidas.get(j)).getHeaderText() + ";");
+                            
+                    }
+                    
+                    buffer.write("\n");
+                }
+                
+                for(int j = 0; j < colunasValidas.size(); j++) {
+                    
+                    buffer.write(this.formatar(tabelaColunas.get(colunasValidas.get(j)).getFilterBy()) + ";");
+                    
+                }
+                
+                buffer.write("\n");
+                
+            }
+            
+            return file;
+            
+        } catch (Exception e) {
+            this.log.error("Erro no ExportarTabelaCSV",e);
+        }
+        
         return null;
     }
     
@@ -259,7 +291,6 @@ public class Exportacoes implements Serializable{
         }
         
         return colunasValidas;
-        
     }
     
     private String formatar(Object obj) {
@@ -280,6 +311,7 @@ public class Exportacoes implements Serializable{
         if(header != null && table != null && type != null) {
             switch(type) {
                 case "xls":
+                    //alterarArquivo();
                     return this.exportarTabelaExcel(header, table);
                 case "pdf":
                     return this.exportarTabelaPDF(header, table);
@@ -289,7 +321,37 @@ public class Exportacoes implements Serializable{
         }
         
         return null;
+    }
+    
+    public void alterarArquivo() {
+        
+        File file = new File("C:\\Users\\eduardo.tremarin\\Desktop\\Eduardo\\intelidente\\afastamento.xhtml");
+        
+        try(BufferedReader bReader = new BufferedReader(new FileReader(file));
+                BufferedWriter bWriter = new BufferedWriter(new FileWriter(file, true))){
+            
+            ArrayList<String> listaString = new ArrayList<String>();
+            StringBuilder sb = new StringBuilder();
+            
+            String idTabela = "";
+            String managedBean = "";
+            String metodoExportacao = "";
+            
+            String linha = "";
+            
+            while(bReader.ready()) {
+                
+                linha = bReader.readLine();
+                
+                
+                
+            }
+            
+        }catch (Exception e) {
+            this.log.error("Erro no alterarArquivo");
+        }
         
     }
+    
         
 }

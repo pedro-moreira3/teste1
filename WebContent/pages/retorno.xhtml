@@ -138,7 +138,7 @@
 						</p:fieldset>
 						<p:separator styleClass="SeparatorFull" />
 						<p:outputPanel styleClass="BordNone">
-							<p:panelGrid columns="3" layout="grid" id="botoesRetornos"
+							<p:panelGrid columns="4" layout="grid" id="botoesRetornos"
 								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 								<p:commandButton icon="White fa fa-file-o" value="Novo"
 									actionListener="#{retornoMB.actionNew}" process="@this"
@@ -152,6 +152,38 @@
 									actionListener="#{retornoMB.actionRemove}"
 									update=":lume:pnRetorno" process="@this"
 									disabled="#{retornoMB.entity.id == 0}" styleClass="RedButton" />
+
+								<h:panelGroup>
+									<p:splitButton icon="White fa fa fa-file-excel-o"
+										value="Exportar tabela para Excel"
+										styleClass="GreenSplitButton"
+										actionListener="#{retornoMB.exportarTabela('xls')}"
+										ajax="false" process="dtRetorno,@this" update="@this"
+										immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+										<p:fileDownload
+											value="#{retornoMB.arquivoDownload}" />
+
+										<p:menuitem value="Exportar tabela para PDF"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{retornoMB.exportarTabela('pdf')}"
+											ajax="false" process="dtRetorno,@this"
+											immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload
+												value="#{retornoMB.arquivoDownload}" />
+										</p:menuitem>
+										<p:menuitem value="Exportar tabela para CSV"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{retornoMB.exportarTabela('csv')}"
+											ajax="false" process="dtRetorno,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload value="#{retornoMB.arquivoDownload}" />
+										</p:menuitem>
+									</p:splitButton>
+								</h:panelGroup>
+
 							</p:panelGrid>
 							<div class="EmptyBox20"></div>
 						</p:outputPanel>
@@ -160,7 +192,7 @@
 							id="dtRetorno" value="#{retornoMB.retornos}" var="retorno"
 							rows="15" paginator="true" selection="#{retornoMB.entity}"
 							selectionMode="single" rowKey="#{retorno}" widgetVar="dtRetorno"
-							paginatorPosition="bottom" styleClass="tableRetorno">
+							paginatorPosition="bottom" styleClass="tableRetorno" binding="#{retornoMB.tabelaRetorno}">
 							<p:ajax event="rowSelect" process="@this, :lume:pnRetorno" update=":lume:botoesRetornos" />
 							<f:facet name="header">
 							Retornos cadastrados

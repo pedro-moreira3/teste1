@@ -322,8 +322,10 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
 
             if (type.equals("xls"))
                 this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
-            else
+            else if(type.equals("pdf"))
                 this.setArquivoDownload(new DefaultStreamedContent(arq, "application/pdf", header + "." + type));
+            else
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/csv", header + "." + type));
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
