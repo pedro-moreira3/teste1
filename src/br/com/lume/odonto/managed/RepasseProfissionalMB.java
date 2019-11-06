@@ -23,10 +23,11 @@ import br.com.lume.odonto.entity.Orcamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.orcamento.OrcamentoSingleton;
+import br.com.lume.odonto.entity.RepasseFaturas;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.repasse.RepasseFaturasSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -37,18 +38,18 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
 
     private int mes;
     private boolean mesesAnteriores, pagoTotalmente;
-    
+
     //FILTROS
     private Date dataInicio;
     private Date dataFim;
     private Profissional profissional;
     private Paciente paciente;
     private PlanoTratamento planoTratamento;
-    
+
     private List<Fatura> faturas;
     private List<Orcamento> orcamentos;
     private List<PlanoTratamento> planosTratamento;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRepasse;
 
@@ -58,11 +59,11 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
         try {
             Calendar now = Calendar.getInstance();
             setMes(now.get(Calendar.MONTH) + 1);
-            //pesquisar();
-            popularTabela();
+            pesquisar();
+            //popularTabela();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError("Erro", "Não foi possivel carregar a tela.",true);
+            this.addError("Erro", "Não foi possivel carregar a tela.", true);
         }
     }
 
@@ -80,7 +81,7 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
 
     public void pesquisar() {
         try {
-            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getMes(), isMesesAnteriores()));
+            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasRepasseFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getPaciente(), null, getMes(), isMesesAnteriores()));
             if (isPagoTotalmente())
                 getEntityList().removeIf(fatura -> {
                     if (FaturaSingleton.getInstance().getTotalRestante(fatura).compareTo(BigDecimal.ZERO) <= 0)
@@ -89,7 +90,7 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
                 });
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError("Erro",Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
+            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
         }
     }
 
@@ -107,15 +108,15 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
             Collections.sort(sugestoes);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError("Erro",Mensagens.ERRO_AO_BUSCAR_REGISTROS,true);
+            this.addError("Erro", Mensagens.ERRO_AO_BUSCAR_REGISTROS, true);
         }
         return sugestoes;
     }
-    
-    public List<Paciente> geraSugestoesPaciente(String query){
-        
+
+    public List<Paciente> geraSugestoesPaciente(String query) {
+
         List<Paciente> pacientes = new ArrayList<Paciente>();
-        
+
         try {
             pacientes = PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Paciente p : pacientes) {
@@ -127,16 +128,16 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
             Collections.sort(pacientes);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError("Erro",Mensagens.ERRO_AO_BUSCAR_REGISTROS, true);
+            this.addError("Erro", Mensagens.ERRO_AO_BUSCAR_REGISTROS, true);
         }
         return pacientes;
-        
+
     }
-    
-    public List<PlanoTratamento> geraSugestoesPlanoTratamento(String query){
-        
+
+    public List<PlanoTratamento> geraSugestoesPlanoTratamento(String query) {
+
         List<PlanoTratamento> planos = new ArrayList<>();
-        
+
         try {
             planos = PlanoTratamentoSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (PlanoTratamento p : planos) {
@@ -148,75 +149,89 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
             Collections.sort(planos);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError("Erro",Mensagens.ERRO_AO_BUSCAR_REGISTROS,true);
+            this.addError("Erro", Mensagens.ERRO_AO_BUSCAR_REGISTROS, true);
         }
         return planos;
-        
-    }
-    
-    public void popularTabela() {
-        
-        if(this.faturas == null)
-            this.faturas = new ArrayList<Fatura>();
-        if(this.orcamentos == null)
-            this.orcamentos = new ArrayList<Orcamento>();
-        if(this.planosTratamento == null)
-            this.planosTratamento = new ArrayList<PlanoTratamento>();
-        
-        this.faturas = FaturaSingleton.getInstance().getBo().findFaturaByDataAndPacienteAndProfissional(this.dataInicio, this.dataFim, profissional, paciente,
-                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        
-        for(Fatura f : this.faturas) {
-            if(f.getItens() != null && !f.getItens().isEmpty()) {
-                //Orcamento orcamento = (f.getItens().get(0).getRepasseItensRepasse().get(0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrcamento());
-                this.planosTratamento.add(f.getItens().get(0).getRepasseItensRepasse().get(0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento());
-            }
-        }
 
     }
-    
+//
+//    public void popularTabela() {
+//
+//        if (this.faturas == null)
+//            this.faturas = new ArrayList<Fatura>();
+//        if (this.orcamentos == null)
+//            this.orcamentos = new ArrayList<Orcamento>();
+//        if (this.planosTratamento == null)
+//            this.planosTratamento = new ArrayList<PlanoTratamento>();
+//
+//        this.faturas = FaturaSingleton.getInstance().getBo().findFaturaByDataAndPacienteAndProfissional(this.dataInicio, this.dataFim, profissional, paciente,
+//                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//
+//        for (Fatura f : this.faturas) {
+//            if (f.getItens() != null && !f.getItens().isEmpty()) {
+//                this.planosTratamento.add(f.getItens().get(0).getRepasseItensRepasse().get(
+//                        0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento());
+//            }
+//        }
+//
+//    }
+
     public String nomePaciente(Fatura fatura) {
-        
-        for(PlanoTratamento p : this.planosTratamento) {
-            if(p.getId() == fatura.getItens().get(0).getRepasseItensRepasse().get(0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getId())
-                return p.getPaciente().getDadosBasico().getNome();
+        /*
+         * for (PlanoTratamento p : this.planosTratamento) { if (p.getId() == fatura.getItens().get(0).getRepasseItensRepasse().get(
+         * 0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getId()) return
+         * p.getPaciente().getDadosBasico().getNome(); } return "";
+         */
+        try {
+            RepasseFaturas repasseObject = RepasseFaturasSingleton.getInstance().getBo().getFaturaOrigemFromRepasse(fatura);
+            return repasseObject.getFaturaOrigem().getPaciente().getDadosBasico().getNome();
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            return "";
         }
-        
-        return "";
     }
-    
+
     public String nomeProfissional(Fatura fatura) {
-        
-        for(PlanoTratamento p : this.planosTratamento) {
-            if(p.getId() == fatura.getItens().get(0).getRepasseItensRepasse().get(0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getId())
-                return p.getProfissional().getDadosBasico().getPrefixoNome();
+        /*
+         * for (PlanoTratamento p : this.planosTratamento) { if (p.getId() == fatura.getItens().get(0).getRepasseItensRepasse().get(
+         * 0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getId()) return
+         * p.getProfissional().getDadosBasico().getPrefixoNome(); } return "";
+         */
+        try {
+            return fatura.getProfissional().getDadosBasico().getNome();
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            return "";
         }
-        
-        return "";
     }
-    
+
     public String descricaoPlanoTratamento(Fatura fatura) {
-        
-        for(PlanoTratamento p : this.planosTratamento) {
-            if(p.getId() == fatura.getItens().get(0).getRepasseItensRepasse().get(0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getId())
-                return p.getDescricao();
+        /*
+         * for (PlanoTratamento p : this.planosTratamento) { if (p.getId() == fatura.getItens().get(0).getRepasseItensRepasse().get(
+         * 0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getId()) return p.getDescricao(); } return "";
+         */
+        try {
+            RepasseFaturas repasseObject = RepasseFaturasSingleton.getInstance().getBo().getFaturaOrigemFromRepasse(fatura);
+            return repasseObject.getFaturaOrigem().getItensFiltered().get(
+                    0).getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao();
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            return "";
         }
-        
-        return "";
     }
 
     public void carregarPlanoTratamentoFromFatura() {
         this.setPlanoTratamento(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaRepasse(this.getEntity()));
     }
-    
+
     public void carregarPacientesFromPlanoTratamento() {
-        
+
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Repasse dos profissionais", tabelaRepasse, type);
     }
-    
+
     public int getMes() {
         return mes;
     }

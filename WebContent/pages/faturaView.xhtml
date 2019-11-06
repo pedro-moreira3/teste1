@@ -249,53 +249,54 @@ body .sideChkBox .ui-chkbox-label {
 									</h:outputText>
 								</p:panel>
 							</p:panelGrid>
-							
+
 							<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 								value="#{faturaPagtoMB.entity.itensFiltered}" var="fi" rows="20"
 								paginator="true" rowKey="#{fi}" paginatorPosition="bottom">
 								<f:facet name="header">Itens</f:facet>
 
-								<p:column 	headerText="Ações" width="100" exportable="false"
-											rendered="#{repasseProfissional != null and repasseProfissional == 'S'}">
-									
-									<p:commandButton 	styleClass="RedButton" icon="fa fa-exchange"
-														title="Trocar Profissional" update=":lume:pnPrincipal"
-														actionListener="#{faturaPagtoMB.abreTrocaItemProfissional(fi)}"
-														process="@this">
+								<p:column headerText="Ações" width="100" exportable="false"
+									rendered="#{repasseProfissional != null and repasseProfissional == 'S'}">
+
+									<p:commandButton styleClass="RedButton" icon="fa fa-exchange"
+										title="Trocar Profissional" update=":lume:pnPrincipal"
+										actionListener="#{faturaPagtoMB.abreTrocaItemProfissional(fi)}"
+										process="@this">
 									</p:commandButton>
-									
+
 								</p:column>
 
-								<p:column 	sortBy="#{fi.descricaoItem}"
-											filterMatchMode="contains" filterBy="#{fi.descricaoItem}"
-											headerText="Descrição">
+								<p:column sortBy="#{fi.descricaoItem}"
+									filterMatchMode="contains" filterBy="#{fi.descricaoItem}"
+									headerText="Descrição">
 									<h:outputText value="#{fi.descricaoItem}" style="float:left" />
 								</p:column>
-								
-								<p:column 	sortBy="#{fi.tipoSaldoStr}" filterMatchMode="contains"
-											filterBy="#{fi.tipoSaldoStr}" headerText="Tipo do Saldo"
-											width="150">
+
+								<p:column sortBy="#{fi.tipoSaldoStr}" filterMatchMode="contains"
+									filterBy="#{fi.tipoSaldoStr}" headerText="Tipo do Saldo"
+									width="150">
 									<h:outputText value="#{fi.tipoSaldoStr}" />
 								</p:column>
-								
-								<p:column 	sortBy="#{fi.valorItem}" filterMatchMode="contains"
-											filterBy="#{fi.valorItem}" headerText="Valor" width="100">
+
+								<p:column sortBy="#{fi.valorItem}" filterMatchMode="contains"
+									filterBy="#{fi.valorItem}" headerText="Valor" width="100">
 									<h:outputText value="#{fi.valorItem}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:column>
-								
-								<p:column 	sortBy="#{fi.valorComDesconto}" filterMatchMode="contains"
-											filterBy="#{fi.valorComDesconto}" headerText="Valor com desconto" width="100">
+
+								<p:column sortBy="#{fi.valorComDesconto}"
+									filterMatchMode="contains" filterBy="#{fi.valorComDesconto}"
+									headerText="Valor com desconto" width="100">
 									<h:outputText value="#{fi.valorComDesconto}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:column>
-								
+
 							</p:dataTable>
-							
+
 							<p:separator styleClass="SeparatorFull" />
-							
+
 							<p:panel
 								rendered="#{repasseProfissional == null or repasseProfissional == 'N'}">
 								<p:selectBooleanCheckbox styleClass="sideChkBox"
@@ -417,7 +418,7 @@ body .sideChkBox .ui-chkbox-label {
 			<p:column />
 			<p:commandButton value="Fechar" icon="fa fa-close"
 				styleClass="NavyButton" onclick="PF('dlgFaturaView').hide()"
-				process="@this" update=":lume:dtPrincipal"/>
+				process="@this" update=":lume:dtPrincipal" />
 		</p:panelGrid>
 	</p:dialog>
 

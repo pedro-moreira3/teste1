@@ -46,7 +46,8 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
     private List<PlanoTratamento> planosTratamento;
     private PlanoTratamento[] planosTratamentoSelecionados;
     private FaturaItem itemTroca;
-    
+    private PlanoTratamentoProcedimento ptpCriaRepasse;
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRepasse;
 
@@ -82,11 +83,12 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
 
     public void abreTrocaItemProfissional(PlanoTratamentoProcedimento ptp) {
         setItemTroca(itemTroca);
-        if (itemTroca == null) {
-            this.addError("Erro!", "Profissional de origem não possui comissionamento! Função ainda não implementada.");
-        } else {
-            PrimeFaces.current().executeScript("PF('dlgTrocaItemProfissional').show()");
-        }
+        setPtpCriaRepasse(ptp);
+        //if (itemTroca == null) {
+        //this.addError("Erro!", "Profissional de origem não possui comissionamento! Função ainda não implementada.");
+        //} else {
+        PrimeFaces.current().executeScript("PF('dlgTrocaItemProfissional').show()");
+        //}
     }
 
     public void pesquisar() {
@@ -128,8 +130,7 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
             if (!this.filtroSemRepasse)
                 RepasseFaturasItemSingleton.getInstance().trocaItemRepasseProfissional(getItemTroca(), null, getProfissionalTroca(), UtilsFrontEnd.getProfissionalLogado());
             else
-                System.out.println("");
-            //criar repasse
+                RepasseFaturasItemSingleton.getInstance().criaItemRepasseProfissional(getPtpCriaRepasse(), getProfissionalTroca(), UtilsFrontEnd.getProfissionalLogado());
             this.pesquisar();
             this.addInfo("Sucesso", "Troca realizada com sucesso.<br />Verifique a nova fatura em nome de " + getProfissionalTroca().getDadosBasico().getNome() + "!", true);
             PrimeFaces.current().executeScript("PF('dlgTrocaItemProfissional').hide();");
@@ -138,7 +139,7 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
             this.addError("Erro", "Falha ao realizar a troca!<br />" + e.getMessage(), true);
         }
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Repasse de itens aos profissionais", tabelaRepasse, type);
     }
@@ -231,6 +232,14 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
 
     public void setTabelaRepasse(DataTable tabelaRepasse) {
         this.tabelaRepasse = tabelaRepasse;
+    }
+
+    public PlanoTratamentoProcedimento getPtpCriaRepasse() {
+        return ptpCriaRepasse;
+    }
+
+    public void setPtpCriaRepasse(PlanoTratamentoProcedimento ptpCriaRepasse) {
+        this.ptpCriaRepasse = ptpCriaRepasse;
     }
 
 }

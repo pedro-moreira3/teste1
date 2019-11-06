@@ -122,7 +122,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             }
 
             getRepasseProfissionalMB().pesquisar();
-            this.addInfo("Sucesso", "Troca realizada com sucesso.<br />Verifique a nova fatura em nome de " + getProfissionalTroca().getDadosBasico().getNome() + "!", true);
+            //getRepasseProfissionalMB().popularTabela();
+            if (Profissional.FIXO.equals(getProfissionalTroca().getTipoRemuneracao())) {
+                this.addInfo("Sucesso", "Item inativado somente, pois o profissional " + getProfissionalTroca().getDadosBasico().getNome() + " não possui comissionamento!", true);
+            } else {
+                this.addInfo("Sucesso", "Troca realizada com sucesso.<br />Verifique a nova fatura em nome de " + getProfissionalTroca().getDadosBasico().getNome() + "!", true);
+            }
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Falha ao realizar a troca!<br />" + e.getMessage(), true);
@@ -184,7 +189,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 fim.set(Calendar.SECOND, 59);
             }
 
-            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), Arrays.asList(getPtSelecionados()),
+            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), Arrays.asList(getPtSelecionados()),
                     (inicio == null ? null : inicio.getTime()), (fim == null ? null : fim.getTime())));
             getEntityList().removeIf(fatura -> {
                 if (Lancamento.PAGO.equals(getStatus()) && this.getTotalRestante(fatura).compareTo(BigDecimal.ZERO) > 0)
