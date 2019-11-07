@@ -145,6 +145,14 @@
 										<p:fileDownload
 											value="#{atestadoMB.arquivoDownload}" />
 									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{atestadoMB.exportarTabela('csv')}"
+										ajax="false" process="dtAtestado,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{atestadoMB.arquivoDownload}" />
+									</p:menuitem>
 								</p:splitButton>
 							</h:panelGroup>
 

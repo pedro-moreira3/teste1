@@ -146,25 +146,40 @@ height: 100%;
                                         <p:dataExporter encoding="iso-8859-1" type="xls" target="dtLancamentoContabil" fileName="pagamentorecebimentos" />
                                     </p:commandButton>
                                     </ui:remove>
-                                    
-                                    <h:panelGroup>
-										<p:splitButton 	icon="White fa fa fa-file-excel-o" value="Exportar tabela para Excel" styleClass="GreenSplitButton"
-														actionListener="#{lancamentoContabilMB.exportarTabela('xls')}" ajax="false"
-														process="dtLancamentoContabil,@this" update="@this" immediate="true"
+
+											<h:panelGroup>
+												<p:splitButton icon="White fa fa fa-file-excel-o"
+													value="Exportar tabela para Excel"
+													styleClass="GreenSplitButton"
+													actionListener="#{lancamentoContabilMB.exportarTabela('xls')}"
+													ajax="false" process="dtLancamentoContabil,@this"
+													update="@this" immediate="true"
+													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+													<p:fileDownload
+														value="#{lancamentoContabilMB.arquivoDownload}" />
+
+													<p:menuitem value="Exportar tabela para PDF"
+														icon="fa fa fa-file-pdf-o"
+														actionListener="#{lancamentoContabilMB.exportarTabela('pdf')}"
+														ajax="false" process="dtLancamentoContabil,@this"
+														immediate="true"
 														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-											
-											<p:fileDownload value="#{lancamentoContabilMB.arquivoDownload}" />
-											
-											<p:menuitem	value="Exportar tabela para PDF" icon="fa fa fa-file-pdf-o" 
-														actionListener="#{lancamentoContabilMB.exportarTabela('pdf')}" ajax="false"
-														process="dtLancamentoContabil,@this" immediate="true"
+														<p:fileDownload
+															value="#{lancamentoContabilMB.arquivoDownload}" />
+													</p:menuitem>
+													<p:menuitem value="Exportar tabela para CSV"
+														icon="fa fa fa-file-pdf-o"
+														actionListener="#{lancamentoMB.exportarTabela('csv')}"
+														ajax="false" process="dtLancamentoContabil,@this" immediate="true"
 														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-												<p:fileDownload value="#{lancamentoContabilMB.arquivoDownload}"/>
-											</p:menuitem>											
-										</p:splitButton>
-									</h:panelGroup>
-                                    
-                                </p:panelGrid>
+														<p:fileDownload
+															value="#{lancamentoMB.arquivoDownload}" />
+													</p:menuitem>
+												</p:splitButton>
+											</h:panelGroup>
+
+										</p:panelGrid>
                             </p:outputPanel>
                             <div class="EmptyBox20"></div>
 

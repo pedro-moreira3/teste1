@@ -152,6 +152,13 @@
 											<p:fileDownload
 												value="#{repasseItensProfissionalMB.arquivoDownload}" />
 										</p:menuitem>
+										<p:menuitem value="Exportar tabela para CSV"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{repasseItensProfissionalMB.exportarTabela('csv')}"
+											ajax="false" process="dtPrincipal,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload value="#{repasseItensProfissionalMB.arquivoDownload}" />
+										</p:menuitem>
 									</p:splitButton>
 								</h:panelGroup>
 

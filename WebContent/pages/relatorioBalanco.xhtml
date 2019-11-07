@@ -61,6 +61,14 @@
 										<p:fileDownload
 											value="#{relatorioRepasseMB.arquivoDownload}" />
 									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioRepasseMB.exportarTabela('csv')}"
+										ajax="false" process="dtRelatorio,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioRepasseMB.arquivoDownload}" />
+									</p:menuitem>
 								</p:splitButton>
 							</h:panelGroup>
 
@@ -70,7 +78,7 @@
                     <div class="EmptyBox20"></div>
 
                     <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtRelatorio" value="#{relatorioRepasseMB.relatorio}" var="rel" rows="50" paginator="true"
-                        paginatorPosition="bottom" binding="#{relatorioRepasseMB.tabelaRepasse}">
+                        paginatorPosition="bottom" binding="#{relatorioRepasseMB.tabelaRelatorio}">
                         <f:facet name="header">Procedimentos</f:facet>
                         
                         <p:column sortBy="#{rel.descricaoPlanoTratamento}" filterBy="#{rel.descricaoPlanoTratamento}" filterMatchMode="contains" filterFunction="#{relatorioRepasseMB.filtroSemAcento}">
