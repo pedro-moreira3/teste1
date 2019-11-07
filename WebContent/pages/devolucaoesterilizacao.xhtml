@@ -8,8 +8,45 @@
                         <h1>Devolução da Esterilização</h1>
                         <div class="SeparatorFull"></div>
                         <br />
+                        
+                        <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank"
+                        			style="border:0px none; background-color:transparent;">
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{esterilizacaoMB.exportarTabela('xls')}"
+									ajax="false" process="dtEsterilizacoesSolicitadas,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{esterilizacaoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{esterilizacaoMB.exportarTabela('pdf')}"
+										ajax="false" process="dtEsterilizacoesSolicitadas,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{conferenciaMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{esterilizacaoMB.exportarTabela('csv')}"
+										ajax="false" process="dtEsterilizacoesSolicitadas,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{esterilizacaoMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
+						</p:panelGrid>
+                        
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtEsterilizacoesSolicitadas" value="#{esterilizacaoMB.esterilizacaoDataModel}" var="esterilizacaoSolicitada" rows="20"
-                            paginator="true" selection="#{esterilizacaoMB.esterilizacaoSelecionadas}" rowKey="#{esterilizacaoSolicitada}" paginatorPosition="bottom">
+                            paginator="true" selection="#{esterilizacaoMB.esterilizacaoSelecionadas}" rowKey="#{esterilizacaoSolicitada}" paginatorPosition="bottom" binding="#{esterilizacaoMB.tabelaEsterilizacao}">
                             <f:facet name="header">Esterilizações Solicitadas</f:facet>
 
                             <p:column selectionMode="multiple" style="width:16px;text-align:center" />
@@ -24,22 +61,25 @@
                                 listener="#{esterilizacaoMB.habilitaDevolucao}" />
 
 
-                            <p:column filterBy="#{esterilizacaoSolicitada.descricao}" sortBy="#{esterilizacaoSolicitada.descricao}" filterMatchMode="contains" headerText="Descrição">
+                            <p:column filterBy="#{esterilizacaoSolicitada.descricao}" sortBy="#{esterilizacaoSolicitada.descricao}" filterMatchMode="contains" headerText="Descrição"
+                            		filterFunction="#{esterilizacaoMB.filtroSemAcento}">
                                 <h:outputText value="#{esterilizacaoSolicitada.descricao}" title="#{esterilizacaoSolicitada.id}" />
                             </p:column>
-                            <p:column filterBy="#{esterilizacaoSolicitada.observacao}" sortBy="#{esterilizacaoSolicitada.observacao}" filterMatchMode="contains" headerText="Observação">
+                            <p:column filterBy="#{esterilizacaoSolicitada.observacao}" sortBy="#{esterilizacaoSolicitada.observacao}" filterMatchMode="contains" headerText="Observação"
+                            		filterFunction="#{esterilizacaoMB.filtroSemAcento}">
                                 <h:outputText value="#{esterilizacaoSolicitada.observacao}" />
                             </p:column>
 
                             <p:column filterBy="#{esterilizacaoSolicitada.solicitante.dadosBasico.prefixoNome}" sortBy="#{esterilizacaoSolicitada.solicitante.dadosBasico.prefixoNome}"
-                                filterMatchMode="contains" headerText="Solicitante">
+                                filterMatchMode="contains" headerText="Solicitante" filterFunction="#{esterilizacaoMB.filtroSemAcento}">
                                 <h:outputText value="#{esterilizacaoSolicitada.solicitante.dadosBasico.prefixoNome}" />
                             </p:column>
                             <p:column filterBy="#{esterilizacaoSolicitada.profissional.dadosBasico.prefixoNome}" sortBy="#{esterilizacaoSolicitada.profissional.dadosBasico.prefixoNome}"
-                                filterMatchMode="contains" headerText="Esterilizador">
+                                filterMatchMode="contains" headerText="Esterilizador" filterFunction="#{esterilizacaoMB.filtroSemAcento}">
                                 <h:outputText value="#{esterilizacaoSolicitada.profissional.dadosBasico.prefixoNome}" />
                             </p:column>
-                            <p:column filterBy="#{esterilizacaoSolicitada.status}" sortBy="#{esterilizacaoSolicitada.status}" filterMatchMode="contains" headerText="Status">
+                            <p:column filterBy="#{esterilizacaoSolicitada.status}" sortBy="#{esterilizacaoSolicitada.status}" filterMatchMode="contains" headerText="Status"
+                            		filterFunction="#{esterilizacaoMB.filtroSemAcento}">
                                 <h:outputText value="#{esterilizacaoSolicitada.status}" />
                             </p:column>
 
@@ -49,10 +89,8 @@
                             <p:column filterBy="#{esterilizacaoSolicitada.dataStr}" sortBy="#{esterilizacaoSolicitada.dataStrOrd}" filterMatchMode="contains" headerText="Data do Pedido">
                                 <h:outputText value="#{esterilizacaoSolicitada.dataStr}" />
                             </p:column>
-                            <p:column filterBy="#{esterilizacaoSolicitada.resumo}" sortBy="#{esterilizacaoSolicitada.resumo}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Resumo" />
-                                </f:facet>
+                            <p:column filterBy="#{esterilizacaoSolicitada.resumo}" sortBy="#{esterilizacaoSolicitada.resumo}" filterMatchMode="contains" headerText="Resumo"
+                            		filterFunction="#{esterilizacaoMB.filtroSemAcento}">
                                 <h:outputText value="#{esterilizacaoSolicitada.resumo}" />
                             </p:column>
                         </p:dataTable>

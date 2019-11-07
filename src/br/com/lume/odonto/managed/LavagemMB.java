@@ -79,6 +79,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
     
     //EXPORTAÇÃO TABELA
     private DataTable tabelaLavagem;
+    private DataTable tabelaDevolucao;
 
     public LavagemMB() {
         super(LavagemSingleton.getInstance().getBo());
@@ -573,6 +574,10 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
     public void exportarTabela(String type) {
         this.exportarTabela("Lavagens", tabelaLavagem, type);
     }
+    
+    public void exportarTabelaDevolucao(String type) {
+        this.exportarTabela("Devolução da lavagem",tabelaDevolucao,type);
+    }
 
     public Date getDataAtual() {
         return dataAtual;
@@ -682,6 +687,14 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
 
     public void setTabelaLavagem(DataTable tabelaLavagem) {
         this.tabelaLavagem = tabelaLavagem;
+    }
+
+    public DataTable getTabelaDevolucao() {
+        return tabelaDevolucao;
+    }
+
+    public void setTabelaDevolucao(DataTable tabelaDevolucao) {
+        this.tabelaDevolucao = tabelaDevolucao;
     }
 
 }

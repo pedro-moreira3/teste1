@@ -15,6 +15,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.event.SelectEvent;
@@ -126,6 +127,9 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
  //   private MaterialLogBO materialLogBO = new MaterialLogBO();
 
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaEsterilizacao;
+    
     public EsterilizacaoMB() {
         super(EsterilizacaoSingleton.getInstance().getBo());
      //   esterilizacaoKitBO = new EsterilizacaoKitBO();
@@ -883,6 +887,10 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
         }
     }
 
+    public void exportarTabela(String type) {
+        this.exportarTabela("Esterilizações", tabelaEsterilizacao, type);
+    }
+    
     public Date getDataAtual() {
         return dataAtual;
     }
@@ -972,5 +980,13 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
     public void setEsterilizacaoDataModel(EsterilizacaoDataModel esterilizacaoDataModel) {
         this.esterilizacaoDataModel = esterilizacaoDataModel;
+    }
+
+    public DataTable getTabelaEsterilizacao() {
+        return tabelaEsterilizacao;
+    }
+
+    public void setTabelaEsterilizacao(DataTable tabelaEsterilizacao) {
+        this.tabelaEsterilizacao = tabelaEsterilizacao;
     }
 }

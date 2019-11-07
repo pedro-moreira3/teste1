@@ -8,8 +8,44 @@
                         <h1>Devolução da Lavagem</h1>
                         <div class="SeparatorFull"></div>
                         <br />
+                        
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                        
+                        	<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{lavagemMB.exportarTabelaDevolucao('xls')}"
+									ajax="false" process="dtLavagensSolicitas,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{lavagemMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{lavagemMB.exportarTabelaDevolucao('pdf')}"
+										ajax="false" process="dtLavagensSolicitas,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{lavagemMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{lavagemMB.exportarTabelaDevolucao('csv')}"
+										ajax="false" process="dtLavagensSolicitas,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{lavagemMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+                        
+                        </p:panelGrid>
+                        
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtLavagensSolicitas" value="#{lavagemMB.lavagensSolicitadas}" var="lavagemSolicitada" rows="10" paginator="true"
-                            selection="#{lavagemMB.lavagemSelecionadas}" rowKey="#{lavagemSolicitada}" paginatorPosition="bottom" widgetVar="tbLavagem">
+                            selection="#{lavagemMB.lavagemSelecionadas}" rowKey="#{lavagemSolicitada}" paginatorPosition="bottom" widgetVar="tbLavagem" binding="#{lavagemMB.tabelaDevolucao}">
                             <f:facet name="header">Lavagens Solicitadas</f:facet>
 
                             <p:column selectionMode="multiple" style="width:16px;text-align:center" />
@@ -26,23 +62,25 @@
 
 
 
-                            <p:column filterBy="#{lavagemSolicitada.descricao}" sortBy="#{lavagemSolicitada.descricao}" filterMatchMode="contains" headerText="Descrição">
+                            <p:column filterBy="#{lavagemSolicitada.descricao}" sortBy="#{lavagemSolicitada.descricao}" filterMatchMode="contains" headerText="Descrição"
+                            		filterFunction="#{lavaemMB.filtroSemAcento}">
                                 <h:outputText value="#{lavagemSolicitada.descricao}" title="#{lavagemSolicitada.id}" />
                             </p:column>
-                            <p:column filterBy="#{lavagemSolicitada.observacao}" sortBy="#{lavagemSolicitada.observacao}" filterMatchMode="contains" headerText="Observação">
+                            <p:column filterBy="#{lavagemSolicitada.observacao}" sortBy="#{lavagemSolicitada.observacao}" filterMatchMode="contains" headerText="Observação"
+                            	filterFunction="#{lavaemMB.filtroSemAcento}">
                                 <h:outputText value="#{lavagemSolicitada.observacao}" />
                             </p:column>
 
                             <p:column filterBy="#{lavagemSolicitada.solicitante.dadosBasico.prefixoNome}" sortBy="#{lavagemSolicitada.solicitante.dadosBasico.prefixoNome}" filterMatchMode="contains"
-                                headerText="Solicitante">
+                                headerText="Solicitante" filterFunction="#{lavaemMB.filtroSemAcento}">
                                 <h:outputText value="#{lavagemSolicitada.solicitante.dadosBasico.prefixoNome}" />
                             </p:column>
                             <p:column filterBy="#{lavagemSolicitada.profissional.dadosBasico.prefixoNome}" sortBy="#{lavagemSolicitada.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains"
-                                headerText="Esterilizador">
+                                headerText="Esterilizador" filterFunction="#{lavaemMB.filtroSemAcento}">
                                 <h:outputText value="#{lavagemSolicitada.profissional.dadosBasico.prefixoNome}" />
                             </p:column>
                             <p:column filterBy="#{lavagemSolicitada.status}" sortBy="#{lavagemSolicitada.status}" filterMatchMode="contains" headerText="Status">
-                                <h:outputText value="#{lavagemSolicitada.status}" />
+                                <h:outputText value="#{lavagemSolicitada.status}" filterFunction="#{lavaemMB.filtroSemAcento}"/>
                             </p:column>
 
                             <p:column filterBy="#{lavagemSolicitada.dataValidadeStr}" sortBy="#{lavagemSolicitada.dataValidadeStr}" filterMatchMode="contains" headerText="Data de Validade">
@@ -51,17 +89,11 @@
                             <p:column filterBy="#{lavagemSolicitada.dataStr}" sortBy="#{lavagemSolicitada.dataStrOrd}" filterMatchMode="contains" headerText="Data do Pedido">
                                 <h:outputText value="#{lavagemSolicitada.dataStr}" />
                             </p:column>
-                            <p:column filterBy="#{lavagemSolicitada.resumo}" sortBy="#{lavagemSolicitada.resumo}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Resumo" />
-                                </f:facet>
-                                <h:outputText value="#{lavagemSolicitada.resumo}" />
+                            <p:column filterBy="#{lavagemSolicitada.resumo}" sortBy="#{lavagemSolicitada.resumo}" filterMatchMode="contains" headerText="Resumo">
+                                <h:outputText value="#{lavagemSolicitada.resumo}" filterFunction="#{lavaemMB.filtroSemAcento}"/>
                             </p:column>
 
-                            <p:column sortBy="#{lavagemSolicitada.clinica}" filterBy="#{lavagemSolicitada.clinica}" filterMatchMode="exact">
-                                <f:facet name="header">
-                                    <h:outputText value="Instrumento da clínica?" />
-                                </f:facet>
+                            <p:column sortBy="#{lavagemSolicitada.clinica}" filterBy="#{lavagemSolicitada.clinica}" filterMatchMode="exact" headerText="Instrumento da clínica?">
                                 <f:facet name="filter">
                                     <p:selectOneMenu onchange="PF('tbLavagem').filter()">
                                         <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true" />
@@ -79,10 +111,10 @@
                             value="#{lavagemMB.lavagemKitsSolicitados}" var="lk" rowKey="#{lk}" rows="7" paginator="true" paginatorPosition="bottom">
                             <f:facet name="header">Detalhes</f:facet>
                             <p:ajax event="rowSelect" update=":lume:pnButton,:lume:pnDescartar" process=":lume:dtKits" listener="#{lavagemMB.actionLimpaJustificativa}" />
-                            <p:column filterBy="#{lk.kit.descricao}" sortBy="#{lk.kit.descricao}" filterMatchMode="contains" headerText="Kit">
+                            <p:column filterBy="#{lk.kit.descricao}" sortBy="#{lk.kit.descricao}" filterMatchMode="contains" headerText="Kit" filterFunction="#{lavaemMB.filtroSemAcento}">
                                 <h:outputText value="#{lk.kit.descricao}" title="#{lk.id}" />
                             </p:column>
-                            <p:column filterBy="#{lk.item.descricaoLimpa}" sortBy="#{lk.item.descricao}" filterMatchMode="contains" headerText="Item">
+                            <p:column filterBy="#{lk.item.descricaoLimpa}" sortBy="#{lk.item.descricao}" filterMatchMode="contains" headerText="Item" filterFunction="#{lavaemMB.filtroSemAcento}">
                                 <h:outputText value="#{lk.item.descricao}" />
                             </p:column>
                             <p:column filterBy="#{lk.quantidade}" sortBy="#{lk.quantidade}" filterMatchMode="contains" headerText="Quantidade">

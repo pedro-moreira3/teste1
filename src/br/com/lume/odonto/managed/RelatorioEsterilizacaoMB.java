@@ -9,6 +9,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.UtilsFrontEnd;
@@ -35,6 +36,11 @@ public class RelatorioEsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
     private List<EsterilizacaoKit> itens;
 
     private List<Material> descartes;
+    
+    //EXPORTAÇÕES TABELA
+    private DataTable tabelaRelatorio;
+    private DataTable tabelaAnalitica;
+    private DataTable tabelaDescartes;
 
     public RelatorioEsterilizacaoMB() {
         super(EsterilizacaoSingleton.getInstance().getBo());   
@@ -70,6 +76,18 @@ public class RelatorioEsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
         super.actionNew(arg0);
     }
 
+    public void exportarTabela(String type) {
+        this.exportarTabela("Relatório Esterilizações", tabelaRelatorio, type);
+    }
+    
+    public void exportarTabelaAnalitica(String type) {
+        this.exportarTabela("Relatório Analítico Esterilizações", getTabelaAnalitica(), type);
+    }
+    
+    public void exportarTabelaDescartes(String type) {
+        this.exportarTabela("Relatório de descartes Esterilizações", getTabelaDescartes(), type);
+    }
+    
     public List<Esterilizacao> getesterilizacoes() {
         return esterilizacoes;
     }
@@ -116,6 +134,30 @@ public class RelatorioEsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
 
     public void setDescartes(List<Material> descartes) {
         this.descartes = descartes;
+    }
+
+    public DataTable getTabelaRelatorio() {
+        return tabelaRelatorio;
+    }
+
+    public void setTabelaRelatorio(DataTable tabelaRelatorio) {
+        this.tabelaRelatorio = tabelaRelatorio;
+    }
+
+    public DataTable getTabelaAnalitica() {
+        return tabelaAnalitica;
+    }
+
+    public void setTabelaAnalitica(DataTable tabelaAnalitica) {
+        this.tabelaAnalitica = tabelaAnalitica;
+    }
+
+    public DataTable getTabelaDescartes() {
+        return tabelaDescartes;
+    }
+
+    public void setTabelaDescartes(DataTable tabelaDescartes) {
+        this.tabelaDescartes = tabelaDescartes;
     }
 
 }
