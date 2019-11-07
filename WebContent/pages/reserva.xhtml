@@ -204,7 +204,7 @@
 									A partir de :
 									<p:calendar value="#{reservaMB.dataIni}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true"
                                         yearRange="-100:+1" style="margin-right: 15px; margin-left: 15px;" />
-                                    <p:commandButton id="pesquisar" icon="fa fa-search White" actionListener="#{reservaMB.geraLista}" update="@form" tabindex="1" process=":lume:dtReserva:filtro"
+                                    <p:commandButton id="pesquisar" icon="fa fa-search White" actionListener="#{reservaMB.geraLista}" update="@this, dtReserva" tabindex="1" process=":lume:dtReserva:filtro"
                                         styleClass="OrangeButton" />
                                 </h:panelGroup>
                             </f:facet>
@@ -212,7 +212,7 @@
 							 <p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlg').show();" update=":lume:pnEntradaDlg" title="Editar" process="@this"
                                 actionListener="#{reservaMB.carregarEditar(reserva)}" style="width:33px !important" />							 
 							 	<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmDialog').show();" update=":lume:pnDlg,:lume:dtReserva" title="Remover" process="@this"
-	                                 style="width:33px !important" actionListener="#{reservaMB.carregarEditar(reserva)}"/>
+	                                 style="width:33px !important" actionListener="#{reservaMB.carregarEditar(reserva)}" rendered="#{reservaMB.isKitPendente(reserva)}" />
 	                        </p:column>		                            
                             <p:column filterBy="#{reserva.descricao}" sortBy="#{reserva.descricao}" filterMatchMode="contains"
                             		headerText="Descrição" filterFunction="#{reservaMB.filtroSemAcento}">

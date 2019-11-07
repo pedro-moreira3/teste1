@@ -120,41 +120,93 @@
                         <p:outputPanel id="pnItemTree" styleClass="BordNone">
                             <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
                                 style="border:0px none; background-color:transparent;">
-                                <p:outputLabel for="filtro" value="Pesquisar: " />
+                                <p:outputLabel for="filtro" value="Item/Categoria: " />                                
                                 <p:inputText id="filtro" value="#{itemMB.filtroTable}">
                                 </p:inputText>
-                                <p:commandButton id="todos" icon="White fa fa-search" value="Pesquisar" actionListener="#{itemMB.actionTodos}" update=":lume:pnItem,:lume:pnItemTree"
-                                    process=":lume:pnItemTree" styleClass="OrangeButton" />
                             </p:panelGrid>
+                            <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                                style="border:0px none; background-color:transparent;">                             
+								<h:outputText for="filtroPeriodo"
+									value="Item ou Categoria?" />
+								<p:selectOneMenu id="filtroPeriodo"
+									value="#{itemMB.filtroItemCategoria}">
+									<f:selectItem itemValue="" itemLabel="Selecione" />																
+									<f:selectItem itemValue="N" itemLabel="Item" />
+									<f:selectItem itemValue="S" itemLabel="Categoria" />									
+								</p:selectOneMenu>
+                            </p:panelGrid>                            
+                            <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                                style="border:0px none; background-color:transparent;">                                
+                                <p:commandButton id="pesquisar" icon="White fa fa-search" value="Pesquisar" 
+                                actionListener="#{itemMB.filtraItemCategoria}" update=":lume:pnItem,:lume:pnItemTree,:lume:form:tbItemTree"
+                                    process=":lume:pnItemTree" styleClass="OrangeButton" />
+                            </p:panelGrid>    
+                             <p:defaultCommand target="pesquisar" />                        
                             <h:form id="form">
-                            <p:treeTable paginator="true" rows="30" value="#{itemMB.root}" var="item" id="tbItemTree" selection="#{itemMB.selectedItem}" selectionMode="single" style="white-space: normal;">                              
-                                <f:facet name="header">Itens</f:facet>
-								<p:column headerText="Ações" width="20%" rendered="#{item.descricao ne 'RAIZ'}" style="text-align:center !important">
+                            
+                          
+	                             
+                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="tbItemTree" value="#{itemMB.itens}" var="item" rows="15" paginator="true" 
+                        rowKey="item" paginatorPosition="bottom">	                             
+	                             
+	                            <f:facet name="header">Itens</f:facet>  		                           
+								<p:column headerText="Ações" width="10%" rendered="#{item.descricao ne 'RAIZ'}" style="text-align:center !important">
 									<p:commandButton class="OrangeButton" icon="fa fa-pencil" update=":lume:pnDlg" title="Editar" process="@this"
 									actionListener="#{itemMB.carregarEditar(item)}" style="width:33px !important" />
 									<h:outputText value="&#160;" /><h:outputText value="&#160;" />
 									<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmDialog').show();" update="" title="Remover" process="@this"
 									style="width:33px !important" actionListener="#{itemMB.carregarExcluir(item)}"/>
-								</p:column>	                                  
-                                <p:column headerText="Item" style="width: 25%; white-space: normal;" priority="1">
-                                    <h:outputText value="#{item.descricao}" title="#{item.id}" />
+								</p:column>	
+                                <p:column headerText="Item" style="width: 25%; white-space: normal;" priority="1" filterBy="#{item.descricao}">
+                                    <h:outputText value="#{item.descricao}" />
                                 </p:column>
-                                <p:column headerText="Unidade de medida" priority="2">
+                                <p:column headerText="Unidade de medida"  filterBy="#{itemMB.getUnidadeString(item)}">
                                     <h:outputText value="#{itemMB.getUnidadeString(item)}" />
                                 </p:column>
-                                <p:column headerText="Tipo" priority="2">
+                                <p:column headerText="Tipo"  filterBy="#{item.tipoStr}">
                                     <h:outputText value="#{item.tipoStr}" />
                                 </p:column>
-                                <p:column headerText="Aplicação" priority="2">
+                                <p:column headerText="Aplicação" filterBy="#{item.aplicacaoStr}">
                                     <h:outputText value="#{item.aplicacaoStr}" />
                                 </p:column>
-                                <p:column headerText="Estoque Mínimo" priority="2">
+                                <p:column headerText="Estoque Mínimo" filterBy="#{item.estoqueMinimo}">
                                     <h:outputText value="#{item.estoqueMinimo}" />
                                 </p:column>
-                                <p:column headerText="Armazenamento" style="width: 14%; white-space: normal;" priority="2">
+                                <p:column headerText="Armazenamento" style="width: 14%; white-space: normal;" filterBy="#{item.formaArmazenamentoString}">
                                     <h:outputText value="#{item.formaArmazenamentoString}" />
-                                </p:column>                              
-                            </p:treeTable>
+                                </p:column> 
+	                        </p:dataTable>	
+                            
+                            <ui:remove>
+	                            <p:treeTable paginator="true" rows="30" value="#{itemMB.root}" var="item" id="tbItemTree" selection="#{itemMB.selectedItem}" selectionMode="single" style="white-space: normal;">                              
+	                                <f:facet name="header">Itens</f:facet>
+									<p:column headerText="Ações" width="20%" rendered="#{item.descricao ne 'RAIZ'}" style="text-align:center !important">
+										<p:commandButton class="OrangeButton" icon="fa fa-pencil" update=":lume:pnDlg" title="Editar" process="@this"
+										actionListener="#{itemMB.carregarEditar(item)}" style="width:33px !important" />
+										<h:outputText value="&#160;" /><h:outputText value="&#160;" />
+										<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmDialog').show();" update="" title="Remover" process="@this"
+										style="width:33px !important" actionListener="#{itemMB.carregarExcluir(item)}"/>
+									</p:column>	                                  
+	                                <p:column headerText="Item" style="width: 25%; white-space: normal;" priority="1">
+	                                    <h:outputText value="#{item.descricao}" title="#{item.id}" />
+	                                </p:column>
+	                                <p:column headerText="Unidade de medida" priority="2">
+	                                    <h:outputText value="#{itemMB.getUnidadeString(item)}" />
+	                                </p:column>
+	                                <p:column headerText="Tipo" priority="2">
+	                                    <h:outputText value="#{item.tipoStr}" />
+	                                </p:column>
+	                                <p:column headerText="Aplicação" priority="2">
+	                                    <h:outputText value="#{item.aplicacaoStr}" />
+	                                </p:column>
+	                                <p:column headerText="Estoque Mínimo" priority="2">
+	                                    <h:outputText value="#{item.estoqueMinimo}" />
+	                                </p:column>
+	                                <p:column headerText="Armazenamento" style="width: 14%; white-space: normal;" priority="2">
+	                                    <h:outputText value="#{item.formaArmazenamentoString}" />
+	                                </p:column>                              
+	                            </p:treeTable>
+                            </ui:remove>
                             </h:form>
                         </p:outputPanel>
                     </p:outputPanel>

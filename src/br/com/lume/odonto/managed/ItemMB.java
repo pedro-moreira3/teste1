@@ -56,7 +56,7 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     private Item item;
 
-    private String filtroTable;
+    private String filtroTable,filtroItemCategoria;
 
     private List<Item> listByPai = new ArrayList<>();
 
@@ -69,19 +69,20 @@ public class ItemMB extends LumeManagedBean<Item> {
         this.setClazz(Item.class);
         categoria = "N";
         this.setDisable(false);
-
+        
         try {
+           //    this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             this.setFormasArmazenamento(this.getDominios(FORMA_ARMAZENAMENTO));
             this.setUtilizacoes(this.getDominios(UTILIZACAO));
             this.setFracoesUnitarias(this.getDominios(FRACAO_UNITARIA));
             this.setUnidadesMedida(this.getDominios(UNIDADE_MEDIDA));
-            this.setRoot(new DefaultTreeNode("", null));
+           // this.setRoot(new DefaultTreeNode("", null));
             this.setRootPai(new DefaultTreeNode("", null));
             Item firstLevel = new Item();
             firstLevel.setDescricao("RAIZ");
             this.chargeTree(new DefaultTreeNode(firstLevel, rootPai), true, false);
             filtroTable = "";
-            this.actionTodos(null);
+          //  this.actionTodos(null);
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
@@ -102,7 +103,7 @@ public class ItemMB extends LumeManagedBean<Item> {
         } else {
             this.setDigitacao(null);
         }
-        this.setSelected();
+       // this.setSelected();
         
         PrimeFaces.current().executeScript("PF('dlg').show();");
     }   
@@ -145,13 +146,18 @@ public class ItemMB extends LumeManagedBean<Item> {
                 this.getEntity().setIdItemPai(this.getItem());
             }
         }
-        for (Item item : this.getItens()) {
-            if (item.getDescricao().equalsIgnoreCase(this.getDescricao()) && item.getId() != this.getEntity().getId()) {
-                log.error("erro.categoria.duplicidade");
-                this.addError(OdontoMensagens.getMensagem("erro.categoria.duplicidade"), "",true);
-                error = true;
-                break;
+        try {
+            for (Item item : ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa())) {
+                if (item.getDescricao().equalsIgnoreCase(this.getDescricao()) && item.getId() != this.getEntity().getId()) {
+                    log.error("erro.categoria.duplicidade");
+                    this.addError(OdontoMensagens.getMensagem("erro.categoria.duplicidade"), "",true);
+                    error = true;
+                    break;
+                }
             }
+        } catch (Exception e) {
+            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
         }
         this.getEntity().setPedidoItens(null);
         if (!error) {
@@ -230,15 +236,15 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     public void carregaTela() {
         this.setItem(null);
-        Item itemAux = ((Item) this.getSelectedItem().getData());
-        if (itemAux.getIdItemPai() != null) {
-            this.setDigitacao(itemAux.getIdItemPai().getDescricao());
-        } else {
+      //  Item itemAux = ((Item) this.getSelectedItem().getData());
+      //  if (itemAux.getIdItemPai() != null) {
+      //      this.setDigitacao(itemAux.getIdItemPai().getDescricao());
+      //  } else {
             this.setDigitacao(null);
-        }
-        this.setSelected();
+    //    }
+      //  this.setSelected();
         try {
-            this.setEntity((Item) selectedItem.getData());
+          //  this.setEntity((Item) selectedItem.getData());
             this.setParametros();
             this.setDescricao(this.getEntity().getDescricao());
         } catch (Exception e) {
@@ -285,12 +291,18 @@ public class ItemMB extends LumeManagedBean<Item> {
     public void chargeTree(TreeNode root, boolean categoria, boolean filtro) {
         List<TreeNode> nodes = new ArrayList<>();
         List<TreeNode> nodesAux;
-        if (categoria) {
-            this.filtraCategorias();
-        } else {
-            this.filtraItens(filtro);
+      //  if (categoria) {
+      //      this.filtraCategorias();
+      //  } else {
+      //      this.filtraItens(filtro);
+     //   }
+        List<Item> locaisRestantes = new ArrayList<Item>();
+        try {
+            locaisRestantes = ItemSingleton.getInstance().getBo().listByEmpresaTipoCategoriaDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),"S",null);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-        List<Item> locaisRestantes = this.getItens();
         root.setExpanded(true);
         nodes.add(root);
         locaisRestantes = this.setLevel(locaisRestantes, nodes, categoria);
@@ -387,41 +399,51 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     public List<String> filtraItem(String digitacao) {
         this.setDigitacao(digitacao);
-        this.filtraCategorias();
+   //     this.filtraCategorias();
         return this.convert(this.getItens());
     }
 
-    public void filtraItens(boolean filtro) {
-        this.setItens(new ArrayList<Item>());
+    public void filtraItemCategoria() {
         try {
-            if (!filtro && this.getDigitacao() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            } else if (filtro && this.getFiltroTable() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcialAndCategoria(this.getFiltroTable(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            } else {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            }
-            Collections.sort(itens);
+            this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaTipoCategoriaDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),this.filtroItemCategoria,this.filtroTable));          
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
-    }
 
-    public void filtraCategorias() {
-        this.setItens(new ArrayList<Item>());
-        try {
-            if (this.getDigitacao() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            } else {
-                this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            }
-            Collections.sort(itens);
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
-            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-        }
     }
+    
+//    public void filtraItens(boolean filtro) {
+//     //   this.setItens(new ArrayList<Item>());
+//        try {
+//           // if (!filtro && this.getDigitacao() != null) {
+//           //     this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+//           // } else if (filtro && this.getFiltroTable() != null) {
+//            //    this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcialAndCategoria(this.getFiltroTable(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+//          //  } else {
+//       //         this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+//        //    }
+//            Collections.sort(itens);
+//        } catch (Exception e) {
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+//            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+//        }
+//    }
+//
+//    public void filtraCategorias() {
+//      //  this.setItens(new ArrayList<Item>());
+//        try {
+//            if (this.getDigitacao() != null) {
+//       //         this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+//            } else {
+//       //         this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+//            }
+//            Collections.sort(itens);
+//        } catch (Exception e) {
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+//            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+//        }
+//    }
 
     public boolean isDisable() {
         return disable;
@@ -515,11 +537,11 @@ public class ItemMB extends LumeManagedBean<Item> {
     public void setSelectedItemPai(TreeNode selectedItemPai) {
         this.selectedItemPai = selectedItemPai;
     }
-
+//
     public TreeNode getRootPai() {
         return rootPai;
     }
-
+//
     public void setRootPai(TreeNode rootPai) {
         this.rootPai = rootPai;
     }
@@ -648,32 +670,42 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     public void setFiltroTable(String filtroTable) {
         this.filtroTable = filtroTable;
-        if (this.getFiltroTable() != null && !this.getFiltroTable().isEmpty() && this.getFiltroTable().length() >= 3) {
-            this.setRoot(new DefaultTreeNode("", null));
-            Item firstLevel = new Item();
-            firstLevel.setDescricao("RAIZ");
-            this.chargeTree(new DefaultTreeNode(firstLevel, root), false, true);
-            List<Item> itens2 = new ArrayList<>();
-            for (Item item : this.getItens()) {
-                //System.out.println(item.getDescricaoLimpa().toUpperCase());
-                if (item.getDescricaoLimpa().toUpperCase().contains(Utils.normalize(filtroTable.toUpperCase()))) {
-                    itens2.add(item);
-                }
-            }
-            root = new DefaultTreeNode("root", null);
-            for (Item item : itens2) {
-                TreeNode node2 = new DefaultTreeNode(item, root);
-                node2.setExpanded(true);
-            }
-        }
+//        if (this.getFiltroTable() != null && !this.getFiltroTable().isEmpty() && this.getFiltroTable().length() >= 3) {
+//            this.setRoot(new DefaultTreeNode("", null));
+//            Item firstLevel = new Item();
+//            firstLevel.setDescricao("RAIZ");
+//            this.chargeTree(new DefaultTreeNode(firstLevel, root), false, true);
+//            List<Item> itens2 = new ArrayList<>();
+//            for (Item item : this.getItens()) {
+//                //System.out.println(item.getDescricaoLimpa().toUpperCase());
+//                if (item.getDescricaoLimpa().toUpperCase().contains(Utils.normalize(filtroTable.toUpperCase()))) {
+//                    itens2.add(item);
+//                }
+//            }
+//            root = new DefaultTreeNode("root", null);
+//            for (Item item : itens2) {
+//                TreeNode node2 = new DefaultTreeNode(item, root);
+//                node2.setExpanded(true);
+//            }
+//        }
     }
 
-    public void actionTodos(ActionEvent event) {
-        this.setRoot(new DefaultTreeNode("", null));
-        Item firstLevel = new Item();
-        firstLevel.setDescricao("RAIZ");
-        this.chargeTree(new DefaultTreeNode(firstLevel, root), false, true);
-        this.eliminaCategoriasVazias(root);
-        // filtroTable = null;
+    
+    public String getFiltroItemCategoria() {
+        return filtroItemCategoria;
     }
+
+    
+    public void setFiltroItemCategoria(String filtroItemCategoria) {
+        this.filtroItemCategoria = filtroItemCategoria;
+    }
+
+//    public void actionTodos(ActionEvent event) {
+//        this.setRoot(new DefaultTreeNode("", null));
+//        Item firstLevel = new Item();
+//        firstLevel.setDescricao("RAIZ");
+//        this.chargeTree(new DefaultTreeNode(firstLevel, root), false, true);
+//        this.eliminaCategoriasVazias(root);
+//        // filtroTable = null;
+//    }
 }

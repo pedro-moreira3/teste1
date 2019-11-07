@@ -96,6 +96,8 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
     private Date dataIni;
     
     private DataTable tabelaReserva;
+    
+    public static final String PENDENTE = "PE";
 
     public ReservaMB() {
         super(ReservaSingleton.getInstance().getBo());     
@@ -104,7 +106,7 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         dataAtual = new Date();        
         try {
             Calendar c = Calendar.getInstance();
-            c.add(Calendar.MONTH, -1);
+            c.add(Calendar.DATE, -7);
             dataIni = c.getTime();
             this.getEntity().setPrazo(Calendar.getInstance().getTime());
             this.setProfissionalSelecionado(UtilsFrontEnd.getProfissionalLogado());
@@ -124,14 +126,25 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
             prazo = dayBefore.getTime();
         }      
     }
+    
+    public boolean isKitPendente(Reserva reserva) {
+        if(reserva.getReservaKits() != null) {
+            for (ReservaKit kit : reserva.getReservaKits()) {
+                if(!kit.getStatus().equals(PENDENTE)) {
+                    return false;
+                }
+            }
+        }        
+        return true;
+    }
 
     public void geraLista() {
         try {
-            if (this.isAdmin()) {
+          //  if (this.isAdmin()) {
                 this.setReservas(ReservaSingleton.getInstance().getBo().listByData(dataIni, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            } else {
-                this.setReservas(ReservaSingleton.getInstance().getBo().listAtuais(UtilsFrontEnd.getProfissionalLogado()));
-            }
+          //  } else {
+            //    this.setReservas(ReservaSingleton.getInstance().getBo().listAtuais(UtilsFrontEnd.getProfissionalLogado()));
+         //   }
             if (reservas != null) {
                 Collections.sort(reservas);
             }
@@ -143,7 +156,15 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
 
     @Override
     public void actionRemove(ActionEvent event) {
-        super.actionRemove(event);
+     //   super.actionRemove(event);
+        getEntity().setExcluido("S");
+        getEntity().setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
+        try {
+            ReservaSingleton.getInstance().getBo().persist(getEntity());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
         this.limpar();
         this.geraLista();
     }

@@ -89,8 +89,10 @@
 
                         <p:fieldset legend="Kits">
 
-                            <p:dataTable id="dtKitsPendentes" filterDelay="1500"  reflow="true" widgetVar="dtKitsPendentes" emptyMessage="" value="#{emprestimoKitMB.kitsPendentes}" var="reservaKit" rows="7" paginator="true"
-                                selection="#{emprestimoKitMB.reservaKit}" selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom" binding="#{emprestimoKitMB.tabelaKit}" >
+
+                            <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtKitsPendentes" value="#{emprestimoKitMB.kitsPendentes}" var="reservaKit" rows="7" paginator="true"
+                                selection="#{emprestimoKitMB.reservaKit}" selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom" binding="#{emprestimoKitMB.tabelaItens}">
+
                                 <f:facet name="header">Kits Pendentes</f:facet>
                                 <p:ajax event="rowSelect" listener="#{emprestimoKitMB.limpaMateriais}"
                                     update=":lume:dtMateriaisDisponiveis, :lume:disponibiliza, :lume:dtItensPendentes, :lume:entregar,:lume:naoUtilizado" process="@this" />
