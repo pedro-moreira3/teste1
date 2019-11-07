@@ -423,7 +423,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                     }
                 }
             } else {
-                this.refreshEntity();
+                //this.refreshEntity();
             }
             validaHabilitaSalvar();
             carregarScheduleTarefas();
