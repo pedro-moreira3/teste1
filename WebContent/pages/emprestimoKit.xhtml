@@ -91,7 +91,7 @@
 
 
                             <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtKitsPendentes" value="#{emprestimoKitMB.kitsPendentes}" var="reservaKit" rows="7" paginator="true"
-                                selection="#{emprestimoKitMB.reservaKit}" selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom" binding="#{emprestimoKitMB.tabelaItens}">
+                                selection="#{emprestimoKitMB.reservaKit}" selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom" binding="#{emprestimoKitMB.tabelaKit}">
 
                                 <f:facet name="header">Kits Pendentes</f:facet>
                                 <p:ajax event="rowSelect" listener="#{emprestimoKitMB.limpaMateriais}"
