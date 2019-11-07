@@ -1072,6 +1072,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 planoTratamentoSelecionado = pt;
             }
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            atualizaPickList();
             visivel = false;
             pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             paciente = new Paciente();
