@@ -233,6 +233,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             pacienteSelecionado = a.getPaciente();
         } else {
             profissional = null;
+            profissionalDentroAgenda = profissional;
             pacienteSelecionado = null;
         }
     }
