@@ -233,6 +233,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             pacienteSelecionado = a.getPaciente();
         } else {
             profissional = null;
+            profissionalDentroAgenda = profissional;
             pacienteSelecionado = null;
         }
     }
@@ -994,6 +995,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         if (agendamento.getPlanoTratamentoProcedimentosAgendamento() != null && agendamento.getPlanoTratamentoProcedimentosAgendamento().size() > 0) {
             this.setPlanoTratamentoSelecionado(agendamento.getPlanoTratamentoProcedimentosAgendamento().get(0).getPlanoTratamentoProcedimento().getPlanoTratamento());
         }
+        atualizaPickList();
         this.setObservacoes(agendamento.getDescricao());
         this.validaHoraUtilProfissional(profissionalDentroAgenda);
         validaHabilitaSalvar();
@@ -1071,6 +1073,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 planoTratamentoSelecionado = pt;
             }
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            atualizaPickList();
             visivel = false;
             pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             paciente = new Paciente();

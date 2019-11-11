@@ -15,9 +15,17 @@ UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Agenda' WHERE OBJ_STR_DES = 'Agendamento';
 UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Devolução Unitária' WHERE OBJ_STR_DES = 'Unitária';
 UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Relatório de Agendamento' WHERE OBJ_STR_DES = 'Relatório de Atendimento';
 
-UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Rel. Atendimento' AND OBJ_STR_CAMINHO = 'filaAtendimento.jsf';
-
 UPDATE SEG_OBJETO SET OBJ_INT_ORDEM = 2 WHERE OBJ_STR_DES = 'Fila de Atendimento';
+
+UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Repasse dos Profissionais' AND OBJ_STR_CAMINHO = 'faturamento.jsf';
+UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Rel. Atendimento' AND OBJ_STR_CAMINHO = 'filaAtendimento.jsf';
+UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Relatório de Avaliação de Atendimentos';
+UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Registro de Custos Diretos';
+UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Pagamentos/Recebimentos';
+UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Relatório de Resultados';
+UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Relatório de Bloqueios';
+UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Atualizações';
+UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Dashboard';
 
 -------------------
 
