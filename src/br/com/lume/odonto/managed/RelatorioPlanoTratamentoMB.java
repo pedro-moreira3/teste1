@@ -48,6 +48,9 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
     private String filtroPeriodoFinalizacao;
     
     private String status;
+    
+    private List<String> listaConvenios;
+    private String filtroPorConvenio;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
@@ -55,6 +58,11 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
     public RelatorioPlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());      
         this.setClazz(PlanoTratamento.class);  
+        
+        if(this.listaConvenios == null)
+            this.listaConvenios = new ArrayList<>();
+        
+        this.sugestoesConvenios("todos");
     }
     
     public List<Paciente> sugestoesPacientes(String query) {
@@ -65,9 +73,9 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
         return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }    
     
-    public List<Convenio> sugestoesConvenios(String query) {
-        return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-    }       
+//    public List<Convenio> sugestoesConvenios(String query) {
+//        return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//    }       
 
     public void actionFiltrar(ActionEvent event) {
         if (inicio != null && fim != null && inicio.getTime() > fim.getTime()) {
@@ -79,8 +87,10 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
         }
         else {
             planoTratamentos = PlanoTratamentoSingleton.getInstance().getBo().filtraRelatorioPT
-                    (inicio, fim,inicioFinalizacao,fimFinalizacao, status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente, profissional,convenio);
+                    (inicio, fim,inicioFinalizacao,fimFinalizacao, status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente, profissional,getConvenio(getFiltroPorConvenio()));
         }
+
+        this.sugestoesConvenios("todos");
     }
 
     public void actionTrocaDatasCriacao() {        
@@ -163,6 +173,37 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
         inicio = null;
         fim = null;
         super.actionNew(arg0);
+    }
+    
+    public void sugestoesConvenios(String query) {
+        try {
+            
+            if(!this.getListaConvenios().contains("SEM CONVENIO"))
+                this.getListaConvenios().add("Sem Convenio");
+            
+            List<Convenio> lista = ConvenioSingleton.getInstance().getBo().listSugestoesCompleteTodos(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
+            
+            for(Convenio c : lista) {
+                this.getListaConvenios().add(c.getDadosBasico().getNome());
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    private Convenio getConvenio(String nome) {
+        if(nome != null && !(nome.toUpperCase().equals("TODOS"))) {
+            
+            List<Convenio> lista = ConvenioSingleton.getInstance().getBo().listSugestoesCompleteTodos(nome, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
+            
+            if(nome.toUpperCase().equals("SEM CONVENIO") && lista.size() == 0)
+                return new Convenio();
+            
+            return lista.get(0);
+            
+        }
+        return null;
     }
 
     public void exportarTabela(String type) {
@@ -263,6 +304,22 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
 
     public void setTabelaRelatorio(DataTable tabelaRelatorio) {
         this.tabelaRelatorio = tabelaRelatorio;
+    }
+
+    public List<String> getListaConvenios() {
+        return listaConvenios;
+    }
+
+    public void setListaConvenios(List<String> listaConvenios) {
+        this.listaConvenios = listaConvenios;
+    }
+
+    public String getFiltroPorConvenio() {
+        return filtroPorConvenio;
+    }
+
+    public void setFiltroPorConvenio(String filtroPorConvenio) {
+        this.filtroPorConvenio = filtroPorConvenio;
     }
 
 }

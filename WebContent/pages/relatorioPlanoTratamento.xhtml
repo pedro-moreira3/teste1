@@ -263,7 +263,22 @@ div.ui-selectoneradio label {
 									<f:selectItem itemValue="N" itemLabel="Não" />
 								</p:selectOneRadio>
 							</h:panelGroup>
-							
+
+							<h:panelGroup>
+								<p:outputLabel style="margin:0px;" for="filtroConvenio"
+									value="Convênio" />
+
+								<p:selectOneMenu id="filtroConvenio"
+									style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+									value="#{relatorioPlanoTratamentoMB.filtroPorConvenio}">
+									<f:selectItem itemLabel="Todos" itemValue="todos" />
+									<f:selectItems value="#{relatorioPlanoTratamentoMB.listaConvenios}"
+										var="agendamento" itemLabel="#{agendamento}"
+										itemValue="#{agendamento}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+
+							<ui:remove>
 							<h:panelGroup>
 								<h:outputText for="filtroConvenio" value="Convênio:" />
 								<p:autoComplete id="filtroConvenio"
@@ -273,6 +288,7 @@ div.ui-selectoneradio label {
 									converter="convenio" forceSelection="true" scrollHeight="400">
 								</p:autoComplete>
 							</h:panelGroup>
+							</ui:remove>
 
 						</p:panelGrid>
 
@@ -341,52 +357,34 @@ div.ui-selectoneradio label {
 							<f:facet name="header">Planos de Tratamentos</f:facet>
 							<p:column filterBy="#{m.paciente.dadosBasico.nomeStr}"
 								sortBy="#{m.paciente.dadosBasico.nome}"
-								filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Paciente" />
-								</f:facet>
+								filterMatchMode="contains" headerText="Paciente">
 								<h:outputText value="#{m.paciente.dadosBasico.nome}"
 									title="#{m.id}" />
 							</p:column>
 							<p:column filterBy="#{m.profissional.dadosBasico.nomeStr}"
 								sortBy="#{m.profissional.dadosBasico.nome}"
 								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
-								filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Profissional" />
-								</f:facet>
+								filterMatchMode="contains" headerText="Profissional">
 								<h:outputText value="#{m.profissional.dadosBasico.nome}"
 									title="#{m.id}" />
 							</p:column>
 							<p:column filterBy="#{m.descricao}" sortBy="#{m.descricao}"
 								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
-								filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Plano de Tratamento" />
-								</f:facet>
+								filterMatchMode="contains" headerText="Plano de Tratamento">
 								<h:outputText value="#{m.descricao}" />
 							</p:column>
 							<p:column filterBy="#{m.dataHoraStr}"
-								sortBy="#{m.dataHoraStrOrd}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Data de Início" />
-								</f:facet>
+								sortBy="#{m.dataHoraStrOrd}" filterMatchMode="contains" headerText="Data de Início">
 								<h:outputText value="#{m.dataHoraStr}" />
 							</p:column>
 							<p:column filterBy="#{m.dataHoraFinalizadoStr}"
 								sortBy="#{m.dataHoraFinalizadoStrOrd}"
 								filterMatchMode="contains"
-								rendered="#{relatorioPlanoTratamentoMB.status == 'S'}">
-								<f:facet name="header">
-									<h:outputText value="Data de Fim" />
-								</f:facet>
+								rendered="#{relatorioPlanoTratamentoMB.status == 'S'}" headerText="Data de Fim">
 								<h:outputText value="#{m.dataHoraFinalizadoStr}" />
 							</p:column>
 							<p:column filterBy="#{m.valorTotal}" sortBy="#{m.valorTotal}"
-								filterMatchMode="contains" style="text-align:right">
-								<f:facet name="header">
-									<h:outputText value="Valor Total" />
-								</f:facet>
+								filterMatchMode="contains" style="text-align:right" headerText="Valor Total">
 								<h:outputText value="#{m.valorTotal}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
@@ -394,20 +392,14 @@ div.ui-selectoneradio label {
 							</p:column>
 							<p:column filterBy="#{m.valorTotalOrcamento}"
 								sortBy="#{m.valorTotalOrcamento}" filterMatchMode="contains"
-								style="text-align:right">
-								<f:facet name="header">
-									<h:outputText value="Valor Total c/ Desc)" />
-								</f:facet>
+								style="text-align:right" headerText="Valor Total c/ Desc)">
 								<h:outputText value="#{m.valorTotalOrcamento}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 							</p:column>
 							<p:column filterBy="#{m.valorPagar}" sortBy="#{m.valorPagar}"
-								filterMatchMode="contains" style="text-align:right">
-								<f:facet name="header">
-									<h:outputText value="Valor Restante à Pagar" />
-								</f:facet>
+								filterMatchMode="contains" style="text-align:right" headerText="Valor Restante à Pagar">
 								<h:outputText value="#{m.valorPagar}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
@@ -416,10 +408,7 @@ div.ui-selectoneradio label {
 							<p:column filterBy="#{m.convenio.dadosBasico.nomeStr}"
 								sortBy="#{m.convenio.dadosBasico.nome}"
 								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
-								filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Convênio" />
-								</f:facet>
+								filterMatchMode="contains" headerText="Convênio">
 								<h:outputText value="#{m.convenio.dadosBasico.nome}"
 									title="#{m.id}" />
 							</p:column>
