@@ -38,13 +38,14 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     
     private List<String> filtroProcedimento;
 
+    private List<String> listaConvenios;
     
     // ATRIBUTOS USADOS COMO FILTRO PARA PESQUISA DOS PROCEDIMENTOS
     private Profissional filtroPorProfissional;
     private PlanoTratamento filtroPorPlanoTratamento;
     private Paciente filtroPorPaciente;
     private Date dataInicio, dataFim;
-    private Convenio filtroPorConvenio;
+    private String filtroPorConvenio;
     private Profissional filtroPorProfissionalUltAlteracao;
     
     private boolean imprimirCabecalho = true;
@@ -64,13 +65,18 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         calendario.add(Calendar.DAY_OF_MONTH, -7);
         this.setDataInicio(calendario.getTime());
         
+        if(this.listaConvenios == null)
+            this.listaConvenios = new ArrayList<String>();
+        
+        this.sugestoesConvenios("todos");
+        
         popularLista();
     }
     
     public void popularLista() {
-        try{            
+        try{
             this.listaProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(this.dataInicio, this.dataFim, this.filtroPorPaciente, 
-                    this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.filtroPorConvenio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                    this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.getConvenio(filtroPorConvenio), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             
             if(!this.filtroProcedimento.isEmpty())
                 removerFiltrosProcedimento(this.listaProcedimentos);
@@ -100,9 +106,9 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
     }
     
-    public List<Convenio> sugestoesConvenios(String query) {
-        return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
-    }
+//    public List<Convenio> sugestoesConvenios(String query) {
+//        return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
+//    }
     
     public String nomeClinica() {
         return UtilsFrontEnd.getEmpresaLogada().getEmpStrNmefantasia();
@@ -116,13 +122,12 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         return PlanoTratamentoSingleton.getInstance().getBo().listSugestoesComplete(query);
     }
     
-    private void removerFiltrosProcedimento(List<PlanoTratamentoProcedimento> procedimentos) {     
+    private void removerFiltrosProcedimento(List<PlanoTratamentoProcedimento> procedimentos) {
+        
         List<PlanoTratamentoProcedimento> listaAux = new ArrayList<>(procedimentos);
+        
         for(PlanoTratamentoProcedimento procedimento : listaAux) {
-            boolean isCancelado = procedimento.isCancelado();
-            boolean isFinalizado = procedimento.isFinalizado();
-            
-            if(!(this.filtroProcedimento.contains("C") && isCancelado) && !(this.filtroProcedimento.contains("F") && isFinalizado))
+            if( (this.filtroProcedimento.contains("C") && procedimento.isCancelado()) || !(this.filtroProcedimento.contains("F") && procedimento.isFinalizado()) )
                 procedimentos.remove(procedimento);
         }
     }
@@ -137,6 +142,37 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
                 return "Reservado";
         }
         return "";
+    }
+    
+    public void sugestoesConvenios(String query) {
+        try {
+            
+            if(!this.getListaConvenios().contains("SEM CONVENIO"))
+                this.getListaConvenios().add("Sem Convenio");
+            
+            List<Convenio> lista = ConvenioSingleton.getInstance().getBo().listSugestoesCompleteTodos(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
+            
+            for(Convenio c : lista) {
+                this.getListaConvenios().add(c.getDadosBasico().getNome());
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    private Convenio getConvenio(String nome) {
+        if(nome != null && !(nome.toUpperCase().equals("TODOS"))) {
+            
+            List<Convenio> lista = ConvenioSingleton.getInstance().getBo().listSugestoesCompleteTodos(nome, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
+            
+            if(nome.toUpperCase().equals("SEM CONVENIO") && lista.size() == 0)
+                return new Convenio();
+            
+            return lista.get(0);
+            
+        }
+        return null;
     }
     
     public void exportarTabela(String type) {
@@ -179,11 +215,11 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         this.dataFim = dataFim;
     }
 
-    public Convenio getFiltroPorConvenio() {
+    public String getFiltroPorConvenio() {
         return filtroPorConvenio;
     }
 
-    public void setFiltroPorConvenio(Convenio filtroPorConvenio) {
+    public void setFiltroPorConvenio(String filtroPorConvenio) {
         this.filtroPorConvenio = filtroPorConvenio;
     }
 
@@ -233,6 +269,14 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
 
     public void setTabelaProcedimento(DataTable tabelaProcedimento) {
         this.tabelaProcedimento = tabelaProcedimento;
+    }
+
+    public List<String> getListaConvenios() {
+        return listaConvenios;
+    }
+
+    public void setListaConvenios(List<String> listaConvenios) {
+        this.listaConvenios = listaConvenios;
     }
 
     
