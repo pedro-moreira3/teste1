@@ -32,3 +32,25 @@ UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Dashboard';
 ALTER TABLE AGENDAMENTO_PLANO_TRATAMENTO_PROCEDIMENTO ADD COLUMN ATIVO VARCHAR(1) NOT NULL DEFAULT 'S';
 ALTER TABLE AGENDAMENTO_PLANO_TRATAMENTO_PROCEDIMENTO ADD COLUMN ALTERACAO_STATUS_ID BIGINT NULL REFERENCES PROFISSIONAL(ID);
 ALTER TABLE AGENDAMENTO_PLANO_TRATAMENTO_PROCEDIMENTO ADD COLUMN DATA_ALTERACAO_STATUS TIMESTAMP(10) NULL;
+
+-----------------
+
+insert into dominio (objeto,tipo,nome,valor,id_empresa,editavel,excluido) values ('indicacao','indicacao','Indicado por Paciente','0',0,false,'N');
+insert into dominio (objeto,tipo,nome,valor,id_empresa,editavel,excluido) values ('indicacao','indicacao','Indicado por Profissional','1',0,false,'N');
+insert into dominio (objeto,tipo,nome,valor,id_empresa,editavel,excluido) values ('indicacao','indicacao','Google','2',0,false,'N');
+insert into dominio (objeto,tipo,nome,valor,id_empresa,editavel,excluido) values ('indicacao','indicacao','Facebook','3',0,false,'N');
+insert into dominio (objeto,tipo,nome,valor,id_empresa,editavel,excluido) values ('indicacao','indicacao','Instagram','4',0,false,'N');
+insert into dominio (objeto,tipo,nome,valor,id_empresa,editavel,excluido) values ('indicacao','indicacao','Propaganda','5',0,false,'N');
+insert into dominio (objeto,tipo,nome,valor,id_empresa,editavel,excluido) values ('indicacao','indicacao','Outros','6',0,false,'N');
+
+alter table PACIENTE ADD COLUMN INDICACAO_DOMINIO_ID BIGINT REFERENCES DOMINIO(ID);
+
+alter table PACIENTE ADD COLUMN INDICACAO_PACIENTE_ID BIGINT REFERENCES PACIENTE(ID);
+alter table PACIENTE ADD COLUMN INDICACAO_PROFISSIONAL_ID BIGINT REFERENCES PROFISSIONAL(ID);
+
+UPDATE PACIENTE SET INDICACAO_DOMINIO_ID = (SELECT ID FROM dominio WHERE TIPO = 'indicacao' AND nome = 'Outros') WHERE INDICACAO IS NOT NULL AND INDICACAO <> '';
+
+
+
+
+

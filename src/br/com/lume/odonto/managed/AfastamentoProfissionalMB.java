@@ -149,7 +149,7 @@ public class AfastamentoProfissionalMB extends LumeManagedBean<Afastamento> {
 
     public List<Dominio> getDominios() {
         try {
-            this.dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjeto("afastamento");
+            this.dominios = DominioSingleton.getInstance().getBo().listByObjeto("afastamento");
         } catch (Exception e) {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
             this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
