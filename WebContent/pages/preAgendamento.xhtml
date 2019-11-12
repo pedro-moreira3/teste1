@@ -1,78 +1,111 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
 					<p:panel id="pnPreAgendamento" styleClass="BordNone">
 
-						<h1 class="CardBigTopic">Pré-Agendamento</h1>
+						<h1>Pré-Agendamento</h1>
 						<div class="SeparatorFull"></div>
 
-						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
+							styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
 
 							<p:outputLabel for="data" value="Data:  " />
-							<p:calendar id="data" value="#{preAgendamentoMB.data}" required="true" mask="true"/>
+							<p:calendar id="data" value="#{preAgendamentoMB.data}"
+								required="true" mask="true" />
 
 							<p:outputLabel for="profissionalPre" value="Profissional : " />
-							<p:autoComplete queryDelay="1000" value="#{preAgendamentoMB.profissional}" id="profissionalPre" minQueryLength="3"
-								completeMethod="#{preAgendamentoMB.geraSugestoes}" var="p" itemLabel="#{p.dadosBasico.prefixoNome}" itemValue="#{p}" converter="profissional"
-								forceSelection="true" required="true" styleClass="profissional">
+							<p:autoComplete queryDelay="1000"
+								value="#{preAgendamentoMB.profissional}" id="profissionalPre"
+								minQueryLength="3"
+								completeMethod="#{preAgendamentoMB.geraSugestoes}" var="p"
+								itemLabel="#{p.dadosBasico.prefixoNome}" itemValue="#{p}"
+								converter="profissional" forceSelection="true" required="true"
+								styleClass="profissional">
 							</p:autoComplete>
 						</p:panelGrid>
 
 						<div class="SeparatorFull"></div>
 
-						<div class="Container25 Responsive100">
-							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{preAgendamentoMB.actionPersist}"
-								update=":lume:pnPreAgendamento,:lume:dtPreAgendamento,:lume:dtAgendados" process=":lume:pnPreAgendamento" styleClass="GreenButton" />
-						</div>
-						<div class="Container25 Responsive100">
-							<p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{preAgendamentoMB.actionPesquisaPreAgendamento}"
-								update=":lume:pnPreAgendamento,:lume:dtPreAgendamento,:lume:dtAgendados" process=":lume:pnPreAgendamento" styleClass="OrangeButton" />
-						</div>
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<p:commandButton id="persist" icon="White fa fa-save"
+								value="Salvar"
+								actionListener="#{preAgendamentoMB.actionPersist}"
+								update=":lume:pnPreAgendamento,:lume:dtPreAgendamento,:lume:dtAgendados"
+								process=":lume:pnPreAgendamento" styleClass="GreenButton" />
+							<p:commandButton id="pesquisar" icon="fa fa-search White"
+								value="Pesquisar"
+								actionListener="#{preAgendamentoMB.actionPesquisaPreAgendamento}"
+								update=":lume:pnPreAgendamento,:lume:dtPreAgendamento,:lume:dtAgendados"
+								process=":lume:pnPreAgendamento" styleClass="OrangeButton" />
+						</p:panelGrid>
 
 					</p:panel>
-					<div class="EmptyBox20"></div>
+					<br />
 
-					<p:fieldset legend="Horários disponíveis" toggleable="true" collapsed="false" toggleSpeed="500">
-						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="Para selecionar um horário, favor preencher o filtro e clicar em pesquisar." id="dtPreAgendamento"
-							value="#{preAgendamentoMB.listExternos}" var="pre" rows="15" paginator="true" selection="#{preAgendamentoMB.entity}" selectionMode="single"
+					<p:fieldset legend="Horários disponíveis" toggleable="true"
+						collapsed="false" toggleSpeed="500">
+						<p:dataTable filterDelay="1500" reflow="true"
+							emptyMessage="Para selecionar um horário, favor preencher o filtro e clicar em pesquisar."
+							id="dtPreAgendamento" value="#{preAgendamentoMB.listExternos}"
+							var="pre" rows="15" paginator="true"
+							selection="#{preAgendamentoMB.entity}" selectionMode="single"
 							rowKey="#{pre}" paginatorPosition="bottom">
 							<p:ajax event="rowSelect" update=":lume:pnPreAgendamento" />
 							<f:facet name="header">Horários disponíveis</f:facet>
 
-							<p:column filterBy="#{pre.inicioStr}" sortBy="#{pre.inicioStrOrd}" filterMatchMode="contains" headerText="Inicio">
+							<p:column filterBy="#{pre.inicioStr}"
+								sortBy="#{pre.inicioStrOrd}" filterMatchMode="contains"
+								headerText="Inicio">
 								<h:outputText value="#{pre.inicioStr}" />
 							</p:column>
 
-							<p:column filterBy="#{pre.fimStr}" sortBy="#{pre.fimStrOrd}" filterMatchMode="contains" headerText="Fim">
+							<p:column filterBy="#{pre.fimStr}" sortBy="#{pre.fimStrOrd}"
+								filterMatchMode="contains" headerText="Fim">
 								<h:outputText value="#{pre.fimStr}" />
 							</p:column>
 
 						</p:dataTable>
 					</p:fieldset>
-					<div class="EmptyBox20"></div>
+					<br />
 
-					<p:fieldset legend="Horários marcados" toggleable="true" collapsed="false" toggleSpeed="500">
-						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtAgendados" value="#{preAgendamentoMB.entityList}" var="pre" rows="15" paginator="true"
-							rowKey="#{pre}" paginatorPosition="bottom">
+					<p:fieldset legend="Horários marcados" toggleable="true"
+						collapsed="false" toggleSpeed="500">
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							id="dtAgendados" value="#{preAgendamentoMB.entityList}" var="pre"
+							rows="15" paginator="true" rowKey="#{pre}"
+							paginatorPosition="bottom">
 							<p:ajax event="rowSelect" update=":lume:pnPreAgendamento" />
 							<f:facet name="header">Horários marcados</f:facet>
-							<p:column filterBy="#{pre.profissional.dadosBasico.prefixoNome}" sortBy="#{pre.profissional.dadosBasico.prefixoNome}"
+							<p:column filterBy="#{pre.profissional.dadosBasico.prefixoNome}"
+								sortBy="#{pre.profissional.dadosBasico.prefixoNome}"
 								filterMatchMode="contains" headerText="Profissional">
-								<h:outputText value="#{pre.profissional.dadosBasico.prefixoNome}" />
+								<h:outputText
+									value="#{pre.profissional.dadosBasico.prefixoNome}" />
 							</p:column>
-							<p:column filterBy="#{pre.statusDescricao}" sortBy="#{pre.statusDescricao}" filterMatchMode="contains" headerText="Status">
+							<p:column filterBy="#{pre.statusDescricao}"
+								sortBy="#{pre.statusDescricao}" filterMatchMode="contains"
+								headerText="Status">
 								<h:outputText value="#{pre.statusDescricao}" />
 							</p:column>
-							<p:column filterBy="#{pre.inicioStr}" sortBy="#{pre.inicioStrOrd}" filterMatchMode="contains" headerText="Inicio">
+							<p:column filterBy="#{pre.inicioStr}"
+								sortBy="#{pre.inicioStrOrd}" filterMatchMode="contains"
+								headerText="Inicio">
 								<h:outputText value="#{pre.inicioStr}" />
 							</p:column>
 
-							<p:column filterBy="#{pre.fimStr}" sortBy="#{pre.fimStrOrd}" filterMatchMode="contains" headerText="Fim">
+							<p:column filterBy="#{pre.fimStr}" sortBy="#{pre.fimStrOrd}"
+								filterMatchMode="contains" headerText="Fim">
 								<h:outputText value="#{pre.fimStr}" />
 							</p:column>
 

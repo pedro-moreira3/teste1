@@ -14,9 +14,9 @@ import br.com.lume.avaliacaoConsulta.AvaliacaoConsultaSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
-//import br.com.lume.odonto.bo.AgendamentoBO;
-//import br.com.lume.odonto.bo.AvaliacaoConsultaBO;
-//import br.com.lume.odonto.bo.PacienteBO;
+// import br.com.lume.odonto.bo.AgendamentoBO;
+// import br.com.lume.odonto.bo.AvaliacaoConsultaBO;
+// import br.com.lume.odonto.bo.PacienteBO;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AvaliacaoConsulta;
 import br.com.lume.odonto.entity.Paciente;
@@ -32,24 +32,24 @@ public class AvaliacaoConsultaMB extends LumeManagedBean<AvaliacaoConsulta> {
 
     private List<AvaliacaoConsulta> avaliacoes;
 
-   // private PacienteBO pacienteBO;
+    // private PacienteBO pacienteBO;
 
-  //  private AgendamentoBO agendamentoBO;
+    //  private AgendamentoBO agendamentoBO;
 
- //   private AvaliacaoConsultaBO avaliacaoConsultaBO;
+    //   private AvaliacaoConsultaBO avaliacaoConsultaBO;
 
     public AvaliacaoConsultaMB() {
         super(AvaliacaoConsultaSingleton.getInstance().getBo());
         this.setClazz(AvaliacaoConsulta.class);
-     //   this.pacienteBO = new PacienteBO();
-      //  this.agendamentoBO = new AgendamentoBO();
-     //   this.avaliacaoConsultaBO = new AvaliacaoConsultaBO();
+        //   this.pacienteBO = new PacienteBO();
+        //  this.agendamentoBO = new AgendamentoBO();
+        //   this.avaliacaoConsultaBO = new AvaliacaoConsultaBO();
         this.carregaDados();
     }
 
     private void carregaDados() {
         try {
-            Paciente paciente = PacienteSingleton.getInstance().getBo().findByEmpresaEUsuario(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.getLumeSecurity().getUsuario().getUsuIntCod());
+            Paciente paciente = PacienteSingleton.getInstance().getBo().findByEmpresaEUsuario(UtilsFrontEnd.getPacienteLogado().getIdEmpresa(), this.getLumeSecurity().getUsuario().getUsuIntCod());
             List<Agendamento> consultasRealizadas = AgendamentoSingleton.getInstance().getBo().listByRealizadasAndPaciente(paciente);
             List<Agendamento> consultasAux = new ArrayList<>();
             this.avaliacoes = AvaliacaoConsultaSingleton.getInstance().getBo().listByPaciente(paciente);

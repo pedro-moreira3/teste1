@@ -1,7 +1,6 @@
 package br.com.lume.common.managed;
 
 import java.io.ByteArrayInputStream;
-import java.io.PipedInputStream;
 import java.io.Serializable;
 import java.text.Normalizer;
 import java.util.Calendar;
@@ -33,11 +32,16 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.MessageType;
 import br.com.lume.common.util.StringUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.odonto.entity.Agendamento;
+import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.entity.Retorno;
+import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.bo.RestricaoBO;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.managed.LumeSecurity;
+import br.com.lume.whatsapp.WhatsappSingleton;
 
 public abstract class LumeManagedBean<E extends Serializable> implements Serializable {
 
@@ -58,7 +62,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     private RestricaoBO restricaoBO;
 
     private Exportacoes exportacao;
-    
+
     private StreamedContent arquivoDownload;
 
     @PostConstruct
@@ -319,16 +323,16 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         try {
             this.exportacao = Exportacoes.getInstance();
             arq = (this.exportacao.exportarTabela(header, tabela, type));
-            
+
             if (type.equals("xls"))
                 this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
-            else if(type.equals("pdf"))
+            else if (type.equals("pdf"))
                 this.setArquivoDownload(new DefaultStreamedContent(arq, "application/pdf", header + "." + type));
             else
                 this.setArquivoDownload(new DefaultStreamedContent(arq, "application/csv", header + "." + type));
 
             arq.close();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -362,4 +366,27 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     public void setArquivoDownload(StreamedContent arquivoDownload) {
         this.arquivoDownload = arquivoDownload;
     }
+
+    public String getUrlWhatsapp(Object o) {
+        return getUrlWhatsapp(o, false);
+    }
+
+    public String getUrlWhatsapp(Object o, boolean showMessage) {
+        try {
+            if (o == null)
+                return null;
+            if (o instanceof Agendamento)
+                return WhatsappSingleton.getInstance().getUrlMessage(OdontoMensagens.getMensagem("whatsapp.defaultmessage.agendamento"), ((Agendamento) o).getPaciente());
+            else if (o instanceof Retorno)
+                return WhatsappSingleton.getInstance().getUrlMessage(OdontoMensagens.getMensagem("whatsapp.defaultmessage.retorno"), ((Retorno) o).getPaciente());
+            else if (o instanceof Paciente)
+                return WhatsappSingleton.getInstance().getUrlMessage(OdontoMensagens.getMensagem("whatsapp.defaultmessage.paciente"), ((Paciente) o));
+            throw new Exception("Objeto informado não reconhecido!");
+        } catch (Exception e) {
+            if (showMessage)
+                addError("Erro ao abrir whatsapp!", e.getMessage());
+            return null;
+        }
+    }
+
 }

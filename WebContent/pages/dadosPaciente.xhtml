@@ -144,9 +144,9 @@
 								onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}"
 								required="true" />
 							<p:commandButton icon="White fa fa-whatsapp"
-								onclick="window.open('#{pacienteMB.entity.whatsURL}');return false;"
+								onclick="window.open('#{pacienteMB.getUrlWhatsapp(pacienteMB.entity)}');return false;"
 								styleClass="GreenButton"
-								disable="#{pacienteMB.entity.whatsURL == null}" />
+								disable="#{pacienteMB.getUrlWhatsapp(pacienteMB.entity) == null}" />
 						</h:panelGroup>
 
 						<p:outputLabel for="dtNascimento" value="Data de Nascimento : " />

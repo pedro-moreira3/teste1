@@ -119,7 +119,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     private List<PlanoTratamento> planoTratamentos;
 
-    private boolean visivel = false, horaUtilValida, dlg, responsavel = false, mostraFinalizados = false, telefonesVisiveis = false;
+    private boolean visivel = false, horaUtilValida, responsavel = false, mostraFinalizados = false, telefonesVisiveis = false;
+    //private boolean dlg;
 
     private DualListModel<AgendamentoPlanoTratamentoProcedimento> procedimentosPickList = new DualListModel<>();
 
@@ -369,7 +370,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.REMARCADO.getSigla()) && validaRangeDatasRemarcado()) {
                     this.refreshEntity();
                     this.addError(OdontoMensagens.getMensagem("agendamento.remarcado.dataigual"), "");
-                    dlg = false;
+                    //dlg = false;
                 } else {
                     if (!this.isRemarcado()) {
                         this.getEntity().setHash(GeradorSenha.gerarSenha());
@@ -510,7 +511,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                         if (this.validaHoraduplicadaPaciente(this.pacienteSelecionado)) {
                             if (this.validaIntervalo()) {
                                 if (validaCadeira()) {
-                                    dlg = true;
+                                    //dlg = true;
 
                                     if (this.getEntity().getStatusNovo().matches("S|N|I|O|A")) {
                                         if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() != null && this.getEntity().getFinalizouAs() != null) {
@@ -551,19 +552,19 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                         return true;
                                     } else {
                                         this.addError(OdontoMensagens.getMensagem("agendamento.profissional.afastado"), "");
-                                        dlg = false;
+                                        //dlg = false;
                                     }
                                 } else {
                                     this.addError("Cadeira já está em uso para este horário.", "");
-                                    dlg = false;
+                                    //dlg = false;
                                 }
                             } else {
                                 this.addError(OdontoMensagens.getMensagem("agendamento.intervalo.incorreto"), "");
-                                dlg = false;
+                                //dlg = false;
                             }
                         } else {
                             this.addError(OdontoMensagens.getMensagem("agendamento.paciente.horamarcada"), "", true);
-                            dlg = false;
+                            //dlg = false;
                         }
 //                        } else {
 //                            this.addError(OdontoMensagens.getMensagem("agendamento.horario.utilizado"), "");
@@ -571,19 +572,19 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                        }
                     } else {
                         this.addError(OdontoMensagens.getMensagem("agendamento.intervalo.incorreto"), "", true);
-                        dlg = false;
+                        //dlg = false;
                     }
                 } else {
                     this.addError(OdontoMensagens.getMensagem("agendamento.paciente.obrigatorio"), "", true);
-                    dlg = false;
+                    //dlg = false;
                 }
             } else {
                 this.addError(OdontoMensagens.getMensagem("agendamento.profissional.obrigatorio"), "");
-                dlg = false;
+                //dlg = false;
             }
         } else {
             this.addError(OdontoMensagens.getMensagem("agendamento.horario.atendimento"), "");
-            dlg = false;
+            //dlg = false;
         }
         return false;
     }
@@ -748,7 +749,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     @Override
     public void actionRemove(ActionEvent arg0) {
         if (!this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) {
-            dlg = true;
+            //dlg = true;
             try {
                 this.removeAgendamentoPlanoTratamentoProcedimento();
                 ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(), UtilsFrontEnd.getProfissionalLogado());

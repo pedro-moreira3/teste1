@@ -201,9 +201,9 @@ div.ui-selectoneradio label {
 									oncomplete="PF('myschedule').update();handleDialogRequest(xhr, status, args);"
 									styleClass="GreenButton" />
 								<p:button id="whats" icon="White fa fa-whatsapp"
-									onclick="window.open('#{agendamentoMB.entity.whatsURL}');return false;"
+									onclick="window.open('#{agendamentoMB.getUrlWhatsapp(agendamentoMB.entity)}');return false;"
 									value="Enviar Whatsapp" styleClass="GreenButton"
-									disable="#{agendamentoMB.entity.whatsURL == null}"
+									disable="#{agendamentoMB.getUrlWhatsapp(agendamentoMB.entity) == null}"
 									rendered="#{agendamentoMB.entity != null and agendamentoMB.entity.id > 0}" />
 								<p:commandButton icon="White fa fa-close" value="Fechar"
 									process="@this" onclick="PF('eventDialog').hide()"

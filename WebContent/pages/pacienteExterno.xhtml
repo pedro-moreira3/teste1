@@ -2,9 +2,10 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-		<div class="Container100 Responsive100 NoIndent">
-			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card">
+	
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
 
 					<p:tabView id="tabView">
 						<p:tab id="tab1" title="Dados">
@@ -22,13 +23,13 @@
 								<p:inputText id="rg" value="#{pacienteExternoMB.entity.dadosBasico.rg}" />
 
 								<p:outputLabel for="cep" value="CEP : " />
-								<p:column>
+								<h:panelGroup style="display: flex !important;">
 									<p:inputMask id="cep" value="#{pacienteExternoMB.entity.dadosBasico.cep}" maxlength="8" mask="99999-999" styleClass="Wid80 MarRight10">
 										<f:validator validatorId="cepValidator" />
 									</p:inputMask>
 									<p:commandButton id="cepsearch" icon="fa fa-search White" actionListener="#{pacienteExternoMB.actionBuscaCep}"
 										update=":lume:tabView:endereco,:lume:tabView:bairro,:lume:tabView:cidade,:lume:tabView:estado" process="@this,:lume:tabView:cep" />
-								</p:column>
+								</h:panelGroup>
 
 								<p:outputLabel for="endereco" value="Endereço : " />
 								<p:inputText id="endereco" value="#{pacienteExternoMB.entity.dadosBasico.endereco}" />
