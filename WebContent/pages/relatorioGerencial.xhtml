@@ -343,9 +343,9 @@
 							</p:column>
 							<p:column headerText="Whats">
 								<p:button id="whats" icon="White fa fa-whatsapp"
-									onclick="window.open('#{pacienteMB.getUrlWhatsapp(paciente)}');return false;"
-									styleClass="GreenButton"
-									disable="#{pacienteMB.getUrlWhatsapp(paciente) == null}" />
+									disabled="#{pacienteMB.getUrlWpp(paciente) == null}"
+									onclick="window.open('#{pacienteMB.getUrlWpp(paciente)}'); return false;"
+									styleClass="GreenButton" />
 							</p:column>
 						</p:dataTable>
 						<p:panelGrid columns="4" layout="grid"

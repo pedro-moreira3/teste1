@@ -225,9 +225,9 @@
 							</p:column>
 							<p:column headerText="Whats" width="50">
 								<p:button id="whats" icon="White fa fa-whatsapp"
-									onclick="window.open('#{retornoMB.getUrlWhatsapp(retorno)}');return false;"
-									styleClass="GreenButton"
-									disable="#{retornoMB.getUrlWhatsapp(retorno) == null}" />
+									disabled="#{retornoMB.getUrlWpp(retorno) == null}"
+									onclick="window.open('#{retornoMB.getUrlWpp(retorno)}'); return false;"
+									styleClass="GreenButton" />
 							</p:column>
 
 							<p:column

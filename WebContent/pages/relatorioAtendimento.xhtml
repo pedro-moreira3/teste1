@@ -538,9 +538,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</p:commandButton>
 
 								<p:button id="whats" icon="White fa fa-whatsapp"
-									onclick="window.open('#{relatorioAtendimentoMB.getUrlWhatsapp(atendimento.paciente)}');return false;"
-									styleClass="GreenButton"
-									disable="#{relatorioAtendimentoMB.getUrlWhatsapp(atendimento.paciente) == null}" />
+									disabled="#{relatorioAtendimentoMB.getUrlWpp(atendimento.paciente) == null}"
+									onclick="window.open('#{relatorioAtendimentoMB.getUrlWpp(atendimento.paciente)}'); return false;"
+									styleClass="GreenButton" />
 								<p:tooltip for="whats" value="Enviar mensagem" />
 
 							</p:column>

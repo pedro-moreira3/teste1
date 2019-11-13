@@ -142,10 +142,9 @@ div.ui-selectoneradio label {
 						</p:column>
 						<p:column headerText="Whats">
 							<p:button id="whats" icon="White fa fa-whatsapp"
-								onclick="window.open('#{agendamentoMB.getUrlWhatsapp(a)}');return false;"
-								styleClass="GreenButton"
-								disable="#{agendamentoMB.getUrlWhatsapp(a) == null}"
-								style="width: 33px !important" />
+								disabled="#{agendamentoMB.getUrlWpp(a) == null}"
+								onclick="window.open('#{agendamentoMB.getUrlWpp(a)}'); return false;"
+								styleClass="GreenButton" style="width: 33px !important" />
 						</p:column>
 						<p:column headerText="Pagamento">
 							<p:button id="pagamento" icon="White fa fa-money"

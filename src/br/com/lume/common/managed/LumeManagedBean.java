@@ -26,17 +26,14 @@ import org.primefaces.model.StreamedContent;
 
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.bo.BO;
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.util.Exportacoes;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.MessageType;
 import br.com.lume.common.util.StringUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
-import br.com.lume.odonto.entity.Agendamento;
-import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.odonto.entity.Retorno;
-import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.bo.RestricaoBO;
 import br.com.lume.security.entity.Empresa;
@@ -141,9 +138,11 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         try {
             StringUtil.toString(this.getEntity(), this.log);
             if (this.bO.persist(this.getEntity())) {
-                this.actionNew(event);
+                //this.actionNew(event);
+                this.addInfo("Sucesso!", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+            } else {
+                this.addError("Erro!", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
             }
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             this.log.error("Erro no actionPersist do " + this.getEntity().getClass().getName(), e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -367,26 +366,14 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         this.arquivoDownload = arquivoDownload;
     }
 
-    public String getUrlWhatsapp(Object o) {
-        return getUrlWhatsapp(o, false);
-    }
-
-    public String getUrlWhatsapp(Object o, boolean showMessage) {
+    public String getUrlWpp(Object o) {
         try {
-            if (o == null)
-                return null;
-            if (o instanceof Agendamento)
-                return WhatsappSingleton.getInstance().getUrlMessage(OdontoMensagens.getMensagem("whatsapp.defaultmessage.agendamento"), ((Agendamento) o).getPaciente());
-            else if (o instanceof Retorno)
-                return WhatsappSingleton.getInstance().getUrlMessage(OdontoMensagens.getMensagem("whatsapp.defaultmessage.retorno"), ((Retorno) o).getPaciente());
-            else if (o instanceof Paciente)
-                return WhatsappSingleton.getInstance().getUrlMessage(OdontoMensagens.getMensagem("whatsapp.defaultmessage.paciente"), ((Paciente) o));
-            throw new Exception("Objeto informado não reconhecido!");
+            return WhatsappSingleton.getInstance().getUrlWhatsapp(o, UtilsFrontEnd.getEmpresaLogada());
         } catch (Exception e) {
-            if (showMessage)
-                addError("Erro ao abrir whatsapp!", e.getMessage());
-            return null;
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            //addError("Erro ao abrir whatsapp!", e.getMessage());
         }
+        return null;
     }
 
 }
