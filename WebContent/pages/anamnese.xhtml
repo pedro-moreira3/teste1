@@ -190,13 +190,14 @@
 											<p:outputLabel for="onRadio"
 												value="#{anamnese.pergunta.descricao}" />
 											<h:panelGroup>
-												<p:selectOneRadio id="onRadio" value="#{anamnese.resposta}"
+												<h:selectOneRadio id="onRadio" value="#{anamnese.resposta}"
 													disabled="#{pacienteMB.readonly}"
 													required="#{anamnese.pergunta.requerida}"
+													style="font-size: 16px; !important"													
 													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório">
 													<f:selectItem itemLabel="Sim" itemValue="Sim" />
 													<f:selectItem itemLabel="Não" itemValue="Não" />
-												</p:selectOneRadio>
+												</h:selectOneRadio>
 												<p:message styleClass="msg" for="onRadio" />
 											</h:panelGroup>
 										</p:panelGrid>
