@@ -292,9 +292,9 @@
 						<p:inputText id="outros" rendered="#{pacienteMB.showOutros()}"
 							value="#{pacienteMB.entity.indicacao}" required="false"
 							maxlength="200" />	
-						<p:outputLabel for="paciente" value="Selecione o Paciente que indicou: " rendered="#{pacienteMB.showPaciente()}"/>							
+						<p:outputLabel for="pacienteIndicacao" value="Selecione o Paciente que indicou: " rendered="#{pacienteMB.showPaciente()}"/>							
 						<p:autoComplete dropdown="true" queryDelay="1000" rendered="#{pacienteMB.showPaciente()}"
-							value="#{pacienteMB.entity.indicacaoPaciente}" id="paciente"
+							value="#{pacienteMB.entity.indicacaoPaciente}" id="pacienteIndicacao"
 							minQueryLength="3" scrollHeight="400"
 							completeMethod="#{pacienteMB.geraSugestoes}" var="p"
 							itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
