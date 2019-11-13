@@ -70,6 +70,7 @@ import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.pergunta.PerguntaSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.UsuarioSingleton;
 import br.com.lume.security.entity.Usuario;
 
@@ -89,6 +90,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
 
     private List<Convenio> convenios;
+    
+    private List<Dominio> indicacoes;
+    
+    private Dominio indicacao;
 
     private String senha, text;
 
@@ -110,6 +115,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private boolean visivelDadosPaciente = true;
 
     private List<Agendamento> historicoAgendamentos;
+    
+  //  private Paciente pacienteIndicacao;
+    
+  //  private Profissional profissionalIndicacao;
+    
+    private List<Profissional> profissionais;
 
     //EXPORTACAO TABELAS
     private DataTable tabelaAnamnese;
@@ -132,12 +143,23 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 planoRender = true;
             }
             DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
-            if (UtilsFrontEnd.getProfissionalLogado() != null)
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
                 especialidades = EspecialidadeSingleton.getInstance().getBo().listAnamnese(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            }
+            
+            indicacoes = DominioSingleton.getInstance().getBo().listByObjeto("indicacao");
+            
+            List<String> perfis = new ArrayList<>();
+            perfis.add(OdontoPerfil.DENTISTA);
+            perfis.add(OdontoPerfil.ADMINISTRADOR);
+            perfis.add(OdontoPerfil.RESPONSAVEL_TECNICO);
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());   
+            
             this.sortAnamneses();
             this.geraLista();
-            if (UtilsFrontEnd.getProfissionalLogado() != null)
-                convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+
+
         } catch (TelefoneException te) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "");
             log.error(OdontoMensagens.getMensagem("erro.valida.telefone"));
@@ -160,6 +182,41 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
         return null;
     }
+    
+    public void mudaIndicacao() {
+        getEntity().setIndicacaoDominio(indicacao);
+    }
+    
+    public boolean showOutros() {
+        if(indicacao != null) {
+            if(indicacao.getNome().equals("Outros")) {
+                return true;
+            }
+        }            
+        return false;
+    }
+    
+    public boolean showPaciente() {
+        if(indicacao != null) {
+            if(indicacao.getNome().equals("Indicado por Paciente")) {
+                return true;
+            }
+        }            
+        return false;
+    }
+    
+    public boolean showProfissional() {
+        if(indicacao != null) {
+            if(indicacao.getNome().equals("Indicado por Profissional")) {
+                return true;
+            }
+        }            
+        return false;
+    }    
+    
+    public List<Paciente> geraSugestoes(String query) {
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    }    
 
     public void renderedPhotoCam(ActionEvent event) {
         renderedPhotoCam = true;
@@ -802,6 +859,36 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void setTabelaPaciente(DataTable tabelaPaciente) {
         this.tabelaPaciente = tabelaPaciente;
+    }
+
+    
+    public List<Dominio> getIndicacoes() {
+        return indicacoes;
+    }
+
+    
+    public void setIndicacoes(List<Dominio> indicacoes) {
+        this.indicacoes = indicacoes;
+    }
+
+    
+    public Dominio getIndicacao() {
+        return indicacao;
+    }
+
+    
+    public void setIndicacao(Dominio indicacao) {
+        this.indicacao = indicacao;
+    }
+
+    
+    public List<Profissional> getProfissionais() {
+        return profissionais;
+    }
+
+    
+    public void setProfissionais(List<Profissional> profissionais) {
+        this.profissionais = profissionais;
     }
 
 }
