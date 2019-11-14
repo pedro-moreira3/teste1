@@ -17,7 +17,7 @@ body div.ui-widget-content.ui-tabs {
 	<p:outputPanel id="tabViewOutPanel">
 		<p:tabView id="tabView"
 			style="padding: 0 15px 15px 15px; min-height: calc(100% - 17px)"
-			activeIndex="#{tabPacienteMB.activeIndex}">
+			binding="#{tabPacienteMB.tabview}" dynamic="true" cache="false">
 
 			<p:ajax event="tabChange" listener="#{tabPacienteMB.onTabChange}"
 				update=":lume:tabView" />

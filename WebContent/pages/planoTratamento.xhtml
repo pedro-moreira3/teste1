@@ -1265,7 +1265,39 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							</span>
 						</h:panelGroup>
 					</div>
-					<p:fieldset legend="Desconto" toggleable="false" collapsed="false"
+					<br />
+					<p:dataTable filterDelay="1500" reflow="true"
+						emptyMessage="Nenhum procedimento cadastrado no Plano de Tratamento"
+						id="tbViewProcedimentoOrcamento" widgetVar="tbViewOrcamento"
+						var="procedimento"
+						value="#{planoTratamentoMB.orcamentoSelecionado.itens}" rows="10"
+						paginator="true" paginatorPosition="bottom">
+						<f:facet name="header">
+							<h:outputText value="Procedimentos" />
+						</f:facet>
+						<p:column headerText="Descrição" filterMatchMode="contains"
+							filterBy="#{procedimento.descricao}"
+							sortBy="#{procedimento.descricao}">
+							<h:outputText value="#{procedimento.descricao}" />
+						</p:column>
+						<p:column headerText="Valor" filterMatchMode="contains"
+							style="width: 200px;" filterBy="#{procedimento.valor}"
+							sortBy="#{procedimento.valor}">
+							<p:inputNumber value="#{procedimento.valor}"
+								required="#{planoTratamentoMB.orcamentoSelecionado != null}"
+								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+								symbol="R$ " thousandSeparator="."
+								readonly="#{planoTratamentoMB.orcamentoSelecionado.ativo == 'N'}"
+								disabled="#{planoTratamentoMB.entity.finalizado == 'S'}">
+							</p:inputNumber>
+						</p:column>
+						<p:column headerText="Incluso?" width="50">
+							<p:selectBooleanCheckbox value="#{procedimento.incluso}"
+								disabled="#{planoTratamentoMB.entity.finalizado == 'S'}" />
+						</p:column>
+					</p:dataTable>
+					<br />
+					<p:fieldset legend="Desconto" toggleable="true" collapsed="true"
 						style="margin: 0;">
 						<p:panelGrid columns="4" layout="grid"
 							columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
@@ -1301,37 +1333,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							</h:panelGroup>
 						</p:panelGrid>
 					</p:fieldset>
-					<br />
-					<p:dataTable filterDelay="1500" reflow="true"
-						emptyMessage="Nenhum procedimento cadastrado no Plano de Tratamento"
-						id="tbViewProcedimentoOrcamento" widgetVar="tbViewOrcamento"
-						var="procedimento"
-						value="#{planoTratamentoMB.orcamentoSelecionado.itens}" rows="10"
-						paginator="true" paginatorPosition="bottom">
-						<f:facet name="header">
-							<h:outputText value="Procedimentos" />
-						</f:facet>
-						<p:column headerText="Descrição" filterMatchMode="contains"
-							filterBy="#{procedimento.descricao}"
-							sortBy="#{procedimento.descricao}">
-							<h:outputText value="#{procedimento.descricao}" />
-						</p:column>
-						<p:column headerText="Valor" filterMatchMode="contains"
-							style="width: 200px;" filterBy="#{procedimento.valor}"
-							sortBy="#{procedimento.valor}">
-							<p:inputNumber value="#{procedimento.valor}"
-								required="#{planoTratamentoMB.orcamentoSelecionado != null}"
-								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
-								symbol="R$ " thousandSeparator="."
-								readonly="#{planoTratamentoMB.orcamentoSelecionado.ativo == 'N'}"
-								disabled="#{planoTratamentoMB.entity.finalizado == 'S'}">
-							</p:inputNumber>
-						</p:column>
-						<p:column headerText="Incluso?" width="50">
-							<p:selectBooleanCheckbox value="#{procedimento.incluso}"
-								disabled="#{planoTratamentoMB.entity.finalizado == 'S'}" />
-						</p:column>
-					</p:dataTable>
 				</p:outputPanel>
 			</p:scrollPanel>
 		</p:outputPanel>

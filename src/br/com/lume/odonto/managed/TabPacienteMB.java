@@ -7,6 +7,7 @@ import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.common.log.LogIntelidenteSingleton;
@@ -54,6 +55,7 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     private FaturaPagtoMB faturaPagtoMB;
 
     private Integer activeIndex;
+    private org.primefaces.component.tabview.TabView tabview = null;
 
     public TabPacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
@@ -169,6 +171,14 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
         this.activeIndex = activeIndex;
     }
 
+    public TabView getTabview() {
+        return tabview;
+    }
+
+    public void setTabview(TabView tabview) {
+        this.tabview = tabview;
+    }
+
     public ExameMB getExameMB() {
         return exameMB;
     }
@@ -202,7 +212,8 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     }
 
     public void openFicha() {
-        this.activeIndex = 0;
+        //this.activeIndex = 0;
+        this.tabview.setActiveIndex(0);
         PrimeFaces.current().executeScript("PF('dlgFichaPaciente').show();");
     }
 
