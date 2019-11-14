@@ -90,9 +90,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
 
     private List<Convenio> convenios;
-    
+
     private List<Dominio> indicacoes;
-    
+
     private Dominio indicacao;
 
     private String senha, text;
@@ -115,11 +115,11 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private boolean visivelDadosPaciente = true;
 
     private List<Agendamento> historicoAgendamentos;
-    
-  //  private Paciente pacienteIndicacao;
-    
-  //  private Profissional profissionalIndicacao;
-    
+
+    //  private Paciente pacienteIndicacao;
+
+    //  private Profissional profissionalIndicacao;
+
     private List<Profissional> profissionais;
 
     //EXPORTACAO TABELAS
@@ -147,18 +147,17 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 especialidades = EspecialidadeSingleton.getInstance().getBo().listAnamnese(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             }
-            
+
             indicacoes = DominioSingleton.getInstance().getBo().listByObjeto("indicacao");
-            
+
             List<String> perfis = new ArrayList<>();
             perfis.add(OdontoPerfil.DENTISTA);
             perfis.add(OdontoPerfil.ADMINISTRADOR);
             perfis.add(OdontoPerfil.RESPONSAVEL_TECNICO);
-            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());   
-            
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+
             this.sortAnamneses();
             this.geraLista();
-
 
         } catch (TelefoneException te) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "");
@@ -182,41 +181,41 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
         return null;
     }
-    
+
     public void mudaIndicacao() {
         getEntity().setIndicacaoDominio(indicacao);
     }
-    
+
     public boolean showOutros() {
-        if(indicacao != null) {
-            if(indicacao.getNome().equals("Outros")) {
+        if (indicacao != null) {
+            if (indicacao.getNome().equals("Outros")) {
                 return true;
             }
-        }            
+        }
         return false;
     }
-    
+
     public boolean showPaciente() {
-        if(indicacao != null) {
-            if(indicacao.getNome().equals("Indicado por Paciente")) {
+        if (indicacao != null) {
+            if (indicacao.getNome().equals("Indicado por Paciente")) {
                 return true;
             }
-        }            
+        }
         return false;
     }
-    
+
     public boolean showProfissional() {
-        if(indicacao != null) {
-            if(indicacao.getNome().equals("Indicado por Profissional")) {
+        if (indicacao != null) {
+            if (indicacao.getNome().equals("Indicado por Profissional")) {
                 return true;
             }
-        }            
+        }
         return false;
-    }    
-    
+    }
+
     public List<Paciente> geraSugestoes(String query) {
         return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-    }    
+    }
 
     public void renderedPhotoCam(ActionEvent event) {
         renderedPhotoCam = true;
@@ -659,6 +658,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
+    public String getProfissionalName(long l) {
+        try {
+            return ProfissionalSingleton.getInstance().getBo().find(l).getDadosBasico().getNome();
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+        return null;
+    }
+
 //------EXPORTAÇÃO TABELAS------
 
     public void exportarTabelaAnamnese(String type) {
@@ -861,32 +869,26 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.tabelaPaciente = tabelaPaciente;
     }
 
-    
     public List<Dominio> getIndicacoes() {
         return indicacoes;
     }
 
-    
     public void setIndicacoes(List<Dominio> indicacoes) {
         this.indicacoes = indicacoes;
     }
 
-    
     public Dominio getIndicacao() {
         return indicacao;
     }
 
-    
     public void setIndicacao(Dominio indicacao) {
         this.indicacao = indicacao;
     }
 
-    
     public List<Profissional> getProfissionais() {
         return profissionais;
     }
 
-    
     public void setProfissionais(List<Profissional> profissionais) {
         this.profissionais = profissionais;
     }
