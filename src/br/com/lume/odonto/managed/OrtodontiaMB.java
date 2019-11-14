@@ -13,7 +13,6 @@ import javax.faces.event.ActionEvent;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.model.StreamedContent;
 
 import br.com.lume.aparelhoOrtodontico.AparelhoOrtodonticoSingleton;
 import br.com.lume.common.log.LogIntelidenteSingleton;
@@ -27,6 +26,7 @@ import br.com.lume.odonto.entity.AparelhoOrtodontico;
 import br.com.lume.odonto.entity.DiagnosticoOrtodontico;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Orcamento;
+import br.com.lume.odonto.entity.OrcamentoItem;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoAparelho;
@@ -70,6 +70,14 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+    }
+
+    public BigDecimal getDescontoFrom(OrcamentoItem oi) {
+        try {
+            return oi.getValorOriginal().subtract(oi.getValor()).divide(oi.getValorOriginal(), BigDecimal.ROUND_HALF_UP);
+        } catch (Exception e) {
+            return BigDecimal.ZERO;
         }
     }
 

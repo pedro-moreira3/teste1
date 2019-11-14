@@ -1280,6 +1280,13 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							sortBy="#{procedimento.descricao}">
 							<h:outputText value="#{procedimento.descricao}" />
 						</p:column>
+						<p:column headerText="Valor Original" filterMatchMode="contains"
+							style="width: 200px;" filterBy="#{procedimento.valorOriginal}"
+							sortBy="#{procedimento.valorOriginal}">
+							<h:outputText value="#{procedimento.valorOriginal}">
+								<f:convertNumber currencySymbol="R$" type="currency" />
+							</h:outputText>
+						</p:column>
 						<p:column headerText="Valor" filterMatchMode="contains"
 							style="width: 200px;" filterBy="#{procedimento.valor}"
 							sortBy="#{procedimento.valor}">
@@ -1290,6 +1297,15 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								readonly="#{planoTratamentoMB.orcamentoSelecionado.ativo == 'N'}"
 								disabled="#{planoTratamentoMB.entity.finalizado == 'S'}">
 							</p:inputNumber>
+						</p:column>
+						<p:column headerText="Desconto" filterMatchMode="contains"
+							style="width: 80px;"
+							filterBy="#{planoTratamentoMB.getDescontoFrom(procedimento)}"
+							sortBy="#{planoTratamentoMB.getDescontoFrom(procedimento)}">
+							<h:outputText
+								value="#{planoTratamentoMB.getDescontoFrom(procedimento)}">
+								<f:convertNumber type="percent" />
+							</h:outputText>
 						</p:column>
 						<p:column headerText="Incluso?" width="50">
 							<p:selectBooleanCheckbox value="#{procedimento.incluso}"

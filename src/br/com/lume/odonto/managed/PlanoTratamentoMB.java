@@ -23,7 +23,6 @@ import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
-import org.primefaces.model.StreamedContent;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
@@ -879,6 +878,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     //============================================== FINANCEIRO ============================================== //
     public BigDecimal calculaTotalOrcamento() {
         return OrcamentoSingleton.getInstance().getTotalOrcamento(this.orcamentoSelecionado);
+    }
+
+    public BigDecimal getDescontoFrom(OrcamentoItem oi) {
+        try {
+            return oi.getValorOriginal().subtract(oi.getValor()).divide(oi.getValorOriginal(), BigDecimal.ROUND_HALF_UP);
+        } catch (Exception e) {
+            return BigDecimal.ZERO;
+        }
     }
 
     public void actionNewOrcamento() {

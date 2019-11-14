@@ -33,6 +33,32 @@ li.orcamento-li {
 .fixaAbaixo button span {
 	margin-top: -3px !important;
 }
+
+.CardTextParent {
+	width: 100%;
+	display: flex;
+}
+
+.CardTextParent .CardText {
+	text-align: center;
+	border: 1px solid #bdbdbd;
+	border-radius: 3px;
+	width: 24.25%;
+	padding: 12px 16px;
+}
+
+.CardText span:first-child {
+	font-size: 18px;
+}
+
+.CardText span:last-child {
+	font-size: 14px;
+}
+
+.descontoFieldset .ui-panelgrid-cell:nth-child(1), .descontoFieldset .ui-panelgrid-cell:nth-child(3)
+	{
+	padding-top: 10px !important;
+}
 </style>
 
 	<div class="Container100 Responsive100 NoIndent">
@@ -161,7 +187,57 @@ li.orcamento-li {
 							</span>
 						</h:panelGroup>
 					</div>
-					<p:fieldset legend="Desconto" toggleable="false" collapsed="false"
+					<br />
+					<p:dataTable filterDelay="1500" reflow="true"
+						emptyMessage="Nenhum procedimento cadastrado no Plano de Tratamento"
+						id="tbViewProcedimentoOrcamentoOrtodontico"
+						widgetVar="tbViewOrcamento" var="procedimento"
+						value="#{ortodontiaMB.orcamentoSelecionado.itens}" rows="10"
+						paginator="true" paginatorPosition="bottom">
+						<f:facet name="header">
+							<h:outputText value="Procedimentos" />
+						</f:facet>
+						<p:column headerText="Descrição" filterMatchMode="contains"
+							filterBy="#{procedimento.descricao}"
+							sortBy="#{procedimento.descricao}">
+							<h:outputText value="#{procedimento.descricao}" />
+						</p:column>
+
+						<p:column headerText="Valor Original" filterMatchMode="contains"
+							style="width: 200px;" filterBy="#{procedimento.valorOriginal}"
+							sortBy="#{procedimento.valorOriginal}">
+							<h:outputText value="#{procedimento.valorOriginal}">
+								<f:convertNumber currencySymbol="R$" type="currency" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Valor" filterMatchMode="contains"
+							style="width: 200px;" filterBy="#{procedimento.valor}"
+							sortBy="#{procedimento.valor}">
+							<p:inputNumber value="#{procedimento.valor}"
+								required="#{planoTratamentoMB.orcamentoSelecionado != null}"
+								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+								symbol="R$ " thousandSeparator="."
+								readonly="#{ortodontiaMB.orcamentoSelecionado.ativo == 'N'}"
+								disabled="#{ortodontiaMB.entity.finalizado == 'S'}">
+							</p:inputNumber>
+						</p:column>
+						<p:column headerText="Desconto" filterMatchMode="contains"
+							style="width: 80px;"
+							filterBy="#{ortodontiaMB.getDescontoFrom(procedimento)}"
+							sortBy="#{ortodontiaMB.getDescontoFrom(procedimento)}">
+							<h:outputText
+								value="#{ortodontiaMB.getDescontoFrom(procedimento)}">
+								<f:convertNumber type="percent" />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Incluso?" width="50">
+							<p:selectBooleanCheckbox value="#{procedimento.incluso}"
+								disabled="#{ortodontiaMB.entity.finalizado == 'S'}" />
+						</p:column>
+					</p:dataTable>
+					<br />
+					<p:fieldset legend="Desconto" toggleable="true" collapsed="true"
 						style="margin: 0;">
 						<p:panelGrid columns="4" layout="grid"
 							columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
@@ -197,37 +273,6 @@ li.orcamento-li {
 							</h:panelGroup>
 						</p:panelGrid>
 					</p:fieldset>
-					<br />
-					<p:dataTable filterDelay="1500" reflow="true"
-						emptyMessage="Nenhum procedimento cadastrado no Plano de Tratamento"
-						id="tbViewProcedimentoOrcamentoOrtodontico"
-						widgetVar="tbViewOrcamento" var="procedimento"
-						value="#{ortodontiaMB.orcamentoSelecionado.itens}" rows="10"
-						paginator="true" paginatorPosition="bottom">
-						<f:facet name="header">
-							<h:outputText value="Procedimentos" />
-						</f:facet>
-						<p:column headerText="Descrição" filterMatchMode="contains"
-							filterBy="#{procedimento.descricao}"
-							sortBy="#{procedimento.descricao}">
-							<h:outputText value="#{procedimento.descricao}" />
-						</p:column>
-						<p:column headerText="Valor" filterMatchMode="contains"
-							style="width: 200px;" filterBy="#{procedimento.valor}"
-							sortBy="#{procedimento.valor}">
-							<p:inputNumber value="#{procedimento.valor}"
-								required="#{planoTratamentoMB.orcamentoSelecionado != null}"
-								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
-								symbol="R$ " thousandSeparator="."
-								readonly="#{ortodontiaMB.orcamentoSelecionado.ativo == 'N'}"
-								disabled="#{ortodontiaMB.entity.finalizado == 'S'}">
-							</p:inputNumber>
-						</p:column>
-						<p:column headerText="Incluso?" width="50">
-							<p:selectBooleanCheckbox value="#{procedimento.incluso}"
-								disabled="#{ortodontiaMB.entity.finalizado == 'S'}" />
-						</p:column>
-					</p:dataTable>
 				</p:outputPanel>
 			</p:scrollPanel>
 		</p:outputPanel>
