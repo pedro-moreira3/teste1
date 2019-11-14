@@ -47,7 +47,7 @@
 											<h:outputText
 												value="#{pacienteMB.getProfissionalName(pacienteMB.entity.criadoPor)}" />
 										</p:outputPanel> <p:outputPanel
-											rendered="#{pacienteMB.entity.criadoPor == null}">
+											rendered="#{pacienteMB.entity.criadoPor == 0}">
 											<h:outputText
 												value="Sem histórico do responsável pela alteração" />
 										</p:outputPanel></td>
@@ -73,7 +73,7 @@
 											<h:outputText
 												value="#{pacienteMB.getProfissionalName(pacienteMB.entity.alteradoPor)}" />
 										</p:outputPanel> <p:outputPanel
-											rendered="#{pacienteMB.entity.alteradoPor == null}">
+											rendered="#{pacienteMB.entity.alteradoPor == 0}">
 											<h:outputText
 												value="Sem histórico do responsável pela alteração" />
 										</p:outputPanel></td>
