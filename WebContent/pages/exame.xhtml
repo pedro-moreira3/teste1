@@ -84,7 +84,7 @@
 						fileUploadListener="#{exameMB.uploadArquivo}" mode="advanced"
 						label="Anexar" auto="true" rendered="true"
 						allowTypes="/(\.|\/)(gif|jpeg|png|pdf|jpg|GIF|JPEG|PNG|PDF|JPG)$/"
-						sizeLimit="5120000"
+						sizeLimit="10240000"
 						invalidFileMessage="Apenas imagens e PDF pode ser utilizados."
 						invalidSizeMessage="Tamanho excedeu oOo limite."
 						update="nomeAnexo" />
@@ -128,7 +128,7 @@
 						<p:column headerText="Download" styleClass="TexAlCenter">
 							<p:commandButton ajax="false" icon="White fa fa-download "
 								immediate="true">
-								<p:fileDownload value="#{exame.arquivo}" />
+								<p:fileDownload value="#{exameMB.getArquivo()}" />
 							</p:commandButton>
 						</p:column>
 						<p:column headerText="Arquivo Original" styleClass="TexAlCenter">

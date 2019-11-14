@@ -3,6 +3,7 @@ package br.com.lume.odonto.managed;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -18,7 +19,11 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.eclipse.persistence.jpa.jpql.parser.ScalarExpressionBNF;
 import org.imgscalr.Scalr;
+import org.imgscalr.Scalr.Method;
+import org.imgscalr.Scalr.Mode;
+import org.primefaces.component.fileupload.FileUpload;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -116,9 +121,9 @@ public class ExameMB extends LumeManagedBean<Exame> {
             if (extensao.equalsIgnoreCase("jpg") || extensao.equalsIgnoreCase("jpeg") || extensao.equalsIgnoreCase("gif") || extensao.equalsIgnoreCase("png")) {
                 try {
                     BufferedImage img = ImageIO.read(event.getFile().getInputstream()); // load image
-                    BufferedImage scaledImg = Scalr.resize(img, Scalr.Method.AUTOMATIC, img.getHeight(), img.getWidth());
+                    BufferedImage scaledImg = Scalr.resize(img, img.getWidth(), img.getHeight());
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    ImageIO.write(scaledImg, "gif", baos);
+                    ImageIO.write(img, "jpg", baos);
                     this.setFile(this.arquivo.getFileName(), baos.toByteArray());
                     size = baos.size();
                 } catch (IOException e) {
