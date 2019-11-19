@@ -219,6 +219,18 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
                 getEntity().setValorTotal(new BigDecimal(0));
                 getEntity().setValorTotalDesconto(new BigDecimal(0));
+
+                Odontograma recente = OdontogramaSingleton.getInstance().odontogramaRecente(this.getPaciente());
+                for (Dente dente : DenteSingleton.getInstance().getBo().findByOdontograma(recente)) {
+                    dente.setId(0l);
+                    for (RegiaoDente regiao : dente.getRegioes())
+                        regiao.setId(0l);
+                }
+                recente.setId(0l);
+                OdontogramaSingleton.getInstance().getBo().persist(recente);
+                recente = OdontogramaSingleton.getInstance().getBo().find(recente);
+
+                getEntity().setOdontograma(recente);
                 PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
 
                 addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -253,6 +265,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         try {
             planosTratamento = new ArrayList<>();
             if (getPaciente() != null) {
+
                 planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(getPaciente());
                 for (PlanoTratamento pt : planosTratamento) {
                     if (pt.getFinalizado().equals(Status.SIM) && contemPlanoTratamentoProcedimentoAberto(pt.getPlanoTratamentoProcedimentos())) {
@@ -657,6 +670,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void carregaDlgProcedimentos(PlanoTratamento planoTratamento) throws Exception {
         setEntity(planoTratamento);
         atualizaTela(true);
+        setOdontogramaSelecionado(odontogramaSelecionado);
     }
 
     public void atualizaTela() throws Exception {
