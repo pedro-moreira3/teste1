@@ -10,7 +10,9 @@ import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 
 import br.com.lume.common.OdontoPerfil;
+import br.com.lume.common.exception.business.SenhaInvalidaException;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
+import br.com.lume.common.exception.business.UsuarioBloqueadoException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
@@ -20,6 +22,7 @@ import br.com.lume.common.util.UtilsFrontEnd;
 //import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.EmpresaSingleton;
@@ -59,6 +62,8 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
    // private PacienteBO pacienteBO;
 
     private String login;
+    
+    private String erroLogin;
 
     //private SistemaBO sistemaBO;
 
@@ -128,13 +133,18 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                 objeto.setCaminho("home");
                 objetosPermitidos.add(objeto);
                 this.getLumeSecurity().setObjetosPermitidos(objetosPermitidos);
-                
-                
-                
+
             }
+        } catch(UsuarioBloqueadoException ub) {
+            this.addError("Erro no login", "Senha inválida", true);
+            log.error("Erro ao efetuar login.", ub);
+            return "";
+        } catch(SenhaInvalidaException si) {
+            this.addError("Erro no login", "Senha inválida", true);
+            log.error("Erro ao efetuar login.", si);
+            return "";
         } catch (Exception e) {
-            PrimeFaces.current().executeScript("PF('loading').hide();");
-            this.addError(e.getMessage(), "");
+            this.addError("Erro no login", "Senha inválida", true);
             log.error("Erro ao efetuar login.", e);
             return "";
         }
@@ -157,7 +167,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                     userLogin = UsuarioSingleton.getInstance().getBo().find(profissional.getIdUsuario());
                     UtilsFrontEnd.setPerfilLogado(perfilLogado);
                     UtilsFrontEnd.setProfissionalLogado(profissional);
-                    UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()));                 
+                    UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()));
                 } else {
                     this.addError("Profissional Inativo.", "");
                     return "";
@@ -340,5 +350,13 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
 
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    public String getErroLogin() {
+        return erroLogin;
+    }
+
+    public void setErroLogin(String erroLogin) {
+        this.erroLogin = erroLogin;
     }
 }
