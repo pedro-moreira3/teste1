@@ -17,13 +17,11 @@
 					<h:inputHidden id="id" value="#{CadastroEmpresaMB.entity.id}" />
 					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
 						<h1>Cadastro da Clínica</h1>
-						<h3>Dados Básicos</h3>
 						<div class="SeparatorFull"></div>
-						<br />
 
 						<p:panelGrid columns="4"
 							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-							layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"
+							layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;"
 							id="pnEmpresa">
 
@@ -32,8 +30,7 @@
 								value="#{cadastroEmpresaMB.entity.empChaTipo}" columns="4">
 								<f:selectItem itemLabel="Juridica" itemValue="J" />
 								<f:selectItem itemLabel="Física" itemValue="F" />
-								<p:ajax
-									update=":lume:pnEmpresa, :lume:pnEmpresaEndereco, :lume:pnEmpresaAdm, :lume:pnEmpresaPers" />
+								<p:ajax update=":lume:pnEmpresa" />
 							</p:selectOneRadio>
 							<p:column></p:column>
 							<p:column></p:column>
@@ -43,12 +40,6 @@
 							<p:inputText id="empStrNme"
 								value="#{cadastroEmpresaMB.entity.empStrNme}" required="true"
 								styleClass="" maxlength="100"
-								rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
-							<p:outputLabel for="empStrNmefantasia" value="Nome Fantasia: "
-								rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
-							<p:inputText id="empStrNmefantasia"
-								value="#{cadastroEmpresaMB.entity.empStrNmefantasia}"
-								required="true" styleClass="" maxlength="100"
 								rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
 
 							<p:outputLabel for="empStrDent" value="Cir. Dentista: "
@@ -96,38 +87,12 @@
 								required="false" styleClass="" maxlength="20"
 								rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
 
-							<p:outputLabel for="empChaFone" value="Fone: " />
-							<p:inputText id="empChaFone"
-								value="#{cadastroEmpresaMB.entity.empChaFone}" required="true"
-								maxlength="15" styleClass="telefone" onfocus="mascaraTelefone()" />
-
-							<p:outputLabel for="empStrEmail" value="E-Mail: " />
-							<p:inputText id="empStrEmail"
-								value="#{cadastroEmpresaMB.entity.empStrEmail}" maxlength="100"
-								required="true">
-								<f:validateRegex
-									pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" />
-							</p:inputText>
-
-						</p:panelGrid>
-						<br />
-						<h3>Endereço</h3>
-						<div class="SeparatorFull"></div>
-						<br />
-						<p:panelGrid columns="4"
-							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-							layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"
-							style="border:0px none; background-color:transparent;"
-							id="pnEmpresaEndereco">
-
 							<p:outputLabel for="empChaCep" value="CEP : " />
 							<p:inputMask id="empChaCep"
 								value="#{cadastroEmpresaMB.entity.empChaCep}" maxlength="8"
 								mask="99999-999">
 								<f:validator validatorId="cepValidator" />
 							</p:inputMask>
-							<p:column></p:column>
-							<p:column></p:column>
 
 							<p:outputLabel for="empStrEndereco" value="Endereço: " />
 							<p:inputText id="empStrEndereco"
@@ -163,16 +128,18 @@
 									itemValue="#{uf}" itemLabel="#{uf.nome}" />
 							</p:selectOneMenu>
 
-						</p:panelGrid>
-						<br />
-						<h3>Administrador</h3>
-						<div class="SeparatorFull"></div>
-						<br />
-						<p:panelGrid columns="4"
-							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-							layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"
-							style="border:0px none; background-color:transparent;"
-							id="pnEmpresaAdm">
+							<p:outputLabel for="empChaFone" value="Fone: " />
+							<p:inputText id="empChaFone"
+								value="#{cadastroEmpresaMB.entity.empChaFone}" required="true"
+								maxlength="15" styleClass="telefone" onfocus="mascaraTelefone()" />
+
+							<p:outputLabel for="empStrEmail" value="E-Mail: " />
+							<p:inputText id="empStrEmail"
+								value="#{cadastroEmpresaMB.entity.empStrEmail}" maxlength="100"
+								required="true">
+								<f:validateRegex
+									pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)" />
+							</p:inputText>
 
 							<p:outputLabel for="admInicial" value="Administrador Inicial: "
 								rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
@@ -185,17 +152,6 @@
 							<p:inputText id="empChaCro"
 								value="#{cadastroEmpresaMB.entity.empChaCro}" required="false"
 								maxlength="30" />
-
-						</p:panelGrid>
-						<br />
-						<h3>Personalização</h3>
-						<div class="SeparatorFull"></div>
-						<br />
-						<p:panelGrid columns="4"
-							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-							layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"
-							style="border:0px none; background-color:transparent;"
-							id="pnEmpresaPers">
 
 							<p:outputLabel for="empStrTokenContify" value="Contify Token: " />
 							<p:inputText id="empStrTokenContify"
@@ -240,8 +196,10 @@
 										invalidFileMessage="Tipo de Arquivo inválido"
 										invalidSizeMessage="Tamanho inválido" />
 								</div>
-								<p:graphicImage styleClass="profile-image Fleft" id="foto"
-									value="#{lumeSecurity.logo}" stream="false" />
+								<br />
+								<p:graphicImage styleClass="Fleft" id="foto"
+									value="/imagens/#{cadastroEmpresaMB.entity.empStrLogo}"
+									stream="false" />
 							</h:panelGroup>
 
 							<p:outputLabel value="Dentista tem acesso administrativo? " />
@@ -253,71 +211,17 @@
 							<p:selectBooleanCheckbox
 								value="#{cadastroEmpresaMB.entity.empBolRetirarMascaraTelefone}" />
 
+
 						</p:panelGrid>
 
-						<p:fieldset legend="Mensagens padrão do WhatsApp"
-							toggleable="true" toggleSpeed="500" collapsed="true">
-							<div
-								style="width: calc(100% - 20px); margin-bottom: 20px; border: solid 1px #e3e3e3; border-radius: 5px; background-color: #fafafa; padding: 10px">
-								Para adicionar valores estáticos às mensagens utiliza o símbolo
-								<i>hashtag</i> '#' mais o comando a seguir. <br /> Lista de
-								valores válidos para agendamentos e retornos: <br />
-								<ul>
-									<li><b>#datainicio</b> - Data de início do
-										agendamento/retorno</li>
-									<li><b>#datafim</b> - Data de fim do agendamento/retorno</li>
-									<li><b>#paciente</b> - Nome do paciente</li>
-									<li><b>#profissional</b> - Nome do profissional</li>
-									<li><b>#clinicanome</b> - Nome da clínica</li>
-									<li><b>#clinicadocumento</b> - Documento da clínica</li>
-									<li><b>#hoje</b> - Data atual (DD/MM/YYYY)</li>
-									<li><b>#hora</b> - Hora atual (HH:MM)</li>
-									<li><b>#procedimentos</b> - Procedimentos relacionados ao
-										agendamento</li>
-								</ul>
-								Lista de valores válidos para o cadastro do paciente: <br />
-								<ul>
-									<li><b>#paciente</b> - Nome do paciente</li>
-									<li><b>#clinicanome</b> - Nome da clínica</li>
-									<li><b>#clinicadocumento</b> - Documento da clínica</li>
-									<li><b>#hoje</b> - Data atual (DD/MM/YYYY)</li>
-									<li><b>#hora</b> - Hora atual (HH:MM)</li>
-								</ul>
-
-							</div>
-							<br />
-							<h:panelGroup styleClass="md-inputfield">
-								<p:inputTextarea id="defaultMessageAgendamento" rows="6"
-									value="#{cadastroEmpresaMB.entity.wppMessageAgendamento}" />
-								<p:outputLabel for="defaultMessageAgendamento"
-									value="Mensagem padrão para o agendamento" />
-								<p:message styleClass="msg" for="defaultMessageAgendamento" />
-							</h:panelGroup>
-							<h:panelGroup styleClass="md-inputfield">
-								<p:inputTextarea id="defaultMessageRetorno" rows="6"
-									value="#{cadastroEmpresaMB.entity.wppMessageRetorno}" />
-								<p:outputLabel for="defaultMessageRetorno"
-									value="Mensagem padrão para o retorno" />
-								<p:message styleClass="msg" for="defaultMessageRetorno" />
-							</h:panelGroup>
-							<h:panelGroup styleClass="md-inputfield">
-								<p:inputTextarea id="defaultMessagePaciente" rows="6"
-									value="#{cadastroEmpresaMB.entity.wppMessagePaciente}" />
-								<p:outputLabel for="defaultMessagePaciente"
-									value="Mensagem padrão no cadastro do paciente" />
-								<p:message styleClass="msg" for="defaultMessagePaciente" />
-							</h:panelGroup>
-						</p:fieldset>
-						<br />
 						<div class="SeparatorFull"></div>
 
-						<p:panelGrid columns="4" layout="grid"
+						<p:panelGrid columns="1" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="persist" icon="White fa fa-save"
 								value="Salvar"
 								actionListener="#{cadastroEmpresaMB.actionPersist}"
-								update=":lume:pnPrincipal" process=":lume:pnPrincipal"
-								styleClass="GreenButton" />
+								update="@all" process="pnPrincipal" styleClass="GreenButton" />
 						</p:panelGrid>
 					</p:outputPanel>
 				</div>
