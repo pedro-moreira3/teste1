@@ -24,7 +24,7 @@
 
 							<p:outputLabel for="dataPublicacao" value="Data da Publicação: " />
 							<p:calendar id="dataPublicacao" required="true" value="#{noticiaRssMB.entity.dataPublicacao}" pattern="dd/MM/yyyy HH:mm"
-								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" mindate="#{noticiaRssMB.dataAtual}" mask="true"/>
+								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+1" mindate="#{noticiaRssMB.dataAtual}" mask="true"/>
 
 							<h:outputLabel value="Imagem : " />
 							<p:fileUpload id="imagem" fileUploadListener="#{noticiaRssMB.uploadArquivo}" mode="advanced" label="Anexar" auto="true" rendered="true"

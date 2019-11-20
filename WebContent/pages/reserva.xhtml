@@ -27,7 +27,7 @@
 
                             <p:outputLabel for="prazo" value="Data Utilização : " />
                             <p:calendar id="prazo" value="#{reservaMB.entity.prazo}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" mindate="#{reservaMB.prazo}"
-                                timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+0" styleClass="prazo">
+                                timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+1" styleClass="prazo">
                                 <p:ajax event="dateSelect" listener="#{reservaMB.selectAgendamentos}" process=":lume:pgReserva" update=":lume:profissional,:lume:agendamento, :lume:prazo" />
                             </p:calendar>
 
