@@ -538,8 +538,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void editaPlanoTratamentoProcedimento(PlanoTratamentoProcedimento ptp) {
         setPlanoTratamentoProcedimentoSelecionado(ptp);
-        if (ptp.getDenteObj() != null)
-            this.odontogramaSelecionado = ptp.getDenteObj().getOdontograma();
+        //if (ptp.getDenteObj() != null)
+        //    this.odontogramaSelecionado = ptp.getDenteObj().getOdontograma();
         this.procedimentoSelecionado = ptp.getProcedimento();
         ptp.setDente((ptp.getDenteObj() == null ? ptp.getRegiao() : "Dente " + ptp.getDenteObj().getDescricao()));
 
@@ -670,7 +670,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void carregaDlgProcedimentos(PlanoTratamento planoTratamento) throws Exception {
         setEntity(planoTratamento);
         atualizaTela(true);
-        setOdontogramaSelecionado(odontogramaSelecionado);
+        setOdontogramaSelecionado(planoTratamento.getOdontograma());
     }
 
     public void atualizaTela() throws Exception {

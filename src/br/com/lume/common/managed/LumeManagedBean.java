@@ -26,7 +26,6 @@ import org.primefaces.model.StreamedContent;
 
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.bo.BO;
-import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.util.Exportacoes;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
@@ -370,7 +369,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         try {
             return WhatsappSingleton.getInstance().getUrlWhatsapp(o, UtilsFrontEnd.getEmpresaLogada());
         } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog(e);
+            //LogIntelidenteSingleton.getInstance().makeLog(e);
             //addError("Erro ao abrir whatsapp!", e.getMessage());
         }
         return null;

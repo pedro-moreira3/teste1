@@ -66,6 +66,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     public void handleFotoUpload(FileUploadEvent event) {
         try {
             this.getEntity().setEmpStrLogo(handleFotoUpload(event, this.getEntity().getEmpStrLogo()));
+            this.addInfo("Sucesso", "Logo alterada com sucesso!");
         } catch (Exception e) {
             this.addError("Erro ao enviar Logo", "");
             log.error("Erro ao enviar Logo", e);

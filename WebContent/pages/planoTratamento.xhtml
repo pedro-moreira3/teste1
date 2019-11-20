@@ -1109,6 +1109,65 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</p:outputPanel>
 					</p:panelGrid>
 
+					<div class="SeparatorFull"></div>
+					<p:fieldset legend="Diagnóstico">
+						<p:outputLabel for="problema2"
+							value="Diagnóstico do Dente/Região:" />
+						<p:panelGrid columns="1" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid NoPaddingSides">
+							<h:panelGroup style="display: flex">
+								<p:selectOneMenu id="problema2"
+									value="#{planoTratamentoMB.statusDenteDenteSelecionado}"
+									converter="statusDente" filter="true"
+									filterMatchMode="contains" autoWidth="false"
+									disabled="#{planoTratamentoMB.entity.finalizado == 'S'}">
+									<p:ajax process="@this" update="adicionarStatusDente2" />
+									<f:selectItem itemLabel="Selecione um diagnóstico"
+										noSelectionOption="true" itemValue="#{null}" />
+									<f:selectItems value="#{planoTratamentoMB.statusDente}"
+										var="statusDente" itemLabel="#{statusDente.descricao}"
+										itemValue="#{statusDente}" />
+								</p:selectOneMenu>
+								<p:commandButton id="adicionarStatusDente2"
+									icon="White fa fa-plus White"
+									actionListener="#{planoTratamentoMB.actionAdicionarStatusDente}"
+									update=":lume:tabView:dtStatusDenteSelecionados2"
+									process="@this, :lume:tabView:problema2"
+									style="margin-left: 5px;"
+									disabled="#{planoTratamentoMB.statusDenteDenteSelecionado == null or planoTratamentoMB.entity.finalizado == 'S'}" />
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:fieldset>
+					<br />
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						id="dtStatusDenteSelecionados2" var="regiao" editable="true"
+						value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.denteObj.regioes}"
+						rows="10" paginator="true" paginatorPosition="bottom">
+						<p:column sortBy="#{regiao.statusDente.descricao}"
+							headerText="Diagnóstico">
+							<h:outputText value="#{regiao.statusDente.descricao}" />
+						</p:column>
+						<p:column headerText="Face">
+							<p:selectCheckboxMenu value="#{regiao.facesArray}"
+								disabled="#{planoTratamentoMB.entity.finalizado == 'S'}"
+								label="#{regiao.facesArrayLabel}" style="width: 200px;"
+								rendered="#{regiao.statusDente.temFace}">
+								<p:ajax process="@this"
+									listener="#{planoTratamentoMB.actionPersistFacesStatusDente(regiao)}"
+									update="@this,:lume:tabView:pnDenteOdontograma,:lume:tabView:procedimentosOdontograma" />
+								<f:selectItems value="#{regiao.facesStr}" var="face"
+									itemValue="#{face}" itemLabel="#{face}" />
+							</p:selectCheckboxMenu>
+						</p:column>
+						<p:column width="10%">
+							<p:commandButton icon="White fa fa-minus White"
+								disabled="#{planoTratamentoMB.entity.finalizado == 'S'}"
+								actionListener="#{planoTratamentoMB.actionRemoverStatusDente(regiao)}"
+								update=":lume:tabView:pnDenteOdontograma,:lume:tabView:dtStatusDenteSelecionados,:lume:tabView:procedimentosOdontograma,:lume:tabView:problema,@this"
+								process="@this" />
+						</p:column>
+					</p:dataTable>
+
 				</div>
 			</div>
 		</p:outputPanel>
@@ -1502,13 +1561,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 											var="odontograma" itemValue="#{odontograma}"
 											itemLabel="#{odontograma.dataCadastroStrE}" />
 										<p:ajax
-											update=":lume:tabView:removeOdontograma,
-													:lume:tabView:removeOdontogramaNewProcedimento,
-													:lume:tabView:removeOdontogramaView,
-													:lume:tabView:odontogramaTrabalho,
-													:lume:tabView:odontogramaTrabalhoNewProcedimento
+											update=":lume:tabView:removeOdontogramaView,
 													:lume:tabView:odontogramaView,
-													:lume:tabView:odontogramaOpensDlg,
 													:lume:tabView:odontogramPT, :lume:tabView:odontogramPTHeader"
 											process="@this"
 											actionListener="#{planoTratamentoMB.carregaTelaOdontograma}" />
@@ -1516,25 +1570,15 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									<p:commandButton icon="White fa fa-file-o"
 										style="float:left;margin-left: 10px;" title="Novo Odontograma"
 										actionListener="#{planoTratamentoMB.actionNewOdontograma}"
-										update=":lume:tabView:removeOdontograma,
-												:lume:tabView:removeOdontogramaNewProcedimento,
-												:lume:tabView:removeOdontogramaView,
-												:lume:tabView:odontogramaTrabalho,
-												:lume:tabView:odontogramaTrabalhoNewProcedimento
-												:lume:tabView:odontogramaView,
-												:lume:tabView:odontogramaOpensDlg"
+										update=":lume:tabView:removeOdontogramaView,
+												:lume:tabView:odontogramaView"
 										process="@this"
 										disabled="#{planoTratamentoMB.entity.finalizado == 'S'}" />
 									<p:commandButton icon="White fa fa-trash-o"
 										id="removeOdontogramaView"
 										actionListener="#{planoTratamentoMB.removeOdontograma}"
-										update=":lume:tabView:removeOdontograma,
-												:lume:tabView:removeOdontogramaNewProcedimento,
-												:lume:tabView:removeOdontogramaView,
-												:lume:tabView:odontogramaTrabalho,
-												:lume:tabView:odontogramaTrabalhoNewProcedimento
-												:lume:tabView:odontogramaView,
-												:lume:tabView:odontogramaOpensDlg"
+										update=":lume:tabView:removeOdontogramaView,
+												:lume:tabView:odontogramaView"
 										process="@this" style="float:left;margin-left: 10px;"
 										title="Excluir Odontograma" styleClass="RedButton"
 										rendered="#{planoTratamentoMB.admin}"
