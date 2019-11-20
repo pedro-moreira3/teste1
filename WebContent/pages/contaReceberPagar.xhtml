@@ -121,7 +121,7 @@ height: 100%;
 									<p:outputLabel for="data" value="Data : " />
 	                                <h:panelGroup styleClass="lumeField">
 	                                    <p:calendar id="data" required="true" value="#{lancamentoContabilMB.entity.data}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
-	                                        locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+1">
+	                                        locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+10">
 	                                    </p:calendar>
 	                                </h:panelGroup>
 
@@ -214,7 +214,7 @@ height: 100%;
                                 </p:column>
                                 <p:column headerText="Data Crédito" filterBy="#{lc.dataCreditoStr}" sortBy="#{lc.dataCreditoStr}" filterMatchMode="contains">
                                     <p:calendar id="dtCreditoLancamento" value="#{lc.dataCredito}" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}"
-                                        timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+1" class="Wid50" mask="true" />
+                                        timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+10" class="Wid50" mask="true" />
                                 </p:column>
                                 <p:column headerText="Conferência" width="100">
                                     <p:commandButton icon="White fa fa-thumbs-o-up" actionListener="#{lancamentoContabilMB.actionValidarLancamento(lc)}" update=":lume:tv:dtLancamentoValidar"

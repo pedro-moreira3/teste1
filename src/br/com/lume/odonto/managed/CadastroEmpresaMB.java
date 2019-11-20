@@ -65,12 +65,13 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     public void handleFotoUpload(FileUploadEvent event) {
         try {
             this.getEntity().setEmpStrLogo(handleFotoUpload(event, this.getEntity().getEmpStrLogo()));
+            this.addInfo("Sucesso", "Logo atualizada com sucesso!");
         } catch (Exception e) {
             this.addError("Erro ao enviar Logo", "");
             log.error("Erro ao enviar Logo", e);
         }
     }
-    
+
     public static String handleFotoUpload(FileUploadEvent event, String nomeImagem) throws Exception {
         File targetFile = null;
         if (nomeImagem != null && !nomeImagem.equals("")) {
@@ -88,9 +89,6 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
         outStream.close();
         return targetFile.getName();
     }
-
-    
-
 
     public List<UF> getListUF() {
         return UF.getList();

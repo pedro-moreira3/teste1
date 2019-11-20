@@ -211,12 +211,12 @@
 
                         <h:panelGroup>
                             <p:calendar value="#{relatorioGerencialMB.inicio}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}"
-                                navigator="true" yearRange="-100:+1" style="width: 95px !important;margin-right: 5px;" />
+                                navigator="true" yearRange="-100:+10" style="width: 95px !important;margin-right: 5px;" />
 
                             <p:outputLabel value="até" style="margin-right: 10px;margin-left: 10px;" />
 
                             <p:calendar value="#{relatorioGerencialMB.fim}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}"
-                                navigator="true" yearRange="-100:+1" />
+                                navigator="true" yearRange="-100:+10" />
                         </h:panelGroup>
 
                         <p:outputLabel value="Filtro Período: " />

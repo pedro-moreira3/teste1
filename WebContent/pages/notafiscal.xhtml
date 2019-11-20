@@ -32,11 +32,11 @@
 
 							<p:outputLabel for="entrada" value="Data Entrada : " />
 							<p:calendar id="entrada" value="#{notaFiscalMB.entity.dataEntrada}" required="true" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
-								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+1" class="Wid10"/>
+								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+10" class="Wid10"/>
 
 							<p:outputLabel for="expedicao" value="Data Expedição : " />
 							<p:calendar id="expedicao" value="#{notaFiscalMB.entity.dataExpedicao}" required="true" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
-								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+1" class="Wid10"/>
+								locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+10" class="Wid10"/>
 
 							<p:outputLabel for="valor" value="Valor Total: " />
 							<p:inputNumber id="valor" value="#{notaFiscalMB.entity.valorTotal}" required="true" maxlength="13" maxValue="9999999999.99"
