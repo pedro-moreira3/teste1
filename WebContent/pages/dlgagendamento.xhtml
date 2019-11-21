@@ -152,32 +152,84 @@
 		</p:panelGrid>
 	</p:dialog>
 
+	<p:dialog id="dlgDisponibilidadeProfissional" widgetVar="dlgDisponibilidadeProfissional" resizable="false"
+		appendTo=":lume" header="Disponibilidade do profissional" responsive="true"
+		modal="true">
+
+		<p:outputPanel id="pnDisponibilidadeProfissional" styleClass="BordNone">
+			
+			<ui:remove>
+			<h:panelGroup rendered="#{agendamentoMB.profissionalDentroAgenda != null and !(agendamentoMB.validaData())}">
+				<i class="topbar-icon material-icons"/>
+				<p:outputLabel value="PROFISSIONAL AFASTADO" style="font-weight:bold;"/>
+			</h:panelGroup>
+			</ui:remove>
+			
+			<p:dataTable filterDelay="1500" reflow="true"
+				emptyMessage="Nenhum registro encontrado" id="dtHorasUteis"
+				value="#{agendamentoMB.horasUteisProfissionalAgenda}" var="hup"
+				rowKey="#{hup}" style="width:800px;height:auto;margin-top:10px;margin-bottom:10px">
+
+				<f:facet name="header">Expediente do profissional</f:facet>
+
+				<p:column filterBy="#{hup.diaDaSemana}" sortBy="#{hup.diaDaSemana}"
+					filterMatchMode="contains" headerText="Dia">
+					<h:outputText value="#{hup.diaDaSemana}" />
+				</p:column>
+
+				<p:column headerText="Hora Inicial" sortBy="#{hup.horaIniStrOrd}"
+					filterBy="#{hup.horaIniStr}" filterMatchMode="contains">
+					<h:outputText value="#{hup.horaIniStr}" />
+				</p:column>
+
+				<p:column headerText="Hora Final" sortBy="#{hup.horaFimStrOrd}"
+					filterBy="#{hup.horaFimStr}" filterMatchMode="contains">
+					<h:outputText value="#{hup.horaFimStr}" />
+				</p:column>
+			</p:dataTable>
+		</p:outputPanel>
+
+	</p:dialog>
+
 	<p:fieldset legend="" toggleable="true" collapsed="false"
 		style="margin-top: 20px !important">
 
-		<p:panelGrid columns="4" layout="grid" columnClasses="ui-g-3, ui-g-6"
+		<p:panelGrid columns="5" layout="grid" columnClasses="ui-g-3, ui-g-6"
 			styleClass="ui-panelgrid-blank form-group ui-fluid">
-			<h:panelGroup styleClass="md-combo"
-				title="#{agendamentoMB.entity.id}">
-				<p:outputLabel for="profissionalAgend" value="Profissional" />
-				<p:selectOneMenu id="profissionalAgend" styleClass="tallerCombo"
-					value="#{agendamentoMB.profissionalDentroAgenda}"
-					converter="profissional" filter="true" filterMatchMode="contains">
-					<p:ajax listener="#{agendamentoMB.validarAfastamentoProfissional}"
-						process="@this" />
-					<p:ajax listener="#{agendamentoMB.validaHoraUtilProfissionalCombo}"
-						process="@this" />
-					<p:ajax listener="#{agendamentoMB.calculaDataFim}" process="@this"
-						update="fim" />
-					<f:selectItem itemValue="#{null}"
-						itemLabel="Selecione um profissional" />
-					<f:selectItems value="#{agendamentoMB.profissionais}"
-						var="profissional"
-						itemLabel="#{profissional.dadosBasico.prefixoNome}"
-						itemValue="#{profissional}" />
-				</p:selectOneMenu>
-				<p:message styleClass="msg" for="profissionalAgend" />
-			</h:panelGroup>
+			
+			<p:panelGrid columns="1" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
+				<h:panelGroup style="display: flex;margin-right:20px;" styleClass="md-combo">
+					<p:outputLabel for="profissionalAgend" value="Profissional" />
+					<p:selectOneMenu id="profissionalAgend" styleClass="tallerCombo"
+						value="#{agendamentoMB.profissionalDentroAgenda}"
+						converter="profissional" filter="true" filterMatchMode="contains">
+						<p:ajax listener="#{agendamentoMB.validarAfastamentoProfissional}"
+							process="@this" update=":lume:btnVisualizarProfissional" />
+						<p:ajax
+							listener="#{agendamentoMB.validaHoraUtilProfissionalCombo}"
+							process="@this" />
+						<p:ajax listener="#{agendamentoMB.calculaDataFim}" process="@this"
+							update="fim" />
+						<f:selectItem itemValue="#{null}"
+							itemLabel="Selecione um profissional" />
+						<f:selectItems value="#{agendamentoMB.profissionais}"
+							var="profissional"
+							itemLabel="#{profissional.dadosBasico.prefixoNome}"
+							itemValue="#{profissional}" />
+					</p:selectOneMenu>
+					<p:message styleClass="msg" for="profissionalAgend" />
+
+					<p:outputPanel id="btnVisualizarProfissional" style="display:inline-flex;">
+						<p:commandButton id="visualizarDisponibilidade" process="@this"
+							disabled="#{agendamentoMB.profissionalDentroAgenda == null}"
+							actionListener="#{agendamentoMB.verificarDisponibilidadeProfissional}"
+							update=":lume:dadosPacienteDlgFields,:lume:pnDisponibilidadeProfissional" icon="fa fa-eye White"
+							immediate="true" title="Disponibilidade do profissional" />
+					</p:outputPanel>
+				</h:panelGroup>
+			</p:panelGrid>
+			
 			<p:panelGrid columns="1" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
 				<h:panelGroup style="display: flex;" styleClass="md-combo">
@@ -523,7 +575,7 @@
 
 			<h:panelGroup styleClass="lumeField labelInline"
 				rendered="#{agendamentoMB.entity.id != 0}">
-				<p:outputLabel for="reserva" value="Fez reserva?"
+				<p:outputLabel for="reserva" value="Material reservado?"
 					rendered="#{agendamentoMB.entity.id != 0}" />
 				<p:selectOneRadio id="reserva" value="#{agendamentoMB.reserva}"
 					readonly="true">
