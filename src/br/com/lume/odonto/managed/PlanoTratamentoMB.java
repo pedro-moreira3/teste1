@@ -53,6 +53,7 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoFace;
 import br.com.lume.odonto.entity.Procedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RegiaoDente;
+import br.com.lume.odonto.entity.RegiaoRegiao;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.entity.StatusDente;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -1240,6 +1241,25 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 denteSelecionado.getRegioes().add(new RegiaoDente(statusDenteDenteSelecionado, 'C', denteSelecionado));
                 DenteSingleton.getInstance().getBo().persist(denteSelecionado);
                 denteSelecionado = DenteSingleton.getInstance().getBo().find(denteSelecionado);
+            } else if (enableRegioes) {
+                if (odontogramaSelecionado.getRegioesRegiao() != null && !odontogramaSelecionado.getRegioesRegiao().isEmpty()) {
+                    for (RegiaoRegiao rd : odontogramaSelecionado.getRegioesRegiao()) {
+                        if (rd.getStatusDente().equals(statusDenteDenteSelecionado)) {
+                            this.addError("Diagnóstico já selecionado.", "");
+                            return;
+                        }
+                    }
+                    if (odontogramaSelecionado.getRegioesRegiao().size() >= 4) {
+                        this.addError("Máximo 4 Diagnóstico por região.", "");
+                        return;
+                    }
+
+                } else {
+                    odontogramaSelecionado.setRegioesRegiao(new ArrayList<>());
+                }
+                odontogramaSelecionado.getRegioesRegiao().add(new RegiaoRegiao(statusDenteDenteSelecionado, regiaoSelecionada));
+                OdontogramaSingleton.getInstance().getBo().persist(odontogramaSelecionado);
+                odontogramaSelecionado = OdontogramaSingleton.getInstance().getBo().find(odontogramaSelecionado);
             }
         } catch (Exception e) {
             log.error("Erro no actionPersistRegioes", e);
@@ -1348,6 +1368,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void enableRegioes(boolean enable) {
         try {
             enableRegioes = enable;
+            denteSelecionado = null;
+            regiaoSelecionada = null;
             carregarProcedimentosComRegiao();
         } catch (Exception e) {
             log.error("Erro no carregaProcedimentos", e);
