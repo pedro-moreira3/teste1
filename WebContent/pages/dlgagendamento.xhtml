@@ -219,7 +219,7 @@
 							itemValue="#{profissional}" />
 					</p:selectOneMenu>
 					<p:message styleClass="msg" for="profissionalAgend" />
-
+					<ui:remove>
 					<p:outputPanel id="btnVisualizarProfissional" style="display:inline-flex;">
 						<p:commandButton id="visualizarDisponibilidade" process="@this"
 							disabled="#{agendamentoMB.profissionalDentroAgenda == null}"
@@ -227,6 +227,7 @@
 							update=":lume:dadosPacienteDlgFields,:lume:pnDisponibilidadeProfissional" icon="fa fa-eye White"
 							immediate="true" title="Disponibilidade do profissional" />
 					</p:outputPanel>
+					</ui:remove>
 				</h:panelGroup>
 			</p:panelGrid>
 			

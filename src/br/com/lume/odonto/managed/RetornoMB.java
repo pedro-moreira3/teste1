@@ -52,8 +52,8 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     public void geraLista() {
         try {
-            if(dataFim.before(dataIni)) {
-                this.addError("Data de início antes da data fim!", "");
+            if( (dataIni != null && dataFim != null) && dataFim.before(dataIni)) {
+                this.addError("Erro no intervalo de datas", "Data inicial deve preceder a data final!", true);
             }else {
                 retornos = RetornoSingleton.getInstance().getBo().listByFiltros(dataIni, dataFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),retornar);
             }
