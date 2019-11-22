@@ -95,7 +95,18 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     public void popularLista() {
         try{
             
-            this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(getDataInicio(), getDataFim(),
+            Calendar c = Calendar.getInstance();
+            c.setTime(getDataInicio());
+            c.add(Calendar.DAY_OF_MONTH, -1);
+            
+            Date dataInicial = c.getTime();
+            
+            c.setTime(getDataFim());
+            c.add(Calendar.DAY_OF_MONTH, +1);
+            
+            Date dataFinal = c.getTime();
+            
+            this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(dataInicial, dataFinal,
                     getFiltroPorProfissional(), getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), this.getConvenio(getFiltroPorConvenio()),
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             
