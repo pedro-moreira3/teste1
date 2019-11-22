@@ -64,6 +64,7 @@ import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingle
 import br.com.lume.procedimento.ProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.regiaoDente.RegiaoDenteSingleton;
+import br.com.lume.regiaoRegiao.RegiaoRegiaoSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.statusDente.StatusDenteSingleton;
@@ -1257,7 +1258,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 } else {
                     odontogramaSelecionado.setRegioesRegiao(new ArrayList<>());
                 }
-                odontogramaSelecionado.getRegioesRegiao().add(new RegiaoRegiao(statusDenteDenteSelecionado, regiaoSelecionada));
+                odontogramaSelecionado.getRegioesRegiao().add(new RegiaoRegiao(statusDenteDenteSelecionado, regiaoSelecionada, odontogramaSelecionado));
                 OdontogramaSingleton.getInstance().getBo().persist(odontogramaSelecionado);
                 odontogramaSelecionado = OdontogramaSingleton.getInstance().getBo().find(odontogramaSelecionado);
             }
@@ -1277,16 +1278,44 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
-    public void actionRemoverStatusDente(RegiaoDente rd) {
+    public void actionRemoverStatusDente(RegiaoRegiao rd) {
         try {
-            if (denteSelecionado != null) {
-                denteSelecionado.getRegioes().remove(rd);
-                DenteSingleton.getInstance().getBo().persist(denteSelecionado);
+            if (enableRegioes) {
+                rd.setExcluido("S");
+                rd.setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
+                rd.setDataExclusao(new Date());
+                RegiaoRegiaoSingleton.getInstance().getBo().persist(rd);
+                odontogramaSelecionado = OdontogramaSingleton.getInstance().getBo().find(odontogramaSelecionado);
             }
         } catch (Exception e) {
             log.error("Erro no actionRemoverStatusDente", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
+    }
+
+    public void actionRemoverStatusDente(RegiaoDente rd) {
+        try {
+            if (denteSelecionado != null) {
+                rd.setExcluido("S");
+                rd.setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
+                rd.setDataExclusao(new Date());
+                RegiaoDenteSingleton.getInstance().getBo().persist(rd);
+                denteSelecionado = DenteSingleton.getInstance().getBo().find(denteSelecionado);
+            }
+        } catch (Exception e) {
+            log.error("Erro no actionRemoverStatusDente", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+        }
+    }
+
+    public List<RegiaoRegiao> getDiagnosticosRegiao() {
+        try {
+            if (odontogramaSelecionado.getRegioesRegiao() != null && !odontogramaSelecionado.getRegioesRegiao().isEmpty() && getRegiaoSelecionada() != null && !getRegiaoSelecionada().isEmpty())
+                return RegiaoRegiaoSingleton.getInstance().getBo().findByDescAndOdontograma(getRegiaoSelecionada(), odontogramaSelecionado);
+        } catch (Exception e) {
+            log.error("Erro no getDiagnosticosRegiao", e);
+        }
+        return null;
     }
     //============================================= ODONTOGRAMA ============================================== //
 

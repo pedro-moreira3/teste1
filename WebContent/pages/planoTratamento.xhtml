@@ -1815,7 +1815,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:selectOneMenu id="regioes"
 						value="#{planoTratamentoMB.regiaoSelecionada}" filter="true"
 						filterMatchMode="contains" autoWidth="false">
-						<p:ajax process="@this" />
+						<p:ajax process="@this"
+							update=":lume:tabView:dtStatusDenteRegiaoSelecionados" />
+						<f:selectItem itemLabel="Selecione uma região" itemValue="#{null}" />
 						<f:selectItem itemLabel="Arcada Superior/Inferior"
 							itemValue="Arcada Superior/Inferior" />
 						<f:selectItem itemLabel="Arcada Superior"
@@ -1864,7 +1866,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:commandButton id="adicionarStatusDente"
 						icon="White fa fa-plus White"
 						actionListener="#{planoTratamentoMB.actionAdicionarStatusDente}"
-						update=":lume:tabView:pnDenteOdontograma,:lume:tabView:dtStatusDenteSelecionados,:lume:tabView:procedimentosOdontograma,:lume:tabView:problema,@this"
+						update=":lume:tabView:pnDenteOdontograma,:lume:tabView:dtStatusDenteSelecionados,:lume:tabView:procedimentosOdontograma,
+							:lume:tabView:dtStatusDenteRegiaoSelecionados, :lume:tabView:problema,@this"
 						process="@this, :lume:tabView:problema, :lume:tabView:regioes"
 						style="margin-left: 5px;"
 						disabled="#{planoTratamentoMB.statusDenteDenteSelecionado == null or planoTratamentoMB.entity.finalizado == 'S'}" />
@@ -1872,34 +1875,56 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			</p:panelGrid>
 			<div class="SeparatorFull"></div>
 			<br />
-			<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-				id="dtStatusDenteSelecionados" var="regiao" editable="true"
-				value="#{planoTratamentoMB.denteSelecionado.regioes}" rows="10"
-				paginator="true" paginatorPosition="bottom">
-				<p:column sortBy="#{regiao.statusDente.descricao}"
-					headerText="Diagnóstico">
-					<h:outputText value="#{regiao.statusDente.descricao}" />
-				</p:column>
-				<p:column headerText="Face">
-					<p:selectCheckboxMenu value="#{regiao.facesArray}"
-						disabled="#{planoTratamentoMB.entity.finalizado == 'S'}"
-						label="#{regiao.facesArrayLabel}" style="width: 200px;"
-						rendered="#{regiao.statusDente.temFace}">
-						<p:ajax process="@this"
-							listener="#{planoTratamentoMB.actionPersistFacesStatusDente(regiao)}"
-							update="@this,:lume:tabView:pnDenteOdontograma,:lume:tabView:procedimentosOdontograma" />
-						<f:selectItems value="#{regiao.facesStr}" var="face"
-							itemValue="#{face}" itemLabel="#{face}" />
-					</p:selectCheckboxMenu>
-				</p:column>
-				<p:column width="10%">
-					<p:commandButton icon="White fa fa-minus White"
-						disabled="#{planoTratamentoMB.entity.finalizado == 'S'}"
-						actionListener="#{planoTratamentoMB.actionRemoverStatusDente(regiao)}"
-						update=":lume:tabView:pnDenteOdontograma,:lume:tabView:dtStatusDenteSelecionados,:lume:tabView:procedimentosOdontograma,:lume:tabView:problema,@this"
-						process="@this" />
-				</p:column>
-			</p:dataTable>
+			<p:outputPanel rendered="#{!planoTratamentoMB.enableRegioes}">
+				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+					id="dtStatusDenteSelecionados" var="regiao" editable="true"
+					value="#{planoTratamentoMB.denteSelecionado.regioesFiltered}"
+					rows="10" paginator="true" paginatorPosition="bottom">
+					<p:column sortBy="#{regiao.statusDente.descricao}"
+						headerText="Diagnóstico">
+						<h:outputText value="#{regiao.statusDente.descricao}" />
+					</p:column>
+					<p:column headerText="Face">
+						<p:selectCheckboxMenu value="#{regiao.facesArray}"
+							disabled="#{planoTratamentoMB.entity.finalizado == 'S'}"
+							label="#{regiao.facesArrayLabel}" style="width: 200px;"
+							rendered="#{regiao.statusDente.temFace}">
+							<p:ajax process="@this"
+								listener="#{planoTratamentoMB.actionPersistFacesStatusDente(regiao)}"
+								update="@this,:lume:tabView:pnDenteOdontograma,:lume:tabView:procedimentosOdontograma" />
+							<f:selectItems value="#{regiao.facesStr}" var="face"
+								itemValue="#{face}" itemLabel="#{face}" />
+						</p:selectCheckboxMenu>
+					</p:column>
+					<p:column width="10%">
+						<p:commandButton icon="White fa fa-minus White"
+							disabled="#{planoTratamentoMB.entity.finalizado == 'S'}"
+							actionListener="#{planoTratamentoMB.actionRemoverStatusDente(regiao)}"
+							update=":lume:tabView:pnDenteOdontograma,:lume:tabView:dtStatusDenteSelecionados,:lume:tabView:procedimentosOdontograma,:lume:tabView:problema,@this"
+							process="@this" />
+					</p:column>
+				</p:dataTable>
+			</p:outputPanel>
+			<p:outputPanel rendered="#{planoTratamentoMB.enableRegioes}">
+				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+					id="dtStatusDenteRegiaoSelecionados" var="regiao" editable="true"
+					value="#{planoTratamentoMB.getDiagnosticosRegiao()}" rows="10"
+					paginator="true" paginatorPosition="bottom">
+					<p:column sortBy="#{regiao.statusDente.descricao}"
+						headerText="Diagnóstico">
+						<h:outputText value="#{regiao.statusDente.descricao}" />
+					</p:column>
+					<p:column width="10%">
+						<p:commandButton icon="White fa fa-minus White"
+							disabled="#{planoTratamentoMB.entity.finalizado == 'S'}"
+							actionListener="#{planoTratamentoMB.actionRemoverStatusDente(regiao)}"
+							update=":lume:tabView:pnDenteOdontograma,:lume:tabView:dtStatusDenteSelecionados,
+								:lume:tabView:dtStatusDenteRegiaoSelecionados,
+								:lume:tabView:procedimentosOdontograma,:lume:tabView:problema,@this"
+							process="@this" />
+					</p:column>
+				</p:dataTable>
+			</p:outputPanel>
 			<br />
 			<div class="SeparatorFull"></div>
 			<br />
