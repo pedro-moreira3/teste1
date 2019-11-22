@@ -20,10 +20,12 @@ import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
+import br.com.lume.odonto.entity.Procedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.procedimento.ProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 
 @ManagedBean
@@ -47,6 +49,7 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     private Date dataInicio, dataFim;
     private String filtroPorConvenio;
     private Profissional filtroPorProfissionalUltAlteracao;
+    private Procedimento filtroPorProcedimento;
     
     private boolean imprimirCabecalho = true;
     
@@ -76,7 +79,7 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     public void popularLista() {
         try{
             this.listaProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(this.dataInicio, this.dataFim, this.filtroPorPaciente, 
-                    this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.getConvenio(filtroPorConvenio), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                    this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.getConvenio(filtroPorConvenio), this.filtroPorProcedimento,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             
             if(!this.filtroProcedimento.isEmpty())
                 removerFiltrosProcedimento(this.listaProcedimentos);
@@ -104,6 +107,10 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     
     public List<Profissional> sugestoesProfissionalUltAlteracao(String query) {
         return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
+    }
+    
+    public List<Procedimento> sugestoesProcedimento(String query){
+        return ProcedimentoSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
     
 //    public List<Convenio> sugestoesConvenios(String query) {
@@ -277,6 +284,14 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
 
     public void setListaConvenios(List<String> listaConvenios) {
         this.listaConvenios = listaConvenios;
+    }
+
+    public Procedimento getFiltroPorProcedimento() {
+        return filtroPorProcedimento;
+    }
+
+    public void setFiltroPorProcedimento(Procedimento filtroPorProcedimento) {
+        this.filtroPorProcedimento = filtroPorProcedimento;
     }
 
     
