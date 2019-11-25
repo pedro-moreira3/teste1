@@ -205,7 +205,7 @@
 						value="#{agendamentoMB.profissionalDentroAgenda}"
 						converter="profissional" filter="true" filterMatchMode="contains">
 						<p:ajax listener="#{agendamentoMB.validarAfastamentoProfissional}"
-							process="@this" update=":lume:btnVisualizarProfissional" />
+							process="@this" />
 						<p:ajax
 							listener="#{agendamentoMB.validaHoraUtilProfissionalCombo}"
 							process="@this" />

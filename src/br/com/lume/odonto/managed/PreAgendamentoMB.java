@@ -100,7 +100,7 @@ public class PreAgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public List<Profissional> geraSugestoes(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query, UtilsFrontEnd.getPacienteLogado().getIdEmpresa());
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteProfissional(query, UtilsFrontEnd.getPacienteLogado().getIdEmpresa());
     }
 
     public void actionPesquisaPreAgendamento(ActionEvent event) {

@@ -102,11 +102,11 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     }
     
     public List<Profissional> sugestoesProfissionais(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
     }
     
     public List<Profissional> sugestoesProfissionalUltAlteracao(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteProfissional(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
     }
     
     public List<Procedimento> sugestoesProcedimento(String query){

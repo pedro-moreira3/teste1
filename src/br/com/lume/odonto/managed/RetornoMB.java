@@ -69,6 +69,12 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     public void persistRetorno(Retorno r) {
         try {
+            
+            if(r.getRetornar().equals("R") || r.getRetornar().equals("N")) {
+                PrimeFaces.current().executeScript("PF('dlgViewRetorno').show();");
+                PrimeFaces.current().ajax().update(":lume:viewRetorno");
+            }
+            
             RetornoSingleton.getInstance().getBo().persist(r);
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
