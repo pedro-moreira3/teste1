@@ -287,9 +287,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:ajax process="@this" />
 
 										<f:selectItem
-											itemLabel="&lt;div&gt;&lt;div class='agendamentoAfastamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Bloqueio&lt;/div&gt;"
-											itemValue="F" itemEscaped="false" />
-										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Atendidos&lt;/div&gt;"
 											itemValue="A" itemEscaped="false" />
 										<f:selectItem
@@ -489,6 +486,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}" />
 							</p:column>
 
+							<ui:remove>
 							<p:column
 								filterBy="#{atendimento.proximoAgendamentoPaciente.inicio}"
 								sortBy="#{atendimento.proximoAgendamentoPaciente.inicio}"
@@ -519,6 +517,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText
 									value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" />
 							</p:column>
+							</ui:remove>
 
 							<p:column>
 								<p:commandButton id="btnView" icon="White fa fa-eye"
