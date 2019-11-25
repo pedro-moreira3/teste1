@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -61,7 +60,6 @@ import br.com.lume.odonto.entity.ItemAnamnese;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Pergunta;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.odonto.entity.ProfissionalFilial;
 import br.com.lume.odonto.entity.ViaCep;
 import br.com.lume.odonto.exception.CertificadoInexistente;
 import br.com.lume.odonto.exception.CpfCnpjDuplicadoException;
@@ -894,6 +892,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void setProfissionais(List<Profissional> profissionais) {
         this.profissionais = profissionais;
+    }
+
+    @Override
+    public Paciente getEntity() {
+        // TODO Auto-generated method stub
+        return super.getEntity();
     }
 
 }

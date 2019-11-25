@@ -395,9 +395,9 @@
 						<p:selectBooleanCheckbox id="legado"
 							value="#{pacienteMB.entity.legado}" />
 
-						<p:outputLabel for="dataCriacao" value="Data Registro : "
+						<p:outputLabel for="dataCriacaoPaciente" value="Data Registro : "
 							rendered="#{pacienteMB.entity.dataCriacao != null and pacienteMB.visivelDadosPaciente}" />
-						<p:inputText id="dataCriacao"
+						<p:inputText id="dataCriacaoPaciente"
 							value="#{pacienteMB.entity.dataCriacaoStr}" readonly="true"
 							rendered="#{pacienteMB.entity.dataCriacao != null and pacienteMB.visivelDadosPaciente}" />
 
