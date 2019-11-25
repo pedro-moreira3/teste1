@@ -35,23 +35,10 @@
 		});
 	</script>
 
-	<p:dialog widgetVar="dlgDadosPacienteAg" resizable="false"
-		onHide="PF('dlgDadosPacienteAg').toggleMaximize();"
-		onShow="PF('dlgDadosPacienteAg').toggleMaximize();" appendTo=":lume"
-		header="Cadastro de Paciente" responsive="true" modal="true">
-		<p:ajax event="close" resetValues="true" />
-		<p:outputPanel id="dadosPacienteDlgFields"
-			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
-			<p:scrollPanel mode="native" style="width: 100%; height: 100%;">
-				<ui:include src="dadosPaciente.xhtml"></ui:include>
-			</p:scrollPanel>
-		</p:outputPanel>
-		<p:panelGrid columns="3" layout="grid"
-			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
-				oncomplete="PF('dlgDadosPacienteAg').hide()" />
-		</p:panelGrid>
-	</p:dialog>
+	<ui:include src="pacienteFicha.xhtml" />
+	<p:remoteCommand name="onHidePacienteFichaOnAgendamento"
+		process="@this"
+		actionListener="#{agendamentoMB.atualizaPacientePosFicha()}" />
 
 	<p:dialog widgetVar="dlgPacienteConflito" resizable="false"
 		onHide="PF('dlgPacienteConflito').toggleMaximize();"
@@ -152,23 +139,28 @@
 		</p:panelGrid>
 	</p:dialog>
 
-	<p:dialog id="dlgDisponibilidadeProfissional" widgetVar="dlgDisponibilidadeProfissional" resizable="false"
-		appendTo=":lume" header="Disponibilidade do profissional" responsive="true"
-		modal="true">
+	<p:dialog id="dlgDisponibilidadeProfissional"
+		widgetVar="dlgDisponibilidadeProfissional" resizable="false"
+		appendTo=":lume" header="Disponibilidade do profissional"
+		responsive="true" modal="true">
 
-		<p:outputPanel id="pnDisponibilidadeProfissional" styleClass="BordNone">
-			
+		<p:outputPanel id="pnDisponibilidadeProfissional"
+			styleClass="BordNone">
+
 			<ui:remove>
-			<h:panelGroup rendered="#{agendamentoMB.profissionalDentroAgenda != null and !(agendamentoMB.validaData())}">
-				<i class="topbar-icon material-icons"/>
-				<p:outputLabel value="PROFISSIONAL AFASTADO" style="font-weight:bold;"/>
-			</h:panelGroup>
+				<h:panelGroup
+					rendered="#{agendamentoMB.profissionalDentroAgenda != null and !(agendamentoMB.validaData())}">
+					<i class="topbar-icon material-icons" />
+					<p:outputLabel value="PROFISSIONAL AFASTADO"
+						style="font-weight:bold;" />
+				</h:panelGroup>
 			</ui:remove>
-			
+
 			<p:dataTable filterDelay="1500" reflow="true"
 				emptyMessage="Nenhum registro encontrado" id="dtHorasUteis"
 				value="#{agendamentoMB.horasUteisProfissionalAgenda}" var="hup"
-				rowKey="#{hup}" style="width:800px;height:auto;margin-top:10px;margin-bottom:10px">
+				rowKey="#{hup}"
+				style="width:800px;height:auto;margin-top:10px;margin-bottom:10px">
 
 				<f:facet name="header">Expediente do profissional</f:facet>
 
@@ -196,10 +188,11 @@
 
 		<p:panelGrid columns="5" layout="grid" columnClasses="ui-g-3, ui-g-6"
 			styleClass="ui-panelgrid-blank form-group ui-fluid">
-			
+
 			<p:panelGrid columns="1" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
-				<h:panelGroup style="display: flex;margin-right:20px;" styleClass="md-combo">
+				<h:panelGroup style="display: flex;margin-right:20px;"
+					styleClass="md-combo">
 					<p:outputLabel for="profissionalAgend" value="Profissional" />
 					<p:selectOneMenu id="profissionalAgend" styleClass="tallerCombo"
 						value="#{agendamentoMB.profissionalDentroAgenda}"
@@ -220,17 +213,19 @@
 					</p:selectOneMenu>
 					<p:message styleClass="msg" for="profissionalAgend" />
 					<ui:remove>
-					<p:outputPanel id="btnVisualizarProfissional" style="display:inline-flex;">
-						<p:commandButton id="visualizarDisponibilidade" process="@this"
-							disabled="#{agendamentoMB.profissionalDentroAgenda == null}"
-							actionListener="#{agendamentoMB.verificarDisponibilidadeProfissional}"
-							update=":lume:dadosPacienteDlgFields,:lume:pnDisponibilidadeProfissional" icon="fa fa-eye White"
-							immediate="true" title="Disponibilidade do profissional" />
-					</p:outputPanel>
+						<p:outputPanel id="btnVisualizarProfissional"
+							style="display:inline-flex;">
+							<p:commandButton id="visualizarDisponibilidade" process="@this"
+								disabled="#{agendamentoMB.profissionalDentroAgenda == null}"
+								actionListener="#{agendamentoMB.verificarDisponibilidadeProfissional}"
+								update=":lume:pnDisponibilidadeProfissional"
+								icon="fa fa-eye White" immediate="true"
+								title="Disponibilidade do profissional" />
+						</p:outputPanel>
 					</ui:remove>
 				</h:panelGroup>
 			</p:panelGrid>
-			
+
 			<p:panelGrid columns="1" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
 				<h:panelGroup style="display: flex;" styleClass="md-combo">
@@ -266,11 +261,11 @@
 							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
 							process="@this"
 							disabled="#{agendamentoMB.pacienteSelecionado == null}"
-							update=":lume:dadosPacienteDlgFields"
-							actionListener="#{pacienteMB.abreReadOnly(agendamentoMB.pacienteSelecionado, 'dadosPacienteDlgFields')}"
+							update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
+							actionListener="#{tabPacienteMB.loadPacienteRO(agendamentoMB.pacienteSelecionado, 'dlgFichaPaciente')}"
 							icon="fa fa-eye White" immediate="true"
 							title="Cadastro do Paciente"
-							oncomplete="PF('dlgDadosPacienteAg').show()" />
+							oncomplete="PF('dlgFichaPaciente').show()" />
 						<p:commandButton id="novoPaciente"
 							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
 							icon="fa fa-plus White" title="Novo Paciente"
