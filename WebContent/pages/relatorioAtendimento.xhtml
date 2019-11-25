@@ -158,7 +158,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-					<h1>Relatório de Atendimento</h1>
+					<h1>Relatório da Agenda</h1>
 
 					<p:separator styleClass="SeparatorFull" />
 
@@ -175,13 +175,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 										<h:panelGroup>
-											<h:outputText for="dataInicial" value="Data inicial:" />
+											<h:outputText for="dataInicial" value="Início do agendamento de:" />
 											<p:calendar id="dataInicial"
 												value="#{relatorioAtendimentoMB.dataInicio}" />
 										</h:panelGroup>
 
 										<h:panelGroup>
-											<h:outputText for="dataFinal" value="Data final:" />
+											<h:outputText for="dataFinal" value="Fim do agendamento até:" />
 											<p:calendar id="dataFinal"
 												value="#{relatorioAtendimentoMB.dataFim}" />
 										</h:panelGroup>
@@ -215,11 +215,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 										<h:panelGroup>
-											<h:outputText for="filtroProfissional" value="Profissional:" />
+											<h:outputText for="filtroProfissional" value="Dentista executor:" />
 											<p:autoComplete id="filtroProfissional"
 												value="#{relatorioAtendimentoMB.filtroPorProfissional}"
 												completeMethod="#{relatorioAtendimentoMB.sugestoesProfissionais}"
-												var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+												var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}" itemValue="#{p}"
 												converter="profissional" forceSelection="true"
 												scrollHeight="400" queryDelay="1000">
 												<p:ajax event="itemSelect" process="@this" />
@@ -233,7 +233,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:autoComplete id="filtroProfissionalUltAlteracao"
 												value="#{relatorioAtendimentoMB.filtroPorProfissionalUltAlteracao}"
 												completeMethod="#{relatorioAtendimentoMB.sugestoesProfissionalUltAlteracao}"
-												var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+												var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}" itemValue="#{p}"
 												converter="profissional" forceSelection="true"
 												scrollHeight="400" queryDelay="1000">
 												<p:ajax event="itemSelect" process="@this" />
@@ -286,9 +286,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										<p:ajax process="@this" />
 
-										<f:selectItem
-											itemLabel="&lt;div&gt;&lt;div class='agendamentoAfastamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Bloqueio&lt;/div&gt;"
-											itemValue="F" itemEscaped="false" />
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Atendidos&lt;/div&gt;"
 											itemValue="A" itemEscaped="false" />
@@ -442,7 +439,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:column filterBy="#{atendimento.profissional.dadosBasico.nome}"
 								sortBy="#{atendimento.profissional.dadosBasico.nome}"
 								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Profissional responsável">
+								filterMatchMode="contains" headerText="Dentista executor">
 								<h:outputText
 									value="#{atendimento.profissional.dadosBasico.nome}" />
 							</p:column>
@@ -489,6 +486,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento)}" />
 							</p:column>
 
+							<ui:remove>
 							<p:column
 								filterBy="#{atendimento.proximoAgendamentoPaciente.inicio}"
 								sortBy="#{atendimento.proximoAgendamentoPaciente.inicio}"
@@ -519,6 +517,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText
 									value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" />
 							</p:column>
+							</ui:remove>
 
 							<p:column>
 								<p:commandButton id="btnView" icon="White fa fa-eye"

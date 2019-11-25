@@ -13,7 +13,7 @@
 }
 </style>
 
-		<p:dialog appendTo=":lume" maximizable="false" modal="true"
+		<p:dialog appendTo=":lume:" maximizable="false" modal="true"
 			minimizable="false" resizable="false" responsive="true"
 			widgetVar="dlgViewRetorno" width="80%">
 			<f:facet name="header">
@@ -27,7 +27,7 @@
 						<p:panelGrid columns="4" layout="grid"
 							columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
 							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-							<h:outputLabel value="Paciente : " />
+							<h:outputLabel value="Paciente:" />
 							<p:autoComplete dropdown="true" queryDelay="1000"
 								minQueryLength="3" value="#{retornoMB.entity.paciente}"
 								completeMethod="#{retornoMB.geraSugestoesPaciente}" var="p"
@@ -73,6 +73,10 @@
 							<h:outputLabel value="Data Finalização Plano de Tratamento : " />
 							<h:outputText
 								value="#{retornoMB.entity.planoTratamento.dataFinalizadoStr}" />
+
+							<p:outputLabel for="detalhesRetorno" value="Detalhes do contato : " />
+							<p:inputTextarea id="detalhesRetorno" rows="3" cols="33" value="#{retornoMB.entity.detalhesContato}" maxlength="200" />
+
 						</p:panelGrid>
 					</div>
 				</div>
@@ -111,7 +115,7 @@
 										styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 											<h:panelGroup>
-												<p:outputLabel value="Data Início:" />
+												<p:outputLabel value="Início do retorno de:" />
 												<p:calendar value="#{retornoMB.dataIni}"
 													pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
 													locale="#{lumeSecurity.locale}"
@@ -120,7 +124,7 @@
 											</h:panelGroup>
 
 											<h:panelGroup>
-												<p:outputLabel value="Data Fim:" />
+												<p:outputLabel value="Fim do retorno até:" />
 												<p:calendar value="#{retornoMB.dataFim}"
 													pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
 													locale="#{lumeSecurity.locale}"
@@ -131,13 +135,11 @@
 											<h:panelGroup>
 												<p:outputLabel for="status" value="Status de Retorno" />
 												<p:selectOneMenu id="status" value="#{retornoMB.retornar}">
-													<f:selectItem itemValue="#{null}"
-														itemLabel="Selecione uma opção" />
+													<f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
 													<f:selectItem itemLabel="Pendente" itemValue="P" />
 													<f:selectItem itemLabel="Agendado" itemValue="A" />
 													<f:selectItem itemLabel="Aguardando Retorno" itemValue="R" />
-													<f:selectItem itemLabel="Não conseguimos Contato"
-														itemValue="N" />
+													<f:selectItem itemLabel="Não conseguimos Contato" itemValue="N" />
 													<f:selectItem itemLabel="Ligar Novamente" itemValue="L" />
 													<f:selectItem itemLabel="Cancelado" itemValue="C" />
 												</p:selectOneMenu>
@@ -243,18 +245,6 @@
 								<h:outputText
 									value="#{retorno.paciente.dadosBasico.telefoneStr}" />
 							</p:column>
-							<p:column headerText="Agendar" width="50">
-								<p:commandButton icon="White fa fa-calendar White"
-									oncomplete="PF('eventDialog').show();" process="@this"
-									action="#{agendamentoMB.retorno(retorno)}"
-									update="lume:pnAgendamento" />
-							</p:column>
-							<p:column headerText="Whats" width="50">
-								<p:button id="whats" icon="White fa fa-whatsapp"
-									disabled="#{retornoMB.getUrlWpp(retorno) == null}"
-									onclick="window.open('#{retornoMB.getUrlWpp(retorno)}'); return false;"
-									styleClass="GreenButton" />
-							</p:column>
 
 							<p:column
 								filterBy="#{retorno.paciente.convenio.dadosBasico.nome}"
@@ -293,6 +283,27 @@
 
 								</p:selectOneMenu>
 							</p:column>
+							
+							<p:column filterBy="#{retorno.detalhesContato}"
+								sortBy="#{retorno.detalhesContato}"
+								filterMatchMode="contains" headerText="Detalhes do contato"
+								filterFunction="#{retornoMB.filtroSemAcento}">
+								<h:outputText value="#{retorno.detalhesContato}" />
+							</p:column>
+							
+							<p:column headerText="Agendar" width="50">
+								<p:commandButton icon="White fa fa-calendar White"
+									oncomplete="PF('eventDialog').show();" process="@this"
+									action="#{agendamentoMB.retorno(retorno)}"
+									update="lume:pnAgendamento" />
+							</p:column>
+							<p:column headerText="Whats" width="50">
+								<p:button id="whats" icon="White fa fa-whatsapp"
+									disabled="#{retornoMB.getUrlWpp(retorno) == null}"
+									onclick="window.open('#{retornoMB.getUrlWpp(retorno)}'); return false;"
+									styleClass="GreenButton" />
+							</p:column>
+							
 							<p:column filterBy="#{retorno.agendamento.dataAgendamentoStr}"
 								sortBy="#{retorno.agendamento.dataAgendamento}"
 								filterMatchMode="contains" headerText="Agendamento">
