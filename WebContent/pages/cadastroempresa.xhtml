@@ -214,6 +214,24 @@
 
 						</p:panelGrid>
 
+						<p:separator styleClass="SeparatorFull" />
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+							layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;"
+							id="pnEmpresaAfiliacao">
+
+							<p:outputLabel for="afiliacao" value="Afiliação: " />
+							<p:selectOneMenu id="afiliacao" converter="afiliacao"
+								value="#{cadastroEmpresaMB.entity.afiliacao}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione uma afiliação (se houver)" />
+								<f:selectItems value="#{cadastroEmpresaMB.afiliacoes}" var="af"
+									itemValue="#{af}" itemLabel="#{af.nome}" />
+							</p:selectOneMenu>
+
+						</p:panelGrid>
+
 						<div class="SeparatorFull"></div>
 
 						<p:panelGrid columns="1" layout="grid"
