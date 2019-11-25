@@ -1151,13 +1151,16 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:selectCheckboxMenu value="#{regiao.facesArray}"
 								disabled="#{planoTratamentoMB.entity.finalizado == 'S'}"
 								label="#{regiao.facesArrayLabel}" style="width: 200px;"
-								rendered="#{regiao.statusDente.temFace}">
+								rendered="#{regiao.statusDente.temFace and planoTratamentoMB.isDenteOrRegiao() == 1}">
 								<p:ajax process="@this"
 									listener="#{planoTratamentoMB.actionPersistFacesStatusDente(regiao)}"
 									update="@this,:lume:tabView:pnDenteOdontograma,:lume:tabView:procedimentosOdontograma" />
 								<f:selectItems value="#{regiao.facesStr}" var="face"
 									itemValue="#{face}" itemLabel="#{face}" />
 							</p:selectCheckboxMenu>
+							<h:outputText
+								rendered="#{planoTratamentoMB.isDenteOrRegiao() == -1}"
+								value="Sem faces para diagnósticos em região" />
 						</p:column>
 						<p:column width="10%">
 							<p:commandButton icon="White fa fa-minus White"

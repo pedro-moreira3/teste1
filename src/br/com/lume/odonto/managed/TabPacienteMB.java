@@ -6,7 +6,6 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
@@ -54,7 +53,6 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     @ManagedProperty(value = "#{faturaPagtoMB}")
     private FaturaPagtoMB faturaPagtoMB;
 
-    private Integer activeIndex;
     private org.primefaces.component.tabview.TabView tabview = null;
 
     public TabPacienteMB() {
@@ -72,7 +70,6 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
                 planoTratamentoMB.carregarPlanosTratamento();
                 planoTratamentoMB.setEntity(pt);
                 planoTratamentoMB.atualizaTela();
-                setActiveIndex(4);
             } catch (Exception e) {
                 log.error("Erro no TabPacienteMB", e);
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -81,11 +78,11 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     }
 
     public void onTabChange(TabChangeEvent event) {
-        if (event.getTab().getTitle().equals("Plano de Tratamento")) {
+        if ("Plano de Tratamento".equals(event.getTab().getTitle())) {
             planoTratamentoMB.carregarPlanosTratamento();
-        } else if (event.getTab().getTitle().equals("Odontograma")) {
+        } else if ("Odontograma".equals(event.getTab().getTitle())) {
             odontogramaMB.atualizaOdontograma();
-        } else if (event.getTab().getTitle().equals("Plano Ortodôntico")) {
+        } else if ("Plano Ortodôntico".equals(event.getTab().getTitle())) {
             ortodontiaMB.carregarTela();
         } else if ("Periograma".equals(event.getTab().getTitle())) {
             periogramaMB.carregarTela();
@@ -163,14 +160,6 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
         this.ortodontiaMB = ortodontiaMB;
     }
 
-    public Integer getActiveIndex() {
-        return activeIndex;
-    }
-
-    public void setActiveIndex(Integer activeIndex) {
-        this.activeIndex = activeIndex;
-    }
-
     public TabView getTabview() {
         return tabview;
     }
@@ -211,14 +200,13 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
         this.faturaPagtoMB = faturaPagtoMB;
     }
 
-    public void openFicha() {
-        //this.activeIndex = 0;
-        this.tabview.setActiveIndex(0);
-        PrimeFaces.current().executeScript("PF('dlgFichaPaciente').show();");
+    public int getIndexTabView() {
+        return this.tabview.getActiveIndex();
     }
 
     public void loadPaciente(Paciente paciente) {
         try {
+            this.tabview.setActiveIndex(0);
             this.pacienteMB.setEntity(paciente);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);

@@ -552,10 +552,24 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         ptp.setFacesSelecionadas(faces);
     }
 
+    public Integer isDenteOrRegiao() {
+        return isDenteOrRegiao(planoTratamentoProcedimentoSelecionado);
+    }
+
+    public Integer isDenteOrRegiao(PlanoTratamentoProcedimento ptp) {
+        if (ptp.getDente() != null && ptp.getDente().trim().startsWith("Dente ")) {
+            return new Integer(1);
+        } else if (ptp.getDente() != null && !ptp.getDente().trim().isEmpty()) {
+            return new Integer(-1);
+        } else {
+            return null;
+        }
+    }
+
     public void actionAdicionarProcedimento(ActionEvent event) {
         try {
-            boolean isDente = planoTratamentoProcedimentoSelecionado.getDente() != null && planoTratamentoProcedimentoSelecionado.getDente().trim().startsWith("Dente ");
-            boolean isRegiao = planoTratamentoProcedimentoSelecionado.getDente() != null && !planoTratamentoProcedimentoSelecionado.getDente().trim().isEmpty();
+            boolean isDente = isDenteOrRegiao() == 1;
+            boolean isRegiao = isDenteOrRegiao() == -1;
 
             if (isDente && this.odontogramaSelecionado == null) {
                 this.addInfo("Escolha um odontograma antes de adicionar um procedimento à um dente.", "");

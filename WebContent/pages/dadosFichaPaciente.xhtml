@@ -12,15 +12,23 @@ body div.ui-widget-content.ui-tabs {
 }
 </style>
 
-	<h:inputHidden id="activeIndexFicha"
-		value="#{tabPacienteMB.activeIndex}" />
 	<p:outputPanel id="tabViewOutPanel">
+		<p:outputPanel
+			rendered="#{pacienteMB.entity.id == null and pacienteMB.entity.id == 0}">
+			<ui:include src="dadosPaciente.xhtml" />
+		</p:outputPanel>
 		<p:tabView id="tabView"
+			rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
 			style="padding: 0 15px 15px 15px; min-height: calc(100% - 17px)"
 			binding="#{tabPacienteMB.tabview}" dynamic="true" cache="false">
 
 			<p:ajax event="tabChange" listener="#{tabPacienteMB.onTabChange}"
-				update=":lume:tabView" />
+				update=":lume:tabView, :lume:buttonsFichaPaciente" />
+
+			<p:tab id="tab1" title="Anamnese"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="dadosPaciente.xhtml" />
+			</p:tab>
 
 			<p:tab id="tab2" title="Anamnese"
 				disabled="#{pacienteMB.entity.id == null}">

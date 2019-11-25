@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -60,6 +61,7 @@ import br.com.lume.odonto.entity.ItemAnamnese;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Pergunta;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.entity.ProfissionalFilial;
 import br.com.lume.odonto.entity.ViaCep;
 import br.com.lume.odonto.exception.CertificadoInexistente;
 import br.com.lume.odonto.exception.CpfCnpjDuplicadoException;
@@ -132,6 +134,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
         this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
+
         pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(super.getEntity());
         if ((profissionalLogado == null || profissionalLogado.getPerfil().equals(
                 OdontoPerfil.DENTISTA)) && (UtilsFrontEnd.getEmpresaLogada() == null || UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false)) {
