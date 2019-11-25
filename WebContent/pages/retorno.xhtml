@@ -47,8 +47,13 @@
 							</p:autoComplete>
 							<h:outputLabel value="Status : " />
 							<p:selectOneMenu value="#{retornoMB.entity.retornar}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione uma opção" />
 								<f:selectItem itemLabel="Pendente" itemValue="P" />
 								<f:selectItem itemLabel="Agendado" itemValue="A" />
+								<f:selectItem itemLabel="Aguardando Retorno" itemValue="R" />
+								<f:selectItem itemLabel="Não conseguimos Contato" itemValue="N" />
+								<f:selectItem itemLabel="Ligar Novamente" itemValue="L" />
 								<f:selectItem itemLabel="Cancelado" itemValue="C" />
 							</p:selectOneMenu>
 							<p:outputLabel value="Data Contato : " for="dtContato" />
@@ -91,44 +96,61 @@
 						<h:inputHidden id="idRetorno" value="#{retornoMB.entity.id}" />
 						<h1>Retorno</h1>
 						<p:separator styleClass="SeparatorFull" />
-						<p:fieldset collapsed="true" legend="Filtro" toggleable="true">
-							<p:panelGrid columns="4" layout="grid" id="filtroRetorno"
-								columnClasses="ui-g-1,ui-g-5,ui-g-1,ui-g-5"
-								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-								<p:outputLabel value="Data Início: " />
-								<p:calendar value="#{retornoMB.dataIni}" pattern="dd/MM/yyyy"
-									mask="true" showWeeksBar="false"
-									locale="#{lumeSecurity.locale}"
-									timeZone="#{lumeSecurity.timeZone}" navigator="true"
-									yearRange="-100:+1"
-									style="width: 95px !important;margin-right: 5px;" />
-								<p:outputLabel value="Data Fim: " />
-								<p:calendar value="#{retornoMB.dataFim}" pattern="dd/MM/yyyy"
-									mask="true" showWeeksBar="false"
-									locale="#{lumeSecurity.locale}"
-									timeZone="#{lumeSecurity.timeZone}" navigator="true"
-									yearRange="-100:+1"
-									style="width: 95px !important;margin-left: 5px;" />
-							</p:panelGrid>
-							<br />
-							<p:panelGrid columns="2" layout="grid"
-								columnClasses="ui-g-4,ui-g-8"
-								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-								<h:panelGroup styleClass="md-combo">
-									<p:outputLabel for="status" value="Status de Retorno" />
-									<p:selectOneMenu id="status" value="#{retornoMB.retornar}">
-										<f:selectItem itemValue="#{null}"
-											itemLabel="Selecione uma opção" />
-										<f:selectItem itemLabel="Pendente" itemValue="P" />
-										<f:selectItem itemLabel="Agendado" itemValue="A" />
-										<f:selectItem itemLabel="Aguardando Retorno" itemValue="R" />
-										<f:selectItem itemLabel="Não conseguimos Contato"
-											itemValue="N" />
-										<f:selectItem itemLabel="Ligar Novamente" itemValue="L" />
-										<f:selectItem itemLabel="Cancelado" itemValue="C" />
-									</p:selectOneMenu>
-								</h:panelGroup>
-							</p:panelGrid>
+						
+						<p:fieldset toggleable="false">
+						
+							<p:outputPanel>
+
+								<p:panelGrid columns="1" layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+									style="border:0px none; background-color:transparent;">
+
+									<p:outputPanel>
+									
+										<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+											<h:panelGroup>
+												<p:outputLabel value="Data Início:" />
+												<p:calendar value="#{retornoMB.dataIni}"
+													pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+													locale="#{lumeSecurity.locale}"
+													timeZone="#{lumeSecurity.timeZone}" navigator="true"
+													yearRange="-100:+1" />
+											</h:panelGroup>
+
+											<h:panelGroup>
+												<p:outputLabel value="Data Fim:" />
+												<p:calendar value="#{retornoMB.dataFim}"
+													pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+													locale="#{lumeSecurity.locale}"
+													timeZone="#{lumeSecurity.timeZone}" navigator="true"
+													yearRange="-100:+1" />
+											</h:panelGroup>
+
+											<h:panelGroup>
+												<p:outputLabel for="status" value="Status de Retorno" />
+												<p:selectOneMenu id="status" value="#{retornoMB.retornar}">
+													<f:selectItem itemValue="#{null}"
+														itemLabel="Selecione uma opção" />
+													<f:selectItem itemLabel="Pendente" itemValue="P" />
+													<f:selectItem itemLabel="Agendado" itemValue="A" />
+													<f:selectItem itemLabel="Aguardando Retorno" itemValue="R" />
+													<f:selectItem itemLabel="Não conseguimos Contato"
+														itemValue="N" />
+													<f:selectItem itemLabel="Ligar Novamente" itemValue="L" />
+													<f:selectItem itemLabel="Cancelado" itemValue="C" />
+												</p:selectOneMenu>
+											</h:panelGroup>
+
+										</p:panelGrid>
+									
+									</p:outputPanel>
+									
+								</p:panelGrid>
+
+							</p:outputPanel>
+							
 							<p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank ui-fluid form-group">
 								<p:commandButton id="pesquisar" icon="fa fa-search White"
@@ -136,8 +158,11 @@
 									update="pnRetorno" tabindex="1" process="@this,pnRetorno"
 									styleClass="OrangeButton" />
 							</p:panelGrid>
+							
 						</p:fieldset>
+						
 						<p:separator styleClass="SeparatorFull" />
+						
 						<p:outputPanel styleClass="BordNone">
 							<p:panelGrid columns="4" layout="grid" id="botoesRetornos"
 								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
@@ -186,17 +211,18 @@
 							<div class="EmptyBox20"></div>
 						</p:outputPanel>
 
-						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage="Nenhum registro encontrado"
 							id="dtRetorno" value="#{retornoMB.retornos}" var="retorno"
 							rows="15" paginator="true" selection="#{retornoMB.entity}"
 							selectionMode="single" rowKey="#{retorno}" widgetVar="dtRetorno"
 							paginatorPosition="bottom" styleClass="tableRetorno"
 							binding="#{retornoMB.tabelaRetorno}">
-							<p:ajax event="rowSelect" process="@this, :lume:pnRetorno"
+							
+							<p:ajax event="rowSelect" process="@this, :lume:botoesRetornos"
 								update=":lume:botoesRetornos" />
-							<f:facet name="header">
-							Retornos cadastrados
-						</f:facet>
+							
+							<f:facet name="header">Retornos cadastrados</f:facet>
+							
 							<p:column filterBy="#{retorno.paciente.dadosBasico.nomeStr}"
 								sortBy="#{retorno.paciente.dadosBasico.nome}"
 								filterFunction="#{retornoMB.filtroSemAcento}"
@@ -218,7 +244,7 @@
 									value="#{retorno.paciente.dadosBasico.telefoneStr}" />
 							</p:column>
 							<p:column headerText="Agendar" width="50">
-								<p:commandButton icon="White fa fa-book White"
+								<p:commandButton icon="White fa fa-calendar White"
 									oncomplete="PF('eventDialog').show();" process="@this"
 									action="#{agendamentoMB.retorno(retorno)}"
 									update="lume:pnAgendamento" />

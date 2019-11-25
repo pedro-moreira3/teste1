@@ -132,10 +132,6 @@ div.ui-selectoneradio label {
 	margin: 0px !important;
 }
 
-element.style{
-	width:50%;
-}
-
 }
 </style>
 		<script type="text/javascript"
@@ -709,11 +705,14 @@ element.style{
 										<p:commandButton value="Exportar para Google Agenda"
 											type="button" icon="White fa fa-google White"
 											onclick="handleClientLoad();resize('#lume\\:dlgGoogleAgenda');PF('dlgGoogleAgenda').show();" />
+										
+										<ui:remove>
 										<p:commandButton value="Novo agendamento" type="button"
 											icon="White fa fa-calendar"
 											styleClass="NavyButton" process="@this">
 											<p:ajax event="click" listener="#{agendamentoMB.verificarProfissional()}" process="@this"/>
 										</p:commandButton>
+										</ui:remove>
 									</p:panelGrid>
 								</p:outputPanel>
 								<p:outputPanel rendered="#{agendamentoMB.visualizacao != 'S'}">
