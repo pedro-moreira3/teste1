@@ -1,0 +1,54 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<style>
+.ui-autocomplete:not (.fixaAbaixo ) input {
+	height: 100%;
+}
+
+.remove12ColPaddingSide div.ui-g-12.ui-lg-12 {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.dialogDados .ui-dialog-content {
+	overflow: hidden;
+}
+</style>
+
+	<p:dialog widgetVar="dlgFichaPaciente" resizable="false"
+		onHide="PF('dlgFichaPaciente').toggleMaximize();onHidePacienteFichaOnAgendamento();"
+		onShow="PF('dlgFichaPaciente').toggleMaximize();" modal="true"
+		appendTo=":lume">
+		<f:facet name="header">
+			<p:outputPanel id="pnPrincipalFichaHeader">
+				<h:outputText
+					value="Ficha do Paciente #{pacienteMB.entity.dadosBasico.nome}" />
+			</p:outputPanel>
+		</f:facet>
+		<p:outputPanel id="pnPrincipalFicha"
+			style="max-height: calc(100% - 54px); height: calc(100% - 54px);"
+			styleClass="remove12ColPaddingSide">
+			<p:scrollPanel mode="native"
+				style="position: relative; width: 100%; height: 100%;">
+				<ui:include src="dadosFichaPaciente.xhtml"></ui:include>
+			</p:scrollPanel>
+		</p:outputPanel>
+		<p:panelGrid columns="4" layout="grid" id="buttonsFichaPaciente"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton icon="fa fa-save" value="Salvar"
+				process="@this, :lume:tabViewOutPanel"
+				rendered="#{tabPacienteMB.indexTabView == 0}"
+				styleClass="GreenButton"
+				actionListener="#{pacienteMB.actionPersist}" />
+			<p:column rendered="#{tabPacienteMB.indexTabView != 0}" />
+			<p:column />
+			<p:column />
+			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+				oncomplete="PF('dlgFichaPaciente').hide()" />
+		</p:panelGrid>
+	</p:dialog>
+
+</ui:composition>
