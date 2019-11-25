@@ -26,60 +26,63 @@
 							style="width:100%;" library="images"
 							rendered="#{pacienteMB.imagemUsuario == null}" />
 
-						<div style="border: 1px solid #cccccc; padding: 10px;">
-							<table style="width: 100%;">
-								<tr>
-									<td style="width: 115px;"><h:outputText
-											value="Data de Criação: " /></td>
-									<td style="text-align: right"><p:outputPanel
-											rendered="#{pacienteMB.entity.dataCriacao != null}">
-											<h:outputText value="#{pacienteMB.entity.dataCriacaoStr}" />
-										</p:outputPanel> <p:outputPanel
-											rendered="#{pacienteMB.entity.dataCriacao == null}">
-											<h:outputText value="Sem histórico da data de criação" />
-										</p:outputPanel></td>
-								</tr>
-								<tr>
-									<td style="width: 115px;"><h:outputText
-											value="Criado Por: " /></td>
-									<td style="text-align: right"><p:outputPanel
-											rendered="#{pacienteMB.entity.criadoPor != 0}">
-											<h:outputText
-												value="#{pacienteMB.getProfissionalName(pacienteMB.entity.criadoPor)}" />
-										</p:outputPanel> <p:outputPanel
-											rendered="#{pacienteMB.entity.criadoPor == 0}">
-											<h:outputText
-												value="Sem histórico do responsável pela criação" />
-										</p:outputPanel></td>
-								</tr>
-								<td></td>
-								<tr>
-									<td style="width: 115px;"><h:outputText
-											value="Data de Alteração: " /></td>
-									<td style="text-align: right"><p:outputPanel
-											rendered="#{pacienteMB.entity.dataUltimaAlteracao != null}">
-											<h:outputText
-												value="#{pacienteMB.entity.dataUltimaAlteracaosStr}" />
-										</p:outputPanel> <p:outputPanel
-											rendered="#{pacienteMB.entity.dataUltimaAlteracao == null}">
-											<h:outputText value="Sem histórico da data de alteração" />
-										</p:outputPanel></td>
-								</tr>
-								<tr>
-									<td style="width: 115px;"><h:outputText
-											value="Alterado Por: " /></td>
-									<td style="text-align: right"><p:outputPanel
-											rendered="#{pacienteMB.entity.alteradoPor != 0}">
-											<h:outputText
-												value="#{pacienteMB.getProfissionalName(pacienteMB.entity.alteradoPor)}" />
-										</p:outputPanel> <p:outputPanel
-											rendered="#{pacienteMB.entity.alteradoPor == 0}">
-											<h:outputText
-												value="Sem histórico do responsável pela alteração" />
-										</p:outputPanel></td>
-								</tr>
-							</table>
-						</div>
+						<p:outputPanel
+							rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}">
+							<div style="border: 1px solid #cccccc; padding: 10px;">
+								<table style="width: 100%;">
+									<tr>
+										<td style="width: 115px;"><h:outputText
+												value="Data de Criação: " /></td>
+										<td style="text-align: right"><p:outputPanel
+												rendered="#{pacienteMB.entity.dataCriacao != null}">
+												<h:outputText value="#{pacienteMB.entity.dataCriacaoStr}" />
+											</p:outputPanel> <p:outputPanel
+												rendered="#{pacienteMB.entity.dataCriacao == null}">
+												<h:outputText value="Sem histórico da data de criação" />
+											</p:outputPanel></td>
+									</tr>
+									<tr>
+										<td style="width: 115px;"><h:outputText
+												value="Criado Por: " /></td>
+										<td style="text-align: right"><p:outputPanel
+												rendered="#{pacienteMB.entity.criadoPor != 0}">
+												<h:outputText
+													value="#{pacienteMB.getProfissionalName(pacienteMB.entity.criadoPor)}" />
+											</p:outputPanel> <p:outputPanel
+												rendered="#{pacienteMB.entity.criadoPor == 0}">
+												<h:outputText
+													value="Sem histórico do responsável pela criação" />
+											</p:outputPanel></td>
+									</tr>
+									<td></td>
+									<tr>
+										<td style="width: 115px;"><h:outputText
+												value="Data de Alteração: " /></td>
+										<td style="text-align: right"><p:outputPanel
+												rendered="#{pacienteMB.entity.dataUltimaAlteracao != null}">
+												<h:outputText
+													value="#{pacienteMB.entity.dataUltimaAlteracaosStr}" />
+											</p:outputPanel> <p:outputPanel
+												rendered="#{pacienteMB.entity.dataUltimaAlteracao == null}">
+												<h:outputText value="Sem histórico da data de alteração" />
+											</p:outputPanel></td>
+									</tr>
+									<tr>
+										<td style="width: 115px;"><h:outputText
+												value="Alterado Por: " /></td>
+										<td style="text-align: right"><p:outputPanel
+												rendered="#{pacienteMB.entity.alteradoPor != 0}">
+												<h:outputText
+													value="#{pacienteMB.getProfissionalName(pacienteMB.entity.alteradoPor)}" />
+											</p:outputPanel> <p:outputPanel
+												rendered="#{pacienteMB.entity.alteradoPor == 0}">
+												<h:outputText
+													value="Sem histórico do responsável pela alteração" />
+											</p:outputPanel></td>
+									</tr>
+								</table>
+							</div>
+						</p:outputPanel>
 					</div>
 				</h:panelGroup>
 				<p:fieldset legend="Dados Pessoais" toggleable="true"
