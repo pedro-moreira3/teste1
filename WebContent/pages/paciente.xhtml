@@ -156,36 +156,7 @@
 			</div>
 		</div>
 
-		<p:dialog widgetVar="dlgFichaPaciente" resizable="false"
-			onHide="PF('dlgFichaPaciente').toggleMaximize();"
-			onShow="PF('dlgFichaPaciente').toggleMaximize();" modal="true"
-			appendTo=":lume">
-			<f:facet name="header">
-				<p:outputPanel id="pnPrincipalFichaHeader">
-					<h:outputText
-						value="Ficha do Paciente #{pacienteMB.entity.dadosBasico.nome}" />
-				</p:outputPanel>
-			</f:facet>
-			<p:outputPanel id="pnPrincipalFicha"
-				style="max-height: calc(100% - 54px); height: calc(100% - 54px);"
-				styleClass="remove12ColPaddingSide">
-				<p:scrollPanel mode="native"
-					style="position: relative; width: 100%; height: 100%;">
-					<ui:include src="dadosFichaPaciente.xhtml"></ui:include>
-				</p:scrollPanel>
-			</p:outputPanel>
-			<p:panelGrid columns="4" layout="grid" id="buttonsFichaPaciente"
-				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-				<p:commandButton icon="fa fa-save" value="Salvar" process="@this"
-					rendered="#{tabPacienteMB.indexTabView == 0}"
-					styleClass="GreenButton" />
-				<p:column rendered="#{tabPacienteMB.indexTabView != 0}" />
-				<p:column />
-				<p:column />
-				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
-					oncomplete="PF('dlgFichaPaciente').hide()" />
-			</p:panelGrid>
-		</p:dialog>
+		<ui:include src="pacienteFicha.xhtml" />
 
 		<p:dialog id="dlgCarregarPacientes" header="Carregar Pacientes"
 			widgetVar="dlgCarregarPacientes" responsive="true" modal="true"

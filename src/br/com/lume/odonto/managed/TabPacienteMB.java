@@ -214,4 +214,14 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
+    public void loadPacienteRO(Paciente paciente, String namePanel) {
+        try {
+            this.tabview.setActiveIndex(0);
+            this.pacienteMB.abreReadOnly(paciente, namePanel);
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
+        }
+    }
+
 }

@@ -15,9 +15,11 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
 
+import br.com.lume.afiliacao.AfiliacaoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.odonto.entity.Afiliacao;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
@@ -35,6 +37,8 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     private Logger log = Logger.getLogger(CadastroEmpresaMB.class);
 
     private Profissional profissional;
+
+    private List<Afiliacao> afiliacoes;
 
     @ManagedProperty(value = "#{menuMB}")
     private MenuMB menuMB;
@@ -57,6 +61,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
         try {
             setEntity(UtilsFrontEnd.getEmpresaLogada());
             profissional = ProfissionalSingleton.getInstance().getBo().findAdminInicial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            this.afiliacoes = AfiliacaoSingleton.getInstance().getBo().getAllAfiliacao();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error("Erro ao buscar registros", e);
@@ -109,6 +114,14 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
 
     public void setMenuMB(MenuMB menuMB) {
         this.menuMB = menuMB;
+    }
+
+    public List<Afiliacao> getAfiliacoes() {
+        return afiliacoes;
+    }
+
+    public void setAfiliacoes(List<Afiliacao> afiliacoes) {
+        this.afiliacoes = afiliacoes;
     }
 
 }
