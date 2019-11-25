@@ -100,8 +100,8 @@ body .ui-wizard .ui-wizard-content {
 											value="#{cadastroWebMB.entity.empChaCep}" maxlength="8"
 											mask="99999-999">
 											<f:validator validatorId="cepValidator" />
-											<p:ajax	event="blur" process="@this" listener="#{cadastroWebMB.buscaCep()}"
-													update=":lume:wizard"/>	
+											<p:ajax event="blur" process="@this"
+												listener="#{cadastroWebMB.buscaCep()}" update=":lume:wizard" />
 										</p:inputMask>
 
 										<p:outputLabel for="empStrEndereco" value="Endereço: " />
@@ -130,7 +130,8 @@ body .ui-wizard .ui-wizard-content {
 											maxlength="50" />
 
 										<p:outputLabel for="empChaUf" value="Estado: " />
-										<p:selectOneMenu id="empChaUf" binding="#{cadastroWebMB.estados}"
+										<p:selectOneMenu id="empChaUf"
+											binding="#{cadastroWebMB.estados}"
 											value="#{cadastroWebMB.entity.empChaUf}" required="true">
 											<f:selectItem itemValue="#{null}"
 												itemLabel="Selecione um Estado" />
@@ -171,6 +172,24 @@ body .ui-wizard .ui-wizard-content {
 											value="Quantidade de cadeiras: " />
 										<p:spinner id="empIntCadeira"
 											value="#{cadastroWebMB.entity.empIntCadeira}" min="1" />
+									</p:panelGrid>
+
+									<p:separator styleClass="SeparatorFull" />
+									<p:panelGrid columns="2"
+										columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+										layout="grid" styleClass="ui-panelgrid-blank"
+										style="border:0px none; background-color:transparent;"
+										id="pnEmpresaAfiliacao">
+
+										<p:outputLabel for="afiliacao" value="Afiliação: " />
+										<p:selectOneMenu id="afiliacao" converter="afiliacao"
+											value="#{cadastroWebMB.entity.afiliacao}">
+											<f:selectItem itemValue="#{null}"
+												itemLabel="Selecione uma afiliação (se houver)" />
+											<f:selectItems value="#{cadastroWebMB.afiliacoes}" var="af"
+												itemValue="#{af}" itemLabel="#{af.nome}" />
+										</p:selectOneMenu>
+
 									</p:panelGrid>
 								</p:tab>
 
@@ -268,7 +287,7 @@ body .ui-wizard .ui-wizard-content {
 
 										<h:outputLabel value="CEP: " style="font-weight: bold;" />
 										<p:inputText value="#{cadastroWebMB.entity.empChaCep}"
-											readonly="true" >
+											readonly="true">
 										</p:inputText>
 
 										<h:outputLabel value="Endereço: " style="font-weight: bold;" />
