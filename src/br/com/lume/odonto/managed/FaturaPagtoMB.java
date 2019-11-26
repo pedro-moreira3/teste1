@@ -51,7 +51,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private Date inicio, fim;
     private Paciente paciente;
     private List<Dominio> formasPagamento;
-    private PlanoTratamento[] ptSelecionados;
+    private PlanoTratamento[] ptSelecionados = new PlanoTratamento[] {};
     private List<PlanoTratamento> listaPt;
     private String status;
     private List<String> listaStatus;

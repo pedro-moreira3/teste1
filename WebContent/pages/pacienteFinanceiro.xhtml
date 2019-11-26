@@ -52,7 +52,12 @@ hr.hrSaldo {
 		<hr class="centerH hrSaldo" />
 		<div class="centerH divSaldo" style="">
 			<div class="centerH divSaldoHeader">Saldo Atual</div>
-			<h:outputText value="#{faturaPagtoMB.paciente.conta.saldo}">
+			<h:outputText value="#{faturaPagtoMB.paciente.conta.saldo}"
+				rendered="#{faturaPagtoMB.paciente.conta.saldo != null}">
+				<f:convertNumber currencySymbol="R$ " type="currency" />
+			</h:outputText>
+			<h:outputText value="#{0.00}"
+				rendered="#{faturaPagtoMB.paciente.conta.saldo == null}">
 				<f:convertNumber currencySymbol="R$ " type="currency" />
 			</h:outputText>
 		</div>
