@@ -156,7 +156,76 @@
 			</div>
 		</div>
 
+<<<<<<< Upstream, based on origin/backend
 		<ui:include src="pacienteFicha.xhtml" />
+=======
+		<p:remoteCommand name="updateButtons"
+			update=":lume:buttonsDadosPaciente" />
+		<p:dialog widgetVar="dlgDadosPaciente" resizable="false"
+			onHide="PF('dlgDadosPaciente').toggleMaximize();"
+			onShow="PF('dlgDadosPaciente').toggleMaximize();updateButtons()"
+			appendTo=":lume" header="Cadastro de Paciente" responsive="true"
+			modal="true" styleClass="dialogDados">
+			<p:ajax event="close" resetValues="true" update=":lume:pnPrincipal" />
+			<p:outputPanel id="pnPrincipal"
+				style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+				<p:scrollPanel mode="native" style="width: 100%; height: 100%;">
+					<ui:include src="dadosPaciente.xhtml"></ui:include>
+				</p:scrollPanel>
+			</p:outputPanel>
+			<p:panelGrid columns="4" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton id="salvar" icon="fa fa-check" value="Salvar"
+					process="@this, :lume:pnPrincipal"
+					update=":lume:pnPrincipal, :lume:dtPrincipal, :lume:view-log"
+					styleClass="BotaoCrud GreenButton"
+					actionListener="#{pacienteMB.actionPersist}"
+					oncomplete="handleAjaxRequest(xhr, status, args); updateButtons()" />
+				<h:panelGroup id="buttonsDadosPaciente">
+					<p:commandButton styleClass="OrangeButton" icon="fa fa-file-text-o"
+						process="@this" value="Exibir ficha do Paciente"
+						actionListener="#{tabPacienteMB.openFicha}"
+						disabled="#{pacienteMB.entity.id == null or pacienteMB.entity.id == 0}"
+						update=":lume:pnPrincipalFichaHeader, :lume:pnPrincipalFicha, :lume:tabViewOutPanel">
+					</p:commandButton>
+				</h:panelGroup>
+				<p:column />
+				<p:commandButton icon="fa fa-close" value="Fechar" process="@this" update=":lume:pnPrincipal, :lume:dtPrincipal, :lume:view-log"
+					oncomplete="PF('dlgDadosPaciente').hide()" actionListener="#{pacienteMB.fechar()}"/>
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgFichaPaciente" resizable="false"
+			onHide="PF('dlgFichaPaciente').toggleMaximize();"
+			onShow="PF('dlgFichaPaciente').toggleMaximize();" modal="true"
+			appendTo=":lume">
+			<f:facet name="header">
+				<p:outputPanel id="pnPrincipalFichaHeader">
+					<h:outputText
+						value="Ficha do Paciente #{pacienteMB.entity.dadosBasico.nome}" />
+				</p:outputPanel>
+			</f:facet>
+			<p:outputPanel id="pnPrincipalFicha"
+				style="max-height: calc(100% - 54px); height: calc(100% - 54px);"
+				styleClass="remove12ColPaddingSide">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: 100%; height: 100%;">
+					<p:outputPanel
+						rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}">
+						<ui:include src="dadosFichaPaciente.xhtml"></ui:include>
+					</p:outputPanel>
+				</p:scrollPanel>
+			</p:outputPanel>
+			<p:panelGrid columns="4" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+					oncomplete="PF('dlgFichaPaciente').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+>>>>>>> 2d50c2a anamnese e ortodontia
 
 		<p:dialog id="dlgCarregarPacientes" header="Carregar Pacientes"
 			widgetVar="dlgCarregarPacientes" responsive="true" modal="true"

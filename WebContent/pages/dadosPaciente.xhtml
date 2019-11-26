@@ -93,11 +93,10 @@
 						layout="grid" styleClass="ui-panelgrid-blank"
 						style="border:0px none; background-color:transparent;">
 
-						<p:outputLabel for="nome" value="Nome : " />
+						<h:outputLabel for="nome" value="Nome : *" />
 						<p:inputText id="nome"
-							value="#{pacienteMB.entity.dadosBasico.nome}" required="true"
-							maxlength="200" />
-
+							value="#{pacienteMB.entity.dadosBasico.nome}" 
+							maxlength="200" />							
 						<p:outputLabel for="nomePreferencial" value="Nome Preferencial : "
 							rendered="#{pacienteMB.visivelDadosPaciente}" />
 						<p:inputText id="nomePreferencial"
@@ -140,10 +139,12 @@
 								mask="99999-999">
 								<f:validator validatorId="cepValidator" />
 							</p:inputMask>
-							<p:commandButton id="cepsearch" icon="White fa fa-search White"
-								actionListener="#{pacienteMB.actionBuscaCep}"
-								update=":lume:endereco,:lume:bairro,:lume:cidade,:lume:estado"
-								process="@this,:lume:cep" />
+							<p:commandButton id="cepsearch" icon="White fa fa-search White"															
+								>
+								<p:ajax event="click" update=":lume:cep,:lume:endereco,:lume:bairro,:lume:cidade,:lume:estado" process="@this,:lume:cep"
+								listener="#{pacienteMB.actionBuscaCep}" />
+								
+								</p:commandButton>
 						</h:panelGroup>
 
 						<p:outputLabel for="endereco" value="Endereço : "
@@ -193,14 +194,17 @@
 							onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}"
 							rendered="#{pacienteMB.visivelDadosPaciente}" />
 
-						<p:outputLabel for="telCelular" value="Celular : "
+						<h:outputLabel for="telCelular" value="Celular : *"
 							rendered="#{pacienteMB.visivelDadosPaciente}" />
 						<h:panelGroup style="display: flex !important;"
 							rendered="#{pacienteMB.visivelDadosPaciente}">
 							<p:inputText id="telCelular"
 								value="#{pacienteMB.entity.dadosBasico.celular}"
 								onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}"
-								required="true" />
+								/>
+							
+								
+								
 							<p:button icon="White fa fa-whatsapp"
 								disabled="#{pacienteMB.getUrlWpp(pacienteMB.entity) == null}"
 								onclick="window.open('#{pacienteMB.getUrlWpp(pacienteMB.entity)}'); return false;"
@@ -301,7 +305,7 @@
 
 						<p:outputLabel id="lblResponsavel" for="responsavel"
 							value="Nome do Responsável : " />
-						<p:inputText id="responsavel" required="#{pacienteMB.responsavel}"
+						<p:inputText id="responsavel" 
 							value="#{pacienteMB.entity.dadosBasico.responsavel}"
 							maxlength="100" />
 

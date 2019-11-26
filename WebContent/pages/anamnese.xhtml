@@ -11,8 +11,8 @@
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton id="newAnamnese" icon="ui-icon-add" value="Novo"
 				actionListener="#{pacienteMB.actionAnamneseNew}"
-				update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade, :lume:tabView:dtAnamnese"
-				process="@this" oncomplete="PF('dlgAnamnesePaciente').show();" />
+				update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade, :lume:tabView:dtAnamnese,:lume:tabView:persistAnamnese"
+				process="@this,:lume:tabView:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />
 			<p:commandButton id="deleteAnamnese" icon="White fa fa-trash-o White"
 				value="Excluir" actionListener="#{pacienteMB.actionAnamneseRemove}"
 				update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade, :lume:tabView:dtAnamnese"
@@ -52,12 +52,10 @@
 					update=":lume:tabView:pnPrincipalAnamnese, :lume:tabView:botoesControleTbAnamnese" />
 				<f:facet name="header">Anamneses</f:facet>
 				<p:column headerText="Visualização" style="width:100px">
-					<p:commandButton styleClass="NavyButton" icon="fa fa-search"
-						actionListener="#{pacienteMB.setPacienteAnamnese(pacienteAnamnese)}"
-						oncomplete="PF('dlgAnamnesePaciente').show();" process="@this"
-						title="Visualizar Anamnese"
-						update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade">
-					</p:commandButton>
+						<p:commandButton id="visualizarAnamnese" icon="fa fa-search" title="Visualizar Anamnese"
+				actionListener="#{pacienteMB.setPacienteAnamnese(pacienteAnamnese)}"
+				update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade,:lume:tabView:persistAnamnese,:lume:tabView:dtAnamnese"
+				process="@this,:lume:tabView:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />					
 				</p:column>
 				<p:column filterBy="#{pacienteAnamnese.id}"
 					sortBy="#{pacienteAnamnese.id}" filterMatchMode="contains"
@@ -111,17 +109,19 @@
 							<f:selectItems value="#{pacienteMB.especialidades}" var="e"
 								itemValue="#{e}" itemLabel="#{e.descricao}" />
 							<p:ajax
-								listener="#{pacienteMB.actionAtualizaPerguntasPorAnamnese}"
-								process="@this" update=":lume:tabView:perguntasEspecialidade" />
+								listener="#{pacienteMB.actionAtualizaPerguntasPorAnamnese(e)}"
+								process="@this" update="" />
 						</p:selectManyCheckbox>
 						<p:separator styleClass="SeparatorFull" />
 
 						<h:panelGroup id="perguntasEspecialidade">
 							<ui:repeat var="anamnesesAgrupadas"
 								value="#{pacienteMB.anamneses}">
-								<p:fieldset legend="#{anamnesesAgrupadas[0].especialidade}">
+								<p:outputPanel id="#{anamnesesAgrupadas[0].especialidade}_id">
+								<p:fieldset legend="#{anamnesesAgrupadas[0].especialidade}" rendered="#{pacienteMB.mapaRenderizacao[anamnesesAgrupadas[0].especialidade]}" 
+								>
 									<ui:repeat var="anamnese" value="#{anamnesesAgrupadas}">
-										<p:panelGrid columns="2" layout="grid"
+										<p:panelGrid columns="2" layout="grid" 
 											styleClass="ui-panelgrid-blank"
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
 											style="border:0px none; background-color:transparent;"
@@ -223,6 +223,7 @@
 
 									</ui:repeat>
 								</p:fieldset>
+								</p:outputPanel>
 								<br />
 							</ui:repeat>
 						</h:panelGroup>
@@ -233,16 +234,21 @@
 		</p:outputPanel>
 		<p:panelGrid columns="4" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton id="persistAnamnese" icon="White fa fa-save White"
-				value="Salvar" actionListener="#{pacienteMB.actionAnamnesePersist}"
-				update=":lume:tabView:especialidade, :lume:tabView:perguntasEspecialidade, :lume:tabView:dtAnamnese"
-				process="@this, :lume:tabView:especialidade, :lume:tabView:perguntasEspecialidade"
-				disabled="#{pacienteMB.readonly and false}" styleClass="GreenButton" />
-			<p:column />
-			<p:column />
-			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
-				oncomplete="PF('dlgAnamnesePaciente').hide()" />
+			<p:outputPanel  id="persistAnamnese">
+				<p:commandButton  icon="White fa fa-save White" rendered="#{pacienteMB.habilitaSalvar}"
+					value="Salvar" actionListener="#{pacienteMB.actionAnamnesePersist}"
+					update=":lume:tabView:especialidade, :lume:tabView:perguntasEspecialidade, :lume:tabView:dtAnamnese"
+					process="@this, :lume:tabView:especialidade, :lume:tabView:perguntasEspecialidade"
+					disabled="#{pacienteMB.readonly and false}" styleClass="GreenButton" />			
+				</p:outputPanel>
+			<p:outputPanel></p:outputPanel>
+			<p:outputPanel></p:outputPanel>	
+			<p:outputPanel>
+				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+					oncomplete="PF('dlgAnamnesePaciente').hide()" />
+			</p:outputPanel>
 		</p:panelGrid>
+		
 	</p:dialog>
 
 </ui:composition>

@@ -380,6 +380,7 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
                 mapa.put(group[0].replaceAll("\"", "").trim(), group[1].replaceAll("\"", "").trim());
             }
             if (!mapa.isEmpty()) {
+<<<<<<< Upstream, based on origin/backend
                 this.getEntity().setEmpStrEndereco(mapa.get("logradouro"));
                 this.getEntity().setEmpStrBairro(mapa.get("bairro"));
                 this.getEntity().setEmpStrCidade(mapa.get("localidade"));
@@ -388,7 +389,34 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
                 getEstados().setValue(mapa.get("uf"));
                 getEstados().setSubmittedValue(mapa.get("uf").toString());
                 getEstados().setLocalValueSet(false);
+=======
+                if(mapa.get("logradouro") != null && !mapa.get("logradouro").isEmpty()) {
+                    this.getEntity().setEmpStrEndereco(mapa.get("logradouro"));  
+                    PrimeFaces.current().ajax().update(":lume:empStrEndereco");
+                }
+                if(mapa.get("bairro") != null && !mapa.get("bairro").isEmpty()) {
+                    this.getEntity().setEmpStrBairro(mapa.get("bairro"));
+                    PrimeFaces.current().ajax().update(":lume:empStrBairro");
+                }
+                if(mapa.get("localidade") != null && !mapa.get("localidade").isEmpty()) {
+                    this.getEntity().setEmpStrCidade(mapa.get("localidade"));
+                    PrimeFaces.current().ajax().update(":lume:empStrCidade");
+                }
+                if(mapa.get("uf") != null && !mapa.get("uf").isEmpty()) {
+                    this.getEntity().setEmpStrEstadoConselho(mapa.get("uf"));                    
+                    getEstados().setValue(mapa.get("uf"));
+                    getEstados().setSubmittedValue(mapa.get("uf").toString());
+                    getEstados().setLocalValueSet(false);
+                    PrimeFaces.current().ajax().update(":lume:empChaUf");
+                }   
+                
+            }else {
+                this.addError("CEP não encontado!", "");
+>>>>>>> 2d50c2a anamnese e ortodontia
             }
+            
+            
+            
 
         }
     }

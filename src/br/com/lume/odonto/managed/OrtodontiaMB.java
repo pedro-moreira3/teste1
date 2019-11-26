@@ -55,7 +55,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     private List<AparelhoOrtodontico> aparelhos;
     private AparelhoOrtodontico aparelhoSelecionado;
     private Procedimento procedimentoExtra;
-
+    
     //EXPORTAÇÃO TABELA
     private DataTable tabelaPlanoOrtodontico;
 
@@ -143,7 +143,18 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             atualizaValorProcedimento(procedimentoPadrao);
             getEntity().setProcedimentoPadrao(procedimentoPadrao);
-            PrimeFaces.current().executeScript("PF('dlgOrcamentoOrtodontia').show()");
+            getEntity().setBconvenio(true);
+            BigDecimal valor = new BigDecimal(0);
+            if (this.getEntity().getProcedimentoPadrao().getValor() == null)               
+                this.getEntity().getProcedimentoPadrao().setValor(valor);
+            
+           // PrimeFaces.current().executeScript("PF('dlgOrcamentoOrtodontia').show()");
+            PrimeFaces.current().ajax().update(":lume:tabView:descricaoPlano");
+            PrimeFaces.current().ajax().update(":lume:tabView:valorProcedimentoPadrao");
+            PrimeFaces.current().ajax().update(":lume:tabView:inicioTratamento");          
+            PrimeFaces.current().ajax().update(":lume:tabView:meses");
+            PrimeFaces.current().ajax().update(":lume:tabView:fimTratamento");
+            PrimeFaces.current().ajax().update(":lume:tabView:utilizaConvenio");
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -317,10 +328,13 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void actionCalculaMeses() {
-        Calendar instance = Calendar.getInstance();
-        instance.setTime(getEntity().getInicio());
-        instance.add(Calendar.MONTH, getEntity().getMeses() - 1);
-        getEntity().setFim(instance.getTime());
+        if(getEntity().getMeses() != null && getEntity().getInicio() != null) {
+            Calendar instance = Calendar.getInstance();
+            instance.setTime(getEntity().getInicio());
+            instance.add(Calendar.MONTH, getEntity().getMeses() - 1);
+            getEntity().setFim(instance.getTime());    
+            PrimeFaces.current().ajax().update(":lume:tabView:fimTratamento");
+        }        
     }
 
     public BigDecimal getValorOrcamentoAPagar() {
@@ -389,15 +403,6 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     public void exportarTabela(String type) {
         exportarTabela("Plano Ortodôntico", this.tabelaPlanoOrtodontico, type);
-    }
-
-    public BigDecimal obterValorProcedimentoValor() {
-        BigDecimal valor = new BigDecimal(0);
-
-        if (this.getEntity().getProcedimentoPadrao() != null)
-            valor = this.getEntity().getProcedimentoPadrao().getValor();
-
-        return valor;
     }
 
     public PacienteMB getPacienteMB() {
