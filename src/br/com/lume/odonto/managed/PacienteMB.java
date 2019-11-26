@@ -116,13 +116,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private boolean visivelDadosPaciente = true;
 
     private List<Agendamento> historicoAgendamentos;
-<<<<<<< Upstream, based on origin/backend
+
 
     //  private Paciente pacienteIndicacao;
 
     //  private Profissional profissionalIndicacao;
 
-=======
     
     private boolean habilitaSalvar;
     
@@ -130,7 +129,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     
   //  private Profissional profissionalIndicacao;
     
->>>>>>> 2d50c2a anamnese e ortodontia
+
     private List<Profissional> profissionais;
 
     //EXPORTACAO TABELAS
@@ -730,16 +729,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             especialidadeSelecionada = new ArrayList<>();
             especialidadeSelecionada.addAll(especialidadesPergunta);
         }
-    }
-    
-    public String getProfissionalName(long l) {
-        try {
-            return ProfissionalSingleton.getInstance().getBo().find(l).getDadosBasico().getNome();
-        } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog(e);
-        }
-        return null;
-    }
+    }  
 
     public String getProfissionalName(long l) {
         try {
@@ -976,12 +966,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.profissionais = profissionais;
     }
 
-<<<<<<< Upstream, based on origin/backend
+
     @Override
     public Paciente getEntity() {
         // TODO Auto-generated method stub
         return super.getEntity();
-=======
+    }
     
     public boolean isVisualizar() {
         return visualizar;
@@ -1010,7 +1000,6 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     
     public void setHabilitaSalvar(boolean habilitaSalvar) {
         this.habilitaSalvar = habilitaSalvar;
->>>>>>> 2d50c2a anamnese e ortodontia
     }
 
 }
