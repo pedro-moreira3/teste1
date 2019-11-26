@@ -42,6 +42,7 @@ import br.com.lume.filial.FilialSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.kit.KitSingleton;
 import br.com.lume.odonto.entity.Afiliacao;
+<<<<<<< Upstream, based on origin/backend
 // import br.com.lume.odonto.bo.DominioBO;
 // import br.com.lume.odonto.bo.EspecialidadeBO;
 // import br.com.lume.odonto.bo.FilialBO;
@@ -51,6 +52,17 @@ import br.com.lume.odonto.entity.Afiliacao;
 // import br.com.lume.odonto.bo.ProcedimentoBO;
 // import br.com.lume.odonto.bo.ProcedimentoKitBO;
 // import br.com.lume.odonto.bo.ProfissionalBO;
+=======
+//import br.com.lume.odonto.bo.DominioBO;
+//import br.com.lume.odonto.bo.EspecialidadeBO;
+//import br.com.lume.odonto.bo.FilialBO;
+//import br.com.lume.odonto.bo.ItemBO;
+//import br.com.lume.odonto.bo.KitBO;
+//import br.com.lume.odonto.bo.PerguntaBO;
+//import br.com.lume.odonto.bo.ProcedimentoBO;
+//import br.com.lume.odonto.bo.ProcedimentoKitBO;
+//import br.com.lume.odonto.bo.ProfissionalBO;
+>>>>>>> df2ae87 Correcoes para rebase
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Especialidade;
@@ -99,6 +111,8 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
     private DualListModel<Especialidade> especialidadePickList = new DualListModel<>();
 
     private List<Dominio> dominios;
+    
+    private List<Afiliacao> afiliacoes;
 
     // private EspecialidadeBO especialidadeBO;
 

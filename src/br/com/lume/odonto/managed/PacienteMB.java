@@ -731,6 +731,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             especialidadeSelecionada.addAll(especialidadesPergunta);
         }
     }
+    
+    public String getProfissionalName(long l) {
+        try {
+            return ProfissionalSingleton.getInstance().getBo().find(l).getDadosBasico().getNome();
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+        return null;
+    }
 
     public String getProfissionalName(long l) {
         try {

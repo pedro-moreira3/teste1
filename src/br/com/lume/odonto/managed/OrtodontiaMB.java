@@ -405,6 +405,15 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         exportarTabela("Plano Ortodôntico", this.tabelaPlanoOrtodontico, type);
     }
 
+    public BigDecimal obterValorProcedimentoValor() {
+        BigDecimal valor = new BigDecimal(0);
+
+        if (this.getEntity().getProcedimentoPadrao() != null)
+            valor = this.getEntity().getProcedimentoPadrao().getValor();
+
+        return valor;
+    }
+
     public PacienteMB getPacienteMB() {
         return pacienteMB;
     }
