@@ -97,6 +97,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private Dominio indicacao;
 
     private String senha, text;
+    
+    private String filtroStatus = "A";
 
     private List<Especialidade> especialidades;
 
@@ -140,6 +142,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private boolean visualizar;
 
     private HashMap<String, Boolean> mapaRenderizacao;
+    
+    
     
     public PacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
@@ -272,6 +276,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             InputStream inputStream = file.getInputstream();
             errosCarregarPaciente = carregarPacienteSingleton.getInstance().getBo().carregarPacientes(inputStream, UtilsFrontEnd.getEmpresaLogada());
             geraLista();
+            
+            if(filtroStatus.equals("A")) {
+                
+            }else if(filtroStatus.equals("I")) {
+                
+            }else if(filtroStatus.equals("T")) {
+                setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            }
+            
             this.addInfo("Arquivo carregado com sucesso.", "");
         } catch (Exception e) {
             log.error(e);
@@ -349,6 +362,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             }
             paciente2Inativar.setStatus(Status.INATIVO);
             PacienteSingleton.getInstance().getBo().persist(paciente2Inativar);
+            this.geraLista();
             this.addInfo("Sucesso", "Paciente inativado com sucesso!", true);
             //PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
         } catch (Exception e) {
@@ -370,6 +384,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             paciente2Ativar.setJustificativa(null);
             paciente2Ativar.setStatus(Status.ATIVO);
             PacienteSingleton.getInstance().getBo().persist(paciente2Ativar);
+            this.geraLista();
             this.addInfo("Sucesso", "Paciente ativado com sucesso!", true);
             //PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
         } catch (Exception e) {
@@ -562,11 +577,18 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     
     public void geraLista() {
         try {
-            if (UtilsFrontEnd.getProfissionalLogado() != null)
-                setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                if(!filtroStatus.equals("T")) {
+                    setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),filtroStatus));                
+                }else {
+                    setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                }
+            }
+                
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
     }
     
     public void fechar() {
@@ -1000,6 +1022,16 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     
     public void setHabilitaSalvar(boolean habilitaSalvar) {
         this.habilitaSalvar = habilitaSalvar;
+    }
+
+    
+    public String getFiltroStatus() {
+        return filtroStatus;
+    }
+
+    
+    public void setFiltroStatus(String filtroStatus) {
+        this.filtroStatus = filtroStatus;
     }
 
 }

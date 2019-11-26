@@ -58,7 +58,22 @@
 						</h:panelGroup>
 
 					</p:panelGrid>
-
+					<p:panelGrid columns="6" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+						<h:panelGroup>
+							<p:outputLabel for="status" value="Status dos Pacientes: " />
+							<p:selectOneMenu id="status" value="#{pacienteMB.filtroStatus}">												
+								<f:selectItem itemLabel="Ativos" itemValue="A" />
+								<f:selectItem itemLabel="Inativos" itemValue="I" />
+								<f:selectItem itemLabel="Todos" itemValue="T" />	
+								<p:ajax listener="#{pacienteMB.geraLista}" process="@this" update="dtPrincipal" />											
+							</p:selectOneMenu>
+						</h:panelGroup>
+						<h:panelGroup></h:panelGroup>
+						<h:panelGroup></h:panelGroup>
+						<h:panelGroup></h:panelGroup>
+						<h:panelGroup></h:panelGroup>
+						<h:panelGroup></h:panelGroup>
+					</p:panelGrid>
 					<h:panelGroup id="botoes" styleClass="tableButtons">
 						<p:commandButton icon="fa fa-file-excel-o" process="dtPrincipal"
 							styleClass="BotaoCrud Exportar green-btn" ajax="false"

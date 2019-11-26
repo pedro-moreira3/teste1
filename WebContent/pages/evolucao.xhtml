@@ -17,11 +17,7 @@
 						actionListener="#{evolucaoMB.actionNew}"
 						update=":lume:tabView:pnEvolucao, :lume:tabView:viewEvolucao"
 						process="@this" />
-					<p:commandButton icon="White fa fa-trash-o White" value="Excluir"
-						actionListener="#{evolucaoMB.actionRemove}" process="@this"
-						update=":lume:tabView:viewEvolucao" styleClass="RedButton"
-						disabled="#{evolucaoMB.entity.id == 0 or evolucaoMB.entity.excluido == 'S'}" />
-
+					<h:panelGroup></h:panelGroup>
 					<h:panelGroup>
 						<p:splitButton icon="White fa fa fa-file-excel-o"
 							value="Exportar tabela para Excel" styleClass="GreenSplitButton"
