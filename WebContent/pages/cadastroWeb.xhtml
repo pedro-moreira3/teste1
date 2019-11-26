@@ -30,25 +30,6 @@ body .ui-wizard .ui-wizard-content {
 							rendered="#{cadastroWebMB.pnInicialVisivel}">
 							<h1 style="margin-bottom: 10px !important; text-align: center">Cadastro</h1>
 
-							<p:confirmDialog id="confirmDialog"
-								message="Digite seu e-mail para recuperar sua senha. Você recebera um e-mail com as instruções."
-								header="Esqueci minha Senha" severity="alert"
-								widgetVar="confirmation" appendToBody="true">
-					  			<div class="Card ui-fluid ShadowEffect InteliBack">
-					                        <div class="Container100">
-					                            <p:inputText id="confirmacaoEmail" placeholder="Email" style="padding:15px !important;" value="#{loginMB.confirmacaoEmail}" />
-					                        </div>                     
-					                    </div>
-								<br />
-								<p:commandButton id="confirm" value="Enviar e-mail" styleClass="NavyButton" style="background-color: #607D8B;color: #ffffff" 
-									oncomplete="PF('confirmation').hide()"
-									action="#{loginMB.actionResetSenha}"/>
-								<p:commandButton id="decline" value="Cancelar"
-									onclick="PF('confirmation').hide()" type="button"
-									 />
-							</p:confirmDialog>
-
-
 							<p:wizard id="wizard" widgetVar="wiz"
 								flowListener="#{cadastroWebMB.onFlowProcess}"
 								nextLabel="Próximo" backLabel="Voltar">
@@ -119,13 +100,8 @@ body .ui-wizard .ui-wizard-content {
 											value="#{cadastroWebMB.entity.empChaCep}" maxlength="8"
 											mask="99999-999">
 											<f:validator validatorId="cepValidator" />
-<<<<<<< Upstream, based on origin/backend
 											<p:ajax event="blur" process="@this"
 												listener="#{cadastroWebMB.buscaCep()}" update=":lume:wizard" />
-=======
-											<p:ajax	event="blur" process="@this" listener="#{cadastroWebMB.buscaCep()}"
-													/>	
->>>>>>> 2d50c2a anamnese e ortodontia
 										</p:inputMask>
 
 										<p:outputLabel for="empStrEndereco" value="Endereço: " />
@@ -408,10 +384,6 @@ body .ui-wizard .ui-wizard-content {
 							<p:messages globalOnly="true" life="10000" escape="false">
 								<p:autoUpdate />
 							</p:messages>
-							<p:panelGrid columns="1" layout="grid"
-								styleClass="ui-panelgrid-blank removeSideGridPadding">
-							Bem vindo ao intelidente! Acesse seu e-mail para verificar sua senha, clique no botão abaixo e efetue o acesso!						
-							</p:panelGrid>							
 							<p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank removeSideGridPadding">
 								<p:commandButton icon="White fa fa-lock" value="Ir para o Login"
