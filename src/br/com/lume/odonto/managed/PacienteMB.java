@@ -23,7 +23,6 @@ import javax.imageio.stream.FileImageOutputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.xddf.usermodel.HasShapeProperties;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CaptureEvent;
@@ -97,7 +96,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private Dominio indicacao;
 
     private String senha, text;
-    
+
     private String filtroStatus = "A";
 
     private List<Especialidade> especialidades;
@@ -119,18 +118,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     private List<Agendamento> historicoAgendamentos;
 
-
     //  private Paciente pacienteIndicacao;
 
     //  private Profissional profissionalIndicacao;
 
-    
     private boolean habilitaSalvar;
-    
-  //  private Paciente pacienteIndicacao;
-    
-  //  private Profissional profissionalIndicacao;
-    
+
+    //  private Paciente pacienteIndicacao;
+
+    //  private Profissional profissionalIndicacao;
 
     private List<Profissional> profissionais;
 
@@ -142,9 +138,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private boolean visualizar;
 
     private HashMap<String, Boolean> mapaRenderizacao;
-    
-    
-    
+
+    private String metodoImagem = "C";
+    private UploadedFile uploadedFile;
+
     public PacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
@@ -270,21 +267,37 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));
     }
 
+    public void uploadPhotoImg(FileUploadEvent event) {
+        try {
+            uploadedFile = event.getFile();
+            if (uploadedFile != null) {
+                data = event.getFile().getContents();
+                scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));
+                addInfo("Sucesso", "Arquivo recebido com sucesso!");
+            } else {
+                throw new Exception("Arquivo corrompido, tente novamente!");
+            }
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            addError("Erro", "Falha ao realizar upload. " + e.getMessage());
+        }
+    }
+
     public void upload(FileUploadEvent event) {
         try {
             UploadedFile file = event.getFile();
             InputStream inputStream = file.getInputstream();
             errosCarregarPaciente = carregarPacienteSingleton.getInstance().getBo().carregarPacientes(inputStream, UtilsFrontEnd.getEmpresaLogada());
             geraLista();
-            
-            if(filtroStatus.equals("A")) {
-                
-            }else if(filtroStatus.equals("I")) {
-                
-            }else if(filtroStatus.equals("T")) {
+
+            if (filtroStatus.equals("A")) {
+
+            } else if (filtroStatus.equals("I")) {
+
+            } else if (filtroStatus.equals("T")) {
                 setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             }
-            
+
             this.addInfo("Arquivo carregado com sucesso.", "");
         } catch (Exception e) {
             log.error(e);
@@ -293,7 +306,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     }
 
     @Override
-    public void actionNew(ActionEvent arg0) {      
+    public void actionNew(ActionEvent arg0) {
         UtilsFrontEnd.setPacienteSelecionado(null);
         super.actionNew(arg0);
     }
@@ -393,8 +406,6 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
-
-
     @Override
     public void setEntity(Paciente entity) {
         pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(entity);
@@ -493,13 +504,13 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 }
             }
         }
-        
+
     }
-    
-  //  public boolean verificaRendered(String especialidade) {
-  //      System.out.println(especialidade);
-   //    return true;
- //   }
+
+    //  public boolean verificaRendered(String especialidade) {
+    //      System.out.println(especialidade);
+    //    return true;
+    //   }
 
     public void actionAtualizaPerguntasPorAnamnese(Especialidade especialidade) {
         //pacienteAnamnese = null;
@@ -518,30 +529,30 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         Map<String, List<Pergunta>> perguntas = new HashMap<>();
         if (UtilsFrontEnd.getProfissionalLogado() != null) {
             perguntas = PerguntaSingleton.getInstance().getBo().listByEspecialidade(especialidadeSelecionada, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-         
+
         }
-        
+
         anamneses = new ArrayList<>();
-        anamneses = ItemAnamneseSingleton.getInstance().getBo().perguntasAnamnese(perguntas);        
-       
+        anamneses = ItemAnamneseSingleton.getInstance().getBo().perguntasAnamnese(perguntas);
+
         mapaRenderizacao = new HashMap<String, Boolean>();
-        if(especialidades!= null) {
+        if (especialidades != null) {
             for (Especialidade especialidadeDefault : especialidades) {
-                mapaRenderizacao.put(especialidadeDefault.getDescricao(), false);  
+                mapaRenderizacao.put(especialidadeDefault.getDescricao(), false);
             }
         }
-        if(especialidadeSelecionada!= null) {
+        if (especialidadeSelecionada != null) {
             for (Especialidade especialidadeSelecionada : especialidadeSelecionada) {
-                mapaRenderizacao.put(especialidadeSelecionada.getDescricao(), true); 
+                mapaRenderizacao.put(especialidadeSelecionada.getDescricao(), true);
             }
         }
-        
+
         //TODO verificar pq especialidade esta vindo nula, nao precisaria fazer esse ultimo for
-     //   mapaRenderizacao.put(especialidade.getDescricao(), true);  
-        
+        //   mapaRenderizacao.put(especialidade.getDescricao(), true);  
+
         PrimeFaces.current().ajax().update(":lume:tabView:perguntasEspecialidade");
     }
-    
+
     public void actionAnamnesePersist(ActionEvent event) {
         try {
             AnamneseSingleton.getInstance().getBo().persistByProfissional(UtilsFrontEnd.getProfissionalLogado(), this.getEntity(), pacienteAnamnese, anamneses);
@@ -574,36 +585,36 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
         }
     }
-    
+
     public void geraLista() {
         try {
             if (UtilsFrontEnd.getProfissionalLogado() != null) {
-                if(!filtroStatus.equals("T")) {
-                    setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),filtroStatus));                
-                }else {
+                if (!filtroStatus.equals("T")) {
+                    setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), filtroStatus));
+                } else {
                     setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 }
             }
-                
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
     }
-    
+
     public void fechar() {
         try {
             //TODO tem que atualizar somente a entidade na lisa
-           // this.setEntity(PacienteSingleton.getInstance().getBo().find(getEntity().getId()));
+            // this.setEntity(PacienteSingleton.getInstance().getBo().find(getEntity().getId()));
             geraLista();
         } catch (Exception e) {
             this.addError("Erro", "Erro ao buscar paciente!", true);
             e.printStackTrace();
         }
-    }    
+    }
 
     public void actionBuscaCep() {
-         
+
         String cep = this.getEntity().getDadosBasico().getCep();
         if (cep != null && !cep.equals("")) {
             cep = cep.replaceAll("-", "");
@@ -612,7 +623,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 this.getEntity().getDadosBasico().setBairro(endereco.getBairro());
                 this.getEntity().getDadosBasico().setCidade(endereco.getLocalidade());
                 this.getEntity().getDadosBasico().setEndereco(endereco.getLogradouro());
-                this.getEntity().getDadosBasico().setUf(endereco.getUf().toUpperCase().trim());   
+                this.getEntity().getDadosBasico().setUf(endereco.getUf().toUpperCase().trim());
             } else {
                 addError("Endereço não encontrado!", "");
             }
@@ -683,7 +694,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     }
 
     public void setPacienteAnamneses(List<Anamnese> pacienteAnamneses) {
-    
+
         this.pacienteAnamneses = pacienteAnamneses;
     }
 
@@ -699,7 +710,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         HashMap<String, List<ItemAnamnese>> anamnesesPorEspecialidades = new HashMap<>();
         anamneses = new ArrayList<>();
         if (pacienteAnamnese != null) {
-            List<ItemAnamnese> list = pacienteAnamnese.getItensAnamnese();          
+            List<ItemAnamnese> list = pacienteAnamnese.getItensAnamnese();
             this.sortItemsByEspecialidade(list);
             this.selecionaEspecialidades(list);
             for (ItemAnamnese itemAnamnese : list) {
@@ -714,28 +725,28 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                     anamnesesPorEspecialidades.get(itemAnamnese.getEspecialidade()).add(itemAnamnese);
                 }
             }
-         
+
         }
 
         // colocaPerguntasNovas();
         anamneses = new ArrayList<>(anamnesesPorEspecialidades.values());
         this.sortAnamneses();
-   
+
         if (pacienteAnamnese != null && (pacienteAnamnese.getXmlAssinado() == null || pacienteAnamnese.getXmlAssinado().equals(""))) {
             this.setReadonly(false);
         } else {
             this.setReadonly(true);
         }
-        
+
         mapaRenderizacao = new HashMap<String, Boolean>();
-        if(especialidades!= null) {
+        if (especialidades != null) {
             for (Especialidade especialidadeDefault : especialidades) {
-                mapaRenderizacao.put(especialidadeDefault.getDescricao(), false);  
+                mapaRenderizacao.put(especialidadeDefault.getDescricao(), false);
             }
         }
-        if(especialidadeSelecionada!= null) {
+        if (especialidadeSelecionada != null) {
             for (Especialidade especialidadeSelecionada : especialidadeSelecionada) {
-                mapaRenderizacao.put(especialidadeSelecionada.getDescricao(), true); 
+                mapaRenderizacao.put(especialidadeSelecionada.getDescricao(), true);
             }
         }
     }
@@ -751,7 +762,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             especialidadeSelecionada = new ArrayList<>();
             especialidadeSelecionada.addAll(especialidadesPergunta);
         }
-    }  
+    }
 
     public String getProfissionalName(long l) {
         try {
@@ -988,50 +999,58 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.profissionais = profissionais;
     }
 
-
     @Override
     public Paciente getEntity() {
         // TODO Auto-generated method stub
         return super.getEntity();
     }
-    
+
     public boolean isVisualizar() {
         return visualizar;
     }
 
-    
     public void setVisualizar(boolean visualizar) {
         this.visualizar = visualizar;
     }
 
-    
     public HashMap<String, Boolean> getMapaRenderizacao() {
         return mapaRenderizacao;
     }
 
-    
     public void setMapaRenderizacao(HashMap<String, Boolean> mapaRenderizacao) {
         this.mapaRenderizacao = mapaRenderizacao;
     }
 
-    
     public boolean isHabilitaSalvar() {
         return habilitaSalvar;
     }
 
-    
     public void setHabilitaSalvar(boolean habilitaSalvar) {
         this.habilitaSalvar = habilitaSalvar;
     }
 
-    
     public String getFiltroStatus() {
         return filtroStatus;
     }
 
-    
     public void setFiltroStatus(String filtroStatus) {
         this.filtroStatus = filtroStatus;
+    }
+
+    public String getMetodoImagem() {
+        return metodoImagem;
+    }
+
+    public void setMetodoImagem(String metodoImagem) {
+        this.metodoImagem = metodoImagem;
+    }
+
+    public UploadedFile getUploadedFile() {
+        return uploadedFile;
+    }
+
+    public void setUploadedFile(UploadedFile uploadedFile) {
+        this.uploadedFile = uploadedFile;
     }
 
 }

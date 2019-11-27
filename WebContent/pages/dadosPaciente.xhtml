@@ -9,6 +9,10 @@
 .optionsPaciente .ui-panelgrid-cell {
 	padding: 12px 8px !important;
 }
+
+.foto .ui-dialog-content {
+	overflow: hidden;
+}
 </style>
 	<div class="ui-g ui-fluid">
 		<div class="ui-g-12 ui-lg-12">
@@ -422,36 +426,79 @@
 	</div>
 
 	<p:dialog id="dlgTirarFoto" header="Tirar Foto" appendTo=":lume"
-		widgetVar="dlgTirarFoto" responsive="true" modal="true">
+		widgetVar="dlgTirarFoto" responsive="true" modal="true"
+		style="min-width: 500px;" styleClass="foto">
+
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
+
+			<h:panelGroup styleClass="md-combo" style="margin-top: 20px">
+				<p:outputLabel for="photoChoice"
+					value="Forma de aquisição da imagem" />
+				<p:selectOneMenu id="photoChoice" value="#{pacienteMB.metodoImagem}">
+					<f:selectItem itemValue="C" itemLabel="Captura por webcam" />
+					<f:selectItem itemValue="U" itemLabel="Upload de imagem" />
+					<p:ajax update=":lume:tabView:pnTirarFoto" />
+				</p:selectOneMenu>
+			</h:panelGroup>
+
+		</p:panelGrid>
+
+		<div class="SeparatorFull"></div>
+
 		<h:panelGroup id="pnTirarFoto">
-			<div class="Container100 Responsive100 NoIndent">
-				<div class="Container100 ui-fluid NoPadding">
-					<div class="Container50 Responsive100">
-						<p:commandButton value="Capturar" icon="White fa fa-camera"
-							type="button" onclick="PF('pc').capture()"
-							styleClass="NavyButton" />
-					</div>
-					<div class="Container50 Responsive100">
-						<p:commandButton value="Salvar" icon="White fa fa-save"
-							process="@this" styleClass="GreenButton"
-							actionListener="#{pacienteMB.actionSalvarFoto}"
-							oncomplete="PF('dlgTirarFoto').hide();" update=":lume:foto" />
-					</div>
-					<div class="SeparatorFull"></div>
 
-					<p:panelGrid columns="2" layout="grid"
-						styleClass="ui-panelgrid-blank"
-						style="border:0px none; background-color:transparent;">
-						<p:photoCam widgetVar="pc" listener="#{pacienteMB.onCapture}"
-							update="photoPaciente" rendered="#{pacienteMB.renderedPhotoCam}" />
-						<p:outputPanel id="photoPaciente">
-							<p:graphicImage value="#{pacienteMB.scFoto}" stream="false" />
-						</p:outputPanel>
-					</p:panelGrid>
+			<p:outputPanel rendered="#{pacienteMB.metodoImagem == 'U'}">
+				<br />
+				<p:fileUpload value="#{pacienteMB.uploadedFile}" multiple="false"
+					mode="advanced" dragDropSupport="true" rendered="true"
+					allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+					label="Subir imagem de perfil"
+					invalidFileMessage="Selecione um arquivo com estensão '.gif, .jpg, .jpeg ou .png'"
+					invalidSizeMessage="Arquivo muito grande! Tamanho não suportado."
+					auto="true" sizeLimit="100000" update="photoPacienteUpload"
+					fileUploadListener="#{pacienteMB.uploadPhotoImg}"
+					styleClass="BotaoCrud cyan-btn" icon="fa fa-cloud-upload" />
+				<p:outputPanel id="photoPacienteUpload" style="position: relative;">
+					<p:graphicImage value="#{pacienteMB.scFoto}" stream="false"
+						style="max-height: 300px; max-width: 300px; margin-left: 50%; transform: translateX(-50%);" />
+				</p:outputPanel>
+			</p:outputPanel>
 
-				</div>
-			</div>
+			<p:outputPanel rendered="#{pacienteMB.metodoImagem == 'C'}">
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding forceSpaceBetweenCell">
+					<p:commandButton value="Capturar" icon="White fa fa-camera"
+						type="button" onclick="PF('pc').capture()" styleClass="NavyButton" />
+				</p:panelGrid>
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding"
+					style="border:0px none; background-color:transparent;">
+					<p:photoCam widgetVar="pc" listener="#{pacienteMB.onCapture}"
+						update="photoPaciente" rendered="#{pacienteMB.renderedPhotoCam}" />
+					<p:outputPanel id="photoPaciente">
+						<p:graphicImage value="#{pacienteMB.scFoto}" stream="false"
+							style="max-height: 300px; max-width: 300px; margin-left: 50%; transform: translateX(-50%);" />
+					</p:outputPanel>
+				</p:panelGrid>
+			</p:outputPanel>
+
 		</h:panelGroup>
+
+		<br />
+		<div class="SeparatorFull"></div>
+
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
+			<p:commandButton value="Salvar" icon="White fa fa-save"
+				process="@this" styleClass="GreenButton"
+				actionListener="#{pacienteMB.actionSalvarFoto}"
+				oncomplete="PF('dlgTirarFoto').hide();" update=":lume:foto" />
+			<p:commandButton value="Fechar" icon="White fa fa-close"
+				process="@this" oncomplete="PF('dlgTirarFoto').hide();" />
+		</p:panelGrid>
+
 	</p:dialog>
 
 </ui:composition>
