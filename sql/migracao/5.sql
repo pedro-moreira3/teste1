@@ -119,3 +119,6 @@ ALTER TABLE TRANSFERENCIA_CONTA
    DROP CONSTRAINT transferencia_conta_id_conta_destino_fkey
  , ADD  CONSTRAINT transferencia_conta_id_conta_destino_fkey FOREIGN KEY(ID_CONTA_DESTINO)
       REFERENCES CONTA(ID) DEFERRABLE INITIALLY DEFERRED;
+      
+----------------------------
+update ESPECIALIDADE set descricao = 'GENERICAS' where descricao ilike 'GEN%'      
