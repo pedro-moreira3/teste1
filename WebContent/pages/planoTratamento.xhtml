@@ -194,7 +194,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:column
 						filterBy="#{planoTratamento.profissional.dadosBasico.prefixoNome}"
 						sortBy="#{planoTratamento.profissional.dadosBasico.prefixoNome}"
-						filterMatchMode="contains" headerText="Profissional"
+						filterMatchMode="contains" headerText="Avaliador"
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<h:outputText
 							value="#{planoTratamento.profissional.dadosBasico.prefixoNome}" />
@@ -535,20 +535,22 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<p:inputText id="desc"
 							value="#{planoTratamentoMB.entity.descricao}" required="true" />
 
-						<p:outputLabel for="desc"
-							value="Profissional para finalizar o procedimento: "
-							rendered="#{planoTratamentoMB.admin}" />
-						<p:selectOneMenu id="profissionalFinalizaProcedimento"
-							value="#{planoTratamentoMB.entity.profissional}"
-							converter="profissional" rendered="#{planoTratamentoMB.admin}"
-							filter="true" filterMatchMode="contains">
-							<f:selectItem itemValue="#{null}"
-								itemLabel="Selecione um profissional" />
-							<f:selectItems value="#{planoTratamentoMB.profissionais}"
-								var="profissional"
-								itemLabel="#{profissional.dadosBasico.prefixoNome}"
-								itemValue="#{profissional}" />
-						</p:selectOneMenu>
+						<ui:remove>
+							<p:outputLabel for="desc"
+								value="Profissional para finalizar o procedimento: "
+								rendered="#{planoTratamentoMB.admin}" />
+							<p:selectOneMenu id="profissionalFinalizaProcedimento"
+								value="#{planoTratamentoMB.entity.profissional}"
+								converter="profissional" rendered="#{planoTratamentoMB.admin}"
+								filter="true" filterMatchMode="contains">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione um profissional" />
+								<f:selectItems value="#{planoTratamentoMB.profissionais}"
+									var="profissional"
+									itemLabel="#{profissional.dadosBasico.prefixoNome}"
+									itemValue="#{profissional}" />
+							</p:selectOneMenu>
+						</ui:remove>
 
 						<p:outputLabel for="odontogramapt" value="Odontograma vinculado: "
 							rendered="#{planoTratamentoMB.admin}" />

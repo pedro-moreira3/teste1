@@ -22,6 +22,23 @@
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 
+					<p:fieldset legend="Filtros" collapsed="true" toggleable="true">
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-6, ui-g-6"
+							styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+							<h:panelGroup styleClass="md-combo">
+								<p:outputLabel for="status" value="Status dos Pacientes: " />
+								<p:selectOneMenu id="status" value="#{pacienteMB.filtroStatus}">
+									<f:selectItem itemLabel="Ativos" itemValue="A" />
+									<f:selectItem itemLabel="Inativos" itemValue="I" />
+									<f:selectItem itemLabel="Todos" itemValue="T" />
+									<p:ajax listener="#{pacienteMB.geraLista}" process="@this"
+										update="dtPrincipal" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:fieldset>
+
 					<p:panelGrid columns="4" layout="grid" id="botoesLong"
 						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
 						<p:commandButton id="new" icon="ui-icon-add"
@@ -58,7 +75,6 @@
 						</h:panelGroup>
 
 					</p:panelGrid>
-
 					<h:panelGroup id="botoes" styleClass="tableButtons">
 						<p:commandButton icon="fa fa-file-excel-o" process="dtPrincipal"
 							styleClass="BotaoCrud Exportar green-btn" ajax="false"
@@ -105,42 +121,42 @@
 							filterBy="#{paciente.dadosBasico.nomeStr}"
 							filterMatchMode="contains" headerText="Nome"
 							filterFunction="#{pacienteMB.filtroSemAcento}">
-							<ui:remove>
-								<p:commandLink value="#{paciente.dadosBasico.nome}"
-									process="@this" title="#{paciente.id}"
-									actionListener="#{tabPacienteMB.loadPaciente(paciente)}"
-									oncomplete="PF('dlgDadosPaciente').show()"
-									update=":lume:pnPrincipal" />
-							</ui:remove>
 							<p:commandLink value="#{paciente.dadosBasico.nome}"
 								process="@this" title="#{paciente.id}"
 								actionListener="#{tabPacienteMB.loadPaciente(paciente)}"
 								oncomplete="PF('dlgFichaPaciente').show()"
 								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 						</p:column>
-						<p:column sortBy="#{paciente.dadosBasico.email}"
-							filterBy="#{paciente.dadosBasico.email}"
-							filterMatchMode="contains" headerText="Email"
-							rendered="#{pacienteMB.visivelDadosPaciente}"
+						<p:column sortBy="#{paciente.dadosBasico.responsavel}"
+							filterBy="#{paciente.dadosBasico.responsavel}"
+							filterMatchMode="contains" headerText="Responsável"
 							filterFunction="#{pacienteMB.filtroSemAcento}">
-							<h:outputText value="#{paciente.dadosBasico.email}" />
+							<h:outputText value="#{paciente.dadosBasico.responsavel}" />
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.dataNascimentoStrOrd}"
 							filterBy="#{paciente.dadosBasico.dataNascimentoStr}"
 							filterMatchMode="contains" headerText="Data de Nascimento">
 							<h:outputText value="#{paciente.dadosBasico.dataNascimentoStr}" />
 						</p:column>
-						<p:column sortBy="#{paciente.dadosBasico.documentoStr}"
-							filterBy="#{paciente.dadosBasico.documentoStr}"
-							filterMatchMode="contains" headerText="Documento"
-							rendered="#{pacienteMB.visivelDadosPaciente}">
-							<h:outputText value="#{paciente.dadosBasico.documento}" />
+						<p:column sortBy="#{paciente.convenio.dadosBasico.nome}"
+							filterBy="#{paciente.convenio.dadosBasico.nome}"
+							filterMatchMode="contains" headerText="Convênio"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
+							<h:outputText value="#{paciente.convenio.dadosBasico.nome}" />
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.celular}"
 							filterBy="#{paciente.dadosBasico.celular}"
 							filterMatchMode="contains" headerText="Telefone Celular"
 							rendered="#{pacienteMB.visivelDadosPaciente}">
-							<h:outputText value="#{paciente.dadosBasico.celular}" />
+							<h:panelGroup style="display: flex !important;">
+								<div style="line-height: 32px; width: calc(100% - 32px);">
+									<h:outputText value="#{paciente.dadosBasico.celular}" />
+								</div>
+								<p:button icon="White fa fa-whatsapp" style="right: 0"
+									disabled="#{pacienteMB.getUrlWpp(paciente) == null}"
+									onclick="window.open('#{pacienteMB.getUrlWpp(paciente)}'); return false;"
+									styleClass="GreenButton" />
+							</h:panelGroup>
 						</p:column>
 					</p:dataTable>
 

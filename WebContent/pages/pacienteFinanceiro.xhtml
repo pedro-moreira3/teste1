@@ -50,25 +50,29 @@ hr.hrSaldo {
 	<br />
 	<div style="position: relative; width: 100%; height: 100px;">
 		<hr class="centerH hrSaldo" />
-		<div class="centerH divSaldo"
-			style="#{faturaPagtoMB.styleBySaldoPaciente}">
+		<div class="centerH divSaldo" style="">
 			<div class="centerH divSaldoHeader">Saldo Atual</div>
-			<h:outputText value="#{faturaPagtoMB.paciente.conta.saldo}">
+			<h:outputText value="#{faturaPagtoMB.paciente.conta.saldo}"
+				rendered="#{faturaPagtoMB.paciente.conta.saldo != null}">
+				<f:convertNumber currencySymbol="R$ " type="currency" />
+			</h:outputText>
+			<h:outputText value="#{0.00}"
+				rendered="#{faturaPagtoMB.paciente.conta.saldo == null}">
 				<f:convertNumber currencySymbol="R$ " type="currency" />
 			</h:outputText>
 		</div>
 	</div>
-	
+
 	<p:panelGrid columns="2" layout="grid"
-			styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
-			style="border:0px none; background-color:transparent;">
+		styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+		style="border:0px none; background-color:transparent;">
 
 		<h:panelGroup>
 			<p:splitButton icon="White fa fa fa-file-excel-o"
 				value="Exportar tabela para Excel" styleClass="GreenSplitButton"
 				actionListener="#{pacienteMB.exportarTabelaFinanceiro('xls')}"
-				ajax="false" process="dtPrincipal,@this" update="@this"
-				immediate="true"
+				ajax="false" process=":lume:tabView:dtPrincipal,@this"
+				update="@this" immediate="true"
 				onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
 				<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
@@ -76,7 +80,8 @@ hr.hrSaldo {
 				<p:menuitem value="Exportar tabela para PDF"
 					icon="fa fa fa-file-pdf-o"
 					actionListener="#{pacienteMB.exportarTabelaFinanceiro('pdf')}"
-					ajax="false" process="ddtPrincipal,@this" immediate="true"
+					ajax="false" process=":lume:tabView:dtPrincipal,@this"
+					immediate="true"
 					onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 					<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
 				</p:menuitem>
@@ -84,7 +89,7 @@ hr.hrSaldo {
 		</h:panelGroup>
 
 	</p:panelGrid>
-	
+
 	<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 		id="dtPrincipal" value="#{faturaPagtoMB.entityList}" var="f" rows="10"
 		paginator="true" rowKey="#{f}" paginatorPosition="bottom"
