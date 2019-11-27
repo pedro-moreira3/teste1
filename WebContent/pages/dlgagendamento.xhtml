@@ -36,8 +36,7 @@
 	</script>
 
 	<ui:include src="pacienteFicha.xhtml" />
-	<p:remoteCommand name="onHidePacienteFichaOnAgendamento"
-		process="@this"
+	<p:remoteCommand name="onHidePacienteFicha" process="@this"
 		actionListener="#{agendamentoMB.atualizaPacientePosFicha()}" />
 
 	<p:dialog widgetVar="dlgPacienteConflito" resizable="false"
