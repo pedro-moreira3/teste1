@@ -139,7 +139,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     private HashMap<String, Boolean> mapaRenderizacao;
 
-    private String metodoImagem = "C";
+    private String metodoImagem = "U";
     private UploadedFile uploadedFile;
 
     public PacienteMB() {
