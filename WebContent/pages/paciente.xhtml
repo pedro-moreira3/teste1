@@ -173,6 +173,7 @@
 		</div>
 
 		<ui:include src="pacienteFicha.xhtml" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 		<p:dialog id="dlgCarregarPacientes" header="Carregar Pacientes"
 			widgetVar="dlgCarregarPacientes" responsive="true" modal="true"
