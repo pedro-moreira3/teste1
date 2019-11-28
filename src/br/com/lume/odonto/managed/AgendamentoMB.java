@@ -219,8 +219,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
         UtilsFrontEnd.setPacienteSelecionado(this.getEntity().getPaciente());
         this.setEntity(this.getEntity());
-        this.setInicio(Calendar.getInstance().getTime());
-        this.setFim(Calendar.getInstance().getTime());
+        this.setInicio(this.getEntity().getInicio());
+        this.setFim(this.getEntity().getFim());
         geraAgendamentoAfastamento(this.getEntity().getInicio(), this.getEntity().getFim(), profissionalDentroAgenda);
         this.setPacienteSelecionado(this.getEntity().getPaciente());
         this.setJustificativa(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("agendamento", "justificativa", this.getEntity().getJustificativa()));
@@ -228,11 +228,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.validaAfastamento();
 
         if (this.getEntity().getPlanoTratamentoProcedimentosAgendamento() != null && this.getEntity().getPlanoTratamentoProcedimentosAgendamento().size() > 0) {
-            this.setPlanoTratamentoSelecionado(this.getEntity().getPlanoTratamentoProcedimentosAgendamento().get(0).getPlanoTratamentoProcedimento().getPlanoTratamento());
+            this.planoTratamentoSelecionado = this.getEntity().getPlanoTratamentoProcedimentosAgendamento().get(0).getPlanoTratamentoProcedimento().getPlanoTratamento();
+            this.procedimentosPickList.setSource(this.getEntity().getPlanoTratamentoProcedimentosAgendamento());
         }
 
         validaHabilitaSalvar();
         this.validaHoraUtilProfissional(profissionalDentroAgenda);
+        
+        PrimeFaces.current().ajax().update(":lume:pnAgendamento");
 
     }
 
