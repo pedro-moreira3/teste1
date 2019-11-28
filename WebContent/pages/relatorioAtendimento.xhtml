@@ -146,7 +146,7 @@ ui-selectonemenu-label {
 }
 
 body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
-	margin-top: 2px !important;
+	margin-top: 2.5px !important;
 	padding: 0px !important;
 }
 
@@ -174,14 +174,37 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									<p:panelGrid columns="3" layout="grid"
 										styleClass="ui-panelgrid-blank ui-fluid form-group">
 
+
+										<h:panelGroup styleClass="md-combo">
+											<h:outputText for="filtroPeriodo"
+												value="Período de agendamento:" />
+											<p:selectOneMenu id="filtroPeriodo"
+												value="#{relatorioAtendimentoMB.filtroPeriodo}">
+
+												<p:ajax process="@this"
+													listener="#{relatorioAtendimentoMB.actionTrocaDatasCriacao}" />
+
+												<f:selectItem itemValue="" itemLabel="Selecione" />
+												<f:selectItem itemValue="O" itemLabel="Ontem" />
+												<f:selectItem itemValue="H" itemLabel="Hoje" />
+												<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+												<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+												<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+												<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+												<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+											</p:selectOneMenu>
+										</h:panelGroup>
+
 										<h:panelGroup>
-											<h:outputText for="dataInicial" value="Início do agendamento de:" />
+											<h:outputText for="dataInicial"
+												value="Data de agendamento de:" />
 											<p:calendar id="dataInicial"
 												value="#{relatorioAtendimentoMB.dataInicio}" />
 										</h:panelGroup>
 
 										<h:panelGroup>
-											<h:outputText for="dataFinal" value="Fim do agendamento até:" />
+											<h:outputText for="dataFinal"
+												value="Data de agendamento até:" />
 											<p:calendar id="dataFinal"
 												value="#{relatorioAtendimentoMB.dataFim}" />
 										</h:panelGroup>
@@ -209,11 +232,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											</p:autoComplete>
 										</h:panelGroup>
 
-									</p:panelGrid>
-
-									<p:panelGrid columns="3" layout="grid"
-										styleClass="ui-panelgrid-blank ui-fluid form-group">
-
 										<h:panelGroup>
 											<h:outputText for="filtroProfissional" value="Dentista executor:" />
 											<p:autoComplete id="filtroProfissional"
@@ -222,6 +240,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}" itemValue="#{p}"
 												converter="profissional" forceSelection="true"
 												scrollHeight="400" queryDelay="1000" dropdown="true">
+												
 												<p:ajax event="itemSelect" process="@this" />
 
 											</p:autoComplete>
@@ -522,7 +541,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:column>
 								<p:commandButton id="btnView" icon="White fa fa-eye"
 									oncomplete="PF('dlgAgendamento').show();"
-									update=":lume:dlgGerarRelatorio,:lume:pnAgendamento" width="5%"
+									update=":lume:dlgGerarRelatorio" width="5%"
 									action="#{agendamentoMB.setEntity(atendimento)}"
 									process="@this">
 									<p:ajax

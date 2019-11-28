@@ -229,8 +229,18 @@
 								sortBy="#{retorno.paciente.dadosBasico.nome}"
 								filterFunction="#{retornoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Paciente">
+								
+								<ui:remove>
 								<h:outputText value="#{retorno.paciente.dadosBasico.nome}"
 									title="#{retorno.id}" />
+								</ui:remove>
+								
+							<p:commandLink value="#{retorno.paciente.dadosBasico.nome}"
+								process="@this" title="#{retorno.paciente.id}"
+								actionListener="#{tabPacienteMB.loadPaciente(retorno.paciente)}"
+								oncomplete="PF('dlgFichaPaciente').show()"
+								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
+									
 							</p:column>
 							<p:column filterBy="#{retorno.paciente.dadosBasico.responsavel}"
 								sortBy="#{retorno.paciente.dadosBasico.responsavel}"

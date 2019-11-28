@@ -14,11 +14,14 @@ import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
+import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
@@ -47,7 +50,7 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
 
     private String filtroPeriodoFinalizacao;
     
-    private String status;
+    private List<String> status;
     
     private List<String> listaConvenios;
     private String filtroPorConvenio;
@@ -57,7 +60,7 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
     
     public RelatorioPlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());      
-        this.setClazz(PlanoTratamento.class);  
+        this.setClazz(PlanoTratamento.class);
         
         if(this.listaConvenios == null)
             this.listaConvenios = new ArrayList<>();
@@ -70,8 +73,8 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
     }
     
     public List<Profissional> sugestoesProfissionais(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-    }    
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
+    }
     
 //    public List<Convenio> sugestoesConvenios(String query) {
 //        return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
@@ -84,17 +87,16 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
             this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
         }else if(inicio == null && fim == null && inicioFinalizacao == null && fimFinalizacao == null && paciente == null && profissional == null && convenio == null) {
             this.addError("Escolha pelo menos um filtro para gerar o relatório.", "");
-        }
-        else {
+        }else {
             planoTratamentos = PlanoTratamentoSingleton.getInstance().getBo().filtraRelatorioPT
-                    (inicio, fim,inicioFinalizacao,fimFinalizacao, status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente, profissional,getConvenio(getFiltroPorConvenio()));
+                    (inicio, fim,inicioFinalizacao,fimFinalizacao, this.status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente, profissional,getConvenio(getFiltroPorConvenio()));
         }
 
         this.sugestoesConvenios("todos");
     }
 
-    public void actionTrocaDatasCriacao() {        
-        try {            
+    public void actionTrocaDatasCriacao() {
+        try {
             setInicio(getDataInicio(filtroPeriodo));
             setFim(getDataFim(filtroPeriodo));
           //  actionFiltrar(null);            
@@ -104,10 +106,10 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
         }
     }
     
-    public void actionTrocaDatasFinal() {        
+    public void actionTrocaDatasFinal() {
         try {
             setInicioFinalizacao(getDataInicio(filtroPeriodoFinalizacao));
-            setFimFinalizacao(getDataFim(filtroPeriodoFinalizacao));        
+            setFimFinalizacao(getDataFim(filtroPeriodoFinalizacao));
          //   actionFiltrar(null);
         } catch (Exception e) {
             log.error("Erro no actionTrocaDatasFinal", e);
@@ -115,12 +117,12 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
         }
     }
     
-    public Date getDataFim(String filtro) {        
+    public Date getDataFim(String filtro) {
         Date dataFim = null;
         try {
             Calendar c = Calendar.getInstance();
             if ("O".equals(filtro)) {
-                c.add(Calendar.DAY_OF_MONTH, -1);  
+                c.add(Calendar.DAY_OF_MONTH, -1);
                 dataFim = c.getTime();
             }else if(filtro == null) { 
                 dataFim = null;
@@ -166,7 +168,7 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             return null;
         }
-    }    
+    }
     
     @Override
     public void actionNew(ActionEvent arg0) {
@@ -206,6 +208,24 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
         return null;
     }
 
+    public String statusPlanoTratamento(PlanoTratamento planoTratamento) {
+        
+        String retorno = "Ativo";
+        if (Status.SIM.equals(planoTratamento.getFinalizado()) && planoTratamento.getJustificativa() == null) {
+            retorno = "Finalizado";
+        } else if (Status.SIM.equals(planoTratamento.getFinalizado()) && planoTratamento.getJustificativa() != null) {
+            retorno = "Encerrado";
+        } else if (!planoTratamento.isAtivo()) {
+            retorno = "Excluido";
+        } else if (planoTratamento.getPlanoTratamentoProcedimentos() != null && !planoTratamento.getPlanoTratamentoProcedimentos().isEmpty()) {
+            for(PlanoTratamentoProcedimento ptp : planoTratamento.getPlanoTratamentoProcedimentos()) {
+                if(!ptp.isFinalizado())
+                    return "Pendente";
+            }
+        }
+        return retorno;
+    }
+    
     public void exportarTabela(String type) {
         exportarTabela("Relatório do Plano de Tratamento", tabelaRelatorio, type);
     }
@@ -242,14 +262,6 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
         this.filtroPeriodo = filtroPeriodo;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-    
     public Paciente getPaciente() {
         return paciente;
     }
@@ -320,6 +332,14 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
 
     public void setFiltroPorConvenio(String filtroPorConvenio) {
         this.filtroPorConvenio = filtroPorConvenio;
+    }
+
+    public List<String> getStatus() {
+        return status;
+    }
+
+    public void setStatus(List<String> status) {
+        this.status = status;
     }
 
 }

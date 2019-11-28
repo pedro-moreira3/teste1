@@ -143,6 +143,26 @@ div.ui-selectoneradio label {
 	overflow: auto;
 	overflow-y: hidden;
 }
+
+/*AJUSTE DO CAMPO FILTRO POR CONVENIO*/
+body .ui-selectonemenu {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+ui-selectonemenu-label {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
+	margin-top: 2.5px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon{
+	margin-top: -12px !important;
+}
 </style>
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
@@ -214,7 +234,7 @@ div.ui-selectoneradio label {
 									value="#{relatorioPlanoTratamentoMB.fimFinalizacao}" />
 							</h:panelGroup>
 						</p:panelGrid>
-						<p:panelGrid columns="2" layout="grid"
+						<p:panelGrid columns="3" layout="grid"
 							styleClass="ui-panelgrid-blank ui-fluid form-group">
 							<h:panelGroup>
 								<h:outputText for="filtroPaciente" value="Paciente:" />
@@ -238,32 +258,15 @@ div.ui-selectoneradio label {
 								</p:autoComplete>
 							</h:panelGroup>
 							<h:panelGroup>
-								<h:outputText for="filtroProfissional" value="Profissional:" />
+								<h:outputText for="filtroProfissional" value="Dentista executor:" />
 								<p:autoComplete id="filtroProfissional"
 									value="#{relatorioPlanoTratamentoMB.profissional}"
 									completeMethod="#{relatorioPlanoTratamentoMB.sugestoesProfissionais}"
-									var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+									var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}" itemValue="#{p}"
 									converter="profissional" forceSelection="true"
-									scrollHeight="400">
+									scrollHeight="400" dropdown="true">
 								</p:autoComplete>
 							</h:panelGroup>
-						</p:panelGrid>
-
-
-						<p:panelGrid id="filtro" columns="2"
-							columnClasses="ui-grid-col-12" layout="grid"
-							styleClass="ui-panelgrid-blank"
-							style="border:0px none; background-color:transparent;">
-
-							<h:panelGroup>
-								<p:outputLabel value="Finalizado? : " />
-								<p:selectOneRadio value="#{relatorioPlanoTratamentoMB.status}">
-									<f:selectItem itemValue="" itemLabel="Todos" />
-									<f:selectItem itemValue="S" itemLabel="Sim" />
-									<f:selectItem itemValue="N" itemLabel="Não" />
-								</p:selectOneRadio>
-							</h:panelGroup>
-
 							<h:panelGroup>
 								<p:outputLabel style="margin:0px;" for="filtroConvenio"
 									value="Convênio" />
@@ -276,6 +279,23 @@ div.ui-selectoneradio label {
 										var="agendamento" itemLabel="#{agendamento}"
 										itemValue="#{agendamento}" />
 								</p:selectOneMenu>
+							</h:panelGroup>
+							
+						</p:panelGrid>
+
+						<ui:remove>
+						<p:panelGrid id="filtro" columns="2"
+							columnClasses="ui-grid-col-12" layout="grid"
+							styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+							<h:panelGroup>
+								<p:outputLabel value="Finalizado? : " />
+								<p:selectOneRadio value="#{relatorioPlanoTratamentoMB.status}">
+									<f:selectItem itemValue="" itemLabel="Todos" />
+									<f:selectItem itemValue="S" itemLabel="Sim" />
+									<f:selectItem itemValue="N" itemLabel="Não" />
+								</p:selectOneRadio>
 							</h:panelGroup>
 
 							<ui:remove>
@@ -291,6 +311,28 @@ div.ui-selectoneradio label {
 							</ui:remove>
 
 						</p:panelGrid>
+						</ui:remove>
+
+						<p:outputPanel style="margin:20px;">
+
+							<h:outputLabel value="Mostrar os procedimentos: " />
+							
+							<p:selectManyCheckbox
+								value="#{relatorioPlanoTratamentoMB.status}"
+								layout="grid" columns="4">
+
+								<p:ajax process="@this" />
+
+								<f:selectItem
+									itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Finalizados&lt;/div&gt;"
+									itemValue="S" itemEscaped="false" />
+								<f:selectItem
+									itemLabel="&lt;div&gt;&lt;div class='agendamentoConsultaInicial legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Não finalizados&lt;/div&gt;"
+									itemValue="N" itemEscaped="false" />
+							</p:selectManyCheckbox>
+
+						</p:outputPanel>
+
 
 						<div class="EmptyBox5"></div>
 
@@ -298,20 +340,25 @@ div.ui-selectoneradio label {
 
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							
 							<p:commandButton id="pesquisar" icon="fa fa-search White"
 								value="Pesquisar"
 								actionListener="#{relatorioPlanoTratamentoMB.actionFiltrar}"
 								update="dtPrincipal" tabindex="1" process="@this,pnPrincipal"
 								styleClass="OrangeButton" />
+							
 							<p:commandButton id="new" icon="White fa fa-file-o"
 								value="Limpar"
 								actionListener="#{relatorioPlanoTratamentoMB.actionNew}"
 								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1" />
+							
+							<ui:remove>
 							<p:commandButton immediate="true" value="Excel" ajax="false"
 								icon="White fa fa-file-excel-o" styleClass="GreenButton">
 								<p:dataExporter encoding="iso-8859-1" type="xls"
 									target="dtPrincipal" fileName="planoTratamento" />
 							</p:commandButton>
+							</ui:remove>
 
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
@@ -354,35 +401,42 @@ div.ui-selectoneradio label {
 							value="#{relatorioPlanoTratamentoMB.planoTratamentos}" var="m"
 							rows="20" paginator="true" rowKey="#{m}"
 							paginatorPosition="bottom" binding="#{relatorioPlanoTratamentoMB.tabelaRelatorio}">
+							
 							<f:facet name="header">Planos de Tratamentos</f:facet>
+							
 							<p:column filterBy="#{m.paciente.dadosBasico.nomeStr}"
 								sortBy="#{m.paciente.dadosBasico.nome}"
 								filterMatchMode="contains" headerText="Paciente">
 								<h:outputText value="#{m.paciente.dadosBasico.nome}"
 									title="#{m.id}" />
 							</p:column>
+							
 							<p:column filterBy="#{m.profissional.dadosBasico.nomeStr}"
 								sortBy="#{m.profissional.dadosBasico.nome}"
 								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Profissional">
+								filterMatchMode="contains" headerText="Dentista executor">
 								<h:outputText value="#{m.profissional.dadosBasico.nome}"
 									title="#{m.id}" />
 							</p:column>
+							
 							<p:column filterBy="#{m.descricao}" sortBy="#{m.descricao}"
 								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Plano de Tratamento">
 								<h:outputText value="#{m.descricao}" />
 							</p:column>
+							
 							<p:column filterBy="#{m.dataHoraStr}"
-								sortBy="#{m.dataHoraStrOrd}" filterMatchMode="contains" headerText="Data de Início">
+								sortBy="#{m.dataHoraStrOrd}" filterMatchMode="contains" headerText="Data de início">
 								<h:outputText value="#{m.dataHoraStr}" />
 							</p:column>
+							
 							<p:column filterBy="#{m.dataHoraFinalizadoStr}"
 								sortBy="#{m.dataHoraFinalizadoStrOrd}"
 								filterMatchMode="contains"
-								rendered="#{relatorioPlanoTratamentoMB.status == 'S'}" headerText="Data de Fim">
+								headerText="Data de finalização">
 								<h:outputText value="#{m.dataHoraFinalizadoStr}" />
 							</p:column>
+							
 							<p:column filterBy="#{m.valorTotal}" sortBy="#{m.valorTotal}"
 								filterMatchMode="contains" style="text-align:right" headerText="Valor Total">
 								<h:outputText value="#{m.valorTotal}">
@@ -390,6 +444,7 @@ div.ui-selectoneradio label {
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 							</p:column>
+							
 							<p:column filterBy="#{m.valorTotalOrcamento}"
 								sortBy="#{m.valorTotalOrcamento}" filterMatchMode="contains"
 								style="text-align:right" headerText="Valor Total c/ Desc)">
@@ -398,6 +453,7 @@ div.ui-selectoneradio label {
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 							</p:column>
+							
 							<p:column filterBy="#{m.valorPagar}" sortBy="#{m.valorPagar}"
 								filterMatchMode="contains" style="text-align:right" headerText="Valor Restante à Pagar">
 								<h:outputText value="#{m.valorPagar}">
@@ -405,6 +461,7 @@ div.ui-selectoneradio label {
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 							</p:column>
+							
 							<p:column filterBy="#{m.convenio.dadosBasico.nomeStr}"
 								sortBy="#{m.convenio.dadosBasico.nome}"
 								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
@@ -412,14 +469,33 @@ div.ui-selectoneradio label {
 								<h:outputText value="#{m.convenio.dadosBasico.nome}"
 									title="#{m.id}" />
 							</p:column>
-							<p:column rendered="#{relatorioPlanoTratamentoMB.status == 'N'}"
-								exportable="false">
+							
+							<p:column filterBy="#{relatorioPlanoTratamentoMB.statusPlanoTratamento(m)}"
+								sortBy="#{relatorioPlanoTratamentoMB.statusPlanoTratamento(m)}"
+								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Status">
+								<h:outputText value="#{relatorioPlanoTratamentoMB.statusPlanoTratamento(m)}" title="#{m.id}" />
+							</p:column>
+							
+							<p:column filterBy="#{m.justificativa}"
+								sortBy="#{m.justificativa}"
+								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Justificativa">
+								<h:outputText value="#{m.justificativa}" title="#{m.id}" />
+							</p:column>
+							
+							<p:column exportable="false">
 								<p:commandButton icon="White fa fa-times-circle"
 									onclick="PF('devolver').show();" title="Encerrar"
 									process="@this" styleClass="OrangeButton"
-									action="#{planoTratamentoMB.setEntity(m)}" />
+									action="#{planoTratamentoMB.setEntity(m)}"
+									rendered="#{m.dataFinalizado == null}"/>
+								
+								<ui:remove>	
 								<p:button icon="White fa fa-eye" title="Visualizar"
 									onclick="window.open('paciente.jsf?idpt=#{m.id}'); return false;" />
+								</ui:remove>
+								
 							</p:column>
 
 						</p:dataTable>
