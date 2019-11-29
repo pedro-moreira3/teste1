@@ -152,18 +152,18 @@
                             </f:facet>
                             <h:outputText value="#{esterilizacaoSolicitada.status}" />
                         </p:column>
-                        <p:column filterBy="#{esterilizacaoSolicitada.dataDevolucaoStr}" sortBy="#{esterilizacaoSolicitada.dataDevolucaoStr}" filterMatchMode="contains">
-                            <f:facet name="header">
-                                <h:outputText value="Data de Devolução" />
-                            </f:facet>
-                            <h:outputText value="#{esterilizacaoSolicitada.dataDevolucaoStr}" />
-                        </p:column>
                         <p:column filterBy="#{esterilizacaoSolicitada.dataStr}" sortBy="#{esterilizacaoSolicitada.dataStrOrd}" filterMatchMode="contains">
                             <f:facet name="header">
                                 <h:outputText value="Data do Pedido" />
                             </f:facet>
                             <h:outputText value="#{esterilizacaoSolicitada.dataStr}" />
                         </p:column>
+                        <p:column filterBy="#{esterilizacaoSolicitada.dataDevolucaoStr}" sortBy="#{esterilizacaoSolicitada.dataDevolucaoStr}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Data de Devolução" />
+                            </f:facet>
+                            <h:outputText value="#{esterilizacaoSolicitada.dataDevolucaoStr}" />
+                        </p:column>                        
                         <p:column filterBy="#{esterilizacaoSolicitada.dataValidadeStr}" sortBy="#{esterilizacaoSolicitada.dataValidadeStr}" filterMatchMode="contains">
                             <f:facet name="header">
                                 <h:outputText value="Data de Validade" />
@@ -212,7 +212,7 @@
                                         
                     <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtItens" value="#{relatorioEsterilizacaoMB.itens}" var="i" rows="10" paginator="true" rowKey="#{i}"
 								paginatorPosition="bottom" binding="#{relatorioEsterilizacaoMB.tabelaAnalitica}">
-                        <f:facet name="header">Analítico</f:facet>
+                        <f:facet name="header">Detalhes (Clique no item acima para visualizar)</f:facet>
                         <p:column filterBy="#{i.kit.descricao}" sortBy="#{i.kit.descricao}" filterMatchMode="contains" headerText="Kit"
                         		filterFunction="#{relatorioEsterilizacaoMB.filtroSemAcento}">
                             <h:outputText value="#{i.kit.descricao}" />
