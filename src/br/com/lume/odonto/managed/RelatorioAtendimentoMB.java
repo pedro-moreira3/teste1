@@ -93,8 +93,16 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     public void popularLista() {
         try {
 
+             if(getDataInicio() == null && getDataFim() == null && filtroPorPaciente == null && 
+                     filtroPorProfissional == null && filtroPorProfissionalUltAlteracao == null && filtroPorConvenio.equals("todos")) {
+                this.addError("Escolha pelo menos um filtro.", "");   
+                return;
+            }
+            
             Date dataInicial = null, dataFinal = null;
 
+            
+            
             if (getDataInicio() != null && getDataFim() != null) {
                 Calendar c = Calendar.getInstance();
                 c.setTime(getDataInicio());
