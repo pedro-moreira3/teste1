@@ -78,7 +78,7 @@
 							<div class="SeparatorFull"></div>
 							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 								<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{fornecedorMB.actionPersist}"
-											update=":lume:pnPrincipal,:lume:pnDlg,:lume:tbDtPrincipal" process=":lume:pnDlg"  styleClass="GreenButton" oncomplete="PF('dlg').hide();"/>	
+											update=":lume:pnPrincipal,:lume:pnDlg,:lume:tbDtPrincipal" process="@this,:lume:pnDlg"  styleClass="GreenButton" />	
 								<p:commandButton id="fechar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlg').hide();" immediate="true" />											
 								</p:panelGrid>
 								<div class="EmptyBox20"></div>

@@ -381,9 +381,14 @@ public class ItemMB extends LumeManagedBean<Item> {
     public void onNodeSelect(NodeSelectEvent event) {
         try {
             this.setItem((Item) (event.getTreeNode().getData()));
-            if (!item.getDescricao().equals("RAIZ")) {
+            getEntity().setTipo(null);
+            if (!this.item.getDescricao().equals("RAIZ")) {
                 this.setDisable(false);
-            }
+                if(this.getItem().getTipo() != null) {
+                    getEntity().setTipo(this.getItem().getTipo());                    
+                }
+            }  
+            PrimeFaces.current().ajax().update(":lume:tipo");
             this.setDigitacao(this.getItem().getDescricao());
             this.filtraItem(this.getDigitacao());
         } catch (Exception e) {
@@ -632,9 +637,11 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     public List<String> convert(@SuppressWarnings("rawtypes") List objects) {
         List<String> strings = new ArrayList<>();
-        for (Object object : objects) {
-            if (object instanceof Item) {
-                strings.add(((Item) object).getDescricao());
+        if(objects != null) {
+            for (Object object : objects) {
+                if (object instanceof Item) {
+                    strings.add(((Item) object).getDescricao());
+                }
             }
         }
         return strings;

@@ -115,7 +115,7 @@
 										styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 											<h:panelGroup>
-												<p:outputLabel value="Início do retorno de:" />
+												<p:outputLabel value="Data do retorno de:" />
 												<p:calendar value="#{retornoMB.dataIni}"
 													pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
 													locale="#{lumeSecurity.locale}"
@@ -124,7 +124,7 @@
 											</h:panelGroup>
 
 											<h:panelGroup>
-												<p:outputLabel value="Fim do retorno até:" />
+												<p:outputLabel value="Data do retorno até:" />
 												<p:calendar value="#{retornoMB.dataFim}"
 													pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
 													locale="#{lumeSecurity.locale}"
@@ -274,7 +274,7 @@
 
 							<p:column filterBy="#{retorno.dataRetornoStr}"
 								sortBy="#{retorno.dataRetornoStrOrd}" filterMatchMode="contains"
-								headerText="Data para Contato">
+								headerText="Data do retorno">
 								<h:outputText value="#{retorno.dataRetornoStr}" />
 							</p:column>
 
