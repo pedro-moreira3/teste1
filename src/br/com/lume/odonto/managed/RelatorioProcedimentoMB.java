@@ -10,6 +10,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
@@ -42,13 +43,22 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
 
     private List<String> listaConvenios;
     
+    
     // ATRIBUTOS USADOS COMO FILTRO PARA PESQUISA DOS PROCEDIMENTOS
     private Profissional filtroPorProfissional;
-    private PlanoTratamento filtroPorPlanoTratamento;
-    private Paciente filtroPorPaciente;
-    private Date dataInicio, dataFim;
-    private String filtroPorConvenio;
     private Profissional filtroPorProfissionalUltAlteracao;
+    
+    private PlanoTratamento filtroPorPlanoTratamento;
+    
+    private Paciente filtroPorPaciente;
+    
+    private Date dataInicio, dataFim;
+    private Date dataFinalizacaoInicio, dataFinalizacaoFim;
+    
+    private String filtroPorConvenio;
+    private String filtroPeriodo;
+    private String filtroPeriodoFinalizacao;
+   
     private Procedimento filtroPorProcedimento;
     
     private boolean imprimirCabecalho = true;
@@ -78,11 +88,17 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     
     public void popularLista() {
         try{
-            this.listaProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(this.dataInicio, this.dataFim, this.filtroPorPaciente, 
-                    this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.getConvenio(filtroPorConvenio), this.filtroPorProcedimento,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             
-            if(!this.filtroProcedimento.isEmpty())
-                removerFiltrosProcedimento(this.listaProcedimentos);
+            if(validarIntervaloDatas()) {
+                
+                this.listaProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(this.dataInicio, this.dataFim, this.dataFinalizacaoInicio,
+                        this.dataFinalizacaoFim, this.filtroPorPaciente, 
+                        this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.getConvenio(filtroPorConvenio), this.filtroPorProcedimento,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                
+                if(!this.filtroProcedimento.isEmpty())
+                    removerFiltrosProcedimento(this.listaProcedimentos);
+                
+            }
             
         }catch(Exception e){
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -180,6 +196,102 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
             
         }
         return null;
+    }
+    
+    public void actionTrocaDatasCriacao() {
+        try {
+            
+            this.dataInicio = getDataInicio(filtroPeriodo);
+            this.dataFim = getDataFim(filtroPeriodo);
+            
+            PrimeFaces.current().ajax().update(":lume:dataInicial");
+            PrimeFaces.current().ajax().update(":lume:dataFinal");
+            
+        } catch (Exception e) {
+            log.error("Erro no actionTrocaDatasCriacao", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+    
+    public void actionTrocaDatasFinal() {
+        try {
+            
+            this.dataFinalizacaoInicio = getDataInicio(filtroPeriodoFinalizacao);
+            this.dataFinalizacaoFim =  getDataFim(filtroPeriodoFinalizacao);
+            
+            PrimeFaces.current().ajax().update(":lume:dataFinalizacaoInicial");
+            PrimeFaces.current().ajax().update(":lume:dataFinalizacaoFinal");
+            
+        } catch (Exception e) {
+            log.error("Erro no actionTrocaDatasFinal", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+    
+    public Date getDataFim(String filtro) {        
+        Date dataFim = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);  
+                dataFim = c.getTime();
+            }else if(filtro == null) { 
+                dataFim = null;
+            } else { 
+                dataFim = c.getTime();
+            } 
+            return dataFim;
+        } catch (Exception e) {
+            log.error("Erro no getDataFim", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }    
+    
+    public Date getDataInicio(String filtro) {        
+        Date dataInicio = null;
+        try {
+            Calendar c = Calendar.getInstance();
+                if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);                
+                dataInicio = c.getTime(); 
+            } else if ("H".equals(filtro)) { //Hoje                
+                dataInicio = c.getTime(); 
+            } else if ("S".equals(filtro)) { //Últimos 7 dias              
+                c.add(Calendar.DAY_OF_MONTH, -7);
+                dataInicio = c.getTime();
+            } else if ("Q".equals(filtro)) { //Últimos 15 dias              
+                c.add(Calendar.DAY_OF_MONTH, -15);
+                dataInicio = c.getTime();
+            } else if ("T".equals(filtro)) { //Últimos 30 dias                
+                c.add(Calendar.DAY_OF_MONTH, -30);
+                dataInicio = c.getTime();
+            } else if ("M".equals(filtro)) { //Mês Atual              
+                c.set(Calendar.DAY_OF_MONTH, 1);
+                dataInicio = c.getTime();
+            } else if ("I".equals(filtro)) { //Mês Atual             
+                c.add(Calendar.MONTH, -6);
+                dataInicio = c.getTime();
+            }
+            return dataInicio;
+        } catch (Exception e) {
+            log.error("Erro no getDataInicio", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }
+    
+    private boolean validarIntervaloDatas() {
+        
+        if((dataInicio != null && dataFim != null) && dataInicio.getTime() > dataFim.getTime()) {
+            this.addError("Intervalo de datas", "A data inicial deve preceder a data final.", true);
+            return false;
+        }else if((dataFinalizacaoInicio != null && dataFinalizacaoFim != null) && dataFinalizacaoInicio.getTime() > dataFinalizacaoFim.getTime()) {
+            this.addError("Intervalo de datas", "A data inicial deve preceder a data final.", true);
+            return false;
+        }
+        
+        return true;
     }
     
     public void exportarTabela(String type) {
@@ -294,6 +406,35 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         this.filtroPorProcedimento = filtroPorProcedimento;
     }
 
-    
+    public String getFiltroPeriodo() {
+        return filtroPeriodo;
+    }
 
+    public void setFiltroPeriodo(String filtroPeriodo) {
+        this.filtroPeriodo = filtroPeriodo;
+    }
+
+    public Date getDataFinalizacaoInicio() {
+        return dataFinalizacaoInicio;
+    }
+
+    public void setDataFinalizacaoInicio(Date dataFinalizacaoInicio) {
+        this.dataFinalizacaoInicio = dataFinalizacaoInicio;
+    }
+
+    public Date getDataFinalizacaoFim() {
+        return dataFinalizacaoFim;
+    }
+
+    public void setDataFinalizacaoFim(Date dataFinalizacaoFim) {
+        this.dataFinalizacaoFim = dataFinalizacaoFim;
+    }
+
+    public String getFiltroPeriodoFinalizacao() {
+        return filtroPeriodoFinalizacao;
+    }
+
+    public void setFiltroPeriodoFinalizacao(String filtroPeriodoFinalizacao) {
+        this.filtroPeriodoFinalizacao = filtroPeriodoFinalizacao;
+    }
 }
