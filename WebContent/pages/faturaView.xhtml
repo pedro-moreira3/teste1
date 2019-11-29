@@ -15,6 +15,11 @@
 	padding: 7px 16px;
 }
 
+.lancamentoExplain.ui-panelgrid.form-group .ui-panelgrid-cell:nth-child(1)
+	{
+	padding-top: 0;
+}
+
 .lessPaddingSides .ui-panelgrid-cell {
 	padding-left: 5px !important;
 	padding-right: 5px !important;
@@ -320,7 +325,7 @@ body .sideChkBox .ui-chkbox-label {
 								id="lancamentosFatura">
 								<f:facet name="header">Lançamentos da Fatura</f:facet>
 								<p:column style="width:16px"
-									rendered="#{repasseProfissional != null or repasseProfissional == 'S'}">
+									rendered="#{(repasseProfissional != null and repasseProfissional == 'S') and (faturaPagtoMB.hasRequisitosCumprir(l))}">
 									<p:rowToggler />
 								</p:column>
 								<p:column headerText="Ações" width="100" exportable="false"
@@ -342,7 +347,7 @@ body .sideChkBox .ui-chkbox-label {
 										actionListener="#{faturaPagtoMB.validaLancamentoRepasse(l)}"
 										process="@this"
 										rendered="#{(repasseProfissional != null and repasseProfissional == 'S') or (showNewLancamento != null and showNewLancamento == 'S')}"
-										disabled="#{l.validado == 'S' or !l.ativo}">
+										disabled="#{l.validado == 'S' or !l.ativo or (faturaPagtoMB.entity.tipoFatura.rotulo == 'PP' and !(faturaPagtoMB.isTodosRequisitosFeitos(l)))}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											message="Você tem certeza que confirma o recebimento deste lançamento?">
 										</p:confirm>
@@ -412,68 +417,34 @@ body .sideChkBox .ui-chkbox-label {
 
 										<h:panelGroup>
 											<p:outputPanel
-												rendered="#{faturaPagtoMB.isPermiteValidar(l)}"
+												rendered="#{faturaPagtoMB.isTodosRequisitosFeitos(l)}"
 												style="color: green; font-weight: bold;">
 												<h:outputText
 													value="Este lançamento está elegível para validação pois," />
 											</p:outputPanel>
 											<p:outputPanel
-												rendered="#{!faturaPagtoMB.isPermiteValidar(l)}"
+												rendered="#{!faturaPagtoMB.isTodosRequisitosFeitos(l)}"
 												style="color: red; font-weight: bold;">
 												<h:outputText
 													value="Este lançamento não está elegível para validação pois," />
 											</p:outputPanel>
 										</h:panelGroup>
 
-										<h:panelGroup>
-											<p:outputPanel rendered="#{faturaPagtoMB.isPtpFinalizado(l)}">
+										<ui:repeat var="requisito"
+											value="#{faturaPagtoMB.getRequisitosValidaLancamentoFromRepasseFatura(l)}">
+											<div style="display: flex;">
+												<img
+													src="../images/#{requisito.requisitoFeito ? 'ok' : 'no'}.png"
+													style="width: 24px;" />
 												<div
-													style="display: flex; color: green; font-weight: bold; width: calc(100% - 15px); height: 24px; margin-left: 15px;">
-													<img src="../images/ok.png" alt="Cliente Válido"
-														style="width: 24px;" class="image-help-valido" />
-													<div
-														style="width: calc(100% - 24px); height: 24px; line-height: 24px; margin-left: 10px;">
-														O Procedimento vinculado à este repasse foi finalizado!</div>
+													style="width: calc(100% - 24px); height: 24px; line-height: 24px; margin-left: 10px;">
+													<h:outputText rendered="#{requisito.requisitoFeito}"
+														style="color: green" value="#{requisito.descricao}" />
+													<h:outputText rendered="#{!requisito.requisitoFeito}"
+														style="color: red" value="#{requisito.descricao}" />
 												</div>
-											</p:outputPanel>
-											<p:outputPanel
-												rendered="#{!faturaPagtoMB.isPtpFinalizado(l)}">
-												<div
-													style="display: flex; color: red; font-weight: bold; width: calc(100% - 15px); height: 24px; margin-left: 15px;">
-													<img src="../images/no.png" alt="Cliente Válido"
-														style="width: 24px;" class="image-help-valido" />
-													<div
-														style="width: calc(100% - 24px); height: 24px; line-height: 24px; margin-left: 10px;">
-														O Procedimento vinculado à este repasse não foi
-														finalizado!</div>
-												</div>
-											</p:outputPanel>
-										</h:panelGroup>
-
-										<h:panelGroup>
-											<p:outputPanel rendered="#{faturaPagtoMB.isLorgValidado(l)}">
-												<div
-													style="display: flex; color: green; font-weight: bold; width: calc(100% - 15px); height: 24px; margin-left: 15px;">
-													<img src="../images/ok.png" alt="Cliente Válido"
-														style="width: 24px;" class="image-help-valido" />
-													<div
-														style="width: calc(100% - 24px); height: 24px; line-height: 24px; margin-left: 10px;">
-														O Lançamento de Origem vinculado à este repasse foi
-														validado!</div>
-												</div>
-											</p:outputPanel>
-											<p:outputPanel rendered="#{!faturaPagtoMB.isLorgValidado(l)}">
-												<div
-													style="display: flex; color: red; font-weight: bold; width: calc(100% - 15px); height: 24px; margin-left: 15px;">
-													<img src="../images/no.png" alt="Cliente Válido"
-														style="width: 24px;" class="image-help-valido" />
-													<div
-														style="width: calc(100% - 24px); height: 24px; line-height: 24px; margin-left: 10px;">
-														O Lançamento de Origem vinculado à este repasse não foi
-														validado!</div>
-												</div>
-											</p:outputPanel>
-										</h:panelGroup>
+											</div>
+										</ui:repeat>
 
 									</p:panelGrid>
 								</p:rowExpansion>

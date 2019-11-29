@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -31,13 +32,12 @@ import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
-import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
+import br.com.lume.odonto.entity.Requisito;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
-import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
@@ -101,33 +101,22 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
-    public boolean isPtpFinalizado(Lancamento l) {
-        RepasseFaturasLancamento repasseLancamento = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(l);
-        return isPtpFinalizado(repasseLancamento);
+    public boolean hasRequisitosCumprir(Lancamento lancamentoRepasse) {
+        List<Requisito> todosRequisitos = getRequisitosValidaLancamentoFromRepasseFatura(lancamentoRepasse);
+        return todosRequisitos != null && todosRequisitos.size() > 0;
     }
 
-    public boolean isPtpFinalizado(RepasseFaturasLancamento repasseLancamento) {
-        if (repasseLancamento != null) {
-            PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasseLancamento.getFaturaItem());
-            return ptp.isFinalizado();
-        }
-        return false;
+    public boolean isTodosRequisitosFeitos(Lancamento lancamentoRepasse) {
+        List<Requisito> todosRequisitos = getRequisitosValidaLancamentoFromRepasseFatura(lancamentoRepasse);
+        if (todosRequisitos != null && todosRequisitos.size() > 0) {
+            List<Requisito> requisitosNaoFeitos = todosRequisitos.stream().filter(requisito -> !requisito.isRequisitoFeito()).collect(Collectors.toList());
+            return !(requisitosNaoFeitos != null && requisitosNaoFeitos.size() > 0);
+        } else
+            return true;
     }
 
-    public boolean isLorgValidado(Lancamento l) {
-        RepasseFaturasLancamento repasseLancamento = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(l);
-        return isLorgValidado(repasseLancamento);
-    }
-
-    public boolean isLorgValidado(RepasseFaturasLancamento repasseLancamento) {
-        if (repasseLancamento != null)
-            return "S".equals(repasseLancamento.getLancamentoOrigem().getValidado());
-        return false;
-    }
-
-    public boolean isPermiteValidar(Lancamento l) {
-        RepasseFaturasLancamento repasseLancamento = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(l);
-        return isPtpFinalizado(repasseLancamento) && isLorgValidado(repasseLancamento);
+    public List<Requisito> getRequisitosValidaLancamentoFromRepasseFatura(Lancamento lancamentoRepasse) {
+        return RepasseFaturasLancamentoSingleton.getInstance().getRequisitosValidaLancamentoFromRepasseFatura(UtilsFrontEnd.getEmpresaLogada(), lancamentoRepasse);
     }
 
     private void carregarProfissionais() throws Exception {
