@@ -78,11 +78,13 @@
 			});
 		}
 
+		var timeoutId;
 		function mostraDialogo(titulo, mensagem, tipo, tempo) {
 
 			if ($("#container").is(":visible")) {
 				return;
 			}
+			clearTimeout(timeoutId);
 
 			var icon = "";
 			var color = "";
@@ -115,6 +117,7 @@
 			var subContainer = 'display: inline-block !important; width: calc(100% - 60px) !important; height: calc(100% - 6px) !important; background-color: white !important; float: right !important; padding-top: 3px; padding-bottom: 3px;';
 			var title = 'display: block !important;height: 40% !important;background-color: white !important;text-align:left;margin-top:10px;';
 			var message = 'display: block !important;height: 40% !important;background-color: white !important;text-align:left;margin-top:15px;margin-bottom:15px;';
+			var closeMsg = 'position: absolute; top: 5px; right: 10px; width: 20px; height: 20px; line-height: 20px; text-align: center; cursor: pointer; font-weight: bold';
 
 			var styleTitle = 'position: relative; top: 0; left: 0; width: 100%; height: 20px; font-weight: bold; display: table-cell; vertical-align: middle;';
 			var styleMessage = 'position: relative; top: 0; left: 0; width: 100%; height: 40px;';
@@ -134,6 +137,10 @@
 			dialogo += mensagem;
 			dialogo += '		</div>';
 			dialogo += '	</div>';
+			dialogo += '	<div style="' + closeMsg
+					+ '" onclick="fechaDialogo();">';
+			dialogo += '		<i class="topbar-icon material-icons" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">close</i>';
+			dialogo += '</div>'
 			dialogo += '</div>';
 
 			// adiciona ao body a mensagem com o efeito de fade
@@ -142,12 +149,19 @@
 			$("#container").fadeIn(200);
 
 			// contador de tempo para a mensagem sumir
-			setTimeout(function() {
+			timeoutId = setTimeout(function() {
+				fechaDialogo();
+			}, tempo); // milliseconds
+
+		}
+
+		function fechaDialogo() {
+			if ($("#container").is(":visible")) {
+				clearTimeout(timeoutId);
 				$('#container').fadeOut(300, function() {
 					$(this).remove();
 				});
-			}, tempo); // milliseconds
-
+			}
 		}
 
 		function chartExtender() {

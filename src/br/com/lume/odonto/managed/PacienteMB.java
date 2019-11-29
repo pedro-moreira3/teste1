@@ -388,7 +388,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         try {
             List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByTitular(paciente2Ativar, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Paciente paciente : pacientes) {
-                if (paciente.getJustificativa().equals(this.getEntity().getJustificativa())) {
+                if ((paciente.getJustificativa() != null && paciente.getJustificativa().equals(
+                        this.getEntity().getJustificativa())) || (paciente.getJustificativa() == null && this.getEntity().getJustificativa() == null)) {
                     paciente.setJustificativa(null);
                     paciente.setStatus(Status.ATIVO);
                     this.getbO().persist(paciente);
@@ -402,7 +403,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             //PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
         } catch (Exception e) {
             e.printStackTrace();
-            this.addError("Erro", "Falha ao inativar paciente!", true);
+            this.addError("Erro", "Falha ao ativar paciente!", true);
         }
     }
 
