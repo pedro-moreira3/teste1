@@ -10,6 +10,9 @@
 			<ui:param name="showNewLancamento" value="S" />
 		</ui:include>
 
+		<ui:include src="pacienteFicha.xhtml" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
+
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -52,7 +55,7 @@
 
 							</p:autoComplete>
 						</h:panelGroup>
-						<h:panelGroup>
+						<h:panelGroup rendered="#{false}">
 							<p:outputLabel for="pt" value="Planos de Tratamento:" />
 							<p:selectCheckboxMenu id="pt" multiple="true"
 								value="#{faturaPagtoMB.ptSelecionados}"
@@ -124,14 +127,26 @@
 							sortBy="#{f.paciente.dadosBasico.nome}" headerText="Paciente"
 							filterMatchMode="contains"
 							filterFunction="#{faturaPagtoMB.filtroSemAcento}">
-							<h:outputText value="#{f.paciente.dadosBasico.nome}" />
+
+							<p:commandLink value="#{f.paciente.dadosBasico.nome}"
+								process="@this" title="#{f.paciente.id}"
+								actionListener="#{tabPacienteMB.loadPaciente(f.paciente)}"
+								oncomplete="PF('dlgFichaPaciente').show()"
+								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+
 						</p:column>
 						<p:column filterBy="#{f.dataCriacaoStr}"
 							headerText="Data de Criação" filterMatchMode="contains"
 							sortBy="#{f.dataCriacaoStr}">
 							<h:outputText value="#{f.dataCriacaoStr}" />
 						</p:column>
-
+						<p:column
+							filterBy="#{faturaPagtoMB.getPTFromFaturaOrigem(f).descricao}"
+							sortBy="#{faturaPagtoMB.getPTFromFaturaOrigem(f).descricao}"
+							filterMatchMode="contains" headerText="Plano de Tratamento">
+							<h:outputText
+								value="#{faturaPagtoMB.getPTFromFaturaOrigem(f).descricao}" />
+						</p:column>
 						<p:column filterBy="#{faturaPagtoMB.getTotal(f)}"
 							headerText="Valor total da fatura" filterMatchMode="contains"
 							sortBy="#{faturaPagtoMB.getTotal(f)}">

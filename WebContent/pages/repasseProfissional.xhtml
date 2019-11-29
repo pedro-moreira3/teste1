@@ -11,6 +11,9 @@
 			<ui:param name="repasseProfissional" value="S" />
 		</ui:include>
 
+		<ui:include src="pacienteFicha.xhtml" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
+
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -193,14 +196,22 @@
 								<h:outputText
 									value="#{f.profissional.dadosBasico.getPrefixoNome()}" />
 							</p:column>
-							<p:column filterBy="#{repasseProfissionalMB.nomePaciente(f)}"
-								sortBy="#{repasseProfissionalMB.nomePaciente(f)}"
+							<p:column filterBy="#{repasseProfissionalMB.resolvePaciente(f)}"
+								sortBy="#{repasseProfissionalMB.resolvePaciente(f)}"
 								filterMatchMode="contains"
 								filterFunction="#{repasseProfissionalMB.filtroSemAcento}">
 								<f:facet name="header">
 									<h:outputText value="Paciente" />
 								</f:facet>
-								<h:outputText value="#{repasseProfissionalMB.nomePaciente(f)}" />
+
+								<p:commandLink
+									value="#{repasseProfissionalMB.resolvePaciente(f).dadosBasico.nome}"
+									process="@this"
+									title="#{repasseProfissionalMB.resolvePaciente(f).id}"
+									actionListener="#{tabPacienteMB.loadPaciente(repasseProfissionalMB.resolvePaciente(f))}"
+									oncomplete="PF('dlgFichaPaciente').show()"
+									update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+
 							</p:column>
 							<p:column
 								filterBy="#{repasseProfissionalMB.descricaoPlanoTratamento(f)}"

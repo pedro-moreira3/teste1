@@ -31,11 +31,13 @@ import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
@@ -99,6 +101,35 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
+    public boolean isPtpFinalizado(Lancamento l) {
+        RepasseFaturasLancamento repasseLancamento = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(l);
+        return isPtpFinalizado(repasseLancamento);
+    }
+
+    public boolean isPtpFinalizado(RepasseFaturasLancamento repasseLancamento) {
+        if (repasseLancamento != null) {
+            PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasseLancamento.getFaturaItem());
+            return ptp.isFinalizado();
+        }
+        return false;
+    }
+
+    public boolean isLorgValidado(Lancamento l) {
+        RepasseFaturasLancamento repasseLancamento = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(l);
+        return isLorgValidado(repasseLancamento);
+    }
+
+    public boolean isLorgValidado(RepasseFaturasLancamento repasseLancamento) {
+        if (repasseLancamento != null)
+            return "S".equals(repasseLancamento.getLancamentoOrigem().getValidado());
+        return false;
+    }
+
+    public boolean isPermiteValidar(Lancamento l) {
+        RepasseFaturasLancamento repasseLancamento = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(l);
+        return isPtpFinalizado(repasseLancamento) && isLorgValidado(repasseLancamento);
+    }
+
     private void carregarProfissionais() throws Exception {
         List<String> perfis = new ArrayList<>();
         perfis.add(OdontoPerfil.DENTISTA);
@@ -145,6 +176,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public void visualizaFatura(Fatura fatura) {
+        /*
+         * List<FaturaItem> itens = new ArrayList<>(fatura.getItens()); if (fatura.getTipoFatura() == Fatura.TipoFatura.RECEBIMENTO_PACIENTE) { itens.forEach(item -> { try { String pt =
+         * PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaItemOrigem(item).getDescricao(); item.setDescricaoItem(item.getDescricaoItem() + " [" + pt + "]"); } catch (Exception e) {
+         * LogIntelidenteSingleton.getInstance().makeLog(e); } }); }
+         */
         setEntity(fatura);
         setShowLancamentosCancelados(false);
     }
@@ -158,6 +194,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public PlanoTratamento getPTFromFaturaRepasse(Fatura fatura) {
         return PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaRepasse(fatura);
+    }
+
+    public PlanoTratamento getPTFromFaturaOrigem(Fatura origem) {
+        return PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(origem);
     }
 
     public void validaLancamentoRepasse(Lancamento l) {

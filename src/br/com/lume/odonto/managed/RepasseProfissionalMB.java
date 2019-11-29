@@ -81,7 +81,8 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
 
     public void pesquisar() {
         try {
-            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasRepasseFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getPaciente(), null, getMes(), isMesesAnteriores()));
+            setEntityList(
+                    FaturaSingleton.getInstance().getBo().findFaturasRepasseFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getPaciente(), null, getMes(), isMesesAnteriores(), false));
             if (isPagoTotalmente())
                 getEntityList().removeIf(fatura -> {
                     if (FaturaSingleton.getInstance().getTotalRestante(fatura).compareTo(BigDecimal.ZERO) <= 0)
@@ -176,7 +177,7 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
 //
 //    }
 
-    public String nomePaciente(Fatura fatura) {
+    public Paciente resolvePaciente(Fatura fatura) {
         /*
          * for (PlanoTratamento p : this.planosTratamento) { if (p.getId() == fatura.getItens().get(0).getRepasseItensRepasse().get(
          * 0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getId()) return
@@ -184,10 +185,11 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
          */
         try {
             RepasseFaturas repasseObject = RepasseFaturasSingleton.getInstance().getBo().getFaturaOrigemFromRepasse(fatura);
-            return repasseObject.getFaturaOrigem().getPaciente().getDadosBasico().getNome();
+            //return repasseObject.getFaturaOrigem().getPaciente().getDadosBasico().getNome();
+            return repasseObject.getFaturaOrigem().getPaciente();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            return "";
+            return null;
         }
     }
 
