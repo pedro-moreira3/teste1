@@ -8,17 +8,74 @@
 
                         <h1>Relatório de Esterilização</h1>
                         <div class="SeparatorFull"></div>
-
-                        <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-                            style="border:0px none; background-color:transparent;">
-
-                            <p:outputLabel for="inicio" value="Inicio : " />
-                            <p:calendar id="inicio" value="#{relatorioEsterilizacaoMB.inicio}" pattern="dd/MM/yyyy" mask="true" />
-
-                            <p:outputLabel for="fim" value="Fim : " />
-                            <p:calendar id="fim" value="#{relatorioEsterilizacaoMB.fim}" pattern="dd/MM/yyyy" mask="true" />
-
-                        </p:panelGrid>
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodo"
+									value="Período do pedido de esterilização:" />
+								<p:selectOneMenu id="filtroPeriodo"
+									value="#{relatorioEsterilizacaoMB.filtroPeriodo}">
+									<p:ajax process="@this" update="@form"
+										listener="#{relatorioEsterilizacaoMB.actionTrocaDatasCriacao}" />
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="O" itemLabel="Ontem" />
+									<f:selectItem itemValue="H" itemLabel="Hoje" />
+									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="inicio" value="Data do pedido de:" />
+								<p:calendar id="inicio"
+									value="#{relatorioEsterilizacaoMB.inicio}" />
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="fim" value="Data do pedido até:" />
+								<p:calendar id="fim" value="#{relatorioEsterilizacaoMB.fim}" />
+							</h:panelGroup>
+						</p:panelGrid>
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodoFinalizacao"
+									value="Período de devolução de esterilização:" />
+								<p:selectOneMenu id="filtroPeriodoFinalizacao"
+									value="#{relatorioEsterilizacaoMB.filtroPeriodoFinalizacao}">
+									<p:ajax process="@this" update="@form"
+										listener="#{relatorioEsterilizacaoMB.actionTrocaDatasFinal}" />
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="O" itemLabel="Ontem" />
+									<f:selectItem itemValue="H" itemLabel="Hoje" />
+									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="inicioFinalizacao"
+									value="Data de devolução de:" />
+								<p:calendar id="inicioFinalizacao"
+									value="#{relatorioEsterilizacaoMB.inicioFinalizacao}" />
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="fimFinalizacao"
+									value="Data de devolução até:" />
+								<p:calendar id="fimFinalizacao"
+									value="#{relatorioEsterilizacaoMB.fimFinalizacao}" />
+							</h:panelGroup>
+						</p:panelGrid>
+							<ui:remove>
+								<p:outputLabel for="inicio" value="Inicio : " />
+								<p:calendar id="inicio" value="#{relatorioEsterilizacaoMB.inicio}" pattern="dd/MM/yyyy" mask="true" />
+								
+								<p:outputLabel for="fim" value="Fim : " />
+								<p:calendar id="fim" value="#{relatorioEsterilizacaoMB.fim}" pattern="dd/MM/yyyy" mask="true" />
+							</ui:remove>                    
 
                         <div class="SeparatorFull"></div>
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">

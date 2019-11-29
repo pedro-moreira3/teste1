@@ -8,6 +8,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
@@ -75,6 +76,7 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             super.actionPersist(event);
             this.carregaLista();
+            PrimeFaces.current().executeScript("PF('dlg').hide()");
         } catch (TelefoneException te) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "",true);
             log.error(OdontoMensagens.getMensagem("erro.valida.telefone"));
@@ -92,10 +94,15 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
         if (cep != null && !cep.equals("")) {
             cep = cep.replaceAll("-", "");
             Endereco endereco = Endereco.getEndereco(cep);
-            this.getEntity().getDadosBasico().setBairro(endereco.getBairro());
-            this.getEntity().getDadosBasico().setCidade(endereco.getCidade());
-            this.getEntity().getDadosBasico().setEndereco(endereco.getRua());
-            this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());
+            if(endereco != null) {
+                this.getEntity().getDadosBasico().setBairro(endereco.getBairro());
+                this.getEntity().getDadosBasico().setCidade(endereco.getCidade());
+                this.getEntity().getDadosBasico().setEndereco(endereco.getRua());
+                this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());    
+            } else {
+                addError("Endereço não encontrado!", "");
+            }
+            
         }
     }
     

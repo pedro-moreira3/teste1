@@ -59,13 +59,6 @@
 
                             <p:outputLabel for="estoqueMinimo" value="Estoque Mínimo: " />
                             <p:inputText id="estoqueMinimo" value="#{itemMB.entity.estoqueMinimo}" maxlength="10" onkeypress="validaNumeros(event)" disabled="#{itemMB.disableItem}"/>
-
-                 <h:outputLabel value="Forma de Armazenamento" />
-                            <p:selectOneMenu id="formaArmazenamento" value="#{itemMB.formaArmazenamento}" converter="dominio" >
-                                <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
-                                <f:selectItems value="#{itemMB.formasArmazenamento}" var="formaArmazenamento" itemLabel="#{formaArmazenamento.nome}" itemValue="#{formaArmazenamento}" itemDisabled="#{itemMB.disableItem}"/>
-                            </p:selectOneMenu>
-
                             <h:outputLabel value="Utilização" />
                             <p:selectOneMenu id="utilizacao" value="#{itemMB.utilizacao}" converter="dominio" >
                                 <f:selectItem itemValue="#{null}" itemLabel="Selecione uma opção" />
@@ -91,7 +84,7 @@
                                 <f:selectItem itemLabel="Consumo" itemValue="C" itemDisabled="#{itemMB.disableItem}"/>
                             </p:selectOneRadio>
 
-                            <p:outputLabel for="aplicacao" value="Aplicação: " />
+                            <p:outputLabel for="aplicacao" value="Aplicação do custo: " />
                             <p:selectOneRadio id="aplicacao" value="#{itemMB.entity.aplicacao}" required="true">
                                 <f:selectItem itemLabel="Indireta" itemValue="I" itemDisabled="#{itemMB.disableItem}"/>
                                 <f:selectItem itemLabel="Direta" itemValue="D" itemDisabled="#{itemMB.disableItem}"/>
@@ -166,7 +159,7 @@
                                 <p:column headerText="Tipo"  filterBy="#{item.tipoStr}">
                                     <h:outputText value="#{item.tipoStr}" />
                                 </p:column>
-                                <p:column headerText="Aplicação" filterBy="#{item.aplicacaoStr}">
+                                <p:column headerText="Aplicação do custo" filterBy="#{item.aplicacaoStr}">
                                     <h:outputText value="#{item.aplicacaoStr}" />
                                 </p:column>
                                 <p:column headerText="Estoque Mínimo" filterBy="#{item.estoqueMinimo}">
