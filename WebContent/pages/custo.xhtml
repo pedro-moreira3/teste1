@@ -86,6 +86,11 @@
 						<p:outputPanel id="botoes" styleClass="BordNone">
 							<p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton id="new" value="Novo Registro de Custo" icon="White fa fa-file-o"
+									actionListener="#{custoMB.actionNew}"
+									update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
+									process=":lume:pnCusto,@this"
+									disabled="#{custoMB.planoTratamento == null}" />								
 								<p:commandButton id="persist" value="Salvar"
 									icon="White fa fa-save"
 									actionListener="#{custoMB.actionPersist}"
@@ -98,13 +103,7 @@
 									update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
 									process=":lume:pnCusto,@this"
 									disabled="#{custoMB.desabilitaExclusao()}"
-									styleClass="RedButton" />
-								<p:commandButton id="new" value="Novo" icon="White fa fa-file-o"
-									actionListener="#{custoMB.actionNew}"
-									update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
-									process=":lume:pnCusto,@this"
-									disabled="#{custoMB.planoTratamento == null}" />
-									
+									styleClass="RedButton" />									
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"
 									styleClass="GreenSplitButton"

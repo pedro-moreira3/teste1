@@ -97,6 +97,10 @@
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="new5" icon="White fa fa-file-o" value="Novo Pedido de Exame"
+								actionListener="#{pedidoExameMB.actionNew}"
+								update=":lume:pnPedidoExame,:lume:pnPedidoExamePrincipal,:lume:dtPedidoExame"
+								immediate="true" tabindex="1" process="@this" />							
 							<h:panelGroup rendered="#{pedidoExameMB.liberaBotao}">
 								<p:commandButton id="persist5" icon="White fa fa-save"
 									value="Gerar Documento"
@@ -106,10 +110,6 @@
 									disabled="#{pedidoExameMB.entity.id != 0}"
 									styleClass="GreenButton" />
 							</h:panelGroup>
-							<p:commandButton id="new5" icon="White fa fa-file-o" value="Novo"
-								actionListener="#{pedidoExameMB.actionNew}"
-								update=":lume:pnPedidoExame,:lume:pnPedidoExamePrincipal,:lume:dtPedidoExame"
-								immediate="true" tabindex="1" process="@this" />
 
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"

@@ -92,6 +92,12 @@
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<h:panelGroup>
+								<p:commandButton id="new4" icon="White fa fa-file-o"
+									value="Novo Receituário" actionListener="#{receituarioMB.actionNew}"
+									update=":lume:pnReceituario,:lume:pnReceituarioPrincipal,:lume:dtReceituario"
+									immediate="true" tabindex="1" process="@this" />
+							</h:panelGroup>
 							<h:panelGroup rendered="#{receituarioMB.liberaBotao}">
 								<p:commandButton id="persist4" icon="White fa fa-save"
 									value="Gerar Receituário"
@@ -101,12 +107,7 @@
 									disabled="#{receituarioMB.entity.id != 0}"
 									styleClass="GreenButton" />
 							</h:panelGroup>
-							<h:panelGroup>
-								<p:commandButton id="new4" icon="White fa fa-file-o"
-									value="Novo" actionListener="#{receituarioMB.actionNew}"
-									update=":lume:pnReceituario,:lume:pnReceituarioPrincipal,:lume:dtReceituario"
-									immediate="true" tabindex="1" process="@this" />
-							</h:panelGroup>
+							
 
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"

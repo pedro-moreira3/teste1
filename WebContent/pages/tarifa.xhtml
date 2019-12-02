@@ -72,13 +72,12 @@
 						</p:panelGrid>
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo Cadastro de Tarifa" actionListener="#{tarifaMB.actionNew}" update=":lume:pnTarifa,:lume:dtTarifa"
+								immediate="true" />						
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{tarifaMB.actionPersist}"
 								update=":lume:pnTarifa,:lume:dtTarifa" process=":lume:pnTarifa" styleClass="GreenButton" />
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{tarifaMB.actionRemove}"
 								update=":lume:pnTarifa,:lume:dtTarifa" process="@this" disabled="#{tarifaMB.entity.id == 0}" styleClass="RedButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{tarifaMB.actionNew}" update=":lume:pnTarifa,:lume:dtTarifa"
-								immediate="true" />
-
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"

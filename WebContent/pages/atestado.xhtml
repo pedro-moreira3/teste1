@@ -111,6 +111,10 @@
 
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="new3" icon="White fa fa-file-o" value="Novo Atestado"
+								actionListener="#{atestadoMB.actionNew}"
+								update=":lume:pnAtestado,:lume:pnAtestadoPrincipal,:lume:dtAtestado"
+								immediate="true" tabindex="1" process="@this" />
 							<h:panelGroup rendered="#{atestadoMB.liberaBotao}">
 								<p:commandButton id="persist3" icon="White fa fa-save"
 									value="Gerar Atestado"
@@ -119,11 +123,7 @@
 									process=":lume:pnAtestadoPrincipal"
 									disabled="#{atestadoMB.entity.id != 0}"
 									styleClass="GreenButton" />
-							</h:panelGroup>
-							<p:commandButton id="new3" icon="White fa fa-file-o" value="Novo"
-								actionListener="#{atestadoMB.actionNew}"
-								update=":lume:pnAtestado,:lume:pnAtestadoPrincipal,:lume:dtAtestado"
-								immediate="true" tabindex="1" process="@this" />
+							</h:panelGroup>							
 
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"

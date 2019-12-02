@@ -79,11 +79,12 @@
 						</p:panelGrid>
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo Convênio" actionListener="#{convenioMB.actionNew}" update=":lume:pnConvenio,:lume:dtConvenio" immediate="true" />
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{convenioMB.actionPersist}" update=":lume:pnConvenio,:lume:dtConvenio"
 								process=":lume:pnConvenio" styleClass="GreenButton" />
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{convenioMB.actionRemove}" update=":lume:pnConvenio,:lume:dtConvenio"
 								process="@this" disabled="#{convenioMB.entity.id == 0}" styleClass="RedButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{convenioMB.actionNew}" update=":lume:pnConvenio,:lume:dtConvenio" immediate="true" />
+							
 
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"

@@ -305,6 +305,9 @@
 
 		<p:panelGrid columns="4" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid">
+			<p:commandButton id="new" icon="White fa fa-file-o" value="Novo Profissional"
+				actionListener="#{profissionalMB.actionNew}" update=":lume:tabView"
+				immediate="true" tabindex="1" />			
 			<p:commandButton id="persist" icon="White fa fa-save" value="Salvar"
 				actionListener="#{profissionalMB.actionPersist}"
 				update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal"
@@ -315,9 +318,6 @@
 				update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal"
 				process="@this" disabled="#{profissionalMB.desabilitaExcluir}"
 				styleClass="RedButton" />
-			<p:commandButton id="new" icon="White fa fa-file-o" value="Novo"
-				actionListener="#{profissionalMB.actionNew}" update=":lume:tabView"
-				immediate="true" tabindex="1" />
 			<p:commandButton id="reenviarSenha" icon="White fa fa-lock"
 				value="Reenviar Senha"
 				actionListener="#{profissionalMB.actionReenviarSenha}"

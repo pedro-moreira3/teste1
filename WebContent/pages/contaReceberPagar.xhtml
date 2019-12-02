@@ -134,13 +134,12 @@ height: 100%;
 	                            <br />
                                 <div class="SeparatorFull"></div>
                                 <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                                	<p:commandButton id="new" icon="White fa fa-file-o" value="Novo Pagamento/Recebimento" actionListener="#{lancamentoContabilMB.actionNew}"
+                                        update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil" immediate="true" />
                                     <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{lancamentoContabilMB.actionPersist}"
                                         update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil" process="@this,dadosBasicos,motivo,data,valor" styleClass="GreenButton" />
                                     <p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{lancamentoContabilMB.actionRemove}"
                                         update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil" process="@this" disabled="#{lancamentoContabilMB.entity.id == 0}" styleClass="RedButton" />
-                                    <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{lancamentoContabilMB.actionNew}"
-                                        update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil" immediate="true" />
-                                    
                                     <ui:remove>
                                     <p:commandButton value="Excel" ajax="false" immediate="true" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                         <p:dataExporter encoding="iso-8859-1" type="xls" target="dtLancamentoContabil" fileName="pagamentorecebimentos" />

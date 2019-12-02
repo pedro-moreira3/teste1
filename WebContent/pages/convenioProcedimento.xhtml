@@ -63,19 +63,19 @@
 
                                 <div class="SeparatorFull"></div>
                                 <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                                    <p:commandButton id="new" icon="White fa fa-file-o" value="Novo Convênio-Procedimento" actionListener="#{convenioProcedimentoMB.actionNew}" update=":lume:tabView:pnConvenio"
+                                        immediate="true" />                                
                                     <p:commandButton id="persist" icon="White fa fa-save" value="Vincular ao Convênio" actionListener="#{convenioProcedimentoMB.actionPersist}"
-                                        update=":lume:tabView:pnConvenio" process=":lume:tabView:pnDados,@this" styleClass="GreenButton" oncomplete="PF('dtConvenioProcedimentoFora').filter()" />
-                                    <p:commandButton id="delete" icon="White fa fa-trash-o" value="Desvincular do Convênio" actionListener="#{convenioProcedimentoMB.actionRemove}"
-                                        update=":lume:tabView:pnConvenio,@this" process="@this" disabled="#{convenioProcedimentoMB.entity.zeraId || convenioProcedimentoMB.entity.id == 0}"
-                                        styleClass="RedButton" oncomplete="PF('dtConvenioProcedimento').filter()" />
-                                    <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{convenioProcedimentoMB.actionNew}" update=":lume:tabView:pnConvenio"
-                                        immediate="true" />
+                                        update=":lume:tabView:pnConvenio" process=":lume:tabView:pnDados,@this" styleClass="GreenButton" oncomplete="PF('dtConvenioProcedimentoFora').filter()" />                                    
                                     <p:commandButton value="Exportar Não Vinculados" ajax="false" process="dtConvenioProcedimentoFora" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                         <p:dataExporter encoding="iso-8859-1" type="xls" target="dtConvenioProcedimentoFora" fileName="convenioProcedimentoFora" />
                                     </p:commandButton>
                                     <p:commandButton value="Exportar Vinculados" ajax="false" process="dtConvenioProcedimento" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                         <p:dataExporter encoding="iso-8859-1" type="xls" target="dtConvenioProcedimento" fileName="convenioProcedimento" />
                                     </p:commandButton>
+									<p:commandButton id="delete" icon="White fa fa-trash-o" value="Desvincular do Convênio" actionListener="#{convenioProcedimentoMB.actionRemove}"
+                                        update=":lume:tabView:pnConvenio,@this" process="@this" disabled="#{convenioProcedimentoMB.entity.zeraId || convenioProcedimentoMB.entity.id == 0}"
+                                        styleClass="RedButton" oncomplete="PF('dtConvenioProcedimento').filter()" />                                    
                                 </p:panelGrid>
 
                                 <div class="EmptyBox20"></div>

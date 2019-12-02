@@ -56,15 +56,14 @@
 						</p:panelGrid>
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Nova Pergunta" actionListener="#{perguntaMB.actionNew}"
+								update=":lume:pnPrincipal,:lume:dtPrincipal" immediate="true" tabindex="1"  />						
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{perguntaMB.actionPersist}"
 								update=":lume:pnPrincipal,:lume:dtPrincipal" process=":lume:pnPrincipal" 
 								styleClass="GreenButton" />
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{perguntaMB.actionRemove}"
 								update=":lume:pnPrincipal,:lume:dtPrincipal" process="@this" disabled="#{perguntaMB.entity.id == null}"
 								 styleClass="RedButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{perguntaMB.actionNew}"
-								update=":lume:pnPrincipal,:lume:dtPrincipal" immediate="true" tabindex="1"  />
-
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"

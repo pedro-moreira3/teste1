@@ -36,9 +36,10 @@
 						<br />
                         <div class="SeparatorFull"></div>
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                        	<p:commandButton id="new" icon="White fa fa-file-o" value="Nova Lavagem Manual" actionListener="#{lavagemMB.actionNew}" update=":lume:pnLavagem, :lume:dtEsterilizacao" immediate="true" />
                             <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{lavagemMB.actionPersist}" oncomplete="handleDialogRequest(xhr, status, args)"
                                 update=":lume:pnLavagem, :lume:dtEsterilizacao, lume:confirmDialog" process=":lume:pnLavagem" disabled="#{lavagemMB.entity.id != 0}" styleClass="GreenButton" />
-                            <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{lavagemMB.actionNew}" update=":lume:pnLavagem, :lume:dtEsterilizacao" immediate="true" />
+                            
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"
