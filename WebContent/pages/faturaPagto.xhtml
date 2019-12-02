@@ -68,7 +68,7 @@
 							<p:outputLabel for="status" value="Status: " />
 							<p:selectOneMenu id="status" value="#{faturaPagtoMB.status}">
 								<f:selectItem itemValue="#{null}"
-									itemLabel="Selecione um Status" />
+									itemLabel="Todos" />
 								<f:selectItems value="#{faturaPagtoMB.listaStatus}" var="status"
 									itemLabel="#{status}" itemValue="#{status}" />
 								<p:ajax process="@this" />

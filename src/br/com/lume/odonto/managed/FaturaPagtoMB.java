@@ -19,6 +19,7 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.conta.ContaSingleton;
@@ -94,8 +95,18 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             setListaStatus(new ArrayList<>());
             getListaStatus().add(Lancamento.PAGO);
             getListaStatus().add(Lancamento.PENDENTE);
+            setStatus(Lancamento.PENDENTE);
             setShowLancamentosCancelados(false);
             carregarProfissionais();
+
+            String idpaciente = JSFHelper.getRequest().getParameter("id");
+            if (idpaciente != null && !idpaciente.isEmpty()) {
+                Paciente pac = PacienteSingleton.getInstance().getBo().find(Long.parseLong(idpaciente));
+                if (pac != null) {
+                    this.setPaciente(pac);
+                    pesquisar();
+                }
+            }
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
