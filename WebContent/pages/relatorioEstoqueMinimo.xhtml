@@ -7,6 +7,32 @@
 				<div class="card card-w-title">
 					<h1>Estoque Mínimo</h1>
 					<div class="SeparatorFull"></div>
+					
+					<p:panelGrid columns="3"  layout="grid" styleClass="ui-panelgrid-blank"
+                                style="border:0px none; background-color:transparent;" id="painelPesquisa">
+						<p:outputPanel style="margin-top:10px">
+							<p:outputLabel for="filtro" value="Item/Categoria: " />                                
+							<p:inputText id="filtro" value="#{relatorioEstoqueMinimoMB.filtroItem}">
+							</p:inputText> 
+						</p:outputPanel>
+						<p:outputPanel>                                
+							<h:outputText for="filtroPeriodo"
+								value="Tipo" />
+							<p:selectOneMenu id="filtroPeriodo"
+								value="#{relatorioEstoqueMinimoMB.filtroTipo}">
+								<f:selectItem itemValue="" itemLabel="Selecione" />																
+								<f:selectItem itemValue="C" itemLabel="Consumo" />
+								<f:selectItem itemValue="I" itemLabel="Instrumental" />									
+							</p:selectOneMenu>
+						</p:outputPanel>
+						<p:outputPanel></p:outputPanel> 							
+                    </p:panelGrid>          
+                    <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                        style="border:0px none; background-color:transparent;">                                
+                        <p:commandButton id="pesquisar" icon="White fa fa-search" value="Pesquisar" 
+                        actionListener="#{relatorioEstoqueMinimoMB.filtra}" update=":lume:dtMaterial"
+                            process="@this,painelPesquisa" styleClass="OrangeButton" />
+                    </p:panelGrid>                
 					<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 						<p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
 							<p:dataExporter encoding="iso-8859-1" type="xls" target="dtMaterial" fileName="EstoqueMinimo" />
@@ -46,6 +72,15 @@
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{relatorioEstoqueMinimoMB.materiais}" var="m" rows="20" paginator="true"
 						rowKey="#{m}" paginatorPosition="bottom" binding="#{relatorioEstoqueMinimoMB.tabelaEstoque}">
 						<f:facet name="header">Materiais</f:facet>
+						
+							
+						
+						<p:column headerText="Detalhes" width="8%">									 	
+						 	<p:commandButton class="" icon="fa fa-eye White" update="" title="Detalhes" process="@this"
+                                 style="width:33px !important" />
+                        </p:column>	
+						
+						
 						<p:column filterBy="#{m.item}" sortBy="#{m.item}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}">
 							<f:facet name="header">
 								<h:outputText value="Item" />

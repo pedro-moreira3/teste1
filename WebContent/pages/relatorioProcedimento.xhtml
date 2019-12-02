@@ -196,7 +196,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 									styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 									<h:panelGroup styleClass="md-combo">
-										<h:outputText for="filtroPeriodo" value="Período de criação do plano:" />
+										<h:outputText for="filtroPeriodo" value="Período de criação do procedimento:" />
 										<p:selectOneMenu id="filtroPeriodo" value="#{relatorioProcedimentoMB.filtroPeriodo}">
 											
 											<p:ajax process="@this" listener="#{relatorioProcedimentoMB.actionTrocaDatasCriacao}" />
@@ -223,7 +223,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 									</h:panelGroup>
 									
 									<h:panelGroup styleClass="md-combo">
-										<h:outputText for="filtroPeriodoFinalizacao" value="Período de criação do plano:" />
+										<h:outputText for="filtroPeriodoFinalizacao" value="Período de finalização do procedimento:" />
 										
 										<p:selectOneMenu id="filtroPeriodoFinalizacao" value="#{relatorioProcedimentoMB.filtroPeriodoFinalizacao}">
 											
@@ -355,13 +355,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 								<h:outputLabel value="Mostrar os procedimentos: " />
 								<p:selectManyCheckbox
 									value="#{relatorioProcedimentoMB.filtroProcedimento}"
-									layout="grid" columns="4" update=":lume:filtroRelatorio">
+									layout="grid" columns="4" update=":lume:filtroRelatorio,:lume:dtRelProcedimento">
 
 									<p:ajax process="@this" />
 
 									<f:selectItem
 										itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Finalizados&lt;/div&gt;"
 										itemValue="F" itemEscaped="false" />
+									<f:selectItem
+										itemLabel="&lt;div&gt;&lt;div class='agendamentoConsultaInicial legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Não finalizados&lt;/div&gt;"
+										itemValue="N" itemEscaped="false" />
 									<f:selectItem
 										itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
 										itemValue="C" itemEscaped="false" />
@@ -483,6 +486,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 								filterMatchMode="contains" headerText="Satus do procedimento">
 								<h:outputText
 									value="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}" />
+							</p:column>
+
+							<p:column filterBy="#{relatorioProcedimentoMB.dataCriacaoProcediemento(procedimento)}"
+								sortBy="#{relatorioProcedimentoMB.dataCriacaoProcediemento(procedimento)}"
+								filterMatchMode="contains" headerText="Data de criação do procedimento">
+								<h:outputText
+									value="#{relatorioProcedimentoMB.dataCriacaoProcediemento(procedimento)}" />
 							</p:column>
 
 							<p:column filterBy="#{procedimento.dataFinalizado}"

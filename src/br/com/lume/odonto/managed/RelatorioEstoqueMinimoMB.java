@@ -23,6 +23,8 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
     private Logger log = Logger.getLogger(RelatorioEstoqueMinimoMB.class);
 
     private List<RelatorioEstoqueMinimo> materiais = new ArrayList<>();
+    
+    private String filtroItem, filtroTipo;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaEstoque;
@@ -38,8 +40,8 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
         exportarTabela("Estoque mínimo", tabelaEstoque, type);
     }
     
-    public void filtra() {
-        this.materiais = RelatorioEstoqueMinimoSingleton.getInstance().getBo().listAllByFilterToReportGroupByItemFiltrado(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    public void filtra() {        
+        this.materiais = RelatorioEstoqueMinimoSingleton.getInstance().getBo().listAllByFilterToReportGroupByItemFiltrado(filtroItem, filtroTipo,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public List<RelatorioEstoqueMinimo> getMateriais() {
@@ -57,4 +59,27 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
     public void setTabelaEstoque(DataTable tabelaEstoque) {
         this.tabelaEstoque = tabelaEstoque;
     }
+
+    
+    public String getFiltroItem() {
+        return filtroItem;
+    }
+
+    
+    public void setFiltroItem(String filtroItem) {
+        this.filtroItem = filtroItem;
+    }
+
+    
+    public String getFiltroTipo() {
+        return filtroTipo;
+    }
+
+    
+    public void setFiltroTipo(String filtroTipo) {
+        this.filtroTipo = filtroTipo;
+    }
+
+    
+
 }
