@@ -15,6 +15,7 @@ import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.odonto.entity.Convenio;
@@ -148,10 +149,14 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     private void removerFiltrosProcedimento(List<PlanoTratamentoProcedimento> procedimentos) {
         
         List<PlanoTratamentoProcedimento> listaAux = new ArrayList<>(procedimentos);
-        
         for(PlanoTratamentoProcedimento procedimento : listaAux) {
-            if( (this.filtroProcedimento.contains("C") && procedimento.isCancelado()) || !(this.filtroProcedimento.contains("F") && procedimento.isFinalizado()) )
+            boolean mostraCancelado = this.filtroProcedimento.contains("C") && procedimento.isCancelado();
+            boolean mostraFinalizado = this.filtroProcedimento.contains("F") && procedimento.isFinalizado();
+            boolean mostraNFinalizado = this.filtroProcedimento.contains("N") && !procedimento.isFinalizado();
+              
+            if(!mostraCancelado && !mostraFinalizado && !mostraNFinalizado) {
                 procedimentos.remove(procedimento);
+            }
         }
     }
     
@@ -292,6 +297,14 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         }
         
         return true;
+    }
+    
+    public String dataCriacaoProcediemento(PlanoTratamentoProcedimento ptp) {
+        
+        if(ptp.getDataCriado() != null)
+            return Utils.dateToString(ptp.getDataCriado());
+        else
+            return Utils.dateToString(ptp.getPlanoTratamento().getDataHora());        
     }
     
     public void exportarTabela(String type) {
