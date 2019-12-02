@@ -153,7 +153,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
 
     public Material atualizaEstoqueLavagem() throws Exception {
         if (getEntity().getClinica()) {
-            Material m = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItem(itemSelecionado, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()).get(0);
+            Material m = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemParaLavagem(itemSelecionado, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()).get(0);
             //System.out.println(" m.getQuantidadeAtualBD() " + m.getQuantidadeAtualBD() + " m.getQuantidadeAtual() " + m.getQuantidadeAtual());
             MaterialSingleton.getInstance().getBo().refresh(m);
             //System.out.println(" m.getQuantidadeAtualBD() " + m.getQuantidadeAtualBD() + " m.getQuantidadeAtual() " + m.getQuantidadeAtual());

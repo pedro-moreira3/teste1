@@ -2,6 +2,122 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
+	
+	<style>
+	.centerPanels .ui-panel .ui-panel-titlebar, .centerPanels .ui-panel .ui-panel-content
+	{
+	text-align: center;
+}
+	</style>
+	
+			<p:dialog appendTo=":lume:" maximizable="false" modal="true"
+			minimizable="false" resizable="false" responsive="true"
+			widgetVar="dlgDetalhes" width="80%">
+			<f:facet name="header">
+				<p:outputPanel id="viewRetornoHeader">
+					Detalhes do Item
+				</p:outputPanel>
+			</f:facet>
+			<p:outputPanel id="viewRetorno">
+				<div class="ui-g ui-fluid">
+					<div class="ui-g-12 ui-lg-12">
+	                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtDetalhes" value="#{relatorioEstoqueMinimoMB.detalhes}" var="material" rows="15" paginator="true" 
+	                        rowKey="#{material}" paginatorPosition="bottom" >	                      
+	                        <f:facet name="header">Materiais</f:facet>
+							<p:column style="width:16px">
+								<p:rowToggler />
+							</p:column>
+	                        <p:column filterBy="#{material.estoque.local.descricao}" sortBy="#{material.estoque.local.descricao}"
+	                        		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="8%" headerText="Local"
+	                            rendered="#{materialMB.estoqueCompleto}">
+	                            <h:outputText value="#{material.estoque.local.descricao}" />
+	                        </p:column>
+	                        <p:column filterBy="#{material.estoque.quantidade}" sortBy="#{material.estoque.quantidade}" width="10%"
+	                        	filterMatchMode="contains" headerText="Quantidade">
+	                            <h:outputText value="#{material.estoque.quantidade}">
+	                                <f:convertNumber />
+	                            </h:outputText>
+	                            <h:outputLabel value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
+	                        </p:column>
+	                        <p:column filterBy="#{material.valor}" sortBy="#{material.valor}" width="11%" style="text-align:right"
+	                        		filterMatchMode="contains" headerText="Valor da Unidade(R$)"
+	                            rendered="#{materialMB.estoqueCompleto}">
+	                            <h:outputText value="#{material.valor}">
+	                                <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
+	                            </h:outputText>
+	                        </p:column>
+	                       <p:column filterBy="#{material.valorTotal}" sortBy="#{material.valorTotal}" width="11%" style="text-align:right"
+	                       			filterMatchMode="contains" headerText="Valor Total(R$)"
+	                            rendered="#{materialMB.estoqueCompleto}">
+	                            <h:outputText value="#{material.valorTotal}">
+	                                <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
+	                            </h:outputText>
+	                        </p:column>
+	                        <p:column filterBy="#{material.dataCadastroStr}" sortBy="#{material.dataCadastroStrOrd}" width="9%"
+	                        		filterMatchMode="contains" headerText="Dt. Entrada">
+	                            <h:outputText value="#{material.dataCadastroStr}" />
+	                        </p:column>
+	                        <p:column filterBy="#{material.dataMovimentacaoStr}" sortBy="#{material.dataMovimentacao}" width="9%" filterMatchMode="contains" headerText="Dt. Últ. Movimentação"
+	                            rendered="#{!materialMB.estoqueCompleto}">
+	                            <h:outputText value="#{material.dataMovimentacaoStr}" />
+	                        </p:column>
+	                        <p:rowExpansion>
+	                        	<p:panelGrid columns="5" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"		                            	
+			                                style="border:0px none; background-color:transparent;">
+									<h:panelGroup styleClass="md-combo">		                                
+			                        	<h:outputLabel value="Marca: " />
+					                    <h:outputText value="#{material.marca.nome}"></h:outputText>
+					                </h:panelGroup>
+					                <h:panelGroup styleClass="md-combo">
+					                    <h:outputLabel value="Fornecedor: " />
+					                    <h:outputText value="#{material.fornecedor.dadosBasico.nome}"></h:outputText>
+					                </h:panelGroup>
+					                <h:panelGroup styleClass="md-combo">
+										<h:outputLabel value="Procedência: " />
+					                    <h:outputText value="#{material.procedenciaString}"></h:outputText>
+					                </h:panelGroup>				             
+					                <h:panelGroup styleClass="md-combo">       
+					                    <h:outputLabel value="Lote: " />
+					                    <h:outputText value="#{material.lote}"></h:outputText>
+					                </h:panelGroup>
+					                <h:panelGroup styleClass="md-combo">
+					                    <h:outputLabel value="Validade: " />
+					                    <h:outputText value="#{material.validadeStr}"></h:outputText>
+					                </h:panelGroup>
+			                    </p:panelGrid>
+	                        </p:rowExpansion>                      
+	                    </p:dataTable> 	                   
+							<p:panelGrid columns="3" layout="grid" id="painelQuantidades"
+								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
+								<p:panel id="valorTotal" header="Quantidade total em estoque">
+					                 <h:outputText value="#{relatorioEstoqueMinimoMB.quantidadeTotal}">
+		                                <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0" locale="#{lumeSecurity.locale}" />
+		                            </h:outputText>
+								</p:panel>								
+								<p:panel id="valorRestante" header="Custo médio por unidade">
+					                 <h:outputText value="#{relatorioEstoqueMinimoMB.custoMedio}">
+		                                <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2" locale="#{lumeSecurity.locale}" />
+		                            </h:outputText>	
+								</p:panel>
+								<p:panel id="valorPago" header="Valor total em estoque">
+					                 <h:outputText value="#{relatorioEstoqueMinimoMB.valorTotal}">
+		                                <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2" locale="#{lumeSecurity.locale}" />
+		                            </h:outputText>	
+								</p:panel>
+							</p:panelGrid>
+										           
+					</div>
+				</div>
+			</p:outputPanel>
+			<p:separator styleClass="SeparatorFull" />
+			<p:panelGrid columns="2" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton icon="White fa fa-close" value="Fechar"
+					styleClass="NavyButton" oncomplete="PF('dlgDetalhes').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+	
+	
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -26,12 +142,17 @@
 							</p:selectOneMenu>
 						</p:outputPanel>
 						<p:outputPanel></p:outputPanel> 							
-                    </p:panelGrid>          
+                    </p:panelGrid>
+                    <p:panelGrid columns="1"  layout="grid" styleClass="ui-panelgrid-blank"
+                                style="border:0px none; background-color:transparent;" id="painelPesquisa2">                    
+                    	<p:selectBooleanCheckbox style="width:100%;" value="#{relatorioEstoqueMinimoMB.mostrarSomenteEstoqueMinimo}" 
+                    	itemLabel="Mostrar somente itens com quantidade abaixo ou igual ao estoque mínimo configurado"/>
+					</p:panelGrid>       
                     <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
                         style="border:0px none; background-color:transparent;">                                
                         <p:commandButton id="pesquisar" icon="White fa fa-search" value="Pesquisar" 
                         actionListener="#{relatorioEstoqueMinimoMB.filtra}" update=":lume:dtMaterial"
-                            process="@this,painelPesquisa" styleClass="OrangeButton" />
+                            process="@this,painelPesquisa,painelPesquisa2" styleClass="OrangeButton" />
                     </p:panelGrid>                
 					<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 						<p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
@@ -73,10 +194,10 @@
 						rowKey="#{m}" paginatorPosition="bottom" binding="#{relatorioEstoqueMinimoMB.tabelaEstoque}">
 						<f:facet name="header">Materiais</f:facet>
 						
-							
-						
 						<p:column headerText="Detalhes" width="8%">									 	
-						 	<p:commandButton class="" icon="fa fa-eye White" update="" title="Detalhes" process="@this"
+						 	<p:commandButton class="" icon="fa fa-eye White" update=":lume:dtDetalhes,:lume:painelQuantidades" title="Detalhes" process="@this" 
+						 	actionListener="#{relatorioEstoqueMinimoMB.detalhes(m)}"
+						 	oncomplete="PF('dlgDetalhes').show()"
                                  style="width:33px !important" />
                         </p:column>	
 						
@@ -87,23 +208,17 @@
 							</f:facet>
 							<h:outputText value="#{m.item}" title="#{m.id}"/>
 						</p:column>						
-						<p:column filterBy="#{m.somaQuantidadeAtual}" sortBy="#{m.somaQuantidadeAtual}" filterMatchMode="contains">
+						<p:column  filterBy="#{m.somaQuantidadeAtual}" sortBy="#{m.somaQuantidadeAtual}" filterMatchMode="contains">
 							<f:facet name="header">
 								<h:outputText value="Quantidade Atual" />
-							</f:facet>
-							<h:outputText value="#{m.somaQuantidadeAtual}">
-								<f:convertNumber locale="#{lumeSecurity.locale}" maxFractionDigits="2" />
-							</h:outputText>
-							<h:outputLabel value="#{m.unidadeMedidaStr}" disabled="true" />
+							</f:facet>							
+							<h:outputLabel value="#{m.somaQuantidadeAtual} #{m.unidadeMedidaStr}" disabled="true" style="color: #{(m.somaQuantidadeAtual le m.estoqueMinimo)?'red':'none'}"/>
 						</p:column>
-						<p:column filterBy="#{m.estoqueMinimo}" sortBy="#{m.estoqueMinimo}" filterMatchMode="contains">
+						<p:column  filterBy="#{m.estoqueMinimo}" sortBy="#{m.estoqueMinimo}" filterMatchMode="contains">
 							<f:facet name="header">
 								<h:outputText value="Estoque Mínimo" />
-							</f:facet>
-							<h:outputText value="#{m.estoqueMinimo}">
-								<f:convertNumber locale="#{lumeSecurity.locale}" maxFractionDigits="2" />
-							</h:outputText>
-							<h:outputLabel value="#{m.unidadeMedidaStr}" disabled="true" />
+							</f:facet>	
+							<h:outputLabel value="#{m.estoqueMinimo} #{m.unidadeMedidaStr}" disabled="true" style="color: #{(m.somaQuantidadeAtual le m.estoqueMinimo)?'red':'none'}"/>
 						</p:column>
 						<p:column filterBy="#{m.valorUltimaCompra}" sortBy="#{m.valorUltimaCompra}" filterMatchMode="contains" rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}">
 							<f:facet name="header">

@@ -9,7 +9,7 @@
 	<p:outputPanel id="mainViewAnamnese">
 		<p:panelGrid columns="3" layout="grid" id="botoesControleTbAnamnese"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton id="newAnamnese" icon="ui-icon-add" value="Novo"
+			<p:commandButton id="newAnamnese" icon="ui-icon-add" value="Nova Anamnese"
 				actionListener="#{pacienteMB.actionAnamneseNew}"
 				update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade, :lume:tabView:dtAnamnese,:lume:tabView:persistAnamnese"
 				process="@this,:lume:tabView:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />
