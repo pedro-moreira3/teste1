@@ -36,14 +36,16 @@
 									style="border:0px none; background-color:transparent;">
 
 									<h:panelGroup>
-										<p:outputLabel for="dataInicio" value="Data inicial:" />
+										<p:outputLabel for="dataInicio"
+											value="Data Inicial da criação da Fatura:" />
 										<p:calendar id="dataInicio"
 											value="#{repasseProfissionalMB.dataInicio}"
 											autocomplete="false" />
 									</h:panelGroup>
 
 									<h:panelGroup>
-										<p:outputLabel for="dataFim" value="Data final:" />
+										<p:outputLabel for="dataFim"
+											value="Data Final da criação da Fatura:" />
 										<p:calendar id="dataFim"
 											value="#{repasseProfissionalMB.dataFim}" autocomplete="false" />
 									</h:panelGroup>
@@ -75,6 +77,16 @@
 
 											<p:ajax event="itemSelect" process="@this" />
 										</p:autoComplete>
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<p:outputLabel for="status" value="Status: " />
+										<p:selectOneMenu id="status" value="#{repasseProfissionalMB.status}">
+											<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+											<f:selectItem itemValue="1" itemLabel="Não disponível para repasse" />
+											<f:selectItem itemValue="2" itemLabel="Pendente de repasse" />
+											<p:ajax process="@this" />
+										</p:selectOneMenu>
 									</h:panelGroup>
 
 									<ui:remove>
