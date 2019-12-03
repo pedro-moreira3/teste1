@@ -50,7 +50,7 @@
 					<f:facet name="header">Evolução</f:facet>
 					<p:column filterBy="#{evolucao.descricao}"
 						sortBy="#{evolucao.descricao}" filterMatchMode="contains"
-						width="70%" headerText="Descrição"
+						width="70%" headerText="Descrição da evolução"
 						filterFunction="#{evolucaoMB.filtroSemAcento}">
 						<h:outputText
 							value="#{evolucao.excluido=='S'?'[ REMOVIDO ]':''} #{evolucao.descricao}"
