@@ -65,21 +65,9 @@
 			<div class="Card">
 				<p:outputPanel id="pnExame" styleClass="BordNone">
 
-					<h1>Descrição</h1>
-
-					<p:separator styleClass="SeparatorFull" />
-
-					<p:inputTextarea id="descricao" cols="50" rows="6"
-						value="#{exameMB.entity.descricao}" autoResize="true"
-						required="true" maxlength="200"
-						counterTemplate="{0} caracteres restantes." counter="counter" />
-					<div class="EmptyBox20"></div>
 					<h1>Arquivo : (JPG/JPEG/GIF/PNG/PDF)</h1>
-
 					<p:separator styleClass="SeparatorFull" />
-
 					<h:outputText id="nomeAnexo" value="#{exameMB.entity.nomeAnexo}" />
-
 					<p:fileUpload id="exame"
 						fileUploadListener="#{exameMB.uploadArquivo}" mode="advanced"
 						label="Anexar" auto="true" rendered="true"
@@ -88,10 +76,17 @@
 						invalidFileMessage="Apenas imagens e PDF pode ser utilizados."
 						invalidSizeMessage="Tamanho excedeu oOo limite."
 						update="nomeAnexo" />
+
+					<div class="EmptyBox20"></div>
+					<h1>Descrição *</h1>
+					<p:separator styleClass="SeparatorFull" />
+					<p:inputTextarea id="descricao" cols="50" rows="6"
+						value="#{exameMB.entity.descricao}" autoResize="true"
+						required="true" maxlength="200"
+						counterTemplate="{0} caracteres restantes." counter="counter" />
 					<br />
 
 					<p:separator styleClass="SeparatorFull" />
-
 					<p:panelGrid columns="3" layout="grid"
 						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente">
 						<p:commandButton id="persistExame" icon="White fa fa-save"
@@ -141,7 +136,7 @@
 									value="#{exame}" />
 							</p:commandButton>
 							<p:commandButton action="#{exameMB.actionEditFile}"
-								icon="White fa fa-search" process="@this" immediate="true"
+								icon="White fa fa-eye" process="@this" immediate="true"
 								oncomplete="carregaPdf();"
 								update=":lume:tabView:media,:lume:tabView:dlgPdf"
 								rendered="#{exameMB.validaPdf(exame)}">
