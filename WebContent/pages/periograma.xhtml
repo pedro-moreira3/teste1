@@ -68,15 +68,15 @@
 			<p:outputPanel id="periogramaMainView">
 				<p:panelGrid columns="4" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
-					<p:commandButton icon="White fa fa-file-o" value="Novo Periograma"
+					<p:commandButton icon="ui-icon-add" value="Novo Periograma"
 						actionListener="#{periogramaMB.actionNew}" process="@this"
 						update=":lume:tabView:pnPeriogramaView, :lume:tabView:pnPeriogramaViewHeader"
 						oncomplete="PF('dlgPeriogramaView').show()" />
-					<p:commandButton icon="White fa fa-file-o" value="Comparar"
+					<p:commandButton icon="White fa fa-file-o" value="Comparar Periogramas"
 						process="@this" actionListener="#{periogramaMB.carregaComparacao}"
 						update=":lume:tabView:compararView, :lume:tabView:compararViewHeader"
 						oncomplete="PF('dlgComparar').show();resize('#lume\\:tabView\\:dlgComparar');" />
-					<p:commandButton icon="White fa fa-trash" value="Excluir"
+					<p:commandButton icon="White fa fa-trash" value="Excluir Periograma"
 						process="@this" actionListener="#{periogramaMB.actionRemove}"
 						update=":lume:tabView:periogramaMainView" styleClass="RedButton"
 						disabled="#{periogramaMB.entity.id == null or periogramaMB.entity.id == 0}" />
@@ -113,7 +113,7 @@
 					<p:ajax event="rowSelect" update=":lume:tabView:periogramaMainView" />
 
 					<p:column headerText="Ações" style="width:140px">
-						<p:commandButton styleClass="NavyButton" icon="fa fa-search"
+						<p:commandButton styleClass="NavyButton" icon="fa fa-eye"
 							oncomplete="PF('dlgPeriogramaView').show()"
 							update=":lume:tabView:periogramaMainView, :lume:tabView:pnPeriogramaViewHeader, :lume:tabView:pnPeriogramaView"
 							actionListener="#{periogramaMB.actionSelecionarPeriograma(dto)}"

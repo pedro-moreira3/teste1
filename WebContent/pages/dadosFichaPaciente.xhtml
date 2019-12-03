@@ -52,7 +52,7 @@ body div.ui-widget-content.ui-tabs {
 				<ui:include src="planoTratamento.xhtml" />
 			</p:tab>
 
-			<p:tab id="tab7" title="Periograma"
+			<p:tab id="tab7" title="Periograma" rendered="#{false}"
 				disabled="#{pacienteMB.entity.id == null}">
 				<ui:include src="periograma.xhtml" />
 			</p:tab>
