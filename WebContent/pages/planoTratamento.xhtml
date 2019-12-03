@@ -180,7 +180,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								update=":lume:tabView:mainViewPT, :lume:tabView:botoesFinalizaPT"
 								title="Encerrar Plano de Tratamento" process="@this"
 								styleClass="OrangeButton"
-								actionListener="#{planoTratamentoMB.iniciaFinalizacaoPT(planoTratamento)}"
+								actionListener="#{planoTratamentoMB.actionFinalizar(planoTratamento)}"
 								disabled="#{planoTratamento.finalizado == 'S'}" />
 						</h:panelGroup>
 					</p:column>
@@ -236,7 +236,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 	<p:dialog id="devolver" widgetVar="devolver"
 		header="Encerrar Plano de Tratamento" responsive="true" modal="true"
-		appendTo=":lume">
+		appendTo=":lume" closable="false">
 		<p:outputPanel id="pgFinalizar">
 			<div class="ui-g ui-fluid">
 				<div class="ui-g-12 ui-lg-12">
@@ -244,12 +244,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						layout="grid"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding"
 						style="border:0px none; background-color:transparent;">
-
-						<p:outputPanel
-							rendered="#{planoTratamentoMB.mensagemEncerrarPT != null and planoTratamentoMB.mensagemEncerrarPT != ''}">
-							<h:outputText value="#{planoTratamentoMB.mensagemEncerrarPT}"
-								escape="false" style="font-weight: bold" />
-						</p:outputPanel>
 
 						<p:outputLabel for="justificativa" value="Justificativa : " />
 						<p:selectOneMenu id="justificativa"
@@ -287,13 +281,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				oncomplete="handleDialogRequest(xhr, status, args);"
 				process="@this, :lume:tabView:pgFinalizar, :lume:tabView:botoesFinalizaPT"
 				styleClass="GreenButton" />
-			<p:commandButton id="cancelDevolver" icon="White fa fa-close"
-				value="Somente finalizar procedimento"
+			<p:commandButton icon="White fa fa-close" value="Fechar"
 				actionListener="#{planoTratamentoMB.actionCancelFinalizar}"
-				update=":lume:tabView:mainViewPT, :lume:tabView:pnViewPlanoTratamento"
-				oncomplete="handleDialogRequest(xhr, status, args);" process="@this"
-				styleClass="GreenButton"
-				rendered="#{planoTratamentoMB.evolucao != null}" />
+				process="@this" styleClass="NavyButton" />
 		</p:panelGrid>
 	</p:dialog>
 
@@ -705,7 +695,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 											:lume:tabView:botoesFinalizaPT"
 										value="Encerrar Plano de Tratamento" process="@this"
 										styleClass="OrangeButton"
-										actionListener="#{planoTratamentoMB.iniciaFinalizacaoPT()}"
+										actionListener="#{planoTratamentoMB.actionFinalizar}"
 										disabled="#{planoTratamentoMB.entity.finalizado == 'S'}" />
 								</h:panelGroup>
 							</p:panelGrid>
@@ -1350,34 +1340,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:panelGrid>
 	</p:dialog>
 
-	<p:dialog id="dlgConfirmarFinalizacao"
-		widgetVar="dlgConfirmarFinalizacao"
-		style="width:80px; height: 60px;z-index:9999 !important;"
-		header="Encerrar plano de tratamento" modal="true" appendTo=":lume">
-		<p:panelGrid columns="1" layout="grid"
-			styleClass="ui-panelgrid-blank form-group ui-fluid">
-			<h:panelGroup>
-				<p:outputLabel
-					value="Todos os procedimentos do plano foram finalizados. Deseja encerrar o plano ?" />
-			</h:panelGroup>
-			<h:panelGroup>
-				<p:panelGrid columns="2" layout="grid"
-					styleClass="ui-panelgrid-blank form-group ui-fluid">
-					<p:commandButton icon="fa fa fa fa-check" styleClass="GreenButton"
-						value="Encerrar"
-						actionListener="#{planoTratamentoMB.actionFinalizar}"
-						process="@this"
-						update=":lume:tabView:mainViewPT,pnViewPlanoTratamento"
-						oncomplete="PF('dlgConfirmarFinalizacao').hide();" />
-
-					<p:commandButton icon="fa fa fa fa-close" styleClass="RedButton"
-						value="Cancelar" update=":lume:tabView:mainViewPT" process="@this"
-						oncomplete="PF('dlgConfirmarFinalizacao').hide();" />
-				</p:panelGrid>
-			</h:panelGroup>
-		</p:panelGrid>
-	</p:dialog>
-
 	<p:dialog id="evolucao" widgetVar="evolucao"
 		header="Evolução - Finalizar procedimento" responsive="true"
 		modal="true" appendTo=":lume">
@@ -1388,8 +1350,24 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:panelGrid columns="1" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
 				<h:panelGroup styleClass="lumeField">
-					<h:outputLabel escape="false"
-						value="#{planoTratamentoMB.evolucaoProcedimento}" />
+					<ui:repeat var="procedimento"
+						value="#{planoTratamentoMB.ptps2Finalizar}">
+						<h:outputText
+							value="Procedimento: #{procedimento.procedimento.descricao}" />
+						<br />
+						<h:outputText
+							value="Finalizado às: #{planoTratamentoMB.dateNowFormat}" />
+						<br />
+						<h:outputText
+							value="Por: #{planoTratamentoMB.entity.profissional.dadosBasico.nome}" />
+						<br />
+						<ui:repeat var="face"
+							value="#{procedimento.planoTratamentoProcedimentoFaces}">
+							<h:outputText
+								value="Dente: #{procedimento.denteObj.descricao} | Face: #{face.face}" />
+						</ui:repeat>
+						<br />
+					</ui:repeat>
 				</h:panelGroup>
 			</p:panelGrid>
 			<p:panelGrid columns="1" layout="grid"
@@ -1397,8 +1375,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				<h:panelGroup styleClass="lumeField">
 					<p:outputLabel for="evolucaoDescricao" value="Descrição : " />
 					<p:inputTextarea id="evolucaoDescricao" cols="60" rows="6"
-						rendered="#{planoTratamentoMB.evolucao != null}"
-						autoResize="false" value="#{planoTratamentoMB.evolucao.descricao}"
+						autoResize="false" value="#{planoTratamentoMB.descricaoEvolucao}"
 						maxlength="2000" required="true" />
 					<p:message for="evolucaoDescricao" styleClass="msg" />
 				</h:panelGroup>
@@ -1428,7 +1405,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:commandButton id="persistEvolucaopt" icon="White fa fa-save"
 				value="Salvar" actionListener="#{planoTratamentoMB.saveEvolucao}"
 				update=":lume:tabView:evolucaoView, :lume:tabView:pnEditaPlanoTratamento, :lume:tabView:mainViewPT, :lume:tabView:dtProcedimentosSelecionadospt,
-					:lume:tabView:pgFinalizar, :lume:tabView:botoesFinalizaPT"
+					:lume:tabView:pgFinalizar, :lume:tabView:botoesFinalizaPT, :lume:tabView:pnViewPlanoTratamento"
 				process="@this, :lume:tabView:evolucaoView"
 				oncomplete="handleDialogRequest(xhr, status, args);" />
 		</p:panelGrid>
