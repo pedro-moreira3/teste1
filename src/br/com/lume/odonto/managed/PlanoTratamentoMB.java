@@ -1515,9 +1515,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public List<Procedimento> geraSugestoesProcedimento(String query) {
         if (getEntity() != null && getEntity().isBconvenio() && getPaciente().getConvenio() != null) {
-            return ProcedimentoSingleton.getInstance().getBo().listSugestoesCompleteConvenio(getPaciente().getConvenio().getId(), super.removerAcentos(query));
+            return ProcedimentoSingleton.getInstance().getBo().listSugestoesCompleteConvenio(getPaciente().getConvenio().getId(), query);
         } else {
-            return ProcedimentoSingleton.getInstance().getBo().listSugestoesComplete(super.removerAcentos(query), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            return ProcedimentoSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         }
     }
 
