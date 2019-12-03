@@ -52,7 +52,7 @@
 					update=":lume:tabView:pnPrincipalAnamnese, :lume:tabView:botoesControleTbAnamnese" />
 				<f:facet name="header">Anamneses</f:facet>
 				<p:column headerText="Visualização" style="width:100px">
-						<p:commandButton id="visualizarAnamnese" icon="fa fa-search" title="Visualizar Anamnese"
+						<p:commandButton id="visualizarAnamnese" icon="fa fa-eye" title="Visualizar Anamnese"
 				actionListener="#{pacienteMB.setPacienteAnamnese(pacienteAnamnese)}"
 				update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade,:lume:tabView:persistAnamnese,:lume:tabView:dtAnamnese"
 				process="@this,:lume:tabView:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />					
