@@ -1530,6 +1530,13 @@ body .ui-button.dark-blue-btn.ui-state-focus {
 	background-color: #43a05b !important;
 	border-color: #348c4b !important
 }
+.GreenSplitButton .ui-splitbutton-menubutton, .GreenSplitButton .ui-button {
+	background-color: #43a05b !important;
+	border-color: #348c4b !important
+}
+.GreenSplitButton .ui-splitbutton-menubutton:hover, .GreenSplitButton .ui-button:hover {
+	background-color: #368048 !important;
+}
 
 .GreenButton.ui-state-hover {
 	background-color: #4bb165 !important;
