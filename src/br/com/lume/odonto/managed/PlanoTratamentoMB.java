@@ -396,6 +396,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
         }
         if (!aux) {
+            this.descricaoEvolucao = null;
             PrimeFaces.current().executeScript("PF('evolucao').show()");
             FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("lume:tabView:evolucaoView");
         }

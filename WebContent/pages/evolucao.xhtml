@@ -12,7 +12,7 @@
 			<p:outputPanel id="viewEvolucao">
 				<p:panelGrid columns="3" layout="grid" id="botoesEvolucao"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-					<p:commandButton icon="White fa fa-file-o White"
+					<p:commandButton icon="ui-icon-add"
 						oncomplete="PF('dlgEvolucao').show()" value="Nova Evolução"
 						actionListener="#{evolucaoMB.actionNew}"
 						update=":lume:tabView:pnEvolucao, :lume:tabView:viewEvolucao"
@@ -21,9 +21,8 @@
 					<h:panelGroup>
 						<p:splitButton icon="White fa fa fa-file-excel-o"
 							value="Exportar tabela para Excel" styleClass="GreenSplitButton"
-							actionListener="#{evolucaoMB.exportarTabela('xls')}"
-							ajax="false" process="dtEvolucao,@this" update="@this"
-							immediate="true"
+							actionListener="#{evolucaoMB.exportarTabela('xls')}" ajax="false"
+							process="dtEvolucao,@this" update="@this" immediate="true"
 							onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
 							<p:fileDownload value="#{evolucaoMB.arquivoDownload}" />
@@ -33,8 +32,7 @@
 								actionListener="#{evolucaoMB.exportarTabela('pdf')}"
 								ajax="false" process="dtEvolucao,@this" immediate="true"
 								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-								<p:fileDownload
-									value="#{evolucaoMB.arquivoDownload}" />
+								<p:fileDownload value="#{evolucaoMB.arquivoDownload}" />
 							</p:menuitem>
 						</p:splitButton>
 					</h:panelGroup>
@@ -48,9 +46,19 @@
 					rowKey="#{evolucao}" binding="#{evolucaoMB.tabelaEvolucao}">
 					<p:ajax event="rowSelect" update=":lume:tabView:pnEvolucao" />
 					<f:facet name="header">Evolução</f:facet>
+					<p:column filterBy="#{evolucaoMB.getInfoPTPFromEvolucao(evolucao)}"
+						sortBy="#{evolucaoMB.getInfoPTPFromEvolucao(evolucao)}"
+						filterFunction="#{evolucaoMB.filtroSemAcento}"
+						filterMatchMode="contains" headerText="Procedimento" width="30%">
+						<div style="width: 100%; text-align: left;">
+							<h:outputText
+								value="#{evolucaoMB.getInfoPTPFromEvolucao(evolucao)}"
+								escape="false" />
+						</div>
+					</p:column>
 					<p:column filterBy="#{evolucao.descricao}"
 						sortBy="#{evolucao.descricao}" filterMatchMode="contains"
-						width="70%" headerText="Descrição da evolução"
+						width="50%" headerText="Descrição"
 						filterFunction="#{evolucaoMB.filtroSemAcento}">
 						<h:outputText
 							value="#{evolucao.excluido=='S'?'[ REMOVIDO ]':''} #{evolucao.descricao}"
@@ -60,10 +68,10 @@
 					<p:column filterBy="#{evolucao.profissional.dadosBasico.nome}"
 						sortBy="#{evolucao.profissional.dadosBasico.nome}"
 						filterMatchMode="contains" headerText="Profissional"
-						filterFunction="#{evolucaoMB.filtroSemAcento}">
+						filterFunction="#{evolucaoMB.filtroSemAcento}" width="10%">
 						<h:outputText value="#{evolucao.profissional.dadosBasico.nome}" />
 					</p:column>
-					<p:column filterBy="#{evolucao.dataStr}"
+					<p:column filterBy="#{evolucao.dataStr}" width="10%"
 						sortBy="#{evolucao.dataStrOrd}" filterMatchMode="contains"
 						headerText="Data">
 						<h:outputText value="#{evolucao.dataStr}" />
@@ -78,14 +86,16 @@
 		modal="true" responsive="true" appendTo=":lume" resizable="false"
 		width="90%">
 		<p:outputPanel id="pnEvolucao">
-			<h1>Descrição</h1>
-			<p:inputTextarea id="eDescricao" rows="6" style="width: 100%;"
-				disabled="#{evolucaoMB.entity.excluido == 'S'}"
-				value="#{evolucaoMB.entity.descricao}" autoResize="true"
-				required="true" maxlength="2000"
-				counterTemplate="{0} caracteres restantes." counter="counter" />
-			<p:message for="eDescricao" styleClass="msg" />
-			<h:outputText id="counter" />
+			<h:panelGroup class="md-inputfield">
+				<p:outputLabel value="Descrição" for="eDescricao" />
+				<p:inputTextarea id="eDescricao" rows="6" style="width: 100%;"
+					disabled="#{evolucaoMB.entity.excluido == 'S'}"
+					value="#{evolucaoMB.entity.descricao}" autoResize="true"
+					required="true" maxlength="2000"
+					counterTemplate="{0} caracteres restantes." counter="counter" />
+				<p:message for="eDescricao" styleClass="msg" />
+				<h:outputText id="counter" />
+			</h:panelGroup>
 		</p:outputPanel>
 		<p:separator styleClass="SeparatorFull" />
 		<p:panelGrid columns="4" layout="grid"
