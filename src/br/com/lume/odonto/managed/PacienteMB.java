@@ -437,7 +437,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                         usuario = new Usuario();
                         PacienteSingleton.getInstance().getBo().criarUsuario(usuario, getEntity(), UtilsFrontEnd.getEmpresaLogada());
                     } else {
-                        UsuarioSingleton.getInstance().getBo().enviarEmailPacienteComSenhaPadrao(usuario, "[A mesma utilizada.]", UtilsFrontEnd.getEmpresaLogada());
+                        //UsuarioSingleton.getInstance().getBo().enviarEmailPacienteComSenhaPadrao(usuario, "[A mesma utilizada.]", UtilsFrontEnd.getEmpresaLogada());
                     }
                 } else {
                     // Trocou o email
@@ -445,7 +445,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                     if (usuarioAtual != null && usuarioAtual.getUsuStrEml() != null && getEntity() != null && getEntity().getDadosBasico() != null && getEntity().getDadosBasico().getEmail() != null) {
                         if (!getEntity().getDadosBasico().getEmail().equals(usuarioAtual.getUsuStrEml())) {
                             if (usuario == null || usuario.getUsuIntCod() == 0) {
-                                UsuarioSingleton.getInstance().getBo().alterarEmailUsuario(usuarioAtual, getEntity().getDadosBasico().getEmail().toUpperCase(), UtilsFrontEnd.getEmpresaLogada());
+                                //UsuarioSingleton.getInstance().getBo().alterarEmailUsuario(usuarioAtual, getEntity().getDadosBasico().getEmail().toUpperCase(), UtilsFrontEnd.getEmpresaLogada());
                                 usuario = usuarioAtual;
                             }
                         }
@@ -455,6 +455,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                     this.getEntity().setIdUsuario(usuario.getUsuIntCod());
                 }
             }
+
             this.getEntity().setIdEmpresa(this.getProfissionalLogado().getIdEmpresa());
             this.getEntity().setPreCadastro("N");
             if (usuario != null) {
