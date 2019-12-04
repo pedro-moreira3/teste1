@@ -11,16 +11,18 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Orcamento;
-import br.com.lume.odonto.entity.RelatorioOrcamento;
+import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.orcamento.OrcamentoSingleton;
-import br.com.lume.relatorioOrcamento.RelatorioOrcamentoSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -30,18 +32,27 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
 
     private Logger log = Logger.getLogger(RelatorioOrcamentoMB.class);
 
-    private Date inicio, fim;
+    private Date inicio = new Date(), fim = new Date(), aprovacaoInicio, aprovacaoFim;
 
    // private List<RelatorioOrcamento> relatorioOrcamentos = new ArrayList<>();
     private List<Orcamento> relatorioOrcamentos = new ArrayList<>();
 
-    private BigDecimal somaValorTotal = new BigDecimal(0), somaValorTotalDesconto = new BigDecimal(0);
+    private BigDecimal somaValorTotal = new BigDecimal(0), somaValorTotalDesconto = new BigDecimal(0), somaValorTotalPago = new BigDecimal(0);
+    
+    private String filtroPeriodo;
+    private String filtroPeriodoAprovacao;
+    
+    private List<String> filtroOrcamento = new ArrayList<String>();
+    
+    private boolean pagos, nPagos;
+    
+    private Profissional filtroPorProfissional;
     
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
 
     public RelatorioOrcamentoMB() {
-        super(OrcamentoSingleton.getInstance().getBo());     
+        super(OrcamentoSingleton.getInstance().getBo());
         this.setClazz(Orcamento.class);
         Calendar c = Calendar.getInstance();
        // this.fim = c.getTime();
@@ -57,21 +68,48 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
             this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
         } else {
             //this.fim = Utils.getLastHourOfDate(this.fim);
-            this.inicio = Utils.setFirstHourDate(this.inicio);
-            this.fim = Utils.setLastHourDate(this.fim);
             
-            this.somaValorTotal = new BigDecimal(0);
-            this.somaValorTotalDesconto = new BigDecimal(0); 
-            this.relatorioOrcamentos = OrcamentoSingleton.getInstance().getBo().listByData(this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            if (this.relatorioOrcamentos != null && !this.relatorioOrcamentos.isEmpty()) {
-                for (Orcamento relatorioOrcamento : this.relatorioOrcamentos) {
-                    this.somaValorTotal = this.somaValorTotal.add(relatorioOrcamento.getValorTotalSemDesconto());
-                    this.somaValorTotalDesconto = this.somaValorTotalDesconto.add(relatorioOrcamento.getValorTotalComDesconto());
+            if(validarIntervaloDatas()) {
+                
+                if(inicio != null && fim != null) {
+                    this.inicio = Utils.setFirstHourDate(this.inicio);
+                    this.fim = Utils.setLastHourDate(this.fim);
+                }
+                
+                this.somaValorTotal = new BigDecimal(0);
+                this.somaValorTotalDesconto = new BigDecimal(0);
+                this.somaValorTotalPago = new BigDecimal(0);
+                
+                this.relatorioOrcamentos = OrcamentoSingleton.getInstance().getBo().listByData(this.inicio, this.fim, this.aprovacaoInicio, this.aprovacaoFim, this.filtroPorProfissional,
+                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                
+                validarFiltro(relatorioOrcamentos);
+                
+                if (this.relatorioOrcamentos != null && !this.relatorioOrcamentos.isEmpty()) {
+                    for (Orcamento relatorioOrcamento : this.relatorioOrcamentos) {                        
+                        this.somaValorTotal = this.somaValorTotal.add(relatorioOrcamento.getValorTotalSemDesconto());
+                        this.somaValorTotalDesconto = this.somaValorTotalDesconto.add(relatorioOrcamento.getValorTotalComDesconto());
+                        this.somaValorTotalPago = this.somaValorTotalPago.add((relatorioOrcamento.getValorPago() == null ? new BigDecimal(0) : relatorioOrcamento.getValorPago()));
+                    }
                 }
             }
+            
         }
     }
 
+    
+    public List<Profissional> sugestoesProfissionais(String query) {
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteProfissional(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), true);
+    }
+    
+    public String origemOrcamento(Orcamento orcamento) {
+        
+        if(!orcamento.getItens().isEmpty())
+            return orcamento.getItens().get(0).getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao();
+        
+        return "";
+    }
+    
     @Override
     public void actionNew(ActionEvent arg0) {
         this.inicio = null;
@@ -82,6 +120,144 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     public void actionLimpar() {
         this.inicio = null;
         this.fim = null;
+    }
+    
+    public void actionTrocaDatasCriacao() {
+        try {
+
+            this.inicio = getDataInicio(getFiltroPeriodo());
+            this.fim = getDataFim(getFiltroPeriodo());
+
+            PrimeFaces.current().ajax().update(":lume:inicio");
+            PrimeFaces.current().ajax().update(":lume:fim");
+
+        } catch (Exception e) {
+            log.error("Erro no actionTrocaDatasCriacao", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+
+    public Date getDataFim(String filtro) {
+        Date dataFim = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataFim = c.getTime();
+            } else if (filtro == null) {
+                dataFim = null;
+            } else {
+                dataFim = c.getTime();
+            }
+            return dataFim;
+        } catch (Exception e) {
+            log.error("Erro no getDataFim", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }
+
+    public Date getDataInicio(String filtro) {
+        Date dataInicio = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataInicio = c.getTime();
+            } else if ("H".equals(filtro)) { //Hoje                
+                dataInicio = c.getTime();
+            } else if ("S".equals(filtro)) { //Últimos 7 dias              
+                c.add(Calendar.DAY_OF_MONTH, -7);
+                dataInicio = c.getTime();
+            } else if ("Q".equals(filtro)) { //Últimos 15 dias              
+                c.add(Calendar.DAY_OF_MONTH, -15);
+                dataInicio = c.getTime();
+            } else if ("T".equals(filtro)) { //Últimos 30 dias                
+                c.add(Calendar.DAY_OF_MONTH, -30);
+                dataInicio = c.getTime();
+            } else if ("M".equals(filtro)) { //Mês Atual              
+                c.set(Calendar.DAY_OF_MONTH, 1);
+                dataInicio = c.getTime();
+            } else if ("I".equals(filtro)) { //Mês Atual             
+                c.add(Calendar.MONTH, -6);
+                dataInicio = c.getTime();
+            }
+            return dataInicio;
+        } catch (Exception e) {
+            log.error("Erro no getDataInicio", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }
+
+    public void actionTrocaDatasAprovacao() {
+        try {
+
+            this.aprovacaoInicio = getDataInicio(getFiltroPeriodoAprovacao());
+            this.aprovacaoFim = getDataFim(getFiltroPeriodoAprovacao());
+
+            PrimeFaces.current().ajax().update(":lume:aprovacaoInicio");
+            PrimeFaces.current().ajax().update(":lume:aprovacaoFim");
+
+        } catch (Exception e) {
+            log.error("Erro no actionTrocaDatasAprovacao", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+    
+    private boolean validarIntervaloDatas() {
+
+        if ((inicio != null && fim != null) && inicio.getTime() > fim.getTime()) {
+            this.addError("Intervalo de datas", "A data inicial deve preceder a data final.", true);
+            return false;
+        }
+        
+        if ((aprovacaoInicio != null && aprovacaoFim != null) && aprovacaoInicio.getTime() > aprovacaoFim.getTime()) {
+            this.addError("Intervalo de datas", "A data inicial deve preceder a data final.", true);
+            return false;
+        }
+        return true;
+    }
+    
+    private void validarFiltro(List<Orcamento> orc) {
+        
+        List<Orcamento> orcamentos = new ArrayList(orc);
+        
+        if(filtroOrcamento.contains("P"))
+            this.pagos = true;
+        else
+            this.pagos = false;
+        
+        if(filtroOrcamento.contains("N"))
+            this.nPagos = true;
+        else
+            this.nPagos = false;
+        
+        
+        for(Orcamento orcamento : orcamentos) {
+            OrcamentoSingleton.getInstance().recalculaValores(orcamento);
+            
+            if(pagos) {
+                
+                if( !(orcamento.isAprovado()) && (orcamento.getValorPago().intValue() < orcamento.getValorTotal().intValue()) )
+                    orc.remove(orcamento);
+            }
+            if(nPagos) {
+                
+                if( !(orcamento.isAprovado()) && (orcamento.getValorPago().intValue() == orcamento.getValorTotal().intValue()) )
+                    orc.remove(orcamento);
+            }
+            
+            if(filtroOrcamento.contains("A")) {
+                if( !(orcamento.isAprovado()) )
+                    orc.remove(orcamento);
+            }else if(filtroOrcamento.contains("I")) {
+                if( (orcamento.isAprovado()) )
+                    orc.remove(orcamento);
+            }
+            
+        }
+        
     }
     
     public void exportarTabela(String type) {
@@ -138,5 +314,77 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
 
     public void setTabelaRelatorio(DataTable tabelaRelatorio) {
         this.tabelaRelatorio = tabelaRelatorio;
+    }
+
+    public String getFiltroPeriodo() {
+        return filtroPeriodo;
+    }
+
+    public void setFiltroPeriodo(String filtroPeriodo) {
+        this.filtroPeriodo = filtroPeriodo;
+    }
+
+    public String getFiltroPeriodoAprovacao() {
+        return filtroPeriodoAprovacao;
+    }
+
+    public void setFiltroPeriodoAprovacao(String filtroPeriodoAprovacao) {
+        this.filtroPeriodoAprovacao = filtroPeriodoAprovacao;
+    }
+
+    public Date getAprovacaoInicio() {
+        return aprovacaoInicio;
+    }
+
+    public void setAprovacaoInicio(Date aprovacaoInicio) {
+        this.aprovacaoInicio = aprovacaoInicio;
+    }
+
+    public Date getAprovacaoFim() {
+        return aprovacaoFim;
+    }
+
+    public void setAprovacaoFim(Date aprovacaoFim) {
+        this.aprovacaoFim = aprovacaoFim;
+    }
+
+    public BigDecimal getSomaValorTotalPago() {
+        return somaValorTotalPago;
+    }
+
+    public void setSomaValorTotalPago(BigDecimal somaValorTotalPago) {
+        this.somaValorTotalPago = somaValorTotalPago;
+    }
+
+    public boolean isPagos() {
+        return pagos;
+    }
+
+    public void setPagos(boolean pagos) {
+        this.pagos = pagos;
+    }
+
+    public boolean isnPagos() {
+        return nPagos;
+    }
+
+    public void setnPagos(boolean nPagos) {
+        this.nPagos = nPagos;
+    }
+
+    public List<String> getFiltroOrcamento() {
+        return filtroOrcamento;
+    }
+
+    public void setFiltroOrcamento(List<String> filtroOrcamento) {
+        this.filtroOrcamento = filtroOrcamento;
+    }
+
+    public Profissional getFiltroPorProfissional() {
+        return filtroPorProfissional;
+    }
+
+    public void setFiltroPorProfissional(Profissional filtroPorProfissional) {
+        this.filtroPorProfissional = filtroPorProfissional;
     }
 }
