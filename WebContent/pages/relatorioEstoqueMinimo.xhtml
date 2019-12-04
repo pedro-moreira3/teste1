@@ -12,10 +12,10 @@
 	
 			<p:dialog appendTo=":lume:" maximizable="false" modal="true"
 			minimizable="false" resizable="false" responsive="true"
-			widgetVar="dlgDetalhes" width="80%">
+			widgetVar="dlgDetalhes" width="80%" id="dlgDetalhes">
 			<f:facet name="header">
 				<p:outputPanel id="viewRetornoHeader">
-					Detalhes do Item
+					 <h:outputText value="Detalhes do Item  #{relatorioEstoqueMinimoMB.itemDetalhamento.descricao}" />				
 				</p:outputPanel>
 			</f:facet>
 			<p:outputPanel id="viewRetorno">
@@ -148,17 +148,11 @@
                     	<p:selectBooleanCheckbox style="width:100%;" value="#{relatorioEstoqueMinimoMB.mostrarSomenteEstoqueMinimo}" 
                     	itemLabel="Mostrar somente itens com quantidade abaixo ou igual ao estoque mínimo configurado"/>
 					</p:panelGrid>       
-                    <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                    <p:panelGrid columns="6" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
                         style="border:0px none; background-color:transparent;">                                
                         <p:commandButton id="pesquisar" icon="White fa fa-search" value="Pesquisar" 
                         actionListener="#{relatorioEstoqueMinimoMB.filtra}" update=":lume:dtMaterial"
                             process="@this,painelPesquisa,painelPesquisa2" styleClass="OrangeButton" />
-                    </p:panelGrid>                
-					<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-						<p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
-							<p:dataExporter encoding="iso-8859-1" type="xls" target="dtMaterial" fileName="EstoqueMinimo" />
-						</p:commandButton>
-
 						<h:panelGroup>
 							<p:splitButton icon="White fa fa fa-file-excel-o"
 								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
@@ -187,15 +181,19 @@
 								</p:menuitem>
 							</p:splitButton>
 						</h:panelGroup>
+						<h:panelGroup></h:panelGroup>                            
+						<h:panelGroup></h:panelGroup>
+						<h:panelGroup></h:panelGroup>
+						<h:panelGroup></h:panelGroup>
+                    </p:panelGrid>                
 
-					</p:panelGrid>
 					<div class="EmptyBox20"></div>
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{relatorioEstoqueMinimoMB.materiais}" var="m" rows="20" paginator="true"
 						rowKey="#{m}" paginatorPosition="bottom" binding="#{relatorioEstoqueMinimoMB.tabelaEstoque}">
 						<f:facet name="header">Materiais</f:facet>
 						
 						<p:column headerText="Detalhes" width="8%">									 	
-						 	<p:commandButton class="" icon="fa fa-eye White" update=":lume:dtDetalhes,:lume:painelQuantidades" title="Detalhes" process="@this" 
+						 	<p:commandButton class="" icon="fa fa-eye White" update=":lume:dtDetalhes,:lume:painelQuantidades,:lume:dlgDetalhes" title="Detalhes" process="@this" 
 						 	actionListener="#{relatorioEstoqueMinimoMB.detalhes(m)}"
 						 	oncomplete="PF('dlgDetalhes').show()"
                                  style="width:33px !important" />

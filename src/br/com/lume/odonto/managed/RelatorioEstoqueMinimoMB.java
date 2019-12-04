@@ -42,7 +42,8 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
     private BigDecimal quantidadeTotal = new BigDecimal(0);
     private BigDecimal valorTotal = new BigDecimal(0);
     private BigDecimal custoMedio = new BigDecimal(0);
-
+    private Item itemDetalhamento; 
+    
     //EXPORTAÇÃO TABELA
     private DataTable tabelaEstoque;
     
@@ -57,9 +58,9 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
 
     public void detalhes(RelatorioEstoqueMinimo relatorioEstoqueMinimo) {
         try {
-            Item item = ItemSingleton.getInstance().getBo().find(relatorioEstoqueMinimo.getId()); 
-            if(item != null) {
-                detalhes = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItem(item,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            itemDetalhamento = ItemSingleton.getInstance().getBo().find(relatorioEstoqueMinimo.getId()); 
+            if(itemDetalhamento != null) {
+                detalhes = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItem(itemDetalhamento,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 this.quantidadeTotal = new BigDecimal(0);
                 this.valorTotal = new BigDecimal(0);
                 this.custoMedio = new BigDecimal(0);
@@ -67,9 +68,8 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                     this.quantidadeTotal = this.quantidadeTotal.add(material.getEstoque().getQuantidade());
                     this.valorTotal = this.valorTotal.add(material.getValorTotal());
                 }          
-                if(!this.valorTotal.equals(new BigDecimal(0)) && !this.quantidadeTotal.equals(new BigDecimal(0))) {
-                    MathContext mc = new MathContext(2, RoundingMode.HALF_UP);
-                    this.custoMedio = this.valorTotal.divide(this.quantidadeTotal,mc);    
+                if(this.valorTotal.compareTo(BigDecimal.ZERO) != 0 && this.quantidadeTotal.compareTo(BigDecimal.ZERO) != 0) {                   
+                    this.custoMedio = this.valorTotal.divide(this.quantidadeTotal, MathContext.DECIMAL32);    
                 }                
                 Collections.sort(detalhes);    
             }else {
@@ -173,6 +173,16 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
     
     public void setCustoMedio(BigDecimal custoMedio) {
         this.custoMedio = custoMedio;
+    }
+
+    
+    public Item getItemDetalhamento() {
+        return itemDetalhamento;
+    }
+
+    
+    public void setItemDetalhamento(Item itemDetalhamento) {
+        this.itemDetalhamento = itemDetalhamento;
     }
 
     
