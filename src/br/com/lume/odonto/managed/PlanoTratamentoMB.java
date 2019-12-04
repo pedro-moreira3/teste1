@@ -491,6 +491,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             boolean isDente = isDenteOrRegiao() == 1;
             boolean isRegiao = isDenteOrRegiao() == -1;
 
+ 
+            if(planoTratamentoProcedimentoSelecionado.getId() == 0)
+                planoTratamentoProcedimentoSelecionado.setDataCriado(new Date());
+
             if (isDente && getEntity().getOdontograma() == null) {
                 this.addInfo("Escolha um odontograma antes de adicionar um procedimento à um dente.", "");
                 return;
@@ -499,6 +503,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.addInfo("Escolha um procedimento antes de salvar.", "");
                 return;
             }
+
 
             if (this.planoTratamentoProcedimentoSelecionado.getProcedimento() == null || this.planoTratamentoProcedimentoSelecionado.getProcedimento().getId() != this.procedimentoSelecionado.getId())
                 PlanoTratamentoProcedimentoSingleton.getInstance().atualizaPlanoTratamentoProcedimento(this.planoTratamentoProcedimentoSelecionado, getEntity(), this.procedimentoSelecionado,
@@ -515,6 +520,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.planoTratamentoProcedimentoSelecionado.setRegiao(this.planoTratamentoProcedimentoSelecionado.getDente());
             }
 
+
             planoTratamentoProcedimentoSelecionado.setDente(null);
             actionPersistFaces(planoTratamentoProcedimentoSelecionado);
             PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(this.planoTratamentoProcedimentoSelecionado);
@@ -522,9 +528,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 getEntity().setPlanoTratamentoProcedimentos(new ArrayList<>());
             getEntity().getPlanoTratamentoProcedimentos().add(this.planoTratamentoProcedimentoSelecionado);
 
+ 
+
             PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
             carregarPlanoTratamentoProcedimentos();
             this.planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
+
+ 
 
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             PrimeFaces.current().executeScript("PF('dlgNovoProcedimento').hide()");
