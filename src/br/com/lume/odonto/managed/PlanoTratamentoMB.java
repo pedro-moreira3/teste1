@@ -478,13 +478,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public Integer isDenteOrRegiao(PlanoTratamentoProcedimento ptp) {
-        if (ptp.getDente() != null && ptp.getDente().trim().startsWith("Dente ")) {
-            return new Integer(1);
-        } else if (ptp.getDente() != null && !ptp.getDente().trim().isEmpty()) {
-            return new Integer(-1);
-        } else {
-            return null;
+        if (ptp != null) {
+            if (ptp.getDente() != null && ptp.getDente().trim().startsWith("Dente ")) {
+                return new Integer(1);
+            } else if (ptp.getDente() != null && !ptp.getDente().trim().isEmpty()) {
+                return new Integer(-1);
+            }
         }
+        return new Integer(0);
     }
 
     public void actionAdicionarProcedimento(ActionEvent event) {
@@ -492,8 +493,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             boolean isDente = isDenteOrRegiao() == 1;
             boolean isRegiao = isDenteOrRegiao() == -1;
 
- 
-            if(planoTratamentoProcedimentoSelecionado.getId() == 0)
+            if (planoTratamentoProcedimentoSelecionado.getId() == 0)
                 planoTratamentoProcedimentoSelecionado.setDataCriado(new Date());
 
             if (isDente && getEntity().getOdontograma() == null) {
@@ -504,7 +504,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.addInfo("Escolha um procedimento antes de salvar.", "");
                 return;
             }
-
 
             if (this.planoTratamentoProcedimentoSelecionado.getProcedimento() == null || this.planoTratamentoProcedimentoSelecionado.getProcedimento().getId() != this.procedimentoSelecionado.getId())
                 PlanoTratamentoProcedimentoSingleton.getInstance().atualizaPlanoTratamentoProcedimento(this.planoTratamentoProcedimentoSelecionado, getEntity(), this.procedimentoSelecionado,
@@ -521,7 +520,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.planoTratamentoProcedimentoSelecionado.setRegiao(this.planoTratamentoProcedimentoSelecionado.getDente());
             }
 
-
             planoTratamentoProcedimentoSelecionado.setDente(null);
             actionPersistFaces(planoTratamentoProcedimentoSelecionado);
             PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(this.planoTratamentoProcedimentoSelecionado);
@@ -529,13 +527,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 getEntity().setPlanoTratamentoProcedimentos(new ArrayList<>());
             getEntity().getPlanoTratamentoProcedimentos().add(this.planoTratamentoProcedimentoSelecionado);
 
- 
-
             PlanoTratamentoSingleton.getInstance().getBo().persist(getEntity());
             carregarPlanoTratamentoProcedimentos();
             this.planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
-
- 
 
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             PrimeFaces.current().executeScript("PF('dlgNovoProcedimento').hide()");
@@ -728,6 +722,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void actionNewProcedimento() {
         this.planoTratamentoProcedimentoSelecionado = new PlanoTratamentoProcedimento();
         this.procedimentoSelecionado = null;
+        handleDenteRegiaoSelected();
     }
 
     public boolean isDisableFaces() {
@@ -1154,6 +1149,28 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionNewStatusDente() {
         statusDenteSelecionado = new StatusDente();
+    }
+
+    public void handleDenteRegiaoSelected() {
+        boolean isDente = isDenteOrRegiao(planoTratamentoProcedimentoSelecionado) == 1;
+        boolean isRegiao = isDenteOrRegiao(planoTratamentoProcedimentoSelecionado) == -1;
+
+        try {
+            this.denteSelecionado = null;
+            this.regiaoSelecionada = null;
+            this.enableRegioes = false;
+
+            if (isDente) {
+                String denteDescricao = planoTratamentoProcedimentoSelecionado.getDente().trim().split("Dente ")[1];
+                this.denteSelecionado = DenteSingleton.getInstance().getBo().findByDescAndOdontograma(denteDescricao, getEntity().getOdontograma());
+            } else if (isRegiao) {
+                this.regiaoSelecionada = planoTratamentoProcedimentoSelecionado.getDente();
+                this.enableRegioes = true;
+            }
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            addError("Erro", "Erro ao adicionar diagnóstico!");
+        }
     }
 
     public void actionAdicionarStatusDente() {

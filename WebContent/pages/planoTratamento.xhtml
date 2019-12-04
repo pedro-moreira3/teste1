@@ -979,7 +979,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								itemLabel="Selecione o Dente/Região" />
 							<f:selectItems value="#{planoTratamentoMB.dentes}" />
 							<p:ajax event="itemSelect" process="@this"
-								update=":lume:tabView:facesProcedimento" />
+								listener="#{planoTratamentoMB.handleDenteRegiaoSelected}"
+								update=":lume:tabView:facesProcedimento, :lume:tabView:diagnosticosNewProcedimento" />
 						</p:selectOneMenu>
 
 						<h:outputText value="Face (Apenas para Dente)" />
@@ -1019,7 +1020,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:commandButton id="adicionarStatusDente2"
 									icon="White fa fa-plus White"
 									actionListener="#{planoTratamentoMB.actionAdicionarStatusDente}"
-									update=":lume:tabView:dtStatusDenteSelecionados2"
+									update=":lume:tabView:diagnosticosNewProcedimento"
 									process="@this, :lume:tabView:problema2"
 									style="margin-left: 5px;"
 									disabled="#{planoTratamentoMB.statusDenteDenteSelecionado == null or planoTratamentoMB.entity.finalizado == 'S'}" />
@@ -1027,38 +1028,60 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</p:panelGrid>
 					</p:fieldset>
 					<br />
-					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-						id="dtStatusDenteSelecionados2" var="regiao" editable="true"
-						value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.denteObj.regioes}"
-						rows="10" paginator="true" paginatorPosition="bottom">
-						<p:column sortBy="#{regiao.statusDente.descricao}"
-							headerText="Diagnóstico">
-							<h:outputText value="#{regiao.statusDente.descricao}" />
-						</p:column>
-						<p:column headerText="Face">
-							<p:selectCheckboxMenu value="#{regiao.facesArray}"
-								disabled="#{planoTratamentoMB.entity.finalizado == 'S'}"
-								label="#{regiao.facesArrayLabel}" style="width: 200px;"
-								rendered="#{regiao.statusDente.temFace and planoTratamentoMB.isDenteOrRegiao() == 1}">
-								<p:ajax process="@this"
-									listener="#{planoTratamentoMB.actionPersistFacesStatusDente(regiao)}"
-									update="@this,:lume:tabView:pnDenteOdontograma,:lume:tabView:procedimentosOdontograma" />
-								<f:selectItems value="#{regiao.facesStr}" var="face"
-									itemValue="#{face}" itemLabel="#{face}" />
-							</p:selectCheckboxMenu>
-							<h:outputText
-								rendered="#{planoTratamentoMB.isDenteOrRegiao() == -1}"
-								value="Sem faces para diagnósticos em região" />
-						</p:column>
-						<p:column width="10%">
-							<p:commandButton icon="White fa fa-minus White"
-								disabled="#{planoTratamentoMB.entity.finalizado == 'S'}"
-								actionListener="#{planoTratamentoMB.actionRemoverStatusDente(regiao)}"
-								update=":lume:tabView:pnDenteOdontograma,:lume:tabView:dtStatusDenteSelecionados,:lume:tabView:procedimentosOdontograma,:lume:tabView:problema,@this"
-								process="@this" />
-						</p:column>
-					</p:dataTable>
-
+					<p:outputPanel id="diagnosticosNewProcedimento">
+						<p:outputPanel rendered="#{!planoTratamentoMB.enableRegioes}">
+							<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+								id="dtStatusDenteSelecionados2" var="regiao" editable="true"
+								value="#{planoTratamentoMB.denteSelecionado.regioesFiltered}"
+								rows="10" paginator="true" paginatorPosition="bottom">
+								<p:column sortBy="#{regiao.statusDente.descricao}"
+									headerText="Diagnóstico">
+									<h:outputText value="#{regiao.statusDente.descricao}" />
+								</p:column>
+								<p:column headerText="Face">
+									<p:selectCheckboxMenu value="#{regiao.facesArray}"
+										disabled="#{planoTratamentoMB.entity.finalizado == 'S'}"
+										label="#{regiao.facesArrayLabel}" style="width: 200px;"
+										rendered="#{regiao.statusDente.temFace and planoTratamentoMB.isDenteOrRegiao() == 1}">
+										<p:ajax process="@this"
+											listener="#{planoTratamentoMB.actionPersistFacesStatusDente(regiao)}"
+											update="@this,:lume:tabView:pnDenteOdontograma,:lume:tabView:procedimentosOdontograma" />
+										<f:selectItems value="#{regiao.facesStr}" var="face"
+											itemValue="#{face}" itemLabel="#{face}" />
+									</p:selectCheckboxMenu>
+									<h:outputText
+										rendered="#{planoTratamentoMB.isDenteOrRegiao() == -1}"
+										value="Sem faces para diagnósticos em região" />
+								</p:column>
+								<p:column width="10%">
+									<p:commandButton icon="White fa fa-minus White"
+										disabled="#{planoTratamentoMB.entity.finalizado == 'S'}"
+										actionListener="#{planoTratamentoMB.actionRemoverStatusDente(regiao)}"
+										update=":lume:tabView:diagnosticosNewProcedimento"
+										process="@this" />
+								</p:column>
+							</p:dataTable>
+						</p:outputPanel>
+						<p:outputPanel rendered="#{planoTratamentoMB.enableRegioes}">
+							<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+								id="dtStatusDenteRegiaoSelecionados2" var="regiao"
+								editable="true"
+								value="#{planoTratamentoMB.getDiagnosticosRegiao()}" rows="10"
+								paginator="true" paginatorPosition="bottom">
+								<p:column sortBy="#{regiao.statusDente.descricao}"
+									headerText="Diagnóstico">
+									<h:outputText value="#{regiao.statusDente.descricao}" />
+								</p:column>
+								<p:column width="10%">
+									<p:commandButton icon="White fa fa-minus White"
+										disabled="#{planoTratamentoMB.entity.finalizado == 'S'}"
+										actionListener="#{planoTratamentoMB.actionRemoverStatusDente(regiao)}"
+										update=":lume:tabView:diagnosticosNewProcedimento"
+										process="@this" />
+								</p:column>
+							</p:dataTable>
+						</p:outputPanel>
+					</p:outputPanel>
 				</div>
 			</div>
 		</p:outputPanel>
@@ -1373,7 +1396,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:panelGrid columns="1" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 				<h:panelGroup styleClass="lumeField">
-					<p:outputLabel for="evolucaoDescricao" value="Descrição da evolução: " />
+					<p:outputLabel for="evolucaoDescricao"
+						value="Descrição da evolução: " />
 					<p:inputTextarea id="evolucaoDescricao" cols="60" rows="6"
 						autoResize="false" value="#{planoTratamentoMB.descricaoEvolucao}"
 						maxlength="2000" required="true" />
