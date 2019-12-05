@@ -104,7 +104,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
                     long qtd = getEntity().getMeses();
                     long ultimoSequencial = 0l;
-                    qtd = (qtd > 12l ? 12 : qtd);
+                    //qtd = (qtd > 12l ? 12 : qtd);
                     for (int i = 0; i < qtd; i++) {
                         PlanoTratamentoProcedimento ptp = new PlanoTratamentoProcedimento();
                         ultimoSequencial++;
@@ -270,7 +270,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             getOrcamentoSelecionado().setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
             getOrcamentoSelecionado().setValorProcedimentoOrtodontico(getEntity().getProcedimentoPadrao().getValor());
             long qtd = getEntity().getMeses() - PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findQtdFinalizadosPTPOrtodontia(getEntity().getId());
-            qtd = (qtd > 12l ? 12 : qtd);
+            //qtd = (qtd > 12l ? 12 : qtd);
             getOrcamentoSelecionado().setQuantidadeParcelas((int) qtd);
             PrimeFaces.current().executeScript("PF('dlgOrcamentoPlanoOrtodontico').show()");
         } catch (Exception e) {

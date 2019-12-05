@@ -481,32 +481,35 @@ li.orcamento-li {
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
 										layout="grid" styleClass="ui-panelgrid-blank"
 										style="border:0px none; background-color:transparent;">
-										<p:outputLabel value="Procedimento Extra : " />
-										<h:panelGroup style="display: flex !important">
-											<p:autoComplete dropdown="true" queryDelay="1000"
-												value="#{ortodontiaMB.procedimentoExtra}"
-												id="procedimentoExtra" styleClass="fixaAbaixo"
-												completeMethod="#{ortodontiaMB.geraSugestoesProcedimentoOrtodontico}"
-												var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
-												converter="procedimento" forceSelection="true"
-												scrollHeight="400" minQueryLength="3"
-												style="width: calc(60% - 5px) !important; margin-right: 5px !important; position: relative">
-												<p:ajax event="itemSelect" process="@this"
-													update="adicionarProcedimentoExtra, valorProcedimentoExtra" />
-											</p:autoComplete>
-											<p:inputNumber id="valorProcedimentoExtra"
-												value="#{ortodontiaMB.valorProcedimentoExtra}"
-												required="#{ortodontiaMB.procedimentoExtra != null}"
-												maxlength="13" maxValue="9999999999.99" decimalSeparator=","
-												symbol="R$ " thousandSeparator="." styleClass="fixaAbaixo"
-												style="width: calc(40% - 33px - 5px) !important; margin-right: 5px !important;" />
-											<p:commandButton id="adicionarProcedimentoExtra"
-												icon="White fa fa-plus White"
-												actionListener="#{ortodontiaMB.actionAdicionarProcedimentoExtra}"
-												update=":lume:tabView:dtProcedimentosOrtodontia,@this"
-												process="procedimentoExtra,valorProcedimentoExtra,@this"
-												disabled="#{ortodontiaMB.procedimentoExtra == null or ortodontiaMB.entity.id == null or ortodontiaMB.entity.id == 0}" />
-										</h:panelGroup>
+										
+										<ui:remove>
+											<p:outputLabel value="Procedimento Extra : " />
+											<h:panelGroup style="display: flex !important">
+												<p:autoComplete dropdown="true" queryDelay="1000"
+													value="#{ortodontiaMB.procedimentoExtra}"
+													id="procedimentoExtra" styleClass="fixaAbaixo"
+													completeMethod="#{ortodontiaMB.geraSugestoesProcedimentoOrtodontico}"
+													var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
+													converter="procedimento" forceSelection="true"
+													scrollHeight="400" minQueryLength="3"
+													style="width: calc(60% - 5px) !important; margin-right: 5px !important; position: relative">
+													<p:ajax event="itemSelect" process="@this"
+														update="adicionarProcedimentoExtra, valorProcedimentoExtra" />
+												</p:autoComplete>
+												<p:inputNumber id="valorProcedimentoExtra"
+													value="#{ortodontiaMB.valorProcedimentoExtra}"
+													required="#{ortodontiaMB.procedimentoExtra != null}"
+													maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+													symbol="R$ " thousandSeparator="." styleClass="fixaAbaixo"
+													style="width: calc(40% - 33px - 5px) !important; margin-right: 5px !important;" />
+												<p:commandButton id="adicionarProcedimentoExtra"
+													icon="White fa fa-plus White"
+													actionListener="#{ortodontiaMB.actionAdicionarProcedimentoExtra}"
+													update=":lume:tabView:dtProcedimentosOrtodontia,@this"
+													process="procedimentoExtra,valorProcedimentoExtra,@this"
+													disabled="#{ortodontiaMB.procedimentoExtra == null or ortodontiaMB.entity.id == null or ortodontiaMB.entity.id == 0}" />
+											</h:panelGroup>
+										</ui:remove>
 										<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 											id="dtProcedimentosOrtodontia" var="ptp"
 											value="#{ortodontiaMB.entity.planoTratamentoProcedimentos}"
