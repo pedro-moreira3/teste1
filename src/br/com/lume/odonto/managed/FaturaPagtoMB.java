@@ -93,9 +93,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             setFim(now.getTime());
             setFormasPagamento(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma"));
             setListaStatus(new ArrayList<>());
-            getListaStatus().add(Lancamento.PAGO);
-            getListaStatus().add(Lancamento.PENDENTE);
-            setStatus(Lancamento.PENDENTE);
+            getListaStatus().add(Fatura.StatusFatura.PAGO.toString());
+            getListaStatus().add(Fatura.StatusFatura.PENDENTE.toString());
+            getListaStatus().add(Fatura.StatusFatura.TODOS.toString());
+            setStatus(Fatura.StatusFatura.PENDENTE.toString());
             setShowLancamentosCancelados(false);
             carregarProfissionais();
 
@@ -230,15 +231,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             }
 
             setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), Arrays.asList(getPtSelecionados()),
-                    (inicio == null ? null : inicio.getTime()), (fim == null ? null : fim.getTime())));
-            getEntityList().removeIf(fatura -> {
-                if (Lancamento.PAGO.equals(getStatus()) && this.getTotalRestante(fatura).compareTo(BigDecimal.ZERO) > 0)
-                    return true;
-                else if (Lancamento.PENDENTE.equals(getStatus()) && this.getTotalRestante(fatura).compareTo(BigDecimal.ZERO) == 0)
-                    return true;
-                else
-                    return false;
-            });
+                    (inicio == null ? null : inicio.getTime()), (fim == null ? null : fim.getTime()), Fatura.StatusFatura.getTipoFromRotulo(getStatus())));
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -294,14 +287,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         setParcela(1);
         setShowProduto(false);
         setFormaPagamento("DI");
-        setValor(getTotalRestante(getEntity()));
+        setValor(getTotalNaoPlanejado(getEntity()));
         setDataPagamento(new Date());
     }
 
     public void actionPersistLancamento() {
         try {
-            if (getValor().compareTo(getTotalRestante(getEntity())) > 0) {
-                this.addError("Informe um valor menor que o total restante!", "");
+            if (getValor().compareTo(getTotalNaoPlanejado(getEntity())) > 0) {
+                this.addError("Informe um valor menor que o total restante de planejamento!", "");
                 return;
             }
 
@@ -355,16 +348,20 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         return lancamentosSearch;
     }
 
+    public BigDecimal getTotal(Fatura fatura) {
+        return FaturaSingleton.getInstance().getTotal(fatura);
+    }
+
     public BigDecimal getTotalPago(Fatura fatura) {
         return FaturaSingleton.getInstance().getTotalPago(fatura);
     }
 
-    public BigDecimal getTotalRestante(Fatura fatura) {
-        return FaturaSingleton.getInstance().getTotalRestante(fatura);
+    public BigDecimal getTotalNaoPago(Fatura fatura) {
+        return FaturaSingleton.getInstance().getTotalNaoPago(fatura);
     }
 
-    public BigDecimal getTotal(Fatura fatura) {
-        return FaturaSingleton.getInstance().getTotal(fatura);
+    public BigDecimal getTotalNaoPlanejado(Fatura fatura) {
+        return FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura);
     }
 
     public List<Paciente> sugestoesPacientes(String query) {

@@ -67,8 +67,7 @@
 						<h:panelGroup>
 							<p:outputLabel for="status" value="Status: " />
 							<p:selectOneMenu id="status" value="#{faturaPagtoMB.status}">
-								<f:selectItem itemValue="#{null}"
-									itemLabel="Todos" />
+								<f:selectItem itemValue="#{null}" itemLabel="Todos" />
 								<f:selectItems value="#{faturaPagtoMB.listaStatus}" var="status"
 									itemLabel="#{status}" itemValue="#{status}" />
 								<p:ajax process="@this" />
@@ -163,10 +162,18 @@
 							</h:outputText>
 						</p:column>
 
-						<p:column filterBy="#{faturaPagtoMB.getTotalRestante(f)}"
-							headerText="Valor total restante" filterMatchMode="contains"
-							sortBy="#{faturaPagtoMB.getTotalRestante(f)}">
-							<h:outputText value="#{faturaPagtoMB.getTotalRestante(f)}">
+						<p:column filterBy="#{faturaPagtoMB.getTotalNaoPago(f)}"
+							headerText="Valor total não pago" filterMatchMode="contains"
+							sortBy="#{faturaPagtoMB.getTotalNaoPago(f)}">
+							<h:outputText value="#{faturaPagtoMB.getTotalNaoPago(f)}">
+								<f:convertNumber currencySymbol="R$ " type="currency" />
+							</h:outputText>
+						</p:column>
+
+						<p:column filterBy="#{faturaPagtoMB.getTotalNaoPlanejado(f)}"
+							headerText="Valor total não planejado" filterMatchMode="contains"
+							sortBy="#{faturaPagtoMB.getTotalNaoPlanejado(f)}">
+							<h:outputText value="#{faturaPagtoMB.getTotalNaoPlanejado(f)}">
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
 						</p:column>
