@@ -469,12 +469,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void editaPlanoTratamentoProcedimento(PlanoTratamentoProcedimento ptp) {
         setPlanoTratamentoProcedimentoSelecionado(ptp);
-        handleDenteRegiaoSelected();
+        ptp.setDente((ptp.getDenteObj() == null ? ptp.getRegiao() : "Dente " + ptp.getDenteObj().getDescricao()));
 
+        handleDenteRegiaoSelected();
         //if (ptp.getDenteObj() != null)
         //    this.odontogramaSelecionado = ptp.getDenteObj().getOdontograma();
         this.procedimentoSelecionado = ptp.getProcedimento();
-        ptp.setDente((ptp.getDenteObj() == null ? ptp.getRegiao() : "Dente " + ptp.getDenteObj().getDescricao()));
 
         List<String> faces = new ArrayList<>();
         for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {
