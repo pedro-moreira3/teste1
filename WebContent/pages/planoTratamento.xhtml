@@ -1008,6 +1008,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:selectOneMenu id="problema2"
 									value="#{planoTratamentoMB.statusDenteDenteSelecionado}"
 									converter="statusDente" filter="true"
+									filterFunction="#{planoTratamentoMB.filtroSemAcento}"
 									filterMatchMode="contains" autoWidth="false"
 									disabled="#{planoTratamentoMB.entity.finalizado == 'S'}">
 									<p:ajax process="@this" update="adicionarStatusDente2" />
