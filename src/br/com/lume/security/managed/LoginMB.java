@@ -39,7 +39,7 @@ public class LoginMB extends LumeManagedBean<Usuario> {
     private Logger log = Logger.getLogger(LoginMB.class);
 
     private String confirmacaoEmail;
-    
+
     public LoginMB() {
         super(new LoginBO());
         this.setClazz(Usuario.class);
@@ -92,7 +92,7 @@ public class LoginMB extends LumeManagedBean<Usuario> {
 //            this.log.error("Erro ao efetuar login.", e);
 //        }
 //    }
-    
+
     /**
      * Método para reconfiguração de senha do usuário. O método verifica se o email usado está cadastrado, se não estiver é apresentada uma mensagem de erro, caso esteja cadastrado, é instanciado um
      * novo objeto Usuário, em seguida é gerada e enviada uma mensagen para o email do usuário para configuração de uma nova senha.
@@ -112,16 +112,18 @@ public class LoginMB extends LumeManagedBean<Usuario> {
                     usuarioTrocaSenha.setTokenAcesso(hash);
                     Date dataAtual = Calendar.getInstance().getTime();
                     usuarioTrocaSenha.setDataToken(dataAtual);
-                    UsuarioSingleton.getInstance().getBo().persist(usuarioTrocaSenha);                    
-                    
-                  //  Utils.enviarEmailUsuario(usuarioTrocaSenha, "recuperacao");
-                    
-                    
+                    UsuarioSingleton.getInstance().getBo().persist(usuarioTrocaSenha);
+
+                    //  Utils.enviarEmailUsuario(usuarioTrocaSenha, "recuperacao");
+
                     Map<String, String> valores = new HashMap<>();
                     valores.put("#token", usuarioTrocaSenha.getTokenAcesso());
-                    
-                    EnviaEmail.enviaEmail(usuarioTrocaSenha.getUsuStrEml(), "Solicitação de troca de senha", EnviaEmail.buscarTemplate(valores, EnviaEmail.RESET));
-                    
+
+                    String mensagem = EnviaEmail.buscarTemplate(valores, EnviaEmail.RESET);
+                    mensagem.replaceAll("#token", usuarioTrocaSenha.getTokenAcesso());
+
+                    EnviaEmail.enviaEmail(usuarioTrocaSenha.getUsuStrEml(), "Solicitação de troca de senha", mensagem);
+
                     addInfo("Sucesso!", "E-mail enviado com sucesso!");
                 } else {
                     addError("Erro!", Mensagens.getMensagem("login.email.nao.cadastrado"));
@@ -131,15 +133,14 @@ public class LoginMB extends LumeManagedBean<Usuario> {
         } catch (NonUniqueResultException e) {
             addError("Erro!", Mensagens.getMensagem("login.reset.erro"));
         } catch (Exception e) {
-            addError("Erro!", Mensagens.getMensagem("login.reset.erro"));          
+            addError("Erro!", Mensagens.getMensagem("login.reset.erro"));
         }
-    }    
-    
+    }
 
     private void carregaObjetosPermitidos(Usuario userLogin, Sistema sistema) {
         this.getLumeSecurity().setUsuario(userLogin);
         ObjetoBO objetoBO = new ObjetoBO();
-        List<Objeto> objetosPermitidos = objetoBO.getAllObjetosByUsuarioAndSistema(userLogin, sistema,UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+        List<Objeto> objetosPermitidos = objetoBO.getAllObjetosByUsuarioAndSistema(userLogin, sistema, UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
         Objeto objeto = new Objeto();
         objeto.setObjStrDes("home");
         objeto.setCaminho("home");
@@ -160,12 +161,10 @@ public class LoginMB extends LumeManagedBean<Usuario> {
         return "login.xhtml";
     }
 
-    
     public String getConfirmacaoEmail() {
         return confirmacaoEmail;
     }
 
-    
     public void setConfirmacaoEmail(String confirmacaoEmail) {
         this.confirmacaoEmail = confirmacaoEmail;
     }
