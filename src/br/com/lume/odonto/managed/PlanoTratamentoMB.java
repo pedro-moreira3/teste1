@@ -231,6 +231,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                         regiao.setOdontograma(recente);
                     }
                     recente.setId(0l);
+                    recente.setDataCadastro(new Date());
                     OdontogramaSingleton.getInstance().getBo().persist(recente);
                     recente = OdontogramaSingleton.getInstance().getBo().find(recente);
                     getEntity().setOdontograma(recente);
