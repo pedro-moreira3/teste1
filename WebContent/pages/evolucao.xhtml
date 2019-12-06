@@ -85,14 +85,14 @@
 	<p:dialog widgetVar="dlgEvolucao" header="Descrever Evolução"
 		modal="true" responsive="true" appendTo=":lume" resizable="false"
 		width="90%">
-		<p:outputPanel id="pnEvolucao">
-			<h:panelGroup class="md-inputfield">
-				<p:outputLabel value="Descrição" for="eDescricao" />
+		<p:outputPanel id="pnEvolucao" style="margin-top: 20px">
+			<h:panelGroup styleClass="md-inputfield">
 				<p:inputTextarea id="eDescricao" rows="6" style="width: 100%;"
 					disabled="#{evolucaoMB.entity.excluido == 'S'}"
 					value="#{evolucaoMB.entity.descricao}" autoResize="true"
 					required="true" maxlength="2000"
 					counterTemplate="{0} caracteres restantes." counter="counter" />
+				<p:outputLabel value="Descrição" for="eDescricao" />
 				<p:message for="eDescricao" styleClass="msg" />
 				<h:outputText id="counter" />
 			</h:panelGroup>
