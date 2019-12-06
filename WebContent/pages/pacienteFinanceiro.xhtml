@@ -123,6 +123,30 @@ hr.hrSaldo {
 			</h:outputText>
 		</p:column>
 
+		<p:column filterBy="#{faturaPagtoMB.getTotalPago(f)}"
+			headerText="Valor total pago" filterMatchMode="contains"
+			sortBy="#{faturaPagtoMB.getTotalPago(f)}">
+			<h:outputText value="#{faturaPagtoMB.getTotalPago(f)}">
+				<f:convertNumber currencySymbol="R$ " type="currency" />
+			</h:outputText>
+		</p:column>
+
+		<p:column filterBy="#{faturaPagtoMB.getTotalNaoPago(f)}"
+			headerText="Valor total não pago" filterMatchMode="contains"
+			sortBy="#{faturaPagtoMB.getTotalNaoPago(f)}">
+			<h:outputText value="#{faturaPagtoMB.getTotalNaoPago(f)}">
+				<f:convertNumber currencySymbol="R$ " type="currency" />
+			</h:outputText>
+		</p:column>
+
+		<p:column filterBy="#{faturaPagtoMB.getTotalNaoPlanejado(f)}"
+			headerText="Valor total não planejado" filterMatchMode="contains"
+			sortBy="#{faturaPagtoMB.getTotalNaoPlanejado(f)}">
+			<h:outputText value="#{faturaPagtoMB.getTotalNaoPlanejado(f)}">
+				<f:convertNumber currencySymbol="R$ " type="currency" />
+			</h:outputText>
+		</p:column>
+
 	</p:dataTable>
 
 </ui:composition>
