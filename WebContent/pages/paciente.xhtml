@@ -85,6 +85,8 @@
 						</p:commandButton>
 					</h:panelGroup>
 
+					<p:focus context=":lume:hiddenFocus" />
+					<p:outputLabel id="hiddenFocus" style="display:hidden" />
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						id="dtPrincipal" value="#{pacienteMB.entityList}" var="paciente"
 						rows="7" paginator="true" rowKey="#{paciente}"
