@@ -218,10 +218,17 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
                 Odontograma recente = OdontogramaSingleton.getInstance().odontogramaRecente(this.getPaciente());
                 if (recente != null) {
-                    for (Dente dente : DenteSingleton.getInstance().getBo().findByOdontograma(recente)) {
+                    for (Dente dente : recente.getDentes()) {
                         dente.setId(0l);
-                        for (RegiaoDente regiao : dente.getRegioes())
+                        dente.setOdontograma(recente);
+                        for (RegiaoDente regiao : dente.getRegioes()) {
                             regiao.setId(0l);
+                            regiao.setDente(dente);
+                        }
+                    }
+                    for (RegiaoRegiao regiao : recente.getRegioesRegiao()) {
+                        regiao.setId(0l);
+                        regiao.setOdontograma(recente);
                     }
                     recente.setId(0l);
                     OdontogramaSingleton.getInstance().getBo().persist(recente);
