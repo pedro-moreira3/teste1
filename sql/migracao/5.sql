@@ -141,4 +141,41 @@ ALTER TABLE PLANO_TRATAMENTO_PROCEDIMENTO ADD COLUMN DATA_CRIADO timestamp witho
 UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Relatório de Estoque Antigo' WHERE OBJ_STR_DES = 'Relatório de Estoque';
 UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Relatório de Estoque' WHERE OBJ_STR_DES = 'Estoque Mínimo';
 UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Relatório de Estoque Antigo';
+----------------------------
+ALTER TABLE SEG_EMPRESA ADD COLUMN UTILIZA_RESERVA_KITS BOOLEAN default TRUE;
 
+UPDATE DOMINIO SET EXCLUIDO = 'S', DATA_EXCLUSAO = CURRENT_DATE
+WHERE ID IN (
+	SELECT
+		D.*
+	FROM DOMINIO D
+	WHERE D.OBJETO = 'planotratamento'
+	  AND D.TIPO = 'justificativa'
+	  AND D.EXCLUIDO = 'N'
+	 ORDER BY D.NOME
+);
+INSERT INTO DOMINIO(OBJETO, TIPO, NOME, VALOR, ID_EMPRESA, EDITAVEL, EXCLUIDO)
+VALUES('planotratamento', 'justificativa', 'Cadastro de plano de tratamento errado', 'CE', 41, TRUE, 'N');
+INSERT INTO DOMINIO(OBJETO, TIPO, NOME, VALOR, ID_EMPRESA, EDITAVEL, EXCLUIDO)
+VALUES('planotratamento', 'justificativa', 'Paciente desistiu do tratamento', 'PD', 41, TRUE, 'N');
+INSERT INTO DOMINIO(OBJETO, TIPO, NOME, VALOR, ID_EMPRESA, EDITAVEL, EXCLUIDO)
+VALUES('planotratamento', 'justificativa', 'Paciente optou por outro plano de tratamento', 'OP', 41, TRUE, 'N');
+INSERT INTO DOMINIO(OBJETO, TIPO, NOME, VALOR, ID_EMPRESA, EDITAVEL, EXCLUIDO)
+VALUES('planotratamento', 'justificativa', 'Plano de tratamento foi alterado', 'PA', 41, TRUE, 'N');
+
+UPDATE DOMINIO SET EXCLUIDO = 'S', DATA_EXCLUSAO = CURRENT_DATE
+WHERE ID IN (
+	SELECT
+		D.*
+	FROM DOMINIO D
+	WHERE D.OBJETO = 'planotratamentoprocedimento'
+	  AND D.TIPO = 'justificativa'
+	  AND D.EXCLUIDO = 'N'
+	 ORDER BY D.NOME
+);
+INSERT INTO DOMINIO(OBJETO, TIPO, NOME, VALOR, ID_EMPRESA, EDITAVEL, EXCLUIDO)
+VALUES('planotratamentoprocedimento', 'justificativa', 'Cadastro de procedimento errado', 'PE', 41, TRUE, 'N');
+INSERT INTO DOMINIO(OBJETO, TIPO, NOME, VALOR, ID_EMPRESA, EDITAVEL, EXCLUIDO)
+VALUES('planotratamentoprocedimento', 'justificativa', 'Solicitação do dentista', 'SD', 41, TRUE, 'N');
+INSERT INTO DOMINIO(OBJETO, TIPO, NOME, VALOR, ID_EMPRESA, EDITAVEL, EXCLUIDO)
+VALUES('planotratamentoprocedimento', 'justificativa', 'Solicitação do paciente', 'SP', 41, TRUE, 'N');
