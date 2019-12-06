@@ -460,7 +460,7 @@ body .sideChkBox .ui-chkbox-label {
 			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
 				process="@this" update="pnlNewLancamento" styleClass="OrangeButton"
 				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
-				disabled="#{faturaPagtoMB.getTotalRestante(faturaPagtoMB.entity) le 0}"
+				disabled="#{faturaPagtoMB.getTotalNaoPlanejado(faturaPagtoMB.entity) le 0}"
 				actionListener="#{faturaPagtoMB.actionNewLancamento}"
 				oncomplete="PF('dlgNewLancamento').show()" />
 			<p:commandButton value="Visualizar Impressão" icon="fa fa-print"

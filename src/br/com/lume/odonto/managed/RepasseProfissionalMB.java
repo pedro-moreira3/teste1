@@ -64,7 +64,7 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
         try {
             Calendar now = Calendar.getInstance();
             setMes(now.get(Calendar.MONTH) + 1);
-            
+
             Calendar inicio = Calendar.getInstance();
             inicio.setTime(new Date());
             inicio.set(Calendar.DAY_OF_MONTH, 1);
@@ -97,6 +97,14 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
 
     public BigDecimal getTotalPago(Fatura fatura) {
         return FaturaSingleton.getInstance().getTotalPago(fatura);
+    }
+
+    public BigDecimal getTotalNaoPago(Fatura fatura) {
+        return FaturaSingleton.getInstance().getTotalNaoPago(fatura);
+    }
+
+    public BigDecimal getTotalNaoPlanejado(Fatura fatura) {
+        return FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura);
     }
 
     public BigDecimal getTotalRestante(Fatura fatura) {

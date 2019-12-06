@@ -81,9 +81,11 @@
 
 									<h:panelGroup>
 										<p:outputLabel for="status" value="Status: " />
-										<p:selectOneMenu id="status" value="#{repasseProfissionalMB.status}">
+										<p:selectOneMenu id="status"
+											value="#{repasseProfissionalMB.status}">
 											<f:selectItem itemValue="#{null}" itemLabel="Todos" />
-											<f:selectItem itemValue="1" itemLabel="Não disponível para repasse" />
+											<f:selectItem itemValue="1"
+												itemLabel="Não disponível para repasse" />
 											<f:selectItem itemValue="2" itemLabel="Pendente de repasse" />
 											<p:ajax process="@this" />
 										</p:selectOneMenu>
@@ -258,11 +260,21 @@
 								</h:outputText>
 							</p:column>
 
-							<p:column filterBy="#{repasseProfissionalMB.getTotalRestante(f)}"
-								headerText="Valor total restante" filterMatchMode="contains"
-								sortBy="#{repasseProfissionalMB.getTotalRestante(f)}">
+							<p:column filterBy="#{repasseProfissionalMB.getTotalNaoPago(f)}"
+								headerText="Valor total não pago" filterMatchMode="contains"
+								sortBy="#{repasseProfissionalMB.getTotalNaoPago(f)}">
+								<h:outputText value="#{repasseProfissionalMB.getTotalNaoPago(f)}">
+									<f:convertNumber currencySymbol="R$ " type="currency" />
+								</h:outputText>
+							</p:column>
+
+							<p:column
+								filterBy="#{repasseProfissionalMB.getTotalNaoPlanejado(f)}"
+								headerText="Valor total não planejado"
+								filterMatchMode="contains"
+								sortBy="#{repasseProfissionalMB.getTotalNaoPlanejado(f)}">
 								<h:outputText
-									value="#{repasseProfissionalMB.getTotalRestante(f)}">
+									value="#{repasseProfissionalMB.getTotalNaoPlanejado(f)}">
 									<f:convertNumber currencySymbol="R$ " type="currency" />
 								</h:outputText>
 							</p:column>

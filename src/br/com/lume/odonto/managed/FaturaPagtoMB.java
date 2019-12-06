@@ -363,6 +363,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public BigDecimal getTotalNaoPlanejado(Fatura fatura) {
         return FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura);
     }
+    
+    public BigDecimal getTotalRestante(Fatura fatura) {
+        return FaturaSingleton.getInstance().getTotalRestante(fatura);
+    }
 
     public List<Paciente> sugestoesPacientes(String query) {
         return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
