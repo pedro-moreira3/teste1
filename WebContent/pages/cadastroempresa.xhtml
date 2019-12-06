@@ -43,11 +43,25 @@
 									styleClass="" maxlength="100"
 									rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
 
+								<p:outputLabel for="empStrNmefantasia" value="Nome Fantasia: "
+									rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
+								<p:inputText id="empStrNmefantasia"
+									value="#{cadastroEmpresaMB.entity.empStrNmefantasia}"
+									required="true" styleClass="" maxlength="100"
+									rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
+
 								<p:outputLabel for="empStrDent" value="Cir. Dentista: "
 									rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'F'}" />
 								<p:inputText id="empStrDent"
 									value="#{cadastroEmpresaMB.entity.empStrNme}" required="true"
 									styleClass="" maxlength="100"
+									rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'F'}" />
+
+								<p:outputLabel for="empStrDentSoc" value="Nome da Clínica: "
+									rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'F'}" />
+								<p:inputText id="empStrDentSoc"
+									value="#{cadastroEmpresaMB.entity.empStrNmefantasia}"
+									required="true" styleClass="" maxlength="100"
 									rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'F'}" />
 
 								<p:outputLabel for="empChaCpf" value="CPF: "
@@ -110,6 +124,9 @@
 									<f:selectItems value="#{cadastroEmpresaMB.afiliacoes}" var="af"
 										itemValue="#{af}" itemLabel="#{af.nome}" />
 								</p:selectOneMenu>
+
+								<p:column rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
+								<p:column rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
 
 								<p:column />
 								<p:column />
@@ -191,10 +208,12 @@
 								style="border:0px none; background-color:transparent;"
 								id="pnEmpresaFlags">
 
-								<p:outputLabel for="empStrTokenContify" value="Contify Token: " />
-								<p:inputText id="empStrTokenContify"
-									value="#{cadastroEmpresaMB.entity.empStrTokenContify}"
-									required="false" maxlength="300" />
+								<ui:remove>
+									<p:outputLabel for="empStrTokenContify" value="Contify Token: " />
+									<p:inputText id="empStrTokenContify"
+										value="#{cadastroEmpresaMB.entity.empStrTokenContify}"
+										required="false" maxlength="300" />
+								</ui:remove>
 
 								<p:outputLabel for="empIntCadeira"
 									value="Quantidade de cadeiras: " />
@@ -214,6 +233,8 @@
 									required="true" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="" thousandSeparator=".">
 								</p:inputNumber>
+								<p:column />
+								<p:column />
 
 								<p:outputLabel for="empStrEstoque" value="Módulo Estoque: " />
 								<p:selectOneRadio id="empStrEstoque"
@@ -224,7 +245,8 @@
 								<p:column />
 								<p:column />
 
-								<p:outputLabel value="Dentista tem acesso administrativo? " />
+								<p:outputLabel
+									value="Dentista tem acesso aos dados do paciente " />
 								<p:selectBooleanCheckbox
 									value="#{cadastroEmpresaMB.entity.empBolDentistaAdmin}" />
 
@@ -234,12 +256,12 @@
 									value="#{cadastroEmpresaMB.entity.empBolRetirarMascaraTelefone}" />
 
 								<p:outputLabel
-									value="Validar se lançamento de origem está validado antes de permitir repasse do profissional? " />
+									value="Validar recebiento do paciente para permitir pagamento do profissional " />
 								<p:selectBooleanCheckbox
 									value="#{cadastroEmpresaMB.entity.validarRepasseLancamentoOrigemValidadoBool}" />
 
 								<p:outputLabel
-									value="Validar se procedimento de origem está finalizado antes de permitir repasse do profissional? " />
+									value="Validar se o procedimento foi executado para permitir repasse profissional " />
 								<p:selectBooleanCheckbox
 									value="#{cadastroEmpresaMB.entity.validarRepasseProcedimentoFinalizadoBool}" />
 
