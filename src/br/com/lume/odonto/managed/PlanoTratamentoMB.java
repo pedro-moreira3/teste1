@@ -469,6 +469,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void editaPlanoTratamentoProcedimento(PlanoTratamentoProcedimento ptp) {
         setPlanoTratamentoProcedimentoSelecionado(ptp);
+        handleDenteRegiaoSelected();
+
         //if (ptp.getDenteObj() != null)
         //    this.odontogramaSelecionado = ptp.getDenteObj().getOdontograma();
         this.procedimentoSelecionado = ptp.getProcedimento();
@@ -1171,6 +1173,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             if (isDente) {
                 String denteDescricao = planoTratamentoProcedimentoSelecionado.getDente().trim().split("Dente ")[1];
                 this.denteSelecionado = DenteSingleton.getInstance().getBo().findByDescAndOdontograma(denteDescricao, getEntity().getOdontograma());
+                if (this.denteSelecionado == null)
+                    this.denteSelecionado = new Dente(denteDescricao, getEntity().getOdontograma());
             } else if (isRegiao) {
                 this.regiaoSelecionada = planoTratamentoProcedimentoSelecionado.getDente();
                 this.enableRegioes = true;
@@ -1386,32 +1390,28 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 "Dente 15"), new SelectItem("Dente 16"), new SelectItem("Dente 17"), new SelectItem("Dente 18") });
 
         SelectItemGroup dentes2128 = new SelectItemGroup("Sequência de dentes 21 - 28");
-        dentes2128.setSelectItems(new SelectItem[] { new SelectItem("Dente 21"), new SelectItem("Dente 22"), new SelectItem("Dente 23"), new SelectItem("24",
-                "Dente 24"), new SelectItem("Dente 25"), new SelectItem("Dente 26"), new SelectItem("Dente 27"), new SelectItem("Dente 28") });
+        dentes2128.setSelectItems(new SelectItem[] { new SelectItem("Dente 21"), new SelectItem("Dente 22"), new SelectItem("Dente 23"), new SelectItem("Dente 24"), new SelectItem(
+                "Dente 25"), new SelectItem("Dente 26"), new SelectItem("Dente 27"), new SelectItem("Dente 28") });
 
         SelectItemGroup dentes3138 = new SelectItemGroup("Sequência de dentes 31 - 38");
-        dentes3138.setSelectItems(new SelectItem[] { new SelectItem("Dente 31"), new SelectItem("Dente 32"), new SelectItem("Dente 33"), new SelectItem("34",
-                "Dente 34"), new SelectItem("Dente 35"), new SelectItem("Dente 36"), new SelectItem("Dente 37"), new SelectItem("Dente 38") });
+        dentes3138.setSelectItems(new SelectItem[] { new SelectItem("Dente 31"), new SelectItem("Dente 32"), new SelectItem("Dente 33"), new SelectItem("Dente 34"), new SelectItem(
+                "Dente 35"), new SelectItem("Dente 36"), new SelectItem("Dente 37"), new SelectItem("Dente 38") });
 
         SelectItemGroup dentes4148 = new SelectItemGroup("Sequência de dentes 41 - 48");
-        dentes4148.setSelectItems(new SelectItem[] { new SelectItem("Dente 41"), new SelectItem("Dente 42"), new SelectItem("Dente 43"), new SelectItem("44",
-                "Dente 44"), new SelectItem("Dente 45"), new SelectItem("Dente 46"), new SelectItem("Dente 47"), new SelectItem("Dente 48") });
+        dentes4148.setSelectItems(new SelectItem[] { new SelectItem("Dente 41"), new SelectItem("Dente 42"), new SelectItem("Dente 43"), new SelectItem("Dente 44"), new SelectItem(
+                "Dente 45"), new SelectItem("Dente 46"), new SelectItem("Dente 47"), new SelectItem("Dente 48") });
 
         SelectItemGroup dentes5155 = new SelectItemGroup("Sequência de dentes 51 - 55");
-        dentes5155.setSelectItems(
-                new SelectItem[] { new SelectItem("Dente 51"), new SelectItem("Dente 52"), new SelectItem("Dente 53"), new SelectItem("54", "Dente 54"), new SelectItem("Dente 55") });
+        dentes5155.setSelectItems(new SelectItem[] { new SelectItem("Dente 51"), new SelectItem("Dente 52"), new SelectItem("Dente 53"), new SelectItem("Dente 54"), new SelectItem("Dente 55") });
 
         SelectItemGroup dentes6165 = new SelectItemGroup("Sequência de dentes 61 - 65");
-        dentes6165.setSelectItems(
-                new SelectItem[] { new SelectItem("Dente 61"), new SelectItem("Dente 62"), new SelectItem("Dente 63"), new SelectItem("64", "Dente 64"), new SelectItem("Dente 65") });
+        dentes6165.setSelectItems(new SelectItem[] { new SelectItem("Dente 61"), new SelectItem("Dente 62"), new SelectItem("Dente 63"), new SelectItem("Dente 64"), new SelectItem("Dente 65") });
 
         SelectItemGroup dentes7175 = new SelectItemGroup("Sequência de dentes 71 - 75");
-        dentes7175.setSelectItems(
-                new SelectItem[] { new SelectItem("Dente 71"), new SelectItem("Dente 72"), new SelectItem("Dente 73"), new SelectItem("74", "Dente 74"), new SelectItem("Dente 75") });
+        dentes7175.setSelectItems(new SelectItem[] { new SelectItem("Dente 71"), new SelectItem("Dente 72"), new SelectItem("Dente 73"), new SelectItem("Dente 74"), new SelectItem("Dente 75") });
 
         SelectItemGroup dentes8185 = new SelectItemGroup("Sequência de dentes 81 - 85");
-        dentes8185.setSelectItems(
-                new SelectItem[] { new SelectItem("Dente 81"), new SelectItem("Dente 82"), new SelectItem("Dente 83"), new SelectItem("84", "Dente 84"), new SelectItem("Dente 85") });
+        dentes8185.setSelectItems(new SelectItem[] { new SelectItem("Dente 81"), new SelectItem("Dente 82"), new SelectItem("Dente 83"), new SelectItem("Dente 84"), new SelectItem("Dente 85") });
 
         dentes.add(dentes1118);
         dentes.add(dentes2128);

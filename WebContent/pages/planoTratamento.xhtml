@@ -938,7 +938,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:panelGrid>
 	</p:dialog>
 
-	<p:dialog id="novoProcedimento" widgetVar="dlgNovoProcedimento"
+	<p:dialog id="novoProcedimento" widgetVar="dlgNovoProcedimento" closable="false"
 		responsive="true" modal="true" appendTo=":lume" resizable="false"
 		header="#{planoTratamentoMB.headerProcedimentoEdit}" width="50%">
 		<p:outputPanel id="pgProcedimento">
@@ -1008,7 +1008,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:selectOneMenu id="problema2"
 									value="#{planoTratamentoMB.statusDenteDenteSelecionado}"
 									converter="statusDente" filter="true"
-									filterFunction="#{planoTratamentoMB.filtroSemAcento}"
 									filterMatchMode="contains" autoWidth="false"
 									disabled="#{planoTratamentoMB.entity.finalizado == 'S'}">
 									<p:ajax process="@this" update="adicionarStatusDente2" />
