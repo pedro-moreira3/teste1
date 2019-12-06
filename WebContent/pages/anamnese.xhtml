@@ -10,8 +10,8 @@
 		<p:panelGrid columns="3" layout="grid" id="botoesControleTbAnamnese"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton id="newAnamnese" icon="ui-icon-add" value="Nova Anamnese"
-				actionListener="#{pacienteMB.actionAnamneseNew}"
-				update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade, :lume:tabView:dtAnamnese,:lume:tabView:persistAnamnese"
+				actionListener="#{pacienteMB.actionAnamneseNew}" 
+				update=":lume:tabView:painelEspecialidades, :lume:tabView:painelPerguntasEspecialidades, :lume:tabView:dtAnamnese,:lume:tabView:persistAnamnese"
 				process="@this,:lume:tabView:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />
 			<p:commandButton id="deleteAnamnese" icon="White fa fa-trash-o White"
 				value="Excluir" actionListener="#{pacienteMB.actionAnamneseRemove}"
@@ -52,10 +52,11 @@
 					update=":lume:tabView:pnPrincipalAnamnese, :lume:tabView:botoesControleTbAnamnese" />
 				<f:facet name="header">Anamneses</f:facet>
 				<p:column headerText="Visualização" style="width:100px">
-						<p:commandButton id="visualizarAnamnese" icon="fa fa-eye" title="Visualizar Anamnese"
-				actionListener="#{pacienteMB.setPacienteAnamnese(pacienteAnamnese)}"
-				update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade,:lume:tabView:persistAnamnese,:lume:tabView:dtAnamnese"
-				process="@this,:lume:tabView:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />					
+				<p:commandButton id="visualizarAnamnese" icon="fa fa-eye" title="Visualizar Anamnese"
+				actionListener="#{pacienteMB.setPacienteAnamnese(pacienteAnamnese)}" 
+				update=":lume:tabView:painelEspecialidades, :lume:tabView:painelPerguntasEspecialidades, :lume:tabView:dtAnamnese,:lume:tabView:persistAnamnese"
+				process="@this,:lume:tabView:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />
+									
 				</p:column>
 				<p:column filterBy="#{pacienteAnamnese.id}"
 					sortBy="#{pacienteAnamnese.id}" filterMatchMode="contains"
@@ -100,25 +101,36 @@
 				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
 
 				<div class="ui-g ui-fluid">
-					<div class="ui-g-12 ui-lg-12">
-						<h1 style="margin-top: 20px !important;">Especialidades</h1>
-						<p:separator styleClass="SeparatorFull" />
-						<p:selectManyCheckbox id="especialidade"
-							value="#{pacienteMB.especialidadeSelecionada}"
-							converter="especialidade" layout="grid" columns="5">
-							<f:selectItems value="#{pacienteMB.especialidades}" var="e"
-								itemValue="#{e}" itemLabel="#{e.descricao}" />
-							<p:ajax
-								listener="#{pacienteMB.actionAtualizaPerguntasPorAnamnese(e)}"
-								process="@this" update="" />
-						</p:selectManyCheckbox>
-						<p:separator styleClass="SeparatorFull" />
+					<div class="ui-g-12 ui-lg-12">											
+					
+						<p:outputPanel id="painelEspecialidades" >
+							<p:outputLabel rendered="#{!pacienteMB.mostrarPerguntasAnamnese}">Selecione as Especialidades da Anamnese:</p:outputLabel> 
+							<p:outputLabel rendered="#{pacienteMB.mostrarPerguntasAnamnese}">Perguntas da Anamnese:</p:outputLabel>
+							<p:selectManyCheckbox id="especialidade" rendered="#{!pacienteMB.mostrarPerguntasAnamnese}"
+								value="#{pacienteMB.especialidadeSelecionada}"
+								converter="especialidade" layout="grid" columns="5">
+								<f:selectItems value="#{pacienteMB.especialidades}" var="e"
+									itemValue="#{e}" itemLabel="#{e.descricao}" />								
+							</p:selectManyCheckbox>
+						<p:panelGrid columns="6" layout="grid" 
+											styleClass="ui-panelgrid-blank"
+											columnClasses="ui-grid-col-4,ui-grid-col-12"
+											style="border:0px none; background-color:transparent;"
+											>
+						<p:commandButton id="ciar" icon="ui-icon-add" value="Preencher Anamnese" rendered="#{!pacienteMB.mostrarPerguntasAnamnese}"
+						actionListener="#{pacienteMB.mostrarPerguntasAnamnese}"
+						update=":lume:tabView:perguntasEspecialidade,:lume:tabView:painelEspecialidades,:lume:tabView:painelPerguntasEspecialidades,:lume:tabView:especialidade" 
+						process="@this,:lume:tabView:especialidade,:lume:tabView:painelEspecialidades" oncomplete="" />
+						</p:panelGrid>							
+						</p:outputPanel>
 
-						<h:panelGroup id="perguntasEspecialidade">
+						<p:separator styleClass="SeparatorFull" />
+						<p:outputPanel id="painelPerguntasEspecialidades" >
+						<h:panelGroup id="perguntasEspecialidade" rendered="#{pacienteMB.mostrarPerguntasAnamnese}">
 							<ui:repeat var="anamnesesAgrupadas"
 								value="#{pacienteMB.anamneses}">
-								<p:outputPanel id="#{anamnesesAgrupadas[0].especialidade}_id">
-								<p:fieldset legend="#{anamnesesAgrupadas[0].especialidade}" rendered="#{pacienteMB.mapaRenderizacao[anamnesesAgrupadas[0].especialidade]}" 
+								<p:outputPanel>
+								<p:fieldset legend="#{anamnesesAgrupadas[0].especialidade}" 
 								>
 									<ui:repeat var="anamnese" value="#{anamnesesAgrupadas}">
 										<p:panelGrid columns="2" layout="grid" 
@@ -227,6 +239,7 @@
 								<br />
 							</ui:repeat>
 						</h:panelGroup>
+						</p:outputPanel>
 					</div>
 				</div>
 

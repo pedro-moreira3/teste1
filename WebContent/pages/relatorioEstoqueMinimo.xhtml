@@ -200,52 +200,36 @@
                         </p:column>	
 						
 						
-						<p:column filterBy="#{m.item}" sortBy="#{m.item}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}">
-							<f:facet name="header">
-								<h:outputText value="Item" />
-							</f:facet>
+						<p:column filterBy="#{m.item}" sortBy="#{m.item}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" headerText="Item">							
 							<h:outputText value="#{m.item}" title="#{m.id}"/>
 						</p:column>						
-						<p:column  filterBy="#{m.somaQuantidadeAtual}" sortBy="#{m.somaQuantidadeAtual}" filterMatchMode="contains">
-							<f:facet name="header">
-								<h:outputText value="Quantidade Atual" />
-							</f:facet>							
+						<p:column  filterBy="#{m.somaQuantidadeAtual}" sortBy="#{m.somaQuantidadeAtual}" filterMatchMode="contains" headerText="Quantidade Atual">												
 							<h:outputLabel value="#{m.somaQuantidadeAtual} #{m.unidadeMedidaStr}" disabled="true" style="color: #{(m.somaQuantidadeAtual le m.estoqueMinimo)?'red':'none'}"/>
 						</p:column>
-						<p:column  filterBy="#{m.estoqueMinimo}" sortBy="#{m.estoqueMinimo}" filterMatchMode="contains">
-							<f:facet name="header">
-								<h:outputText value="Estoque Mínimo" />
-							</f:facet>	
+						<p:column  filterBy="#{m.estoqueMinimo}" sortBy="#{m.estoqueMinimo}" filterMatchMode="contains" headerText="Estoque Mínimo">							
 							<h:outputLabel value="#{m.estoqueMinimo} #{m.unidadeMedidaStr}" disabled="true" style="color: #{(m.somaQuantidadeAtual le m.estoqueMinimo)?'red':'none'}"/>
 						</p:column>
-						<p:column filterBy="#{m.valorUltimaCompra}" sortBy="#{m.valorUltimaCompra}" filterMatchMode="contains" rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}">
-							<f:facet name="header">
-								<h:outputText value="Valor Unit. Últ. Compra(R$)" />
-							</f:facet>
+						<p:column filterBy="#{m.valorUltimaCompra}" sortBy="#{m.valorUltimaCompra}" filterMatchMode="contains" 
+						rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}" headerText="Valor Unit. Últ. Compra(R$)">							
 							<h:outputText value="#{m.valorUltimaCompra}">
 								<f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 						</p:column>
-						<p:column filterBy="#{m.valorMedio}" sortBy="#{m.valorMedio}" filterMatchMode="contains" rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}">
-							<f:facet name="header">
-								<h:outputText value="Valor Unit. Médio" />
-							</f:facet>
+						<p:column filterBy="#{m.valorMedio}" sortBy="#{m.valorMedio}" filterMatchMode="contains" 
+						rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}" headerText="Valor Unit. Médio">						
 							<h:outputText value="#{m.valorMedio}">
 								<f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 						</p:column>
-						<p:column filterBy="#{m.valorMedioUlt6Meses}" sortBy="#{m.valorMedioUlt6Meses}" filterMatchMode="contains" rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}">
-							<f:facet name="header">
-								<h:outputText value="Valor Unit. Médio Ult. 6 meses(R$)" />
-							</f:facet>
+						<p:column filterBy="#{m.valorMedioUlt6Meses}" sortBy="#{m.valorMedioUlt6Meses}" filterMatchMode="contains" 
+						rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}" headerText="Valor Unit. Médio Ult. 6 meses(R$)">							
 							<h:outputText value="#{m.valorMedioUlt6Meses}">
 								<f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 						</p:column>
-                        <p:column filterBy="#{m.tipoStr}" sortBy="#{m.tipoStr}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}">
-                            <f:facet name="header">
-                                <h:outputText value="Tipo" />
-                            </f:facet>
+                        <p:column filterBy="#{m.tipoStr}" sortBy="#{m.tipoStr}" filterMatchMode="contains" 
+                        filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" headerText="Tipo">
+                            
                             <h:outputText value="#{m.tipoStr}"/>
                         </p:column>
 					</p:dataTable>

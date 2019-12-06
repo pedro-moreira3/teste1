@@ -192,7 +192,7 @@
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtEmprestimoUnitario" value="#{emprestimoUnitarioMB.emprestimoUnitarios}" var="emprestimoUnitario" rows="15" paginator="true"
                              rowKey="#{emprestimoUnitario}" paginatorPosition="bottom" binding="#{emprestimoUnitarioMB.tabelaEmprestimo}">                         
                             <f:facet name="header">Empréstimos Unitários</f:facet>
-							 <p:column headerText="AçÃµes" width="10%">
+							 <p:column headerText="Ações" width="10%">
 							 <p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlg').show();" update=":lume:pnDlg, :lume:pnBotoesDlg" title="Editar" process="@this"
                                 actionListener="#{emprestimoUnitarioMB.carregarEditar(emprestimoUnitario)}" style="width:33px !important" />
 	                        </p:column>		                         

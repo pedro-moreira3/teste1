@@ -130,14 +130,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     private List<Profissional> profissionais;
 
+    private boolean mostrarPerguntasAnamnese = false;
+    
     //EXPORTACAO TABELAS
     private DataTable tabelaAnamnese;
     private DataTable tabelaFrequencia;
     private DataTable tabelaFinanceiro;
     private DataTable tabelaPaciente;
     private boolean visualizar;
-
-    private HashMap<String, Boolean> mapaRenderizacao;
 
     private String metodoImagem = "U";
     private UploadedFile uploadedFile;
@@ -183,6 +183,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
+    public void mostrarPerguntasAnamnese() {
+        this.mostrarPerguntasAnamnese = true;     
+        anamneses = new ArrayList<>();
+        for (Especialidade e : especialidadeSelecionada) {
+            actionAtualizaPerguntasPorAnamnese(e);
+        }
+    }
+    
     public StreamedContent getImagemUsuario() {
         try {
             if (getEntity() != null && getEntity().getNomeImagem() != null) {
@@ -491,6 +499,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void actionAnamneseNew(ActionEvent event) {
         this.visualizar = false;
+        this.mostrarPerguntasAnamnese = false;
         this.pacienteAnamnese = null;
         especialidadeSelecionada = new ArrayList<>();
         this.habilitaSalvar = true;
@@ -502,6 +511,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
                 if (generica != null) {
                     especialidadeSelecionada.add(generica);
+                    anamneses = new ArrayList<>();
                     this.actionAtualizaPerguntasPorAnamnese(generica);
                 }
             }
@@ -530,29 +540,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.setReadonly(false);
         Map<String, List<Pergunta>> perguntas = new HashMap<>();
         if (UtilsFrontEnd.getProfissionalLogado() != null) {
-            perguntas = PerguntaSingleton.getInstance().getBo().listByEspecialidade(especialidadeSelecionada, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            perguntas = PerguntaSingleton.getInstance().getBo().listByEspecialidadeMap(especialidade, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
-        }
-
-        anamneses = new ArrayList<>();
-        anamneses = ItemAnamneseSingleton.getInstance().getBo().perguntasAnamnese(perguntas);
-
-        mapaRenderizacao = new HashMap<String, Boolean>();
-        if (especialidades != null) {
-            for (Especialidade especialidadeDefault : especialidades) {
-                mapaRenderizacao.put(especialidadeDefault.getDescricao(), false);
-            }
-        }
-        if (especialidadeSelecionada != null) {
-            for (Especialidade especialidadeSelecionada : especialidadeSelecionada) {
-                mapaRenderizacao.put(especialidadeSelecionada.getDescricao(), true);
-            }
-        }
-
-        //TODO verificar pq especialidade esta vindo nula, nao precisaria fazer esse ultimo for
-        //   mapaRenderizacao.put(especialidade.getDescricao(), true);  
-
-        PrimeFaces.current().ajax().update(":lume:tabView:perguntasEspecialidade");
+        }      
+        anamneses.addAll(ItemAnamneseSingleton.getInstance().getBo().perguntasAnamnese(perguntas)); 
     }
 
     public void actionAnamnesePersist(ActionEvent event) {
@@ -696,7 +687,6 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     }
 
     public void setPacienteAnamneses(List<Anamnese> pacienteAnamneses) {
-
         this.pacienteAnamneses = pacienteAnamneses;
     }
 
@@ -708,7 +698,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.habilitaSalvar = false;
         this.visualizar = true;
         this.pacienteAnamnese = pacienteAnamnese;
-
+        this.mostrarPerguntasAnamnese = true;
         HashMap<String, List<ItemAnamnese>> anamnesesPorEspecialidades = new HashMap<>();
         anamneses = new ArrayList<>();
         if (pacienteAnamnese != null) {
@@ -740,17 +730,6 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.setReadonly(true);
         }
 
-        mapaRenderizacao = new HashMap<String, Boolean>();
-        if (especialidades != null) {
-            for (Especialidade especialidadeDefault : especialidades) {
-                mapaRenderizacao.put(especialidadeDefault.getDescricao(), false);
-            }
-        }
-        if (especialidadeSelecionada != null) {
-            for (Especialidade especialidadeSelecionada : especialidadeSelecionada) {
-                mapaRenderizacao.put(especialidadeSelecionada.getDescricao(), true);
-            }
-        }
     }
 
     private void selecionaEspecialidades(List<ItemAnamnese> list) {
@@ -1015,14 +994,6 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.visualizar = visualizar;
     }
 
-    public HashMap<String, Boolean> getMapaRenderizacao() {
-        return mapaRenderizacao;
-    }
-
-    public void setMapaRenderizacao(HashMap<String, Boolean> mapaRenderizacao) {
-        this.mapaRenderizacao = mapaRenderizacao;
-    }
-
     public boolean isHabilitaSalvar() {
         return habilitaSalvar;
     }
@@ -1053,6 +1024,16 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void setUploadedFile(UploadedFile uploadedFile) {
         this.uploadedFile = uploadedFile;
+    }
+
+    
+    public boolean isMostrarPerguntasAnamnese() {
+        return mostrarPerguntasAnamnese;
+    }
+
+    
+    public void setMostrarPerguntasAnamnese(boolean mostrarPerguntasAnamnese) {
+        this.mostrarPerguntasAnamnese = mostrarPerguntasAnamnese;
     }
 
 }

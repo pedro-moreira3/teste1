@@ -358,7 +358,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												action="#{relatorioAtendimentoMB.popularLista}"
 												icon="White fa fa-search"
 												update=":lume:dtRelAtendimento,:lume:dlgGerarRelatorioTabela,:lume:filtroRelatorio"
-												process="@this,:lume:filtroRelatorio" />
+												process="@this,:lume:filtroRelatorio" styleClass="OrangeButton"/>
 										</h:panelGroup>
 
 										<h:panelGroup>
@@ -366,7 +366,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												oncomplete="PF('dlgConfirmarImpCabecalho').show();"
 												icon="White fa fa-print"
 												update=":lume:dlgGerarRelatorioTabela,:lume:dlgConfirmarImpCabecalho"
-												styleClass="RedButton"
+												styleClass=""
 												process="@this,:lume:dlgConfirmarImpCabecalho,:lume:filtroRelatorio" />
 										</h:panelGroup>
 

@@ -225,6 +225,16 @@
 							
 							<f:facet name="header">Retornos cadastrados</f:facet>
 							
+							<p:column headerText="Ações" width="100">
+								<p:commandButton icon="White fa fa-calendar White"
+									oncomplete="PF('eventDialog').show();" process="@this"
+									action="#{agendamentoMB.retorno(retorno)}"
+									update="lume:pnAgendamento" title="Agendar"/>
+								<p:button id="whats" icon="White fa fa-whatsapp" title="Whats"
+									disabled="#{retornoMB.getUrlWpp(retorno) == null}"
+									onclick="window.open('#{retornoMB.getUrlWpp(retorno)}'); return false;"
+									styleClass="GreenButton" />
+							</p:column>							
 							<p:column filterBy="#{retorno.paciente.dadosBasico.nomeStr}"
 								sortBy="#{retorno.paciente.dadosBasico.nome}"
 								filterFunction="#{retornoMB.filtroSemAcento}"
@@ -301,18 +311,7 @@
 								<h:outputText value="#{retorno.detalhesContato}" />
 							</p:column>
 							
-							<p:column headerText="Agendar" width="50">
-								<p:commandButton icon="White fa fa-calendar White"
-									oncomplete="PF('eventDialog').show();" process="@this"
-									action="#{agendamentoMB.retorno(retorno)}"
-									update="lume:pnAgendamento" />
-							</p:column>
-							<p:column headerText="Whats" width="50">
-								<p:button id="whats" icon="White fa fa-whatsapp"
-									disabled="#{retornoMB.getUrlWpp(retorno) == null}"
-									onclick="window.open('#{retornoMB.getUrlWpp(retorno)}'); return false;"
-									styleClass="GreenButton" />
-							</p:column>
+							
 							
 							<p:column filterBy="#{retorno.agendamento.dataAgendamentoStr}"
 								sortBy="#{retorno.agendamento.dataAgendamento}"

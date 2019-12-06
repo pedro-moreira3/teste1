@@ -99,25 +99,34 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 	<div class="ui-g ui-fluid">
 		<div class="ui-g-12 ui-lg-12">
 			<p:outputPanel id="mainViewPT">
-
-				<p:panelGrid columns="4" layout="grid"
+					<p:fieldset legend="Filtros" collapsed="true" toggleable="true">
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-6, ui-g-6"
+							styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+							<h:panelGroup styleClass="md-combo">
+								<p:outputLabel for="status" value="Status dos Planos de Tratamento " />
+								<p:selectOneMenu id="status" value="#{planoTratamentoMB.filtroStatus}">
+									<f:selectItem itemLabel="Ativos" itemValue="N" />
+									<f:selectItem itemLabel="Finalizados" itemValue="S" />
+									<f:selectItem itemLabel="Todos" itemValue="T" />
+									<p:ajax listener="#{planoTratamentoMB.carregarPlanosTratamento}" process="@this"
+										update="dtPlanoTratamento" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:fieldset>
+				<p:panelGrid columns="3" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 					<p:commandButton id="new" icon="ui-icon-add"
 						actionListener="#{planoTratamentoMB.actionNew}"
 						update=":lume:tabView:mainViewPT, :lume:tabView:pgPt"
 						onclick="PF('dlgPt').show();" value="Novo Plano de Tratamento"
-						process="@this" styleClass="NavyButton" />
-					<p:commandButton id="editar" icon="ui-icon-edit"
-						actionListener="#{planoTratamentoMB.atualizaTela()}"
-						update=":lume:tabView:pnEditaPlanoTratamento"
-						onclick="PF('dlgEditaPlanoTratamento').show();" value="Editar"
-						process="@this" styleClass="NavyButton"
-						disabled="#{planoTratamentoMB.entity.id == null}" />
+						process="@this" styleClass="NavyButton" />					
 					<h:panelGroup rendered="#{planoTratamentoMB.admin}">
 						<p:commandButton id="ptinicial" icon="White fa fa-file-o"
 							value="Criar P.T. Inicial"
 							update=":lume:tabView:dtPlanoTratamento" process="@this"
-							styleClass="PinkButton" rendered="#{planoTratamentoMB.admin}"
+							styleClass="OrangeButton" rendered="#{planoTratamentoMB.admin}"
 							actionListener="#{planoTratamentoMB.actionPTInicial}"
 							disabled="#{planoTratamentoMB.paciente == null}" />
 					</h:panelGroup>
@@ -179,7 +188,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:commandButton id="devolucao" icon="White fa fa-times-circle"
 								update=":lume:tabView:mainViewPT, :lume:tabView:botoesFinalizaPT"
 								title="Encerrar Plano de Tratamento" process="@this"
-								styleClass="OrangeButton"
+								styleClass="RedButton"
 								actionListener="#{planoTratamentoMB.actionFinalizar(planoTratamento)}"
 								disabled="#{planoTratamento.finalizado == 'S'}" />
 						</h:panelGroup>
@@ -674,10 +683,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 										maxFractionDigits="2" />
 								</p:inputText>
 							</p:panelGrid>
-							<p:panelGrid columns="6" layout="grid"
+							<p:panelGrid columns="5" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid removePaddingUp removeSideGridPadding">
 								<p:commandButton process="@this" value="Editar Informações"
-									update=":lume:tabView:pnEditaPlanoTratamento"
+									update=":lume:tabView:pnEditaPlanoTratamento" styleClass="OrangeButton"
 									icon="fa fa-pencil"
 									oncomplete="PF('dlgEditaPlanoTratamento').show()"
 									disabled="#{planoTratamentoMB.entity.finalizado == 'S'}" />
@@ -694,7 +703,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 										update=":lume:tabView:mainViewPT, :lume:tabView:pgFinalizar, :lume:tabView:pnViewPlanoTratamento,
 											:lume:tabView:botoesFinalizaPT"
 										value="Encerrar Plano de Tratamento" process="@this"
-										styleClass="OrangeButton"
+										styleClass="RedButton"
 										actionListener="#{planoTratamentoMB.actionFinalizar}"
 										disabled="#{planoTratamentoMB.entity.finalizado == 'S'}" />
 								</h:panelGroup>
@@ -733,22 +742,24 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							</f:facet>
 
 							<p:column styleClass="TexAlCenter" width="120">
-								<p:commandButton icon="fa fa-minus White"
-									disabled="#{plano.finalizado || planoTratamentoMB.finalizado}"
-									actionListener="#{planoTratamentoMB.abreJustificativaRemove(plano)}"
-									process="@this" title="Cancelar"
-									update=":lume:tabView:pnlJustificativaRemoveHeader, :lume:tabView:pnlJustificativaRemove" />
+								
 								<p:commandButton icon="fa fa-pencil" process="@this"
 									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
 									oncomplete="PF('dlgNovoProcedimento').show()" title="Editar"
 									disabled="#{plano.finalizado || planoTratamentoMB.finalizado}"
+									styleClass="OrangeButton"
 									update=":lume:tabView:pnViewPlanoTratamento, :lume:tabView:pgProcedimento, :lume:tabView:pgProcedimentoBotoes" />
-								<p:commandButton icon="fa fa-clock-o" process="@this"
+								<p:commandButton icon="fa fa-clock-o" process="@this" 
 									actionListener="#{planoTratamentoMB.carregaAgendamentosProcedimento(plano)}"
 									oncomplete="PF('dlgListaAgendamentoProcedimento').show()"
 									title="Agendamentos"
 									update=":lume:tabView:pnlListaAgendamento, :lume:tabView:pnlListaAgendamentoHeader">
 								</p:commandButton>
+								<p:commandButton icon="fa fa-times-circle White"
+									disabled="#{plano.finalizado || planoTratamentoMB.finalizado}"
+									actionListener="#{planoTratamentoMB.abreJustificativaRemove(plano)}"
+									process="@this" title="Cancelar" styleClass="RedButton"
+									update=":lume:tabView:pnlJustificativaRemoveHeader, :lume:tabView:pnlJustificativaRemove" />
 							</p:column>
 
 							<p:column styleClass="TexAlCenter" sortBy="#{plano.sequencial}"
