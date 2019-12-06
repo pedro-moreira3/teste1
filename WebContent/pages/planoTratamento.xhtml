@@ -949,9 +949,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:panelGrid>
 	</p:dialog>
 
-	<p:dialog id="novoProcedimento" widgetVar="dlgNovoProcedimento" closable="false"
-		responsive="true" modal="true" appendTo=":lume" resizable="false"
-		header="#{planoTratamentoMB.headerProcedimentoEdit}" width="50%">
+	<p:dialog id="novoProcedimento" widgetVar="dlgNovoProcedimento"
+		closable="false" responsive="true" modal="true" appendTo=":lume"
+		resizable="false" header="#{planoTratamentoMB.headerProcedimentoEdit}"
+		width="50%">
 		<p:outputPanel id="pgProcedimento">
 			<div class="ui-g ui-fluid">
 				<div class="ui-g-12 ui-lg-12">
@@ -983,8 +984,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</p:autoComplete>
 
 						<h:outputText value="Dente/Região" />
-						<p:selectOneMenu
-							value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.dente}"
+						<p:selectOneMenu value="#{planoTratamentoMB.denteRegiaoEscolhida}"
 							filterMatchMode="contains" filter="true">
 							<f:selectItem itemValue="#{null}"
 								itemLabel="Selecione o Dente/Região" />
