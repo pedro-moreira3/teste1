@@ -120,7 +120,10 @@ public class LoginMB extends LumeManagedBean<Usuario> {
                     Map<String, String> valores = new HashMap<>();
                     valores.put("#token", usuarioTrocaSenha.getTokenAcesso());
 
-                    EnviaEmail.enviaEmail(usuarioTrocaSenha.getUsuStrEml(), "Solicitação de troca de senha", EnviaEmail.buscarTemplate(valores, EnviaEmail.RESET));
+                    String mensagem = EnviaEmail.buscarTemplate(valores, EnviaEmail.RESET);
+                    mensagem.replaceAll("#token", usuarioTrocaSenha.getTokenAcesso());
+
+                    EnviaEmail.enviaEmail(usuarioTrocaSenha.getUsuStrEml(), "Solicitação de troca de senha", mensagem);
 
                     addInfo("Sucesso!", "E-mail enviado com sucesso!");
                 } else {
