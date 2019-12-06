@@ -104,10 +104,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private Procedimento procedimentoSelecionado;
 
     private List<Dominio> justificativas;
-    
+
     private String filtroStatus = "N";
 
     private DualListModel<PlanoTratamentoProcedimento> ptProcedimentosDisponiveis = new DualListModel<>();
+
+    private boolean novoPtDialogAberto = false;
 
     //Dentes
     private List<Integer> grupoDente1 = new ArrayList<>();
@@ -247,6 +249,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
                 addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 PrimeFaces.current().executeScript("PF('dlgPt').hide()");
+                fechaNovoPtDialog();
 
                 setEntity(PlanoTratamentoSingleton.getInstance().getBo().find(getEntity()));
                 carregaDlgProcedimentos(getEntity());
@@ -270,6 +273,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         observacoesRetorno = null;
         if (!this.getEntity().isBconvenio())
             this.getEntity().setBconvenio(true);
+        abreNovoPtDialog();
     }
 
     public void carregarPlanosTratamento() {
@@ -1810,6 +1814,18 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void setFiltroStatus(String filtroStatus) {
         this.filtroStatus = filtroStatus;
+    }
+
+    public boolean isNovoPtDialogAberto() {
+        return novoPtDialogAberto;
+    }
+
+    public void abreNovoPtDialog() {
+        this.novoPtDialogAberto = true;
+    }
+
+    public void fechaNovoPtDialog() {
+        this.novoPtDialogAberto = true;
     }
 
 }
