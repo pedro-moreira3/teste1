@@ -142,7 +142,6 @@ UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Relatório de Estoque Antigo' WHERE OBJ_STR
 UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Relatório de Estoque' WHERE OBJ_STR_DES = 'Estoque Mínimo';
 UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Relatório de Estoque Antigo';
 ----------------------------
-ALTER TABLE SEG_EMPRESA ADD COLUMN UTILIZA_RESERVA_KITS BOOLEAN default TRUE;
 INSERT INTO AFILIACAO('NOME', 'ATIVO')
 VALUES('Consultório Legal', 'S');
 

@@ -420,16 +420,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             getEntity().setDescricao(getObservacoes());
                         try {
                             if (profissionalDentroAgenda.getId() != getEntity().getProfissional().getIdUsuario()) {
-                                getEntity().setProfissional(profissionalDentroAgenda);
-                                if(UtilsFrontEnd.getEmpresaLogada().isUtilizaReservaKits()) {
+                                getEntity().setProfissional(profissionalDentroAgenda);                          
                                 List<Reserva> reservas = ReservaSingleton.getInstance().getBo().listByAgendamento(getEntity(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                                     if (reservas != null && !reservas.isEmpty()) {
                                         for (Reserva reserva : reservas) {
                                             reserva.setProfissional(profissionalDentroAgenda);
                                         }
                                         ReservaSingleton.getInstance().getBo().mergeBatch(reservas);
-                                    }
-                                }
+                                    }                               
                             }
                             AgendamentoSingleton.getInstance().getBo().persist(this.getEntity(), UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada().getEmpStrEstoque(),
                                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
@@ -516,10 +514,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                     aptpsNovos.add(a);
                 }
                 agendamento.setPlanoTratamentoProcedimentosAgendamento(aptpsNovos);
-                AgendamentoSingleton.getInstance().getBo().persist(agendamento);
-                if(UtilsFrontEnd.getEmpresaLogada().isUtilizaReservaKits()) {
-                    ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(), UtilsFrontEnd.getProfissionalLogado());
-                }
+                AgendamentoSingleton.getInstance().getBo().persist(agendamento);                
+                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(), UtilsFrontEnd.getProfissionalLogado());
+              
                 return true;
             } //else if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.CANCELADO.getSigla()) || this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) {
              //   ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(), UtilsFrontEnd.getProfissionalLogado());
@@ -792,10 +789,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         if (!this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) {
             //dlg = true;
             try {
-                this.removeAgendamentoPlanoTratamentoProcedimento();
-                if(UtilsFrontEnd.getEmpresaLogada().isUtilizaReservaKits()) {
-                    ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(), UtilsFrontEnd.getProfissionalLogado());
-                }
+                this.removeAgendamentoPlanoTratamentoProcedimento();               
+                ReservaSingleton.getInstance().getBo().cancelaReservas(getEntity(), UtilsFrontEnd.getProfissionalLogado());             
                 AgendamentoSingleton.getInstance().getBo().remove(this.getEntity());
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
             } catch (Exception e) {

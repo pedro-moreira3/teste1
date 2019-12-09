@@ -283,7 +283,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
                 planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPacienteAndFinalizado(getPaciente(), filtroStatus);
                 for (PlanoTratamento pt : planosTratamento) {
-                    if (pt.getFinalizado().equals(Status.SIM) && contemPlanoTratamentoProcedimentoAberto(pt.getPlanoTratamentoProcedimentos())) {
+                    if (pt.getStatus().equals(Status.SIM) && contemPlanoTratamentoProcedimentoAberto(pt.getPlanoTratamentoProcedimentos())) {
                         pt.setValor(BigDecimal.ZERO);
                     }
                 }
@@ -705,8 +705,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         return valorTotal;
     }
 
-    public boolean isFinalizado() {
-        if (getEntity().getFinalizado() != null && getEntity().getFinalizado().equals(Status.SIM))
+    public boolean isEncerrado() {
+        if (getEntity().getStatus().equals(Status.SIM))
+            return true;
+        return false;
+    }
+    
+    public boolean isExecutado() {
+        if (getEntity().getStatus().equals(Status.EXECUTADO))
             return true;
         return false;
     }
@@ -870,7 +876,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     this.addError("Valor do plano está diferente do valor do orçamento, é preciso refazer o orçamento!", "");
                 }
             } else {
-                if (isTemPermissaoExtra() && getEntity().getFinalizado().equals("N")) {
+                if (isTemPermissaoExtra() && getEntity().getStatus().equals("N")) {
                     this.addError("Este plano é novo e ainda não tem orçamento, é preciso fazer o orçamento!", "");
                 } else {
                     this.addError("Este plano já foi finalizado!", "");

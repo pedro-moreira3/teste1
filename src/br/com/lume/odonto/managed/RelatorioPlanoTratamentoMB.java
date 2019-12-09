@@ -210,9 +210,9 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
     public String statusPlanoTratamento(PlanoTratamento planoTratamento) {
         
         String retorno = "Ativo";
-        if (Status.SIM.equals(planoTratamento.getFinalizado()) && planoTratamento.getJustificativa() == null) {
+        if (Status.SIM.equals(planoTratamento.getStatus()) && planoTratamento.getJustificativa() == null) {
             retorno = "Finalizado";
-        } else if (Status.SIM.equals(planoTratamento.getFinalizado()) && planoTratamento.getJustificativa() != null) {
+        } else if (Status.SIM.equals(planoTratamento.getStatus()) && planoTratamento.getJustificativa() != null) {
             retorno = "Encerrado";
         } else if (!planoTratamento.isAtivo()) {
             retorno = "Excluido";

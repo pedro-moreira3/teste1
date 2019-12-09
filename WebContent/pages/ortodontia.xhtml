@@ -108,7 +108,7 @@ li.orcamento-li {
 						<h:outputText value="#{planoTratamento.inicioStr}" />
 					</p:column>
 					<p:column filterBy="#{planoTratamento.fimStr}"
-						filterMatchMode="contains" headerText="Inicio"
+						filterMatchMode="contains" headerText="Fim"
 						sortBy="#{planoTratamento.fim}">
 						<h:outputText value="#{planoTratamento.fimStr}" />
 					</p:column>
@@ -218,7 +218,7 @@ li.orcamento-li {
 								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 								symbol="R$ " thousandSeparator="."
 								readonly="#{ortodontiaMB.orcamentoSelecionado.ativo == 'N'}"
-								disabled="#{ortodontiaMB.entity.finalizado == 'S'}">
+								disabled="#{ortodontiaMB.entity.status == 'S'}">
 							</p:inputNumber>
 						</p:column>
 						<p:column headerText="Desconto" filterMatchMode="contains"
@@ -233,7 +233,7 @@ li.orcamento-li {
 
 						<p:column headerText="Incluso?" width="50">
 							<p:selectBooleanCheckbox value="#{procedimento.incluso}"
-								disabled="#{ortodontiaMB.entity.finalizado == 'S'}" />
+								disabled="#{ortodontiaMB.entity.status == 'S'}" />
 						</p:column>
 					</p:dataTable>
 					<br />
@@ -245,7 +245,7 @@ li.orcamento-li {
 							<h:outputText value="Tipo do Desconto" />
 							<p:selectOneMenu
 								rendered="#{ortodontiaMB.orcamentoSelecionado != null}"
-								disabled="#{ortodontiaMB.entity.finalizado == 'S' or ortodontiaMB.orcamentoSelecionado.aprovado}"
+								disabled="#{ortodontiaMB.entity.status == 'S' or ortodontiaMB.orcamentoSelecionado.aprovado}"
 								value="#{ortodontiaMB.orcamentoSelecionado.descontoTipo}">
 								<f:selectItem itemValue="P" itemLabel="Porcentagem" />
 								<f:selectItem itemValue="V" itemLabel="Valor" />
@@ -256,14 +256,14 @@ li.orcamento-li {
 							<h:outputText value="Valor do Desconto" />
 							<h:panelGroup id="orcamentoOrtodonticoDescontoValor">
 								<p:inputNumber
-									disabled="#{ortodontiaMB.entity.finalizado == 'S' or ortodontiaMB.orcamentoSelecionado.aprovado}"
+									disabled="#{ortodontiaMB.entity.status == 'S' or ortodontiaMB.orcamentoSelecionado.aprovado}"
 									value="#{ortodontiaMB.orcamentoSelecionado.descontoValor}"
 									styleClass="taller" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
 									rendered="#{ortodontiaMB.orcamentoSelecionado.descontoTipo == 'V'}">
 								</p:inputNumber>
 								<p:inputNumber
-									disabled="#{ortodontiaMB.entity.finalizado == 'S' or ortodontiaMB.orcamentoSelecionado.aprovado}"
+									disabled="#{ortodontiaMB.entity.status == 'S' or ortodontiaMB.orcamentoSelecionado.aprovado}"
 									value="#{ortodontiaMB.orcamentoSelecionado.descontoValor}"
 									styleClass="taller" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="%" thousandSeparator="."
@@ -284,7 +284,7 @@ li.orcamento-li {
 				actionListener="#{ortodontiaMB.actionPersistOrcamento}"
 				styleClass="GreenButton"
 				update=":lume:tabView:orcamentoPlanoOrtodontico, :lume:tabView:dtOrcamentosOrtodontia, :lume:tabView:buttonsDlgOrcamentoOrtodonticoView"
-				disabled="#{ortodontiaMB.entity.finalizado == 'S' or ortodontiaMB.orcamentoSelecionado.aprovado}" />
+				disabled="#{ortodontiaMB.entity.status == 'S' or ortodontiaMB.orcamentoSelecionado.aprovado}" />
 			<p:commandButton icon="White fa fa-print"
 				value="Visualizar Impressão" process="@this"
 				oncomplete="PF('dlgPrintOrcamentoO').show()" styleClass="NavyButton"
@@ -296,7 +296,7 @@ li.orcamento-li {
 				process="@this, :lume:tabView:orcamentoPlanoOrtodontico"
 				styleClass="OrangeButton"
 				update=":lume:tabView:buttonsDlgOrcamentoOrtodonticoView, :lume:tabView:orcamentoPlanoOrtodontico, :lume:tabView:dtOrcamentosOrtodontia"
-				disabled="#{ortodontiaMB.entity.finalizado == 'S' or ortodontiaMB.orcamentoSelecionado.id == null or ortodontiaMB.orcamentoSelecionado.id == 0
+				disabled="#{ortodontiaMB.entity.status == 'S' or ortodontiaMB.orcamentoSelecionado.id == null or ortodontiaMB.orcamentoSelecionado.id == 0
 								or ortodontiaMB.orcamentoSelecionado.aprovado}" />
 			<p:commandButton icon="White fa fa-close" value="Fechar"
 				process="@this" onclick="PF('dlgOrcamentoPlanoOrtodontico').hide();"
@@ -575,7 +575,7 @@ li.orcamento-li {
 														actionListener="#{ortodontiaMB.actionRemoveOrcamento(o)}"
 														update=":lume:tabView:dtOrcamentosOrtodontia"
 														styleClass="RedButton" title="Cancelar Orçamento"
-														disabled="#{o.aprovado or ortodontiaMB.entity.finalizado == 'S'}">
+														disabled="#{o.aprovado or ortodontiaMB.entity.status == 'S'}">
 														<p:confirm header="Confirmação"
 															message="Deseja cancelar o orçamento?"
 															icon="ui-icon-alert" />
