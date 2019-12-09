@@ -181,3 +181,5 @@ INSERT INTO DOMINIO(OBJETO, TIPO, NOME, VALOR, ID_EMPRESA, EDITAVEL, EXCLUIDO)
 VALUES('planotratamentoprocedimento', 'justificativa', 'Solicitação do dentista', 'SD', 41, TRUE, 'N');
 INSERT INTO DOMINIO(OBJETO, TIPO, NOME, VALOR, ID_EMPRESA, EDITAVEL, EXCLUIDO)
 VALUES('planotratamentoprocedimento', 'justificativa', 'Solicitação do paciente', 'SP', 41, TRUE, 'N');
+
+ALTER TABLE SEG_EMPRESA ADD COLUMN ADICIONAR_LOGO_ORCAMENTO VARCHAR(1) NOT NULL DEFAULT 'N';
