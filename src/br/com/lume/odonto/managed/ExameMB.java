@@ -3,9 +3,9 @@ package br.com.lume.odonto.managed;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -19,26 +19,24 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.eclipse.persistence.jpa.jpql.parser.ScalarExpressionBNF;
 import org.imgscalr.Scalr;
-import org.imgscalr.Scalr.Method;
-import org.imgscalr.Scalr.Mode;
-import org.primefaces.component.fileupload.FileUpload;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.exame.ExameSingleton;
-//import br.com.lume.odonto.bo.DominioBO;
-//import br.com.lume.odonto.bo.ExameBO;
+// import br.com.lume.odonto.bo.DominioBO;
+// import br.com.lume.odonto.bo.ExameBO;
 import br.com.lume.odonto.entity.Exame;
-import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.util.OdontoMensagens;
 
 @ManagedBean
@@ -58,36 +56,27 @@ public class ExameMB extends LumeManagedBean<Exame> {
     @ManagedProperty(value = "#{pacienteMB}")
     private PacienteMB pacienteMB;
 
-    private Paciente pacienteAnterior;
-
     private StreamedContent media;
 
     private boolean habilitaPDF = false, habilitaImage = false;
 
-  //  private ExameBO exameBO;
-
- //   private DominioBO dominioBO;
-
     public ExameMB() {
         super(ExameSingleton.getInstance().getBo());
-      //  this.exameBO = new ExameBO();
-      //  this.dominioBO = new DominioBO();
         this.setClazz(Exame.class);
     }
-    
 
-  public StreamedContent getArquivo() {
-      StreamedContent arquivo = null;
-      if (getEntity().getAnexo() != null) {
-          try {
-              ByteArrayInputStream bis = new ByteArrayInputStream(getEntity().getAnexo());
-              arquivo = new DefaultStreamedContent(bis, null, getEntity().getNomeAnexo());
-          } catch (Exception e) {
-              e.printStackTrace();
-          }
-      }
-      return arquivo;
-  }
+    public StreamedContent getArquivo(Exame exame) {
+        StreamedContent arquivo = null;
+        if (exame.getAnexo() != null) {
+            try {
+                ByteArrayInputStream bis = new ByteArrayInputStream(exame.getAnexo());
+                arquivo = new DefaultStreamedContent(bis, null, exame.getNomeAnexo());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return arquivo;
+    }
 
     @Override
     public void actionPersist(ActionEvent event) {
@@ -95,22 +84,37 @@ public class ExameMB extends LumeManagedBean<Exame> {
             if (this.getEntity().getAnexo() != null) {
                 this.getEntity().setPaciente(this.pacienteMB.getEntity());
                 ExameSingleton.getInstance().getBo().persist(this.getEntity());
-                this.setEntity(new Exame());
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                this.pacienteAnterior = null;
+                this.setEntity(null);
+                this.addInfo("Sucesso", "Exame salvo com sucesso!");
+                PrimeFaces.current().executeScript("PF('dlgViewExame').hide()");
             } else {
-                this.addError(OdontoMensagens.getMensagem("exame.anexo.vazio"), "");
+                this.addError("Erro", OdontoMensagens.getMensagem("exame.anexo.vazio"));
             }
         } catch (Exception e) {
             this.log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
         }
+    }
+
+    public void actionRemove(Exame exame) {
+        inativarExame(exame);
     }
 
     @Override
     public void actionRemove(ActionEvent event) {
-        super.actionRemove(event);
-        this.pacienteAnterior = null;
+        //super.actionRemove(event);
+        inativarExame(getEntity());
+    }
+
+    public void inativarExame(Exame exame) {
+        try {
+            exame.setExcluido("S");
+            exame.setDataExclusao(new Date());
+            exame.setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
+            ExameSingleton.getInstance().getBo().persist(exame);
+        } catch (Exception e) {
+            this.addError("Erro", "Falha ao excluir exame. " + e.getMessage());
+        }
     }
 
     public void uploadArquivo(FileUploadEvent event) {
@@ -181,9 +185,23 @@ public class ExameMB extends LumeManagedBean<Exame> {
         return baos;
     }
 
+    public void removeFile() {
+        setFile(null, null);
+    }
+
     public void setFile(String nome, byte[] anexo) {
         this.getEntity().setNomeAnexo(nome);
         this.getEntity().setAnexo(anexo);
+    }
+
+    public void cancelaAlteracao() {
+        try {
+            if (getEntity().getId() != 0)
+                setEntity(ExameSingleton.getInstance().getBo().find(getEntity()));
+            setEntity(null);
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
     }
 
     public void actionEditFile() {
@@ -240,13 +258,9 @@ public class ExameMB extends LumeManagedBean<Exame> {
     }
 
     public List<Exame> getExames() {
-        Paciente pacienteAtual = this.pacienteMB.getEntity();
-        if (this.pacienteAnterior == null || this.pacienteAnterior.getId() != pacienteAtual.getId()) {
-            this.pacienteAnterior = pacienteAtual;
-            if (this.pacienteMB != null && this.pacienteMB.getEntity() != null) {
-                this.exames = ExameSingleton.getInstance().getBo().listByPaciente(this.pacienteMB.getEntity());
-                Collections.sort(this.exames);
-            }
+        if (this.pacienteMB != null && this.pacienteMB.getEntity() != null) {
+            this.exames = ExameSingleton.getInstance().getBo().listByPaciente(this.pacienteMB.getEntity());
+            Collections.sort(this.exames);
         }
         return this.exames;
     }

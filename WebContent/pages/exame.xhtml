@@ -25,86 +25,118 @@
 	<script type="text/javascript"
 		src="${request.contextPath}/resources/wPaint/plugins/file/wPaint.menu.main.file.min.js"></script>
 	<script>
-		$(window).on("load",function(){
-			doPaint = function() {
-				if ($("#lume\\:tabView\\:arquivoBase64").val() != "") {
-					$("#lume\\:tabView\\:paint").wPaint();
-					$("#lume\\:tabView\\:paint").wPaint("image",
-							$("#lume\\:tabView\\:arquivoBase64").val());
-					$('div#_wPaint_menu').css('position', 'absolute');
-				}
+		var doPaint = function() {
+			if ($("#lume\\:tabView\\:arquivoBase64").val() != "") {
+				$("#lume\\:tabView\\:paint").wPaint();
+				$("#lume\\:tabView\\:paint").wPaint("image",
+						$("#lume\\:tabView\\:arquivoBase64").val());
+				$('div#_wPaint_menu').css('position', 'absolute');
 			}
+		}
 
-			doView = function() {
-				if ($("#lume\\:tabView\\:viewArquivoBase64").val() != "") {
-					$("#lume\\:tabView\\:view").wPaint();
-					$("#lume\\:tabView\\:view").wPaint("image",
-							$("#lume\\:tabView\\:viewArquivoBase64").val());
-					$('div#_wPaint_menu').css('position', 'absolute');
-				}
+		var doView = function() {
+			if ($("#lume\\:tabView\\:viewArquivoBase64").val() != "") {
+				$("#lume\\:tabView\\:view").wPaint();
+				$("#lume\\:tabView\\:view").wPaint("image",
+						$("#lume\\:tabView\\:viewArquivoBase64").val());
+				$('div#_wPaint_menu').css('position', 'absolute');
 			}
+		}
 
-			saveImage = function() {
-				var imageData = $("#lume\\:tabView\\:paint").wPaint("image");
-				$("#lume\\:tabView\\:arquivoBase64").val(imageData);
-			}
-		});
+		var saveImage = function() {
+			var imageData = $("#lume\\:tabView\\:paint").wPaint("image");
+			$("#lume\\:tabView\\:arquivoBase64").val(imageData);
+		}
 	</script>
 	<style>
 #lume\3a tabView\3a exame>div.ui-fileupload-buttonbar {
 	width: 30%;
 }
+
+.ui-fileupload .ui-fileupload-buttonbar {
+	padding: 0 !important;
+	background: none;
+	border: none;
+}
+
+.ui-fileupload .ui-fileupload-content {
+	display: none;
+}
 </style>
+
+	<p:dialog widgetVar="dlgViewExame" resizable="false" modal="true"
+		appendTo=":lume" width="70%" closable="false">
+		<f:facet name="header">
+			<p:outputPanel id="pnPrincipalExameHeader">
+				<h:outputText
+					value="Exame do Paciente #{pacienteMB.entity.dadosBasico.nome}" />
+			</p:outputPanel>
+		</f:facet>
+		<p:outputPanel id="pnPrincipalExame">
+			<h3>Arquivo : (JPG/JPEG/GIF/PNG/PDF)</h3>
+			<p:fileUpload multiple="false" mode="advanced" dragDropSupport="true"
+				rendered="true" update="nomeAnexo"
+				allowTypes="/(\.|\/)(gif|jpeg|png|pdf|jpg|GIF|JPEG|PNG|PDF|JPG)$/"
+				label="Anexar Exame"
+				invalidFileMessage="Apenas imagens e PDF pode ser utilizados."
+				invalidSizeMessage="Tamanho excedeu oOo limite." auto="true"
+				sizeLimit="10240000" id="exame"
+				fileUploadListener="#{exameMB.uploadArquivo}"
+				styleClass="NavyButton" icon="fa fa-cloud-upload" />
+
+			<p:separator styleClass="SeparatorFull" />
+			<br />
+			<p:panelGrid columns="1" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<h:panelGroup styleClass="md-inputfield" style="display: flex;">
+					<p:inputText id="nomeAnexo"
+						value="#{(exameMB.entity.nomeAnexo != null and !exameMB.entity.nomeAnexo.isEmpty() ? exameMB.entity.nomeAnexo : 'Sem arquivo anexado!')}"
+						readonly="true" />
+					<p:commandButton icon="White fa fa-trash-o"
+						actionListener="#{exameMB.removeFile}"
+						update=":lume:tabView:pnPrincipalExame" process="@this"
+						styleClass="RedButton" />
+					<p:outputLabel for="nomeAnexo" value="Arquivo Anexado" />
+					<p:message for="nomeAnexo" styleClass="msg" />
+				</h:panelGroup>
+				<br />
+				<h:panelGroup styleClass="md-inputfield">
+					<p:inputTextarea id="descricao" rows="6" style="width: 100%"
+						value="#{exameMB.entity.descricao}" autoResize="true"
+						required="true" maxlength="200"
+						counterTemplate="{0} caracteres restantes." counter="counter" />
+					<p:outputLabel for="descricao" value="Descrição" />
+					<p:message for="descricao" styleClass="msg" />
+				</h:panelGroup>
+			</p:panelGrid>
+
+		</p:outputPanel>
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton icon="fa fa-save" value="Salvar"
+				process="@this, :lume:tabView:pnPrincipalExame"
+				update=":lume:tabView:tbExame"
+				actionListener="#{exameMB.actionPersist}" styleClass="GreenButton" />
+			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+				oncomplete="PF('dlgViewExame').hide()"
+				actionListener="#{exameMB.cancelaAlteracao}" />
+		</p:panelGrid>
+	</p:dialog>
 
 	<p:remoteCommand id="carregaPdf" name="carregaPdf" process="@this"
 		update=":lume:tabView:media,:lume:tabView:dlgPdf"
 		oncomplete="PF('viewDialogPdf').show();" />
 	<div class="Container100 Responsive100 NoIndent">
 		<div class="Container100 ui-fluid NoPadding">
-
 			<div class="Card">
-				<p:outputPanel id="pnExame" styleClass="BordNone">
 
-					<h1>Arquivo : (JPG/JPEG/GIF/PNG/PDF)</h1>
-					<p:separator styleClass="SeparatorFull" />
-					<h:outputText id="nomeAnexo" value="#{exameMB.entity.nomeAnexo}" />
-					<p:fileUpload id="exame"
-						fileUploadListener="#{exameMB.uploadArquivo}" mode="advanced"
-						label="Anexar" auto="true" rendered="true"
-						allowTypes="/(\.|\/)(gif|jpeg|png|pdf|jpg|GIF|JPEG|PNG|PDF|JPG)$/"
-						sizeLimit="10240000"
-						invalidFileMessage="Apenas imagens e PDF pode ser utilizados."
-						invalidSizeMessage="Tamanho excedeu oOo limite."
-						update="nomeAnexo" />
-
-					<div class="EmptyBox20"></div>
-					<h1>Descrição *</h1>
-					<p:separator styleClass="SeparatorFull" />
-					<p:inputTextarea id="descricao" cols="50" rows="6"
-						value="#{exameMB.entity.descricao}" autoResize="true"
-						required="true" maxlength="200"
-						counterTemplate="{0} caracteres restantes." counter="counter" />
-					<br />
-
-					<p:separator styleClass="SeparatorFull" />
-					<p:panelGrid columns="3" layout="grid"
-						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente">
-						<p:commandButton id="persistExame" icon="White fa fa-save"
-							value="Salvar" actionListener="#{exameMB.actionPersist}"
-							update=":lume:tabView:pnExame,:lume:tabView:tbExame"
-							process=":lume:tabView:pnExame" styleClass="GreenButton" />
-						<p:commandButton id="deleteExame" icon="White fa fa-trash-o"
-							value="Excluir" actionListener="#{exameMB.actionRemove}"
-							update=":lume:tabView:pnExame,:lume:tabView:tbExame"
-							process="@this" disabled="#{exameMB.entity.id == 0}"
-							styleClass="RedButton" />
-						<p:commandButton id="newExame" icon="White fa fa-file-o"
-							value="Novo" actionListener="#{exameMB.actionNew}"
-							update=":lume:tabView:pnExame,:lume:tabView:dtExame"
-							immediate="true" process="@this" tabindex="1" />
-					</p:panelGrid>
-
-				</p:outputPanel>
+				<p:panelGrid columns="4" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+					<p:commandButton id="newExame" icon="ui-icon-add" value="Novo"
+						actionListener="#{exameMB.actionNew}"
+						onsuccess="PF('dlgViewExame').show()"
+						update=":lume:tabView:pnPrincipalExame" process="@this" />
+				</p:panelGrid>
 				<div class="EmptyBox20"></div>
 
 				<p:outputPanel id="tbExame">
@@ -113,22 +145,30 @@
 						paginator="true" paginatorPosition="bottom"
 						selection="#{exameMB.entity}" selectionMode="single"
 						rowKey="#{exame}">
-						<p:ajax event="rowSelect" update=":lume:tabView:pnExame" />
 						<f:facet name="header">Exames</f:facet>
+						<p:column width="80" headerText="Ações">
+							<p:commandButton icon="White fa fa-eye"
+								actionListener="#{exameMB.setEntity(exame)}"
+								update=":lume:tabView:pnPrincipalExame" process="@this"
+								styleClass="NavyButton" oncomplete="PF('dlgViewExame').show()" />
+							<p:commandButton icon="White fa fa-trash-o"
+								actionListener="#{exameMB.actionRemove(exame)}"
+								update=":lume:tabView:tbExame" process="@this"
+								styleClass="RedButton" />
+						</p:column>
 						<p:column sortBy="#{exame.descricao}"
 							filterBy="#{exame.descricao}" filterMatchMode="contains"
 							headerText="Descrição">
 							<h:outputText value="#{exame.descricao}" />
 						</p:column>
 						<p:column headerText="Download" styleClass="TexAlCenter">
-							<p:commandButton ajax="false" icon="White fa fa-download "
-								immediate="true">
-								<p:fileDownload value="#{exameMB.getArquivo()}" />
+							<p:commandButton ajax="true" icon="White fa fa-download ">
+								<p:fileDownload value="#{exameMB.getArquivo(exame)}" />
 							</p:commandButton>
 						</p:column>
 						<p:column headerText="Arquivo Original" styleClass="TexAlCenter">
 							<p:commandButton action="#{exameMB.actionEditFile}"
-								icon="White fa fa-save" process="@this" immediate="true"
+								icon="White fa fa-save" process="@this"
 								oncomplete="PF('viewDialogResponsivo').show();PF('viewDialogResponsivo').toggleMaximize();"
 								update=":lume:tabView:pnResponsivo"
 								rendered="#{!exameMB.validaPdf(exame)}">
@@ -150,7 +190,7 @@
 								icon="White fa fa-save" process="@this" immediate="true"
 								oncomplete="doView();PF('viewDialog').show();"
 								update=":lume:tabView:view,:lume:tabView:viewArquivoBase64"
-								disabled="#{exameMB.validaPdf(exame)}">
+								disabled="#{exameMB.validaPdf(exame) or exame.anexoAlterado == null}">
 								<f:setPropertyActionListener target="#{exameMB.entity}"
 									value="#{exame}" />
 							</p:commandButton>
@@ -176,11 +216,12 @@
 	<p:dialog widgetVar="viewDialogResponsivo" header="Visualizar imagem"
 		modal="true" responsive="true" appendTo=":lume"
 		onHide="PF('viewDialogResponsivo').toggleMaximize();">
-		<p:graphicImage value="#{exameMB.arquivo}" stream="false"
-			id="pnResponsivo" style="width: 100%;height: auto;" />
+		<p:graphicImage value="#{exameMB.getArquivo(exameMB.entity)}"
+			stream="false" id="pnResponsivo" style="width: 100%;height: auto;" />
 	</p:dialog>
-	<p:dialog widgetVar="editDialog" header="Editar imagem" id="pnEditar" appendTo=":lume"
-		modal="true" responsive="true" onHide="$('div#_wPaint_menu').hide();">
+	<p:dialog widgetVar="editDialog" header="Editar imagem" id="pnEditar"
+		appendTo=":lume" modal="true" responsive="true"
+		onHide="$('div#_wPaint_menu').hide();">
 		<div class="Card">
 			<p:outputPanel id="paint" layout="block" class="ResolucaoImg"
 				style="height: 450px !important; width: 800px !important" />
@@ -194,8 +235,9 @@
 			oncomplete="PF('editDialog').hide();$('div#_wPaint_menu').hide();"
 			styleClass="GreenButton" />
 	</p:dialog>
-	<p:dialog widgetVar="viewDialog" header="Visualizar imagem" appendTo=":lume"
-		modal="true" responsive="true" onShow="$('div#_wPaint_menu').hide();">
+	<p:dialog widgetVar="viewDialog" header="Visualizar imagem"
+		appendTo=":lume" modal="true" responsive="true"
+		onShow="$('div#_wPaint_menu').hide();">
 		<h:panelGroup styleClass="lumeField" id="pnVisualizar">
 			<p:outputPanel id="view" layout="block" class="ResolucaoImg" />
 			<h:inputHidden id="viewArquivoBase64"
