@@ -363,9 +363,15 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public BigDecimal getTotalNaoPlanejado(Fatura fatura) {
         return FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura);
     }
-    
+
     public BigDecimal getTotalRestante(Fatura fatura) {
         return FaturaSingleton.getInstance().getTotalRestante(fatura);
+    }
+
+    public String getStatus(Fatura fatura) {
+        if (getTotal(fatura).subtract(getTotalPago(fatura)).doubleValue() <= 0)
+            return "Pago";
+        return "Pendente";
     }
 
     public List<Paciente> sugestoesPacientes(String query) {

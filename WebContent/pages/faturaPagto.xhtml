@@ -178,6 +178,12 @@
 							</h:outputText>
 						</p:column>
 
+						<p:column width="80" headerText="Status"
+							filterBy="#{faturaPagtoMB.getStatus(f)}"
+							sortBy="#{faturaPagtoMB.getStatus(f)}" filterMatchMode="contains">
+							<h:outputText value="#{faturaPagtoMB.getStatus(f)}" />
+						</p:column>
+
 					</p:dataTable>
 				</div>
 			</div>
