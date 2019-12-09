@@ -1277,7 +1277,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							filterBy="#{procedimento.descricao}"
 							sortBy="#{procedimento.descricao}"
 							filterFunction="#{agendamentoMB.filtroSemAcento}">
-							<h:outputText value="#{procedimento.descricao}" />
+							<div style="width: 100%; text-align: left">
+								<h:outputText value="#{procedimento.descricao}" />
+							</div>
 						</p:column>
 						<p:column headerText="Valor Original" filterMatchMode="contains"
 							style="width: 200px;" filterBy="#{procedimento.valorOriginal}"
@@ -1298,7 +1300,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							</p:inputNumber>
 						</p:column>
 						<p:column headerText="Desconto" filterMatchMode="contains"
-							style="width: 80px;"
+							style="width: 80px;" rendered="false"
 							filterBy="#{planoTratamentoMB.getDescontoFrom(procedimento)}"
 							sortBy="#{planoTratamentoMB.getDescontoFrom(procedimento)}">
 							<h:outputText
