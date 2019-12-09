@@ -43,12 +43,28 @@ public class OrcamentoImpressaoMB extends LumeManagedBean<Orcamento> {
         }
     }
 
+    public boolean isShowLogo() {
+        try {
+            return "S".equals(UtilsFrontEnd.getEmpresaLogada().getAdicionarLogoOrcamento());
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String getLogo() {
+        try {
+            return UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public BigDecimal getTotalPago(Orcamento orcamento) {
         BigDecimal valorTotal = BigDecimal.ZERO;
-        if(orcamento == null)
+        if (orcamento == null)
             return valorTotal;
         List<Lancamento> lancamentos = LancamentoSingleton.getInstance().getBo().listLancamentosFromOrcamento(orcamento);
-        for(Lancamento lancamento: lancamentos)
+        for (Lancamento lancamento : lancamentos)
             valorTotal.add(lancamento.getValor());
         return valorTotal;
     }
@@ -56,14 +72,14 @@ public class OrcamentoImpressaoMB extends LumeManagedBean<Orcamento> {
     public BigDecimal getValorOrcamentoAPagar(Orcamento orcamento) {
         return OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamento);
     }
-    
+
     public boolean showPanel(Orcamento o, PlanoTratamento pt) {
         return o != null && o.getId() != 0 && pt != null && pt.getId() != null && pt.getId().longValue() != 0l;
     }
-    
+
     public String getId(String prefix, Orcamento o) {
         String result = "" + (prefix != null ? prefix : "");
-        if(o != null)
+        if (o != null)
             result += (o.getId() != 0l ? "_" + o.getId() : "");
         else {
             Random r = new Random();
