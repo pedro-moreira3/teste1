@@ -164,6 +164,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private List<Agendamento> agendamentosDisponiveis;
     private Date dataAgendamentoInicial;
     private Date dataAgendamentoFinal;
+    private List<Afastamento> afastamentos = new ArrayList<>();
 
     public AgendamentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
@@ -198,9 +199,18 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             profissional = null;
         }
         carregarScheduleTarefas();
-        carregarScheduleProfissionalTarefas();
+        
     }
 
+    public void carregarAgenda() {
+        long tempoInicial = System.currentTimeMillis()*1000;
+        System.out.println("Tempo inicial: " + String.valueOf(tempoInicial));
+        carregarScheduleTarefas();
+        PrimeFaces.current().executeScript("atualizaGraficos();");
+        long tempoFinal = System.currentTimeMillis()*1000;
+        System.out.println("\nTempo Final: "+String.valueOf(tempoFinal));
+    }
+    
     public void atualizaPacientePosFicha() {
         try {
             pacienteSelecionado = PacienteSingleton.getInstance().getBo().find(pacienteSelecionado);
@@ -827,53 +837,72 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                     profissional = UtilsFrontEnd.getProfissionalLogado();
                 }
 
-                if (profissional == null && pacientePesquisado == null) {
-                    this.clear();
-                    agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataTodosProfissionais(start, end, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                try {
+                    if (profissional == null && pacientePesquisado == null) {
+                        
+                        this.clear();
+                        agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataTodosProfissionais(start, end, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                        afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataValidos(start, end, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
-                    List<Profissional> dentistas;
-                    try {
-                        dentistas = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                        removerFiltrosAgendamento(agendamentos);
+                        pacientePesquisado = null;
 
-                        for (Profissional dentista : dentistas) {
-                            geraAgendamentoAfastamento(start, end, dentista);
-                            agendamentos.addAll(agendamentosAfastamento);
+                    } else if (profissional != null && pacientePesquisado == null) {
+                        
+                        tempoConsulta = profissional.getTempoConsulta();
+                        this.clear();
+                        agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndProfissional(profissional, start, end);
+                        removerFiltrosAgendamento(agendamentos);
+                        afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalValidos(profissional, start, end, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                        pacientePesquisado = null;
+                        
+                    } else if (pacientePesquisado != null && profissional == null) {
+                        
+                        this.clear();
+                        agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndPaciente(pacientePesquisado, start, end);
+                        afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataValidos(start, end, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                        removerFiltrosAgendamento(agendamentos);
+                        
+                    } else if (pacientePesquisado != null && profissional != null) {
+                        
+                        this.clear();
+                        agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndPacienteAndProfissional(pacientePesquisado, profissional, start, end);
+                        afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalValidos(profissional, start, end, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                        removerFiltrosAgendamento(agendamentos);
+                        
+                    }
+
+                    if (agendamentos != null) {
+                        Calendar dataNasc = Calendar.getInstance();
+                        dataNasc.add(Calendar.YEAR, -18);
+                        Calendar dataAtual = Calendar.getInstance();
+
+                        String descricao = "";
+
+                        if (afastamentos != null) {
+
+                            Dominio dominio = null;
+
+                            String dominioStr;
+
+                            for (Afastamento afastamento : afastamentos) {
+
+                                dominio = DominioSingleton.getInstance().getBo().listByTipoAndObjeto(afastamento.getTipo(), "afastamento");
+                                dominioStr = dominio != null ? dominio.getNome() : "";
+
+                                descricao = afastamento.getProfissional().getDadosBasico().getNomeAbreviado() + " - " + "[" + dominioStr + " - " + afastamento.getObservacao() + "] ";
+                                String breakLine = "\r\n";
+                                descricao += breakLine;
+
+                                DefaultScheduleEvent event = new DefaultScheduleEvent(descricao, afastamento.getInicio(), afastamento.getFim(), afastamento);
+                                event.setStyleClass(StatusAgendamentoUtil.findBySigla("F").getStyleCss());
+                                this.addEvent(event);
+                            }
                         }
 
-                    } catch (Exception e) {
-                        addError("Erro no carregarScheduleTarefas", "");
-                    }
-                    removerFiltrosAgendamento(agendamentos);
-                    pacientePesquisado = null;
-                } else if (profissional != null && pacientePesquisado == null) {
-                    tempoConsulta = profissional.getTempoConsulta();
-                    this.clear();
-                    agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndProfissional(profissional, start, end);
-                    removerFiltrosAgendamento(agendamentos);
-                    geraAgendamentoAfastamento(start, end, profissional);
-                    agendamentos.addAll(agendamentosAfastamento);
-                    pacientePesquisado = null;
-                } else if (pacientePesquisado != null && profissional == null) {
-                    this.clear();
-                    agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndPaciente(pacientePesquisado, start, end);
-                    removerFiltrosAgendamento(agendamentos);
-                } else if (pacientePesquisado != null && profissional != null) {
-                    this.clear();
-                    agendamentos = AgendamentoSingleton.getInstance().getBo().listByDataAndPacienteAndProfissional(pacientePesquisado, profissional, start, end);
-                    removerFiltrosAgendamento(agendamentos);
-                }
+                        for (Agendamento agendamento : agendamentos) {
 
-                if (agendamentos != null) {
-                    Calendar dataNasc = Calendar.getInstance();
-                    dataNasc.add(Calendar.YEAR, -18);
-                    Calendar dataAtual = Calendar.getInstance();
-                    for (Agendamento agendamento : agendamentos) {
-                        String descricao = "";
-                        if (agendamento.getStatusNovo().equals(StatusAgendamentoUtil.AFASTAMENTO.getSigla())) {
-                            descricao = agendamento.getProfissional().getDadosBasico().getNomeAbreviado() + " - " + "[" + agendamento.getPaciente().getDadosBasico().getNome() + " - " + agendamento.getDescricao() + "] ";
-                            String breakLine = "\r\n";
-                            descricao += breakLine;
-                        } else {
+                            descricao = "";
 
                             if (agendamento != null && agendamento.getPaciente() != null && agendamento.getPaciente().getDadosBasico() != null && agendamento.getPaciente().getDadosBasico().getDataNascimento() != null)
                                 dataAtual.setTime(agendamento.getPaciente().getDadosBasico().getDataNascimento());
@@ -893,12 +922,15 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             if (agendamento.getDescricao() != null && !agendamento.getDescricao().isEmpty())
                                 descricao += "Obs.: " + agendamento.getDescricao();
 
+                            DefaultScheduleEvent event = new DefaultScheduleEvent(descricao, agendamento.getInicio(), agendamento.getFim(), agendamento);
+                            event.setStyleClass(StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getStyleCss());
+                            this.addEvent(event);
                         }
-                        DefaultScheduleEvent event = new DefaultScheduleEvent(descricao, agendamento.getInicio(), agendamento.getFim(), agendamento);
-                        event.setStyleClass(StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getStyleCss());
-                        this.addEvent(event);
                     }
+                } catch (Exception e) {
+                    // TODO: handle exception
                 }
+
             }
         };
     }
@@ -924,9 +956,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         try {
             List<Afastamento> afastamentos = null;
             if (profissional != null) {
-                afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalValidos(profissional, start, end);
+                afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalValidos(profissional, start, end,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             } else {
-                afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataValidos(start, end);
+                afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataValidos(start, end,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             }
             if (afastamentos != null) {
                 for (Afastamento afastamento : afastamentos) {
@@ -1022,27 +1054,46 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void onEventSelect(SelectEvent selectEvent) {
-        Agendamento agendamento = (Agendamento) ((ScheduleEvent) selectEvent.getObject()).getData();
-        // profissional = agendamento.getProfissional();
-        profissionalDentroAgenda = agendamento.getProfissional();
-        cadeiraDentroAgenda = agendamento.getCadeira();
+        
+        Agendamento agendamento = null;
 
-        UtilsFrontEnd.setPacienteSelecionado(agendamento.getPaciente());
-        this.setEntity(agendamento);
-        this.setInicio(this.getEntity().getInicio());
-        this.setFim(this.getEntity().getFim());
-        geraAgendamentoAfastamento(this.getEntity().getInicio(), this.getEntity().getFim(), profissionalDentroAgenda);
-        this.setPacienteSelecionado(agendamento.getPaciente());
-        this.setJustificativa(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("agendamento", "justificativa", this.getEntity().getJustificativa()));
-        this.setStatus(this.getEntity().getStatusNovo());
-        this.validaAfastamento();
-        if (agendamento.getPlanoTratamentoProcedimentosAgendamento() != null && agendamento.getPlanoTratamentoProcedimentosAgendamento().size() > 0) {
-            this.setPlanoTratamentoSelecionado(agendamento.getPlanoTratamentoProcedimentosAgendamento().get(0).getPlanoTratamentoProcedimento().getPlanoTratamento());
+        Object obj = ((ScheduleEvent) selectEvent.getObject()).getData();
+        
+        if(obj instanceof Afastamento) {
+            
+            this.addError("Profissional afastado !", "O profissional não está disponível para atender.");
+            
+        }else {
+            
+            agendamento = (Agendamento) obj;
+            
+            profissionalDentroAgenda = agendamento.getProfissional();
+            cadeiraDentroAgenda = agendamento.getCadeira();
+
+            UtilsFrontEnd.setPacienteSelecionado(agendamento.getPaciente());
+            this.setEntity(agendamento);
+            this.setInicio(this.getEntity().getInicio());
+            this.setFim(this.getEntity().getFim());
+            
+            this.setPacienteSelecionado(agendamento.getPaciente());
+            this.setJustificativa(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("agendamento", "justificativa", this.getEntity().getJustificativa()));
+            this.setStatus(this.getEntity().getStatusNovo());
+            //this.validaAfastamento();
+            
+            if (agendamento.getPlanoTratamentoProcedimentosAgendamento() != null && agendamento.getPlanoTratamentoProcedimentosAgendamento().size() > 0)
+                this.setPlanoTratamentoSelecionado(agendamento.getPlanoTratamentoProcedimentosAgendamento().get(0).getPlanoTratamentoProcedimento().getPlanoTratamento());
+            
+            atualizaPickList();
+            
+            this.setObservacoes(agendamento.getDescricao());
+            this.validaHoraUtilProfissional(profissionalDentroAgenda);
+            
+            validaHabilitaSalvar();
+            
+            PrimeFaces.current().executeScript("PF('eventDialog').show()");
+            PrimeFaces.current().ajax().update(":lume:pnAgendamento");
+            
         }
-        atualizaPickList();
-        this.setObservacoes(agendamento.getDescricao());
-        this.validaHoraUtilProfissional(profissionalDentroAgenda);
-        validaHabilitaSalvar();
     }
 
     private void validaAfastamento() {
