@@ -65,17 +65,25 @@ public class ExameMB extends LumeManagedBean<Exame> {
         this.setClazz(Exame.class);
     }
 
-    public StreamedContent getArquivo(Exame exame) {
+    public StreamedContent getArquivoGenerico(byte[] file, String nome) {
         StreamedContent arquivo = null;
-        if (exame.getAnexo() != null) {
+        if (file != null) {
             try {
-                ByteArrayInputStream bis = new ByteArrayInputStream(exame.getAnexo());
-                arquivo = new DefaultStreamedContent(bis, null, exame.getNomeAnexo());
+                ByteArrayInputStream bis = new ByteArrayInputStream(file);
+                arquivo = new DefaultStreamedContent(bis, null, nome);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         return arquivo;
+    }
+
+    public StreamedContent getArquivoEditado(Exame exame) {
+        return getArquivoGenerico(exame.getAnexoAlterado(), exame.getNomeAnexo());
+    }
+
+    public StreamedContent getArquivo(Exame exame) {
+        return getArquivoGenerico(exame.getAnexo(), exame.getNomeAnexo());
     }
 
     @Override
