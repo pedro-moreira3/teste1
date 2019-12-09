@@ -970,7 +970,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             carregaOrcamentos();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionPersist OrcamentoMB", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
             return;
         }
     }
