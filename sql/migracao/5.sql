@@ -142,6 +142,7 @@ UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Relatório de Estoque Antigo' WHERE OBJ_STR
 UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Relatório de Estoque' WHERE OBJ_STR_DES = 'Estoque Mínimo';
 UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_DES = 'Relatório de Estoque Antigo';
 ----------------------------
+ALTER TABLE SEG_EMPRESA ADD COLUMN UTILIZA_RESERVA_KITS BOOLEAN default TRUE;
 INSERT INTO AFILIACAO('NOME', 'ATIVO')
 VALUES('Consultório Legal', 'S');
 
@@ -182,3 +183,7 @@ INSERT INTO DOMINIO(OBJETO, TIPO, NOME, VALOR, ID_EMPRESA, EDITAVEL, EXCLUIDO)
 VALUES('planotratamentoprocedimento', 'justificativa', 'Solicitação do paciente', 'SP', 41, TRUE, 'N');
 
 ALTER TABLE SEG_EMPRESA ADD COLUMN ADICIONAR_LOGO_ORCAMENTO VARCHAR(1) NOT NULL DEFAULT 'N';
+
+ALTER TABLE plano_tratamento RENAME finalizado TO status;
+
+update plano_tratamento set status = 'E' where status = 'S' and justificativa is null
