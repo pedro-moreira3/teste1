@@ -125,8 +125,10 @@
 										itemValue="#{af}" itemLabel="#{af.nome}" />
 								</p:selectOneMenu>
 
-								<p:column rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
-								<p:column rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
+								<p:column
+									rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
+								<p:column
+									rendered="#{cadastroEmpresaMB.entity.empChaTipo == 'J'}" />
 
 								<p:column />
 								<p:column />
@@ -268,6 +270,10 @@
 								<p:outputLabel value="Utilizar reserva automática de Kits? " />
 								<p:selectBooleanCheckbox
 									value="#{cadastroEmpresaMB.entity.utilizaReservaKits}" />
+
+								<p:outputLabel value="Inserir logo no orçamento" />
+								<p:selectBooleanCheckbox
+									value="#{cadastroEmpresaMB.entity.adicionarLogoOrcamento}" />
 
 								<p:outputLabel for="foto"
 									value="Logo (resolução recomendada 180x50 pixels, utilizar .png ou .jpg, somente utilizar logo se sua clínica não utilizar papel timbrado): "
