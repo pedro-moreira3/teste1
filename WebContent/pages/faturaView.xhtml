@@ -241,7 +241,7 @@ body .sideChkBox .ui-chkbox-label {
 									rendered="#{repasseProfissional == null or repasseProfissional != 'S'}" />
 							</p:panelGrid>
 
-							<p:panelGrid columns="3" layout="grid"
+							<p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
 								<p:panel id="valorTotal" header="Valor Total">
 									<h:outputText
@@ -255,9 +255,15 @@ body .sideChkBox .ui-chkbox-label {
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
-								<p:panel id="valorRestante" header="Valor Restante">
+								<p:panel id="valorNaoPago" header="Valor Não Pago">
 									<h:outputText
-										value="#{faturaPagtoMB.getTotalRestante(faturaPagtoMB.entity)}">
+										value="#{faturaPagtoMB.getTotalNaoPago(faturaPagtoMB.entity)}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:panel>
+								<p:panel id="valorNaoPlanejado" header="Valor Não Planejado">
+									<h:outputText
+										value="#{faturaPagtoMB.getTotalNaoPlanejado(faturaPagtoMB.entity)}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
