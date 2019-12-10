@@ -17,6 +17,7 @@ import br.com.lume.common.exception.business.SenhaInvalidaException;
 import br.com.lume.common.exception.business.UsuarioBloqueadoException;
 import br.com.lume.common.exception.business.UsuarioSemPagamentoException;
 import br.com.lume.common.exception.business.UsuarioSemPerfilException;
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.JSFHelper;
@@ -121,6 +122,17 @@ public class LoginMB extends LumeManagedBean<Usuario> {
 
                     String mensagem = EnviaEmail.buscarTemplate(valores, EnviaEmail.RESET);
                     mensagem.replaceAll("#token", usuarioTrocaSenha.getTokenAcesso());
+
+                    LogIntelidenteSingleton.getInstance().makeLog("========================================================");
+                    LogIntelidenteSingleton.getInstance().makeLog("==================== Resetar Senha =====================");
+                    LogIntelidenteSingleton.getInstance().makeLog("========================================================");
+                    LogIntelidenteSingleton.getInstance().makeLog("Email: ");
+                    LogIntelidenteSingleton.getInstance().makeLog(usuarioTrocaSenha.getUsuStrEml());
+                    LogIntelidenteSingleton.getInstance().makeLog("Valores: ");
+                    LogIntelidenteSingleton.getInstance().makeLog("{ \"#token\", \"" + usuarioTrocaSenha.getTokenAcesso() + "\" }");
+                    LogIntelidenteSingleton.getInstance().makeLog("Mensagem: ");
+                    LogIntelidenteSingleton.getInstance().makeLog(mensagem);
+                    LogIntelidenteSingleton.getInstance().makeLog("========================================================");
 
                     EnviaEmail.enviaEmail(usuarioTrocaSenha.getUsuStrEml(), "Solicitação de troca de senha", mensagem);
 
