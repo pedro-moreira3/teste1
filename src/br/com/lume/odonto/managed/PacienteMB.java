@@ -131,7 +131,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private List<Profissional> profissionais;
 
     private boolean mostrarPerguntasAnamnese = false;
-    
+
     //EXPORTACAO TABELAS
     private DataTable tabelaAnamnese;
     private DataTable tabelaFrequencia;
@@ -184,13 +184,13 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     }
 
     public void mostrarPerguntasAnamnese() {
-        this.mostrarPerguntasAnamnese = true;     
+        this.mostrarPerguntasAnamnese = true;
         anamneses = new ArrayList<>();
         for (Especialidade e : especialidadeSelecionada) {
             actionAtualizaPerguntasPorAnamnese(e);
         }
     }
-    
+
     public StreamedContent getImagemUsuario() {
         try {
             if (getEntity() != null && getEntity().getNomeImagem() != null) {
@@ -474,11 +474,13 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             if (getEntity().getId() == null || getEntity().getId() == 0) {
                 getEntity().setDataCriacao(Calendar.getInstance().getTime());
             }
+
+            boolean novoPaciente = getEntity().getId() == null || getEntity().getId().longValue() == 0;
             this.getbO().persist(this.getEntity());
             this.geraLista();
-            //    this.actionNew(event);
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), true);
-            //PrimeFaces.current().executeScript("PF('dlgDadosPaciente').hide()");
+            if (novoPaciente)
+                PrimeFaces.current().executeScript("PF('dlgFichaPaciente').hide()");
         } catch (DataNascimentoException dne) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.datanascimento"), "");
             log.error(OdontoMensagens.getMensagem("erro.valida.datanascimento"));
@@ -542,8 +544,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         if (UtilsFrontEnd.getProfissionalLogado() != null) {
             perguntas = PerguntaSingleton.getInstance().getBo().listByEspecialidadeMap(especialidade, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
-        }      
-        anamneses.addAll(ItemAnamneseSingleton.getInstance().getBo().perguntasAnamnese(perguntas)); 
+        }
+        anamneses.addAll(ItemAnamneseSingleton.getInstance().getBo().perguntasAnamnese(perguntas));
     }
 
     public void actionAnamnesePersist(ActionEvent event) {
@@ -1026,12 +1028,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.uploadedFile = uploadedFile;
     }
 
-    
     public boolean isMostrarPerguntasAnamnese() {
         return mostrarPerguntasAnamnese;
     }
 
-    
     public void setMostrarPerguntasAnamnese(boolean mostrarPerguntasAnamnese) {
         this.mostrarPerguntasAnamnese = mostrarPerguntasAnamnese;
     }
