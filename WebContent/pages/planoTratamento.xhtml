@@ -193,7 +193,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								title="Encerrar Plano de Tratamento" process="@this"
 								styleClass="RedButton"
 								actionListener="#{planoTratamentoMB.actionFinalizar(planoTratamento)}"
-								disabled="#{planoTratamento.status == 'S'}" />
+								disabled="#{planoTratamento.status == 'S' or planoTratamento.status == 'E'}" />
 						</h:panelGroup>
 					</p:column>
 					<p:column filterBy="#{planoTratamento.descricaoComConvenio}"
@@ -580,7 +580,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								style="float:left;margin-left: 10px;" title="Novo Odontograma"
 								actionListener="#{planoTratamentoMB.actionNewOdontograma}"
 								update=":lume:tabView:removeOdontograma" process="@this"
-								disabled="#{planoTratamentoMB.entity.status == 'S'}" />
+								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 							<p:commandButton icon="White fa fa-trash-o"
 								id="removeOdontograma"
 								actionListener="#{planoTratamentoMB.removeOdontograma}"
@@ -591,7 +591,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								rendered="#{planoTratamentoMB.admin}"
 								disabled="#{planoTratamentoMB.entity.odontograma == null or
 											planoTratamentoMB.entity.odontograma.id == 0 or
-											planoTratamentoMB.entity.status == 'S'}">
+											planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}">
 								<p:confirm header="Confirmação"
 									message="Deseja realmente excluir este Plano de Tratamento?"
 									icon="fa fa-warning" />
@@ -648,7 +648,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 								<p:outputLabel for="statusPTView" value="Status: " />
 								<p:inputText id="statusPTView"
-									value="#{planoTratamentoMB.entity.status}" readonly="true" />
+									value="#{planoTratamentoMB.entity.statusDescritivo}"
+									readonly="true" />
 
 								<p:outputLabel for="totalPTView" value="Valor Total: " />
 								<p:inputText id="totalPTView"
@@ -697,14 +698,14 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									update=":lume:tabView:pnEditaPlanoTratamento"
 									styleClass="OrangeButton" icon="fa fa-pencil"
 									oncomplete="PF('dlgEditaPlanoTratamento').show()"
-									disabled="#{planoTratamentoMB.entity.status == 'S'}" />
+									disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 								<h:panelGroup rendered="#{planoTratamentoMB.temPermissaoExtra}">
 									<p:commandButton id="geraNegociacao" icon="fa fa-legal"
 										value="Orçamento" oncomplete="PF('dlgOrcamentos').show()"
 										actionListener="#{planoTratamentoMB.carregaOrcamentos}"
 										update=":lume:tabView:pnOrcamento, :lume:tabView:orcamentoViewTable, :lume:tabView:orcamentos"
 										styleClass="NavyButton" process="@this"
-										disabled="#{planoTratamentoMB.entity.status == 'S'}" />
+										disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 								</h:panelGroup>
 								<h:panelGroup rendered="#{planoTratamentoMB.admin}">
 									<p:commandButton id="devolucao" icon="White fa fa-times-circle"
@@ -713,7 +714,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 										value="Encerrar Plano de Tratamento" process="@this"
 										styleClass="RedButton"
 										actionListener="#{planoTratamentoMB.actionFinalizar}"
-										disabled="#{planoTratamentoMB.entity.status == 'S'}" />
+										disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 								</h:panelGroup>
 							</p:panelGrid>
 						</p:fieldset>
@@ -730,7 +731,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								actionListener="#{planoTratamentoMB.actionNewProcedimento}"
 								update=":lume:tabView:pnViewPlanoTratamento, :lume:tabView:pgProcedimento, :lume:tabView:pgProcedimentoBotoes"
 								process="@this" styleClass="GreenButton"
-								disabled="#{planoTratamentoMB.entity.status == 'S'}" />
+								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 							<p:commandButton styleClass="NavyButton" process="@this"
 								id="odontogramaOpensDlg99" title="Odontograma" icon="btnTooth"
 								actionListener="#{planoTratamentoMB.carregaTelaOdontograma}"
@@ -800,7 +801,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									required="true" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
 									rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"
-									disabled="#{plano.planoTratamento.status == 'S'}">
+									disabled="#{plano.planoTratamento.status == 'S' or planoTratamento.status == 'E'}">
 								</p:inputNumber>
 								<h:outputText value="#{plano.valorDesconto}"
 									rendered="#{!planoTratamentoMB.temPermissaoTrocarValor}">
@@ -819,7 +820,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:column headerText="Finalizado" width="100"
 								styleClass="hideOnEdit">
 								<p:selectManyCheckbox id="status" value="#{plano.statuss}"
-									disabled="#{plano.finalizado or plano.planoTratamento.status == 'S'}"
+									disabled="#{plano.finalizado or plano.planoTratamento.status == 'S' or planoTratamento.status == 'E'}"
 									styleClass="lumeField"
 									style="width: 35px;display: inline-block;">
 									<f:selectItem itemLabel="" itemValue="F" />
@@ -861,7 +862,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								process=":lume:tabView:pnViewPlanoTratamento,@this"
 								styleClass="GreenButton"
 								oncomplete="handleDialogRequest(xhr, status, args);"
-								disabled="#{planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.status == 'S'}" />
+								disabled="#{planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 						</p:panelGrid>
 					</div>
 				</div>
@@ -1028,7 +1029,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									value="#{planoTratamentoMB.statusDenteDenteSelecionado}"
 									converter="statusDente" filter="true"
 									filterMatchMode="contains" autoWidth="false"
-									disabled="#{planoTratamentoMB.entity.status == 'S'}">
+									disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}">
 									<p:ajax process="@this" update="adicionarStatusDente2" />
 									<f:selectItem itemLabel="Selecione um diagnóstico"
 										noSelectionOption="true" itemValue="#{null}" />
@@ -1042,7 +1043,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									update=":lume:tabView:diagnosticosNewProcedimento"
 									process="@this, :lume:tabView:problema2"
 									style="margin-left: 5px;"
-									disabled="#{planoTratamentoMB.statusDenteDenteSelecionado == null or planoTratamentoMB.entity.status == 'S'}" />
+									disabled="#{planoTratamentoMB.statusDenteDenteSelecionado == null or planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 							</h:panelGroup>
 						</p:panelGrid>
 					</p:fieldset>
@@ -1059,7 +1060,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								</p:column>
 								<p:column headerText="Face">
 									<p:selectCheckboxMenu value="#{regiao.facesArray}"
-										disabled="#{planoTratamentoMB.entity.status == 'S'}"
+										disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
 										label="#{regiao.facesArrayLabel}" style="width: 200px;"
 										rendered="#{regiao.statusDente.temFace and planoTratamentoMB.isDenteOrRegiao() == 1}">
 										<p:ajax process="@this"
@@ -1074,7 +1075,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								</p:column>
 								<p:column width="10%">
 									<p:commandButton icon="White fa fa-minus White"
-										disabled="#{planoTratamentoMB.entity.status == 'S'}"
+										disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
 										actionListener="#{planoTratamentoMB.actionRemoverStatusDente(regiao)}"
 										update=":lume:tabView:diagnosticosNewProcedimento"
 										process="@this" />
@@ -1093,7 +1094,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								</p:column>
 								<p:column width="10%">
 									<p:commandButton icon="White fa fa-minus White"
-										disabled="#{planoTratamentoMB.entity.status == 'S'}"
+										disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
 										actionListener="#{planoTratamentoMB.actionRemoverStatusDente(regiao)}"
 										update=":lume:tabView:diagnosticosNewProcedimento"
 										process="@this" />
@@ -1132,7 +1133,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					actionListener="#{planoTratamentoMB.actionNewOrcamento}"
 					update=":lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView"
 					value="Novo Orçamento" process="@this" styleClass="NavyButton"
-					disabled="#{planoTratamentoMB.entity.status == 'S'}" />
+					disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 			</p:panelGrid>
 
 			<p:dataTable filterDelay="1500" reflow="true"
@@ -1160,7 +1161,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						actionListener="#{planoTratamentoMB.actionRemoveOrcamento(orcamento)}"
 						update=":lume:tabView:tbViewOrcamento" styleClass="NavyButton"
 						title="Cancelar Orçamento"
-						disabled="#{orcamento.aprovado or planoTratamentoMB.entity.status == 'S'}">
+						disabled="#{orcamento.aprovado or planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}">
 						<p:confirm header="Confirmação"
 							message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
 					</p:commandButton>
@@ -1299,7 +1300,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 								symbol="R$ " thousandSeparator="."
 								readonly="#{planoTratamentoMB.orcamentoSelecionado.ativo == 'N'}"
-								disabled="#{planoTratamentoMB.entity.status == 'S'}">
+								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}">
 							</p:inputNumber>
 						</p:column>
 						<p:column headerText="Desconto" filterMatchMode="contains"
@@ -1313,7 +1314,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</p:column>
 						<p:column headerText="Incluso?" width="50">
 							<p:selectBooleanCheckbox value="#{procedimento.incluso}"
-								disabled="#{planoTratamentoMB.entity.status == 'S'}" />
+								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 						</p:column>
 					</p:dataTable>
 					<br />
@@ -1325,7 +1326,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<h:outputText value="Tipo do Desconto" />
 							<p:selectOneMenu
 								rendered="#{planoTratamentoMB.orcamentoSelecionado != null}"
-								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
+								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
 								value="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo}">
 								<f:selectItem itemValue="P" itemLabel="Porcentagem" />
 								<f:selectItem itemValue="V" itemLabel="Valor" />
@@ -1336,14 +1337,14 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<h:outputText value="Valor do Desconto" />
 							<h:panelGroup id="orcamentoDescontoValor">
 								<p:inputNumber
-									disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
+									disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
 									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
 									styleClass="taller" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
 									rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'V'}">
 								</p:inputNumber>
 								<p:inputNumber
-									disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
+									disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
 									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
 									styleClass="taller" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="%" thousandSeparator="."
@@ -1362,7 +1363,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				process="@this, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader"
 				actionListener="#{planoTratamentoMB.actionPersistOrcamento}"
 				styleClass="GreenButton"
-				disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
+				disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
 				update=":lume:tabView:orcamentoViewTable, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView" />
 			<p:commandButton icon="White fa fa-print"
 				value="Visualizar Impressão" process="@this"
@@ -1376,7 +1377,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				process="@this, :lume:tabView:pnViewOrcamento"
 				update=":lume:tabView:pnViewOrcamento, :lume:tabView:buttonsDlgOrcamentoView, :lume:tabView:orcamentoViewTable"
 				styleClass="OrangeButton"
-				disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.orcamentoSelecionado.id == null
+				disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E' or planoTratamentoMB.orcamentoSelecionado.id == null
 					or planoTratamentoMB.orcamentoSelecionado.id == 0 or planoTratamentoMB.orcamentoSelecionado.aprovado}" />
 			<p:commandButton icon="White fa fa-close" value="Fechar"
 				process="@this" onclick="PF('dlgViewOrcamento').hide();"
@@ -1499,7 +1500,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 											update=":lume:tabView:removeOdontogramaView,
 													:lume:tabView:odontogramaView"
 											process="@this"
-											disabled="#{planoTratamentoMB.entity.status == 'S'}" />
+											disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 										<p:commandButton icon="White fa fa-trash-o"
 											id="removeOdontogramaView"
 											actionListener="#{planoTratamentoMB.removeOdontograma}"
@@ -1510,7 +1511,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 											rendered="#{planoTratamentoMB.admin}"
 											disabled="#{planoTratamentoMB.odontogramaSelecionado == null or
 															planoTratamentoMB.odontogramaSelecionado.id == 0 or
-															planoTratamentoMB.entity.status == 'S'}">
+															planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}">
 											<p:confirm header="Confirmação"
 												message="Deseja realmente excluir este Plano de Tratamento?"
 												icon="fa fa-warning" />
@@ -1649,7 +1650,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:commandButton icon="White fa fa-asterisk" value="Personalizar"
 				process="@this" oncomplete="PF('dlgPersonalizar').show();"
 				styleClass="PinkButton"
-				disabled="#{planoTratamentoMB.entity.status == 'S'}" />
+				disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
 				oncomplete="PF('dlgOdontogramaPT').hide()" />
 		</p:panelGrid>
@@ -1782,7 +1783,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						value="#{planoTratamentoMB.statusDenteDenteSelecionado}"
 						converter="statusDente" filter="true" filterMatchMode="contains"
 						autoWidth="false"
-						disabled="#{planoTratamentoMB.entity.status == 'S'}">
+						disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}">
 						<p:ajax process="@this" update="adicionarStatusDente" />
 						<f:selectItem itemLabel="Selecione um diagnóstico"
 							noSelectionOption="true" itemValue="#{null}" />
@@ -1797,7 +1798,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							:lume:tabView:dtStatusDenteRegiaoSelecionados, :lume:tabView:problema,@this"
 						process="@this, :lume:tabView:problema, :lume:tabView:regioes"
 						style="margin-left: 5px;"
-						disabled="#{planoTratamentoMB.statusDenteDenteSelecionado == null or planoTratamentoMB.entity.status == 'S'}" />
+						disabled="#{planoTratamentoMB.statusDenteDenteSelecionado == null or planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 				</h:panelGroup>
 			</p:panelGrid>
 			<div class="SeparatorFull"></div>
@@ -1813,7 +1814,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					</p:column>
 					<p:column headerText="Face">
 						<p:selectCheckboxMenu value="#{regiao.facesArray}"
-							disabled="#{planoTratamentoMB.entity.status == 'S'}"
+							disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
 							label="#{regiao.facesArrayLabel}" style="width: 200px;"
 							rendered="#{regiao.statusDente.temFace}">
 							<p:ajax process="@this"
@@ -1825,7 +1826,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					</p:column>
 					<p:column width="10%">
 						<p:commandButton icon="White fa fa-minus White"
-							disabled="#{planoTratamentoMB.entity.status == 'S'}"
+							disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
 							actionListener="#{planoTratamentoMB.actionRemoverStatusDente(regiao)}"
 							update=":lume:tabView:pnDenteOdontograma,:lume:tabView:dtStatusDenteSelecionados,:lume:tabView:procedimentosOdontograma,:lume:tabView:problema,@this"
 							process="@this" />
@@ -1843,7 +1844,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					</p:column>
 					<p:column width="10%">
 						<p:commandButton icon="White fa fa-minus White"
-							disabled="#{planoTratamentoMB.entity.status == 'S'}"
+							disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
 							actionListener="#{planoTratamentoMB.actionRemoverStatusDente(regiao)}"
 							update=":lume:tabView:pnDenteOdontograma,:lume:tabView:dtStatusDenteSelecionados,
 								:lume:tabView:dtStatusDenteRegiaoSelecionados,
@@ -1863,7 +1864,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:autoComplete dropdown="true" queryDelay="1000"
 						value="#{planoTratamentoMB.procedimentoSelecionado}"
 						id="procedimento"
-						disabled="#{planoTratamentoMB.entity.status == 'S'}"
+						disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
 						completeMethod="#{planoTratamentoMB.geraSugestoesProcedimento}"
 						var="p" itemLabel="#{p.descricao}" itemValue="#{p}"
 						converter="procedimento" forceSelection="true" scrollHeight="400"
@@ -1876,7 +1877,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							:lume:tabView:pnViewPlanoTratamento"
 						process="@this, :lume:tabView:procedimento, :lume:tabView:regioes"
 						style="margin-right: 5px;"
-						disabled="#{planoTratamentoMB.procedimentoSelecionado == null or planoTratamentoMB.entity.status == 'S'}" />
+						disabled="#{planoTratamentoMB.procedimentoSelecionado == null or planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 				</h:panelGroup>
 			</p:panelGrid>
 			<div class="SeparatorFull"></div>
@@ -1893,7 +1894,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				<p:column headerText="Face" id="cFaces"
 					rendered="#{!planoTratamentoMB.enableRegioes}">
 					<p:selectCheckboxMenu id="face"
-						disabled="#{planoTratamentoMB.entity.status == 'S'}"
+						disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
 						value="#{procedimento.facesSelecionadas}"
 						label="#{procedimento.facesSelecionadasStr}"
 						rendered="#{procedimento.procedimento.quantidadeFaces > 0}">
@@ -1908,7 +1909,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					rendered="#{planoTratamentoMB.enableRegioes}">
 					<p:selectOneMenu id="regioes" value="#{procedimento.regiao}"
 						filter="true" filterMatchMode="contains" autoWidth="false"
-						disabled="#{planoTratamentoMB.entity.status == 'S'}"
+						disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}"
 						style="float:left;" rendered="#{planoTratamentoMB.enableRegioes}">
 						<p:ajax process="@this"
 							listener="#{planoTratamentoMB.actionAlterarRegiao(procedimento)}" />
