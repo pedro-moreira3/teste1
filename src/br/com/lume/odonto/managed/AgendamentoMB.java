@@ -203,12 +203,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void carregarAgenda() {
-        long tempoInicial = System.currentTimeMillis()*1000;
-        System.out.println("Tempo inicial: " + String.valueOf(tempoInicial));
         carregarScheduleTarefas();
-        PrimeFaces.current().executeScript("atualizaGraficos();");
-        long tempoFinal = System.currentTimeMillis()*1000;
-        System.out.println("\nTempo Final: "+String.valueOf(tempoFinal));
+        PrimeFaces.current().ajax().update(":lume:schedule");
     }
     
     public void atualizaPacientePosFicha() {
@@ -826,7 +822,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
             @Override
             public void loadEvents(Date start, Date end) {
-                initialDate = start;
+
 
                 if (AgendamentoMB.this.isDentista()) {
                     profissional = UtilsFrontEnd.getProfissionalLogado();
