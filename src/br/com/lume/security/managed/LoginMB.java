@@ -122,17 +122,17 @@ public class LoginMB extends LumeManagedBean<Usuario> {
 
                     String mensagem = EnviaEmail.buscarTemplate(valores, EnviaEmail.RESET);
                     mensagem.replaceAll("#token", usuarioTrocaSenha.getTokenAcesso());
-
-                    LogIntelidenteSingleton.getInstance().makeLog("========================================================");
-                    LogIntelidenteSingleton.getInstance().makeLog("==================== Resetar Senha =====================");
-                    LogIntelidenteSingleton.getInstance().makeLog("========================================================");
-                    LogIntelidenteSingleton.getInstance().makeLog("Email: ");
-                    LogIntelidenteSingleton.getInstance().makeLog(usuarioTrocaSenha.getUsuStrEml());
-                    LogIntelidenteSingleton.getInstance().makeLog("Valores: ");
-                    LogIntelidenteSingleton.getInstance().makeLog("{ \"#token\", \"" + usuarioTrocaSenha.getTokenAcesso() + "\" }");
-                    LogIntelidenteSingleton.getInstance().makeLog("Mensagem: ");
-                    LogIntelidenteSingleton.getInstance().makeLog(mensagem);
-                    LogIntelidenteSingleton.getInstance().makeLog("========================================================");
+                       
+                    log.info("========================================================");
+                    log.info("==================== Resetar Senha =====================");
+                    log.info("========================================================");
+                    log.info("Email: ");
+                    log.info(usuarioTrocaSenha.getUsuStrEml());
+                    log.info("Valores: ");
+                    log.info("{ \"#token\", \"" + usuarioTrocaSenha.getTokenAcesso() + "\" }");
+                    log.info("Mensagem: ");
+                    log.info(mensagem);
+                    log.info("========================================================");
 
                     EnviaEmail.enviaEmail(usuarioTrocaSenha.getUsuStrEml(), "Solicitação de troca de senha", mensagem);
 
