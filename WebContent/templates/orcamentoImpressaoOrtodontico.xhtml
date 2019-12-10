@@ -19,6 +19,15 @@
 			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
 			<p:scrollPanel mode="native"
 				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
+				<p:outputPanel rendered="#{orcamentoImpressaoMB.showLogo}">
+					<div style="width: 100%;">
+						<img src="/imagens/#{orcamentoImpressaoMB.logo}" height="50"
+							width="180"
+							style="margin-left: 50%; transform: translateX(-50%);" />
+					</div>
+				</p:outputPanel>
+				<br />
+				<br />
 
 				<p:outputPanel id="orcamento2PrintInternoO"
 					style="font-family: sans-serif">
