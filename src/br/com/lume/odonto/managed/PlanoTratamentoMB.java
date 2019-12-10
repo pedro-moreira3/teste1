@@ -710,11 +710,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             return true;
         return false;
     }
-    
+
     public boolean isExecutado() {
         if (getEntity().getStatus().equals(Status.EXECUTADO))
             return true;
         return false;
+    }
+
+    public List<String> getFacesDisponiveis() {
+        return planoTratamentoProcedimentoSelecionado.getFaces(null, this.denteRegiaoEscolhida);
     }
 
     public void actionPersistFaces(PlanoTratamentoProcedimento ptp) {

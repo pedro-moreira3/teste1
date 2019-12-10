@@ -216,7 +216,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						sortBy="#{planoTratamento.dataHoraStrOrd}">
 						<h:outputText value="#{planoTratamento.dataHoraStr}" />
 					</p:column>
-					<p:column headerText="Status" sortBy="#{planoTratamento.statusDescritivo}"
+					<p:column headerText="Status"
+						sortBy="#{planoTratamento.statusDescritivo}"
 						filterBy="#{planoTratamento.statusDescritivo}"
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<p:outputLabel value="#{planoTratamento.statusDescritivo}" />
@@ -482,7 +483,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<h:panelGroup>
 								<p:inputText id="planoTratamentoDescricao"
 									value="#{planoTratamentoMB.entity.descricao}"
-									required="#{planoTratamentoMB.novoPtDialogAberto}" />
+									required="#{planoTratamentoMB.novoPtDialogAberto}"
+									onkeypress="if (event.keyCode == 13) { return false; }" />
 								<p:message for="planoTratamentoDescricao" styleClass="msg" />
 							</h:panelGroup>
 
@@ -1008,8 +1010,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								disabled="#{planoTratamentoMB.disableFaces}"
 								style="width: 100%;text-align: left" multiple="true">
 								<f:selectItems
-									value="#{planoTratamentoMB.planoTratamentoProcedimentoSelecionado.faces}"
-									var="face" itemValue="#{face}" itemLabel="#{face}" />
+									value="#{planoTratamentoMB.getFacesDisponiveis()}" var="face"
+									itemValue="#{face}" itemLabel="#{face}" />
 							</p:selectCheckboxMenu>
 						</p:outputPanel>
 					</p:panelGrid>
