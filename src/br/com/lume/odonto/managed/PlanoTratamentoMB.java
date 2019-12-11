@@ -106,6 +106,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private List<Dominio> justificativas;
 
     private String filtroStatus = "N";
+    
+    private String filtroTipo = "T";
 
     private DualListModel<PlanoTratamentoProcedimento> ptProcedimentosDisponiveis = new DualListModel<>();
 
@@ -281,7 +283,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             planosTratamento = new ArrayList<>();
             if (getPaciente() != null) {
 
-                planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPacienteAndFinalizado(getPaciente(), filtroStatus);
+                planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPacienteAndStatusAndTipo(getPaciente(), filtroStatus,filtroTipo);
                 for (PlanoTratamento pt : planosTratamento) {
                     if (pt.getStatus().equals(Status.SIM) && contemPlanoTratamentoProcedimentoAberto(pt.getPlanoTratamentoProcedimentos())) {
                         pt.setValor(BigDecimal.ZERO);
@@ -1836,6 +1838,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void fechaNovoPtDialog() {
         this.novoPtDialogAberto = true;
+    }
+
+    
+    public String getFiltroTipo() {
+        return filtroTipo;
+    }
+
+    
+    public void setFiltroTipo(String filtroTipo) {
+        this.filtroTipo = filtroTipo;
     }
 
 }

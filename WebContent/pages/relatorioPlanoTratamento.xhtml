@@ -319,20 +319,19 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon{
 							
 							<p:selectManyCheckbox
 								value="#{relatorioPlanoTratamentoMB.status}"
-								layout="grid" columns="4">
-
+								layout="grid" columns="6">
 								<p:ajax process="@this" />
-
 								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Finalizados&lt;/div&gt;"
+									itemLabel="Encerrados"
 									itemValue="S" itemEscaped="false" />
 								<f:selectItem
-									itemLabel="&lt;div&gt;&lt;div class='agendamentoConsultaInicial legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Não finalizados&lt;/div&gt;"
+									itemLabel="Executados"
+									itemValue="E" itemEscaped="false" />
+									<f:selectItem
+									itemLabel="Não finalizados"
 									itemValue="N" itemEscaped="false" />
 							</p:selectManyCheckbox>
-
 						</p:outputPanel>
-
 
 						<div class="EmptyBox5"></div>
 
