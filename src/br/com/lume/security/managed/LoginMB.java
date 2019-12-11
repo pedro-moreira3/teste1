@@ -115,13 +115,9 @@ public class LoginMB extends LumeManagedBean<Usuario> {
                     usuarioTrocaSenha.setDataToken(dataAtual);
                     UsuarioSingleton.getInstance().getBo().persist(usuarioTrocaSenha);
 
-                    //  Utils.enviarEmailUsuario(usuarioTrocaSenha, "recuperacao");
-
                     Map<String, String> valores = new HashMap<>();
                     valores.put("#token", usuarioTrocaSenha.getTokenAcesso());
-
                     String mensagem = EnviaEmail.buscarTemplate(valores, EnviaEmail.RESET);
-                    mensagem.replaceAll("#token", usuarioTrocaSenha.getTokenAcesso());
                        
                     log.info("========================================================");
                     log.info("==================== Resetar Senha =====================");
