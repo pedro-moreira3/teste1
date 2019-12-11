@@ -120,7 +120,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                         this.listaConvenios = new ArrayList<>();
 
                     this.sugestoesConvenios("todos");
-                    //this.removerFiltrosAgendamento(this.getListaAtendimentos());
+                    this.removerFiltrosAgendamento(this.getListaAtendimentos());
 
                 }
             }else {
