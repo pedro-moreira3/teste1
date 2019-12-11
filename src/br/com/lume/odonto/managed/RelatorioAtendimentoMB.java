@@ -95,13 +95,11 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
              if(getDataInicio() == null && getDataFim() == null && filtroPorPaciente == null && 
                      filtroPorProfissional == null && filtroPorProfissionalUltAlteracao == null && filtroPorConvenio.equals("todos")) {
-                this.addError("Escolha pelo menos um filtro.", "");   
+                this.addError("Erro na consulta", "Escolha pelo menos um filtro.");
                 return;
             }
             
             Date dataInicial = null, dataFinal = null;
-
-            
             
             if (getDataInicio() != null && getDataFim() != null) {
                 Calendar c = Calendar.getInstance();
@@ -112,26 +110,37 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                 c.setTime(getDataFim());
                 c.add(Calendar.DAY_OF_MONTH, +1);
                 dataFinal = c.getTime();
-            }
+                
+                if (validarIntervaloDatas()) {
 
-            if (validarIntervaloDatas()) {
+                    this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(dataInicial, dataFinal, getFiltroPorProfissional(),
+                            getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), this.getConvenio(getFiltroPorConvenio()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
 
-                this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(dataInicial, dataFinal, getFiltroPorProfissional(),
-                        getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), this.getConvenio(getFiltroPorConvenio()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                    if (this.listaConvenios == null)
+                        this.listaConvenios = new ArrayList<>();
 
-                List<Agendamento> lista = geraAgendamentoAfastamentoByProfissional(this.getDataInicio(), this.getDataFim(), getFiltroPorProfissional());
+                    this.sugestoesConvenios("todos");
+                    this.removerFiltrosAgendamento(this.getListaAtendimentos());
 
-                for (Agendamento agendamentoBloq : lista) {
-                    this.listaAtendimentos.add(agendamentoBloq);
                 }
+            }else {
+                
+                if (validarIntervaloDatas()) {
 
-                if (this.listaConvenios == null)
-                    this.listaConvenios = new ArrayList<>();
+                    this.setListaAtendimentos(AgendamentoSingleton.getInstance().getBo().listByDataAndPacientesAndProfissionais(this.dataInicio, this.dataFim, getFiltroPorProfissional(),
+                            getFiltroPorProfissionalUltAlteracao(), getFiltroPorPaciente(), this.getConvenio(getFiltroPorConvenio()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
 
-                this.sugestoesConvenios("todos");
-                this.removerFiltrosAgendamento(this.getListaAtendimentos());
+                    if (this.listaConvenios == null)
+                        this.listaConvenios = new ArrayList<>();
 
+                    this.sugestoesConvenios("todos");
+                    this.removerFiltrosAgendamento(this.getListaAtendimentos());
+
+                }
+                
             }
+
+            
 
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -163,12 +172,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 //    }
 
     private void removerFiltrosAgendamento(List<Agendamento> agendamentos) {
-        List<Agendamento> agentamentoAux = new ArrayList<>(agendamentos);
-        for (Agendamento agendamento : agentamentoAux) {
-            if (!filtroAtendimento.contains(agendamento.getStatusNovo())) {
-                agendamentos.remove(agendamento);
-            }
-        }
+        agendamentos.removeIf(agendamento -> !filtroAtendimento.contains(agendamento.getStatusNovo()));
     }
 
     public String verificarSituacaoAgendamento(Agendamento agendamento) {

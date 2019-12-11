@@ -49,69 +49,89 @@ div.ui-selectoneradio label {
 					<h1>Fila de Atendimento</h1>
 					<p:separator styleClass="SeparatorFull" />
 
-					<p:panelGrid columns="3" layout="grid"
-						styleClass="ui-panelgrid-blank ui-fluid form-group marginTop8">
-						<p:outputPanel style="margin-top: 8px;">
-							<h:outputText value="Dia : " />
-						</p:outputPanel>
-						<ui:remove>
-							<p:selectOneMenu id="filtro" value="#{filaAtendimentoMB.filtro}"
-								rendered="#{filaAtendimentoMB.dia != 7}">
-								<f:selectItem itemValue="CURRENT_DATE" itemLabel="HOJE" />
-								<f:selectItem itemValue="CURRENT_DATE +1" itemLabel="AMANHÃ" />
-								<p:ajax listener="#{filaAtendimentoMB.carregaLista}"
-									process="@this" update="dtAtendimento" />
-							</p:selectOneMenu>
-							<p:selectOneMenu id="filtroSegunda"
-								value="#{filaAtendimentoMB.filtro}"
-								rendered="#{filaAtendimentoMB.dia == 7}">
-								<f:selectItem itemValue="#{null}" itemLabel="HOJE" />
-								<f:selectItem itemValue="CURRENT_DATE +2" itemLabel="SEGUNDA" />
-								<p:ajax listener="#{filaAtendimentoMB.carregaLista}"
-									process="@this" update="dtAtendimento" />
-							</p:selectOneMenu>
-						</ui:remove>
-						<p:calendar value="#{filaAtendimentoMB.dateFilter}"
-							pattern="dd/MM/yyyy" mask="true">
-							<p:ajax event="close"
-								listener="#{filaAtendimentoMB.carregaLista}" process="@this"
-								update=":lume:dtAtendimento" />
-						</p:calendar>
-						<p:commandButton value="Novo Agendamento"
-							icon="White fa fa-book White"
-							oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
-							action="#{agendamentoMB.filaAtendimento(a)}"
-							update="lume:pnAgendamento" process="@this" />
+					<p:fieldset toggleable="false" collapsed="false">
+						<p:panelGrid columns="1" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+							style="border:0px none; background-color:transparent;">
 
-						<h:panelGroup>
-							<p:splitButton icon="White fa fa fa-file-excel-o"
-								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
-								actionListener="#{filaAtendimentoMB.exportarTabela('xls')}"
-								ajax="false" process="dtAtendimento,@this" update="@this"
-								immediate="true"
-								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+							<p:panelGrid columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group marginTop8">
 
-								<p:fileDownload value="#{filaAtendimentoMB.arquivoDownload}" />
+								<ui:remove>
+									<p:selectOneMenu id="filtro"
+										value="#{filaAtendimentoMB.filtro}"
+										rendered="#{filaAtendimentoMB.dia != 7}">
+										<f:selectItem itemValue="CURRENT_DATE" itemLabel="HOJE" />
+										<f:selectItem itemValue="CURRENT_DATE +1" itemLabel="AMANHÃ" />
+										<p:ajax listener="#{filaAtendimentoMB.carregaLista}"
+											process="@this" update="dtAtendimento" />
+									</p:selectOneMenu>
+									<p:selectOneMenu id="filtroSegunda"
+										value="#{filaAtendimentoMB.filtro}"
+										rendered="#{filaAtendimentoMB.dia == 7}">
+										<f:selectItem itemValue="#{null}" itemLabel="HOJE" />
+										<f:selectItem itemValue="CURRENT_DATE +2" itemLabel="SEGUNDA" />
+										<p:ajax listener="#{filaAtendimentoMB.carregaLista}"
+											process="@this" update="dtAtendimento" />
+									</p:selectOneMenu>
+								</ui:remove>
 
-								<p:menuitem value="Exportar tabela para PDF"
-									icon="fa fa fa-file-pdf-o"
-									actionListener="#{filaAtendimentoMB.exportarTabela('pdf')}"
-									ajax="false" process="dtAtendimento,@this" immediate="true"
-									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-									<p:fileDownload value="#{filaAtendimentoMB.arquivoDownload}" />
-								</p:menuitem>
-								<p:menuitem value="Exportar tabela para CSV"
-									icon="fa fa fa-file-pdf-o"
-									actionListener="#{filaAtendimentoMB.exportarTabela('csv')}"
-									ajax="false" process="dtAtendimento,@this" immediate="true"
-									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-									<p:fileDownload value="#{filaAtendimentoMB.arquivoDownload}" />
-								</p:menuitem>
-							</p:splitButton>
-						</h:panelGroup>
 
-					</p:panelGrid>
+								<h:panelGroup>
 
+									<h:outputText value="Dia:" />
+									<p:calendar value="#{filaAtendimentoMB.dateFilter}"
+										pattern="dd/MM/yyyy" mask="true">
+										<p:ajax event="close"
+											listener="#{filaAtendimentoMB.carregaLista}" process="@this"
+											update=":lume:dtAtendimento" />
+									</p:calendar>
+
+								</h:panelGroup>
+
+							</p:panelGrid>
+
+							<p:panelGrid columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group marginTop8">
+								<h:panelGroup>
+									<p:commandButton value="Novo Agendamento"
+										icon="White fa fa-book White"
+										oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
+										action="#{agendamentoMB.filaAtendimento(a)}"
+										update="lume:pnAgendamento" process="@this" />
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<p:splitButton icon="White fa fa fa-file-excel-o"
+										value="Exportar tabela para Excel"
+										styleClass="GreenSplitButton"
+										actionListener="#{filaAtendimentoMB.exportarTabela('xls')}"
+										ajax="false" process="dtAtendimento,@this" update="@this"
+										immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+										<p:fileDownload value="#{filaAtendimentoMB.arquivoDownload}" />
+
+										<p:menuitem value="Exportar tabela para PDF"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{filaAtendimentoMB.exportarTabela('pdf')}"
+											ajax="false" process="dtAtendimento,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload value="#{filaAtendimentoMB.arquivoDownload}" />
+										</p:menuitem>
+										<p:menuitem value="Exportar tabela para CSV"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{filaAtendimentoMB.exportarTabela('csv')}"
+											ajax="false" process="dtAtendimento,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload value="#{filaAtendimentoMB.arquivoDownload}" />
+										</p:menuitem>
+									</p:splitButton>
+								</h:panelGroup>
+
+							</p:panelGrid>
+						</p:panelGrid>
+					</p:fieldset>
 
 					<p:separator styleClass="SeparatorFull" />
 					<div class="EmptyBox20"></div>
@@ -124,7 +144,7 @@ div.ui-selectoneradio label {
 						<f:facet name="header">Agendamentos</f:facet>
 						<p:column filterBy="#{a.profissional.dadosBasico.nome}"
 							sortBy="#{a.profissional.dadosBasico.nome}"
-							filterMatchMode="contains" headerText="Profissional"
+							filterMatchMode="contains" headerText="Dentista executor"
 							filterFunction="#{filaAtendimentoMB.filtroSemAcento}">
 							<h:outputText value="#{a.profissional.dadosBasico.nome}" />
 						</p:column>
@@ -134,7 +154,7 @@ div.ui-selectoneradio label {
 							filterFunction="#{filaAtendimentoMB.filtroSemAcento}">
 							<h:outputText value="#{a.paciente.dadosBasico.nome}" />
 						</p:column>
-						<p:column headerText="Agendar c/ mesmo profissional">
+						<p:column headerText="Agendar c/ mesmo Dentista">
 							<p:commandButton icon="fa fa fa-calendar"
 								oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
 								process="@this" action="#{agendamentoMB.filaAtendimento(a)}"
@@ -207,7 +227,7 @@ div.ui-selectoneradio label {
 								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
 								<p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}"
-									process="@this" update="@form" />
+									process="@this" update=":lume:dtAtendimento" />
 							</p:calendar>
 						</p:column>
 						<p:column filterBy="#{a.iniciouAsStr}"

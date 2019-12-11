@@ -274,7 +274,7 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
             } else if ("M".equals(filtro)) { //Mês Atual              
                 c.set(Calendar.DAY_OF_MONTH, 1);
                 dataInicio = c.getTime();
-            } else if ("I".equals(filtro)) { //Mês Atual             
+            } else if ("I".equals(filtro)) { //Mês Atual
                 c.add(Calendar.MONTH, -6);
                 dataInicio = c.getTime();
             }

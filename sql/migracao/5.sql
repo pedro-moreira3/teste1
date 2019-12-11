@@ -187,3 +187,14 @@ ALTER TABLE SEG_EMPRESA ADD COLUMN ADICIONAR_LOGO_ORCAMENTO VARCHAR(1) NOT NULL 
 ALTER TABLE plano_tratamento RENAME finalizado TO status;
 
 update plano_tratamento set status = 'E' where status = 'S' and justificativa is null
+
+
+
+----------------------------
+ insert into seg_perobjeto (per_int_cod,obj_int_cod) values (
+ select per_int_cod,149 from seg_perobjeto where obj_int_cod = 90
+);
+
+insert into objeto_profissional (obj_int_cod,id_profissional) 
+values ( select 149,id_profissional from objeto_profissional where obj_int_cod = 90);
+-------------------------------

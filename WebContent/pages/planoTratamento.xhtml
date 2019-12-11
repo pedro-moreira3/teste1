@@ -116,6 +116,18 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									process="@this" update="dtPlanoTratamento" />
 							</p:selectOneMenu>
 						</h:panelGroup>
+						<h:panelGroup styleClass="md-combo">
+							<p:outputLabel for="tipo"
+								value="Tipo dos Planos de Tratamento " />
+							<p:selectOneMenu id="tipo"
+								value="#{planoTratamentoMB.filtroTipo}">
+								<f:selectItem itemLabel="Todos" itemValue="T" />
+								<f:selectItem itemLabel="Normal" itemValue="N" />
+								<f:selectItem itemLabel="Ortodôntico" itemValue="O" />
+								<p:ajax listener="#{planoTratamentoMB.carregarPlanosTratamento}"
+									process="@this" update="dtPlanoTratamento" />
+							</p:selectOneMenu>
+						</h:panelGroup>
 					</p:panelGrid>
 				</p:fieldset>
 				<p:panelGrid columns="3" layout="grid"
@@ -196,12 +208,20 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								disabled="#{planoTratamento.status == 'S' or planoTratamento.status == 'E'}" />
 						</h:panelGroup>
 					</p:column>
-					<p:column filterBy="#{planoTratamento.descricaoComConvenio}"
+					<p:column filterBy="#{planoTratamento.descricaoComConvenio}"  style="width:25%"
 						sortBy="#{planoTratamento.descricaoComConvenio}"
 						filterMatchMode="contains" headerText="Descrição"
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<h:outputText value="#{planoTratamento.descricaoComConvenio}"
 							title="#{planoTratamento.id}" />
+					</p:column>
+					<p:column
+						filterBy="#{planoTratamento.tipoPlano}"
+						sortBy="#{planoTratamento.tipoPlano}"
+						filterMatchMode="contains" headerText="Tipo do Plano"
+						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
+						<h:outputText
+							value="#{planoTratamento.tipoPlano}" />
 					</p:column>
 					<p:column
 						filterBy="#{planoTratamento.profissional.dadosBasico.prefixoNome}"
@@ -750,13 +770,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									value="Procedimentos do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
 							</f:facet>
 
-							<p:column styleClass="TexAlCenter" width="120">
+							<p:column headerText="Ações" styleClass="TexAlCenter" width="120">
 
-								<p:commandButton icon="fa fa-pencil" process="@this"
+								<p:commandButton styleClass="NavyButton" icon="fa fa-eye" process="@this"
 									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
 									oncomplete="PF('dlgNovoProcedimento').show()" title="Editar"
-									disabled="#{plano.finalizado || planoTratamentoMB.encerrado}"
-									styleClass="OrangeButton"
+									disabled="#{plano.finalizado || planoTratamentoMB.encerrado}"									
 									update=":lume:tabView:pnViewPlanoTratamento, :lume:tabView:pgProcedimento, :lume:tabView:pgProcedimentoBotoes" />
 								<p:commandButton icon="fa fa-clock-o" process="@this"
 									actionListener="#{planoTratamentoMB.carregaAgendamentosProcedimento(plano)}"

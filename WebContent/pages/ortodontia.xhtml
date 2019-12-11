@@ -82,10 +82,10 @@ li.orcamento-li {
 					<p:ajax event="rowSelect" process="@this" />
 					<f:facet name="header">Planos de Tratamento Ortodonticos</f:facet>
 					<p:column headerText="Ações" style="width:50px">
-						<p:commandButton class="OrangeButton" icon="fa fa-pencil"
+						<p:commandButton styleClass="NavyButton" icon="fa fa-eye"
 							oncomplete="PF('dlgPlanoOrtodontico').show()"
 							update=":lume:tabView:planoOrtodonticoHeader, :lume:tabView:planoOrtodontico"
-							process="@this" title="Editar"
+							process="@this" title="Gerenciar Plano de Tratamento"
 							actionListener="#{ortodontiaMB.actionCarregarPlano(planoTratamento)}">
 						</p:commandButton>
 					</p:column>

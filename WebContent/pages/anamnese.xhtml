@@ -51,7 +51,7 @@
 				<p:ajax event="rowSelect"
 					update=":lume:tabView:pnPrincipalAnamnese, :lume:tabView:botoesControleTbAnamnese" />
 				<f:facet name="header">Anamneses</f:facet>
-				<p:column headerText="Visualização" style="width:100px">
+				<p:column headerText="Ações" style="width:100px">
 				<p:commandButton id="visualizarAnamnese" icon="fa fa-eye" title="Visualizar Anamnese"
 				actionListener="#{pacienteMB.setPacienteAnamnese(pacienteAnamnese)}" 
 				update=":lume:tabView:painelEspecialidades, :lume:tabView:painelPerguntasEspecialidades, :lume:tabView:dtAnamnese,:lume:tabView:persistAnamnese"

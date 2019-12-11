@@ -52,6 +52,8 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
     public void carregaList() {
         try {
             dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("convenio", "tipo");
+            dominios.removeIf(dom -> dom.getNome().equals("Promoção"));
+                
             convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             e.printStackTrace();
