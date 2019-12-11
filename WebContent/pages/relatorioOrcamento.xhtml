@@ -140,6 +140,20 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										</p:autoComplete>
 									</h:panelGroup>
+									
+									<h:panelGroup styleClass="md-combo">
+										<h:outputText for="filtroStatusPagamento"
+											value="Status do pagamento:" />
+										
+										<p:selectOneMenu id="filtroStatusPagamento"
+											value="#{relatorioOrcamentoMB.filtroStatusPagamento}">
+
+											<f:selectItem itemValue="" itemLabel="Selecione" />
+											<f:selectItem itemValue="P" itemLabel="Pagos" />
+											<f:selectItem itemValue="N" itemLabel="Não pagos" />
+											
+										</p:selectOneMenu>
+									</h:panelGroup>
 
 								</p:panelGrid>
 
@@ -155,12 +169,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										<p:ajax process="@this" />
 
-										<f:selectItem
-											itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;Pagos&lt;/div&gt;"
-											itemValue="P" itemEscaped="false" />
-										<f:selectItem
-											itemLabel="&lt;div&gt;&lt;div class='agendamentoErroAgendamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;Não pagos&lt;/div&gt;"
-											itemValue="N" itemEscaped="false" />
 										<f:selectItem
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoConfirmado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;Aprovados&lt;/div&gt;"
 											itemValue="A" itemEscaped="false" />
@@ -307,6 +315,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 							</f:facet>
+						</p:column>
+						
+						<p:column filterBy="#{relatorioOrcamentoMB.statusPagamento(m)}" 
+								sortBy="#{relatorioOrcamentoMB.statusPagamento(m)}" filterMatchMode="contains" headerText="Status pagamento">
+							<h:outputText value="#{relatorioOrcamentoMB.statusPagamento(m)}" />
 						</p:column>
 						
 					</p:dataTable>

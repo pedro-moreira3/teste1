@@ -41,10 +41,9 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     
     private String filtroPeriodo;
     private String filtroPeriodoAprovacao;
+    private String filtroStatusPagamento;
     
     private List<String> filtroOrcamento = new ArrayList<String>();
-    
-    private boolean pagos, nPagos;
     
     private Profissional filtroPorProfissional;
     
@@ -83,7 +82,8 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
                 this.relatorioOrcamentos = OrcamentoSingleton.getInstance().getBo().listByData(this.inicio, this.fim, this.aprovacaoInicio, this.aprovacaoFim, this.filtroPorProfissional,
                         UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 
-                validarFiltro(relatorioOrcamentos);
+                if(this.relatorioOrcamentos != null)
+                    validarFiltro(relatorioOrcamentos);
                 
                 if (this.relatorioOrcamentos != null && !this.relatorioOrcamentos.isEmpty()) {
                     for (Orcamento relatorioOrcamento : this.relatorioOrcamentos) {                        
@@ -219,41 +219,41 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
         return true;
     }
     
+    public String statusPagamento(Orcamento orcamento) {
+        
+        if( (orcamento.getValorPago().intValue() < orcamento.getValorTotal().intValue()) ) {
+            return "Pendente";
+        }else if( (orcamento.getValorPago().intValue() == orcamento.getValorTotal().intValue()) ) {
+            return "Pago";
+        }
+        
+        return "";
+    }
+    
     private void validarFiltro(List<Orcamento> orc) {
         
         List<Orcamento> orcamentos = new ArrayList(orc);
         
-        if(filtroOrcamento.contains("P"))
-            this.pagos = true;
-        else
-            this.pagos = false;
-        
-        if(filtroOrcamento.contains("N"))
-            this.nPagos = true;
-        else
-            this.nPagos = false;
-        
-        
         for(Orcamento orcamento : orcamentos) {
             OrcamentoSingleton.getInstance().recalculaValores(orcamento);
             
-            if(pagos) {
-                
-                if( !(orcamento.isAprovado()) && (orcamento.getValorPago().intValue() < orcamento.getValorTotal().intValue()) )
-                    orc.remove(orcamento);
-            }
-            if(nPagos) {
-                
-                if( !(orcamento.isAprovado()) && (orcamento.getValorPago().intValue() == orcamento.getValorTotal().intValue()) )
-                    orc.remove(orcamento);
+            if(this.filtroStatusPagamento != null) {
+                if( (this.filtroStatusPagamento.equals("P") && (orcamento.getValorPago().intValue() < orcamento.getValorTotal().intValue())) ) 
+                    this.relatorioOrcamentos.remove(orcamento);
+                else if( (this.filtroStatusPagamento.equals("N") && (orcamento.getValorPago().intValue() == orcamento.getValorTotal().intValue())) )
+                    this.relatorioOrcamentos.remove(orcamento);
             }
             
-            if(filtroOrcamento.contains("A")) {
-                if( !(orcamento.isAprovado()) )
-                    orc.remove(orcamento);
-            }else if(filtroOrcamento.contains("I")) {
-                if( (orcamento.isAprovado()) )
-                    orc.remove(orcamento);
+            if(this.filtroOrcamento != null && !this.filtroOrcamento.isEmpty()) {
+                if( (this.filtroOrcamento.contains("A")) ) {
+                    if( !orcamento.isAprovado() )
+                        this.relatorioOrcamentos.remove(orcamento);
+                }
+                
+                if( (this.filtroOrcamento.contains("I")) ) {
+                    if( orcamento.isAprovado() )
+                        this.relatorioOrcamentos.remove(orcamento);
+                }
             }
             
         }
@@ -356,22 +356,6 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
         this.somaValorTotalPago = somaValorTotalPago;
     }
 
-    public boolean isPagos() {
-        return pagos;
-    }
-
-    public void setPagos(boolean pagos) {
-        this.pagos = pagos;
-    }
-
-    public boolean isnPagos() {
-        return nPagos;
-    }
-
-    public void setnPagos(boolean nPagos) {
-        this.nPagos = nPagos;
-    }
-
     public List<String> getFiltroOrcamento() {
         return filtroOrcamento;
     }
@@ -386,5 +370,13 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
 
     public void setFiltroPorProfissional(Profissional filtroPorProfissional) {
         this.filtroPorProfissional = filtroPorProfissional;
+    }
+
+    public String getFiltroStatusPagamento() {
+        return filtroStatusPagamento;
+    }
+
+    public void setFiltroStatusPagamento(String filtroStatusPagamento) {
+        this.filtroStatusPagamento = filtroStatusPagamento;
     }
 }
