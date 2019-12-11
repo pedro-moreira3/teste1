@@ -23,20 +23,25 @@
 							<ui:include src="perfilProfissional.xhtml" />
 						</p:tab>
 
+						<ui:remove>
 						<p:tab id="tab2" title="Contrato"
 							disabled="#{profissionalMB.entity.id == null}">
 							<ui:include src="contrato.xhtml" />
 						</p:tab>
+						</ui:remove>
 
 						<p:tab id="tab3" title="Horas Úteis"
 							disabled="#{profissionalMB.entity.id == null}">
 							<ui:include src="horasUteisProfissional.xhtml" />
 						</p:tab>
 
+						<ui:remove>
 						<p:tab id="tab5" title="Ponto"
 							disabled="#{profissionalMB.entity.id == null}">
 							<ui:include src="profissionalPonto.xhtml" />
 						</p:tab>
+						</ui:remove>
+						
 					</p:tabView>
 				</div>
 			</div>
