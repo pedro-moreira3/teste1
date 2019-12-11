@@ -288,8 +288,8 @@
 								<h:outputText value="#{retorno.dataRetornoStr}" />
 							</p:column>
 
-							<p:column filterBy="#{retorno.retornar}"
-								sortBy="#{retorno.retornar}" filterMatchMode="contains"
+							<p:column filterBy="#{retornoMB.statusRetornoTabela(retorno)}"
+								sortBy="#{retornoMB.statusRetornoTabela(retorno)}" filterMatchMode="contains"
 								headerText="Status de Retorno">
 								<p:selectOneMenu value="#{retorno.retornar}">
 									<p:ajax process="@this"
