@@ -1,0 +1,210 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+
+					<p:fieldset legend="Filtros">
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+
+							<h:panelGroup styleClass="md-combo">
+								<p:selectOneMenu id="filtroPeriodo"
+									value="#{reciboRepasseProfissionalMB.filtroPeriodo}">
+
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="O" itemLabel="Ontem" />
+									<f:selectItem itemValue="H" itemLabel="Hoje" />
+									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+
+									<p:ajax process="@this" update="dataInicial, dataFinal"
+										listener="#{reciboRepasseProfissionalMB.actionTrocaDatasCriacao}" />
+								</p:selectOneMenu>
+								<p:outputLabel for="filtroPeriodo"
+									value="Período de agendamento:" />
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="md-inputfield taller">
+								<p:calendar id="dataInicial"
+									value="#{reciboRepasseProfissionalMB.dataInicio}" />
+								<p:outputLabel for="dataInicial" value="Data de agendamento de:" />
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="md-inputfield taller">
+								<p:calendar id="dataFinal"
+									value="#{reciboRepasseProfissionalMB.dataFim}" />
+								<p:outputLabel for="dataFinal" value="Data de agendamento até:" />
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="md-inputfield">
+								<p:autoComplete dropdown="true" queryDelay="1000" size="35"
+									value="#{reciboRepasseProfissionalMB.profissional}"
+									id="fitroProfissional" minQueryLength="3"
+									completeMethod="#{reciboRepasseProfissionalMB.geraSugestoesProfissional}"
+									var="profissional"
+									itemLabel="#{profissional.dadosBasico.prefixoNome}"
+									itemValue="#{profissional}" converter="profissional"
+									forceSelection="true">
+									<p:ajax event="itemSelect" process="@this" />
+								</p:autoComplete>
+								<p:outputLabel for="fitroProfissional" value="Profissional:" />
+							</h:panelGroup>
+
+							<h:panelGroup>
+								<p:selectBooleanCheckbox id="lancSemRecibo"
+									value="#{reciboRepasseProfissionalMB.lancSemRecibo}" />
+								<p:outputLabel for="lancSemRecibo" style="margin-left: 10px;"
+									value="Buscar somente lançamentos sem recibo associado" />
+							</h:panelGroup>
+
+							<h:panelGroup>
+								<p:selectBooleanCheckbox id="lancValidadosOnly"
+									value="#{reciboRepasseProfissionalMB.lancValidadosOnly}" />
+								<p:outputLabel for="lancValidadosOnly"
+									style="margin-left: 10px;"
+									value="Buscar somente lançamentos validados" />
+							</h:panelGroup>
+
+							<p:commandButton value="Pesquisar" process="@this, @parent"
+								update="dtRepasseLancamentos"
+								actionListener="#{reciboRepasseProfissionalMB.pesquisar}" />
+
+						</p:panelGrid>
+					</p:fieldset>
+					<br />
+
+					<p:dataTable value="#{reciboRepasseProfissionalMB.lancamentos}"
+						var="lancamento" filterDelay="1000" reflow="true"
+						emptyMessage="Nenhum repasse encontrado" id="dtRepasseLancamentos"
+						rows="15" paginator="true" paginatorPosition="bottom"
+						rowKey="#{lancamento}"
+						selection="#{reciboRepasseProfissionalMB.lancamentosSelecionados}"
+						binding="#{reciboRepasseProfissionalMB.tabelaLancamentos}">
+						<f:facet name="header">
+							<h:outputText value="Repasses de Profissionais" />
+						</f:facet>
+
+						<p:column selectionMode="multiple" style="width:16px;" />
+
+						<p:column filterMatchMode="contains" headerText="Profissional"
+							filterBy="#{lancamento.fatura.profissional.dadosBasico.nome}"
+							sortBy="#{lancamento.fatura.profissional.dadosBasico.nome}">
+							<h:outputText
+								value="#{lancamento.fatura.profissional.dadosBasico.nome}" />
+						</p:column>
+						<p:column filterMatchMode="contains" headerText="Procedimento"
+							filterBy="#{lancamento.ptp.procedimento.descricao}"
+							sortBy="#{lancamento.ptp.procedimento.descricao}">
+							<h:outputText value="#{lancamento.ptp.procedimento.descricao}" />
+						</p:column>
+						<p:column filterMatchMode="contains"
+							headerText="Plano de Tratamento"
+							filterBy="#{lancamento.ptp.planoTratamento.descricao}"
+							sortBy="#{lancamento.ptp.planoTratamento.descricao}">
+							<h:outputText value="#{lancamento.ptp.planoTratamento.descricao}" />
+						</p:column>
+						<p:column filterMatchMode="contains" headerText="Paciente"
+							filterBy="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}"
+							sortBy="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}">
+							<h:outputText
+								value="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}" />
+						</p:column>
+
+						<p:column filterMatchMode="contains" headerText="Valor"
+							filterBy="#{lancamento.valorComDesconto}"
+							sortBy="#{lancamento.valorComDesconto}" width="150">
+							<h:outputText value="#{lancamento.valor}">
+								<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+									type="currency" />
+							</h:outputText>
+						</p:column>
+						<p:column filterMatchMode="contains" headerText="Data de criação"
+							filterBy="#{lancamento.dataCriacao}"
+							sortBy="#{lancamento.dataCriacao}" width="150">
+							<h:outputText value="#{lancamento.dataCriacao}">
+								<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column filterMatchMode="contains" headerText="Validado?"
+							filterBy="#{lancamento.validadoStr}"
+							sortBy="#{lancamento.validadoStr}" width="100">
+							<h:outputText value="#{lancamento.validadoStr}" />
+						</p:column>
+
+
+						<ui:remove>
+							<p:column filterMatchMode="contains" headerText="Data validação"
+								filterBy="#{lancamento.dataValidado}"
+								sortBy="#{lancamento.dataValidado}">
+								<h:outputText value="#{lancamento.dataValidado}">
+									<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column filterMatchMode="contains" headerText="Validado Por"
+								filterBy="#{lancamento.validadoPorProfissional.dadosBasico.nome}"
+								sortBy="#{lancamento.validadoPorProfissional.dadosBasico.nome}">
+								<h:outputText
+									value="#{lancamento.validadoPorProfissional.dadosBasico.nome}" />
+							</p:column>
+						</ui:remove>
+					</p:dataTable>
+
+					<p:panelGrid columns="4" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+						<p:commandButton value="Gerar Recibo dos Repasses Selecionados"
+							process="@this, dtRepasseLancamentos"
+							actionListener="#{reciboRepasseProfissionalMB.prepararRecibo}"
+							update=":lume:gerarReciboPnl" />
+					</p:panelGrid>
+
+				</div>
+			</div>
+		</div>
+
+		<p:dialog appendTo=":lume" closable="false" widgetVar="dlgGerarRecibo"
+			header="Gerar recibo de pagamento" modal="true" width="500">
+			<p:outputPanel id="gerarReciboPnl">
+				<p:panelGrid columns="1" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+					<h:outputText
+						value="Será gerado um recibo para cada profissional destinatário dos lançamentos, agrupando-os em um único recibo."
+						escape="false" />
+				</p:panelGrid>
+				<p:dataTable
+					value="#{reciboRepasseProfissionalMB.profissionaisRecibo}"
+					var="profissional" filterDelay="1000" reflow="true"
+					emptyMessage="Nenhum profissional para gerar recibo"
+					id="dtProfissionaisRecibo" rows="15" paginator="true"
+					paginatorPosition="bottom" rowKey="#{profissional}">
+					<p:column filterMatchMode="contains" headerText="Profissional"
+						sortBy="#{profissional.dadosBasico.nome}"
+						filterBy="#{profissional.dadosBasico.nome}">
+						<h:outputText value="#{profissional.dadosBasico.nome}" />
+					</p:column>
+					<p:column filterMatchMode="contains" headerText="Qtde. Lançamentos"
+						sortBy="#{reciboRepasseProfissionalMB.getQtdeLancamentosFromProfissional(profissional)}"
+						filterBy="#{reciboRepasseProfissionalMB.getQtdeLancamentosFromProfissional(profissional)}">
+						<h:outputText
+							value="#{reciboRepasseProfissionalMB.getQtdeLancamentosFromProfissional(profissional)}" />
+					</p:column>
+				</p:dataTable>
+			</p:outputPanel>
+		</p:dialog>
+
+		<script type="text/javascript">
+			//<![CDATA[
+
+			//]]>
+		</script>
+	</ui:define>
+</ui:composition>
