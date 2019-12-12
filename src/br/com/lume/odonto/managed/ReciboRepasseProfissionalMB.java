@@ -28,6 +28,7 @@ import br.com.lume.odonto.entity.ReciboRepasseProfissional.StatusRecibo;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.repasse.ReciboRepasseProfissionalLancamentoSingleton;
 import br.com.lume.repasse.ReciboRepasseProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 
@@ -56,6 +57,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         super(ReciboRepasseProfissionalSingleton.getInstance().getBo());
         this.setClazz(ReciboRepasseProfissional.class);
         try {
+            setFiltroStatus(StatusRecibo.TODOS);
             actionTrocaDatasCriacaoRepasses();
             actionTrocaDatasCriacaoRecibos();
             pesquisarRepasses();
@@ -64,8 +66,20 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         }
     }
 
+    public void cancelarRecibo(ReciboRepasseProfissional r) {
+        ReciboRepasseProfissionalSingleton.getInstance().inativaRecibo(r, UtilsFrontEnd.getProfissionalLogado());
+        pesquisarRecibos();
+    }
+
+    public void aprovarRecibo(ReciboRepasseProfissional r) {
+        ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(r, UtilsFrontEnd.getProfissionalLogado());
+        pesquisarRecibos();
+    }
+
     public void onTabChange(TabChangeEvent event) {
-        if ("Histórico de Recibos".equals(event.getTab().getTitle())) {
+        if ("Repasses".equals(event.getTab().getTitle())) {
+            pesquisarRepasses();
+        } else if ("Histórico de Recibos".equals(event.getTab().getTitle())) {
             pesquisarRecibos();
         }
     }
@@ -131,14 +145,24 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                 this.profissionaisReciboValores.put(donoLancamento, this.profissionaisReciboValores.get(donoLancamento) + valor);
             }
         }
+
         PrimeFaces.current().executeScript("PF('dlgGerarRecibo').show()");
     }
 
     public void gerarRecibo() {
         try {
+            for (Lancamento l : Arrays.asList(lancamentosSelecionados)) {
+                if (ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().findReciboValidoForLancamento(l) != null) {
+                    addError("Erro", "Existem lançamentos na lista de repasse que já estão em outros recibos!");
+                    return;
+                }
+            }
+
             if (!ReciboRepasseProfissionalSingleton.getInstance().gerarRecibo(Arrays.asList(this.lancamentosSelecionados), this.descricao, this.observacao))
                 throw new Exception();
             pesquisarRepasses();
+            setLancamentosSelecionados(new Lancamento[] {});
+            PrimeFaces.current().executeScript("PF('dlgGerarRecibo').hide()");
             addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));
         } catch (Exception e) {
             addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));

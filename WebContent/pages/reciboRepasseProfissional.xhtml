@@ -89,7 +89,7 @@
 
 									<p:commandButton value="Pesquisar" process="@this, @parent"
 										update="dtRepasseLancamentos"
-										actionListener="#{reciboRepasseProfissionalMB.pesquisar}" />
+										actionListener="#{reciboRepasseProfissionalMB.pesquisarRepasses}" />
 
 								</p:panelGrid>
 							</p:fieldset>
@@ -259,13 +259,13 @@
 
 									<p:commandButton value="Pesquisar" process="@this, @parent"
 										update="dtRepasseLancamentos"
-										actionListener="#{reciboRepasseProfissionalMB.pesquisar}" />
+										actionListener="#{reciboRepasseProfissionalMB.pesquisarRecibos}" />
 
 								</p:panelGrid>
 							</p:fieldset>
 							<br />
 							<p:dataTable value="#{reciboRepasseProfissionalMB.entityList}"
-								var="lancamento" filterDelay="1000" reflow="true"
+								var="recibo" filterDelay="1000" reflow="true"
 								emptyMessage="Nenhum recibo encontrado" id="dtRecibos" rows="15"
 								paginator="true" paginatorPosition="bottom" rowKey="#{recibo}"
 								selection="#{reciboRepasseProfissionalMB.entity}"
@@ -273,15 +273,55 @@
 								<f:facet name="header">
 									<h:outputText value="Recibos de Repasses" />
 								</f:facet>
-								<p:column headerText="Profissional">
+								<p:column headerText="Ações" width="150">
+									<p:commandButton title="Aprovar Recibo"
+										styleClass="GreenButton" icon="fa fa-check"
+										actionListener="#{reciboRepasseProfissionalMB.aprovarRecibo(recibo)}"
+										process="@this" update=":lume:tabViewRepasses:dtRecibos"
+										disabled="#{!recibo.ativo || recibo.aprovado == 'S'}">
+										<p:confirm header="Confirmação" icon="ui-icon-alert"
+											escape="false"
+											message="Você tem certeza que deseja aprovar este recibo? &lt;br/&gt; Os lançamentos &lt;b&gt;não validados&lt;/b&gt; serão validados neste momento, completando o repasse. &lt;br/&gt; Os lançamentos &lt;b&gt;já validados&lt;/b&gt; seguirão como estão, já validados e com histórico de pagamento.">
+										</p:confirm>
+									</p:commandButton>
+									<p:commandButton title="Cancelar Recibo" styleClass="RedButton"
+										icon="fa fa-trash"
+										actionListener="#{reciboRepasseProfissionalMB.cancelarRecibo(recibo)}"
+										process="@this" update=":lume:tabViewRepasses:dtRecibos"
+										disabled="#{!recibo.ativo || recibo.aprovado == 'S'}">
+										<p:confirm header="Confirmação" icon="ui-icon-alert"
+											escape="false"
+											message="Você tem certeza que deseja cancelar este recibo? &lt;br/&gt; Os lançamentos &lt;b&gt;já validados&lt;/b&gt; permanecerão validados, poré todos os lançamentos deste recibo voltarão a lista de repasses elegíveis para criação de outro recibo.">
+										</p:confirm>
+									</p:commandButton>
 								</p:column>
-								<p:column headerText="Descrição">
+								<p:column headerText="Profissional" filterMatchMode="contains"
+									filterBy="#{recibo.profissional.dadosBasico.nome}"
+									sortBy="#{recibo.profissional.dadosBasico.nome}">
+									<h:outputText value="#{recibo.profissional.dadosBasico.nome}" />
 								</p:column>
-								<p:column headerText="Aprovado?" width="100">
+								<p:column headerText="Descrição" filterMatchMode="contains"
+									filterBy="#{recibo.descricao}" sortBy="#{recibo.descricao}">
+									<h:outputText value="#{recibo.descricao}" />
 								</p:column>
-								<p:column headerText="Qtde. Repasses" width="200">
+								<p:column headerText="Aprovado?" filterMatchMode="contains"
+									width="100" filterBy="#{recibo.aprovadoStr}"
+									sortBy="#{recibo.aprovadoStr}">
+									<h:outputText value="#{recibo.aprovadoStr}" />
 								</p:column>
-								<p:column headerText="Valor Total de Repasse" width="200">
+								<p:column headerText="Qtde. Repasses" filterMatchMode="contains"
+									width="200" filterBy="#{recibo.quantidadeRepasses}"
+									sortBy="#{recibo.quantidadeRepasses}">
+									<h:outputText value="#{recibo.quantidadeRepasses}" />
+								</p:column>
+								<p:column headerText="Valor Total de Repasse"
+									filterMatchMode="contains" width="200"
+									filterBy="#{recibo.valorTotalRepasse}"
+									sortBy="#{recibo.valorTotalRepasse}">
+									<h:outputText value="#{recibo.valorTotalRepasse}">
+										<f:convertNumber type="currency" currencySymbol="R$"
+											maxFractionDigits="2" />
+									</h:outputText>
 								</p:column>
 							</p:dataTable>
 						</p:tab>
@@ -330,7 +370,7 @@
 					</p:column>
 				</p:dataTable>
 				<br />
-				<p:panelGrid columns="1" layout="grid"
+				<p:panelGrid columns="1" layout="grid" id="detalhesNovoRecibo"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
 					<h:panelGroup styleClass="md-inputfield">
 						<p:inputText value="#{reciboRepasseProfissionalMB.descricao}"
@@ -349,7 +389,7 @@
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
 					<p:commandButton styleClass="GreenButton" value="Gerar Recibo"
 						update=":lume:tabViewRepasses:dtRepasseLancamentos"
-						process="@this"
+						process="@this, detalhesNovoRecibo"
 						actionListener="#{reciboRepasseProfissionalMB.gerarRecibo}" />
 				</p:panelGrid>
 			</p:outputPanel>
