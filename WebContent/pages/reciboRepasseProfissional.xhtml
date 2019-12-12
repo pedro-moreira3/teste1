@@ -6,6 +6,27 @@
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
 
+		<style>
+.centerPanels .ui-panel .ui-panel-titlebar, .centerPanels .ui-panel .ui-panel-content
+	{
+	text-align: center;
+}
+
+.lancamentoExplain.ui-panelgrid.form-group .ui-panelgrid-cell {
+	padding: 7px 16px;
+}
+
+.lancamentoExplain.ui-panelgrid.form-group .ui-panelgrid-cell:nth-child(1)
+	{
+	padding-top: 0;
+}
+
+.lessPaddingSides .ui-panelgrid-cell {
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+}
+</style>
+
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -88,7 +109,7 @@
 									</h:panelGroup>
 
 									<p:commandButton value="Pesquisar" process="@this, @parent"
-										update="dtRepasseLancamentos"
+										update=":lume:tabViewRepasses:dtRepasseLancamentos"
 										actionListener="#{reciboRepasseProfissionalMB.pesquisarRepasses}" />
 
 								</p:panelGrid>
@@ -135,7 +156,7 @@
 
 								<p:column filterMatchMode="contains" headerText="Valor"
 									filterBy="#{lancamento.valorComDesconto}"
-									sortBy="#{lancamento.valorComDesconto}" width="150">
+									sortBy="#{lancamento.valorComDesconto}" width="100">
 									<h:outputText value="#{lancamento.valor}">
 										<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
 											type="currency" />
@@ -154,30 +175,19 @@
 									sortBy="#{lancamento.validadoStr}" width="100">
 									<h:outputText value="#{lancamento.validadoStr}" />
 								</p:column>
-
-
-								<ui:remove>
-									<p:column filterMatchMode="contains"
-										headerText="Data validação"
-										filterBy="#{lancamento.dataValidado}"
-										sortBy="#{lancamento.dataValidado}">
-										<h:outputText value="#{lancamento.dataValidado}">
-											<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
-										</h:outputText>
-									</p:column>
-									<p:column filterMatchMode="contains" headerText="Validado Por"
-										filterBy="#{lancamento.validadoPorProfissional.dadosBasico.nome}"
-										sortBy="#{lancamento.validadoPorProfissional.dadosBasico.nome}">
-										<h:outputText
-											value="#{lancamento.validadoPorProfissional.dadosBasico.nome}" />
-									</p:column>
-								</ui:remove>
+								<p:column filterMatchMode="contains" headerText="Recibo Ativo"
+									filterBy="#{lancamento.reciboRepasseAtivo.descricaoStr}"
+									sortBy="#{lancamento.reciboRepasseAtivo.descricaoStr}"
+									width="200">
+									<h:outputText
+										value="#{lancamento.reciboRepasseAtivo.recibo.descricaoStr}" />
+								</p:column>
 							</p:dataTable>
 
 							<p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
 								<p:commandButton value="Gerar Recibo dos Repasses Selecionados"
-									process="@this, dtRepasseLancamentos"
+									process="@this, :lume:tabViewRepasses:dtRepasseLancamentos"
 									actionListener="#{reciboRepasseProfissionalMB.prepararRecibo}"
 									update=":lume:gerarReciboPnl" />
 							</p:panelGrid>
@@ -258,7 +268,7 @@
 									</h:panelGroup>
 
 									<p:commandButton value="Pesquisar" process="@this, @parent"
-										update="dtRepasseLancamentos"
+										update=":lume:tabViewRepasses:dtRecibos"
 										actionListener="#{reciboRepasseProfissionalMB.pesquisarRecibos}" />
 
 								</p:panelGrid>
@@ -274,6 +284,11 @@
 									<h:outputText value="Recibos de Repasses" />
 								</f:facet>
 								<p:column headerText="Ações" width="150">
+									<p:commandButton title="Visualizar Recibo"
+										styleClass="NavyButton" icon="fa fa-eye" process="@this"
+										update=":lume:visualizarReciboPnl"
+										actionListener="#{reciboRepasseProfissionalMB.preparaVisualizacao(recibo)}"
+										oncomplete="PF('dlgVisualizarRecibo').show()" />
 									<p:commandButton title="Aprovar Recibo"
 										styleClass="GreenButton" icon="fa fa-check"
 										actionListener="#{reciboRepasseProfissionalMB.aprovarRecibo(recibo)}"
@@ -291,7 +306,7 @@
 										disabled="#{!recibo.ativo || recibo.aprovado == 'S'}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											escape="false"
-											message="Você tem certeza que deseja cancelar este recibo? &lt;br/&gt; Os lançamentos &lt;b&gt;já validados&lt;/b&gt; permanecerão validados, poré todos os lançamentos deste recibo voltarão a lista de repasses elegíveis para criação de outro recibo.">
+											message="Você tem certeza que deseja cancelar este recibo? &lt;br/&gt; Os lançamentos &lt;b&gt;já validados&lt;/b&gt; permanecerão validados. &lt;br/&gt; Porém todos os lançamentos deste recibo voltarão a lista de repasses elegíveis para criação de outro recibo.">
 										</p:confirm>
 									</p:commandButton>
 								</p:column>
@@ -330,6 +345,94 @@
 				</div>
 			</div>
 		</div>
+
+		<p:dialog appendTo=":lume" closable="false"
+			widgetVar="dlgVisualizarRecibo"
+			header="Visualizar recibo de pagamento" modal="true" width="70%">
+			<p:outputPanel id="visualizarReciboPnl">
+				<p:panelGrid columns="3" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
+					<p:panel header="Profissional">
+						<h:outputText
+							value="#{reciboRepasseProfissionalMB.entity.profissional.dadosBasico.nome}" />
+					</p:panel>
+					<p:panel header="Valor Total de Repasse">
+						<h:outputText
+							value="#{reciboRepasseProfissionalMB.entity.valorTotalRepasse}">
+							<f:convertNumber currencySymbol="R$ " type="currency" />
+						</h:outputText>
+					</p:panel>
+					<p:panel header="Aprovado?">
+						<h:outputText
+							value="#{reciboRepasseProfissionalMB.entity.aprovadoStr}" />
+					</p:panel>
+				</p:panelGrid>
+				<p:dataTable
+					value="#{reciboRepasseProfissionalMB.entity.reciboLancamentos}"
+					var="reciboLancamento" filterDelay="1000" reflow="true"
+					emptyMessage="Nenhum repasse encontrado"
+					id="dtReciboRepasseLancamentos" rows="15" paginator="true"
+					paginatorPosition="bottom" rowKey="#{reciboLancamento}">
+					<f:facet name="header">
+						<h:outputText value="Repasses de Profissionais" />
+					</f:facet>
+
+					<p:column filterMatchMode="contains" headerText="Profissional"
+						filterBy="#{reciboLancamento.lancamento.fatura.profissional.dadosBasico.nome}"
+						sortBy="#{reciboLancamento.lancamento.fatura.profissional.dadosBasico.nome}">
+						<h:outputText
+							value="#{reciboLancamento.lancamento.fatura.profissional.dadosBasico.nome}" />
+					</p:column>
+					<p:column filterMatchMode="contains" headerText="Procedimento"
+						filterBy="#{reciboLancamento.lancamento.ptp.procedimento.descricao}"
+						sortBy="#{reciboLancamento.lancamento.ptp.procedimento.descricao}">
+						<h:outputText
+							value="#{reciboLancamento.lancamento.ptp.procedimento.descricao}" />
+					</p:column>
+					<p:column filterMatchMode="contains"
+						headerText="Plano de Tratamento"
+						filterBy="#{reciboLancamento.lancamento.ptp.planoTratamento.descricao}"
+						sortBy="#{reciboLancamento.lancamento.ptp.planoTratamento.descricao}">
+						<h:outputText
+							value="#{reciboLancamento.lancamento.ptp.planoTratamento.descricao}" />
+					</p:column>
+					<p:column filterMatchMode="contains" headerText="Paciente"
+						filterBy="#{reciboLancamento.lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}"
+						sortBy="#{reciboLancamento.lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}">
+						<h:outputText
+							value="#{reciboLancamento.lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}" />
+					</p:column>
+
+					<p:column filterMatchMode="contains" headerText="Valor"
+						filterBy="#{reciboLancamento.lancamento.valorComDesconto}"
+						sortBy="#{reciboLancamento.lancamento.valorComDesconto}"
+						width="100">
+						<h:outputText value="#{reciboLancamento.lancamento.valor}">
+							<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+								type="currency" />
+						</h:outputText>
+					</p:column>
+					<p:column filterMatchMode="contains" headerText="Data de criação"
+						filterBy="#{reciboLancamento.lancamento.dataCriacao}"
+						sortBy="#{reciboLancamento.lancamento.dataCriacao}" width="150">
+						<h:outputText value="#{reciboLancamento.lancamento.dataCriacao}">
+							<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					<p:column filterMatchMode="contains" headerText="Validado?"
+						filterBy="#{reciboLancamento.lancamento.validadoStr}"
+						sortBy="#{reciboLancamento.lancamento.validadoStr}" width="100">
+						<h:outputText value="#{reciboLancamento.lancamento.validadoStr}" />
+					</p:column>
+				</p:dataTable>
+			</p:outputPanel>
+			<p:separator styleClass="SeparatorFull" />
+			<p:panelGrid columns="1" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+				<p:commandButton styleClass="NavyButton" value="Fechar"
+					process="@this" oncomplete="PF('dlgVisualizarRecibo').hide()" />
+			</p:panelGrid>
+		</p:dialog>
 
 		<p:dialog appendTo=":lume" closable="false" widgetVar="dlgGerarRecibo"
 			header="Gerar recibo de pagamento" modal="true" width="70%">
@@ -385,12 +488,15 @@
 					</h:panelGroup>
 				</p:panelGrid>
 				<p:separator styleClass="SeparatorFull" />
-				<p:panelGrid columns="1" layout="grid"
+				<p:panelGrid columns="2" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
 					<p:commandButton styleClass="GreenButton" value="Gerar Recibo"
 						update=":lume:tabViewRepasses:dtRepasseLancamentos"
 						process="@this, detalhesNovoRecibo"
 						actionListener="#{reciboRepasseProfissionalMB.gerarRecibo}" />
+					<p:commandButton styleClass="NavyButton" value="Fechar"
+						process="@this"
+						actionListener="#{reciboRepasseProfissionalMB.cancelarRecibo}" />
 				</p:panelGrid>
 			</p:outputPanel>
 		</p:dialog>

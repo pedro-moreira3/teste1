@@ -68,11 +68,13 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
     public void cancelarRecibo(ReciboRepasseProfissional r) {
         ReciboRepasseProfissionalSingleton.getInstance().inativaRecibo(r, UtilsFrontEnd.getProfissionalLogado());
+        addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO));
         pesquisarRecibos();
     }
 
     public void aprovarRecibo(ReciboRepasseProfissional r) {
         ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(r, UtilsFrontEnd.getProfissionalLogado());
+        addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         pesquisarRecibos();
     }
 
@@ -122,7 +124,24 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         return this.profissionaisReciboValores.get(profissional);
     }
 
+    public void preparaVisualizacao(ReciboRepasseProfissional recibo) {
+        setEntity(recibo);
+        if (getEntity().getReciboLancamentos() != null && !getEntity().getReciboLancamentos().isEmpty()) {
+            getEntity().getReciboLancamentos().forEach(repasseRecibo -> {
+                try {
+                    RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(repasseRecibo.getLancamento());
+                    repasseRecibo.getLancamento().setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
+                } catch (Exception e) {
+                    repasseRecibo.getLancamento().setPtp(null);
+                }
+            });
+        }
+    }
+
     public void prepararRecibo() {
+        this.descricao = null;
+        this.observacao = null;
+
         this.profissionaisReciboLancamentos = new HashMap<>();
         this.profissionaisReciboValores = new HashMap<>();
         this.profissionaisRecibo = new ArrayList<>();
@@ -149,6 +168,11 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         PrimeFaces.current().executeScript("PF('dlgGerarRecibo').show()");
     }
 
+    public void cancelarRecibo() {
+        setLancamentosSelecionados(new Lancamento[] {});
+        PrimeFaces.current().executeScript("PF('dlgGerarRecibo').hide()");
+    }
+
     public void gerarRecibo() {
         try {
             for (Lancamento l : Arrays.asList(lancamentosSelecionados)) {
@@ -163,7 +187,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
             pesquisarRepasses();
             setLancamentosSelecionados(new Lancamento[] {});
             PrimeFaces.current().executeScript("PF('dlgGerarRecibo').hide()");
-            addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+            addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         } catch (Exception e) {
             addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));
         }
