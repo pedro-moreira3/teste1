@@ -221,10 +221,12 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     
     public String statusPagamento(Orcamento orcamento) {
         
-        if( (orcamento.getValorPago().intValue() < orcamento.getValorTotal().intValue()) ) {
-            return "Pendente";
-        }else if( (orcamento.getValorPago().intValue() == orcamento.getValorTotal().intValue()) ) {
-            return "Pago";
+        if(orcamento.isAtivo()) {
+            if( (orcamento.isAprovado() && orcamento.getValorPago().intValue() < orcamento.getValorTotal().intValue()) ) {
+                return "Pendente";
+            }else if( (orcamento.getValorPago().intValue() == orcamento.getValorTotal().intValue()) ) {
+                return "Pago";
+            }
         }
         
         return "";
