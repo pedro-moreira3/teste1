@@ -47,9 +47,16 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        // TODO Auto-generated method stub
-        super.actionPersist(event);
-        menuMB.carregarMenu();
+        try {
+            // TODO Auto-generated method stub
+            super.actionPersist(event);
+            UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(getEntity()));
+
+            menuMB.carregarMenu();
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            log.error("Erro ao salvar registros", e);
+        }
     }
 
     private void carregarEmpresa() {
