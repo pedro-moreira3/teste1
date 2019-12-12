@@ -149,7 +149,7 @@ VALUES('Consultório Legal', 'S');
 UPDATE DOMINIO SET EXCLUIDO = 'S', DATA_EXCLUSAO = CURRENT_DATE
 WHERE ID IN (
 	SELECT
-		D.*
+		D.ID
 	FROM DOMINIO D
 	WHERE D.OBJETO = 'planotratamento'
 	  AND D.TIPO = 'justificativa'
@@ -161,14 +161,14 @@ VALUES('planotratamento', 'justificativa', 'Cadastro de plano de tratamento erra
 INSERT INTO DOMINIO(OBJETO, TIPO, NOME, VALOR, ID_EMPRESA, EDITAVEL, EXCLUIDO)
 VALUES('planotratamento', 'justificativa', 'Paciente desistiu do tratamento', 'PD', 41, TRUE, 'N');
 INSERT INTO DOMINIO(OBJETO, TIPO, NOME, VALOR, ID_EMPRESA, EDITAVEL, EXCLUIDO)
-VALUES('planotratamento', 'justificativa', 'Paciente optou por outro plano de tratamento', 'OP', 41, TRUE, 'N');
+VALUES('planotratamento', 'justificativa', 'Paciente optou por outro plano de tratamento', 'PP', 41, TRUE, 'N');
 INSERT INTO DOMINIO(OBJETO, TIPO, NOME, VALOR, ID_EMPRESA, EDITAVEL, EXCLUIDO)
 VALUES('planotratamento', 'justificativa', 'Plano de tratamento foi alterado', 'PA', 41, TRUE, 'N');
 
 UPDATE DOMINIO SET EXCLUIDO = 'S', DATA_EXCLUSAO = CURRENT_DATE
 WHERE ID IN (
 	SELECT
-		D.*
+		D.ID
 	FROM DOMINIO D
 	WHERE D.OBJETO = 'planotratamentoprocedimento'
 	  AND D.TIPO = 'justificativa'
@@ -191,12 +191,12 @@ update plano_tratamento set status = 'E' where status = 'S' and justificativa is
 
 
 ----------------------------
- insert into seg_perobjeto (per_int_cod,obj_int_cod) values (
+ insert into seg_perobjeto (per_int_cod,obj_int_cod)  
  select per_int_cod,149 from seg_perobjeto where obj_int_cod = 90
-);
+
 
 insert into objeto_profissional (obj_int_cod,id_profissional) 
-values ( select 149,id_profissional from objeto_profissional where obj_int_cod = 90);
+  select 149,id_profissional from objeto_profissional where obj_int_cod = 90
 -------------------------------
 
 CREATE TABLE RECIBO_REPASSE_PROFISSIONAL (

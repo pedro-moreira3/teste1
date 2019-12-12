@@ -172,10 +172,10 @@
 									actionListener="#{retornoMB.actionNew}" process="@this"
 									immediate="true" oncomplete="PF('dlgViewRetorno').show()"
 									update=":lume:viewRetorno, :lume:viewRetornoHeader" />
-								<p:commandButton icon="White fa fa-pencil" value="Editar"
+								<p:commandButton styleClass="NavyButton" icon="fa fa-eye" value="Editar"
 									process="@this" oncomplete="PF('dlgViewRetorno').show()"
 									update=":lume:viewRetorno, :lume:viewRetornoHeader"
-									disabled="#{retornoMB.entity.id == 0}" styleClass="NavyButton" />
+									disabled="#{retornoMB.entity.id == 0}"  />
 								<p:commandButton icon="White fa fa-trash-o" value="Excluir"
 									actionListener="#{retornoMB.actionRemove}"
 									update=":lume:pnRetorno" process="@this"

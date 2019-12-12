@@ -77,7 +77,7 @@
                         <div class="SeparatorFull"></div>
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid" style="padding: 0px 0px !important;">
                             <p:commandButton id="busca" icon="White fa fa-search" value="Busca Itens" disabled="#{emprestimoUnitarioMB.entity.id!=0}" actionListener="#{emprestimoUnitarioMB.actionFindMateriais}"
-                                update=":lume:pnEntradaDlg, :lume:dtEmprestimoUnitario, :lume:dtMateriaisDisponiveis" process=":lume:pnEntradaDlg" styleClass="OrangeButton" />
+                                update=":lume:pnEntradaDlg, :lume:dtEmprestimoUnitario, :lume:dtMateriaisDisponiveis" process=":lume:pnEntradaDlg" styleClass="NavyButton" />
                         </p:panelGrid>					
 							<div class="EmptyBox20"></div>	
 						</p:scrollPanel>
@@ -88,7 +88,7 @@
 						</p:outputPanel>        
 						<p:dataTable filterDelay="1500"  reflow="true" var="materiaisSelecionado" value="#{emprestimoUnitarioMB.materiaisDisponiveis}" paginator="true" rows="7" paginatorPosition="bottom"
                             id="dtMateriaisDisponiveis" emptyMessage="" selection="#{emprestimoUnitarioMB.materiaisSelecionado}" rowKey="#{materiaisSelecionado.id}">
-                            <f:facet name="header">Materiais DisponÃ­veis</f:facet>
+                            <f:facet name="header">Materiais Disponíveis</f:facet>
 
                             <p:column selectionMode="multiple" style="width:16px;text-align:center" />
 
@@ -193,7 +193,7 @@
                              rowKey="#{emprestimoUnitario}" paginatorPosition="bottom" binding="#{emprestimoUnitarioMB.tabelaEmprestimo}">                         
                             <f:facet name="header">Empréstimos Unitários</f:facet>
 							 <p:column headerText="Ações" width="10%">
-							 <p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlg').show();" update=":lume:pnDlg, :lume:pnBotoesDlg" title="Editar" process="@this"
+							 <p:commandButton styleClass="NavyButton" icon="fa fa-eye" oncomplete="PF('dlg').show();" update=":lume:pnDlg, :lume:pnBotoesDlg" title="Editar" process="@this"
                                 actionListener="#{emprestimoUnitarioMB.carregarEditar(emprestimoUnitario)}" style="width:33px !important" />
 	                        </p:column>		                         
                             <p:column filterBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}" sortBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}"

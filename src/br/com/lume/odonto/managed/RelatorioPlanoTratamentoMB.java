@@ -65,6 +65,8 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
             this.listaConvenios = new ArrayList<>();
         
         this.sugestoesConvenios("todos");
+        status = new ArrayList<String>();
+        status.add("N");
     }
     
     public List<Paciente> sugestoesPacientes(String query) {
@@ -107,6 +109,8 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
     
     public void actionTrocaDatasFinal() {
         try {
+            this.status.add("S");
+            this.status.add("E");
             setInicioFinalizacao(getDataInicio(filtroPeriodoFinalizacao));
             setFimFinalizacao(getDataFim(filtroPeriodoFinalizacao));
          //   actionFiltrar(null);
@@ -207,23 +211,23 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
         return null;
     }
 
-    public String statusPlanoTratamento(PlanoTratamento planoTratamento) {
-        
-        String retorno = "Ativo";
-        if (Status.SIM.equals(planoTratamento.getStatus()) && planoTratamento.getJustificativa() == null) {
-            retorno = "Finalizado";
-        } else if (Status.SIM.equals(planoTratamento.getStatus()) && planoTratamento.getJustificativa() != null) {
-            retorno = "Encerrado";
-        } else if (!planoTratamento.isAtivo()) {
-            retorno = "Excluido";
-        } else if (planoTratamento.getPlanoTratamentoProcedimentos() != null && !planoTratamento.getPlanoTratamentoProcedimentos().isEmpty()) {
-            for(PlanoTratamentoProcedimento ptp : planoTratamento.getPlanoTratamentoProcedimentos()) {
-                if(!ptp.isFinalizado())
-                    return "Pendente";
-            }
-        }
-        return retorno;
-    }
+//    public String statusPlanoTratamento(PlanoTratamento planoTratamento) {
+//        
+//        String retorno = "Ativo";
+//        if (Status.EXECUTADO.equals(planoTratamento.getStatus()) && planoTratamento.getJustificativa() == null) {
+//            retorno = "Executado";
+//        } else if (Status.SIM.equals(planoTratamento.getStatus()) && planoTratamento.getJustificativa() != null) {
+//            retorno = "Encerrado";
+//        } else if (!planoTratamento.isAtivo()) {
+//            retorno = "Excluido";
+//        } else if (planoTratamento.getPlanoTratamentoProcedimentos() != null && !planoTratamento.getPlanoTratamentoProcedimentos().isEmpty()) {
+//            for(PlanoTratamentoProcedimento ptp : planoTratamento.getPlanoTratamentoProcedimentos()) {
+//                if(!ptp.isFinalizado())
+//                    return "Pendente";
+//            }
+//        }
+//        return retorno;
+//    }
     
     public void exportarTabela(String type) {
         exportarTabela("Relatório do Plano de Tratamento", tabelaRelatorio, type);

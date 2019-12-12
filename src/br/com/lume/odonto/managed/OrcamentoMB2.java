@@ -116,7 +116,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
 
             }
             totalPago = new BigDecimal(0);
-            for (Lancamento lan : LancamentoSingleton.getInstance().getBo().listByPlanoTratamentoOrcamentoNaoExcluido(planoTratamentoMB.getEntity())) {
+            for (Lancamento lan : LancamentoSingleton.getInstance().getBo().listLancamentosFromPlanoTratamento(planoTratamentoMB.getEntity(),true)) {
                 if (lan.getDataPagamento() != null) {
                     totalPago = totalPago.add(lan.getValorOriginal());
                 }

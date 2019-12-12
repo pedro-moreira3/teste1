@@ -82,7 +82,7 @@
 						<p:ajax event="rowSelect" update=":lume:pnMarca" />
 						<f:facet name="header">Marcas</f:facet>
  						<p:column headerText="Ações" width="20%">
- 							<p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlg').show();" update=":lume:pnDlg" title="Editar" process="@this"
+ 							<p:commandButton styleClass="NavyButton" icon="fa fa-eye" oncomplete="PF('dlg').show();" update=":lume:pnDlg" title="Editar" process="@this"
 							actionListener="#{marcaMB.carregarEditar(marca)}" style="width:33px !important" />
 							<h:outputText value="&#160;" /><h:outputText value="&#160;" />
 							<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmation').show();" update=":lume:pnDlg,:lume:dtMarca" title="Remover" process="@this"

@@ -197,7 +197,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								actionListener="#{planoTratamentoMB.preparaImprimirOrcamento(planoTratamento)}"
 								process="@this" oncomplete="PF('dlgGerarOrcamento').show()"
 								update=":lume:tabView:pnConteudoImpressaoOrcamento, :lume:tabView:mainViewPT"
-								styleClass="OrangeButton" title="Imprimir Orçamento" />
+								styleClass="OrangeButton" title="Imprimir Orçamento" >
+								
+								</p:commandButton>
 						</ui:remove>
 						<h:panelGroup rendered="#{planoTratamentoMB.admin}">
 							<p:commandButton id="devolucao" icon="White fa fa-times-circle"
@@ -205,7 +207,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								title="Encerrar Plano de Tratamento" process="@this"
 								styleClass="RedButton"
 								actionListener="#{planoTratamentoMB.actionFinalizar(planoTratamento)}"
-								disabled="#{planoTratamento.status == 'S' or planoTratamento.status == 'E'}" />
+								disabled="#{planoTratamento.status == 'S' or planoTratamento.status == 'E'}" >
+								<p:confirm header="Confirmação"
+									message="Deseja realmente encerrar este Plano de Tratamento?"
+									icon="fa fa-warning" />
+								</p:commandButton>
 						</h:panelGroup>
 					</p:column>
 					<p:column filterBy="#{planoTratamento.descricaoComConvenio}"  style="width:25%"
@@ -716,7 +722,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								styleClass="ui-panelgrid-blank form-group ui-fluid removePaddingUp removeSideGridPadding">
 								<p:commandButton process="@this" value="Editar Informações"
 									update=":lume:tabView:pnEditaPlanoTratamento"
-									styleClass="OrangeButton" icon="fa fa-pencil"
+									styleClass="NavyButton" icon="fa fa-eye"
 									oncomplete="PF('dlgEditaPlanoTratamento').show()"
 									disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 								<h:panelGroup rendered="#{planoTratamentoMB.temPermissaoExtra}">
@@ -734,7 +740,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 										value="Encerrar Plano de Tratamento" process="@this"
 										styleClass="RedButton"
 										actionListener="#{planoTratamentoMB.actionFinalizar}"
-										disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
+										disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" >
+										<p:confirm header="Confirmação"
+									message="Deseja realmente encerrar este Plano de Tratamento?"
+									icon="fa fa-warning" />
+										</p:commandButton>
 								</h:panelGroup>
 							</p:panelGrid>
 						</p:fieldset>
@@ -759,7 +769,22 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								disabled="#{planoTratamentoMB.odontogramas == null or planoTratamentoMB.odontogramas.isEmpty()}"
 								value="Ver odontograma" />
 						</p:panelGrid>
-
+				<p:panelGrid columns="4" layout="grid"
+						columnClasses="ui-g-6, ui-g-6"
+						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+						<h:panelGroup styleClass="md-combo">
+							<p:outputLabel for="statusProcedimentos"
+								value="Status dos Procedimentos " />
+							<p:selectOneMenu id="statusProcedimentos"
+								value="#{planoTratamentoMB.filtroStatusProcedimento}">
+								<f:selectItem itemLabel="Ativos" itemValue="N" />								
+								<f:selectItem itemLabel="Cancelados" itemValue="S" />
+								<f:selectItem itemLabel="Todos" itemValue="T" />
+								<p:ajax listener="#{planoTratamentoMB.carregarPlanoTratamentoProcedimentos}"
+									process="@this" update="dtProcedimentosSelecionadospt" />
+							</p:selectOneMenu>
+						</h:panelGroup>
+					</p:panelGrid>
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							widgetVar="procedimentosTableInPT"
 							id="dtProcedimentosSelecionadospt" var="plano"
@@ -775,16 +800,17 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:commandButton styleClass="NavyButton" icon="fa fa-eye" process="@this"
 									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
 									oncomplete="PF('dlgNovoProcedimento').show()" title="Editar"
-									disabled="#{plano.finalizado || planoTratamentoMB.encerrado}"									
+									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"									
 									update=":lume:tabView:pnViewPlanoTratamento, :lume:tabView:pgProcedimento, :lume:tabView:pgProcedimentoBotoes" />
 								<p:commandButton icon="fa fa-clock-o" process="@this"
 									actionListener="#{planoTratamentoMB.carregaAgendamentosProcedimento(plano)}"
 									oncomplete="PF('dlgListaAgendamentoProcedimento').show()"
 									title="Agendamentos"
+									disabled="#{plano.excluido eq 'S'}"
 									update=":lume:tabView:pnlListaAgendamento, :lume:tabView:pnlListaAgendamentoHeader">
 								</p:commandButton>
 								<p:commandButton icon="fa fa-times-circle White"
-									disabled="#{plano.finalizado || planoTratamentoMB.encerrado}"
+									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"
 									actionListener="#{planoTratamentoMB.abreJustificativaRemove(plano)}"
 									process="@this" title="Cancelar" styleClass="RedButton"
 									update=":lume:tabView:pnlJustificativaRemoveHeader, :lume:tabView:pnlJustificativaRemove" />
@@ -796,6 +822,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							</p:column>
 							<p:column headerText="Prioridade" width="60">
 								<h:outputText value="#{plano.prioridade}" />
+							</p:column>
+							<p:column headerText="Status" width="60">
+								<h:outputText value="#{plano.statusDescricao}" />
 							</p:column>
 
 							<p:column sortBy="#{plano.procedimento.descricao}"
@@ -820,7 +849,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									required="true" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
 									rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"
-									disabled="#{plano.planoTratamento.status == 'S' or planoTratamento.status == 'E'}">
+									disabled="#{plano.planoTratamento.status == 'S' or planoTratamento.status == 'E' or plano.excluido eq 'S'}">
 								</p:inputNumber>
 								<h:outputText value="#{plano.valorDesconto}"
 									rendered="#{!planoTratamentoMB.temPermissaoTrocarValor}">
@@ -835,11 +864,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									</h:outputText>
 								</f:facet>
 							</p:column>
-
 							<p:column headerText="Finalizado" width="100"
 								styleClass="hideOnEdit">
 								<p:selectManyCheckbox id="status" value="#{plano.statuss}"
-									disabled="#{plano.finalizado or plano.planoTratamento.status == 'S' or planoTratamento.status == 'E'}"
+									disabled="#{plano.finalizado or plano.planoTratamento.status == 'S' or planoTratamento.status == 'E' or plano.excluido eq 'S'}"
 									styleClass="lumeField"
 									style="width: 35px;display: inline-block;">
 									<f:selectItem itemLabel="" itemValue="F" />
@@ -1167,10 +1195,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						value="Orçamentos do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
 				</f:facet>
 				<p:column width="120" headerText="Editar">
-					<p:commandButton icon="fa fa-pencil" process="@this"
+					<p:commandButton  process="@this"
 						actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
 						update=":lume:tabView:orcamentoViewTable, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView"
-						onclick="PF('dlgViewOrcamento').show();" styleClass="NavyButton" />
+						onclick="PF('dlgViewOrcamento').show();" styleClass="NavyButton" icon="fa fa-eye" />
 					<p:commandButton icon="White fa fa-print" process="@this"
 						update=":lume:tabView:orcamentoInclude"
 						actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"

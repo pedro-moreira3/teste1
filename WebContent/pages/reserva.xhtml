@@ -209,7 +209,7 @@
                                 </h:panelGroup>
                             </f:facet>
 							 <p:column headerText="Ações" width="10%">
-							 <p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlg').show();" update=":lume:pnEntradaDlg" title="Editar" process="@this"
+							 <p:commandButton styleClass="NavyButton" icon="fa fa-eye" oncomplete="PF('dlg').show();" update=":lume:pnEntradaDlg" title="Editar" process="@this"
                                 actionListener="#{reservaMB.carregarEditar(reserva)}" style="width:33px !important" />							 
 							 	<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmDialog').show();" update=":lume:pnDlg,:lume:dtReserva" title="Remover" process="@this"
 	                                 style="width:33px !important" actionListener="#{reservaMB.carregarEditar(reserva)}" rendered="#{reservaMB.isKitPendente(reserva)}" />

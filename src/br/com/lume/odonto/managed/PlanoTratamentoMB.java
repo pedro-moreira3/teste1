@@ -107,6 +107,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     private String filtroStatus = "N";
     
+    private String filtroStatusProcedimento  = "N";
+    
     private String filtroTipo = "T";
 
     private DualListModel<PlanoTratamentoProcedimento> ptProcedimentosDisponiveis = new DualListModel<>();
@@ -316,7 +318,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionFinalizar(ActionEvent event) {
         try {
-            if (temProcedimentosAbertos()) {
+            if (this.planoTratamentoProcedimentos == null || this.planoTratamentoProcedimentos.isEmpty() || temProcedimentosAbertos()) {
                 if (this.justificativa == null) {
                     PrimeFaces.current().executeScript("PF('devolver').show()");
                     return;
@@ -1352,18 +1354,18 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
-    private void carregarPlanoTratamentoProcedimentos() throws Exception {
+    public void carregarPlanoTratamentoProcedimentos() throws Exception {
         if (getEntity() != null && getEntity().getId() != null) {
             planoTratamentoProcedimentosExcluidos = new ArrayList<>();
             List<PlanoTratamentoProcedimento> aux = null;
-            aux = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(getEntity().getId());
+            aux = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoStatus(getEntity().getId(),filtroStatusProcedimento);
             planoTratamentoProcedimentos = new ArrayList<>();
             for (PlanoTratamentoProcedimento ptp : aux) {
-                if (ptp.getExcluido().equals(Status.NAO)) {
+             //   if (ptp.getExcluido().equals(Status.NAO)) {
                     //  PlanoTratamentoProcedimentoSingleton.getInstance().getBo().refresh(ptp);
                     ptp.setValorAnterior(ptp.getValorDesconto());
                     planoTratamentoProcedimentos.add(ptp);
-                }
+              //  }
 
                 List<String> faces = new ArrayList<>();
                 for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {
@@ -1848,6 +1850,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     
     public void setFiltroTipo(String filtroTipo) {
         this.filtroTipo = filtroTipo;
+    }
+
+    
+    public String getFiltroStatusProcedimento() {
+        return filtroStatusProcedimento;
+    }
+
+    
+    public void setFiltroStatusProcedimento(String filtroStatusProcedimento) {
+        this.filtroStatusProcedimento = filtroStatusProcedimento;
     }
 
 }

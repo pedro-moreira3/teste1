@@ -144,7 +144,7 @@
 	                             
 	                            <f:facet name="header">Itens</f:facet>  		                           
 								<p:column headerText="Ações" width="10%" rendered="#{item.descricao ne 'RAIZ'}" style="text-align:center !important">
-									<p:commandButton class="OrangeButton" icon="fa fa-pencil" update=":lume:pnDlg" title="Editar" process="@this"
+									<p:commandButton styleClass="NavyButton" icon="fa fa-eye" update=":lume:pnDlg" title="Editar" process="@this"
 									actionListener="#{itemMB.carregarEditar(item)}" style="width:33px !important" />
 									<h:outputText value="&#160;" /><h:outputText value="&#160;" />
 									<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmDialog').show();" update="" title="Remover" process="@this"
@@ -174,7 +174,7 @@
 	                            <p:treeTable paginator="true" rows="30" value="#{itemMB.root}" var="item" id="tbItemTree" selection="#{itemMB.selectedItem}" selectionMode="single" style="white-space: normal;">                              
 	                                <f:facet name="header">Itens</f:facet>
 									<p:column headerText="Ações" width="20%" rendered="#{item.descricao ne 'RAIZ'}" style="text-align:center !important">
-										<p:commandButton class="OrangeButton" icon="fa fa-pencil" update=":lume:pnDlg" title="Editar" process="@this"
+										<p:commandButton styleClass="NavyButton" icon="fa fa-eye" update=":lume:pnDlg" title="Editar" process="@this"
 										actionListener="#{itemMB.carregarEditar(item)}" style="width:33px !important" />
 										<h:outputText value="&#160;" /><h:outputText value="&#160;" />
 										<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmDialog').show();" update="" title="Remover" process="@this"
