@@ -197,7 +197,7 @@
 						</p:column>
 						<p:column headerText="Editar" styleClass="TexAlCenter BotaoExame">
 							<p:commandButton action="#{exameMB.actionEditFile}"
-								disabled="#{exameMB.validaPdf(exame)}" icon="fa fa-pencil White"
+								disabled="#{exameMB.validaPdf(exame)}" styleClass="NavyButton" icon="fa fa-eye"
 								process="@this" immediate="true"
 								update=":lume:tabView:paint,:lume:tabView:arquivoBase64"
 								oncomplete="doPaint();PF('editDialog').show();">

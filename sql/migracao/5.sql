@@ -191,11 +191,12 @@ update plano_tratamento set status = 'E' where status = 'S' and justificativa is
 
 
 ----------------------------
- insert into seg_perobjeto (per_int_cod,obj_int_cod) values (
+ insert into seg_perobjeto (per_int_cod,obj_int_cod)  
  select per_int_cod,149 from seg_perobjeto where obj_int_cod = 90
-);
+
 
 insert into objeto_profissional (obj_int_cod,id_profissional) 
+<<<<<<< Upstream, based on origin/backend
 values ( select 149,id_profissional from objeto_profissional where obj_int_cod = 90);
 -------------------------------
 
@@ -246,3 +247,7 @@ LEFT JOIN SEG_OBJETO O
 	ON O.OBJ_INT_COD = OP.OBJ_INT_COD
 WHERE O.OBJ_STR_DES ILIKE 'REPASSE DE PROFISSIONAL'
   AND O.OBJ_CHA_STS = 'A';
+=======
+ select 149,id_profissional from objeto_profissional where obj_int_cod = 90
+-------------------------------
+>>>>>>> 0963bcd correcoes

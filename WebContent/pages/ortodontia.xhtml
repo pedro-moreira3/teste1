@@ -561,11 +561,11 @@ li.orcamento-li {
 												paginatorPosition="bottom">
 												<f:facet name="header">Orçamentos</f:facet>
 												<p:column width="120" headerText="Editar">
-													<p:commandButton icon="fa fa-pencil" process="@this"
+													<p:commandButton  process="@this"
 														actionListener="#{ortodontiaMB.actionEditOrcamento(o)}"
 														update=":lume:tabView:orcamentoPlanoOrtodontico, :lume:tabView:orcamentoPlanoOrtodonticoHeader, :lume:tabView:buttonsDlgOrcamentoOrtodonticoView"
 														onclick="PF('dlgOrcamentoPlanoOrtodontico').show();"
-														 styleClass="OrangeButton" title="Editar Dados" />
+														 styleClass="NavyButton" icon="fa fa-eye" title="Editar Dados" />
 													<p:commandButton icon="White fa fa-print" process="@this"
 														actionListener="#{ortodontiaMB.setOrcamentoSelecionado(o)}"
 														update=":lume:tabView:orcamentoIncludeOrtodontico"

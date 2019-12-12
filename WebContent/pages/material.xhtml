@@ -51,7 +51,10 @@
                       
                         <f:facet name="header">Materiais</f:facet>
 						 <p:column headerText="Ações" width="12%">
-						 	<p:commandButton class="OrangeButton" icon="fa fa-pencil" oncomplete="PF('dlgEntrada').show();" update=":lume:pnEntradaDlg" title="Editar" process="@this"
+						 
+						 
+						 
+						 	<p:commandButton styleClass="NavyButton" icon="fa fa-eye" oncomplete="PF('dlgEntrada').show();" update=":lume:pnEntradaDlg" title="Editar" process="@this"
                                 actionListener="#{materialMB.carregarEditar(material)}" style="width:33px !important" />
 							<h:outputText value="&#160;" /><h:outputText value="&#160;" />                                
                             <p:commandButton class="GreenButton" icon="White fa fa-mail-forward" oncomplete="PF('dlg').show();" process="@this"

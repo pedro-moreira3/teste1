@@ -41,7 +41,7 @@
                         <p:commandButton id="deletAfastamento" icon="White fa fa-trash-o" value="Excluir" actionListener="#{afastamentoMB.actionRemove}"
                             update=":lume:pnAfastamento,:lume:dtAfastamento" process="@this" disabled="#{afastamentoMB.entity.id == 0}" styleClass="RedButton"
                             oncomplete="handleDialogRequestAfastamento(xhr, status, args);" />
-                        <p:commandButton id="newAfastamento" icon="White fa fa-file-o" value="Novo" actionListener="#{afastamentoMB.actionNew}" update=":lume:pnAfastamento" immediate="true"
+                        <p:commandButton id="newAfastamento" icon="White fa fa-file-o" value="Novo Afastamento" actionListener="#{afastamentoMB.actionNew}" update=":lume:pnAfastamento" immediate="true"
                             tabindex="1" process="@this,pnAfastamento" />
                     </p:panelGrid>
 
