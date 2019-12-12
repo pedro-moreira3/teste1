@@ -172,7 +172,7 @@
 		</div>
 
 		<p:dialog appendTo=":lume" closable="false" widgetVar="dlgGerarRecibo"
-			header="Gerar recibo de pagamento" modal="true" width="500">
+			header="Gerar recibo de pagamento" modal="true" width="70%">
 			<p:outputPanel id="gerarReciboPnl">
 				<p:panelGrid columns="1" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
@@ -186,6 +186,7 @@
 					emptyMessage="Nenhum profissional para gerar recibo"
 					id="dtProfissionaisRecibo" rows="15" paginator="true"
 					paginatorPosition="bottom" rowKey="#{profissional}">
+					<f:facet name="header">Profissionais e Repasses</f:facet>
 					<p:column filterMatchMode="contains" headerText="Profissional"
 						sortBy="#{profissional.dadosBasico.nome}"
 						filterBy="#{profissional.dadosBasico.nome}">
@@ -197,7 +198,34 @@
 						<h:outputText
 							value="#{reciboRepasseProfissionalMB.getQtdeLancamentosFromProfissional(profissional)}" />
 					</p:column>
+					<p:column filterMatchMode="contains"
+						headerText="Valor total para repasse"
+						sortBy="#{reciboRepasseProfissionalMB.getValorLancamentosFromProfissional(profissional)}"
+						filterBy="#{reciboRepasseProfissionalMB.getValorLancamentosFromProfissional(profissional)}">
+						<h:outputText
+							value="#{reciboRepasseProfissionalMB.getValorLancamentosFromProfissional(profissional)}">
+							<f:convertNumber type="currency" currencySymbol="R$"
+								maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
 				</p:dataTable>
+				<p:panelGrid columns="1" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+					<h:panelGroup styleClass="md-inputfield">
+						<p:inputText value="#{reciboRepasseProfissionalMB.descricao}"
+							id="descricaoRecibo" maxlength="255" />
+						<p:outputLabel for="descricaoRecibo" value="Descrição" />
+					</h:panelGroup>
+					<h:panelGroup styleClass="md-inputfield">
+						<p:inputTextarea style="width: 100%" rows="6"
+							value="#{reciboRepasseProfissionalMB.observacao}"
+							id="observacaoRecibo" />
+						<p:outputLabel for="observacaoRecibo" value="Observação" />
+					</h:panelGroup>
+					<p:separator styleClass="SeparatorFull" />
+					<p:commandButton styleClass="GreenButton" value="Gerar Recibo"
+						process="@this" />
+				</p:panelGrid>
 			</p:outputPanel>
 		</p:dialog>
 

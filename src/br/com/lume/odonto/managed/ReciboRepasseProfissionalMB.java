@@ -42,7 +42,9 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     private List<Lancamento> lancamentos;
     private Lancamento[] lancamentosSelecionados;
 
-    private HashMap<Profissional, Integer> profissionaisRecibo;
+    private List<Profissional> profissionaisRecibo;
+    private HashMap<Profissional, Integer> profissionaisReciboLancamentos;
+    private HashMap<Profissional, Double> profissionaisReciboValores;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaLancamentos;
@@ -74,20 +76,29 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     }
 
     public Integer getQtdeLancamentosFromProfissional(Profissional profissional) {
-        return this.profissionaisRecibo.get(profissional);
+        return this.profissionaisReciboLancamentos.get(profissional);
+    }
+
+    public Double getValorLancamentosFromProfissional(Profissional profissional) {
+        return this.profissionaisReciboValores.get(profissional);
     }
 
     public void prepararRecibo() {
-        if (this.profissionaisRecibo == null)
-            this.profissionaisRecibo = new HashMap<Profissional, Integer>();
-        else
-            this.profissionaisRecibo.clear();
+        this.profissionaisReciboLancamentos = new HashMap<>();
+        this.profissionaisReciboValores = new HashMap<>();
+        this.profissionaisRecibo = new ArrayList<>();
+
         for (int i = 0; i < lancamentos.size(); i++) {
-            Profissional donoLancamento = lancamentos.get(i).getFatura().getProfissional();
+            Lancamento lancamento = lancamentos.get(i);
+            Profissional donoLancamento = lancamento.getFatura().getProfissional();
+            Double valor = (lancamento.getValorComDesconto() == null || lancamento.getValorComDesconto().doubleValue() == 0d ? lancamento.getValor().doubleValue() : lancamento.getValorComDesconto().doubleValue());
             if (getProfissionaisRecibo() == null || getProfissionaisRecibo().indexOf(donoLancamento) < 0) {
-                this.profissionaisRecibo.put(donoLancamento, new Integer(1));
+                this.profissionaisReciboLancamentos.put(donoLancamento, new Integer(1));
+                this.profissionaisReciboValores.put(donoLancamento, valor);
+                this.profissionaisRecibo.add(donoLancamento);
             } else {
-                this.profissionaisRecibo.put(donoLancamento, this.profissionaisRecibo.get(donoLancamento) + 1);
+                this.profissionaisReciboLancamentos.put(donoLancamento, this.profissionaisReciboLancamentos.get(donoLancamento) + 1);
+                this.profissionaisReciboValores.put(donoLancamento, this.profissionaisReciboValores.get(donoLancamento) + valor);
             }
         }
         PrimeFaces.current().executeScript("PF('dlgGerarRecibo').show()");
@@ -258,9 +269,23 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     }
 
     public List<Profissional> getProfissionaisRecibo() {
-        if (this.profissionaisRecibo != null && !this.profissionaisRecibo.isEmpty())
-            return new ArrayList<>(this.profissionaisRecibo.keySet());
-        return null;
+        return this.profissionaisRecibo;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public String getObservacao() {
+        return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
     }
 
 }
