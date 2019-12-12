@@ -136,6 +136,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                 }
             });
         }
+        PrimeFaces.current().executeScript("PF('dlgVisualizarRecibo').show()");
     }
 
     public void prepararRecibo() {
