@@ -14,6 +14,7 @@ import javax.faces.bean.ViewScoped;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
@@ -23,6 +24,7 @@ import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional;
+import br.com.lume.odonto.entity.ReciboRepasseProfissional.StatusRecibo;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
@@ -35,43 +37,66 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
     private static final long serialVersionUID = 1L;
 
-    private String filtroPeriodo = "M", descricao, observacao;
-    private Date dataInicio, dataFim;
-    boolean lancSemRecibo = true, lancValidadosOnly = false;
-    private Profissional profissional;
+    private String filtroPeriodoRepasses = "M", filtroPeriodoRecibos = "M", descricao, observacao;
+    private Date dataInicioRepasses, dataFimRepasses, dataInicioRecibos, dataFimRecibos;
+    boolean lancSemRecibo = true, lancValidadosOnly = false, recibosFindCancelados = false;
+    private Profissional profissionalRepasses, profissionalRecibos;
     private List<Lancamento> lancamentos;
     private Lancamento[] lancamentosSelecionados;
+    private StatusRecibo filtroStatus;
 
     private List<Profissional> profissionaisRecibo;
     private HashMap<Profissional, Integer> profissionaisReciboLancamentos;
     private HashMap<Profissional, Double> profissionaisReciboValores;
 
     //EXPORTAÇÃO TABELA
-    private DataTable tabelaLancamentos;
+    private DataTable tabelaLancamentos, tabelaRecibos;
 
     public ReciboRepasseProfissionalMB() {
         super(ReciboRepasseProfissionalSingleton.getInstance().getBo());
         this.setClazz(ReciboRepasseProfissional.class);
         try {
-            actionTrocaDatasCriacao();
-            pesquisar();
+            actionTrocaDatasCriacaoRepasses();
+            actionTrocaDatasCriacaoRecibos();
+            pesquisarRepasses();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
     }
 
-    public void pesquisar() {
-        setLancamentos(LancamentoSingleton.getInstance().getBo().listLancamentosRepasse(UtilsFrontEnd.getEmpresaLogada(), this.profissional, this.lancSemRecibo, this.lancValidadosOnly,
-                this.dataInicio, this.dataFim));
-        if (getLancamentos() != null && !getLancamentos().isEmpty()) {
-            getLancamentos().forEach(lancamento -> {
-                try {
-                    RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(lancamento);
-                    lancamento.setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
-                } catch (Exception e) {
-                    lancamento.setPtp(null);
-                }
-            });
+    public void onTabChange(TabChangeEvent event) {
+        if ("Histórico de Recibos".equals(event.getTab().getTitle())) {
+            pesquisarRecibos();
+        }
+    }
+
+    public void pesquisarRecibos() {
+        try {
+            setEntityList(ReciboRepasseProfissionalSingleton.getInstance().getBo().findRecibosFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissionalRecibos(), getDataInicioRecibos(),
+                    getDataFimRecibos(), getFiltroStatus(), isRecibosFindCancelados()));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
+        }
+    }
+
+    public void pesquisarRepasses() {
+        try {
+            setLancamentos(LancamentoSingleton.getInstance().getBo().listLancamentosRepasse(UtilsFrontEnd.getEmpresaLogada(), getProfissionalRepasses(), isLancSemRecibo(), isLancValidadosOnly(),
+                    getDataInicioRepasses(), getDataFimRepasses()));
+            if (getLancamentos() != null && !getLancamentos().isEmpty()) {
+                getLancamentos().forEach(lancamento -> {
+                    try {
+                        RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(lancamento);
+                        lancamento.setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
+                    } catch (Exception e) {
+                        lancamento.setPtp(null);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
         }
     }
 
@@ -88,8 +113,13 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         this.profissionaisReciboValores = new HashMap<>();
         this.profissionaisRecibo = new ArrayList<>();
 
-        for (int i = 0; i < lancamentos.size(); i++) {
-            Lancamento lancamento = lancamentos.get(i);
+        if (lancamentosSelecionados == null || Arrays.asList(lancamentosSelecionados).size() == 0) {
+            addError("Erro", "É necessário escolher ao menos um repasse.");
+            return;
+        }
+
+        for (int i = 0; i < Arrays.asList(lancamentosSelecionados).size(); i++) {
+            Lancamento lancamento = Arrays.asList(lancamentosSelecionados).get(i);
             Profissional donoLancamento = lancamento.getFatura().getProfissional();
             Double valor = (lancamento.getValorComDesconto() == null || lancamento.getValorComDesconto().doubleValue() == 0d ? lancamento.getValor().doubleValue() : lancamento.getValorComDesconto().doubleValue());
             if (getProfissionaisRecibo() == null || getProfissionaisRecibo().indexOf(donoLancamento) < 0) {
@@ -108,6 +138,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         try {
             if (!ReciboRepasseProfissionalSingleton.getInstance().gerarRecibo(Arrays.asList(this.lancamentosSelecionados), this.descricao, this.observacao))
                 throw new Exception();
+            pesquisarRepasses();
             addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));
         } catch (Exception e) {
             addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));
@@ -133,10 +164,20 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         return sugestoes;
     }
 
-    public void actionTrocaDatasCriacao() {
+    public void actionTrocaDatasCriacaoRecibos() {
         try {
-            this.dataInicio = getDataInicio(filtroPeriodo);
-            this.dataFim = getDataFim(filtroPeriodo);
+            this.dataInicioRecibos = getDataInicio(filtroPeriodoRecibos);
+            this.dataFimRecibos = getDataFim(filtroPeriodoRecibos);
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
+        }
+    }
+
+    public void actionTrocaDatasCriacaoRepasses() {
+        try {
+            this.dataInicioRepasses = getDataInicio(filtroPeriodoRepasses);
+            this.dataFimRepasses = getDataFim(filtroPeriodoRepasses);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
@@ -196,20 +237,36 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         }
     }
 
+    public List<StatusRecibo> getStatusRecibo() {
+        return Arrays.asList(ReciboRepasseProfissional.StatusRecibo.values());
+    }
+
+    private Date aplicaHoraInicial(Date data) {
+        return aplicaHora(data, 0, 0, 0, 0);
+    }
+
+    private Date aplicaHoraFinal(Date data) {
+        return aplicaHora(data, 23, 59, 59, 999);
+    }
+
+    private Date aplicaHora(Date data, int hora, int minuto, int segundo, int millis) {
+        if (data == null)
+            return null;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(data);
+        calendar.set(Calendar.HOUR, hora);
+        calendar.set(Calendar.MINUTE, minuto);
+        calendar.set(Calendar.SECOND, segundo);
+        calendar.set(Calendar.MILLISECOND, millis);
+        return calendar.getTime();
+    }
+
     public boolean isLancSemRecibo() {
         return lancSemRecibo;
     }
 
     public void setLancSemRecibo(boolean lancSemRecibo) {
         this.lancSemRecibo = lancSemRecibo;
-    }
-
-    public Profissional getProfissional() {
-        return profissional;
-    }
-
-    public void setProfissional(Profissional profissional) {
-        this.profissional = profissional;
     }
 
     public Lancamento[] getLancamentosSelecionados() {
@@ -236,28 +293,20 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         this.lancamentos = lancamentos;
     }
 
-    public String getFiltroPeriodo() {
-        return filtroPeriodo;
+    public String getFiltroPeriodoRepasses() {
+        return filtroPeriodoRepasses;
     }
 
-    public void setFiltroPeriodo(String filtroPeriodo) {
-        this.filtroPeriodo = filtroPeriodo;
+    public void setFiltroPeriodoRepasses(String filtroPeriodoRepasses) {
+        this.filtroPeriodoRepasses = filtroPeriodoRepasses;
     }
 
-    public Date getDataInicio() {
-        return dataInicio;
+    public String getFiltroPeriodoRecibos() {
+        return filtroPeriodoRecibos;
     }
 
-    public void setDataInicio(Date dataInicio) {
-        this.dataInicio = dataInicio;
-    }
-
-    public Date getDataFim() {
-        return dataFim;
-    }
-
-    public void setDataFim(Date dataFim) {
-        this.dataFim = dataFim;
+    public void setFiltroPeriodoRecibos(String filtroPeriodoRecibos) {
+        this.filtroPeriodoRecibos = filtroPeriodoRecibos;
     }
 
     public boolean isLancValidadosOnly() {
@@ -286,6 +335,98 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
     public void setObservacao(String observacao) {
         this.observacao = observacao;
+    }
+
+    public Date getDataInicioRepasses() {
+        return aplicaHoraInicial(dataInicioRepasses);
+    }
+
+    public void setDataInicioRepasses(Date dataInicioRepasses) {
+        this.dataInicioRepasses = dataInicioRepasses;
+    }
+
+    public Date getDataFimRepasses() {
+        return aplicaHoraFinal(dataFimRepasses);
+    }
+
+    public void setDataFimRepasses(Date dataFimRepasses) {
+        this.dataFimRepasses = dataFimRepasses;
+    }
+
+    public Date getDataInicioRecibos() {
+        return aplicaHoraInicial(dataInicioRecibos);
+    }
+
+    public void setDataInicioRecibos(Date dataInicioRecibos) {
+        this.dataInicioRecibos = dataInicioRecibos;
+    }
+
+    public Date getDataFimRecibos() {
+        return aplicaHoraFinal(dataFimRecibos);
+    }
+
+    public void setDataFimRecibos(Date dataFimRecibos) {
+        this.dataFimRecibos = dataFimRecibos;
+    }
+
+    public Profissional getProfissionalRepasses() {
+        return profissionalRepasses;
+    }
+
+    public void setProfissionalRepasses(Profissional profissionalRepasses) {
+        this.profissionalRepasses = profissionalRepasses;
+    }
+
+    public Profissional getProfissionalRecibos() {
+        return profissionalRecibos;
+    }
+
+    public void setProfissionalRecibos(Profissional profissionalRecibos) {
+        this.profissionalRecibos = profissionalRecibos;
+    }
+
+    public HashMap<Profissional, Integer> getProfissionaisReciboLancamentos() {
+        return profissionaisReciboLancamentos;
+    }
+
+    public void setProfissionaisReciboLancamentos(HashMap<Profissional, Integer> profissionaisReciboLancamentos) {
+        this.profissionaisReciboLancamentos = profissionaisReciboLancamentos;
+    }
+
+    public HashMap<Profissional, Double> getProfissionaisReciboValores() {
+        return profissionaisReciboValores;
+    }
+
+    public void setProfissionaisReciboValores(HashMap<Profissional, Double> profissionaisReciboValores) {
+        this.profissionaisReciboValores = profissionaisReciboValores;
+    }
+
+    public void setProfissionaisRecibo(List<Profissional> profissionaisRecibo) {
+        this.profissionaisRecibo = profissionaisRecibo;
+    }
+
+    public StatusRecibo getFiltroStatus() {
+        return filtroStatus;
+    }
+
+    public void setFiltroStatus(StatusRecibo filtroStatus) {
+        this.filtroStatus = filtroStatus;
+    }
+
+    public boolean isRecibosFindCancelados() {
+        return recibosFindCancelados;
+    }
+
+    public void setRecibosFindCancelados(boolean recibosFindCancelados) {
+        this.recibosFindCancelados = recibosFindCancelados;
+    }
+
+    public DataTable getTabelaRecibos() {
+        return tabelaRecibos;
+    }
+
+    public void setTabelaRecibos(DataTable tabelaRecibos) {
+        this.tabelaRecibos = tabelaRecibos;
     }
 
 }

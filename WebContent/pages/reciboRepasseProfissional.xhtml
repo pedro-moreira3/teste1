@@ -10,163 +10,283 @@
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 
-					<p:fieldset legend="Filtros">
-						<p:panelGrid columns="3" layout="grid"
-							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+					<p:tabView id="tabViewRepasses" style="padding: 0 15px 15px 15px;"
+						dynamic="true" cache="false">
 
-							<h:panelGroup styleClass="md-combo">
-								<p:selectOneMenu id="filtroPeriodo"
-									value="#{reciboRepasseProfissionalMB.filtroPeriodo}">
+						<p:ajax event="tabChange"
+							listener="#{reciboRepasseProfissionalMB.onTabChange}"
+							update=":lume:tabViewRepasses" />
 
-									<f:selectItem itemValue="" itemLabel="Selecione" />
-									<f:selectItem itemValue="O" itemLabel="Ontem" />
-									<f:selectItem itemValue="H" itemLabel="Hoje" />
-									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
-									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
-									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
-									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
-									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+						<p:tab title="Repasses">
+							<p:fieldset legend="Filtros">
+								<p:panelGrid columns="3" layout="grid"
+									styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
 
-									<p:ajax process="@this" update="dataInicial, dataFinal"
-										listener="#{reciboRepasseProfissionalMB.actionTrocaDatasCriacao}" />
-								</p:selectOneMenu>
-								<p:outputLabel for="filtroPeriodo"
-									value="Período de agendamento:" />
-							</h:panelGroup>
+									<h:panelGroup styleClass="md-combo">
+										<p:selectOneMenu id="filtroPeriodoRepasses"
+											value="#{reciboRepasseProfissionalMB.filtroPeriodoRepasses}">
 
-							<h:panelGroup styleClass="md-inputfield taller">
-								<p:calendar id="dataInicial"
-									value="#{reciboRepasseProfissionalMB.dataInicio}" />
-								<p:outputLabel for="dataInicial" value="Data de agendamento de:" />
-							</h:panelGroup>
+											<f:selectItem itemValue="" itemLabel="Selecione" />
+											<f:selectItem itemValue="O" itemLabel="Ontem" />
+											<f:selectItem itemValue="H" itemLabel="Hoje" />
+											<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+											<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+											<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+											<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+											<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
 
-							<h:panelGroup styleClass="md-inputfield taller">
-								<p:calendar id="dataFinal"
-									value="#{reciboRepasseProfissionalMB.dataFim}" />
-								<p:outputLabel for="dataFinal" value="Data de agendamento até:" />
-							</h:panelGroup>
+											<p:ajax process="@this"
+												update="dataInicialRepasses, dataFinalRepasses"
+												listener="#{reciboRepasseProfissionalMB.actionTrocaDatasCriacao}" />
+										</p:selectOneMenu>
+										<p:outputLabel for="filtroPeriodoRepasses"
+											value="Período de criação:" />
+									</h:panelGroup>
 
-							<h:panelGroup styleClass="md-inputfield">
-								<p:autoComplete dropdown="true" queryDelay="1000" size="35"
-									value="#{reciboRepasseProfissionalMB.profissional}"
-									id="fitroProfissional" minQueryLength="3"
-									completeMethod="#{reciboRepasseProfissionalMB.geraSugestoesProfissional}"
-									var="profissional"
-									itemLabel="#{profissional.dadosBasico.prefixoNome}"
-									itemValue="#{profissional}" converter="profissional"
-									forceSelection="true">
-									<p:ajax event="itemSelect" process="@this" />
-								</p:autoComplete>
-								<p:outputLabel for="fitroProfissional" value="Profissional:" />
-							</h:panelGroup>
+									<h:panelGroup styleClass="md-inputfield taller">
+										<p:calendar id="dataInicialRepasses"
+											value="#{reciboRepasseProfissionalMB.dataInicioRepasses}" />
+										<p:outputLabel for="dataInicialRepasses"
+											value="Data de criação de:" />
+									</h:panelGroup>
 
-							<h:panelGroup>
-								<p:selectBooleanCheckbox id="lancSemRecibo"
-									value="#{reciboRepasseProfissionalMB.lancSemRecibo}" />
-								<p:outputLabel for="lancSemRecibo" style="margin-left: 10px;"
-									value="Buscar somente lançamentos sem recibo associado" />
-							</h:panelGroup>
+									<h:panelGroup styleClass="md-inputfield taller">
+										<p:calendar id="dataFinalRepasses"
+											value="#{reciboRepasseProfissionalMB.dataFimRepasses}" />
+										<p:outputLabel for="dataFinalRepasses"
+											value="Data de criação até:" />
+									</h:panelGroup>
 
-							<h:panelGroup>
-								<p:selectBooleanCheckbox id="lancValidadosOnly"
-									value="#{reciboRepasseProfissionalMB.lancValidadosOnly}" />
-								<p:outputLabel for="lancValidadosOnly"
-									style="margin-left: 10px;"
-									value="Buscar somente lançamentos validados" />
-							</h:panelGroup>
+									<h:panelGroup styleClass="md-inputfield">
+										<p:autoComplete dropdown="true" queryDelay="1000" size="35"
+											value="#{reciboRepasseProfissionalMB.profissionalRepasses}"
+											id="fitroProfissionalRepasses" minQueryLength="3"
+											completeMethod="#{reciboRepasseProfissionalMB.geraSugestoesProfissional}"
+											var="profissional"
+											itemLabel="#{profissional.dadosBasico.prefixoNome}"
+											itemValue="#{profissional}" converter="profissional"
+											forceSelection="true">
+											<p:ajax event="itemSelect" process="@this" />
+										</p:autoComplete>
+										<p:outputLabel for="fitroProfissionalRepasses"
+											value="Profissional" />
+									</h:panelGroup>
 
-							<p:commandButton value="Pesquisar" process="@this, @parent"
-								update="dtRepasseLancamentos"
-								actionListener="#{reciboRepasseProfissionalMB.pesquisar}" />
+									<h:panelGroup>
+										<p:selectBooleanCheckbox id="lancSemRecibo"
+											value="#{reciboRepasseProfissionalMB.lancSemRecibo}" />
+										<p:outputLabel for="lancSemRecibo" style="margin-left: 10px;"
+											value="Buscar somente lançamentos sem recibo associado" />
+									</h:panelGroup>
 
-						</p:panelGrid>
-					</p:fieldset>
-					<br />
+									<h:panelGroup>
+										<p:selectBooleanCheckbox id="lancValidadosOnly"
+											value="#{reciboRepasseProfissionalMB.lancValidadosOnly}" />
+										<p:outputLabel for="lancValidadosOnly"
+											style="margin-left: 10px;"
+											value="Buscar somente lançamentos validados" />
+									</h:panelGroup>
 
-					<p:dataTable value="#{reciboRepasseProfissionalMB.lancamentos}"
-						var="lancamento" filterDelay="1000" reflow="true"
-						emptyMessage="Nenhum repasse encontrado" id="dtRepasseLancamentos"
-						rows="15" paginator="true" paginatorPosition="bottom"
-						rowKey="#{lancamento}"
-						selection="#{reciboRepasseProfissionalMB.lancamentosSelecionados}"
-						binding="#{reciboRepasseProfissionalMB.tabelaLancamentos}">
-						<f:facet name="header">
-							<h:outputText value="Repasses de Profissionais" />
-						</f:facet>
+									<p:commandButton value="Pesquisar" process="@this, @parent"
+										update="dtRepasseLancamentos"
+										actionListener="#{reciboRepasseProfissionalMB.pesquisar}" />
 
-						<p:column selectionMode="multiple" style="width:16px;" />
+								</p:panelGrid>
+							</p:fieldset>
+							<br />
 
-						<p:column filterMatchMode="contains" headerText="Profissional"
-							filterBy="#{lancamento.fatura.profissional.dadosBasico.nome}"
-							sortBy="#{lancamento.fatura.profissional.dadosBasico.nome}">
-							<h:outputText
-								value="#{lancamento.fatura.profissional.dadosBasico.nome}" />
-						</p:column>
-						<p:column filterMatchMode="contains" headerText="Procedimento"
-							filterBy="#{lancamento.ptp.procedimento.descricao}"
-							sortBy="#{lancamento.ptp.procedimento.descricao}">
-							<h:outputText value="#{lancamento.ptp.procedimento.descricao}" />
-						</p:column>
-						<p:column filterMatchMode="contains"
-							headerText="Plano de Tratamento"
-							filterBy="#{lancamento.ptp.planoTratamento.descricao}"
-							sortBy="#{lancamento.ptp.planoTratamento.descricao}">
-							<h:outputText value="#{lancamento.ptp.planoTratamento.descricao}" />
-						</p:column>
-						<p:column filterMatchMode="contains" headerText="Paciente"
-							filterBy="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}"
-							sortBy="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}">
-							<h:outputText
-								value="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}" />
-						</p:column>
+							<p:dataTable value="#{reciboRepasseProfissionalMB.lancamentos}"
+								var="lancamento" filterDelay="1000" reflow="true"
+								emptyMessage="Nenhum repasse encontrado"
+								id="dtRepasseLancamentos" rows="15" paginator="true"
+								paginatorPosition="bottom" rowKey="#{lancamento}"
+								selection="#{reciboRepasseProfissionalMB.lancamentosSelecionados}"
+								binding="#{reciboRepasseProfissionalMB.tabelaLancamentos}">
+								<f:facet name="header">
+									<h:outputText value="Repasses de Profissionais" />
+								</f:facet>
 
-						<p:column filterMatchMode="contains" headerText="Valor"
-							filterBy="#{lancamento.valorComDesconto}"
-							sortBy="#{lancamento.valorComDesconto}" width="150">
-							<h:outputText value="#{lancamento.valor}">
-								<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
-									type="currency" />
-							</h:outputText>
-						</p:column>
-						<p:column filterMatchMode="contains" headerText="Data de criação"
-							filterBy="#{lancamento.dataCriacao}"
-							sortBy="#{lancamento.dataCriacao}" width="150">
-							<h:outputText value="#{lancamento.dataCriacao}">
-								<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
-							</h:outputText>
-						</p:column>
-						<p:column filterMatchMode="contains" headerText="Validado?"
-							filterBy="#{lancamento.validadoStr}"
-							sortBy="#{lancamento.validadoStr}" width="100">
-							<h:outputText value="#{lancamento.validadoStr}" />
-						</p:column>
+								<p:column selectionMode="multiple" style="width:16px;" />
+
+								<p:column filterMatchMode="contains" headerText="Profissional"
+									filterBy="#{lancamento.fatura.profissional.dadosBasico.nome}"
+									sortBy="#{lancamento.fatura.profissional.dadosBasico.nome}">
+									<h:outputText
+										value="#{lancamento.fatura.profissional.dadosBasico.nome}" />
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Procedimento"
+									filterBy="#{lancamento.ptp.procedimento.descricao}"
+									sortBy="#{lancamento.ptp.procedimento.descricao}">
+									<h:outputText value="#{lancamento.ptp.procedimento.descricao}" />
+								</p:column>
+								<p:column filterMatchMode="contains"
+									headerText="Plano de Tratamento"
+									filterBy="#{lancamento.ptp.planoTratamento.descricao}"
+									sortBy="#{lancamento.ptp.planoTratamento.descricao}">
+									<h:outputText
+										value="#{lancamento.ptp.planoTratamento.descricao}" />
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Paciente"
+									filterBy="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}"
+									sortBy="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}">
+									<h:outputText
+										value="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}" />
+								</p:column>
+
+								<p:column filterMatchMode="contains" headerText="Valor"
+									filterBy="#{lancamento.valorComDesconto}"
+									sortBy="#{lancamento.valorComDesconto}" width="150">
+									<h:outputText value="#{lancamento.valor}">
+										<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+											type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column filterMatchMode="contains"
+									headerText="Data de criação"
+									filterBy="#{lancamento.dataCriacao}"
+									sortBy="#{lancamento.dataCriacao}" width="150">
+									<h:outputText value="#{lancamento.dataCriacao}">
+										<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Validado?"
+									filterBy="#{lancamento.validadoStr}"
+									sortBy="#{lancamento.validadoStr}" width="100">
+									<h:outputText value="#{lancamento.validadoStr}" />
+								</p:column>
 
 
-						<ui:remove>
-							<p:column filterMatchMode="contains" headerText="Data validação"
-								filterBy="#{lancamento.dataValidado}"
-								sortBy="#{lancamento.dataValidado}">
-								<h:outputText value="#{lancamento.dataValidado}">
-									<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
-								</h:outputText>
-							</p:column>
-							<p:column filterMatchMode="contains" headerText="Validado Por"
-								filterBy="#{lancamento.validadoPorProfissional.dadosBasico.nome}"
-								sortBy="#{lancamento.validadoPorProfissional.dadosBasico.nome}">
-								<h:outputText
-									value="#{lancamento.validadoPorProfissional.dadosBasico.nome}" />
-							</p:column>
-						</ui:remove>
-					</p:dataTable>
+								<ui:remove>
+									<p:column filterMatchMode="contains"
+										headerText="Data validação"
+										filterBy="#{lancamento.dataValidado}"
+										sortBy="#{lancamento.dataValidado}">
+										<h:outputText value="#{lancamento.dataValidado}">
+											<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+									<p:column filterMatchMode="contains" headerText="Validado Por"
+										filterBy="#{lancamento.validadoPorProfissional.dadosBasico.nome}"
+										sortBy="#{lancamento.validadoPorProfissional.dadosBasico.nome}">
+										<h:outputText
+											value="#{lancamento.validadoPorProfissional.dadosBasico.nome}" />
+									</p:column>
+								</ui:remove>
+							</p:dataTable>
 
-					<p:panelGrid columns="4" layout="grid"
-						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
-						<p:commandButton value="Gerar Recibo dos Repasses Selecionados"
-							process="@this, dtRepasseLancamentos"
-							actionListener="#{reciboRepasseProfissionalMB.prepararRecibo}"
-							update=":lume:gerarReciboPnl" />
-					</p:panelGrid>
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+								<p:commandButton value="Gerar Recibo dos Repasses Selecionados"
+									process="@this, dtRepasseLancamentos"
+									actionListener="#{reciboRepasseProfissionalMB.prepararRecibo}"
+									update=":lume:gerarReciboPnl" />
+							</p:panelGrid>
+						</p:tab>
 
+						<p:tab title="Histórico de Recibos">
+							<p:fieldset legend="Filtros">
+								<p:panelGrid columns="3" layout="grid"
+									styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+
+									<h:panelGroup styleClass="md-combo">
+										<p:selectOneMenu id="filtroPeriodoRecibos"
+											value="#{reciboRepasseProfissionalMB.filtroPeriodoRecibos}">
+
+											<f:selectItem itemValue="" itemLabel="Selecione" />
+											<f:selectItem itemValue="O" itemLabel="Ontem" />
+											<f:selectItem itemValue="H" itemLabel="Hoje" />
+											<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+											<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+											<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+											<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+											<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+
+											<p:ajax process="@this"
+												update="dataInicialRecibos, dataFinalRecibos"
+												listener="#{reciboRepasseProfissionalMB.actionTrocaDatasCriacao}" />
+										</p:selectOneMenu>
+										<p:outputLabel for="filtroPeriodoRecibos"
+											value="Período de criação:" />
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-inputfield taller">
+										<p:calendar id="dataInicialRecibos"
+											value="#{reciboRepasseProfissionalMB.dataInicioRecibos}" />
+										<p:outputLabel for="dataInicialRecibos"
+											value="Data de criação de:" />
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-inputfield taller">
+										<p:calendar id="dataFinalRecibos"
+											value="#{reciboRepasseProfissionalMB.dataFimRecibos}" />
+										<p:outputLabel for="dataFinalRecibos"
+											value="Data de criação até:" />
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-inputfield taller">
+										<p:autoComplete dropdown="true" queryDelay="1000" size="35"
+											value="#{reciboRepasseProfissionalMB.profissionalRecibos}"
+											id="fitroProfissionalRecibos" minQueryLength="3"
+											completeMethod="#{reciboRepasseProfissionalMB.geraSugestoesProfissional}"
+											var="profissional"
+											itemLabel="#{profissional.dadosBasico.prefixoNome}"
+											itemValue="#{profissional}" converter="profissional"
+											forceSelection="true">
+											<p:ajax event="itemSelect" process="@this" />
+										</p:autoComplete>
+										<p:outputLabel for="fitroProfissionalRecibos"
+											value="Profissional" />
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-combo">
+										<p:selectOneMenu id="filtroStatusRecibos"
+											value="#{reciboRepasseProfissionalMB.filtroStatus}">
+											<f:selectItems
+												value="#{reciboRepasseProfissionalMB.statusRecibo}"
+												var="status" itemValue="#{status}"
+												itemLabel="#{status.rotulo}" />
+										</p:selectOneMenu>
+										<p:outputLabel for="filtroStatusRecibos"
+											value="Buscar somente lançamentos validados" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<p:selectBooleanCheckbox id="recibosFindCancelados"
+											value="#{reciboRepasseProfissionalMB.recibosFindCancelados}" />
+										<p:outputLabel for="recibosFindCancelados"
+											style="margin-left: 10px;" value="Buscar recibos cancelados" />
+									</h:panelGroup>
+
+									<p:commandButton value="Pesquisar" process="@this, @parent"
+										update="dtRepasseLancamentos"
+										actionListener="#{reciboRepasseProfissionalMB.pesquisar}" />
+
+								</p:panelGrid>
+							</p:fieldset>
+							<br />
+							<p:dataTable value="#{reciboRepasseProfissionalMB.entityList}"
+								var="lancamento" filterDelay="1000" reflow="true"
+								emptyMessage="Nenhum recibo encontrado" id="dtRecibos" rows="15"
+								paginator="true" paginatorPosition="bottom" rowKey="#{recibo}"
+								selection="#{reciboRepasseProfissionalMB.entity}"
+								binding="#{reciboRepasseProfissionalMB.tabelaRecibos}">
+								<f:facet name="header">
+									<h:outputText value="Recibos de Repasses" />
+								</f:facet>
+								<p:column headerText="Profissional">
+								</p:column>
+								<p:column headerText="Descrição">
+								</p:column>
+								<p:column headerText="Aprovado?" width="100">
+								</p:column>
+								<p:column headerText="Qtde. Repasses" width="200">
+								</p:column>
+								<p:column headerText="Valor Total de Repasse" width="200">
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+
+					</p:tabView>
 				</div>
 			</div>
 		</div>
@@ -209,6 +329,7 @@
 						</h:outputText>
 					</p:column>
 				</p:dataTable>
+				<br />
 				<p:panelGrid columns="1" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
 					<h:panelGroup styleClass="md-inputfield">
@@ -222,9 +343,14 @@
 							id="observacaoRecibo" />
 						<p:outputLabel for="observacaoRecibo" value="Observação" />
 					</h:panelGroup>
-					<p:separator styleClass="SeparatorFull" />
+				</p:panelGrid>
+				<p:separator styleClass="SeparatorFull" />
+				<p:panelGrid columns="1" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
 					<p:commandButton styleClass="GreenButton" value="Gerar Recibo"
-						process="@this" />
+						update=":lume:tabViewRepasses:dtRepasseLancamentos"
+						process="@this"
+						actionListener="#{reciboRepasseProfissionalMB.gerarRecibo}" />
 				</p:panelGrid>
 			</p:outputPanel>
 		</p:dialog>
