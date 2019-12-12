@@ -158,7 +158,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                 }
             }
 
-            if (!ReciboRepasseProfissionalSingleton.getInstance().gerarRecibo(Arrays.asList(this.lancamentosSelecionados), this.descricao, this.observacao))
+            if (!ReciboRepasseProfissionalSingleton.getInstance().gerarRecibo(Arrays.asList(this.lancamentosSelecionados), this.descricao, this.observacao, UtilsFrontEnd.getProfissionalLogado()))
                 throw new Exception();
             pesquisarRepasses();
             setLancamentosSelecionados(new Lancamento[] {});
