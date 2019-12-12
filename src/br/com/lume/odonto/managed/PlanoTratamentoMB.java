@@ -316,7 +316,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionFinalizar(ActionEvent event) {
         try {
-            if (temProcedimentosAbertos()) {
+            if (this.planoTratamentoProcedimentos == null || this.planoTratamentoProcedimentos.isEmpty() || temProcedimentosAbertos()) {
                 if (this.justificativa == null) {
                     PrimeFaces.current().executeScript("PF('devolver').show()");
                     return;

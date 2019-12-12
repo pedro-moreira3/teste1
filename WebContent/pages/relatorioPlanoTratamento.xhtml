@@ -206,7 +206,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon{
 							styleClass="ui-panelgrid-blank ui-fluid form-group">
 							<h:panelGroup styleClass="md-combo">
 								<h:outputText for="filtroPeriodoFinalizacao"
-									value="Período de finalização do plano:" />
+									value="Período de fechamento do plano:" />
 								<p:selectOneMenu id="filtroPeriodoFinalizacao"
 									value="#{relatorioPlanoTratamentoMB.filtroPeriodoFinalizacao}">
 									<p:ajax process="@this" update="@form"
@@ -223,13 +223,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon{
 							</h:panelGroup>
 							<h:panelGroup>
 								<h:outputText for="inicioFinalizacao"
-									value="Data de finalização de:" />
+									value="Data de fechamento de:" />
 								<p:calendar id="inicioFinalizacao"
 									value="#{relatorioPlanoTratamentoMB.inicioFinalizacao}" />
 							</h:panelGroup>
 							<h:panelGroup>
 								<h:outputText for="fimFinalizacao"
-									value="Data de finalização até:" />
+									value="Data de fechamento até:" />
 								<p:calendar id="fimFinalizacao"
 									value="#{relatorioPlanoTratamentoMB.fimFinalizacao}" />
 							</h:panelGroup>
@@ -313,23 +313,24 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon{
 						</p:panelGrid>
 						</ui:remove>
 
+
 						<p:outputPanel style="margin:20px;">
 
-							<h:outputLabel value="Mostrar os procedimentos: " />
+							<h:outputLabel value="Mostrar os planos: " />
 							
 							<p:selectManyCheckbox
 								value="#{relatorioPlanoTratamentoMB.status}"
 								layout="grid" columns="6">
 								<p:ajax process="@this" />
+								<f:selectItem 
+									itemLabel="Ativos"
+									itemValue="N" itemEscaped="false" />
 								<f:selectItem
 									itemLabel="Encerrados"
 									itemValue="S" itemEscaped="false" />
 								<f:selectItem
 									itemLabel="Executados"
-									itemValue="E" itemEscaped="false" />
-									<f:selectItem
-									itemLabel="Não finalizados"
-									itemValue="N" itemEscaped="false" />
+									itemValue="E" itemEscaped="false" />								
 							</p:selectManyCheckbox>
 						</p:outputPanel>
 
@@ -432,13 +433,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon{
 							<p:column filterBy="#{m.dataHoraFinalizadoStr}"
 								sortBy="#{m.dataHoraFinalizadoStrOrd}"
 								filterMatchMode="contains"
-								headerText="Data de finalização">
+								headerText="Data de fechamento">
 								<h:outputText value="#{m.dataHoraFinalizadoStr}" />
 							</p:column>
 							
-							<p:column filterBy="#{m.valorTotal}" sortBy="#{m.valorTotal}"
+							<p:column filterBy="#{m.valor}" sortBy="#{m.valor}"
 								filterMatchMode="contains" style="text-align:right" headerText="Valor Total">
-								<h:outputText value="#{m.valorTotal}">
+								<h:outputText value="#{m.valor}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
@@ -469,19 +470,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon{
 									title="#{m.id}" />
 							</p:column>
 							
-							<p:column filterBy="#{relatorioPlanoTratamentoMB.statusPlanoTratamento(m)}"
-								sortBy="#{relatorioPlanoTratamentoMB.statusPlanoTratamento(m)}"
+							<p:column filterBy="#{m.statusDescritivo}"
+								sortBy="#{m.statusDescritivo}"
 								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Status">
-								<h:outputText value="#{relatorioPlanoTratamentoMB.statusPlanoTratamento(m)}" title="#{m.id}" />
+								<h:outputText value="#{m.statusDescritivo}" title="#{m.id}" />
 							</p:column>
 							
-							<p:column filterBy="#{m.justificativa}"
-								sortBy="#{m.justificativa}"
-								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Justificativa">
-								<h:outputText value="#{m.justificativa}" title="#{m.id}" />
-							</p:column>
+						
 							
 							<p:column exportable="false">
 								<p:commandButton icon="White fa fa-times-circle"
