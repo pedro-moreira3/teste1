@@ -238,7 +238,7 @@ div.ui-selectoneradio label {
 								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
 								<p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}"
-									process="@this" update="@form" />
+									process="@this" update=":lume:dtAtendimento" />
 							</p:calendar>
 						</p:column>
 						<p:column filterBy="#{a.finalizouAsStr}"
@@ -249,7 +249,7 @@ div.ui-selectoneradio label {
 								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
 								<p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}"
-									process="@this" update="@form" />
+									process="@this" update=":lume:dtAtendimento" />
 							</p:calendar>
 						</p:column>
 					</p:dataTable>
