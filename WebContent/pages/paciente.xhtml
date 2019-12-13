@@ -33,7 +33,7 @@
 									<f:selectItem itemLabel="Inativos" itemValue="I" />
 									<f:selectItem itemLabel="Todos" itemValue="T" />
 									<p:ajax listener="#{pacienteMB.geraLista}" process="@this"
-										update="dtPrincipal" />
+										update="dtPrincipalPacientes" />
 								</p:selectOneMenu>
 							</h:panelGroup>
 						</p:panelGrid>
@@ -51,7 +51,7 @@
 							<p:splitButton icon="White fa fa fa-file-excel-o"
 								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
 								actionListener="#{pacienteMB.exportarTabelaPaciente('xls')}"
-								ajax="false" process="dtPrincipal,@this" update="@this"
+								ajax="false" process="dtPrincipalPacientes,@this" update="@this"
 								immediate="true"
 								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
@@ -60,14 +60,16 @@
 								<p:menuitem value="Exportar tabela para PDF"
 									icon="fa fa fa-file-pdf-o"
 									actionListener="#{pacienteMB.exportarTabelaPaciente('pdf')}"
-									ajax="false" process="dtPrincipal,@this" immediate="true"
+									ajax="false" process="dtPrincipalPacientes,@this"
+									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 									<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
 								</p:menuitem>
 								<p:menuitem value="Exportar tabela para CSV"
 									icon="fa fa fa-file-pdf-o"
 									actionListener="#{pacienteMB.exportarTabelaPaciente('csv')}"
-									ajax="false" process="dtPrincipal,@this" immediate="true"
+									ajax="false" process="dtPrincipalPacientes,@this"
+									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 									<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
 								</p:menuitem>
@@ -76,10 +78,11 @@
 
 					</p:panelGrid>
 					<h:panelGroup id="botoes" styleClass="tableButtons">
-						<p:commandButton icon="fa fa-file-excel-o" process="dtPrincipal"
+						<p:commandButton icon="fa fa-file-excel-o"
+							process="dtPrincipalPacientes"
 							styleClass="BotaoCrud Exportar green-btn" ajax="false"
 							id="btExporExcel" immediate="true">
-							<p:dataExporter type="xls" target="dtPrincipal"
+							<p:dataExporter type="xls" target="dtPrincipalPacientes"
 								fileName="pacientes" pageOnly="false" encoding="ISO-8859-1" />
 							<p:tooltip value="Exportar tabela para Excel" for="btExporExcel" />
 						</p:commandButton>
@@ -88,9 +91,9 @@
 					<p:focus context=":lume:hiddenFocus" />
 					<p:outputLabel id="hiddenFocus" style="display:hidden" />
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-						id="dtPrincipal" value="#{pacienteMB.entityList}" var="paciente"
-						rows="7" paginator="true" rowKey="#{paciente}"
-						paginatorPosition="bottom" widgetVar="dtPrincipal"
+						id="dtPrincipalPacientes" value="#{pacienteMB.entityList}"
+						var="paciente" rows="7" paginator="true" rowKey="#{paciente}"
+						paginatorPosition="bottom" widgetVar="dtPrincipalPacientes"
 						binding="#{pacienteMB.tabelaPaciente}">
 
 						<f:facet name="header">#{dominioMB.cliente}
@@ -98,7 +101,8 @@
 								<p:outputPanel>
 									<h:outputText value="Pesquisar Paciente" />
 									<p:inputText id="globalFilter"
-										onkeyup="PF('dtPrincipal').filter()" style="width:150px" />
+										onkeyup="PF('dtPrincipalPacientes').filter()"
+										style="width:150px" />
 								</p:outputPanel>
 							</h:panelGroup>
 						</f:facet>
@@ -108,14 +112,14 @@
 								<p:commandButton id="persistInativar"
 									icon="White fa fa-chain-broken" title="Inativar"
 									actionListener="#{pacienteMB.actionInativar(paciente)}"
-									update=":lume:dtPrincipal" process="@this"
+									update=":lume:dtPrincipalPacientes" process="@this"
 									styleClass="NavyButton" />
 							</h:panelGroup>
 							<h:panelGroup rendered="#{paciente.status == 'I'}">
 								<p:commandButton id="persistAtivar"
 									icon="White fa fa-chain White" title="Ativar"
 									actionListener="#{pacienteMB.actionAtivar(paciente)}"
-									update=":lume:dtPrincipal" process="@this"
+									update=":lume:dtPrincipalPacientes" process="@this"
 									styleClass="NavyButton" />
 							</h:panelGroup>
 						</p:column>
@@ -176,7 +180,7 @@
 
 		<ui:include src="pacienteFicha.xhtml" />
 		<p:remoteCommand name="onHidePacienteFicha" process="@this"
-			update=":lume:dtPrincipal" />
+			update=":lume:dtPrincipalPacientes" />
 
 		<p:dialog id="dlgCarregarPacientes" header="Carregar Pacientes"
 			widgetVar="dlgCarregarPacientes" responsive="true" modal="true"
@@ -196,7 +200,7 @@
 								mode="advanced" dragDropSupport="true" sizeLimit="500000000"
 								label="Anexar"
 								invalidFileMessage="Arquivo inválido para processamento."
-								update=":lume:pnLogCarregarPacientes,:lume:dtPrincipal"
+								update=":lume:pnLogCarregarPacientes,:lume:dtPrincipalPacientes"
 								onstart="PF('loading').show();"
 								oncomplete="PF('loading').hide();"
 								allowTypes="/(\.|\/)(csv|CSV|txt|TXT)$/" />

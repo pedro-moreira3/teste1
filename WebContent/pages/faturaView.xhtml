@@ -171,7 +171,7 @@ body .sideChkBox .ui-chkbox-label {
 
 	<p:dialog id="faturaView" appendTo=":lume" widgetVar="dlgFaturaView"
 		responsive="true" modal="true"
-		onHide="PF('dlgFaturaView').toggleMaximize();"
+		onHide="PF('dlgFaturaView').toggleMaximize();onCloseFaturaView();"
 		onShow="PF('dlgFaturaView').toggleMaximize();">
 		<f:facet name="header">
 			<p:outputPanel id="pnlfaturaViewHeader">
@@ -478,7 +478,7 @@ body .sideChkBox .ui-chkbox-label {
 			<p:column />
 			<p:commandButton value="Fechar" icon="fa fa-close"
 				styleClass="NavyButton" onclick="PF('dlgFaturaView').hide()"
-				process="@this" update=":lume:dtPrincipal" />
+				process="@this" />
 		</p:panelGrid>
 	</p:dialog>
 

@@ -10,6 +10,8 @@
 			<ui:param name="showNewLancamento" value="N" />
 			<ui:param name="repasseProfissional" value="S" />
 		</ui:include>
+		<p:remoteCommand name="onCloseFaturaView" process="@this"
+			update="dtPrincipalFaturaPP" />
 
 		<ui:include src="pacienteFicha.xhtml" />
 		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
@@ -20,7 +22,8 @@
 
 					<p:remoteCommand name="pesquisarFaturasRepasse"
 						actionListener="#{repasseProfissionalMB.pesquisar}"
-						oncomplete="PF('dtPrincipal').filter()" update=":lume:dtPrincipal"
+						oncomplete="PF('dtPrincipalFaturaPP').filter()"
+						update=":lume:dtPrincipalFaturaPP"
 						process="@this, :lume:pnPrincipal" />
 					<p:outputPanel id="pnPrincipal">
 						<h1>Repasse dos Profissionais</h1>
@@ -156,15 +159,16 @@
 								<p:commandButton id="pesquisar" icon="White fa fa-search"
 									value="Pesquisar" styleClass="OrangeButton"
 									actionListener="#{repasseProfissionalMB.pesquisar}"
-									process="@this,:lume:filtros" update=":lume:dtPrincipal" />
+									process="@this,:lume:filtros"
+									update=":lume:dtPrincipalFaturaPP" />
 
 								<h:panelGroup>
 									<p:splitButton icon="White fa fa fa-file-excel-o"
 										value="Exportar tabela para Excel"
 										styleClass="GreenSplitButton"
 										actionListener="#{repasseProfissionalMB.exportarTabela('xls')}"
-										ajax="false" process="dtPrincipal,@this" update="@this"
-										immediate="true"
+										ajax="false" process="dtPrincipalFaturaPP,@this"
+										update="@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
 										<p:fileDownload
@@ -173,7 +177,8 @@
 										<p:menuitem value="Exportar tabela para PDF"
 											icon="fa fa fa-file-pdf-o"
 											actionListener="#{repasseProfissionalMB.exportarTabela('pdf')}"
-											ajax="false" process="dtPrincipal,@this" immediate="true"
+											ajax="false" process="dtPrincipalFaturaPP,@this"
+											immediate="true"
 											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 											<p:fileDownload
 												value="#{repasseProfissionalMB.arquivoDownload}" />
@@ -184,9 +189,10 @@
 						</p:fieldset>
 
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-							id="dtPrincipal" value="#{repasseProfissionalMB.entityList}"
-							var="f" rows="20" paginator="true" rowKey="#{f}"
-							paginatorPosition="bottom" widgetVar="dtPrincipal"
+							id="dtPrincipalFaturaPP"
+							value="#{repasseProfissionalMB.entityList}" var="f" rows="20"
+							paginator="true" rowKey="#{f}" paginatorPosition="bottom"
+							widgetVar="dtPrincipalFaturaPP"
 							binding="#{repasseProfissionalMB.tabelaRepasse}">
 
 							<f:facet name="header">Faturas</f:facet>
@@ -263,7 +269,8 @@
 							<p:column filterBy="#{repasseProfissionalMB.getTotalNaoPago(f)}"
 								headerText="Valor total não pago" filterMatchMode="contains"
 								sortBy="#{repasseProfissionalMB.getTotalNaoPago(f)}">
-								<h:outputText value="#{repasseProfissionalMB.getTotalNaoPago(f)}">
+								<h:outputText
+									value="#{repasseProfissionalMB.getTotalNaoPago(f)}">
 									<f:convertNumber currencySymbol="R$ " type="currency" />
 								</h:outputText>
 							</p:column>

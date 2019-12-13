@@ -9,6 +9,8 @@
 		<ui:include src="faturaView.xhtml">
 			<ui:param name="showNewLancamento" value="S" />
 		</ui:include>
+		<p:remoteCommand name="onCloseFaturaView" process="@this"
+			update="dtPrincipalFaturaRP" />
 
 		<ui:include src="pacienteFicha.xhtml" />
 		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
@@ -65,13 +67,13 @@
 						styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
 						<p:commandButton actionListener="#{faturaPagtoMB.pesquisar}"
 							process="@this, :lume:filterFaturas" value="Pesquisar"
-							update=":lume:dtPrincipal" />
+							update=":lume:dtPrincipalFaturaRP" />
 
 						<h:panelGroup>
 							<p:splitButton icon="White fa fa fa-file-excel-o"
 								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
 								actionListener="#{faturaPagtoMB.exportarTabela('xls')}"
-								ajax="false" process="dtPrincipal,@this" update="@this"
+								ajax="false" process="dtPrincipalFaturaRP,@this" update="@this"
 								immediate="true"
 								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
@@ -80,14 +82,16 @@
 								<p:menuitem value="Exportar tabela para PDF"
 									icon="fa fa fa-file-pdf-o"
 									actionListener="#{faturaPagtoMB.exportarTabela('pdf')}"
-									ajax="false" process="dtPrincipal,@this" immediate="true"
+									ajax="false" process="dtPrincipalFaturaRP,@this"
+									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 									<p:fileDownload value="#{faturaPagtoMB.arquivoDownload}" />
 								</p:menuitem>
 								<p:menuitem value="Exportar tabela para CSV"
 									icon="fa fa fa-file-pdf-o"
 									actionListener="#{faturaPagtoMB.exportarTabela('csv')}"
-									ajax="false" process="dtPrincipal,@this" immediate="true"
+									ajax="false" process="dtPrincipalFaturaRP,@this"
+									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 									<p:fileDownload value="#{faturaPagtoMB.arquivoDownload}" />
 								</p:menuitem>
@@ -98,8 +102,8 @@
 					<div class="SeparatorFull"></div>
 					<br />
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-						id="dtPrincipal" value="#{faturaPagtoMB.entityList}" var="f"
-						rows="20" paginator="true" rowKey="#{f}"
+						id="dtPrincipalFaturaRP" value="#{faturaPagtoMB.entityList}"
+						var="f" rows="20" paginator="true" rowKey="#{f}"
 						paginatorPosition="bottom" binding="#{faturaPagtoMB.tabelaFatura}">
 						<f:facet name="header">Faturas</f:facet>
 						<p:column width="120" headerText="Detalhes">
