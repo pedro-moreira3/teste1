@@ -38,10 +38,6 @@
 								itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 								converter="paciente" forceSelection="true" scrollHeight="400"
 								minQueryLength="3" queryDelay="1000">
-								<p:ajax event="itemSelect" process="@this, filtroPaciente"
-									update=":lume:pt" listener="#{faturaPagtoMB.changePaciente}" />
-								<p:ajax event="change" process="@this, filtroPaciente"
-									update=":lume:pt" listener="#{faturaPagtoMB.changePaciente}" />
 
 								<p:column headerText="Nome">
 									<h:outputText value="#{p.dadosBasico.nome}" />
@@ -54,15 +50,6 @@
 								</p:column>
 
 							</p:autoComplete>
-						</h:panelGroup>
-						<h:panelGroup rendered="#{false}">
-							<p:outputLabel for="pt" value="Planos de Tratamento:" />
-							<p:selectCheckboxMenu id="pt" multiple="true"
-								value="#{faturaPagtoMB.ptSelecionados}"
-								converter="planoTratamento">
-								<f:selectItems value="#{faturaPagtoMB.listaPt}" var="plt"
-									itemValue="#{plt}" itemLabel="#{plt.descricao}" />
-							</p:selectCheckboxMenu>
 						</h:panelGroup>
 						<h:panelGroup>
 							<p:outputLabel for="status" value="Status: " />
