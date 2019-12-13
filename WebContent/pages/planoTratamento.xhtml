@@ -1178,7 +1178,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 				<p:commandButton id="newOrcamento" icon="ui-icon-add"
 					actionListener="#{planoTratamentoMB.actionNewOrcamento}"
-					update=":lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView"
+					update=":lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView,:lume:tabView:panelDescObs"
 					value="Novo Orçamento" process="@this" styleClass="NavyButton"
 					disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 			</p:panelGrid>
@@ -1213,6 +1213,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
 					</p:commandButton>
 				</p:column>
+				<p:column headerText="Descrição" filterBy="#{orcamento.descricao}"
+					filterMatchMode="contains" sortBy="#{orcamento.descricao}">
+					<h:outputText value="#{orcamento.descricao}" />
+				</p:column>
 				<p:column headerText="Data de Criação"
 					filterBy="#{orcamento.dataCriacao}" filterMatchMode="contains"
 					sortBy="#{orcamento.dataCriacao}">
@@ -1232,6 +1236,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					filterMatchMode="contains" sortBy="#{orcamento.aprovadoStr}">
 					<h:outputText value="#{orcamento.aprovadoStr}" />
 				</p:column>
+				<p:column headerText="Observações" filterBy="#{orcamento.observacoes}"
+					filterMatchMode="contains" sortBy="#{orcamento.observacoes}">
+					<h:outputText value="#{orcamento.observacoes}" />
+				</p:column>				
 			</p:dataTable>
 		</p:outputPanel>
 		<br />
@@ -1259,6 +1267,25 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
 			<p:scrollPanel mode="native"
 				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
+				
+				<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-12,ui-grid-col-12" layout="grid"
+							styleClass="ui-panelgrid-blank" id="panelDescObs"
+							style="border:0px none; background-color:transparent;">
+							
+							<h:panelGroup>
+							<p:outputLabel value="Descrição:" for="descricaoOrcamento"/>
+								<p:inputText id="descricaoOrcamento" style="width:100%"
+									value="#{planoTratamentoMB.orcamentoSelecionado.descricao}" />							
+							</h:panelGroup>
+							<h:panelGroup>
+							<p:outputLabel value="Observações:" for="observacaoOrcamento" />
+								<p:inputText id="observacaoOrcamento"  style="width:100%"
+									value="#{planoTratamentoMB.orcamentoSelecionado.observacoes}" />							
+							</h:panelGroup>							
+							
+				</p:panelGrid>
+				
 				<p:outputPanel id="pnViewOrcamento">
 					<div class="CardTextParent">
 						<h:panelGroup styleClass="CardText">
@@ -1407,11 +1434,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<p:panelGrid columns="4" layout="grid" id="buttonsDlgOrcamentoView"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="White fa fa-save" value="Salvar"
-				process="@this, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader"
+				process="@this, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader,:lume:tabView:panelDescObs"
 				actionListener="#{planoTratamentoMB.actionPersistOrcamento}"
 				styleClass="GreenButton"
 				disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
-				update=":lume:tabView:orcamentoViewTable, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView" />
+				update=":lume:tabView:orcamentoViewTable, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView,:lume:tabView:panelDescObs" />
 			<p:commandButton icon="White fa fa-print"
 				value="Visualizar Impressão" process="@this"
 				update=":lume:tabView:orcamentoInclude"
