@@ -150,8 +150,13 @@
 								<p:column filterMatchMode="contains" headerText="Paciente"
 									filterBy="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}"
 									sortBy="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}">
-									<h:outputText
-										value="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}" />
+									<p:commandLink
+										value="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}"
+										process="@this"
+										title="#{lancamento.ptp.planoTratamento.paciente.id}"
+										actionListener="#{tabPacienteMB.loadPaciente(lancamento.ptp.planoTratamento.paciente)}"
+										oncomplete="PF('dlgFichaPaciente').show()"
+										update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 								</p:column>
 
 								<p:column filterMatchMode="contains" headerText="Valor"
@@ -344,6 +349,9 @@
 				</div>
 			</div>
 		</div>
+
+		<ui:include src="pacienteFicha.xhtml" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 		<p:dialog widgetVar="dlgVisualizarRecibo" resizable="false"
 			header="Visualizar recibo de pagamento"
