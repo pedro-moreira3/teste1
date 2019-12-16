@@ -152,7 +152,11 @@ div.ui-selectoneradio label {
 							sortBy="#{a.paciente.dadosBasico.nome}"
 							filterMatchMode="contains" headerText="#{dominioMB.cliente}"
 							filterFunction="#{filaAtendimentoMB.filtroSemAcento}">
-							<h:outputText value="#{a.paciente.dadosBasico.nome}" />
+							<p:commandLink value="#{a.paciente.dadosBasico.nome}"
+								process="@this" title="#{a.paciente.id}"
+								actionListener="#{tabPacienteMB.loadPaciente(a.paciente)}"
+								oncomplete="PF('dlgFichaPaciente').show()"
+								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
 						</p:column>
 						<p:column headerText="Agendar c/ mesmo Dentista">
 							<p:commandButton icon="fa fa fa-calendar"

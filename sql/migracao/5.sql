@@ -254,3 +254,23 @@ WHERE O.OBJ_STR_DES ILIKE 'REPASSE DE PROFISSIONAL'
   ALTER TABLE ORCAMENTO ADD COLUMN OBSERVACOES VARCHAR(1000);
   
   ALTER TABLE PLANO_TRATAMENTO_PROCEDIMENTO ADD COLUMN DENTISTA_EXECUTOR_ID BIGINT NULL REFERENCES PROFISSIONAL(ID);
+-------------------------------
+UPDATE seg_objeto SET obj_int_ordem = 2 WHERE obj_str_des = 'Agenda';
+UPDATE seg_objeto SET obj_int_ordem = 3 WHERE obj_str_des = 'Fila de Atendimento';
+UPDATE seg_objeto SET obj_int_ordem = 4 WHERE obj_str_des = 'Retorno';
+UPDATE seg_objeto SET obj_cha_sts = 'I' WHERE obj_str_des = 'Dashboard';
+UPDATE seg_objeto SET obj_str_des = 'Consumo' WHERE obj_str_des = 'Empréstimo de Materiais';
+UPDATE seg_objeto SET obj_cha_sts = 'I' WHERE obj_str_des = 'Devolução de Materiais';
+UPDATE seg_objeto SET obj_int_ordem = 3 WHERE obj_str_des = 'Empréstimo Unitário';
+UPDATE seg_objeto SET obj_int_ordem = 1 WHERE obj_str_des = 'Empréstimo de Kits';
+UPDATE seg_objeto SET obj_int_codpai = 36, obj_int_ordem = 2 WHERE obj_str_des = 'Devolução de Kits';
+UPDATE seg_objeto SET obj_int_codpai = 36, obj_int_ordem = 4 WHERE obj_str_des = 'Devolução Unitária';
+UPDATE seg_objeto SET obj_int_ordem = 5 WHERE obj_str_des = 'Ajuste de Estoque';
+UPDATE seg_objeto SET obj_int_ordem = 7 WHERE obj_str_des = 'Movimentação de Materiais';
+UPDATE seg_objeto SET obj_int_ordem = 6 WHERE obj_str_des = 'Cadastros';
+-------------------------------
+INSERT INTO objeto_profissional (obj_int_cod,id_profissional) 
+SELECT 166,id_profissional FROM objeto_profissional WHERE obj_int_cod = 149;
+-------------------------------
+ALTER TABLE CONVENIO ADD COLUMN observacao_convenio character varying(255);
+-------------------------------
