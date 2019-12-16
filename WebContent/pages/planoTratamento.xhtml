@@ -1974,7 +1974,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						rendered="#{procedimento.procedimento.quantidadeFaces > 0}">
 						<p:ajax process="@this"
 							listener="#{planoTratamentoMB.actionPersistFaces(procedimento)}"
-							update=":lume:tabView:procedimentosOdontograma,@this" />
+							update=":lume:tabView:procedimentosOdontograma,@this,:lume:tabView:dtProcedimentosSelecionadospt" />
 						<f:selectItems value="#{procedimento.faces}" var="face"
 							itemValue="#{face}" itemLabel="#{face}" />
 					</p:selectCheckboxMenu>
