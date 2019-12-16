@@ -65,6 +65,7 @@ import br.com.lume.procedimento.ProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.regiaoDente.RegiaoDenteSingleton;
 import br.com.lume.regiaoRegiao.RegiaoRegiaoSingleton;
+import br.com.lume.repasse.RepasseFaturasSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.statusDente.StatusDenteSingleton;
@@ -106,9 +107,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private List<Dominio> justificativas;
 
     private String filtroStatus = "N";
-    
-    private String filtroStatusProcedimento  = "N";
-    
+
+    private String filtroStatusProcedimento = "N";
+
     private String filtroTipo = "T";
 
     private DualListModel<PlanoTratamentoProcedimento> ptProcedimentosDisponiveis = new DualListModel<>();
@@ -285,7 +286,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             planosTratamento = new ArrayList<>();
             if (getPaciente() != null) {
 
-                planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPacienteAndStatusAndTipo(getPaciente(), filtroStatus,filtroTipo);
+                planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPacienteAndStatusAndTipo(getPaciente(), filtroStatus, filtroTipo);
                 for (PlanoTratamento pt : planosTratamento) {
                     if (pt.getStatus().equals(Status.SIM) && contemPlanoTratamentoProcedimentoAberto(pt.getPlanoTratamentoProcedimentos())) {
                         pt.setValor(BigDecimal.ZERO);
@@ -776,6 +777,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     ptp.setFinalizadoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
                     this.calculaRepasse(ptp);
                     salvaProcedimento(ptp);
+
+                    RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado());
                 }
             }
             carregarPlanoTratamentoProcedimentos();
@@ -1358,14 +1361,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (getEntity() != null && getEntity().getId() != null) {
             planoTratamentoProcedimentosExcluidos = new ArrayList<>();
             List<PlanoTratamentoProcedimento> aux = null;
-            aux = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoStatus(getEntity().getId(),filtroStatusProcedimento);
+            aux = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoStatus(getEntity().getId(), filtroStatusProcedimento);
             planoTratamentoProcedimentos = new ArrayList<>();
             for (PlanoTratamentoProcedimento ptp : aux) {
-             //   if (ptp.getExcluido().equals(Status.NAO)) {
-                    //  PlanoTratamentoProcedimentoSingleton.getInstance().getBo().refresh(ptp);
-                    ptp.setValorAnterior(ptp.getValorDesconto());
-                    planoTratamentoProcedimentos.add(ptp);
-              //  }
+                //   if (ptp.getExcluido().equals(Status.NAO)) {
+                //  PlanoTratamentoProcedimentoSingleton.getInstance().getBo().refresh(ptp);
+                ptp.setValorAnterior(ptp.getValorDesconto());
+                planoTratamentoProcedimentos.add(ptp);
+                //  }
 
                 List<String> faces = new ArrayList<>();
                 for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {
@@ -1842,22 +1845,18 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.novoPtDialogAberto = true;
     }
 
-    
     public String getFiltroTipo() {
         return filtroTipo;
     }
 
-    
     public void setFiltroTipo(String filtroTipo) {
         this.filtroTipo = filtroTipo;
     }
 
-    
     public String getFiltroStatusProcedimento() {
         return filtroStatusProcedimento;
     }
 
-    
     public void setFiltroStatusProcedimento(String filtroStatusProcedimento) {
         this.filtroStatusProcedimento = filtroStatusProcedimento;
     }
