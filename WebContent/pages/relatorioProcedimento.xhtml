@@ -442,8 +442,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Paciente">
 								
-								<h:outputText
-									value="#{procedimento.planoTratamento.paciente.dadosBasico.nome}" />
+								<p:commandLink value="#{procedimento.planoTratamento.paciente.dadosBasico.nome}"
+									process="@this" title="#{procedimento.planoTratamento.paciente.id}"
+									actionListener="#{tabPacienteMB.loadPaciente(procedimento.planoTratamento.paciente)}"
+									oncomplete="PF('dlgFichaPaciente').show();"
+									update=":lume:pnPrincipalFicha, @parent(:lume:pnPrincipalFichaHeader), @parent(:lume:tabViewOutPanel), @parent(:lume:buttonsFichaPaciente)"/>
 									
 							</p:column>
 
@@ -878,6 +881,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 
 					</p:dialog>
 
+
+		<ui:include src="pacienteFicha.xhtml" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 				</div>
 			</div>

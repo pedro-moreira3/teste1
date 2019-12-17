@@ -60,48 +60,61 @@
 							<p:ajax event="rowSelect" update=":lume:pnMaterial"
 								listener="#{conferenciaMB.carregaTela}" />
 							<f:facet name="header">Materiais</f:facet>
+							
 							<p:column filterBy="#{estoque.material.item.descricaoLimpa}"
 								sortBy="#{estoque.material.item.descricao}" filterMatchMode="contains" headerText="Material">
 								<h:outputText value="#{estoque.material.item.descricao}"
 									title="#{estoque.material.id}" />
 							</p:column>
+							
 							<p:column filterBy="#{estoque.material.estoque.local.descricao}"
 								sortBy="#{estoque.material.estoque.local.descricao}" filterMatchMode="contains" headerText="Local">
 								<h:outputText value="#{estoque.material.estoque.local.descricao}" />
 							</p:column>
+							
 							<p:column filterBy="#{estoque.quantidade}"
 								sortBy="#{estoque.quantidade}" filterMatchMode="contains" headerText="Quantidade disponível">
+								
 								<h:outputText value="#{estoque.quantidade}">
 									<f:convertNumber />
 								</h:outputText>
+								
 								<h:outputLabel
 									value="#{conferenciaMB.getUnidadeString(estoque.material.item)}"
 									styleClass="unidadeMedidaString" disabled="true" />
 							</p:column>
-							<p:column exportable="false">
-								<f:facet name="header">
-									<h:outputText value="Quantidade Emprestada" />
-								</f:facet>
-
-								<p:commandButton
-									action="#{conferenciaMB.carregaMaterialEmprestado(estoque.material)}"
-									oncomplete="PF('dlgMaterialEmprestado').show();"
-									process="@this" update=":lume:pgMaterialEmprestado"
-									icon="White fa fa-search" />
+							
+							<p:column exportable="false" headerText="Quantidade emprestada">
+								
+								<h:panelGroup>
+									<h:outputText value="#{conferenciaMB.estoque.material.quantidadeEmprestada}" />
+								</h:panelGroup>
+								
+								<h:panelGroup>
+									<p:commandButton
+										action="#{conferenciaMB.carregaMaterialEmprestado(estoque)}"
+										oncomplete="PF('dlgMaterialEmprestado').show();"
+										process="@this" update=":lume:pgMaterialEmprestado"
+										icon="White fa fa-search" />
+								</h:panelGroup>
 
 							</p:column>
+							
 							<p:column filterBy="#{estoque.material.marca.nome}"
 								sortBy="#{estoque.material.marca.nome}" filterMatchMode="contains" headerText="Marca">
 								<h:outputText value="#{estoque.material.marca.nome}" />
 							</p:column>
+							
 							<p:column filterBy="#{estoque.material.lote}" sortBy="#{estoque.material.lote}"
 								filterMatchMode="contains" headerText="Lote">
 								<h:outputText value="#{estoque.material.lote}" />
 							</p:column>
+							
 							<p:column filterBy="#{estoque.material.dataValidadeStr}"
 								sortBy="#{estoque.material.dataValidadeStr}" filterMatchMode="contains" headerText="Data de validade">
 								<h:outputText value="#{estoque.material.dataValidadeStr}" />
 							</p:column>
+							
 						</p:dataTable>
 						<br />
 						<div class="SeparatorFull"></div>
@@ -231,12 +244,15 @@
                             </f:facet>
                             <h:outputText value="#{material.profissional.dadosBasico.nome}" />
                         </p:column>
+                        
+                        <ui:remove>
                         <p:column filterBy="#{material.agendamento.paciente.dadosBasico.nome}" sortBy="#{material.agendamento.paciente.dadosBasico.nome}" filterMatchMode="contains">
                             <f:facet name="header">
                                 <h:outputText value="Paciente" />
                             </f:facet>
                             <h:outputText value="#{material.agendamento.paciente.dadosBasico.nome}" />
                         </p:column>
+                        </ui:remove>
 
                         <p:column filterBy="#{material.quantidade}" sortBy="#{material.quantidade}" filterMatchMode="contains">
                             <f:facet name="header">

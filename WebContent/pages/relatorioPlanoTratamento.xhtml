@@ -407,8 +407,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon{
 							<p:column filterBy="#{m.paciente.dadosBasico.nomeStr}"
 								sortBy="#{m.paciente.dadosBasico.nome}"
 								filterMatchMode="contains" headerText="Paciente">
-								<h:outputText value="#{m.paciente.dadosBasico.nome}"
-									title="#{m.id}" />
+							
+								<p:commandLink value="#{m.paciente.dadosBasico.nome}"
+									process="@this" title="#{m.paciente.id}"
+									actionListener="#{tabPacienteMB.loadPaciente(retorno.paciente)}"
+									oncomplete="PF('dlgFichaPaciente').show()"
+									update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
+							
 							</p:column>
 							
 							<p:column filterBy="#{m.profissional.dadosBasico.nomeStr}"
@@ -531,6 +536,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon{
 								styleClass="GreenButton" />
 						</div>
 					</p:dialog>
+					
+					<ui:include src="pacienteFicha.xhtml" />
+					<p:remoteCommand name="onHidePacienteFicha" process="@this" />
+					
 				</div>
 			</div>
 		</div>

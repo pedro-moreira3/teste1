@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
+import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -31,7 +32,7 @@ import br.com.lume.procedimento.ProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 
 @ManagedBean
-@RequestScoped
+@ViewScoped
 public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> {
 
     private static final long serialVersionUID = 1L;

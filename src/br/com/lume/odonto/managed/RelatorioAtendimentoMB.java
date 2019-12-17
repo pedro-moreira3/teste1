@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -87,7 +88,10 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
             this.filtroAtendimento = new ArrayList<String>();
         }
 
-        //this.popularLista();
+        if(this.listaConvenios == null)
+            this.listaConvenios = new LinkedList<String>();
+        
+        sugestoesConvenios("todos");
     }
 
     public void popularLista() {

@@ -165,8 +165,13 @@
 							filterBy="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
 							filterMatchMode="contains"
 							filterFunction="#{custoMB.filtroSemAcento}">
-							<h:outputText
-								value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}" />
+							
+							<p:commandLink value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
+									process="@this" title="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.id}"
+									actionListener="#{tabPacienteMB.loadPaciente(custo.planoTratamentoProcedimento.planoTratamento.paciente)}"
+									oncomplete="PF('dlgFichaPaciente').show()"
+									update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+							
 						</p:column>
 						<p:column headerText="Plano de Tratamento"
 							sortBy="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}"
