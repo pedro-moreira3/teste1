@@ -3,6 +3,7 @@ package br.com.lume.odonto.managed;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -46,6 +47,7 @@ import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Odontograma;
 import br.com.lume.odonto.entity.Orcamento;
 import br.com.lume.odonto.entity.OrcamentoItem;
+import br.com.lume.odonto.entity.OrcamentoPlanejamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
@@ -56,6 +58,7 @@ import br.com.lume.odonto.entity.RegiaoDente;
 import br.com.lume.odonto.entity.RegiaoRegiao;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.entity.StatusDente;
+import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odontograma.OdontogramaSingleton;
 import br.com.lume.orcamento.OrcamentoSingleton;
@@ -69,6 +72,7 @@ import br.com.lume.repasse.RepasseFaturasSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.statusDente.StatusDenteSingleton;
+import br.com.lume.tarifa.TarifaSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -95,6 +99,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     private List<Orcamento> orcamentos;
     private Orcamento orcamentoSelecionado;
+    private OrcamentoPlanejamento planejamentoAtual;
+
+    private List<Dominio> formasPagamentoNewPlanejamento;
+    private List<Tarifa> tarifasNewPlanejamento;
+    private List<Integer> parcelasNewPlanejamento;
 
     private String nomeClinica;
     private String endTelefoneClinica;
@@ -152,6 +161,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         super(PlanoTratamentoSingleton.getInstance().getBo());
         setClazz(PlanoTratamento.class);
         try {
+            setFormasPagamentoNewPlanejamento(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma"));
             justificativas = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("planotratamento", "justificativa");
             atualizaTela();
 
@@ -871,6 +881,94 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
         }
 
+    }
+
+    public BigDecimal getValorRestanteOrcamento() {
+        BigDecimal totalAPagar = this.getValorOrcamentoAPagar();
+        if (totalAPagar == null || getOrcamentoSelecionado() == null)
+            return BigDecimal.ZERO;
+        BigDecimal totalPlanejado = getOrcamentoSelecionado().getTotalPlanejado();
+        if (totalPlanejado == null)
+            return BigDecimal.ZERO;
+        return totalAPagar.subtract(totalPlanejado);
+    }
+
+    public void newPlanejamento() {
+        Dominio pagtoDinheiro;
+        try {
+            pagtoDinheiro = this.formasPagamentoNewPlanejamento.stream().filter(forma -> "DI".equals(forma.getValor())).collect(Collectors.toList()).get(0);
+        } catch (Exception e) {
+            pagtoDinheiro = null;
+        }
+
+        this.planejamentoAtual = new OrcamentoPlanejamento();
+        this.planejamentoAtual.setDataCriacao(new Date());
+        this.planejamentoAtual.setCriadoPor(UtilsFrontEnd.getProfissionalLogado());
+        this.planejamentoAtual.setOrcamento(getOrcamentoSelecionado());
+        this.planejamentoAtual.setDataPagamento(new Date());
+        this.planejamentoAtual.setDataCredito(new Date());
+        this.planejamentoAtual.setFormaPagamento(pagtoDinheiro);
+        this.planejamentoAtual.setValor(0d);
+    }
+
+    public void atualizaDataCreditoNParcelasNewPlanejamento() {
+        if (this.getPlanejamentoAtual().getTarifa() != null) {
+            this.setParcelasNewPlanejamento(new ArrayList<>());
+            for (int i = this.getPlanejamentoAtual().getTarifa().getParcelaMinima(); i <= this.getPlanejamentoAtual().getTarifa().getParcelaMaxima(); i++)
+                this.getParcelasNewPlanejamento().add(i);
+
+            Calendar c = Calendar.getInstance();
+            if (this.getPlanejamentoAtual().getDataPagamento() == null)
+                this.getPlanejamentoAtual().setDataPagamento(c.getTime());
+            c.setTime(this.getPlanejamentoAtual().getDataPagamento());
+            c.add(Calendar.DAY_OF_MONTH, this.getPlanejamentoAtual().getTarifa().getPrazo());
+            this.getPlanejamentoAtual().setDataCredito(c.getTime());
+        } else {
+            this.getPlanejamentoAtual().setDataCredito(this.getPlanejamentoAtual().getDataPagamento());
+        }
+    }
+
+    public boolean showProdutoNewPlanejamento() {
+        List<String> formasPagamentoComProduto = Arrays.asList(new String[] { "CC", "CD", "BO" });
+        if (getPlanejamentoAtual() != null && getPlanejamentoAtual().getFormaPagamento() != null) {
+            if (formasPagamentoComProduto.indexOf(getPlanejamentoAtual().getFormaPagamento().getValor()) >= 0) {
+                setTarifasNewPlanejamento(
+                        TarifaSingleton.getInstance().getBo().listByForma(getPlanejamentoAtual().getFormaPagamento().getValor(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                return true;
+            } else {
+                getPlanejamentoAtual().setnParcela(1);
+                return false;
+            }
+        } else
+            return false;
+    }
+
+    public void removePlanejamento(OrcamentoPlanejamento planejamento) {
+        planejamento.setAtivo(false);
+        planejamento.setDataAlteracaoStatus(new Date());
+        planejamento.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
+    }
+
+    public void addPlanejamentoContinuando() {
+        try {
+            BigDecimal valorFuturo = getOrcamentoSelecionado().getTotalPlanejado().add(BigDecimal.valueOf(planejamentoAtual.getValor()));
+            if (getOrcamentoSelecionado().getValorComDesconto().compareTo(valorFuturo) == -1)
+                throw new Exception("Valor do orçamento excedido!");
+            if (getOrcamentoSelecionado().getPlanejamento() == null)
+                getOrcamentoSelecionado().setPlanejamento(new ArrayList<>());
+            planejamentoAtual.setOrcamento(getOrcamentoSelecionado());
+            getOrcamentoSelecionado().getPlanejamento().add(planejamentoAtual);
+            planejamentoAtual = null;
+
+            newPlanejamento();
+            this.addInfo("Sucesso", "Planejamento inserido com sucesso.");
+        } catch (Exception e) {
+            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO) + " " + e.getMessage());
+        }
+    }
+
+    public void addPlanejamento() {
+        PrimeFaces.current().executeScript("PF('dlgNewPlanejamento').hide()");
     }
 
     public void cancelaLancamentos() throws Exception {
@@ -1850,6 +1948,38 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void setFiltroStatusProcedimento(String filtroStatusProcedimento) {
         this.filtroStatusProcedimento = filtroStatusProcedimento;
+    }
+
+    public OrcamentoPlanejamento getPlanejamentoAtual() {
+        return planejamentoAtual;
+    }
+
+    public void setPlanejamentoAtual(OrcamentoPlanejamento planejamentoAtual) {
+        this.planejamentoAtual = planejamentoAtual;
+    }
+
+    public List<Dominio> getFormasPagamentoNewPlanejamento() {
+        return formasPagamentoNewPlanejamento;
+    }
+
+    public void setFormasPagamentoNewPlanejamento(List<Dominio> formasPagamentoNewPlanejamento) {
+        this.formasPagamentoNewPlanejamento = formasPagamentoNewPlanejamento;
+    }
+
+    public List<Tarifa> getTarifasNewPlanejamento() {
+        return tarifasNewPlanejamento;
+    }
+
+    public void setTarifasNewPlanejamento(List<Tarifa> tarifasNewPlanejamento) {
+        this.tarifasNewPlanejamento = tarifasNewPlanejamento;
+    }
+
+    public List<Integer> getParcelasNewPlanejamento() {
+        return parcelasNewPlanejamento;
+    }
+
+    public void setParcelasNewPlanejamento(List<Integer> parcelasNewPlanejamento) {
+        this.parcelasNewPlanejamento = parcelasNewPlanejamento;
     }
 
 }

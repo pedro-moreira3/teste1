@@ -117,8 +117,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							</p:selectOneMenu>
 						</h:panelGroup>
 						<h:panelGroup styleClass="md-combo">
-							<p:outputLabel for="tipo"
-								value="Tipo dos Planos de Tratamento " />
+							<p:outputLabel for="tipo" value="Tipo dos Planos de Tratamento " />
 							<p:selectOneMenu id="tipo"
 								value="#{planoTratamentoMB.filtroTipo}">
 								<f:selectItem itemLabel="Todos" itemValue="T" />
@@ -197,9 +196,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								actionListener="#{planoTratamentoMB.preparaImprimirOrcamento(planoTratamento)}"
 								process="@this" oncomplete="PF('dlgGerarOrcamento').show()"
 								update=":lume:tabView:pnConteudoImpressaoOrcamento, :lume:tabView:mainViewPT"
-								styleClass="OrangeButton" title="Imprimir Orçamento" >
-								
-								</p:commandButton>
+								styleClass="OrangeButton" title="Imprimir Orçamento">
+
+							</p:commandButton>
 						</ui:remove>
 						<h:panelGroup rendered="#{planoTratamentoMB.admin}">
 							<p:commandButton id="devolucao" icon="White fa fa-times-circle"
@@ -207,27 +206,25 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								title="Encerrar Plano de Tratamento" process="@this"
 								styleClass="RedButton"
 								actionListener="#{planoTratamentoMB.actionFinalizar(planoTratamento)}"
-								disabled="#{planoTratamento.status == 'S' or planoTratamento.status == 'E'}" >
+								disabled="#{planoTratamento.status == 'S' or planoTratamento.status == 'E'}">
 								<p:confirm header="Confirmação"
 									message="Deseja realmente encerrar este Plano de Tratamento?"
 									icon="fa fa-warning" />
-								</p:commandButton>
+							</p:commandButton>
 						</h:panelGroup>
 					</p:column>
-					<p:column filterBy="#{planoTratamento.descricaoComConvenio}"  style="width:25%"
-						sortBy="#{planoTratamento.descricaoComConvenio}"
+					<p:column filterBy="#{planoTratamento.descricaoComConvenio}"
+						style="width:25%" sortBy="#{planoTratamento.descricaoComConvenio}"
 						filterMatchMode="contains" headerText="Descrição"
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<h:outputText value="#{planoTratamento.descricaoComConvenio}"
 							title="#{planoTratamento.id}" />
 					</p:column>
-					<p:column
-						filterBy="#{planoTratamento.tipoPlano}"
-						sortBy="#{planoTratamento.tipoPlano}"
-						filterMatchMode="contains" headerText="Tipo do Plano"
+					<p:column filterBy="#{planoTratamento.tipoPlano}"
+						sortBy="#{planoTratamento.tipoPlano}" filterMatchMode="contains"
+						headerText="Tipo do Plano"
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
-						<h:outputText
-							value="#{planoTratamento.tipoPlano}" />
+						<h:outputText value="#{planoTratamento.tipoPlano}" />
 					</p:column>
 					<p:column
 						filterBy="#{planoTratamento.profissional.dadosBasico.prefixoNome}"
@@ -740,11 +737,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 										value="Encerrar Plano de Tratamento" process="@this"
 										styleClass="RedButton"
 										actionListener="#{planoTratamentoMB.actionFinalizar}"
-										disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" >
+										disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}">
 										<p:confirm header="Confirmação"
-									message="Deseja realmente encerrar este Plano de Tratamento?"
-									icon="fa fa-warning" />
-										</p:commandButton>
+											message="Deseja realmente encerrar este Plano de Tratamento?"
+											icon="fa fa-warning" />
+									</p:commandButton>
 								</h:panelGroup>
 							</p:panelGrid>
 						</p:fieldset>
@@ -769,22 +766,23 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								disabled="#{planoTratamentoMB.odontogramas == null or planoTratamentoMB.odontogramas.isEmpty()}"
 								value="Ver odontograma" />
 						</p:panelGrid>
-				<p:panelGrid columns="4" layout="grid"
-						columnClasses="ui-g-6, ui-g-6"
-						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
-						<h:panelGroup styleClass="md-combo">
-							<p:outputLabel for="statusProcedimentos"
-								value="Status dos Procedimentos " />
-							<p:selectOneMenu id="statusProcedimentos"
-								value="#{planoTratamentoMB.filtroStatusProcedimento}">
-								<f:selectItem itemLabel="Ativos" itemValue="N" />								
-								<f:selectItem itemLabel="Cancelados" itemValue="S" />
-								<f:selectItem itemLabel="Todos" itemValue="T" />
-								<p:ajax listener="#{planoTratamentoMB.carregarPlanoTratamentoProcedimentos}"
-									process="@this" update="dtProcedimentosSelecionadospt" />
-							</p:selectOneMenu>
-						</h:panelGroup>
-					</p:panelGrid>
+						<p:panelGrid columns="4" layout="grid"
+							columnClasses="ui-g-6, ui-g-6"
+							styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+							<h:panelGroup styleClass="md-combo">
+								<p:outputLabel for="statusProcedimentos"
+									value="Status dos Procedimentos " />
+								<p:selectOneMenu id="statusProcedimentos"
+									value="#{planoTratamentoMB.filtroStatusProcedimento}">
+									<f:selectItem itemLabel="Ativos" itemValue="N" />
+									<f:selectItem itemLabel="Cancelados" itemValue="S" />
+									<f:selectItem itemLabel="Todos" itemValue="T" />
+									<p:ajax
+										listener="#{planoTratamentoMB.carregarPlanoTratamentoProcedimentos}"
+										process="@this" update="dtProcedimentosSelecionadospt" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+						</p:panelGrid>
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							widgetVar="procedimentosTableInPT"
 							id="dtProcedimentosSelecionadospt" var="plano"
@@ -797,16 +795,16 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 							<p:column headerText="Ações" styleClass="TexAlCenter" width="120">
 
-								<p:commandButton styleClass="NavyButton" icon="fa fa-eye" process="@this"
+								<p:commandButton styleClass="NavyButton" icon="fa fa-eye"
+									process="@this"
 									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
 									oncomplete="PF('dlgNovoProcedimento').show()" title="Editar"
-									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"									
+									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"
 									update=":lume:tabView:pnViewPlanoTratamento, :lume:tabView:pgProcedimento, :lume:tabView:pgProcedimentoBotoes" />
 								<p:commandButton icon="fa fa-clock-o" process="@this"
 									actionListener="#{planoTratamentoMB.carregaAgendamentosProcedimento(plano)}"
 									oncomplete="PF('dlgListaAgendamentoProcedimento').show()"
-									title="Agendamentos"
-									disabled="#{plano.excluido eq 'S'}"
+									title="Agendamentos" disabled="#{plano.excluido eq 'S'}"
 									update=":lume:tabView:pnlListaAgendamento, :lume:tabView:pnlListaAgendamentoHeader">
 								</p:commandButton>
 								<p:commandButton icon="fa fa-times-circle White"
@@ -1195,10 +1193,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						value="Orçamentos do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
 				</f:facet>
 				<p:column width="120" headerText="Editar">
-					<p:commandButton  process="@this"
+					<p:commandButton process="@this"
 						actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
 						update=":lume:tabView:orcamentoViewTable, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView"
-						onclick="PF('dlgViewOrcamento').show();" styleClass="NavyButton" icon="fa fa-eye" />
+						onclick="PF('dlgViewOrcamento').show();" styleClass="NavyButton"
+						icon="fa fa-eye" />
 					<p:commandButton icon="White fa fa-print" process="@this"
 						update=":lume:tabView:orcamentoInclude"
 						actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
@@ -1236,10 +1235,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					filterMatchMode="contains" sortBy="#{orcamento.aprovadoStr}">
 					<h:outputText value="#{orcamento.aprovadoStr}" />
 				</p:column>
-				<p:column headerText="Observações" filterBy="#{orcamento.observacoes}"
-					filterMatchMode="contains" sortBy="#{orcamento.observacoes}">
+				<p:column headerText="Observações"
+					filterBy="#{orcamento.observacoes}" filterMatchMode="contains"
+					sortBy="#{orcamento.observacoes}">
 					<h:outputText value="#{orcamento.observacoes}" />
-				</p:column>				
+				</p:column>
 			</p:dataTable>
 		</p:outputPanel>
 		<br />
@@ -1267,25 +1267,25 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
 			<p:scrollPanel mode="native"
 				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
-				
+
 				<p:panelGrid columns="2"
-							columnClasses="ui-grid-col-12,ui-grid-col-12" layout="grid"
-							styleClass="ui-panelgrid-blank" id="panelDescObs"
-							style="border:0px none; background-color:transparent;">
-							
-							<h:panelGroup>
-							<p:outputLabel value="Descrição:" for="descricaoOrcamento"/>
-								<p:inputText id="descricaoOrcamento" style="width:100%"
-									value="#{planoTratamentoMB.orcamentoSelecionado.descricao}" />							
-							</h:panelGroup>
-							<h:panelGroup>
-							<p:outputLabel value="Observações:" for="observacaoOrcamento" />
-								<p:inputText id="observacaoOrcamento"  style="width:100%"
-									value="#{planoTratamentoMB.orcamentoSelecionado.observacoes}" />							
-							</h:panelGroup>							
-							
+					columnClasses="ui-grid-col-12,ui-grid-col-12" layout="grid"
+					styleClass="ui-panelgrid-blank" id="panelDescObs"
+					style="border:0px none; background-color:transparent;">
+
+					<h:panelGroup>
+						<p:outputLabel value="Descrição:" for="descricaoOrcamento" />
+						<p:inputText id="descricaoOrcamento" style="width:100%"
+							value="#{planoTratamentoMB.orcamentoSelecionado.descricao}" />
+					</h:panelGroup>
+					<h:panelGroup>
+						<p:outputLabel value="Observações:" for="observacaoOrcamento" />
+						<p:inputText id="observacaoOrcamento" style="width:100%"
+							value="#{planoTratamentoMB.orcamentoSelecionado.observacoes}" />
+					</h:panelGroup>
+
 				</p:panelGrid>
-				
+
 				<p:outputPanel id="pnViewOrcamento">
 					<div class="CardTextParent">
 						<h:panelGroup styleClass="CardText">
@@ -1374,7 +1374,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 								symbol="R$ " thousandSeparator="."
 								readonly="#{planoTratamentoMB.orcamentoSelecionado.ativo == 'N'}"
-								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}">
+								disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}">
 							</p:inputNumber>
 						</p:column>
 						<p:column headerText="Desconto" filterMatchMode="contains"
@@ -1388,9 +1388,75 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</p:column>
 						<p:column headerText="Incluso?" width="50">
 							<p:selectBooleanCheckbox value="#{procedimento.incluso}"
-								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
+								disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}" />
 						</p:column>
 					</p:dataTable>
+					<br />
+					<p:fieldset legend="Planejamento do Pagamento" toggleable="true"
+						collapsed="true" style="margin: 0;">
+
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+							<p:commandButton icon="ui-icon-add" value="Novo Planejamento"
+								process="@this" styleClass="GreenButton"
+								actionListener="#{planoTratamentoMB.newPlanejamento}"
+								update=":lume:tabView:pnlNewPlanejamento"
+								oncomplete="PF('dlgNewPlanejamento').show()" />
+						</p:panelGrid>
+
+						<p:dataTable filterDelay="1500" reflow="true"
+							emptyMessage="Nenhum planejamento realizado" id="dtPlanejamento"
+							var="lancPlanejamento"
+							value="#{planoTratamentoMB.orcamentoSelecionado.planejamentoFitered}"
+							rows="10" paginator="true" paginatorPosition="bottom">
+							<f:facet name="header">
+								<h:outputText value="Planejamento" />
+							</f:facet>
+							<p:column headerText="Ações" width="80">
+								<p:commandButton title="Excluir planejamento" icon="fa fa-trash"
+									styleClass="RedButton" process="@this" update="dtPlanejamento"
+									actionListener="#{planoTratamentoMB.removePlanejamento(lancPlanejamento)}"
+									disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}" />
+							</p:column>
+							<p:column headerText="Forma de pagamento"
+								filterMatchMode="contains"
+								filterBy="#{lancPlanejamento.formaPagamento.nome}"
+								sortBy="#{lancPlanejamento.formaPagamento.nome}">
+								<h:outputText value="#{lancPlanejamento.formaPagamento.nome}" />
+							</p:column>
+							<p:column headerText="Valor" filterMatchMode="contains"
+								filterBy="#{lancPlanejamento.valor}"
+								sortBy="#{lancPlanejamento.valor}">
+								<h:outputText value="#{lancPlanejamento.valor}">
+									<f:convertNumber type="currency" currencySymbol="R$"
+										maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Parcelamento" filterMatchMode="contains"
+								filterBy="#{lancPlanejamento.nParcela}"
+								sortBy="#{lancPlanejamento.nParcela}">
+								<h:outputText value="Á vista"
+									rendered="#{lancPlanejamento.nParcela == 1}" />
+								<h:outputText value="#{lancPlanejamento.nParcela}x"
+									rendered="#{lancPlanejamento.nParcela > 1}" />
+							</p:column>
+							<p:column headerText="Data de Pagamento"
+								filterMatchMode="contains"
+								filterBy="#{lancPlanejamento.dataPagamento}"
+								sortBy="#{lancPlanejamento.dataPagamento}">
+								<h:outputText value="#{lancPlanejamento.dataPagamento}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column headerText="Data de Crédito" filterMatchMode="contains"
+								filterBy="#{lancPlanejamento.dataCredito}"
+								sortBy="#{lancPlanejamento.dataCredito}">
+								<h:outputText value="#{lancPlanejamento.dataCredito}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+					</p:fieldset>
 					<br />
 					<p:fieldset legend="Desconto" toggleable="true" collapsed="true"
 						style="margin: 0;">
@@ -1400,7 +1466,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<h:outputText value="Tipo do Desconto" />
 							<p:selectOneMenu
 								rendered="#{planoTratamentoMB.orcamentoSelecionado != null}"
-								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
+								disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}"
 								value="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo}">
 								<f:selectItem itemValue="P" itemLabel="Porcentagem" />
 								<f:selectItem itemValue="V" itemLabel="Valor" />
@@ -1411,14 +1477,14 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<h:outputText value="Valor do Desconto" />
 							<h:panelGroup id="orcamentoDescontoValor">
 								<p:inputNumber
-									disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
+									disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}"
 									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
 									styleClass="taller" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
 									rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'V'}">
 								</p:inputNumber>
 								<p:inputNumber
-									disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
+									disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}"
 									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
 									styleClass="taller" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="%" thousandSeparator="."
@@ -1437,7 +1503,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				process="@this, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader,:lume:tabView:panelDescObs"
 				actionListener="#{planoTratamentoMB.actionPersistOrcamento}"
 				styleClass="GreenButton"
-				disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E' or planoTratamentoMB.orcamentoSelecionado.aprovado}"
+				disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E' or planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}"
 				update=":lume:tabView:orcamentoViewTable, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView,:lume:tabView:panelDescObs" />
 			<p:commandButton icon="White fa fa-print"
 				value="Visualizar Impressão" process="@this"
@@ -1457,6 +1523,137 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				process="@this" onclick="PF('dlgViewOrcamento').hide();"
 				styleClass="NavyButton" />
 		</p:panelGrid>
+	</p:dialog>
+
+	<p:dialog widgetVar="dlgNewPlanejamento" appendTo=":lume"
+		closable="false" header="Novo Planejamento de Orçamento" modal="true"
+		width="70%">
+		<p:outputPanel id="pnlNewPlanejamento">
+			<p:panelGrid columns="1" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<h:panelGroup styleClass="lumeField">
+					<p:outputLabel for="formaPagamentoNewPlanejamento"
+						value="Forma de Pagamento: " />
+					<p:selectOneRadio id="formaPagamentoNewPlanejamento"
+						converter="dominio"
+						value="#{planoTratamentoMB.planejamentoAtual.formaPagamento}"
+						required="true" layout="grid" columns="3">
+						<p:ajax update="pnlNewPlanejamento" process="@this" />
+						<f:selectItems
+							value="#{planoTratamentoMB.formasPagamentoNewPlanejamento}"
+							var="tp" itemValue="#{tp}" itemLabel="#{tp.nome}" />
+					</p:selectOneRadio>
+				</h:panelGroup>
+			</p:panelGrid>
+
+			<p:panelGrid columns="2" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding"
+				rendered="#{planoTratamentoMB.showProdutoNewPlanejamento() or (planoTratamentoMB.planejamentoAtual.formaPagamento.valor == 'CC' and planoTratamentoMB.planejamentoAtual.tarifa != null)}">
+				<p:outputPanel
+					rendered="#{planoTratamentoMB.showProdutoNewPlanejamento()}">
+					<h:panelGroup styleClass="lumeField">
+						<p:outputLabel for="produtoLancamentoNewPlanejamento"
+							value="Produto: " />
+						<p:selectOneMenu id="produtoLancamentoNewPlanejamento"
+							value="#{planoTratamentoMB.planejamentoAtual.tarifa}"
+							converter="tarifa"
+							required="#{planoTratamentoMB.showProdutoNewPlanejamento()}">
+							<p:ajax
+								listener="#{planoTratamentoMB.atualizaDataCreditoNParcelasNewPlanejamento}"
+								process="@this, pnlNewPlanejamento" update="pnlNewPlanejamento" />
+							<f:selectItem itemLabel="Selecione um Produto"
+								itemValue="#{null}" />
+							<f:selectItems
+								value="#{planoTratamentoMB.tarifasNewPlanejamento}" var="tp"
+								itemValue="#{tp}" itemLabel="#{tp.produtoStr}" />
+						</p:selectOneMenu>
+					</h:panelGroup>
+				</p:outputPanel>
+				<p:outputPanel
+					rendered="#{planoTratamentoMB.planejamentoAtual.formaPagamento.valor == 'CC' and planoTratamentoMB.planejamentoAtual.tarifa != null}">
+					<h:panelGroup styleClass="lumeField">
+						<p:outputLabel for="numParcelasNewPlanejamento" value="Parcelas: " />
+						<p:selectOneMenu id="numParcelasNewPlanejamento"
+							value="#{planoTratamentoMB.planejamentoAtual.nParcela}"
+							filter="true" filterMatchMode="startsWith">
+							<f:selectItems
+								value="#{planoTratamentoMB.parcelasNewPlanejamento}" var="p"
+								itemValue="#{p}" itemLabel="#{p}" />
+						</p:selectOneMenu>
+					</h:panelGroup>
+				</p:outputPanel>
+			</p:panelGrid>
+
+			<p:panelGrid columns="2" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+				<h:panelGroup styleClass="lumeField">
+					<p:outputLabel for="valorRestanteNewPlanejamento"
+						value="Valor Restante: " />
+					<p:inputNumber id="valorRestanteNewPlanejamento" disabled="true"
+						value="#{planoTratamentoMB.getValorRestanteOrcamento()}"
+						maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+						symbol="R$ " thousandSeparator=".">
+					</p:inputNumber>
+				</h:panelGroup>
+				<h:panelGroup styleClass="lumeField">
+					<p:outputLabel for="valorAPagarNewPlanejamento" value="Valor: " />
+					<p:inputNumber id="valorAPagarNewPlanejamento"
+						value="#{planoTratamentoMB.planejamentoAtual.valor}"
+						required="true" maxlength="13" maxValue="9999999999.99"
+						decimalSeparator="," symbol="R$ " thousandSeparator=".">
+					</p:inputNumber>
+				</h:panelGroup>
+			</p:panelGrid>
+
+			<p:panelGrid columns="2" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<h:panelGroup styleClass="lumeField">
+					<p:outputLabel for="dataPagamentoNewPlanejamento"
+						value="Data de Pagamento: " />
+					<p:calendar id="dataPagamentoNewPlanejamento"
+						value="#{planoTratamentoMB.planejamentoAtual.dataPagamento}"
+						required="true" pattern="dd/MM/yyyy" showWeeksBar="false"
+						locale="#{lumeSecurity.locale}"
+						timeZone="#{lumeSecurity.timeZone}" navigator="true"
+						yearRange="-10:+10">
+						<p:ajax event="dateSelect"
+							listener="#{planoTratamentoMB.atualizaDataCreditoNParcelasNewPlanejamento}"
+							process="@this, pnlNewPlanejamento" update="pnlNewPlanejamento" />
+						<p:ajax event="change"
+							listener="#{planoTratamentoMB.atualizaDataCreditoNParcelasNewPlanejamento}"
+							process="@this, pnlNewPlanejamento" update="pnlNewPlanejamento" />
+					</p:calendar>
+				</h:panelGroup>
+				<h:panelGroup styleClass="lumeField">
+					<p:outputLabel for="dataCreditoNewPlanejamento"
+						value="Data de Crédito:" />
+					<p:calendar id="dataCreditoNewPlanejamento"
+						value="#{planoTratamentoMB.planejamentoAtual.dataCredito}"
+						required="true" pattern="dd/MM/yyyy" showWeeksBar="false"
+						locale="#{lumeSecurity.locale}"
+						timeZone="#{lumeSecurity.timeZone}" navigator="true"
+						yearRange="-10:+10" />
+				</h:panelGroup>
+			</p:panelGrid>
+			<div class="SeparatorFull"></div>
+			<p:panelGrid columns="4" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton value="Salvar e Fechar" icon="White fa fa-save"
+					actionListener="#{planoTratamentoMB.addPlanejamento}"
+					update=":lume:tabView:pnlNewPlanejamento, :lume:tabView:dtPlanejamento"
+					process="@this, :lume:tabView:pnlNewPlanejamento"
+					styleClass="GreenButton" />
+				<p:commandButton value="Salvar e Continuar" icon="White fa fa-save"
+					actionListener="#{planoTratamentoMB.addPlanejamentoContinuando}"
+					update=":lume:tabView:pnlNewPlanejamento, :lume:tabView:dtPlanejamento"
+					process="@this, :lume:tabView:pnlNewPlanejamento"
+					styleClass="GreenButton" />
+				<p:commandButton value="Fechar" icon="White fa fa-close"
+					oncomplete="PF('dlgNewPlanejamento').hide()" process="@this"
+					styleClass="NavyButton" />
+			</p:panelGrid>
+		</p:outputPanel>
 	</p:dialog>
 
 	<p:dialog id="evolucao" widgetVar="evolucao"
