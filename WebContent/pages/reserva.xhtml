@@ -136,9 +136,9 @@
 	                            <p:column headerText="Procedimento">
 	                                <h:outputText value="#{reservaKit.procedimentoStr}" />
 	                            </p:column>
-	                        </p:dataTable>	
-	                        </p:panel>	
-							<div class="EmptyBox20"></div>	
+	                        </p:dataTable>
+	                        </p:panel>
+							<div class="EmptyBox20"></div>
 						</p:scrollPanel>
 						<div class="EmptyBox20"></div>
 								<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
@@ -196,9 +196,10 @@
                     </p:outputPanel>
 						<br />
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtReserva" value="#{reservaMB.reservas}" var="reserva" rows="15" paginator="true"
-                            rowKey="#{reserva}" paginatorPosition="bottom" binding="#{reservaMB.tabelaReserva}"                            
-                            >
+                            rowKey="#{reserva}" paginatorPosition="bottom" binding="#{reservaMB.tabelaReserva}">
+                            
                             <p:ajax event="rowSelect"  listener="#{reservaMB.carregaTelaGeral}" />
+                            
                             <f:facet name="header">
                                 <h:panelGroup id="filtro" rendered="#{reservaMB.admin}">
 									A partir de :
@@ -208,6 +209,7 @@
                                         styleClass="OrangeButton" />
                                 </h:panelGroup>
                             </f:facet>
+                            
 							 <p:column headerText="Ações" width="10%">
 							 <p:commandButton styleClass="NavyButton" icon="fa fa-eye" oncomplete="PF('dlg').show();" update=":lume:pnEntradaDlg" title="Editar" process="@this"
                                 actionListener="#{reservaMB.carregarEditar(reserva)}" style="width:33px !important" />							 
@@ -225,8 +227,14 @@
                             </p:column>
                             <p:column filterBy="#{reserva.agendamento.paciente.dadosBasico.prefixoNome}" sortBy="#{reserva.agendamento.paciente.dadosBasico.prefixoNome}"
                             		filterMatchMode="contains" filterFunction="#{reservaMB.filtroSemAcento}"
-                                headerText="Paciente">
-                                <h:outputText value="#{reserva.agendamento.paciente.dadosBasico.prefixoNome}" />
+                                	headerText="Paciente">
+                                
+                                <p:commandLink value="#{reserva.agendamento.paciente.dadosBasico.nome}"
+									process="@this" title="#{reserva.agendamento.paciente.id}"
+									actionListener="#{tabPacienteMB.loadPaciente(reserva.agendamento.paciente)}"
+									oncomplete="PF('dlgFichaPaciente').show()"
+									update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
+									
                             </p:column>
                             <p:column filterBy="#{reserva.agendamento.inicioStr}" sortBy="#{reserva.agendamento.inicioStr}"
                             		filterMatchMode="contains" headerText="Data de Agendamento">
@@ -244,6 +252,10 @@
                                 <h:outputText value="#{reserva.dataStr}" />
                             </p:column>
                         </p:dataTable>
+                        
+					<ui:include src="pacienteFicha.xhtml" />
+					<p:remoteCommand name="onHidePacienteFicha" process="@this" />
+					
                 </div>
             </div>
         </div>

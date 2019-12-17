@@ -234,23 +234,23 @@
 									disabled="#{retornoMB.getUrlWpp(retorno) == null}"
 									onclick="window.open('#{retornoMB.getUrlWpp(retorno)}'); return false;"
 									styleClass="GreenButton" />
-							</p:column>							
+							</p:column>
 							<p:column filterBy="#{retorno.paciente.dadosBasico.nomeStr}"
 								sortBy="#{retorno.paciente.dadosBasico.nome}"
 								filterFunction="#{retornoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Paciente">
 								
 								<ui:remove>
-								<h:outputText value="#{retorno.paciente.dadosBasico.nome}"
-									title="#{retorno.id}" />
+									<h:outputText value="#{retorno.paciente.dadosBasico.nome}"
+												title="#{retorno.id}" />
 								</ui:remove>
-								
-							<p:commandLink value="#{retorno.paciente.dadosBasico.nome}"
-								process="@this" title="#{retorno.paciente.id}"
-								actionListener="#{tabPacienteMB.loadPaciente(retorno.paciente)}"
-								oncomplete="PF('dlgFichaPaciente').show()"
-								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
-									
+
+								<p:commandLink value="#{retorno.paciente.dadosBasico.nome}"
+									process="@this" title="#{retorno.paciente.id}"
+									actionListener="#{tabPacienteMB.loadPaciente(retorno.paciente)}"
+									oncomplete="PF('dlgFichaPaciente').show()"
+									update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+
 							</p:column>
 							<p:column filterBy="#{retorno.paciente.dadosBasico.responsavel}"
 								sortBy="#{retorno.paciente.dadosBasico.responsavel}"

@@ -358,7 +358,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												action="#{relatorioAtendimentoMB.popularLista}"
 												icon="White fa fa-search"
 												update=":lume:dtRelAtendimento,:lume:dlgGerarRelatorioTabela,:lume:filtroRelatorio"
-												process="@this,:lume:filtroRelatorio" styleClass="OrangeButton"/>
+												process="@this,:lume:filtroRelatorio" styleClass="NavyButton"/>
 										</h:panelGroup>
 
 										<h:panelGroup>
@@ -425,25 +425,49 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<f:facet name="header">Relatório de atendimentos
 							</f:facet>
 
+							<p:column headerText="Ações">
+								<p:commandButton id="btnView" icon="White fa fa-eye"
+									oncomplete="PF('dlgAgendamento').show();"
+									update=":lume:dlgGerarRelatorio" width="5%"
+									action="#{agendamentoMB.setEntity(atendimento)}"
+									process="@this">
+									<p:ajax
+										listener="#{relatorioAtendimentoMB.verificarNovoAgendamento()}" />
+									<p:ajax
+										listener="#{relatorioAtendimentoMB.setEntity(atendimento)}" />
+									<p:ajax
+										listener="#{relatorioAtendimentoMB.setNovoAgendamento(false)}" />
+									<p:ajax
+										listener="#{agendamentoMB.popularAgendamento(atendimento)}" />
+									<p:tooltip for="btnView" value="Visualizar" />
+								</p:commandButton>
+
+							</p:column>
+
 							<p:column filterBy="#{atendimento.paciente.dadosBasico.nome}"
 								sortBy="#{atendimento.paciente.dadosBasico.nome}"
 								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								headerText="Paciente">
-								<h:outputText value="#{atendimento.paciente.dadosBasico.nome}" />
+								
+								<p:commandLink value="#{atendimento.paciente.dadosBasico.nome}"
+									process="@this" title="#{atendimento.paciente.id}"
+									actionListener="#{tabPacienteMB.loadPaciente(atendimento.paciente)}"
+									oncomplete="PF('dlgFichaPaciente').show()"
+									update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
+								
 							</p:column>
 
-							<p:column filterBy="#{atendimento.paciente.dadosBasico.celular}"
-								sortBy="#{atendimento.paciente.dadosBasico.celular}"
-								filterMatchMode="contains" headerText="Celular">
-								<h:outputText
-									value="#{atendimento.paciente.dadosBasico.celular}" />
-							</p:column>
-
-							<p:column filterBy="#{atendimento.paciente.dadosBasico.telefone}"
-								sortBy="#{atendimento.paciente.dadosBasico.telefone}"
+							<p:column filterBy="#{atendimento.paciente.dadosBasico.telefoneStr}"
+								sortBy="#{atendimento.paciente.dadosBasico.telefoneStr}"
 								filterMatchMode="contains" headerText="Telefone">
-								<h:outputText
-									value="#{atendimento.paciente.dadosBasico.telefone}" />
+								
+								<h:outputText value="#{atendimento.paciente.dadosBasico.telefoneStr}" />
+								
+								<p:button id="whats" icon="White fa fa-whatsapp"
+									rendered="#{atendimento.paciente.dadosBasico.celular != null}"
+									onclick="window.open('#{relatorioAtendimentoMB.getUrlWpp(atendimento.paciente)}'); return false;"
+									styleClass="GreenButton" style="margin-left:10px;" />
+								<p:tooltip for="whats" value="Enviar mensagem" />
 							</p:column>
 
 							<p:column
@@ -537,31 +561,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" />
 							</p:column>
 							</ui:remove>
-
-							<p:column>
-								<p:commandButton id="btnView" icon="White fa fa-eye"
-									oncomplete="PF('dlgAgendamento').show();"
-									update=":lume:dlgGerarRelatorio" width="5%"
-									action="#{agendamentoMB.setEntity(atendimento)}"
-									process="@this">
-									<p:ajax
-										listener="#{relatorioAtendimentoMB.verificarNovoAgendamento()}" />
-									<p:ajax
-										listener="#{relatorioAtendimentoMB.setEntity(atendimento)}" />
-									<p:ajax
-										listener="#{relatorioAtendimentoMB.setNovoAgendamento(false)}" />
-									<p:ajax
-										listener="#{agendamentoMB.popularAgendamento(atendimento)}" />
-									<p:tooltip for="btnView" value="Visualizar" />
-								</p:commandButton>
-
-								<p:button id="whats" icon="White fa fa-whatsapp"
-									disabled="#{relatorioAtendimentoMB.getUrlWpp(atendimento.paciente) == null}"
-									onclick="window.open('#{relatorioAtendimentoMB.getUrlWpp(atendimento.paciente)}'); return false;"
-									styleClass="GreenButton" />
-								<p:tooltip for="whats" value="Enviar mensagem" />
-
-							</p:column>
 
 						</p:dataTable>
 

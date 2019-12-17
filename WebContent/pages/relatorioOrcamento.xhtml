@@ -252,7 +252,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						<f:facet name="header">Orçamentos</f:facet>
 						
 						<p:column filterBy="#{m.paciente}" sortBy="#{m.paciente.dadosBasico.nome}" filterMatchMode="contains" headerText="Paciente">
-							<h:outputText value="#{m.paciente.dadosBasico.nome}" />
+							
+							<p:commandLink value="#{m.paciente.dadosBasico.nome}"
+								process="@this" title="#{m.paciente.id}"
+								actionListener="#{tabPacienteMB.loadPaciente(retorno.paciente)}"
+								oncomplete="PF('dlgFichaPaciente').show()"
+								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
+							
 							<f:facet name="footer">
 								<h:outputText value="Total"/>
 							</f:facet>
@@ -323,6 +329,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:column>
 						
 					</p:dataTable>
+
+					<ui:include src="pacienteFicha.xhtml" />
+					<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 				</div>
 			</div>

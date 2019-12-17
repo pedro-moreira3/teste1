@@ -188,6 +188,10 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
        // Collections.sort(estoques);
     }
     
+    public String quantidadeEmprestada() {
+        return "";
+    }
+    
     public void exportarTabelaConferencia(String type) {
         exportarTabela("Ajuste de materiais", tabelaConferencia, type);
     }

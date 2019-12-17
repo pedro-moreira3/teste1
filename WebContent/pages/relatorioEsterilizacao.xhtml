@@ -81,9 +81,11 @@
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioEsterilizacaoMB.filtra}" update="dtPrincipal,pnPrincipal"
                                 process="@this,pnPrincipal,inicio,fim" styleClass="OrangeButton" />
+                            <ui:remove>
                             <p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                 <p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="RelatorioEsterilizacao" />
                             </p:commandButton>
+                            </ui:remove>
                             <p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioEsterilizacaoMB.actionNew}" update="dtPrincipal,pnPrincipal" immediate="true"
                                 tabindex="1" />
 							
