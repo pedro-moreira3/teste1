@@ -296,7 +296,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             planosTratamento = new ArrayList<>();
             if (getPaciente() != null) {
 
-                planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPacienteAndStatusAndTipo(getPaciente(), filtroStatus,filtroTipo);
+                planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPacienteAndStatusAndTipo(getPaciente(), filtroStatus, filtroTipo);
                 for (PlanoTratamento pt : planosTratamento) {
                     if (pt.getStatus().equals(Status.SIM) && contemPlanoTratamentoProcedimentoAberto(pt.getPlanoTratamentoProcedimentos())) {
                         pt.setValor(BigDecimal.ZERO);
@@ -498,10 +498,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.denteRegiaoEscolhida = (ptp.getDenteObj() == null ? ptp.getRegiao() : "Dente " + ptp.getDenteObj().getDescricao());
 
         List<String> faces = new ArrayList<>();
-        for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {            
-            if(!faces.contains(ptpf.getFace())) {
+        for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {
+            if (!faces.contains(ptpf.getFace())) {
                 faces.add(ptpf.getFace());
-            }  
+            }
         }
         ptp.setFacesSelecionadas(faces);
     }
@@ -588,9 +588,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         for (PlanoTratamentoProcedimento ptp : procedimentosDente) {
             List<String> faces = new ArrayList<>();
             for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {
-                if(!faces.contains(ptpf.getFace())) {
+                if (!faces.contains(ptpf.getFace())) {
                     faces.add(ptpf.getFace());
-                }  
+                }
             }
             ptp.setFacesSelecionadas(faces);
         }
@@ -968,6 +968,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void addPlanejamento() {
+        addPlanejamentoContinuando();
         PrimeFaces.current().executeScript("PF('dlgNewPlanejamento').hide()");
     }
 
@@ -1226,10 +1227,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             procedimentosDente = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByDenteAndPlanoTratamento(denteSelecionado, getEntity());
             for (PlanoTratamentoProcedimento ptp : procedimentosDente) {
                 List<String> faces = new ArrayList<>();
-                for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {                    
-                    if(!faces.contains(ptpf.getFace())) {
+                for (PlanoTratamentoProcedimentoFace ptpf : ptp.getPlanoTratamentoProcedimentoFaces()) {
+                    if (!faces.contains(ptpf.getFace())) {
                         faces.add(ptpf.getFace());
-                    }  
+                    }
                 }
                 ptp.setFacesSelecionadas(faces);
             }
@@ -1463,8 +1464,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void carregarPlanoTratamentoProcedimentos() throws Exception {
         if (getEntity() != null && getEntity().getId() != null) {
-            this.planoTratamentoProcedimentosExcluidos = new ArrayList<>();        
-            this.planoTratamentoProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoStatus(getEntity().getId(),filtroStatusProcedimento);
+            this.planoTratamentoProcedimentosExcluidos = new ArrayList<>();
+            this.planoTratamentoProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoStatus(getEntity().getId(), filtroStatusProcedimento);
             getEntity().setPlanoTratamentoProcedimentos(this.planoTratamentoProcedimentos);
         }
     }

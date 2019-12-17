@@ -290,3 +290,4 @@ SELECT 166,id_profissional FROM objeto_profissional WHERE obj_int_cod = 149;
 -------------------------------
 ALTER TABLE CONVENIO ADD COLUMN observacao_convenio character varying(255);
 -------------------------------
+ALTER TABLE FATURA ADD COLUMN PROFISSIONAL_CRIACAO_ID BIGINT NULL REFERENCES PROFISSIONAL(ID);

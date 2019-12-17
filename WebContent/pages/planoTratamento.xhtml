@@ -1373,8 +1373,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								required="#{planoTratamentoMB.orcamentoSelecionado != null}"
 								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 								symbol="R$ " thousandSeparator="."
-								readonly="#{planoTratamentoMB.orcamentoSelecionado.ativo == 'N'}"
-								disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}">
+								disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}">
 							</p:inputNumber>
 						</p:column>
 						<p:column headerText="Desconto" filterMatchMode="contains"
@@ -1388,7 +1387,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</p:column>
 						<p:column headerText="Incluso?" width="50">
 							<p:selectBooleanCheckbox value="#{procedimento.incluso}"
-								disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}" />
+								disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}" />
 						</p:column>
 					</p:dataTable>
 					<br />
@@ -1401,7 +1400,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								process="@this" styleClass="GreenButton"
 								actionListener="#{planoTratamentoMB.newPlanejamento}"
 								update=":lume:tabView:pnlNewPlanejamento"
-								oncomplete="PF('dlgNewPlanejamento').show()" />
+								oncomplete="PF('dlgNewPlanejamento').show()"
+								disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}" />
 						</p:panelGrid>
 
 						<p:dataTable filterDelay="1500" reflow="true"
@@ -1416,7 +1416,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:commandButton title="Excluir planejamento" icon="fa fa-trash"
 									styleClass="RedButton" process="@this" update="dtPlanejamento"
 									actionListener="#{planoTratamentoMB.removePlanejamento(lancPlanejamento)}"
-									disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}" />
+									disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}" />
 							</p:column>
 							<p:column headerText="Forma de pagamento"
 								filterMatchMode="contains"
@@ -1466,7 +1466,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<h:outputText value="Tipo do Desconto" />
 							<p:selectOneMenu
 								rendered="#{planoTratamentoMB.orcamentoSelecionado != null}"
-								disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}"
+								disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
 								value="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo}">
 								<f:selectItem itemValue="P" itemLabel="Porcentagem" />
 								<f:selectItem itemValue="V" itemLabel="Valor" />
@@ -1477,14 +1477,14 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<h:outputText value="Valor do Desconto" />
 							<h:panelGroup id="orcamentoDescontoValor">
 								<p:inputNumber
-									disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}"
+									disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
 									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
 									styleClass="taller" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
 									rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'V'}">
 								</p:inputNumber>
 								<p:inputNumber
-									disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}"
+									disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
 									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
 									styleClass="taller" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="%" thousandSeparator="."
@@ -1503,7 +1503,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				process="@this, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader,:lume:tabView:panelDescObs"
 				actionListener="#{planoTratamentoMB.actionPersistOrcamento}"
 				styleClass="GreenButton"
-				disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E' or planoTratamentoMB.orcamentoSelecionado.aprovado or !planoTratamentoMB.orcamentoSelecionado.ativo}"
+				disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
 				update=":lume:tabView:orcamentoViewTable, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView,:lume:tabView:panelDescObs" />
 			<p:commandButton icon="White fa fa-print"
 				value="Visualizar Impressão" process="@this"
@@ -1517,7 +1517,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				process="@this, :lume:tabView:pnViewOrcamento"
 				update=":lume:tabView:pnViewOrcamento, :lume:tabView:buttonsDlgOrcamentoView, :lume:tabView:orcamentoViewTable"
 				styleClass="OrangeButton"
-				disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E' or planoTratamentoMB.orcamentoSelecionado.id == null
+				disabled="#{planoTratamentoMB.orcamentoSelecionado.id == null
 					or planoTratamentoMB.orcamentoSelecionado.id == 0 or planoTratamentoMB.orcamentoSelecionado.aprovado}" />
 			<p:commandButton icon="White fa fa-close" value="Fechar"
 				process="@this" onclick="PF('dlgViewOrcamento').hide();"
@@ -1649,6 +1649,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					update=":lume:tabView:pnlNewPlanejamento, :lume:tabView:dtPlanejamento"
 					process="@this, :lume:tabView:pnlNewPlanejamento"
 					styleClass="GreenButton" />
+				<p:column />
 				<p:commandButton value="Fechar" icon="White fa fa-close"
 					oncomplete="PF('dlgNewPlanejamento').hide()" process="@this"
 					styleClass="NavyButton" />
