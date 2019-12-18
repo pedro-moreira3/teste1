@@ -1,0 +1,197 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<h1>Movimentações</h1>
+					<div class="SeparatorFull"></div>
+					<br />
+
+					<p:tabView style="padding: 10px; padding-top: 0px;"
+						id="tabViewMovimentacoes">
+						<p:tab title="Contas a Receber">
+
+							<p:outputPanel style="padding-top: 10px;">
+								<p:fieldset collapsed="true" toggleable="true" legend="Filtros">
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+										<h:panelGroup styleClass="md-combo">
+											<p:outputLabel for="mesAReceber" value="Mês de Referência" />
+											<p:selectOneMenu id="mesAReceber"
+												value="#{movimentacoesMB.mesAReceber}" filter="true"
+												filterMatchMode="contains">
+												<f:selectItems value="#{movimentacoesMB.meses}" var="mes"
+													itemLabel="#{mes.rotulo}" itemValue="#{mes}" />
+											</p:selectOneMenu>
+											<p:message styleClass="msg" for="mesAReceber" />
+										</h:panelGroup>
+
+										<h:panelGroup>
+											<p:selectBooleanCheckbox id="lancValidadoAReceber"
+												value="#{movimentacoesMB.consideraLancamentosValidadosAReceber}" />
+											<p:outputLabel for="lancValidadoAReceber"
+												style="margin-left: 10px;"
+												value="Incluir lançamentos já validados" />
+										</h:panelGroup>
+
+										<p:commandButton value="Pesquisar" styleClass="GreenButton"
+											actionListener="#{movimentacoesMB.carregaListaAReceber}"
+											process="@this"
+											update=":lume:tabViewMovimentacoes:dtContasAReceber" />
+
+									</p:panelGrid>
+								</p:fieldset>
+							</p:outputPanel>
+
+							<br />
+
+							<p:dataTable id="dtContasAReceber" paginator="true"
+								paginatorPosition="bottom" rows="10"
+								value="#{movimentacoesMB.aReceber}" var="l" rowKey="#{l}">
+								<f:facet name="header">Lançamentos a Receber</f:facet>
+								<p:column headerText="Forma de pagamento"
+									filterMatchMode="contains" filterBy="#{l.formaPagamentoStr}"
+									sortBy="#{l.formaPagamentoStr}" width="20%">
+									<h:outputText value="#{l.formaPagamentoStr}" />
+								</p:column>
+								<p:column headerText="Valor" filterMatchMode="contains"
+									filterBy="#{l.valor}" sortBy="#{l.valor}" width="10%">
+									<h:outputText value="#{l.valor}">
+										<f:convertNumber type="currency" currencySymbol="R$"
+											maxFractionDigits="2" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Data Pagamento" filterMatchMode="contains"
+									filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}">
+									<h:outputText value="#{l.dataPagamento}" width="15%">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Data Crédito" filterMatchMode="contains"
+									filterBy="#{l.dataCredito}" sortBy="#{l.dataCredito}"
+									width="15%">
+									<h:outputText value="#{l.dataCredito}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Validado?" filterMatchMode="contains"
+									filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}"
+									width="10%">
+									<h:outputText value="#{l.validadoStr}" />
+									<p:tooltip rendered="#{l.validado == 'S'}"
+										value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
+								</p:column>
+								<p:column headerText="Status" filterMatchMode="contains"
+									filterBy="#{l.status}" sortBy="#{l.status}" width="15%">
+									<h:outputText value="#{l.status}" />
+								</p:column>
+								<p:column headerText="Origem" filterMatchMode="contains"
+									filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+									sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+									width="15%">
+									<h:outputText
+										value="#{movimentacoesMB.getOrigemFromLancamento(l)}" />
+								</p:column>
+							</p:dataTable>
+
+						</p:tab>
+						<p:tab title="Contas a Pagar">
+
+							<p:outputPanel style="padding-top: 10px;">
+								<p:fieldset collapsed="true" toggleable="true" legend="Filtros">
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+										<h:panelGroup styleClass="md-combo">
+											<p:outputLabel for="mesAPagar" value="Mês de Referência" />
+											<p:selectOneMenu id="mesAPagar"
+												value="#{movimentacoesMB.mesAPagar}" filter="true"
+												filterMatchMode="contains">
+												<f:selectItems value="#{movimentacoesMB.meses}" var="mes"
+													itemLabel="#{mes.rotulo}" itemValue="#{mes}" />
+											</p:selectOneMenu>
+											<p:message styleClass="msg" for="mesAPagar" />
+										</h:panelGroup>
+
+										<h:panelGroup>
+											<p:selectBooleanCheckbox id="lancValidadoAPagar"
+												value="#{movimentacoesMB.consideraLancamentosValidadosAPagar}" />
+											<p:outputLabel for="lancValidadoAPagar"
+												style="margin-left: 10px;"
+												value="Incluir lançamentos já validados" />
+										</h:panelGroup>
+
+										<p:commandButton value="Pesquisar" styleClass="GreenButton"
+											actionListener="#{movimentacoesMB.carregaListaAPagar}"
+											process="@this"
+											update=":lume:tabViewMovimentacoes:dtContasAPagar" />
+
+									</p:panelGrid>
+								</p:fieldset>
+							</p:outputPanel>
+
+							<br />
+
+							<p:dataTable id="dtContasAPagar" paginator="true"
+								paginatorPosition="bottom" rows="10"
+								value="#{movimentacoesMB.aPagar}" var="l" rowKey="#{l}">
+								<f:facet name="header">Lançamentos a Pagar</f:facet>
+								<p:column headerText="Forma de pagamento"
+									filterMatchMode="contains" filterBy="#{l.formaPagamentoStr}"
+									sortBy="#{l.formaPagamentoStr}" width="20%">
+									<h:outputText value="#{l.formaPagamentoStr}" />
+								</p:column>
+								<p:column headerText="Valor" filterMatchMode="contains"
+									filterBy="#{l.valor}" sortBy="#{l.valor}" width="10%">
+									<h:outputText value="#{l.valor}">
+										<f:convertNumber type="currency" currencySymbol="R$"
+											maxFractionDigits="2" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Data Pagamento" filterMatchMode="contains"
+									filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}">
+									<h:outputText value="#{l.dataPagamento}" width="15%">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Data Crédito" filterMatchMode="contains"
+									filterBy="#{l.dataCredito}" sortBy="#{l.dataCredito}"
+									width="15%">
+									<h:outputText value="#{l.dataCredito}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Validado?" filterMatchMode="contains"
+									filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}"
+									width="10%">
+									<h:outputText value="#{l.validadoStr}" />
+									<p:tooltip rendered="#{l.validado == 'S'}"
+										value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
+								</p:column>
+								<p:column headerText="Status" filterMatchMode="contains"
+									filterBy="#{l.status}" sortBy="#{l.status}" width="15%">
+									<h:outputText value="#{l.status}" />
+								</p:column>
+								<p:column headerText="Origem" filterMatchMode="contains"
+									filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+									sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+									width="15%">
+									<h:outputText
+										value="#{movimentacoesMB.getOrigemFromLancamento(l)}" />
+								</p:column>
+							</p:dataTable>
+
+						</p:tab>
+					</p:tabView>
+
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>
