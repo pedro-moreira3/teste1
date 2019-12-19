@@ -357,21 +357,17 @@ public class MaterialMB extends LumeManagedBean<Material> {
     public void actionDevolver(ActionEvent event) {
         try {
             if (this.getEntity().getEstoque().getQuantidade().intValue() >= quantidadePacotes.intValue()) {
-                //this.getbO().refresh(getEntity());
-                //this.getEntity().getEstoque().setQuantidade(this.getEntity().getEstoque().getQuantidade().subtract(quantidadePacotes));
-               
-               
+             
                 if (justificativa != null) {
                     this.getEntity().setJustificativa(justificativa.getNome());
                 }                
                 MaterialSingleton.getInstance().getBo().persist(this.getEntity());
                 
-                EstoqueSingleton.getInstance().subtrair( this.getEntity(),  this.getEntity().getEstoque().getLocal(),quantidadePacotes, EstoqueSingleton.DEVOLUCAO_MATERIAL_PROBLEMA + "- " + justificativa.getNome(), UtilsFrontEnd.getProfissionalLogado());
-                
-                
-               // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadePacotes.multiply(new BigDecimal(-1)), getEntity().getQuantidadeAtual(),
-               //         MaterialLog.ENTRADA_MATERIAL_DEVOLVER));
-            
+                //EstoqueSingleton.getInstance().subtrair( this.getEntity(),  this.getEntity().getEstoque().getLocal(),quantidadePacotes, EstoqueSingleton.DEVOLUCAO_MATERIAL_PROBLEMA + "- " + justificativa.getNome(), UtilsFrontEnd.getProfissionalLogado());
+               
+                Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_KIT");
+                EstoqueSingleton.getInstance().transferencia(this.getEntity(),this.getEntity().getEstoque().getLocal(),localDestino,quantidadePacotes,EstoqueSingleton.RESERVA_KIT_EXCLUIDA,UtilsFrontEnd.getProfissionalLogado());
+                         
                 this.actionNew(event);
                 this.geraLista();
                 PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
@@ -454,8 +450,12 @@ public class MaterialMB extends LumeManagedBean<Material> {
                             }
                             if (novo) {
                                // this.getEntity().getEstoque().setMaterial(this.getEntity());
-                                EstoqueSingleton.getInstance().inserir(this.getEntity(), this.getEntity().getEstoque().getLocal(),  this.getEntity().getEstoque().getQuantidade(),  EstoqueSingleton.ENTRADA_MATERIAL_CADASTRO, UtilsFrontEnd.getProfissionalLogado());
-                                                                
+                               // EstoqueSingleton.getInstance().inserir(this.getEntity(), this.getEntity().getEstoque().getLocal(),  this.getEntity().getEstoque().getQuantidade(),  EstoqueSingleton.ENTRADA_MATERIAL_CADASTRO, UtilsFrontEnd.getProfissionalLogado());
+                                
+                                Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");
+                                EstoqueSingleton.getInstance().transferencia(this.getEntity(),localOrigem,this.getEntity().getEstoque().getLocal(),this.getEntity().getEstoque().getQuantidade(),EstoqueSingleton.ENTRADA_MATERIAL_CADASTRO,UtilsFrontEnd.getProfissionalLogado());
+                              
+                                
                                // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), getEntity().getEstoque().getQuantidade(),
                                 //        getEntity().getEstoque().getQuantidade(), MaterialLog.ENTRADA_MATERIAL_CADASTRO));
                                 this.setEntity(new Material());
@@ -491,19 +491,21 @@ public class MaterialMB extends LumeManagedBean<Material> {
         } else {
             try {
                 this.getbO().refresh(getEntity());
-                if (tipoMovimentacao.equals(Material.MOVIMENTACAO_ENTRADA)) {
-                   // this.getEntity().setQuantidadeAtual(this.getEntity().getEstoque().getQuantidade().add(quantidadeMovimentacao));
-                    EstoqueSingleton.getInstance().adicionar(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentacao,  EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
-                                        
-                } else {
-                    //this.getEntity().setQuantidadeAtual(this.getEntity().getEstoque().getQuantidade().subtract(quantidadeMovimentacao));
-                    EstoqueSingleton.getInstance().subtrair(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentacao,  EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
+                if (tipoMovimentacao.equals(Material.MOVIMENTACAO_ENTRADA)) {                  
+                    //EstoqueSingleton.getInstance().adicionar(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentacao,  EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
+                   
+                    Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");
+                    EstoqueSingleton.getInstance().transferencia(this.getEntity(),localOrigem,this.getEntity().getEstoque().getLocal(),quantidadeMovimentacao,EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA,UtilsFrontEnd.getProfissionalLogado());
+                                       
+                } else {                 
+                   // EstoqueSingleton.getInstance().subtrair(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentacao,  EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
+                    
+                    Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");                    
+                    EstoqueSingleton.getInstance().transferencia(this.getEntity(),this.getEntity().getEstoque().getLocal(),localDestino,quantidadeMovimentacao,EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA,UtilsFrontEnd.getProfissionalLogado());                                      
                     quantidadeMovimentacao = quantidadeMovimentacao.multiply(new BigDecimal(-1));
                 }
-               // this.getEntity().setQuantidadeTotal(this.getEntity().getQuantidadeAtual());
-                this.getEntity().setDataMovimentacao(Calendar.getInstance().getTime());
-               // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentacao, getEntity().getQuantidadeAtual(),
-                //        MaterialLog.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA));
+            
+                this.getEntity().setDataMovimentacao(Calendar.getInstance().getTime());              
                 this.getbO().persist(this.getEntity());
 
                 this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "",true);
@@ -528,28 +530,30 @@ public class MaterialMB extends LumeManagedBean<Material> {
         } else {
 
             try {
-                this.getbO().refresh(getEntity());
+                
+               //this.getbO().m(getEntity());
+               // setEntity(MaterialSingleton.getInstance().getBo().find(this.getEntity().getId()));
                // this.getEntity().setQuantidadeAtual(this.getEntity().getEstoque().getQuantidade().subtract(quantidadeMovimentada));
                // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentada.multiply(new BigDecimal(-1)),
                //         getEntity().getQuantidadeAtual(), MaterialLog.MOVIMENTACAO_MATERIAL_MOVIMENTAR));
-                this.getbO().persist(this.getEntity());
-                Material material = new Material();
-                PropertyUtils.copyProperties(material, this.getEntity());
+               // this.getbO().persist(this.getEntity());
+              
               //  material.setQuantidadeAtual(quantidadeMovimentada);
                // material.setQuantidadeTotal(quantidadeMovimentada);
-                material.setId(0);
-                material.getEstoque().setLocal(this.getLocal());
-                this.setEntity(material);
-
+                
+                 //atualizando somente o estoque, caso tenha sido alterada por outro usuário por exempl
+                getEntity().setEstoque(MaterialSingleton.getInstance().getBo().find(getEntity().getId()).getEstoque());
+                
+                //pegando local origem para salvar na transferencia
+                Local localOrigem = this.getEntity().getEstoque().getLocal();                              
+              //  material.getEstoque().setLocal(this.getLocal());
+              //  material.setId(0);
                 this.getEntity().setDataMovimentacao(new Date());
-                this.getbO().persist(this.getEntity());
-
-                EstoqueSingleton.getInstance().subtrair(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentada,  EstoqueSingleton.DEVOLUCAO_KIT_NAO_UTILIZADO, UtilsFrontEnd.getProfissionalLogado());
+                //this.getbO().persist(this.getEntity());
+               // this.getbO().persist(material);
                 
-                
-               // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentada, getEntity().getQuantidadeAtual(),
-               //         MaterialLog.MOVIMENTACAO_MATERIAL_MOVIMENTAR));
-
+                EstoqueSingleton.getInstance().transferencia(this.getEntity(), localOrigem, this.getLocal(), quantidadeMovimentada, EstoqueSingleton.MOVIMENTACAO_MATERIAL_MOVIMENTAR, UtilsFrontEnd.getProfissionalLogado()); 
+               
                 this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "",true);
                 this.actionNew(event);
                 this.geraLista();

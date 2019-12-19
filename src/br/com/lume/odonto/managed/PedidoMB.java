@@ -248,7 +248,7 @@ public class PedidoMB extends LumeManagedBean<Pedido> {
         try {
             List<Material> materiais = MaterialSingleton.getInstance().getBo().listByItem(this.getItem());
             for (Material material : materiais) {
-                BigDecimal quantidade =  EstoqueSingleton.getInstance().getBo().findByMaterial(material).getQuantidade();
+                BigDecimal quantidade =  EstoqueSingleton.getInstance().getBo().findByMaterialLocal(material,material.getEstoque().getLocal()).getQuantidade();
                 quantidadeTotal = quantidadeTotal.add(quantidade);
             }
         } catch (Exception e) {
