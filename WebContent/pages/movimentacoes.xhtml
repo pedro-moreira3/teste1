@@ -5,6 +5,10 @@
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
+
+		<ui:include src="faturaView.xhtml" />
+		<p:remoteCommand name="onCloseFaturaView" process="@this" />
+
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -14,11 +18,16 @@
 
 					<p:tabView style="padding: 10px; padding-top: 0px;"
 						id="tabViewMovimentacoes">
+
+						<p:ajax event="tabChange"
+							listener="#{movimentacoesMB.onTabChange}"
+							update=":lume:tabViewMovimentacoes" />
+
 						<p:tab title="Contas a Receber">
 
 							<p:outputPanel style="padding-top: 10px;">
 								<p:fieldset collapsed="true" toggleable="true" legend="Filtros">
-									<p:panelGrid columns="2" layout="grid"
+									<p:panelGrid columns="2" layout="grid" id="filtrosAReceber"
 										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 										<h:panelGroup styleClass="md-combo">
@@ -40,9 +49,14 @@
 												value="Incluir lançamentos já validados" />
 										</h:panelGroup>
 
+									</p:panelGrid>
+
+									<p:panelGrid columns="4" layout="grid"
+										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
 										<p:commandButton value="Pesquisar" styleClass="GreenButton"
 											actionListener="#{movimentacoesMB.carregaListaAReceber}"
-											process="@this"
+											process="@this, :lume:tabViewMovimentacoes:filtrosAReceber"
 											update=":lume:tabViewMovimentacoes:dtContasAReceber" />
 
 									</p:panelGrid>
@@ -53,6 +67,7 @@
 
 							<p:dataTable id="dtContasAReceber" paginator="true"
 								paginatorPosition="bottom" rows="10"
+								emptyMessage="Nenhum lançamento a receber para o mês corrente."
 								value="#{movimentacoesMB.aReceber}" var="l" rowKey="#{l}">
 								<f:facet name="header">Lançamentos a Receber</f:facet>
 								<p:column headerText="Forma de pagamento"
@@ -84,19 +99,25 @@
 									filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}"
 									width="10%">
 									<h:outputText value="#{l.validadoStr}" />
-									<p:tooltip rendered="#{l.validado == 'S'}"
+									<p:tooltip rendered="#{l.validado == 'S'}" for="@parent"
 										value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
 								<p:column headerText="Status" filterMatchMode="contains"
-									filterBy="#{l.status}" sortBy="#{l.status}" width="15%">
-									<h:outputText value="#{l.status}" />
+									filterBy="#{movimentacoesMB.getNewStatusLancamento(l)}"
+									sortBy="#{movimentacoesMB.getNewStatusLancamento(l)}"
+									width="15%">
+									<h:outputText
+										value="#{movimentacoesMB.getNewStatusLancamento(l)}" />
 								</p:column>
 								<p:column headerText="Origem" filterMatchMode="contains"
 									filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
 									sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
 									width="15%">
-									<h:outputText
-										value="#{movimentacoesMB.getOrigemFromLancamento(l)}" />
+									<p:commandLink process="@this" title="Visualizar Fatura"
+										value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+										actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
+										oncomplete="PF('dlgFaturaView').show();"
+										update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 								</p:column>
 							</p:dataTable>
 
@@ -105,7 +126,7 @@
 
 							<p:outputPanel style="padding-top: 10px;">
 								<p:fieldset collapsed="true" toggleable="true" legend="Filtros">
-									<p:panelGrid columns="2" layout="grid"
+									<p:panelGrid columns="2" layout="grid" id="filtrosAPagar"
 										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 										<h:panelGroup styleClass="md-combo">
@@ -127,9 +148,14 @@
 												value="Incluir lançamentos já validados" />
 										</h:panelGroup>
 
+									</p:panelGrid>
+
+									<p:panelGrid columns="4" layout="grid"
+										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
 										<p:commandButton value="Pesquisar" styleClass="GreenButton"
 											actionListener="#{movimentacoesMB.carregaListaAPagar}"
-											process="@this"
+											process="@this, :lume:tabViewMovimentacoes:filtrosAPagar"
 											update=":lume:tabViewMovimentacoes:dtContasAPagar" />
 
 									</p:panelGrid>
@@ -140,6 +166,7 @@
 
 							<p:dataTable id="dtContasAPagar" paginator="true"
 								paginatorPosition="bottom" rows="10"
+								emptyMessage="Nenhum lançamento a pagar para o mês corrente."
 								value="#{movimentacoesMB.aPagar}" var="l" rowKey="#{l}">
 								<f:facet name="header">Lançamentos a Pagar</f:facet>
 								<p:column headerText="Forma de pagamento"
@@ -175,20 +202,38 @@
 										value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
 								<p:column headerText="Status" filterMatchMode="contains"
-									filterBy="#{l.status}" sortBy="#{l.status}" width="15%">
-									<h:outputText value="#{l.status}" />
+									filterBy="#{movimentacoesMB.getNewStatusLancamento(l)}"
+									sortBy="#{movimentacoesMB.getNewStatusLancamento(l)}"
+									width="15%">
+									<h:outputText
+										value="#{movimentacoesMB.getNewStatusLancamento(l)}" />
 								</p:column>
 								<p:column headerText="Origem" filterMatchMode="contains"
 									filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
 									sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
 									width="15%">
-									<h:outputText
-										value="#{movimentacoesMB.getOrigemFromLancamento(l)}" />
+									<p:commandLink process="@this" title="Visualizar Fatura"
+										value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+										actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
+										oncomplete="PF('dlgFaturaView').show();"
+										update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 								</p:column>
 							</p:dataTable>
 
 						</p:tab>
 					</p:tabView>
+
+					<br />
+
+					<p:poll interval="5" update="@this, :lume:movimentacoesChart"
+						stop="#{movimentacoesMB.lineModel != null}" process="@this" />
+					<p:outputPanel id="movimentacoesChart">
+						<p:outputPanel rendered="#{movimentacoesMB.lineModel != null}"
+							style="width: 100%;">
+							<p:barChart model="#{movimentacoesMB.lineModel}"
+								style="width: 100%; height: 300px;" />
+						</p:outputPanel>
+					</p:outputPanel>
 
 				</div>
 			</div>

@@ -251,6 +251,14 @@
 			ga.l = +new Date;
 			ga('create', 'UA-100802286-3', 'auto');
 			ga('send', 'pageview');
+
+			function startTimer() {
+				t = setTimeout("PF('loading').show();", 200);
+			}
+
+			function stopTimer() {
+				clearTimeout(t);
+			}
 			//]]>
 		</script>
 
@@ -305,8 +313,9 @@
 					globalOnly="true" life="4000">
 					<p:autoUpdate />
 				</p:growl>
-				<p:ajaxStatus onstart="PF('loading').show();"
-					onsuccess="PF('loading').hide();" onerror="PF('loading').hide();" />
+				<p:ajaxStatus onstart="startTimer();"
+					onsuccess="PF('loading').hide();stopTimer();"
+					onerror="PF('loading').hide();stopTimer();" />
 				<p:dialog modal="true" widgetVar="loading" draggable="false"
 					closable="false" showHeader="false" resizable="false">
 					<p:graphicImage value="/images/loading.gif" />

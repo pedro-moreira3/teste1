@@ -207,11 +207,11 @@ body .sideChkBox .ui-chkbox-label {
 									readonly="true" />
 
 								<h:outputText
-									rendered="#{repasseProfissional != null and repasseProfissional == 'S'}"
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}"
 									for="planoTratamentoFatura"
 									value="Plano de Tratamento da fatura de origem:" />
 								<p:inputText
-									rendered="#{repasseProfissional != null and repasseProfissional == 'S'}"
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}"
 									id="planoTratamentoFatura" readonly="true"
 									value="#{faturaPagtoMB.getPTFromFaturaRepasse(faturaPagtoMB.entity).descricao}" />
 								<h:outputText
@@ -228,17 +228,17 @@ body .sideChkBox .ui-chkbox-label {
 									value="#{faturaPagtoMB.entity.dataCriacaoStr}" readonly="true" />
 
 								<h:outputText
-									rendered="#{repasseProfissional != null and repasseProfissional == 'S'}"
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}"
 									for="pacienteFaturaOrigem"
 									value="Paciente da fatura de origem:" />
 								<p:inputText
-									rendered="#{repasseProfissional != null and repasseProfissional == 'S'}"
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}"
 									id="pacienteFaturaOrigem" readonly="true"
 									value="#{faturaPagtoMB.getPTFromFaturaRepasse(faturaPagtoMB.entity).paciente.dadosBasico.nome}" />
 								<p:column
-									rendered="#{repasseProfissional == null or repasseProfissional != 'S'}" />
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}" />
 								<p:column
-									rendered="#{repasseProfissional == null or repasseProfissional != 'S'}" />
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}" />
 							</p:panelGrid>
 
 							<p:panelGrid columns="4" layout="grid"
@@ -477,7 +477,7 @@ body .sideChkBox .ui-chkbox-label {
 				rendered="#{showNewLancamento == null or showNewLancamento != 'S'}" />
 			<p:column />
 			<p:commandButton value="Fechar" icon="fa fa-close"
-				styleClass="NavyButton" onclick="PF('dlgFaturaView').hide()"
+				styleClass="NavyButton" oncomplete="PF('dlgFaturaView').hide()"
 				process="@this" />
 		</p:panelGrid>
 	</p:dialog>

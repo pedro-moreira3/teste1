@@ -21,6 +21,8 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils.Mes;
+import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.conta.ContaSingleton;
 import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
@@ -74,6 +76,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private List<Tarifa> tarifas = new ArrayList<>();
     private List<Integer> parcelas;
     private Integer parcela;
+
+    //Campos para lançamentos a pagar e a receber da aba financeiro do paciente
+    private List<Lancamento> lAPagar, lAReceber;
 
     //FIXME - corrigir deixando mais bonito
     @Inject
@@ -404,6 +409,26 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
+        try {
+            this.lAPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(this.paciente.getConta(), Mes.getMesAtual(), ValidacaoLancamento.NAO_VALIDADO);
+            BigDecimal vAPagar = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAPagar));
+            this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(this.paciente.getConta(), Mes.getMesAtual(), ValidacaoLancamento.NAO_VALIDADO);
+            BigDecimal vAReceber = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAReceber));
+            this.paciente.getConta().setSaldo(vAReceber.subtract(vAPagar));
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+    }
+
+    public String getSaldoCor() {
+        BigDecimal saldo = this.paciente.getConta().getSaldo();
+        if (saldo != null && saldo.compareTo(BigDecimal.ZERO) != 0) {
+            if (saldo.compareTo(BigDecimal.ZERO) < 0)
+                return "#dc3545";
+            else if (saldo.compareTo(BigDecimal.ZERO) > 0)
+                return "#007bff";
+        }
+        return "black";
     }
 
     public List<Dominio> getFormasPagamento() {
@@ -572,6 +597,22 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setTabelaFatura(DataTable tabelaFatura) {
         this.tabelaFatura = tabelaFatura;
+    }
+
+    public List<Lancamento> getlAPagar() {
+        return lAPagar;
+    }
+
+    public void setlAPagar(List<Lancamento> lAPagar) {
+        this.lAPagar = lAPagar;
+    }
+
+    public List<Lancamento> getlAReceber() {
+        return lAReceber;
+    }
+
+    public void setlAReceber(List<Lancamento> lAReceber) {
+        this.lAReceber = lAReceber;
     }
 
 }

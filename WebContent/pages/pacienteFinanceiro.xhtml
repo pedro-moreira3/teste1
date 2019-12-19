@@ -46,22 +46,127 @@ hr.hrSaldo {
 </style>
 
 	<ui:include src="faturaView.xhtml" />
+	<p:remoteCommand name="onCloseFaturaView" process="@this" />
 
 	<br />
 	<div style="position: relative; width: 100%; height: 100px;">
 		<hr class="centerH hrSaldo" />
-		<div class="centerH divSaldo" style="">
-			<div class="centerH divSaldoHeader">Saldo Atual</div>
-			<h:outputText value="#{faturaPagtoMB.paciente.conta.saldo}"
-				rendered="#{faturaPagtoMB.paciente.conta.saldo != null}">
-				<f:convertNumber currencySymbol="R$ " type="currency" />
-			</h:outputText>
-			<h:outputText value="#{0.00}"
-				rendered="#{faturaPagtoMB.paciente.conta.saldo == null}">
-				<f:convertNumber currencySymbol="R$ " type="currency" />
-			</h:outputText>
-		</div>
+		<p:outputPanel style="color: #{faturaPagtoMB.saldoCor}">
+			<div class="centerH divSaldo">
+				<div class="centerH divSaldoHeader">Saldo Atual</div>
+				<h:outputText value="#{faturaPagtoMB.paciente.conta.saldo}"
+					rendered="#{faturaPagtoMB.paciente.conta.saldo != null}">
+					<f:convertNumber currencySymbol="R$ " type="currency" />
+				</h:outputText>
+				<h:outputText value="#{0.00}"
+					rendered="#{faturaPagtoMB.paciente.conta.saldo == null}">
+					<f:convertNumber currencySymbol="R$ " type="currency" />
+				</h:outputText>
+			</div>
+		</p:outputPanel>
 	</div>
+
+	<p:dataTable id="dtContasAReceber" paginator="true"
+		paginatorPosition="bottom" rows="10"
+		emptyMessage="Nenhum lançamento a receber para o mês corrente."
+		value="#{faturaPagtoMB.lAReceber}" var="l" rowKey="#{l}">
+		<f:facet name="header">Lançamentos a Receber</f:facet>
+		<p:column headerText="Forma de pagamento" filterMatchMode="contains"
+			filterBy="#{l.formaPagamentoStr}" sortBy="#{l.formaPagamentoStr}"
+			width="20%">
+			<h:outputText value="#{l.formaPagamentoStr}" />
+		</p:column>
+		<p:column headerText="Valor" filterMatchMode="contains"
+			filterBy="#{l.valor}" sortBy="#{l.valor}" width="10%">
+			<h:outputText value="#{l.valor}">
+				<f:convertNumber type="currency" currencySymbol="R$"
+					maxFractionDigits="2" />
+			</h:outputText>
+		</p:column>
+		<p:column headerText="Data Pagamento" filterMatchMode="contains"
+			filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}">
+			<h:outputText value="#{l.dataPagamento}" width="15%">
+				<f:convertDateTime pattern="dd/MM/yyyy" />
+			</h:outputText>
+		</p:column>
+		<p:column headerText="Data Crédito" filterMatchMode="contains"
+			filterBy="#{l.dataCredito}" sortBy="#{l.dataCredito}" width="15%">
+			<h:outputText value="#{l.dataCredito}">
+				<f:convertDateTime pattern="dd/MM/yyyy" />
+			</h:outputText>
+		</p:column>
+		<p:column headerText="Validado?" filterMatchMode="contains"
+			filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}" width="10%">
+			<h:outputText value="#{l.validadoStr}" />
+			<p:tooltip rendered="#{l.validado == 'S'}" for="@parent"
+				value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
+		</p:column>
+		<p:column headerText="Status" filterMatchMode="contains"
+			filterBy="#{l.status}" sortBy="#{l.status}" width="15%">
+			<h:outputText value="#{l.status}" />
+		</p:column>
+		<p:column headerText="Origem" filterMatchMode="contains"
+			filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+			sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}" width="15%">
+			<p:commandLink process="@this" title="Visualizar Fatura"
+				value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+				actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
+				oncomplete="PF('dlgFaturaView').show();"
+				update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura" />
+		</p:column>
+	</p:dataTable>
+	<br />
+	<p:dataTable id="dtContasAPagar" paginator="true"
+		paginatorPosition="bottom" rows="10" value="#{faturaPagtoMB.lAPagar}"
+		var="l" rowKey="#{l}"
+		emptyMessage="Nenhum lançamento a pagar para o mês corrente.">
+		<f:facet name="header">Lançamentos a Pagar</f:facet>
+		<p:column headerText="Forma de pagamento" filterMatchMode="contains"
+			filterBy="#{l.formaPagamentoStr}" sortBy="#{l.formaPagamentoStr}"
+			width="20%">
+			<h:outputText value="#{l.formaPagamentoStr}" />
+		</p:column>
+		<p:column headerText="Valor" filterMatchMode="contains"
+			filterBy="#{l.valor}" sortBy="#{l.valor}" width="10%">
+			<h:outputText value="#{l.valor}">
+				<f:convertNumber type="currency" currencySymbol="R$"
+					maxFractionDigits="2" />
+			</h:outputText>
+		</p:column>
+		<p:column headerText="Data Pagamento" filterMatchMode="contains"
+			filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}">
+			<h:outputText value="#{l.dataPagamento}" width="15%">
+				<f:convertDateTime pattern="dd/MM/yyyy" />
+			</h:outputText>
+		</p:column>
+		<p:column headerText="Data Crédito" filterMatchMode="contains"
+			filterBy="#{l.dataCredito}" sortBy="#{l.dataCredito}" width="15%">
+			<h:outputText value="#{l.dataCredito}">
+				<f:convertDateTime pattern="dd/MM/yyyy" />
+			</h:outputText>
+		</p:column>
+		<p:column headerText="Validado?" filterMatchMode="contains"
+			filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}" width="10%">
+			<h:outputText value="#{l.validadoStr}" />
+			<p:tooltip rendered="#{l.validado == 'S'}"
+				value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
+		</p:column>
+		<p:column headerText="Status" filterMatchMode="contains"
+			filterBy="#{l.status}" sortBy="#{l.status}" width="15%">
+			<h:outputText value="#{l.status}" />
+		</p:column>
+		<p:column headerText="Origem" filterMatchMode="contains"
+			filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+			sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}" width="15%">
+			<p:commandLink process="@this" title="Visualizar Fatura"
+				value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+				actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
+				oncomplete="PF('dlgFaturaView').show();"
+				update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura" />
+		</p:column>
+	</p:dataTable>
+
+	<p:separator styleClass="SeparatorFull" />
 
 	<p:panelGrid columns="2" layout="grid"
 		styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
