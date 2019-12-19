@@ -128,6 +128,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private String gmt;
 
     public List<HorasUteisProfissional> horasUteisProfissional;
+    
+    private String statusNovoTemp = "";
 
     //  private DominioBO dominioBO;
 
@@ -213,7 +215,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.setEntity(agendamento);
         profissionalDentroAgenda = this.getEntity().getProfissional();
         cadeiraDentroAgenda = this.getEntity().getCadeira();
-
+        this.statusNovoTemp = getEntity().getStatusNovo();
         UtilsFrontEnd.setPacienteSelecionado(this.getEntity().getPaciente());
         this.setEntity(this.getEntity());
         this.setInicio(Calendar.getInstance().getTime());
@@ -327,6 +329,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.setPlanoTratamentos(null);
         this.setPlanoTratamentoSelecionado(null);
         this.setProcedimentosPickList(new DualListModel<>());
+        this.statusNovoTemp = "";
     }
 
     @Override
@@ -498,19 +501,21 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             if (this.validaIntervalo()) {
                                 if (validaCadeira()) {
                                     dlg = true;
-
-                                    if (this.getEntity().getStatusNovo().matches("S|N|I|O|A")) {
-                                        if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() != null && this.getEntity().getFinalizouAs() != null) {
-                                            this.getEntity().setStatusNovo("A");
-                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.atendido"), "");
-                                        } else if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() == null && this.getEntity().getFinalizouAs() == null) {
-                                            this.getEntity().setStatusNovo("I");
-                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.clientenaclinica"), "");
-                                        } else if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() != null && this.getEntity().getFinalizouAs() == null) {
-                                            this.getEntity().setStatusNovo("O");
-                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.ematendimento"), "");
-                                        }
+                                    if(!this.statusNovoTemp.equals("") && this.statusNovoTemp.equals(this.getEntity().getStatusNovo())) {
+                                        if (this.getEntity().getStatusNovo().matches("S|N|I|O|A")) {
+                                            if (this.getEntity().getChegouAs() != null && this.getEntity().getFinalizouAs() != null) {
+                                                this.getEntity().setStatusNovo("A");
+                                                this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.atendido"), "");
+                                            } else if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() == null && this.getEntity().getFinalizouAs() == null) {
+                                                this.getEntity().setStatusNovo("I");
+                                                this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.clientenaclinica"), "");
+                                            } else if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() != null && this.getEntity().getFinalizouAs() == null) {
+                                                this.getEntity().setStatusNovo("O");
+                                                this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.ematendimento"), "");
+                                            }
+                                        }  
                                     }
+
 
 //                                    if (this.getEntity().getIniciouAs() == null && this.getEntity().getChegouAs() != null && (!this.getEntity().getStatusNovo().equals(
 //                                            StatusAgendamentoUtil.CANCELADO.getSigla()) || !this.getEntity().getStatusNovo().equals(
@@ -942,7 +947,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         // profissional = agendamento.getProfissional();
         profissionalDentroAgenda = agendamento.getProfissional();
         cadeiraDentroAgenda = agendamento.getCadeira();
-
+        
         UtilsFrontEnd.setPacienteSelecionado(agendamento.getPaciente());
         this.setEntity(agendamento);
         this.setInicio(this.getEntity().getInicio());
@@ -951,6 +956,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.setPacienteSelecionado(agendamento.getPaciente());
         this.setJustificativa(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("agendamento", "justificativa", this.getEntity().getJustificativa()));
         this.setStatus(this.getEntity().getStatusNovo());
+        this.statusNovoTemp = getEntity().getStatusNovo();
         this.validaAfastamento();
         if (agendamento.getPlanoTratamentoProcedimentosAgendamento() != null && agendamento.getPlanoTratamentoProcedimentosAgendamento().size() > 0) {
             this.setPlanoTratamentoSelecionado(agendamento.getPlanoTratamentoProcedimentosAgendamento().get(0).getPlanoTratamentoProcedimento().getPlanoTratamento());
@@ -1500,6 +1506,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     public void setPacienteConflito(Paciente pacienteConflito) {
         this.pacienteConflito = pacienteConflito;
+    }
+
+    
+    public String getStatusNovoTemp() {
+        return statusNovoTemp;
+    }
+
+    
+    public void setStatusNovoTemp(String statusNovoTemp) {
+        this.statusNovoTemp = statusNovoTemp;
     }
 
 }
