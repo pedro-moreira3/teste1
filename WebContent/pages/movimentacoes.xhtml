@@ -227,12 +227,13 @@
 
 					<p:poll interval="5" update="@this, :lume:movimentacoesChart"
 						stop="#{movimentacoesMB.lineModel != null}" process="@this" />
-					<p:outputPanel id="movimentacoesChart">
-						<p:outputPanel rendered="#{movimentacoesMB.lineModel != null}"
-							style="width: 100%;">
-							<p:barChart model="#{movimentacoesMB.lineModel}"
-								style="width: 100%; height: 300px;" />
-						</p:outputPanel>
+					<p:outputPanel style="width: 100%;" id="movimentacoesChart">
+						<p:barChart model="#{movimentacoesMB.lineModel}"
+							style="width: 100%; height: 300px;"
+							rendered="#{movimentacoesMB.lineModel != null}" />
+						<p:graphicImage value="/images/loading.gif"
+							style="width: 100%: max-height: 300px; margin-left: 50%; transform: translateX(-50%);"
+							rendered="#{movimentacoesMB.lineModel == null}" />
 					</p:outputPanel>
 
 				</div>
