@@ -6,14 +6,17 @@
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
 
-		<ui:include src="faturaView.xhtml">
-			<ui:param name="showNewLancamento" value="S" />
-		</ui:include>
-		<p:remoteCommand name="onCloseFaturaView" process="@this"
-			update="dtPrincipalFaturaRP" />
+		<p:outputPanel id="viewFatura">
+			<ui:include src="faturaView.xhtml">
+				<ui:param name="showNewLancamento" value="S" />
+			</ui:include>
+			<p:remoteCommand name="onCloseFaturaView" process="@this"
+				update="dtPrincipalFaturaRP" />
+		</p:outputPanel>
 
 		<ui:include src="pacienteFicha.xhtml" />
-		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this"
+			update=":lume:viewFatura" />
 
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
@@ -110,7 +113,7 @@
 							<p:commandButton icon="fa fa-eye" process="@this"
 								actionListener="#{faturaPagtoMB.visualizaFatura(f)}"
 								update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura"
-								onclick="PF('dlgFaturaView').show();" styleClass="NavyButton"
+								oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
 								title="Visualizar Fatura" />
 						</p:column>
 						<p:column filterBy="#{f.paciente.dadosBasico.nomeStr}"

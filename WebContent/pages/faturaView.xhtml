@@ -330,10 +330,6 @@ body .sideChkBox .ui-chkbox-label {
 								paginator="true" rowKey="#{l}" paginatorPosition="bottom"
 								id="lancamentosFatura">
 								<f:facet name="header">Lançamentos da Fatura</f:facet>
-								<p:column style="width:16px"
-									rendered="#{(repasseProfissional != null and repasseProfissional == 'S') and (faturaPagtoMB.hasRequisitosCumprir(l))}">
-									<p:rowToggler />
-								</p:column>
 								<p:column headerText="Ações" width="100" exportable="false"
 									rendered="#{(showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.admin)
 											 or (repasseProfissional != null or repasseProfissional == 'S')}">
@@ -342,7 +338,7 @@ body .sideChkBox .ui-chkbox-label {
 										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
 										actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
 										process="@this"
-										rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.admin and faturaPagto.permiteExcluirLancamento}">
+										rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.permiteExcluirLancamento}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											escape="false"
 											message="Você tem certeza que deseja cancelar este lançamento? &lt;br/&gt; &lt;b&gt;Se já foi confirmado&lt;/b&gt;, o saldo ficará disponível na &lt;b&gt;conta do paciente&lt;/b&gt;.">
@@ -417,43 +413,6 @@ body .sideChkBox .ui-chkbox-label {
 									<h:outputText
 										value="Referente à '#{faturaPagtoMB.buscaProcedimentoOrigemRepasse(l)}'" />
 								</p:column>
-								<p:rowExpansion>
-									<p:panelGrid columns="1" layout="grid"
-										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding lancamentoExplain">
-
-										<h:panelGroup>
-											<p:outputPanel
-												rendered="#{faturaPagtoMB.isTodosRequisitosFeitos(l)}"
-												style="color: green; font-weight: bold;">
-												<h:outputText
-													value="Este lançamento está elegível para validação pois," />
-											</p:outputPanel>
-											<p:outputPanel
-												rendered="#{!faturaPagtoMB.isTodosRequisitosFeitos(l)}"
-												style="color: red; font-weight: bold;">
-												<h:outputText
-													value="Este lançamento não está elegível para validação pois," />
-											</p:outputPanel>
-										</h:panelGroup>
-
-										<ui:repeat var="requisito"
-											value="#{faturaPagtoMB.getRequisitosValidaLancamentoFromRepasseFatura(l)}">
-											<div style="display: flex;">
-												<img
-													src="../images/#{requisito.requisitoFeito ? 'ok' : 'no'}.png"
-													style="width: 24px;" />
-												<div
-													style="width: calc(100% - 24px); height: 24px; line-height: 24px; margin-left: 10px;">
-													<h:outputText rendered="#{requisito.requisitoFeito}"
-														style="color: green" value="#{requisito.descricao}" />
-													<h:outputText rendered="#{!requisito.requisitoFeito}"
-														style="color: red" value="#{requisito.descricao}" />
-												</div>
-											</div>
-										</ui:repeat>
-
-									</p:panelGrid>
-								</p:rowExpansion>
 							</p:dataTable>
 
 						</div>

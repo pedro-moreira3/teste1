@@ -1287,60 +1287,64 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				</p:panelGrid>
 
 				<p:outputPanel id="pnViewOrcamento">
-					<div class="CardTextParent">
-						<h:panelGroup styleClass="CardText">
-							<span> <b><h:outputText value="Valor Total" /></b>
-							</span>
-							<br />
-							<span> <h:outputText
-									value="#{planoTratamentoMB.orcamentoSelecionado.valorTotalSemDesconto}">
-									<f:convertNumber type="currency" currencySymbol="R$"
-										maxFractionDigits="2" />
-								</h:outputText>
-							</span>
-						</h:panelGroup>
-						<div style="width: 1%" />
-						<h:panelGroup styleClass="CardText">
-							<span> <b><h:outputText value="Valor Pago" /></b>
-							</span>
-							<br />
-							<span> <h:outputText
-									value="#{planoTratamentoMB.orcamentoSelecionado.valorPago}">
-									<f:convertNumber type="currency" currencySymbol="R$"
-										maxFractionDigits="2" />
-								</h:outputText>
-							</span>
-						</h:panelGroup>
-						<div style="width: 1%" />
-						<h:panelGroup styleClass="CardText">
-							<span> <b><h:outputText value="Desconto" /></b>
-							</span>
-							<br />
-							<span> <h:outputText
-									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
-									rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'V'}">
-									<f:convertNumber type="currency" currencySymbol="R$"
-										maxFractionDigits="2" />
-								</h:outputText> <h:outputText
-									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValorDec}"
-									rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'P'}">
-									<f:convertNumber type="percent" maxFractionDigits="2" />
-								</h:outputText>
-							</span>
-						</h:panelGroup>
-						<div style="width: 1%" />
-						<h:panelGroup styleClass="CardText">
-							<span> <b><h:outputText value="Valor a Pagar" /></b>
-							</span>
-							<br />
-							<span> <h:outputText
-									value="#{planoTratamentoMB.valorOrcamentoAPagar}">
-									<f:convertNumber type="currency" currencySymbol="R$"
-										maxFractionDigits="2" />
-								</h:outputText>
-							</span>
-						</h:panelGroup>
-					</div>
+					<p:remoteCommand name="attValores" process="@this"
+						update=":lume:tabView:pnViewOrcamentoValores" />
+					<p:outputPanel id="pnViewOrcamentoValores">
+						<div class="CardTextParent">
+							<h:panelGroup styleClass="CardText">
+								<span> <b><h:outputText value="Valor Total" /></b>
+								</span>
+								<br />
+								<span> <h:outputText
+										value="#{planoTratamentoMB.orcamentoSelecionado.valorTotalSemDesconto}">
+										<f:convertNumber type="currency" currencySymbol="R$"
+											maxFractionDigits="2" />
+									</h:outputText>
+								</span>
+							</h:panelGroup>
+							<div style="width: 1%" />
+							<h:panelGroup styleClass="CardText">
+								<span> <b><h:outputText value="Valor Pago" /></b>
+								</span>
+								<br />
+								<span> <h:outputText
+										value="#{planoTratamentoMB.orcamentoSelecionado.valorPago}">
+										<f:convertNumber type="currency" currencySymbol="R$"
+											maxFractionDigits="2" />
+									</h:outputText>
+								</span>
+							</h:panelGroup>
+							<div style="width: 1%" />
+							<h:panelGroup styleClass="CardText">
+								<span> <b><h:outputText value="Desconto" /></b>
+								</span>
+								<br />
+								<span> <h:outputText
+										value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
+										rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'V'}">
+										<f:convertNumber type="currency" currencySymbol="R$"
+											maxFractionDigits="2" />
+									</h:outputText> <h:outputText
+										value="#{planoTratamentoMB.orcamentoSelecionado.descontoValorDec}"
+										rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'P'}">
+										<f:convertNumber type="percent" maxFractionDigits="2" />
+									</h:outputText>
+								</span>
+							</h:panelGroup>
+							<div style="width: 1%" />
+							<h:panelGroup styleClass="CardText">
+								<span> <b><h:outputText value="Valor a Pagar" /></b>
+								</span>
+								<br />
+								<span> <h:outputText
+										value="#{planoTratamentoMB.valorOrcamentoAPagar}">
+										<f:convertNumber type="currency" currencySymbol="R$"
+											maxFractionDigits="2" />
+									</h:outputText>
+								</span>
+							</h:panelGroup>
+						</div>
+					</p:outputPanel>
 					<br />
 					<p:dataTable filterDelay="1500" reflow="true"
 						emptyMessage="Nenhum procedimento cadastrado no Plano de Tratamento"
@@ -1374,6 +1378,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 								symbol="R$ " thousandSeparator="."
 								disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}">
+								<p:ajax process="@this" oncomplete="attValores()" />
 							</p:inputNumber>
 						</p:column>
 						<p:column headerText="Desconto" filterMatchMode="contains"
@@ -1387,7 +1392,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</p:column>
 						<p:column headerText="Incluso?" width="50">
 							<p:selectBooleanCheckbox value="#{procedimento.incluso}"
-								disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}" />
+								disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}">
+								<p:ajax process="@this" />
+							</p:selectBooleanCheckbox>
 						</p:column>
 					</p:dataTable>
 					<br />
@@ -1471,7 +1478,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<f:selectItem itemValue="P" itemLabel="Porcentagem" />
 								<f:selectItem itemValue="V" itemLabel="Valor" />
 								<p:ajax process="@this"
-									update=":lume:tabView:orcamentoDescontoValor" />
+									update=":lume:tabView:orcamentoDescontoValor, :lume:tabView:pnViewOrcamentoValores" />
 							</p:selectOneMenu>
 
 							<h:outputText value="Valor do Desconto" />
@@ -1482,6 +1489,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									styleClass="taller" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
 									rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'V'}">
+									<p:ajax process="@this" oncomplete="attValores()" />
 								</p:inputNumber>
 								<p:inputNumber
 									disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
@@ -1490,6 +1498,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									decimalSeparator="," symbol="%" thousandSeparator="."
 									symbolPosition="s"
 									rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'P'}">
+									<p:ajax process="@this" oncomplete="attValores()" />
 								</p:inputNumber>
 							</h:panelGroup>
 						</p:panelGrid>

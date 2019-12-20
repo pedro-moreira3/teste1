@@ -237,18 +237,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
                 Odontograma recente = OdontogramaSingleton.getInstance().odontogramaRecente(this.getPaciente());
                 if (recente != null) {
-                    for (Dente dente : recente.getDentes()) {
-                        dente.setId(0l);
-                        dente.setOdontograma(recente);
-                        for (RegiaoDente regiao : dente.getRegioes()) {
-                            regiao.setId(0l);
-                            regiao.setDente(dente);
-                        }
-                    }
-                    for (RegiaoRegiao regiao : recente.getRegioesRegiao()) {
-                        regiao.setId(0l);
-                        regiao.setOdontograma(recente);
-                    }
+                    /*
+                     * for (Dente dente : recente.getDentes()) { dente.setId(0l); dente.setOdontograma(recente); for (RegiaoDente regiao : dente.getRegioes()) { regiao.setId(0l);
+                     * regiao.setDente(dente); } } for (RegiaoRegiao regiao : recente.getRegioesRegiao()) { regiao.setId(0l); regiao.setOdontograma(recente); }
+                     */
+                    recente.setRegioesRegiao(null);
+                    recente.setDentes(null);
                     recente.setId(0l);
                     recente.setDataCadastro(new Date());
                     OdontogramaSingleton.getInstance().getBo().persist(recente);
@@ -1114,13 +1108,17 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
+    public void atualizaValoresOrcamento() {
+        orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
+    }
+
     public void actionPersistOrcamento(ActionEvent event) {
         try {
             if (orcamentoSelecionado.getDataCriacao() == null) {
                 orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
                 orcamentoSelecionado.setDataCriacao(new Date());
             }
-            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
+            atualizaValoresOrcamento();
             setOrcamentoSelecionado(OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado));
 
 //            List<Lancamento> lancamentosNaoPagos = LancamentoSingleton.getInstance().getBo().listLancamentosNaoPagos(orcamentoSelecionado);

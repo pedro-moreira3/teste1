@@ -3,6 +3,7 @@ package br.com.lume.odonto.managed;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -45,6 +46,7 @@ import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.UtilsPrimefaces;
+import br.com.lume.conta.ContaSingleton;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -479,8 +481,11 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.getbO().persist(this.getEntity());
             this.geraLista();
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), true);
-            if (novoPaciente)
+            if (novoPaciente) {
+                getEntity().setConta(ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getEntity(), null, null));
+                this.getbO().persist(this.getEntity());
                 PrimeFaces.current().executeScript("PF('dlgFichaPaciente').hide()");
+            }
         } catch (DataNascimentoException dne) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.datanascimento"), "");
             log.error(OdontoMensagens.getMensagem("erro.valida.datanascimento"));
