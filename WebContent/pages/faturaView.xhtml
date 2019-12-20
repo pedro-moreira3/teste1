@@ -275,7 +275,7 @@ body .sideChkBox .ui-chkbox-label {
 								<f:facet name="header">Itens</f:facet>
 
 								<p:column headerText="Ações" width="100" exportable="false"
-									rendered="#{repasseProfissional != null and repasseProfissional == 'S'}">
+									rendered="#{repasseProfissional != null and repasseProfissional == 'S' and false}">
 
 									<p:commandButton styleClass="RedButton" icon="fa fa-exchange"
 										title="Trocar Profissional" update=":lume:pnPrincipal"
@@ -342,20 +342,20 @@ body .sideChkBox .ui-chkbox-label {
 										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
 										actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
 										process="@this"
-										rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.admin}">
+										rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.admin and faturaPagto.permiteExcluirLancamento}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											escape="false"
 											message="Você tem certeza que deseja cancelar este lançamento? &lt;br/&gt; &lt;b&gt;Se já foi confirmado&lt;/b&gt;, o saldo ficará disponível na &lt;b&gt;conta do paciente&lt;/b&gt;.">
 										</p:confirm>
 									</p:commandButton>
 									<p:commandButton styleClass="GreenButton" icon="fa fa-check"
-										title="Validar Lançamento" update="@parent:@parent"
-										actionListener="#{faturaPagtoMB.validaLancamentoRepasse(l)}"
+										title="Conferir Lançamento" update="@parent:@parent"
+										actionListener="#{faturaPagtoMB.confereLancamentoRepasse(l)}"
 										process="@this"
 										rendered="#{(repasseProfissional != null and repasseProfissional == 'S') or (showNewLancamento != null and showNewLancamento == 'S')}"
-										disabled="#{l.validado == 'S' or !l.ativo or (faturaPagtoMB.entity.tipoFatura.rotulo == 'PP' and !(faturaPagtoMB.isTodosRequisitosFeitos(l)))}">
+										disabled="#{l.pagamentoConferido == 'S' or !l.ativo}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
-											message="Você tem certeza que confirma o recebimento deste lançamento?">
+											message="Você tem certeza que confirma o pagamento deste lançamento?">
 										</p:confirm>
 									</p:commandButton>
 								</p:column>

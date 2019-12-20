@@ -206,7 +206,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         return PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(origem);
     }
 
-    public void validaLancamentoRepasse(Lancamento l) {
+    public boolean isPermiteExcluirLancamento() {
+        return isAdmin() || isAdministrador();
+    }
+
+    public void confereLancamentoRepasse(Lancamento l) {
         try {
             RepasseFaturasLancamentoSingleton.getInstance().validaLancamentoRepasse(l, UtilsFrontEnd.getProfissionalLogado());
             addInfo("Sucesso", "Sucesso ao salvar o registro", true);
