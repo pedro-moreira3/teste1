@@ -27,7 +27,8 @@
 
 							<p:outputPanel style="padding-top: 10px;">
 								<p:fieldset collapsed="true" toggleable="true" legend="Filtros">
-									<p:panelGrid columns="2" layout="grid" id="filtrosAReceber"
+									<p:panelGrid columns="3" layout="grid" id="filtrosAReceber"
+										columnClasses="ui-g-6, ui-g-3, ui-g-3"
 										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 										<h:panelGroup styleClass="md-combo">
@@ -39,6 +40,14 @@
 													itemLabel="#{mes.rotulo}" itemValue="#{mes}" />
 											</p:selectOneMenu>
 											<p:message styleClass="msg" for="mesAReceber" />
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="md-inputfield taller">
+											<p:inputNumber id="anoAReceber" maxValue="2050"
+												value="#{movimentacoesMB.anoAReceber}" autocomplete="false"
+												decimalPlaces="0" maxlength="4" thousandSeparator="" />
+											<p:outputLabel for="anoAReceber" value="Ano de Referência" />
+											<p:message for="anoAReceber" styleClass="msg" />
 										</h:panelGroup>
 
 										<h:panelGroup>
@@ -126,7 +135,8 @@
 
 							<p:outputPanel style="padding-top: 10px;">
 								<p:fieldset collapsed="true" toggleable="true" legend="Filtros">
-									<p:panelGrid columns="2" layout="grid" id="filtrosAPagar"
+									<p:panelGrid columns="3" layout="grid" id="filtrosAPagar"
+										columnClasses="ui-g-6, ui-g-3, ui-g-3"
 										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 										<h:panelGroup styleClass="md-combo">
@@ -138,6 +148,14 @@
 													itemLabel="#{mes.rotulo}" itemValue="#{mes}" />
 											</p:selectOneMenu>
 											<p:message styleClass="msg" for="mesAPagar" />
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="md-inputfield taller">
+											<p:inputNumber id="anoAPagar" maxValue="2050"
+												value="#{movimentacoesMB.anoAPagar}" autocomplete="false"
+												decimalPlaces="0" maxlength="4" thousandSeparator="" />
+											<p:outputLabel for="anoAPagar" value="Ano de Referência" />
+											<p:message for="anoAPagar" styleClass="msg" />
 										</h:panelGroup>
 
 										<h:panelGroup>

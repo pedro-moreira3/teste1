@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -34,6 +35,7 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
     private static final long serialVersionUID = 1L;
     private List<Lancamento> aPagar, aReceber;
     private Mes mesAPagar, mesAReceber;
+    private int anoAReceber, anoAPagar;
     private boolean consideraLancamentosValidadosAPagar, consideraLancamentosValidadosAReceber;
 
     private Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
@@ -128,6 +130,7 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
     public MovimentacoesMB() {
         super(LancamentoSingleton.getInstance().getBo());
         this.setClazz(Lancamento.class);
+        this.anoAReceber = this.anoAPagar = Calendar.getInstance().get(Calendar.YEAR);
         this.mesAPagar = this.mesAReceber = getMeses().get(Calendar.getInstance().get(Calendar.MONTH));
         this.consideraLancamentosValidadosAPagar = this.consideraLancamentosValidadosAReceber = false;
         this.carregaListaAReceber();
@@ -153,7 +156,7 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
 
     public void carregaListaAReceber() {
         try {
-            this.aReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(UtilsFrontEnd.getEmpresaLogada().getConta(), this.mesAReceber,
+            this.aReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(UtilsFrontEnd.getEmpresaLogada().getConta(), this.mesAReceber, this.anoAReceber,
                     (this.consideraLancamentosValidadosAReceber ? ValidacaoLancamento.TODOS : ValidacaoLancamento.NAO_VALIDADO));
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -233,6 +236,22 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
 
     public void setLineModel(BarChartModel lineModel) {
         this.lineModel = lineModel;
+    }
+
+    public int getAnoAReceber() {
+        return anoAReceber;
+    }
+
+    public void setAnoAReceber(int anoAReceber) {
+        this.anoAReceber = anoAReceber;
+    }
+
+    public int getAnoAPagar() {
+        return anoAPagar;
+    }
+
+    public void setAnoAPagar(int anoAPagar) {
+        this.anoAPagar = anoAPagar;
     }
 
 }

@@ -215,6 +215,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                     this.getbO().persist(lancamentoContabil);
                 }
                 this.carregarLancamentosValidar();
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

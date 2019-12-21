@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -36,6 +37,7 @@ import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
+import br.com.lume.odonto.entity.Requisito;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
@@ -116,6 +118,24 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
+    public boolean hasRequisitosCumprir(Lancamento lancamentoRepasse) {
+        List<Requisito> todosRequisitos = getRequisitosValidaLancamentoFromRepasseFatura(lancamentoRepasse);
+        return todosRequisitos != null && todosRequisitos.size() > 0;
+    }
+
+    public boolean isTodosRequisitosFeitos(Lancamento lancamentoRepasse) {
+        List<Requisito> todosRequisitos = getRequisitosValidaLancamentoFromRepasseFatura(lancamentoRepasse);
+        if (todosRequisitos != null && todosRequisitos.size() > 0) {
+            List<Requisito> requisitosNaoFeitos = todosRequisitos.stream().filter(requisito -> !requisito.isRequisitoFeito()).collect(Collectors.toList());
+            return !(requisitosNaoFeitos != null && requisitosNaoFeitos.size() > 0);
+        } else
+            return true;
+    }
+
+    public List<Requisito> getRequisitosValidaLancamentoFromRepasseFatura(Lancamento lancamentoRepasse) {
+        return RepasseFaturasLancamentoSingleton.getInstance().getRequisitosValidaLancamentoFromRepasseFatura(UtilsFrontEnd.getEmpresaLogada(), lancamentoRepasse);
+    }
+
     private void carregarProfissionais() throws Exception {
         List<String> perfis = new ArrayList<>();
         perfis.add(OdontoPerfil.DENTISTA);
@@ -188,6 +208,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public boolean isPermiteExcluirLancamento() {
         return isAdmin() || isAdministrador();
+    }
+
+    public void validaLancamentoRepasse(Lancamento l) {
+        try {
+            RepasseFaturasLancamentoSingleton.getInstance().validaLancamentoRepasse(l, UtilsFrontEnd.getProfissionalLogado());
+            addInfo("Sucesso", "Sucesso ao salvar o registro", true);
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro", "Falha ao validar o lançamento! " + e.getMessage().replace("'", "\\'"), true);
+        }
     }
 
     public void confereLancamentoRepasse(Lancamento l) {

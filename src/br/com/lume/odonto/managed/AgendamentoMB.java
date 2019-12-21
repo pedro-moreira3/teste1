@@ -1332,10 +1332,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             List<AgendamentoPlanoTratamentoProcedimento> planoTratamentoProcedimentos;
             if (mostraFinalizados) {
                 planoTratamentoProcedimentos = this.converteParaAgendamentoPlanoTratamentoProcedimento(
-                        PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listProcedimentosPickListAgendamento(planoTratamentoSelecionado.getId(), this.getEntity().getId(), false));
+                        PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listProcedimentosPickListAgendamento(planoTratamentoSelecionado.getId(), this.getEntity().getId(), false, true));
             } else {
                 planoTratamentoProcedimentos = this.converteParaAgendamentoPlanoTratamentoProcedimento(
-                        PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listProcedimentosPickListAgendamento(planoTratamentoSelecionado.getId(), this.getEntity().getId(), true));
+                        PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listProcedimentosPickListAgendamento(planoTratamentoSelecionado.getId(), this.getEntity().getId(), true, true));
             }
 
             procedimentosPickList = new DualListModel<>(planoTratamentoProcedimentos != null ? planoTratamentoProcedimentos : new ArrayList<AgendamentoPlanoTratamentoProcedimento>(),

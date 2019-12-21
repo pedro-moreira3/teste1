@@ -155,11 +155,57 @@ li.MENULABEL [href="#"] span {
 	width: auto !important;
 }
 
-.ui-fluid button.ui-button:not (.ui-button-icon-only )(.ui-wizard-nav-back
-	):not (.ui-wizard-nav-next ) {
-	width: 100% ! important;
-}
+.ui-fluid
 
+ 
+
+button
+
+
+.ui-button
+
+
+:not
+
+ 
+
+(
+.ui-button-icon-only
+
+ 
+
+)(
+.ui-wizard-nav-back
+
+
+	
+
+)
+:not
+
+ 
+
+(
+.ui-wizard-nav-next
+
+ 
+
+)
+{
+width
+
+
+:
+
+ 
+
+100%
+!
+important
+
+
+;
+}
 .ui-fluid .ui-autocomplete .ui-button {
 	width: 24px !important;
 }
@@ -1883,12 +1929,74 @@ body .forceSpaceBetweenCell .ui-panelgrid-cell:last-child {
 	padding-left: 5px !important;
 }
 
-body .forceSpaceBetweenCell .ui-panelgrid-cell:not (:first-child ):not (:last-child
-	) {
-	padding-right: 5px !important;
-	padding-left: 5px !important;
-}
+body
 
+ 
+
+.forceSpaceBetweenCell
+
+ 
+
+.ui-panelgrid-cell
+
+
+:not
+
+ 
+
+(
+:first-child
+
+ 
+
+)
+:not
+
+ 
+
+(
+:last-child
+
+
+	
+
+)
+{
+padding-right
+
+
+:
+
+ 
+
+5
+px
+
+ 
+
+!
+important
+
+
+;
+padding-left
+
+
+:
+
+ 
+
+5
+px
+
+ 
+
+!
+important
+
+
+;
+}
 body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 	{
 	margin-top: 8px !important;
@@ -1898,25 +2006,47 @@ body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 	background-image: url("#{resource['images:tooth_icon.png']}") !important;
 }
 
-.md-inputfield.taller .ui-calendar input, .md-inputfield.taller .ui-autocomplete input
-	{
+.md-inputfield.taller .ui-calendar input, .md-inputfield.taller .ui-autocomplete input,
+	.md-inputfield.taller .ui-inputnumber input {
 	height: 31px;
 }
 
-.md-inputfield.taller .ui-autocomplete > button {
+.md-inputfield.taller .ui-autocomplete>button {
 	top: 12px !important;
 }
 
-.md-inputfield.taller .ui-calendar ~ label, .md-inputfield.taller .ui-autocomplete ~ label {
+.md-inputfield.taller .ui-calendar ~ label, .md-inputfield.taller .ui-autocomplete 
+	 ~ label, .md-inputfield.taller .ui-inputnumber ~ label {
 	top: 8px !important;
 }
 
 .md-inputfield.taller .ui-calendar.md-inputwrapper-focus ~ label,
 	.md-inputfield.taller .ui-calendar.md-inputwrapper-filled ~ label,
 	.md-inputfield.taller .ui-autocomplete.md-inputwrapper-focus ~ label,
-	.md-inputfield.taller .ui-autocomplete.md-inputwrapper-filled ~ label {
+	.md-inputfield.taller .ui-autocomplete.md-inputwrapper-filled ~ label,
+	.md-inputfield.taller .ui-inputnumber.md-inputwrapper-focus ~ label,
+	.md-inputfield.taller .ui-inputnumber.md-inputwrapper-filled ~ label {
 	top: -20px !important;
 }
-.ui-panelgrid.moreSpace .ui-panelgrid-content .ui-g:not(:first-child) {
-	margin-top: 15px;
+.ui-panelgrid
+.moreSpace
+ 
+.ui-panelgrid-content
+ 
+.ui-g
+:not
+ 
+(
+:first-child
+ 
+)
+{
+margin-top
+:
+ 
+15
+px
+;
+
+
 }

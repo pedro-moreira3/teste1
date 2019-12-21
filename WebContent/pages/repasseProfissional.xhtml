@@ -6,15 +6,18 @@
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
 
-		<ui:include src="faturaView.xhtml">
-			<ui:param name="showNewLancamento" value="N" />
-			<ui:param name="repasseProfissional" value="S" />
-		</ui:include>
-		<p:remoteCommand name="onCloseFaturaView" process="@this"
-			update="dtPrincipalFaturaPP" />
+		<p:outputPanel id="viewFaturaRepasse">
+			<ui:include src="faturaView.xhtml">
+				<ui:param name="showNewLancamento" value="N" />
+				<ui:param name="repasseProfissional" value="S" />
+			</ui:include>
+			<p:remoteCommand name="onCloseFaturaView" process="@this"
+				update="dtPrincipalFaturaPP" />
+		</p:outputPanel>
 
 		<ui:include src="pacienteFicha.xhtml" />
-		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this"
+			update=":lume:viewFaturaRepasse" />
 
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
