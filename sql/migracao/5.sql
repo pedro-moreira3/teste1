@@ -290,6 +290,7 @@ SELECT 166,id_profissional FROM objeto_profissional WHERE obj_int_cod = 149;
 -------------------------------
 ALTER TABLE CONVENIO ADD COLUMN observacao_convenio character varying(255);
 -------------------------------
+<<<<<<< Upstream, based on origin/backend
 ALTER TABLE FATURA ADD COLUMN PROFISSIONAL_CRIACAO_ID BIGINT NULL REFERENCES PROFISSIONAL(ID);
 ALTER TABLE REPASSE_FATURAS ADD COLUMN VALOR_CALCULO_MANUTENCAO NUMERIC(5, 2) NULL;
 -------------------------------
@@ -316,6 +317,26 @@ FROM OBJETO_PROFISSIONAL OP
 LEFT JOIN SEG_OBJETO O
 	ON O.OBJ_INT_COD = OP.OBJ_INT_COD
 WHERE O.OBJ_STR_DES ILIKE 'Pagamentos/Recebimentos';
+=======
+--//TODO ESSES LOCAIS DEVEM SER INSERIDOS PARA TODAS AS EMPRESAS E TAMBEM COMO DEFAULT NA CRIACAO DE NOVAS EMPRESAS
+insert into local (descricao, tipo, id_empresa, excluido) values ('CANCELAMENTO_RESERVA','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('EXCLUSAO_RESERVA','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('EXCLUSAO_RESERVA_KIT','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('DEVOLUCAO_KIT','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('COMPRA','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('KIT_NAO_UTILIZADO','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('KIT_UTILIZADO_DEVOLVIDO','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('DEVOLUCAO_KIT_LAVAGEM','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('EMPRESTIMO_KIT','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('CANCELAMENTO_EMPRESTIMO_KIT','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('DEVOLUCAO_UNITARIA','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('EMPRESTIMO_UNITARIO','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('MATERIAL_ESTERELIZADO_DEVOLUCAO_LAVAGEM','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('ENTREGA_LAVAGEM_MANUAL','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('FINALIZACAO_DEVOLUCAO_LAVAGEM','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('DESCARTE','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('DEVOLUCAO_MATERIAL','SI',41,'N');
+>>>>>>> 9528458 emprestimo de kit
 
 ALTER TABLE LANCAMENTO ADD COLUMN PAGAMENTO_CONFERIDO VARCHAR(1) NOT NULL DEFAULT 'N';
 ALTER TABLE LANCAMENTO ADD COLUMN CONFERIDO_POR BIGINT NULL REFERENCES PROFISSIONAL(ID);

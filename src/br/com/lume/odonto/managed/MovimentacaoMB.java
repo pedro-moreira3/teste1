@@ -48,7 +48,7 @@ import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
 @ManagedBean
 @ViewScoped
-public class MaterialMB extends LumeManagedBean<Material> {
+public class MovimentacaoMB extends LumeManagedBean<Estoque> {
 
     private static final long serialVersionUID = 1L;
 
@@ -56,7 +56,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     private List<Dominio> procedencias;
 
-    private Logger log = Logger.getLogger(MaterialMB.class);
+    private Logger log = Logger.getLogger(MovimentacaoMB.class);
 
     private Item item;
 
@@ -74,7 +74,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     private Date dateHoje;
 
-    private List<Material> materiais = new ArrayList<>();
+   // private List<Material> materiais = new ArrayList<>();
+    
+    private List<Estoque> estoques = new ArrayList<>();
 
     private boolean caixa, novaMarca, novoFornecedor;
 
@@ -82,7 +84,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     private List<Dominio> dominios;
 
-    private BigDecimal valorTotal = new BigDecimal(0), quantidadeMovimentada, quantidadePacotes, quantidadeMovimentacao;
+  //  private BigDecimal valorTotal = new BigDecimal(0), quantidadeMovimentada, quantidadePacotes, quantidadeMovimentacao;
+    
+    private BigDecimal quantidadeMovimentada;
 
     private List<TransferenciaEstoque> listaTransferenciasEstoque;
 
@@ -92,11 +96,11 @@ public class MaterialMB extends LumeManagedBean<Material> {
     private DataTable tabelaMaterial;
     private DataTable tabelaMovimentacao;
 
-    public MaterialMB() {
-        super(MaterialSingleton.getInstance().getBo());
+    public MovimentacaoMB() {
+        super(EstoqueSingleton.getInstance().getBo());
       
         this.setCaixa(true);
-        this.setClazz(Material.class);
+        this.setClazz(Estoque.class);
         this.geraLista();
         try {
             this.setProcedencias(this.getPrecedencias());
@@ -174,30 +178,30 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     private void geraLista() {
         try {
-            materiais = MaterialSingleton.getInstance().getBo().listAtivosByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            Collections.sort(materiais);
+            estoques = EstoqueSingleton.getInstance().getBo().listAllByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            Collections.sort(estoques);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
 
-    public void atualizaQuantidades() {
-        BigDecimal quantidadeTotal = this.getEntity().getQuantidadePacotes().multiply(this.getEntity().getTamanhoUnidade());
-        Estoque estoque;
-        if(this.getEntity().getEstoque() == null) {
-            this.getEntity().setEstoque(new ArrayList<Estoque>());
-            estoque = new Estoque();  
-            this.getEntity().getEstoque().add(estoque);
-        }
-        
-        this.getEntity().getEstoque().get(0).setLocal(this.getLocal());
-        this.getEntity().getEstoque().get(0).setQuantidade(quantidadeTotal);       
-        if(this.getEntity().getEstoque().get(0).getQuantidade() != null && this.getEntity().getValorUnidadeInformado() != null && this.getEntity().getEstoque().get(0).getQuantidade().compareTo(BigDecimal.ZERO) != 0) {
-            getEntity().setValor(this.getEntity().getValorUnidadeInformado().divide(this.getEntity().getEstoque().get(0).getQuantidade(), 2, RoundingMode.HALF_UP));    
-        }
-        
-    }
+//    public void atualizaQuantidades() {
+//        BigDecimal quantidadeTotal = this.getEntity().getQuantidadePacotes().multiply(this.getEntity().getTamanhoUnidade());
+//        Estoque estoque;
+//        if(this.getEntity().getEstoque() == null) {
+//            this.getEntity().setEstoque(new ArrayList<Estoque>());
+//            estoque = new Estoque();  
+//            this.getEntity().getEstoque().add(estoque);
+//        }
+//        
+//        this.getEntity().getEstoque().get(0).setLocal(this.getLocal());
+//        this.getEntity().getEstoque().get(0).setQuantidade(quantidadeTotal);       
+//        if(this.getEntity().getEstoque().get(0).getQuantidade() != null && this.getEntity().getValorUnidadeInformado() != null && this.getEntity().getEstoque().get(0).getQuantidade().compareTo(BigDecimal.ZERO) != 0) {
+//            getEntity().setValor(this.getEntity().getValorUnidadeInformado().divide(this.getEntity().getEstoque().get(0).getQuantidade(), 2, RoundingMode.HALF_UP));    
+//        }
+//        
+//    }
 
     public void chargeTree(TreeNode root) {
         List<TreeNode> nodes = new ArrayList<>();
@@ -223,11 +227,11 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public void carregaTela() {
         try {
-            this.setDigitacaoLocal(this.getEntity().getEstoque().get(0).getLocal().getDescricao());
-            this.setLocal(this.getEntity().getEstoque().get(0).getLocal());
-            this.setProcedencia(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO, this.getEntity().getProcedencia()));
-            this.setItem(this.getEntity().getItem());
-            this.setDigitacao(this.getEntity().getItem().getDescricao());
+            this.setDigitacaoLocal(this.getEntity().getLocal().getDescricao());
+            this.setLocal(this.getEntity().getLocal());
+            this.setProcedencia(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO, this.getEntity().getMaterial().getProcedencia()));
+            this.setItem(this.getEntity().getMaterial().getItem());
+            this.setDigitacao(this.getEntity().getMaterial().getItem().getDescricao());
             this.setSelectedItem();
             this.setSelectedLocal();
         } catch (Exception e) {
@@ -278,24 +282,24 @@ public class MaterialMB extends LumeManagedBean<Material> {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
-    public void carregarEntity(Material material) {
-        setEntity(material);
-    }
-    public void carregarEditar(Material material) {
-        setEntity(material);
-    //    rootLocal
-    //    root
-        this.digitacaoLocal = this.getEntity().getEstoque().get(0).getLocal().getDescricao();
-        this.digitacao = this.getEntity().getItem().getDescricao();
-        this.setItem(this.getEntity().getItem());
-        this.setLocal(this.getEntity().getEstoque().get(0).getLocal());
-        try {
-            this.procedencia = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO, this.getEntity().getProcedencia());
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }           
-    }      
+//    public void carregarEntity(Material material) {
+//        setEntity(material);
+//    }
+//    public void carregarEditar(Material material) {
+//        setEntity(material);
+//    //    rootLocal
+//    //    root
+//        this.digitacaoLocal = this.getEntity().getEstoque().get(0).getLocal().getDescricao();
+//        this.digitacao = this.getEntity().getItem().getDescricao();
+//        this.setItem(this.getEntity().getItem());
+//        this.setLocal(this.getEntity().getEstoque().get(0).getLocal());
+//        try {
+//            this.procedencia = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO, this.getEntity().getProcedencia());
+//        } catch (Exception e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }           
+//    }      
         
 
     public void chargeTreeLocal(TreeNode root) {
@@ -358,33 +362,33 @@ public class MaterialMB extends LumeManagedBean<Material> {
         return locaisRestantesAux;
     }
 
-    public void actionDevolver(ActionEvent event) {
-        try {
-            if (this.getEntity().getEstoque().get(0).getQuantidade().intValue() >= quantidadePacotes.intValue()) {
-             
-                if (justificativa != null) {
-                    this.getEntity().setJustificativa(justificativa.getNome());
-                }                
-                MaterialSingleton.getInstance().getBo().persist(this.getEntity());
-                
-                //EstoqueSingleton.getInstance().subtrair( this.getEntity(),  this.getEntity().getEstoque().getLocal(),quantidadePacotes, EstoqueSingleton.DEVOLUCAO_MATERIAL_PROBLEMA + "- " + justificativa.getNome(), UtilsFrontEnd.getProfissionalLogado());
-               
-                Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_MATERIAL");
-                EstoqueSingleton.getInstance().transferencia(this.getEntity(),this.getEntity().getEstoque().get(0).getLocal(),localDestino,quantidadePacotes,EstoqueSingleton.DEVOLUCAO_MATERIAL_PROBLEMA + ": " + justificativa.getNome(),UtilsFrontEnd.getProfissionalLogado());
-                         
-                this.actionNew(event);
-                this.geraLista();
-                PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
-                this.addInfo("Devolução concluída com sucesso!", "",true);
-            } else {
-                this.addError(OdontoMensagens.getMensagem("material.quantidade.maior"), "",true);
-            }
-        } catch (Exception e) {
-            log.error("Erro no actionDevolver", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
-        }
-
-    }
+//    public void actionDevolver(ActionEvent event) {
+//        try {
+//            if (this.getEntity().getEstoque().get(0).getQuantidade().intValue() >= quantidadePacotes.intValue()) {
+//             
+//                if (justificativa != null) {
+//                    this.getEntity().setJustificativa(justificativa.getNome());
+//                }                
+//                MaterialSingleton.getInstance().getBo().persist(this.getEntity());
+//                
+//                //EstoqueSingleton.getInstance().subtrair( this.getEntity(),  this.getEntity().getEstoque().getLocal(),quantidadePacotes, EstoqueSingleton.DEVOLUCAO_MATERIAL_PROBLEMA + "- " + justificativa.getNome(), UtilsFrontEnd.getProfissionalLogado());
+//               
+//                Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_MATERIAL");
+//                EstoqueSingleton.getInstance().transferencia(this.getEntity(),this.getEntity().getEstoque().get(0).getLocal(),localDestino,quantidadePacotes,EstoqueSingleton.DEVOLUCAO_MATERIAL_PROBLEMA + ": " + justificativa.getNome(),UtilsFrontEnd.getProfissionalLogado());
+//                         
+//                this.actionNew(event);
+//                this.geraLista();
+//                PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
+//                this.addInfo("Devolução concluída com sucesso!", "",true);
+//            } else {
+//                this.addError(OdontoMensagens.getMensagem("material.quantidade.maior"), "",true);
+//            }
+//        } catch (Exception e) {
+//            log.error("Erro no actionDevolver", e);
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
+//        }
+//
+//    }
     
     public void actionPersistFechar(ActionEvent event){
         this.actionPersist(event);
@@ -393,168 +397,150 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     @Override
     public void actionPersist(ActionEvent event) {
-        try {
-
-            if (!isEstoqueCompleto() && getEntity().getId() != 0) {
-                actionMovimentacaoEstoqueSimplificado(event);
-                return;
-            } else if (!isEstoqueCompleto() && getEntity().getId() == 0) {
-                List<Material> mats = MaterialSingleton.getInstance().getBo().listByItem(getItem());
-                if (mats != null && !mats.isEmpty()) {
-                    quantidadeMovimentacao = getEntity().getEstoque().get(0).getQuantidade();
-                    tipoMovimentacao = Material.MOVIMENTACAO_ENTRADA;
-                    setEntity(mats.get(0));
-                    actionMovimentacaoEstoqueSimplificado(event);
-                    return;
-                }
-            }
-
-         //   if (this.getValorTotal() != null && this.getEntity().getQuantidadeTotal() != null) {
-         //       this.getEntity().setValor(this.getValorTotal().divide(this.getEntity().getQuantidadeTotal(), 2, RoundingMode.HALF_UP));
-         //   }
-            this.atualizaQuantidades();
-            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            if (this.getEntity().getStatus() == null) {
-                this.getEntity().setStatus(ATIVO);
-            }
-            if (this.getEntity().getId() == 0) {
-                this.getEntity().setDataCadastro(new Date());
-            }
-            if (this.getProcedencia() != null) {
-                this.getEntity().setProcedencia(this.getProcedencia().getValor());
-            }
-            this.getEntity().setDataCadastro(new Date());
-            if ((this.getItem() == null) || (this.getItem().getDescricao().equals("RAIZ")) || // RAIZ
-                    (this.getItem().getCategoria().equals("S"))) {
-                this.addError(OdontoMensagens.getMensagem("erro.item.material.raiz"), "",true);
-            } else {
-                if (isEstoqueCompleto() && (this.getLocal() == null || this.getLocal().getDescricao().equals("RAIZ"))) {
-                    this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "",true);
-                } else {
-                    this.getEntity().setItem(this.getItem());
-                    if (this.getLocal() == null) {
-                        this.getEntity().getEstoque().get(0).setLocal(LocalSingleton.getInstance().getBo().getLocalPadraoSistema(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-                    } else {
-                        this.getEntity().getEstoque().get(0).setLocal(this.getLocal());
-                    }
-
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(new Date());
-                    cal.add(Calendar.DAY_OF_MONTH, -1);
-                    if (this.getEntity().getStatus().equals(DEVOLVIDO) || this.getEntity().getValidade() == null || this.getEntity().getValidade().getTime() >= cal.getTime().getTime()) {
-                        boolean novo = false;
-                        if (getEntity().getId() == 0) {
-                            novo = true;
-                        }
-                        if (this.getbO().persist(this.getEntity())) {
-                            if (this.getEntity().getStatus().equals(DEVOLVIDO)) {
-                                this.addInfo(OdontoMensagens.getMensagem("material.salvo.devolvido"), "",true);
-                            } else {
-                                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
-                            }
-                            if (novo) {                                 
-                                Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");
-                                BigDecimal quantidade = this.getEntity().getEstoque().get(0).getQuantidade();
-                                this.getEntity().getEstoque().get(0).setQuantidade(new BigDecimal(0));
-                                this.getEntity().getEstoque().get(0).setLocal(this.getLocal());
-                                this.getEntity().getEstoque().get(0).setMaterial(this.getEntity());
-                                EstoqueSingleton.getInstance().transferencia2(this.getEntity(),localOrigem,this.getEntity().getEstoque().get(0),quantidade,EstoqueSingleton.ENTRADA_MATERIAL_CADASTRO,UtilsFrontEnd.getProfissionalLogado());
-                              
-                                this.setEntity(new Material());
-                                this.getEntity().setFornecedor(null);
-                                this.getEntity().setMarca(null);
-                                valorTotal = new BigDecimal(0);
-                                                
-                                this.setSelectedItem(null);
-                                digitacao = null;
-                                digitacaoLocal = null;                            
-                            }
-                        
-
-                            this.geraLista();
-                        }
-                    } else {
-                        this.addError(OdontoMensagens.getMensagem("material.validade.erro"), "",true);
-                    }
-
-                }
-            }
-        } catch (Exception e) {
-            log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
-        }
+//        try {
+//
+//            if (!isEstoqueCompleto() && getEntity().getId() != 0) {
+//                actionMovimentacaoEstoqueSimplificado(event);
+//                return;
+//            } else if (!isEstoqueCompleto() && getEntity().getId() == 0) {
+//                List<Material> mats = MaterialSingleton.getInstance().getBo().listByItem(getItem());
+//                if (mats != null && !mats.isEmpty()) {
+//                    quantidadeMovimentacao = getEntity().getEstoque().get(0).getQuantidade();
+//                    tipoMovimentacao = Material.MOVIMENTACAO_ENTRADA;
+//                    setEntity(mats.get(0));
+//                    actionMovimentacaoEstoqueSimplificado(event);
+//                    return;
+//                }
+//            }
+//
+//         //   if (this.getValorTotal() != null && this.getEntity().getQuantidadeTotal() != null) {
+//         //       this.getEntity().setValor(this.getValorTotal().divide(this.getEntity().getQuantidadeTotal(), 2, RoundingMode.HALF_UP));
+//         //   }
+//            this.atualizaQuantidades();
+//            this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//            if (this.getEntity().getStatus() == null) {
+//                this.getEntity().setStatus(ATIVO);
+//            }
+//            if (this.getEntity().getId() == 0) {
+//                this.getEntity().setDataCadastro(new Date());
+//            }
+//            if (this.getProcedencia() != null) {
+//                this.getEntity().setProcedencia(this.getProcedencia().getValor());
+//            }
+//            this.getEntity().setDataCadastro(new Date());
+//            if ((this.getItem() == null) || (this.getItem().getDescricao().equals("RAIZ")) || // RAIZ
+//                    (this.getItem().getCategoria().equals("S"))) {
+//                this.addError(OdontoMensagens.getMensagem("erro.item.material.raiz"), "",true);
+//            } else {
+//                if (isEstoqueCompleto() && (this.getLocal() == null || this.getLocal().getDescricao().equals("RAIZ"))) {
+//                    this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "",true);
+//                } else {
+//                    this.getEntity().setItem(this.getItem());
+//                    if (this.getLocal() == null) {
+//                        this.getEntity().getEstoque().get(0).setLocal(LocalSingleton.getInstance().getBo().getLocalPadraoSistema(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+//                    } else {
+//                        this.getEntity().getEstoque().get(0).setLocal(this.getLocal());
+//                    }
+//
+//                    Calendar cal = Calendar.getInstance();
+//                    cal.setTime(new Date());
+//                    cal.add(Calendar.DAY_OF_MONTH, -1);
+//                    if (this.getEntity().getStatus().equals(DEVOLVIDO) || this.getEntity().getValidade() == null || this.getEntity().getValidade().getTime() >= cal.getTime().getTime()) {
+//                        boolean novo = false;
+//                        if (getEntity().getId() == 0) {
+//                            novo = true;
+//                        }
+//                        if (this.getbO().persist(this.getEntity())) {
+//                            if (this.getEntity().getStatus().equals(DEVOLVIDO)) {
+//                                this.addInfo(OdontoMensagens.getMensagem("material.salvo.devolvido"), "",true);
+//                            } else {
+//                                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
+//                            }
+//                            if (novo) {                                 
+//                                Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");
+//                                BigDecimal quantidade = this.getEntity().getEstoque().get(0).getQuantidade();
+//                                this.getEntity().getEstoque().get(0).setQuantidade(new BigDecimal(0));
+//                                this.getEntity().getEstoque().get(0).setLocal(this.getLocal());
+//                                this.getEntity().getEstoque().get(0).setMaterial(this.getEntity());
+//                                EstoqueSingleton.getInstance().transferencia2(this.getEntity(),localOrigem,this.getEntity().getEstoque().get(0),quantidade,EstoqueSingleton.ENTRADA_MATERIAL_CADASTRO,UtilsFrontEnd.getProfissionalLogado());
+//                              
+//                                this.setEntity(new Material());
+//                                this.getEntity().setFornecedor(null);
+//                                this.getEntity().setMarca(null);
+//                                valorTotal = new BigDecimal(0);
+//                                                
+//                                this.setSelectedItem(null);
+//                                digitacao = null;
+//                                digitacaoLocal = null;                            
+//                            }
+//                        
+//
+//                            this.geraLista();
+//                        }
+//                    } else {
+//                        this.addError(OdontoMensagens.getMensagem("material.validade.erro"), "",true);
+//                    }
+//
+//                }
+//            }
+//        } catch (Exception e) {
+//            log.error("Erro no actionPersist", e);
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
+//        }
     }
 
-    public void actionMovimentacaoEstoqueSimplificado(ActionEvent event) {
-        if (quantidadeMovimentacao.equals(new BigDecimal(0))) {
-            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "",true);
-        } else if (tipoMovimentacao.equals(Material.MOVIMENTACAO_SAIDA) && getEntity().getEstoque().get(0).getQuantidade().doubleValue() < quantidadeMovimentacao.doubleValue()) {
-            this.addError("Não é possível retirar mais quantidade do que a quantidade atual.", "",true);
-        } else {
-            try {
-                this.getbO().refresh(getEntity());
-                if (tipoMovimentacao.equals(Material.MOVIMENTACAO_ENTRADA)) {                  
-                    //EstoqueSingleton.getInstance().adicionar(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentacao,  EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
-                   
-                    Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");
-                    EstoqueSingleton.getInstance().transferencia(this.getEntity(),localOrigem,this.getEntity().getEstoque().get(0).getLocal(),quantidadeMovimentacao,EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA,UtilsFrontEnd.getProfissionalLogado());
-                                       
-                } else {                 
-                   // EstoqueSingleton.getInstance().subtrair(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentacao,  EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
-                    
-                    Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");                    
-                    EstoqueSingleton.getInstance().transferencia(this.getEntity(),this.getEntity().getEstoque().get(0).getLocal(),localDestino,quantidadeMovimentacao,EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA,UtilsFrontEnd.getProfissionalLogado());                                      
-                    quantidadeMovimentacao = quantidadeMovimentacao.multiply(new BigDecimal(-1));
-                }
-            
-                this.getEntity().setDataMovimentacao(Calendar.getInstance().getTime());              
-                this.getbO().persist(this.getEntity());
-
-                this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "",true);
-                this.actionNew(event);
-                this.geraLista();
-            } catch (Exception e) {
-                log.error("Erro no actionPersist", e);
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
-            }
-        }
-    }
+//    public void actionMovimentacaoEstoqueSimplificado(ActionEvent event) {
+//        if (quantidadeMovimentacao.equals(new BigDecimal(0))) {
+//            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "",true);
+//        } else if (tipoMovimentacao.equals(Material.MOVIMENTACAO_SAIDA) && getEntity().getEstoque().get(0).getQuantidade().doubleValue() < quantidadeMovimentacao.doubleValue()) {
+//            this.addError("Não é possível retirar mais quantidade do que a quantidade atual.", "",true);
+//        } else {
+//            try {
+//                this.getbO().refresh(getEntity());
+//                if (tipoMovimentacao.equals(Material.MOVIMENTACAO_ENTRADA)) {                  
+//                    //EstoqueSingleton.getInstance().adicionar(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentacao,  EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
+//                   
+//                    Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");
+//                    EstoqueSingleton.getInstance().transferencia(this.getEntity(),localOrigem,this.getEntity().getEstoque().get(0).getLocal(),quantidadeMovimentacao,EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA,UtilsFrontEnd.getProfissionalLogado());
+//                                       
+//                } else {                 
+//                   // EstoqueSingleton.getInstance().subtrair(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentacao,  EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
+//                    
+//                    Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");                    
+//                    EstoqueSingleton.getInstance().transferencia(this.getEntity(),this.getEntity().getEstoque().get(0).getLocal(),localDestino,quantidadeMovimentacao,EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA,UtilsFrontEnd.getProfissionalLogado());                                      
+//                    quantidadeMovimentacao = quantidadeMovimentacao.multiply(new BigDecimal(-1));
+//                }
+//            
+//                this.getEntity().setDataMovimentacao(Calendar.getInstance().getTime());              
+//                this.getbO().persist(this.getEntity());
+//
+//                this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "",true);
+//                this.actionNew(event);
+//                this.geraLista();
+//            } catch (Exception e) {
+//                log.error("Erro no actionPersist", e);
+//                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
+//            }
+//        }
+//    }
 
     public void movimentar(ActionEvent event) {
         if (quantidadeMovimentada.equals(new BigDecimal(0))) {
             this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "",true);
-        } else if (this.getEntity().getEstoque().get(0).getQuantidade().doubleValue() < quantidadeMovimentada.doubleValue()) {
+        } else if (this.getEntity().getQuantidade().doubleValue() < quantidadeMovimentada.doubleValue()) {
             this.addError(OdontoMensagens.getMensagem("erro.material.quantidade"), "",true);
         } else if ((this.getLocal() == null)) {
             this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "",true);
-        } else if (this.getEntity().getEstoque().get(0).getLocal().getDescricao().equals(this.getDigitacaoLocal())) {
+        } else if (this.getEntity().getLocal().getDescricao().equals(this.getDigitacaoLocal())) {
             this.addError(OdontoMensagens.getMensagem("erro.local.material.inalterado"), "",true);
         } else {
-
-            try {
-                
-               //this.getbO().m(getEntity());
-               // setEntity(MaterialSingleton.getInstance().getBo().find(this.getEntity().getId()));
-               // this.getEntity().setQuantidadeAtual(this.getEntity().getEstoque().getQuantidade().subtract(quantidadeMovimentada));
-               // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentada.multiply(new BigDecimal(-1)),
-               //         getEntity().getQuantidadeAtual(), MaterialLog.MOVIMENTACAO_MATERIAL_MOVIMENTAR));
-               // this.getbO().persist(this.getEntity());
-              
-              //  material.setQuantidadeAtual(quantidadeMovimentada);
-               // material.setQuantidadeTotal(quantidadeMovimentada);
-                
+            try {                  
                  //atualizando somente o estoque, caso tenha sido alterada por outro usuário por exempl
-                getEntity().setEstoque(MaterialSingleton.getInstance().getBo().find(getEntity().getId()).getEstoque());
-                
-                //pegando local origem para salvar na transferencia
-                Local localOrigem = this.getEntity().getEstoque().get(0).getLocal();                              
-              //  material.getEstoque().setLocal(this.getLocal());
-              //  material.setId(0);
-                this.getEntity().setDataMovimentacao(new Date());
-                //this.getbO().persist(this.getEntity());
-               // this.getbO().persist(material);
-                
-                EstoqueSingleton.getInstance().transferencia(this.getEntity(), localOrigem, this.getLocal(), quantidadeMovimentada, EstoqueSingleton.MOVIMENTACAO_MATERIAL_MOVIMENTAR, UtilsFrontEnd.getProfissionalLogado()); 
+                setEntity(EstoqueSingleton.getInstance().getBo().find(getEntity().getId()));                                  
+             
+                this.getEntity().getMaterial().setDataMovimentacao(new Date());
+                               
+                EstoqueSingleton.getInstance().transferencia(this.getEntity().getMaterial(),  this.getEntity().getLocal(), this.getLocal(), quantidadeMovimentada, EstoqueSingleton.MOVIMENTACAO_MATERIAL_MOVIMENTAR, UtilsFrontEnd.getProfissionalLogado()); 
                
                 this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "",true);
                 this.actionNew(event);
@@ -654,8 +640,8 @@ public class MaterialMB extends LumeManagedBean<Material> {
         this.marcas = marcas;
     }
 
-    public List<Material> getMateriais() {
-        return materiais;
+    public List<Estoque> getEstoques() {
+        return estoques;
     }
 
     public List<String> filtraItem(String digitacao) {
@@ -852,31 +838,31 @@ public class MaterialMB extends LumeManagedBean<Material> {
         }
         return sugestoes;
     }
-    public void handleSelectMarca(SelectEvent event) {
-        this.getEntity().setMarca((Marca) event.getObject());
-    }
+//    public void handleSelectMarca(SelectEvent event) {
+//        this.getEntity().setMarca((Marca) event.getObject());
+//    }
     
-    public List<Fornecedor> geraSugestoesFornecedores(String query) {
-        List<Fornecedor> sugestoes = new ArrayList<>();
-        List<Fornecedor> fornecedores = new ArrayList<>();
-        try {          
-            fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            for (Fornecedor m : fornecedores) {
-                if (Normalizer.normalize(m.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").contains(
-                        Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))) {
-                    sugestoes.add(m);
-                }
-            }
-            Collections.sort(sugestoes);
-        } catch (Exception e) {
-            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS);
-        }
-        return sugestoes;
-    }    
-
-    public void handleSelectFornecedor(SelectEvent event) {
-        this.getEntity().setFornecedor((Fornecedor) event.getObject());
-    }
+//    public List<Fornecedor> geraSugestoesFornecedores(String query) {
+//        List<Fornecedor> sugestoes = new ArrayList<>();
+//        List<Fornecedor> fornecedores = new ArrayList<>();
+//        try {          
+//            fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//            for (Fornecedor m : fornecedores) {
+//                if (Normalizer.normalize(m.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").contains(
+//                        Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))) {
+//                    sugestoes.add(m);
+//                }
+//            }
+//            Collections.sort(sugestoes);
+//        } catch (Exception e) {
+//            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS);
+//        }
+//        return sugestoes;
+//    }    
+//
+//    public void handleSelectFornecedor(SelectEvent event) {
+//        this.getEntity().setFornecedor((Fornecedor) event.getObject());
+//    }
     
     
 
@@ -906,60 +892,60 @@ public class MaterialMB extends LumeManagedBean<Material> {
         this.setNovoFornecedor(false);
     }    
 
-    public void actionPersistMarca(ActionEvent event) {
-        this.getEntity().setMarca(new Marca());
-        this.getEntity().getMarca().setNome(this.getNomeMarca());
-        Marca marca = MarcaSingleton.getInstance().getBo().findByNomeAndEmpresa(this.getEntity().getMarca().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        if (marca != null) {
-            if (marca.getId() != this.getEntity().getMarca().getId() && marca.getNome().equals(this.getEntity().getMarca().getNome())) {
-                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "",true);
-                try {
-                    this.getbO().refresh(this.getEntity());
-                } catch (Exception e) {
-                    log.error("refresh" + e);
-                }
-            }
-        } else {
-            this.getEntity().getMarca().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            this.getEntity().getMarca().setDataCadastro(Calendar.getInstance().getTime());
-            try {
-                MarcaSingleton.getInstance().getBo().persist(this.getEntity().getMarca());
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
-            } catch (Exception e) {
-                log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO);
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
-            }
-            this.geraLista();
-        }
-    }
-    public void actionPersistFornecedor(ActionEvent event) {
-        this.getEntity().setFornecedor(new Fornecedor());
-        this.getEntity().getFornecedor().setDadosBasico(new DadosBasico());
-        this.getEntity().getFornecedor().getDadosBasico().setNome(this.getNomeFornecedor());
-        this.getEntity().getFornecedor().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()); 
-        this.getEntity().getFornecedor().setExcluido("N");
-        Fornecedor fornecedor = FornecedorSingleton.getInstance().getBo().findByNomeandEmpresa(this.getEntity().getFornecedor());
-        if (fornecedor != null) {
-            if (fornecedor.getId() != this.getEntity().getFornecedor().getId() && fornecedor.getDadosBasico().getNome().equals(this.getEntity().getFornecedor().getDadosBasico().getNome())) {
-                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "",true);
-                try {
-                    this.getbO().refresh(this.getEntity());
-                } catch (Exception e) {
-                    log.error("refresh" + e);
-                }
-            }
-        } else {
-            try {
-                DadosBasicoSingleton.getInstance().getBo().persist(this.getEntity().getFornecedor().getDadosBasico());
-                FornecedorSingleton.getInstance().getBo().persist(this.getEntity().getFornecedor());
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
-            } catch (Exception e) {
-                log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO);
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
-            }
-            this.geraLista();
-        }
-    }
+//    public void actionPersistMarca(ActionEvent event) {
+//        this.getEntity().setMarca(new Marca());
+//        this.getEntity().getMarca().setNome(this.getNomeMarca());
+//        Marca marca = MarcaSingleton.getInstance().getBo().findByNomeAndEmpresa(this.getEntity().getMarca().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//        if (marca != null) {
+//            if (marca.getId() != this.getEntity().getMarca().getId() && marca.getNome().equals(this.getEntity().getMarca().getNome())) {
+//                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "",true);
+//                try {
+//                    this.getbO().refresh(this.getEntity());
+//                } catch (Exception e) {
+//                    log.error("refresh" + e);
+//                }
+//            }
+//        } else {
+//            this.getEntity().getMarca().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//            this.getEntity().getMarca().setDataCadastro(Calendar.getInstance().getTime());
+//            try {
+//                MarcaSingleton.getInstance().getBo().persist(this.getEntity().getMarca());
+//                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
+//            } catch (Exception e) {
+//                log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO);
+//                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
+//            }
+//            this.geraLista();
+//        }
+//    }
+//    public void actionPersistFornecedor(ActionEvent event) {
+//        this.getEntity().setFornecedor(new Fornecedor());
+//        this.getEntity().getFornecedor().setDadosBasico(new DadosBasico());
+//        this.getEntity().getFornecedor().getDadosBasico().setNome(this.getNomeFornecedor());
+//        this.getEntity().getFornecedor().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()); 
+//        this.getEntity().getFornecedor().setExcluido("N");
+//        Fornecedor fornecedor = FornecedorSingleton.getInstance().getBo().findByNomeandEmpresa(this.getEntity().getFornecedor());
+//        if (fornecedor != null) {
+//            if (fornecedor.getId() != this.getEntity().getFornecedor().getId() && fornecedor.getDadosBasico().getNome().equals(this.getEntity().getFornecedor().getDadosBasico().getNome())) {
+//                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "",true);
+//                try {
+//                    this.getbO().refresh(this.getEntity());
+//                } catch (Exception e) {
+//                    log.error("refresh" + e);
+//                }
+//            }
+//        } else {
+//            try {
+//                DadosBasicoSingleton.getInstance().getBo().persist(this.getEntity().getFornecedor().getDadosBasico());
+//                FornecedorSingleton.getInstance().getBo().persist(this.getEntity().getFornecedor());
+//                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
+//            } catch (Exception e) {
+//                log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO);
+//                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
+//            }
+//            this.geraLista();
+//        }
+//    }
 
     public Dominio getProcedencia() {
         return procedencia;
@@ -1060,31 +1046,31 @@ public class MaterialMB extends LumeManagedBean<Material> {
         this.quantidadeMovimentada = quantidadeMovimentada;
     }
 
-    public BigDecimal getValorTotal() {
-        if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
-            valorTotal = this.getEntity().getValor().multiply(this.getEntity().getEstoque().get(0).getQuantidade());
-        }
-        return valorTotal;
-    }  
+//    public BigDecimal getValorTotal() {
+//        if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
+//            valorTotal = this.getEntity().getValor().multiply(this.getEntity().getEstoque().get(0).getQuantidade());
+//        }
+//        return valorTotal;
+//    }  
 
-    public void setValorTotal(BigDecimal valorTotal) {
-        this.valorTotal = valorTotal;
-    }    
+//    public void setValorTotal(BigDecimal valorTotal) {
+//        this.valorTotal = valorTotal;
+//    }    
     
-     public void valorTotal() {
-         this.atualizaQuantidades();
-         if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
-             valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getEstoque().get(0).getQuantidade());
-         }
-     }
+//     public void valorTotal() {
+//         this.atualizaQuantidades();
+//         if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
+//             valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getEstoque().get(0).getQuantidade());
+//         }
+//     }
 
-    public BigDecimal getQuantidadePacotes() {
-        return quantidadePacotes;
-    }
-
-    public void setQuantidadePacotes(BigDecimal quantidadePacotes) {
-        this.quantidadePacotes = quantidadePacotes;
-    }
+//    public BigDecimal getQuantidadePacotes() {
+//        return quantidadePacotes;
+//    }
+//
+//    public void setQuantidadePacotes(BigDecimal quantidadePacotes) {
+//        this.quantidadePacotes = quantidadePacotes;
+//    }
 
     public String getTipoMovimentacao() {
         return tipoMovimentacao;
@@ -1094,13 +1080,13 @@ public class MaterialMB extends LumeManagedBean<Material> {
         this.tipoMovimentacao = tipoMovimentacao;
     }
 
-    public BigDecimal getQuantidadeMovimentacao() {
-        return quantidadeMovimentacao;
-    }
-
-    public void setQuantidadeMovimentacao(BigDecimal quantidadeMovimentacao) {
-        this.quantidadeMovimentacao = quantidadeMovimentacao;
-    }
+//    public BigDecimal getQuantidadeMovimentacao() {
+//        return quantidadeMovimentacao;
+//    }
+//
+//    public void setQuantidadeMovimentacao(BigDecimal quantidadeMovimentacao) {
+//        this.quantidadeMovimentacao = quantidadeMovimentacao;
+//    }
 
     
     public boolean isNovoFornecedor() {

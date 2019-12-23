@@ -165,7 +165,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
                     //this.getEntity().getMaterial().setQuantidadeAtual(this.getEntity().getMaterial().getQuantidadeAtual().add(quantidadeDevolvida));
                   
                     Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_UNITARIA");
-                    EstoqueSingleton.getInstance().transferencia(this.getEntity().getMaterial(),localOrigem,this.getEntity().getMaterial().getEstoque().getLocal(),quantidadeDevolvida,EstoqueSingleton.DEVOLUCAO_UNITARIA,UtilsFrontEnd.getProfissionalLogado());
+                    EstoqueSingleton.getInstance().transferencia(this.getEntity().getMaterial(),localOrigem,this.getEntity().getMaterial().getEstoque().get(0).getLocal(),quantidadeDevolvida,EstoqueSingleton.DEVOLUCAO_UNITARIA,UtilsFrontEnd.getProfissionalLogado());
 
                     
                     MaterialSingleton.getInstance().getBo().persist(this.getEntity().getMaterial());
@@ -364,7 +364,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
             for (Material m : materiaisSelecionado) {
              //   MaterialSingleton.getInstance().getBo().refresh(m);
                 try {
-                    total = total.add(EstoqueSingleton.getInstance().getBo().findByMaterialLocal(m,m.getEstoque().getLocal()).getQuantidade());
+                    total = total.add(EstoqueSingleton.getInstance().getBo().findByMaterialLocal(m,m.getEstoque().get(0).getLocal()).getQuantidade());
                 } catch (Exception e) {                 
                     e.printStackTrace();
                 }
@@ -423,7 +423,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
               //  }                
                 
                 Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "EMPRESTIMO_UNITARIO");                    
-                EstoqueSingleton.getInstance().transferencia(m,m.getEstoque().getLocal(),localDestino,quantidadeRetirar,EstoqueSingleton.EMPRESTIMO_UNITARIO,UtilsFrontEnd.getProfissionalLogado());
+                EstoqueSingleton.getInstance().transferencia(m,m.getEstoque().get(0).getLocal(),localDestino,quantidadeRetirar,EstoqueSingleton.EMPRESTIMO_UNITARIO,UtilsFrontEnd.getProfissionalLogado());
               
                 
                 
@@ -521,7 +521,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
             List<Material> materiais = MaterialSingleton.getInstance().getBo().listByItem(this.getItem());
             for (Material material : materiais) {
                 
-                quantidadeTotal = quantidadeTotal.add(material.getTamanhoUnidade().multiply(EstoqueSingleton.getInstance().getBo().findByMaterialLocal(material,material.getEstoque().getLocal()).getQuantidade().multiply(material.getTamanhoUnidade())));
+                quantidadeTotal = quantidadeTotal.add(material.getTamanhoUnidade().multiply(EstoqueSingleton.getInstance().getBo().findByMaterialLocal(material,material.getEstoque().get(0).getLocal()).getQuantidade().multiply(material.getTamanhoUnidade())));
             }
         } catch (Exception e) {
             e.printStackTrace();

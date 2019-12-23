@@ -70,14 +70,14 @@
                         		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="20%" headerText="Descrição">
                             <h:outputText value="#{material.item.descricao}" title="#{material.id}" />
                         </p:column>
-                        <p:column filterBy="#{material.estoque.local.descricao}" sortBy="#{material.estoque.local.descricao}"
+                        <p:column filterBy="#{material.estoque.locais}" sortBy="#{material.locais}"
                         		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="8%" headerText="Local"
                             rendered="#{materialMB.estoqueCompleto}">
-                            <h:outputText value="#{material.estoque.local.descricao}" />
+                            <h:outputText value="#{material.locais}" />
                         </p:column>
-                        <p:column filterBy="#{material.estoque.quantidade}" sortBy="#{material.estoque.quantidade}" width="10%"
+                        <p:column filterBy="#{material.quantidades}" sortBy="#{material.quantidades}" width="10%"
                         	filterMatchMode="contains" headerText="Quantidade">
-                            <h:outputText value="#{material.estoque.quantidade}">
+                            <h:outputText value="#{material.quantidades}">
                                 <f:convertNumber />
                             </h:outputText>
                             <h:outputLabel value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
@@ -191,7 +191,7 @@
 		                                <h:panelGroup styleClass="md-combo">
 			                                <p:outputLabel for="quantidade" value="Quantidade Total: " />
 			                                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-			                                    <h:outputText id="quantidade" value="#{materialMB.entity.estoque.quantidade}">
+			                                    <h:outputText id="quantidade" value="#{materialMB.entity.quantidades}">
 			                                        <f:convertNumber />
 			                                    </h:outputText>
 			                                    <h:outputLabel  value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
