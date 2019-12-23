@@ -55,6 +55,7 @@ import br.com.lume.itemAnamnese.ItemAnamneseSingleton;
 import br.com.lume.odonto.biometria.ImpressaoDigital;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Anamnese;
+import br.com.lume.odonto.entity.Conta;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Especialidade;
@@ -482,7 +483,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.geraLista();
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), true);
             if (novoPaciente) {
-                getEntity().setConta(ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getEntity(), null, null));
+                Conta conta = ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getEntity(), null, null);
+                getEntity().setConta(conta);
                 this.getbO().persist(this.getEntity());
                 PrimeFaces.current().executeScript("PF('dlgFichaPaciente').hide()");
             }
