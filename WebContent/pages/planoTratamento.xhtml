@@ -862,7 +862,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									</h:outputText>
 								</f:facet>
 							</p:column>
-							<p:column headerText="Finalizado" width="100"
+							<p:column headerText="Executado" width="100"
 								styleClass="hideOnEdit">
 								<p:selectManyCheckbox id="status" value="#{plano.statuss}"
 									disabled="#{plano.finalizado or plano.planoTratamento.status == 'S' or planoTratamento.status == 'E' or plano.excluido eq 'S'}"
@@ -884,7 +884,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 										icon="fa fa-warning" />
 								</p:commandButton>
 							</p:column>
-							<p:column headerText="Dta. de Finalização"
+							<p:column headerText="Dta. de Execução"
 								styleClass="cabecalho hideOnEdit"
 								sortBy="#{plano.dataFinalizadoStrOrd}" width="70px;">
 								<h:outputText value="#{plano.dataFinalizadoStr}" />
@@ -1398,6 +1398,45 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</p:column>
 					</p:dataTable>
 					<br />
+					<p:fieldset legend="Desconto" toggleable="true" collapsed="true"
+						style="margin: 0;">
+						<p:panelGrid columns="4" layout="grid"
+							columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removePaddingUp descontoFieldset">
+							<h:outputText value="Tipo do Desconto" />
+							<p:selectOneMenu
+								rendered="#{planoTratamentoMB.orcamentoSelecionado != null}"
+								disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
+								value="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo}">
+								<f:selectItem itemValue="P" itemLabel="Porcentagem" />
+								<f:selectItem itemValue="V" itemLabel="Valor" />
+								<p:ajax process="@this"
+									update=":lume:tabView:orcamentoDescontoValor, :lume:tabView:pnViewOrcamentoValores" />
+							</p:selectOneMenu>
+
+							<h:outputText value="Valor do Desconto" />
+							<h:panelGroup id="orcamentoDescontoValor">
+								<p:inputNumber
+									disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
+									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
+									styleClass="taller" maxlength="13" maxValue="9999999999.99"
+									decimalSeparator="," symbol="R$ " thousandSeparator="."
+									rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'V'}">
+									<p:ajax process="@this" oncomplete="attValores()" />
+								</p:inputNumber>
+								<p:inputNumber
+									disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
+									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
+									styleClass="taller" maxlength="13" maxValue="9999999999.99"
+									decimalSeparator="," symbol="%" thousandSeparator="."
+									symbolPosition="s"
+									rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'P'}">
+									<p:ajax process="@this" oncomplete="attValores()" />
+								</p:inputNumber>
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:fieldset>
+					<br />
 					<p:fieldset legend="Planejamento do Pagamento" toggleable="true"
 						collapsed="true" style="margin: 0;">
 
@@ -1463,45 +1502,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								</h:outputText>
 							</p:column>
 						</p:dataTable>
-					</p:fieldset>
-					<br />
-					<p:fieldset legend="Desconto" toggleable="true" collapsed="true"
-						style="margin: 0;">
-						<p:panelGrid columns="4" layout="grid"
-							columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
-							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removePaddingUp descontoFieldset">
-							<h:outputText value="Tipo do Desconto" />
-							<p:selectOneMenu
-								rendered="#{planoTratamentoMB.orcamentoSelecionado != null}"
-								disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
-								value="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo}">
-								<f:selectItem itemValue="P" itemLabel="Porcentagem" />
-								<f:selectItem itemValue="V" itemLabel="Valor" />
-								<p:ajax process="@this"
-									update=":lume:tabView:orcamentoDescontoValor, :lume:tabView:pnViewOrcamentoValores" />
-							</p:selectOneMenu>
-
-							<h:outputText value="Valor do Desconto" />
-							<h:panelGroup id="orcamentoDescontoValor">
-								<p:inputNumber
-									disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
-									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
-									styleClass="taller" maxlength="13" maxValue="9999999999.99"
-									decimalSeparator="," symbol="R$ " thousandSeparator="."
-									rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'V'}">
-									<p:ajax process="@this" oncomplete="attValores()" />
-								</p:inputNumber>
-								<p:inputNumber
-									disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
-									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
-									styleClass="taller" maxlength="13" maxValue="9999999999.99"
-									decimalSeparator="," symbol="%" thousandSeparator="."
-									symbolPosition="s"
-									rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'P'}">
-									<p:ajax process="@this" oncomplete="attValores()" />
-								</p:inputNumber>
-							</h:panelGroup>
-						</p:panelGrid>
 					</p:fieldset>
 				</p:outputPanel>
 			</p:scrollPanel>

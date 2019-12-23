@@ -11,8 +11,9 @@
 				<ui:param name="showNewLancamento" value="N" />
 				<ui:param name="repasseProfissional" value="S" />
 			</ui:include>
-			<p:remoteCommand name="onCloseFaturaView" process="@this"
-				update="dtPrincipalFaturaPP" />
+			<p:remoteCommand name="onCloseFaturaView"
+				process="@this, :lume:filtros" update=":lume:dtPrincipalFaturaPP"
+				actionListener="#{repasseProfissionalMB.pesquisar}" />
 		</p:outputPanel>
 
 		<ui:include src="pacienteFicha.xhtml" />

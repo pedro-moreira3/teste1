@@ -1,0 +1,106 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+	<style>
+</style>
+
+	<p:dialog widgetVar="dlgPTPCustoDireto" resizable="false" modal="true"
+		appendTo=":lume" width="70%" closable="false">
+		<f:facet name="header">
+			<p:outputPanel id="pnPTPCustoDiretoHeader">
+				<h:outputText
+					value="Custos diretos do procedimento #{pTPCustoDiretoMB.entity.procedimento.descricao} | P.T. #{pTPCustoDiretoMB.entity.planoTratamento.descricao} do paciente #{pTPCustoDiretoMB.entity.planoTratamento.paciente.dadosBasico.nome}" />
+			</p:outputPanel>
+		</f:facet>
+		<p:outputPanel id="pnPTPCustoDireto">
+
+			<p:dataTable value="#{pTPCustoDiretoMB.custos}" var="custo"
+				rowKey="#{custo}" emptyMessage="Nenhum custo direto associado!">
+				<f:facet name="header">
+					<h:outputText
+						value="Custos diretos associados ao Plano Tratamento Procedimento" />
+				</f:facet>
+
+				<p:column headerText="Data de Faturamento"
+					sortBy="#{custo.dataFaturamento}"
+					filterBy="#{custo.dataFaturamento}" filterMatchMode="contains">
+					<h:outputText value="#{custo.dataFaturamentoStr}"
+						title="#{custo.id}" />
+				</p:column>
+				<p:column headerText="Data do Custo" sortBy="#{custo.dataRegistro}"
+					filterBy="#{custo.dataRegistroStr}" filterMatchMode="contains">
+					<h:outputText value="#{custo.dataRegistroStr}" />
+				</p:column>
+				<p:column headerText="Paciente"
+					sortBy="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
+					filterBy="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
+					filterMatchMode="contains"
+					filterFunction="#{custoMB.filtroSemAcento}">
+
+					<p:commandLink
+						value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
+						process="@this" rendered="#{false}"
+						title="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.id}"
+						actionListener="#{tabPacienteMB.loadPaciente(custo.planoTratamentoProcedimento.planoTratamento.paciente)}"
+						oncomplete="PF('dlgFichaPaciente').show()"
+						update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+					<h:outputText
+						value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}" />
+
+				</p:column>
+				<p:column headerText="Plano de Tratamento"
+					sortBy="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}"
+					filterBy="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}"
+					filterMatchMode="contains"
+					filterFunction="#{custoMB.filtroSemAcento}">
+					<h:outputText
+						value="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}" />
+				</p:column>
+				<p:column headerText="Procedimento"
+					sortBy="#{custo.planoTratamentoProcedimento.descricaoCompleta}"
+					filterBy="#{custo.planoTratamentoProcedimento.descricaoCompleta}"
+					filterMatchMode="contains"
+					filterFunction="#{custoMB.filtroSemAcento}">
+					<h:outputText
+						value="#{custo.planoTratamentoProcedimento.descricaoCompleta}" />
+				</p:column>
+				<p:column sortBy="#{custo.descricao}" headerText="Descrição"
+					filterBy="#{custo.descricao}"
+					filterFunction="#{custoMB.filtroSemAcento}">
+					<h:outputText value="#{custo.descricao}" />
+				</p:column>
+				<p:column sortBy="#{custo.valor}" style="text-align:center;"
+					headerText="Parcela" filterBy="#{custo.valor}"
+					filterFunction="#{custoMB.filtroSemAcento}">
+					<h:outputText value="#{custo.valor}" />
+				</p:column>
+
+			</p:dataTable>
+
+		</p:outputPanel>
+		<p:panelGrid columns="4" layout="grid" id="buttonsPTPCustoDireto"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton icon="fa fa-check"
+				value="Validar conferência dos custos diretos" process="@this"
+				update="buttonsPTPCustoDireto" styleClass="GreenButton"
+				disabled="#{pTPCustoDiretoMB.entity.custoDiretoValido == 'S' or !pTPCustoDiretoMB.admin}"
+				actionListener="#{pTPCustoDiretoMB.validarCustosDiretos}">
+				<p:confirm header="Confirmação" icon="ui-icon-alert" escape="false"
+					message="Você tem certeza que deseja validar a conferência dos custos diretos? &lt;br/&gt; Esta é uma operação irreversível!">
+				</p:confirm>
+			</p:commandButton>
+			<h:outputText
+				rendered="#{pTPCustoDiretoMB.entity.custoDiretoValido == 'S' and pTPCustoDiretoMB.admin}"
+				value="* Custos já conferidos pelo profissional #{pTPCustoDiretoMB.entity.custoDiretoValidadoPor.dadosBasico.nome} às #{pTPCustoDiretoMB.entity.dataCustoDiretoValidadoStr}"
+				style="color: gray;" />
+			<p:column
+				rendered="#{pTPCustoDiretoMB.entity.custoDiretoValido != 'S' or !pTPCustoDiretoMB.admin}" />
+			<p:column />
+			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+				oncomplete="PF('dlgPTPCustoDireto').hide()" />
+		</p:panelGrid>
+	</p:dialog>
+
+</ui:composition>

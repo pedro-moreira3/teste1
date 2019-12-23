@@ -5,6 +5,10 @@
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
+
+		<ui:include src="pacienteFicha.xhtml" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
+
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -86,11 +90,11 @@
 						<p:outputPanel id="botoes" styleClass="BordNone">
 							<p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid">
-								<p:commandButton id="new" value="Novo Registro de Custo" icon="White fa fa-file-o"
-									actionListener="#{custoMB.actionNew}"
+								<p:commandButton id="new" value="Novo Registro de Custo"
+									icon="White fa fa-file-o" actionListener="#{custoMB.actionNew}"
 									update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
 									process=":lume:pnCusto,@this"
-									disabled="#{custoMB.planoTratamento == null}" />								
+									disabled="#{custoMB.planoTratamento == null}" />
 								<p:commandButton id="persist" value="Salvar"
 									icon="White fa fa-save"
 									actionListener="#{custoMB.actionPersist}"
@@ -103,36 +107,32 @@
 									update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
 									process=":lume:pnCusto,@this"
 									disabled="#{custoMB.desabilitaExclusao()}"
-									styleClass="RedButton" />									
+									styleClass="RedButton" />
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"
 									styleClass="GreenSplitButton"
-									actionListener="#{custoMB.exportarTabela('xls')}"
-									ajax="false" process="dtCusto,@this" update="@this"
-									immediate="true"
+									actionListener="#{custoMB.exportarTabela('xls')}" ajax="false"
+									process="dtCusto,@this" update="@this" immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-									<p:fileDownload
-										value="#{custoMB.arquivoDownload}" />
+									<p:fileDownload value="#{custoMB.arquivoDownload}" />
 
 									<p:menuitem value="Exportar tabela para PDF"
 										icon="fa fa fa-file-pdf-o"
-										actionListener="#{custoMB.exportarTabela('pdf')}"
-										ajax="false" process="dtCusto,@this" immediate="true"
+										actionListener="#{custoMB.exportarTabela('pdf')}" ajax="false"
+										process="dtCusto,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{custoMB.arquivoDownload}" />
+										<p:fileDownload value="#{custoMB.arquivoDownload}" />
 									</p:menuitem>
 									<p:menuitem value="Exportar tabela para CSV"
 										icon="fa fa fa-file-pdf-o"
-										actionListener="#{custoMB.exportarTabela('csv')}"
-										ajax="false" process="dtCusto,@this" immediate="true"
+										actionListener="#{custoMB.exportarTabela('csv')}" ajax="false"
+										process="dtCusto,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{custoMB.arquivoDownload}" />
+										<p:fileDownload value="#{custoMB.arquivoDownload}" />
 									</p:menuitem>
 								</p:splitButton>
-									
+
 							</p:panelGrid>
 						</p:outputPanel>
 					</p:outputPanel>
@@ -165,13 +165,15 @@
 							filterBy="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
 							filterMatchMode="contains"
 							filterFunction="#{custoMB.filtroSemAcento}">
-							
-							<p:commandLink value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
-									process="@this" title="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.id}"
-									actionListener="#{tabPacienteMB.loadPaciente(custo.planoTratamentoProcedimento.planoTratamento.paciente)}"
-									oncomplete="PF('dlgFichaPaciente').show()"
-									update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
-							
+
+							<p:commandLink
+								value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
+								process="@this"
+								title="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.id}"
+								actionListener="#{tabPacienteMB.loadPaciente(custo.planoTratamentoProcedimento.planoTratamento.paciente)}"
+								oncomplete="PF('dlgFichaPaciente').show()"
+								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+
 						</p:column>
 						<p:column headerText="Plano de Tratamento"
 							sortBy="#{custo.planoTratamentoProcedimento.planoTratamento.descricao}"

@@ -31,16 +31,19 @@ import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.Fatura.TipoFatura;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.odonto.entity.Requisito;
 import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
@@ -191,6 +194,17 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         setShowLancamentosCancelados(false);
     }
 
+    public PlanoTratamentoProcedimento buscaPTPOrigemRepasse(Lancamento l) {
+        try {
+            RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(l);
+            if (repasse != null)
+                return PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem());
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        return null;
+    }
+
     public String buscaProcedimentoOrigemRepasse(Lancamento l) {
         RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(l);
         if (repasse != null)
@@ -226,7 +240,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             addInfo("Sucesso", "Sucesso ao salvar o registro", true);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError("Erro", "Falha ao validar o lançamento! " + e.getMessage().replace("'", "\\'"), true);
+            this.addError("Erro", "Falha ao conferir o lançamento! " + e.getMessage().replace("'", "\\'"), true);
         }
     }
 
@@ -421,6 +435,19 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         return paciente;
     }
 
+    public BigDecimal getTotalNaoPlanejado() {
+        BigDecimal valor = BigDecimal.ZERO;
+        try {
+            List<Fatura> faturas = FaturaSingleton.getInstance().getBo().findFaturaIrregularByPaciente(TipoFatura.RECEBIMENTO_PACIENTE, this.paciente);
+            for (Fatura fatura : faturas) {
+                valor = valor.add(FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura));
+            }
+        } catch (Exception e) {
+            addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
+        }
+        return valor;
+    }
+
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
         try {
@@ -434,11 +461,20 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
+    public String getNaoPlanejadoCor() {
+        BigDecimal saldo = getTotalNaoPlanejado();
+        if (saldo != null && saldo.compareTo(BigDecimal.ZERO) != 0) {
+            if (saldo.compareTo(BigDecimal.ZERO) > 0)
+                return "#dc3545";
+        }
+        return "black";
+    }
+
     public String getSaldoCor() {
         BigDecimal saldo = this.paciente.getConta().getSaldo();
         if (saldo != null && saldo.compareTo(BigDecimal.ZERO) != 0) {
             if (saldo.compareTo(BigDecimal.ZERO) < 0)
-                return "#dc3545";
+                return "#ffc107";
             else if (saldo.compareTo(BigDecimal.ZERO) > 0)
                 return "#007bff";
         }

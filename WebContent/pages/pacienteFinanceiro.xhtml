@@ -49,21 +49,40 @@ hr.hrSaldo {
 	<p:remoteCommand name="onCloseFaturaView" process="@this" />
 
 	<br />
-	<div style="position: relative; width: 100%; height: 100px;">
-		<hr class="centerH hrSaldo" />
-		<p:outputPanel style="color: #{faturaPagtoMB.saldoCor}">
-			<div class="centerH divSaldo">
-				<div class="centerH divSaldoHeader">Saldo Atual</div>
-				<h:outputText value="#{faturaPagtoMB.paciente.conta.saldo}"
-					rendered="#{faturaPagtoMB.paciente.conta.saldo != null}">
-					<f:convertNumber currencySymbol="R$ " type="currency" />
-				</h:outputText>
-				<h:outputText value="#{0.00}"
-					rendered="#{faturaPagtoMB.paciente.conta.saldo == null}">
-					<f:convertNumber currencySymbol="R$ " type="currency" />
-				</h:outputText>
-			</div>
-		</p:outputPanel>
+	<div
+		style="position: relative; width: 80%; height: 100px; display: flex; padding-left: 10%; padding-right: 10%;">
+		<div style="position: relative; width: 50%; height: 100%;">
+			<hr class="centerH hrSaldo" />
+			<p:outputPanel style="color: #{faturaPagtoMB.saldoCor}">
+				<div class="centerH divSaldo">
+					<div class="centerH divSaldoHeader">Saldo Atual</div>
+					<h:outputText value="#{faturaPagtoMB.paciente.conta.saldo}"
+						rendered="#{faturaPagtoMB.paciente.conta.saldo != null}">
+						<f:convertNumber currencySymbol="R$ " type="currency" />
+					</h:outputText>
+					<h:outputText value="#{0.00}"
+						rendered="#{faturaPagtoMB.paciente.conta.saldo == null}">
+						<f:convertNumber currencySymbol="R$ " type="currency" />
+					</h:outputText>
+				</div>
+			</p:outputPanel>
+		</div>
+		<div style="position: relative; width: 50%; height: 100%;">
+			<hr class="centerH hrSaldo" />
+			<p:outputPanel style="color: #{faturaPagtoMB.naoPlanejadoCor}">
+				<div class="centerH divSaldo">
+					<div class="centerH divSaldoHeader">Total não planejado</div>
+					<h:outputText value="#{faturaPagtoMB.getTotalNaoPlanejado()}"
+						rendered="#{faturaPagtoMB.getTotalNaoPlanejado() != null}">
+						<f:convertNumber currencySymbol="R$ " type="currency" />
+					</h:outputText>
+					<h:outputText value="#{0.00}"
+						rendered="#{faturaPagtoMB.getTotalNaoPlanejado() == null}">
+						<f:convertNumber currencySymbol="R$ " type="currency" />
+					</h:outputText>
+				</div>
+			</p:outputPanel>
+		</div>
 	</div>
 
 	<p:dataTable id="dtContasAReceber" paginator="true"

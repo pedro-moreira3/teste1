@@ -45,6 +45,8 @@ body .sideChkBox .ui-chkbox-label {
 }
 </style>
 
+	<ui:include src="ptpCustoDireto.xhtml	" />
+
 	<p:dialog widgetVar="dlgNewLancamento" header="Novo Lançamento"
 		responsive="true" modal="true" appendTo=":lume">
 		<p:ajax event="close" resetValues="true" update="pnlNewLancamento" />
@@ -273,7 +275,10 @@ body .sideChkBox .ui-chkbox-label {
 								value="#{faturaPagtoMB.entity.itensFiltered}" var="fi" rows="20"
 								paginator="true" rowKey="#{fi}" paginatorPosition="bottom">
 								<f:facet name="header">Itens</f:facet>
-
+								<p:column style="width:16px"
+									rendered="#{(repasseProfissional != null and repasseProfissional == 'S') and (faturaPagtoMB.hasRequisitosCumprir(l))}">
+									<p:rowToggler />
+								</p:column>
 								<p:column headerText="Ações" width="100" exportable="false"
 									rendered="#{repasseProfissional != null and repasseProfissional == 'S' and false}">
 
@@ -311,6 +316,13 @@ body .sideChkBox .ui-chkbox-label {
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:column>
+
+								<p:rowExpansion>
+									<p:panelGrid columns="1" layout="grid"
+										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding lancamentoExplain">
+										<h:outputText value="#{fi.observacaoHTML}" escape="false" />
+									</p:panelGrid>
+								</p:rowExpansion>
 
 							</p:dataTable>
 
@@ -368,6 +380,14 @@ body .sideChkBox .ui-chkbox-label {
 											message="Você tem certeza que confirma o pagamento deste repasse?">
 										</p:confirm>
 									</p:commandButton>
+									<p:commandButton styleClass="NavyButton" icon="fa fa-dollar"
+										title="Visualizar Custos Diretos"
+										update=":lume:pnPTPCustoDireto, :lume:pnPTPCustoDiretoHeader"
+										actionListener="#{pTPCustoDiretoMB.abreDialog(faturaPagtoMB.buscaPTPOrigemRepasse(l))}"
+										process="@this"
+										rendered="#{(repasseProfissional != null and repasseProfissional == 'S')}"
+										disabled="#{faturaPagtoMB.buscaPTPOrigemRepasse(l) == null}">
+									</p:commandButton>
 								</p:column>
 								<p:column styleClass="cabecalho"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
@@ -385,8 +405,8 @@ body .sideChkBox .ui-chkbox-label {
 								<p:column sortBy="#{l.tributo}" filterMatchMode="contains"
 									filterBy="#{l.tributo}" headerText="Tributos"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
-									<h:outputText value="#{l.tributo}">
-										<f:convertNumber currencySymbol="R$ " type="currency" />
+									<h:outputText value="#{l.tributoPerc}">
+										<f:convertNumber type="percent" maxFractionDigits="2" />
 									</h:outputText>
 								</p:column>
 								<p:column sortBy="#{l.dataCreditoStr}"
