@@ -221,32 +221,36 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
 
     private void devolveMateriais(ActionEvent event, boolean naoUtilizado) throws BusinessException, TechnicalException, Exception {
         for (EmprestimoKit cm : this.getMateriais()) {
-            BigDecimal quantidadeUtilizada;
-            BigDecimal qtdDevolvida;
+        //    BigDecimal quantidadeUtilizada;
+      //      BigDecimal qtdDevolvida;
             if (naoUtilizado || cm.getMaterial().getItem().getTipo().equals("I")) {
-                qtdDevolvida = cm.getQuantidade();
-                cm.setQuantidadeDevolvida(cm.getQuantidade());
-                quantidadeUtilizada = BigDecimal.ZERO;
+            //    qtdDevolvida = cm.getQuantidade();
+               // cm.setQuantidadeDevolvida(cm.getQuantidade());
+               // quantidadeUtilizada = BigDecimal.ZERO;
             } else {
-                qtdDevolvida = cm.getQuantidadeDevolvida();
-                quantidadeUtilizada = cm.getQuantidade().subtract(cm.getQuantidadeDevolvida());
+             //   qtdDevolvida = cm.getQuantidadeDevolvida();
+              //  quantidadeUtilizada = cm.getQuantidade().subtract(cm.getQuantidadeDevolvida());
             }
-            if (cm.getQuantidadeDevolvida().compareTo(BigDecimal.ZERO) != 0) {// Foi solicitado material e devolvido alguma coisa
-                MaterialSingleton.getInstance().getBo().refresh(cm.getMaterial());
+         //   if (cm.getQuantidadeDevolvida().compareTo(BigDecimal.ZERO) != 0) {// Foi solicitado material e devolvido alguma coisa
+       //         MaterialSingleton.getInstance().getBo().refresh(cm.getMaterial());
                // cm.getMaterial().setQuantidadeAtual(cm.getMaterial().getQuantidadeAtual().add(cm.getQuantidadeDevolvida()));
-                MaterialSingleton.getInstance().getBo().persist(cm.getMaterial());
-                cm.setQuantidade(quantidadeUtilizada);
-            }
-            String acao = "";
-            if (naoUtilizado) {
-                cm.setStatus(EmprestimoKit.NAOUTILIZADO);                
-                Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "KIT_NAO_UTILIZADO");
-                EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,cm.getMaterial().getEstoque().get(0).getLocal(),cm.getQuantidade(),EstoqueSingleton.DEVOLUCAO_KIT_NAO_UTILIZADO,UtilsFrontEnd.getProfissionalLogado());
-            } else {
-                cm.setStatus(EmprestimoKit.UTILIZADO_KIT);               
-                Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "KIT_UTILIZADO_DEVOLVIDO");
-                EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,cm.getMaterial().getEstoque().get(0).getLocal(),cm.getQuantidade(),EstoqueSingleton.DEVOLUCAO_KIT_FINALIZAR,UtilsFrontEnd.getProfissionalLogado());
-            }
+          //      MaterialSingleton.getInstance().getBo().persist(cm.getMaterial());
+            //    cm.setQuantidade(quantidadeUtilizada);
+         //   }
+           // String acao = "";
+          //  if (naoUtilizado) {
+                //  } else {
+                if(cm.getQuantidadeDevolvida().compareTo(new BigDecimal(0)) == 0) {
+                    cm.setStatus(EmprestimoKit.UTILIZADO_KIT);               
+                    Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "KIT_UTILIZADO_DEVOLVIDO");
+                    EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,cm.getMaterial().getEstoque().get(0).getLocal(),cm.getQuantidadeDevolvida(),EstoqueSingleton.DEVOLUCAO_KIT_FINALIZAR,UtilsFrontEnd.getProfissionalLogado());
+             
+                }else {
+                    cm.setStatus(EmprestimoKit.NAOUTILIZADO);                
+                    Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "KIT_NAO_UTILIZADO");
+                    EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,cm.getMaterial().getEstoque().get(0).getLocal(),cm.getQuantidadeDevolvida(),EstoqueSingleton.DEVOLUCAO_KIT_NAO_UTILIZADO,UtilsFrontEnd.getProfissionalLogado());
+               }
+           // }
             this.setEntity(cm);
             this.actionPersistLowProfile(event);
             //MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, cm.getMaterial(), UtilsFrontEnd.getProfissionalLogado(), qtdDevolvida, cm.getMaterial().getQuantidadeAtual(), acao));
@@ -256,20 +260,27 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
 
     private void lavaMateriais(ActionEvent event) throws Exception {
         for (EmprestimoKit cm : this.getMateriais()) {
-            BigDecimal quantidadeDevolver;
-            quantidadeDevolver = cm.getQuantidade().subtract(cm.getQuantidadeDevolvida());
-            if (cm.getQuantidadeDevolvida().compareTo(cm.getQuantidade()) != 0) {// Foi solicitado material e devolvido alguma coisa
-                MaterialSingleton.getInstance().getBo().refresh(cm.getMaterial());
+         //   BigDecimal quantidadeDevolver;
+        //    quantidadeDevolver = cm.getQuantidade().subtract(cm.getQuantidadeDevolvida());
+            if (cm.getQuantidadeDevolvida().compareTo(new BigDecimal(0)) > 0) {// enviando para lavagem, se nao tiver nada material 
+              //  MaterialSingleton.getInstance().getBo().refresh(cm.getMaterial());
                 //cm.getMaterial().setQuantidadeAtual(cm.getMaterial().getQuantidadeAtual().add(quantidadeDevolver));
                 
                 Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_KIT_LAVAGEM");
-                EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,cm.getMaterial().getEstoque().get(0).getLocal(),cm.getQuantidade(),EstoqueSingleton.DEVOLUCAO_KIT_LAVAGEM,UtilsFrontEnd.getProfissionalLogado());
+                Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "ENTREGA_LAVAGEM_MANUAL");
                 
-                MaterialSingleton.getInstance().getBo().persist(cm.getMaterial());
+                
+                EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,localDestino,cm.getQuantidadeDevolvida(),EstoqueSingleton.DEVOLUCAO_KIT_LAVAGEM,UtilsFrontEnd.getProfissionalLogado());
+                
+             //   MaterialSingleton.getInstance().getBo().persist(cm.getMaterial());
                 cm.setQuantidade(cm.getQuantidadeDevolvida());
               //  MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, cm.getMaterial(), UtilsFrontEnd.getProfissionalLogado(), quantidadeDevolver, cm.getMaterial().getQuantidadeAtual(),
                //         MaterialLog.DEVOLUCAO_KIT_LAVAGEM));
+               
             }
+            //else {
+                
+           // }
             cm.setStatus(EmprestimoKit.UTILIZADO_KIT);
             if (cm.getQuantidadeDevolvida().compareTo(BigDecimal.ZERO) > 0) {
                 new LavagemMB().lavar(cm, cm.getQuantidadeDevolvida().longValue());
@@ -456,7 +467,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
         KitItem kitItem = this.kitItensPendentes.get(0);
         
         try {
-            this.setEstoquesDisponiveis(EstoqueSingleton.getInstance().getBo().listAllDisponiveisByEmpresaItem(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),kitItem.getItem()));
+            this.setEstoquesDisponiveis(EstoqueSingleton.getInstance().getBo().listAllByEmpresaAndItem (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),kitItem.getItem()));
         } catch (Exception e) {
             log.error("Erro no carregaItem", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);

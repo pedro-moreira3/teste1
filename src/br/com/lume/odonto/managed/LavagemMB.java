@@ -439,7 +439,9 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                 l.setDevolvidoPorProfissional(profisionalLogado);
                 l.setStatus(Lavagem.DEVOLVIDO);
                 l.setDataDevolucao(Calendar.getInstance().getTime());
-                LavagemSingleton.getInstance().getBo().persist(l);
+                LavagemSingleton.getInstance().getBo().persist(l);              
+                
+                
             }
             this.setLavagemSelecionadas(null);
             this.geraListaSolicitadas();

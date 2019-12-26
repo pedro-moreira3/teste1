@@ -17,12 +17,20 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.emprestimoKit.EmprestimoKitSingleton;
+import br.com.lume.emprestimoUnitario.EmprestimoUnitarioSingleton;
+import br.com.lume.esterilizacao.EsterilizacaoSingleton;
+import br.com.lume.esterilizacaoKit.EsterilizacaoKitSIngleton;
 import br.com.lume.estoque.EstoqueSingleton;
 import br.com.lume.item.ItemSingleton;
+import br.com.lume.lavagemKit.LavagemKitSingleton;
 import br.com.lume.material.MaterialSingleton;
 import br.com.lume.odonto.entity.EmprestimoKit;
+import br.com.lume.odonto.entity.EmprestimoUnitario;
+import br.com.lume.odonto.entity.Esterilizacao;
+import br.com.lume.odonto.entity.EsterilizacaoKit;
 import br.com.lume.odonto.entity.Estoque;
 import br.com.lume.odonto.entity.Item;
+import br.com.lume.odonto.entity.LavagemKit;
 import br.com.lume.odonto.entity.MateriaisEmprestados;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialEmprestado;
@@ -68,16 +76,22 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
         try {
             itemDetalhamento = ItemSingleton.getInstance().getBo().find(relatorioEstoqueMinimo.getId()); 
             if(itemDetalhamento != null) {
-                detalhes = EstoqueSingleton.getInstance().getBo().listAllByEmpresaAndItem(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),itemDetalhamento);
+                detalhes = EstoqueSingleton.getInstance().getBo().listAllDisponiveisByEmpresaItemAndQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),itemDetalhamento,new BigDecimal(0));
                 this.quantidadeTotal = new BigDecimal(0);
                 this.valorTotal = new BigDecimal(0);
-                this.custoMedio = new BigDecimal(0);
+                this.custoMedio = new BigDecimal(0);               
                 for (Estoque estoque : detalhes) {
                     this.quantidadeTotal = estoque.getQuantidade().add(this.quantidadeTotal);
                     this.valorTotal = this.valorTotal.add(estoque.getMaterial().getValor().multiply(estoque.getQuantidade()));
                     //montando todos os emprestimos                  
-                }          
+                }        
+               
+                    this.emprestados = new ArrayList<MateriaisEmprestados>();
+                
                 montaKitsEmprestados(detalhes);
+                montaUnitarioEmprestados(detalhes);
+                montaEmLavagem(detalhes);
+                montaEmEsterilizacao(detalhes);
                 //TODO unitario, lavagel, esterilizacao, 
                 if(this.valorTotal.compareTo(BigDecimal.ZERO) != 0 && this.quantidadeTotal.compareTo(BigDecimal.ZERO) != 0) {                   
                     this.custoMedio = this.valorTotal.divide(this.quantidadeTotal, MathContext.DECIMAL32);    
@@ -96,9 +110,9 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
         for (Estoque estoque : estoques) {
             List<EmprestimoKit> kits;
             try {
-                kits = EmprestimoKitSingleton.getInstance().getBo().listByEmpresaAndMaterial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),estoque.getMaterial());
+                kits = EmprestimoKitSingleton.getInstance().getBo().listByEmpresaAndMaterialComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),estoque.getMaterial());
                 if(kits != null && !kits.isEmpty()) {
-                    this.emprestados = new ArrayList<MateriaisEmprestados>();
+         
                     for (EmprestimoKit kit : kits) {
                         //TODO verificar se sao esses os status emprestados mesmo kit.getReservaKit().getStatus().equals("PE") kit.getReservaKit().getStatus().equals("EN")       
                         //para colocar nesse if
@@ -107,8 +121,11 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                             emprestado.setLocal("Kit emprestado");
                             emprestado.setDetalhes(kit.getReservaKit().getDetalhamento());
                             emprestado.setQuantidade(kit.getQuantidade());
-                            //TODO trocar para objetos local?                              
-                            this.emprestados.add(emprestado);
+                            //TODO trocar para objetos local?   
+                            if(!this.emprestados.contains(emprestado)) {
+                                this.emprestados.add(emprestado);    
+                            }
+                            
                         }  
                     
                     }
@@ -118,10 +135,116 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }           
-        }
-    
+        }    
             
     }
+    
+    public void montaUnitarioEmprestados(List<Estoque> estoques) {
+        for (Estoque estoque : estoques) {
+            List<EmprestimoUnitario> unitarios;
+            try {
+                unitarios = EmprestimoUnitarioSingleton.getInstance().getBo().listByEmpresaAndMaterialComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),estoque.getMaterial());
+                if(unitarios != null && !unitarios.isEmpty()) {
+                    for (EmprestimoUnitario item : unitarios) {
+                        //TODO verificar se sao esses os status emprestados mesmo kit.getReservaKit().getStatus().equals("PE") kit.getReservaKit().getStatus().equals("EN")       
+                        //para colocar nesse if
+                        if(item.getMaterial().getExcluido().equals("N")) {
+                            MateriaisEmprestados emprestado = new MateriaisEmprestados();
+                            emprestado.setLocal("Empréstimo unitário");
+                            emprestado.setDetalhes(item.getDetalhamento());
+                            emprestado.setQuantidade(item.getQuantidade());
+                            //TODO trocar para objetos local?                              
+                            if(!this.emprestados.contains(emprestado)) {
+                                this.emprestados.add(emprestado);    
+                            }
+                        }  
+                    
+                    }
+               
+                }
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }           
+        }    
+            
+    }
+    
+    public void montaEmLavagem(List<Estoque> estoques) {
+        for (Estoque estoque : estoques) {
+            List<LavagemKit> lavagens = new ArrayList<LavagemKit>();
+            try {
+                List<LavagemKit> lavagensKit =  LavagemKitSingleton.getInstance().getBo().listKitByEmpresaAndMaterialComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),estoque.getMaterial());
+                List<LavagemKit> lavagensItens = LavagemKitSingleton.getInstance().getBo().listUnitarioByEmpresaAndMaterialComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),estoque.getMaterial());
+                if(lavagensKit != null) {
+                    lavagens.addAll(lavagensKit);
+                }
+                if(lavagensItens != null) {
+                    lavagens.addAll(lavagensItens);
+                }
+                if(lavagens != null && !lavagens.isEmpty()) {
+                    for (LavagemKit item : lavagens) {
+                        //TODO verificar se sao esses os status emprestados mesmo kit.getReservaKit().getStatus().equals("PE") kit.getReservaKit().getStatus().equals("EN")       
+                        //para colocar nesse if
+                        if(item.getExcluido().equals("N")) {
+                            MateriaisEmprestados emprestado = new MateriaisEmprestados();
+                            emprestado.setLocal("Item em lavagem");
+                            emprestado.setDetalhes(item.getDetalhamento());
+                            emprestado.setQuantidade(new BigDecimal(item.getQuantidade()) );
+                            //TODO trocar para objetos local?                              
+                            if(!this.emprestados.contains(emprestado)) {
+                                this.emprestados.add(emprestado);    
+                            }
+                        }  
+                    
+                    }
+               
+                }
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }           
+        }    
+            
+    }
+    
+    public void montaEmEsterilizacao(List<Estoque> estoques) {
+        for (Estoque estoque : estoques) {
+            List<EsterilizacaoKit> esterilizacoes = new ArrayList<EsterilizacaoKit>();
+            try {
+                List<EsterilizacaoKit> estKit = EsterilizacaoKitSIngleton.getInstance().getBo().listKitByEmpresaAndMaterialComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),estoque.getMaterial());
+                List<EsterilizacaoKit> estItens = EsterilizacaoKitSIngleton.getInstance().getBo().listUnitarioByEmpresaAndMaterialComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),estoque.getMaterial());
+                if(estKit != null) {
+                    esterilizacoes.addAll(estKit);
+                }
+                if(estItens != null) {
+                    esterilizacoes.addAll(estItens);
+                }
+                if(esterilizacoes != null && !esterilizacoes.isEmpty()) {
+                    for (EsterilizacaoKit item : esterilizacoes) {
+                        //TODO verificar se sao esses os status emprestados mesmo kit.getReservaKit().getStatus().equals("PE") kit.getReservaKit().getStatus().equals("EN")       
+                        //para colocar nesse if
+                        if(item.getExcluido().equals("N")) {
+                            MateriaisEmprestados emprestado = new MateriaisEmprestados();
+                            emprestado.setLocal("Item em esterilização");
+                            emprestado.setDetalhes(item.getDetalhamento());
+                            emprestado.setQuantidade(new BigDecimal(item.getQuantidade()) );
+                            //TODO trocar para objetos local?                              
+                            if(!this.emprestados.contains(emprestado)) {
+                                this.emprestados.add(emprestado);    
+                            }
+                        }  
+                    
+                    }
+               
+                }
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }           
+        }    
+            
+    }    
     
     public void exportarTabela(String type) {
         exportarTabela("Estoque mínimo", tabelaEstoque, type);

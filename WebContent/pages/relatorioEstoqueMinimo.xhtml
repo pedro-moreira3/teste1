@@ -12,17 +12,20 @@
 	
 			<p:dialog appendTo=":lume:" maximizable="false" modal="true"
 			minimizable="false" resizable="false" responsive="true"
-			widgetVar="dlgDetalhes" width="80%" id="dlgDetalhes">
+			widgetVar="dlgDetalhes" width="80%" id="dlgDetalhes"
+			onHide="PF('dlgDetalhes').toggleMaximize();"
+			onShow="PF('dlgDetalhes').toggleMaximize();"			
+			>
 			<f:facet name="header">
 				<p:outputPanel id="viewRetornoHeader">
 					 <h:outputText value="Detalhes do Item  #{relatorioEstoqueMinimoMB.itemDetalhamento.descricao}" />				
 				</p:outputPanel>
 			</f:facet>
-			<p:scrollPanel mode="native"
-				style="position: relative; width: 100%; height: 100%;">				
-			<p:outputPanel id="viewRetorno">
-				<div class="ui-g ui-fluid">
-					<div class="ui-g-12 ui-lg-12">
+			
+			<p:outputPanel id="viewRetorno" style="max-height: calc(100% - 54px); height: calc(100% - 54px);"
+			styleClass="remove12ColPaddingSide">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: 100%; height: 100%;">	
 	                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtDetalhes" value="#{relatorioEstoqueMinimoMB.detalhes}" var="estoque" rows="15" paginator="true" 
 	                        rowKey="#{estoque}" paginatorPosition="bottom" >	                      
 	                        <f:facet name="header">Materiais</f:facet>
@@ -126,13 +129,9 @@
 	                            rendered="#{materialMB.estoqueCompleto}">
 	                            <h:outputText value="#{emprestado.detalhes}" />
 	                        </p:column>                                           
-	                    </p:dataTable> 	                   
-										           
-					</div>
-				</div>
+	                    </p:dataTable> 	
+				</p:scrollPanel>	
 			</p:outputPanel>
-			</p:scrollPanel>
-			<p:separator styleClass="SeparatorFull" />
 			<p:panelGrid columns="2" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 				<p:commandButton icon="White fa fa-close" value="Fechar"

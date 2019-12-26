@@ -37,14 +37,13 @@ import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.EmprestimoKit;
 import br.com.lume.odonto.entity.EmprestimoUnitario;
+import br.com.lume.odonto.entity.Estoque;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.PedidoItem;
-//import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoCusto;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
-//import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 
 @ManagedBean
@@ -63,7 +62,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
 
     private List<PedidoItem> pedidoItens = new ArrayList<>();
 
-    private List<Material> materiaisSelecionado;
+    private Estoque estoqueSelecionado;
 
     private Item item;
 
@@ -77,7 +76,9 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
 
     private BigDecimal quantidade;
 
-    private List<Material> materiaisDisponiveis;
+ //  private List<Material> materiaisDisponiveis;
+    
+    private List<Estoque> estoquesDisponiveis;
 
     private List<EmprestimoUnitario> emprestimoUnitarios, emprestimoUnitariosDevolucao;
 
@@ -103,20 +104,6 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
     
     private boolean fecharDialog;
 
-  //  private MaterialBO materialBO;
-
-   // private AgendamentoPlanoTratamentoProcedimentoBO agendamentoPlanoTratamentoProcedimentoBO;
-
- //   private AgendamentoBO agendamentoBO;
-
-//    private ItemBO itemBO;
-
-  //  private ProfissionalBO profissionalBO;
-
- //   private PlanoTratamentoProcedimentoCustoBO planoTratamentoProcedimentoCustoBO;
-
- //   private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
-
     private boolean enableSalvar;
     
     private boolean editar;
@@ -125,17 +112,9 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
     private DataTable tabelaEmprestimo;
     private DataTable tabelaEmprestimoUnitario;
 
-//    private MaterialLogBO materialLogBO = new MaterialLogBO();
-
     public EmprestimoUnitarioMB() {
         super(EmprestimoUnitarioSingleton.getInstance().getBo());
-     //   agendamentoPlanoTratamentoProcedimentoBO = new AgendamentoPlanoTratamentoProcedimentoBO();
-      //  agendamentoBO = new AgendamentoBO();
-     //   materialBO = new MaterialBO();
-    //    itemBO = new ItemBO();
-    //   profissionalBO = new ProfissionalBO();
-    //    planoTratamentoProcedimentoCustoBO = new PlanoTratamentoProcedimentoCustoBO();
-    //    planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
+
         this.setRoot(new DefaultTreeNode("", null));
         Item firstLevel = new Item();
         firstLevel.setDescricao("RAIZ");
@@ -160,10 +139,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
 
                 if (!quantidadeUtilizada.equals(this.getEntity().getQuantidade())) {// Foi solicitado material e devolvido uma parte ou o total
                     // Devolvendo sobras
-                    // Material material = materialBO.find(cm.getMaterial());
-                  //  MaterialSingleton.getInstance().getBo().refresh(getEntity().getMaterial());
-                    //this.getEntity().getMaterial().setQuantidadeAtual(this.getEntity().getMaterial().getQuantidadeAtual().add(quantidadeDevolvida));
-                  
+                
                     Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_UNITARIA");
                     EstoqueSingleton.getInstance().transferencia(this.getEntity().getMaterial(),localOrigem,this.getEntity().getMaterial().getEstoque().get(0).getLocal(),quantidadeDevolvida,EstoqueSingleton.DEVOLUCAO_UNITARIA,UtilsFrontEnd.getProfissionalLogado());
 
@@ -174,11 +150,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
                 }
                 this.getEntity().setStatus(EmprestimoKit.UTILIZADO_UNITARIO);
                 this.getbO().persist(this.getEntity());
-//                if (quantidadeDevolvida.doubleValue() != 0d && this.getEntity().getMaterial().getItem().getAplicacao().equals(Item.APLICACAO_DIRETA)) {
-//                    this.devolveCusto(quantidadeUtilizada);
-//                }
-               // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, getEntity(), getEntity().getMaterial(), UtilsFrontEnd.getProfissionalLogado(), quantidadeDevolvida,
-                //        this.getEntity().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_UNITARIA_DEVOLUCAO));
+
                 super.actionNew(event);
                 this.geraLista();
                 this.setEnableDevolucao(false);
@@ -189,51 +161,6 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
             }
         }
     }
-
-//    private void devolveCusto(BigDecimal quantidadeUtilizada) {
-//        try {
-//            PlanoTratamentoProcedimentoCusto ptpCusto =  PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().findByEmprestimoUnitario(this.getEntity());
-//            BigDecimal valorCusto = this.getEntity().getMaterial().getValor().multiply(quantidadeUtilizada);
-//            ptpCusto.setValor(valorCusto);
-//            PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().merge(ptpCusto);
-//        } catch (Exception e) {
-//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-//            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-//        }
-//    }
-
-//    public void actionLavagemMaterial(EmprestimoUnitario emprestimo) {
-//        this.setEntity(emprestimo);
-//        if (this.getEntity().getQuantidade().longValue() < this.getQuantidadeDevolvida().longValue()) {
-//            this.addWarn(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "",true);
-//        } else {
-//            try {
-//                // O que nÃ£o vai pra lavagem Ã© devolvido
-//                BigDecimal quantidadeDevolver = this.getEntity().getQuantidade().subtract(this.getQuantidadeDevolvida());
-//                // Algo a devolver?
-//                if (quantidadeDevolver.compareTo(BigDecimal.ZERO) != 0) {
-//                    MaterialSingleton.getInstance().getBo().refresh(getEntity().getMaterial());
-//                    this.getEntity().getMaterial().setQuantidadeAtual(this.getEntity().getMaterial().getQuantidadeAtual().add(quantidadeDevolver));
-//                    MaterialSingleton.getInstance().getBo().persist(this.getEntity().getMaterial());// Atualizando estoque
-//                    this.getEntity().setQuantidade(quantidadeDevolvida);
-//                    MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, getEntity(), getEntity().getMaterial(), UtilsFrontEnd.getProfissionalLogado(), quantidadeDevolver,
-//                            getEntity().getMaterial().getQuantidadeAtual(), MaterialLog.DEVOLUCAO_UNITARIA_LAVAGEM));
-//                }
-//                this.getEntity().setStatus(EmprestimoKit.UTILIZADO_UNITARIO);
-//                if (quantidadeDevolvida.compareTo(BigDecimal.ZERO) > 0) {
-//                    new LavagemMB().lavar(this.getEntity(), quantidadeDevolvida.longValue());
-//                }
-//                this.getbO().persist(this.getEntity());// Atualizando emprestimoUnitario
-//                //super.actionNew(event);
-//                this.geraLista();
-//                this.setEnableDevolucao(false);
-//                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
-//            } catch (Exception e) {
-//                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
-//                log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
-//            }
-//        }
-//    }
 
     public void atualizaTela() {
         this.setEnableDevolucao(true);
@@ -257,11 +184,11 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
     public void actionPersist(ActionEvent event) {
         try {         
             if (this.existeMaterialAplicacaoDireta() && (planoTratamentoProcedimentoAgendamentos == null || planoTratamentoProcedimentoAgendamentos.isEmpty())) {
-                this.addError("Material do tipo direto, Ã© obrigatÃ³rio selecionar o agendamento e procedimento.", "",true);
+                this.addError("Material do tipo direto, é obrigatório selecionar o agendamento e procedimento.", "",true);
             } else if (this.existeMaterialAplicacaoDireta() && planoTratamentoProcedimentoAgendamentos != null && planoTratamentoProcedimentoAgendamentos.size() > 1) {
-                this.addError("Material do tipo direto, Ã© obrigatÃ³rio selecionar apenas um procedimento por agendamento.", "",true);
-            } else  if(materiaisSelecionado == null) {
-                this.addError("Selecione um item na tabela de Materias DisponÃ­veis", "",true);   
+                this.addError("Material do tipo direto, é obrigatório selecionar apenas um procedimento por agendamento.", "",true);
+            } else  if(estoqueSelecionado == null) {
+                this.addError("Selecione um item na tabela de Materias Disponíeis", "",true);   
             }else {
                 if (this.getEntity().getId() == 0) {
                     agendamento = this.getEntity().getAgendamento();
@@ -270,7 +197,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
                     this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                     this.getEntity().setDataEntrega(new Date());
                     this.getEntity().setProfissional(profissional);
-                    this.getEntity().setMaterial(materiaisSelecionado.get(materiaisSelecionado.size() - 1));
+                    this.getEntity().setMaterial(estoqueSelecionado.getMaterial());
                     this.getEntity().setStatus(ENTREGUE);
                     if(agendamento != null) {
                         this.getEntity().setAgendamento(agendamento);    
@@ -290,8 +217,8 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
                     this.getbO().persist(this.getEntity());
                 }
                 this.actionNewCopiaAntigo();
-                this.setMateriaisSelecionado(null);
-                this.setMateriaisDisponiveis(null);
+                this.setEstoqueSelecionado(null);
+                this.setEstoquesDisponiveis(null);
                 this.setEnableSalvar(false);
                 setData(null);
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
@@ -314,9 +241,9 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
         setDigitacao(emprestimoUnitario.getMaterial().getItem().getDescricao());
         setQuantidade(emprestimoUnitario.getQuantidade());
         setData(emprestimoUnitario.getDataEntrega());
-        if(this.materiaisSelecionado == null && emprestimoUnitario.getMaterial() != null) {
-            this.materiaisSelecionado = new ArrayList<Material>();
-            this.materiaisSelecionado.add(emprestimoUnitario.getMaterial());    
+        if(this.estoqueSelecionado == null && emprestimoUnitario.getMaterial() != null) {
+            this.estoqueSelecionado = new Estoque();
+            //this.estoquese materiaisSelecionado.add(emprestimoUnitario.getMaterial());    
         }
         listaAgendamentos();
         carregaProcedimentos();
@@ -324,14 +251,12 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
     } 
 
     private boolean existeMaterialAplicacaoDireta() {
-        if(materiaisSelecionado == null) {
+        if(estoqueSelecionado == null) {
             return false;
         }
-        for (Material m : materiaisSelecionado) {
-            if (m.getItem().getAplicacao().equals(Item.APLICACAO_DIRETA)) {
-                return true;
-            }
-        }
+        if (estoqueSelecionado.getMaterial().getItem().getAplicacao().equals(Item.APLICACAO_DIRETA)) {
+           return true;
+       }        
         return false;
     }
 
@@ -359,17 +284,8 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
     }
 
     public void actionVerificaSalvar() {
-        if (materiaisSelecionado != null && !materiaisSelecionado.isEmpty()) {
-            BigDecimal total = new BigDecimal(0);
-            for (Material m : materiaisSelecionado) {
-             //   MaterialSingleton.getInstance().getBo().refresh(m);
-                try {
-                    total = total.add(EstoqueSingleton.getInstance().getBo().findByMaterialLocal(m,m.getEstoque().get(0).getLocal()).getQuantidade());
-                } catch (Exception e) {                 
-                    e.printStackTrace();
-                }
-            }
-            if (quantidade != null && total.doubleValue() >= quantidade.doubleValue()) {
+        if (estoqueSelecionado != null) {
+            if (quantidade != null && estoqueSelecionado.getQuantidade().doubleValue() >= quantidade.doubleValue()) {
                 this.setEnableSalvar(true);
             } else {
                 this.setEnableSalvar(false);
@@ -379,72 +295,27 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
         }
     }
 
-//    private void persistCusto() {
-//        try {
-//            for (Material m : materiaisSelecionado) {
-//                if (m.getItem().getAplicacao().equals(Item.APLICACAO_DIRETA)) {
-//                    Date d = Calendar.getInstance().getTime();
-//                    BigDecimal valorCusto = m.getValor().multiply(this.getQuantidade());
-//                    AgendamentoPlanoTratamentoProcedimento ag = planoTratamentoProcedimentoAgendamentos.get(0);
-//                    PlanoTratamentoProcedimentoCusto ptpc = new PlanoTratamentoProcedimentoCusto(this.getEntity(), ag.getPlanoTratamentoProcedimento(), d, d, valorCusto, m.getItem().getDescricao());
-//                    PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().persist(ptpc);
-//                    PlanoTratamentoProcedimento planoTratamentoProcedimento = ag.getPlanoTratamentoProcedimento();
-//                    if (planoTratamentoProcedimento.isFinalizado()) {
-//                        planoTratamentoProcedimento.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(planoTratamentoProcedimento,
-//                                UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
-//                        PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(planoTratamentoProcedimento);
-//                    }
-//                    return;
-//                }
-//            }
-//        } catch (Exception e) {
-//            log.error("Erro no actionPersistCusto do " + this.getEntity().getClass().getName(), e);
-//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
-//        }
-//    }
+
 
     private void retiraQuantidade() throws Exception {
-        BigDecimal quantidadeRetirar = quantidade;
-       // List<MaterialLog> logs = new ArrayList<>();
-        for (Material m : materiaisSelecionado) {
-            if (quantidadeRetirar.doubleValue() != 0d) {
-             //   BigDecimal quantidadeRetirada = new BigDecimal(0d);
-
-             //   if (m.getQuantidadeAtual().doubleValue() >= quantidadeRetirar.doubleValue()) {
-                   // MaterialSingleton.getInstance().getBo().refresh(m);
-               //     m.setQuantidadeAtual(m.getQuantidadeAtual().subtract(quantidadeRetirar));
-               //     quantidadeRetirada = quantidadeRetirar;
-               //     quantidadeRetirar = new BigDecimal(0);
-              //  } else {
-               //     quantidadeRetirar = quantidadeRetirar.subtract(m.getQuantidadeAtual());
-                //    quantidadeRetirada = m.getQuantidadeAtual();
-
-               //     m.setQuantidadeAtual(new BigDecimal(0));
-              //  }                
-                
-                Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "EMPRESTIMO_UNITARIO");                    
-                EstoqueSingleton.getInstance().transferencia(m,m.getEstoque().get(0).getLocal(),localDestino,quantidadeRetirar,EstoqueSingleton.EMPRESTIMO_UNITARIO,UtilsFrontEnd.getProfissionalLogado());
-              
-                
-                
-                m.setDataUltimaUtilizacao(Calendar.getInstance().getTime());
-                MaterialSingleton.getInstance().getBo().persist(m);
-              //  logs.add(new MaterialLog(null, getEntity(), m, UtilsFrontEnd.getProfissionalLogado(), quantidadeRetirada.multiply(new BigDecimal(-1)), m.getQuantidadeAtual(),
-             //           MaterialLog.EMPRESTIMO_UNITARIO));
-            }//
+        if (quantidade.doubleValue() != 0d) {   
+            Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "EMPRESTIMO_UNITARIO");                    
+            EstoqueSingleton.getInstance().transferencia(estoqueSelecionado.getMaterial(),estoqueSelecionado.getLocal(),localDestino,quantidade,EstoqueSingleton.EMPRESTIMO_UNITARIO,UtilsFrontEnd.getProfissionalLogado());  
+            estoqueSelecionado.getMaterial().setDataUltimaUtilizacao(Calendar.getInstance().getTime());
+            MaterialSingleton.getInstance().getBo().persist(estoqueSelecionado.getMaterial());           
         }
-       // return logs;
     }
 
     public void actionFindMateriais(ActionEvent event) {
         try {
             if (quantidade.intValue() != 0) {
-                materiaisDisponiveis = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(item, quantidade.intValue(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                if (materiaisDisponiveis.isEmpty() || materiaisDisponiveis == null) {
+              //  materiaisDisponiveis = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(item, quantidade.intValue(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                estoquesDisponiveis = EstoqueSingleton.getInstance().getBo().listAllDisponiveisByEmpresaItemAndQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), item, quantidade);
+                if (estoquesDisponiveis.isEmpty() || estoquesDisponiveis == null) {
                     this.addWarn(OdontoMensagens.getMensagem("emprestimoUnitario.materiais.vazio"), "",true);
                 }
             } else {
-                materiaisDisponiveis = new ArrayList<>();
+                estoquesDisponiveis = new ArrayList<>();
                 this.addWarn(OdontoMensagens.getMensagem("emprestimoUnitario.quantidade.vazio"), "",true);
             }
         } catch (Exception e) {
@@ -467,18 +338,11 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
         this.filtraItem(this.getDigitacao());
         this.setSelected();
         this.carregaProcedimentos();
-//        try {
-//            materiaisDisponiveis = new ArrayList<>();
-//            Material m = this.getEntity().getMaterial();
-//            m.setQuantidade(this.getEntity().getQuantidade());
-//            materiaisDisponiveis.add(m);
-//        } catch (Exception e) {
-//            log.error("Erro no findMaterial", e);
-//        }
+
     }
 
     public List<String> filtraItem(String digitacao) {
-        materiaisDisponiveis = new ArrayList<>();
+        estoquesDisponiveis = new ArrayList<>();
         this.setDigitacao(digitacao);
         this.filtraItens();
         return this.convert(this.getItens());
@@ -704,14 +568,6 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
         this.quantidade = quantidade;
     }
 
-    public List<Material> getMateriaisDisponiveis() {
-        return materiaisDisponiveis;
-    }
-
-    public void setMateriaisDisponiveis(List<Material> materiaisDisponiveis) {
-        this.materiaisDisponiveis = materiaisDisponiveis;
-    }
-
     public List<EmprestimoUnitario> getEmprestimoUnitarios() {
         return emprestimoUnitarios;
     }
@@ -892,15 +748,6 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
     public void setEnableSalvar(boolean enableSalvar) {
         this.enableSalvar = enableSalvar;
     }
-
-    public List<Material> getMateriaisSelecionado() {
-        return materiaisSelecionado;
-    }
-
-    public void setMateriaisSelecionado(List<Material> materiaisSelecionado) {
-        this.materiaisSelecionado = materiaisSelecionado;
-    }
-
     
     public boolean isEditar() {
         return editar;
@@ -935,5 +782,25 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
 
     public void setTabelaEmprestimoUnitario(DataTable tabelaEmprestimoUnitario) {
         this.tabelaEmprestimoUnitario = tabelaEmprestimoUnitario;
+    }
+
+    
+    public List<Estoque> getEstoquesDisponiveis() {
+        return estoquesDisponiveis;
+    }
+
+    
+    public void setEstoquesDisponiveis(List<Estoque> estoquesDisponiveis) {
+        this.estoquesDisponiveis = estoquesDisponiveis;
+    }
+
+    
+    public Estoque getEstoqueSelecionado() {
+        return estoqueSelecionado;
+    }
+
+    
+    public void setEstoqueSelecionado(Estoque estoqueSelecionado) {
+        this.estoqueSelecionado = estoqueSelecionado;
     }
 }

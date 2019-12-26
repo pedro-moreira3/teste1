@@ -70,7 +70,7 @@
                         		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="20%" headerText="Descrição">
                             <h:outputText value="#{material.item.descricao}" title="#{material.id}" />
                         </p:column>
-                        <p:column filterBy="#{material.estoque.locais}" sortBy="#{material.locais}"
+                        <p:column filterBy="#{material.locais}" sortBy="#{material.locais}"
                         		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="8%" headerText="Local"
                             rendered="#{materialMB.estoqueCompleto}">
                             <h:outputText value="#{material.locais}" />
