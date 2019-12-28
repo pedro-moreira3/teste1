@@ -69,9 +69,9 @@ li.orcamento-li {
 				<p:panelGrid columns="2" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 					<p:commandButton id="newOrtodontia" icon="White fa fa-file-o"
-						value="Novo Plano Ortodôntico" actionListener="#{ortodontiaMB.actionNew}"
-						process="@this" oncomplete="PF('dlgPlanoOrtodontico').show()" immediate="true"
-						 />
+						value="Novo Plano Ortodôntico"
+						actionListener="#{ortodontiaMB.actionNew}" process="@this"
+						oncomplete="PF('dlgPlanoOrtodontico').show()" immediate="true" />
 				</p:panelGrid>
 
 				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
@@ -329,10 +329,12 @@ li.orcamento-li {
 									columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
 									styleClass="ui-panelgrid-blank form-group ui-fluid"
 									style="border:0px none; background-color:transparent;">
-									<p:outputLabel for="descricaoPlano" value="Descrição do Plano : " />
-									<p:inputText id="descricaoPlano" value="#{ortodontiaMB.entity.descricao}"
-										required="true" />
-									<p:outputLabel for="valorProcedimentoPadrao" value="Valor procedimento : " />
+									<p:outputLabel for="descricaoPlano"
+										value="Descrição do Plano : " />
+									<p:inputText id="descricaoPlano"
+										value="#{ortodontiaMB.entity.descricao}" required="true" />
+									<p:outputLabel for="valorProcedimentoPadrao"
+										value="Valor procedimento : " />
 									<p:inputNumber id="valorProcedimentoPadrao"
 										value="#{ortodontiaMB.entity.procedimentoPadrao.valor}"
 										required="true" maxlength="13" maxValue="9999999999.99"
@@ -344,7 +346,7 @@ li.orcamento-li {
 										value="#{ortodontiaMB.entity.bconvenio}"
 										rendered="#{ortodontiaMB.paciente.convenio != null}"
 										disabled="#{ortodontiaMB.entity.id != null or ortodontiaMB.entity.id > 0}">
-										<p:ajax process="@this" update="valorProcedimentoPadrao" 
+										<p:ajax process="@this" update="valorProcedimentoPadrao"
 											listener="#{ortodontiaMB.atualizaValorProcedimento()}" />
 									</p:selectBooleanCheckbox>
 									<p:column rendered="#{ortodontiaMB.paciente.convenio == null}" />
@@ -353,21 +355,24 @@ li.orcamento-li {
 									<p:inputText value="#{ortodontiaMB.entity.meses}" id="meses"
 										required="true"
 										disabled="#{ortodontiaMB.entity.id != null or ortodontiaMB.entity.id > 0}">
-										<p:ajax event="keyup" process="inicioTratamento,@this" 
-											update=""
-											listener="#{ortodontiaMB.actionCalculaMeses}" delay="0" />
-									</p:inputText>									
-									<p:outputLabel for="inicioTratamento" value="Início do tratamento : " />
+										<p:ajax event="keyup" process="inicioTratamento,@this"
+											update="" listener="#{ortodontiaMB.actionCalculaMeses}"
+											delay="0" />
+									</p:inputText>
+									<p:outputLabel for="inicioTratamento"
+										value="Início do tratamento : " />
 									<p:calendar id="inicioTratamento" required="true"
 										value="#{ortodontiaMB.entity.inicio}" pattern="dd/MM/yyyy"
 										showWeeksBar="false" locale="#{lumeSecurity.locale}"
 										timeZone="#{lumeSecurity.timeZone}" navigator="true"
 										yearRange="-0:+1" mask="true"
 										disabled="#{ortodontiaMB.entity.id != null or ortodontiaMB.entity.id > 0}">
-										<p:ajax process="@this,meses" event="dateSelect" listener="#{ortodontiaMB.actionCalculaMeses}"/>
-   										<p:ajax process="@this,meses" event="change" listener="#{ortodontiaMB.actionCalculaMeses}"/>
+										<p:ajax process="@this,meses" event="dateSelect"
+											listener="#{ortodontiaMB.actionCalculaMeses}" />
+										<p:ajax process="@this,meses" event="change"
+											listener="#{ortodontiaMB.actionCalculaMeses}" />
 									</p:calendar>
-								
+
 									<p:outputLabel value="Previsão de fim do tratamento : " />
 									<p:inputText id="fimTratamento"
 										value="#{ortodontiaMB.entity.fimStr}" readonly="true"
@@ -377,8 +382,10 @@ li.orcamento-li {
 									columnClasses="ui-grid-col-3,ui-grid-col-5,ui-grid-col-2,ui-grid-col-2"
 									layout="grid" styleClass="ui-panelgrid-blank"
 									style="border:0px none; background-color:transparent;">
-									<p:outputLabel value="Procedimento Ortodôntico : " for="procedimentoPadrao"/>
-									<p:autoComplete dropdown="true" queryDelay="1000" required="true"
+									<p:outputLabel value="Procedimento Ortodôntico : "
+										for="procedimentoPadrao" />
+									<p:autoComplete dropdown="true" queryDelay="1000"
+										required="true"
 										value="#{ortodontiaMB.entity.procedimentoPadrao}"
 										id="procedimentoPadrao"
 										completeMethod="#{ortodontiaMB.geraSugestoesProcedimentoOrtodontico}"
@@ -395,7 +402,8 @@ li.orcamento-li {
 							</p:fieldset>
 							<br />
 
-							<p:fieldset legend="Diagnósticos" toggleable="true">
+							<p:fieldset legend="Diagnósticos" toggleable="true"
+								rendered="#{false}">
 								<p:panelGrid columns="2"
 									columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid"
 									styleClass="ui-panelgrid-blank"
@@ -481,7 +489,7 @@ li.orcamento-li {
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
 										layout="grid" styleClass="ui-panelgrid-blank"
 										style="border:0px none; background-color:transparent;">
-										
+
 										<ui:remove>
 											<p:outputLabel value="Procedimento Extra : " />
 											<h:panelGroup style="display: flex !important">
@@ -499,8 +507,9 @@ li.orcamento-li {
 												<p:inputNumber id="valorProcedimentoExtra"
 													value="#{ortodontiaMB.valorProcedimentoExtra}"
 													required="#{ortodontiaMB.procedimentoExtra != null}"
-													maxlength="13" maxValue="9999999999.99" decimalSeparator=","
-													symbol="R$ " thousandSeparator="." styleClass="fixaAbaixo"
+													maxlength="13" maxValue="9999999999.99"
+													decimalSeparator="," symbol="R$ " thousandSeparator="."
+													styleClass="fixaAbaixo"
 													style="width: calc(40% - 33px - 5px) !important; margin-right: 5px !important;" />
 												<p:commandButton id="adicionarProcedimentoExtra"
 													icon="White fa fa-plus White"
@@ -513,7 +522,8 @@ li.orcamento-li {
 										<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 											id="dtProcedimentosOrtodontia" var="ptp"
 											value="#{ortodontiaMB.entity.planoTratamentoProcedimentos}"
-											rows="6" paginator="true" paginatorPosition="bottom" sortField="#{ptp.sequencial}"  sortBy="#{ptp.sequencial}">
+											rows="6" paginator="true" paginatorPosition="bottom"
+											sortField="#{ptp.sequencial}" sortBy="#{ptp.sequencial}">
 											<f:facet name="header">Procedimentos</f:facet>
 											<p:column styleClass="TexAlCenter" sortBy="#{ptp.sequencial}"
 												headerText="Nr." width="10%">
@@ -561,11 +571,12 @@ li.orcamento-li {
 												paginatorPosition="bottom">
 												<f:facet name="header">Orçamentos</f:facet>
 												<p:column width="120" headerText="Editar">
-													<p:commandButton  process="@this"
+													<p:commandButton process="@this"
 														actionListener="#{ortodontiaMB.actionEditOrcamento(o)}"
 														update=":lume:tabView:orcamentoPlanoOrtodontico, :lume:tabView:orcamentoPlanoOrtodonticoHeader, :lume:tabView:buttonsDlgOrcamentoOrtodonticoView"
 														onclick="PF('dlgOrcamentoPlanoOrtodontico').show();"
-														 styleClass="NavyButton" icon="fa fa-eye" title="Editar Dados" />
+														styleClass="NavyButton" icon="fa fa-eye"
+														title="Editar Dados" />
 													<p:commandButton icon="White fa fa-print" process="@this"
 														actionListener="#{ortodontiaMB.setOrcamentoSelecionado(o)}"
 														update=":lume:tabView:orcamentoIncludeOrtodontico"
@@ -632,7 +643,7 @@ li.orcamento-li {
 		</p:outputPanel>
 		<p:panelGrid columns="4" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton value="Salvar" id ="salvar"
+			<p:commandButton value="Salvar" id="salvar"
 				process="@this, :lume:tabView:planoOrtodontico"
 				actionListener="#{ortodontiaMB.actionPersist}"
 				icon="White fa fa-save White" styleClass="GreenButton"
