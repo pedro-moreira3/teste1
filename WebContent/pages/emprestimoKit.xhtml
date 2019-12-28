@@ -167,7 +167,7 @@
                         <p:fieldset legend="Materiais">
                             <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtItensPendentes" value="#{emprestimoKitMB.kitItensPendentes}" var="kitItemSelecionado" rows="7" paginator="true"
                                 selection="#{emprestimoKitMB.kitItemSelecionado}" selectionMode="single" rowKey="#{kitItemSelecionado}" paginatorPosition="bottom" binding="#{emprestimoKitMB.tabelaItens}">
-                                <p:ajax event="rowSelect" update=":lume:dtMateriaisDisponiveis, :lume:disponibiliza" listener="#{emprestimoKitMB.carregaItem}"
+                                <p:ajax event="rowSelect" update=":lume:dtMateriaisDisponiveis, :lume:disponibiliza" listener="#{emprestimoKitMB.carregaItem()}"
                                     process="@this" />
                                 <f:facet name="header">Itens Pendentes</f:facet>
                                 <p:column filterBy="#{kitItemSelecionado.item.descricaoLimpa}" sortBy="#{kitItemSelecionado.item.descricao}"
@@ -206,41 +206,40 @@
 								</h:panelGroup>
 							</p:panelGrid>
 
-							<p:dataTable filterDelay="1500"  reflow="true" emptyMessage=" " id="dtMateriaisDisponiveis" value="#{emprestimoKitMB.materiaisDisponiveis}" var="materiaisSelecionado" rows="7"
-                                paginator="true" selection="#{emprestimoKitMB.materiaisSelecionado}" paginatorPosition="bottom" rowKey="#{materiaisSelecionado.id}" binding="#{emprestimoKitMB.tabelaMateriais}">
+							<p:dataTable filterDelay="1500"  reflow="true" emptyMessage=" " id="dtMateriaisDisponiveis" value="#{emprestimoKitMB.estoquesDisponiveis}" var="estoqueSelecionado" rows="7"
+                                paginator="true" selection="#{emprestimoKitMB.estoqueSelecionado}" paginatorPosition="bottom" rowKey="#{estoqueSelecionado.id}" binding="#{emprestimoKitMB.tabelaMateriais}">
 
-                                <p:ajax event="rowSelect" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{emprestimoKitMB.actionVerificaDisponibiliza}" />
-                                <p:ajax event="rowSelectCheckbox" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{emprestimoKitMB.actionVerificaDisponibiliza}" />
-                                <p:ajax event="rowUnselectCheckbox" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{emprestimoKitMB.actionVerificaDisponibiliza}" />
+                                <p:ajax event="rowSelect" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{emprestimoKitMB.actionVerificaDisponibiliza}" />                                
+                                <p:ajax event="rowSelectRadio" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{emprestimoKitMB.actionVerificaDisponibiliza}" />
                                 <p:ajax event="toggleSelect" update=":lume:disponibiliza,:lume:dtMateriaisDisponiveis" listener="#{emprestimoKitMB.actionVerificaDisponibiliza}" />
 
-                                <p:column selectionMode="multiple" style="width:16px;text-align:center" />
+                                <p:column selectionMode="single" style="width:16px;text-align:center" />
 
                                 <f:facet name="header">Materiais Disponíveis</f:facet>
-                                <p:column filterBy="#{materiaisSelecionado.item.descricaoLimpa}" sortBy="#{materiaisSelecionado.item.descricao}"
+                                <p:column filterBy="#{estoqueSelecionado.material.item.descricaoLimpa}" sortBy="#{estoqueSelecionado.material.item.descricao}"
                                 		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Descrição">
-                                    <h:outputText value="#{materiaisSelecionado.item.descricao}" title="#{materiaisSelecionado.id}" />
+                                    <h:outputText value="#{estoqueSelecionado.material.item.descricao}" title="#{estoqueSelecionado.material.id}" />
                                 </p:column>
-                                <p:column filterBy="#{materiaisSelecionado.estoque.quantidade}" sortBy="#{materiaisSelecionado.estoque.quantidade}" filterMatchMode="contains" headerText="Quantidade Atual">
-                                    <h:outputText value="#{materiaisSelecionado.estoque.quantidade}">
+                                <p:column filterBy="#{estoqueSelecionado.quantidade}" sortBy="#{mestoqueSelecionado.quantidade}" filterMatchMode="contains" headerText="Quantidade Atual">
+                                    <h:outputText value="#{estoqueSelecionado.quantidade}">
                                         <f:convertNumber />
                                     </h:outputText>
                                     <h:outputText value="#{emprestimoKitMB.getUnidadeString(materiaisSelecionado.item)}" styleClass="unidadeMedidaString" />
                                 </p:column>
-                                <p:column filterBy="#{materiaisSelecionado.marca.nome}" sortBy="#{materiaisSelecionado.marca.nome}"
+                                <p:column filterBy="#{estoqueSelecionado.material.marca.nome}" sortBy="#{estoqueSelecionado.material.marca.nome}"
                                 		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Marca">
-                                    <h:outputText value="#{materiaisSelecionado.marca.nome}" />
+                                    <h:outputText value="#{estoqueSelecionado.material.marca.nome}" />
                                 </p:column>
-                                <p:column filterBy="#{materiaisSelecionado.lote}" sortBy="#{materiaisSelecionado.lote}"
+                                <p:column filterBy="#{estoqueSelecionado.material.lote}" sortBy="#{estoqueSelecionado.material.lote}"
                                 		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Lote">
-                                    <h:outputText value="#{materiaisSelecionado.lote}" />
+                                    <h:outputText value="#{estoqueSelecionado.material.lote}" />
                                 </p:column>
-                                <p:column filterBy="#{materiaisSelecionado.dataValidadeStr}" sortBy="#{materiaisSelecionado.dataValidade}" filterMatchMode="contains" headerText="Validade">
-                                    <h:outputText value="#{materiaisSelecionado.dataValidadeStr}" />
+                                <p:column filterBy="#estoqueSelecionado.material.dataValidadeStr}" sortBy="#{estoqueSelecionado.material.dataValidade}" filterMatchMode="contains" headerText="Validade">
+                                    <h:outputText value="#{estoqueSelecionado.material.dataValidadeStr}" />
                                 </p:column>
-                                <p:column filterBy="#{materiaisSelecionado.estoque.local.descricao}" sortBy="#{materiaisSelecionado.estoque.local.descricao}"
+                                <p:column filterBy="#{estoqueSelecionado.local.descricao}" sortBy="#{estoqueSelecionado.local.descricao}"
                                 		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Localização">
-                                    <h:outputText value="#{materiaisSelecionado.estoque.local.descricao}"/>
+                                    <h:outputText value="#{estoqueSelecionado.local.descricao}"/>
                                </p:column>
                             </p:dataTable>
                             <br />

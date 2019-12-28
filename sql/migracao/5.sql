@@ -328,3 +328,23 @@ ALTER TABLE REPASSE_FATURAS ADD COLUMN VALOR_IMPOSTO NUMERIC(11, 2) NULL;
 ALTER TABLE PLANO_TRATAMENTO_PROCEDIMENTO ADD COLUMN CUSTO_DIRETO_VALIDO VARCHAR(1) NOT NULL DEFAULT 'N';
 ALTER TABLE PLANO_TRATAMENTO_PROCEDIMENTO ADD COLUMN DATA_CUSTO_DIRETO_VALIDADO TIMESTAMP(10) NULL;
 ALTER TABLE PLANO_TRATAMENTO_PROCEDIMENTO ADD COLUMN CUSTO_DIRETO_VALIDADO_POR BIGINT REFERENCES PROFISSIONAL(ID) NULL;
+
+--//TODO ESSES LOCAIS DEVEM SER INSERIDOS PARA TODAS AS EMPRESAS E TAMBEM COMO DEFAULT NA CRIACAO DE NOVAS EMPRESAS
+insert into local (descricao, tipo, id_empresa, excluido) values ('CANCELAMENTO_RESERVA','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('EXCLUSAO_RESERVA','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('EXCLUSAO_RESERVA_KIT','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('DEVOLUCAO_KIT','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('COMPRA','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('KIT_NAO_UTILIZADO','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('KIT_UTILIZADO_DEVOLVIDO','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('DEVOLUCAO_KIT_LAVAGEM','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('EMPRESTIMO_KIT','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('CANCELAMENTO_EMPRESTIMO_KIT','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('DEVOLUCAO_UNITARIA','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('EMPRESTIMO_UNITARIO','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('MATERIAL_ESTERELIZADO_DEVOLUCAO_LAVAGEM','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('ENTREGA_LAVAGEM_MANUAL','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('FINALIZACAO_DEVOLUCAO_LAVAGEM','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('DESCARTE','SI',41,'N');
+insert into local (descricao, tipo, id_empresa, excluido) values ('DEVOLUCAO_MATERIAL','SI',41,'N');
+

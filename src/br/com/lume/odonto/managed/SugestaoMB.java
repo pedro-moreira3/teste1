@@ -267,7 +267,7 @@ public class SugestaoMB extends LumeManagedBean<Sugestao> {
         try {
             List<Material> materiais = MaterialSingleton.getInstance().getBo().listByItem(this.getItem());
             for (Material material : materiais) {
-                BigDecimal quantidade =  EstoqueSingleton.getInstance().getBo().findByMaterial(material).getQuantidade();
+                BigDecimal quantidade =  EstoqueSingleton.getInstance().getBo().findByMaterialLocal(material,material.getEstoque().get(0).getLocal()).getQuantidade();
                 
                 quantidadeTotal = quantidadeTotal.add(material.getTamanhoUnidade().multiply(quantidade.multiply(material.getTamanhoUnidade())));
             }

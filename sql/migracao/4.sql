@@ -80,14 +80,7 @@ RENAME COLUMN QUANTIDADE TO QUANTIDADE_PACOTES;
 
 --EM - emprestimo
 --PARA CONTROLAR MATERIAIS NAO DISPONIVEIS ESTOQUES EMPRESTADOS
-insert into local (descricao, tipo, id_empresa, excluido) values ('EM LAVAGEM','EM',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('EM ESTERILIZACAO','EM',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('EMPRESTADO KIT','EM',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('EMPRESTADO UNITARIO','EM',41,'N');
 
-insert into local (descricao, tipo, id_empresa, excluido) values ('DESCARTE','DE',41,'N');
-
-insert into local (descricao, tipo, id_empresa, excluido) values ('AJUSTE','AJ',41,'N');
 
 
 somente depois de rodar o construtor do materialmb
