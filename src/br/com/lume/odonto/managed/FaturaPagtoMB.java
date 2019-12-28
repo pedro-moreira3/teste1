@@ -471,12 +471,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public String getSaldoCor() {
-        BigDecimal saldo = this.paciente.getConta().getSaldo();
-        if (saldo != null && saldo.compareTo(BigDecimal.ZERO) != 0) {
-            if (saldo.compareTo(BigDecimal.ZERO) < 0)
-                return "#ffc107";
-            else if (saldo.compareTo(BigDecimal.ZERO) > 0)
-                return "#007bff";
+        if (this.paciente.getConta() != null) {
+            BigDecimal saldo = this.paciente.getConta().getSaldo();
+            if (saldo != null && saldo.compareTo(BigDecimal.ZERO) != 0) {
+                if (saldo.compareTo(BigDecimal.ZERO) < 0)
+                    return "#ffc107";
+                else if (saldo.compareTo(BigDecimal.ZERO) > 0)
+                    return "#007bff";
+            }
         }
         return "black";
     }
