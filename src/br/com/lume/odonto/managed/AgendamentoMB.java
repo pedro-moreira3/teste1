@@ -154,6 +154,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     private Date initialDate;
 
+    private String statusNovoTemp = "";
+    
     //S - Scheduler, C - Cadeiras, P - Profissional
     private String visualizacao = "S";
 
@@ -226,6 +228,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
         UtilsFrontEnd.setPacienteSelecionado(this.getEntity().getPaciente());
         this.setEntity(this.getEntity());
+        this.statusNovoTemp = getEntity().getStatusNovo();
+        
         this.setInicio(this.getEntity().getInicio());
         this.setFim(this.getEntity().getFim());
         geraAgendamentoAfastamento(this.getEntity().getInicio(), this.getEntity().getFim(), profissionalDentroAgenda);
@@ -342,6 +346,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.setPlanoTratamentos(null);
         this.setPlanoTratamentoSelecionado(null);
         this.setProcedimentosPickList(new DualListModel<AgendamentoPlanoTratamentoProcedimento>());
+        this.statusNovoTemp = "";
     }
 
     @Override
@@ -562,17 +567,19 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                 if (validaCadeira()) {
                                     //dlg = true;
 
-                                    if (this.getEntity().getStatusNovo().matches("S|N|I|O|A")) {
-                                        if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() != null && this.getEntity().getFinalizouAs() != null) {
-                                            this.getEntity().setStatusNovo("A");
-                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.atendido"), "");
-                                        } else if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() == null && this.getEntity().getFinalizouAs() == null) {
-                                            this.getEntity().setStatusNovo("I");
-                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.clientenaclinica"), "");
-                                        } else if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() != null && this.getEntity().getFinalizouAs() == null) {
-                                            this.getEntity().setStatusNovo("O");
-                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.ematendimento"), "");
-                                        }
+                                    if(!this.statusNovoTemp.equals("") && this.statusNovoTemp.equals(this.getEntity().getStatusNovo())) {
+                                        if (this.getEntity().getStatusNovo().matches("S|N|I|O|A")) {
+                                            if (this.getEntity().getChegouAs() != null && this.getEntity().getFinalizouAs() != null) {
+                                                this.getEntity().setStatusNovo("A");
+                                                this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.atendido"), "");
+                                            } else if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() == null && this.getEntity().getFinalizouAs() == null) {
+                                                this.getEntity().setStatusNovo("I");
+                                                this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.clientenaclinica"), "");
+                                            } else if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() != null && this.getEntity().getFinalizouAs() == null) {
+                                                this.getEntity().setStatusNovo("O");
+                                                this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.ematendimento"), "");
+                                            }
+                                        }  
                                     }
 
 //                                    if (this.getEntity().getIniciouAs() == null && this.getEntity().getChegouAs() != null && (!this.getEntity().getStatusNovo().equals(
@@ -1859,6 +1866,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     public void setDataAgendamentoFinal(Date dataAgendamentoFinal) {
         this.dataAgendamentoFinal = dataAgendamentoFinal;
+    }
+
+    
+    public String getStatusNovoTemp() {
+        return statusNovoTemp;
+    }
+
+    
+    public void setStatusNovoTemp(String statusNovoTemp) {
+        this.statusNovoTemp = statusNovoTemp;
     }
 
 }
