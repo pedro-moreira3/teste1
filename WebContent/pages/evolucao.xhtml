@@ -58,7 +58,7 @@
 					</p:column>
 					<p:column filterBy="#{evolucao.descricao}"
 						sortBy="#{evolucao.descricao}" filterMatchMode="contains"
-						width="50%" headerText="Descrição"
+						width="40%" headerText="Descrição"
 						filterFunction="#{evolucaoMB.filtroSemAcento}">
 						<h:outputText
 							value="#{evolucao.excluido=='S'?'[ REMOVIDO ]':''} #{evolucao.descricao}"
@@ -75,6 +75,9 @@
 						sortBy="#{evolucao.dataStrOrd}" filterMatchMode="contains"
 						headerText="Data">
 						<h:outputText value="#{evolucao.dataStr}" />
+					</p:column>
+					<p:column width="10%" headerText="Autenticação">
+
 					</p:column>
 				</p:dataTable>
 			</p:outputPanel>
