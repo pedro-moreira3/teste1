@@ -152,9 +152,10 @@
 						</p:column>
 						<p:column sortBy="#{paciente.convenio.observacaoConvenio}"
 							filterBy="#{paciente.convenio.observacaoConvenio}"
-							filterMatchMode="contains" headerText="Observação convênio"
+							rendered="#{false}" filterMatchMode="contains"
+							headerText="Observação convênio"
 							filterFunction="#{pacienteMB.filtroSemAcento}">
-							<h:outputText value="#{paciente.convenio.observacaoConvenio}"/>
+							<h:outputText value="#{paciente.convenio.observacaoConvenio}" />
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.celular}"
 							filterBy="#{paciente.dadosBasico.celular}"
