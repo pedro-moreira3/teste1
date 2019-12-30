@@ -402,7 +402,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void exportarTabela(String type) {
-        exportarTabela("Plano Ortodôntico", this.tabelaPlanoOrtodontico, type);
+        exportarTabela("Manutenção Orto", this.tabelaPlanoOrtodontico, type);
     }
 
     public BigDecimal obterValorProcedimentoValor() {

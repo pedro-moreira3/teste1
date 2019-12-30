@@ -69,7 +69,7 @@ li.orcamento-li {
 				<p:panelGrid columns="2" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 					<p:commandButton id="newOrtodontia" icon="White fa fa-file-o"
-						value="Novo Plano Ortodôntico"
+						value="Nova Manutenção Orto"
 						actionListener="#{ortodontiaMB.actionNew}" process="@this"
 						oncomplete="PF('dlgPlanoOrtodontico').show()" immediate="true" />
 				</p:panelGrid>
@@ -125,7 +125,7 @@ li.orcamento-li {
 		<f:facet name="header">
 			<p:outputPanel id="orcamentoPlanoOrtodonticoHeader">
 				<h:outputText
-					value="Orçamento - Plano Ortodôntico do paciente #{ortodontiaMB.paciente.dadosBasico.nome}" />
+					value="Orçamento - Manutenção Ortodôntica do paciente #{ortodontiaMB.paciente.dadosBasico.nome}" />
 			</p:outputPanel>
 		</f:facet>
 		<p:outputPanel id="orcamentoPlanoOrtodontico"
@@ -311,7 +311,7 @@ li.orcamento-li {
 		<f:facet name="header">
 			<p:outputPanel id="planoOrtodonticoHeader">
 				<h:outputText
-					value="Plano Ortodôntico do paciente #{ortodontiaMB.paciente.dadosBasico.nome}" />
+					value="Manutenção Ortodôntica do paciente #{ortodontiaMB.paciente.dadosBasico.nome}" />
 			</p:outputPanel>
 		</f:facet>
 		<p:outputPanel id="planoOrtodontico"

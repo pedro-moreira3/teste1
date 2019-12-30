@@ -149,8 +149,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											value="#{relatorioOrcamentoMB.filtroStatusPagamento}">
 
 											<f:selectItem itemValue="" itemLabel="Selecione" />
-											<f:selectItem itemValue="P" itemLabel="Pagos" />
-											<f:selectItem itemValue="N" itemLabel="Não pagos" />
+											<f:selectItem itemValue="P" itemLabel="Recebidos" />
+											<f:selectItem itemValue="N" itemLabel="Há Receber" />
 											
 										</p:selectOneMenu>
 									</h:panelGroup>
@@ -169,10 +169,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										<p:ajax process="@this" />
 
-										<f:selectItem
+										<f:selectItem itemDisabled="#{relatorioOrcamentoMB.filtrandoAprovacao}"
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoConfirmado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;Aprovados&lt;/div&gt;"
 											itemValue="A" itemEscaped="false" />
-										<f:selectItem
+										<f:selectItem itemDisabled="#{relatorioOrcamentoMB.filtrandoAprovacao}"
 											itemLabel="&lt;div&gt;&lt;div class='clienteNaClinica legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;Não aprovados&lt;/div&gt;"
 											itemValue="I" itemEscaped="false" />
 											

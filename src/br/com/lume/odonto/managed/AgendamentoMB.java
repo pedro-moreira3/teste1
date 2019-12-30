@@ -73,6 +73,7 @@ import br.com.lume.odonto.entity.Reserva;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.orcamento.OrcamentoSingleton;
 import br.com.lume.origemAgendamento.OrigemAgendamentoSingleton;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
@@ -697,6 +698,24 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
         validaProfissionalEmAgendamento();
     }
+    
+    public void verificaProcedimentos() {
+        List<AgendamentoPlanoTratamentoProcedimento> aptps = procedimentosPickList.getTarget();
+        
+        for (AgendamentoPlanoTratamentoProcedimento aptp : aptps) {
+            
+            if(aptp.getPlanoTratamentoProcedimento().getOrcamentoProcedimentos() == null || aptp.getPlanoTratamentoProcedimento().getOrcamentoProcedimentos().size() == 0) {               
+                addWarn("", "Atenção! Procedimento " + aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao() + " não está em nenhum orçamento aprovado", true);
+            }else if(!OrcamentoSingleton.getInstance().isProcedimentoTemOrcamentoAprovado(aptp.getPlanoTratamentoProcedimento())) {
+                addWarn("", "Atenção! Procedimento " + aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao() + " não está em nenhum orçamento aprovado", true);               
+            } 
+            
+            
+        }
+         
+                  
+        
+    }
 
     public void validaHoraUtilProfissional(Profissional profissional) {
         if (profissional != null) {
@@ -731,12 +750,13 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void calculaDataFim() {
-        if (this.getInicio() != null && profissionalDentroAgenda != null) {
-            Calendar c = Calendar.getInstance();
-            c.setTime(inicio);
-            c.add(Calendar.MINUTE, profissionalDentroAgenda.getTempoConsulta());
-            fim = c.getTime();
-        }
+//        if (this.getInicio() != null && profissionalDentroAgenda != null) {
+//            Calendar c = Calendar.getInstance();
+//            c.setTime(inicio);
+//            c.add(Calendar.MINUTE, profissionalDentroAgenda.getTempoConsulta());
+//            if(this.fim == null)
+//            this.fim = c.getTime();
+//        }
     }
 
     public boolean validaHoraduplicadaProfissional(Agendamento agendamento) {
@@ -925,18 +945,20 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
                             descricao = agendamento.getProfissional().getDadosBasico().getNomeAbreviado() + " - " + "[" + agendamento.getPaciente().getSiglaConvenio() + "] " + agendamento.getPaciente().getDadosBasico().getNome();
 
-                            String breakLine = "\r\n";
+                            String breakLine = "\r\n";                          
+                            if (agendamento.getDescricao() != null && !agendamento.getDescricao().isEmpty())
+                                descricao += " - Obs.: " + agendamento.getDescricao();
                             descricao += breakLine;
+                            if (agendamento.getDescricao() != null && !agendamento.getDescricao().isEmpty())
+                                descricao += breakLine;
                             if (agendamento.getPlanoTratamentoProcedimentosAgendamento() != null && !agendamento.getPlanoTratamentoProcedimentosAgendamento().isEmpty()) {
-                                descricao += "P: ";
+                                descricao += " P: ";
                                 for (AgendamentoPlanoTratamentoProcedimento ptpAgendamento : agendamento.getPlanoTratamentoProcedimentosAgendamento())
                                     descricao += ptpAgendamento.getPlanoTratamentoProcedimento().getProcedimento().getDescricao() + ", ";
                                 descricao = descricao.substring(0, descricao.length() - 2);
-                                if (agendamento.getDescricao() != null && !agendamento.getDescricao().isEmpty())
-                                    descricao += breakLine;
+                               
                             }
-                            if (agendamento.getDescricao() != null && !agendamento.getDescricao().isEmpty())
-                                descricao += "Obs.: " + agendamento.getDescricao();
+
 
                             DefaultScheduleEvent event = new DefaultScheduleEvent(descricao, agendamento.getInicio(), agendamento.getFim(), agendamento);
                             event.setStyleClass(StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getStyleCss());

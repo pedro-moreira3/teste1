@@ -47,6 +47,8 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     
     private Profissional filtroPorProfissional;
     
+    private boolean filtrandoAprovacao = false;
+    
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
 
@@ -193,12 +195,21 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     public void actionTrocaDatasAprovacao() {
         try {
 
-            this.aprovacaoInicio = getDataInicio(getFiltroPeriodoAprovacao());
-            this.aprovacaoFim = getDataFim(getFiltroPeriodoAprovacao());
-
+            if(filtroPeriodoAprovacao == null || filtroPeriodoAprovacao.equals("")) {
+                filtrandoAprovacao = false;              
+                this.aprovacaoInicio = null;
+                this.aprovacaoFim = null;                
+            }else {
+                filtrandoAprovacao = true;
+                this.aprovacaoInicio = getDataInicio(getFiltroPeriodoAprovacao());
+                this.aprovacaoFim = getDataFim(getFiltroPeriodoAprovacao());
+                filtroOrcamento = new ArrayList<String>();
+                filtroOrcamento.add("A");
+            }
             PrimeFaces.current().ajax().update(":lume:aprovacaoInicio");
             PrimeFaces.current().ajax().update(":lume:aprovacaoFim");
-
+            PrimeFaces.current().ajax().update(":lume:checkbox");
+    
         } catch (Exception e) {
             log.error("Erro no actionTrocaDatasAprovacao", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -219,13 +230,12 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
         return true;
     }
     
-    public String statusPagamento(Orcamento orcamento) {
-        
+    public String statusPagamento(Orcamento orcamento) {    
         if(orcamento.isAtivo()) {
             if( (orcamento.isAprovado() && orcamento.getValorPago().intValue() < orcamento.getValorTotal().intValue()) ) {
-                return "Pendente";
+                return "Há Receber";
             }else if( (orcamento.getValorPago().intValue() == orcamento.getValorTotal().intValue()) ) {
-                return "Pago";
+                return "Recebidos";
             }
         }
         
@@ -380,5 +390,15 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
 
     public void setFiltroStatusPagamento(String filtroStatusPagamento) {
         this.filtroStatusPagamento = filtroStatusPagamento;
+    }
+
+    
+    public boolean isFiltrandoAprovacao() {
+        return filtrandoAprovacao;
+    }
+
+    
+    public void setFiltrandoAprovacao(boolean filtrandoAprovacao) {
+        this.filtrandoAprovacao = filtrandoAprovacao;
     }
 }

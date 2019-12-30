@@ -121,8 +121,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:selectOneMenu id="tipo"
 								value="#{planoTratamentoMB.filtroTipo}">
 								<f:selectItem itemLabel="Todos" itemValue="T" />
-								<f:selectItem itemLabel="Normal" itemValue="N" />
-								<f:selectItem itemLabel="Ortodôntico" itemValue="O" />
+								<f:selectItem itemLabel="Clinica Geral" itemValue="N" />
+								<f:selectItem itemLabel="Manutenção Orto" itemValue="O" />
 								<p:ajax listener="#{planoTratamentoMB.carregarPlanosTratamento}"
 									process="@this" update="dtPlanoTratamento" />
 							</p:selectOneMenu>
@@ -229,7 +229,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:column
 						filterBy="#{planoTratamento.profissional.dadosBasico.prefixoNome}"
 						sortBy="#{planoTratamento.profissional.dadosBasico.prefixoNome}"
-						filterMatchMode="contains" headerText="Dentista Avaliador"
+						filterMatchMode="contains" headerText="Criado Por"
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<h:outputText
 							value="#{planoTratamento.profissional.dadosBasico.prefixoNome}" />
@@ -664,7 +664,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:inputText id="descricaoPTView"
 									value="#{planoTratamentoMB.entity.descricao}" readonly="true" />
 
-								<p:outputLabel for="profPTView" value="Dentista Avaliador: " />
+								<p:outputLabel for="profPTView" value="Criado Por: " />
 								<p:inputText id="profPTView"
 									value="#{planoTratamentoMB.entity.profissional.dadosBasico.nome}"
 									readonly="true" />
@@ -1607,7 +1607,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				</h:panelGroup>
 				<h:panelGroup styleClass="lumeField">
 					<p:outputLabel for="valorAPagarNewPlanejamento" value="Valor: " />
-					<p:inputNumber id="valorAPagarNewPlanejamento"
+					<p:inputNumber id="valorAPagarNewPlanejamento" rendered="#{planoTratamentoMB.planejamentoAtual != null}"
 						value="#{planoTratamentoMB.planejamentoAtual.valor}"
 						required="true" maxlength="13" maxValue="9999999999.99"
 						decimalSeparator="," symbol="R$ " thousandSeparator=".">

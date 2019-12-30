@@ -599,7 +599,7 @@
 					responsive="true" required="false" converter="agendamentoPlanoDash">
 					<f:facet name="sourceCaption">Disponíveis</f:facet>
 					<f:facet name="targetCaption">Selecionados</f:facet>
-					<p:ajax event="transfer" process="@this" />
+					<p:ajax event="transfer" process="@this" listener="#{agendamentoMB.verificaProcedimentos()}"/>					
 				</p:pickList>
 			</h:panelGroup>
 
