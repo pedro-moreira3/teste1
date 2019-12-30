@@ -362,7 +362,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         if (getPaciente() == null || getPaciente().getId() == null || getPaciente().getId().longValue() == 0)
             return "";
         if (getPaciente().getConta() == null)
-            getPaciente().setConta(ContaSingleton.getInstance().criaConta(TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getPaciente(), null, null));
+            getPaciente().setConta(ContaSingleton.getInstance().criaConta(TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getPaciente(), null, null, null, null));
         BigDecimal saldo = getPaciente().getConta().getSaldo();
         String color = (saldo.compareTo(BigDecimal.ZERO) == 0 ? "#17a2b8" : (saldo.compareTo(BigDecimal.ZERO) < 0 ? "#dc3545" : "#28a745"));
         return (color != null && !color.isEmpty() ? "color: " + color : "");
