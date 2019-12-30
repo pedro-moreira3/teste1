@@ -1,10 +1,10 @@
 package br.com.lume.odonto.managed;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -24,7 +24,9 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils.Mes;
 import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
+import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.security.entity.Empresa;
 
@@ -40,6 +42,7 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
 
     private Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
     private BarChartModel lineModel;
+    private boolean graficoCompleto = false;
     private Thread atualizaGraficoContas = new Thread(new Runnable() {
 
         @Override
@@ -53,24 +56,19 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
             Mes mesAtual = Mes.getMesAtual();
             int mesAtualIdx = Arrays.asList(Mes.values()).indexOf(mesAtual), anoAtual = Calendar.getInstance().get(Calendar.YEAR);
             for (int i = 0; i < 12; i++) {
-                List<Lancamento> lancamentos;
-                Double valor;
+                BigDecimal valor;
 
-                lancamentos = LancamentoSingleton.getInstance().getBo().listContasAPagar(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.NAO_VALIDADO);
-                valor = LancamentoSingleton.getInstance().sumLancamentos(lancamentos);
-                valuesAPagar.add(valor);
+                valor = LancamentoSingleton.getInstance().getBo().listContasAPagarValor(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.NAO_VALIDADO);
+                valuesAPagar.add((valor == null ? 0d : valor.doubleValue()));
 
-                lancamentos = LancamentoSingleton.getInstance().getBo().listContasAPagar(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.VALIDADO);
-                valor = LancamentoSingleton.getInstance().sumLancamentos(lancamentos);
-                valuesPagos.add(valor);
+                valor = LancamentoSingleton.getInstance().getBo().listContasAPagarValor(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.VALIDADO);
+                valuesPagos.add((valor == null ? 0d : valor.doubleValue()));
 
-                lancamentos = LancamentoSingleton.getInstance().getBo().listContasAReceber(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.NAO_VALIDADO);
-                valor = LancamentoSingleton.getInstance().sumLancamentos(lancamentos);
-                valuesAReceber.add(valor);
+                valor = LancamentoSingleton.getInstance().getBo().listContasAReceberValor(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.NAO_VALIDADO);
+                valuesAReceber.add((valor == null ? 0d : valor.doubleValue()));
 
-                lancamentos = LancamentoSingleton.getInstance().getBo().listContasAReceber(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.NAO_VALIDADO);
-                valor = LancamentoSingleton.getInstance().sumLancamentos(lancamentos);
-                valuesRecebidos.add(valor);
+                valor = LancamentoSingleton.getInstance().getBo().listContasAReceberValor(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.NAO_VALIDADO);
+                valuesRecebidos.add((valor == null ? 0d : valor.doubleValue()));
 
                 labels.add(mesAtual.getRotulo() + "/" + String.valueOf(anoAtual));
                 mesAtualIdx = mesAtualIdx - 1;
@@ -123,7 +121,7 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
             data.setLabels(labels);
             lineModel.setOptions(options);
             lineModel.setData(data);
-            //attMovimentacoesChart()
+            graficoCompleto = true;
         }
     });
 
@@ -142,6 +140,10 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         } else if ("Contas a Pagar".equals(event.getTab().getTitle())) {
             carregaListaAPagar();
         }
+    }
+
+    public String getFaturaInfo(Fatura f) {
+        return FaturaSingleton.getInstance().getFaturaInfo(f);
     }
 
     public void carregaListaAPagar() {
@@ -252,6 +254,14 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
 
     public void setAnoAPagar(int anoAPagar) {
         this.anoAPagar = anoAPagar;
+    }
+
+    public boolean isGraficoCompleto() {
+        return graficoCompleto;
+    }
+
+    public void setGraficoCompleto(boolean graficoCompleto) {
+        this.graficoCompleto = graficoCompleto;
     }
 
 }
