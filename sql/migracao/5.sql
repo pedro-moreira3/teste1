@@ -330,39 +330,22 @@ ALTER TABLE PLANO_TRATAMENTO_PROCEDIMENTO ADD COLUMN DATA_CUSTO_DIRETO_VALIDADO 
 ALTER TABLE PLANO_TRATAMENTO_PROCEDIMENTO ADD COLUMN CUSTO_DIRETO_VALIDADO_POR BIGINT REFERENCES PROFISSIONAL(ID) NULL;
 
 --//TODO ESSES LOCAIS DEVEM SER INSERIDOS PARA TODAS AS EMPRESAS E TAMBEM COMO DEFAULT NA CRIACAO DE NOVAS EMPRESAS
-insert into local (descricao, tipo, id_empresa, excluido) values ('CANCELAMENTO_RESERVA','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('EXCLUSAO_RESERVA','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('EXCLUSAO_RESERVA_KIT','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('DEVOLUCAO_KIT','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('COMPRA','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('KIT_NAO_UTILIZADO','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('KIT_UTILIZADO_DEVOLVIDO','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('DEVOLUCAO_KIT_LAVAGEM','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('EMPRESTIMO_KIT','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('CANCELAMENTO_EMPRESTIMO_KIT','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('DEVOLUCAO_UNITARIA','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('EMPRESTIMO_UNITARIO','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('MATERIAL_ESTERELIZADO_DEVOLUCAO_LAVAGEM','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('ENTREGA_LAVAGEM_MANUAL','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('FINALIZACAO_DEVOLUCAO_LAVAGEM','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('DESCARTE','SI',41,'N');
-insert into local (descricao, tipo, id_empresa, excluido) values ('DEVOLUCAO_MATERIAL','SI',41,'N');
--------------------------------
-ALTER TABLE FATURA ADD COLUMN PROFISSIONAL_CRIACAO_ID BIGINT NULL REFERENCES PROFISSIONAL(ID);
--------------------------------
-INSERT INTO seg_objeto (obj_int_cod, obj_int_codpai, obj_str_des, obj_cha_sts, obj_str_caminho,sis_int_cod, obj_int_ordem, obj_cha_tipo, obj_str_icon)
-			values (170, 11, 'Pagamentos e Recebimentos', 'A', 'pagamentoRecebimentoFatura.jsf',123, 6, 'T', null);
--------------------------------
-INSERT INTO objeto_profissional (obj_int_cod,id_profissional) 
-SELECT 170,id_profissional FROM objeto_profissional WHERE obj_int_cod = 149;
--------------------------------
-ALTER TABLE fatura ADD COLUMN fornecedor_id bigint;
--------------------------------
-ALTER TABLE conta ADD COLUMN fornecedor_id bigint;
--------------------------------
-ALTER TABLE fatura ADD COLUMN origem_id bigint;
--------------------------------
-ALTER TABLE conta ADD COLUMN origem_id bigint;
--------------------------------
-ALTER TABLE fatura ADD COLUMN id_empresa bigint;
--------------------------------
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'CANCELAMENTO_RESERVA','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'EXCLUSAO_RESERVA','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'EXCLUSAO_RESERVA_KIT','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'DEVOLUCAO_KIT','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'COMPRA','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'KIT_NAO_UTILIZADO','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'KIT_UTILIZADO_DEVOLVIDO','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'DEVOLUCAO_KIT_LAVAGEM','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'EMPRESTIMO_KIT','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'CANCELAMENTO_EMPRESTIMO_KIT','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'DEVOLUCAO_UNITARIA','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'EMPRESTIMO_UNITARIO','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'MATERIAL_ESTERELIZADO_DEVOLUCAO_LAVAGEM','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'ENTREGA_LAVAGEM_MANUAL','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'FINALIZACAO_DEVOLUCAO_LAVAGEM','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'DESCARTE','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'DEVOLUCAO_MATERIAL','SI',emp_int_cod,'N' FROM seg_empresa;
+
+
