@@ -21,6 +21,7 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.imageio.stream.FileImageOutputStream;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -150,39 +151,44 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.setClazz(Paciente.class);
         this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
 
-        pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(super.getEntity());
-        if ((profissionalLogado == null || profissionalLogado.getPerfil().equals(
-                OdontoPerfil.DENTISTA)) && (UtilsFrontEnd.getEmpresaLogada() == null || UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false)) {
-            visivelDadosPaciente = false;
-        }
-        try {
-            Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("paciente", "mostrar", "plano");
-            if (dominio != null && dominio.getValor().equals(Status.SIM)) {
-                planoRender = true;
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String url = request.getRequestURL().toString();       
+        
+        if(url.contains("paciente.jsf")) {
+            pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(super.getEntity());
+            if ((profissionalLogado == null || profissionalLogado.getPerfil().equals(
+                    OdontoPerfil.DENTISTA)) && (UtilsFrontEnd.getEmpresaLogada() == null || UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false)) {
+                visivelDadosPaciente = false;
             }
-            DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
-            if (UtilsFrontEnd.getProfissionalLogado() != null) {
-                especialidades = EspecialidadeSingleton.getInstance().getBo().listAnamnese(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            }
+            try {
+                Dominio dominio = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("paciente", "mostrar", "plano");
+                if (dominio != null && dominio.getValor().equals(Status.SIM)) {
+                    planoRender = true;
+                }
+                DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
+                if (UtilsFrontEnd.getProfissionalLogado() != null) {
+                    especialidades = EspecialidadeSingleton.getInstance().getBo().listAnamnese(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                    convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                }
 
-            indicacoes = DominioSingleton.getInstance().getBo().listByObjeto("indicacao");
+                indicacoes = DominioSingleton.getInstance().getBo().listByObjeto("indicacao");
 
-            List<String> perfis = new ArrayList<>();
-            perfis.add(OdontoPerfil.DENTISTA);
-            perfis.add(OdontoPerfil.ADMINISTRADOR);
-            perfis.add(OdontoPerfil.RESPONSAVEL_TECNICO);
-            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                List<String> perfis = new ArrayList<>();
+                perfis.add(OdontoPerfil.DENTISTA);
+                perfis.add(OdontoPerfil.ADMINISTRADOR);
+                perfis.add(OdontoPerfil.RESPONSAVEL_TECNICO);
+                profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
-            this.sortAnamneses();
-            this.geraLista();
+                this.sortAnamneses();
+                this.geraLista();
 
-        } catch (TelefoneException te) {
-            this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "");
-            log.error(OdontoMensagens.getMensagem("erro.valida.telefone"));
-        } catch (Exception e) {
-            log.error("Erro no PacienteMB", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            } catch (TelefoneException te) {
+                this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "");
+                log.error(OdontoMensagens.getMensagem("erro.valida.telefone"));
+            } catch (Exception e) {
+                log.error("Erro no PacienteMB", e);
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            }    
         }
     }
 

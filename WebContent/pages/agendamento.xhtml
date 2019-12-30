@@ -272,7 +272,6 @@ div.ui-selectoneradio label {
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
 						<h:panelGroup style="display: flex;" styleClass="md-combo">
 							<p:outputLabel for="pacienteWizard" value="#{dominioMB.cliente}" />
-
 							<p:autoComplete dropdown="true" queryDelay="1000"
 								value="#{agendamentoMB.pacienteSelecionado}" id="pacienteWizard"
 								minQueryLength="3" scrollHeight="400"
@@ -526,22 +525,34 @@ div.ui-selectoneradio label {
 											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 											style="border:0px none; background-color:transparent;">
 
-											<h:panelGroup styleClass="md-combo">
-												<p:outputLabel for="pacienteSelecionado" value="Paciente" />
-												<p:selectOneMenu id="pacienteSelecionado"
-													value="#{agendamentoMB.pacientePesquisado}"
-													converter="paciente" filter="true"
-													filterMatchMode="contains"
-													style="margin-top:1px;margin-bottom:10px">
-													<f:selectItem itemValue="#{null}" itemLabel="Todos" />
-													<f:selectItems value="#{agendamentoMB.pacientes}" var="p"
-														itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}" />
-
+											<h:panelGroup styleClass="md-inputfield">												
+													<p:autoComplete dropdown="true" queryDelay="1000"
+														value="#{agendamentoMB.pacientePesquisado}" id="pacienteSelecionado"
+														minQueryLength="3" scrollHeight="400"
+														completeMethod="#{agendamentoMB.geraSugestoes}" var="p"
+														itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+														converter="paciente" forceSelection="true"
+														disabled="#{agendamentoMB.entity.id != 0}"
+														required="#{!agendamentoMB.visivel}"
+														styleClass="paciente tallerAutoComplete">
+								
+														<p:column headerText="Nome">
+															<h:outputText value="#{p.dadosBasico.nome}" />
+														</p:column>
+														<p:column headerText="Celular">
+															<h:outputText value="#{p.dadosBasico.celular}" />
+														</p:column>
+														<p:column headerText="Nome da Mãe">
+															<h:outputText value="#{p.nomeMae}" />
+														</p:column>
+								
 													<p:ajax
 														listener="#{agendamentoMB.limpaPacienteSelecionado}"
 														process="@this" />
-
-												</p:selectOneMenu>
+													</p:autoComplete>
+													<p:outputLabel for="pacienteSelecionado" value="Paciente" />
+												
+												
 											</h:panelGroup>
 
 											<h:panelGroup></h:panelGroup>
@@ -597,7 +608,7 @@ div.ui-selectoneradio label {
 
 													<p:ajax
 														listener="#{agendamentoMB.limpaPacienteSelecionado}"
-														process="@this" />
+														process="@this" update="btBloqueioAgenda"/>
 
 												</p:selectOneMenu>
 

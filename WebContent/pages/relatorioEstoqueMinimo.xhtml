@@ -220,12 +220,10 @@
 						 	oncomplete="PF('dlgDetalhes').show()"
                                  style="width:33px !important" />
                         </p:column>	
-						
-						
 						<p:column filterBy="#{m.item}" sortBy="#{m.item}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" headerText="Item">							
 							<h:outputText value="#{m.item}" title="#{m.id}"/>
-						</p:column>						
-						<p:column  filterBy="#{m.somaQuantidadeAtual}" sortBy="#{m.somaQuantidadeAtual}" filterMatchMode="contains" headerText="Quantidade Atual">												
+						</p:column>
+						<p:column  filterBy="#{m.somaQuantidadeAtual}" sortBy="#{m.somaQuantidadeAtual}" filterMatchMode="contains" headerText="Quantidade Atual Disponível">												
 							<h:outputLabel value="#{m.somaQuantidadeAtual} #{m.unidadeMedidaStr}" disabled="true" style="color: #{(m.somaQuantidadeAtual le m.estoqueMinimo)?'red':'none'}"/>
 						</p:column>
 						<p:column  filterBy="#{m.estoqueMinimo}" sortBy="#{m.estoqueMinimo}" filterMatchMode="contains" headerText="Estoque Mínimo">							
@@ -240,12 +238,6 @@
 						<p:column filterBy="#{m.valorMedio}" sortBy="#{m.valorMedio}" filterMatchMode="contains" 
 						rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}" headerText="Valor Unit. Médio">						
 							<h:outputText value="#{m.valorMedio}">
-								<f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
-							</h:outputText>
-						</p:column>
-						<p:column filterBy="#{m.valorMedioUlt6Meses}" sortBy="#{m.valorMedioUlt6Meses}" filterMatchMode="contains" 
-						rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}" headerText="Valor Unit. Médio Ult. 6 meses(R$)">							
-							<h:outputText value="#{m.valorMedioUlt6Meses}">
 								<f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 						</p:column>

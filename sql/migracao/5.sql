@@ -348,4 +348,26 @@ INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'FINAL
 INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'DESCARTE','SI',emp_int_cod,'N' FROM seg_empresa;
 INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'DEVOLUCAO_MATERIAL','SI',emp_int_cod,'N' FROM seg_empresa;
 
+alter table material alter column id_local drop not null; 
 
+alter table material alter column quantidade_unidade drop not null;
+
+-------------------------------
+ALTER TABLE FATURA ADD COLUMN PROFISSIONAL_CRIACAO_ID BIGINT NULL REFERENCES PROFISSIONAL(ID);
+-------------------------------
+INSERT INTO seg_objeto (obj_int_cod, obj_int_codpai, obj_str_des, obj_cha_sts, obj_str_caminho,sis_int_cod, obj_int_ordem, obj_cha_tipo, obj_str_icon)
+			values (170, 11, 'Pagamentos e Recebimentos', 'A', 'pagamentoRecebimentoFatura.jsf',123, 6, 'T', null);
+-------------------------------
+INSERT INTO objeto_profissional (obj_int_cod,id_profissional) 
+SELECT 170,id_profissional FROM objeto_profissional WHERE obj_int_cod = 149;
+-------------------------------
+ALTER TABLE fatura ADD COLUMN fornecedor_id bigint REFERENCES FORNECEDOR(ID);
+-------------------------------
+ALTER TABLE conta ADD COLUMN fornecedor_id bigint REFERENCES FORNECEDOR(ID);
+-------------------------------
+ALTER TABLE fatura ADD COLUMN origem_id bigint REFERENCES ORIGEM(ID);
+-------------------------------
+ALTER TABLE conta ADD COLUMN origem_id bigint REFERENCES ORIGEM(ID);
+-------------------------------
+ALTER TABLE fatura ADD COLUMN id_empresa bigint REFERENCES SEG_EMPRESA(EMP_INT_COD);
+----

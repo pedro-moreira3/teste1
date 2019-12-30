@@ -1,5 +1,6 @@
 package br.com.lume.odonto.managed;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,7 +108,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     private List<Convenio> convenios;
 
-    private List<Paciente> pacientes;
+  //  private List<Paciente> pacientes;
 
     private Integer tempoConsulta;
 
@@ -182,8 +183,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             }
             gmt = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("agendamento", "hora", "GM").getNome();
             this.carregarProfissionais();
+
             qtdProfissionais = profissionais.size();
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+           // pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+
             tempoConsulta = UtilsFrontEnd.getProfissionalLogado().getTempoConsulta();
             carregarCadeiras();
             filtroAgendamento.addAll(Arrays.asList("F", "A", "I", "S", "O", "E", "B", "N", "P", "G", "H"));
@@ -191,6 +194,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
             this.profissionaisDisponiveis = new ArrayList<Profissional>();
+
+            
         } catch (Exception e) {
             log.error(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -201,8 +206,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         } else {
             profissional = null;
         }
-        carregarScheduleTarefas();
-
+        carregarScheduleTarefas();      
     }
 
     public void carregarAgenda() {
@@ -1182,7 +1186,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             atualizaPickList();
             visivel = false;
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+           // pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             paciente = new Paciente();
         } catch (TelefoneException te) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "");
@@ -1256,16 +1260,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.profissionais = profissionais;
     }
 
-    public List<Paciente> getPacientes() {
-        if (pacientes != null) {
-            Collections.sort(pacientes);
-        }
-        return pacientes;
-    }
-
-    public void setPacientes(List<Paciente> pacientes) {
-        this.pacientes = pacientes;
-    }
+//    public List<Paciente> getPacientes() {
+//        if (pacientes != null) {
+//            Collections.sort(pacientes);
+//        }
+//        return pacientes;
+//    }
+//
+//    public void setPacientes(List<Paciente> pacientes) {
+//        this.pacientes = pacientes;
+//    }
 
     public Integer getTempoConsulta() {
         return tempoConsulta;
