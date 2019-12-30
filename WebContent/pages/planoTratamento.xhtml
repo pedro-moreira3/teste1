@@ -1224,9 +1224,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					</h:outputText>
 				</p:column>
 				<p:column headerText="Valor Total"
-					filterBy="#{orcamento.valorComDesconto}" filterMatchMode="contains"
-					sortBy="#{orcamento.valorComDesconto}">
-					<h:outputText value="#{orcamento.valorComDesconto}">
+					filterBy="#{orcamento.valorTotal}" filterMatchMode="contains"
+					sortBy="#{orcamento.valorTotal}">
+					<h:outputText value="#{orcamento.valorTotal}">
 						<f:convertNumber type="currency" currencySymbol="R$"
 							maxFractionDigits="2" />
 					</h:outputText>
