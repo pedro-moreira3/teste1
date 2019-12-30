@@ -347,4 +347,22 @@ insert into local (descricao, tipo, id_empresa, excluido) values ('ENTREGA_LAVAG
 insert into local (descricao, tipo, id_empresa, excluido) values ('FINALIZACAO_DEVOLUCAO_LAVAGEM','SI',41,'N');
 insert into local (descricao, tipo, id_empresa, excluido) values ('DESCARTE','SI',41,'N');
 insert into local (descricao, tipo, id_empresa, excluido) values ('DEVOLUCAO_MATERIAL','SI',41,'N');
-
+-------------------------------
+ALTER TABLE FATURA ADD COLUMN PROFISSIONAL_CRIACAO_ID BIGINT NULL REFERENCES PROFISSIONAL(ID);
+-------------------------------
+INSERT INTO seg_objeto (obj_int_cod, obj_int_codpai, obj_str_des, obj_cha_sts, obj_str_caminho,sis_int_cod, obj_int_ordem, obj_cha_tipo, obj_str_icon)
+			values (170, 11, 'Pagamentos e Recebimentos', 'A', 'pagamentoRecebimentoFatura.jsf',123, 6, 'T', null);
+-------------------------------
+INSERT INTO objeto_profissional (obj_int_cod,id_profissional) 
+SELECT 170,id_profissional FROM objeto_profissional WHERE obj_int_cod = 149;
+-------------------------------
+ALTER TABLE fatura ADD COLUMN fornecedor_id bigint;
+-------------------------------
+ALTER TABLE conta ADD COLUMN fornecedor_id bigint;
+-------------------------------
+ALTER TABLE fatura ADD COLUMN origem_id bigint;
+-------------------------------
+ALTER TABLE conta ADD COLUMN origem_id bigint;
+-------------------------------
+ALTER TABLE fatura ADD COLUMN id_empresa bigint;
+-------------------------------

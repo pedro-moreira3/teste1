@@ -483,7 +483,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.geraLista();
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), true);
             if (novoPaciente) {
-                Conta conta = ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getEntity(), null, null);
+                Conta conta = ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getEntity(),null, null, null, null);
                 getEntity().setConta(conta);
                 this.getbO().persist(this.getEntity());
                 PrimeFaces.current().executeScript("PF('dlgFichaPaciente').hide()");
