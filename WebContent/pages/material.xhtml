@@ -13,7 +13,7 @@
      				<h1>Entrada de Materiais no Estoque</h1>
                      <div class="SeparatorFull"></div>                  
                     <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-                      	<p:commandButton id="new" icon="White fa fa-file-o" value="Nova Entrada de Materiais" oncomplete="PF('dlgEntrada').show();" actionListener="#{materialMB.actionNew}" update=":lume:pnMaterial,:lume:dtMaterial" immediate="true" />
+                      	<p:commandButton id="new" icon="White fa fa-file-o" value="Nova Entrada de Materiais" oncomplete="PF('dlgEntrada').show();" actionListener="#{materialMB.actionNew}" update=":lume:pnMaterial,:lume:dtMaterial,:lume:tbLocalTree,:lume:tbItemTree" immediate="true" />
 
 						<h:panelGroup>
 							<p:splitButton icon="White fa fa fa-file-excel-o"

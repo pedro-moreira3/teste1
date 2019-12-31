@@ -267,8 +267,8 @@
                         		filterFunction="#{relatorioEsterilizacaoMB.filtroSemAcento}">
                             <h:outputText value="#{i.item.descricao}" />
                         </p:column>                       
-                        <p:column filterBy="#{i.estoque.quantidade.intValue()}" sortBy="#{i.estoque.quantidade.intValue()}" filterMatchMode="contains" headerText="Quantidade">
-                            <h:outputText value="#{i.estoque.quantidade.intValue()}" />
+                        <p:column filterBy="#{i.quantidades.intValue()}" sortBy="#{i.quantidades.intValue()}" filterMatchMode="contains" headerText="Quantidade">
+                            <h:outputText value="#{i.quantidades.intValue()}" />
                         </p:column>
                         <p:column filterBy="#{i.dataCadastroStr}" sortBy="#{i.dataCadastro}" filterMatchMode="contains" headerText="Data">
                             <h:outputText value="#{i.dataCadastroStr}" />

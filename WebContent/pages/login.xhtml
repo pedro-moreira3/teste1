@@ -204,7 +204,11 @@
 	</p:dialog>
 
     <h:form id="lume">
-    
+    		<br/>
+		<p:outputPanel  style="font-size:25px; text-align: center;color:red;margin-left:150px;margin-right: 150px;margin-bottom:-70px">
+		Aviso: Publicamos uma versão nova da plataforma Intelidente, para elucidar possíveis dúvidas de uso, favor entrar em contato com seu Consultor. <br/><br/>
+		A plataforma ficará indisponível até dia 02/01/2020 para publicação de nova versão.
+		</p:outputPanel>	
     	<p:outputPanel id="loginPanel">
 			<div class="login-panel card ui-fluid">
 				<div class="ui-g">
@@ -257,6 +261,7 @@
 			</h:outputText>
 			Lume Tecnologia - v.#{odonto.version}.#{odonto.revision}
 		</div>
+		
 		<p:confirmDialog id="confirmDialog"
 			message="Digite seu e-mail para recuperar sua senha. Você recebera um e-mail com as instruções."
 			header="Esqueci minha Senha" severity="alert"

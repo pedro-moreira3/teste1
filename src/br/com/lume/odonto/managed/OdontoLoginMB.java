@@ -89,6 +89,15 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
     public String actionLogin() {
         try {
             JSFHelper.getSession().invalidate();
+            
+            if(!this.getEntity().getUsuStrLogin().toUpperCase().equals("faruk.zahra@lumetec.com.br".toUpperCase()) &&
+                    !this.getEntity().getUsuStrLogin().toUpperCase().equals("mariana.mamp27@gmail.com".toUpperCase()) &&
+                    !this.getEntity().getUsuStrLogin().toUpperCase().equals("alvaro@consultoriolegal.com.br".toUpperCase()) && 
+                    !this.getEntity().getUsuStrLogin().toUpperCase().equals("mariana.pepino@facialclin.com.br".toUpperCase())
+                    ) {
+                this.addError("Sistema em manutenção", "");
+                return "";
+            }
             Usuario userLogin = LoginSingleton.getInstance().getBo().doLogin(this.getEntity(), sistema);
             Usuario usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(userLogin.getUsuStrLogin());
             List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByUsuario(usuario);
