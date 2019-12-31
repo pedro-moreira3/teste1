@@ -101,10 +101,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             setFim(now.getTime());
             setFormasPagamento(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma"));
             setListaStatus(new ArrayList<>());
-            getListaStatus().add(Fatura.StatusFatura.PAGO.toString());
-            getListaStatus().add(Fatura.StatusFatura.PENDENTE.toString());
-            getListaStatus().add(Fatura.StatusFatura.TODOS.toString());
-            setStatus(Fatura.StatusFatura.PENDENTE.toString());
+            getListaStatus().add(Fatura.StatusFatura.PAGO.getRotulo());
+            getListaStatus().add(Fatura.StatusFatura.PENDENTE.getRotulo());
+            getListaStatus().add(Fatura.StatusFatura.TODOS.getRotulo());
+            setStatus(Fatura.StatusFatura.PENDENTE.getRotulo());
             setShowLancamentosCancelados(false);
             carregarProfissionais();
 

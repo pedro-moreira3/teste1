@@ -16,7 +16,7 @@
 									value="Período do pedido de lavagem:" />
 								<p:selectOneMenu id="filtroPeriodo"
 									value="#{relatorioLavagemMB.filtroPeriodo}">
-									<p:ajax process="@this" update="@form"
+									<p:ajax process="@this" update=":lume:inicio,:lume:fim"
 										listener="#{relatorioLavagemMB.actionTrocaDatasCriacao}" />
 									<f:selectItem itemValue="" itemLabel="Selecione" />
 									<f:selectItem itemValue="O" itemLabel="Ontem" />
@@ -45,7 +45,7 @@
 									value="Período de devolução de lavagem:" />
 								<p:selectOneMenu id="filtroPeriodoFinalizacao"
 									value="#{relatorioLavagemMB.filtroPeriodoFinalizacao}">
-									<p:ajax process="@this" update="@form"
+									<p:ajax process="@this" update=":lume:inicioFinalizacao,:lume:fimFinalizacao"
 										listener="#{relatorioLavagemMB.actionTrocaDatasFinal}" />
 									<f:selectItem itemValue="" itemLabel="Selecione" />
 									<f:selectItem itemValue="O" itemLabel="Ontem" />

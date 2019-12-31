@@ -42,6 +42,7 @@ import br.com.lume.especialidade.EspecialidadeSingleton;
 import br.com.lume.filial.FilialSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.kit.KitSingleton;
+import br.com.lume.local.LocalSingleton;
 import br.com.lume.odonto.entity.Afiliacao;
 
 // import br.com.lume.odonto.bo.DominioBO;
@@ -168,13 +169,21 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
             this.getEntity().setEmpStrEstoque(Empresa.ESTOQUE_COMPLETO);
             this.getEntity().setEmpChaSts(Status.ATIVO);
             this.getEntity().setEmpChaTrial(Status.SIM);
+            
+            
             Calendar c = Calendar.getInstance();
             this.getEntity().setEmpDtmCriacao(c.getTime());
             this.getEntity().setEmpDtmAceite(c.getTime());
             this.getEntity().setEmpChaIp(JSFHelper.getRequest().getRemoteAddr());
             c.add(Calendar.MONTH, 1);
             this.getEntity().setEmpDtmExpiracao(c.getTime());
+            this.getEntity().setValidarRepasseProcedimentoFinalizado("S");          
+            this.getEntity().setValidarRepasseConfereCustoDireto("S");
+            this.getEntity().setValidarRepasseLancamentoOrigemValidado("S");
             EmpresaSingleton.getInstance().getBo().persist(this.getEntity());
+            LocalSingleton.getInstance().createLocaisDefault(EmpresaSingleton.getInstance().getBo().find(this.getEntity()).getEmpIntCod());
+            
+            
             cadastrarDadosTemplate(getEntity());
             this.actionPersistFilial(null);
             this.actionPersistProfissional(null);
