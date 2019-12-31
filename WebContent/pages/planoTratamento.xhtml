@@ -188,7 +188,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:commandButton id="geraNegociacao" icon="fa fa-legal"
 								title="Orçamento" oncomplete="PF('dlgOrcamentos').show()"
 								action="#{planoTratamentoMB.carregaTelaOrcamento(planoTratamento)}"
-								update=":lume:tabView:mainViewPT, :lume:tabView:pnOrcamento, :lume:tabView:orcamentoViewTable, :lume:tabView:orcamentos"
+								update=":lume:tabView:orcamentoViewTable"
 								styleClass="NavyButton" process="@this" />
 						</h:panelGroup>
 						<ui:remove>
@@ -642,9 +642,14 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 	<p:dialog widgetVar="dlgViewPlanoTratamento" resizable="false"
 		onHide="PF('dlgViewPlanoTratamento').toggleMaximize();"
-		onShow="PF('dlgViewPlanoTratamento').toggleMaximize();"
-		header="Plano de tratamento '#{planoTratamentoMB.entity.descricao}' do Paciente #{pacienteMB.entity.dadosBasico.nome}"
-		id="viewPlanoTratamento" modal="true" appendTo=":lume">
+		onShow="PF('dlgViewPlanoTratamento').toggleMaximize();" modal="true"
+		appendTo=":lume">
+		<f:facet name="header">
+			<p:outputPanel id="viewPlanoTratamento">
+				<h:outputText
+					value="Plano de tratamento '#{planoTratamentoMB.entity.descricao}' do Paciente #{pacienteMB.entity.dadosBasico.nome}" />
+			</p:outputPanel>
+		</f:facet>
 
 		<p:outputPanel id="pnViewPlanoTratamento"
 			style="max-height: calc(100% - 54px); height: calc(100% - 54px);"
@@ -726,7 +731,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									<p:commandButton id="geraNegociacao" icon="fa fa-legal"
 										value="Orçamento" oncomplete="PF('dlgOrcamentos').show()"
 										actionListener="#{planoTratamentoMB.carregaOrcamentos}"
-										update=":lume:tabView:pnOrcamento, :lume:tabView:orcamentoViewTable, :lume:tabView:orcamentos"
+										update=":lume:tabView:orcamentoViewTable"
 										styleClass="NavyButton" process="@this"
 										disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 								</h:panelGroup>
@@ -1156,7 +1161,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:panelGrid columns="2" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 				<p:commandButton icon="ui-icon-add" styleClass="GreenButton"
-					process="@this, :lume:tabView:pgProcedimento, :lume:tabView:mainViewPT, :lume:tabView:pnViewPlanoTratamento, :lume:tabView:pgProcedimentoBotoes"
+					process="@this, :lume:tabView:pgProcedimento"
 					value="#{(planoTratamentoMB.planoTratamentoProcedimentoSelecionado.id == 0 ? 'Adicionar Procedimento ao Plano de Tratamento' : 'Salvar Procedimento')}"
 					actionListener="#{planoTratamentoMB.actionAdicionarProcedimento}"
 					update=":lume:tabView:pnViewPlanoTratamento" />
@@ -1358,7 +1363,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<p:column headerText="Descrição" filterMatchMode="contains"
 							filterBy="#{procedimento.descricao}"
 							sortBy="#{procedimento.descricao}"
-							filterFunction="#{agendamentoMB.filtroSemAcento}">
+							filterFunction="#{pacienteMB.filtroSemAcento}">
 							<div style="width: 100%; text-align: left">
 								<h:outputText value="#{procedimento.descricao}" />
 							</div>
@@ -1607,7 +1612,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				</h:panelGroup>
 				<h:panelGroup styleClass="lumeField">
 					<p:outputLabel for="valorAPagarNewPlanejamento" value="Valor: " />
-					<p:inputNumber id="valorAPagarNewPlanejamento" rendered="#{planoTratamentoMB.planejamentoAtual != null}"
+					<p:inputNumber id="valorAPagarNewPlanejamento"
+						rendered="#{planoTratamentoMB.planejamentoAtual != null}"
 						value="#{planoTratamentoMB.planejamentoAtual.valor}"
 						required="true" maxlength="13" maxValue="9999999999.99"
 						decimalSeparator="," symbol="R$ " thousandSeparator=".">

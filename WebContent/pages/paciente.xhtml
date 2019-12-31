@@ -160,14 +160,14 @@
 						<p:column sortBy="#{paciente.dadosBasico.celular}"
 							filterBy="#{paciente.dadosBasico.celular}"
 							filterMatchMode="contains" headerText="Telefone Celular"
-							rendered="#{pacienteMB.visivelDadosPaciente}">
+							rendered="#{pacienteMB.visivelDadosPaciente and false}">
 							<h:panelGroup style="display: flex !important;">
 								<div style="line-height: 32px; width: calc(100% - 32px);">
 									<h:outputText value="#{paciente.dadosBasico.celular}" />
 								</div>
 								<p:button icon="White fa fa-whatsapp" style="right: 0"
-									disabled="#{pacienteMB.getUrlWpp(paciente) == null}"
-									onclick="window.open('#{pacienteMB.getUrlWpp(paciente)}'); return false;"
+									disabled="#{paciente.wppURL == null}"
+									onclick="window.open('#{paciente.wppURL}'); return false;"
 									styleClass="GreenButton" />
 							</h:panelGroup>
 						</p:column>

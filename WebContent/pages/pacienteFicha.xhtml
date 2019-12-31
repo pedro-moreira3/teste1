@@ -19,7 +19,7 @@
 </style>
 
 	<p:dialog widgetVar="dlgFichaPaciente" resizable="false"
-		onHide="PF('dlgFichaPaciente').toggleMaximize();onHidePacienteFicha();"
+		onHide="PF('dlgFichaPaciente').toggleMaximize();"
 		onShow="PF('dlgFichaPaciente').toggleMaximize();" modal="true"
 		appendTo=":lume">
 		<f:facet name="header">
@@ -46,7 +46,7 @@
 			<p:column rendered="#{tabPacienteMB.indexTabView != 0}" />
 			<p:column />
 			<p:column />
-			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+			<p:commandButton icon="fa fa-close" value="Fechar"
 				oncomplete="PF('dlgFichaPaciente').hide()" />
 		</p:panelGrid>
 	</p:dialog>
