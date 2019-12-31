@@ -136,9 +136,10 @@
 										value="#{lancamento.fatura.profissional.dadosBasico.nome}" />
 								</p:column>
 								<p:column filterMatchMode="contains" headerText="Procedimento"
-									filterBy="#{lancamento.ptp.procedimento.descricao}"
-									sortBy="#{lancamento.ptp.procedimento.descricao}">
-									<h:outputText value="#{lancamento.ptp.procedimento.descricao}" />
+									filterBy="#{lancamento.rfl.faturaItem.descricaoItem}"
+									sortBy="#{lancamento.rfl.faturaItem.descricaoItem}">
+									<h:outputText
+										value="#{lancamento.rfl.faturaItem.descricaoItem}" />
 								</p:column>
 								<p:column filterMatchMode="contains"
 									headerText="Plano de Tratamento"
@@ -163,34 +164,55 @@
 									headerText="Valor Procedimento"
 									filterBy="#{lancamento.rfl.faturaItem.valorComDesconto}"
 									sortBy="#{lancamento.rfl.faturaItem.valorComDesconto}"
-									width="100">
+									width="80">
 									<h:outputText
 										value="#{lancamento.rfl.faturaItem.valorComDesconto}">
-										<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
-											type="currency" />
-									</h:outputText>
-								</p:column>
-								<p:column filterMatchMode="contains" headerText="Taxas/Tarifas"
-									filterBy="#{lancamento.valorTaxasETarifas}"
-									sortBy="#{lancamento.valorTaxasETarifas}" width="100">
-									<h:outputText value="#{lancamento.valorTaxasETarifas}">
-										<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+										<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 											type="currency" />
 									</h:outputText>
 								</p:column>
 								<p:column filterMatchMode="contains" headerText="Custos Diretos"
 									filterBy="#{lancamento.custosDiretos}"
-									sortBy="#{lancamento.custosDiretos}" width="100">
+									sortBy="#{lancamento.custosDiretos}" width="80">
 									<h:outputText value="#{lancamento.custosDiretos}">
-										<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+										<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 											type="currency" />
 									</h:outputText>
 								</p:column>
-								<p:column filterMatchMode="contains" headerText="Valor"
+								<p:column filterMatchMode="contains" headerText="Recebido"
+									filterBy="#{lancamento.valorRecebidoComFormaPagto}"
+									sortBy="#{lancamento.valorRecebidoComFormaPagto}" width="80">
+									<h:outputText value="#{lancamento.valorRecebidoComFormaPagto}">
+										<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+											type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Taxas/Tarifas"
+									filterBy="#{lancamento.valorTaxasETarifas}"
+									sortBy="#{lancamento.valorTaxasETarifas}" width="80">
+									<h:outputText value="#{lancamento.valorTaxasETarifas}">
+										<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+											type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Tributo"
+									filterBy="#{lancamento.tributoPerc}"
+									sortBy="#{lancamento.tributoPerc}" width="80">
+									<h:outputText value="#{lancamento.tributoPerc}">
+										<f:convertNumber maxFractionDigits="2" type="percent" />
+									</h:outputText>
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Método Repasse"
+									filterBy="#{lancamento.metodoRepasse}"
+									sortBy="#{lancamento.metodoRepasse}" width="100">
+									<h:outputText value="#{lancamento.metodoRepasse}" />
+								</p:column>
+								<p:column filterMatchMode="contains"
+									headerText="Valor a Repassar"
 									filterBy="#{lancamento.valorComDesconto}"
-									sortBy="#{lancamento.valorComDesconto}" width="100">
+									sortBy="#{lancamento.valorComDesconto}" width="80">
 									<h:outputText value="#{lancamento.valor}">
-										<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+										<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 											type="currency" />
 									</h:outputText>
 								</p:column>
@@ -198,20 +220,20 @@
 								<p:column filterMatchMode="contains"
 									headerText="Data de criação"
 									filterBy="#{lancamento.dataCriacao}"
-									sortBy="#{lancamento.dataCriacao}" width="150">
+									sortBy="#{lancamento.dataCriacao}" width="120">
 									<h:outputText value="#{lancamento.dataCriacao}">
 										<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
 									</h:outputText>
 								</p:column>
-								<p:column filterMatchMode="contains" headerText="Validado?"
+								<p:column filterMatchMode="contains" headerText="Repassado?"
 									filterBy="#{lancamento.validadoStr}"
-									sortBy="#{lancamento.validadoStr}" width="100">
+									sortBy="#{lancamento.validadoStr}" width="50">
 									<h:outputText value="#{lancamento.validadoStr}" />
 								</p:column>
 								<p:column filterMatchMode="contains" headerText="Recibo Ativo"
 									filterBy="#{lancamento.reciboRepasseAtivo.descricaoStr}"
 									sortBy="#{lancamento.reciboRepasseAtivo.descricaoStr}"
-									width="200">
+									width="100">
 									<h:outputText
 										value="#{lancamento.reciboRepasseAtivo.recibo.descricaoStr}" />
 								</p:column>

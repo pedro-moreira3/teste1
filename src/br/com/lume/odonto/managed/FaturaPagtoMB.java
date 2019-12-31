@@ -253,6 +253,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 inicio.set(Calendar.HOUR_OF_DAY, 0);
                 inicio.set(Calendar.MINUTE, 0);
                 inicio.set(Calendar.SECOND, 0);
+                inicio.set(Calendar.MILLISECOND, 0);
             }
             Calendar fim = null;
             if (getFim() != null) {
@@ -261,6 +262,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 fim.set(Calendar.HOUR_OF_DAY, 23);
                 fim.set(Calendar.MINUTE, 59);
                 fim.set(Calendar.SECOND, 59);
+                fim.set(Calendar.MILLISECOND, 999);
             }
 
             setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), Arrays.asList(getPtSelecionados()),
@@ -331,6 +333,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 return;
             }
 
+            Calendar now = Calendar.getInstance();
             Calendar data = Calendar.getInstance();
             data.setTime(getDataCredito());
             if ("CC".equals(getFormaPagamento())) {
@@ -340,13 +343,13 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                     if (i == getParcela()) {
                         valorOriginalDividio = valorOriginalDividio.subtract(diferenca);
                     }
-                    LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), Calendar.getInstance().getTime(), data.getTime(),
-                            getTarifa(), UtilsFrontEnd.getProfissionalLogado());
+                    LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
+                            UtilsFrontEnd.getProfissionalLogado());
                     //persistLancamento(getParcela(), getEntity(), valorOriginalDividio, getFormaPagamento(), Calendar.getInstance().getTime(), data.getTime(), getTarifa());
                     data.add(Calendar.MONTH, 1);
                 }
             } else {
-                LancamentoSingleton.getInstance().novoLancamento(getEntity(), getValor(), getFormaPagamento(), getParcela(), Calendar.getInstance().getTime(), data.getTime(), getTarifa(),
+                LancamentoSingleton.getInstance().novoLancamento(getEntity(), getValor(), getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
                         UtilsFrontEnd.getProfissionalLogado());
                 //persistLancamento(getParcela(), getEntity(), getValor(), getFormaPagamento(), Calendar.getInstance().getTime(), data.getTime(), getTarifa());
             }

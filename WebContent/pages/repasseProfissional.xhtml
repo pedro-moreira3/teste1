@@ -66,8 +66,6 @@
 											var="paciente" itemLabel="#{paciente.dadosBasico.nome}"
 											itemValue="#{paciente}" converter="paciente"
 											forceSelection="true">
-
-											<p:ajax event="itemSelect" process="@this" />
 										</p:autoComplete>
 									</h:panelGroup>
 
@@ -81,8 +79,6 @@
 											itemLabel="#{profissional.dadosBasico.prefixoNome}"
 											itemValue="#{profissional}" converter="profissional"
 											forceSelection="true">
-
-											<p:ajax event="itemSelect" process="@this" />
 										</p:autoComplete>
 									</h:panelGroup>
 
@@ -94,7 +90,6 @@
 											<f:selectItem itemValue="1"
 												itemLabel="Não disponível para repasse" />
 											<f:selectItem itemValue="2" itemLabel="Pendente de repasse" />
-											<p:ajax process="@this" />
 										</p:selectOneMenu>
 									</h:panelGroup>
 

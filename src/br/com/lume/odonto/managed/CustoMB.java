@@ -29,7 +29,7 @@ import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
-import br.com.lume.repasse.RepasseFaturasItemSingleton;
+import br.com.lume.repasse.RepasseFaturasSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -108,7 +108,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
             this.actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
 
-            RepasseFaturasItemSingleton.getInstance().ajusteCustoDireto(this.getCustoSelecionado().getPlanoTratamentoProcedimento(), UtilsFrontEnd.getProfissionalLogado());
+            RepasseFaturasSingleton.getInstance().validaValoresItensRepasse(this.getCustoSelecionado().getPlanoTratamentoProcedimento(), UtilsFrontEnd.getProfissionalLogado());
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -136,7 +136,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
 //            actionNew(event);
 
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-            RepasseFaturasItemSingleton.getInstance().ajusteCustoDireto(planoTratamentoProcedimento, UtilsFrontEnd.getProfissionalLogado());
+            RepasseFaturasSingleton.getInstance().validaValoresItensRepasse(this.getCustoSelecionado().getPlanoTratamentoProcedimento(), UtilsFrontEnd.getProfissionalLogado());
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");

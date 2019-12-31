@@ -21,6 +21,7 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.Lancamento;
@@ -114,10 +115,16 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                         lancamento.setCustosDiretos(BigDecimal.ZERO);
                         for (PlanoTratamentoProcedimentoCusto custo : custos)
                             lancamento.setCustosDiretos(lancamento.getCustosDiretos().add(custo.getValor()));
-                        BigDecimal taxas = LancamentoContabilSingleton.getInstance().getTaxasAndTarifasForLancamentoRecebimento(lancamento);
+                        BigDecimal taxas = LancamentoContabilSingleton.getInstance().getTaxasAndTarifasForLancamentoRecebimento(repasse.getLancamentoOrigem());
                         lancamento.setValorTaxasETarifas(taxas);
-                        for (PlanoTratamentoProcedimentoCusto custo : custos)
-                            lancamento.setCustosDiretos(lancamento.getCustosDiretos().add(custo.getValor()));
+                        if (Profissional.PORCENTAGEM.equals(repasse.getRepasseFaturas().getTipoCalculo()))
+                            lancamento.setMetodoRepasse("POR - " + String.format("%.2f%%", repasse.getRepasseFaturas().getValorCalculo()));
+                        else if (Profissional.PROCEDIMENTO.equals(repasse.getRepasseFaturas().getTipoCalculo())) {
+                            BigDecimal valorRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(lancamento.getPtp());
+                            lancamento.setMetodoRepasse("PRO - " + String.format("R$ %.2f", valorRepasse.doubleValue()));
+                        }
+
+                        lancamento.setValorRecebidoComFormaPagto(String.format("R$ %.2f", repasse.getLancamentoOrigem().getValor()) + " " + repasse.getLancamentoOrigem().getFormaPagamentoStr());
                     } catch (Exception e) {
                         lancamento.setPtp(null);
                     }

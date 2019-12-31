@@ -113,14 +113,33 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
 
     public void pesquisar() {
         try {
+            Calendar inicio = null;
+            if (getDataInicio() != null) {
+                inicio = Calendar.getInstance();
+                inicio.setTime(getDataInicio());
+                inicio.set(Calendar.HOUR_OF_DAY, 0);
+                inicio.set(Calendar.MINUTE, 0);
+                inicio.set(Calendar.SECOND, 0);
+                inicio.set(Calendar.MILLISECOND, 0);
+            }
+            Calendar fim = null;
+            if (getDataFim() != null) {
+                fim = Calendar.getInstance();
+                fim.setTime(getDataFim());
+                fim.set(Calendar.HOUR_OF_DAY, 23);
+                fim.set(Calendar.MINUTE, 59);
+                fim.set(Calendar.SECOND, 59);
+                fim.set(Calendar.MILLISECOND, 999);
+            }
+
             if (this.status == null)
-                setEntityList(FaturaSingleton.getInstance().getBo().findFaturasRepasseFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getPaciente(), null, getDataInicio(), getDataFim(),
+                setEntityList(FaturaSingleton.getInstance().getBo().findFaturasRepasseFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getPaciente(), null, inicio.getTime(), fim.getTime(),
                         isMesesAnteriores(), true, true));
             else if (this.status == 1)
-                setEntityList(FaturaSingleton.getInstance().getBo().findFaturasRepasseFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getPaciente(), null, getDataInicio(), getDataFim(),
+                setEntityList(FaturaSingleton.getInstance().getBo().findFaturasRepasseFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getPaciente(), null, inicio.getTime(), fim.getTime(),
                         isMesesAnteriores(), false, true));
             else if (this.status == 2)
-                setEntityList(FaturaSingleton.getInstance().getBo().findFaturasRepasseFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getPaciente(), null, getDataInicio(), getDataFim(),
+                setEntityList(FaturaSingleton.getInstance().getBo().findFaturasRepasseFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getPaciente(), null, inicio.getTime(), fim.getTime(),
                         isMesesAnteriores(), true, false));
             if (isPagoTotalmente())
                 getEntityList().removeIf(fatura -> {
