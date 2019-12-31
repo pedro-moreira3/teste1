@@ -1,5 +1,6 @@
 package br.com.lume.odonto.managed;
 
+import java.math.BigDecimal;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,12 +22,15 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.lancamento.LancamentoSingleton;
+import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoCusto;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional.StatusRecibo;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.ReciboRepasseProfissionalLancamentoSingleton;
 import br.com.lume.repasse.ReciboRepasseProfissionalSingleton;
@@ -104,7 +108,16 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                 getLancamentos().forEach(lancamento -> {
                     try {
                         RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(lancamento);
+                        lancamento.setRfl(repasse);
                         lancamento.setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
+                        List<PlanoTratamentoProcedimentoCusto> custos = PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().listFromPlanoTratamentoProcedimento(lancamento.getPtp());
+                        lancamento.setCustosDiretos(BigDecimal.ZERO);
+                        for (PlanoTratamentoProcedimentoCusto custo : custos)
+                            lancamento.setCustosDiretos(lancamento.getCustosDiretos().add(custo.getValor()));
+                        BigDecimal taxas = LancamentoContabilSingleton.getInstance().getTaxasAndTarifasForLancamentoRecebimento(lancamento);
+                        lancamento.setValorTaxasETarifas(taxas);
+                        for (PlanoTratamentoProcedimentoCusto custo : custos)
+                            lancamento.setCustosDiretos(lancamento.getCustosDiretos().add(custo.getValor()));
                     } catch (Exception e) {
                         lancamento.setPtp(null);
                     }

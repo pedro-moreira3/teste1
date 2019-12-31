@@ -159,6 +159,33 @@
 										update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 								</p:column>
 
+								<p:column filterMatchMode="contains"
+									headerText="Valor Procedimento"
+									filterBy="#{lancamento.rfl.faturaItem.valorComDesconto}"
+									sortBy="#{lancamento.rfl.faturaItem.valorComDesconto}"
+									width="100">
+									<h:outputText
+										value="#{lancamento.rfl.faturaItem.valorComDesconto}">
+										<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+											type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Taxas/Tarifas"
+									filterBy="#{lancamento.valorTaxasETarifas}"
+									sortBy="#{lancamento.valorTaxasETarifas}" width="100">
+									<h:outputText value="#{lancamento.valorTaxasETarifas}">
+										<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+											type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Custos Diretos"
+									filterBy="#{lancamento.custosDiretos}"
+									sortBy="#{lancamento.custosDiretos}" width="100">
+									<h:outputText value="#{lancamento.custosDiretos}">
+										<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+											type="currency" />
+									</h:outputText>
+								</p:column>
 								<p:column filterMatchMode="contains" headerText="Valor"
 									filterBy="#{lancamento.valorComDesconto}"
 									sortBy="#{lancamento.valorComDesconto}" width="100">
@@ -167,6 +194,7 @@
 											type="currency" />
 									</h:outputText>
 								</p:column>
+
 								<p:column filterMatchMode="contains"
 									headerText="Data de criação"
 									filterBy="#{lancamento.dataCriacao}"
