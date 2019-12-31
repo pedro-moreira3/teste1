@@ -492,6 +492,10 @@ public class MaterialMB extends LumeManagedBean<Material> {
                         if (getEntity().getId() == 0) {
                             novo = true;
                         }
+                        Local localDestino = this.getEntity().getEstoque().get(0).getLocal();
+                        BigDecimal quantidade = this.getEntity().getEstoque().get(0).getQuantidade();
+                        this.getEntity().setEstoque(null);
+                        
                         if (this.getbO().persist(this.getEntity())) {
                             if (this.getEntity().getStatus().equals(DEVOLVIDO)) {
                                 this.addInfo(OdontoMensagens.getMensagem("material.salvo.devolvido"), "", true);
@@ -500,11 +504,11 @@ public class MaterialMB extends LumeManagedBean<Material> {
                             }
                             if (novo) {
                                 Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");
-                                BigDecimal quantidade = this.getEntity().getEstoque().get(0).getQuantidade();
+                               
                                // this.getEntity().getEstoque().get(0).setQuantidade(new BigDecimal(0));
                                // this.getEntity().getEstoque().get(0).setLocal(this.getLocal());
                               //  this.getEntity().getEstoque().get(0).setMaterial(this.getEntity());
-                                EstoqueSingleton.getInstance().transferencia(this.getEntity(), localOrigem, this.getEntity().getEstoque().get(0).getLocal(), quantidade,
+                                EstoqueSingleton.getInstance().transferencia(this.getEntity(), localOrigem, localDestino, quantidade,
                                         EstoqueSingleton.ENTRADA_MATERIAL_CADASTRO, UtilsFrontEnd.getProfissionalLogado());
 
                                 this.setEntity(new Material());
