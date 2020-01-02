@@ -24,6 +24,7 @@ import org.primefaces.model.TreeNode;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.conta.ContaSingleton;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
@@ -121,7 +122,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             Local firstLevelLocal = new Local();
             firstLevelLocal.setDescricao("RAIZ");
             this.chargeTreeLocal(new DefaultTreeNode(firstLevelLocal, this.getRootLocal()));
-            dateHoje = new Date();  
+            dateHoje = new Date();
 
 //            //para inserir estoque inicial            
 //            MaterialBO bo = MaterialSingleton.getInstance().getBo();
@@ -144,12 +145,12 @@ public class MaterialMB extends LumeManagedBean<Material> {
 //                    soma = soma.add(ptp.getValorRepassado());
 //                }
 //                System.out.println("Prof: " + profissional.getDadosBasico().getNome() + "Soma: " + soma);
-//                Conta conta = ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PROFISSIONAL, profissional, soma, null, profissional, null,null,null);
-//                if(conta == null) {
+//                Conta conta = ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PROFISSIONAL, profissional, soma, null, profissional, null, null, null);
+//                if (conta == null) {
 //                    profissional.setConta(conta);
-//                    ProfissionalSingleton.getInstance().getBo().persist(profissional);    
+//                    ProfissionalSingleton.getInstance().getBo().persist(profissional);
 //                }
-//                
+//
 //            }
 //
 //            //para inserir saldo inicial de empresa
@@ -173,29 +174,21 @@ public class MaterialMB extends LumeManagedBean<Material> {
 //
 //                System.out.println(empresa.getEmpStrNme() + "saldo: " + saldoFinal);
 //
-//                Conta conta = ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.EMPRESA, null, saldoFinal,null, null, null,null, empresa);
-//                if(conta == null) {
-//                    empresa.setConta(conta);
-//                    EmpresaSingleton.getInstance().getBo().persist(empresa);    
-//                }
+//                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.EMPRESA, null, saldoFinal, null, null, null, null, empresa);
 //            }
 //
-//            for (Paciente paciente : PacienteSingleton.getInstance().getBo().listAll()) {
-//                Conta conta = ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, null, BigDecimal.ZERO, paciente, null, null,null,null);
-//                if(conta == null) {
-//                    paciente.setConta(conta);
-//                    PacienteSingleton.getInstance().getBo().persist(paciente);    
-//                }                
+//            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listAll();
+//            for (Paciente paciente : pacientes) {
+//                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, null, BigDecimal.ZERO, paciente, null, null, null, null);
+//                System.out.println("Paciente: " + Utils.processProgress(paciente, pacientes));
 //            }
-//            
-//            for (Fornecedor fornecedor : FornecedorSingleton.getInstance().getBo().listAll()) {
-//                Conta conta = ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, null, BigDecimal.ZERO, null, null, fornecedor,null,null);
-//                if(conta == null) {
-//                    fornecedor.setConta(conta);
-//                    FornecedorSingleton.getInstance().getBo().persist(fornecedor);    
-//                }                
+//
+//            List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listAll();
+//            for (Fornecedor fornecedor : fornecedores) {
+//                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, null, BigDecimal.ZERO, null, null, fornecedor, null, null);
+//                System.out.println("Fornecedor: " + Utils.processProgress(fornecedor, fornecedores));
 //            }
-            
+//
 //
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -419,18 +412,12 @@ public class MaterialMB extends LumeManagedBean<Material> {
         }
 
     }
-    
-    
 
-    
-    
     @Override
     public void actionNew(ActionEvent arg0) {
-     
-       
+
         super.actionNew(arg0);
     }
-    
 
     public void actionPersistFechar(ActionEvent event) {
         this.actionPersist(event);
@@ -495,7 +482,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                         Local localDestino = this.getEntity().getEstoque().get(0).getLocal();
                         BigDecimal quantidade = this.getEntity().getEstoque().get(0).getQuantidade();
                         this.getEntity().setEstoque(null);
-                        
+
                         if (this.getbO().persist(this.getEntity())) {
                             if (this.getEntity().getStatus().equals(DEVOLVIDO)) {
                                 this.addInfo(OdontoMensagens.getMensagem("material.salvo.devolvido"), "", true);
@@ -504,12 +491,12 @@ public class MaterialMB extends LumeManagedBean<Material> {
                             }
                             if (novo) {
                                 Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");
-                               
-                               // this.getEntity().getEstoque().get(0).setQuantidade(new BigDecimal(0));
-                               // this.getEntity().getEstoque().get(0).setLocal(this.getLocal());
-                              //  this.getEntity().getEstoque().get(0).setMaterial(this.getEntity());
-                                EstoqueSingleton.getInstance().transferencia(this.getEntity(), localOrigem, localDestino, quantidade,
-                                        EstoqueSingleton.ENTRADA_MATERIAL_CADASTRO, UtilsFrontEnd.getProfissionalLogado());
+
+                                // this.getEntity().getEstoque().get(0).setQuantidade(new BigDecimal(0));
+                                // this.getEntity().getEstoque().get(0).setLocal(this.getLocal());
+                                //  this.getEntity().getEstoque().get(0).setMaterial(this.getEntity());
+                                EstoqueSingleton.getInstance().transferencia(this.getEntity(), localOrigem, localDestino, quantidade, EstoqueSingleton.ENTRADA_MATERIAL_CADASTRO,
+                                        UtilsFrontEnd.getProfissionalLogado());
 
                                 this.setEntity(new Material());
                                 this.getEntity().setFornecedor(null);
