@@ -441,3 +441,5 @@ descricao in
 'FIOS ORTODONTICOS'
 ) and id_empresa = 41;
 
+alter table SEG_USUARIO alter column USU_STR_SENHA drop not null; 
+

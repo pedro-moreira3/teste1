@@ -489,9 +489,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.geraLista();
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), true);
             if (novoPaciente) {
-                Conta conta = ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getEntity(),null, null, null, null);
-                getEntity().setConta(conta);
-                this.getbO().persist(this.getEntity());
+                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getEntity(),null, null, null, null);            
                 PrimeFaces.current().executeScript("PF('dlgFichaPaciente').hide()");
             }
         } catch (DataNascimentoException dne) {
@@ -597,11 +595,11 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void geraLista() {
         try {
             if (UtilsFrontEnd.getProfissionalLogado() != null) {
-                if (!filtroStatus.equals("T")) {
-                    setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), filtroStatus));
-                } else {
+              //  if (!filtroStatus.equals("T")) {
+              //      setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), filtroStatus));
+               // } else {
                     setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-                }
+              //  }
             }
 
         } catch (Exception e) {

@@ -101,7 +101,7 @@ body .ui-wizard .ui-wizard-content {
 											mask="99999-999">
 											<f:validator validatorId="cepValidator" />
 											<p:ajax event="blur" process="@this"
-												listener="#{cadastroWebMB.buscaCep()}" update=":lume:wizard" />
+												listener="#{cadastroWebMB.buscaCep()}" update=":lume:empStrEndereco,:lume:empStrComplemento,:lume:empStrBairro,:lume:empStrCidade,:lume:empChaUf" />
 										</p:inputMask>
 
 										<p:outputLabel for="empStrEndereco" value="Endereço: " />

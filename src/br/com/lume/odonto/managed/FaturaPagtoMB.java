@@ -364,9 +364,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public String getStyleBySaldoPaciente() throws Exception {
         if (getPaciente() == null || getPaciente().getId() == null || getPaciente().getId().longValue() == 0)
             return "";
-        if (getPaciente().getConta() == null)
-            getPaciente().setConta(ContaSingleton.getInstance().criaConta(TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getPaciente(), null, null, null, null));
-        BigDecimal saldo = getPaciente().getConta().getSaldo();
+        if (ContaSingleton.getInstance().getContaFromOrigem(getPaciente()) == null)
+            ContaSingleton.getInstance().criaConta(TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getPaciente(), null, null, null, null);
+        BigDecimal saldo = ContaSingleton.getInstance().getContaFromOrigem(getPaciente()).getSaldo();
         String color = (saldo.compareTo(BigDecimal.ZERO) == 0 ? "#17a2b8" : (saldo.compareTo(BigDecimal.ZERO) < 0 ? "#dc3545" : "#28a745"));
         return (color != null && !color.isEmpty() ? "color: " + color : "");
     }
@@ -446,6 +446,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 valor = valor.add(FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura));
             }
         } catch (Exception e) {
+            e.printStackTrace();
             addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
         }
         return valor;
@@ -453,14 +454,15 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
-        try {
-            this.lAPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(this.paciente.getConta(), Mes.getMesAtual(), ValidacaoLancamento.NAO_VALIDADO);
+        try {           
+            this.lAPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), Mes.getMesAtual(), ValidacaoLancamento.NAO_VALIDADO);
             BigDecimal vAPagar = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAPagar));
-            this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(this.paciente.getConta(), Mes.getMesAtual(), ValidacaoLancamento.NAO_VALIDADO);
+            this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), Mes.getMesAtual(), ValidacaoLancamento.NAO_VALIDADO);
             BigDecimal vAReceber = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAReceber));
-            this.paciente.getConta().setSaldo(vAReceber.subtract(vAPagar));
+            ContaSingleton.getInstance().getContaFromOrigem(this.paciente).setSaldo(vAReceber.subtract(vAPagar));
         } catch (Exception e) {
-            // TODO: handle exception
+            e.printStackTrace();
+            addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
         }
     }
 
@@ -473,16 +475,22 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         return "black";
     }
 
-    public String getSaldoCor() {
-        if (this.paciente.getConta() != null) {
-            BigDecimal saldo = this.paciente.getConta().getSaldo();
-            if (saldo != null && saldo.compareTo(BigDecimal.ZERO) != 0) {
-                if (saldo.compareTo(BigDecimal.ZERO) < 0)
-                    return "#ffc107";
-                else if (saldo.compareTo(BigDecimal.ZERO) > 0)
-                    return "#007bff";
-            }
+    public String getSaldoCor() {        
+        try {
+            if ( ContaSingleton.getInstance().getContaFromOrigem(this.paciente) != null) {
+                BigDecimal saldo =  ContaSingleton.getInstance().getContaFromOrigem(this.paciente).getSaldo();
+                if (saldo != null && saldo.compareTo(BigDecimal.ZERO) != 0) {
+                    if (saldo.compareTo(BigDecimal.ZERO) < 0)
+                        return "#ffc107";
+                    else if (saldo.compareTo(BigDecimal.ZERO) > 0)
+                        return "#007bff";
+                }
+            }     
+        } catch (Exception e) {
+            e.printStackTrace();
+            addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
         }
+       
         return "black";
     }
 
