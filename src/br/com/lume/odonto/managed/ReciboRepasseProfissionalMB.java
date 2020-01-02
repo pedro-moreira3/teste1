@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.event.AjaxBehaviorEvent;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
@@ -45,7 +46,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
     private String filtroPeriodoRepasses = "M", filtroPeriodoRecibos = "M", descricao, observacao;
     private Date dataInicioRepasses, dataFimRepasses, dataInicioRecibos, dataFimRecibos;
-    boolean lancSemRecibo = true, lancValidadosOnly = false, recibosFindCancelados = false;
+    boolean lancSemRecibo = true, lancValidadosOnly = false, recibosFindCancelados = false, lancMesesAnterioresRepasse = false;
     private Profissional profissionalRepasses, profissionalRecibos;
     private List<Lancamento> lancamentos;
     private Lancamento[] lancamentosSelecionados;
@@ -63,8 +64,8 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         this.setClazz(ReciboRepasseProfissional.class);
         try {
             setFiltroStatus(StatusRecibo.TODOS);
-            actionTrocaDatasCriacaoRepasses();
-            actionTrocaDatasCriacaoRecibos();
+            actionTrocaDatasCriacaoRepasses(null);
+            actionTrocaDatasCriacaoRecibos(null);
             pesquisarRepasses();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -104,7 +105,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     public void pesquisarRepasses() {
         try {
             setLancamentos(LancamentoSingleton.getInstance().getBo().listLancamentosRepasse(UtilsFrontEnd.getEmpresaLogada(), getProfissionalRepasses(), isLancSemRecibo(), isLancValidadosOnly(),
-                    getDataInicioRepasses(), getDataFimRepasses()));
+                    isLancMesesAnterioresRepasse(), getDataInicioRepasses(), getDataFimRepasses()));
             if (getLancamentos() != null && !getLancamentos().isEmpty()) {
                 getLancamentos().forEach(lancamento -> {
                     try {
@@ -233,7 +234,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         return sugestoes;
     }
 
-    public void actionTrocaDatasCriacaoRecibos() {
+    public void actionTrocaDatasCriacaoRecibos(AjaxBehaviorEvent event) {
         try {
             this.dataInicioRecibos = getDataInicio(filtroPeriodoRecibos);
             this.dataFimRecibos = getDataFim(filtroPeriodoRecibos);
@@ -243,7 +244,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         }
     }
 
-    public void actionTrocaDatasCriacaoRepasses() {
+    public void actionTrocaDatasCriacaoRepasses(AjaxBehaviorEvent event) {
         try {
             this.dataInicioRepasses = getDataInicio(filtroPeriodoRepasses);
             this.dataFimRepasses = getDataFim(filtroPeriodoRepasses);
@@ -496,6 +497,14 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
     public void setTabelaRecibos(DataTable tabelaRecibos) {
         this.tabelaRecibos = tabelaRecibos;
+    }
+
+    public boolean isLancMesesAnterioresRepasse() {
+        return lancMesesAnterioresRepasse;
+    }
+
+    public void setLancMesesAnterioresRepasse(boolean lancMesesAnterioresRepasse) {
+        this.lancMesesAnterioresRepasse = lancMesesAnterioresRepasse;
     }
 
 }

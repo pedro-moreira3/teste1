@@ -58,7 +58,7 @@
 
 											<p:ajax process="@this"
 												update="dataInicialRepasses, dataFinalRepasses"
-												listener="#{reciboRepasseProfissionalMB.actionTrocaDatasCriacao}" />
+												listener="#{reciboRepasseProfissionalMB.actionTrocaDatasCriacaoRepasses}" />
 										</p:selectOneMenu>
 										<p:outputLabel for="filtroPeriodoRepasses"
 											value="Período de criação:" />
@@ -97,7 +97,7 @@
 										<p:selectBooleanCheckbox id="lancSemRecibo"
 											value="#{reciboRepasseProfissionalMB.lancSemRecibo}" />
 										<p:outputLabel for="lancSemRecibo" style="margin-left: 10px;"
-											value="Buscar somente lançamentos sem recibo associado" />
+											value="Buscar somente repasses sem recibo associado" />
 									</h:panelGroup>
 
 									<h:panelGroup>
@@ -105,7 +105,15 @@
 											value="#{reciboRepasseProfissionalMB.lancValidadosOnly}" />
 										<p:outputLabel for="lancValidadosOnly"
 											style="margin-left: 10px;"
-											value="Buscar somente lançamentos validados" />
+											value="Buscar somente repasses pagos" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<p:selectBooleanCheckbox id="lancMesesAnterioresRecibo"
+											value="#{reciboRepasseProfissionalMB.lancMesesAnterioresRecibo}" />
+										<p:outputLabel for="lancMesesAnterioresRecibo"
+											style="margin-left: 10px;"
+											value="Incluir repasses de meses anteriores" />
 									</h:panelGroup>
 
 									<p:commandButton value="Pesquisar" process="@this, @parent"
@@ -268,7 +276,7 @@
 
 											<p:ajax process="@this"
 												update="dataInicialRecibos, dataFinalRecibos"
-												listener="#{reciboRepasseProfissionalMB.actionTrocaDatasCriacao}" />
+												listener="#{reciboRepasseProfissionalMB.actionTrocaDatasCriacaoRecibos}" />
 										</p:selectOneMenu>
 										<p:outputLabel for="filtroPeriodoRecibos"
 											value="Período de criação:" />

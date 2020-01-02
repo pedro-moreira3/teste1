@@ -17,9 +17,10 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
-
 import br.com.lume.odonto.entity.RelatorioRepasse;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.relatorioRepasse.RelatorioRepasseSingleton;
 
@@ -31,14 +32,14 @@ public class RelatorioRepasseMB extends LumeManagedBean<RelatorioRepasse> {
 
     private Logger log = Logger.getLogger(RelatorioRepasseMB.class);
 
-    private Date inicio, fim;  
+    private Date inicio, fim;
 
-     private List<RelatorioRepasse> relatorio;
-        
+    private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos;
+
     private Profissional profissional;
 
     private String statusPagamento;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
 
@@ -51,7 +52,7 @@ public class RelatorioRepasseMB extends LumeManagedBean<RelatorioRepasse> {
 
     public void actionCarregarProcedimentos() {
         try {
-            this.relatorio = RelatorioRepasseSingleton.getInstance().getBo().listAllByFilter(this.statusPagamento, this.profissional.getId(), this.inicio, this.fim);
+            this.planoTratamentoProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByRelatoriosBalanco(this.inicio, this.fim, this.profissional, this.statusPagamento);
         } catch (Exception e) {
             this.log.error("Erro no carregarProcedimentos : ", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -82,13 +83,13 @@ public class RelatorioRepasseMB extends LumeManagedBean<RelatorioRepasse> {
         this.inicio = null;
         this.fim = null;
         this.setEntityList(null);
-        this.setRelatorio(null); 
+        this.setPlanoTratamentoProcedimentos(null);
     }
 
     public void exportarTabela(String type) {
         exportarTabela("Relatório de repasses", tabelaRelatorio, type);
     }
-    
+
     public Date getInicio() {
         return this.inicio;
     }
@@ -121,14 +122,12 @@ public class RelatorioRepasseMB extends LumeManagedBean<RelatorioRepasse> {
         this.statusPagamento = statusPagamento;
     }
 
-    
-    public List<RelatorioRepasse> getRelatorio() {
-        return relatorio;
+    public List<PlanoTratamentoProcedimento> getPlanoTratamentoProcedimentos() {
+        return planoTratamentoProcedimentos;
     }
 
-    
-    public void setRelatorio(List<RelatorioRepasse> relatorio) {
-        this.relatorio = relatorio;
+    public void setPlanoTratamentoProcedimentos(List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos) {
+        this.planoTratamentoProcedimentos = planoTratamentoProcedimentos;
     }
 
     public DataTable getTabelaRelatorio() {
