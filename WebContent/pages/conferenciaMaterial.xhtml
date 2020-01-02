@@ -66,29 +66,16 @@
 								<h:outputText value="#{estoque.material.item.descricao}"
 									title="#{estoque.material.id}" />
 							</p:column>
-<<<<<<< Upstream, based on origin/backend
-							
-							<p:column filterBy="#{estoque.material.estoque.local.descricao}"
-								sortBy="#{estoque.material.estoque.local.descricao}" filterMatchMode="contains" headerText="Local">
-								<h:outputText value="#{estoque.material.estoque.local.descricao}" />
-=======
 							<p:column filterBy="#{estoque.local.descricao}"
 								sortBy="#{estoque.local.descricao}" filterMatchMode="contains" headerText="Local">
 								<h:outputText value="#{estoque.local.descricao}" />
->>>>>>> 9528458 emprestimo de kit
 							</p:column>
 							
 							<p:column filterBy="#{estoque.quantidade}"
-								sortBy="#{estoque.quantidade}" filterMatchMode="contains" headerText="Quantidade disponível">
-								
-								<h:outputText value="#{estoque.quantidade}">
-									<f:convertNumber />
+								sortBy="#{estoque.quantidade}" filterMatchMode="contains" headerText="Quantidade disponível">								
+								<h:outputText value="#{estoque.quantidade}">									<f:convertNumber />
 								</h:outputText>
-								
-								<h:outputLabel
-									value="#{conferenciaMB.getUnidadeString(estoque.material.item)}"
-									styleClass="unidadeMedidaString" disabled="true" />
-<<<<<<< Upstream, based on origin/backend
+
 							</p:column>
 							
 							<p:column exportable="false" headerText="Quantidade emprestada">
@@ -106,10 +93,7 @@
 								</h:panelGroup>
 
 							</p:column>
-							
-=======
-							</p:column>						
->>>>>>> 9528458 emprestimo de kit
+
 							<p:column filterBy="#{estoque.material.marca.nome}"
 								sortBy="#{estoque.material.marca.nome}" filterMatchMode="contains" headerText="Marca">
 								<h:outputText value="#{estoque.material.marca.nome}" />
