@@ -28,6 +28,8 @@ import br.com.lume.item.ItemSingleton;
 import br.com.lume.kitItem.KitItemSingleton;
 import br.com.lume.local.LocalSingleton;
 import br.com.lume.material.MaterialSingleton;
+import br.com.lume.materialConsumido.MaterialConsumidoSingleton;
+import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.EmprestimoKit;
 import br.com.lume.odonto.entity.Estoque;
@@ -35,6 +37,7 @@ import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.KitItem;
 import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Material;
+import br.com.lume.odonto.entity.MaterialConsumido;
 import br.com.lume.odonto.entity.MaterialLog;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
@@ -154,7 +157,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
 
     public void actionDevolucao(ActionEvent event) {
         try {
-            this.devolveMateriais(event, false);
+            this.devolveMateriais(event);
             // atualiza a reserva para finalizada;
             this.getReservaKit().setDevolvidoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
             this.getReservaKit().setStatus(EmprestimoKit.FINALIZADO);
@@ -219,18 +222,18 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
         }
     }
 
-    private void devolveMateriais(ActionEvent event, boolean naoUtilizado) throws BusinessException, TechnicalException, Exception {
+    private void devolveMateriais(ActionEvent event) throws BusinessException, TechnicalException, Exception {
         for (EmprestimoKit cm : this.getMateriais()) {
-        //    BigDecimal quantidadeUtilizada;
-      //      BigDecimal qtdDevolvida;
-            if (naoUtilizado || cm.getMaterial().getItem().getTipo().equals("I")) {
-            //    qtdDevolvida = cm.getQuantidade();
-               // cm.setQuantidadeDevolvida(cm.getQuantidade());
-               // quantidadeUtilizada = BigDecimal.ZERO;
+            BigDecimal quantidadeUtilizada;
+            BigDecimal qtdDevolvida;
+            boolean isInstrumental;
+            if (cm.getMaterial().getItem().getTipo().equals("I")) {              
+                isInstrumental = true;
             } else {
-             //   qtdDevolvida = cm.getQuantidadeDevolvida();
-              //  quantidadeUtilizada = cm.getQuantidade().subtract(cm.getQuantidadeDevolvida());
+                isInstrumental = false;
             }
+            qtdDevolvida = cm.getQuantidadeDevolvida();
+            quantidadeUtilizada = cm.getQuantidade().subtract(cm.getQuantidadeDevolvida());
          //   if (cm.getQuantidadeDevolvida().compareTo(BigDecimal.ZERO) != 0) {// Foi solicitado material e devolvido alguma coisa
        //         MaterialSingleton.getInstance().getBo().refresh(cm.getMaterial());
                // cm.getMaterial().setQuantidadeAtual(cm.getMaterial().getQuantidadeAtual().add(cm.getQuantidadeDevolvida()));
@@ -240,15 +243,52 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
            // String acao = "";
           //  if (naoUtilizado) {
                 //  } else {
-                if(cm.getQuantidadeDevolvida().compareTo(new BigDecimal(0)) == 0) {
-                    cm.setStatus(EmprestimoKit.UTILIZADO_KIT);               
+                 //se tiver alguma quantidade utilizado, é marcado como utilizado
+                if(quantidadeUtilizada.compareTo(new BigDecimal(0)) == 1) {
+                    cm.setStatus(EmprestimoKit.UTILIZADO_KIT);        
+                    //se for instrumental e utilizado, vai para lavagem, no caso devolvido. se form consumo, foi consumido
                     Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "KIT_UTILIZADO_DEVOLVIDO");
-                    EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,cm.getMaterial().getEstoque().get(0).getLocal(),cm.getQuantidadeDevolvida(),EstoqueSingleton.DEVOLUCAO_KIT_FINALIZAR,UtilsFrontEnd.getProfissionalLogado());
-             
-                }else {
+                    if(!isInstrumental) {                        
+                        localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "EMPRESTIMO_KIT");
+                        Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "KIT_UTILIZADO_CONSUMIDO");
+                        //TODO para no futuro facilitar a buscas de custos de procedimentos executados, estou gravando
+                        //em uma tabela separada o que foi consumido                       
+                       for (AgendamentoPlanoTratamentoProcedimento aptp : cm.getReservaKit().getPlanoTratamentoProcedimentosAgendamentos()) {
+                           MaterialConsumido mc = new MaterialConsumido();
+                           mc.setData(new Date());
+                           mc.setEmpresa(UtilsFrontEnd.getEmpresaLogada());
+                           mc.setMaterial(cm.getMaterial());
+                           if(aptp.getPlanoTratamentoProcedimento() != null) {
+                               mc.setPaciente(aptp.getPlanoTratamentoProcedimento().getPlanoTratamento().getPaciente());
+                               mc.setPlanoTratamento(aptp.getPlanoTratamentoProcedimento().getPlanoTratamento());
+                               mc.setProcedimento(aptp.getPlanoTratamentoProcedimento().getProcedimento());
+                               mc.setProfissional(aptp.getPlanoTratamentoProcedimento().getDentistaExecutor());      
+                           }                         
+                           mc.setQuantidade(quantidadeUtilizada);
+                           MaterialConsumidoSingleton.getInstance().getBo().persist(mc);
+                       }
+                       EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,localDestino,quantidadeUtilizada,EstoqueSingleton.DEVOLUCAO_KIT_FINALIZAR,UtilsFrontEnd.getProfissionalLogado());
+                    }else {
+                        EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,cm.getMaterial().getEstoque().get(0).getLocal(),quantidadeUtilizada,EstoqueSingleton.DEVOLUCAO_KIT_FINALIZAR,UtilsFrontEnd.getProfissionalLogado());    
+                    }                    
+                    
+                }
+                
+                //se tiver alguma quantidade devolvida, é marcado como não utilizado
+               if(qtdDevolvida.compareTo(new BigDecimal(0)) == 1){
+                   if(!isInstrumental) {   
                     cm.setStatus(EmprestimoKit.NAOUTILIZADO);                
                     Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "KIT_NAO_UTILIZADO");
-                    EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,cm.getMaterial().getEstoque().get(0).getLocal(),cm.getQuantidadeDevolvida(),EstoqueSingleton.DEVOLUCAO_KIT_NAO_UTILIZADO,UtilsFrontEnd.getProfissionalLogado());
+                    EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,cm.getMaterial().getEstoque().get(0).getLocal(),qtdDevolvida,EstoqueSingleton.DEVOLUCAO_KIT_NAO_UTILIZADO,UtilsFrontEnd.getProfissionalLogado());
+                   }else {
+                       //envia para lavagem
+                       Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_KIT_LAVAGEM");
+                       Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "ENTREGA_LAVAGEM_MANUAL");
+                       EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,localDestino,qtdDevolvida,EstoqueSingleton.DEVOLUCAO_KIT_LAVAGEM,UtilsFrontEnd.getProfissionalLogado());            
+                       cm.setQuantidade(qtdDevolvida); 
+                       cm.setStatus(EmprestimoKit.UTILIZADO_KIT);
+                       new LavagemMB().lavar(cm, qtdDevolvida.longValue());
+                   }
                }
            // }
             this.setEntity(cm);
@@ -260,27 +300,15 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
 
     private void lavaMateriais(ActionEvent event) throws Exception {
         for (EmprestimoKit cm : this.getMateriais()) {
-         //   BigDecimal quantidadeDevolver;
-        //    quantidadeDevolver = cm.getQuantidade().subtract(cm.getQuantidadeDevolvida());
+        
             if (cm.getQuantidadeDevolvida().compareTo(new BigDecimal(0)) > 0) {// enviando para lavagem, se nao tiver nada material 
-              //  MaterialSingleton.getInstance().getBo().refresh(cm.getMaterial());
-                //cm.getMaterial().setQuantidadeAtual(cm.getMaterial().getQuantidadeAtual().add(quantidadeDevolver));
-                
+            
                 Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_KIT_LAVAGEM");
                 Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "ENTREGA_LAVAGEM_MANUAL");
-                
-                
-                EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,localDestino,cm.getQuantidadeDevolvida(),EstoqueSingleton.DEVOLUCAO_KIT_LAVAGEM,UtilsFrontEnd.getProfissionalLogado());
-                
-             //   MaterialSingleton.getInstance().getBo().persist(cm.getMaterial());
-                cm.setQuantidade(cm.getQuantidadeDevolvida());
-              //  MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(cm, null, cm.getMaterial(), UtilsFrontEnd.getProfissionalLogado(), quantidadeDevolver, cm.getMaterial().getQuantidadeAtual(),
-               //         MaterialLog.DEVOLUCAO_KIT_LAVAGEM));
-               
+                EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,localDestino,cm.getQuantidadeDevolvida(),EstoqueSingleton.DEVOLUCAO_KIT_LAVAGEM,UtilsFrontEnd.getProfissionalLogado());            
+                cm.setQuantidade(cm.getQuantidadeDevolvida());          
             }
-            //else {
-                
-           // }
+          
             cm.setStatus(EmprestimoKit.UTILIZADO_KIT);
             if (cm.getQuantidadeDevolvida().compareTo(BigDecimal.ZERO) > 0) {
                 new LavagemMB().lavar(cm, cm.getQuantidadeDevolvida().longValue());
@@ -371,7 +399,14 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
 
     public void actionNaoUtilizado(ActionEvent event) throws Exception {
         try {
-            this.devolveMateriais(event, true);
+            for (EmprestimoKit cm : this.getMateriais()) {
+                BigDecimal qtdDevolvida = cm.getQuantidade();
+                cm.setQuantidadeDevolvida(cm.getQuantidade());               
+                cm.setStatus(EmprestimoKit.NAOUTILIZADO);                
+                Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "KIT_NAO_UTILIZADO");
+                EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,cm.getMaterial().getEstoque().get(0).getLocal(),qtdDevolvida,EstoqueSingleton.DEVOLUCAO_KIT_NAO_UTILIZADO,UtilsFrontEnd.getProfissionalLogado());        
+            }
+          
             this.getReservaKit().setStatus(EmprestimoKit.NAOUTILIZADO);
             this.getReservaKit().setJustificativa(justificativa.getValor());
             this.getReservaKit().setDataFinalizado(new Date());

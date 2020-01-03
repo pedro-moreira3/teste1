@@ -117,15 +117,21 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                         //TODO verificar se sao esses os status emprestados mesmo kit.getReservaKit().getStatus().equals("PE") kit.getReservaKit().getStatus().equals("EN")       
                         //para colocar nesse if
                         if(kit.getReservaKit().getExcluido().equals("N") && kit.getReservaKit().getReserva().getExcluido().equals("N") && !kit.getReservaKit().getStatus().equals("FI")) {
-                            MateriaisEmprestados emprestado = new MateriaisEmprestados();
-                            emprestado.setLocal("Kit emprestado");
-                            emprestado.setDetalhes(kit.getReservaKit().getDetalhamento());
-                            emprestado.setQuantidade(kit.getQuantidade());
-                            //TODO trocar para objetos local?   
-                            if(!this.emprestados.contains(emprestado)) {
-                                this.emprestados.add(emprestado);    
+                            if(kit.getReservaKit().getStatus().equals(EmprestimoKit.ENTREGUE) || kit.getReservaKit().getStatus().equals(EmprestimoKit.PENDENTE)) {
+                                MateriaisEmprestados emprestado = new MateriaisEmprestados();
+                                if(kit.getReservaKit().getStatus().equals(EmprestimoKit.PENDENTE)) {
+                                    emprestado.setLocal("Kit emprestado - disponibilizado");
+                                }else if(kit.getReservaKit().getStatus().equals(EmprestimoKit.ENTREGUE)) {
+                                    emprestado.setLocal("Kit emprestado - entregue");
+                                }
+                              
+                                emprestado.setDetalhes(kit.getReservaKit().getDetalhamento());
+                                emprestado.setQuantidade(kit.getQuantidade());
+                                //TODO trocar para objetos local?   
+                                if(!this.emprestados.contains(emprestado)) {
+                                    this.emprestados.add(emprestado);    
+                                }  
                             }
-                            
                         }  
                     
                     }
@@ -192,9 +198,9 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                             emprestado.setDetalhes(item.getDetalhamento());
                             emprestado.setQuantidade(new BigDecimal(item.getQuantidade()) );
                             //TODO trocar para objetos local?                              
-                            if(!this.emprestados.contains(emprestado)) {
+                           // if(!this.emprestados.contains(emprestado)) {
                                 this.emprestados.add(emprestado);    
-                            }
+                          //  }
                         }  
                     
                     }
@@ -235,9 +241,9 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                             }
                             emprestado.setQuantidade(new BigDecimal(item.getQuantidade()) );
                             //TODO trocar para objetos local?                              
-                            if(!this.emprestados.contains(emprestado)) {
+                         //   if(!this.emprestados.contains(emprestado)) {
                                 this.emprestados.add(emprestado);    
-                            }
+                         //   }
                         }  
                     
                     }

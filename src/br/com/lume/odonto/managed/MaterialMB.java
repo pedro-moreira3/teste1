@@ -126,9 +126,9 @@ public class MaterialMB extends LumeManagedBean<Material> {
             dateHoje = new Date();
 
 //            //para inserir estoque inicial            
-//            MaterialBO bo = MaterialSingleton.getInstance().getBo();
+           
 //            int count = 0;
-//            for (Material material : bo.listAll()) {
+//            for (Material material : MaterialSingleton.getInstance().getBo().listAll()) {
 //                count++;
 //                Estoque estoque = new Estoque();
 //                estoque.setLocal(material.getLocal());
@@ -385,7 +385,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             }
             if (anotherLevel) {
                 locaisRestantesAux.add(local);
-            }
+            }           
         }
         return locaisRestantesAux;
     }

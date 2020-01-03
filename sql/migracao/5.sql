@@ -594,4 +594,30 @@ descricao in
 update item set excluido = 'S',data_exclusao = current_timestamp 
 where descricao IN ('1','2') and  id_empresa = 41
 	
-	
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'KIT_UTILIZADO_CONSUMIDO','SI',emp_int_cod,'N' FROM seg_empresa;	
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'DESCARTAR_LAVAGEM','SI',emp_int_cod,'N' FROM seg_empresa;
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'DESCARTAR_ESTERILIZACAO','SI',emp_int_cod,'N' FROM seg_empresa;
+CREATE TABLE MATERIAL_CONSUMIDO (
+	ID SERIAL PRIMARY KEY,
+	MATERIAL_ID BIGINT NOT NULL REFERENCES MATERIAL(ID),
+	PLANO_TRATAMENTO_ID BIGINT NOT NULL REFERENCES PLANO_TRATAMENTO(ID),
+	PROCEDIMENTO_ID BIGINT NOT NULL REFERENCES PROCEDIMENTO(ID),
+	PROFISSIONAL_ID BIGINT NOT NULL REFERENCES PROFISSIONAL(ID),
+	EMPRESA_ID BIGINT NOT NULL REFERENCES SEG_EMPRESA(EMP_INT_COD),
+	PACIENTE_ID BIGINT NOT NULL REFERENCES PACIENTE(ID),
+	QUANTIDADE NUMERIC(10,2),
+	DATA TIMESTAMP(10)
+);
+
+alter table MATERIAL_CONSUMIDO alter column MATERIAL_ID drop not null; 
+alter table MATERIAL_CONSUMIDO alter column PLANO_TRATAMENTO_ID drop not null;
+alter table MATERIAL_CONSUMIDO alter column PROCEDIMENTO_ID drop not null;
+alter table MATERIAL_CONSUMIDO alter column PROFISSIONAL_ID drop not null;
+alter table MATERIAL_CONSUMIDO alter column EMPRESA_ID drop not null;
+alter table MATERIAL_CONSUMIDO alter column PACIENTE_ID drop not null;
+
+
+
+                     
+                    
+                     

@@ -234,7 +234,8 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
                 }                
                 
                 Local descarte = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),"DESCARTE");
-                EstoqueSingleton.getInstance().transferencia(m, m.getEstoque().get(0).getLocal(), descarte, new BigDecimal(this.getQuantidadeDescarte()), EstoqueSingleton.DESCARTAR_ESTERILIZACAO, UtilsFrontEnd.getProfissionalLogado());
+                Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DESCARTAR_ESTERILIZACAO"); 
+                EstoqueSingleton.getInstance().transferencia(m, localOrigem, descarte, new BigDecimal(this.getQuantidadeDescarte()), EstoqueSingleton.DESCARTAR_ESTERILIZACAO, UtilsFrontEnd.getProfissionalLogado());
                 
                 
                // Material m2 = new Material();

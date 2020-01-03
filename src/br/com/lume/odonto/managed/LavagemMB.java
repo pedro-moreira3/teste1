@@ -254,8 +254,9 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                    //         MaterialLog.DEVOLUCAO_LAVAGEM_DESCARTAR));
                 }
 
-                Local descarte = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),"DESCARTE");
-                EstoqueSingleton.getInstance().transferencia(m, m.getEstoque().get(0).getLocal(), descarte, new BigDecimal(this.getQuantidadeDescarte()), EstoqueSingleton.DESCARTAR_LAVAGEM, UtilsFrontEnd.getProfissionalLogado());
+                Local descarte = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),"DESCARTE");              
+                Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DESCARTAR_LAVAGEM");
+                EstoqueSingleton.getInstance().transferencia(m, localOrigem, descarte, new BigDecimal(this.getQuantidadeDescarte()), EstoqueSingleton.DESCARTAR_LAVAGEM, UtilsFrontEnd.getProfissionalLogado());
                                
                 
                // Material m2 = new Material();
@@ -349,7 +350,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                         if (lk.getEmprestimoKit() != null) {
                             lk.getEmprestimoKit().setQuantidade(lk.getEmprestimoKit().getQuantidade().subtract(new BigDecimal(lk.getQuantidade())));
                             EmprestimoKitSingleton.getInstance().getBo().persist(lk.getEmprestimoKit());// Atualizando estoque
-                            MaterialSingleton.getInstance().getBo().refresh(lk.getEmprestimoKit().getMaterial());                            
+                        //    MaterialSingleton.getInstance().getBo().refresh(lk.getEmprestimoKit().getMaterial());                            
                                
                             Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "FINALIZACAO_DEVOLUCAO_LAVAGEM");
                             EstoqueSingleton.getInstance().transferencia(lk.getEmprestimoKit().getMaterial(),localOrigem,lk.getEmprestimoKit().getMaterial().getEstoque().get(0).getLocal(),new BigDecimal(lk.getQuantidade())
@@ -360,7 +361,7 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                         } else if (lk.getEmprestimoUnitario() != null) {
                             lk.getEmprestimoUnitario().setQuantidade(lk.getEmprestimoUnitario().getQuantidade().subtract(new BigDecimal(lk.getQuantidade())));
                             EmprestimoUnitarioSingleton.getInstance().getBo().persist(lk.getEmprestimoUnitario());// Atualizando estoque
-                            MaterialSingleton.getInstance().getBo().refresh(lk.getEmprestimoUnitario().getMaterial());
+                      //      MaterialSingleton.getInstance().getBo().refresh(lk.getEmprestimoUnitario().getMaterial());
                                
                             Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "FINALIZACAO_DEVOLUCAO_LAVAGEM");
                             EstoqueSingleton.getInstance().transferencia(lk.getEmprestimoKit().getMaterial(),localOrigem,lk.getEmprestimoKit().getMaterial().getEstoque().get(0).getLocal(),new BigDecimal(lk.getQuantidade())
