@@ -52,7 +52,7 @@ public class RelatorioEsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
     public RelatorioEsterilizacaoMB() {
         super(EsterilizacaoSingleton.getInstance().getBo());   
         this.setClazz(Esterilizacao.class);
-        this.filtra();
+      //  this.filtra();
     }
 
     public void mostraItens() throws Exception {

@@ -372,11 +372,17 @@ ALTER TABLE conta ADD COLUMN origem_id bigint REFERENCES ORIGEM(ID);
 ALTER TABLE fatura ADD COLUMN id_empresa bigint REFERENCES SEG_EMPRESA(EMP_INT_COD);
 ----
 
+alter table SEG_USUARIO alter column USU_STR_SENHA drop not null; 
 
-update item set excluido = 'S',data_exclusao = current_timestamp where id in
-(
+-------
+
+update item set excluido = 'S',data_exclusao = current_timestamp where id_item_pai in (
 select id from item where id_item_pai in (
-select id from item where descricao in
+select id from item where id_item_pai in (
+select id from item where id_item_pai in (
+select id from item
+where id_item_pai in ( select id from item where 
+descricao in
 (	
 'BIO MATERIAIS',
 'MATERIAIS DE ACABAMENTO E POLIMENTO (Para Compósitos)',
@@ -406,9 +412,153 @@ select id from item where descricao in
 'MATERIAL RAIO-X',
 'FIOS ORTODONTICOS'
 ) and id_empresa = 41
-)
-);
-
+	)))));
+	
+	
+update item set excluido = 'S',data_exclusao = current_timestamp where id_item_pai in (
+select id from item where id_item_pai in (
+select id from item where id_item_pai in (
+select id from item
+where id_item_pai in ( select id from item where 
+descricao in
+(	
+'BIO MATERIAIS',
+'MATERIAIS DE ACABAMENTO E POLIMENTO (Para Compósitos)',
+'RESINA COMPOSTA',
+'RESINA COMPOSTA INCISAL',
+'RESINA COMPOSTA MICROPARTICULADA',
+'RESINA COMPOSTA NANOPARTICULADA',
+'RESINA COMPOSTA POSTERIOR',
+'RESINA FLUIDA (FLOW)',
+'EQUIPAMENTOS ELETRÔNICOS',
+'COMPONENTES PROTÉTICOS E DE MOLDAGEM',
+'ALVIM TI',
+'DRIVE TI',
+'DRIVE TI ACQUA',
+'TITAMAX EX TI',
+'TITAMAX EX TI ACQUA',
+'TITAMAX TI CORTICAL',
+'TITAMAX WS CORTICAL',
+'TITAMAX WS MEDULAR',
+'MINI IMPLANTES - ANCORAGEM ORTODÔNTICA',
+'RECIPIENTES PLÁSTICOS',
+'EMBALAGENS PLÁSTICAS',
+'LUVAS CIRÚRGICAS',
+'SORO FISIOLÓGICO',
+'MATERIAIS DE LIMPEZA',
+'MATERIAL ESTERILIZAÇÃO	',
+'MATERIAL RAIO-X',
+'FIOS ORTODONTICOS'
+) and id_empresa = 41
+	))));
+	
+update item set excluido = 'S',data_exclusao = current_timestamp where id_item_pai in (
+select id from item where id_item_pai in (
+select id from item
+where id_item_pai in ( select id from item where 
+descricao in
+(	
+'BIO MATERIAIS',
+'MATERIAIS DE ACABAMENTO E POLIMENTO (Para Compósitos)',
+'RESINA COMPOSTA',
+'RESINA COMPOSTA INCISAL',
+'RESINA COMPOSTA MICROPARTICULADA',
+'RESINA COMPOSTA NANOPARTICULADA',
+'RESINA COMPOSTA POSTERIOR',
+'RESINA FLUIDA (FLOW)',
+'EQUIPAMENTOS ELETRÔNICOS',
+'COMPONENTES PROTÉTICOS E DE MOLDAGEM',
+'ALVIM TI',
+'DRIVE TI',
+'DRIVE TI ACQUA',
+'TITAMAX EX TI',
+'TITAMAX EX TI ACQUA',
+'TITAMAX TI CORTICAL',
+'TITAMAX WS CORTICAL',
+'TITAMAX WS MEDULAR',
+'MINI IMPLANTES - ANCORAGEM ORTODÔNTICA',
+'RECIPIENTES PLÁSTICOS',
+'EMBALAGENS PLÁSTICAS',
+'LUVAS CIRÚRGICAS',
+'SORO FISIOLÓGICO',
+'MATERIAIS DE LIMPEZA',
+'MATERIAL ESTERILIZAÇÃO	',
+'MATERIAL RAIO-X',
+'FIOS ORTODONTICOS'
+) and id_empresa = 41
+	)));	
+	
+update item set excluido = 'S',data_exclusao = current_timestamp where id_item_pai in (
+select id from item
+where id_item_pai in ( select id from item where 
+descricao in
+(	
+'BIO MATERIAIS',
+'MATERIAIS DE ACABAMENTO E POLIMENTO (Para Compósitos)',
+'RESINA COMPOSTA',
+'RESINA COMPOSTA INCISAL',
+'RESINA COMPOSTA MICROPARTICULADA',
+'RESINA COMPOSTA NANOPARTICULADA',
+'RESINA COMPOSTA POSTERIOR',
+'RESINA FLUIDA (FLOW)',
+'EQUIPAMENTOS ELETRÔNICOS',
+'COMPONENTES PROTÉTICOS E DE MOLDAGEM',
+'ALVIM TI',
+'DRIVE TI',
+'DRIVE TI ACQUA',
+'TITAMAX EX TI',
+'TITAMAX EX TI ACQUA',
+'TITAMAX TI CORTICAL',
+'TITAMAX WS CORTICAL',
+'TITAMAX WS MEDULAR',
+'MINI IMPLANTES - ANCORAGEM ORTODÔNTICA',
+'RECIPIENTES PLÁSTICOS',
+'EMBALAGENS PLÁSTICAS',
+'LUVAS CIRÚRGICAS',
+'SORO FISIOLÓGICO',
+'MATERIAIS DE LIMPEZA',
+'MATERIAL ESTERILIZAÇÃO	',
+'MATERIAL RAIO-X',
+'FIOS ORTODONTICOS'
+) and id_empresa = 41
+	));		
+	
+	
+update item set excluido = 'S',data_exclusao = current_timestamp where id_item_pai in ( select id from item where 
+descricao in
+(	
+'BIO MATERIAIS',
+'MATERIAIS DE ACABAMENTO E POLIMENTO (Para Compósitos)',
+'RESINA COMPOSTA',
+'RESINA COMPOSTA INCISAL',
+'RESINA COMPOSTA MICROPARTICULADA',
+'RESINA COMPOSTA NANOPARTICULADA',
+'RESINA COMPOSTA POSTERIOR',
+'RESINA FLUIDA (FLOW)',
+'EQUIPAMENTOS ELETRÔNICOS',
+'COMPONENTES PROTÉTICOS E DE MOLDAGEM',
+'ALVIM TI',
+'DRIVE TI',
+'DRIVE TI ACQUA',
+'TITAMAX EX TI',
+'TITAMAX EX TI ACQUA',
+'TITAMAX TI CORTICAL',
+'TITAMAX WS CORTICAL',
+'TITAMAX WS MEDULAR',
+'MINI IMPLANTES - ANCORAGEM ORTODÔNTICA',
+'RECIPIENTES PLÁSTICOS',
+'EMBALAGENS PLÁSTICAS',
+'LUVAS CIRÚRGICAS',
+'SORO FISIOLÓGICO',
+'MATERIAIS DE LIMPEZA',
+'MATERIAL ESTERILIZAÇÃO	',
+'MATERIAL RAIO-X',
+'FIOS ORTODONTICOS'
+) and id_empresa = 41
+	);		
+	
+	
+		
 update item set excluido = 'S',data_exclusao = current_timestamp where
 descricao in
 (	
@@ -441,5 +591,7 @@ descricao in
 'FIOS ORTODONTICOS'
 ) and id_empresa = 41;
 
-alter table SEG_USUARIO alter column USU_STR_SENHA drop not null; 
-
+update item set excluido = 'S',data_exclusao = current_timestamp 
+where descricao IN ('1','2') and  id_empresa = 41
+	
+	
