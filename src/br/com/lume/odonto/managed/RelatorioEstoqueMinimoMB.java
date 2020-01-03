@@ -116,7 +116,7 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                     for (EmprestimoKit kit : kits) {
                         //TODO verificar se sao esses os status emprestados mesmo kit.getReservaKit().getStatus().equals("PE") kit.getReservaKit().getStatus().equals("EN")       
                         //para colocar nesse if
-                        if(kit.getReservaKit().getExcluido().equals("N") && kit.getReservaKit().getReserva().getExcluido().equals("N")) {
+                        if(kit.getReservaKit().getExcluido().equals("N") && kit.getReservaKit().getReserva().getExcluido().equals("N") && !kit.getReservaKit().getStatus().equals("FI")) {
                             MateriaisEmprestados emprestado = new MateriaisEmprestados();
                             emprestado.setLocal("Kit emprestado");
                             emprestado.setDetalhes(kit.getReservaKit().getDetalhamento());
@@ -228,6 +228,11 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                             MateriaisEmprestados emprestado = new MateriaisEmprestados();
                             emprestado.setLocal("Item em esterilização");
                             emprestado.setDetalhes(item.getDetalhamento());
+                            if(item.getDetalhamento().equals("")) {
+                                emprestado.setDetalhes("Agendamento não encontrado - Descrição esterilização: " + item.getEsterilizacao().getDescricao() +
+                                        " Data da solicitação da esterilização: " + item.getEsterilizacao().getDataStr());
+                                
+                            }
                             emprestado.setQuantidade(new BigDecimal(item.getQuantidade()) );
                             //TODO trocar para objetos local?                              
                             if(!this.emprestados.contains(emprestado)) {

@@ -77,14 +77,14 @@
 								<h:outputText value="#{conferencia.material.item.descricao}" />
 							</p:column>
 							<p:column
-								filterBy="#{conferencia.material.estoque.local.descricao}"
-								sortBy="#{conferencia.material.estoque.local.descricao}"
+								filterBy="#{conferencia.material.locais}"
+								sortBy="#{conferencia.material.locais}"
 								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Local" />
 								</f:facet>
 								<h:outputText
-									value="#{conferencia.material.estoque.local.descricao}" />
+									value="#{conferencia.material.locais}" />
 							</p:column>
 							<p:column sortBy="#{conferencia.valorOriginal}"
 								filterBy="#{conferencia.valorOriginal}"

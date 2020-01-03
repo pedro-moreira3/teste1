@@ -47,7 +47,7 @@ public class RelatorioLavagemMB extends LumeManagedBean<Lavagem> {
     public RelatorioLavagemMB() {
         super(LavagemSingleton.getInstance().getBo());
         this.setClazz(Lavagem.class);
-        this.filtra();
+       // this.filtra();
     }
 
     public void mostraItens() throws Exception {

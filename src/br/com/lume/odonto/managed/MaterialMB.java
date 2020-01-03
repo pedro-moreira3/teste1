@@ -106,6 +106,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
     private DataTable tabelaMovimentacao;
 
     public MaterialMB() {
+        
         super(MaterialSingleton.getInstance().getBo());
 
         this.setCaixa(true);
@@ -209,7 +210,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
     public void atualizaQuantidades() {
         BigDecimal quantidadeTotal = this.getEntity().getQuantidadePacotes().multiply(this.getEntity().getTamanhoUnidade());
         Estoque estoque;
-        if (this.getEntity().getEstoque() == null) {
+        if (this.getEntity().getEstoque() == null || this.getEntity().getEstoque().isEmpty()) {
             this.getEntity().setEstoque(new ArrayList<Estoque>());
             estoque = new Estoque();
             this.getEntity().getEstoque().add(estoque);
@@ -225,13 +226,17 @@ public class MaterialMB extends LumeManagedBean<Material> {
     }
 
     public void chargeTree(TreeNode root) {
+
         List<TreeNode> nodes = new ArrayList<>();
         List<TreeNode> nodesAux;
+     
         this.filtraItens();
+     
         List<Item> itensRestantes = this.getItens();
         root.setExpanded(true);
         nodes.add(root);
         itensRestantes = this.setLevel(itensRestantes, nodes);
+      
         List<TreeNode> subNodes;
         while (itensRestantes.size() > 0) {
             subNodes = new ArrayList<>();
@@ -242,8 +247,8 @@ public class MaterialMB extends LumeManagedBean<Material> {
             }
             itensRestantes = this.setLevel(itensRestantes, subNodes);
             nodes = new ArrayList<>();
-            nodes.addAll(subNodes);
-        }
+            nodes.addAll(subNodes);            
+        }      
     }
 
     public void carregaTela() {
@@ -352,15 +357,16 @@ public class MaterialMB extends LumeManagedBean<Material> {
         for (Item item : itensRestantes) {
             anotherLevel = true;
             for (TreeNode node : nodes) {
-                if ((item.getIdItemPai() == null) || (item.getIdItemPai().equals(node.getData()))) {
+                if ((item.getIdItemPai() == null) || (item.getIdItemPai().equals(node.getData())) || item.getExcluido().equals("S") ) {
                     (new DefaultTreeNode(item, node)).setExpanded(true);
                     anotherLevel = false;
                     break;
                 }
             }
             if (anotherLevel) {
-                locaisRestantesAux.add(item);
+                locaisRestantesAux.add(item);               
             }
+
         }
         return locaisRestantesAux;
     }
