@@ -284,7 +284,7 @@
 								</p:column>
 
 								<p:rowExpansion>
-									<p:outputPanel rendered="#{lancamento.metodoRepasse == 'POR'}"
+									<p:outputPanel rendered="true"
 										style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
 										<div style="padding: 10px;">
 											<div style="width: 100%; padding: 5px; text-align: center">
@@ -432,8 +432,8 @@
 											</table>
 										</div>
 									</p:outputPanel>
-									
-									<p:outputPanel rendered="#{lancamento.metodoRepasse == 'PRO'}"
+
+									<p:outputPanel rendered="false"
 										style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
 										<div style="padding: 10px;">
 											<div style="width: 100%; padding: 5px; text-align: center">
