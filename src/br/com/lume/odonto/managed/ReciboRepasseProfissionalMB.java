@@ -135,6 +135,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                         lancamento.setDadosTabelaMetodoRepasseComValor(lancamento.getDadosTabelaMetodoRepasse() + " - " + lancamento.getDadosTabelaValorRepasse());
 
                         // Calculos necessários para mostragem da explicação do cálculo
+                        lancamento.setDadosCalculoPercLancamentoFatura(repasse.getLancamentoOrigem().getValor().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
                         lancamento.setDadosCalculoPercTaxa((repasse.getLancamentoOrigem().getTarifa() != null ? repasse.getLancamentoOrigem().getTarifa().getTaxa() : BigDecimal.ZERO));
                         lancamento.setDadosCalculoValorTaxa(lancamento.getDadosCalculoPercTaxa().multiply(repasse.getLancamentoOrigem().getValor()));
                         lancamento.setDadosCalculoValorTarifa((repasse.getLancamentoOrigem().getTarifa() != null ? repasse.getLancamentoOrigem().getTarifa().getTarifa() : BigDecimal.ZERO));
