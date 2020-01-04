@@ -167,7 +167,8 @@ public class RelatorioGerencialMB extends LumeManagedBean<Paciente> {
             agendamentosHorario = RelatorioGerencialSingleton.getInstance().getBo().findAgendamentosHorario(inicio, fim, empresa);
             minutosOciosos = minutosAgendados - minutosUtilizados;
             
-            int workingDays = Utils.getNumDiasUteis(inicio, fim);
+          //  int workingDays = Utils.getNumDiasUteis(inicio, fim);
+            int workingDays = 5;
             int horas = (int) ((UtilsFrontEnd.getEmpresaLogada().getEmpIntHorasUteisSemanal() / 6) * workingDays); 
             taxaDeOcupacao = (int) (((minutosUtilizados / 60) / horas) * 100);
         } catch (Exception e) {
