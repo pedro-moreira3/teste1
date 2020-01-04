@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.inject.Inject;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
@@ -82,10 +81,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     //Campos para lançamentos a pagar e a receber da aba financeiro do paciente
     private List<Lancamento> lAPagar, lAReceber;
-
-    //FIXME - corrigir deixando mais bonito
-    @Inject
-    RepasseProfissionalMB repasseProfissionalMB;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
@@ -161,8 +156,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 setEntity(null);
             }
 
-            getRepasseProfissionalMB().pesquisar();
-            //getRepasseProfissionalMB().popularTabela();
             if (Profissional.FIXO.equals(getProfissionalTroca().getTipoRemuneracao())) {
                 this.addInfo("Sucesso", "Item inativado somente, pois o profissional " + getProfissionalTroca().getDadosBasico().getNome() + " não possui comissionamento!", true);
             } else {
@@ -454,10 +447,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
-        try {           
-            this.lAPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), Mes.getMesAtual(), ValidacaoLancamento.NAO_VALIDADO);
+        try {
+            this.lAPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), Mes.getMesAtual(),
+                    ValidacaoLancamento.NAO_VALIDADO);
             BigDecimal vAPagar = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAPagar));
-            this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), Mes.getMesAtual(), ValidacaoLancamento.NAO_VALIDADO);
+            this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), Mes.getMesAtual(),
+                    ValidacaoLancamento.NAO_VALIDADO);
             BigDecimal vAReceber = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAReceber));
             ContaSingleton.getInstance().getContaFromOrigem(this.paciente).setSaldo(vAReceber.subtract(vAPagar));
         } catch (Exception e) {
@@ -475,22 +470,22 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         return "black";
     }
 
-    public String getSaldoCor() {        
+    public String getSaldoCor() {
         try {
-            if ( ContaSingleton.getInstance().getContaFromOrigem(this.paciente) != null) {
-                BigDecimal saldo =  ContaSingleton.getInstance().getContaFromOrigem(this.paciente).getSaldo();
+            if (ContaSingleton.getInstance().getContaFromOrigem(this.paciente) != null) {
+                BigDecimal saldo = ContaSingleton.getInstance().getContaFromOrigem(this.paciente).getSaldo();
                 if (saldo != null && saldo.compareTo(BigDecimal.ZERO) != 0) {
                     if (saldo.compareTo(BigDecimal.ZERO) < 0)
                         return "#ffc107";
                     else if (saldo.compareTo(BigDecimal.ZERO) > 0)
                         return "#007bff";
                 }
-            }     
+            }
         } catch (Exception e) {
             e.printStackTrace();
             addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
         }
-       
+
         return "black";
     }
 
@@ -644,14 +639,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setProfissionais(List<Profissional> profissionais) {
         this.profissionais = profissionais;
-    }
-
-    public RepasseProfissionalMB getRepasseProfissionalMB() {
-        return repasseProfissionalMB;
-    }
-
-    public void setRepasseProfissionalMB(RepasseProfissionalMB repasseProfissionalMB) {
-        this.repasseProfissionalMB = repasseProfissionalMB;
     }
 
     public DataTable getTabelaFatura() {

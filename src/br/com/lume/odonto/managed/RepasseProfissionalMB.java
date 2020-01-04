@@ -19,14 +19,15 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.odonto.entity.Fatura;
-import br.com.lume.odonto.entity.Orcamento;
 import br.com.lume.odonto.entity.Paciente;
-import br.com.lume.odonto.entity.PlanoTratamento;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RepasseFaturas;
+import br.com.lume.odonto.entity.RepasseFaturasItem;
 import br.com.lume.paciente.PacienteSingleton;
-import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
 
 /**
@@ -47,11 +48,6 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
     private Date dataFim;
     private Profissional profissional;
     private Paciente paciente;
-    private PlanoTratamento planoTratamento;
-
-    private List<Fatura> faturas;
-    private List<Orcamento> orcamentos;
-    private List<PlanoTratamento> planosTratamento;
 
     private Integer status;
 
@@ -84,31 +80,10 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
 
             setStatus(2);
             pesquisar();
-            //popularTabela();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Não foi possivel carregar a tela.", true);
         }
-    }
-
-    public BigDecimal getTotal(Fatura fatura) {
-        return FaturaSingleton.getInstance().getTotal(fatura);
-    }
-
-    public BigDecimal getTotalPago(Fatura fatura) {
-        return FaturaSingleton.getInstance().getTotalPago(fatura);
-    }
-
-    public BigDecimal getTotalNaoPago(Fatura fatura) {
-        return FaturaSingleton.getInstance().getTotalNaoPago(fatura);
-    }
-
-    public BigDecimal getTotalNaoPlanejado(Fatura fatura) {
-        return FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura);
-    }
-
-    public BigDecimal getTotalRestante(Fatura fatura) {
-        return FaturaSingleton.getInstance().getTotalRestante(fatura);
     }
 
     public void pesquisar() {
@@ -147,6 +122,27 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
                         return true;
                     return false;
                 });
+
+            if (getEntityList() != null) {
+                getEntityList().forEach(fatura -> {
+                    try {
+                        RepasseFaturas repasseObject = RepasseFaturasSingleton.getInstance().getBo().getFaturaOrigemFromRepasse(fatura);
+                        RepasseFaturasItem repasseItem = RepasseFaturasItemSingleton.getInstance().getBo().getItemOrigemFromRepasse(fatura.getItensFiltered().get(0));
+                        PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasseItem.getFaturaItemOrigem());
+                        fatura.setDadosTabelaRepassePaciente(repasseObject.getFaturaOrigem().getPaciente());
+                        fatura.setDadosTabelaRepassePTP(ptp);
+                        fatura.setDadosTabelaRepassePlanoTratamento(repasseObject.getFaturaOrigem().getItensFiltered().get(
+                                0).getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento());
+                        fatura.setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
+                        fatura.setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(fatura));
+                        fatura.setDadosTabelaRepasseTotalNaoPago(FaturaSingleton.getInstance().getTotalNaoPago(fatura));
+                        fatura.setDadosTabelaRepasseTotalNaoPlanejado(FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura));
+                        fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura));
+                    } catch (Exception e) {
+                        // TODO: handle exception
+                    }
+                });
+            }
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
@@ -190,101 +186,6 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
             this.addError("Erro", Mensagens.ERRO_AO_BUSCAR_REGISTROS, true);
         }
         return pacientes;
-
-    }
-
-    public List<PlanoTratamento> geraSugestoesPlanoTratamento(String query) {
-
-        List<PlanoTratamento> planos = new ArrayList<>();
-
-        try {
-            planos = PlanoTratamentoSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            for (PlanoTratamento p : planos) {
-                if (!Normalizer.normalize(p.getDescricao().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
-                        Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {
-                    planos.remove(p);
-                }
-            }
-            Collections.sort(planos);
-        } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError("Erro", Mensagens.ERRO_AO_BUSCAR_REGISTROS, true);
-        }
-        return planos;
-
-    }
-//
-//    public void popularTabela() {
-//
-//        if (this.faturas == null)
-//            this.faturas = new ArrayList<Fatura>();
-//        if (this.orcamentos == null)
-//            this.orcamentos = new ArrayList<Orcamento>();
-//        if (this.planosTratamento == null)
-//            this.planosTratamento = new ArrayList<PlanoTratamento>();
-//
-//        this.faturas = FaturaSingleton.getInstance().getBo().findFaturaByDataAndPacienteAndProfissional(this.dataInicio, this.dataFim, profissional, paciente,
-//                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-//
-//        for (Fatura f : this.faturas) {
-//            if (f.getItens() != null && !f.getItens().isEmpty()) {
-//                this.planosTratamento.add(f.getItens().get(0).getRepasseItensRepasse().get(
-//                        0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento());
-//            }
-//        }
-//
-//    }
-
-    public Paciente resolvePaciente(Fatura fatura) {
-        /*
-         * for (PlanoTratamento p : this.planosTratamento) { if (p.getId() == fatura.getItens().get(0).getRepasseItensRepasse().get(
-         * 0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getId()) return
-         * p.getPaciente().getDadosBasico().getNome(); } return "";
-         */
-        try {
-            RepasseFaturas repasseObject = RepasseFaturasSingleton.getInstance().getBo().getFaturaOrigemFromRepasse(fatura);
-            //return repasseObject.getFaturaOrigem().getPaciente().getDadosBasico().getNome();
-            return repasseObject.getFaturaOrigem().getPaciente();
-        } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog(e);
-            return null;
-        }
-    }
-
-    public String nomeProfissional(Fatura fatura) {
-        /*
-         * for (PlanoTratamento p : this.planosTratamento) { if (p.getId() == fatura.getItens().get(0).getRepasseItensRepasse().get(
-         * 0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getId()) return
-         * p.getProfissional().getDadosBasico().getPrefixoNome(); } return "";
-         */
-        try {
-            return fatura.getProfissional().getDadosBasico().getNome();
-        } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog(e);
-            return "";
-        }
-    }
-
-    public String descricaoPlanoTratamento(Fatura fatura) {
-        /*
-         * for (PlanoTratamento p : this.planosTratamento) { if (p.getId() == fatura.getItens().get(0).getRepasseItensRepasse().get(
-         * 0).getFaturaItemOrigem().getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getId()) return p.getDescricao(); } return "";
-         */
-        try {
-            RepasseFaturas repasseObject = RepasseFaturasSingleton.getInstance().getBo().getFaturaOrigemFromRepasse(fatura);
-            return repasseObject.getFaturaOrigem().getItensFiltered().get(
-                    0).getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao();
-        } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog(e);
-            return "";
-        }
-    }
-
-    public void carregarPlanoTratamentoFromFatura() {
-        this.setPlanoTratamento(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaRepasse(this.getEntity()));
-    }
-
-    public void carregarPacientesFromPlanoTratamento() {
 
     }
 
@@ -346,38 +247,6 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
 
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
-    }
-
-    public PlanoTratamento getPlanoTratamento() {
-        return planoTratamento;
-    }
-
-    public void setPlanoTratamento(PlanoTratamento planoTratamento) {
-        this.planoTratamento = planoTratamento;
-    }
-
-    public List<Fatura> getFaturas() {
-        return faturas;
-    }
-
-    public void setFaturas(List<Fatura> faturas) {
-        this.faturas = faturas;
-    }
-
-    public List<Orcamento> getOrcamentos() {
-        return orcamentos;
-    }
-
-    public void setOrcamentos(List<Orcamento> orcamentos) {
-        this.orcamentos = orcamentos;
-    }
-
-    public List<PlanoTratamento> getPlanosTratamento() {
-        return planosTratamento;
-    }
-
-    public void setPlanosTratamento(List<PlanoTratamento> planosTratamento) {
-        this.planosTratamento = planosTratamento;
     }
 
     public DataTable getTabelaRepasse() {

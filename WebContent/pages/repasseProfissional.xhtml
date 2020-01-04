@@ -158,7 +158,7 @@
 
 												<f:facet name="header">Faturas</f:facet>
 
-												<p:column width="120" headerText="Detalhes">
+												<p:column width="50" headerText="Detalhes">
 													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
 														title="Visualizar Fatura"
 														oncomplete="PF('dlgFaturaView').show();"
@@ -167,19 +167,19 @@
 														update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 												</p:column>
 												<p:column
-													filterBy="#{f.profissional.dadosBasico.getPrefixoNome()}"
-													sortBy="#{f.profissional.dadosBasico.getPrefixoNome()}"
+													filterBy="#{f.profissional.dadosBasico.prefixoNome}"
+													sortBy="#{f.profissional.dadosBasico.prefixoNome}"
 													filterMatchMode="contains"
 													filterFunction="#{repasseProfissionalMB.filtroSemAcento}">
 													<f:facet name="header">
 														<h:outputText value="Profissional" />
 													</f:facet>
 													<h:outputText
-														value="#{f.profissional.dadosBasico.getPrefixoNome()}" />
+														value="#{f.profissional.dadosBasico.prefixoNome}" />
 												</p:column>
 												<p:column
-													filterBy="#{repasseProfissionalMB.resolvePaciente(f)}"
-													sortBy="#{repasseProfissionalMB.resolvePaciente(f)}"
+													filterBy="#{f.dadosTabelaRepassePaciente.dadosBasico.prefixoNome}"
+													sortBy="#{f.dadosTabelaRepassePaciente.dadosBasico.prefixoNome}"
 													filterMatchMode="contains"
 													filterFunction="#{repasseProfissionalMB.filtroSemAcento}">
 													<f:facet name="header">
@@ -187,24 +187,34 @@
 													</f:facet>
 
 													<p:commandLink
-														value="#{repasseProfissionalMB.resolvePaciente(f).dadosBasico.nome}"
-														process="@this"
-														title="#{repasseProfissionalMB.resolvePaciente(f).id}"
-														actionListener="#{tabPacienteMB.loadPaciente(repasseProfissionalMB.resolvePaciente(f))}"
+														value="#{f.dadosTabelaRepassePaciente.dadosBasico.nome}"
+														process="@this" title="#{f.dadosTabelaRepassePaciente.id}"
+														actionListener="#{tabPacienteMB.loadPaciente(f.dadosTabelaRepassePaciente)}"
 														oncomplete="PF('dlgFichaPaciente').show()"
 														update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 
 												</p:column>
 												<p:column
-													filterBy="#{repasseProfissionalMB.descricaoPlanoTratamento(f)}"
-													sortBy="#{repasseProfissionalMB.descricaoPlanoTratamento(f)}"
+													filterBy="#{f.dadosTabelaRepassePlanoTratamento.descricao}"
+													sortBy="#{f.dadosTabelaRepassePlanoTratamento.descricao}"
 													filterMatchMode="contains"
 													filterFunction="#{repasseProfissionalMB.filtroSemAcento}">
 													<f:facet name="header">
 														<h:outputText value="Plano de tratamento de origem" />
 													</f:facet>
 													<h:outputText
-														value="#{repasseProfissionalMB.descricaoPlanoTratamento(f)}" />
+														value="#{f.dadosTabelaRepassePlanoTratamento.descricao}" />
+												</p:column>
+												<p:column
+													filterBy="#{f.dadosTabelaRepassePTP.procedimento.descricao}"
+													sortBy="#{f.dadosTabelaRepassePTP.procedimento.descricao}"
+													filterMatchMode="contains"
+													filterFunction="#{repasseProfissionalMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Procedimento de origem" />
+													</f:facet>
+													<h:outputText
+														value="#{f.dadosTabelaRepassePTP.procedimento.descricao}" />
 												</p:column>
 												<p:column filterBy="#{f.dataCriacaoStr}"
 													headerText="Data de Criação" filterMatchMode="contains"
@@ -212,43 +222,39 @@
 													<h:outputText value="#{f.dataCriacaoStr}" />
 												</p:column>
 
-												<p:column filterBy="#{repasseProfissionalMB.getTotal(f)}"
+												<p:column filterBy="#{f.dadosTabelaRepasseTotalFatura}"
 													headerText="Valor total da fatura"
 													filterMatchMode="contains"
-													sortBy="#{repasseProfissionalMB.getTotal(f)}">
-													<h:outputText value="#{repasseProfissionalMB.getTotal(f)}">
+													sortBy="#{f.dadosTabelaRepasseTotalFatura}">
+													<h:outputText value="#{f.dadosTabelaRepasseTotalFatura}">
 														<f:convertNumber currencySymbol="R$ " type="currency" />
 													</h:outputText>
 												</p:column>
 
-												<p:column
-													filterBy="#{repasseProfissionalMB.getTotalPago(f)}"
+												<p:column filterBy="#{f.dadosTabelaRepasseTotalPago}"
 													headerText="Valor total pago" filterMatchMode="contains"
-													sortBy="#{repasseProfissionalMB.getTotalPago(f)}">
-													<h:outputText
-														value="#{repasseProfissionalMB.getTotalPago(f)}">
+													sortBy="#{f.dadosTabelaRepasseTotalPago}">
+													<h:outputText value="#{f.dadosTabelaRepasseTotalPago}">
 														<f:convertNumber currencySymbol="R$ " type="currency" />
 													</h:outputText>
 												</p:column>
 
-												<p:column
-													filterBy="#{repasseProfissionalMB.getTotalNaoPago(f)}"
+												<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPago}"
 													headerText="Valor total não pago"
 													filterMatchMode="contains"
-													sortBy="#{repasseProfissionalMB.getTotalNaoPago(f)}">
-													<h:outputText
-														value="#{repasseProfissionalMB.getTotalNaoPago(f)}">
+													sortBy="#{f.dadosTabelaRepasseTotalNaoPago}">
+													<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPago}">
 														<f:convertNumber currencySymbol="R$ " type="currency" />
 													</h:outputText>
 												</p:column>
 
 												<p:column
-													filterBy="#{repasseProfissionalMB.getTotalNaoPlanejado(f)}"
+													filterBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}"
 													headerText="Valor total não planejado"
 													filterMatchMode="contains"
-													sortBy="#{repasseProfissionalMB.getTotalNaoPlanejado(f)}">
+													sortBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
 													<h:outputText
-														value="#{repasseProfissionalMB.getTotalNaoPlanejado(f)}">
+														value="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
 														<f:convertNumber currencySymbol="R$ " type="currency" />
 													</h:outputText>
 												</p:column>
