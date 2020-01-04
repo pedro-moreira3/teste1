@@ -27,22 +27,52 @@
 						<div class="SeparatorFull"></div>
 
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Nova Resposta" actionListener="#{respostaMB.actionNew}"
+								update=":lume:pnPrincipal,:lume:dtPrincipal" immediate="true" tabindex="1"  />						
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{respostaMB.actionPersist}"
 								update=":lume:pnPrincipal,:lume:dtPrincipal" process=":lume:pnPrincipal" 
 								styleClass="GreenButton" />
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{respostaMB.actionRemove}"
 								update=":lume:pnPrincipal,:lume:dtPrincipal" process="@this" 
 								disabled="#{respostaMB.entity.id == 0}" styleClass="RedButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{respostaMB.actionNew}"
-								update=":lume:pnPrincipal,:lume:dtPrincipal" immediate="true" tabindex="1"  />
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{respostaMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{respostaMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{respostaMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{respostaMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{respostaMB.exportarTabela('csv')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{respostaMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
 						</p:panelGrid>
 					</p:outputPanel>
 
 					<div class="EmptyBox20"></div>
 
-
 					<p:dataTable filterDelay="1500"  reflow="true"  id="dtPrincipal" emptyMessage="" value="#{respostaMB.respostas}" var="resposta" rows="10" paginator="true"
-						selection="#{respostaMB.entity}" selectionMode="single" rowKey="#{resposta}" paginatorPosition="bottom" paginatorAlwaysVisible="false">
+						selection="#{respostaMB.entity}" selectionMode="single" rowKey="#{resposta}" paginatorPosition="bottom" paginatorAlwaysVisible="false" binding="#{respostaMB.tabelaResposta}">
 						<p:ajax event="rowSelect" update=":lume:pnPrincipal" />
 						<f:facet name="header">Respostas</f:facet>
 						<p:column filterBy="#{resposta.pergunta.descricao}" sortBy="#{resposta.pergunta.descricao}" filterMatchMode="contains" headerText="Pergunta">

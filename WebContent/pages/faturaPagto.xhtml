@@ -1,0 +1,192 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+
+		<p:outputPanel id="viewFatura">
+			<ui:include src="faturaView.xhtml">
+				<ui:param name="showNewLancamento" value="S" />
+			</ui:include>
+			<p:remoteCommand name="onCloseFaturaView" process="@this"
+				update="dtPrincipalFaturaRP" />
+		</p:outputPanel>
+
+		<ui:include src="pacienteFicha.xhtml" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this"
+			update=":lume:viewFatura" />
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<h1>Faturas dos Pacientes</h1>
+					<p:separator styleClass="SeparatorFull" />
+
+					<p:panelGrid columns="2" layout="grid" id="filterFaturas"
+						styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
+						<h:panelGroup>
+							<h:outputText for="inicio" value="Data de criação de:" />
+							<p:calendar id="inicio" value="#{faturaPagtoMB.inicio}" />
+						</h:panelGroup>
+						<h:panelGroup>
+							<h:outputText for="fim" value="Data de criação até:" />
+							<p:calendar id="fim" value="#{faturaPagtoMB.fim}" />
+						</h:panelGroup>
+						<h:panelGroup styleClass="noupdate">
+							<h:outputText for="filtroPaciente" value="Paciente:" />
+							<p:autoComplete id="filtroPaciente"
+								value="#{faturaPagtoMB.paciente}"
+								style="margin-top: 10px !important"
+								completeMethod="#{faturaPagtoMB.sugestoesPacientes}" var="p"
+								itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+								converter="paciente" forceSelection="true" scrollHeight="400"
+								minQueryLength="3" queryDelay="1000">
+
+								<p:column headerText="Nome">
+									<h:outputText value="#{p.dadosBasico.nome}" />
+								</p:column>
+								<p:column headerText="Celular">
+									<h:outputText value="#{p.dadosBasico.celular}" />
+								</p:column>
+								<p:column headerText="Nome da Mãe">
+									<h:outputText value="#{p.nomeMae}" />
+								</p:column>
+
+							</p:autoComplete>
+						</h:panelGroup>
+						<h:panelGroup>
+							<p:outputLabel for="status" value="Status: " />
+							<p:selectOneMenu id="status" value="#{faturaPagtoMB.status}">
+								<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+								<f:selectItems value="#{faturaPagtoMB.listaStatus}" var="status"
+									itemLabel="#{status}" itemValue="#{status}" />
+								<p:ajax process="@this" />
+							</p:selectOneMenu>
+						</h:panelGroup>
+					</p:panelGrid>
+					<p:panelGrid columns="4" layout="grid"
+						styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
+						<p:commandButton actionListener="#{faturaPagtoMB.pesquisar}"
+							process="@this, :lume:filterFaturas" value="Pesquisar"
+							update=":lume:dtPrincipalFaturaRP" />
+
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{faturaPagtoMB.exportarTabela('xls')}"
+								ajax="false" process="dtPrincipalFaturaRP,@this" update="@this"
+								immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+								<p:fileDownload value="#{faturaPagtoMB.arquivoDownload}" />
+
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{faturaPagtoMB.exportarTabela('pdf')}"
+									ajax="false" process="dtPrincipalFaturaRP,@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload value="#{faturaPagtoMB.arquivoDownload}" />
+								</p:menuitem>
+								<p:menuitem value="Exportar tabela para CSV"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{faturaPagtoMB.exportarTabela('csv')}"
+									ajax="false" process="dtPrincipalFaturaRP,@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload value="#{faturaPagtoMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
+						</h:panelGroup>
+
+					</p:panelGrid>
+					<div class="SeparatorFull"></div>
+					<br />
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						id="dtPrincipalFaturaRP" value="#{faturaPagtoMB.entityList}"
+						var="f" rows="20" paginator="true" rowKey="#{f}"
+						paginatorPosition="bottom" binding="#{faturaPagtoMB.tabelaFatura}">
+						<f:facet name="header">Faturas</f:facet>
+						<p:column width="120" headerText="Detalhes">
+							<p:commandButton icon="fa fa-eye" process="@this"
+								actionListener="#{faturaPagtoMB.visualizaFatura(f)}"
+								update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura"
+								oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
+								title="Visualizar Fatura" />
+						</p:column>
+						<p:column filterBy="#{f.paciente.dadosBasico.nomeStr}"
+							sortBy="#{f.paciente.dadosBasico.nome}" headerText="Paciente"
+							filterMatchMode="contains"
+							filterFunction="#{faturaPagtoMB.filtroSemAcento}">
+
+							<p:commandLink value="#{f.paciente.dadosBasico.nome}"
+								process="@this" title="#{f.paciente.id}"
+								actionListener="#{tabPacienteMB.loadPaciente(f.paciente)}"
+								oncomplete="PF('dlgFichaPaciente').show()"
+								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+
+						</p:column>
+						<p:column filterBy="#{f.dataCriacaoStr}"
+							headerText="Data de Criação" filterMatchMode="contains"
+							sortBy="#{f.dataCriacaoStr}">
+							<h:outputText value="#{f.dataCriacaoStr}" />
+						</p:column>
+						<p:column
+							filterBy="#{faturaPagtoMB.getPTFromFaturaOrigem(f).descricao}"
+							sortBy="#{faturaPagtoMB.getPTFromFaturaOrigem(f).descricao}"
+							filterMatchMode="contains" headerText="Plano de Tratamento">
+							<h:outputText
+								value="#{faturaPagtoMB.getPTFromFaturaOrigem(f).descricao}" />
+						</p:column>
+						<p:column filterBy="#{faturaPagtoMB.getTotal(f)}"
+							headerText="Valor total da fatura" filterMatchMode="contains"
+							sortBy="#{faturaPagtoMB.getTotal(f)}">
+							<h:outputText value="#{faturaPagtoMB.getTotal(f)}">
+								<f:convertNumber currencySymbol="R$ " type="currency" />
+							</h:outputText>
+						</p:column>
+
+						<p:column filterBy="#{faturaPagtoMB.getTotalPago(f)}"
+							headerText="Valor total pago" filterMatchMode="contains"
+							sortBy="#{faturaPagtoMB.getTotalPago(f)}">
+							<h:outputText value="#{faturaPagtoMB.getTotalPago(f)}">
+								<f:convertNumber currencySymbol="R$ " type="currency" />
+							</h:outputText>
+						</p:column>
+
+						<p:column filterBy="#{faturaPagtoMB.getTotalNaoPago(f)}"
+							headerText="Valor total não pago" filterMatchMode="contains"
+							sortBy="#{faturaPagtoMB.getTotalNaoPago(f)}">
+							<h:outputText value="#{faturaPagtoMB.getTotalNaoPago(f)}">
+								<f:convertNumber currencySymbol="R$ " type="currency" />
+							</h:outputText>
+						</p:column>
+
+						<p:column filterBy="#{faturaPagtoMB.getTotalNaoPlanejado(f)}"
+							headerText="Valor total não planejado" filterMatchMode="contains"
+							sortBy="#{faturaPagtoMB.getTotalNaoPlanejado(f)}">
+							<h:outputText value="#{faturaPagtoMB.getTotalNaoPlanejado(f)}">
+								<f:convertNumber currencySymbol="R$ " type="currency" />
+							</h:outputText>
+						</p:column>
+
+						<p:column width="80" headerText="Status"
+							filterBy="#{faturaPagtoMB.getStatus(f)}"
+							sortBy="#{faturaPagtoMB.getStatus(f)}" filterMatchMode="contains">
+							<h:outputText value="#{faturaPagtoMB.getStatus(f)}" />
+						</p:column>
+
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			//<![CDATA[
+
+			//]]>
+		</script>
+	</ui:define>
+</ui:composition>

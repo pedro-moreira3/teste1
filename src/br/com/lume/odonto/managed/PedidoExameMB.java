@@ -10,6 +10,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
 
 import br.com.lume.common.OdontoPerfil;
@@ -51,8 +52,10 @@ public class PedidoExameMB extends LumeManagedBean<PedidoExame> {
 
     private Paciente paciente;
 
-
     private Profissional profissionalLogado;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaExame;
 
     public PedidoExameMB() {
         super(PedidoExameSingleton.getInstance().getBo());
@@ -125,6 +128,10 @@ public class PedidoExameMB extends LumeManagedBean<PedidoExame> {
         documento = documento.replaceAll("span", "div");
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Pedidos de Exames", tabelaExame, type);
+    }
+    
     public String getDocumento() {
         return documento;
     }
@@ -199,5 +206,13 @@ public class PedidoExameMB extends LumeManagedBean<PedidoExame> {
 
     public void setLiberaBotao(boolean liberaBotao) {
         this.liberaBotao = liberaBotao;
+    }
+
+    public DataTable getTabelaExame() {
+        return tabelaExame;
+    }
+
+    public void setTabelaExame(DataTable tabelaExame) {
+        this.tabelaExame = tabelaExame;
     }
 }

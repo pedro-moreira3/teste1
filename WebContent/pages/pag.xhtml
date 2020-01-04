@@ -38,6 +38,7 @@
 										<h:outputText value="#{p.nomeMae}" />
 									</p:column>
 
+
 									<p:ajax event="itemSelect"
 										listener="#{lancamentoMB.handleSelect}" process="paciente"
 										update=":lume:pnFiltros,:lume:dtLancamento" />

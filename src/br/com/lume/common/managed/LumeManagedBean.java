@@ -1,12 +1,7 @@
 package br.com.lume.common.managed;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
 import java.text.Normalizer;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,7 +13,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
-import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
@@ -28,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.bo.BO;
@@ -42,6 +37,7 @@ import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.bo.RestricaoBO;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.managed.LumeSecurity;
+import br.com.lume.whatsapp.WhatsappSingleton;
 
 public abstract class LumeManagedBean<E extends Serializable> implements Serializable {
 
@@ -60,8 +56,10 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     private List<E> entityList;
 
     private RestricaoBO restricaoBO;
-    
+
     private Exportacoes exportacao;
+
+    private StreamedContent arquivoDownload;
 
     @PostConstruct
     public void init() {
@@ -139,9 +137,11 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         try {
             StringUtil.toString(this.getEntity(), this.log);
             if (this.bO.persist(this.getEntity())) {
-                this.actionNew(event);
+                //this.actionNew(event);
+                this.addInfo("Sucesso!", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+            } else {
+                this.addError("Erro!", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
             }
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             this.log.error("Erro no actionPersist do " + this.getEntity().getClass().getName(), e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -185,9 +185,13 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     public void addInfo(String summary, String detail) {
         this.addMessage(FacesMessage.SEVERITY_INFO, summary, detail, MessageType.TYPE_INFO);
     }
-    
+
+    public void addInfo(String summary, String detail, boolean sendPrimefacesError) {
+        this.addMessage(FacesMessage.SEVERITY_INFO, summary, detail, MessageType.TYPE_INFO, sendPrimefacesError);
+    }
+
     public void addWarn(String summary, String detail) {
-        addWarn(summary, detail, false);
+        addWarn(summary, detail, true);
     }
 
     public void addWarn(String summary, String detail, boolean sendPrimefacesError) {
@@ -195,7 +199,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     }
 
     public void addError(String summary, String detail) {
-        addError(summary, detail, false);
+        addError(summary, detail, true);
     }
 
     public void addError(String summary, String detail, boolean sendPrimefacesError) {
@@ -207,13 +211,16 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     }
 
     private void addMessage(Severity severity, String summary, String detail, String type) {
-        addMessage(severity, summary, detail, type, false);
+        addMessage(severity, summary, detail, type, true);
     }
 
     private void addMessage(Severity severity, String summary, String detail, String type, boolean sendPrimefacesError) {
-        if (sendPrimefacesError)
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
-        else {
+        if (sendPrimefacesError) {
+            if (MessageType.TYPE_INFO.equals(type))
+                type = MessageType.TYPE_SUCCESS;
+            PrimeFaces.current().executeScript("mostraDialogo('" + summary + "', '" + detail + "', '" + type + "')");
+            // FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
+        } else {
             summary = summary.replace("\n", "\\r\\n");
             if (severity == FacesMessage.SEVERITY_ERROR || severity == FacesMessage.SEVERITY_FATAL)
                 PrimeFaces.current().executeScript("message('', '" + summary + " " + detail + "', '" + type + "')");
@@ -307,44 +314,65 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             return 0;
         return getCalendarFromDate(date).get(Calendar.MINUTE);
     }
-    
-    public DefaultStreamedContent exportarTabela(String header, DataTable tabela,String type) {
-        
-        FileInputStream arq;
+
+    public void exportarTabela(String header, DataTable tabela, String type) {
+
+        ByteArrayInputStream arq;
         try {
             this.exportacao = Exportacoes.getInstance();
-            arq = new FileInputStream(this.exportacao.exportarTabela(header,tabela,type));
-            
-            if(type.equals("xls"))
-                return new DefaultStreamedContent(arq,"application/vnd.ms-excel",header+"."+type);
+            arq = (this.exportacao.exportarTabela(header, tabela, type));
+
+            if (type.equals("xls"))
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
+            else if (type.equals("pdf"))
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/pdf", header + "." + type));
             else
-                return new DefaultStreamedContent(arq,"application/pdf",header+"."+type);
-            
-        } catch (FileNotFoundException e) {
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/csv", header + "." + type));
+
+            arq.close();
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        return null;
     }
-    
+
     public boolean filtroSemAcento(Object value, Object filter, Locale locale) {
-        
+
         String filterText = (filter == null) ? null : filter.toString().trim();
-        if(StringUtils.isBlank(filterText)) {
+        if (StringUtils.isBlank(filterText)) {
             return true;
         }
-         
-        if(value == null) {
+
+        if (value == null) {
             return false;
         }
-        
+
         return StringUtils.containsIgnoreCase(removerAcentos((String) value), removerAcentos(filterText));
     }
-    
+
     private String removerAcentos(String str) {
         String c;
         c = Normalizer.normalize(str, Normalizer.Form.NFD);
         c = c.replaceAll("\\p{InCombiningDiacriticalMarks}+", "");
         return c;
     }
+
+    public StreamedContent getArquivoDownload() {
+        return arquivoDownload;
+    }
+
+    public void setArquivoDownload(StreamedContent arquivoDownload) {
+        this.arquivoDownload = arquivoDownload;
+    }
+
+    public String getUrlWpp(Object o) {
+        try {
+            return WhatsappSingleton.getInstance().getUrlWhatsapp(o, UtilsFrontEnd.getEmpresaLogada());
+        } catch (Exception e) {
+            //LogIntelidenteSingleton.getInstance().makeLog(e);
+            //addError("Erro ao abrir whatsapp!", e.getMessage());
+        }
+        return null;
+    }
+
 }

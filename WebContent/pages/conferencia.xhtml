@@ -1,69 +1,142 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
-    <ui:define name="content">
-        <div class="ui-g ui-fluid">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-                    <p:outputPanel id="pnConferencias" styleClass="BordNone">
-                        <h1>Consulta Ajustes</h1>
-                        <div class="SeparatorFull"></div>
-                        <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
-                            <p:outputLabel for="conferencia" value="Conferência : " />
-                            <p:selectOneMenu id="conferencia" value="#{conferenciaMB.entity}" converter="conferencia">
-                                <f:selectItem itemLabel="Selecione uma Conferência" value="#{null}" />
-                                <f:selectItems value="#{conferenciaMB.conferencias}" var="c" itemValue="#{c}" itemLabel="#{c.dataStr}" />
-                                <p:ajax update=":lume:pnConferencias" listener="#{conferenciaMB.pesquisa}" />
-                            </p:selectOneMenu>
-                        </p:panelGrid>
-                        <div class="EmptyBox20"></div>
-                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtConferencias" value="#{conferenciaMB.conferenciasMaterial}" var="conferencia" rows="7" paginator="true" rowKey="#{conferencia}"
-                            paginatorPosition="bottom">
-                            <f:facet name="header">Conferências</f:facet>
-                            <p:column filterBy="#{conferencia.conferencia.profissional.dadosBasico.prefixoNome}" sortBy="#{conferencia.conferencia.profissional.dadosBasico.prefixoNome}"
-                                filterMatchMode="contains" headerText="Conferente">
-                                <h:outputText value="#{conferencia.conferencia.profissional.dadosBasico.prefixoNome}" title="#{conferencia.id}" />
-                            </p:column>
-                            <p:column filterBy="#{conferencia.material.item.descricaoLimpa}" sortBy="#{conferencia.material.item.descricao}" filterMatchMode="contains" headerText="Material">
-                                <h:outputText value="#{conferencia.material.item.descricao}" />
-                            </p:column>
-                            <p:column filterBy="#{conferencia.material.local.descricao}" sortBy="#{conferencia.material.local.descricao}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Local" />
-                                </f:facet>
-                                <h:outputText value="#{conferencia.material.local.descricao}" />
-                            </p:column>
-                            <p:column sortBy="#{conferencia.valorOriginal}" filterBy="#{conferencia.valorOriginal}" filterMatchMode="contains" headerText="Quantidade Original">
-                                <h:outputText value="#{conferencia.valorOriginal}">
-                                    <f:convertNumber />
-                                </h:outputText>
-                                <h:outputText value="#{conferenciaMB.getUnidadeString(conferencia.material.item)}" styleClass="unidadeMedidaString" />
-                            </p:column>
-                            <p:column sortBy="#{conferencia.valorAlterado}" filterBy="#{conferencia.valorAlterado}" filterMatchMode="contains" headerText="Quantidade Alterada">
-                                <h:outputText value="#{conferencia.valorAlterado}">
-                                    <f:convertNumber />
-                                </h:outputText>
-                                <h:outputText value="#{conferenciaMB.getUnidadeString(conferencia.material.item)}" styleClass="unidadeMedidaString" />
-                            </p:column>
+					<p:outputPanel id="pnConferencias" styleClass="BordNone">
+						<h1>Consulta Ajustes</h1>
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="4"
+							columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+							styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="conferencia" value="Conferência : " />
+							<p:selectOneMenu id="conferencia" value="#{conferenciaMB.entity}"
+								converter="conferencia">
+								<f:selectItem itemLabel="Selecione uma Conferência"
+									value="#{null}" />
+								<f:selectItems value="#{conferenciaMB.conferencias}" var="c"
+									itemValue="#{c}" itemLabel="#{c.dataStr}" />
+								<p:ajax update=":lume:pnConferencias"
+									listener="#{conferenciaMB.pesquisa}" />
+							</p:selectOneMenu>
 
-                            <p:column sortBy="#{conferencia.motivo}" filterMatchMode="contains" filterBy="#{conferencia.motivo}" headerText="Motivo">
-                                <h:outputText value="#{conferencia.motivo}" />
-                            </p:column>
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{conferenciaMB.exportarTabela('xls')}"
+									ajax="false" process="dtConferencias,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-                            <p:column sortBy="#{conferencia.dataCadastroStr}" filterMatchMode="contains" filterBy="#{conferencia.dataCadastroStr}" headerText="Data do Cadastro">
-                                <h:outputText value="#{conferencia.dataCadastroStr}" />
-                            </p:column>
-                        </p:dataTable>
-                        <br />
-                        <div class="SeparatorFull"></div>
-                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-                            <p:commandButton value="Excel" ajax="false" process="dtConferencias" icon="White fa fa-file-excel-o" styleClass="GreenButton">
-                                <p:dataExporter encoding="iso-8859-1" type="xls" target="dtConferencias" fileName="Conferencia" />
-                            </p:commandButton>
-                        </p:panelGrid>
-                    </p:outputPanel>
-                </div>
-            </div>
-        </div>
-    </ui:define>
+									<p:fileDownload value="#{conferenciaMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{conferenciaMB.exportarTabela('pdf')}"
+										ajax="false" process="dtConferencias,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload value="#{conferenciaMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{conferenciaMB.exportarTabela('csv')}"
+										ajax="false" process="dtConferencias,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload value="#{conferenciaMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
+						</p:panelGrid>
+						<div class="EmptyBox20"></div>
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							id="dtConferencias" value="#{conferenciaMB.conferenciasMaterial}"
+							var="conferencia" rows="7" paginator="true"
+							rowKey="#{conferencia}" paginatorPosition="bottom"
+							binding="#{conferenciaMB.tabela}">
+							<f:facet name="header">Conferências</f:facet>
+							<p:column
+								filterBy="#{conferencia.conferencia.profissional.dadosBasico.prefixoNome}"
+								sortBy="#{conferencia.conferencia.profissional.dadosBasico.prefixoNome}"
+								filterMatchMode="contains" headerText="Conferente">
+								<h:outputText
+									value="#{conferencia.conferencia.profissional.dadosBasico.prefixoNome}"
+									title="#{conferencia.id}" />
+							</p:column>
+							<p:column filterBy="#{conferencia.material.item.descricaoLimpa}"
+								sortBy="#{conferencia.material.item.descricao}"
+								filterMatchMode="contains" headerText="Material">
+								<h:outputText value="#{conferencia.material.item.descricao}" />
+							</p:column>
+							<p:column
+								filterBy="#{conferencia.material.locais}"
+								sortBy="#{conferencia.material.locais}"
+								filterMatchMode="contains">
+								<f:facet name="header">
+									<h:outputText value="Local" />
+								</f:facet>
+								<h:outputText
+									value="#{conferencia.material.locais}" />
+							</p:column>
+							<p:column sortBy="#{conferencia.valorOriginal}"
+								filterBy="#{conferencia.valorOriginal}"
+								filterMatchMode="contains" headerText="Quantidade Original">
+								<h:outputText value="#{conferencia.valorOriginal}">
+									<f:convertNumber />
+								</h:outputText>
+								<h:outputText
+									value="#{conferenciaMB.getUnidadeString(conferencia.material.item)}"
+									styleClass="unidadeMedidaString" />
+							</p:column>
+							<p:column sortBy="#{conferencia.valorAlterado}"
+								filterBy="#{conferencia.valorAlterado}"
+								filterMatchMode="contains" headerText="Quantidade Alterada">
+								<h:outputText value="#{conferencia.valorAlterado}">
+									<f:convertNumber />
+								</h:outputText>
+								<h:outputText
+									value="#{conferenciaMB.getUnidadeString(conferencia.material.item)}"
+									styleClass="unidadeMedidaString" />
+							</p:column>
+
+							<p:column sortBy="#{conferencia.motivo}"
+								filterMatchMode="contains" filterBy="#{conferencia.motivo}"
+								headerText="Motivo">
+								<h:outputText value="#{conferencia.motivo}" />
+							</p:column>
+
+							<p:column sortBy="#{conferencia.dataCadastroStr}"
+								filterMatchMode="contains"
+								filterBy="#{conferencia.dataCadastroStr}"
+								headerText="Data do Cadastro">
+								<h:outputText value="#{conferencia.dataCadastroStr}" />
+							</p:column>
+						</p:dataTable>
+
+						<ui:remove>
+							<br />
+							<div class="SeparatorFull"></div>
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton value="Excel" ajax="false"
+									process="dtConferencias" icon="White fa fa-file-excel-o"
+									styleClass="GreenButton">
+									<p:dataExporter encoding="iso-8859-1" type="xls"
+										target="dtConferencias" fileName="Conferencia" />
+								</p:commandButton>
+							</p:panelGrid>
+						</ui:remove>
+					</p:outputPanel>
+				</div>
+			</div>
+		</div>
+	</ui:define>
 </ui:composition>

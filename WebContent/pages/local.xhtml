@@ -5,70 +5,109 @@
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-				<style>
-    [role="gridcell"] {
-        text-align: left !important;
-    }
-    </style>				
-					<p:outputPanel id="pnLocal" styleClass="BordNone">
-						<h:inputHidden id="id" value="#{localMB.entity.id}" />
+					<p:confirmDialog id="confirmDialog"
+						message=" Você tem certeza que deseja excluir o local?"
+						header="Excluir local?" severity="alert"
+						widgetVar="confirmation" appendToBody="true">
+						<p:commandButton id="confirm" value="Sim"
+							update=":lume:pnLocal"							
+							actionListener="#{localMB.actionRemove}" process="@this" oncomplete="PF('confirmation').hide()"/>
+						<p:commandButton id="decline" value="Não"
+							onclick="PF('confirmation').hide()" type="button" />
+					</p:confirmDialog>				
+					<p:dialog id="dlg" widgetVar="dlg" header="Novo Local" responsive="true" modal="true" width="60%">
+						<p:panel id="pnDlg" styleClass="BordNone">
+						<br/>
+							<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid" style="border:0px none; background-color:transparent;">
+								<h:panelGroup styleClass="md-combo"> 		 
+									<p:outputLabel for="descricao" value="Descrição: " />
+									<p:inputText id="descricao" value="#{localMB.descricao}"  required="true" maxlength="50" />				                               
+								</h:panelGroup>
+								<h:panelGroup styleClass="md-combo"> 
+								
+									<p:outputLabel for="tipo" value="Tipo: " />
+									<p:selectOneMenu required="true" id="tipo" value="#{localMB.tipo}" disabled="#{localMB.disable}" >
+										<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
+										<f:selectItem itemValue="ES" itemLabel="Estoque" />
+										<f:selectItem itemValue="CO" itemLabel="Consultório" />
+										<f:selectItem itemValue="PA" itemLabel="Patrimônio" />
+										<f:selectItem itemValue="SM" itemLabel="Sala de materiais" />
+									</p:selectOneMenu>				
+								</h:panelGroup>								                      	                                
+							</p:panelGrid> 				
+							<br />
+							<div class="SeparatorFull"></div>
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{localMB.actionPersist}"
+											update=":lume:pnLocal,:lume:pnDlg" process=":lume:pnDlg"  styleClass="GreenButton" oncomplete="PF('dlg').hide();"/>	
+								<p:commandButton id="fechar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlg').hide();" immediate="true" />											
+								</p:panelGrid>
+								<div class="EmptyBox20"></div>
+						</p:panel>
+					</p:dialog>
 
+					<p:outputPanel id="pnLocal" styleClass="BordNone">					
+						<h:inputHidden id="id" value="#{localMB.entity.id}" />
 						<h1>Local</h1>
 						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-							style="border:0px none; background-color:transparent;">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">	
+								<p:commandButton id="new" icon="White fa fa-file-o" value="Novo Local" 
+								oncomplete="PF('dlg').show();" actionListener="#{localMB.actionNew}" update=":lume:pnDlg" immediate="true" />
 
-							<h:outputLabel value="Categoria: " for="tbLocalPaiTree" />
-							<p:tree value="#{localMB.rootPai}" var="localPai" id="tbLocalPaiTree" selection="#{localMB.selectedLocalPai}"
-								selectionMode="single">
-								<p:ajax event="select" update="@this" listener="#{localMB.onNodeSelect}" />
-								<p:ajax event="unselect" update="@this" listener="#{localMB.onNodeUnselect}" />
-								<p:treeNode>
-									<h:outputText value="#{localPai.descricao}" />
-								</p:treeNode>
-							</p:tree>
-							
-							<p:column></p:column>
-							<p:column></p:column>
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{localMB.exportarTabela('xls')}"
+									ajax="false" process="dtLocal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-							<p:outputLabel for="descricao" value="Local: " />
-							<p:inputText id="descricao" value="#{localMB.descricao}"  required="true" maxlength="50" />
+									<p:fileDownload
+										value="#{localMB.arquivoDownload}" />
 
-							<h:outputLabel value="Tipo" />
-							<p:selectOneMenu id="tipo" value="#{localMB.tipoLocal}"  converter="dominio" disabled="#{localMB.disable}">
-								<f:selectItems value="#{localMB.tiposLocais}" var="tipo" itemLabel="#{tipo.nome}" itemValue="#{tipo}" />
-							</p:selectOneMenu>
-						</p:panelGrid>
-						<br />
-						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{localMB.actionPersist}"
-								update=":lume:pnLocal,:lume:pnLocalTree" process=":lume:pnLocal"  styleClass="GreenButton" />
-							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{localMB.actionRemove}"
-								update=":lume:pnLocal,:lume:pnLocalTree" process="@this" disabled="#{localMB.entity.id == 0}" 
-								styleClass="RedButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{localMB.actionNew}" update=":lume:pnLocal,:lume:pnLocalTree"
-								immediate="true"  />
-						</p:panelGrid>
-					</p:outputPanel>
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{localMB.exportarTabela('pdf')}"
+										ajax="false" process="dtLocal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{localMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{localMB.exportarTabela('csv')}"
+										ajax="false" process="dtLocal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{localMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
 
-
-					<div class="EmptyBox20"></div>
-
-
-					<p:outputPanel id="pnLocalTree" styleClass="BordNone">
-						<p:treeTable value="#{localMB.root}" var="local" id="tbLocalTree" selection="#{localMB.selectedLocal}" selectionMode="single">
-							<p:ajax event="select" listener="#{localMB.carregaTela()}" update=":lume:pnLocal" />
-							<f:facet name="header">Locais</f:facet>
-							<p:column headerText="Local">
-								<h:outputText value="#{local.descricao}" title="#{local.id}"/>
-							</p:column>
-							<p:column headerText="Tipo">
-								<h:outputText value="#{local.descricaoTipo}" />
-							</p:column>
-						</p:treeTable>
-					</p:outputPanel>
-				</div>
+						</p:panelGrid>						
+													
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtLocal" value="#{localMB.locais}" var="local" rows="15" paginator="true" selection="#{localMB.entity}"
+	                        selectionMode="single" rowKey="#{local}" paginatorPosition="bottom" binding="#{localMB.tabelaLocal}">	                        
+	                        <f:facet name="header">Locais</f:facet>
+							 <p:column headerText="Ações" width="20%">
+							 	<p:commandButton styleClass="NavyButton" icon="fa fa-eye" oncomplete="PF('dlg').show();" update=":lume:pnDlg,:lume:dtLocal" title="Editar" process="@this"
+	                                actionListener="#{localMB.carregarEditar(local)}" style="width:33px !important" immediate="true"/>
+								<h:outputText value="&#160;" /><h:outputText value="&#160;" />	                                
+							 	<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmation').show();" update=":lume:pnDlg" title="Remover" process="@this"
+	                                 style="width:33px !important" actionListener="#{localMB.carregarEditar(local)}"/>
+	                        </p:column>								                                           
+	                        <p:column filterBy="#{local.descricao}" sortBy="#{local.descricao}" filterMatchMode="contains" width="30%" headerText="Descrição"
+	                        			filterFunction="#{localMB.filtroSemAcento}">
+	                            <h:outputText value="#{local.descricao}" title="#{local.id}" />
+	                        </p:column>
+	                        <p:column filterBy="#{local.tipo}" sortBy="#{local.descricaoTipo}" filterMatchMode="contains" width="20%" headerText="Tipo"
+	                            filterFunction="#{localMB.filtroSemAcento}">
+	                            <h:outputText value="#{local.descricaoTipo}" />
+	                        </p:column>                     
+					</p:dataTable>                  							
+				</p:outputPanel>	
+				</div>						
 			</div>
 		</div>
 	</ui:define>

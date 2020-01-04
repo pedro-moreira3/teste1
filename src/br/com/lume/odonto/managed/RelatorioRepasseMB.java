@@ -11,6 +11,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -18,34 +19,33 @@ import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.odonto.entity.RelatorioBalanco;
+import br.com.lume.odonto.entity.RelatorioRepasse;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
-import br.com.lume.relatorioBalanco.RelatorioBalancoSingleton;
+import br.com.lume.relatorioRepasse.RelatorioRepasseSingleton;
 
 @ManagedBean
 @ViewScoped
-public class RelatorioBalancoMB extends LumeManagedBean<RelatorioBalanco> {
+public class RelatorioRepasseMB extends LumeManagedBean<RelatorioRepasse> {
 
     private static final long serialVersionUID = 1L;
 
-    private Logger log = Logger.getLogger(RelatorioBalancoMB.class);
+    private Logger log = Logger.getLogger(RelatorioRepasseMB.class);
 
     private Date inicio, fim;
 
-    private boolean finalizado, repassado;
-
     private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos;
-  
+
     private Profissional profissional;
-  
-    private List<RelatorioBalanco> relatoriosSelecionados;
 
     private String statusPagamento;
 
-    public RelatorioBalancoMB() {
-        super(RelatorioBalancoSingleton.getInstance().getBo());
-        this.setClazz(RelatorioBalanco.class);
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaRelatorio;
+
+    public RelatorioRepasseMB() {
+        super(RelatorioRepasseSingleton.getInstance().getBo());
+        this.setClazz(RelatorioRepasse.class);
         this.inicio = Utils.getPrimeiroDiaMesCorrente();
         this.fim = Calendar.getInstance().getTime();
     }
@@ -86,6 +86,10 @@ public class RelatorioBalancoMB extends LumeManagedBean<RelatorioBalanco> {
         this.setPlanoTratamentoProcedimentos(null);
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Relatório de repasses", tabelaRelatorio, type);
+    }
+
     public Date getInicio() {
         return this.inicio;
     }
@@ -102,30 +106,6 @@ public class RelatorioBalancoMB extends LumeManagedBean<RelatorioBalanco> {
         this.fim = fim;
     }
 
-    public boolean isFinalizado() {
-        return this.finalizado;
-    }
-
-    public void setFinalizado(boolean finalizado) {
-        this.finalizado = finalizado;
-    }
-
-    public boolean isRepassado() {
-        return this.repassado;
-    }
-
-    public void setRepassado(boolean repassado) {
-        this.repassado = repassado;
-    }
-
-    public List<PlanoTratamentoProcedimento> getPlanoTratamentoProcedimentos() {
-        return this.planoTratamentoProcedimentos;
-    }
-
-    public void setPlanoTratamentoProcedimentos(List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos) {
-        this.planoTratamentoProcedimentos = planoTratamentoProcedimentos;
-    }
-
     public Profissional getProfissional() {
         return this.profissional;
     }
@@ -134,19 +114,27 @@ public class RelatorioBalancoMB extends LumeManagedBean<RelatorioBalanco> {
         this.profissional = profissional;
     }
 
-    public List<RelatorioBalanco> getRelatoriosSelecionados() {
-        return this.relatoriosSelecionados;
-    }
-
-    public void setRelatoriosSelecionados(List<RelatorioBalanco> relatoriosSelecionados) {
-        this.relatoriosSelecionados = relatoriosSelecionados;
-    }
-
     public String getStatusPagamento() {
         return this.statusPagamento;
     }
 
     public void setStatusPagamento(String statusPagamento) {
         this.statusPagamento = statusPagamento;
+    }
+
+    public List<PlanoTratamentoProcedimento> getPlanoTratamentoProcedimentos() {
+        return planoTratamentoProcedimentos;
+    }
+
+    public void setPlanoTratamentoProcedimentos(List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos) {
+        this.planoTratamentoProcedimentos = planoTratamentoProcedimentos;
+    }
+
+    public DataTable getTabelaRelatorio() {
+        return tabelaRelatorio;
+    }
+
+    public void setTabelaRelatorio(DataTable tabelaRelatorio) {
+        this.tabelaRelatorio = tabelaRelatorio;
     }
 }

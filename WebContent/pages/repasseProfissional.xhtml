@@ -1,0 +1,288 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+
+		<p:outputPanel id="viewFaturaRepasse">
+			<ui:include src="faturaView.xhtml">
+				<ui:param name="showNewLancamento" value="N" />
+				<ui:param name="repasseProfissional" value="S" />
+			</ui:include>
+			<p:remoteCommand name="onCloseFaturaView"
+				process="@this, :lume:tabViewRepasseProfissional:filtros"
+				update=":lume:tabViewRepasseProfissional:dtPrincipalFaturaPP"
+				actionListener="#{repasseProfissionalMB.pesquisar}" />
+		</p:outputPanel>
+
+		<ui:include src="pacienteFicha.xhtml" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this"
+			update=":lume:viewFaturaRepasse" />
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+
+					<p:tabView id="tabViewRepasseProfissional">
+						<p:tab title="Repasse Novo">
+
+							<div class="ui-g ui-fluid">
+								<div class="ui-g-12 ui-lg-12">
+									<div class="card card-w-title">
+										<p:remoteCommand name="pesquisarFaturasRepasse"
+											actionListener="#{repasseProfissionalMB.pesquisar}"
+											oncomplete="PF('dtPrincipalFaturaPP').filter()"
+											update=":lume:tabViewRepasseProfissional:dtPrincipalFaturaPP"
+											process="@this, :lume:tabViewRepasseProfissional:pnPrincipalNovoRepasse" />
+										<p:outputPanel id="pnPrincipalNovoRepasse">
+											<h1>Repasse dos Profissionais</h1>
+											<div class="SeparatorFull"></div>
+											<p:fieldset legend="Filtros">
+												<p:outputPanel id="filtros">
+
+													<p:panelGrid columns="2" layout="grid"
+														styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+														style="border:0px none; background-color:transparent;">
+
+														<h:panelGroup>
+															<p:outputLabel for="dataInicio"
+																value="Data Inicial da criação da Fatura:" />
+															<p:calendar id="dataInicio"
+																value="#{repasseProfissionalMB.dataInicio}"
+																autocomplete="false" />
+														</h:panelGroup>
+
+														<h:panelGroup>
+															<p:outputLabel for="dataFim"
+																value="Data Final da criação da Fatura:" />
+															<p:calendar id="dataFim"
+																value="#{repasseProfissionalMB.dataFim}"
+																autocomplete="false" />
+														</h:panelGroup>
+
+														<h:panelGroup>
+															<p:outputLabel for="filtroPaciente" value="Paciente:" />
+															<p:autoComplete dropdown="true" queryDelay="1000"
+																size="35" value="#{repasseProfissionalMB.paciente}"
+																id="filtroPaciente" minQueryLength="3"
+																completeMethod="#{repasseProfissionalMB.geraSugestoesPaciente}"
+																var="paciente" itemLabel="#{paciente.dadosBasico.nome}"
+																itemValue="#{paciente}" converter="paciente"
+																forceSelection="true">
+															</p:autoComplete>
+														</h:panelGroup>
+
+														<h:panelGroup>
+															<p:outputLabel for="fitroProfissional"
+																value="Profissional:" />
+															<p:autoComplete dropdown="true" queryDelay="1000"
+																size="35" value="#{repasseProfissionalMB.profissional}"
+																id="fitroProfissional" minQueryLength="3"
+																completeMethod="#{repasseProfissionalMB.geraSugestoesProfissional}"
+																var="profissional"
+																itemLabel="#{profissional.dadosBasico.prefixoNome}"
+																itemValue="#{profissional}" converter="profissional"
+																forceSelection="true">
+															</p:autoComplete>
+														</h:panelGroup>
+
+														<h:panelGroup>
+															<p:outputLabel for="status" value="Status: " />
+															<p:selectOneMenu id="status"
+																value="#{repasseProfissionalMB.status}">
+																<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+																<f:selectItem itemValue="1"
+																	itemLabel="Não disponível para repasse" />
+																<f:selectItem itemValue="2"
+																	itemLabel="Pendente de repasse" />
+															</p:selectOneMenu>
+														</h:panelGroup>
+
+													</p:panelGrid>
+													<p:panelGrid columns="2"
+														columnClasses="ui-grid-col-3,ui-grid-col-9" layout="grid"
+														styleClass="ui-panelgrid-blank">
+														<p:outputLabel for="mesesAnterioresNovoRepasse"
+															value="Incluir finalizados em aberto dos meses anteriores : " />
+														<p:selectBooleanCheckbox id="mesesAnterioresNovoRepasse"
+															value="#{repasseProfissionalMB.mesesAnteriores}" />
+													</p:panelGrid>
+												</p:outputPanel>
+
+												<div class="SeparatorFull"></div>
+
+												<p:panelGrid columns="3" layout="grid"
+													styleClass="ui-panelgrid-blank form-group ui-fluid">
+
+													<p:commandButton id="pesquisarNovoRepasse"
+														icon="White fa fa-search" value="Pesquisar"
+														styleClass="OrangeButton"
+														actionListener="#{repasseProfissionalMB.pesquisar}"
+														process="@this, :lume:tabViewRepasseProfissional:filtros"
+														update=":lume:tabViewRepasseProfissional:dtPrincipalFaturaPP" />
+
+													<h:panelGroup>
+														<p:splitButton icon="White fa fa fa-file-excel-o"
+															value="Exportar tabela para Excel"
+															styleClass="GreenSplitButton"
+															actionListener="#{repasseProfissionalMB.exportarTabela('xls')}"
+															ajax="false" process="dtPrincipalFaturaPP, @this"
+															update="@this" immediate="true"
+															onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+															<p:fileDownload
+																value="#{repasseProfissionalMB.arquivoDownload}" />
+
+															<p:menuitem value="Exportar tabela para PDF"
+																icon="fa fa fa-file-pdf-o"
+																actionListener="#{repasseProfissionalMB.exportarTabela('pdf')}"
+																ajax="false" process="dtPrincipalFaturaPP, @this"
+																immediate="true"
+																onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+																<p:fileDownload
+																	value="#{repasseProfissionalMB.arquivoDownload}" />
+															</p:menuitem>
+														</p:splitButton>
+													</h:panelGroup>
+												</p:panelGrid>
+											</p:fieldset>
+
+											<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+												id="dtPrincipalFaturaPP"
+												value="#{repasseProfissionalMB.entityList}" var="f"
+												rows="20" paginator="true" rowKey="#{f}"
+												paginatorPosition="bottom" widgetVar="dtPrincipalFaturaPP"
+												binding="#{repasseProfissionalMB.tabelaRepasse}">
+
+												<f:facet name="header">Faturas</f:facet>
+
+												<p:column width="50" headerText="Detalhes">
+													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
+														title="Visualizar Fatura"
+														oncomplete="PF('dlgFaturaView').show();"
+														actionListener="#{faturaPagtoMB.visualizaFatura(f)}"
+														process="@this"
+														update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+												</p:column>
+												<p:column
+													filterBy="#{f.profissional.dadosBasico.prefixoNome}"
+													sortBy="#{f.profissional.dadosBasico.prefixoNome}"
+													filterMatchMode="contains"
+													filterFunction="#{repasseProfissionalMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Profissional" />
+													</f:facet>
+													<h:outputText
+														value="#{f.profissional.dadosBasico.prefixoNome}" />
+												</p:column>
+												<p:column
+													filterBy="#{f.dadosTabelaRepassePaciente.dadosBasico.prefixoNome}"
+													sortBy="#{f.dadosTabelaRepassePaciente.dadosBasico.prefixoNome}"
+													filterMatchMode="contains"
+													filterFunction="#{repasseProfissionalMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Paciente" />
+													</f:facet>
+
+													<p:commandLink
+														value="#{f.dadosTabelaRepassePaciente.dadosBasico.nome}"
+														process="@this" title="#{f.dadosTabelaRepassePaciente.id}"
+														actionListener="#{tabPacienteMB.loadPaciente(f.dadosTabelaRepassePaciente)}"
+														oncomplete="PF('dlgFichaPaciente').show()"
+														update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+
+												</p:column>
+												<p:column
+													filterBy="#{f.dadosTabelaRepassePlanoTratamento.descricao}"
+													sortBy="#{f.dadosTabelaRepassePlanoTratamento.descricao}"
+													filterMatchMode="contains"
+													filterFunction="#{repasseProfissionalMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Plano de tratamento de origem" />
+													</f:facet>
+													<h:outputText
+														value="#{f.dadosTabelaRepassePlanoTratamento.descricao}" />
+												</p:column>
+												<p:column
+													filterBy="#{f.dadosTabelaRepassePTP.procedimento.descricao}"
+													sortBy="#{f.dadosTabelaRepassePTP.procedimento.descricao}"
+													filterMatchMode="contains"
+													filterFunction="#{repasseProfissionalMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Procedimento de origem" />
+													</f:facet>
+													<h:outputText
+														value="#{f.dadosTabelaRepassePTP.procedimento.descricao}" />
+												</p:column>
+												<p:column filterBy="#{f.dataCriacaoStr}"
+													headerText="Data de Criação" filterMatchMode="contains"
+													sortBy="#{f.dataCriacaoStr}">
+													<h:outputText value="#{f.dataCriacaoStr}" />
+												</p:column>
+
+												<p:column filterBy="#{f.dadosTabelaRepasseTotalFatura}"
+													headerText="Valor total da fatura"
+													filterMatchMode="contains"
+													sortBy="#{f.dadosTabelaRepasseTotalFatura}">
+													<h:outputText value="#{f.dadosTabelaRepasseTotalFatura}">
+														<f:convertNumber currencySymbol="R$ " type="currency" />
+													</h:outputText>
+												</p:column>
+
+												<p:column filterBy="#{f.dadosTabelaRepasseTotalPago}"
+													headerText="Valor total pago" filterMatchMode="contains"
+													sortBy="#{f.dadosTabelaRepasseTotalPago}">
+													<h:outputText value="#{f.dadosTabelaRepasseTotalPago}">
+														<f:convertNumber currencySymbol="R$ " type="currency" />
+													</h:outputText>
+												</p:column>
+
+												<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPago}"
+													headerText="Valor total não pago"
+													filterMatchMode="contains"
+													sortBy="#{f.dadosTabelaRepasseTotalNaoPago}">
+													<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPago}">
+														<f:convertNumber currencySymbol="R$ " type="currency" />
+													</h:outputText>
+												</p:column>
+
+												<p:column
+													filterBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}"
+													headerText="Valor total não planejado"
+													filterMatchMode="contains"
+													sortBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
+													<h:outputText
+														value="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
+														<f:convertNumber currencySymbol="R$ " type="currency" />
+													</h:outputText>
+												</p:column>
+
+											</p:dataTable>
+										</p:outputPanel>
+
+									</div>
+								</div>
+							</div>
+
+						</p:tab>
+
+						<p:tab title="Repasse Antigo">
+
+							<ui:include src="faturamento.xhtml"></ui:include>
+
+						</p:tab>
+					</p:tabView>
+
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			//<![CDATA[
+
+			//]]>
+		</script>
+	</ui:define>
+</ui:composition>

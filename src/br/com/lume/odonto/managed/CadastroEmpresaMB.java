@@ -15,9 +15,11 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
 
+import br.com.lume.afiliacao.AfiliacaoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.odonto.entity.Afiliacao;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
@@ -36,6 +38,8 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
 
     private Profissional profissional;
 
+    private List<Afiliacao> afiliacoes;
+
     @ManagedProperty(value = "#{menuMB}")
     private MenuMB menuMB;
 
@@ -51,11 +55,12 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
             // TODO Auto-generated method stub
             super.actionPersist(event);
             UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(getEntity()));
-
             menuMB.carregarMenu();
+
+            this.addInfo("Sucesso", "Dados salvos com sucesso!");
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
-            log.error("Erro ao salvar registros", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            log.error("Erro ao buscar registros", e);
         }
     }
 
@@ -63,6 +68,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
         try {
             setEntity(UtilsFrontEnd.getEmpresaLogada());
             profissional = ProfissionalSingleton.getInstance().getBo().findAdminInicial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            this.afiliacoes = AfiliacaoSingleton.getInstance().getBo().getAllAfiliacao();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error("Erro ao buscar registros", e);
@@ -72,7 +78,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     public void handleFotoUpload(FileUploadEvent event) {
         try {
             this.getEntity().setEmpStrLogo(handleFotoUpload(event, this.getEntity().getEmpStrLogo()));
-            this.addInfo("Sucesso", "Logo atualizada com sucesso!");
+            this.addInfo("Sucesso", "Logo alterada com sucesso!");
         } catch (Exception e) {
             this.addError("Erro ao enviar Logo", "");
             log.error("Erro ao enviar Logo", e);
@@ -115,6 +121,14 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
 
     public void setMenuMB(MenuMB menuMB) {
         this.menuMB = menuMB;
+    }
+
+    public List<Afiliacao> getAfiliacoes() {
+        return afiliacoes;
+    }
+
+    public void setAfiliacoes(List<Afiliacao> afiliacoes) {
+        this.afiliacoes = afiliacoes;
     }
 
 }

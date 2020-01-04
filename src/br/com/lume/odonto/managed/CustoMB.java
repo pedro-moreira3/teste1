@@ -11,9 +11,11 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CloseEvent;
 import org.primefaces.event.SelectEvent;
 
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
@@ -27,6 +29,7 @@ import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.repasse.RepasseFaturasSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -58,18 +61,21 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
 
     public PlanoTratamentoProcedimento planoTratamentoProcedimento;
 
- //   private PacienteBO pacienteBO;
+    //   private PacienteBO pacienteBO;
 
-  //  private PlanoTratamentoBO planoTratamentoBO;
+    //  private PlanoTratamentoBO planoTratamentoBO;
 
- //   private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
+    //   private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO;
+
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaCusto;
 
     public CustoMB() {
         super(CustoSingleton.getInstance().getBo());
         this.setClazz(PlanoTratamentoProcedimentoCusto.class);
-     //   pacienteBO = new PacienteBO();
-      //  planoTratamentoBO = new PlanoTratamentoBO();
-    //    planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
+        //   pacienteBO = new PacienteBO();
+        //  planoTratamentoBO = new PlanoTratamentoBO();
+        //    planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
         try {
             pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 //            setPaciente(PacienteBO.getPacienteSelecionado());
@@ -101,6 +107,8 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
             this.getbO().persist(this.getCustoSelecionado());
             this.actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+
+            RepasseFaturasSingleton.getInstance().validaValoresItensRepasse(this.getCustoSelecionado().getPlanoTratamentoProcedimento(), UtilsFrontEnd.getProfissionalLogado());
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -121,12 +129,14 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
             this.getCustoSelecionado().setDataFaturamento(Calendar.getInstance().getTime());
             super.actionPersist(event);
             if (planoTratamentoProcedimento.isFinalizado()) {
-                planoTratamentoProcedimento.setValorRepasse(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(planoTratamentoProcedimento,
-                        UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
+                planoTratamentoProcedimento.setValorRepasse(
+                        PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findValorRepasse(planoTratamentoProcedimento, UtilsFrontEnd.getEmpresaLogada().getEmpFltImposto()));
                 PlanoTratamentoProcedimentoSingleton.getInstance().getBo().merge(planoTratamentoProcedimento);
             }
 //            actionNew(event);
+
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            RepasseFaturasSingleton.getInstance().validaValoresItensRepasse(this.getCustoSelecionado().getPlanoTratamentoProcedimento(), UtilsFrontEnd.getProfissionalLogado());
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -146,10 +156,14 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
         paciente = (Paciente) object;
         if (paciente == null) {
             this.addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "");
-        }      
+        }
         UtilsFrontEnd.setPacienteLogado(paciente);
         this.setPlanoTratamento(null);
-        this.setPlanoTratamentos(PlanoTratamentoSingleton.getInstance().getBo() .listByPaciente(paciente));
+        try {
+            this.setPlanoTratamentos(PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(paciente));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
         this.carregaListaCusto();
     }
 
@@ -195,9 +209,17 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
 
     public Paciente getPaciente() {
         paciente = UtilsFrontEnd.getPacienteSelecionado();
-        this.setPlanoTratamentos(PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(paciente));
+        try {
+            this.setPlanoTratamentos(PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(paciente));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
         this.carregaListaCusto();
         return paciente;
+    }
+
+    public void exportarTabela(String type) {
+        exportarTabela("Custos diretos", tabelaCusto, type);
     }
 
     public void setPaciente(Paciente paciente) {
@@ -267,6 +289,14 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
 
     public void setValor(BigDecimal valor) {
         this.valor = valor;
+    }
+
+    public DataTable getTabelaCusto() {
+        return tabelaCusto;
+    }
+
+    public void setTabelaCusto(DataTable tabelaCusto) {
+        this.tabelaCusto = tabelaCusto;
     }
 
 }

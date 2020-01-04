@@ -8,28 +8,116 @@
 
                         <h1>Relatório de Esterilização</h1>
                         <div class="SeparatorFull"></div>
-
-                        <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-                            style="border:0px none; background-color:transparent;">
-
-                            <p:outputLabel for="inicio" value="Inicio : " />
-                            <p:calendar id="inicio" value="#{relatorioEsterilizacaoMB.inicio}" pattern="dd/MM/yyyy" mask="true" />
-
-                            <p:outputLabel for="fim" value="Fim : " />
-                            <p:calendar id="fim" value="#{relatorioEsterilizacaoMB.fim}" pattern="dd/MM/yyyy" mask="true" />
-
-                        </p:panelGrid>
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodo"
+									value="Período do pedido de esterilização:" />
+								<p:selectOneMenu id="filtroPeriodo"
+									value="#{relatorioEsterilizacaoMB.filtroPeriodo}">
+									<p:ajax process="@this" update="@form"
+										listener="#{relatorioEsterilizacaoMB.actionTrocaDatasCriacao}" />
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="O" itemLabel="Ontem" />
+									<f:selectItem itemValue="H" itemLabel="Hoje" />
+									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="inicio" value="Data do pedido de:" />
+								<p:calendar id="inicio"
+									value="#{relatorioEsterilizacaoMB.inicio}" />
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="fim" value="Data do pedido até:" />
+								<p:calendar id="fim" value="#{relatorioEsterilizacaoMB.fim}" />
+							</h:panelGroup>
+						</p:panelGrid>
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodoFinalizacao"
+									value="Período de devolução de esterilização:" />
+								<p:selectOneMenu id="filtroPeriodoFinalizacao"
+									value="#{relatorioEsterilizacaoMB.filtroPeriodoFinalizacao}">
+									<p:ajax process="@this" update="@form"
+										listener="#{relatorioEsterilizacaoMB.actionTrocaDatasFinal}" />
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="O" itemLabel="Ontem" />
+									<f:selectItem itemValue="H" itemLabel="Hoje" />
+									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="inicioFinalizacao"
+									value="Data de devolução de:" />
+								<p:calendar id="inicioFinalizacao"
+									value="#{relatorioEsterilizacaoMB.inicioFinalizacao}" />
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="fimFinalizacao"
+									value="Data de devolução até:" />
+								<p:calendar id="fimFinalizacao"
+									value="#{relatorioEsterilizacaoMB.fimFinalizacao}" />
+							</h:panelGroup>
+						</p:panelGrid>
+							<ui:remove>
+								<p:outputLabel for="inicio" value="Inicio : " />
+								<p:calendar id="inicio" value="#{relatorioEsterilizacaoMB.inicio}" pattern="dd/MM/yyyy" mask="true" />
+								
+								<p:outputLabel for="fim" value="Fim : " />
+								<p:calendar id="fim" value="#{relatorioEsterilizacaoMB.fim}" pattern="dd/MM/yyyy" mask="true" />
+							</ui:remove>                    
 
                         <div class="SeparatorFull"></div>
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioEsterilizacaoMB.filtra}" update="dtPrincipal,pnPrincipal"
                                 process="@this,pnPrincipal,inicio,fim" styleClass="OrangeButton" />
+                            <ui:remove>
                             <p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                 <p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="RelatorioEsterilizacao" />
                             </p:commandButton>
+                            </ui:remove>
                             <p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioEsterilizacaoMB.actionNew}" update="dtPrincipal,pnPrincipal" immediate="true"
                                 tabindex="1" />
-                        </p:panelGrid>
+							
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{relatorioEsterilizacaoMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload value="#{relatorioEsterilizacaoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioEsterilizacaoMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload value="#{relatorioEsterilizacaoMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioEsterilizacaoMB.exportarTabela('csv')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload value="#{relatorioEsterilizacaoMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+							
+						</p:panelGrid>
 
                     </p:outputPanel>
 
@@ -37,7 +125,7 @@
 
 
                     <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" selection="#{relatorioEsterilizacaoMB.entity}" selectionMode="single" value="#{relatorioEsterilizacaoMB.esterilizacoes}"
-                        var="esterilizacaoSolicitada" rows="10" paginator="true" rowKey="#{esterilizacaoSolicitada}" paginatorPosition="bottom">
+                        var="esterilizacaoSolicitada" rows="10" paginator="true" rowKey="#{esterilizacaoSolicitada}" paginatorPosition="bottom" binding="#{relatorioEsterilizacaoMB.tabelaRelatorio}">
                         <f:facet name="header">Esterilizações</f:facet>
                         <p:ajax event="rowSelect" listener="#{relatorioEsterilizacaoMB.mostraItens}" update=":lume:dtItens" process="@this" />
                         <p:column filterBy="#{esterilizacaoSolicitada.descricao}" sortBy="#{esterilizacaoSolicitada.descricao}" filterMatchMode="contains" headerText="Descrição">
@@ -66,18 +154,18 @@
                             </f:facet>
                             <h:outputText value="#{esterilizacaoSolicitada.status}" />
                         </p:column>
-                        <p:column filterBy="#{esterilizacaoSolicitada.dataDevolucaoStr}" sortBy="#{esterilizacaoSolicitada.dataDevolucaoStr}" filterMatchMode="contains">
-                            <f:facet name="header">
-                                <h:outputText value="Data de Devolução" />
-                            </f:facet>
-                            <h:outputText value="#{esterilizacaoSolicitada.dataDevolucaoStr}" />
-                        </p:column>
                         <p:column filterBy="#{esterilizacaoSolicitada.dataStr}" sortBy="#{esterilizacaoSolicitada.dataStrOrd}" filterMatchMode="contains">
                             <f:facet name="header">
                                 <h:outputText value="Data do Pedido" />
                             </f:facet>
                             <h:outputText value="#{esterilizacaoSolicitada.dataStr}" />
                         </p:column>
+                        <p:column filterBy="#{esterilizacaoSolicitada.dataDevolucaoStr}" sortBy="#{esterilizacaoSolicitada.dataDevolucaoStr}" filterMatchMode="contains">
+                            <f:facet name="header">
+                                <h:outputText value="Data de Devolução" />
+                            </f:facet>
+                            <h:outputText value="#{esterilizacaoSolicitada.dataDevolucaoStr}" />
+                        </p:column>                        
                         <p:column filterBy="#{esterilizacaoSolicitada.dataValidadeStr}" sortBy="#{esterilizacaoSolicitada.dataValidadeStr}" filterMatchMode="contains">
                             <f:facet name="header">
                                 <h:outputText value="Data de Validade" />
@@ -92,52 +180,101 @@
                         </p:column>
                     </p:dataTable>
                     <br />
-                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtItens" value="#{relatorioEsterilizacaoMB.itens}" var="i" rows="10" paginator="true" rowKey="#{i}" paginatorPosition="bottom">
-                        <f:facet name="header">Analítico</f:facet>
-                        <p:column filterBy="#{i.kit.descricao}" sortBy="#{i.kit.descricao}" filterMatchMode="contains">
-                            <f:facet name="header">
-                                <h:outputText value="Kit" />
-                            </f:facet>
+                    
+                    <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{relatorioEsterilizacaoMB.exportarTabelaAnalitico('xls')}"
+								ajax="false" process="dtItens,@this" update="@this"
+								immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+								<p:fileDownload
+									value="#{relatorioEsterilizacaoMB.arquivoDownload}" />
+
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{relatorioEsterilizacaoMB.exportarTabelaAnalitico('pdf')}"
+									ajax="false" process="dtItens,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload value="#{relatorioEsterilizacaoMB.arquivoDownload}" />
+								</p:menuitem>
+								<p:menuitem value="Exportar tabela para CSV"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{relatorioEsterilizacaoMB.exportarTabelaAnalitico('csv')}"
+									ajax="false" process="dtItens,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload
+										value="#{relatorioEsterilizacaoMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
+						</h:panelGroup>
+					</p:panelGrid>
+                                        
+                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtItens" value="#{relatorioEsterilizacaoMB.itens}" var="i" rows="10" paginator="true" rowKey="#{i}"
+								paginatorPosition="bottom" binding="#{relatorioEsterilizacaoMB.tabelaAnalitica}">
+                        <f:facet name="header">Detalhes (Clique no item acima para visualizar)</f:facet>
+                        <p:column filterBy="#{i.kit.descricao}" sortBy="#{i.kit.descricao}" filterMatchMode="contains" headerText="Kit"
+                        		filterFunction="#{relatorioEsterilizacaoMB.filtroSemAcento}">
                             <h:outputText value="#{i.kit.descricao}" />
                         </p:column>
-                        <p:column filterBy="#{i.item.descricaoLimpa}" sortBy="#{i.item.descricao}" filterMatchMode="contains">
-                            <f:facet name="header">
-                                <h:outputText value="Item" />
-                            </f:facet>
+                        <p:column filterBy="#{i.item.descricaoLimpa}" sortBy="#{i.item.descricao}" filterMatchMode="contains" headerText="Item"
+                        		filterFunction="#{relatorioEsterilizacaoMB.filtroSemAcento}">
                             <h:outputText value="#{i.item.descricao}" />
                         </p:column>
-                        <p:column filterBy="#{i.quantidade}" sortBy="#{i.quantidade}" filterMatchMode="contains">
-                            <f:facet name="header">
-                                <h:outputText value="Quantidade" />
-                            </f:facet>
+                        <p:column filterBy="#{i.quantidade}" sortBy="#{i.quantidade}" filterMatchMode="contains" headerText="Quantidade">
                             <h:outputText value="#{i.quantidade}" />
                         </p:column>
                     </p:dataTable>
                     <br />
-                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtDescartes" value="#{relatorioEsterilizacaoMB.descartes}" var="i" rows="10" paginator="true" rowKey="#{i}" paginatorPosition="bottom">
+                    
+                    <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{relatorioEsterilizacaoMB.exportarTabelaDescartes('xls')}"
+								ajax="false" process="dtDescartes,@this" update="@this"
+								immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+								<p:fileDownload
+									value="#{relatorioEsterilizacaoMB.arquivoDownload}" />
+
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{relatorioEsterilizacaoMB.exportarTabelaDescartes('pdf')}"
+									ajax="false" process="dtDescartes,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload value="#{relatorioEsterilizacaoMB.arquivoDownload}" />
+								</p:menuitem>
+								<p:menuitem value="Exportar tabela para CSV"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{relatorioEsterilizacaoMB.exportarTabelaDescartes('csv')}"
+									ajax="false" process="dtDescartes,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload
+										value="#{relatorioEsterilizacaoMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
+						</h:panelGroup>
+					</p:panelGrid>
+                    
+                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtDescartes" value="#{relatorioEsterilizacaoMB.descartes}" var="i" rows="10" paginator="true" rowKey="#{i}"
+                    			paginatorPosition="bottom" binding="#{relatorioEsterilizacaoMB.tabelaDescartes}">
                         <f:facet name="header">Descartes</f:facet>
-                        <p:column filterBy="#{i.item.descricaoLimpa}" sortBy="#{i.item.descricao}" filterMatchMode="contains">
-                            <f:facet name="header">
-                                <h:outputText value="Item" />
-                            </f:facet>
+                        <p:column filterBy="#{i.item.descricaoLimpa}" sortBy="#{i.item.descricao}" filterMatchMode="contains" headerText="Item"
+                        		filterFunction="#{relatorioEsterilizacaoMB.filtroSemAcento}">
                             <h:outputText value="#{i.item.descricao}" />
                         </p:column>                       
-                        <p:column filterBy="#{i.quantidadeAtual.intValue()}" sortBy="#{i.quantidadeAtual.intValue()}" filterMatchMode="contains">
-                            <f:facet name="header">
-                                <h:outputText value="Quantidade" />
-                            </f:facet>
-                            <h:outputText value="#{i.quantidadeAtual.intValue()}" />
+                        <p:column filterBy="#{i.quantidades.intValue()}" sortBy="#{i.quantidades.intValue()}" filterMatchMode="contains" headerText="Quantidade">
+                            <h:outputText value="#{i.quantidades.intValue()}" />
                         </p:column>
-                        <p:column filterBy="#{i.dataCadastroStr}" sortBy="#{i.dataCadastro}" filterMatchMode="contains">
-                            <f:facet name="header">
-                                <h:outputText value="Data" />
-                            </f:facet>
+                        <p:column filterBy="#{i.dataCadastroStr}" sortBy="#{i.dataCadastro}" filterMatchMode="contains" headerText="Data">
                             <h:outputText value="#{i.dataCadastroStr}" />
                         </p:column>
-                        <p:column filterBy="#{i.justificativa}" sortBy="#{i.justificativa}" filterMatchMode="contains">
-                            <f:facet name="header">
-                                <h:outputText value="Justificativa" />
-                            </f:facet>
+                        <p:column filterBy="#{i.justificativa}" sortBy="#{i.justificativa}" filterMatchMode="contains" headerText="Justificativa"
+                        		filterFunction="#{relatorioEsterilizacaoMB.filtroSemAcento}">
                             <h:outputText value="#{i.justificativa}" />
                         </p:column>
                     </p:dataTable>

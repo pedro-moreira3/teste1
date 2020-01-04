@@ -89,13 +89,13 @@
 						<br />
                         <div class="SeparatorFull"></div>
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                        	<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{kitMB.actionNew}" update=":lume:pnKit, :lume:pnItens, :lume:dtKit" immediate="true"
+                                rendered="#{kitMB.admin}" />
                             <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{kitMB.actionPersist}" update=":lume:pnKit, :lume:pnItens, :lume:dtKit"
                                 process=":lume:pnKit" rendered="#{kitMB.admin}" styleClass="GreenButton" />
                             <p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" oncomplete="PF('removeKit').show()" update=":lume:pnKit, :lume:pnItens, :lume:dtKit, confirmDialog"
                                 process="@this" disabled="#{kitMB.entity.id==0}" rendered="#{kitMB.admin}" styleClass="RedButton">
-                            </p:commandButton>
-                            <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{kitMB.actionNew}" update=":lume:pnKit, :lume:pnItens, :lume:dtKit" immediate="true"
-                                rendered="#{kitMB.admin}" />
+                            </p:commandButton>                            
                         </p:panelGrid>
 
                     </p:outputPanel>

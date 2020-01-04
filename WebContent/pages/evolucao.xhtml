@@ -1,52 +1,118 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
-	<div class="Container100 Responsive100 NoIndent">
-		<div class="Container100 ui-fluid NoPadding">
-			<div class="Card">
-				<p:outputPanel id="pnEvolucao" styleClass="BordNone">
-					<h1>Descrição</h1>
-					
-					<p:separator styleClass="SeparatorFull" />
-					
-					<p:inputTextarea id="eDescricao" cols="100" rows="6" disabled="#{evolucaoMB.entity.excluido == 'S'}" value="#{evolucaoMB.entity.descricao}"
-						autoResize="true" required="true" maxlength="2000" counterTemplate="{0} caracteres restantes." counter="counter" />
-					<p:message for="eDescricao" styleClass="msg" />
-					<h:outputText id="counter" />
-					
-					<p:separator styleClass="SeparatorFull" />
-					
-					<p:panelGrid columns="3" layout="grid"
-						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente">
-						<p:commandButton id="persistEvolucao" icon="White fa fa-save White" value="Salvar" actionListener="#{evolucaoMB.actionPersist}"
-							update=":lume:tabView:pnEvolucao,:lume:tabView:dtEvolucao" process=":lume:tabView:pnEvolucao" disabled="#{evolucaoMB.entity.excluido == 'S'}"
-							 styleClass="GreenButton" />
-						<p:commandButton id="deleteEvolucao" icon="White fa fa-trash-o White" value="Excluir" actionListener="#{evolucaoMB.actionRemove}"
-							update=":lume:tabView:pnEvolucao,:lume:tabView:dtEvolucao" process=":lume:tabView:pnEvolucao" 
-							disabled="#{evolucaoMB.entity.id==0 or evolucaoMB.entity.excluido == 'S'}" styleClass="RedButton" />
-						<p:commandButton id="newEvolucao" icon="White fa fa-file-o White" value="Novo" actionListener="#{evolucaoMB.actionNew}"
-							update=":lume:tabView:pnEvolucao" immediate="true" tabindex="4" process="@this"  />
-					</p:panelGrid>
-				</p:outputPanel>
-				<div class="EmptyBox20"></div>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
 
-				<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtEvolucao" value="#{evolucaoMB.evolucoes}" var="evolucao" rows="15" paginator="true"
-					paginatorPosition="bottom" selection="#{evolucaoMB.entity}" selectionMode="single" rowKey="#{evolucao}">
+
+	<div class="ui-g ui-fluid">
+		<div class="ui-g-12 ui-lg-12">
+
+			<p:outputPanel id="viewEvolucao">
+				<p:panelGrid columns="3" layout="grid" id="botoesEvolucao"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+					<p:commandButton icon="ui-icon-add"
+						oncomplete="PF('dlgEvolucao').show()" value="Nova Evolução"
+						actionListener="#{evolucaoMB.actionNew}"
+						update=":lume:tabView:pnEvolucao, :lume:tabView:viewEvolucao"
+						process="@this" />
+					<h:panelGroup></h:panelGroup>
+					<h:panelGroup>
+						<p:splitButton icon="White fa fa fa-file-excel-o"
+							value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+							actionListener="#{evolucaoMB.exportarTabela('xls')}" ajax="false"
+							process="dtEvolucao,@this" update="@this" immediate="true"
+							onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+							<p:fileDownload value="#{evolucaoMB.arquivoDownload}" />
+
+							<p:menuitem value="Exportar tabela para PDF"
+								icon="fa fa fa-file-pdf-o"
+								actionListener="#{evolucaoMB.exportarTabela('pdf')}"
+								ajax="false" process="dtEvolucao,@this" immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+								<p:fileDownload value="#{evolucaoMB.arquivoDownload}" />
+							</p:menuitem>
+						</p:splitButton>
+					</h:panelGroup>
+
+				</p:panelGrid>
+
+				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+					id="dtEvolucao" value="#{evolucaoMB.entityList}" var="evolucao"
+					rows="15" paginator="true" paginatorPosition="bottom"
+					selection="#{evolucaoMB.entity}" selectionMode="single"
+					rowKey="#{evolucao}" binding="#{evolucaoMB.tabelaEvolucao}">
 					<p:ajax event="rowSelect" update=":lume:tabView:pnEvolucao" />
 					<f:facet name="header">Evolução</f:facet>
-					<p:column filterBy="#{evolucao.descricao}" sortBy="#{evolucao.descricao}" filterMatchMode="contains" width="70%" headerText="Descrição">
-						<h:outputText value="#{evolucao.excluido=='S'?'[ REMOVIDO ]':''} #{evolucao.descricao}" title="#{evolucao.id}"
+					<p:column filterBy="#{evolucaoMB.getInfoPTPFromEvolucao(evolucao)}"
+						sortBy="#{evolucaoMB.getInfoPTPFromEvolucao(evolucao)}"
+						filterFunction="#{evolucaoMB.filtroSemAcento}"
+						filterMatchMode="contains" headerText="Procedimento" width="30%">
+						<div style="width: 100%; text-align: left;">
+							<h:outputText
+								value="#{evolucaoMB.getInfoPTPFromEvolucao(evolucao)}"
+								escape="false" />
+						</div>
+					</p:column>
+					<p:column filterBy="#{evolucao.descricao}"
+						sortBy="#{evolucao.descricao}" filterMatchMode="contains"
+						width="40%" headerText="Descrição"
+						filterFunction="#{evolucaoMB.filtroSemAcento}">
+						<h:outputText
+							value="#{evolucao.excluido=='S'?'[ REMOVIDO ]':''} #{evolucao.descricao}"
+							title="#{evolucao.id}"
 							style="#{evolucao.excluido=='S'?'color:red':''}" />
 					</p:column>
-					<p:column filterBy="#{evolucao.profissional.dadosBasico.nome}" sortBy="#{evolucao.profissional.dadosBasico.nome}" filterMatchMode="contains"
-						headerText="Profissional">
+					<p:column filterBy="#{evolucao.profissional.dadosBasico.nome}"
+						sortBy="#{evolucao.profissional.dadosBasico.nome}"
+						filterMatchMode="contains" headerText="Profissional"
+						filterFunction="#{evolucaoMB.filtroSemAcento}" width="10%">
 						<h:outputText value="#{evolucao.profissional.dadosBasico.nome}" />
 					</p:column>
-					<p:column filterBy="#{evolucao.dataStr}" sortBy="#{evolucao.dataStrOrd}" filterMatchMode="contains" headerText="Data">
+					<p:column filterBy="#{evolucao.dataStr}" width="10%"
+						sortBy="#{evolucao.dataStrOrd}" filterMatchMode="contains"
+						headerText="Data">
 						<h:outputText value="#{evolucao.dataStr}" />
 					</p:column>
+					<p:column width="10%" headerText="Autenticação">
+
+					</p:column>
 				</p:dataTable>
-			</div>
+			</p:outputPanel>
+
 		</div>
 	</div>
+
+	<p:dialog widgetVar="dlgEvolucao" header="Descrever Evolução"
+		modal="true" responsive="true" appendTo=":lume" resizable="false"
+		width="90%">
+		<p:outputPanel id="pnEvolucao" style="margin-top: 20px">
+			<h:panelGroup styleClass="md-inputfield">
+				<p:inputTextarea id="eDescricao" rows="6" style="width: 100%;"
+					disabled="#{evolucaoMB.entity.excluido == 'S'}"
+					value="#{evolucaoMB.entity.descricao}" autoResize="true"
+					required="true" maxlength="2000"
+					counterTemplate="{0} caracteres restantes." counter="counter" />
+				<p:outputLabel value="Descrição" for="eDescricao" />
+				<p:message for="eDescricao" styleClass="msg" />
+				<h:outputText id="counter" />
+			</h:panelGroup>
+		</p:outputPanel>
+		<p:separator styleClass="SeparatorFull" />
+		<p:panelGrid columns="4" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton icon="White fa fa-save White" value="Salvar"
+				actionListener="#{evolucaoMB.actionPersist}"
+				styleClass="GreenButton" update=":lume:tabView:viewEvolucao"
+				process="@this, :lume:tabView:pnEvolucao"
+				disabled="#{evolucaoMB.entity.excluido == 'S'}" />
+			<p:column />
+			<p:column />
+			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+				oncomplete="PF('dlgEvolucao').hide()" />
+		</p:panelGrid>
+	</p:dialog>
+
 </ui:composition>

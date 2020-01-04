@@ -9,6 +9,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.model.DefaultTreeNode;
@@ -23,11 +24,8 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.material.MaterialSingleton;
-//import br.com.lume.odonto.bo.DominioBO;
-//import br.com.lume.odonto.bo.ItemBO;
-//import br.com.lume.odonto.bo.MaterialBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -58,41 +56,60 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     private Item item;
 
-    private String filtroTable;
+    private String filtroTable,filtroItemCategoria;
 
     private List<Item> listByPai = new ArrayList<>();
 
- //   private ItemBO itemBO;
-
-  //  private DominioBO dominioBO;
-
     List<TreeNode> nodes, nodesAux;
 
-//    private MaterialBO materialBO = new MaterialBO();
 
     public ItemMB() {
         super(ItemSingleton.getInstance().getBo());
-     //   itemBO = new ItemBO();
-    //    dominioBO = new DominioBO();
+
         this.setClazz(Item.class);
-        categoria = "S";
+        categoria = "N";
         this.setDisable(false);
-        this.setDisableItem(true);
+        
         try {
+           //    this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             this.setFormasArmazenamento(this.getDominios(FORMA_ARMAZENAMENTO));
             this.setUtilizacoes(this.getDominios(UTILIZACAO));
             this.setFracoesUnitarias(this.getDominios(FRACAO_UNITARIA));
             this.setUnidadesMedida(this.getDominios(UNIDADE_MEDIDA));
-            this.setRoot(new DefaultTreeNode("", null));
+           // this.setRoot(new DefaultTreeNode("", null));
             this.setRootPai(new DefaultTreeNode("", null));
             Item firstLevel = new Item();
             firstLevel.setDescricao("RAIZ");
             this.chargeTree(new DefaultTreeNode(firstLevel, rootPai), true, false);
             filtroTable = "";
-            this.actionTodos(null);
+          //  this.actionTodos(null);
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
+    }
+    
+    public void carregarEditar(Item item) {
+        setEntity(item);
+        this.setItem(null);
+        if(item.getIdItemPai() != null) {
+            setDigitacao(item.getIdItemPai().getDescricao());    
+        }
+        setCategoria(item.getCategoria());
+        setDescricao(item.getDescricao());
+        setParametros();
+
+        if (item.getIdItemPai() != null) {
+            this.setDigitacao(item.getIdItemPai().getDescricao());
+        } else {
+            this.setDigitacao(null);
+        }
+       // this.setSelected();
+        
+        PrimeFaces.current().executeScript("PF('dlg').show();");
+    }   
+    
+    public void carregarExcluir(Item item) {
+        setEntity(item);
     }
 
     @Override
@@ -118,7 +135,7 @@ public class ItemMB extends LumeManagedBean<Item> {
             } else {
                 if (this.getItem().getCategoria().equals(Status.NAO)) {
                     log.error("erro.categoria.item");
-                    this.addError(OdontoMensagens.getMensagem("erro.categoria.item"), "");
+                    this.addError(OdontoMensagens.getMensagem("erro.categoria.item"), "",true);
                     error = true;
                 }
                 if (!this.getItem().getTipo().equals(this.getEntity().getTipo())) {
@@ -129,19 +146,24 @@ public class ItemMB extends LumeManagedBean<Item> {
                 this.getEntity().setIdItemPai(this.getItem());
             }
         }
-        for (Item item : this.getItens()) {
-            if (item.getDescricao().equalsIgnoreCase(this.getDescricao()) && item.getId() != this.getEntity().getId()) {
-                log.error("erro.categoria.duplicidade");
-                this.addError(OdontoMensagens.getMensagem("erro.categoria.duplicidade"), "");
-                error = true;
-                break;
+        try {
+            for (Item item : ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa())) {
+                if (item.getDescricao().equalsIgnoreCase(this.getDescricao()) && item.getId() != this.getEntity().getId()) {
+                    log.error("erro.categoria.duplicidade");
+                    this.addError(OdontoMensagens.getMensagem("erro.categoria.duplicidade"), "",true);
+                    error = true;
+                    break;
+                }
             }
+        } catch (Exception e) {
+            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
         }
         this.getEntity().setPedidoItens(null);
         if (!error) {
             if (this.getEntity().equals(this.getEntity().getIdItemPai())) {
                 log.error("erro.pai.filho.itens.iguais");
-                this.addError(OdontoMensagens.getMensagem("erro.pai.filho.itens.iguais"), "");
+                this.addError(OdontoMensagens.getMensagem("erro.pai.filho.itens.iguais"), "",true);
             } else {
                 this.getEntity().setDescricao(this.getDescricao());
                 this.getEntity().setExcluido(Status.NAO);
@@ -158,49 +180,49 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     public void removeItens() {
         try {
-            for (Item item : listByPai) {
-                this.removeRecursivo(item);
-                ItemSingleton.getInstance().getBo().remove(item);
-            }
+           // for (Item item : listByPai) {
+             //   this.removeRecursivo(item);
+            //    ItemSingleton.getInstance().getBo().remove(item);
+          //  }
             ItemSingleton.getInstance().getBo().remove(this.getEntity());
             this.actionNew(null);
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "",true);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void removeRecursivo(Item item) throws Exception {
-        List<Item> listByPaiAux = ItemSingleton.getInstance().getBo().listByPai(item.getId(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        if (listByPaiAux != null && !listByPaiAux.isEmpty()) {
-            for (Item itemAux : listByPaiAux) {
-                this.removeRecursivo(itemAux);
-            }
-            for (Item itemAux : listByPaiAux) {
-                ItemSingleton.getInstance().getBo().remove(item);
-            }
-        } else {
-            ItemSingleton.getInstance().getBo().remove(item);
-        }
-    }
+//    private void removeRecursivo(Item item) throws Exception {
+//        List<Item> listByPaiAux = ItemSingleton.getInstance().getBo().listByPai(item.getId(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//        if (listByPaiAux != null && !listByPaiAux.isEmpty()) {
+//            for (Item itemAux : listByPaiAux) {
+//                this.removeRecursivo(itemAux);
+//            }
+//            for (Item itemAux : listByPaiAux) {
+//                ItemSingleton.getInstance().getBo().remove(item);
+//            }
+//        } else {
+//            ItemSingleton.getInstance().getBo().remove(item);
+//        }
+//    }
 
     @Override
     public void actionRemove(ActionEvent arg0) {
         try {
             listByPai = ItemSingleton.getInstance().getBo().listByPai(this.getEntity().getId(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (listByPai != null && !listByPai.isEmpty()) {
-                this.addError("Não é possível excluir itens com itens filhos, remova-os antes.", "");
+                this.addError("Não é possível excluir itens com itens filhos, remova-os antes.", "",true);
             } else {
                 List<Material> materiais = MaterialSingleton.getInstance().getBo().listByItem(this.getEntity());
                 if (materiais != null && !materiais.isEmpty()) {
-                    this.addError("Não é possível excluir itens com materiais vinculados.", "");
+                    this.addError("Não é possível excluir itens com materiais vinculados.", "",true);
                 } else {
                     super.actionRemove(arg0);
                 }
             }
         } catch (Exception e) {
             log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
         }
     }
 
@@ -214,15 +236,15 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     public void carregaTela() {
         this.setItem(null);
-        Item itemAux = ((Item) this.getSelectedItem().getData());
-        if (itemAux.getIdItemPai() != null) {
-            this.setDigitacao(itemAux.getIdItemPai().getDescricao());
-        } else {
+      //  Item itemAux = ((Item) this.getSelectedItem().getData());
+      //  if (itemAux.getIdItemPai() != null) {
+      //      this.setDigitacao(itemAux.getIdItemPai().getDescricao());
+      //  } else {
             this.setDigitacao(null);
-        }
-        this.setSelected();
+    //    }
+      //  this.setSelected();
         try {
-            this.setEntity((Item) selectedItem.getData());
+          //  this.setEntity((Item) selectedItem.getData());
             this.setParametros();
             this.setDescricao(this.getEntity().getDescricao());
         } catch (Exception e) {
@@ -269,12 +291,18 @@ public class ItemMB extends LumeManagedBean<Item> {
     public void chargeTree(TreeNode root, boolean categoria, boolean filtro) {
         List<TreeNode> nodes = new ArrayList<>();
         List<TreeNode> nodesAux;
-        if (categoria) {
-            this.filtraCategorias();
-        } else {
-            this.filtraItens(filtro);
+      //  if (categoria) {
+      //      this.filtraCategorias();
+      //  } else {
+      //      this.filtraItens(filtro);
+     //   }
+        List<Item> locaisRestantes = new ArrayList<Item>();
+        try {
+            locaisRestantes = ItemSingleton.getInstance().getBo().listByEmpresaTipoCategoriaDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),"S",null);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-        List<Item> locaisRestantes = this.getItens();
         root.setExpanded(true);
         nodes.add(root);
         locaisRestantes = this.setLevel(locaisRestantes, nodes, categoria);
@@ -353,9 +381,14 @@ public class ItemMB extends LumeManagedBean<Item> {
     public void onNodeSelect(NodeSelectEvent event) {
         try {
             this.setItem((Item) (event.getTreeNode().getData()));
-            if (!item.getDescricao().equals("RAIZ")) {
+            getEntity().setTipo(null);
+            if (!this.item.getDescricao().equals("RAIZ")) {
                 this.setDisable(false);
-            }
+                if(this.getItem().getTipo() != null) {
+                    getEntity().setTipo(this.getItem().getTipo());                    
+                }
+            }  
+            PrimeFaces.current().ajax().update(":lume:tipo");
             this.setDigitacao(this.getItem().getDescricao());
             this.filtraItem(this.getDigitacao());
         } catch (Exception e) {
@@ -371,41 +404,51 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     public List<String> filtraItem(String digitacao) {
         this.setDigitacao(digitacao);
-        this.filtraCategorias();
+   //     this.filtraCategorias();
         return this.convert(this.getItens());
     }
 
-    public void filtraItens(boolean filtro) {
-        this.setItens(new ArrayList<Item>());
+    public void filtraItemCategoria() {
         try {
-            if (!filtro && this.getDigitacao() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            } else if (filtro && this.getFiltroTable() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcialAndCategoria(this.getFiltroTable(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            } else {
-                this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            }
-            Collections.sort(itens);
+            this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaTipoCategoriaDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),this.filtroItemCategoria,this.filtroTable));          
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
-    }
 
-    public void filtraCategorias() {
-        this.setItens(new ArrayList<Item>());
-        try {
-            if (this.getDigitacao() != null) {
-                this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            } else {
-                this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            }
-            Collections.sort(itens);
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-        }
     }
+    
+//    public void filtraItens(boolean filtro) {
+//     //   this.setItens(new ArrayList<Item>());
+//        try {
+//           // if (!filtro && this.getDigitacao() != null) {
+//           //     this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+//           // } else if (filtro && this.getFiltroTable() != null) {
+//            //    this.setItens(ItemSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcialAndCategoria(this.getFiltroTable(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+//          //  } else {
+//       //         this.setItens(ItemSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+//        //    }
+//            Collections.sort(itens);
+//        } catch (Exception e) {
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+//            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+//        }
+//    }
+//
+//    public void filtraCategorias() {
+//      //  this.setItens(new ArrayList<Item>());
+//        try {
+//            if (this.getDigitacao() != null) {
+//       //         this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresaAndDescricaoParcial(this.getDigitacao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+//            } else {
+//       //         this.setItens(ItemSingleton.getInstance().getBo().listCategoriasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+//            }
+//            Collections.sort(itens);
+//        } catch (Exception e) {
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+//            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+//        }
+//    }
 
     public boolean isDisable() {
         return disable;
@@ -499,11 +542,11 @@ public class ItemMB extends LumeManagedBean<Item> {
     public void setSelectedItemPai(TreeNode selectedItemPai) {
         this.selectedItemPai = selectedItemPai;
     }
-
+//
     public TreeNode getRootPai() {
         return rootPai;
     }
-
+//
     public void setRootPai(TreeNode rootPai) {
         this.rootPai = rootPai;
     }
@@ -594,9 +637,11 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     public List<String> convert(@SuppressWarnings("rawtypes") List objects) {
         List<String> strings = new ArrayList<>();
-        for (Object object : objects) {
-            if (object instanceof Item) {
-                strings.add(((Item) object).getDescricao());
+        if(objects != null) {
+            for (Object object : objects) {
+                if (object instanceof Item) {
+                    strings.add(((Item) object).getDescricao());
+                }
             }
         }
         return strings;
@@ -632,32 +677,42 @@ public class ItemMB extends LumeManagedBean<Item> {
 
     public void setFiltroTable(String filtroTable) {
         this.filtroTable = filtroTable;
-        if (this.getFiltroTable() != null && !this.getFiltroTable().isEmpty() && this.getFiltroTable().length() >= 3) {
-            this.setRoot(new DefaultTreeNode("", null));
-            Item firstLevel = new Item();
-            firstLevel.setDescricao("RAIZ");
-            this.chargeTree(new DefaultTreeNode(firstLevel, root), false, true);
-            List<Item> itens2 = new ArrayList<>();
-            for (Item item : this.getItens()) {
-                //System.out.println(item.getDescricaoLimpa().toUpperCase());
-                if (item.getDescricaoLimpa().toUpperCase().contains(Utils.normalize(filtroTable.toUpperCase()))) {
-                    itens2.add(item);
-                }
-            }
-            root = new DefaultTreeNode("root", null);
-            for (Item item : itens2) {
-                TreeNode node2 = new DefaultTreeNode(item, root);
-                node2.setExpanded(true);
-            }
-        }
+//        if (this.getFiltroTable() != null && !this.getFiltroTable().isEmpty() && this.getFiltroTable().length() >= 3) {
+//            this.setRoot(new DefaultTreeNode("", null));
+//            Item firstLevel = new Item();
+//            firstLevel.setDescricao("RAIZ");
+//            this.chargeTree(new DefaultTreeNode(firstLevel, root), false, true);
+//            List<Item> itens2 = new ArrayList<>();
+//            for (Item item : this.getItens()) {
+//                //System.out.println(item.getDescricaoLimpa().toUpperCase());
+//                if (item.getDescricaoLimpa().toUpperCase().contains(Utils.normalize(filtroTable.toUpperCase()))) {
+//                    itens2.add(item);
+//                }
+//            }
+//            root = new DefaultTreeNode("root", null);
+//            for (Item item : itens2) {
+//                TreeNode node2 = new DefaultTreeNode(item, root);
+//                node2.setExpanded(true);
+//            }
+//        }
     }
 
-    public void actionTodos(ActionEvent event) {
-        this.setRoot(new DefaultTreeNode("", null));
-        Item firstLevel = new Item();
-        firstLevel.setDescricao("RAIZ");
-        this.chargeTree(new DefaultTreeNode(firstLevel, root), false, true);
-        this.eliminaCategoriasVazias(root);
-        // filtroTable = null;
+    
+    public String getFiltroItemCategoria() {
+        return filtroItemCategoria;
     }
+
+    
+    public void setFiltroItemCategoria(String filtroItemCategoria) {
+        this.filtroItemCategoria = filtroItemCategoria;
+    }
+
+//    public void actionTodos(ActionEvent event) {
+//        this.setRoot(new DefaultTreeNode("", null));
+//        Item firstLevel = new Item();
+//        firstLevel.setDescricao("RAIZ");
+//        this.chargeTree(new DefaultTreeNode(firstLevel, root), false, true);
+//        this.eliminaCategoriasVazias(root);
+//        // filtroTable = null;
+//    }
 }

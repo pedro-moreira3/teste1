@@ -211,7 +211,7 @@ public class ImportaMB implements Serializable {
         pt.setPlanoTratamentoProcedimentos(planoTratamentoProcedimentos);
         pt.setValorTotal(subTotal);
         pt.setValorTotalDesconto(subTotalDesconto);
-        pt.setFinalizado(Status.NAO);
+        pt.setStatus(Status.NAO);
         if (!planoTratamentoProcedimentos.isEmpty()) {
             PlanoTratamentoSingleton.getInstance().getBo().persist(pt);
             okPlano++;

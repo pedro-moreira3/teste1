@@ -1,13 +1,27 @@
 package br.com.lume.common.util;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.compress.utils.ByteUtils;
+import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -28,11 +42,19 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
+import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.security.entity.Empresa;
 
 public class Exportacoes implements Serializable{
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     private static Exportacoes exportacao;
+    
+    private Logger log = Logger.getLogger(LumeManagedBean.class);
     
     private Exportacoes() {
         
@@ -49,8 +71,10 @@ public class Exportacoes implements Serializable{
             
     }
     
-    private File exportarTabelaExcel(String header,DataTable tabela) {
+    private ByteArrayInputStream exportarTabelaExcel(String header,DataTable tabela) {
 
+        ArrayList<Integer> colunasValidas = validarColunas(tabela);
+        
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheetTabela = workbook.createSheet(header);
         
@@ -65,7 +89,7 @@ public class Exportacoes implements Serializable{
             
             Row linhaPlanilha = sheetTabela.createRow(i+1);
             
-            for(int j = 0; j < tabela.getColumnsCount(); j++) {
+            for(int j = 0; j < colunasValidas.size(); j++) {
                 
                 if(i == 0) {
                     
@@ -78,14 +102,14 @@ public class Exportacoes implements Serializable{
                     styleTitulo.setBorderTop(BorderStyle.THIN);
                     
                     Cell celula = cabecalho.createCell(j);
-                    celula.setCellValue(tabelaColunas.get(j).getHeaderText());
+                    celula.setCellValue(tabelaColunas.get(colunasValidas.get(j)).getHeaderText());
                     
                     celula.setCellStyle(styleTitulo);
                     
                 }
                 
                 Cell celula = linhaPlanilha.createCell(j);
-                celula.setCellValue(this.formatar(tabelaColunas.get(j).getSortBy()));
+                celula.setCellValue(this.formatar(tabelaColunas.get(colunasValidas.get(j)).getSortBy()));
                 
             }
             
@@ -93,45 +117,47 @@ public class Exportacoes implements Serializable{
         
         try {
             
-            File arquivoXLS = new File("C:\\Users\\eduardo.tremarin\\Desktop\\Eduardo\\"+header+".xls");
-            FileOutputStream arq = new FileOutputStream(arquivoXLS);
-            workbook.write(arq);
+            ByteArrayOutputStream outputData = new ByteArrayOutputStream();
             
-            arq.flush();
-            arq.close();
+            workbook.write(outputData);
+            
+            ByteArrayInputStream inputData = new ByteArrayInputStream(outputData.toByteArray());
+            
+            outputData.flush();
+            outputData.close();
             
             workbook.close();
             
-            return arquivoXLS;
+            return inputData;
             
         }catch(Exception e) {
-            
+            this.log.error("Erro ao exportar Tabela Excel", e);
         }
         
         return null;
         
     }
     
-    private File exportarTabelaPDF(String header, DataTable table) {
+    private ByteArrayInputStream exportarTabelaPDF(String header, DataTable table) {
 
         try {
             
-            int qtdColunasTabela = validaColuna(table.getColumns());
+            ArrayList<Integer> colunasValidas = validarColunas(table);
             
             Document documento = new Document(PageSize.A4.rotate(),30,30,30,30);
             
-            File arquivoPDF = new File("C:\\Users\\eduardo.tremarin\\Desktop\\Eduardo\\"+header+".pdf");
-            FileOutputStream arq = new FileOutputStream(arquivoPDF);
-            PdfWriter pdfWriter = PdfWriter.getInstance(documento, arq);
+            ByteArrayOutputStream outputData = new ByteArrayOutputStream();            
+            
+            PdfWriter pdfWriter = PdfWriter.getInstance(documento, outputData);
             
             documento.open();
             
             documento.newPage();
             
-            PdfPTable tabelaPDF = new PdfPTable(qtdColunasTabela);
+            PdfPTable tabelaPDF = new PdfPTable(colunasValidas.size());
             tabelaPDF.setWidthPercentage(100f);
             
-            for(int i = 0; i < table.getRowCount() ; i++) {
+            for(int i = 0; i < table.getRowCount(); i++) {
                 
                 table.setRowIndex(i);
                 table.getRowData();
@@ -154,27 +180,29 @@ public class Exportacoes implements Serializable{
                     documento.add(new Paragraph(empresa.getEmpStrNmefantasia()));
                     documento.add(new Paragraph(string.toString()));
                     
-                    for(int j = 0; j < qtdColunasTabela; j++) {
+                    for(int j = 0; j < colunasValidas.size(); j++) {
                         
-                        String tituloTabela = tabelaColunas.get(j).getHeaderText();
+                        String tituloTabela = "";
+                        
+                        tituloTabela = tabelaColunas.get(colunasValidas.get(j)).getHeaderText();
                         
                         Font fonte = new Font(Font.BOLD, 10, Font.BOLD);
                         
                         PdfPCell celula = new PdfPCell(new Phrase(tituloTabela,fonte));
                         celula.setHorizontalAlignment(Element.ALIGN_CENTER);
                         celula.setBorderWidth(1);
-                        celula.setColspan(tabelaColunas.get(j).getColspan());
+                        celula.setColspan(tabelaColunas.get(colunasValidas.get(j)).getColspan());
 
                         tabelaPDF.addCell(celula);
                             
                     }
                 }
                 
-                for(int j = 0; j < qtdColunasTabela; j++) {
+                for(int j = 0; j < colunasValidas.size(); j++) {
                     
                     Font fonte = new Font(5,10);
                     
-                    PdfPCell celula = new PdfPCell(new Phrase(this.formatar(tabelaColunas.get(j).getSortBy()), fonte));
+                    PdfPCell celula = new PdfPCell(new Phrase(this.formatar(tabelaColunas.get(colunasValidas.get(j)).getSortBy()), fonte));
                     celula.setHorizontalAlignment(Element.ALIGN_CENTER);
                     
                     tabelaPDF.addCell(celula);
@@ -187,55 +215,122 @@ public class Exportacoes implements Serializable{
 
             documento.close();
             
-            return arquivoPDF;
+            ByteArrayInputStream inputData = new ByteArrayInputStream(outputData.toByteArray());
+            
+            outputData.flush();
+            outputData.close();
+            
+            return inputData;
             
         }catch(Exception e) {
-            
+            this.log.error("Erro ao exportar Tabela Pdf", e);
         }
         
         return null;
         
     }
     
-    private File exportarTabelaCSV(String header, DataTable table) {
+    private ByteArrayInputStream exportarTabelaCSV(String header, DataTable tabela) {
+        
+        ArrayList<Integer> colunasValidas = validarColunas(tabela);
+        
+        try(ByteArrayOutputStream outputData = new ByteArrayOutputStream();) {
+            
+            for(int i = 0; i < tabela.getRowCount(); i++) {
+                
+                tabela.setRowIndex(i);
+                tabela.getRowData();
+                
+                List<UIColumn> tabelaColunas = tabela.getColumns();
+                
+                if(i == 0) {
+                    
+                    for(int j = 0; j < colunasValidas.size(); j++) {
+                        
+                        outputData.write((tabelaColunas.get(colunasValidas.get(j)).getHeaderText() + ";").getBytes());
+
+                    }
+                    
+                    outputData.write(("\n").getBytes());
+                }
+                
+                for(int j = 0; j < colunasValidas.size(); j++) {
+                    
+                    outputData.write((this.formatar(tabelaColunas.get(colunasValidas.get(j)).getFilterBy()) + ";").getBytes());
+                    
+                }
+                
+                outputData.write(("\n").getBytes());
+                
+            }
+            
+            ByteArrayInputStream inputData = new ByteArrayInputStream(outputData.toByteArray());
+            
+            outputData.flush();
+            outputData.close();
+            
+            return inputData;
+            
+        } catch (Exception e) {
+            this.log.error("Erro no ExportarTabelaCSV",e);
+        }
+        
         return null;
     }
     
-    private int validaColuna(List<UIColumn> colunas) {
+    private ArrayList<Integer> validarColunas(DataTable tabela) {
+
+        ArrayList<Integer> colunasValidas = new ArrayList<Integer>();
         
-        int c = 0;
+        int quantidadeLinhas = tabela.getRows();
         
-        for(int i = 0; i < colunas.size(); i++) {
-            
-            String t = colunas.get(i).getHeaderText();
-            
-            if(t != null && !t.isEmpty())
-                c++;
-            
+        if(quantidadeLinhas > 1) {
+            for(int i = 0; i < 1; i++) {
+                
+                tabela.setRowIndex(i);
+                tabela.getRowData();
+                
+                List<UIColumn> tabelaColunas = tabela.getColumns();
+                
+                for(int j = 0; j < tabelaColunas.size(); j++) {
+                    
+                    if(tabelaColunas.get(j).isExportable()) {
+                        
+                        if( !((tabelaColunas.get(j).getChildren().toString().contains("HtmlPanelGroup")) || (tabelaColunas.get(j).getChildren().toString().contains("CommandButton")) ||
+                                (tabelaColunas.get(j).getChildren().toString().contains("Button"))) ) {
+                            colunasValidas.add(j);
+                        }
+                        
+                    }
+                }
+                
+            }
         }
         
-        return c;
+        return colunasValidas;
     }
     
     private String formatar(Object obj) {
-        
-        if(obj instanceof Date) {
+        if(obj == null){
+            return "";
+        }else if(obj instanceof Date) {
             Date data = (Date) obj;
             return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",new Locale("PT BR")).format(data);
         }else if(obj instanceof Number) {
             Number valor = (Number) obj;
             return String.valueOf(valor);
-        }else if(obj == null){
-            return "";
-        }else {
-            return String.valueOf(obj);
+        }else if(obj instanceof String){
+            return (String) obj;
         }
+        
+        return "";
     }
     
-    public File exportarTabela(String header, DataTable table, String type) {
+    public ByteArrayInputStream exportarTabela(String header, DataTable table, String type) {
         if(header != null && table != null && type != null) {
             switch(type) {
                 case "xls":
+                    //alterarArquivo();
                     return this.exportarTabelaExcel(header, table);
                 case "pdf":
                     return this.exportarTabelaPDF(header, table);
@@ -245,7 +340,37 @@ public class Exportacoes implements Serializable{
         }
         
         return null;
-        
     }
+    
+//    public void alterarArquivo() {
+//        
+//        File file = new File("C:\\Users\\eduardo.tremarin\\Desktop\\Eduardo\\intelidente\\afastamento.xhtml");
+//        
+//        try(BufferedReader bReader = new BufferedReader(new FileReader(file));
+//                BufferedWriter bWriter = new BufferedWriter(new FileWriter(file, true))){
+//            
+//            ArrayList<String> listaString = new ArrayList<String>();
+//            StringBuilder sb = new StringBuilder();
+//            
+//            String idTabela = "";
+//            String managedBean = "";
+//            String metodoExportacao = "";
+//            
+//            String linha = "";
+//            
+//            while(bReader.ready()) {
+//                
+//                linha = bReader.readLine();
+//                
+//                
+//                
+//            }
+//            
+//        }catch (Exception e) {
+//            this.log.error("Erro no alterarArquivo");
+//        }
+//        
+//    }
+    
         
 }

@@ -9,33 +9,71 @@
                         <h1>Devolução de Kits</h1>
                         <div class="SeparatorFull"></div>
                         <br />
+						
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{emprestimoKitMB.exportarTabelaDevolucaoKit('xls')}"
+									ajax="false" process="dtKitsDisponibilizados,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtKitsDisponibilizados" value="#{controleMaterialMB.kitsDisponibilizados}" var="reservaKit" rows="7" paginator="true"
-                            selection="#{controleMaterialMB.reservaKit}" selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom">
+									<p:fileDownload
+										value="#{emprestimoKitMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{emprestimoKitMB.exportarTabelaDevolucaoKit('pdf')}"
+										ajax="false" process="dtKitsDisponibilizados,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{emprestimoKitMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{emprestimoKitMB.exportarTabelaDevolucaoKit('csv')}"
+										ajax="false" process="dtKitsDisponibilizados,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{emprestimoKitMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+						</p:panelGrid>
+						
+                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtKitsDisponibilizados" value="#{emprestimoKitMB.kitsDisponibilizados}" var="reservaKit" rows="7" paginator="true"
+                            selection="#{emprestimoKitMB.reservaKit}" selectionMode="single" rowKey="#{reservaKit}" paginatorPosition="bottom" binding="#{emprestimoKitMB.tabelaDevolucaoKit}">
                             <f:facet name="header">Kits Disponibilizados</f:facet>
-                            <p:ajax event="rowSelect" listener="#{controleMaterialMB.habilitaDevolucao}"
+                            <p:ajax event="rowSelect" listener="#{emprestimoKitMB.habilitaDevolucao}"
                                 update=":lume:dtMateriais, :lume:dtKitsDisponibilizados, :lume:devolucao , :lume:naoUtilizado, :lume:lavagem" process="@this" />
-                            <p:column filterBy="#{reservaKit.reserva.descricao}" sortBy="#{reservaKit.reserva.descricao}" filterMatchMode="contains" headerText="Descrição">
+                            <p:column filterBy="#{reservaKit.reserva.descricao}" sortBy="#{reservaKit.reserva.descricao}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Descrição">
                                 <h:outputText value="#{reservaKit.reserva.descricao}" title="#{reservaKit.id}" />
                             </p:column>
-                            <p:column filterBy="#{reservaKit.kit.descricao}" sortBy="#{reservaKit.kit.descricao}" filterMatchMode="contains" headerText="Kit">
+                            <p:column filterBy="#{reservaKit.kit.descricao}" sortBy="#{reservaKit.kit.descricao}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Kit">
                                 <h:outputText value="#{reservaKit.kit.descricao}" />
                             </p:column>
-                            <p:column filterBy="#{reservaKit.kit.tipo}" sortBy="#{reservaKit.kit.tipo}" filterMatchMode="contains" headerText="Tipo">
+                            <p:column filterBy="#{reservaKit.kit.tipo}" sortBy="#{reservaKit.kit.tipo}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Tipo">
                                 <h:outputText value="#{reservaKit.kit.tipo}" />
                             </p:column>
                             <p:column filterBy="#{reservaKit.reserva.profissional.dadosBasico.prefixoNome}" sortBy="#{reservaKit.reserva.profissional.dadosBasico.prefixoNome}"
-                                filterMatchMode="contains" headerText="Profissional">
+                                filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Profissional">
                                 <h:outputText value="#{reservaKit.reserva.profissional.dadosBasico.prefixoNome}" />
                             </p:column>
                             <p:column filterBy="#{reservaKit.reserva.agendamento.paciente.dadosBasico.prefixoNome}" sortBy="#{reservaKit.reserva.agendamento.paciente.dadosBasico.prefixoNome}"
-                                filterMatchMode="contains" headerText="#{dominioMB.cliente}">
+                                filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="#{dominioMB.cliente}">
                                 <h:outputText value="#{reservaKit.reserva.agendamento.paciente.dadosBasico.prefixoNome}" />
                             </p:column>
-                            <p:column filterBy="#{reservaKit.reserva.local.descricao}" sortBy="#{reservaKit.reserva.local.descricao}" filterMatchMode="contains" headerText="Destino">
+                            <p:column filterBy="#{reservaKit.reserva.local.descricao}" sortBy="#{reservaKit.reserva.local.descricao}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Destino">
                                 <h:outputText value="#{reservaKit.reserva.local.descricao}" />
                             </p:column>
-                            <p:column filterBy="#{reservaKit.reserva.dataStr}" sortBy="#{reservaKit.reserva.dataStrOrd}" filterMatchMode="contains" headerText="Data do Pedido">
+                            <p:column filterBy="#{reservaKit.reserva.dataStr}" sortBy="#{reservaKit.reserva.dataStrOrd}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Data do Pedido">
                                 <h:outputText value="#{reservaKit.reserva.dataStr}" />
                             </p:column>
                             <p:column filterBy="#{reservaKit.reserva.prazoStr}" sortBy="#{reservaKit.reserva.prazoStrOrd}" filterMatchMode="contains" headerText="Data da Utilização">
@@ -46,30 +84,58 @@
                             </p:column>
                         </p:dataTable>
                         <br />
-                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMateriais" value="#{controleMaterialMB.materiais}" editable="true" var="material" rows="7" paginator="true"
-                            paginatorPosition="bottom">
-                            <p:ajax event="rowEdit" listener="#{controleMaterialMB.validaCampo}" update=":lume:devolucao , :lume:lavagem , :lume:naoUtilizado, @this" />
+                        
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{emprestimoKitMB.exportarTabelaDevolucaoMateriais('xls')}"
+									ajax="false" process="dtMateriais,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{emprestimoKitMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{emprestimoKitMB.exportarTabelaDevolucaoMateriais('pdf')}"
+										ajax="false" process="dtMateriais,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{emprestimoKitMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+						</p:panelGrid>
+                        
+                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMateriais" value="#{emprestimoKitMB.materiais}" editable="true" var="material" rows="7" paginator="true"
+                            paginatorPosition="bottom" binding="#{emprestimoKitMB.tabelaDevolucaoMateriais}">
+                            <p:ajax event="rowEdit" listener="#{emprestimoKitMB.validaCampo}" update=":lume:devolucao , :lume:lavagem , :lume:naoUtilizado, @this" />
                             <f:facet name="header">Materiais</f:facet>
-                            <p:column filterBy="#{material.material.item.descricaoLimpa}" sortBy="#{material.material.item.descricao}" filterMatchMode="contains" headerText="Descrição">
+                            <p:column filterBy="#{material.material.item.descricaoLimpa}" sortBy="#{material.material.item.descricao}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Descrição">
                                 <h:outputText value="#{material.material.item.descricao}" title="#{material.material.id}" />
                             </p:column>
-                            <p:column filterBy="#{material.material.marca.nome}" sortBy="#{material.material.marca.nome}" filterMatchMode="contains" headerText="Marca">
+                            <p:column filterBy="#{material.material.marca.nome}" sortBy="#{material.material.marca.nome}"
+                            		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Marca">
                                 <h:outputText value="#{material.material.marca.nome}" />
                             </p:column>
                             <p:column sortBy="#{material.quantidade}" filterMatchMode="contains" headerText="Quantidade Disponibilizada" filterBy="#{material.quantidade}">
                                 <h:outputText value="#{material.quantidade}">
                                     <f:convertNumber />
                                 </h:outputText>
-                                <h:outputText value="#{controleMaterialMB.getUnidadeString(material.material.item)}" styleClass="unidadeMedidaString" />
+                                <h:outputText value="#{emprestimoKitMB.getUnidadeString(material.material.item)}" styleClass="unidadeMedidaString" />
                             </p:column>
-                            <p:column headerText="Unidades à devolver/lavar" style="width:25%" sortBy="#{controleMaterialMB.getUnidadeString(material.material.item)}"
-                                filterBy="#{controleMaterialMB.getUnidadeString(material.material.item)}">
+                            <p:column headerText="Unidades à devolver/lavar" style="width:25%" sortBy="#{emprestimoKitMB.getUnidadeString(material.material.item)}"
+                                filterBy="#{emprestimoKitMB.getUnidadeString(material.material.item)}">
                                 <p:cellEditor>
                                     <f:facet name="output">
                                         <h:outputText id="quantidadeDevolvidaOutput" value="#{material.quantidadeDevolvida}">
                                             <f:convertNumber />
                                         </h:outputText>
-                                        <h:outputText value="#{controleMaterialMB.getUnidadeString(material.material.item)}" styleClass="unidadeMedidaString" />
+                                        <h:outputText value="#{emprestimoKitMB.getUnidadeString(material.material.item)}" styleClass="unidadeMedidaString" />
                                     </f:facet>
                                     <f:facet name="input">
                                         <p:inputText id="quantidadeDevolvida" value="#{material.quantidadeDevolvida}" maxlength="10" required="true" onkeypress="validaNumeros(event)" style="width:20%">
@@ -87,25 +153,25 @@
                         <p:defaultCommand target=":lume:naoUtilizado"></p:defaultCommand>
 
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-                            <p:commandButton id="devolucao" icon="White fa fa-mail-forward" value="Finalizar Devolução" actionListener="#{controleMaterialMB.actionDevolucao}"
-                                disabled="#{!controleMaterialMB.enableDevolucao}" update=":lume:dtMateriais,:lume:dtKitsDisponibilizados,@this,:lume:naoUtilizado" process=":lume:dtMateriais, @this"
+                            <p:commandButton id="devolucao" icon="White fa fa-mail-forward" value="Finalizar Devolução" actionListener="#{emprestimoKitMB.actionDevolucao}"
+                                disabled="#{!emprestimoKitMB.enableDevolucao}" update=":lume:dtMateriais,:lume:dtKitsDisponibilizados,@this,:lume:naoUtilizado" process=":lume:dtMateriais, @this"
                                 styleClass="OrangeButton" />
-                            <p:commandButton id="lavagem" icon="White fa fa-tty" value="Lavagem" actionListener="#{controleMaterialMB.actionLavagem}" disabled="#{!controleMaterialMB.enableLavagem}"
+                            <p:commandButton id="lavagem" icon="White fa fa-tty" value="Lavagem" actionListener="#{emprestimoKitMB.actionLavagem}" disabled="#{!emprestimoKitMB.enableLavagem}"
                                 update=":lume:dtMateriais,:lume:dtKitsDisponibilizados,@this" process=":lume:dtMateriais, @this" styleClass="AquaButton" />
-                            <p:commandButton id="naoUtilizado" icon="White fa fa-star-half-o" value="Não utilizado" onclick="PF('dlg').show();" disabled="#{controleMaterialMB.enableNaoUtilizado}"
+                            <p:commandButton id="naoUtilizado" icon="White fa fa-star-half-o" value="Não utilizado" onclick="PF('dlg').show();" disabled="#{emprestimoKitMB.enableNaoUtilizado}"
                                 styleClass="RedButton" />
                         </p:panelGrid>
                         <p:dialog id="dlg" widgetVar="dlg" header="Não Utilizado" responsive="true" modal="true">
                             <h:panelGroup styleClass="lumeField">
                                 <p:outputLabel for="justificativa" value="Justificativa : " />
-                                <p:selectOneMenu id="justificativa" value="#{controleMaterialMB.justificativa}" style="width: 340px;" converter="dominio">
+                                <p:selectOneMenu id="justificativa" value="#{emprestimoKitMB.justificativa}" style="width: 340px;" converter="dominio">
                                     <f:selectItem itemValue="#{null}" itemLabel="Selecione uma justificativa" />
-                                    <f:selectItems value="#{controleMaterialMB.justificativas}" var="justificativa" itemLabel="#{justificativa.nome}" itemValue="#{justificativa}" />
+                                    <f:selectItems value="#{emprestimoKitMB.justificativas}" var="justificativa" itemLabel="#{justificativa.nome}" itemValue="#{justificativa}" />
                                 </p:selectOneMenu>
 
                             </h:panelGroup>
                             <div class="Separator"></div>
-                            <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{controleMaterialMB.actionNaoUtilizado}"
+                            <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{emprestimoKitMB.actionNaoUtilizado}"
                                 update=":lume:dtMateriais, :lume:dtKitsDisponibilizados,:lume:naoUtilizado,:lume:devolucao" process=":lume:dlg" oncomplete="PF('dlg').hide();" />
                         </p:dialog>
                     </p:outputPanel>

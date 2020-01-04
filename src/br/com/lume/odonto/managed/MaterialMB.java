@@ -13,9 +13,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.NodeSelectEvent;
 import org.primefaces.event.NodeUnselectEvent;
 import org.primefaces.event.SelectEvent;
@@ -24,22 +24,40 @@ import org.primefaces.model.TreeNode;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.conta.ContaSingleton;
+import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.estoque.EstoqueSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.item.ItemSingleton;
+import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.local.LocalSingleton;
 import br.com.lume.marca.MarcaSingleton;
 import br.com.lume.material.MaterialSingleton;
-import br.com.lume.materialLog.MaterialLogSingleton;
+import br.com.lume.odonto.entity.Conta;
+import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.Estoque;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Item;
+import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.LancamentoContabilRelatorio;
 import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.Marca;
 import br.com.lume.odonto.entity.Material;
-import br.com.lume.odonto.entity.MaterialLog;
+import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
+import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.entity.TransferenciaEstoque;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.security.EmpresaSingleton;
+import br.com.lume.security.entity.Empresa;
+import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -61,7 +79,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     private List<Local> locais;
 
-    private String digitacao, digitacaoLocal, nomeMarca;
+    private String digitacao, digitacaoLocal, nomeMarca, nomeFornecedor;
 
     private TreeNode root, rootLocal, selectedItem, selectedLocal;
 
@@ -71,26 +89,26 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     private List<Material> materiais = new ArrayList<>();
 
-    private boolean caixa, novaMarca;
+    private boolean caixa, novaMarca, novoFornecedor;
 
     private Dominio justificativa;
 
     private List<Dominio> dominios;
 
-    private BigDecimal valorTotal = new BigDecimal(0), quantidadeMovimentada, quantidade, quantidadeMovimentacao;
+    private BigDecimal valorTotal = new BigDecimal(0), quantidadeMovimentada, quantidadePacotes, quantidadeMovimentacao;
 
-
-    private List<Fornecedor> fornecedores;
-
-
-
-    private List<MaterialLog> materialLogs;
+    private List<TransferenciaEstoque> listaTransferenciasEstoque;
 
     private String tipoMovimentacao;
 
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaMaterial;
+    private DataTable tabelaMovimentacao;
+
     public MaterialMB() {
+        
         super(MaterialSingleton.getInstance().getBo());
-      
+
         this.setCaixa(true);
         this.setClazz(Material.class);
         this.geraLista();
@@ -106,10 +124,76 @@ public class MaterialMB extends LumeManagedBean<Material> {
             firstLevelLocal.setDescricao("RAIZ");
             this.chargeTreeLocal(new DefaultTreeNode(firstLevelLocal, this.getRootLocal()));
             dateHoje = new Date();
-            fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+
+//            //para inserir estoque inicial            
+           
+//            int count = 0;
+//            for (Material material : MaterialSingleton.getInstance().getBo().listAll()) {
+//                count++;
+//                Estoque estoque = new Estoque();
+//                estoque.setLocal(material.getLocal());
+//                estoque.setMaterial(material);
+//                estoque.setQuantidade(material.getQuantidadeAtual());
+//                EstoqueSingleton.getInstance().getBo().persist(estoque);    
+//                System.out.println(count);
+//            }
+//            
+//            //para inserir contas dos profissionais   
+//            for (Profissional profissional : ProfissionalSingleton.getInstance().getBo().listAll()) {
+//                List<PlanoTratamentoProcedimento> planos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listAllByProfissional(profissional);
+//                BigDecimal soma = new BigDecimal(0);
+//                for (PlanoTratamentoProcedimento ptp : planos) {
+//                    soma = soma.add(ptp.getValorRepassado());
+//                }
+//                System.out.println("Prof: " + profissional.getDadosBasico().getNome() + "Soma: " + soma);
+//                Conta conta = ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PROFISSIONAL, profissional, soma, null, profissional, null, null, null);
+//                if (conta == null) {
+//                    profissional.setConta(conta);
+//                    ProfissionalSingleton.getInstance().getBo().persist(profissional);
+//                }
+//
+//            }
+//
+//            //para inserir saldo inicial de empresa
+//
+//            for (Empresa empresa : EmpresaSingleton.getInstance().getBo().listAll()) {
+//                List<LancamentoContabilRelatorio> lancamentoContabeis = null;
+//                lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listAllByEmpresa(empresa.getEmpIntCod());
+//                BigDecimal saldoFinal = new BigDecimal(0);
+//                for (LancamentoContabilRelatorio lc : lancamentoContabeis) {
+//                    BigDecimal valor = lc.getValor();
+//                    valor = valor.abs();
+//                    if (lc.getTipo().equals("Pagar")) {
+//                        valor = valor.multiply(new BigDecimal(-1));
+//                    }
+//                    Lancamento lancamento = lc.getLancamento();
+//                    if (lancamento != null && lancamento.getTarifa() != null) {
+//                        valor = lancamento.getValorComDesconto();
+//                    }
+//                    saldoFinal = saldoFinal.add(valor);
+//                }
+//
+//                System.out.println(empresa.getEmpStrNme() + "saldo: " + saldoFinal);
+//
+//                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.EMPRESA, null, saldoFinal, null, null, null, null, empresa);
+//            }
+//
+//            List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listAll();
+//            for (Paciente paciente : pacientes) {
+//                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, null, BigDecimal.ZERO, paciente, null, null, null, null);
+//                System.out.println("Paciente: " + Utils.processProgress(paciente, pacientes));
+//            }
+//
+//            List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listAll();
+//            for (Fornecedor fornecedor : fornecedores) {
+//                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, null, BigDecimal.ZERO, null, null, fornecedor, null, null);
+//                System.out.println("Fornecedor: " + Utils.processProgress(fornecedor, fornecedores));
+//            }
+//
+//
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-            this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
+            this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "", true);
         }
     }
 
@@ -118,25 +202,41 @@ public class MaterialMB extends LumeManagedBean<Material> {
             materiais = MaterialSingleton.getInstance().getBo().listAtivosByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             Collections.sort(materiais);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
 
-    public void atualizaQuantidadeTotal() {
-        BigDecimal quantidadeTotal = this.getEntity().getQuantidade().multiply(this.getEntity().getTamanhoUnidade());
-        this.getEntity().setQuantidadeTotal(quantidadeTotal);
-        this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeTotal());
+    public void atualizaQuantidades() {
+        BigDecimal quantidadeTotal = this.getEntity().getQuantidadePacotes().multiply(this.getEntity().getTamanhoUnidade());
+        Estoque estoque;
+        if (this.getEntity().getEstoque() == null || this.getEntity().getEstoque().isEmpty()) {
+            this.getEntity().setEstoque(new ArrayList<Estoque>());
+            estoque = new Estoque();
+            this.getEntity().getEstoque().add(estoque);
+        }
+
+        this.getEntity().getEstoque().get(0).setLocal(this.getLocal());
+        this.getEntity().getEstoque().get(0).setQuantidade(quantidadeTotal);
+        if (this.getEntity().getEstoque().get(0).getQuantidade() != null && this.getEntity().getValorUnidadeInformado() != null && this.getEntity().getEstoque().get(0).getQuantidade().compareTo(
+                BigDecimal.ZERO) != 0) {
+            getEntity().setValor(this.getEntity().getValorUnidadeInformado().divide(this.getEntity().getEstoque().get(0).getQuantidade(), 2, RoundingMode.HALF_UP));
+        }
+
     }
 
     public void chargeTree(TreeNode root) {
+
         List<TreeNode> nodes = new ArrayList<>();
         List<TreeNode> nodesAux;
+     
         this.filtraItens();
+     
         List<Item> itensRestantes = this.getItens();
         root.setExpanded(true);
         nodes.add(root);
         itensRestantes = this.setLevel(itensRestantes, nodes);
+      
         List<TreeNode> subNodes;
         while (itensRestantes.size() > 0) {
             subNodes = new ArrayList<>();
@@ -147,21 +247,21 @@ public class MaterialMB extends LumeManagedBean<Material> {
             }
             itensRestantes = this.setLevel(itensRestantes, subNodes);
             nodes = new ArrayList<>();
-            nodes.addAll(subNodes);
-        }
+            nodes.addAll(subNodes);            
+        }      
     }
 
     public void carregaTela() {
         try {
-            this.setDigitacaoLocal(this.getEntity().getLocal().getDescricao());
-            this.setLocal(this.getEntity().getLocal());
+            this.setDigitacaoLocal(this.getEntity().getEstoque().get(0).getLocal().getDescricao());
+            this.setLocal(this.getEntity().getEstoque().get(0).getLocal());
             this.setProcedencia(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO, this.getEntity().getProcedencia()));
             this.setItem(this.getEntity().getItem());
             this.setDigitacao(this.getEntity().getItem().getDescricao());
             this.setSelectedItem();
             this.setSelectedLocal();
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -202,10 +302,30 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public void carregarMaterialLog(Material material) {
         try {
-            materialLogs = MaterialLogSingleton.getInstance().getBo().listByMaterial(material);
+            listaTransferenciasEstoque = TransferenciaEstoqueSingleton.getInstance().getBo().listByMaterial(material);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
+    }
+
+    public void carregarEntity(Material material) {
+        setEntity(material);
+    }
+
+    public void carregarEditar(Material material) {
+        setEntity(material);
+        //    rootLocal
+        //    root
+        this.digitacaoLocal = this.getEntity().getEstoque().get(0).getLocal().getDescricao();
+        this.digitacao = this.getEntity().getItem().getDescricao();
+        this.setItem(this.getEntity().getItem());
+        this.setLocal(this.getEntity().getEstoque().get(0).getLocal());
+        try {
+            this.procedencia = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO, this.getEntity().getProcedencia());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
@@ -237,15 +357,16 @@ public class MaterialMB extends LumeManagedBean<Material> {
         for (Item item : itensRestantes) {
             anotherLevel = true;
             for (TreeNode node : nodes) {
-                if ((item.getIdItemPai() == null) || (item.getIdItemPai().equals(node.getData()))) {
+                if ((item.getIdItemPai() == null) || (item.getIdItemPai().equals(node.getData())) || item.getExcluido().equals("S") ) {
                     (new DefaultTreeNode(item, node)).setExpanded(true);
                     anotherLevel = false;
                     break;
                 }
             }
             if (anotherLevel) {
-                locaisRestantesAux.add(item);
+                locaisRestantesAux.add(item);               
             }
+
         }
         return locaisRestantesAux;
     }
@@ -256,7 +377,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
         for (Local local : locaisRestantes) {
             anotherLevel = true;
             for (TreeNode node : nodes) {
-                if ((local.getIdLocal() == null) || (local.getIdLocal().equals(node.getData()))) {
+                if ((local.getLocalPai() == null) || (local.getLocalPai().equals(node.getData()))) {
                     (new DefaultTreeNode(local, node)).setExpanded(true);
                     anotherLevel = false;
                     break;
@@ -264,33 +385,49 @@ public class MaterialMB extends LumeManagedBean<Material> {
             }
             if (anotherLevel) {
                 locaisRestantesAux.add(local);
-            }
+            }           
         }
         return locaisRestantesAux;
     }
 
     public void actionDevolver(ActionEvent event) {
         try {
-            if (this.getEntity().getQuantidadeAtual().intValue() >= quantidade.intValue()) {
-                this.getbO().refresh(getEntity());
-                this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeAtual().subtract(quantidade));
-                this.getbO().persist(this.getEntity());
+            if (this.getEntity().getEstoque().get(0).getQuantidade().intValue() >= quantidadePacotes.intValue()) {
+
                 if (justificativa != null) {
                     this.getEntity().setJustificativa(justificativa.getNome());
                 }
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidade.multiply(new BigDecimal(-1)), getEntity().getQuantidadeAtual(),
-                        MaterialLog.ENTRADA_MATERIAL_DEVOLVER));
+                MaterialSingleton.getInstance().getBo().persist(this.getEntity());
+
+                //EstoqueSingleton.getInstance().subtrair( this.getEntity(),  this.getEntity().getEstoque().getLocal(),quantidadePacotes, EstoqueSingleton.DEVOLUCAO_MATERIAL_PROBLEMA + "- " + justificativa.getNome(), UtilsFrontEnd.getProfissionalLogado());
+
+                Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_MATERIAL");
+                EstoqueSingleton.getInstance().transferencia(this.getEntity(), this.getEntity().getEstoque().get(0).getLocal(), localDestino, quantidadePacotes,
+                        EstoqueSingleton.DEVOLUCAO_MATERIAL_PROBLEMA + ": " + justificativa.getNome(), UtilsFrontEnd.getProfissionalLogado());
+
                 this.actionNew(event);
                 this.geraLista();
                 PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
+                this.addInfo("Devolução concluída com sucesso!", "", true);
             } else {
-                this.addError(OdontoMensagens.getMensagem("material.quantidade.maior"), "");
+                this.addError(OdontoMensagens.getMensagem("material.quantidade.maior"), "", true);
             }
         } catch (Exception e) {
-            log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            log.error("Erro no actionDevolver", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "", true);
         }
 
+    }
+
+    @Override
+    public void actionNew(ActionEvent arg0) {
+
+        super.actionNew(arg0);
+    }
+
+    public void actionPersistFechar(ActionEvent event) {
+        this.actionPersist(event);
+        PrimeFaces.current().executeScript("PF('dlgEntrada').hide();");
     }
 
     @Override
@@ -303,7 +440,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             } else if (!isEstoqueCompleto() && getEntity().getId() == 0) {
                 List<Material> mats = MaterialSingleton.getInstance().getBo().listByItem(getItem());
                 if (mats != null && !mats.isEmpty()) {
-                    quantidadeMovimentacao = getEntity().getQuantidadeAtual();
+                    quantidadeMovimentacao = getEntity().getEstoque().get(0).getQuantidade();
                     tipoMovimentacao = Material.MOVIMENTACAO_ENTRADA;
                     setEntity(mats.get(0));
                     actionMovimentacaoEstoqueSimplificado(event);
@@ -311,10 +448,10 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 }
             }
 
-            if (this.getValorTotal() != null && this.getEntity().getQuantidadeTotal() != null) {
-                this.getEntity().setValor(this.getValorTotal().divide(this.getEntity().getQuantidadeTotal(), 2, RoundingMode.HALF_UP));
-            }
-            this.atualizaQuantidadeTotal();
+            //   if (this.getValorTotal() != null && this.getEntity().getQuantidadeTotal() != null) {
+            //       this.getEntity().setValor(this.getValorTotal().divide(this.getEntity().getQuantidadeTotal(), 2, RoundingMode.HALF_UP));
+            //   }
+            this.atualizaQuantidades();
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (this.getEntity().getStatus() == null) {
                 this.getEntity().setStatus(ATIVO);
@@ -328,16 +465,16 @@ public class MaterialMB extends LumeManagedBean<Material> {
             this.getEntity().setDataCadastro(new Date());
             if ((this.getItem() == null) || (this.getItem().getDescricao().equals("RAIZ")) || // RAIZ
                     (this.getItem().getCategoria().equals("S"))) {
-                this.addError(OdontoMensagens.getMensagem("erro.item.material.raiz"), "");
+                this.addError(OdontoMensagens.getMensagem("erro.item.material.raiz"), "", true);
             } else {
                 if (isEstoqueCompleto() && (this.getLocal() == null || this.getLocal().getDescricao().equals("RAIZ"))) {
-                    this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "");
+                    this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "", true);
                 } else {
                     this.getEntity().setItem(this.getItem());
                     if (this.getLocal() == null) {
-                        this.getEntity().setLocal(LocalSingleton.getInstance().getBo().getLocalPadraoSistema(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                        this.getEntity().getEstoque().get(0).setLocal(LocalSingleton.getInstance().getBo().getLocalPadraoSistema(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                     } else {
-                        this.getEntity().setLocal(this.getLocal());
+                        this.getEntity().getEstoque().get(0).setLocal(this.getLocal());
                     }
 
                     Calendar cal = Calendar.getInstance();
@@ -348,114 +485,145 @@ public class MaterialMB extends LumeManagedBean<Material> {
                         if (getEntity().getId() == 0) {
                             novo = true;
                         }
+                        Local localDestino = this.getEntity().getEstoque().get(0).getLocal();
+                        BigDecimal quantidade = this.getEntity().getEstoque().get(0).getQuantidade();
+                        this.getEntity().setEstoque(null);
+
                         if (this.getbO().persist(this.getEntity())) {
                             if (this.getEntity().getStatus().equals(DEVOLVIDO)) {
-                                this.addInfo(OdontoMensagens.getMensagem("material.salvo.devolvido"), "");
+                                this.addInfo(OdontoMensagens.getMensagem("material.salvo.devolvido"), "", true);
                             } else {
-                                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "", true);
                             }
                             if (novo) {
-                                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), getEntity().getQuantidadeAtual(),
-                                        getEntity().getQuantidadeAtual(), MaterialLog.ENTRADA_MATERIAL_CADASTRO));
+                                Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");
+
+                                // this.getEntity().getEstoque().get(0).setQuantidade(new BigDecimal(0));
+                                // this.getEntity().getEstoque().get(0).setLocal(this.getLocal());
+                                //  this.getEntity().getEstoque().get(0).setMaterial(this.getEntity());
+                                EstoqueSingleton.getInstance().transferencia(this.getEntity(), localOrigem, localDestino, quantidade, EstoqueSingleton.ENTRADA_MATERIAL_CADASTRO,
+                                        UtilsFrontEnd.getProfissionalLogado());
+
+                                this.setEntity(new Material());
+                                this.getEntity().setFornecedor(null);
+                                this.getEntity().setMarca(null);
+                                valorTotal = new BigDecimal(0);
+
+                                this.setSelectedItem(null);
+                                digitacao = null;
+                                digitacaoLocal = null;
                             }
-                            //actionNew(event);
-                            Fornecedor f = this.getEntity().getFornecedor();
-                            Marca m = this.getEntity().getMarca();
-                            this.setEntity(new Material());
-                            this.getEntity().setFornecedor(f);
-                            this.getEntity().setMarca(m);
-                            valorTotal = null;
-                            this.setSelectedItem(null);
-                            digitacao = null;
+
                             this.geraLista();
                         }
                     } else {
-                        this.addError(OdontoMensagens.getMensagem("material.validade.erro"), "");
+                        this.addError(OdontoMensagens.getMensagem("material.validade.erro"), "", true);
                     }
 
                 }
             }
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "", true);
         }
     }
 
     public void actionMovimentacaoEstoqueSimplificado(ActionEvent event) {
         if (quantidadeMovimentacao.equals(new BigDecimal(0))) {
-            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "");
-        } else if (tipoMovimentacao.equals(Material.MOVIMENTACAO_SAIDA) && getEntity().getQuantidadeAtual().doubleValue() < quantidadeMovimentacao.doubleValue()) {
-            this.addError("Não é possível retirar mais quantidade do que a quantidade atual.", "");
+            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "", true);
+        } else if (tipoMovimentacao.equals(Material.MOVIMENTACAO_SAIDA) && getEntity().getEstoque().get(0).getQuantidade().doubleValue() < quantidadeMovimentacao.doubleValue()) {
+            this.addError("Não é possível retirar mais quantidade do que a quantidade atual.", "", true);
         } else {
             try {
                 this.getbO().refresh(getEntity());
                 if (tipoMovimentacao.equals(Material.MOVIMENTACAO_ENTRADA)) {
-                    this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeAtual().add(quantidadeMovimentacao));
+                    //EstoqueSingleton.getInstance().adicionar(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentacao,  EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
+
+                    Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");
+                    EstoqueSingleton.getInstance().transferencia(this.getEntity(), localOrigem, this.getEntity().getEstoque().get(0).getLocal(), quantidadeMovimentacao,
+                            EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
+
                 } else {
-                    this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeAtual().subtract(quantidadeMovimentacao));
+                    // EstoqueSingleton.getInstance().subtrair(this.getEntity(), this.getEntity().getEstoque().getLocal(), quantidadeMovimentacao,  EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
+
+                    Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "COMPRA");
+                    EstoqueSingleton.getInstance().transferencia(this.getEntity(), this.getEntity().getEstoque().get(0).getLocal(), localDestino, quantidadeMovimentacao,
+                            EstoqueSingleton.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA, UtilsFrontEnd.getProfissionalLogado());
                     quantidadeMovimentacao = quantidadeMovimentacao.multiply(new BigDecimal(-1));
                 }
-                this.getEntity().setQuantidadeTotal(this.getEntity().getQuantidadeAtual());
+
                 this.getEntity().setDataMovimentacao(Calendar.getInstance().getTime());
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentacao, getEntity().getQuantidadeAtual(),
-                        MaterialLog.ENTRADA_MATERIAL_DEVOLVER_MOVIMENTACAO_SIMPLIFICADA));
                 this.getbO().persist(this.getEntity());
 
-                this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "");
+                this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "", true);
                 this.actionNew(event);
                 this.geraLista();
             } catch (Exception e) {
                 log.error("Erro no actionPersist", e);
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "", true);
             }
         }
     }
 
     public void movimentar(ActionEvent event) {
         if (quantidadeMovimentada.equals(new BigDecimal(0))) {
-            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "");
-        } else if (this.getEntity().getQuantidadeAtual().doubleValue() < quantidadeMovimentada.doubleValue()) {
-            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade.zerada"), "", true);
+        } else if (this.getEntity().getEstoque().get(0).getQuantidade().doubleValue() < quantidadeMovimentada.doubleValue()) {
+            this.addError(OdontoMensagens.getMensagem("erro.material.quantidade"), "", true);
         } else if ((this.getLocal() == null)) {
-            this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "");
-        } else if (this.getEntity().getLocal().getDescricao().equals(this.getDigitacaoLocal())) {
-            this.addError(OdontoMensagens.getMensagem("erro.local.material.inalterado"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.local.material.raiz"), "", true);
+        } else if (this.getEntity().getEstoque().get(0).getLocal().getDescricao().equals(this.getDigitacaoLocal())) {
+            this.addError(OdontoMensagens.getMensagem("erro.local.material.inalterado"), "", true);
         } else {
 
             try {
-                this.getbO().refresh(getEntity());
-                this.getEntity().setQuantidadeAtual(this.getEntity().getQuantidadeAtual().subtract(quantidadeMovimentada));
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentada.multiply(new BigDecimal(-1)),
-                        getEntity().getQuantidadeAtual(), MaterialLog.MOVIMENTACAO_MATERIAL_MOVIMENTAR));
-                this.getbO().persist(this.getEntity());
-                Material material = new Material();
-                PropertyUtils.copyProperties(material, this.getEntity());
-                material.setQuantidadeAtual(quantidadeMovimentada);
-                material.setQuantidadeTotal(quantidadeMovimentada);
-                material.setId(0);
-                material.setLocal(this.getLocal());
-                this.setEntity(material);
 
+                //this.getbO().m(getEntity());
+                // setEntity(MaterialSingleton.getInstance().getBo().find(this.getEntity().getId()));
+                // this.getEntity().setQuantidadeAtual(this.getEntity().getEstoque().getQuantidade().subtract(quantidadeMovimentada));
+                // MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentada.multiply(new BigDecimal(-1)),
+                //         getEntity().getQuantidadeAtual(), MaterialLog.MOVIMENTACAO_MATERIAL_MOVIMENTAR));
+                // this.getbO().persist(this.getEntity());
+
+                //  material.setQuantidadeAtual(quantidadeMovimentada);
+                // material.setQuantidadeTotal(quantidadeMovimentada);
+
+                //atualizando somente o estoque, caso tenha sido alterada por outro usuário por exempl
+                getEntity().setEstoque(MaterialSingleton.getInstance().getBo().find(getEntity().getId()).getEstoque());
+
+                //pegando local origem para salvar na transferencia
+                Local localOrigem = this.getEntity().getEstoque().get(0).getLocal();
+                //  material.getEstoque().setLocal(this.getLocal());
+                //  material.setId(0);
                 this.getEntity().setDataMovimentacao(new Date());
-                this.getbO().persist(this.getEntity());
+                //this.getbO().persist(this.getEntity());
+                // this.getbO().persist(material);
 
-                MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, null, getEntity(), UtilsFrontEnd.getProfissionalLogado(), quantidadeMovimentada, getEntity().getQuantidadeAtual(),
-                        MaterialLog.MOVIMENTACAO_MATERIAL_MOVIMENTAR));
+                EstoqueSingleton.getInstance().transferencia(this.getEntity(), localOrigem, this.getLocal(), quantidadeMovimentada, EstoqueSingleton.MOVIMENTACAO_MATERIAL_MOVIMENTAR,
+                        UtilsFrontEnd.getProfissionalLogado());
 
-                this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "");
+                this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "", true);
                 this.actionNew(event);
                 this.geraLista();
             } catch (Exception e) {
                 log.error("Erro no actionPersist", e);
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "", true);
             }
         }
     }
-    
+
     public String getUnidadeString(Item item) {
-        if(item != null)
+        if (item != null)
             return DominioSingleton.getInstance().getBo().getUnidadeMedidaString(item.getUnidadeMedida());
         return null;
+    }
+
+    public void exportarTabela(String type) {
+        exportarTabela("Entrada de Materiais", tabelaMaterial, type);
+    }
+
+    public void exportarTabelaMovimentacao(String type) {
+        exportarTabela("Movimentação de materiais", tabelaMovimentacao, type);
     }
 
     public List<Local> getLocais() {
@@ -558,7 +726,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             }
             Collections.sort(this.getLocais());
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -573,7 +741,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
             }
             Collections.sort(itens);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
@@ -590,17 +758,17 @@ public class MaterialMB extends LumeManagedBean<Material> {
         return strings;
     }
 
-    public void handleSelect() {
-        this.filtraItem(this.getDigitacao());
-        this.setItem(null);
-        this.setSelected();
-    }
+    // public void handleSelect() {
+    //    this.filtraItem(this.getDigitacao());
+    //     this.setItem(null);
+    //    this.setSelected();
+    // }
 
-    public void handleSelectLocal() {
-        this.filtraLocal(this.getDigitacaoLocal());
-        this.setLocal(null);
-        this.setSelectedLocal();
-    }
+    // public void handleSelectLocal() {
+    //  this.filtraLocal(this.getDigitacaoLocal());
+    // this.setLocal(null);
+    //  this.setSelectedLocal();
+    //  }
 
     public void setSelected() {
         List<TreeNode> nodes = new ArrayList<>();
@@ -735,6 +903,28 @@ public class MaterialMB extends LumeManagedBean<Material> {
         this.getEntity().setMarca((Marca) event.getObject());
     }
 
+    public List<Fornecedor> geraSugestoesFornecedores(String query) {
+        List<Fornecedor> sugestoes = new ArrayList<>();
+        List<Fornecedor> fornecedores = new ArrayList<>();
+        try {
+            fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            for (Fornecedor m : fornecedores) {
+                if (Normalizer.normalize(m.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").contains(
+                        Normalizer.normalize(query.toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))) {
+                    sugestoes.add(m);
+                }
+            }
+            Collections.sort(sugestoes);
+        } catch (Exception e) {
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS);
+        }
+        return sugestoes;
+    }
+
+    public void handleSelectFornecedor(SelectEvent event) {
+        this.getEntity().setFornecedor((Fornecedor) event.getObject());
+    }
+
     public List<Dominio> getJustificativas() {
         List<Dominio> justificativas = new ArrayList<>();
         try {
@@ -753,13 +943,21 @@ public class MaterialMB extends LumeManagedBean<Material> {
         this.setNovaMarca(false);
     }
 
+    public void novoFornecedor() {
+        this.setNovoFornecedor(true);
+    }
+
+    public void cancelaNovoFornecedor(ActionEvent event) {
+        this.setNovoFornecedor(false);
+    }
+
     public void actionPersistMarca(ActionEvent event) {
         this.getEntity().setMarca(new Marca());
         this.getEntity().getMarca().setNome(this.getNomeMarca());
         Marca marca = MarcaSingleton.getInstance().getBo().findByNomeAndEmpresa(this.getEntity().getMarca().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (marca != null) {
             if (marca.getId() != this.getEntity().getMarca().getId() && marca.getNome().equals(this.getEntity().getMarca().getNome())) {
-                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "");
+                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "", true);
                 try {
                     this.getbO().refresh(this.getEntity());
                 } catch (Exception e) {
@@ -771,10 +969,39 @@ public class MaterialMB extends LumeManagedBean<Material> {
             this.getEntity().getMarca().setDataCadastro(Calendar.getInstance().getTime());
             try {
                 MarcaSingleton.getInstance().getBo().persist(this.getEntity().getMarca());
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "", true);
             } catch (Exception e) {
                 log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO);
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "", true);
+            }
+            this.geraLista();
+        }
+    }
+
+    public void actionPersistFornecedor(ActionEvent event) {
+        this.getEntity().setFornecedor(new Fornecedor());
+        this.getEntity().getFornecedor().setDadosBasico(new DadosBasico());
+        this.getEntity().getFornecedor().getDadosBasico().setNome(this.getNomeFornecedor());
+        this.getEntity().getFornecedor().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        this.getEntity().getFornecedor().setExcluido("N");
+        Fornecedor fornecedor = FornecedorSingleton.getInstance().getBo().findByNomeandEmpresa(this.getEntity().getFornecedor());
+        if (fornecedor != null) {
+            if (fornecedor.getId() != this.getEntity().getFornecedor().getId() && fornecedor.getDadosBasico().getNome().equals(this.getEntity().getFornecedor().getDadosBasico().getNome())) {
+                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "", true);
+                try {
+                    this.getbO().refresh(this.getEntity());
+                } catch (Exception e) {
+                    log.error("refresh" + e);
+                }
+            }
+        } else {
+            try {
+                DadosBasicoSingleton.getInstance().getBo().persist(this.getEntity().getFornecedor().getDadosBasico());
+                FornecedorSingleton.getInstance().getBo().persist(this.getEntity().getFornecedor());
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "", true);
+            } catch (Exception e) {
+                log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO);
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "", true);
             }
             this.geraLista();
         }
@@ -881,44 +1108,28 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public BigDecimal getValorTotal() {
         if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
-            valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getQuantidade());
+            valorTotal = this.getEntity().getValor().multiply(this.getEntity().getEstoque().get(0).getQuantidade());
         }
         return valorTotal;
-    }
-
-    public void valorTotal() {
-        this.atualizaQuantidadeTotal();
-        if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
-            valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getQuantidade());
-        }
     }
 
     public void setValorTotal(BigDecimal valorTotal) {
         this.valorTotal = valorTotal;
     }
 
-    public BigDecimal getQuantidade() {
-        return quantidade;
+    public void valorTotal() {
+        this.atualizaQuantidades();
+        if (this.getEntity().getValorUnidadeInformado() != null && !this.getEntity().getValorUnidadeInformado().equals(new BigDecimal(0))) {
+            valorTotal = this.getEntity().getValorUnidadeInformado().multiply(this.getEntity().getEstoque().get(0).getQuantidade());
+        }
     }
 
-    public void setQuantidade(BigDecimal quantidade) {
-        this.quantidade = quantidade;
+    public BigDecimal getQuantidadePacotes() {
+        return quantidadePacotes;
     }
 
-    public List<Fornecedor> getFornecedores() {
-        return fornecedores;
-    }
-
-    public void setFornecedores(List<Fornecedor> fornecedores) {
-        this.fornecedores = fornecedores;
-    }
-
-    public List<MaterialLog> getMaterialLogs() {
-        return materialLogs;
-    }
-
-    public void setMaterialLogs(List<MaterialLog> materialLogs) {
-        this.materialLogs = materialLogs;
+    public void setQuantidadePacotes(BigDecimal quantidadePacotes) {
+        this.quantidadePacotes = quantidadePacotes;
     }
 
     public String getTipoMovimentacao() {
@@ -935,6 +1146,46 @@ public class MaterialMB extends LumeManagedBean<Material> {
 
     public void setQuantidadeMovimentacao(BigDecimal quantidadeMovimentacao) {
         this.quantidadeMovimentacao = quantidadeMovimentacao;
+    }
+
+    public boolean isNovoFornecedor() {
+        return novoFornecedor;
+    }
+
+    public void setNovoFornecedor(boolean novoFornecedor) {
+        this.novoFornecedor = novoFornecedor;
+    }
+
+    public String getNomeFornecedor() {
+        return nomeFornecedor;
+    }
+
+    public void setNomeFornecedor(String nomeFornecedor) {
+        this.nomeFornecedor = nomeFornecedor;
+    }
+
+    public List<TransferenciaEstoque> getListaTransferenciasEstoque() {
+        return listaTransferenciasEstoque;
+    }
+
+    public void setListaTransferenciasEstoque(List<TransferenciaEstoque> listaTransferenciasEstoque) {
+        this.listaTransferenciasEstoque = listaTransferenciasEstoque;
+    }
+
+    public DataTable getTabelaMaterial() {
+        return tabelaMaterial;
+    }
+
+    public void setTabelaMaterial(DataTable tabelaMaterial) {
+        this.tabelaMaterial = tabelaMaterial;
+    }
+
+    public DataTable getTabelaMovimentacao() {
+        return tabelaMovimentacao;
+    }
+
+    public void setTabelaMovimentacao(DataTable tabelaMovimentacao) {
+        this.tabelaMovimentacao = tabelaMovimentacao;
     }
 
 }

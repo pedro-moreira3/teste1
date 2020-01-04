@@ -36,38 +36,60 @@
 						<br />
                         <div class="SeparatorFull"></div>
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                        	<p:commandButton id="new" icon="White fa fa-file-o" value="Nova Lavagem Manual" actionListener="#{lavagemMB.actionNew}" update=":lume:pnLavagem, :lume:dtEsterilizacao" immediate="true" />
                             <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{lavagemMB.actionPersist}" oncomplete="handleDialogRequest(xhr, status, args)"
                                 update=":lume:pnLavagem, :lume:dtEsterilizacao, lume:confirmDialog" process=":lume:pnLavagem" disabled="#{lavagemMB.entity.id != 0}" styleClass="GreenButton" />
-                            <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{lavagemMB.actionNew}" update=":lume:pnLavagem, :lume:dtEsterilizacao" immediate="true" />
-                        </p:panelGrid>
+                            
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{lavagemMB.exportarTabela('xls')}"
+									ajax="false" process="dtEsterilizacao,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload value="#{lavagemMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{lavagemMB.exportarTabela('pdf')}"
+										ajax="false" process="dtEsterilizacao,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload value="#{lavagemMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{lavagemMB.exportarTabela('csv')}"
+										ajax="false" process="dtEsterilizacao,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload value="#{lavagemMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+						</p:panelGrid>
                         <div class="EmptyBox20"></div>
                     </p:outputPanel>
                     <p:outputPanel styleClass="BordNone">
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtEsterilizacao" value="#{lavagemMB.lavagens}" var="lavagem" rows="15" paginator="true" selection="#{lavagemMB.entity}"
-                            selectionMode="single" rowKey="#{lavagem}" paginatorPosition="bottom">
+                            selectionMode="single" rowKey="#{lavagem}" paginatorPosition="bottom" binding="#{lavagemMB.tabelaLavagem}">
                             <p:ajax event="rowSelect" update=":lume:pnLavagem" listener="#{lavagemMB.carregarLavagem}"/>
                             <f:facet name="header">Lavagens</f:facet>
 
-                            <p:column filterBy="#{lavagem.descricao}" sortBy="#{lavagem.descricao}" filterMatchMode="contains" headerText="Descrição">
+                            <p:column filterBy="#{lavagem.descricao}" sortBy="#{lavagem.descricao}" filterMatchMode="contains" headerText="Descrição" filterFunction="#{lavagemMB.filtroSemAcento}">
                                 <h:outputText value="#{lavagem.descricao}" title="#{lavagem.id}" />
                             </p:column>
                             <p:column filterBy="#{lavagem.solicitante.dadosBasico.prefixoNome}" sortBy="#{lavagem.solicitante.dadosBasico.prefixoNome}" filterMatchMode="contains"
-                                headerText="Solicitante">
+                                headerText="Solicitante" filterFunction="#{lavagemMB.filtroSemAcento}">
                                 <h:outputText value="#{lavagem.solicitante.dadosBasico.prefixoNome}" />
                             </p:column>
                             <p:column filterBy="#{lavagem.dataStr}" sortBy="#{lavagem.dataStrOrd}" filterMatchMode="contains" headerText="Data do Cadastro">
                                 <h:outputText value="#{lavagem.dataStr}" />
                             </p:column>
-                            <p:column filterBy="#{lavagem.resumo}" sortBy="#{lavagem.resumo}" filterMatchMode="contains">
-                                <f:facet name="header">
-                                    <h:outputText value="Resumo" />
-                                </f:facet>
+                            <p:column filterBy="#{lavagem.resumo}" sortBy="#{lavagem.resumo}" filterMatchMode="contains" headerText="Resumo" filterFunction="#{lavagemMB.filtroSemAcento}">
                                 <h:outputText value="#{lavagem.resumo}" />
                             </p:column>
-                            <p:column sortBy="#{lavagem.clinica}" filterBy="#{lavagem.clinica}" filterMatchMode="exact">
-                                <f:facet name="header">
-                                    <h:outputText value="Instrumento da clínica?" />
-                                </f:facet>
+                            <p:column sortBy="#{lavagem.clinica}" filterBy="#{lavagem.clinica}" filterMatchMode="exact" headerText="Instrumento da clínica?">
                                 <f:facet name="filter">
                                     <p:selectOneMenu onchange="PF('tbLavagem').filter()">
                                         <f:selectItem itemLabel="" itemValue="#{null}" noSelectionOption="true" />

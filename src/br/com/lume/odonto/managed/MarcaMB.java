@@ -10,11 +10,13 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.marca.MarcaSingleton;
+import br.com.lume.odonto.entity.Fornecedor;
 //import br.com.lume.odonto.bo.MarcaBO;
 //import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Marca;
@@ -29,6 +31,9 @@ public class MarcaMB extends LumeManagedBean<Marca> {
     private Logger log = Logger.getLogger(MarcaMB.class);
 
     private List<Marca> marcas = new ArrayList<>();
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaMarca;
 
     public MarcaMB() {
         super(MarcaSingleton.getInstance().getBo());
@@ -40,18 +45,22 @@ public class MarcaMB extends LumeManagedBean<Marca> {
         try {
             this.marcas = MarcaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
         Collections.sort(this.marcas);
     }
+    
+    public void carregarEditar(Marca marca) {
+        setEntity(marca);      
+    }    
 
     @Override
     public void actionPersist(ActionEvent event) {
         Marca marca = MarcaSingleton.getInstance().getBo().findByNomeAndEmpresa(this.getEntity().getNome(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if (marca != null) {
             if (marca.getId() != this.getEntity().getId() && marca.getNome().equals(this.getEntity().getNome())) {
-                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "");
+                this.addError(OdontoMensagens.getMensagem("marca.erro.duplicado"), "",true);
                 try {
                     this.getbO().refresh(this.getEntity());
                 } catch (Exception e) {
@@ -66,11 +75,23 @@ public class MarcaMB extends LumeManagedBean<Marca> {
         }
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Marcas", tabelaMarca, type);
+    }
+    
     public List<Marca> getMarcas() {
         return this.marcas;
     }
 
     public void setMarcas(List<Marca> marcas) {
         this.marcas = marcas;
+    }
+
+    public DataTable getTabelaMarca() {
+        return tabelaMarca;
+    }
+
+    public void setTabelaMarca(DataTable tabelaMarca) {
+        this.tabelaMarca = tabelaMarca;
     }
 }

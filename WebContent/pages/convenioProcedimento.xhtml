@@ -63,19 +63,19 @@
 
                                 <div class="SeparatorFull"></div>
                                 <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                                    <p:commandButton id="new" icon="White fa fa-file-o" value="Novo Convênio-Procedimento" actionListener="#{convenioProcedimentoMB.actionNew}" update=":lume:tabView:pnConvenio"
+                                        immediate="true" />                                
                                     <p:commandButton id="persist" icon="White fa fa-save" value="Vincular ao Convênio" actionListener="#{convenioProcedimentoMB.actionPersist}"
-                                        update=":lume:tabView:pnConvenio" process=":lume:tabView:pnDados,@this" styleClass="GreenButton" oncomplete="PF('dtConvenioProcedimentoFora').filter()" />
-                                    <p:commandButton id="delete" icon="White fa fa-trash-o" value="Desvincular do Convênio" actionListener="#{convenioProcedimentoMB.actionRemove}"
-                                        update=":lume:tabView:pnConvenio,@this" process="@this" disabled="#{convenioProcedimentoMB.entity.zeraId || convenioProcedimentoMB.entity.id == 0}"
-                                        styleClass="RedButton" oncomplete="PF('dtConvenioProcedimento').filter()" />
-                                    <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{convenioProcedimentoMB.actionNew}" update=":lume:tabView:pnConvenio"
-                                        immediate="true" />
+                                        update=":lume:tabView:pnConvenio" process=":lume:tabView:pnDados,@this" styleClass="GreenButton" oncomplete="PF('dtConvenioProcedimentoFora').filter()" />                                    
                                     <p:commandButton value="Exportar Não Vinculados" ajax="false" process="dtConvenioProcedimentoFora" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                         <p:dataExporter encoding="iso-8859-1" type="xls" target="dtConvenioProcedimentoFora" fileName="convenioProcedimentoFora" />
                                     </p:commandButton>
                                     <p:commandButton value="Exportar Vinculados" ajax="false" process="dtConvenioProcedimento" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                         <p:dataExporter encoding="iso-8859-1" type="xls" target="dtConvenioProcedimento" fileName="convenioProcedimento" />
                                     </p:commandButton>
+									<p:commandButton id="delete" icon="White fa fa-trash-o" value="Desvincular do Convênio" actionListener="#{convenioProcedimentoMB.actionRemove}"
+                                        update=":lume:tabView:pnConvenio,@this" process="@this" disabled="#{convenioProcedimentoMB.entity.zeraId || convenioProcedimentoMB.entity.id == 0}"
+                                        styleClass="RedButton" oncomplete="PF('dtConvenioProcedimento').filter()" />                                    
                                 </p:panelGrid>
 
                                 <div class="EmptyBox20"></div>
@@ -187,15 +187,41 @@
                                 </p:panelGrid>
 
                                 <div class="SeparatorFull"></div>
-                                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                                <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                     <p:commandButton icon="White fa fa-search" value="Pesquisar" actionListener="#{convenioProcedimentoMB.carregarRelatorio}" update="dtRelatorioConvenioProcedimento"
-                                        process="@this,mes,ano" styleClass="OrangeButton" />
+                                        process="@this,mes,ano" styleClass="NavyButton" />
+                                        
+                                    <h:panelGroup>
+										<p:splitButton 	icon="White fa fa fa-file-excel-o" value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+														actionListener="#{convenioProcedimentoMB.exportarTabela('xls')}" ajax="false"
+														process="dtRelatorioConvenioProcedimento,@this" update="@this" immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											
+											<p:fileDownload value="#{convenioProcedimentoMB.arquivoDownload}" />
+											
+											<p:menuitem	value="Exportar tabela para PDF" icon="fa fa fa-file-pdf-o" 
+														actionListener="#{convenioProcedimentoMB.exportarTabela('pdf')}" ajax="false"
+														process="dtRelatorioConvenioProcedimento,@this" immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+												<p:fileDownload value="#{convenioProcedimentoMB.arquivoDownload}"/>
+											</p:menuitem>
+												<p:menuitem value="Exportar tabela para CSV"
+													icon="fa fa fa-file-pdf-o"
+													actionListener="#{convenioProcedimentoMB.exportarTabela('csv')}"
+													ajax="false" process="dtRelatorioConvenioProcedimento,@this"
+													immediate="true"
+													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+													<p:fileDownload value="#{convenioProcedimentoMB.arquivoDownload}" />
+												</p:menuitem>
+											</p:splitButton>
+									</h:panelGroup>
+                                        
                                 </p:panelGrid>
                             </p:fieldset>
                             <br />
 
                             <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtRelatorioConvenioProcedimento" value="#{convenioProcedimentoMB.relatorioConvenioProcedimentos}" var="cp"
-                                paginatorPosition="bottom" rows="15" paginator="true">
+                                paginatorPosition="bottom" rows="15" paginator="true" binding="#{convenioProcedimentoMB.tabelaRelatorioConvenio}">
                                 <f:facet name="header">Procedimentos por convênio</f:facet>
                                 <p:column filterBy="#{cp.descricao}" sortBy="#{cp.descricao}" filterMatchMode="contains" headerText="Procedimento">
                                     <h:outputText value="#{cp.descricao}" />

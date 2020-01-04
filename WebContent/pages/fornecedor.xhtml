@@ -5,10 +5,19 @@
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
-						<h:inputHidden id="id" value="#{fornecedorMB.entity.id}" />
-						<h1>Fornecedor</h1>
-						<div class="SeparatorFull"></div>
+					<p:confirmDialog id="confirmDialog"
+						message=" Você tem certeza que deseja excluir o fornecedor?"
+						header="Excluir fornecedor?" severity="alert"
+						widgetVar="confirmation" appendToBody="true">
+						<p:commandButton id="confirm" value="Sim"
+							update=":lume:pnPrincipal,:lume:tbDtPrincipal"							
+							actionListener="#{fornecedorMB.actionRemove}" process="@this" oncomplete="PF('confirmation').hide()"/>
+						<p:commandButton id="decline" value="Não"
+							onclick="PF('confirmation').hide()" type="button" />
+					</p:confirmDialog>				
+					<p:dialog id="dlg" widgetVar="dlg" header="Novo Fornecedor" responsive="true" modal="true" width="60%">
+						<p:panel id="pnDlg" styleClass="BordNone">
+						<br/>
 						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
 
@@ -60,38 +69,80 @@
 							<p:inputText id="telCelular" value="#{fornecedorMB.entity.dadosBasico.celular}" styleClass="telefone"/>
 
 							<p:outputLabel for="contato" value="Contato : " />
-							<p:inputText id="contato" value="#{fornecedorMB.entity.dadosBasico.responsavel}" required="true" maxlength="200" />
+							<p:inputText id="contato" value="#{fornecedorMB.entity.dadosBasico.responsavel}" required="false" maxlength="200" />
 							
 							<p:column></p:column>
 							<p:column></p:column>
-						</p:panelGrid>
-						<br />
-						<div class="SeparatorFull"></div>
+						</p:panelGrid>				
+							<br />
+							<div class="SeparatorFull"></div>
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{fornecedorMB.actionPersist}"
+											update=":lume:pnPrincipal,:lume:pnDlg,:lume:tbDtPrincipal" process="@this,:lume:pnDlg"  styleClass="GreenButton" />	
+								<p:commandButton id="fechar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlg').hide();" immediate="true" />											
+								</p:panelGrid>
+								<div class="EmptyBox20"></div>
+						</p:panel>
+					</p:dialog>				
+					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
+						<h:inputHidden id="id" value="#{fornecedorMB.entity.id}" />
+						<h1>Fornecedor</h1>
+						<div class="SeparatorFull"></div>						
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{fornecedorMB.actionPersist}"
-								update=":lume:pnPrincipal,:lume:tbDtPrincipal" process=":lume:pnPrincipal" 
-								styleClass="GreenButton" />
-							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{fornecedorMB.actionRemove}"
-								update=":lume:pnPrincipal,:lume:tbDtPrincipal" process="@this" disabled="#{fornecedorMB.entity.id == null}"
-								 styleClass="RedButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{fornecedorMB.actionNew}"
-								update=":lume:pnPrincipal,:lume:dtPrincipal" immediate="true" tabindex="1"  />
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo Fornecedor" 
+								oncomplete="PF('dlg').show();" actionListener="#{fornecedorMB.actionNew}" update=":lume:pnDlg" immediate="true" />
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{fornecedorMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{fornecedorMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{fornecedorMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{fornecedorMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{fornecedorMB.exportarTabela('csv')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{fornecedorMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+							
 						</p:panelGrid>
-
 						<div class="EmptyBox20"></div>
-
 					</p:outputPanel>
 
 					<p:outputLabel id="tbDtPrincipal" styleClass="BordNone">
 
 						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{fornecedorMB.fornecedores}" var="fornecedor" rows="7" paginator="true"
-							selection="#{fornecedorMB.entity}" selectionMode="single" rowKey="#{fornecedor}" paginatorPosition="bottom" paginatorAlwaysVisible="false">
+							selection="#{fornecedorMB.entity}" selectionMode="single" rowKey="#{fornecedor}" paginatorPosition="bottom" paginatorAlwaysVisible="false" binding="#{fornecedorMB.tabelaFornecedor}">
 							<p:ajax event="rowSelect" update=":lume:pnPrincipal" />
 							<f:facet name="header">Fornecedores</f:facet>
-							<p:column filterBy="#{fornecedor.dadosBasico.nome}" sortBy="#{fornecedor.dadosBasico.nome}" filterMatchMode="contains" headerText="Nome">
+							 <p:column headerText="Ações" width="20%">
+							 	<p:commandButton styleClass="NavyButton" icon="fa fa-eye" oncomplete="PF('dlg').show();" update=":lume:pnDlg" title="Editar" process="@this"
+	                                actionListener="#{fornecedorMB.carregarEditar(fornecedor)}" style="width:33px !important" />
+							 	<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmation').show();" update=":lume:pnDlg,:lume:tbDtPrincipal" title="Remover" process="@this"
+	                                 style="width:33px !important" actionListener="#{fornecedorMB.carregarEditar(fornecedor)}"/>
+	                        </p:column>								
+							<p:column filterBy="#{fornecedor.dadosBasico.nome}" sortBy="#{fornecedor.dadosBasico.nome}" filterMatchMode="contains" headerText="Nome" filterFunction="#{localMB.filtroSemAcento}">
 								<h:outputText value="#{fornecedor.dadosBasico.nome}" title="#{fornecedor.id}"/>
 							</p:column>
-							<p:column filterBy="#{fornecedor.dadosBasico.bairro}" sortBy="#{fornecedor.dadosBasico.bairro}" filterMatchMode="contains" headerText="Bairro">
+							<p:column filterBy="#{fornecedor.dadosBasico.bairro}" sortBy="#{fornecedor.dadosBasico.bairro}" filterMatchMode="contains" headerText="Bairro" filterFunction="#{localMB.filtroSemAcento}">
 								<h:outputText value="#{fornecedor.dadosBasico.bairro}" />
 							</p:column>
 							<p:column filterBy="#{fornecedor.dadosBasico.celular}" sortBy="#{fornecedor.dadosBasico.celular}" filterMatchMode="contains"
@@ -99,7 +150,7 @@
 								<h:outputText value="#{fornecedor.dadosBasico.celular}" />
 							</p:column>
 							<p:column filterBy="#{fornecedor.dadosBasico.responsavel}" sortBy="#{fornecedor.dadosBasico.responsavel}" filterMatchMode="contains"
-								headerText="Contato">
+								headerText="Contato" filterFunction="#{localMB.filtroSemAcento}">
 								<h:outputText value="#{fornecedor.dadosBasico.responsavel}" />
 							</p:column>
 						</p:dataTable>

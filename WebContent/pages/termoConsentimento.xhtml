@@ -60,6 +60,7 @@
 									<h:outputText value="#{p.nomeMae}" />
 								</p:column>
 
+
 								<p:ajax event="itemSelect"
 									listener="#{termoConsentimentoMB.handleSelectPacienteSelecionado}"
 									update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo,:lume:pnTermoConsentimento"
@@ -111,6 +112,10 @@
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="newTermo" icon="White fa fa-file-o"
+								value="Novo Termo de Consentimento" actionListener="#{termoConsentimentoMB.actionNew}"
+								update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo"
+								immediate="true" tabindex="1" process="@this" />							
 							<h:panelGroup rendered="#{termoConsentimentoMB.liberaBotao}">
 								<p:commandButton id="persistTermo" icon="White fa fa-save"
 									value="Gerar Termo"
@@ -120,10 +125,39 @@
 									disabled="#{termoConsentimentoMB.entity.id != null}"
 									styleClass="GreenButton" />
 							</h:panelGroup>
-							<p:commandButton id="newTermo" icon="White fa fa-file-o"
-								value="Novo" actionListener="#{termoConsentimentoMB.actionNew}"
-								update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo"
-								immediate="true" tabindex="1" process="@this" />
+
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{termoConsentimentoMB.exportarTabela('xls')}"
+									ajax="false" process="dtTermo,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{termoConsentimentoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{termoConsentimentoMB.exportarTabela('pdf')}"
+										ajax="false" process="dtTermo,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{termoConsentimentoMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{termoConsentimentoMB.exportarTabela('csv')}"
+										ajax="false" process="dtTermo,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{termoConsentimentoMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
 						</p:panelGrid>
 
 						<div class="EmptyBox20"></div>
@@ -133,7 +167,7 @@
 						id="dtTermo" value="#{termoConsentimentoMB.entityList}" var="tct"
 						rows="7" paginator="true"
 						selection="#{termoConsentimentoMB.entity}" selectionMode="single"
-						rowKey="#{tct}" paginatorPosition="bottom">
+						rowKey="#{tct}" paginatorPosition="bottom" binding="#{termoConsentimentoMB.tabelaTermo}">
 						<p:ajax event="rowSelect"
 							update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo"
 							listener="#{termoConsentimentoMB.atualizaTela}" />
@@ -146,7 +180,8 @@
 						</p:column>
 						<p:column filterBy="#{tct.profissional.dadosBasico.prefixoNome}"
 							sortBy="#{tct.profissional.dadosBasico.prefixoNome}"
-							filterMatchMode="contains" headerText="Profissional">
+							filterMatchMode="contains" headerText="Profissional"
+							filterFunction="#{termoConsentimentoMB.filtroSemAcento}">
 							<h:outputText value="#{tct.profissional.dadosBasico.prefixoNome}" />
 						</p:column>
 					</p:dataTable>

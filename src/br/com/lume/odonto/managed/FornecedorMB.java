@@ -8,6 +8,8 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
@@ -19,6 +21,7 @@ import br.com.lume.fornecedor.FornecedorSingleton;
 //import br.com.lume.odonto.bo.FornecedorBO;
 //import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Fornecedor;
+import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.exception.CpfCnpjDuplicadoException;
 import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -37,6 +40,9 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
    // private FornecedorBO fornecedorBO;
 
   //  private DadosBasicoBO dadosBasicoBO;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaFornecedor;
 
     public FornecedorMB() {
         super(FornecedorSingleton.getInstance().getBo());
@@ -54,10 +60,13 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
             }
         } catch (Exception e) {
             log.error("Erro no setEntity", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
         }
-
     }
+    
+    public void carregarEditar(Fornecedor fornecedor) {
+        setEntity(fornecedor);      
+    }     
 
     @Override
     public void actionPersist(ActionEvent event) {
@@ -67,15 +76,16 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             super.actionPersist(event);
             this.carregaLista();
+            PrimeFaces.current().executeScript("PF('dlg').hide()");
         } catch (TelefoneException te) {
-            this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "",true);
             log.error(OdontoMensagens.getMensagem("erro.valida.telefone"));
         } catch (CpfCnpjDuplicadoException cd) {
-            this.addError(OdontoMensagens.getMensagem("erro.cpf.duplicado"), "");
+            this.addError(OdontoMensagens.getMensagem("erro.cpf.duplicado"), "",true);
             log.error(OdontoMensagens.getMensagem("erro.cpf.duplicado"));
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
         }
     }
 
@@ -84,11 +94,20 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
         if (cep != null && !cep.equals("")) {
             cep = cep.replaceAll("-", "");
             Endereco endereco = Endereco.getEndereco(cep);
-            this.getEntity().getDadosBasico().setBairro(endereco.getBairro());
-            this.getEntity().getDadosBasico().setCidade(endereco.getCidade());
-            this.getEntity().getDadosBasico().setEndereco(endereco.getRua());
-            this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());
+            if(endereco != null) {
+                this.getEntity().getDadosBasico().setBairro(endereco.getBairro());
+                this.getEntity().getDadosBasico().setCidade(endereco.getCidade());
+                this.getEntity().getDadosBasico().setEndereco(endereco.getRua());
+                this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());    
+            } else {
+                addError("Endereço não encontrado!", "");
+            }
+            
         }
+    }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Fornecedores", tabelaFornecedor, type);
     }
 
     public List<UF> getListUF() {
@@ -102,5 +121,13 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
 
     public void setFornecedores(List<Fornecedor> fornecedores) {
         this.fornecedores = fornecedores;
+    }
+
+    public DataTable getTabelaFornecedor() {
+        return tabelaFornecedor;
+    }
+
+    public void setTabelaFornecedor(DataTable tabelaFornecedor) {
+        this.tabelaFornecedor = tabelaFornecedor;
     }
 }

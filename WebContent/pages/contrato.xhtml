@@ -76,14 +76,14 @@
 				value="#{contratoMB.entity.dataInicial}" pattern="dd/MM/yyyy"
 				showWeeksBar="false" locale="#{lumeSecurity.locale}"
 				timeZone="#{lumeSecurity.timeZone}" navigator="true"
-				yearRange="-100:+10" mask="true" />
+				yearRange="-100:+1" mask="true" />
 
 			<p:outputLabel for="dataFinal" value="Data Final : " />
 			<p:calendar id="dataFinal" required="true"
 				value="#{contratoMB.entity.dataFinal}" pattern="dd/MM/yyyy"
 				showWeeksBar="false" locale="#{lumeSecurity.locale}"
 				timeZone="#{lumeSecurity.timeZone}" navigator="true"
-				yearRange="-100:+10" mask="true" />
+				yearRange="-100:+1" mask="true" />
 
 		</p:panelGrid>
 
@@ -111,16 +111,37 @@
 				update=":lume:tabView:pnContrato, :lume:tabView:pnContratoPrincipal, :lume:tabView:dtContrato"
 				process="@this,:lume:tabView:pgDados"
 				disabled="#{contratoMB.entity.id != 0}" styleClass="GreenButton" />
-			<p:commandButton id="new3" icon="White fa fa-file-o" value="Novo"
+			<p:commandButton id="new3" icon="White fa fa-file-o" value="Novo Contrato"
 				actionListener="#{contratoMB.actionNew}"
 				update=":lume:tabView:pnContrato, :lume:tabView:pnContratoPrincipal"
 				tabindex="1" process="@this" />
+
+			<h:panelGroup>
+				<p:splitButton icon="White fa fa fa-file-excel-o"
+					value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+					actionListener="#{contratoMB.exportarTabela('xls')}"
+					ajax="false" process="dtContrato,@this" update="@this"
+					immediate="true"
+					onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+					<p:fileDownload value="#{contratoMB.arquivoDownload}" />
+
+					<p:menuitem value="Exportar tabela para PDF"
+						icon="fa fa fa-file-pdf-o"
+						actionListener="#{contratoMB.exportarTabela('pdf')}"
+						ajax="false" process="dtContrato,@this" immediate="true"
+						onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+						<p:fileDownload value="#{contratoMB.arquivoDownload}" />
+					</p:menuitem>
+				</p:splitButton>
+			</h:panelGroup>
+
 		</p:panelGrid>
 		<div class="EmptyBox20"></div>
 		<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 			id="dtContrato" value="#{contratoMB.entityList}" var="att" rows="7"
 			paginator="true" selection="#{contratoMB.entity}"
-			selectionMode="single" rowKey="#{att}" paginatorPosition="bottom">
+			selectionMode="single" rowKey="#{att}" paginatorPosition="bottom" binding="#{contratoMB.tabelaContrato}">
 			<p:ajax event="rowSelect"
 				update=":lume:tabView:pnContrato,:lume:tabView:pnContratoPrincipal"
 				listener="#{contratoMB.atualizaTela}" />
@@ -132,7 +153,7 @@
 			<p:column
 				filterBy="#{att.profissionalContratante.dadosBasico.prefixoNome}"
 				sortBy="#{att.profissionalContratante.dadosBasico.prefixoNome}"
-				filterMatchMode="contains" headerText="Profissional">
+				filterMatchMode="contains" headerText="Profissional" filterFunction="#{contratoMB.filtroSemAcento}">
 				<h:outputText
 					value="#{att.profissionalContratante.dadosBasico.prefixoNome}" />
 			</p:column>
@@ -147,7 +168,8 @@
 			</p:column>
 			<p:column filterBy="#{att.formaContratacao.nome}"
 				sortBy="#{att.formaContratacao.nome}" filterMatchMode="contains"
-				headerText="Forma de Contratação">
+				headerText="Forma de Contratação"
+				filterFunction="#{contratoMB.filtroSemAcento}">
 				<h:outputText value="#{att.formaContratacao.nome}" />
 			</p:column>
 		</p:dataTable>

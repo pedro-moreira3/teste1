@@ -49,41 +49,89 @@ div.ui-selectoneradio label {
 					<h1>Fila de Atendimento</h1>
 					<p:separator styleClass="SeparatorFull" />
 
-					<p:panelGrid columns="3" layout="grid"
-						styleClass="ui-panelgrid-blank ui-fluid form-group marginTop8">
-						<p:outputPanel style="margin-top: 8px;">
-							<h:outputText value="Dia : " />
-						</p:outputPanel>
-						<ui:remove>
-							<p:selectOneMenu id="filtro" value="#{filaAtendimentoMB.filtro}"
-								rendered="#{filaAtendimentoMB.dia != 7}">
-								<f:selectItem itemValue="CURRENT_DATE" itemLabel="HOJE" />
-								<f:selectItem itemValue="CURRENT_DATE +1" itemLabel="AMANHÃ" />
-								<p:ajax listener="#{filaAtendimentoMB.carregaLista}"
-									process="@this" update="dtAtendimento" />
-							</p:selectOneMenu>
-							<p:selectOneMenu id="filtroSegunda"
-								value="#{filaAtendimentoMB.filtro}"
-								rendered="#{filaAtendimentoMB.dia == 7}">
-								<f:selectItem itemValue="#{null}" itemLabel="HOJE" />
-								<f:selectItem itemValue="CURRENT_DATE +2" itemLabel="SEGUNDA" />
-								<p:ajax listener="#{filaAtendimentoMB.carregaLista}"
-									process="@this" update="dtAtendimento" />
-							</p:selectOneMenu>
-						</ui:remove>
-						<p:calendar value="#{filaAtendimentoMB.dateFilter}"
-							pattern="dd/MM/yyyy" mask="true">
-							<p:ajax event="close"
-								listener="#{filaAtendimentoMB.carregaLista}" process="@this"
-								update=":lume:dtAtendimento" />
-						</p:calendar>
-						<p:commandButton value="Novo Agendamento"
-							icon="White fa fa-book White"
-							oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
-							action="#{agendamentoMB.filaAtendimento(a)}"
-							update="lume:pnAgendamento" process="@this" />
-					</p:panelGrid>
+					<p:fieldset toggleable="false" collapsed="false">
+						<p:panelGrid columns="1" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+							style="border:0px none; background-color:transparent;">
 
+							<p:panelGrid columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group marginTop8">
+
+								<ui:remove>
+									<p:selectOneMenu id="filtro"
+										value="#{filaAtendimentoMB.filtro}"
+										rendered="#{filaAtendimentoMB.dia != 7}">
+										<f:selectItem itemValue="CURRENT_DATE" itemLabel="HOJE" />
+										<f:selectItem itemValue="CURRENT_DATE +1" itemLabel="AMANHÃ" />
+										<p:ajax listener="#{filaAtendimentoMB.carregaLista}"
+											process="@this" update="dtAtendimento" />
+									</p:selectOneMenu>
+									<p:selectOneMenu id="filtroSegunda"
+										value="#{filaAtendimentoMB.filtro}"
+										rendered="#{filaAtendimentoMB.dia == 7}">
+										<f:selectItem itemValue="#{null}" itemLabel="HOJE" />
+										<f:selectItem itemValue="CURRENT_DATE +2" itemLabel="SEGUNDA" />
+										<p:ajax listener="#{filaAtendimentoMB.carregaLista}"
+											process="@this" update="dtAtendimento" />
+									</p:selectOneMenu>
+								</ui:remove>
+
+
+								<h:panelGroup>
+
+									<h:outputText value="Dia:" />
+									<p:calendar value="#{filaAtendimentoMB.dateFilter}"
+										pattern="dd/MM/yyyy" mask="true">
+										<p:ajax event="close"
+											listener="#{filaAtendimentoMB.carregaLista}" process="@this"
+											update=":lume:dtAtendimento" />
+									</p:calendar>
+
+								</h:panelGroup>
+
+							</p:panelGrid>
+
+							<p:panelGrid columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group marginTop8">
+								<h:panelGroup>
+									<p:commandButton value="Novo Agendamento"
+										icon="White fa fa-book White"
+										oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
+										action="#{agendamentoMB.filaAtendimento(a)}"
+										update="lume:pnAgendamento" process="@this" />
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<p:splitButton icon="White fa fa fa-file-excel-o"
+										value="Exportar tabela para Excel"
+										styleClass="GreenSplitButton"
+										actionListener="#{filaAtendimentoMB.exportarTabela('xls')}"
+										ajax="false" process="dtAtendimento,@this" update="@this"
+										immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+										<p:fileDownload value="#{filaAtendimentoMB.arquivoDownload}" />
+
+										<p:menuitem value="Exportar tabela para PDF"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{filaAtendimentoMB.exportarTabela('pdf')}"
+											ajax="false" process="dtAtendimento,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload value="#{filaAtendimentoMB.arquivoDownload}" />
+										</p:menuitem>
+										<p:menuitem value="Exportar tabela para CSV"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{filaAtendimentoMB.exportarTabela('csv')}"
+											ajax="false" process="dtAtendimento,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload value="#{filaAtendimentoMB.arquivoDownload}" />
+										</p:menuitem>
+									</p:splitButton>
+								</h:panelGroup>
+
+							</p:panelGrid>
+						</p:panelGrid>
+					</p:fieldset>
 
 					<p:separator styleClass="SeparatorFull" />
 					<div class="EmptyBox20"></div>
@@ -91,19 +139,26 @@ div.ui-selectoneradio label {
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						id="dtAtendimento" value="#{filaAtendimentoMB.agendamentos}"
 						var="a" rows="15" paginator="true" rowKey="#{a}"
-						paginatorPosition="bottom">
+						paginatorPosition="bottom"
+						binding="#{filaAtendimentoMB.tabelaAtendimento}">
 						<f:facet name="header">Agendamentos</f:facet>
 						<p:column filterBy="#{a.profissional.dadosBasico.nome}"
 							sortBy="#{a.profissional.dadosBasico.nome}"
-							filterMatchMode="contains" headerText="Profissional">
+							filterMatchMode="contains" headerText="Dentista executor"
+							filterFunction="#{filaAtendimentoMB.filtroSemAcento}">
 							<h:outputText value="#{a.profissional.dadosBasico.nome}" />
 						</p:column>
 						<p:column filterBy="#{a.paciente.dadosBasico.nomeStr}"
 							sortBy="#{a.paciente.dadosBasico.nome}"
-							filterMatchMode="contains" headerText="#{dominioMB.cliente}">
-							<h:outputText value="#{a.paciente.dadosBasico.nome}" />
+							filterMatchMode="contains" headerText="#{dominioMB.cliente}"
+							filterFunction="#{filaAtendimentoMB.filtroSemAcento}">
+							<p:commandLink value="#{a.paciente.dadosBasico.nome}"
+								process="@this" title="#{a.paciente.id}"
+								actionListener="#{tabPacienteMB.loadPaciente(a.paciente)}"
+								oncomplete="PF('dlgFichaPaciente').show()"
+								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
 						</p:column>
-						<p:column headerText="Agendar c/ mesmo profissional">
+						<p:column headerText="Agendar c/ mesmo Dentista">
 							<p:commandButton icon="fa fa fa-calendar"
 								oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
 								process="@this" action="#{agendamentoMB.filaAtendimento(a)}"
@@ -111,14 +166,14 @@ div.ui-selectoneradio label {
 						</p:column>
 						<p:column headerText="Whats">
 							<p:button id="whats" icon="White fa fa-whatsapp"
-								onclick="window.open('#{a.whatsURL}');return false;"
-								styleClass="GreenButton" disable="#{a.whatsURL == null}"
-								style="width: 33px !important" />
+								disabled="#{agendamentoMB.getUrlWpp(a) == null}"
+								onclick="window.open('#{agendamentoMB.getUrlWpp(a)}'); return false;"
+								styleClass="GreenButton" style="width: 33px !important" />
 						</p:column>
 						<p:column headerText="Pagamento">
 							<p:button id="pagamento" icon="White fa fa-money"
 								styleClass="OrangeButton"
-								onclick="window.open('pagamento.jsf?id=#{a.paciente.id}');return false;"
+								onclick="window.open('faturaPagto.jsf?id=#{a.paciente.id}');return false;"
 								style="width: 33px !important" />
 						</p:column>
 						<p:column filterBy="#{a.paciente.siglaConvenio}"
@@ -128,7 +183,8 @@ div.ui-selectoneradio label {
 						</p:column>
 						<p:column filterBy="#{a.statusDescricao}"
 							sortBy="#{a.statusDescricao}" filterMatchMode="contains"
-							headerText="Status" width="15%">
+							headerText="Status" width="15%"
+							filterFunction="#{filaAtendimentoMB.filtroSemAcento}">
 							<p:selectOneMenu value="#{a.statusNovo}"
 								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.isDisableFieldsAg(a)}">
 								<p:ajax process="@this"
@@ -137,7 +193,8 @@ div.ui-selectoneradio label {
 								<f:selectItems
 									value="#{filaAtendimentoMB.getStatusAgendamentoUtil()}"
 									var="teste" itemLabel="#{teste.descricao}"
-									itemValue="#{teste.sigla}" itemDisabled="#{(teste.sigla == 'P' ? 'true' : 'false')}" />
+									itemValue="#{teste.sigla}"
+									itemDisabled="#{(teste.sigla == 'P' ? 'true' : 'false')}" />
 							</p:selectOneMenu>
 						</p:column>
 						<p:column filterBy="#{a.auxiliarStr}" sortBy="#{a.auxiliarStr}"
@@ -153,7 +210,8 @@ div.ui-selectoneradio label {
 						</p:column>
 						<p:column filterBy="#{a.cadeira}" sortBy="#{a.cadeira}"
 							filterMatchMode="contains" headerText="Cadeira" width="8%">
-							<p:selectOneMenu id="cadeira" value="#{a.cadeira}" disabled="#{filaAtendimentoMB.isDisableFieldsAg(a)}">
+							<p:selectOneMenu id="cadeira" value="#{a.cadeira}"
+								disabled="#{filaAtendimentoMB.isDisableFieldsAg(a)}">
 								<p:ajax process="@this"
 									listener="#{filaAtendimentoMB.persistAgendamento(a)}"
 									update="@form" />
@@ -173,7 +231,7 @@ div.ui-selectoneradio label {
 								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
 								<p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}"
-									process="@this" update="@form" />
+									process="@this" update=":lume:dtAtendimento" />
 							</p:calendar>
 						</p:column>
 						<p:column filterBy="#{a.iniciouAsStr}"
@@ -184,7 +242,7 @@ div.ui-selectoneradio label {
 								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
 								<p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}"
-									process="@this" update="@form" />
+									process="@this" update=":lume:dtAtendimento" />
 							</p:calendar>
 						</p:column>
 						<p:column filterBy="#{a.finalizouAsStr}"
@@ -195,7 +253,7 @@ div.ui-selectoneradio label {
 								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
 								<p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}"
-									process="@this" update="@form" />
+									process="@this" update=":lume:dtAtendimento" />
 							</p:calendar>
 						</p:column>
 					</p:dataTable>

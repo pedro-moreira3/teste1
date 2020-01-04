@@ -8,6 +8,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -36,6 +37,9 @@ public class ProcedimentoKitMB extends LumeManagedBean<ProcedimentoKit> {
     private Procedimento procedimentoSelecionado;
 
     private boolean procedimentoSemKit;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaProcedimento;
 
     public ProcedimentoKitMB() {
         super(ProcedimentoKitSingleton.getInstance().getBo());
@@ -116,6 +120,10 @@ public class ProcedimentoKitMB extends LumeManagedBean<ProcedimentoKit> {
         this.setEntity(new ProcedimentoKit());
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Kits/Procedimentos", tabelaProcedimento, type);
+    }
+    
     public List<Kit> getKits() {
         return kits;
     }
@@ -146,5 +154,13 @@ public class ProcedimentoKitMB extends LumeManagedBean<ProcedimentoKit> {
 
     public void setProcedimentoSemKit(boolean procedimentoSemKit) {
         this.procedimentoSemKit = procedimentoSemKit;
+    }
+
+    public DataTable getTabelaProcedimento() {
+        return tabelaProcedimento;
+    }
+
+    public void setTabelaProcedimento(DataTable tabelaProcedimento) {
+        this.tabelaProcedimento = tabelaProcedimento;
     }
 }

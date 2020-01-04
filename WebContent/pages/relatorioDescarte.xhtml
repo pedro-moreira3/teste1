@@ -1,0 +1,257 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+    <style>
+    
+    /*AJUSTE DO CAMPO FILTRO POR CONVENIO*/
+body .ui-selectonemenu {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+ui-selectonemenu-label {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
+	margin-top: 2.5px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
+	{
+	margin-top: -12px !important;
+}
+    
+    </style>
+    
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+
+					<h1>Relatório de Descarte</h1>
+                    <div class="SeparatorFull"></div>
+                    <br />
+
+					<p:fieldset collapsed="false" toggleable="false">
+
+						<p:outputPanel id="pnPrincipal" styleClass="BordNone">
+							<p:panelGrid columns="1" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+								style="border:0px none; background-color:transparent;">
+
+								<p:panelGrid columns="3" layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid form-group">
+									<h:panelGroup styleClass="md-combo">
+										<h:outputText for="filtroPeriodo" value="Período de descarte" />
+										<p:selectOneMenu id="filtroPeriodo"
+											value="#{relatorioDescarteMB.filtroPeriodo}">
+
+											<p:ajax process="@this"
+												listener="#{relatorioDescarteMB.actionTrocaDatasDescarte}" />
+
+											<f:selectItem itemValue="" itemLabel="Selecione" />
+											<f:selectItem itemValue="O" itemLabel="Ontem" />
+											<f:selectItem itemValue="H" itemLabel="Hoje" />
+											<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+											<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+											<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+											<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+											<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+										</p:selectOneMenu>
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<h:outputText for="dataInicialDescarte"
+											value="Data de descarte de:" />
+										<p:calendar id="dataInicialDescarte"
+											value="#{relatorioDescarteMB.movimentacaoInicio}"
+											autocomplete="false" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<h:outputText for="dataFinalDescarte"
+											value="Data de descarte até:" />
+										<p:calendar id="dataFinalDescarte"
+											value="#{relatorioDescarteMB.movimentacaoFim}"
+											autocomplete="false" />
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-combo">
+										<h:outputText for="filtroPeriodoCadastro"
+											value="Período de Cadastro" />
+										<p:selectOneMenu id="filtroPeriodoCadastro"
+											value="#{relatorioDescarteMB.filtroPeriodoCadastro}">
+
+											<p:ajax process="@this"
+												listener="#{relatorioDescarteMB.actionTrocaDatasCadastro}" />
+
+											<f:selectItem itemValue="" itemLabel="Selecione" />
+											<f:selectItem itemValue="O" itemLabel="Ontem" />
+											<f:selectItem itemValue="H" itemLabel="Hoje" />
+											<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+											<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+											<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+											<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+											<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+										</p:selectOneMenu>
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<h:outputText for="dataInicialCadastro"
+											value="Data de cadastro de:" />
+										<p:calendar id="dataInicialCadastro"
+											value="#{relatorioDescarteMB.dataInicio}"
+											autocomplete="false" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<h:outputText for="dataFinalCadastro"
+											value="Data de cadastro até:" />
+										<p:calendar id="dataFinalCadastro"
+											value="#{relatorioDescarteMB.dataFim}" autocomplete="false" />
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-combo">
+										<h:outputText for="filtroPeriodoValidade"
+											value="Período de validade" />
+										<p:selectOneMenu id="filtroPeriodoValidade"
+											value="#{relatorioDescarteMB.filtroPeriodoValidade}">
+
+											<p:ajax process="@this"
+												listener="#{relatorioDescarteMB.actionTrocaDatasValidade}" />
+
+											<f:selectItem itemValue="" itemLabel="Selecione" />
+											<f:selectItem itemValue="O" itemLabel="Ontem" />
+											<f:selectItem itemValue="H" itemLabel="Hoje" />
+											<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+											<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+											<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+											<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+											<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+										</p:selectOneMenu>
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<h:outputText for="dataInicialValidade"
+											value="Data de validade de:" />
+										<p:calendar id="dataInicialValidade"
+											value="#{relatorioDescarteMB.validadeInicio}"
+											autocomplete="false" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<h:outputText for="dataFinalValidade"
+											value="Data de validade até:" />
+										<p:calendar id="dataFinalValidade"
+											value="#{relatorioDescarteMB.validadeFinal}"
+											autocomplete="false" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<h:outputText for="filtroProfissionalDescarte"
+											value="Descarte realizado por:" />
+										<p:autoComplete id="filtroProfissionalDescarte"
+											value="#{relatorioDescarteMB.profissionalDescarte}"
+											completeMethod="#{relatorioDescarteMB.sugestoesProfissionais}"
+											var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
+											itemValue="#{p}" converter="profissional"
+											forceSelection="true" scrollHeight="400" queryDelay="1000"
+											dropdown="true">
+											
+											<p:ajax event="itemSelect" process="@this" />
+										</p:autoComplete>
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<h:outputText for="filtroItem"
+											value="Item:" />
+										<p:autoComplete id="filtroItem"
+											value="#{relatorioDescarteMB.item}"
+											completeMethod="#{relatorioDescarteMB.sugestoesItens}"
+											var="i" itemLabel="#{i.descricao}"
+											itemValue="#{i}" converter="item"
+											forceSelection="true" scrollHeight="400" queryDelay="1000"
+											dropdown="true">
+											
+											<p:ajax event="itemSelect" process="@this" />
+										</p:autoComplete>
+									</h:panelGroup>
+								</p:panelGrid>
+
+							</p:panelGrid>
+						</p:outputPanel>
+
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<h:panelGroup>
+								<p:commandButton id="pesquisar" value="Pesquisar"
+									oncomplete="#{relatorioDescarteMB.pesquisar()}">
+									<p:ajax process="@this" update=":lume:dtDescartes" />
+								</p:commandButton>
+							</h:panelGroup>
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{relatorioDescarteMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload value="#{relatorioDescarteMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioDescarteMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload value="#{relatorioDescarteMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioDescarteMB.exportarTabela('csv')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload value="#{relatorioDescarteMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
+						</p:panelGrid>
+					</p:fieldset>
+
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="Nenhum registro encontrado" id="dtDescartes" value="#{relatorioDescarteMB.materiais}"
+                    			var="material" rows="10" paginator="true" rowKey="#{material}" widgetVar="dtDescartes"
+                    			paginatorPosition="bottom" binding="#{relatorioDescarteMB.tabelaDescartes}">
+                        
+                        <f:facet name="header">Descartes</f:facet>
+                        
+                        <p:column filterBy="#{material.item.descricaoLimpa}" sortBy="#{material.item.descricao}" filterMatchMode="contains" headerText="Item"
+                        		filterFunction="#{relatorioDescarteMB.filtroSemAcento}">
+                            <h:outputText value="#{material.item.descricao}" />
+                        </p:column>                       
+                        
+                        <p:column filterBy="#{material.estoque.quantidade.intValue()}" sortBy="#{material.estoque.quantidade.intValue()}" filterMatchMode="contains" headerText="Quantidade">
+                            <h:outputText value="#{material.estoque.quantidade.intValue()}" />
+                        </p:column>
+                        
+                        <p:column filterBy="#{material.dataCadastroStr}" sortBy="#{material.dataCadastro}" filterMatchMode="contains" headerText="Data">
+                            <h:outputText value="#{material.dataCadastroStr}" />
+                        </p:column>
+                        
+                        <p:column filterBy="#{material.justificativa}" sortBy="#{material.justificativa}" filterMatchMode="contains" headerText="Justificativa"
+                        		filterFunction="#{relatorioDescarteMB.filtroSemAcento}">
+                            <h:outputText value="#{material.justificativa}" />
+                        </p:column>
+                        
+                    </p:dataTable>
+
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

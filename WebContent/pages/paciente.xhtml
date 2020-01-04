@@ -2,146 +2,237 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
-	xmlns:pe="http://primefaces.org/ui/extensions">
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
 	<ui:define name="content">
 		<style>
 .ui-autocomplete:not (.fixaAbaixo ) input {
 	height: 100%;
 }
+
+.remove12ColPaddingSide div.ui-g-12.ui-lg-12 {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.dialogDados .ui-dialog-content {
+	overflow: hidden;
+}
 </style>
-		<h:inputHidden value="#{tabPacienteMB.activeIndex}" />
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
-				<div class="card card-w-title pacienteChoice">
-					<p:panelGrid columns="1" layout="grid"
-						styleClass="ui-panelgrid-blank form-group ui-fluid">
-						<p:outputLabel value="Paciente: " />
-						<h:panelGroup style="display: flex">
-							<p:autoComplete dropdown="true" queryDelay="1000"
-								style="margin-right: 10px;" value="#{pacienteMB.entity}"
-								minQueryLength="3" scrollHeight="400"
-								completeMethod="#{pacienteMB.geraSugestoesPaciente}" var="p"
-								itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-								converter="paciente" forceSelection="true" id="pacienteChoice">
+				<div class="card card-w-title">
 
-								<p:column headerText="Nome">
-									<h:outputText value="#{p.dadosBasico.nome}" />
-								</p:column>
-								<p:column headerText="Celular">
-									<h:outputText value="#{p.dadosBasico.celular}" />
-								</p:column>
-								<p:column headerText="Nome da Mãe">
-									<h:outputText value="#{p.nomeMae}" />
-								</p:column>
+					<p:fieldset legend="Filtros" collapsed="true" toggleable="true">
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-6, ui-g-6"
+							styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+							<h:panelGroup styleClass="md-combo">
+								<p:outputLabel for="status" value="Status dos Pacientes: " />
+								<p:selectOneMenu id="status" value="#{pacienteMB.filtroStatus}">
+									<f:selectItem itemLabel="Ativos" itemValue="A" />
+									<f:selectItem itemLabel="Inativos" itemValue="I" />
+									<f:selectItem itemLabel="Todos" itemValue="T" />
+									<p:ajax listener="#{pacienteMB.geraLista}" process="@this"
+										update="dtPrincipalPacientes" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:fieldset>
 
-								<p:ajax event="itemSelect" listener="#{pacienteMB.validaIdade}"
-									update="@all" />
-								<p:ajax event="itemSelect"
-									listener="#{pacienteMB.carregarAgendamentos}" />
-								<p:ajax event="itemSelect" listener="#{exameMB.limpaExames}" />
-								<p:ajax event="itemSelect"
-									listener="#{planoTratamentoMB.carregarDados}" />
-								<p:ajax event="itemSelect"
-									listener="#{evolucaoMB.limpaEvolucoes}" />
-								<p:ajax event="itemSelect"
-									listener="#{periogramaMB.carregarTela}" />
-								<p:ajax event="itemSelect"
-									listener="#{ortodontiaMB.carregarTela}" />
-								<p:ajax event="itemSelect"
-									listener="#{planoTratamentoMB.handleSelectPaciente}"
-									update=":lume:tabView:pnPlanoTratamento,:lume:tabView:dtPlanoTratamento" />
-								<p:ajax event="itemSelect" update=":lume"
-									oncomplete="$('div#lume\\:tabView\\:pnAtestado').hide();carregarListaOdontograma();window.scrollTo(0,0);"
-									listener="#{odontogramaMB.atualizaOdontograma}" />
-							</p:autoComplete>
+					<p:panelGrid columns="4" layout="grid" id="botoesLong"
+						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+						<p:commandButton id="new" icon="ui-icon-add"
+							styleClass="BotaoCrud" actionListener="#{pacienteMB.actionNew}"
+							update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
+							value="Novo Paciente" oncomplete="PF('dlgFichaPaciente').show()"
+							process="@this" />
 
-							<p:message styleClass="msg" for="pacienteChoice" />
-							<p:commandButton id="pesquisar" icon="White fa fa-eraser"
-								onstart="PF('loading').show();"
-								oncomplete="PF('loading').hide()"
-								actionListener="#{pacienteMB.actionNew}" update=":lume"
-								process="@this" />
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{pacienteMB.exportarTabelaPaciente('xls')}"
+								ajax="false" process="dtPrincipalPacientes,@this" update="@this"
+								immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
+								<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
 
-							<p:remoteCommand name="teste2" update=":lume"
-								actionListener="#{pacienteMB.actionNew}" />
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{pacienteMB.exportarTabelaPaciente('pdf')}"
+									ajax="false" process="dtPrincipalPacientes,@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+								</p:menuitem>
+								<p:menuitem value="Exportar tabela para CSV"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{pacienteMB.exportarTabelaPaciente('csv')}"
+									ajax="false" process="dtPrincipalPacientes,@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
+						</h:panelGroup>
+
+					</p:panelGrid>
+					<h:panelGroup id="botoes" styleClass="tableButtons">
+						<p:commandButton icon="fa fa-file-excel-o"
+							process="dtPrincipalPacientes"
+							styleClass="BotaoCrud Exportar green-btn" ajax="false"
+							id="btExporExcel" immediate="true">
+							<p:dataExporter type="xls" target="dtPrincipalPacientes"
+								fileName="pacientes" pageOnly="false" encoding="ISO-8859-1" />
+							<p:tooltip value="Exportar tabela para Excel" for="btExporExcel" />
+						</p:commandButton>
+					</h:panelGroup>
+
+					<p:focus context=":lume:hiddenFocus" />
+					<p:outputLabel id="hiddenFocus" style="display:hidden" />
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						id="dtPrincipalPacientes" value="#{pacienteMB.entityList}"
+						var="paciente" rows="7" paginator="true" rowKey="#{paciente}"
+						paginatorPosition="bottom" widgetVar="dtPrincipalPacientes"
+						binding="#{pacienteMB.tabelaPaciente}">
+
+						<f:facet name="header">#{dominioMB.cliente}
+							<h:panelGroup styleClass="pesquisa">
+								<p:outputPanel>
+									<h:outputText value="Pesquisar Paciente" />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('dtPrincipalPacientes').filter()"
+										style="width:150px" />
+								</p:outputPanel>
+							</h:panelGroup>
+						</f:facet>
+
+						<p:column headerText="Ações" width="100">
+							<h:panelGroup rendered="#{paciente.status == 'A'}">
+								<p:commandButton id="persistInativar"
+									icon="White fa fa-chain-broken" title="Inativar"
+									actionListener="#{pacienteMB.actionInativar(paciente)}"
+									update=":lume:dtPrincipalPacientes" process="@this"
+									styleClass="NavyButton" />
+							</h:panelGroup>
+							<h:panelGroup rendered="#{paciente.status == 'I'}">
+								<p:commandButton id="persistAtivar"
+									icon="White fa fa-chain White" title="Ativar"
+									actionListener="#{pacienteMB.actionAtivar(paciente)}"
+									update=":lume:dtPrincipalPacientes" process="@this"
+									styleClass="NavyButton" />
+							</h:panelGroup>
+						</p:column>
+						<p:column sortBy="#{paciente.dadosBasico.nome}"
+							filterBy="#{paciente.dadosBasico.nomeStr}"
+							filterMatchMode="contains" headerText="Nome"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
+							<p:commandLink value="#{paciente.dadosBasico.nome}"
+								process="@this" title="#{paciente.id}"
+								actionListener="#{tabPacienteMB.loadPaciente(paciente)}"
+								oncomplete="PF('dlgFichaPaciente').show()"
+								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+						</p:column>
+						<p:column sortBy="#{paciente.dadosBasico.responsavel}"
+							filterBy="#{paciente.dadosBasico.responsavel}"
+							filterMatchMode="contains" headerText="Responsável"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
+							<h:outputText value="#{paciente.dadosBasico.responsavel}" />
+						</p:column>
+						<p:column sortBy="#{paciente.dadosBasico.dataNascimentoStrOrd}"
+							filterBy="#{paciente.dadosBasico.dataNascimentoStr}"
+							filterMatchMode="contains" headerText="Data de Nascimento">
+							<h:outputText value="#{paciente.dadosBasico.dataNascimentoStr}" />
+						</p:column>
+						<p:column sortBy="#{paciente.convenio.dadosBasico.nome}"
+							filterBy="#{paciente.convenio.dadosBasico.nome}"
+							filterMatchMode="contains" headerText="Convênio"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
+							<h:outputText value="#{paciente.convenio.dadosBasico.nome}" />
+						</p:column>
+						<p:column sortBy="#{paciente.convenio.observacaoConvenio}"
+							filterBy="#{paciente.convenio.observacaoConvenio}"
+							rendered="#{false}" filterMatchMode="contains"
+							headerText="Observação convênio"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
+							<h:outputText value="#{paciente.convenio.observacaoConvenio}" />
+						</p:column>
+						<p:column sortBy="#{paciente.dadosBasico.celular}"
+							filterBy="#{paciente.dadosBasico.celular}"
+							filterMatchMode="contains" headerText="Telefone Celular"
+							rendered="#{pacienteMB.visivelDadosPaciente and false}">
+							<h:panelGroup style="display: flex !important;">
+								<div style="line-height: 32px; width: calc(100% - 32px);">
+									<h:outputText value="#{paciente.dadosBasico.celular}" />
+								</div>
+								<p:button icon="White fa fa-whatsapp" style="right: 0"
+									disabled="#{paciente.wppURL == null}"
+									onclick="window.open('#{paciente.wppURL}'); return false;"
+									styleClass="GreenButton" />
+							</h:panelGroup>
+						</p:column>
+					</p:dataTable>
+
+					<p:panelGrid columns="4" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+						<h:panelGroup rendered="#{pacienteMB.admin}">
+							<p:commandButton value="Carregar Pacientes" process="@this"
+								icon="White fa fa-upload" styleClass="OrangeButton"
+								oncomplete="PF('dlgCarregarPacientes').show();" />
 						</h:panelGroup>
 					</p:panelGrid>
 				</div>
 			</div>
 		</div>
-		<div class="ui-g ui-fluid">
-			<div class="ui-g-12 ui-lg-12">
-				<div class="card card-w-title">
-					<p:tabView id="tabView" style="padding: 0 15px 15px 15px;"
-						onTabChange="fechaMenu();"
-						activeIndex="#{tabPacienteMB.activeIndex}">
 
-						<p:ajax event="tabChange" listener="#{tabPacienteMB.onTabChange}"
-							update="@form" />
+		<ui:include src="pacienteFicha.xhtml" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this"
+			update=":lume:dtPrincipalPacientes" />
 
-						<p:tab id="tab1" title="Dados Cadastrais">
-							<ui:include src="dadosPaciente.xhtml" />
-						</p:tab>
-
-						<p:tab id="tab2" title="Anamnese"
-							disabled="#{pacienteMB.entity.id == null}">
-							<ui:include src="anamnese.xhtml" />
-						</p:tab>
-
-						<p:tab id="tab3" title="Odontograma"
-							disabled="#{pacienteMB.entity.id == null}">
-							<ui:include src="odontograma.xhtml" />
-						</p:tab>
-
-						<p:tab id="tab9" title="Plano Ortodôntico"
-							disabled="#{pacienteMB.entity.id == null}">
-							<ui:include src="ortodontia.xhtml" />
-						</p:tab>
-
-						<p:tab id="tab8" title="Plano de Tratamento"
-							disabled="#{pacienteMB.entity.id == null}">
-							<ui:include src="planoTratamento.xhtml" />
-						</p:tab>
-
-						<p:tab id="tab7" title="Periograma"
-							disabled="#{pacienteMB.entity.id == null}">
-							<ui:include src="periograma.xhtml" />
-						</p:tab>
-
-						<p:tab id="tab5" title="Evolução"
-							disabled="#{pacienteMB.entity.id == null}">
-							<ui:include src="evolucao.xhtml" />
-						</p:tab>
-
-						<p:tab id="tab6" title="Exames"
-							disabled="#{pacienteMB.entity.id == null}">
-							<ui:include src="exame.xhtml" />
-						</p:tab>
-
-						<p:tab id="tab10" title="Frequência"
-							disabled="#{pacienteMB.entity.id == null}">
-							<ui:include src="historicoagendamentos.xhtml" />
-						</p:tab>
-
-					</p:tabView>
-					<p:dialog widgetVar="eventDialog" header="Descrição"
-						showEffect="fade" hideEffect="fade" modal="true" responsive="true"
-						position="bottom">
-						<pe:ckEditor value="#{evolucaoMB.entity.descricao}" id="descricao"
-							height="480" />
-						<p:panel styleClass="lumeButton">
-							<p:commandButton id="persistEvolucao" icon="White fa fa-save"
-								value="Salvar" actionListener="#{evolucaoMB.actionPersist}"
-								process="@this,descricao" oncomplete="PF('eventDialog').hide()"
-								update=":lume:tabView:dtEvolucao" />
-						</p:panel>
-					</p:dialog>
+		<p:dialog id="dlgCarregarPacientes" header="Carregar Pacientes"
+			widgetVar="dlgCarregarPacientes" responsive="true" modal="true"
+			width="800" appendTo=":lume">
+			<h:panelGroup id="pnCarregarPacientes">
+				<div class="Container100 Responsive100 NoIndent">
+					<div class="Container100 NoPadding">
+						<div class="Container100 Responsive100">
+							<div style="font-weight: bold;">Leiaute :</div>
+							<br />
+							nome;celular;dataNascimento[dd/MM/AAAA];email;cpf;rg;cep;endereco;numero[numérico];bairro;uf[ex:
+							PR];telefone;sexo[M/F];cria usuário?[S/N];
+						</div>
+						<div class="Container100 Responsive100">
+							<p:fileUpload fileUploadListener="#{pacienteMB.upload}"
+								multiple="false" cancelLabel="Cancelar" uploadLabel="Carregar"
+								mode="advanced" dragDropSupport="true" sizeLimit="500000000"
+								label="Anexar"
+								invalidFileMessage="Arquivo inválido para processamento."
+								update=":lume:pnLogCarregarPacientes,:lume:dtPrincipalPacientes"
+								onstart="PF('loading').show();"
+								oncomplete="PF('loading').hide();"
+								allowTypes="/(\.|\/)(csv|CSV|txt|TXT)$/" />
+						</div>
+						<div class="SeparatorFull"></div>
+						<div class="Container100 Responsive100">
+							<h:panelGroup id="pnLogCarregarPacientes">
+								<p:dataList value="#{pacienteMB.errosCarregarPaciente}" var="e">
+									<f:facet name="header">
+                                		Erros
+                            		</f:facet>
+                            		#{e}
+                        		</p:dataList>
+							</h:panelGroup>
+						</div>
+					</div>
+					<div class="SeparatorFull"></div>
+					<div class="Container50 Responsive100">
+						<p:commandButton icon="White fa fa-close" value="Fechar"
+							process="@this" onclick="PF('dlgCarregarPacientes').hide()"
+							styleClass="RedButton" />
+					</div>
 				</div>
-			</div>
-		</div>
-
+			</h:panelGroup>
+		</p:dialog>
 
 	</ui:define>
 </ui:composition>

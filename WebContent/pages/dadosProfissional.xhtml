@@ -150,7 +150,7 @@
 						pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
 						locale="#{lumeSecurity.locale}"
 						timeZone="#{lumeSecurity.timeZone}" navigator="true"
-						yearRange="-100:+10" maxdate="#{odontoMB.sysdate}" class="Wid50" />
+						yearRange="-100:+1" maxdate="#{odontoMB.sysdate}" class="Wid50" />
 
 					<p:outputLabel for="sexo" value="Sexo :" rendered="true" />
 					<p:selectOneRadio id="sexo" required="false"
@@ -305,6 +305,9 @@
 
 		<p:panelGrid columns="4" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid">
+			<p:commandButton id="new" icon="White fa fa-file-o" value="Novo Profissional"
+				actionListener="#{profissionalMB.actionNew}" update=":lume:tabView"
+				immediate="true" tabindex="1" />			
 			<p:commandButton id="persist" icon="White fa fa-save" value="Salvar"
 				actionListener="#{profissionalMB.actionPersist}"
 				update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal"
@@ -315,9 +318,6 @@
 				update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal"
 				process="@this" disabled="#{profissionalMB.desabilitaExcluir}"
 				styleClass="RedButton" />
-			<p:commandButton id="new" icon="White fa fa-file-o" value="Novo"
-				actionListener="#{profissionalMB.actionNew}" update=":lume:tabView"
-				immediate="true" tabindex="1" />
 			<p:commandButton id="reenviarSenha" icon="White fa fa-lock"
 				value="Reenviar Senha"
 				actionListener="#{profissionalMB.actionReenviarSenha}"
@@ -330,6 +330,32 @@
 					update=":lume:tabView:pnPrincipal,:lume:tabView:dtPrincipal"
 					process="@this" disabled="#{profissionalMB.entity.id == null}"
 					styleClass="NavyButton" />
+			</h:panelGroup>
+			<h:panelGroup>
+				<p:splitButton icon="White fa fa fa-file-excel-o"
+					value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+					actionListener="#{profissionalMB.exportarTabela('xls')}"
+					ajax="false" process="dtPrincipal,@this" update="@this"
+					immediate="true"
+					onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+					<p:fileDownload value="#{profissionalMB.arquivoDownload}" />
+
+					<p:menuitem value="Exportar tabela para PDF"
+						icon="fa fa fa-file-pdf-o"
+						actionListener="#{profissionalMB.exportarTabela('pdf')}"
+						ajax="false" process="dtPrincipal,@this" immediate="true"
+						onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+						<p:fileDownload value="#{profissionalMB.arquivoDownload}" />
+					</p:menuitem>
+					<p:menuitem value="Exportar tabela para CSV"
+						icon="fa fa fa-file-pdf-o"
+						actionListener="#{profissionalMB.exportarTabela('csv')}"
+						ajax="false" process="dtPrincipal,@this" immediate="true"
+						onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+						<p:fileDownload value="#{profissionalMB.arquivoDownload}" />
+					</p:menuitem>
+				</p:splitButton>
 			</h:panelGroup>
 			<h:panelGroup rendered="#{profissionalMB.entity.status=='I'}">
 				<p:commandButton id="ativar" icon="White fa fa-chain"
@@ -346,7 +372,7 @@
 		id="dtPrincipal" value="#{profissionalMB.profissionais}"
 		var="profissional" rows="7" paginator="true"
 		selection="#{profissionalMB.entity}" selectionMode="single"
-		rowKey="#{profissional}" paginatorPosition="bottom">
+		rowKey="#{profissional}" paginatorPosition="bottom" binding="#{profissionalMB.tabelaProfissional}">
 		<p:ajax event="rowSelect" update=":lume:tabView"
 			listener="#{profissionalMB.carregaTela}" />
 		<p:ajax event="rowSelect" update=":lume:tabView"
@@ -354,17 +380,20 @@
 		<f:facet name="header">Profissional</f:facet>
 		<p:column filterBy="#{profissional.dadosBasico.nomeLimpo}"
 			filterMatchMode="contains" headerText="Nome"
-			sortBy="#{profissional.dadosBasico.nomeLimpo}">
+			sortBy="#{profissional.dadosBasico.nomeLimpo}"
+			filterFunction="#{profissionalMB.filtroSemAcento}">
 			<h:outputText value="#{profissional.dadosBasico.prefixoNome}"
 				title="#{profissional.id}" />
 		</p:column>
 		<p:column filterBy="#{profissional.perfil}" filterMatchMode="contains"
-			headerText="Perfil" sortBy="#{profissional.perfil}">
+			headerText="Perfil" sortBy="#{profissional.perfil}"
+			filterFunction="#{profissionalMB.filtroSemAcento}">
 			<h:outputText value="#{profissional.perfil}" />
 		</p:column>
 		<p:column filterBy="#{profissional.dadosBasico.email}"
 			filterMatchMode="contains" headerText="E-mail"
-			sortBy="#{profissional.dadosBasico.email}">
+			sortBy="#{profissional.dadosBasico.email}"
+			filterFunction="#{profissionalMB.filtroSemAcento}">
 			<h:outputText value="#{profissional.dadosBasico.email}" />
 		</p:column>
 		<p:column filterBy="#{profissional.dadosBasico.dataNascimentoStr}"

@@ -85,7 +85,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     private List<PlanoTratamentoProcedimento> procedimentosDente;
 
-    private Procedimento procedimentoSelecionado;  
+    private Procedimento procedimentoSelecionado;
 
     private PlanoTratamento planoTratamento;
 
@@ -109,9 +109,11 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos;
 
+    private boolean novoPtDialogAberto = false;
+
     public OdontogramaMB() {
         super(OdontogramaSingleton.getInstance().getBo());
-    
+
         this.setClazz(Odontograma.class);
         try {
             carregarStatusDente();
@@ -180,6 +182,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
     public void actionNewPT() {
         planoTratamento = new PlanoTratamento(getEntity());
         planoTratamento.setBconvenio(getPaciente().getConvenio() != null);
+        abreNovoPtDialog();
     }
 
     public void enableRegioes(boolean enable) {
@@ -381,7 +384,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
         try {
             if (planoTratamento != null) {
 
-                PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().carregaProcedimento(planoTratamento, procedimentoSelecionado, getPaciente());
+                PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().carregaProcedimento(planoTratamento, procedimentoSelecionado, getPaciente());
                 if (enableRegioes) {
                     ptp.setRegiao(regiaoSelecionada);
                 } else {
@@ -417,6 +420,9 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
             PlanoTratamentoSingleton.getInstance().getBo().persist(planoTratamento);
             actionCarregarPTOdontograma();
             carregarOdontogramas();
+
+            PrimeFaces.current().executeScript("PF('dlgPt').hide()");
+            fechaNovoPtDialog();
         } catch (Exception e) {
             e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -443,6 +449,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
             setEntity(null);
             actionSelecionarOdontograma();
             carregarOdontogramas();
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
         } catch (Exception e) {
             e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
@@ -492,6 +499,8 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
             if (odontograma == null || odontograma.getId() == 0) {
                 odontograma = new Odontograma(Calendar.getInstance().getTime(), this.getPaciente(), observacoes);
+            } else {
+                odontograma.setObservacoes(observacoes);
             }
             OdontogramaSingleton.getInstance().getBo().persist(odontograma);
             setEntity(odontograma);
@@ -586,7 +595,6 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
     }
 
     public void atualizaOdontograma() {
-        JSFHelper.getSession().setAttribute("reportBytes", null);
         this.getOdontogramas();
         setEntity(null);
         observacoes = "";
@@ -820,6 +828,31 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
 
     public void setPlanoTratamentoProcedimentos(List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos) {
         this.planoTratamentoProcedimentos = planoTratamentoProcedimentos;
+    }
+
+    public String getHeaderProcedimentoEdit() {
+        String result;
+        if (enableRegioes)
+            result = "Procedimentos p/ Região";
+        else if (denteSelecionado != null && denteSelecionado.getDescricao() != null && !denteSelecionado.getDescricao().isEmpty())
+            result = "Procedimentos do Dente " + denteSelecionado.getDescricao().trim();
+        else
+            result = "Procedimentos de Dente";
+        if (pacienteMB != null && pacienteMB.getEntity() != null && pacienteMB.getEntity().getDadosBasico() != null && pacienteMB.getEntity().getDadosBasico().getNome() != null && !pacienteMB.getEntity().getDadosBasico().getNome().trim().isEmpty())
+            result = "Odontograma do Paciente " + pacienteMB.getEntity().getDadosBasico().getNome().trim() + (result != null && !result.trim().isEmpty() ? " | " + result : "");
+        return result;
+    }
+
+    public boolean isNovoPtDialogAberto() {
+        return novoPtDialogAberto;
+    }
+
+    public void abreNovoPtDialog() {
+        this.novoPtDialogAberto = true;
+    }
+
+    public void fechaNovoPtDialog() {
+        this.novoPtDialogAberto = true;
     }
 
 }

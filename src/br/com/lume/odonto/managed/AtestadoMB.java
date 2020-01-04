@@ -11,6 +11,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
 
 import br.com.lume.atestado.AtestadoSingleton;
@@ -73,6 +74,9 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
  //   private ProfissionalBO profissionalBO;
 
     private Profissional profissionalLogado;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaAtestado;
 
     public AtestadoMB() {
         super(AtestadoSingleton.getInstance().getBo());
@@ -189,6 +193,10 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
         // documento = documentoBO.replacePacienteTitular(documento, paciente);
         documento = documento.replaceAll("span", "div");
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Atestados", tabelaAtestado, type);
+    }
 
     public String getDocumento() {
         return documento;
@@ -288,5 +296,13 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
 
     public void setLiberaBotao(boolean liberaBotao) {
         this.liberaBotao = liberaBotao;
+    }
+
+    public DataTable getTabelaAtestado() {
+        return tabelaAtestado;
+    }
+
+    public void setTabelaAtestado(DataTable tabelaAtestado) {
+        this.tabelaAtestado = tabelaAtestado;
     }
 }

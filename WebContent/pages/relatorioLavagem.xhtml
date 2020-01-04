@@ -9,107 +9,205 @@
 
 						<h1>Relatório de Lavagem</h1>
 						<div class="SeparatorFull"></div>
-
-						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-							style="border:0px none; background-color:transparent;">
-
-							<p:outputLabel for="inicio" value="Inicio : " />
-							<p:calendar id="inicio" value="#{relatorioLavagemMB.inicio}" pattern="dd/MM/yyyy" mask="true" />
-
-							<p:outputLabel for="fim" value="Fim : " />
-							<p:calendar id="fim" value="#{relatorioLavagemMB.fim}" pattern="dd/MM/yyyy" mask="true" />
-
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodo"
+									value="Período do pedido de lavagem:" />
+								<p:selectOneMenu id="filtroPeriodo"
+									value="#{relatorioLavagemMB.filtroPeriodo}">
+									<p:ajax process="@this" update=":lume:inicio,:lume:fim"
+										listener="#{relatorioLavagemMB.actionTrocaDatasCriacao}" />
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="O" itemLabel="Ontem" />
+									<f:selectItem itemValue="H" itemLabel="Hoje" />
+									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="inicio" value="Data do pedido de:" />
+								<p:calendar id="inicio"
+									value="#{relatorioLavagemMB.inicio}" />
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="fim" value="Data do pedido até:" />
+								<p:calendar id="fim" value="#{relatorioLavagemMB.fim}" />
+							</h:panelGroup>
 						</p:panelGrid>
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodoFinalizacao"
+									value="Período de devolução de lavagem:" />
+								<p:selectOneMenu id="filtroPeriodoFinalizacao"
+									value="#{relatorioLavagemMB.filtroPeriodoFinalizacao}">
+									<p:ajax process="@this" update=":lume:inicioFinalizacao,:lume:fimFinalizacao"
+										listener="#{relatorioLavagemMB.actionTrocaDatasFinal}" />
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="O" itemLabel="Ontem" />
+									<f:selectItem itemValue="H" itemLabel="Hoje" />
+									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="inicioFinalizacao"
+									value="Data de devolução de:" />
+								<p:calendar id="inicioFinalizacao"
+									value="#{relatorioLavagemMB.inicioFinalizacao}" />
+							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="fimFinalizacao"
+									value="Data de devolução até:" />
+								<p:calendar id="fimFinalizacao"
+									value="#{relatorioLavagemMB.fimFinalizacao}" />
+							</h:panelGroup>
+						</p:panelGrid>						
+						<ui:remove>
+							<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;">
+	
+								<p:outputLabel for="inicio" value="Inicio : " />
+								<p:calendar id="inicio" value="#{relatorioLavagemMB.inicio}" pattern="dd/MM/yyyy" mask="true" />
+	
+								<p:outputLabel for="fim" value="Fim : " />
+								<p:calendar id="fim" value="#{relatorioLavagemMB.fim}" pattern="dd/MM/yyyy" mask="true" />
+	
+							</p:panelGrid>
+						</ui:remove>
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioLavagemMB.filtra}"
 								update="dtPrincipal,pnPrincipal" process="@this,pnPrincipal,inicio,fim" styleClass="OrangeButton" />
-							<p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
-								<p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="RelatorioLavagem" />
-							</p:commandButton>
 							<p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioLavagemMB.actionNew}"
 								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1" />
+							
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{relatorioLavagemMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{relatorioLavagemMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioLavagemMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioLavagemMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioLavagemMB.exportarTabela('csv')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioLavagemMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
 						</p:panelGrid>
 						<div class="EmptyBox20"></div>
 
 						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" selection="#{relatorioLavagemMB.entity}" selectionMode="single"
 							value="#{relatorioLavagemMB.lavagens}" var="lavagemSolicitada" rows="10" paginator="true" rowKey="#{lavagemSolicitada}"
-							paginatorPosition="bottom">
+							paginatorPosition="bottom" binding="#{relatorioLavagemMB.tabelaRelatorio}">
 							<f:facet name="header">Lavagens</f:facet>
 							<p:ajax event="rowSelect" listener="#{relatorioLavagemMB.mostraItens}" update=":lume:dtItens" process="@this" />
-							<p:column filterBy="#{lavagemSolicitada.descricao}" sortBy="#{lavagemSolicitada.descricao}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Descrição" />
-								</f:facet>
+							<p:column filterBy="#{lavagemSolicitada.descricao}" sortBy="#{lavagemSolicitada.descricao}" filterMatchMode="contains" headerText="Descrição"
+									filterFunction="#{relatorioLavagemMB.filtroSemAcento}">
 								<h:outputText value="#{lavagemSolicitada.descricao}" title="#{lavagemSolicitada.id}"/>
 							</p:column>
 							<p:column filterBy="#{lavagemSolicitada.solicitante.dadosBasico.prefixoNome}" sortBy="#{lavagemSolicitada.solicitante.dadosBasico.prefixoNome}"
-								filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Solicitante" />
-								</f:facet>
+								filterMatchMode="contains" headerText="Solicitante" filterFunction="#{relatorioLavagemMB.filtroSemAcento}">
 								<h:outputText value="#{lavagemSolicitada.solicitante.dadosBasico.prefixoNome}" />
 							</p:column>
 							<p:column filterBy="#{lavagemSolicitada.profissional.dadosBasico.prefixoNome}"
-								sortBy="#{lavagemSolicitada.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Esterilizador" />
-								</f:facet>
+								sortBy="#{lavagemSolicitada.profissional.dadosBasico.prefixoNome}" filterMatchMode="contains" headerText="Esterilizador"
+								filterFunction="#{relatorioLavagemMB.filtroSemAcento}">
 								<h:outputText value="#{lavagemSolicitada.profissional.dadosBasico.prefixoNome}" />
 							</p:column>
-							<p:column filterBy="#{lavagemSolicitada.status}" sortBy="#{lavagemSolicitada.status}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Status" />
-								</f:facet>
+							<p:column filterBy="#{lavagemSolicitada.status}" sortBy="#{lavagemSolicitada.status}" filterMatchMode="contains" headerText="Status"
+									filterFunction="#{relatorioLavagemMB.filtroSemAcento}">
 								<h:outputText value="#{lavagemSolicitada.status}" />
 							</p:column>
-							<p:column filterBy="#{lavagemSolicitada.dataDevolucaoStr}" sortBy="#{lavagemSolicitada.dataDevolucaoStr}"
-								filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Data de Devolução" />
-								</f:facet>
-								<h:outputText value="#{lavagemSolicitada.dataDevolucaoStr}" />
-							</p:column>
-							<p:column filterBy="#{lavagemSolicitada.dataStr}" sortBy="#{lavagemSolicitada.dataStrOrd}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Data do Pedido" />
-								</f:facet>
+							<p:column filterBy="#{lavagemSolicitada.dataStr}" sortBy="#{lavagemSolicitada.dataStrOrd}" filterMatchMode="contains" headerText="Data do pedido">
 								<h:outputText value="#{lavagemSolicitada.dataStr}" />
 							</p:column>
-							<p:column filterBy="#{lavagemSolicitada.dataValidadeStr}" sortBy="#{lavagemSolicitada.dataValidade}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Data de Validade" />
-								</f:facet>
+							<p:column filterBy="#{lavagemSolicitada.dataDevolucaoStr}" sortBy="#{lavagemSolicitada.dataDevolucaoStr}"
+								filterMatchMode="contains" headerText="Data de devolução">
+								<h:outputText value="#{lavagemSolicitada.dataDevolucaoStr}" />
+							</p:column>							
+							<p:column filterBy="#{lavagemSolicitada.dataValidadeStr}" sortBy="#{lavagemSolicitada.dataValidade}" filterMatchMode="contains" headerText="Data de validade">
 								<h:outputText value="#{lavagemSolicitada.dataValidadeStr}" />
 							</p:column>
-							<p:column filterBy="#{lavagemSolicitada.resumo}" sortBy="#{lavagemSolicitada.resumo}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Resumo" />
-								</f:facet>
+							<p:column filterBy="#{lavagemSolicitada.resumo}" sortBy="#{lavagemSolicitada.resumo}" filterMatchMode="contains" headerText="Resumo"
+									filterFunction="#{relatorioLavagemMB.filtroSemAcento}">
 								<h:outputText value="#{lavagemSolicitada.resumo}" />
 							</p:column>
 						</p:dataTable>
 						<br />
 
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+						
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{relatorioLavagemMB.exportarTabelaAnalitica('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{relatorioLavagemMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioLavagemMB.exportarTabelaAnalitica('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioLavagemMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioLavagemMB.exportarTabelaAnalitica('csv')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioLavagemMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+						
+						</p:panelGrid>
+
 						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtItens" value="#{relatorioLavagemMB.itens}" var="i" rows="10" paginator="true" rowKey="#{i}"
-							paginatorPosition="bottom">
-							<f:facet name="header">Analítico</f:facet>
-							<p:column filterBy="#{i.kit.descricao}" sortBy="#{i.kit.descricao}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Kit" />
-								</f:facet>
+							paginatorPosition="bottom" binding="#{relatorioLavagemMB.tabelaAnalitica}">
+							<f:facet name="header">Detalhes (Clique no item acima para visualizar)</f:facet>
+							<p:column filterBy="#{i.kit.descricao}" sortBy="#{i.kit.descricao}" filterMatchMode="contains" headerText="Kit"
+									filterFunction="#{relatorioLavagemMB.filtroSemAcento}">
 								<h:outputText value="#{i.kit.descricao}" />
 							</p:column>
-							<p:column filterBy="#{i.item.descricaoLimpa}" sortBy="#{i.item.descricao}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Item" />
-								</f:facet>
+							<p:column filterBy="#{i.item.descricaoLimpa}" sortBy="#{i.item.descricao}" filterMatchMode="contains" headerText="Item"
+									filterFunction="#{relatorioLavagemMB.filtroSemAcento}">
 								<h:outputText value="#{i.item.descricao}" />
 							</p:column>
-							<p:column filterBy="#{i.quantidade}" sortBy="#{i.quantidade}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Quantidade" />
-								</f:facet>
+							<p:column filterBy="#{i.quantidade}" sortBy="#{i.quantidade}" filterMatchMode="contains" headerText="Quantidade">
 								<h:outputText value="#{i.quantidade}" />
 							</p:column>
 						</p:dataTable>

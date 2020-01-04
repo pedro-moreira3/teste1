@@ -20,8 +20,80 @@ function message(title, text, type) {
 	message(title, text, type, false);
 }
 
+function mostraDialogo(titulo, mensagem, tipo, tempo) {
+
+	if ($("#container").is(":visible")) {
+		return;
+	}
+
+	var icon = "";
+	var color = "";
+
+	if (!tempo) {
+		var tempo = 3000;
+	}
+
+	if (!tipo) {
+		var tipo = "info";
+	} else if (tipo == 'success') {
+		icon = 'check_circle';
+		color = '#32CD32';
+	} else if (tipo == 'error') {
+		icon = 'error';
+		color = '#FF0000';
+	} else if (tipo == 'warning') {
+		icon = 'warning';
+		color = '#FFFF00';
+	} else if (tipo == 'info') {
+		icon = 'info';
+		color = '#0000FF';
+	}
+
+	var container = 'margin-top:10px !important;display: block !important;width: 400px !important;height: 60px !important;padding-left: 20px !important;background-color: '
+			+ color
+			+ ' !important;color: black !important;opacity: 1 !important;position:fixed !important;right:0;transition: opacity 0.6s !important;top:0 !important;z-index:9999 !important;float:right !important;border-radius:8px;border:1px solid '
+			+ color + ';';
+	var icone = 'position:relative; display: inline-block !important; width: 60px !important; height: 100% !important; text-align:center; background-color: white;';
+	var subContainer = 'display: inline-block !important; width: calc(100% - 60px) !important; height: calc(100% - 6px) !important; background-color: white !important; float: right !important; padding-top: 3px; padding-bottom: 3px;';
+	var title = 'display: block !important;height: 40% !important;background-color: white !important;text-align:left;margin-top:10px;';
+	var message = 'display: block !important;height: 40% !important;background-color: white !important;text-align:left;margin-top:15px;margin-bottom:15px;';
+
+	var styleTitle = 'position: relative; top: 0; left: 0; width: 100%; height: 20px; font-weight: bold; display: table-cell; vertical-align: middle;';
+	var styleMessage = 'position: relative; top: 0; left: 0; width: 100%; height: 40px;';
+
+	var dialogo = "";
+
+	dialogo += '<div id="container" style="'+container+'">';
+	dialogo += '	<div id="icone" style="'+icone+'">';
+	dialogo += '		<i class="topbar-icon material-icons" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">'
+			+ icon + '</i>';
+	dialogo += '	</div>';
+	dialogo += '	<div id="subContainer" style="'+subContainer+'">';
+	dialogo += '		<div style="' + styleTitle + '">';
+	dialogo += titulo;
+	dialogo += '		</div>';
+	dialogo += '		<div style="' + styleMessage + '">';
+	dialogo += mensagem;
+	dialogo += '		</div>';
+	dialogo += '	</div>';
+	dialogo += '</div>';
+
+	// adiciona ao body a mensagem com o efeito de fade
+	$("body").append(dialogo);
+	$("#container").hide();
+	$("#container").fadeIn(200);
+
+	// contador de tempo para a mensagem sumir
+	setTimeout(function() {
+		$('#container').fadeOut(300, function() {
+			$(this).remove();
+		});
+	}, tempo); // milliseconds
+
+}
+
 function message(title, text, type, fechaSozinho) {
-	//swal(title, text, type);
+	// swal(title, text, type);
 	if(fechaSozinho) {
 		swal({
 	        title   : title,

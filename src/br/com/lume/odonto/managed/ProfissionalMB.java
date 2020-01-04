@@ -19,6 +19,7 @@ import javax.imageio.stream.FileImageOutputStream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
@@ -107,6 +108,9 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
     private boolean renderedPhotoCam;
 
     private byte[] data;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaProfissional;
 
     public ProfissionalMB() {
         super(ProfissionalSingleton.getInstance().getBo());
@@ -463,6 +467,10 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());
         }
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Profissionais", tabelaProfissional, type);
+    }
 
     public List<UF> getListUF() {
         return UF.getList();
@@ -651,6 +659,14 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     public void setRenderedPhotoCam(boolean renderedPhotoCam) {
         this.renderedPhotoCam = renderedPhotoCam;
+    }
+
+    public DataTable getTabelaProfissional() {
+        return tabelaProfissional;
+    }
+
+    public void setTabelaProfissional(DataTable tabelaProfissional) {
+        this.tabelaProfissional = tabelaProfissional;
     }
 
 }

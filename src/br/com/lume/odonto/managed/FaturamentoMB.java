@@ -16,6 +16,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.ToggleSelectEvent;
 
 import br.com.lume.common.exception.business.BusinessException;
@@ -117,6 +118,12 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
   //  private RepasseItemBO repasseItemBO = new RepasseItemBO();
 
   //  private PlanoTratamentoProcedimentoBO planoTratamentoProcedimentoBO = new PlanoTratamentoProcedimentoBO();
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaProcedimento;
+    private DataTable tabelaRecebimento;
+    private DataTable tabelaProcedimentoRepasse;
+    private DataTable tabelaRepasse;
 
     public FaturamentoMB() {
         super(PlanoTratamentoProcedimentoSingleton.getInstance().getBo());
@@ -513,7 +520,23 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
         }
         return sugestoes;
     }
+    
+    public void exportarTabelaProcedimento(String type) {
+        exportarTabela("Procedimentos à reservar", tabelaProcedimento, type);
+    }
+    
+    public void exportarTabelaRecebimento(String type) {
+        exportarTabela("Recebimentos com crédito", tabelaRecebimento, type);
+    }
 
+    public void exportarTabelaProcedimentoRepasse(String type) {
+        exportarTabela("Procedimentos à repassar", tabelaProcedimentoRepasse, type);
+    }
+    
+    public void exportarTabelaRepasse(String type) {
+        exportarTabela("Repasses", tabelaRepasse, type);
+    }
+    
     public Profissional getProfissional() {
         return profissional;
     }
@@ -720,6 +743,38 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
 
     public void setProcedimentosSemValor(List<PlanoTratamentoProcedimento> procedimentosSemValor) {
         this.procedimentosSemValor = procedimentosSemValor;
+    }
+
+    public DataTable getTabelaProcedimento() {
+        return tabelaProcedimento;
+    }
+
+    public void setTabelaProcedimento(DataTable tabelaProcedimento) {
+        this.tabelaProcedimento = tabelaProcedimento;
+    }
+
+    public DataTable getTabelaRecebimento() {
+        return tabelaRecebimento;
+    }
+
+    public void setTabelaRecebimento(DataTable tabelaRecebimento) {
+        this.tabelaRecebimento = tabelaRecebimento;
+    }
+
+    public DataTable getTabelaProcedimentoRepasse() {
+        return tabelaProcedimentoRepasse;
+    }
+
+    public void setTabelaProcedimentoRepasse(DataTable tabelaProcedimentoRepasse) {
+        this.tabelaProcedimentoRepasse = tabelaProcedimentoRepasse;
+    }
+
+    public DataTable getTabelaRepasse() {
+        return tabelaRepasse;
+    }
+
+    public void setTabelaRepasse(DataTable tabelaRepasse) {
+        this.tabelaRepasse = tabelaRepasse;
     }
 
 }

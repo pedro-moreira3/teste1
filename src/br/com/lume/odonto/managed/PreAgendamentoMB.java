@@ -52,7 +52,6 @@ public class PreAgendamentoMB extends LumeManagedBean<Agendamento> {
 
     private List<Agendamento> listExternos = new ArrayList<>();
 
-
     public PreAgendamentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
         this.setClazz(Agendamento.class);
@@ -96,11 +95,12 @@ public class PreAgendamentoMB extends LumeManagedBean<Agendamento> {
         valores.put("#profissional", this.getEntity().getProfissional().getDadosBasico().getNome());
         valores.put("#data", this.getEntity().getInicioStrOrd());
         valores.put("#horario", this.getEntity().getInicioHoraStr());
-        EnviaEmail.enviaEmail(ProfissionalSingleton.getInstance().getBo().findEmailEmpresa(profissional), "Pré-agendamento de paciente", EnviaEmail.buscarTemplate(valores, EnviaEmail.AGENDAMENTO_PACIENTE));
+        EnviaEmail.enviaEmail(ProfissionalSingleton.getInstance().getBo().findEmailEmpresa(profissional), "Pré-agendamento de paciente",
+                EnviaEmail.buscarTemplate(valores, EnviaEmail.AGENDAMENTO_PACIENTE));
     }
 
     public List<Profissional> geraSugestoes(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompletePaciente(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteProfissional(query, UtilsFrontEnd.getPacienteLogado().getIdEmpresa());
     }
 
     public void actionPesquisaPreAgendamento(ActionEvent event) {
@@ -147,9 +147,9 @@ public class PreAgendamentoMB extends LumeManagedBean<Agendamento> {
             for (Afastamento afastamento : afastamentos) {
                 Paciente pacienteAfastamento = new Paciente();
 
-                Dominio dominio = DominioSingleton.getInstance().getBo().listByTipoAndObjeto(afastamento.getTipo(), "afastamento");                 
+                Dominio dominio = DominioSingleton.getInstance().getBo().listByTipoAndObjeto(afastamento.getTipo(), "afastamento");
                 String dominioStr = dominio != null ? dominio.getNome() : "";
-                
+
                 pacienteAfastamento.getDadosBasico().setNome(dominioStr);
                 Agendamento agendamento = new Agendamento();
                 agendamento.setInicio(afastamento.getInicio());

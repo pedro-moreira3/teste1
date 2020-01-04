@@ -5,56 +5,79 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:pe="http://primefaces.org/ui/extensions">
-	
-	<h:inputHidden id="activeIndexFicha" value="#{tabPacienteMB.activeIndex}" />
-	<p:tabView id="tabView" style="padding: 0 15px 15px 15px; min-height: calc(100% - 17px)"
-		activeIndex="#{tabPacienteMB.activeIndex}">
 
-		<p:ajax event="tabChange" listener="#{tabPacienteMB.onTabChange}"
-			update=":lume:tabView" />
+	<style>
+body div.ui-widget-content.ui-tabs {
+	border: none;
+}
+</style>
 
-		<p:tab id="tab2" title="Anamnese"
-			disabled="#{pacienteMB.entity.id == null}">
-			<ui:include src="anamnese.xhtml" />
-		</p:tab>
+	<p:outputPanel id="tabViewOutPanel">
+		<p:outputPanel
+			rendered="#{!(pacienteMB.entity.id != null and pacienteMB.entity.id != 0)}">
+			<ui:include src="dadosPaciente.xhtml" />
+		</p:outputPanel>
+		<p:tabView id="tabView"
+			rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
+			style="padding: 0 15px 15px 15px; min-height: calc(100% - 17px)"
+			binding="#{tabPacienteMB.tabview}" dynamic="true" cache="false">
 
-		<ui:remove>
-		<p:tab id="tab3" title="Odontograma"
-			disabled="#{pacienteMB.entity.id == null}">
-			<ui:include src="odontograma.xhtml" />
-		</p:tab>
-		</ui:remove>
+			<p:ajax event="tabChange" listener="#{tabPacienteMB.onTabChange}"
+				update=":lume:tabView, :lume:buttonsFichaPaciente" />
 
-		<p:tab id="tab9" title="Plano Ortodôntico"
-			disabled="#{pacienteMB.entity.id == null}">
-			<ui:include src="ortodontia.xhtml" />
-		</p:tab>
+			<p:tab id="tab1" title="Dados Cadastrais"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="dadosPaciente.xhtml" />
+			</p:tab>
 
-		<p:tab id="tab8" title="Plano de Tratamento"
-			disabled="#{pacienteMB.entity.id == null}">
-			<ui:include src="planoTratamento.xhtml" />
-		</p:tab>
+			<p:tab id="tab2" title="Anamnese"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="anamnese.xhtml" />
+			</p:tab>
 
-		<p:tab id="tab7" title="Periograma"
-			disabled="#{pacienteMB.entity.id == null}">
-			<ui:include src="periograma.xhtml" />
-		</p:tab>
+			<ui:remove>
+				<p:tab id="tab3" title="Odontograma"
+					disabled="#{pacienteMB.entity.id == null}">
+					<ui:include src="odontograma.xhtml" />
+				</p:tab>
+			</ui:remove>
 
-		<p:tab id="tab5" title="Evolução"
-			disabled="#{pacienteMB.entity.id == null}">
-			<ui:include src="evolucao.xhtml" />
-		</p:tab>
+			<p:tab id="tab9" title="Manutenção Orto"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="ortodontia.xhtml" />
+			</p:tab>
 
-		<p:tab id="tab6" title="Exames"
-			disabled="#{pacienteMB.entity.id == null}">
-			<ui:include src="exame.xhtml" />
-		</p:tab>
+			<p:tab id="tab8" title="Plano de Tratamento"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="planoTratamento.xhtml" />
+			</p:tab>
 
-		<p:tab id="tab10" title="Frequência"
-			disabled="#{pacienteMB.entity.id == null}">
-			<ui:include src="historicoagendamentos.xhtml" />
-		</p:tab>
+			<p:tab id="tab7" title="Periograma" rendered="#{false}"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="periograma.xhtml" />
+			</p:tab>
 
-	</p:tabView>
+			<p:tab id="tab5" title="Evolução"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="evolucao.xhtml" />
+			</p:tab>
+
+			<p:tab id="tab6" title="Exames"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="exame.xhtml" />
+			</p:tab>
+
+			<p:tab id="tab10" title="Frequência"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="historicoagendamentos.xhtml" />
+			</p:tab>
+
+			<p:tab id="tab11" title="Financeiro"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="pacienteFinanceiro.xhtml" />
+			</p:tab>
+
+		</p:tabView>
+	</p:outputPanel>
 
 </ui:composition>

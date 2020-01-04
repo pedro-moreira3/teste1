@@ -155,11 +155,57 @@ li.MENULABEL [href="#"] span {
 	width: auto !important;
 }
 
-.ui-fluid button.ui-button:not (.ui-button-icon-only ):not (.ui-wizard-nav-back
-	):not (.ui-wizard-nav-next ) {
-	width: 100% !important;
-}
+.ui-fluid
 
+ 
+
+button
+
+
+.ui-button
+
+
+:not
+
+ 
+
+(
+.ui-button-icon-only
+
+ 
+
+)(
+.ui-wizard-nav-back
+
+
+	
+
+)
+:not
+
+ 
+
+(
+.ui-wizard-nav-next
+
+ 
+
+)
+{
+width
+
+
+:
+
+ 
+
+100%
+!
+important
+
+
+;
+}
 .ui-fluid .ui-autocomplete .ui-button {
 	width: 24px !important;
 }
@@ -1502,6 +1548,17 @@ body .ui-button.dark-blue-btn.ui-state-focus {
 	border-color: #348c4b !important
 }
 
+.GreenSplitButton .ui-splitbutton-menubutton, .GreenSplitButton .ui-button
+	{
+	background-color: #43a05b !important;
+	border-color: #348c4b !important
+}
+
+.GreenSplitButton .ui-splitbutton-menubutton:hover, .GreenSplitButton .ui-button:hover
+	{
+	background-color: #368048 !important;
+}
+
 .GreenButton.ui-state-hover {
 	background-color: #4bb165 !important;
 }
@@ -1592,8 +1649,8 @@ body .md-combo .ui-outputlabel {
 	width: 100%;
 }
 
-.body *:not (.ui-growl ) .ui-state-active, body *:not (.ui-growl ) .ui-state-highlight
-	{
+.body *:not (.ui-growl ) .ui-state-active, body *:not (.ui-growl )
+	.ui-state-highlight {
 	background-color: #4e7c73 !important;
 	color: #ffffff !important;
 }
@@ -1834,6 +1891,7 @@ body .removeSideAltGridPadding .ui-grid-row:last-child .ui-panelgrid-cell
 
 body span.ui-autocomplete.tallerAutoComplete {
 	margin-right: 10px;
+	height: 31px !important;
 }
 
 body span.ui-autocomplete.tallerAutoComplete input, body span.ui-input.tallerAutoComplete input
@@ -1841,7 +1899,8 @@ body span.ui-autocomplete.tallerAutoComplete input, body span.ui-input.tallerAut
 	height: 100%;
 }
 
-body span.ui-autocomplete.tallerAutoComplete .ui-autocomplete-dropdown.ui-button.ui-button-icon-only .ui-icon {
+body span.ui-autocomplete.tallerAutoComplete .ui-autocomplete-dropdown.ui-button.ui-button-icon-only .ui-icon
+	{
 	margin-top: -8px !important;
 }
 
@@ -1870,12 +1929,74 @@ body .forceSpaceBetweenCell .ui-panelgrid-cell:last-child {
 	padding-left: 5px !important;
 }
 
-body .forceSpaceBetweenCell .ui-panelgrid-cell:not (:first-child ):not (:last-child
-	) {
-	padding-right: 5px !important;
-	padding-left: 5px !important;
-}
+body
 
+ 
+
+.forceSpaceBetweenCell
+
+ 
+
+.ui-panelgrid-cell
+
+
+:not
+
+ 
+
+(
+:first-child
+
+ 
+
+)
+:not
+
+ 
+
+(
+:last-child
+
+
+	
+
+)
+{
+padding-right
+
+
+:
+
+ 
+
+5
+px
+
+ 
+
+!
+important
+
+
+;
+padding-left
+
+
+:
+
+ 
+
+5
+px
+
+ 
+
+!
+important
+
+
+;
+}
 body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 	{
 	margin-top: 8px !important;
@@ -1883,4 +2004,49 @@ body .ui-selectonemenu .ui-selectonemenu-trigger, body .ui-selectonemenu label
 
 .btnTooth {
 	background-image: url("#{resource['images:tooth_icon.png']}") !important;
+}
+
+.md-inputfield.taller .ui-calendar input, .md-inputfield.taller .ui-autocomplete input,
+	.md-inputfield.taller .ui-inputnumber input {
+	height: 31px;
+}
+
+.md-inputfield.taller .ui-autocomplete>button {
+	top: 12px !important;
+}
+
+.md-inputfield.taller .ui-calendar ~ label, .md-inputfield.taller .ui-autocomplete 
+	 ~ label, .md-inputfield.taller .ui-inputnumber ~ label {
+	top: 8px !important;
+}
+
+.md-inputfield.taller .ui-calendar.md-inputwrapper-focus ~ label,
+	.md-inputfield.taller .ui-calendar.md-inputwrapper-filled ~ label,
+	.md-inputfield.taller .ui-autocomplete.md-inputwrapper-focus ~ label,
+	.md-inputfield.taller .ui-autocomplete.md-inputwrapper-filled ~ label,
+	.md-inputfield.taller .ui-inputnumber.md-inputwrapper-focus ~ label,
+	.md-inputfield.taller .ui-inputnumber.md-inputwrapper-filled ~ label {
+	top: -20px !important;
+}
+.ui-panelgrid
+.moreSpace
+ 
+.ui-panelgrid-content
+ 
+.ui-g
+:not
+ 
+(
+:first-child
+ 
+)
+{
+margin-top
+:
+ 
+15
+px
+;
+
+
 }

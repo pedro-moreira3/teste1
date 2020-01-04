@@ -1,0 +1,985 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+
+		<style>
+.centerPanels .ui-panel .ui-panel-titlebar, .centerPanels .ui-panel .ui-panel-content
+	{
+	text-align: center;
+}
+
+.lancamentoExplain.ui-panelgrid.form-group .ui-panelgrid-cell {
+	padding: 7px 16px;
+}
+
+.lancamentoExplain.ui-panelgrid.form-group .ui-panelgrid-cell:nth-child(1)
+	{
+	padding-top: 0;
+}
+
+.lessPaddingSides .ui-panelgrid-cell {
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+}
+
+.traceRepasse tr:nth-child(3), .traceRepasse tr:nth-child(9),
+	.traceRepasse tr:nth-child(12) {
+	height: 40px;
+	vertical-align: bottom;
+}
+</style>
+
+		<ui:include src="ptpCustoDireto.xhtml	" />
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+
+					<p:tabView id="tabViewRepasses" style="padding: 0 15px 15px 15px;"
+						dynamic="true" cache="false">
+
+						<p:ajax event="tabChange"
+							listener="#{reciboRepasseProfissionalMB.onTabChange}"
+							update=":lume:tabViewRepasses" />
+
+						<p:tab title="Repasses">
+							<p:fieldset legend="Filtros">
+								<p:panelGrid columns="3" layout="grid"
+									styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+
+									<h:panelGroup styleClass="md-combo">
+										<p:selectOneMenu id="filtroPeriodoRepasses"
+											value="#{reciboRepasseProfissionalMB.filtroPeriodoRepasses}">
+
+											<f:selectItem itemValue="" itemLabel="Selecione" />
+											<f:selectItem itemValue="O" itemLabel="Ontem" />
+											<f:selectItem itemValue="H" itemLabel="Hoje" />
+											<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+											<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+											<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+											<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+											<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+
+											<p:ajax process="@this"
+												update="dataInicialRepasses, dataFinalRepasses"
+												listener="#{reciboRepasseProfissionalMB.actionTrocaDatasCriacaoRepasses}" />
+										</p:selectOneMenu>
+										<p:outputLabel for="filtroPeriodoRepasses"
+											value="Período de criação:" />
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-inputfield taller">
+										<p:calendar id="dataInicialRepasses"
+											value="#{reciboRepasseProfissionalMB.dataInicioRepasses}" />
+										<p:outputLabel for="dataInicialRepasses"
+											value="Data de criação de:" />
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-inputfield taller">
+										<p:calendar id="dataFinalRepasses"
+											value="#{reciboRepasseProfissionalMB.dataFimRepasses}" />
+										<p:outputLabel for="dataFinalRepasses"
+											value="Data de criação até:" />
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-inputfield">
+										<p:autoComplete dropdown="true" queryDelay="1000" size="35"
+											value="#{reciboRepasseProfissionalMB.profissionalRepasses}"
+											id="fitroProfissionalRepasses" minQueryLength="3"
+											completeMethod="#{reciboRepasseProfissionalMB.geraSugestoesProfissional}"
+											var="profissional"
+											itemLabel="#{profissional.dadosBasico.prefixoNome}"
+											itemValue="#{profissional}" converter="profissional"
+											forceSelection="true">
+											<p:ajax event="itemSelect" process="@this" />
+										</p:autoComplete>
+										<p:outputLabel for="fitroProfissionalRepasses"
+											value="Profissional" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<p:selectBooleanCheckbox id="lancSemRecibo"
+											value="#{reciboRepasseProfissionalMB.lancSemRecibo}" />
+										<p:outputLabel for="lancSemRecibo" style="margin-left: 10px;"
+											value="Buscar somente repasses sem recibo associado" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<p:selectBooleanCheckbox id="lancValidadosOnly"
+											value="#{reciboRepasseProfissionalMB.lancValidadosOnly}" />
+										<p:outputLabel for="lancValidadosOnly"
+											style="margin-left: 10px;"
+											value="Buscar somente repasses pagos" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<p:selectBooleanCheckbox id="lancMesesAnterioresRepasse"
+											value="#{reciboRepasseProfissionalMB.lancMesesAnterioresRepasse}" />
+										<p:outputLabel for="lancMesesAnterioresRepasse"
+											style="margin-left: 10px;"
+											value="Incluir repasses de meses anteriores" />
+									</h:panelGroup>
+
+									<p:commandButton value="Pesquisar" process="@this, @parent"
+										update=":lume:tabViewRepasses:dtRepasseLancamentos"
+										actionListener="#{reciboRepasseProfissionalMB.pesquisarRepasses}" />
+
+								</p:panelGrid>
+							</p:fieldset>
+							<br />
+
+							<p:dataTable value="#{reciboRepasseProfissionalMB.lancamentos}"
+								var="lancamento" filterDelay="1000" reflow="true"
+								emptyMessage="Nenhum repasse encontrado"
+								id="dtRepasseLancamentos" rows="15" paginator="true"
+								paginatorPosition="bottom" rowKey="#{lancamento}"
+								selection="#{reciboRepasseProfissionalMB.lancamentosSelecionados}"
+								binding="#{reciboRepasseProfissionalMB.tabelaLancamentos}">
+								<f:facet name="header">
+									<h:outputText value="Repasses de Profissionais" />
+								</f:facet>
+
+								<p:column selectionMode="multiple" style="width:16px;" />
+								<p:column style="width:16px">
+									<p:rowToggler />
+								</p:column>
+
+								<p:column filterMatchMode="contains" headerText="Profissional"
+									filterBy="#{lancamento.fatura.profissional.dadosBasico.nome}"
+									sortBy="#{lancamento.fatura.profissional.dadosBasico.nome}">
+									<h:outputText
+										value="#{lancamento.fatura.profissional.dadosBasico.nome}" />
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Procedimento"
+									filterBy="#{lancamento.rfl.faturaItem.descricaoItem}"
+									sortBy="#{lancamento.rfl.faturaItem.descricaoItem}">
+									<h:outputText
+										value="#{lancamento.rfl.faturaItem.descricaoItem}" />
+								</p:column>
+								<p:column filterMatchMode="contains"
+									headerText="Plano de Tratamento"
+									filterBy="#{lancamento.ptp.planoTratamento.descricao}"
+									sortBy="#{lancamento.ptp.planoTratamento.descricao}">
+									<h:outputText
+										value="#{lancamento.ptp.planoTratamento.descricao}" />
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Paciente"
+									filterBy="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}"
+									sortBy="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}">
+									<p:commandLink
+										value="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}"
+										process="@this"
+										title="#{lancamento.ptp.planoTratamento.paciente.id}"
+										actionListener="#{tabPacienteMB.loadPaciente(lancamento.ptp.planoTratamento.paciente)}"
+										oncomplete="PF('dlgFichaPaciente').show()"
+										update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+								</p:column>
+
+								<p:column filterMatchMode="contains" headerText="Valor Fatura"
+									filterBy="#{lancamento.dadosTabelaValorTotalFatura}"
+									sortBy="#{lancamento.dadosTabelaValorTotalFatura}" width="80">
+									<h:outputText value="#{lancamento.dadosTabelaValorTotalFatura}">
+										<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+											type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column filterMatchMode="contains"
+									headerText="Valor Procedimento"
+									filterBy="#{lancamento.dadosTabelaValorProcComPercItem}"
+									sortBy="#{lancamento.dadosTabelaValorProcComPercItem}"
+									width="80">
+									<h:outputText
+										value="#{lancamento.dadosTabelaValorProcComPercItem}" />
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Custos Diretos"
+									filterBy="#{lancamento.custosDiretos}"
+									sortBy="#{lancamento.custosDiretos}" width="80">
+
+									<p:commandLink title="Visualizar Custos Diretos"
+										update=":lume:pnPTPCustoDireto, :lume:pnPTPCustoDiretoHeader"
+										actionListener="#{pTPCustoDiretoMB.abreDialog(faturaPagtoMB.buscaPTPOrigemRepasse(lancamento))}"
+										process="@this"
+										rendered="#{lancamento.dadosTabelaValorTotalCustosDiretos != null and lancamento.dadosTabelaValorTotalCustosDiretos.doubleValue() != 0}">
+										<h:outputText
+											value="#{lancamento.dadosTabelaValorTotalCustosDiretos}">
+											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+												type="currency" />
+										</h:outputText>
+									</p:commandLink>
+
+									<h:outputText
+										value="#{lancamento.dadosTabelaValorTotalCustosDiretos}"
+										rendered="#{lancamento.dadosTabelaValorTotalCustosDiretos == null or lancamento.dadosTabelaValorTotalCustosDiretos.doubleValue() == 0}">
+										<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+											type="currency" />
+									</h:outputText>
+
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Recebido"
+									filterBy="#{lancamento.dadosTabelaValorRecebidoComFormaPagto}"
+									sortBy="#{lancamento.dadosTabelaValorRecebidoComFormaPagto}"
+									width="80">
+									<h:outputText
+										value="#{lancamento.dadosTabelaValorRecebidoComFormaPagto}">
+										<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+											type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Taxas/Tarifas"
+									filterBy="#{lancamento.dadosTabelaValorTaxasETarifas}"
+									sortBy="#{lancamento.dadosTabelaValorTaxasETarifas}" width="80">
+									<h:outputText
+										value="#{lancamento.dadosTabelaValorTaxasETarifas}">
+										<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+											type="currency" />
+									</h:outputText>
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Tributo"
+									filterBy="#{lancamento.dadosCalculoPercTributo}"
+									sortBy="#{lancamento.dadosCalculoPercTributo}" width="80">
+									<h:outputText value="#{lancamento.dadosCalculoPercTributo}">
+										<f:convertNumber maxFractionDigits="2" type="percent" />
+									</h:outputText>
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Método Repasse"
+									filterBy="#{lancamento.dadosTabelaMetodoRepasseComValor}"
+									sortBy="#{lancamento.dadosTabelaMetodoRepasseComValor}"
+									width="100">
+									<h:outputText
+										value="#{lancamento.dadosTabelaMetodoRepasseComValor}" />
+								</p:column>
+								<p:column filterMatchMode="contains"
+									headerText="Valor a Repassar"
+									filterBy="#{lancamento.valorComDesconto}"
+									sortBy="#{lancamento.valorComDesconto}" width="80">
+									<h:outputText value="#{lancamento.valor}">
+										<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+											type="currency" />
+									</h:outputText>
+								</p:column>
+
+								<p:column filterMatchMode="contains"
+									headerText="Data de criação"
+									filterBy="#{lancamento.dataCriacao}"
+									sortBy="#{lancamento.dataCriacao}" width="120">
+									<h:outputText value="#{lancamento.dataCriacao}">
+										<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Repassado?"
+									filterBy="#{lancamento.validadoStr}"
+									sortBy="#{lancamento.validadoStr}" width="50">
+									<h:outputText value="#{lancamento.validadoStr}" />
+								</p:column>
+								<p:column filterMatchMode="contains" headerText="Recibo Ativo"
+									filterBy="#{lancamento.reciboRepasseAtivo.descricaoStr}"
+									sortBy="#{lancamento.reciboRepasseAtivo.descricaoStr}"
+									width="100">
+									<h:outputText
+										value="#{lancamento.reciboRepasseAtivo.recibo.descricaoStr}" />
+								</p:column>
+
+								<p:rowExpansion>
+									<p:outputPanel
+										rendered="#{lancamento.dadosTabelaMetodoRepasse == 'POR'}"
+										style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
+										<div style="padding: 10px;">
+											<div style="width: 100%; padding: 5px; text-align: center">
+												(<b>Valor Recebido</b> - <b>Taxas/Tarifas</b> - <b>Tributos</b>
+												- <b>Custos Diretos</b>) * <b>Perc. Repasse</b>
+											</div>
+											<p:separator styleClass="SeparatorFull" />
+											<table style="width: 100%" class="traceRepasse">
+												<tr>
+													<th colspan="8">Procedimento</th>
+													<th colspan="4">Valor Recebido</th>
+												</tr>
+												<tr>
+													<td colspan="8"><h:outputText
+															value="#{lancamento.rfl.faturaItem.descricaoItem}" /></td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.rfl.lancamentoOrigem.valor}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<th colspan="4">Item de dedução</th>
+													<th colspan="4">Base de cálculo</th>
+													<th colspan="4">Valor da dedução</th>
+												</tr>
+												<tr>
+													<td colspan="4">Taxa</td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.dadosCalculoPercTaxa}">
+															<f:convertNumber maxFractionDigits="2" type="percent" />
+														</h:outputText></td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.dadosCalculoValorTaxa}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<td colspan="4">Tarifa</td>
+													<td colspan="4"></td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.dadosCalculoValorTarifa}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<td colspan="4">Tributo</td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.dadosCalculoPercTributo}">
+															<f:convertNumber maxFractionDigits="2" type="percent" />
+														</h:outputText></td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.dadosCalculoValorTributo}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<td colspan="8">Total:</td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.dadosCalculoTotalReducao}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<td colspan="8">Valor recebido descontando as deduções
+														acima:</td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.dadosCalculoRecebidoMenosReducao}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<th colspan="1">Valor do procedimento</th>
+													<th colspan="1">Valor Custos Diretos</th>
+													<th colspan="1">Valor sem custos diretos</th>
+													<th colspan="1">Valor total da fatura</th>
+													<th colspan="2">Percentual Item/Fatura</th>
+													<th colspan="2">Percentual de dedução</th>
+													<th colspan="4">Valor a deduzir do pagamento</th>
+												</tr>
+												<tr>
+													<td colspan="1"><h:outputText
+															value="#{lancamento.rfl.faturaItem.valorComDesconto}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="1"><h:outputText
+															value="#{lancamento.dadosTabelaValorTotalCustosDiretos}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="1"><h:outputText
+															value="#{lancamento.dadosCalculoValorItemSemCusto}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="1"><h:outputText
+															value="#{lancamento.dadosTabelaValorTotalFatura}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="2"><h:outputText
+															value="#{lancamento.dadosCalculoPercItemSemCusto}">
+															<f:convertNumber maxFractionDigits="2" type="percent" />
+														</h:outputText></td>
+													<td colspan="2"><h:outputText
+															value="#{lancamento.dadosCalculoInvPercItemSemCusto}">
+															<f:convertNumber maxFractionDigits="2" type="percent" />
+														</h:outputText></td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.dadosCalculoReducaoCustoDireto}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<td colspan="8">Valor sem descontos e custos diretos:</td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.dadosCalculoValorARepassarSemCusto}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<th colspan="4">Profissional</th>
+													<th colspan="4">Percentual de repasse</th>
+													<th colspan="4">Valor do repasse</th>
+												</tr>
+												<tr>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.fatura.profissional.dadosBasico.nome}" /></td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.dadosTabelaValorRepasse}" /></td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.valor}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+											</table>
+										</div>
+									</p:outputPanel>
+
+									<p:outputPanel
+										rendered="#{lancamento.dadosTabelaMetodoRepasse == 'PRO'}"
+										style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
+										<div style="padding: 10px;">
+											<div style="width: 100%; padding: 5px; text-align: center">
+												(<b>Valor Recebido</b> / <b>Valor total da fatura</b>) * <b>Valor
+													de Repasse</b>
+											</div>
+											<p:separator styleClass="SeparatorFull" />
+											<table style="width: 100%" class="traceRepassePro">
+												<tr>
+													<th colspan="8">Procedimento</th>
+													<th colspan="4">Valor Recebido</th>
+												</tr>
+												<tr>
+													<td colspan="8"><h:outputText
+															value="#{lancamento.rfl.faturaItem.descricaoItem}" /></td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.rfl.lancamentoOrigem.valor}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<th colspan="2">Valor recebido</th>
+													<th colspan="2">Valor total da fatura</th>
+													<th colspan="2">Percentual Recebido/Total fatura</th>
+													<th colspan="2">Valor de Repasse do procedimento</th>
+													<th colspan="4">Valor do Repasse</th>
+												</tr>
+												<tr>
+													<td colspan="2"><h:outputText
+															value="#{lancamento.rfl.lancamentoOrigem.valor}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="2"><h:outputText
+															value="#{lancamento.dadosTabelaValorTotalFatura}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="2"><h:outputText
+															value="#{lancamento.dadosCalculoPercLancamentoFatura}">
+															<f:convertNumber maxFractionDigits="2" type="percent" />
+														</h:outputText></td>
+													<td colspan="2"><h:outputText
+															value="#{lancamento.dadosTabelaValorRepasse}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="4"><h:outputText
+															value="#{lancamento.valor}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+											</table>
+										</div>
+									</p:outputPanel>
+								</p:rowExpansion>
+							</p:dataTable>
+
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+								<p:commandButton value="Gerar Recibo dos Repasses Selecionados"
+									process="@this, :lume:tabViewRepasses:dtRepasseLancamentos"
+									actionListener="#{reciboRepasseProfissionalMB.prepararRecibo}"
+									update=":lume:gerarReciboPnl" />
+							</p:panelGrid>
+						</p:tab>
+
+						<p:tab title="Histórico de Recibos">
+							<p:fieldset legend="Filtros">
+								<p:panelGrid columns="3" layout="grid"
+									styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+
+									<h:panelGroup styleClass="md-combo">
+										<p:selectOneMenu id="filtroPeriodoRecibos"
+											value="#{reciboRepasseProfissionalMB.filtroPeriodoRecibos}">
+
+											<f:selectItem itemValue="" itemLabel="Selecione" />
+											<f:selectItem itemValue="O" itemLabel="Ontem" />
+											<f:selectItem itemValue="H" itemLabel="Hoje" />
+											<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+											<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+											<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+											<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+											<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+
+											<p:ajax process="@this"
+												update="dataInicialRecibos, dataFinalRecibos"
+												listener="#{reciboRepasseProfissionalMB.actionTrocaDatasCriacaoRecibos}" />
+										</p:selectOneMenu>
+										<p:outputLabel for="filtroPeriodoRecibos"
+											value="Período de criação:" />
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-inputfield taller">
+										<p:calendar id="dataInicialRecibos"
+											value="#{reciboRepasseProfissionalMB.dataInicioRecibos}" />
+										<p:outputLabel for="dataInicialRecibos"
+											value="Data de criação de:" />
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-inputfield taller">
+										<p:calendar id="dataFinalRecibos"
+											value="#{reciboRepasseProfissionalMB.dataFimRecibos}" />
+										<p:outputLabel for="dataFinalRecibos"
+											value="Data de criação até:" />
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-inputfield taller">
+										<p:autoComplete dropdown="true" queryDelay="1000" size="35"
+											value="#{reciboRepasseProfissionalMB.profissionalRecibos}"
+											id="fitroProfissionalRecibos" minQueryLength="3"
+											completeMethod="#{reciboRepasseProfissionalMB.geraSugestoesProfissional}"
+											var="profissional"
+											itemLabel="#{profissional.dadosBasico.prefixoNome}"
+											itemValue="#{profissional}" converter="profissional"
+											forceSelection="true">
+											<p:ajax event="itemSelect" process="@this" />
+										</p:autoComplete>
+										<p:outputLabel for="fitroProfissionalRecibos"
+											value="Profissional" />
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-combo">
+										<p:selectOneMenu id="filtroStatusRecibos"
+											value="#{reciboRepasseProfissionalMB.filtroStatus}">
+											<f:selectItems
+												value="#{reciboRepasseProfissionalMB.statusRecibo}"
+												var="status" itemValue="#{status}"
+												itemLabel="#{status.rotulo}" />
+										</p:selectOneMenu>
+										<p:outputLabel for="filtroStatusRecibos"
+											value="Buscar somente lançamentos validados" />
+									</h:panelGroup>
+
+									<h:panelGroup>
+										<p:selectBooleanCheckbox id="recibosFindCancelados"
+											value="#{reciboRepasseProfissionalMB.recibosFindCancelados}" />
+										<p:outputLabel for="recibosFindCancelados"
+											style="margin-left: 10px;" value="Buscar recibos cancelados" />
+									</h:panelGroup>
+
+									<p:commandButton value="Pesquisar" process="@this, @parent"
+										update=":lume:tabViewRepasses:dtRecibos"
+										actionListener="#{reciboRepasseProfissionalMB.pesquisarRecibos}" />
+
+								</p:panelGrid>
+							</p:fieldset>
+							<br />
+							<p:dataTable value="#{reciboRepasseProfissionalMB.entityList}"
+								var="recibo" filterDelay="1000" reflow="true"
+								emptyMessage="Nenhum recibo encontrado" id="dtRecibos" rows="15"
+								paginator="true" paginatorPosition="bottom" rowKey="#{recibo}"
+								selection="#{reciboRepasseProfissionalMB.entity}"
+								binding="#{reciboRepasseProfissionalMB.tabelaRecibos}">
+								<f:facet name="header">
+									<h:outputText value="Recibos de Repasses" />
+								</f:facet>
+								<p:column headerText="Ações" width="150">
+									<p:commandButton title="Visualizar Recibo"
+										styleClass="NavyButton" icon="fa fa-eye" process="@this"
+										update=":lume:visualizarReciboPnl"
+										action="#{reciboRepasseProfissionalMB.preparaVisualizacao(recibo)}" />
+									<p:commandButton title="Aprovar Recibo"
+										styleClass="GreenButton" icon="fa fa-check"
+										actionListener="#{reciboRepasseProfissionalMB.aprovarRecibo(recibo)}"
+										process="@this" update=":lume:tabViewRepasses:dtRecibos"
+										disabled="#{!recibo.ativo || recibo.aprovado == 'S'}">
+										<p:confirm header="Confirmação" icon="ui-icon-alert"
+											escape="false"
+											message="Você tem certeza que deseja aprovar este recibo? &lt;br/&gt; Os lançamentos &lt;b&gt;não validados&lt;/b&gt; serão validados neste momento, completando o repasse. &lt;br/&gt; Os lançamentos &lt;b&gt;já validados&lt;/b&gt; seguirão como estão, já validados e com histórico de pagamento.">
+										</p:confirm>
+									</p:commandButton>
+									<p:commandButton title="Cancelar Recibo" styleClass="RedButton"
+										icon="fa fa-trash"
+										actionListener="#{reciboRepasseProfissionalMB.cancelarRecibo(recibo)}"
+										process="@this" update=":lume:tabViewRepasses:dtRecibos"
+										disabled="#{!recibo.ativo || recibo.aprovado == 'S'}">
+										<p:confirm header="Confirmação" icon="ui-icon-alert"
+											escape="false"
+											message="Você tem certeza que deseja cancelar este recibo? &lt;br/&gt; Os lançamentos &lt;b&gt;já validados&lt;/b&gt; permanecerão validados. &lt;br/&gt; Porém todos os lançamentos deste recibo voltarão a lista de repasses elegíveis para criação de outro recibo.">
+										</p:confirm>
+									</p:commandButton>
+								</p:column>
+								<p:column headerText="Profissional" filterMatchMode="contains"
+									filterBy="#{recibo.profissional.dadosBasico.nome}"
+									sortBy="#{recibo.profissional.dadosBasico.nome}">
+									<h:outputText value="#{recibo.profissional.dadosBasico.nome}" />
+								</p:column>
+								<p:column headerText="Descrição" filterMatchMode="contains"
+									filterBy="#{recibo.descricao}" sortBy="#{recibo.descricao}">
+									<h:outputText value="#{recibo.descricao}" />
+								</p:column>
+								<p:column headerText="Aprovado?" filterMatchMode="contains"
+									width="100" filterBy="#{recibo.aprovadoStr}"
+									sortBy="#{recibo.aprovadoStr}">
+									<h:outputText value="#{recibo.aprovadoStr}" />
+								</p:column>
+								<p:column headerText="Qtde. Repasses" filterMatchMode="contains"
+									width="200" filterBy="#{recibo.quantidadeRepasses}"
+									sortBy="#{recibo.quantidadeRepasses}">
+									<h:outputText value="#{recibo.quantidadeRepasses}" />
+								</p:column>
+								<p:column headerText="Valor Total de Repasse"
+									filterMatchMode="contains" width="200"
+									filterBy="#{recibo.valorTotalRepasse}"
+									sortBy="#{recibo.valorTotalRepasse}">
+									<h:outputText value="#{recibo.valorTotalRepasse}">
+										<f:convertNumber type="currency" currencySymbol="R$"
+											maxFractionDigits="2" />
+									</h:outputText>
+								</p:column>
+							</p:dataTable>
+						</p:tab>
+
+					</p:tabView>
+				</div>
+			</div>
+		</div>
+
+		<ui:include src="pacienteFicha.xhtml" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
+
+		<p:dialog widgetVar="dlgVisualizarRecibo" resizable="false"
+			header="Visualizar recibo de pagamento"
+			onHide="PF('dlgVisualizarRecibo').toggleMaximize();"
+			onShow="PF('dlgVisualizarRecibo').toggleMaximize();" modal="true"
+			appendTo=":lume">
+			<p:outputPanel id="visualizarReciboPnl"
+				style="max-height: calc(100% - 54px); height: calc(100% - 54px);"
+				styleClass="remove12ColPaddingSide">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: 100%; height: 100%;">
+
+					<p:outputPanel style="padding: 10px; padding-top: 0px">
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
+							<p:panel header="Profissional">
+								<h:outputText
+									value="#{reciboRepasseProfissionalMB.entity.profissional.dadosBasico.nome}" />
+							</p:panel>
+							<p:panel header="Valor Total de Repasse">
+								<h:outputText
+									value="#{reciboRepasseProfissionalMB.entity.valorTotalRepasse}">
+									<f:convertNumber currencySymbol="R$ " type="currency" />
+								</h:outputText>
+							</p:panel>
+							<p:panel header="Aprovado?">
+								<h:outputText
+									value="#{reciboRepasseProfissionalMB.entity.aprovadoStr}" />
+							</p:panel>
+						</p:panelGrid>
+						<p:dataTable
+							value="#{reciboRepasseProfissionalMB.entity.reciboLancamentos}"
+							var="reciboLancamento" filterDelay="1000" reflow="true"
+							emptyMessage="Nenhum repasse encontrado"
+							id="dtReciboRepasseLancamentos" rows="15" paginator="true"
+							paginatorPosition="bottom" rowKey="#{reciboLancamento}">
+							<f:facet name="header">
+								<h:outputText value="Repasses de Profissionais" />
+							</f:facet>
+
+							<p:column filterMatchMode="contains" headerText="Profissional"
+								filterBy="#{reciboLancamento.lancamento.fatura.profissional.dadosBasico.nome}"
+								sortBy="#{reciboLancamento.lancamento.fatura.profissional.dadosBasico.nome}">
+								<h:outputText
+									value="#{reciboLancamento.lancamento.fatura.profissional.dadosBasico.nome}" />
+							</p:column>
+							<p:column filterMatchMode="contains" headerText="Procedimento"
+								filterBy="#{reciboLancamento.lancamento.ptp.procedimento.descricao}"
+								sortBy="#{reciboLancamento.lancamento.ptp.procedimento.descricao}">
+								<h:outputText
+									value="#{reciboLancamento.lancamento.ptp.procedimento.descricao}" />
+							</p:column>
+							<p:column filterMatchMode="contains"
+								headerText="Plano de Tratamento"
+								filterBy="#{reciboLancamento.lancamento.ptp.planoTratamento.descricao}"
+								sortBy="#{reciboLancamento.lancamento.ptp.planoTratamento.descricao}">
+								<h:outputText
+									value="#{reciboLancamento.lancamento.ptp.planoTratamento.descricao}" />
+							</p:column>
+							<p:column filterMatchMode="contains" headerText="Paciente"
+								filterBy="#{reciboLancamento.lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}"
+								sortBy="#{reciboLancamento.lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}">
+								<h:outputText
+									value="#{reciboLancamento.lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}" />
+							</p:column>
+
+							<p:column filterMatchMode="contains" headerText="Valor"
+								filterBy="#{reciboLancamento.lancamento.valorComDesconto}"
+								sortBy="#{reciboLancamento.lancamento.valorComDesconto}"
+								width="100">
+								<h:outputText value="#{reciboLancamento.lancamento.valor}">
+									<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+										type="currency" />
+								</h:outputText>
+							</p:column>
+							<p:column filterMatchMode="contains" headerText="Data de criação"
+								filterBy="#{reciboLancamento.lancamento.dataCriacao}"
+								sortBy="#{reciboLancamento.lancamento.dataCriacao}" width="150">
+								<h:outputText value="#{reciboLancamento.lancamento.dataCriacao}">
+									<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+							<p:column filterMatchMode="contains" headerText="Validado?"
+								filterBy="#{reciboLancamento.lancamento.validadoStr}"
+								sortBy="#{reciboLancamento.lancamento.validadoStr}" width="100">
+								<h:outputText value="#{reciboLancamento.lancamento.validadoStr}" />
+							</p:column>
+						</p:dataTable>
+					</p:outputPanel>
+
+				</p:scrollPanel>
+			</p:outputPanel>
+			<p:panelGrid columns="4" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton styleClass="NavyButton"
+					update=":lume:imprimirReciboReciboPnl" value="Visualizar impressao"
+					icon="fa fa-printer" oncomplete="PF('dlgImprimirRecibo').show()"
+					process="@this" />
+				<p:column />
+				<p:column />
+				<p:commandButton styleClass="NavyButton" value="Fechar"
+					process="@this" oncomplete="PF('dlgVisualizarRecibo').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgImprimirRecibo" resizable="false"
+			header="Imprimir recibo de pagamento"
+			onHide="PF('dlgImprimirRecibo').toggleMaximize();"
+			onShow="PF('dlgImprimirRecibo').toggleMaximize();" modal="true"
+			appendTo=":lume">
+			<p:outputPanel id="imprimirReciboReciboPnl"
+				style="max-height: calc(100% - 54px); height: calc(100% - 54px);"
+				styleClass="remove12ColPaddingSide">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: 100%; height: 100%;">
+
+					<p:outputPanel style="padding: 10px;" id="impressHere">
+						<div style="font-size: 10pt">
+
+							<p:outputPanel
+								rendered="#{reciboRepasseProfissionalMB.entity.aprovado != 'S'}">
+								<div
+									style="width: calc(100% - 42px); border: 1px solid #bdbdbd; text-align: center; padding: 20px;">
+									<h:outputText escape="false"
+										value="Este recibo ainda não foi &lt;b&gt;aprovado&lt;/b&gt;, portanto não reflete o valor real de repasse" />
+								</div>
+								<br />
+							</p:outputPanel>
+							<div style="width: 100%; display: flex">
+								<h:panelGroup
+									style="text-align: center; border: 1px solid #bdbdbd; width: 24.25%; padding: 12px 16px;">
+									<span> <b><h:outputText value="Profissional" /></b>
+									</span>
+									<br />
+									<span> <h:outputText
+											value="#{reciboRepasseProfissionalMB.entity.profissional.dadosBasico.nome}" />
+									</span>
+								</h:panelGroup>
+								<div style="width: 1%" />
+								<h:panelGroup
+									style="text-align: center; border: 1px solid #bdbdbd; width: 24.25%; padding: 12px 16px;">
+									<span> <b><h:outputText
+												value="Quantidade de repasses" /></b>
+									</span>
+									<br />
+									<span> <h:outputText
+											value="#{reciboRepasseProfissionalMB.entity.quantidadeRepasses}" />
+									</span>
+								</h:panelGroup>
+								<div style="width: 1%" />
+								<h:panelGroup
+									style="text-align: center; border: 1px solid #bdbdbd; width: 24.25%; padding: 12px 16px;">
+									<span> <b><h:outputText
+												value="Valor total do repasse" /></b>
+									</span>
+									<br />
+									<span> <h:outputText
+											value="#{reciboRepasseProfissionalMB.entity.valorTotalRepasse}">
+											<f:convertNumber type="currency" currencySymbol="R$"
+												maxFractionDigits="2" />
+										</h:outputText>
+									</span>
+								</h:panelGroup>
+								<div style="width: 1%" />
+								<h:panelGroup
+									style="text-align: center; border: 1px solid #bdbdbd; width: 24.25%; padding: 12px 16px;">
+									<span> <b><h:outputText value="Data do Recibo" /></b>
+									</span>
+									<br />
+									<span> <h:outputText
+											value="#{reciboRepasseProfissionalMB.entity.dataCriacao}">
+											<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
+										</h:outputText>
+									</span>
+								</h:panelGroup>
+							</div>
+							<br />
+							<table style="width: 100%; border-collapse: collapse;">
+								<thead>
+									<tr>
+										<th style="border: 1px solid #bdbdbd; padding: 5px;">Procedimento</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px;">Plano
+											de Tratamento</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px;">Paciente</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px;">Valor</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px;">Validado?</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px;">Data
+											Validação</th>
+									</tr>
+								</thead>
+								<tbody>
+									<ui:repeat var="reciboLancamento"
+										value="#{reciboRepasseProfissionalMB.entity.reciboLancamentos}">
+										<tr>
+											<td
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 45%"><h:outputText
+													value="#{reciboLancamento.lancamento.ptp.procedimento.descricao}" /></td>
+											<td
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 20% px; text-align: center;"><h:outputText
+													value="#{reciboLancamento.lancamento.ptp.planoTratamento.descricao}" /></td>
+											<td
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 20%; text-align: center;"><h:outputText
+													value="#{reciboLancamento.lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}" /></td>
+											<td
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 5%; text-align: center;"><h:outputText
+													value="#{(reciboLancamento.lancamento.valorComDesconto != null and reciboLancamento.lancamento.valorComDesconto != 0 ? reciboLancamento.lancamento.valorComDesconto : reciboLancamento.lancamento.valor)}">
+													<f:convertNumber type="currency" currencySymbol="R$"
+														maxFractionDigits="2" />
+												</h:outputText></td>
+											<td
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 5%; text-align: center;"><h:outputText
+													value="#{reciboLancamento.lancamento.validadoStr}" /></td>
+											<td
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 5%; text-align: center;"><h:outputText
+													value="#{reciboLancamento.lancamento.dataValidado}">
+													<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
+												</h:outputText></td>
+										</tr>
+									</ui:repeat>
+								</tbody>
+							</table>
+							<br />
+							<div style="width: 100%; height: 80px;">
+								<div
+									style="width: 40%; height: 40px; border-bottom: solid 1px black;"></div>
+								<div
+									style="width: 40%; height: 40px; line-height: 40px; font-weight: bold; text-align: center;">
+									<h:outputText
+										value="#{reciboRepasseProfissionalMB.entity.profissional.dadosBasico.nome}#{(reciboRepasseProfissionalMB.entity.profissional.dadosBasico.documento != null and !reciboRepasseProfissionalMB.entity.profissional.dadosBasico.documento.isEmpty() ? ' - ' + reciboRepasseProfissionalMB.entity.profissional.dadosBasico.documento : '')}" />
+								</div>
+							</div>
+						</div>
+
+					</p:outputPanel>
+
+				</p:scrollPanel>
+			</p:outputPanel>
+			<p:panelGrid columns="4" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton styleClass="NavyButton" value="Impressao"
+					process="@this" icon="fa fa-printer">
+					<p:printer target=":lume:impressHere" />
+				</p:commandButton>
+				<p:column />
+				<p:column />
+				<p:commandButton styleClass="NavyButton" value="Fechar"
+					process="@this" oncomplete="PF('dlgImprimirRecibo').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog appendTo=":lume" closable="false" widgetVar="dlgGerarRecibo"
+			header="Gerar recibo de pagamento" modal="true" width="70%">
+			<p:outputPanel id="gerarReciboPnl">
+				<p:panelGrid columns="1" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+					<h:outputText
+						value="Será gerado um recibo para cada profissional destinatário dos lançamentos, agrupando-os em um único recibo."
+						escape="false" />
+				</p:panelGrid>
+				<p:dataTable
+					value="#{reciboRepasseProfissionalMB.profissionaisRecibo}"
+					var="profissional" filterDelay="1000" reflow="true"
+					emptyMessage="Nenhum profissional para gerar recibo"
+					id="dtProfissionaisRecibo" rows="15" paginator="true"
+					paginatorPosition="bottom" rowKey="#{profissional}">
+					<f:facet name="header">Profissionais e Repasses</f:facet>
+					<p:column filterMatchMode="contains" headerText="Profissional"
+						sortBy="#{profissional.dadosBasico.nome}"
+						filterBy="#{profissional.dadosBasico.nome}">
+						<h:outputText value="#{profissional.dadosBasico.nome}" />
+					</p:column>
+					<p:column filterMatchMode="contains" headerText="Qtde. Lançamentos"
+						sortBy="#{reciboRepasseProfissionalMB.getQtdeLancamentosFromProfissional(profissional)}"
+						filterBy="#{reciboRepasseProfissionalMB.getQtdeLancamentosFromProfissional(profissional)}">
+						<h:outputText
+							value="#{reciboRepasseProfissionalMB.getQtdeLancamentosFromProfissional(profissional)}" />
+					</p:column>
+					<p:column filterMatchMode="contains"
+						headerText="Valor total para repasse"
+						sortBy="#{reciboRepasseProfissionalMB.getValorLancamentosFromProfissional(profissional)}"
+						filterBy="#{reciboRepasseProfissionalMB.getValorLancamentosFromProfissional(profissional)}">
+						<h:outputText
+							value="#{reciboRepasseProfissionalMB.getValorLancamentosFromProfissional(profissional)}">
+							<f:convertNumber type="currency" currencySymbol="R$"
+								maxFractionDigits="2" />
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+				<br />
+				<p:panelGrid columns="1" layout="grid" id="detalhesNovoRecibo"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+					<h:panelGroup styleClass="md-inputfield">
+						<p:inputText value="#{reciboRepasseProfissionalMB.descricao}"
+							id="descricaoRecibo" maxlength="255" />
+						<p:outputLabel for="descricaoRecibo" value="Descrição" />
+					</h:panelGroup>
+					<h:panelGroup styleClass="md-inputfield">
+						<p:inputTextarea style="width: 100%" rows="6"
+							value="#{reciboRepasseProfissionalMB.observacao}"
+							id="observacaoRecibo" />
+						<p:outputLabel for="observacaoRecibo" value="Observação" />
+					</h:panelGroup>
+				</p:panelGrid>
+				<p:separator styleClass="SeparatorFull" />
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+					<p:commandButton styleClass="GreenButton" value="Gerar Recibo"
+						update=":lume:tabViewRepasses:dtRepasseLancamentos"
+						process="@this, detalhesNovoRecibo"
+						actionListener="#{reciboRepasseProfissionalMB.gerarRecibo}" />
+					<p:commandButton styleClass="NavyButton" value="Fechar"
+						process="@this"
+						actionListener="#{reciboRepasseProfissionalMB.cancelarRecibo}" />
+				</p:panelGrid>
+			</p:outputPanel>
+		</p:dialog>
+
+		<script type="text/javascript">
+			//<![CDATA[
+
+			//]]>
+		</script>
+	</ui:define>
+</ui:composition>

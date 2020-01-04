@@ -60,7 +60,7 @@ public class PacienteTotemMB extends LumeManagedBean<Paciente> {
         super(PacienteSingleton.getInstance().getBo());
     
         try {
-            List<Dominio> dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjeto("noticia");
+            List<Dominio> dominios = DominioSingleton.getInstance().getBo().listByObjeto("noticia");
             for (Dominio dominio : dominios) {
                 if (dominio.getTipo().equals("quantidade")) {
                     this.setQuantidadeNoticias(new Integer(dominio.getValor()));

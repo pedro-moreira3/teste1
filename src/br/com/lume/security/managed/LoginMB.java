@@ -115,20 +115,13 @@ public class LoginMB extends LumeManagedBean<Usuario> {
                     usuarioTrocaSenha.setDataToken(dataAtual);
                     UsuarioSingleton.getInstance().getBo().persist(usuarioTrocaSenha);
 
+                    //  Utils.enviarEmailUsuario(usuarioTrocaSenha, "recuperacao");
+
                     Map<String, String> valores = new HashMap<>();
                     valores.put("#token", usuarioTrocaSenha.getTokenAcesso());
+
                     String mensagem = EnviaEmail.buscarTemplate(valores, EnviaEmail.RESET);
-                       
-                    log.info("========================================================");
-                    log.info("==================== Resetar Senha =====================");
-                    log.info("========================================================");
-                    log.info("Email: ");
-                    log.info(usuarioTrocaSenha.getUsuStrEml());
-                    log.info("Valores: ");
-                    log.info("{ \"#token\", \"" + usuarioTrocaSenha.getTokenAcesso() + "\" }");
-                    log.info("Mensagem: ");
-                    log.info(mensagem);
-                    log.info("========================================================");
+                    mensagem.replaceAll("#token", usuarioTrocaSenha.getTokenAcesso());
 
                     EnviaEmail.enviaEmail(usuarioTrocaSenha.getUsuStrEml(), "Solicitação de troca de senha", mensagem);
 
@@ -139,8 +132,10 @@ public class LoginMB extends LumeManagedBean<Usuario> {
 
             }
         } catch (NonUniqueResultException e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
             addError("Erro!", Mensagens.getMensagem("login.reset.erro"));
         } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
             addError("Erro!", Mensagens.getMensagem("login.reset.erro"));
         }
     }

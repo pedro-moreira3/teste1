@@ -1,31 +1,32 @@
 package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
-import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.aparelhoOrtodontico.AparelhoOrtodonticoSingleton;
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
-import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.diagnosticoOrtodontico.DiagnosticoOrtodonticoSingleton;
 import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.AparelhoOrtodontico;
-import br.com.lume.odonto.entity.ConvenioProcedimento;
 import br.com.lume.odonto.entity.DiagnosticoOrtodontico;
-import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Orcamento;
+import br.com.lume.odonto.entity.OrcamentoItem;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoAparelho;
@@ -36,44 +37,30 @@ import br.com.lume.orcamento.OrcamentoSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.procedimento.ProcedimentoSingleton;
+import br.com.lume.security.entity.Empresa;
 
+/**
+ * @author ricardo.poncio
+ */
 @ManagedBean
 @ViewScoped
 public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
-    private List<PlanoTratamento> planosTratamento;
+    private static final long serialVersionUID = 153723419074952967L;
 
-    private Logger log = Logger.getLogger(OrtodontiaMB.class);
+    private List<Orcamento> orcamentos;
+    private Orcamento orcamentoSelecionado;
+    private List<DiagnosticoOrtodontico> diagnosticos;
+    private DiagnosticoOrtodontico diagnosticoSelecionado;
+    private List<AparelhoOrtodontico> aparelhos;
+    private AparelhoOrtodontico aparelhoSelecionado;
+    private Procedimento procedimentoExtra;
+
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaPlanoOrtodontico;
 
     @ManagedProperty(value = "#{pacienteMB}")
     private PacienteMB pacienteMB;
-
-    @ManagedProperty(value = "#{planoTratamentoMB}")
-    private PlanoTratamentoMB planoTratamentoMB;
-
-    private Paciente paciente;
-
-    private DiagnosticoOrtodontico diagnosticoSelecionado;
-
-    private List<DiagnosticoOrtodontico> diagnosticos;   
-
-    private AparelhoOrtodontico aparelhoSelecionado;
-
-    private List<AparelhoOrtodontico> aparelhos;   
-
-    private Procedimento procedimentoPadrao;
-
-      private BigDecimal valorProcedimentoOrtodontico;
-
-    private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos;
-
-    private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentosOrcamento;
-
-    private List<Orcamento> orcamentos;
-
-       private Procedimento procedimentoExtra;
-
-    private BigDecimal valorProcedimentoExtra;
 
     public OrtodontiaMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());
@@ -82,263 +69,130 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             setEntity(new PlanoTratamento());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
+            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
     }
 
-    @Override
-    public void actionNew(ActionEvent event) {
-        setEntity(new PlanoTratamento());
-        carregarTela();
+    public BigDecimal getDescontoFrom(OrcamentoItem oi) {
+        try {
+            return oi.getValorOriginal().subtract(oi.getValor()).divide(oi.getValorOriginal(), BigDecimal.ROUND_HALF_UP);
+        } catch (Exception e) {
+            return BigDecimal.ZERO;
+        }
     }
 
+    //TODO - Estudar o início/fim para planos de tratamento não ortodônticos também.
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            
+
             Calendar cal1 = Calendar.getInstance();
             Calendar cal2 = Calendar.getInstance();
             cal1.setTime(getEntity().getInicio());
             cal2.setTime(getEntity().getFim());
-            boolean sameDay = cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
-                              cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
-            
+            boolean sameDay = cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) && cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
+
             if (getEntity().getInicio().before(getEntity().getFim()) || sameDay) {
                 boolean novoPlano = getEntity().getId() == null || getEntity().getId() == 0;
-
                 if (novoPlano) {
                     getEntity().setPaciente(getPaciente());
                     getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
                     getEntity().setOrtodontico(true);
-                    getEntity().setValorTotal(calculaValorTotal());
-                    getEntity().setValorTotalDesconto(calculaValorTotal());
-                    getbO().persist(getEntity());
-                    geraPlanoTratamentoProcedimento();
-                    geraOrcamento();
+                    getEntity().setValorTotal(PlanoTratamentoSingleton.getInstance().calculaValorTotal(getEntity()));
+                    getEntity().setValorTotalDesconto(PlanoTratamentoSingleton.getInstance().calculaValorTotal(getEntity()));
+                    getEntity().setPlanoTratamentoProcedimentos(new ArrayList<>());
+
+                    long qtd = getEntity().getMeses();
+                    long ultimoSequencial = 0l;
+                    //qtd = (qtd > 12l ? 12 : qtd);
+                    for (int i = 0; i < qtd; i++) {
+                        PlanoTratamentoProcedimento ptp = new PlanoTratamentoProcedimento();
+                        ultimoSequencial++;
+                        ptp.setSequencial((int) ultimoSequencial);
+                        ptp.setProcedimento(getEntity().getProcedimentoPadrao());
+                        ptp.setValor(getEntity().getProcedimentoPadrao().getValor());
+                        ptp.setValorDesconto(getEntity().getProcedimentoPadrao().getValor());
+                        ptp.setPlanoTratamento(getEntity());
+                        ptp.setOrtodontico(true);
+                        getEntity().getPlanoTratamentoProcedimentos().add(ptp);
+                    }
                 } else {
-                    getbO().persist(getEntity());
+                    //só salva
                 }
-                this.actionNew(event);
+
+                getbO().persist(getEntity());
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+
+                carregarTela();
+                atualizaOrcamentos();
             } else {
                 this.addError("Data de fim de previsão de fim de tratamento não pode ser antes da data de início do tratamento", "");
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e);
+            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
     }
 
-    public void actionOrcamentoAnual() {
+    @Override
+    public void actionNew(ActionEvent event) {
+        setEntity(null);
         try {
-            if (getEntity().getValorOrcamentoRestante().doubleValue() == 0d) {
-                if (PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findQtdNaoFinalizadosPTPOrtodontia(getEntity().getId()) == 0l) {
-                    geraPlanoTratamentoProcedimento();
-                    geraOrcamento();
-                    PlanoTratamentoSingleton.getInstance().getBo().carregarNovoValorTotal(getEntity(), valorProcedimentoOrtodontico);
-                    getbO().persist(getEntity());
-                    actionCarregarPlano();
-                } else {
-                    this.addError("É preciso finalizar os procedimentos ortodonticos restantes antes de fazer um novo orçamento anual.", "");
-                }
-                //refazer procedimento em caso de paciente ainda nao ter pago nada.
-            } else if (getEntity().getValorPago().doubleValue() == 0d) { 
-                for (PlanoTratamentoProcedimento planoTratamentoProc : PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamento(getEntity())) {
-                    planoTratamentoProc.setValor(valorProcedimentoOrtodontico);
-                    planoTratamentoProc.setValorDesconto(valorProcedimentoOrtodontico);                  
-                    planoTratamentoProc.getPlanoTratamento().getOrcamentos();
-                    for (Orcamento orcamento : planoTratamentoProc.getPlanoTratamento().getOrcamentos()) {
-                        orcamento.setValorProcedimentoOrtodontico(valorProcedimentoOrtodontico);
-                        BigDecimal valorTotal = valorProcedimentoOrtodontico.multiply(new BigDecimal(getQtdMesesRestantes()));
-                        orcamento.setValorTotal(valorTotal);    
-                        
-                        List<Lancamento> lancamentos = new ArrayList<>();
-                        
-                        for (Lancamento lancamento : orcamento.getLancamentos()) {
-                            lancamento.setValor(valorTotal);
-                            lancamento.setValorOriginal(valorTotal);
-                            lancamentos.add(lancamento);
-                        }
-                        orcamento.setLancamentos(lancamentos);
-                        OrcamentoSingleton.getInstance().getBo().persist(orcamento);
-                        
-                    }
-                    getEntity().setValorTotalRestante(valorProcedimentoOrtodontico);
-                    getEntity().setValorTotalRestante(valorProcedimentoOrtodontico);
-                    PlanoTratamentoSingleton.getInstance().getBo().carregarNovoValorTotal(getEntity(), valorProcedimentoOrtodontico);   
-                    getbO().persist(getEntity());
-                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(planoTratamentoProc);                 
-                } 
-                actionCarregarPlano();
-            } else {
-                NumberFormat formatter = NumberFormat.getCurrencyInstance(getLumeSecurity().getLocale());
-                this.addError("É preciso que o cliente quite os débitos " + formatter.format(getEntity().getValorOrcamentoRestante()) + " antes de fazer um novo orçamento anual.", "");
-            }
-            
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e);
-        }
-    }
-
-    public void actionCarregarPlano() {
-        try {
-            valorProcedimentoOrtodontico = procedimentoPadrao.getValor();
-            planoTratamentoProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listPTPOrtodontia(getEntity().getId());
-            planoTratamentoProcedimentosOrcamento = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listPTPOrtodontiaOrcamento(getEntity().getId());
-        
-            PlanoTratamentoSingleton.getInstance().getBo().carregarValoresOrtodontia(getEntity());
-            carregarOrcamentos();
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
-        }
-    }
-
-    private void carregarOrcamentos() throws Exception {
-        orcamentos = OrcamentoSingleton.getInstance().getBo().listByPlanoTratamento(getEntity());
-        if (orcamentos != null && !orcamentos.isEmpty()) {
-            for (Orcamento o : orcamentos) {
-                o.setValorPago(OrcamentoSingleton.getInstance().getBo().findValorPago(o));
-            }
-            valorProcedimentoOrtodontico = OrcamentoSingleton.getInstance().getBo().findUltimoOrcamentoOrtodontico(getEntity().getId()).getValorProcedimentoOrtodontico();
-        }
-    }
-
-    private void geraPlanoTratamentoProcedimento() throws Exception {
-        long qtd = getQtdMesesRestantes();
-        long ultimoSequencial = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findUltimoSequencial(getEntity().getId());
-        for (int i = 0; i < qtd; i++) {
-            PlanoTratamentoProcedimento ptp = new PlanoTratamentoProcedimento();
-            ultimoSequencial++;
-            ptp.setSequencial((int) ultimoSequencial);
-            ptp.setProcedimento(procedimentoPadrao);
-            ptp.setValor(valorProcedimentoOrtodontico);
-            ptp.setValorDesconto(valorProcedimentoOrtodontico);
-            ptp.setPlanoTratamento(getEntity());
-            ptp.setOrtodontico(true);
-            PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
-        }
-
-    }
-
-    private long getQtdMesesRestantes() {
-        long qtd = getEntity().getMeses() - PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findQtdFinalizadosPTPOrtodontia(getEntity().getId());
-        if (qtd >= 12) {
-            return 12;
-        } else {
-            return qtd;
-        }
-    }
-
-    public List<PlanoTratamentoProcedimento> getPlanoTratamentoProcedimentos() {
-        return planoTratamentoProcedimentos;
-    }
-
-    private BigDecimal calculaValorTotal() {
-        return valorProcedimentoOrtodontico.multiply(new BigDecimal(getEntity().getMeses()));
-    }
-
-    public void actionCalculaMeses() {
-        Calendar instance = Calendar.getInstance();
-        instance.setTime(getEntity().getInicio());
-        instance.add(Calendar.MONTH, getEntity().getMeses() - 1);
-        getEntity().setFim(instance.getTime());
-    }
-
-    private void geraOrcamento() throws Exception {
-        Orcamento o = new Orcamento();
-        o.setDataAprovacao(Calendar.getInstance().getTime());
-        o.setPlanoTratamento(getEntity());
-        o.setValorProcedimentoOrtodontico(valorProcedimentoOrtodontico);
-        o.setOrtodontico(true);
-        BigDecimal valorTotal = valorProcedimentoOrtodontico.multiply(new BigDecimal(getQtdMesesRestantes()));
-        o.setValorTotal(valorTotal);
-        o.setProfissional(UtilsFrontEnd.getProfissionalLogado());
-        o.setQuantidadeParcelas((int) getQtdMesesRestantes());
-        Lancamento l = new Lancamento();
-
-        l.setValor(valorTotal);
-        l.setValorOriginal(valorTotal);
-        l.setNumeroParcela(1);
-        l.setOrcamento(o);
-        l.setDataCredito(getEntity().getInicio());
-
-        List<Lancamento> lancamentos = new ArrayList<>();
-        lancamentos.add(l);
-        o.setLancamentos(lancamentos);
-        OrcamentoSingleton.getInstance().getBo().persist(o);
-    }
-
-    @PostConstruct
-    public void carregarTela() {
-        try {
-            procedimentoPadrao = ProcedimentoSingleton.getInstance().getBo().findByCodigoProcedimento(
-                    Integer.parseInt(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("ortodontia", "procedimento_padrao", "PP").getNome()),
+            Dominio dominioProcedimentoPadrao = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("ortodontia", "procedimento_padrao", "PP");
+            Procedimento procedimentoPadrao = ProcedimentoSingleton.getInstance().getBo().findByCodigoProcedimento(Integer.parseInt(dominioProcedimentoPadrao.getNome()),
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            
-            valorProcedimentoOrtodontico = procedimentoPadrao.getValor();
-            planoTratamentoProcedimentos = null;
-            setEntity(null);
-            orcamentos = null;
-            carregarPlanos();
-            carregarDiagnosticos();
-            carregarAparelhos();
+            atualizaValorProcedimento(procedimentoPadrao);
+            getEntity().setProcedimentoPadrao(procedimentoPadrao);
+            getEntity().setBconvenio(true);
+            BigDecimal valor = new BigDecimal(0);
+            if (this.getEntity().getProcedimentoPadrao().getValor() == null)
+                this.getEntity().getProcedimentoPadrao().setValor(valor);
+
+            // PrimeFaces.current().executeScript("PF('dlgOrcamentoOrtodontia').show()");
+            PrimeFaces.current().ajax().update(":lume:tabView:descricaoPlano");
+            PrimeFaces.current().ajax().update(":lume:tabView:valorProcedimentoPadrao");
+            PrimeFaces.current().ajax().update(":lume:tabView:inicioTratamento");
+            PrimeFaces.current().ajax().update(":lume:tabView:meses");
+            PrimeFaces.current().ajax().update(":lume:tabView:fimTratamento");
+            PrimeFaces.current().ajax().update(":lume:tabView:utilizaConvenio");
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
+            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
     }
 
-    public void carregarPlanos() {
-        try {
-            if (getPaciente() != null) {
-                planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPacienteOrtodontia(getPaciente());
-            }
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
-        }
+    public void atualizaValorProcedimento() {
+        atualizaValorProcedimento(getEntity().getProcedimentoPadrao());
     }
 
-    public void carregarDiagnosticos() {
+    private void atualizaValorProcedimento(Procedimento procedimento) {
         try {
-            diagnosticos = DiagnosticoOrtodonticoSingleton.getInstance().getBo().listAll();
+            BigDecimal valorConv = ProcedimentoSingleton.getInstance().getValorProcedimentoConvenio(procedimento, getEntity().getConvenio());
+            procedimento.setValor(valorConv);
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
-        }
-    }
-
-    public void carregarAparelhos() {
-        try {
-            aparelhos = AparelhoOrtodonticoSingleton.getInstance().getBo().listAll();
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
+            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
     }
 
     public void actionAdicionarDiagnostico() {
         try {
-            if (diagnosticoSelecionado != null) {
+            if (getDiagnosticoSelecionado() != null) {
                 List<PlanoTratamentoDiagnostico> list = getEntity().getDiagnosticos();
-                if (list == null) {
+                if (list == null)
                     list = new ArrayList<>();
-                }
-                PlanoTratamentoDiagnostico repetido = list.stream().filter(n -> n.getDiagnosticoOrtodontico().getDescricao().equals(diagnosticoSelecionado.getDescricao())).findAny().orElse(null);
+                PlanoTratamentoDiagnostico repetido = list.stream().filter(n -> n.getDiagnosticoOrtodontico().getDescricao().equals(getDiagnosticoSelecionado().getDescricao())).findAny().orElse(null);
 
                 if (repetido != null) {
                     this.addError("Diagnóstico já cadastrado", "");
                     return;
                 } else {
-                    list.add(new PlanoTratamentoDiagnostico(getEntity(), diagnosticoSelecionado));
+                    list.add(new PlanoTratamentoDiagnostico(getEntity(), getDiagnosticoSelecionado()));
                     getEntity().setDiagnosticos(list);
                 }
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e);
+            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
     }
 
@@ -347,8 +201,196 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             getEntity().getDiagnosticos().remove(diagnostico);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e);
+            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
+    }
+
+    public void actionAdicionarProcedimentoExtra() {
+        if (getProcedimentoExtra() != null) {
+            try {
+                long ultimoSequencial = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findUltimoSequencial(getEntity().getId());
+
+                PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().carregaProcedimento(getEntity(), getProcedimentoExtra(), getPaciente());
+
+                ultimoSequencial++;
+                ptp.setSequencial((int) ultimoSequencial);
+                getEntity().getPlanoTratamentoProcedimentos().add(ptp);
+                getEntity().setValorTotal(PlanoTratamentoSingleton.getInstance().calculaValorTotal(getEntity()));
+
+                setProcedimentoExtra(null);
+            } catch (Exception e) {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+                LogIntelidenteSingleton.getInstance().makeLog(e);
+            }
+        }
+    }
+
+    public void actionAdicionarAparelho() {
+        try {
+            if (getAparelhoSelecionado() != null) {
+                List<PlanoTratamentoAparelho> list = getEntity().getAparelhos();
+                if (list == null) {
+                    list = new ArrayList<>();
+                }
+                PlanoTratamentoAparelho repetido = list.stream().filter(n -> n.getAparelhoOrtodontico().getDescricao().equals(getAparelhoSelecionado().getDescricao())).findAny().orElse(null);
+
+                if (repetido != null) {
+                    this.addError("Aparelho já cadastrado", "");
+                    return;
+                } else {
+                    list.add(new PlanoTratamentoAparelho(getEntity(), getAparelhoSelecionado()));
+                    getEntity().setAparelhos(list);
+                }
+            }
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+    }
+
+    public void actionRemoverAparelho(PlanoTratamentoAparelho aparelho) {
+        try {
+            getEntity().getAparelhos().remove(aparelho);
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+    }
+
+    public void atualizaOrcamentos() throws Exception {
+        setOrcamentos(OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(getEntity(), true));
+        for (Orcamento orcamento : orcamentos)
+            OrcamentoSingleton.getInstance().recalculaValores(orcamento);
+    }
+
+    public void actionNewOrcamento() {
+        try {
+            setOrcamentoSelecionado(OrcamentoSingleton.getInstance().preparaOrcamentoFromPT(getEntity()));
+            getOrcamentoSelecionado().setOrtodontico(true);
+            getOrcamentoSelecionado().setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
+            getOrcamentoSelecionado().setValorProcedimentoOrtodontico(getEntity().getProcedimentoPadrao().getValor());
+            long qtd = getEntity().getMeses() - PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findQtdFinalizadosPTPOrtodontia(getEntity().getId());
+            //qtd = (qtd > 12l ? 12 : qtd);
+            getOrcamentoSelecionado().setQuantidadeParcelas((int) qtd);
+            PrimeFaces.current().executeScript("PF('dlgOrcamentoPlanoOrtodontico').show()");
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e.getMessage());
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+
+    }
+
+    public void actionPersistOrcamento() {
+        try {
+            if (orcamentoSelecionado.getDataCriacao() == null) {
+                orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
+                orcamentoSelecionado.setDataCriacao(new Date());
+            }
+            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
+            OrcamentoSingleton.getInstance().recalculaValores(orcamentoSelecionado);
+            setOrcamentoSelecionado(OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado));
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            atualizaOrcamentos();
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+    }
+
+    public void actionEditOrcamento(Orcamento orcamento) {
+        setOrcamentoSelecionado(orcamento);
+    }
+
+    public void actionRemoveOrcamento(Orcamento orcamento) {
+        try {
+            OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado());
+            atualizaOrcamentos();
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+    }
+
+    public void actionAprovaOrcamento() {
+        actionAprovaOrcamento(getOrcamentoSelecionado());
+    }
+
+    public void actionAprovaOrcamento(Orcamento orcamento) {
+        try {
+            OrcamentoSingleton.getInstance().aprovaOrcamento(orcamento, null, UtilsFrontEnd.getProfissionalLogado());
+            atualizaOrcamentos();
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+    }
+
+    public void actionCalculaMeses() {
+        if (getEntity().getMeses() != null && getEntity().getInicio() != null) {
+            Calendar instance = Calendar.getInstance();
+            instance.setTime(getEntity().getInicio());
+            instance.add(Calendar.MONTH, getEntity().getMeses() - 1);
+            getEntity().setFim(instance.getTime());
+            PrimeFaces.current().ajax().update(":lume:tabView:fimTratamento");
+        }
+    }
+
+    public BigDecimal getValorOrcamentoAPagar() {
+        if (getOrcamentoSelecionado() != null) {
+            BigDecimal totalOrcamento = OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(getOrcamentoSelecionado());
+            BigDecimal valorPago = LancamentoSingleton.getInstance().getTotalLancamentoPorOrcamento(getOrcamentoSelecionado(), true);
+            if (totalOrcamento == null)
+                return BigDecimal.ZERO;
+            return totalOrcamento.subtract((valorPago == null ? BigDecimal.ZERO : valorPago));
+        }
+        return null;
+    }
+
+    public void carregarTela() {
+        try {
+            setDiagnosticos(DiagnosticoOrtodonticoSingleton.getInstance().getBo().listAll());
+            setAparelhos(AparelhoOrtodonticoSingleton.getInstance().getBo().listAll());
+
+            setEntityList(PlanoTratamentoSingleton.getInstance().getBo().listByPacienteOrtodontia(getPaciente()));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+    }
+
+    public void actionCarregarPlano(PlanoTratamento plano) {
+        setEntity(plano);
+        try {
+            atualizaValorProcedimento(getEntity().getProcedimentoPadrao());
+            getEntity().setValorTotal(PlanoTratamentoSingleton.getInstance().calculaValorTotal(getEntity()));
+            getEntity().setValorPago(LancamentoSingleton.getInstance().getTotalLancamentoPorPT(getEntity(), true));
+            atualizaOrcamentos();
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+    }
+
+    public Paciente getPaciente() {
+        if (this.getPacienteMB() != null && this.getPacienteMB().getEntity() != null && this.getPacienteMB().getEntity().getId() != null)
+            return this.getPacienteMB().getEntity();
+        return null;
+    }
+
+    public String getNomeClinica() {
+        Empresa empresalogada = UtilsFrontEnd.getEmpresaLogada();
+        return (empresalogada.getEmpStrNme() != null ? empresalogada.getEmpStrNme() : "");
+    }
+
+    public String getInfoClinica() {
+        Empresa empresalogada = UtilsFrontEnd.getEmpresaLogada();
+        String info = "";
+        info += (info != null && !info.isEmpty() ? " - " : "") + (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() : "");
+        info += (info != null && !info.isEmpty() ? " - " : "") + (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() : "");
+        info += (info != null && !info.isEmpty() ? "/" : "") + (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() : "");
+        info += (info != null && !info.isEmpty() ? " - " : "") + (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
+        return info;
     }
 
     public List<Procedimento> geraSugestoesProcedimento(String query) {
@@ -359,138 +401,17 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         return ProcedimentoSingleton.getInstance().getBo().listSugestoesCompleteOrtodontico(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
-    public void actionAdicionarProcedimentoExtra() {
-        if (procedimentoExtra != null) {
-            try {
-                long ultimoSequencial = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findUltimoSequencial(getEntity().getId());
-
-                PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().carregaProcedimento(getEntity(), procedimentoExtra, getPaciente());
-
-                ultimoSequencial++;
-                ptp.setValor(valorProcedimentoExtra);
-                ptp.setValorDesconto(valorProcedimentoExtra);
-                ptp.setSequencial((int) ultimoSequencial);
-                PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(ptp);
-                planoTratamentoProcedimentos.add(ptp);
-                gerarOrcamentoProcedimentoExtra(ptp);
-                PlanoTratamentoSingleton.getInstance().getBo().carregarNovoValorTotal(getEntity(), valorProcedimentoOrtodontico);
-                getbO().persist(getEntity());
-                procedimentoExtra = null;
-                actionCarregarPlano();
-            } catch (Exception e) {
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
-                log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e);
-            }
-        }
+    public void exportarTabela(String type) {
+        exportarTabela("Manutenção Orto", this.tabelaPlanoOrtodontico, type);
     }
 
-    public void actionMudaValorProcedimentoExtra() {
-        if (procedimentoExtra != null) {
-            PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().carregaProcedimento(getEntity(), procedimentoExtra, getPaciente());
-            valorProcedimentoExtra = ptp.getValor();
-        }
-    }
+    public BigDecimal obterValorProcedimentoValor() {
+        BigDecimal valor = new BigDecimal(0);
 
-    public void gerarOrcamentoProcedimentoExtra(PlanoTratamentoProcedimento ptp) {
-        try {
-            Orcamento o = new Orcamento();
-            o.setDataAprovacao(Calendar.getInstance().getTime());
-            o.setPlanoTratamento(getEntity());
-            o.setOrtodontico(false);
-            o.setValorTotal(ptp.getValor());
-            o.setProfissional(UtilsFrontEnd.getProfissionalLogado());
-            Lancamento l = new Lancamento();
+        if (this.getEntity().getProcedimentoPadrao() != null)
+            valor = this.getEntity().getProcedimentoPadrao().getValor();
 
-            l.setValor(ptp.getValor());
-            l.setValorOriginal(ptp.getValor());
-            l.setNumeroParcela(1);
-            l.setOrcamento(o);
-            l.setDataCredito(getEntity().getInicio());
-
-            List<Lancamento> lancamentos = new ArrayList<>();
-            lancamentos.add(l);
-            o.setLancamentos(lancamentos);
-            OrcamentoSingleton.getInstance().getBo().persist(o);
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e);
-        }
-    }
-
-    public void actionAdicionarAparelho() {
-        try {
-            if (aparelhoSelecionado != null) {
-                List<PlanoTratamentoAparelho> list = getEntity().getAparelhos();
-                if (list == null) {
-                    list = new ArrayList<>();
-                }
-                PlanoTratamentoAparelho repetido = list.stream().filter(n -> n.getAparelhoOrtodontico().getDescricao().equals(aparelhoSelecionado.getDescricao())).findAny().orElse(null);
-
-                if (repetido != null) {
-                    this.addError("Aparelho já cadastrado", "");
-                    return;
-                } else {
-                    list.add(new PlanoTratamentoAparelho(getEntity(), aparelhoSelecionado));
-                    getEntity().setAparelhos(list);
-                }
-            }
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e);
-        }
-    }
-
-    public void actionCarregarValorProcedimentoPadrao() {
-        try {
-            if (procedimentoPadrao != null) {
-                if (getEntity().isBconvenio()) {
-                    ConvenioProcedimento cp = ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(paciente.getConvenio(), procedimentoPadrao);
-                    if (cp != null) {
-                        valorProcedimentoOrtodontico = cp.getValor();
-                    } else {
-                        valorProcedimentoOrtodontico = procedimentoPadrao.getValor();
-                    }
-                } else {
-                    valorProcedimentoOrtodontico = procedimentoPadrao.getValor();
-                }
-            }
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), e);
-        }
-    }
-
-    public void actionRemoverAparelho(PlanoTratamentoAparelho aparelho) {
-        try {
-            getEntity().getAparelhos().remove(aparelho);
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
-            log.error(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e);
-        }
-    }
-
-    public List<PlanoTratamento> getPlanosTratamento() {
-        return planosTratamento;
-    }
-
-    public void setPlanosTratamento(List<PlanoTratamento> planosTratamento) {
-        this.planosTratamento = planosTratamento;
-    }
-
-    public DiagnosticoOrtodontico getDiagnosticoSelecionado() {
-        return diagnosticoSelecionado;
-    }
-
-    public void setDiagnosticoSelecionado(DiagnosticoOrtodontico diagnosticoSelecionado) {
-        this.diagnosticoSelecionado = diagnosticoSelecionado;
-    }
-
-    public List<DiagnosticoOrtodontico> getDiagnosticos() {
-        return diagnosticos;
-    }
-
-    public void setDiagnosticos(List<DiagnosticoOrtodontico> diagnosticos) {
-        this.diagnosticos = diagnosticos;
+        return valor;
     }
 
     public PacienteMB getPacienteMB() {
@@ -501,41 +422,36 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         this.pacienteMB = pacienteMB;
     }
 
-    public Paciente getPaciente() {
-        if (this.getPacienteMB().getEntity().getId() != null) {
-            paciente = this.getPacienteMB().getEntity();
-        } else {
-            paciente = null;
-        }
-        return paciente;
+    public List<Orcamento> getOrcamentos() {
+        return orcamentos;
     }
 
-    public void setPaciente(Paciente paciente) {
-        this.paciente = paciente;
+    public void setOrcamentos(List<Orcamento> orcamentos) {
+        this.orcamentos = orcamentos;
     }
 
-    public Procedimento getProcedimentoPadrao() {
-        return procedimentoPadrao;
+    public Orcamento getOrcamentoSelecionado() {
+        return orcamentoSelecionado;
     }
 
-    public void setProcedimentoPadrao(Procedimento procedimentoPadrao) {
-        this.procedimentoPadrao = procedimentoPadrao;
+    public void setOrcamentoSelecionado(Orcamento orcamentoSelecionado) {
+        this.orcamentoSelecionado = orcamentoSelecionado;
     }
 
-    public PlanoTratamentoMB getPlanoTratamentoMB() {
-        return planoTratamentoMB;
+    public List<DiagnosticoOrtodontico> getDiagnosticos() {
+        return diagnosticos;
     }
 
-    public void setPlanoTratamentoMB(PlanoTratamentoMB planoTratamentoMB) {
-        this.planoTratamentoMB = planoTratamentoMB;
+    public void setDiagnosticos(List<DiagnosticoOrtodontico> diagnosticos) {
+        this.diagnosticos = diagnosticos;
     }
 
-    public AparelhoOrtodontico getAparelhoSelecionado() {
-        return aparelhoSelecionado;
+    public DiagnosticoOrtodontico getDiagnosticoSelecionado() {
+        return diagnosticoSelecionado;
     }
 
-    public void setAparelhoSelecionado(AparelhoOrtodontico aparelhoSelecionado) {
-        this.aparelhoSelecionado = aparelhoSelecionado;
+    public void setDiagnosticoSelecionado(DiagnosticoOrtodontico diagnosticoSelecionado) {
+        this.diagnosticoSelecionado = diagnosticoSelecionado;
     }
 
     public List<AparelhoOrtodontico> getAparelhos() {
@@ -546,20 +462,12 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         this.aparelhos = aparelhos;
     }
 
-    public BigDecimal getValorProcedimentoOrtodontico() {
-        return valorProcedimentoOrtodontico;
+    public AparelhoOrtodontico getAparelhoSelecionado() {
+        return aparelhoSelecionado;
     }
 
-    public void setValorProcedimentoOrtodontico(BigDecimal valorProcedimentoOrtodontico) {
-        this.valorProcedimentoOrtodontico = valorProcedimentoOrtodontico;
-    }
-
-    public List<Orcamento> getOrcamentos() {
-        return orcamentos;
-    }
-
-    public void setOrcamentos(List<Orcamento> orcamentos) {
-        this.orcamentos = orcamentos;
+    public void setAparelhoSelecionado(AparelhoOrtodontico aparelhoSelecionado) {
+        this.aparelhoSelecionado = aparelhoSelecionado;
     }
 
     public Procedimento getProcedimentoExtra() {
@@ -571,19 +479,19 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public BigDecimal getValorProcedimentoExtra() {
-        return valorProcedimentoExtra;
+        return (this.procedimentoExtra == null ? null : this.procedimentoExtra.getValor());
     }
 
     public void setValorProcedimentoExtra(BigDecimal valorProcedimentoExtra) {
-        this.valorProcedimentoExtra = valorProcedimentoExtra;
+        if (this.procedimentoExtra != null)
+            this.procedimentoExtra.setValor(valorProcedimentoExtra);
     }
 
-    public List<PlanoTratamentoProcedimento> getPlanoTratamentoProcedimentosOrcamento() {
-        return planoTratamentoProcedimentosOrcamento;
+    public DataTable getTabelaPlanoOrtodontico() {
+        return tabelaPlanoOrtodontico;
     }
 
-    public void setPlanoTratamentoProcedimentosOrcamento(List<PlanoTratamentoProcedimento> planoTratamentoProcedimentosOrcamento) {
-        this.planoTratamentoProcedimentosOrcamento = planoTratamentoProcedimentosOrcamento;
+    public void setTabelaPlanoOrtodontico(DataTable tabelaPlanoOrtodontico) {
+        this.tabelaPlanoOrtodontico = tabelaPlanoOrtodontico;
     }
-
 }

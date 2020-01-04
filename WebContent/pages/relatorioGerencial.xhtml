@@ -1,17 +1,21 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
-    <ui:define name="content">
-        <style>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<style>
 .ui-fluid .ui-calendar, .ui-fluid .ui-calendar input {
-    width: auto !important;
+	width: auto !important;
 }
 
 .Blue {
-    color: #1e739e !important;
+	color: #1e739e !important;
 }
 
 .ui-grid-col-4 {
-    text-align: center;
+	text-align: center;
 }
 
 .tableCustomPadding .ui-panelgrid-cell:nth-child(1) {
@@ -23,10 +27,11 @@
 }
 </style>
 
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">
+		<script type="text/javascript"
+			src="https://www.gstatic.com/charts/loader.js">
         </script>
 
-        <script>
+		<script>
             google.charts.load('current', {packages: ['corechart', 'bar', 'gauge'], 'language': 'pt_br'});
             google.charts.setOnLoadCallback(drawMultSeries);
             
@@ -135,7 +140,7 @@
                 var data = google.visualization.arrayToDataTable([
                     ['', ''],     
                     ['Ocupado',#{relatorioGerencialMB.taxaDeOcupacao}],         
-                    ['Ociosa', 100-#{(relatorioGerencialMB.taxaDeOcupacao > 100 ? 100 : relatorioGerencialMB.taxaDeOcupacao)}],
+                    ['Ociosa', 100-#{relatorioGerencialMB.taxaDeOcupacao}],
                   ]);
             
                   var options = {
@@ -198,128 +203,172 @@
         </script>
 
 
-        <div class="ui-g ui-fluid">
+		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-                    <h1>Dashboard</h1>
-                    <p:separator styleClass="SeparatorFull" />
+					<h1>Dashboard</h1>
+					<p:separator styleClass="SeparatorFull" />
 
-                    <p:panelGrid id="filtro" columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
-                        style="border:0px none; background-color:transparent;">
+					<p:panelGrid id="filtro" columns="2"
+						columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
+						styleClass="ui-panelgrid-blank"
+						style="border:0px none; background-color:transparent;">
 
-                        <p:outputLabel value="Período: " />
+						<p:outputLabel value="Período: " />
 
-                        <h:panelGroup>
-                            <p:calendar value="#{relatorioGerencialMB.inicio}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}"
-                                navigator="true" yearRange="-100:+10" style="width: 95px !important;margin-right: 5px;" />
+						<h:panelGroup>
+							<p:calendar value="#{relatorioGerencialMB.inicio}"
+								pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-100:+1"
+								style="width: 95px !important;margin-right: 5px;" />
 
-                            <p:outputLabel value="até" style="margin-right: 10px;margin-left: 10px;" />
+							<p:outputLabel value="até"
+								style="margin-right: 10px;margin-left: 10px;" />
 
-                            <p:calendar value="#{relatorioGerencialMB.fim}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}"
-                                navigator="true" yearRange="-100:+10" />
-                        </h:panelGroup>
+							<p:calendar value="#{relatorioGerencialMB.fim}"
+								pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-100:+1" />
+						</h:panelGroup>
 
-                        <p:outputLabel value="Filtro Período: " />
+						<p:outputLabel value="Filtro Período: " />
 
-                        <p:selectOneMenu value="#{relatorioGerencialMB.filtroPeriodo}" styleClass="Wid30">
-                            <p:ajax process="@this" update="@form" listener="#{relatorioGerencialMB.actionTrocaDatas}" />
-                            <f:selectItem itemValue="O" itemLabel="Ontem" />
-                            <f:selectItem itemValue="H" itemLabel="Hoje" />
-                            <f:selectItem itemValue="M" itemLabel="Mês Atual" />
-                            <f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
-                            <f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
-                            <f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
-                            <f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
-                        </p:selectOneMenu>
+						<p:selectOneMenu value="#{relatorioGerencialMB.filtroPeriodo}"
+							styleClass="Wid30">
+							<p:ajax process="@this" update="@form"
+								listener="#{relatorioGerencialMB.actionTrocaDatas}" />
+							<f:selectItem itemValue="O" itemLabel="Ontem" />
+							<f:selectItem itemValue="H" itemLabel="Hoje" />
+							<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+							<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+							<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+							<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+							<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+						</p:selectOneMenu>
 
-                    </p:panelGrid>
+					</p:panelGrid>
 
-                    <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                        <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioGerencialMB.actionFiltrar}" styleClass="OrangeButton"
-                            process="@this,filtro" update="@form" />
-                    </p:panelGrid>
+					<p:panelGrid columns="4" layout="grid"
+						styleClass="ui-panelgrid-blank ui-fluid form-group">
+						<p:commandButton id="pesquisar" icon="fa fa-search White"
+							value="Pesquisar"
+							actionListener="#{relatorioGerencialMB.actionFiltrar}"
+							styleClass="OrangeButton" process="@this,filtro" update="@form" />
+					</p:panelGrid>
 
-                    <div class="EmptyBox5"></div>
+					<div class="EmptyBox5"></div>
 
-                    <p:separator styleClass="SeparatorFull" />
-
-
-
-                    <div class="EmptyBox5"></div>
+					<p:separator styleClass="SeparatorFull" />
 
 
-                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                        <p:outputPanel>
-                            <div id="chartFinanceiro"></div>
-                        </p:outputPanel>
-                        <p:outputPanel>
-                            <div id="chartProfissionaisMaisRentaveis"></div>
-                        </p:outputPanel>
-                    </p:panelGrid>
-                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                        <p:outputPanel>
-                            <div id="chartPacientesAgendamento" style="height: 400px;"></div>
-                        </p:outputPanel>
-                        <p:outputPanel>
-                            <div id="chartPacientesConvenio" style="height: 400px;"></div>
-                        </p:outputPanel>
-                    </p:panelGrid>
-                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                        <p:outputPanel>
-                            <div id="chartOcupacao" style="height: 400px;"></div>
-                        </p:outputPanel>
-                        <p:outputPanel>
-                            <div id="chartOrcamentos" style="height: 400px;"></div>
-                        </p:outputPanel>
-                    </p:panelGrid>
-                    <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                        <p:outputPanel>
-                            <div id="chartPacientesAtivos" style="height: 400px;"></div>
-                        </p:outputPanel>
-                    </p:panelGrid>
-                    <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group tableCustomPadding">
-                        <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtPacientes" value="#{relatorioGerencialMB.pacientesInativosDetalhe}" var="paciente" rows="10"
-                            paginator="true" paginatorPosition="bottom">
-                            <f:facet name="header">Pacientes não atendidos no período
-                            </f:facet>
-                            <p:column sortBy="#{paciente.dadosBasico.nome}" filterBy="#{paciente.dadosBasico.nomeStr}" filterMatchMode="contains" headerText="Nome">
-                                <h:outputText value="#{paciente.dadosBasico.nome}" title="#{paciente.id}" />
-                            </p:column>                          
-                            <p:column sortBy="#{paciente.dadosBasico.celular}" filterBy="#{paciente.dadosBasico.celular}" filterMatchMode="contains" headerText="Cel">
-                                <h:outputText value="#{paciente.dadosBasico.celular}" />
-                            </p:column>                        
-                            <p:column sortBy="#{paciente.dataUltimaAlteracao}" filterBy="#{paciente.dataUltimaAlteracaosStr}" filterMatchMode="contains" headerText="Dta. Últ. Agendamento">
-                                <h:outputText value="#{paciente.dataUltimaAlteracaosStr}" />
-                            </p:column>
-                             <p:column sortBy="#{paciente.statusUltimoAgendamento}" filterBy="#{paciente.statusUltimoAgendamento}" filterMatchMode="contains" headerText="Status Últ. Agendamento">
-                                <h:outputText value="#{paciente.statusUltimoAgendamento}" />
-                            </p:column>
-                            <p:column sortBy="#{paciente.dataProximoAgendamentoStr}" filterBy="#{paciente.dataProximoAgendamentoStr}" filterMatchMode="contains" headerText="Dta. Prox. Agendamento">
-                                <h:outputText value="#{paciente.dataProximoAgendamentoStr}" />
-                            </p:column>
-                             <p:column sortBy="#{paciente.statusProximoAgendamento}" filterBy="#{paciente.statusProximoAgendamento}" filterMatchMode="contains" headerText="Status Prox. Agendamento">
-                                <h:outputText value="#{paciente.statusProximoAgendamento}" />
-                            </p:column>                            
-                            <p:column headerText="Whats">
-                                <p:button id="whats" icon="White fa fa-whatsapp" onclick="window.open('#{paciente.whatsURL}');return false;" styleClass="GreenButton" disable="#{paciente.whatsURL == null}" />
-                            </p:column>
-                        </p:dataTable>
-                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
-                            <p:commandButton value="Excel" ajax="false" process="dtConferencias" icon="White fa fa-file-excel-o" styleClass="GreenButton">
-                                <p:dataExporter encoding="iso-8859-1" type="xls" target=":lume:dtPacientes" fileName="PacientesParaReativar" />
-                            </p:commandButton>
-                        </p:panelGrid>
-                    </p:panelGrid>
 
-					<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+					<div class="EmptyBox5"></div>
+
+
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="ui-panelgrid-blank ui-fluid form-group">
 						<p:outputPanel>
-                        	<div id="chartAgendamentosHorario" style="height: 400px;"></div>
-                        </p:outputPanel>
+							<div id="chartFinanceiro"></div>
+						</p:outputPanel>
+						<p:outputPanel>
+							<div id="chartProfissionaisMaisRentaveis"></div>
+						</p:outputPanel>
+					</p:panelGrid>
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="ui-panelgrid-blank ui-fluid form-group">
+						<p:outputPanel>
+							<div id="chartPacientesAgendamento" style="height: 400px;"></div>
+						</p:outputPanel>
+						<p:outputPanel>
+							<div id="chartPacientesConvenio" style="height: 400px;"></div>
+						</p:outputPanel>
+					</p:panelGrid>
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="ui-panelgrid-blank ui-fluid form-group">
+						<p:outputPanel>
+							<div id="chartOcupacao" style="height: 400px;"></div>
+						</p:outputPanel>
+						<p:outputPanel>
+							<div id="chartOrcamentos" style="height: 400px;"></div>
+						</p:outputPanel>
+					</p:panelGrid>
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="ui-panelgrid-blank ui-fluid form-group">
+						<p:outputPanel>
+							<div id="chartPacientesAtivos" style="height: 400px;"></div>
+						</p:outputPanel>
+					</p:panelGrid>
+					<p:panelGrid columns="1" layout="grid"
+						styleClass="ui-panelgrid-blank ui-fluid form-group tableCustomPadding">
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							id="dtPacientes"
+							value="#{relatorioGerencialMB.pacientesInativosDetalhe}"
+							var="paciente" rows="10" paginator="true"
+							paginatorPosition="bottom">
+							<f:facet name="header">Pacientes não atendidos no período
+                            </f:facet>
+							<p:column sortBy="#{paciente.dadosBasico.nome}"
+								filterBy="#{paciente.dadosBasico.nomeStr}"
+								filterMatchMode="contains" headerText="Nome">
+								<h:outputText value="#{paciente.dadosBasico.nome}"
+									title="#{paciente.id}" />
+							</p:column>
+							<p:column sortBy="#{paciente.dadosBasico.celular}"
+								filterBy="#{paciente.dadosBasico.celular}"
+								filterMatchMode="contains" headerText="Cel">
+								<h:outputText value="#{paciente.dadosBasico.celular}" />
+							</p:column>
+							<p:column sortBy="#{paciente.dataUltimaAlteracao}"
+								filterBy="#{paciente.dataUltimaAlteracaosStr}"
+								filterMatchMode="contains" headerText="Dta. Últ. Agendamento">
+								<h:outputText value="#{paciente.dataUltimaAlteracaosStr}" />
+							</p:column>
+							<p:column sortBy="#{paciente.statusUltimoAgendamento}"
+								filterBy="#{paciente.statusUltimoAgendamento}"
+								filterMatchMode="contains" headerText="Status Últ. Agendamento">
+								<h:outputText value="#{paciente.statusUltimoAgendamento}" />
+							</p:column>
+							<p:column sortBy="#{paciente.dataProximoAgendamentoStr}"
+								filterBy="#{paciente.dataProximoAgendamentoStr}"
+								filterMatchMode="contains" headerText="Dta. Prox. Agendamento">
+								<h:outputText value="#{paciente.dataProximoAgendamentoStr}" />
+							</p:column>
+							<p:column sortBy="#{paciente.statusProximoAgendamento}"
+								filterBy="#{paciente.statusProximoAgendamento}"
+								filterMatchMode="contains" headerText="Status Prox. Agendamento">
+								<h:outputText value="#{paciente.statusProximoAgendamento}" />
+							</p:column>
+							<p:column headerText="Whats">
+								<p:button id="whats" icon="White fa fa-whatsapp"
+									disabled="#{pacienteMB.getUrlWpp(paciente) == null}"
+									onclick="window.open('#{pacienteMB.getUrlWpp(paciente)}'); return false;"
+									styleClass="GreenButton" />
+							</p:column>
+						</p:dataTable>
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<p:commandButton value="Excel" ajax="false"
+								process="dtConferencias" icon="White fa fa-file-excel-o"
+								styleClass="GreenButton">
+								<p:dataExporter encoding="iso-8859-1" type="xls"
+									target=":lume:dtPacientes" fileName="PacientesParaReativar" />
+							</p:commandButton>
+						</p:panelGrid>
+					</p:panelGrid>
+
+					<p:panelGrid columns="1" layout="grid"
+						styleClass="ui-panelgrid-blank ui-fluid form-group">
+						<p:outputPanel>
+							<div id="chartAgendamentosHorario" style="height: 400px;"></div>
+						</p:outputPanel>
 					</p:panelGrid>
 
 
-                </div>
-            </div>
-        </div>
-    </ui:define>
+				</div>
+			</div>
+		</div>
+	</ui:define>
 </ui:composition>

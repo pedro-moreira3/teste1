@@ -5,187 +5,263 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets">
-	<div class="Container100 Responsive100 NoIndent">
-		<div class="Container100 ui-fluid NoPadding">
-			<div class="Card">
-				<p:outputPanel id="pnAnamnese" styleClass="BordNone">
-					<h1 style="margin-top: 20px !important;">Especialidades</h1>
-					<p:separator styleClass="SeparatorFull" />
-					<p:selectManyCheckbox id="especialidade"
-						value="#{pacienteMB.especialidadeSelecionada}"
-						converter="especialidade" layout="grid" columns="5">
-						<f:selectItems value="#{pacienteMB.especialidades}" var="e"
-							itemValue="#{e}" itemLabel="#{e.descricao}" />
-						<p:ajax
-							listener="#{pacienteMB.actionAtualizaPerguntasPorAnamnese}"
-							process="@this" update=":lume:tabView:perguntasEspecialidade" />
-					</p:selectManyCheckbox>
-					<p:separator styleClass="SeparatorFull" />
 
-					<h:panelGroup id="perguntasEspecialidade">
-						<ui:repeat var="anamnesesAgrupadas"
-							value="#{pacienteMB.anamneses}">
-							<p:fieldset legend="#{anamnesesAgrupadas[0].especialidade}">
-								<ui:repeat var="anamnese" value="#{anamnesesAgrupadas}">
-									<p:panelGrid columns="2" layout="grid"
-										styleClass="ui-panelgrid-blank"
-										columnClasses="ui-grid-col-4,ui-grid-col-8"
-										style="border:0px none; background-color:transparent;">
-										<p:column>
+	<p:outputPanel id="mainViewAnamnese">
+		<p:panelGrid columns="3" layout="grid" id="botoesControleTbAnamnese"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton id="newAnamnese" icon="ui-icon-add" value="Nova Anamnese"
+				actionListener="#{pacienteMB.actionAnamneseNew}" 
+				update=":lume:tabView:painelEspecialidades, :lume:tabView:painelPerguntasEspecialidades, :lume:tabView:dtAnamnese,:lume:tabView:persistAnamnese"
+				process="@this,:lume:tabView:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />
+			<p:commandButton id="deleteAnamnese" icon="White fa fa-trash-o White"
+				value="Excluir" actionListener="#{pacienteMB.actionAnamneseRemove}"
+				update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade, :lume:tabView:dtAnamnese"
+				process="@this" disabled="#{pacienteMB.pacienteAnamnese.id == null}"
+				rendered="#{pacienteMB.admin}" styleClass="RedButton" />
+
+			<h:panelGroup>
+				<p:splitButton icon="White fa fa fa-file-excel-o"
+					value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+					actionListener="#{pacienteMB.exportarTabelaAnamnese('xls')}"
+					ajax="false" process="tabelaAnamnese,@this" update="@this"
+					immediate="true"
+					onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+					<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+
+					<p:menuitem value="Exportar tabela para PDF"
+						icon="fa fa fa-file-pdf-o"
+						actionListener="#{pacienteMB.exportarTabelaAnamnese('pdf')}"
+						ajax="false" process="tabelaAnamnese,@this" immediate="true"
+						onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+						<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+					</p:menuitem>
+				</p:splitButton>
+			</h:panelGroup>
+		</p:panelGrid>
+
+		<h:panelGroup id="dtAnamnese">
+			<p:dataTable id="tabelaAnamnese" filterDelay="1500" reflow="true"
+				emptyMessage="" value="#{pacienteMB.pacienteAnamneses}"
+				var="pacienteAnamnese" rows="10" paginator="true"
+				widgetVar="tabelaAnamnese"
+				selection="#{pacienteMB.pacienteAnamnese}" selectionMode="single"
+				rowKey="#{pacienteAnamnese}" paginatorPosition="bottom"
+				binding="#{pacienteMB.tabelaAnamnese}">
+				<p:ajax event="rowSelect"
+					update=":lume:tabView:pnPrincipalAnamnese, :lume:tabView:botoesControleTbAnamnese" />
+				<f:facet name="header">Anamneses</f:facet>
+				<p:column headerText="Ações" style="width:100px">
+				<p:commandButton id="visualizarAnamnese" icon="fa fa-eye" title="Visualizar Anamnese"
+				actionListener="#{pacienteMB.setPacienteAnamnese(pacienteAnamnese)}" 
+				update=":lume:tabView:painelEspecialidades, :lume:tabView:painelPerguntasEspecialidades, :lume:tabView:dtAnamnese,:lume:tabView:persistAnamnese"
+				process="@this,:lume:tabView:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />
+									
+				</p:column>
+				<p:column filterBy="#{pacienteAnamnese.id}"
+					sortBy="#{pacienteAnamnese.id}" filterMatchMode="contains"
+					headerText="ID">
+					<h:outputText value="#{pacienteAnamnese.id}"
+						title="#{pacienteAnamnese.id}" />
+				</p:column>
+				<p:column
+					filterBy="#{pacienteAnamnese.profissional.dadosBasico.prefixoNome}"
+					sortBy="#{pacienteAnamnese.profissional.dadosBasico.prefixoNome}"
+					filterMatchMode="contains" headerText="Profissional"
+					filterFunction="#{pacienteMB.filtroSemAcento}">
+					<h:outputText
+						value="#{pacienteAnamnese.profissional.dadosBasico.prefixoNome}"
+						rendered="#{pacienteAnamnese.profissional != null}" />
+					<h:outputText value="#{dominioMB.cliente} via Web"
+						rendered="#{pacienteAnamnese.profissional == null}" />
+				</p:column>
+				<p:column filterBy="#{pacienteAnamnese.dataHoraStr}"
+					sortBy="#{pacienteAnamnese.dataHoraStrOrd}"
+					filterMatchMode="contains" headerText="Data/Hora"
+					filterFunction="#{pacienteMB.filtroSemAcento}">
+					<h:outputText value="#{pacienteAnamnese.dataHoraStr}" />
+				</p:column>
+				<p:column filterBy="#{pacienteAnamnese.especialidades}"
+					sortBy="#{pacienteAnamnese.especialidades}"
+					filterMatchMode="contains" headerText="Especialidades">
+					<h:outputText value="#{pacienteAnamnese.especialidades}" />
+				</p:column>
+			</p:dataTable>
+		</h:panelGroup>
+	</p:outputPanel>
+
+	<p:dialog widgetVar="dlgAnamnesePaciente" appendTo=":lume"
+		onHide="PF('dlgAnamnesePaciente').toggleMaximize();"
+		onShow="PF('dlgAnamnesePaciente').toggleMaximize();"
+		header="Anamnese do Paciente #{pacienteMB.entity.dadosBasico.nome}"
+		resizable="false" modal="true" responsive="true">
+		<p:outputPanel id="pnPrincipalAnamnese"
+			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+			<p:scrollPanel mode="native"
+				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
+
+				<div class="ui-g ui-fluid">
+					<div class="ui-g-12 ui-lg-12">											
+					
+						<p:outputPanel id="painelEspecialidades" >
+							<p:outputLabel rendered="#{!pacienteMB.mostrarPerguntasAnamnese}">Selecione as Especialidades da Anamnese:</p:outputLabel> 
+							<p:outputLabel rendered="#{pacienteMB.mostrarPerguntasAnamnese}">Perguntas da Anamnese:</p:outputLabel>
+							<p:selectManyCheckbox id="especialidade" rendered="#{!pacienteMB.mostrarPerguntasAnamnese}"
+								value="#{pacienteMB.especialidadeSelecionada}"
+								converter="especialidade" layout="grid" columns="5">
+								<f:selectItems value="#{pacienteMB.especialidades}" var="e"
+									itemValue="#{e}" itemLabel="#{e.descricao}" />								
+							</p:selectManyCheckbox>
+						<p:panelGrid columns="6" layout="grid" 
+											styleClass="ui-panelgrid-blank"
+											columnClasses="ui-grid-col-4,ui-grid-col-12"
+											style="border:0px none; background-color:transparent;"
+											>
+						<p:commandButton id="ciar" icon="ui-icon-add" value="Preencher Anamnese" rendered="#{!pacienteMB.mostrarPerguntasAnamnese}"
+						actionListener="#{pacienteMB.mostrarPerguntasAnamnese}"
+						update=":lume:tabView:perguntasEspecialidade,:lume:tabView:painelEspecialidades,:lume:tabView:painelPerguntasEspecialidades,:lume:tabView:especialidade" 
+						process="@this,:lume:tabView:especialidade,:lume:tabView:painelEspecialidades" oncomplete="" />
+						</p:panelGrid>							
+						</p:outputPanel>
+
+						<p:separator styleClass="SeparatorFull" />
+						<p:outputPanel id="painelPerguntasEspecialidades" >
+						<h:panelGroup id="perguntasEspecialidade" rendered="#{pacienteMB.mostrarPerguntasAnamnese}">
+							<ui:repeat var="anamnesesAgrupadas"
+								value="#{pacienteMB.anamneses}">
+								<p:outputPanel>
+								<p:fieldset legend="#{anamnesesAgrupadas[0].especialidade}" 
+								>
+									<ui:repeat var="anamnese" value="#{anamnesesAgrupadas}">
+										<p:panelGrid columns="2" layout="grid" 
+											styleClass="ui-panelgrid-blank"
+											columnClasses="ui-grid-col-4,ui-grid-col-8"
+											style="border:0px none; background-color:transparent;"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTexto}">
 											<p:outputLabel for="texte"
-												value="#{anamnese.pergunta.descricao}"
-												rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTexto}" />
-										</p:column>
-										<p:column>
-											<p:inputText id="texte" value="#{anamnese.resposta}"
-												disabled="#{pacienteMB.readonly}"
-												required="#{anamnese.pergunta.requerida}"
-												requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
-												rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTexto}" />
-										</p:column>
-									</p:panelGrid>
+												value="#{anamnese.pergunta.descricao}" />
+											<h:panelGroup>
+												<p:inputText id="texte" value="#{anamnese.resposta}"
+													disabled="#{pacienteMB.readonly}"
+													required="#{anamnese.pergunta.requerida}"
+													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório" />
+												<p:message styleClass="msg" for="texte" />
+											</h:panelGroup>
+										</p:panelGrid>
 
-									<p:panelGrid columns="2" layout="grid"
-										styleClass="ui-panelgrid-blank"
-										columnClasses="ui-grid-col-4,ui-grid-col-8"
-										style="border:0px none; background-color:transparent;">
-										<p:outputLabel for="onMenu"
-											value="#{anamnese.pergunta.descricao}"
-											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaUmaEmVarias}" />
-										<p:selectOneMenu id="onMenu" value="#{anamnese.resposta}"
-											style="width: 340px;" converter="resposta"
-											disabled="#{pacienteMB.readonly}"
-											required="#{anamnese.pergunta.requerida}"
-											requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
+										<p:panelGrid columns="2" layout="grid"
+											styleClass="ui-panelgrid-blank"
+											columnClasses="ui-grid-col-4,ui-grid-col-8"
+											style="border:0px none; background-color:transparent;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaUmaEmVarias}">
-											<f:selectItem itemValue="#{null}"
-												itemLabel="Selecione uma opção" />
-											<f:selectItems value="#{anamnese.pergunta.respostas}"
-												var="resposta" itemLabel="#{resposta.descricao}"
-												itemValue="#{resposta.descricao}" />
-										</p:selectOneMenu>
-									</p:panelGrid>
+											<p:outputLabel for="onMenu"
+												value="#{anamnese.pergunta.descricao}" />
+											<h:panelGroup>
+												<p:selectOneMenu id="onMenu" value="#{anamnese.resposta}"
+													style="width: 340px;" converter="resposta"
+													disabled="#{pacienteMB.readonly}"
+													required="#{anamnese.pergunta.requerida}"
+													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório">
+													<f:selectItem itemValue="#{null}"
+														itemLabel="Selecione uma opção" />
+													<f:selectItems value="#{anamnese.pergunta.respostas}"
+														var="resposta" itemLabel="#{resposta.descricao}"
+														itemValue="#{resposta.descricao}" />
+												</p:selectOneMenu>
+												<p:message styleClass="msg" for="onMenu" />
+											</h:panelGroup>
+										</p:panelGrid>
 
-									<p:panelGrid columns="2" layout="grid"
-										styleClass="ui-panelgrid-blank"
-										columnClasses="ui-grid-col-4,ui-grid-col-8"
-										style="border:0px none; background-color:transparent;">
-										<p:outputLabel for="checkBox"
-											value="#{anamnese.pergunta.descricao}"
-											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaVariasEmVarias}" />
-										<p:selectManyCheckbox id="checkBox"
-											value="#{anamnese.respostas}"
-											disabled="#{pacienteMB.readonly}"
-											required="#{anamnese.pergunta.requerida}"
-											requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
-											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaVariasEmVarias}"
-											layout="responsive" columns="3">
-											<f:selectItems value="#{anamnese.pergunta.respostas}"
-												var="resposta" itemLabel="#{resposta.descricao}"
-												itemValue="#{resposta.descricao}" />
-										</p:selectManyCheckbox>
-									</p:panelGrid>
+										<p:panelGrid columns="2" layout="grid"
+											styleClass="ui-panelgrid-blank"
+											columnClasses="ui-grid-col-4,ui-grid-col-8"
+											style="border:0px none; background-color:transparent;"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaVariasEmVarias}">
+											<p:outputLabel for="checkBox"
+												value="#{anamnese.pergunta.descricao}" />
+											<h:panelGroup>
+												<p:selectManyCheckbox id="checkBox"
+													value="#{anamnese.respostas}"
+													disabled="#{pacienteMB.readonly}"
+													required="#{anamnese.pergunta.requerida}"
+													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
+													layout="responsive" columns="3">
+													<f:selectItems value="#{anamnese.pergunta.respostas}"
+														var="resposta" itemLabel="#{resposta.descricao}"
+														itemValue="#{resposta.descricao}" />
+												</p:selectManyCheckbox>
+												<p:message styleClass="msg" for="checkBox" />
+											</h:panelGroup>
+										</p:panelGrid>
 
-									<p:panelGrid columns="2" layout="grid"
-										styleClass="ui-panelgrid-blank"
-										columnClasses="ui-grid-col-4,ui-grid-col-8"
-										style="border:0px none; background-color:transparent;">
-										<p:outputLabel for="onRadio"
-											value="#{anamnese.pergunta.descricao}"
-											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaSimOuNao}" />
-										<p:selectOneRadio id="onRadio" value="#{anamnese.resposta}"
-											disabled="#{pacienteMB.readonly}"
-											required="#{anamnese.pergunta.requerida}"
-											requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
+										<p:panelGrid columns="2" layout="grid"
+											styleClass="ui-panelgrid-blank"
+											columnClasses="ui-grid-col-4,ui-grid-col-8"
+											style="border:0px none; background-color:transparent;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaSimOuNao}">
-											<f:selectItem itemLabel="Sim" itemValue="Sim" />
-											<f:selectItem itemLabel="Não" itemValue="Não" />
-										</p:selectOneRadio>
-									</p:panelGrid>
+											<p:outputLabel for="onRadio"
+												value="#{anamnese.pergunta.descricao}" />
+											<h:panelGroup>
+												<h:selectOneRadio id="onRadio" value="#{anamnese.resposta}"
+													disabled="#{pacienteMB.readonly}"
+													required="#{anamnese.pergunta.requerida}"
+													style="font-size: 16px; !important"													
+													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório">
+													<f:selectItem itemLabel="Sim" itemValue="Sim" />
+													<f:selectItem itemLabel="Não" itemValue="Não" />
+												</h:selectOneRadio>
+												<p:message styleClass="msg" for="onRadio" />
+											</h:panelGroup>
+										</p:panelGrid>
 
-									<p:panelGrid columns="2" layout="grid"
-										styleClass="ui-panelgrid-blank"
-										columnClasses="ui-grid-col-4,ui-grid-col-8"
-										style="border:0px none; background-color:transparent;">
-										<p:outputLabel for="numero"
-											value="#{anamnese.pergunta.descricao}"
-											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaQuantidade}" />
-										<p:inputText value="#{anamnese.resposta}"
-											style="width: 340px;" disabled="#{pacienteMB.readonly}"
-											validatorMessage="Favor digitar um número." id="numero"
-											required="#{anamnese.pergunta.requerida}"
-											requiredMessage="#{anamnese.pergunta.descricao} é obrigatório"
+										<p:panelGrid columns="2" layout="grid"
+											styleClass="ui-panelgrid-blank"
+											columnClasses="ui-grid-col-4,ui-grid-col-8"
+											style="border:0px none; background-color:transparent;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaQuantidade}">
-											<f:validateRegex pattern="[0-9]*" />
-										</p:inputText>
-									</p:panelGrid>
-								</ui:repeat>
-							</p:fieldset>
-							<br />
-						</ui:repeat>
-					</h:panelGroup>
-					<p:separator styleClass="SeparatorFull" />
-					<p:panelGrid columns="3" layout="grid"
-						styleClass="ui-panelgrid-blank form-group ui-fluid">
-						<p:commandButton id="persist2" icon="White fa fa-save White"
-							value="Salvar"
-							actionListener="#{pacienteMB.actionAnamnesePersist}"
-							update=":lume:tabView:pnAnamnese,:lume:tabView:dtAnamnese"
-							process=":lume:tabView:pnAnamnese"
-							disabled="#{pacienteMB.readonly}" styleClass="GreenButton" />
-						<p:commandButton id="deleteAnamnese"
-							icon="White fa fa-trash-o White" value="Excluir"
-							actionListener="#{pacienteMB.actionAnamneseRemove}"
-							update=":lume:tabView:pnAnamnese,:lume:tabView:dtAnamnese"
-							process=":lume:tabView:pnAnamnese"
-							disabled="#{pacienteMB.pacienteAnamnese.id == null}"
-							rendered="#{pacienteMB.admin}" styleClass="RedButton" />
-						<p:commandButton id="new2" icon="White fa fa-file-o White"
-							value="Novo" actionListener="#{pacienteMB.actionAnamneseNew}"
-							update=":lume:tabView:pnAnamnese,:lume:tabView:dtAnamnese"
-							process="@this" />
-					</p:panelGrid>
+											<p:outputLabel for="numero"
+												value="#{anamnese.pergunta.descricao}" />
+											<h:panelGroup>
+												<p:inputText value="#{anamnese.resposta}"
+													style="width: 340px;" disabled="#{pacienteMB.readonly}"
+													validatorMessage="Favor digitar um número." id="numero"
+													required="#{anamnese.pergunta.requerida}"
+													requiredMessage="#{anamnese.pergunta.descricao} é obrigatório">
+													<f:validateRegex pattern="[0-9]*" />
+												</p:inputText>
+												<p:message styleClass="msg" for="numero" />
+											</h:panelGroup>
+										</p:panelGrid>
 
+									</ui:repeat>
+								</p:fieldset>
+								</p:outputPanel>
+								<br />
+							</ui:repeat>
+						</h:panelGroup>
+						</p:outputPanel>
+					</div>
+				</div>
+
+			</p:scrollPanel>
+		</p:outputPanel>
+		<p:panelGrid columns="4" layout="grid"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:outputPanel  id="persistAnamnese">
+				<p:commandButton  icon="White fa fa-save White" rendered="#{pacienteMB.habilitaSalvar}"
+					value="Salvar" actionListener="#{pacienteMB.actionAnamnesePersist}"
+					update=":lume:tabView:especialidade, :lume:tabView:perguntasEspecialidade, :lume:tabView:dtAnamnese"
+					process="@this, :lume:tabView:especialidade, :lume:tabView:perguntasEspecialidade"
+					disabled="#{pacienteMB.readonly and false}" styleClass="GreenButton" />			
 				</p:outputPanel>
-				<div class="EmptyBox20"></div>
+			<p:outputPanel></p:outputPanel>
+			<p:outputPanel></p:outputPanel>	
+			<p:outputPanel>
+				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+					oncomplete="PF('dlgAnamnesePaciente').hide()" />
+			</p:outputPanel>
+		</p:panelGrid>
+		
+	</p:dialog>
 
-				<h:panelGroup id="dtAnamnese">
-					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-						value="#{pacienteMB.pacienteAnamneses}" var="pacienteAnamnese"
-						rows="7" paginator="true"
-						selection="#{pacienteMB.pacienteAnamnese}" selectionMode="single"
-						rowKey="#{pacienteAnamnese}" paginatorPosition="bottom">
-						<p:ajax event="rowSelect" update=":lume:tabView:pnAnamnese" />
-						<f:facet name="header">Anamneses</f:facet>
-						<p:column filterBy="#{pacienteAnamnese.id}"
-							sortBy="#{pacienteAnamnese.id}" filterMatchMode="contains"
-							headerText="ID">
-							<h:outputText value="#{pacienteAnamnese.id}"
-								title="#{pacienteAnamnese.id}" />
-						</p:column>
-						<p:column
-							filterBy="#{pacienteAnamnese.profissional.dadosBasico.prefixoNome}"
-							sortBy="#{pacienteAnamnese.profissional.dadosBasico.prefixoNome}"
-							filterMatchMode="contains" headerText="Profissional">
-							<h:outputText
-								value="#{pacienteAnamnese.profissional.dadosBasico.prefixoNome}"
-								rendered="#{pacienteAnamnese.profissional != null}" />
-							<h:outputText value="#{dominioMB.cliente} via Web"
-								rendered="#{pacienteAnamnese.profissional == null}" />
-						</p:column>
-						<p:column filterBy="#{pacienteAnamnese.dataHoraStr}"
-							sortBy="#{pacienteAnamnese.dataHoraStrOrd}"
-							filterMatchMode="contains" headerText="Data/Hora">
-							<h:outputText value="#{pacienteAnamnese.dataHoraStr}" />
-						</p:column>
-						<p:column filterBy="#{pacienteAnamnese.especialidades}"
-							sortBy="#{pacienteAnamnese.especialidades}"
-							filterMatchMode="contains" headerText="Especialidades">
-							<h:outputText value="#{pacienteAnamnese.especialidades}" />
-						</p:column>
-					</p:dataTable>
-				</h:panelGroup>
-			</div>
-		</div>
-	</div>
 </ui:composition>

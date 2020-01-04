@@ -7,6 +7,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
@@ -36,6 +37,9 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
   //  private DominioBO dominioBO;
 
   //  private ConvenioBO convenioBO;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaConvenio;
 
     public ConvenioMB() {
         super(ConvenioSingleton.getInstance().getBo());
@@ -48,6 +52,8 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
     public void carregaList() {
         try {
             dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("convenio", "tipo");
+            dominios.removeIf(dom -> dom.getNome().equals("Promoção"));
+                
             convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,6 +83,10 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
             this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());
         }
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Convênios", tabelaConvenio, type);
+    }
 
     public List<UF> getListUF() {
         return UF.getList();
@@ -96,5 +106,13 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
 
     public void setDominios(List<Dominio> dominios) {
         this.dominios = dominios;
+    }
+
+    public DataTable getTabelaConvenio() {
+        return tabelaConvenio;
+    }
+
+    public void setTabelaConvenio(DataTable tabelaConvenio) {
+        this.tabelaConvenio = tabelaConvenio;
     }
 }

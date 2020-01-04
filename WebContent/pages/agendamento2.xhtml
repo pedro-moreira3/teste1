@@ -223,7 +223,7 @@ div.ui-selectoneradio label {
 											pattern="dd/MM/yyyy" showWeeksBar="false"
 											locale="#{lumeSecurity.locale}"
 											timeZone="#{lumeSecurity.timeZone}" navigator="true"
-											yearRange="-100:+10" maxdate="#{odontoMB.sysdate}"
+											yearRange="-100:+1" maxdate="#{odontoMB.sysdate}"
 											class="Wid20" mask="true">
 											<p:ajax event="dateSelect" update="pgResponsavel"
 												listener="#{agendamentoMB.validaIdade}" />
@@ -526,17 +526,6 @@ div.ui-selectoneradio label {
 												scrollHeight="400" minQueryLength="3"
 												rendered="#{!agendamentoMB.dentista}"
 												style="margin-top:10px;margin-bottom:10px">
-
-												<p:column headerText="Nome">
-													<h:outputText value="#{p.dadosBasico.nome}" />
-												</p:column>
-												<p:column headerText="Celular">
-													<h:outputText value="#{p.dadosBasico.celular}" />
-												</p:column>
-												<p:column headerText="Nome da Mãe">
-													<h:outputText value="#{p.nomeMae}" />
-												</p:column>
-
 												<p:ajax event="itemSelect"
 													listener="#{agendamentoMB.handleSelectPacienteSelecionado}"
 													update="planoTratamento,procedimentos, profissional"

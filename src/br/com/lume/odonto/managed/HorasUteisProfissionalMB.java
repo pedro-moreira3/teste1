@@ -13,6 +13,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -47,6 +48,9 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
     public List<HorasUteisProfissional> horasUteisProfissional;
 
    // private HorasUteisProfissionalBO horasUteisProfissionalBO;
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaHorasUteis;
 
     public HorasUteisProfissionalMB() {
         super(HorasUteisProfissionalSingleton.getInstance().getBo());
@@ -169,6 +173,10 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
         this.setHoraFim(this.getEntity().getHoraFim());
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Horas cadastradas para o profissional", tabelaHorasUteis, type);
+    }
+    
     public ProfissionalMB getProfissionalMB() {
         return this.profissionalMB;
     }
@@ -215,5 +223,13 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
 
     public void setDiasSelecionados(List<String> diasSelecionados) {
         this.diasSelecionados = diasSelecionados;
+    }
+
+    public DataTable getTabelaHorasUteis() {
+        return tabelaHorasUteis;
+    }
+
+    public void setTabelaHorasUteis(DataTable tabelaHorasUteis) {
+        this.tabelaHorasUteis = tabelaHorasUteis;
     }
 }

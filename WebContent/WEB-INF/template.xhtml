@@ -19,7 +19,7 @@
 	</f:facet>
 	<title>INTELIDENTE</title>
 
-	<p:cache region="jscache" key="ultimalayout">
+	<p:cache region="jscache" key="ultimalayout_v2">
 		<script type="text/javascript"
 			src="https://maps.googleapis.com/maps/api/js"></script>
 
@@ -37,10 +37,133 @@
 		<h:outputScript name="jquery.cookie.js" library="joyride" />
 		<h:outputScript name="modernizr.mq.js" library="joyride" />
 		<h:outputScript name="jquery.joyride-2.1.js" library="joyride" />
-	</p:cache>
-	<ui:insert name="head" />
 
+		<script
+			src="https://cdn.jsdelivr.net/npm/promise-polyfill@7.1.0/dist/promise.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@8"></script>
+		<script src="sweetalert2.all.min.js"></script>
+	</p:cache>
+
+	<ui:insert name="head" />
+	<style>
+.swal-custom-popup {
+	display: block !important;
+	box-shadow: none !important;
+	border: solid 1px #cccdcf !important;
+	background-color: #fcfcfc;
+	z-index: 999 !important;
+}
+
+.swal-custom-content #swal2-content {
+	text-align: left !important;
+	margin-top: 5px !important;
+}
+</style>
 	<script>
+		function messageJSFStyle(title, text, type) {
+			const Toast = Swal.mixin({
+				toast : true,
+				position : 'top-end',
+				showConfirmButton : false,
+				timer : 4000,
+				customClass : {
+					popup : 'swal-custom-popup',
+					content : 'swal-custom-content'
+				}
+			})
+			Toast.fire({
+				type : type,
+				title : title,
+				html : text
+			});
+		}
+
+		var timeoutId;
+		function mostraDialogo(titulo, mensagem, tipo, tempo) {
+
+			if ($("#container").is(":visible")) {
+				return;
+			}
+			clearTimeout(timeoutId);
+
+			var icon = "";
+			var color = "";
+
+			if (!tempo) {
+				var tempo = 3000;
+			}
+
+			if (!tipo) {
+				var tipo = "info";
+			} else if (tipo == 'success') {
+				icon = 'check_circle';
+				color = '#32CD32';
+			} else if (tipo == 'error') {
+				icon = 'error';
+				color = '#FF0000';
+			} else if (tipo == 'warning') {
+				icon = 'warning';
+				color = '#FFFF00';
+			} else if (tipo == 'info') {
+				icon = 'info';
+				color = '#0000FF';
+			}
+
+			var container = 'margin-top:10px !important;display: block !important;width: 400px !important;height: 60px !important;padding-left: 20px !important;background-color: '
+					+ color
+					+ ' !important;color: black !important;opacity: 1 !important;position:fixed !important;right:0;transition: opacity 0.6s !important;top:0 !important;z-index:9999 !important;float:right !important;border-radius:8px;border:1px solid '
+					+ color + ';';
+			var icone = 'position:relative; display: inline-block !important; width: 60px !important; height: 100% !important; text-align:center; background-color: white;';
+			var subContainer = 'display: inline-block !important; width: calc(100% - 60px) !important; height: calc(100% - 6px) !important; background-color: white !important; float: right !important; padding-top: 3px; padding-bottom: 3px;';
+			var title = 'display: block !important;height: 40% !important;background-color: white !important;text-align:left;margin-top:10px;';
+			var message = 'display: block !important;height: 40% !important;background-color: white !important;text-align:left;margin-top:15px;margin-bottom:15px;';
+			var closeMsg = 'position: absolute; top: 5px; right: 10px; width: 20px; height: 20px; line-height: 20px; text-align: center; cursor: pointer; font-weight: bold';
+
+			var styleTitle = 'position: relative; top: 0; left: 0; width: 100%; height: 20px; font-weight: bold; display: table-cell; vertical-align: middle;';
+			var styleMessage = 'position: relative; top: 0; left: 0; width: 100%; height: 40px;';
+
+			var dialogo = "";
+
+			dialogo += '<div id="container" style="'+container+'">';
+			dialogo += '	<div id="icone" style="'+icone+'">';
+			dialogo += '		<i class="topbar-icon material-icons" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">'
+					+ icon + '</i>';
+			dialogo += '	</div>';
+			dialogo += '	<div id="subContainer" style="'+subContainer+'">';
+			dialogo += '		<div style="' + styleTitle + '">';
+			dialogo += titulo;
+			dialogo += '		</div>';
+			dialogo += '		<div style="' + styleMessage + '">';
+			dialogo += mensagem;
+			dialogo += '		</div>';
+			dialogo += '	</div>';
+			dialogo += '	<div style="' + closeMsg
+					+ '" onclick="fechaDialogo();">';
+			dialogo += '		<i class="topbar-icon material-icons" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">close</i>';
+			dialogo += '</div>'
+			dialogo += '</div>';
+
+			// adiciona ao body a mensagem com o efeito de fade
+			$("body").append(dialogo);
+			$("#container").hide();
+			$("#container").fadeIn(200);
+
+			// contador de tempo para a mensagem sumir
+			timeoutId = setTimeout(function() {
+				fechaDialogo();
+			}, tempo); // milliseconds
+
+		}
+
+		function fechaDialogo() {
+			if ($("#container").is(":visible")) {
+				clearTimeout(timeoutId);
+				$('#container').fadeOut(300, function() {
+					$(this).remove();
+				});
+			}
+		}
+
 		function chartExtender() {
 			this.cfg.seriesDefaults = {
 				renderer : $.jqplot.BarRenderer,
@@ -128,6 +251,14 @@
 			ga.l = +new Date;
 			ga('create', 'UA-100802286-3', 'auto');
 			ga('send', 'pageview');
+
+			function startTimer() {
+				t = setTimeout("PF('loading').show();", 200);
+			}
+
+			function stopTimer() {
+				clearTimeout(t);
+			}
 			//]]>
 		</script>
 
@@ -178,11 +309,13 @@
 
 		<div class="layout-main">
 			<h:form id="lume">
-				<p:growl id="view-log" showDetail="true" escape="false" globalOnly="true" life="4000">
+				<p:growl id="view-log" showDetail="true" escape="false"
+					globalOnly="true" life="4000">
 					<p:autoUpdate />
 				</p:growl>
-				<p:ajaxStatus onstart="PF('loading').show();"
-					onsuccess="PF('loading').hide();" onerror="PF('loading').hide();"/>
+				<p:ajaxStatus onstart="startTimer();"
+					onsuccess="PF('loading').hide();stopTimer();"
+					onerror="PF('loading').hide();stopTimer();" />
 				<p:dialog modal="true" widgetVar="loading" draggable="false"
 					closable="false" showHeader="false" resizable="false">
 					<p:graphicImage value="/images/loading.gif" />

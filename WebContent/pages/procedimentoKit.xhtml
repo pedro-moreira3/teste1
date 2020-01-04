@@ -37,20 +37,51 @@
 						<br />
                         <div class="SeparatorFull"></div>
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                         	<p:commandButton id="new2" icon="White fa fa-file-o" value="Novo Kit/Procedimento" actionListener="#{procedimentoKitMB.actionNew}" update=":lume:pnProcedimentoKit,:lume:tbProcedimentoKit"
+                                process="@this" />
                             <p:commandButton id="persist2" icon="White fa fa-save" value="Salvar" actionListener="#{procedimentoKitMB.actionPersist}"
                                 update=":lume:pnProcedimentoKit, lume:tbProcedimentoKit" process=":lume:pnProcedimentoKit" styleClass="GreenButton" />
                             <p:commandButton id="delete2" icon="White fa fa-trash-o" value="Excluir" actionListener="#{procedimentoKitMB.actionRemove}"
                                 update=":lume:pnProcedimentoKit, lume:tbProcedimentoKit" process="@this" disabled="#{procedimentoKitMB.entity.id == null}" styleClass="RedButton" />
-                            <p:commandButton id="new2" icon="White fa fa-file-o" value="Novo" actionListener="#{procedimentoKitMB.actionNew}" update=":lume:pnProcedimentoKit,:lume:tbProcedimentoKit"
-                                process="@this" />
-                        </p:panelGrid>
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{procedimentoKitMB.exportarTabela('xls')}"
+									ajax="false" process="tbProcedimentoKit,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{procedimentoKitMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{procedimentoKitMB.exportarTabela('pdf')}"
+										ajax="false" process="tbProcedimentoKit,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{procedimentoKitMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{procedimentoKitMB.exportarTabela('csv')}"
+										ajax="false" process="tbProcedimentoKit,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{procedimentoKitMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+							
+						</p:panelGrid>
                     </p:outputPanel>
 
                     <div class="EmptyBox20"></div>
 
                     <p:outputPanel styleClass="BordNone">
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="tbProcedimentoKit" value="#{procedimentoKitMB.entityList}" var="p" rows="15" paginator="true" widgetVar="procedimentoTable"
-                            selection="#{procedimentoKitMB.entity}" selectionMode="single" rowKey="#{p}" paginatorPosition="bottom">
+                            selection="#{procedimentoKitMB.entity}" selectionMode="single" rowKey="#{p}" paginatorPosition="bottom" binding="#{procedimentoKitMB.tabelaProcedimento}">
                             <p:ajax event="rowSelect" update=":lume:pnProcedimentoKit" resetValues="true" />
                             <f:facet name="header">Kits-Procedimentos</f:facet>
 
@@ -64,7 +95,7 @@
                                 <h:outputText value="#{p.procedimento.descricao}" title="#{p.id}" />
                             </p:column>
 
-                            <p:column filterBy="#{p.kit.descricao}" sortBy="#{p.kit.descricao}" filterMatchMode="contains" headerText="Kit">
+                            <p:column filterBy="#{p.kit.descricao}" sortBy="#{p.kit.descricao}" filterMatchMode="contains" headerText="Kit" filterFunction="#{procedimentoKitMB.filtroSemAcento}">
                                 <h:outputText value="#{p.kit.descricao} (#{p.kit.tipo})" />
                             </p:column>
 

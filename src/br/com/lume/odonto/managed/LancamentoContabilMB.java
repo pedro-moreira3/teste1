@@ -12,6 +12,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
 
 import br.com.lume.categoriaMotivo.CategoriaMotivoSingleton;
@@ -80,6 +81,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     private String tipo = "Pagar";
 
     private String tipoOrigem = "J";
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaLancamento;
 
     public LancamentoContabilMB() {
         super(LancamentoContabilSingleton.getInstance().getBo());
@@ -96,7 +100,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     private void carregarLancamentosValidar() {
         try {
-            lancamentosValidar = LancamentoSingleton.getInstance().getBo().listByPagamentoPacienteNaoValidado(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            lancamentosValidar = LancamentoSingleton.getInstance().getBo().listByPagamentoPacienteNaoValidado(UtilsFrontEnd.getEmpresaLogada());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -202,7 +206,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             if (l != null) {
                 Date data = Calendar.getInstance().getTime();
                 l.setDataValidado(data);
-                l.setValidadoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
+                l.setValidadoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
                 l.setValidado(Status.SIM);
                 LancamentoSingleton.getInstance().getBo().merge(l);
                 List<LancamentoContabil> lancamentosContabeis = l.getLancamentosContabeis();
@@ -211,6 +215,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                     this.getbO().persist(lancamentoContabil);
                 }
                 this.carregarLancamentosValidar();
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -310,6 +315,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Contas a Pagar e Receber", tabelaLancamento, type);
+    }
 
     public List<LancamentoContabil> getLancamentoContabeis() {
         return lancamentoContabeis;
@@ -405,6 +414,14 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void setTipoOrigem(String tipoOrigem) {
         this.tipoOrigem = tipoOrigem;
+    }
+
+    public DataTable getTabelaLancamento() {
+        return tabelaLancamento;
+    }
+
+    public void setTabelaLancamento(DataTable tabelaLancamento) {
+        this.tabelaLancamento = tabelaLancamento;
     }
 
 }

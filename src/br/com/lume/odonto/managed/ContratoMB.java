@@ -11,6 +11,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -56,6 +57,9 @@ public class ContratoMB extends LumeManagedBean<Contrato> {
     private ProfissionalMB profissionalMB;
 
     private List<String> legendas = new ArrayList<>();
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaContrato;
 
     public ContratoMB() {
         super(ContratoSingleton.getInstance().getBo());
@@ -129,6 +133,10 @@ public class ContratoMB extends LumeManagedBean<Contrato> {
         
         documento = documento.replaceAll("#contratado", profissionalMB.getEntity().getDadosBasico().getNome());
         documento = documento.replaceAll("span", "div");
+    }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Contratos", tabelaContrato, type);
     }
 
     public String getDocumento() {
@@ -204,5 +212,13 @@ public class ContratoMB extends LumeManagedBean<Contrato> {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public DataTable getTabelaContrato() {
+        return tabelaContrato;
+    }
+
+    public void setTabelaContrato(DataTable tabelaContrato) {
+        this.tabelaContrato = tabelaContrato;
     }
 }

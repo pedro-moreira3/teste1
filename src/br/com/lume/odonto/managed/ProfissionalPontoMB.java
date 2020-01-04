@@ -6,6 +6,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -23,6 +24,9 @@ public class ProfissionalPontoMB extends LumeManagedBean<ProfissionalPonto> {
     @ManagedProperty(value = "#{profissionalMB}")
     private ProfissionalMB profissionalMB;
 
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaPonto;
+    
     public ProfissionalPontoMB() {
         super(ProfissionalPontoSingleton.getInstance().getBo());
         this.setClazz(ProfissionalPonto.class);
@@ -61,12 +65,24 @@ public class ProfissionalPontoMB extends LumeManagedBean<ProfissionalPonto> {
         }
     }
 
+    public void exportarTabela(String type) {
+        exportarTabela("Registros de ponto", tabelaPonto, type);
+    }
+    
     public ProfissionalMB getProfissionalMB() {
         return profissionalMB;
     }
 
     public void setProfissionalMB(ProfissionalMB profissionalMB) {
         this.profissionalMB = profissionalMB;
+    }
+
+    public DataTable getTabelaPonto() {
+        return tabelaPonto;
+    }
+
+    public void setTabelaPonto(DataTable tabelaPonto) {
+        this.tabelaPonto = tabelaPonto;
     }
 
 }

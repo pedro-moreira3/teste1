@@ -8,6 +8,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -34,7 +35,9 @@ public class PerguntaMB extends LumeManagedBean<Pergunta> {
 
     private Especialidade especialidade;
 
-
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaPergunta;
+    
     public PerguntaMB() {
         super(PerguntaSingleton.getInstance().getBo());
 
@@ -70,6 +73,10 @@ public class PerguntaMB extends LumeManagedBean<Pergunta> {
         this.setPerguntas(listByEspecialidade);
         Collections.sort(this.perguntas);
     }
+    
+    public void exportarTabela(String type) {
+        exportarTabela("Perguntas Anamnese", tabelaPergunta, type);
+    }
 
     public Especialidade getEspecialidade() {
         return this.especialidade;
@@ -98,5 +105,13 @@ public class PerguntaMB extends LumeManagedBean<Pergunta> {
 
     public void setPerguntas(List<Pergunta> perguntas) {
         this.perguntas = perguntas;
+    }
+
+    public DataTable getTabelaPergunta() {
+        return tabelaPergunta;
+    }
+
+    public void setTabelaPergunta(DataTable tabelaPergunta) {
+        this.tabelaPergunta = tabelaPergunta;
     }
 }

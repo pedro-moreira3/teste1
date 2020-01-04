@@ -7,23 +7,29 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
+import org.primefaces.component.selectonemenu.SelectOneMenu;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.FlowEvent;
 import org.primefaces.model.DualListModel;
 import org.primefaces.model.UploadedFile;
 
+import br.com.lume.afiliacao.AfiliacaoSingleton;
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.BusinessException;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.ClienteViaCepWS;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.JSFHelper;
@@ -36,6 +42,18 @@ import br.com.lume.especialidade.EspecialidadeSingleton;
 import br.com.lume.filial.FilialSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.kit.KitSingleton;
+import br.com.lume.local.LocalSingleton;
+import br.com.lume.odonto.entity.Afiliacao;
+
+// import br.com.lume.odonto.bo.DominioBO;
+// import br.com.lume.odonto.bo.EspecialidadeBO;
+// import br.com.lume.odonto.bo.FilialBO;
+// import br.com.lume.odonto.bo.ItemBO;
+// import br.com.lume.odonto.bo.KitBO;
+// import br.com.lume.odonto.bo.PerguntaBO;
+// import br.com.lume.odonto.bo.ProcedimentoBO;
+// import br.com.lume.odonto.bo.ProcedimentoKitBO;
+// import br.com.lume.odonto.bo.ProfissionalBO;
 //import br.com.lume.odonto.bo.DominioBO;
 //import br.com.lume.odonto.bo.EspecialidadeBO;
 //import br.com.lume.odonto.bo.FilialBO;
@@ -45,6 +63,7 @@ import br.com.lume.kit.KitSingleton;
 //import br.com.lume.odonto.bo.ProcedimentoBO;
 //import br.com.lume.odonto.bo.ProcedimentoKitBO;
 //import br.com.lume.odonto.bo.ProfissionalBO;
+
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Especialidade;
@@ -62,9 +81,9 @@ import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.PerfilSingleton;
 import br.com.lume.security.UsuarioSingleton;
-//import br.com.lume.security.bo.EmpresaBO;
-//import br.com.lume.security.bo.PerfilBO;
-//import br.com.lume.security.bo.UsuarioBO;
+// import br.com.lume.security.bo.EmpresaBO;
+// import br.com.lume.security.bo.PerfilBO;
+// import br.com.lume.security.bo.UsuarioBO;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.entity.Usuario;
 
@@ -78,13 +97,13 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
     private Profissional profissional = new Profissional();
 
-   // private ProfissionalBO profissionalBO;
+    // private ProfissionalBO profissionalBO;
 
     private Filial filial;
 
     private boolean skip;
 
-  //  private FilialBO filialBO;
+    //  private FilialBO filialBO;
 
     private Usuario usuario;
 
@@ -92,19 +111,19 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
     private DualListModel<Especialidade> especialidadePickList = new DualListModel<>();
 
-    private List<Dominio> dominios;
+    private List<Dominio> dominios;    
+ 
+    // private EspecialidadeBO especialidadeBO;
 
-  // private EspecialidadeBO especialidadeBO;
+    // private ProcedimentoBO procedimentoBO;
 
-   // private ProcedimentoBO procedimentoBO;
+    //  private UsuarioBO usuarioBO;
 
-  //  private UsuarioBO usuarioBO;
+    //  private PerfilBO perfilBO;
 
-  //  private PerfilBO perfilBO;
+    //  private DominioBO dominioBO;
 
-  //  private DominioBO dominioBO;
-
- //   private EmpresaBO empresaBO;
+    //   private EmpresaBO empresaBO;
 
     private boolean dadosClinica;
 
@@ -112,18 +131,23 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
     private boolean pnInicialVisivel;
 
+    private SelectOneMenu estados;
+
+    private List<Afiliacao> afiliacoes;
+
     public CadastroWebMB() {
         super(EmpresaSingleton.getInstance().getBo());
         this.setClazz(Empresa.class);
-     //   filialBO = new FilialBO();
-      //  profissionalBO = new ProfissionalBO();
-      //  especialidadeBO = new EspecialidadeBO();
-     //   procedimentoBO = new ProcedimentoBO();
-     //   usuarioBO = new UsuarioBO();
-    //    perfilBO = new PerfilBO();
-    //    dominioBO = new DominioBO();
-    //    empresaBO = new EmpresaBO();
+        //   filialBO = new FilialBO();
+        //  profissionalBO = new ProfissionalBO();
+        //  especialidadeBO = new EspecialidadeBO();
+        //   procedimentoBO = new ProcedimentoBO();
+        //   usuarioBO = new UsuarioBO();
+        //    perfilBO = new PerfilBO();
+        //    dominioBO = new DominioBO();
+        //    empresaBO = new EmpresaBO();
         pnInicialVisivel = true;
+        this.afiliacoes = AfiliacaoSingleton.getInstance().getBo().getAllAfiliacao();
     }
 
     public String actionPersist() {
@@ -134,7 +158,6 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 //                pnInicialVisivel = false;
 //                return "";
 //            }
-            
             //Usuario usu = UsuarioSingleton.getInstance().getBo().findByEmail(profissional.getDadosBasico().getEmail());
             //if (usu != null) {
             //    UsuarioSingleton.getInstance().getBo().resetSenha(usu);
@@ -146,13 +169,23 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
             this.getEntity().setEmpStrEstoque(Empresa.ESTOQUE_COMPLETO);
             this.getEntity().setEmpChaSts(Status.ATIVO);
             this.getEntity().setEmpChaTrial(Status.SIM);
+            
+            
             Calendar c = Calendar.getInstance();
             this.getEntity().setEmpDtmCriacao(c.getTime());
             this.getEntity().setEmpDtmAceite(c.getTime());
             this.getEntity().setEmpChaIp(JSFHelper.getRequest().getRemoteAddr());
             c.add(Calendar.MONTH, 1);
             this.getEntity().setEmpDtmExpiracao(c.getTime());
+            this.getEntity().setValidarRepasseProcedimentoFinalizado("S");          
+            this.getEntity().setValidarRepasseConfereCustoDireto("S");
+            this.getEntity().setValidarRepasseLancamentoOrigemValidado("S");
+            this.getEntity().setAdicionarLogoOrcamento("S");
+            this.getEntity().setRepasseAdicionaTributos("S");
             EmpresaSingleton.getInstance().getBo().persist(this.getEntity());
+            LocalSingleton.getInstance().createLocaisDefault(EmpresaSingleton.getInstance().getBo().find(this.getEntity()).getEmpIntCod());
+            
+            
             cadastrarDadosTemplate(getEntity());
             this.actionPersistFilial(null);
             this.actionPersistProfissional(null);
@@ -233,7 +266,7 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
             usuario.setPerfisUsuarios(Arrays.asList(PerfilSingleton.getInstance().getBo().getPerfilbyDescricaoAndSistema(OdontoPerfil.ADMINISTRADOR, this.getLumeSecurity().getSistemaAtual())));
             usuario.setUsuIntDiastrocasenha(999);
             usuario.setUsuChaTutorial("S");
-            UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario,UtilsFrontEnd.getEmpresaLogada());
+            UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario, UtilsFrontEnd.getEmpresaLogada());
         } else {
             Map<String, String> valores = new HashMap<>();
             valores.put("#nome", usuario.getUsuStrNme());
@@ -245,15 +278,15 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
     public void cadastrarDadosTemplate(Empresa destino) {
         try {
-          //  EspecialidadeBO especialidadeBO = new EspecialidadeBO();
-          // ItemBO itemBO = new ItemBO();
-           // ProcedimentoBO procedimentoBO = new ProcedimentoBO();
-          //  PerguntaBO perguntaBO = new PerguntaBO();
-         //   KitBO kitBO = new KitBO();
-          //  ProcedimentoKitBO procedimentoKitBO = new ProcedimentoKitBO();
-          //  DocumentoBO documentoBO = new DocumentoBO();
+            //  EspecialidadeBO especialidadeBO = new EspecialidadeBO();
+            // ItemBO itemBO = new ItemBO();
+            // ProcedimentoBO procedimentoBO = new ProcedimentoBO();
+            //  PerguntaBO perguntaBO = new PerguntaBO();
+            //   KitBO kitBO = new KitBO();
+            //  ProcedimentoKitBO procedimentoKitBO = new ProcedimentoKitBO();
+            //  DocumentoBO documentoBO = new DocumentoBO();
 
-          //  EmpresaBO empresaBO = new EmpresaBO();
+            //  EmpresaBO empresaBO = new EmpresaBO();
             Empresa modelo = EmpresaSingleton.getInstance().getBo().find(Long.parseLong(OdontoMensagens.getMensagem("empresa.modelo")));
 
             EspecialidadeSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
@@ -353,6 +386,64 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
         return dominios;
     }
 
+    public void buscaCep() {
+        if (this.getEntity().getEmpChaCep() == null || this.getEntity().getEmpChaCep().trim().isEmpty())
+            return;
+
+        String cep = this.getEntity().getEmpChaCep().replace("-", "").trim();
+        cep = cep.replace("_", "");
+        if (!"".equals(cep) && cep.length() > 7) {
+            String json = ClienteViaCepWS.buscarCep(cep);
+
+            Map<String, String> mapa = new HashMap<>();
+
+            Matcher matcher = Pattern.compile("\"\\D.*?\": \".*?\"").matcher(json);
+            while (matcher.find()) {
+                String[] group = matcher.group().split(":");
+                mapa.put(group[0].replaceAll("\"", "").trim(), group[1].replaceAll("\"", "").trim());
+            }
+            if (!mapa.isEmpty()) {
+
+                this.getEntity().setEmpStrEndereco(mapa.get("logradouro"));
+                this.getEntity().setEmpStrBairro(mapa.get("bairro"));
+                this.getEntity().setEmpStrCidade(mapa.get("localidade"));
+                this.getEntity().setEmpStrEstadoConselho(mapa.get("uf"));
+
+                getEstados().setValue(mapa.get("uf"));
+                getEstados().setSubmittedValue(mapa.get("uf").toString());
+                getEstados().setLocalValueSet(false);
+
+                if(mapa.get("logradouro") != null && !mapa.get("logradouro").isEmpty()) {
+                    this.getEntity().setEmpStrEndereco(mapa.get("logradouro"));  
+                    PrimeFaces.current().ajax().update(":lume:empStrEndereco");
+                }
+                if(mapa.get("bairro") != null && !mapa.get("bairro").isEmpty()) {
+                    this.getEntity().setEmpStrBairro(mapa.get("bairro"));
+                    PrimeFaces.current().ajax().update(":lume:empStrBairro");
+                }
+                if(mapa.get("localidade") != null && !mapa.get("localidade").isEmpty()) {
+                    this.getEntity().setEmpStrCidade(mapa.get("localidade"));
+                    PrimeFaces.current().ajax().update(":lume:empStrCidade");
+                }
+                if(mapa.get("uf") != null && !mapa.get("uf").isEmpty()) {
+                    this.getEntity().setEmpStrEstadoConselho(mapa.get("uf"));                    
+                    getEstados().setValue(mapa.get("uf"));
+                    getEstados().setSubmittedValue(mapa.get("uf").toString());
+                    getEstados().setLocalValueSet(false);
+                    PrimeFaces.current().ajax().update(":lume:empChaUf");
+                }   
+                
+            }else {
+                this.addError("CEP não encontado!", "");
+
+            }
+            
+            
+            
+
+        }
+    }
+
     public void setDominios(List<Dominio> dominios) {
         this.dominios = dominios;
     }
@@ -365,13 +456,13 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
         this.profissional = profissional;
     }
 
-   // public ProfissionalBO getProfissionalBO() {
-   //     return profissionalBO;
-   // }
+    // public ProfissionalBO getProfissionalBO() {
+    //     return profissionalBO;
+    // }
 
-   // public void setProfissionalBO(ProfissionalBO profissionalBO) {
-   //     this.profissionalBO = profissionalBO;
-   // }
+    // public void setProfissionalBO(ProfissionalBO profissionalBO) {
+    //     this.profissionalBO = profissionalBO;
+    // }
 
     public Filial getFilial() {
         return filial;
@@ -381,13 +472,13 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
         this.filial = filial;
     }
 
-   // public FilialBO getFilialBO() {
-   //     return filialBO;
-   // }
+    // public FilialBO getFilialBO() {
+    //     return filialBO;
+    // }
 
-  //  public void setFilialBO(FilialBO filialBO) {
-   //     this.filialBO = filialBO;
-  //  }
+    //  public void setFilialBO(FilialBO filialBO) {
+    //     this.filialBO = filialBO;
+    //  }
 
     public Usuario getUsuario() {
         return usuario;
@@ -439,6 +530,22 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
 
     public void setPnInicialVisivel(boolean pnInicialVisivel) {
         this.pnInicialVisivel = pnInicialVisivel;
+    }
+
+    public SelectOneMenu getEstados() {
+        return estados;
+    }
+
+    public void setEstados(SelectOneMenu estados) {
+        this.estados = estados;
+    }
+
+    public List<Afiliacao> getAfiliacoes() {
+        return afiliacoes;
+    }
+
+    public void setAfiliacoes(List<Afiliacao> afiliacoes) {
+        this.afiliacoes = afiliacoes;
     }
 
 }

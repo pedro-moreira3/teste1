@@ -72,30 +72,61 @@
 						</p:panelGrid>
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo Cadastro de Tarifa" actionListener="#{tarifaMB.actionNew}" update=":lume:pnTarifa,:lume:dtTarifa"
+								immediate="true" />						
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{tarifaMB.actionPersist}"
 								update=":lume:pnTarifa,:lume:dtTarifa" process=":lume:pnTarifa" styleClass="GreenButton" />
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{tarifaMB.actionRemove}"
 								update=":lume:pnTarifa,:lume:dtTarifa" process="@this" disabled="#{tarifaMB.entity.id == 0}" styleClass="RedButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{tarifaMB.actionNew}" update=":lume:pnTarifa,:lume:dtTarifa"
-								immediate="true" />
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{tarifaMB.exportarTabela('xls')}"
+									ajax="false" process="dtTarifa,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{tarifaMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{tarifaMB.exportarTabela('pdf')}"
+										ajax="false" process="dtTarifa,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{tarifaMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{tarifaMB.exportarTabela('csv')}"
+										ajax="false" process="dtTarifa,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{tarifaMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
 						</p:panelGrid>
 					</p:outputPanel>
 					<div class="EmptyBox20"></div>
 
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtTarifa" value="#{tarifaMB.tarifas}" var="tarifa" rows="15" paginator="true"
-						selection="#{tarifaMB.entity}" selectionMode="single" rowKey="#{tarifa}" paginatorPosition="bottom">
+						selection="#{tarifaMB.entity}" selectionMode="single" rowKey="#{tarifa}" paginatorPosition="bottom" binding="#{tarifaMB.tabelaTarifa}">
 						<p:ajax event="rowSelect" update=":lume:pnTarifa" />
 						<f:facet name="header">Tarifas</f:facet>
 
-						<p:column filterBy="#{tarifa.tipoStr}" sortBy="#{tarifa.tipoStr}" filterMatchMode="contains" headerText="Tipo">
+						<p:column filterBy="#{tarifa.tipoStr}" sortBy="#{tarifa.tipoStr}" filterMatchMode="contains" headerText="Tipo" filterFunction="#{tarifaMB.filtroSemAcento}">
 							<h:outputText value="#{tarifa.tipoStr}" title="#{tarifa.id}" />
 						</p:column>
 
-						<p:column filterBy="#{tarifa.produto}" sortBy="#{tarifa.produto}" filterMatchMode="contains" headerText="Produto">
+						<p:column filterBy="#{tarifa.produto}" sortBy="#{tarifa.produto}" filterMatchMode="contains" headerText="Produto" filterFunction="#{tarifaMB.filtroSemAcento}">
 							<h:outputText value="#{tarifa.produto}" />
 						</p:column>
 
-						<p:column filterBy="#{tarifa.bandeira}" sortBy="#{tarifa.bandeira}" filterMatchMode="contains" headerText="Bandeira">
+						<p:column filterBy="#{tarifa.bandeira}" sortBy="#{tarifa.bandeira}" filterMatchMode="contains" headerText="Bandeira" filterFunction="#{tarifaMB.filtroSemAcento}">
 							<h:outputText value="#{tarifa.bandeira}" />
 						</p:column>
 

@@ -2,72 +2,248 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
+	
+	<style>
+	.centerPanels .ui-panel .ui-panel-titlebar, .centerPanels .ui-panel .ui-panel-content
+	{
+	text-align: center;
+}
+	</style>
+	
+			<p:dialog appendTo=":lume:" maximizable="false" modal="true"
+			minimizable="false" resizable="false" responsive="true"
+			widgetVar="dlgDetalhes" width="80%" id="dlgDetalhes"
+			onHide="PF('dlgDetalhes').toggleMaximize();"
+			onShow="PF('dlgDetalhes').toggleMaximize();"			
+			>
+			<f:facet name="header">
+				<p:outputPanel id="viewRetornoHeader">
+					 <h:outputText value="Detalhes do Item  #{relatorioEstoqueMinimoMB.itemDetalhamento.descricao}" />				
+				</p:outputPanel>
+			</f:facet>
+			
+			<p:outputPanel id="viewRetorno" style="max-height: calc(100% - 54px); height: calc(100% - 54px);"
+			styleClass="remove12ColPaddingSide">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: 100%; height: 100%;">	
+	                    <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtDetalhes" value="#{relatorioEstoqueMinimoMB.detalhes}" var="estoque" rows="15" paginator="true" 
+	                        rowKey="#{estoque}" paginatorPosition="bottom" >	                      
+	                        <f:facet name="header">Materiais</f:facet>
+							<p:column style="width:16px">
+								<p:rowToggler />
+							</p:column>
+	                        <p:column filterBy="#{estoque.local.descricao}" sortBy="#{estoque.local.descricao}"
+	                        		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="8%" headerText="Local"
+	                            rendered="#{materialMB.estoqueCompleto}">
+	                            <h:outputText value="#{estoque.local.descricao}" />
+	                        </p:column>
+	                        <p:column filterBy="#{estoque.quantidade}" sortBy="#{estoque.quantidade}" width="10%"
+	                        	filterMatchMode="contains" headerText="Quantidade">
+	                            <h:outputText value="#{estoque.quantidade}">
+	                                <f:convertNumber />
+	                            </h:outputText>
+	                            <h:outputLabel value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
+	                        </p:column>
+	                        <p:column filterBy="#{estoque.material.valor}" sortBy="#{estoque.material.valor}" width="11%" style="text-align:right"
+	                        		filterMatchMode="contains" headerText="Valor da Unidade(R$)"
+	                            rendered="#{materialMB.estoqueCompleto}">
+	                            <h:outputText value="#{estoque.material.valor}">
+	                                <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2" locale="#{lumeSecurity.locale}" />
+	                            </h:outputText>
+	                        </p:column>
+	                       <p:column filterBy="#{estoque.material.valorTotal}" sortBy="#{estoque.material.valorTotal}" width="11%" style="text-align:right"
+	                       			filterMatchMode="contains" headerText="Valor Total(R$)"
+	                            rendered="#{materialMB.estoqueCompleto}">
+	                            <h:outputText value="#{estoque.material.valorTotal}">
+	                                <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2" locale="#{lumeSecurity.locale}" />
+	                            </h:outputText>
+	                        </p:column>
+	                        <p:column filterBy="#{estoque.material.dataCadastroStr}" sortBy="#{estoque.material.dataCadastroStrOrd}" width="9%"
+	                        		filterMatchMode="contains" headerText="Dt. Entrada">
+	                            <h:outputText value="#{estoque.material.dataCadastroStr}" />
+	                        </p:column>
+	                        <p:column filterBy="#{estoque.material.dataMovimentacaoStr}" sortBy="#{estoque.material.dataMovimentacao}" width="9%" filterMatchMode="contains" headerText="Dt. Últ. Movimentação"
+	                            rendered="#{!materialMB.estoqueCompleto}">
+	                            <h:outputText value="#{estoque.material.dataMovimentacaoStr}" />
+	                        </p:column>
+	                        <p:rowExpansion>
+	                        	<p:panelGrid columns="5" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"		                            	
+			                                style="border:0px none; background-color:transparent;">
+									<h:panelGroup styleClass="md-combo">		                                
+			                        	<h:outputLabel value="Marca: " />
+					                    <h:outputText value="#{estoque.material.marca.nome}"></h:outputText>
+					                </h:panelGroup>
+					                <h:panelGroup styleClass="md-combo">
+					                    <h:outputLabel value="Fornecedor: " />
+					                    <h:outputText value="#{estoque.material.fornecedor.dadosBasico.nome}"></h:outputText>
+					                </h:panelGroup>
+					                <h:panelGroup styleClass="md-combo">
+										<h:outputLabel value="Procedência: " />
+					                    <h:outputText value="#{estoque.material.procedenciaString}"></h:outputText>
+					                </h:panelGroup>				             
+					                <h:panelGroup styleClass="md-combo">       
+					                    <h:outputLabel value="Lote: " />
+					                    <h:outputText value="#{estoque.material.lote}"></h:outputText>
+					                </h:panelGroup>
+					                <h:panelGroup styleClass="md-combo">
+					                    <h:outputLabel value="Validade: " />
+					                    <h:outputText value="#{estoque.material.validadeStr}"></h:outputText>
+					                </h:panelGroup>
+			                    </p:panelGrid>
+	                        </p:rowExpansion>                      
+	                    </p:dataTable> 	                   
+							<p:panelGrid columns="3" layout="grid" id="painelQuantidades"
+								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
+								<p:panel id="valorTotal" header="Quantidade total em estoque">
+					                 <h:outputText value="#{relatorioEstoqueMinimoMB.quantidadeTotal}">
+		                                <f:convertNumber currencySymbol="" type="currency" maxFractionDigits="0" locale="#{lumeSecurity.locale}" />
+		                            </h:outputText>
+								</p:panel>								
+								<p:panel id="valorRestante" header="Custo médio por unidade">
+					                 <h:outputText value="#{relatorioEstoqueMinimoMB.custoMedio}">
+		                                <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2" locale="#{lumeSecurity.locale}" />
+		                            </h:outputText>	
+								</p:panel>
+								<p:panel id="valorPago" header="Valor total em estoque">
+					                 <h:outputText value="#{relatorioEstoqueMinimoMB.valorTotal}">
+		                                <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2" locale="#{lumeSecurity.locale}" />
+		                            </h:outputText>	
+								</p:panel>
+							</p:panelGrid>
+							 <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtEmprestimos" value="#{relatorioEstoqueMinimoMB.emprestados}" var="emprestado" rows="15" paginator="true" 
+	                        rowKey="#{estoque}" paginatorPosition="bottom" >	                      
+	                        <f:facet name="header">Materiais indisponíveis para uso</f:facet>
+	                        <p:column filterBy="#{emprestado.detalhes}" sortBy="#{emprestado.detalhes}"
+	                        		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="20%" headerText="Situação"
+	                            rendered="#{materialMB.estoqueCompleto}">
+	                            <h:outputText value="#{emprestado.local}" />
+	                        </p:column>
+	                        <p:column filterBy="#{emprestado.quantidade}" sortBy="#{emprestado.quantidade}" width="10%"
+	                        	filterMatchMode="contains" headerText="Quantidade">
+	                            <h:outputText value="#{emprestado.quantidade}">
+	                                <f:convertNumber />
+	                            </h:outputText>	                          
+	                        </p:column>
+	                        <p:column filterBy="#{emprestado.detalhes}" sortBy="#{emprestado.detalhes}"
+	                        		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="70%" headerText="Detalhe"
+	                            rendered="#{materialMB.estoqueCompleto}">
+	                            <h:outputText value="#{emprestado.detalhes}" />
+	                        </p:column>                                           
+	                    </p:dataTable> 	
+				</p:scrollPanel>	
+			</p:outputPanel>
+			<p:panelGrid columns="2" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton icon="White fa fa-close" value="Fechar"
+					styleClass="NavyButton" oncomplete="PF('dlgDetalhes').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+	
+	
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-					<h1>Estoque Mínimo</h1>
+					<h1>Relatório de Estoque</h1>
 					<div class="SeparatorFull"></div>
-					<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-						<p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
-							<p:dataExporter encoding="iso-8859-1" type="xls" target="dtMaterial" fileName="EstoqueMinimo" />
-						</p:commandButton>
-					</p:panelGrid>
+					
+					<p:panelGrid columns="3"  layout="grid" styleClass="ui-panelgrid-blank"
+                                style="border:0px none; background-color:transparent;" id="painelPesquisa">
+						<p:outputPanel style="margin-top:10px">
+							<p:outputLabel for="filtro" value="Item/Categoria: " />                                
+							<p:inputText id="filtro" value="#{relatorioEstoqueMinimoMB.filtroItem}">
+							</p:inputText> 
+						</p:outputPanel>
+						<p:outputPanel>                                
+							<h:outputText for="filtroPeriodo"
+								value="Tipo" />
+							<p:selectOneMenu id="filtroPeriodo"
+								value="#{relatorioEstoqueMinimoMB.filtroTipo}">
+								<f:selectItem itemValue="" itemLabel="Selecione" />																
+								<f:selectItem itemValue="C" itemLabel="Consumo" />
+								<f:selectItem itemValue="I" itemLabel="Instrumental" />									
+							</p:selectOneMenu>
+						</p:outputPanel>
+						<p:outputPanel></p:outputPanel> 							
+                    </p:panelGrid>
+                    <p:panelGrid columns="1"  layout="grid" styleClass="ui-panelgrid-blank"
+                                style="border:0px none; background-color:transparent;" id="painelPesquisa2">                    
+                    	<p:selectBooleanCheckbox style="width:100%;" value="#{relatorioEstoqueMinimoMB.mostrarSomenteEstoqueMinimo}" 
+                    	itemLabel="Mostrar somente itens com quantidade abaixo ou igual ao estoque mínimo configurado"/>
+					</p:panelGrid>       
+                    <p:panelGrid columns="6" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+                        style="border:0px none; background-color:transparent;">                                
+                        <p:commandButton id="pesquisar" icon="White fa fa-search" value="Pesquisar" 
+                        actionListener="#{relatorioEstoqueMinimoMB.filtra}" update=":lume:dtMaterial"
+                            process="@this,painelPesquisa,painelPesquisa2" styleClass="OrangeButton" />
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{relatorioEstoqueMinimoMB.exportarTabela('xls')}"
+								ajax="false" process="dtMaterial,@this" update="@this"
+								immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+								<p:fileDownload
+									value="#{relatorioEstoqueMinimoMB.arquivoDownload}" />
+
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{relatorioEstoqueMinimoMB.exportarTabela('pdf')}"
+									ajax="false" process="dtMaterial,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload
+										value="#{relatorioEstoqueMinimoMB.arquivoDownload}" />
+								</p:menuitem>
+								<p:menuitem value="Exportar tabela para CSV"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{relatorioEstoqueMinimoMB.exportarTabela('csv')}"
+									ajax="false" process="dtMaterial,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload value="#{relatorioEstoqueMinimoMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
+						</h:panelGroup>
+						<h:panelGroup></h:panelGroup>                            
+						<h:panelGroup></h:panelGroup>
+						<h:panelGroup></h:panelGroup>
+						<h:panelGroup></h:panelGroup>
+                    </p:panelGrid>                
+
 					<div class="EmptyBox20"></div>
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{relatorioEstoqueMinimoMB.materiais}" var="m" rows="20" paginator="true"
-						rowKey="#{m}" paginatorPosition="bottom">
-						<f:facet name="header">Materiais</f:facet>
-						<p:column filterBy="#{m.item}" sortBy="#{m.item}" filterMatchMode="contains">
-							<f:facet name="header">
-								<h:outputText value="Item" />
-							</f:facet>
+						rowKey="#{m}" paginatorPosition="bottom" binding="#{relatorioEstoqueMinimoMB.tabelaEstoque}">
+						<f:facet name="header">Itens</f:facet>
+						
+						<p:column headerText="Detalhes" width="8%">									 	
+						 	<p:commandButton class="" icon="fa fa-eye White" update=":lume:dtDetalhes,:lume:dtEmprestimos,:lume:painelQuantidades,:lume:dlgDetalhes" title="Detalhes" process="@this" 
+						 	actionListener="#{relatorioEstoqueMinimoMB.detalhes(m)}"
+						 	oncomplete="PF('dlgDetalhes').show()"
+                                 style="width:33px !important" />
+                        </p:column>	
+						<p:column filterBy="#{m.item}" sortBy="#{m.item}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" headerText="Item">							
 							<h:outputText value="#{m.item}" title="#{m.id}"/>
-						</p:column>						
-						<p:column filterBy="#{m.somaQuantidadeAtual}" sortBy="#{m.somaQuantidadeAtual}" filterMatchMode="contains">
-							<f:facet name="header">
-								<h:outputText value="Quantidade Atual" />
-							</f:facet>
-							<h:outputText value="#{m.somaQuantidadeAtual}">
-								<f:convertNumber locale="#{lumeSecurity.locale}" maxFractionDigits="2" />
-							</h:outputText>
-							<h:outputLabel value="#{m.unidadeMedidaStr}" disabled="true" />
 						</p:column>
-						<p:column filterBy="#{m.estoqueMinimo}" sortBy="#{m.estoqueMinimo}" filterMatchMode="contains">
-							<f:facet name="header">
-								<h:outputText value="Estoque Mínimo" />
-							</f:facet>
-							<h:outputText value="#{m.estoqueMinimo}">
-								<f:convertNumber locale="#{lumeSecurity.locale}" maxFractionDigits="2" />
-							</h:outputText>
-							<h:outputLabel value="#{m.unidadeMedidaStr}" disabled="true" />
+						<p:column  filterBy="#{m.somaQuantidadeAtual}" sortBy="#{m.somaQuantidadeAtual}" filterMatchMode="contains" headerText="Quantidade Atual Disponível">												
+							<h:outputLabel value="#{m.somaQuantidadeAtual} #{m.unidadeMedidaStr}" disabled="true" style="color: #{(m.somaQuantidadeAtual le m.estoqueMinimo)?'red':'none'}"/>
 						</p:column>
-						<p:column filterBy="#{m.valorUltimaCompra}" sortBy="#{m.valorUltimaCompra}" filterMatchMode="contains" rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}">
-							<f:facet name="header">
-								<h:outputText value="Valor Unit. Últ. Compra(R$)" />
-							</f:facet>
+						<p:column  filterBy="#{m.estoqueMinimo}" sortBy="#{m.estoqueMinimo}" filterMatchMode="contains" headerText="Estoque Mínimo">							
+							<h:outputLabel value="#{m.estoqueMinimo} #{m.unidadeMedidaStr}" disabled="true" style="color: #{(m.somaQuantidadeAtual le m.estoqueMinimo)?'red':'none'}"/>
+						</p:column>
+						<p:column filterBy="#{m.valorUltimaCompra}" sortBy="#{m.valorUltimaCompra}" filterMatchMode="contains" 
+						rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}" headerText="Valor Unit. Últ. Compra(R$)">							
 							<h:outputText value="#{m.valorUltimaCompra}">
 								<f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 						</p:column>
-						<p:column filterBy="#{m.valorMedio}" sortBy="#{m.valorMedio}" filterMatchMode="contains" rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}">
-							<f:facet name="header">
-								<h:outputText value="Valor Unit. Médio" />
-							</f:facet>
+						<p:column filterBy="#{m.valorMedio}" sortBy="#{m.valorMedio}" filterMatchMode="contains" 
+						rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}" headerText="Valor Unit. Médio">						
 							<h:outputText value="#{m.valorMedio}">
 								<f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 						</p:column>
-						<p:column filterBy="#{m.valorMedioUlt6Meses}" sortBy="#{m.valorMedioUlt6Meses}" filterMatchMode="contains" rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}">
-							<f:facet name="header">
-								<h:outputText value="Valor Unit. Médio Ult. 6 meses(R$)" />
-							</f:facet>
-							<h:outputText value="#{m.valorMedioUlt6Meses}">
-								<f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
-							</h:outputText>
-						</p:column>
-                        <p:column filterBy="#{m.tipoStr}" sortBy="#{m.tipoStr}" filterMatchMode="contains">
-                            <f:facet name="header">
-                                <h:outputText value="Tipo" />
-                            </f:facet>
+                        <p:column filterBy="#{m.tipoStr}" sortBy="#{m.tipoStr}" filterMatchMode="contains" 
+                        filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" headerText="Tipo">
+                            
                             <h:outputText value="#{m.tipoStr}"/>
                         </p:column>
 					</p:dataTable>

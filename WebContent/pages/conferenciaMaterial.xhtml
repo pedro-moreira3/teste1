@@ -14,77 +14,101 @@
 						<h1>Ajuste de Materiais</h1>
 						<div class="SeparatorFull"></div>
 						<br />
+						
+						<p:panelGrid columns="4" layout="grid" columnClasses="ui-grid-col-2,ui-grid-col-10"
+							styleClass="ui-panelgrid-blank form-group ui-fluid"
+							style="border:0px none; background-color:transparent;">
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{conferenciaMB.exportarTabelaConferencia('xls')}"
+									ajax="false" process="dtMaterial,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{conferenciaMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{conferenciaMB.exportarTabelaConferencia('pdf')}"
+										ajax="false" process="dtMaterial,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{conferenciaMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{conferenciaMB.exportarTabelaConferencia('csv')}"
+										ajax="false" process="dtMaterial,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{conferenciaMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
+						</p:panelGrid>
+						
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-							id="dtMaterial" value="#{conferenciaMB.materiais}" var="material"
-							rows="6" paginator="true" selection="#{conferenciaMB.material}"
-							selectionMode="single" rowKey="#{material}"
-							paginatorPosition="bottom">
+							id="dtMaterial" value="#{conferenciaMB.estoques}" var="estoque"
+							rows="6" paginator="true" 
+							rowKey="#{conferenciaMB.estoque}"
+							paginatorPosition="bottom" binding="#{conferenciaMB.tabelaConferencia}">
 							<p:ajax event="rowSelect" update=":lume:pnMaterial"
 								listener="#{conferenciaMB.carregaTela}" />
 							<f:facet name="header">Materiais</f:facet>
-							<p:column filterBy="#{material.item.descricaoLimpa}"
-								sortBy="#{material.item.descricao}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Material" />
-								</f:facet>
-								<h:outputText value="#{material.item.descricao}"
-									title="#{material.id}" />
+							
+							<p:column filterBy="#{estoque.material.item.descricaoLimpa}"
+								sortBy="#{estoque.material.item.descricao}" filterMatchMode="contains" headerText="Material">
+								<h:outputText value="#{estoque.material.item.descricao}"
+									title="#{estoque.material.id}" />
 							</p:column>
-							<p:column filterBy="#{material.local.descricao}"
-								sortBy="#{material.local.descricao}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Local" />
-								</f:facet>
-								<h:outputText value="#{material.local.descricao}" />
+							<p:column filterBy="#{estoque.local.descricao}"
+								sortBy="#{estoque.local.descricao}" filterMatchMode="contains" headerText="Local">
+								<h:outputText value="#{estoque.local.descricao}" />
 							</p:column>
-							<p:column filterBy="#{material.quantidadeAtual}"
-								sortBy="#{material.quantidadeAtual}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Quantidade Disponível" />
-								</f:facet>
-								<h:outputText value="#{material.quantidadeAtual}">
-									<f:convertNumber />
+							
+							<p:column filterBy="#{estoque.quantidade}"
+								sortBy="#{estoque.quantidade}" filterMatchMode="contains" headerText="Quantidade disponível">								
+								<h:outputText value="#{estoque.quantidade}">									<f:convertNumber />
 								</h:outputText>
-								<h:outputLabel
-									value="#{conferenciaMB.getUnidadeString(material.item)}"
-									styleClass="unidadeMedidaString" disabled="true" />
-							</p:column>
-
-							<p:column filterBy="#{material.quantidadeEmprestada}"
-								sortBy="#{material.quantidadeEmprestada}"
-								filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Quantidade Emprestada" />
-								</f:facet>
-
-								<p:commandButton
-									action="#{conferenciaMB.carregaMaterialEmprestado(material)}"
-									oncomplete="PF('dlgMaterialEmprestado').show();"
-									process="@this" update=":lume:pgMaterialEmprestado"
-									icon="White fa fa-search" />
 
 							</p:column>
-							<p:column filterBy="#{material.marca.nome}"
-								sortBy="#{material.marca.nome}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Marca" />
-								</f:facet>
-								<h:outputText value="#{material.marca.nome}" />
+							
+							<p:column exportable="false" headerText="Quantidade emprestada">
+								
+								<h:panelGroup>
+									<h:outputText value="#{conferenciaMB.estoque.material.quantidadeEmprestada}" />
+								</h:panelGroup>
+								
+								<h:panelGroup>
+									<p:commandButton
+										action="#{conferenciaMB.carregaMaterialEmprestado(estoque)}"
+										oncomplete="PF('dlgMaterialEmprestado').show();"
+										process="@this" update=":lume:pgMaterialEmprestado"
+										icon="White fa fa-search" />
+								</h:panelGroup>
+
 							</p:column>
-							<p:column filterBy="#{material.lote}" sortBy="#{material.lote}"
-								filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Lote" />
-								</f:facet>
-								<h:outputText value="#{material.lote}" />
+
+							<p:column filterBy="#{estoque.material.marca.nome}"
+								sortBy="#{estoque.material.marca.nome}" filterMatchMode="contains" headerText="Marca">
+								<h:outputText value="#{estoque.material.marca.nome}" />
 							</p:column>
-							<p:column filterBy="#{material.dataValidadeStr}"
-								sortBy="#{material.dataValidadeStr}" filterMatchMode="contains">
-								<f:facet name="header">
-									<h:outputText value="Data de Validade" />
-								</f:facet>
-								<h:outputText value="#{material.dataValidadeStr}" />
+							
+							<p:column filterBy="#{estoque.material.lote}" sortBy="#{estoque.material.lote}"
+								filterMatchMode="contains" headerText="Lote">
+								<h:outputText value="#{estoque.material.lote}" />
 							</p:column>
+							
+							<p:column filterBy="#{estoque.material.dataValidadeStr}"
+								sortBy="#{estoque.material.dataValidadeStr}" filterMatchMode="contains" headerText="Data de validade">
+								<h:outputText value="#{estoque.material.dataValidadeStr}" />
+							</p:column>
+							
 						</p:dataTable>
 						<br />
 						<div class="SeparatorFull"></div>
@@ -105,19 +129,19 @@
 							</p:column>
 
 							<h:outputLabel value="Material : " />
-							<h:outputText value="#{conferenciaMB.material.item.descricao}"
+							<h:outputText value="#{conferenciaMB.estoque.material.item.descricao}"
 								styleClass="FontItalic" />
 
 
 							<h:outputLabel value="Quantidade Atual : " />
 							<p:column>
-								<h:outputText value="#{conferenciaMB.material.quantidadeAtual}"
+								<h:outputText value="#{conferenciaMB.estoque.quantidade}"
 									styleClass="FontItalic">
 									<f:convertNumber />
 								</h:outputText>
 
 								<h:outputText
-									value="#{conferenciaMB.getUnidadeString(conferenciaMB.material.item)}"
+									value="#{conferenciaMB.getUnidadeString(conferenciaMB.estoque.material.item)}"
 									styleClass="unidadeMedidaString" />
 							</p:column>
 
@@ -127,7 +151,7 @@
 									value="#{conferenciaMB.conferenciaMaterial.valorAlterado}"
 									maxlength="10" onkeypress="validaNumeros(event)" />
 								<h:outputText
-									value="#{conferenciaMB.getUnidadeString(conferenciaMB.material.item)}"
+									value="#{conferenciaMB.getUnidadeString(conferenciaMB.estoque.material.item)}"
 									styleClass="unidadeMedidaString" disabled="true" />
 							</p:column>
 
@@ -153,9 +177,9 @@
 								value="Salvar" actionListener="#{conferenciaMB.actionPersist}"
 								update=":lume:pnMaterial,:lume:dtMaterial"
 								process=":lume:pnMaterial"
-								disabled="#{conferenciaMB.material.id == 0}"
+								disabled="#{conferenciaMB.estoque.material.id == 0}"
 								styleClass="GreenButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo"
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo Ajuste de Materiais"
 								actionListener="#{conferenciaMB.actionNew}"
 								update=":lume:pnMaterial,:lume:dtMaterial" process="@this" />
 							<p:commandButton value="Excel" ajax="false" immediate="true"
@@ -184,23 +208,23 @@
 		</div>
 		<h:panelGroup id="pgMaterialEmprestado">
             <p:dialog widgetVar="dlgMaterialEmprestado" modal="true" width="90%">
-                    <h1>#{conferenciaMB.material.item.descricao}</h1>
+                    <h1>#{conferenciaMB.estoque.material.item.descricao}</h1>
                     <div class="SeparatorFull"></div>
                     <p:panelGrid columns="6" columnClasses="ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2,ui-grid-col-2" layout="grid" styleClass="ui-panelgrid-blank"
                         style="border:0px none; background-color:transparent;">
 
                         <h:outputLabel value="Quantidade Atual : " />
-                        <h:outputText value="#{conferenciaMB.material.quantidadeAtual}">
+                        <h:outputText value="#{conferenciaMB.estoque.quantidade}">
                             <f:convertNumber />
                         </h:outputText>
 
                         <h:outputLabel value="Quantidade Emprestada : " />
-                        <h:outputText value="#{conferenciaMB.material.quantidadeEmprestada}">
+                        <h:outputText value="#{conferenciaMB.estoque.material.quantidadeEmprestada}">
                             <f:convertNumber />
                         </h:outputText>
 
                         <h:outputLabel value="Quantidade Total : " />
-                        <h:outputText value="#{conferenciaMB.material.quantidadeDisponivelEEmprestada}">
+                        <h:outputText value="#{conferenciaMB.estoque.material.quantidadeDisponivelEEmprestada}">
                             <f:convertNumber />
                         </h:outputText>
 
@@ -214,12 +238,15 @@
                             </f:facet>
                             <h:outputText value="#{material.profissional.dadosBasico.nome}" />
                         </p:column>
+                        
+                        <ui:remove>
                         <p:column filterBy="#{material.agendamento.paciente.dadosBasico.nome}" sortBy="#{material.agendamento.paciente.dadosBasico.nome}" filterMatchMode="contains">
                             <f:facet name="header">
                                 <h:outputText value="Paciente" />
                             </f:facet>
                             <h:outputText value="#{material.agendamento.paciente.dadosBasico.nome}" />
                         </p:column>
+                        </ui:remove>
 
                         <p:column filterBy="#{material.quantidade}" sortBy="#{material.quantidade}" filterMatchMode="contains">
                             <f:facet name="header">

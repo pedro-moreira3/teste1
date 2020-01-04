@@ -28,12 +28,12 @@
 
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Nova Especialidade" actionListener="#{especialidadeMB.actionNew}"
+								update=":lume:pnEspecialidade , :lume:dtEspecialidade" immediate="true" />						
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{especialidadeMB.actionPersist}"
 								update=":lume:pnEspecialidade,:lume:tbEspecialidade" process=":lume:pnEspecialidade" styleClass="GreenButton" />
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{especialidadeMB.actionRemove}"
 								update=":lume:pnEspecialidade,:lume:tbEspecialidade" process="@this" disabled="#{especialidadeMB.entity.id == null}" styleClass="RedButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{especialidadeMB.actionNew}"
-								update=":lume:pnEspecialidade , :lume:dtEspecialidade" immediate="true" />
 						</p:panelGrid>
 					</p:outputPanel>
 
@@ -44,7 +44,7 @@
 							paginator="true" paginatorPosition="bottom" selection="#{especialidadeMB.entity}" selectionMode="single" rowKey="#{especialidade}">
 							<p:ajax event="rowSelect" update=":lume:pnEspecialidade" />
 							<f:facet name="header">Especialidades</f:facet>
-							<p:column filterBy="#{especialidade.descricaoLimpa}" sortBy="#{especialidade.descricao}" filterMatchMode="contains" headerText="Descrição">
+							<p:column filterBy="#{especialidade.descricaoLimpa}" sortBy="#{especialidade.descricao}" filterMatchMode="contains" headerText="Descrição" filterFunction="#{especialidadeMB.filtroSemAcento}">
 								<h:outputText value="#{especialidade.descricao}" />
 							</p:column>
 						</p:dataTable>

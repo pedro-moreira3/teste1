@@ -121,7 +121,7 @@ height: 100%;
 									<p:outputLabel for="data" value="Data : " />
 	                                <h:panelGroup styleClass="lumeField">
 	                                    <p:calendar id="data" required="true" value="#{lancamentoContabilMB.entity.data}" pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
-	                                        locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+10">
+	                                        locale="#{lumeSecurity.locale}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+1">
 	                                    </p:calendar>
 	                                </h:panelGroup>
 
@@ -134,46 +134,86 @@ height: 100%;
 	                            <br />
                                 <div class="SeparatorFull"></div>
                                 <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                                	<p:commandButton id="new" icon="White fa fa-file-o" value="Novo Pagamento/Recebimento" actionListener="#{lancamentoContabilMB.actionNew}"
+                                        update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil" immediate="true" />
                                     <p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{lancamentoContabilMB.actionPersist}"
                                         update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil" process="@this,dadosBasicos,motivo,data,valor" styleClass="GreenButton" />
                                     <p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{lancamentoContabilMB.actionRemove}"
                                         update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil" process="@this" disabled="#{lancamentoContabilMB.entity.id == 0}" styleClass="RedButton" />
-                                    <p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{lancamentoContabilMB.actionNew}"
-                                        update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil" immediate="true" />
+                                    <ui:remove>
                                     <p:commandButton value="Excel" ajax="false" immediate="true" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                         <p:dataExporter encoding="iso-8859-1" type="xls" target="dtLancamentoContabil" fileName="pagamentorecebimentos" />
                                     </p:commandButton>
-                                </p:panelGrid>
+                                    </ui:remove>
+
+											<h:panelGroup>
+												<p:splitButton icon="White fa fa fa-file-excel-o"
+													value="Exportar tabela para Excel"
+													styleClass="GreenSplitButton"
+													actionListener="#{lancamentoContabilMB.exportarTabela('xls')}"
+													ajax="false" process="dtLancamentoContabil,@this"
+													update="@this" immediate="true"
+													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+													<p:fileDownload
+														value="#{lancamentoContabilMB.arquivoDownload}" />
+
+													<p:menuitem value="Exportar tabela para PDF"
+														icon="fa fa fa-file-pdf-o"
+														actionListener="#{lancamentoContabilMB.exportarTabela('pdf')}"
+														ajax="false" process="dtLancamentoContabil,@this"
+														immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+														<p:fileDownload
+															value="#{lancamentoContabilMB.arquivoDownload}" />
+													</p:menuitem>
+													<p:menuitem value="Exportar tabela para CSV"
+														icon="fa fa fa-file-pdf-o"
+														actionListener="#{lancamentoMB.exportarTabela('csv')}"
+														ajax="false" process="dtLancamentoContabil,@this" immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+														<p:fileDownload
+															value="#{lancamentoMB.arquivoDownload}" />
+													</p:menuitem>
+												</p:splitButton>
+											</h:panelGroup>
+
+										</p:panelGrid>
                             </p:outputPanel>
                             <div class="EmptyBox20"></div>
 
                             <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtLancamentoContabil" value="#{lancamentoContabilMB.lancamentoContabeis}" var="lc" rows="15"
-                                paginator="true" selection="#{lancamentoContabilMB.entity}" selectionMode="single" rowKey="#{lc}" paginatorPosition="bottom">
+                                paginator="true" selection="#{lancamentoContabilMB.entity}" selectionMode="single" rowKey="#{lc}" paginatorPosition="bottom" binding="#{lancamentoContabilMB.tabelaLancamento}">
                                 <p:ajax event="rowSelect" update=":lume:tv:pnLancamentoContabil" listener="#{lancamentoContabilMB.carregaTela}" />
                                 <f:facet name="header">Contas a Pagar/Receber</f:facet>
 
-                                <p:column filterBy="#{lc.dadosBasico.nome}" sortBy="#{lc.dadosBasico.nome}" filterMatchMode="contains" headerText="Origem/Destino">
+                                <p:column 	filterBy="#{lc.dadosBasico.nome}" sortBy="#{lc.dadosBasico.nome}" filterMatchMode="contains" headerText="Origem/Destino"
+                                			filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
                                     <h:outputText value="#{lc.dadosBasico.nome}" title="#{lc.id}" />
                                 </p:column>
-                                <p:column filterBy="#{lc.motivo.categoria.tipoCategoria.descricao}" sortBy="#{lc.motivo.categoria.tipoCategoria.descricao}" filterMatchMode="contains"
-                                    headerText="Tipo Categoria">
+                                <p:column 	filterBy="#{lc.motivo.categoria.tipoCategoria.descricao}" sortBy="#{lc.motivo.categoria.tipoCategoria.descricao}" filterMatchMode="contains"
+                                    		headerText="Tipo Categoria" filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
                                     <h:outputText value="#{lc.motivo.categoria.tipoCategoria.descricao}" />
                                 </p:column>
-                                <p:column filterBy="#{lc.motivo.categoria.descricao}" sortBy="#{lc.motivo.categoria.descricao}" filterMatchMode="contains" headerText="Categoria">
+                                <p:column 	filterBy="#{lc.motivo.categoria.descricao}" sortBy="#{lc.motivo.categoria.descricao}" filterMatchMode="contains" headerText="Categoria"
+                                			filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
                                     <h:outputText value="#{lc.motivo.categoria.descricao}" />
                                 </p:column>
-                                <p:column filterBy="#{lc.motivo.descricao}" sortBy="#{lc.motivo.descricao}" filterMatchMode="contains" headerText="Motivo">
+                                <p:column 	filterBy="#{lc.motivo.descricao}" sortBy="#{lc.motivo.descricao}" filterMatchMode="contains" headerText="Motivo"
+                                			filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
                                     <h:outputText value="#{lc.motivo.descricao}" />
                                 </p:column>
-                                <p:column filterBy="#{lc.valor}" sortBy="#{lc.valor}" style="text-align:right" filterMatchMode="contains" headerText="Valor(R$)">
+                                <p:column 	filterBy="#{lc.valor}" sortBy="#{lc.valor}" style="text-align:right" filterMatchMode="contains" headerText="Valor(R$)">
                                     <h:outputText value="#{lc.valor}">
                                         <f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
                                     </h:outputText>
                                 </p:column>
-                                <p:column headerText="Data" filterBy="#{lc.dataStr}" sortBy="#{lc.data}" filterMatchMode="contains">
+                                <p:column 	headerText="Data" filterBy="#{lc.dataStr}" sortBy="#{lc.data}" filterMatchMode="contains"
+                                			filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
                                     <h:outputText value="#{lc.dataStr}" />
                                 </p:column>
-                                <p:column filterBy="#{lc.tipo}" sortBy="#{lc.tipo}" filterMatchMode="contains" headerText="Tipo">
+                                <p:column 	filterBy="#{lc.tipo}" sortBy="#{lc.tipo}" filterMatchMode="contains" headerText="Tipo"
+                                			filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
                                     <h:outputText value="#{lc.tipo}" />
                                 </p:column>
                             </p:dataTable>
@@ -190,11 +230,11 @@ height: 100%;
                             </p:outputPanel>
                             <br />
                             <p:dataTable filterDelay="1500" reflow="true" emptyMessage="" id="dtLancamentoValidar" value="#{lancamentoContabilMB.lancamentosValidar}" var="lc" rows="50"
-                                paginator="true" paginatorPosition="bottom">
+                                paginator="true" paginatorPosition="bottom" widgetVar="dtLancamentoValidar">
                                 <f:facet name="header">Lançamentos</f:facet>
-                                <p:column filterBy="#{lc.orcamento.planoTratamento.paciente.dadosBasico.nomeStr}" sortBy="#{lc.orcamento.planoTratamento.paciente.dadosBasico.nome}"
+                                <p:column filterBy="#{lc.fatura.paciente.dadosBasico.nomeStr}" sortBy="#{lc.fatura.paciente.dadosBasico.nome}"
                                     filterMatchMode="contains" headerText="Paciente">
-                                    <h:outputText value="#{lc.orcamento.planoTratamento.paciente.dadosBasico.nome}" title="#{lc.id}" />
+                                    <h:outputText value="#{lc.fatura.paciente.dadosBasico.nome}" title="#{lc.id}" />
                                 </p:column>
                                 <p:column filterBy="#{lc.formaPagamentoStr}" sortBy="#{lc.formaPagamentoStr}" filterMatchMode="contains" headerText="Forma">
                                     <h:outputText value="#{lc.formaPagamentoStr}" />
@@ -214,11 +254,11 @@ height: 100%;
                                 </p:column>
                                 <p:column headerText="Data Crédito" filterBy="#{lc.dataCreditoStr}" sortBy="#{lc.dataCreditoStr}" filterMatchMode="contains">
                                     <p:calendar id="dtCreditoLancamento" value="#{lc.dataCredito}" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}"
-                                        timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+10" class="Wid50" mask="true" />
+                                        timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-100:+1" class="Wid50" mask="true" />
                                 </p:column>
                                 <p:column headerText="Conferência" width="100">
                                     <p:commandButton icon="White fa fa-thumbs-o-up" actionListener="#{lancamentoContabilMB.actionValidarLancamento(lc)}" update=":lume:tv:dtLancamentoValidar"
-                                        process="@this,dtCreditoLancamento" styleClass="GreenButton" />
+                                        process="@this,dtCreditoLancamento" styleClass="GreenButton" oncomplete="PF('dtLancamentoValidar').filter()" />
                                 </p:column>
                             </p:dataTable>
                     </div>
@@ -286,7 +326,7 @@ height: 100%;
                                 <div class="SeparatorFull"></div>
                                 <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                     <p:commandButton id="pesquisarDetalhado" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioContabilDetalhadoMB.filtra}"
-                                        update="extratoDetalhado" process="@this,extratoDetalhado,inicioDetalhado,fimDetalhado" styleClass="OrangeButton" />
+                                        update="extratoDetalhado" process="@this,extratoDetalhado,inicioDetalhado,fimDetalhado" styleClass="NavyButton" />
                                     <p:commandButton id="limparDetalhado" icon="White fa fa-file-o" value="Limpar" update="inicioDetalhado, fimDetalhado" process="@this"
                                         actionListener="#{relatorioContabilDetalhadoMB.actionLimpar}" />
                                     <p:commandButton value="Imprimir" type="button" icon="White fa fa-print" styleClass="NavyButton">

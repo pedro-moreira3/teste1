@@ -48,13 +48,44 @@
 						</p:panelGrid>
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Nova Configuração de Documentos" actionListener="#{documentoMB.actionNew}" update=":lume:pnPrincipal"
+								immediate="true" tabindex="1"  />						
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{documentoMB.actionPersist}"
 								update=":lume:pnPrincipal, :lume:dtPrincipal"  process=":lume:pnPrincipal"
 								styleClass="GreenButton" />
 							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{documentoMB.actionRemove}" update=":lume:pnPrincipal, :lume:dtPrincipal"
 								process="@this" disabled="#{documentoMB.entity.id == 0}"  styleClass="RedButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo" actionListener="#{documentoMB.actionNew}" update=":lume:pnPrincipal"
-								immediate="true" tabindex="1"  />
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{documentoMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{documentoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{documentoMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{documentoMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{documentoMB.exportarTabela('csv')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{documentoMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
 						</p:panelGrid>
 
 						<div class="EmptyBox20"></div>
@@ -64,10 +95,10 @@
 						selection="#{documentoMB.entity}" selectionMode="single" rowKey="#{doc}" paginatorPosition="bottom">
 						<p:ajax event="rowSelect" update=":lume:pnPrincipal" listener="#{documentoMB.addLegendas}" />
 						<f:facet name="header">Documentos</f:facet>
-						<p:column sortBy="#{doc.descricao}" filterBy="#{doc.descricao}" filterMatchMode="contains" headerText="Descrição">
+						<p:column sortBy="#{doc.descricao}" filterBy="#{doc.descricao}" filterMatchMode="contains" headerText="Descrição" filterFunction="#{documentoMB.filtroSemAcento}">
 							<h:outputText value="#{doc.descricao}" title="#{doc.id}" />
 						</p:column>
-						<p:column sortBy="#{doc.tipo.nome}" filterBy="#{doc.tipo.nome}" filterMatchMode="contains" headerText="Tipo">
+						<p:column sortBy="#{doc.tipo.nome}" filterBy="#{doc.tipo.nome}" filterMatchMode="contains" headerText="Tipo" filterFunction="#{documentoMB.filtroSemAcento}">
 							<h:outputText value="#{doc.tipo.nome}" />
 						</p:column>
 

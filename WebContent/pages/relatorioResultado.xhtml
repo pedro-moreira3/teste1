@@ -32,10 +32,45 @@
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                             <p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioResultadoMB.filtra}" update="dtPrincipal,pnPrincipal" tabindex="1"
                                 process="@this,pnPrincipal" styleClass="OrangeButton" />
+                            
+                            <ui:remove>
                             <p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
                                 <p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="relatorioResultado" />
                             </p:commandButton>
-                            <p:commandButton id="limpar" icon="White fa fa-file-o" value="Limpar" update="inicio, fim, dtPrincipal" process="@this"
+                            </ui:remove>
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{relatorioResultadoMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{relatorioResultadoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioResultadoMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioResultadoMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioResultadoMB.exportarTabela('csv')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioResultadoMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+
+							<p:commandButton id="limpar" icon="White fa fa-file-o" value="Limpar" update="inicio, fim, dtPrincipal" process="@this"
                                 actionListener="#{relatorioResultadoMB.actionLimpar}" />
                         </p:panelGrid>
                     </p:outputPanel>
@@ -43,7 +78,7 @@
                     <div class="EmptyBox20"></div>
 
                     <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioResultadoMB.relatorioResultados}" var="m" rows="20" paginator="true" rowKey="#{m}"
-                        paginatorPosition="bottom">
+                        paginatorPosition="bottom" binding="#{relatorioResultadoMB.tabelaRelatorio}">
                         <f:facet name="header">Procedimentos</f:facet>
                         <p:column exportable="false" width="45">                       
                         	<p:commandButton oncomplete="PF('dlgValorMaterial').show();" process="@this"

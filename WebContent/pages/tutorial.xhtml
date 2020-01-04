@@ -19,13 +19,12 @@
 			style="position:absolute;overflow:auto;" visible="true" onShow="resize('#lume\\:dgTutorial1Vez');">	
 			<p:galleria showCaption="false" autoPlay="false" value="#{odontoMenuMB.tutorialImagens}" var="imagem" panelHeight="520" panelWidth="920"
 				style="margin: 0 auto;">
-				<h:graphicImage name="#{imagem}" library="#{imagem}" styleClass="ImagemResponsiva" title="" alt="" height="520" panelWidth="920" />
+				<h:graphicImage name="images/tutorial/#{imagem}" styleClass="ImagemResponsiva" title="" alt="" height="520" panelWidth="920" />
 			</p:galleria>
 
 			<div class="SeparatorFull"></div>
 
 			<p:commandButton id="fechar" icon="White fa fa-close" value="Fechar" process="@this" styleClass="RedButton"
-				actionListener="#{odontoMenuMB.voltarAoHome()}"
 				oncomplete="PF('tutorialDialog1Vez').hide()" />
 			<p:spacer width="10" />
 

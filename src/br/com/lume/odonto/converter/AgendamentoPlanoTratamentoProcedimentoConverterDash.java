@@ -1,5 +1,6 @@
 package br.com.lume.odonto.converter;
 
+import java.io.Console;
 import java.io.Serializable;
 
 import javax.faces.component.UIComponent;
@@ -24,15 +25,18 @@ public class AgendamentoPlanoTratamentoProcedimentoConverterDash implements Conv
         try {
             if (value != null && !value.trim().isEmpty()) {
                 String[] split = value.split("\\|");
-                if (!split[0].equals("0")) {
+                if (split[0] != null && !"0".equals(split[0])) {
                     final Long id = Long.parseLong(split[0]);
-                    return  AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(id);
+                    return AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(id);
                 } else {
                     Agendamento ag = null;
-                    if (!split[1].equals("0")) {
+                    PlanoTratamentoProcedimento ptp = null;
+                    if (split[1] != null && !"0".equals(split[1])) {
                         ag = AgendamentoSingleton.getInstance().getBo().find(Long.parseLong(split[1]));
                     }
-                    PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(Long.parseLong(split[2]));
+                    if (split[2] != null && !"0".equals(split[2])) {
+                        ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(Long.parseLong(split[2]));
+                    }
                     return new AgendamentoPlanoTratamentoProcedimento(ptp, ag);
                 }
             }
@@ -47,7 +51,11 @@ public class AgendamentoPlanoTratamentoProcedimentoConverterDash implements Conv
         try {
             if (value != null) {
                 AgendamentoPlanoTratamentoProcedimento a = (AgendamentoPlanoTratamentoProcedimento) value;
-                return String.valueOf(a.getId() + "|" + a.getAgendamento().getId() + "|" + a.getPlanoTratamentoProcedimento().getId());
+                String toString = "";
+                toString += String.valueOf(a.getId()) + "|";
+                toString += String.valueOf(a.getAgendamento() == null ? 0l : a.getAgendamento().getId()) + "|";
+                toString += String.valueOf(a.getPlanoTratamentoProcedimento() == null ? 0l : a.getPlanoTratamentoProcedimento().getId());
+                return toString;
             }
         } catch (Exception e) {
             e.printStackTrace();
