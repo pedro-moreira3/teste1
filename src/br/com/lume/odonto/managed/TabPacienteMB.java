@@ -50,8 +50,8 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     @ManagedProperty(value = "#{evolucaoMB}")
     private EvolucaoMB evolucaoMB;
 
-    @ManagedProperty(value = "#{faturaPagtoMB}")
-    private FaturaPagtoMB faturaPagtoMB;
+    @ManagedProperty(value = "#{pacienteFinanceiroMB}")
+    private PacienteFinanceiroMB pacienteFinanceiroMB;
 
     private org.primefaces.component.tabview.TabView tabview = null;
 
@@ -94,10 +94,10 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
         } else if ("Frequência".equals(event.getTab().getTitle())) {
             pacienteMB.carregarAgendamentos();
         } else if ("Financeiro".equals(event.getTab().getTitle())) {
-            faturaPagtoMB.setPaciente(getPacienteMB().getEntity());
-            faturaPagtoMB.setInicio(null);
-            faturaPagtoMB.setFim(null);
-            faturaPagtoMB.pesquisar();
+            pacienteFinanceiroMB.setPaciente(getPacienteMB().getEntity());
+            pacienteFinanceiroMB.setInicio(null);
+            pacienteFinanceiroMB.setFim(null);
+            pacienteFinanceiroMB.pesquisar();
         }
     }
 
@@ -192,12 +192,12 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
         this.periogramaMB = periogramaMB;
     }
 
-    public FaturaPagtoMB getFaturaPagtoMB() {
-        return faturaPagtoMB;
+    public PacienteFinanceiroMB getPacienteFinanceiroMB() {
+        return pacienteFinanceiroMB;
     }
 
-    public void setFaturaPagtoMB(FaturaPagtoMB faturaPagtoMB) {
-        this.faturaPagtoMB = faturaPagtoMB;
+    public void setPacienteFinanceiroMB(PacienteFinanceiroMB pacienteFinanceiroMB) {
+        this.pacienteFinanceiroMB = pacienteFinanceiroMB;
     }
 
     public int getIndexTabView() {

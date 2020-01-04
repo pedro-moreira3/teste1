@@ -435,7 +435,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         BigDecimal valor = BigDecimal.ZERO;
         try {
             List<Fatura> faturas = FaturaSingleton.getInstance().getBo().findFaturaIrregularByPaciente(TipoFatura.RECEBIMENTO_PACIENTE, this.paciente);
-            if(faturas != null) {
+            if (faturas != null) {
                 for (Fatura fatura : faturas) {
                     valor = valor.add(FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura));
                 }

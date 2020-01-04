@@ -53,15 +53,15 @@ hr.hrSaldo {
 		style="position: relative; width: 80%; height: 100px; display: flex; padding-left: 10%; padding-right: 10%;">
 		<div style="position: relative; width: 50%; height: 100%;">
 			<hr class="centerH hrSaldo" />
-			<p:outputPanel style="color: #{faturaPagtoMB.saldoCor}">
+			<p:outputPanel style="color: #{pacienteFinanceiroMB.saldoCor}">
 				<div class="centerH divSaldo">
 					<div class="centerH divSaldoHeader">Saldo Atual</div>
-					<h:outputText value="#{faturaPagtoMB.paciente.conta.saldo}"
-						rendered="#{faturaPagtoMB.paciente.conta.saldo != null}">
+					<h:outputText value="#{pacienteFinanceiroMB.paciente.conta.saldo}"
+						rendered="#{pacienteFinanceiroMB.paciente.conta.saldo != null}">
 						<f:convertNumber currencySymbol="R$ " type="currency" />
 					</h:outputText>
 					<h:outputText value="#{0.00}"
-						rendered="#{faturaPagtoMB.paciente.conta.saldo == null}">
+						rendered="#{pacienteFinanceiroMB.paciente.conta.saldo == null}">
 						<f:convertNumber currencySymbol="R$ " type="currency" />
 					</h:outputText>
 				</div>
@@ -69,15 +69,16 @@ hr.hrSaldo {
 		</div>
 		<div style="position: relative; width: 50%; height: 100%;">
 			<hr class="centerH hrSaldo" />
-			<p:outputPanel style="color: #{faturaPagtoMB.naoPlanejadoCor}">
+			<p:outputPanel style="color: #{pacienteFinanceiroMB.naoPlanejadoCor}">
 				<div class="centerH divSaldo">
 					<div class="centerH divSaldoHeader">Total não planejado</div>
-					<h:outputText value="#{faturaPagtoMB.getTotalNaoPlanejado()}"
-						rendered="#{faturaPagtoMB.getTotalNaoPlanejado() != null}">
+					<h:outputText
+						value="#{pacienteFinanceiroMB.paciente.dadosTabelaTotalNaoPlanejado}"
+						rendered="#{pacienteFinanceiroMB.paciente.dadosTabelaTotalNaoPlanejado != null}">
 						<f:convertNumber currencySymbol="R$ " type="currency" />
 					</h:outputText>
 					<h:outputText value="#{0.00}"
-						rendered="#{faturaPagtoMB.getTotalNaoPlanejado() == null}">
+						rendered="#{pacienteFinanceiroMB.paciente.dadosTabelaTotalNaoPlanejado == null}">
 						<f:convertNumber currencySymbol="R$ " type="currency" />
 					</h:outputText>
 				</div>
@@ -88,7 +89,7 @@ hr.hrSaldo {
 	<p:dataTable id="dtContasAReceber" paginator="true"
 		paginatorPosition="bottom" rows="10"
 		emptyMessage="Nenhum lançamento a receber para o mês corrente."
-		value="#{faturaPagtoMB.lAReceber}" var="l" rowKey="#{l}">
+		value="#{pacienteFinanceiroMB.lAReceber}" var="l" rowKey="#{l}">
 		<f:facet name="header">Lançamentos a Receber</f:facet>
 		<p:column headerText="Forma de pagamento" filterMatchMode="contains"
 			filterBy="#{l.formaPagamentoStr}" sortBy="#{l.formaPagamentoStr}"
@@ -136,8 +137,8 @@ hr.hrSaldo {
 	</p:dataTable>
 	<br />
 	<p:dataTable id="dtContasAPagar" paginator="true"
-		paginatorPosition="bottom" rows="10" value="#{faturaPagtoMB.lAPagar}"
-		var="l" rowKey="#{l}"
+		paginatorPosition="bottom" rows="10"
+		value="#{pacienteFinanceiroMB.lAPagar}" var="l" rowKey="#{l}"
 		emptyMessage="Nenhum lançamento a pagar para o mês corrente.">
 		<f:facet name="header">Lançamentos a Pagar</f:facet>
 		<p:column headerText="Forma de pagamento" filterMatchMode="contains"
@@ -215,9 +216,9 @@ hr.hrSaldo {
 	</p:panelGrid>
 
 	<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-		id="dtPrincipalFinanceiro" value="#{faturaPagtoMB.entityList}" var="f"
-		rows="10" paginator="true" rowKey="#{f}" paginatorPosition="bottom"
-		binding="#{pacienteMB.tabelaFinanceiro}">
+		id="dtPrincipalFinanceiro" value="#{pacienteFinanceiroMB.entityList}"
+		var="f" rows="10" paginator="true" rowKey="#{f}"
+		paginatorPosition="bottom" binding="#{pacienteMB.tabelaFinanceiro}">
 		<f:facet name="header">Faturas</f:facet>
 		<p:column width="120" headerText="Detalhes">
 			<p:commandButton icon="fa fa-eye" process="@this"
@@ -239,34 +240,34 @@ hr.hrSaldo {
 			<h:outputText value="#{f.dataCriacaoStr}" />
 		</p:column>
 
-		<p:column filterBy="#{faturaPagtoMB.getTotal(f)}"
+		<p:column filterBy="#{f.dadosTabelaRepasseTotalFatura}"
 			headerText="Valor total da fatura" filterMatchMode="contains"
-			sortBy="#{faturaPagtoMB.getTotal(f)}">
-			<h:outputText value="#{faturaPagtoMB.getTotal(f)}">
+			sortBy="#{f.dadosTabelaRepasseTotalFatura}">
+			<h:outputText value="#{f.dadosTabelaRepasseTotalFatura}">
 				<f:convertNumber currencySymbol="R$ " type="currency" />
 			</h:outputText>
 		</p:column>
 
-		<p:column filterBy="#{faturaPagtoMB.getTotalPago(f)}"
+		<p:column filterBy="#{f.dadosTabelaRepasseTotalPago}"
 			headerText="Valor total pago" filterMatchMode="contains"
-			sortBy="#{faturaPagtoMB.getTotalPago(f)}">
-			<h:outputText value="#{faturaPagtoMB.getTotalPago(f)}">
+			sortBy="#{f.dadosTabelaRepasseTotalPago}">
+			<h:outputText value="#{f.dadosTabelaRepasseTotalPago}">
 				<f:convertNumber currencySymbol="R$ " type="currency" />
 			</h:outputText>
 		</p:column>
 
-		<p:column filterBy="#{faturaPagtoMB.getTotalNaoPago(f)}"
+		<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPago}"
 			headerText="Valor total não pago" filterMatchMode="contains"
-			sortBy="#{faturaPagtoMB.getTotalNaoPago(f)}">
-			<h:outputText value="#{faturaPagtoMB.getTotalNaoPago(f)}">
+			sortBy="#{f.dadosTabelaRepasseTotalNaoPago}">
+			<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPago}">
 				<f:convertNumber currencySymbol="R$ " type="currency" />
 			</h:outputText>
 		</p:column>
 
-		<p:column filterBy="#{faturaPagtoMB.getTotalNaoPlanejado(f)}"
+		<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}"
 			headerText="Valor total não planejado" filterMatchMode="contains"
-			sortBy="#{faturaPagtoMB.getTotalNaoPlanejado(f)}">
-			<h:outputText value="#{faturaPagtoMB.getTotalNaoPlanejado(f)}">
+			sortBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
+			<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
 				<f:convertNumber currencySymbol="R$ " type="currency" />
 			</h:outputText>
 		</p:column>
