@@ -211,6 +211,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void carregarAgenda() {
+        limpaPacienteSelecionado();
         carregarScheduleTarefas();
         PrimeFaces.current().ajax().update(":lume:schedule");
     }
