@@ -205,7 +205,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 l.setValidadoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
                 l.setValidado(Status.SIM);
 
-                if (Status.NAO.equals(l.getPagamentoConferido())) {
+                if (!Status.SIM.equals(l.getPagamentoConferido())) {
                     l.setDataConferido(data);
                     l.setConferidoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
                     l.setPagamentoConferido(Status.SIM);
