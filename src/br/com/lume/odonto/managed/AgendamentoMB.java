@@ -916,7 +916,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
                         String descricao = "";
 
-                        if (afastamentos != null) {
+                        if (afastamentos != null && filtroAgendamento != null && filtroAgendamento.contains("F")) {
 
                             Dominio dominio = null;
 
