@@ -547,7 +547,7 @@ div.ui-selectoneradio label {
 														</p:column>
 								
 													<p:ajax
-														listener="#{agendamentoMB.limpaPacienteSelecionado}"
+														listener="#{agendamentoMB.carregarAgenda}"
 														process="@this" />
 													</p:autoComplete>
 													<p:outputLabel for="pacienteSelecionado" value="Paciente" />
@@ -607,7 +607,7 @@ div.ui-selectoneradio label {
 														itemValue="#{profissional}" />
 
 													<p:ajax
-														listener="#{agendamentoMB.limpaPacienteSelecionado}"
+														listener="#{agendamentoMB.carregarAgenda}"
 														process="@this" update="btBloqueioAgenda"/>
 
 												</p:selectOneMenu>

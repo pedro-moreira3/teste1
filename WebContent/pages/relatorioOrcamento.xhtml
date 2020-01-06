@@ -1,9 +1,12 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-	<style>
-	
+		<style>
+
 /*AJUSTE DO CAMPO FILTRO POR CONVENIO*/
 body .ui-selectonemenu {
 	margin: 0px !important;
@@ -24,12 +27,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 	{
 	margin-top: -12px !important;
 }
-	
-#checkbox{
-	width:400px;
+
+#checkbox {
+	width: 400px;
 }
-	
-	</style>
+</style>
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -37,7 +39,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						<h1>Relatório de Orçamentos</h1>
 
 						<p:fieldset id="filtroRelatorio" header="Filtro" toggleable="true"
-									toggleSpeed="500">
+							toggleSpeed="500">
 
 							<p:panelGrid columns="1" layout="grid"
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
@@ -53,7 +55,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:selectOneMenu id="filtroPeriodo"
 											value="#{relatorioOrcamentoMB.filtroPeriodo}">
 
-											<p:ajax process="@this"
+											<p:ajax process="@this" update="inicio, fim"
 												listener="#{relatorioOrcamentoMB.actionTrocaDatasCriacao}" />
 
 											<f:selectItem itemValue="" itemLabel="Selecione" />
@@ -70,13 +72,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									<h:panelGroup>
 										<p:outputLabel for="inicio" value="Data de criação de:" />
 										<p:calendar id="inicio" value="#{relatorioOrcamentoMB.inicio}"
-											pattern="dd/MM/yyyy" mask="true"/>
+											pattern="dd/MM/yyyy" mask="true" />
 									</h:panelGroup>
 
 									<h:panelGroup>
 										<p:outputLabel for="fim" value="Data de criação até:" />
 										<p:calendar id="fim" value="#{relatorioOrcamentoMB.fim}"
-											pattern="dd/MM/yyyy" mask="true"/>
+											pattern="dd/MM/yyyy" mask="true" />
 									</h:panelGroup>
 								</p:panelGrid>
 
@@ -91,6 +93,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											value="#{relatorioOrcamentoMB.filtroPeriodoAprovacao}">
 
 											<p:ajax process="@this"
+												update="aprovacaoInicio, aprovacaoFim"
 												listener="#{relatorioOrcamentoMB.actionTrocaDatasAprovacao}" />
 
 											<f:selectItem itemValue="" itemLabel="Selecione" />
@@ -120,7 +123,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											pattern="dd/MM/yyyy" mask="true" />
 									</h:panelGroup>
 								</p:panelGrid>
-								
+
 								<p:panelGrid columns="3" layout="grid"
 									styleClass="ui-panelgrid-blank ui-fluid form-group"
 									style="border:0px none; background-color:transparent;">
@@ -136,55 +139,53 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											forceSelection="true" scrollHeight="400" queryDelay="1000"
 											dropdown="true">
 
-											<p:ajax event="itemSelect" process="@this" />
-
 										</p:autoComplete>
 									</h:panelGroup>
-									
+
 									<h:panelGroup styleClass="md-combo">
 										<h:outputText for="filtroStatusPagamento"
 											value="Status do pagamento:" />
-										
+
 										<p:selectOneMenu id="filtroStatusPagamento"
 											value="#{relatorioOrcamentoMB.filtroStatusPagamento}">
 
 											<f:selectItem itemValue="" itemLabel="Selecione" />
 											<f:selectItem itemValue="P" itemLabel="Recebidos" />
-											<f:selectItem itemValue="N" itemLabel="Há Receber" />
-											
+											<f:selectItem itemValue="N" itemLabel="A Receber" />
+
 										</p:selectOneMenu>
 									</h:panelGroup>
 
 								</p:panelGrid>
 
-									<h:panelGroup>
-										<h:outputText value="Mostrar os orçamentos:"/>
-									</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText value="Mostrar os orçamentos:" />
+								</h:panelGroup>
 
 								<p:outputPanel>
 
 									<p:selectManyCheckbox id="checkbox"
-										value="#{relatorioOrcamentoMB.filtroOrcamento}"
-										layout="grid" columns="4" process="@this">
+										value="#{relatorioOrcamentoMB.filtroOrcamento}" layout="grid"
+										columns="4" process="@this">
 
-										<p:ajax process="@this" />
-
-										<f:selectItem itemDisabled="#{relatorioOrcamentoMB.filtrandoAprovacao}"
+										<f:selectItem
+											itemDisabled="#{relatorioOrcamentoMB.filtrandoAprovacao}"
 											itemLabel="&lt;div&gt;&lt;div class='agendamentoConfirmado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;Aprovados&lt;/div&gt;"
 											itemValue="A" itemEscaped="false" />
-										<f:selectItem itemDisabled="#{relatorioOrcamentoMB.filtrandoAprovacao}"
+										<f:selectItem
+											itemDisabled="#{relatorioOrcamentoMB.filtrandoAprovacao}"
 											itemLabel="&lt;div&gt;&lt;div class='clienteNaClinica legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;Não aprovados&lt;/div&gt;"
 											itemValue="I" itemEscaped="false" />
-											
+
 									</p:selectManyCheckbox>
-											
+
 								</p:outputPanel>
 
 								<div class="SeparatorFull"></div>
 
 								<p:panelGrid columns="4" layout="grid"
 									styleClass="ui-panelgrid-blank form-group ui-fluid">
-									
+
 									<h:panelGroup>
 										<p:commandButton id="pesquisar" icon="fa fa-search White"
 											value="Pesquisar"
@@ -247,87 +248,118 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 					<div class="EmptyBox20"></div>
 
-					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioOrcamentoMB.relatorioOrcamentos}" var="m" rows="20"
-						paginator="true" rowKey="#{m}" paginatorPosition="bottom" binding="#{relatorioOrcamentoMB.tabelaRelatorio}">
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						id="dtPrincipal"
+						value="#{relatorioOrcamentoMB.relatorioOrcamentos}" var="m"
+						rows="20" paginator="true" rowKey="#{m}"
+						paginatorPosition="bottom"
+						binding="#{relatorioOrcamentoMB.tabelaRelatorio}">
 						<f:facet name="header">Orçamentos</f:facet>
-						
-						<p:column filterBy="#{m.paciente}" sortBy="#{m.paciente.dadosBasico.nome}" filterMatchMode="contains" headerText="Paciente">
-							
+
+						<p:column filterBy="#{m.paciente}"
+							sortBy="#{m.paciente.dadosBasico.nome}"
+							filterMatchMode="contains" headerText="Paciente">
+
 							<p:commandLink value="#{m.paciente.dadosBasico.nome}"
 								process="@this" title="#{m.paciente.id}"
 								actionListener="#{tabPacienteMB.loadPaciente(retorno.paciente)}"
 								oncomplete="PF('dlgFichaPaciente').show()"
-								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
-							
+								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+
 							<f:facet name="footer">
-								<h:outputText value="Total"/>
+								<h:outputText value="Total" />
 							</f:facet>
 						</p:column>
-						
-						<p:column filterBy="#{relatorioOrcamentoMB.origemOrcamento(m)}" filterMatchMode="contains" sortBy="#{relatorioOrcamentoMB.origemOrcamento(m)}"
-								filterFunction="#{relatorioOrcamentoMB.filtroSemAcento()}" headerText="Origem">
-							<h:outputText value="#{relatorioOrcamentoMB.origemOrcamento(m)}"/>
-						</p:column>
-						
-						<p:column filterBy="#{m.profissionalCriacao}" sortBy="#{m.profissionalCriacao}" filterMatchMode="contains" headerText="Criado por">
-							<h:outputText value="#{m.profissionalCriacao}" title="#{m.id}"/>
-						</p:column>
-						
-						<p:column filterBy="#{m.dataStr}" sortBy="#{m.dataCriacaoStr}" filterMatchMode="contains" headerText="Data de criação">
-							<h:outputText value="#{m.dataCriacaoStr}" />
-						</p:column>
-						
-						<p:column filterBy="#{m.status}" sortBy="#{m.status}" filterMatchMode="contains" headerText="Status">
-							<h:outputText value="#{m.status}" />
-						</p:column>
-						
-						<p:column filterBy="#{m.dataAprovacaoStr}" sortBy="#{m.dataAprovacaoStr}" filterMatchMode="contains" headerText="Data de aprovação">
-							<h:outputText value="#{m.dataAprovacaoStr}" />
-						</p:column>
-						
-						<p:column filterBy="#{m.profissionalAprovacao.dadosBasicos.getPrefixoNome()}" sortBy="#{m.profissionalAprovacao.dadosBasicos.getPrefixoNome()}" 
-								filterMatchMode="contains" headerText="Registro de aprovação por">
-							<h:outputText value="#{m.profissionalAprovacao.dadosBasico.getPrefixoNome()}"/>
+
+						<p:column filterBy="#{relatorioOrcamentoMB.origemOrcamento(m)}"
+							filterMatchMode="contains"
+							sortBy="#{relatorioOrcamentoMB.origemOrcamento(m)}"
+							filterFunction="#{relatorioOrcamentoMB.filtroSemAcento()}"
+							headerText="Origem">
+							<h:outputText value="#{relatorioOrcamentoMB.origemOrcamento(m)}" />
 						</p:column>
 
-						<p:column filterBy="#{m.valorTotal}" sortBy="#{m.valorTotalSemDesconto}" filterMatchMode="contains" headerText="Valor Total(R$)">
+						<p:column filterBy="#{m.profissionalCriacao}"
+							sortBy="#{m.profissionalCriacao}" filterMatchMode="contains"
+							headerText="Criado por">
+							<h:outputText value="#{m.profissionalCriacao}" title="#{m.id}" />
+						</p:column>
+
+						<p:column filterBy="#{m.dataStr}" sortBy="#{m.dataCriacaoStr}"
+							filterMatchMode="contains" headerText="Data de criação">
+							<h:outputText value="#{m.dataCriacaoStr}" />
+						</p:column>
+
+						<p:column filterBy="#{m.status}" sortBy="#{m.status}"
+							filterMatchMode="contains" headerText="Status">
+							<h:outputText value="#{m.status}" />
+						</p:column>
+
+						<p:column filterBy="#{m.dataAprovacaoStr}"
+							sortBy="#{m.dataAprovacaoStr}" filterMatchMode="contains"
+							headerText="Data de aprovação">
+							<h:outputText value="#{m.dataAprovacaoStr}" />
+						</p:column>
+
+						<p:column
+							filterBy="#{m.profissionalAprovacao.dadosBasicos.getPrefixoNome()}"
+							sortBy="#{m.profissionalAprovacao.dadosBasicos.getPrefixoNome()}"
+							filterMatchMode="contains" headerText="Registro de aprovação por">
+							<h:outputText
+								value="#{m.profissionalAprovacao.dadosBasico.getPrefixoNome()}" />
+						</p:column>
+
+						<p:column filterBy="#{m.valorTotal}"
+							sortBy="#{m.valorTotalSemDesconto}" filterMatchMode="contains"
+							headerText="Valor Total(R$)">
 							<h:outputText value="#{m.valorTotalSemDesconto}">
-								<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+								<f:convertNumber currencySymbol="R$" type="currency"
+									locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 							<f:facet name="footer">
 								<h:outputText value="#{relatorioOrcamentoMB.somaValorTotal}">
-									<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 							</f:facet>
 						</p:column>
-						
-						<p:column filterBy="#{m.valorTotalDesconto}" sortBy="#{m.valorTotalComDesconto}" filterMatchMode="contains" headerText="Valor com Desconto(R$)">
+
+						<p:column filterBy="#{m.valorTotalDesconto}"
+							sortBy="#{m.valorTotalComDesconto}" filterMatchMode="contains"
+							headerText="Valor com Desconto(R$)">
 							<h:outputText value="#{m.valorTotalComDesconto}">
-								<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+								<f:convertNumber currencySymbol="R$" type="currency"
+									locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 							<f:facet name="footer">
-								<h:outputText value="#{relatorioOrcamentoMB.somaValorTotalDesconto}">
-									<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+								<h:outputText
+									value="#{relatorioOrcamentoMB.somaValorTotalDesconto}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 							</f:facet>
 						</p:column>
-						
-						<p:column filterBy="#{m.valorPago}" sortBy="#{m.valorPago}" filterMatchMode="contains" headerText="Valor pago(R$)">
+
+						<p:column filterBy="#{m.valorPago}" sortBy="#{m.valorPago}"
+							filterMatchMode="contains" headerText="Valor pago(R$)">
 							<h:outputText value="#{m.valorPago}">
-								<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+								<f:convertNumber currencySymbol="R$" type="currency"
+									locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 							<f:facet name="footer">
 								<h:outputText value="#{relatorioOrcamentoMB.somaValorTotalPago}">
-									<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 							</f:facet>
 						</p:column>
-						
-						<p:column filterBy="#{relatorioOrcamentoMB.statusPagamento(m)}" 
-								sortBy="#{relatorioOrcamentoMB.statusPagamento(m)}" filterMatchMode="contains" headerText="Status pagamento">
+
+						<p:column filterBy="#{relatorioOrcamentoMB.statusPagamento(m)}"
+							sortBy="#{relatorioOrcamentoMB.statusPagamento(m)}"
+							filterMatchMode="contains" headerText="Status pagamento">
 							<h:outputText value="#{relatorioOrcamentoMB.statusPagamento(m)}" />
 						</p:column>
-						
+
 					</p:dataTable>
 
 					<ui:include src="pacienteFicha.xhtml" />

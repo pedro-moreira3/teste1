@@ -233,7 +233,7 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     public String statusPagamento(Orcamento orcamento) {    
         if(orcamento.isAtivo()) {
             if( (orcamento.isAprovado() && orcamento.getValorPago().intValue() < orcamento.getValorTotal().intValue()) ) {
-                return "Há Receber";
+                return "A Receber";
             }else if( (orcamento.getValorPago().intValue() == orcamento.getValorTotal().intValue()) ) {
                 return "Recebidos";
             }
