@@ -358,23 +358,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     @Override
     public void actionPersist(ActionEvent event) {
 
-        //   if (profissionalDentroAgenda != null) {
-        //    profissional = profissionalDentroAgenda;
-        //  }
         if ((procedimentosPickList.getSource().isEmpty() && procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado == null) || (!procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado != null)) {
 
-//            List<AgendamentoPlanoTratamentoProcedimento> agendamentoPlanosTratamentoExistentes =  this.getEntity().getPlanoTratamentoProcedimentosAgendamento();
-//            for (AgendamentoPlanoTratamentoProcedimento aptpExistente : agendamentoPlanosTratamentoExistentes) {
-//                if(!this.insereAgendamento(procedimentosPickList.getTarget()).contains(aptpExistente)) {
-//                    aptpExistente.setAtivo(false);
-//                }
-//            }
-            // for (AgendamentoPlanoTratamentoProcedimento aptpNovo : this.insereAgendamento(procedimentosPickList.getTarget())) {
-            //  if(!agendamentoPlanosTratamentoExistentes.contains(aptpNovo)) {
-            //     aptpNovo.setAgendamento(getEntity());
-            //     agendamentoPlanosTratamentoExistentes.add(aptpNovo);
-            //    }               
-            //  }
             //items para adicionar
             List<AgendamentoPlanoTratamentoProcedimento> paraInserir = new ArrayList<>();
             for (AgendamentoPlanoTratamentoProcedimento aptpNovo : this.insereAgendamento(procedimentosPickList.getTarget())) {
@@ -420,6 +405,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                     if (!this.isRemarcado()) {
                         this.getEntity().setHash(GeradorSenha.gerarSenha());
                         this.getEntity().setInicio(this.getInicio());
+                        this.fim = this.fim;
                         this.getEntity().setFim(this.getFim());
                         if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.ENCAIXE.getSigla())) {
                             this.getEntity().setEncaixe(Status.SIM);
@@ -751,12 +737,13 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void calculaDataFim() {
-        if (this.getInicio() != null && profissionalDentroAgenda != null && profissionalDentroAgenda.getTempoConsulta() != null && profissionalDentroAgenda.getTempoConsulta() != 0) {
+        if (this.getInicio() != null && profissionalDentroAgenda != null && profissionalDentroAgenda.getTempoConsulta() != null && profissionalDentroAgenda.getTempoConsulta() != 0 &&
+                getEntity().getId() == 0) {
             Calendar c = Calendar.getInstance();
             c.setTime(this.getInicio());
             c.add(Calendar.MINUTE, profissionalDentroAgenda.getTempoConsulta());
           //  if(this.fim == null)
-            this.fim = c.getTime();
+            setFim(c.getTime());
         }
     }    
     
@@ -1400,7 +1387,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void onCalendarAgChange() {
-        calculaDataFim();
+       // calculaDataFim();
         atualizaCadeiraSelecionada();
         validaHoraUtilProfissional();
     }

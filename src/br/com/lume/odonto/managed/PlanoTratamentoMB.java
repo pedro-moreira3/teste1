@@ -115,7 +115,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     private List<Dominio> justificativas;
 
-    private String filtroStatus = "N";
+    private String filtroStatus = "T";
 
     private String filtroStatusProcedimento = "N";
 
