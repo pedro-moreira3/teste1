@@ -165,9 +165,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 	margin-top: -12px !important;
 }
 </style>
+
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
+
+					<ui:include src="pacienteFicha.xhtml" />
+					<p:remoteCommand name="onHidePacienteFicha" process="@this" />
+
 					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
 
 						<h1>Relatório de Planos de Tratamento</h1>
@@ -410,8 +415,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 								<p:commandLink value="#{m.paciente.dadosBasico.nome}"
 									process="@this" title="#{m.paciente.id}"
-									actionListener="#{tabPacienteMB.loadPaciente(retorno.paciente)}"
-									oncomplete="PF('dlgFichaPaciente').show()"
+									actionListener="#{tabPacienteMB.loadPaciente(m.paciente)}"
+									onsuccess="PF('dlgFichaPaciente').show()"
 									update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 
 							</p:column>
@@ -538,9 +543,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								styleClass="GreenButton" />
 						</div>
 					</p:dialog>
-
-					<ui:include src="pacienteFicha.xhtml" />
-					<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 				</div>
 			</div>
