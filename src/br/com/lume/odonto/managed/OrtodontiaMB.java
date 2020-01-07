@@ -373,6 +373,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         setEntity(plano);
         try {
             atualizaValorProcedimento(getEntity().getProcedimentoPadrao());
+            this.valorProcedimento = getEntity().getPlanoTratamentoProcedimentos().get(0).getValor();
             getEntity().setValorTotal(PlanoTratamentoSingleton.getInstance().calculaValorTotal(getEntity()));
             getEntity().setValorPago(LancamentoSingleton.getInstance().getTotalLancamentoPorPT(getEntity(), true));
             atualizaOrcamentos();
