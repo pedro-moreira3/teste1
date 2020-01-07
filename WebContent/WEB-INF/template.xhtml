@@ -201,7 +201,7 @@
 <h:body
 	styleClass="main-body #{guestPreferences.compact ? 'layout-compact' : null}">
 	<!-- LAYOUT CONTAINER -->
-	<div class="layout-wrapper #{guestPreferences.menuLayout}">
+	<div id="tabMenu" class="layout-wrapper #{guestPreferences.menuLayout}">
 		<ui:include src="layouttabmenu.xhtml" />
 		<ui:include src="topbar.xhtml" />
 
@@ -226,6 +226,7 @@
 									var item = activeLink.parent('li');
 									$this.addMenuitem(item.attr('id'));
 									addParentItems($this, item);
+									rc();
 									rc();
 								}
 							}
@@ -324,6 +325,7 @@
 			</h:form>
 			<ui:include src="footer.xhtml" />
 		</div>
+		
 	</div>
 
 	<p:confirmDialog global="true">

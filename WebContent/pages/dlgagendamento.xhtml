@@ -196,13 +196,8 @@
 					<p:selectOneMenu id="profissionalAgend" styleClass="tallerCombo"
 						value="#{agendamentoMB.profissionalDentroAgenda}"
 						converter="profissional" filter="true" filterMatchMode="contains">
-						<p:ajax listener="#{agendamentoMB.validarAfastamentoProfissional}"
-							process="@this" />
-						<p:ajax
-							listener="#{agendamentoMB.validaHoraUtilProfissionalCombo}"
-							process="@this" />
-						<p:ajax listener="#{agendamentoMB.calculaDataFim}" process="@this"
-							update="fim" />
+						<p:ajax listener="#{agendamentoMB.listenerAlterouProfissional}" process="@this"
+							update="fim" />		
 						<f:selectItem itemValue="#{null}"
 							itemLabel="Selecione um profissional" />
 						<f:selectItems value="#{agendamentoMB.profissionais}"
@@ -306,7 +301,7 @@
 							pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
 							locale="#{lumeSecurity.locale}"
 							timeZone="#{lumeSecurity.timeZone}" navigator="true"
-							yearRange="-100:+1" maxdate="#{odontoMB.sysdate}">
+							yearRange="-100:+10" maxdate="#{odontoMB.sysdate}">
 						</p:calendar>
 						<p:outputLabel for="dtNascimentoPaciente"
 							value="Data de Nascimento" />

@@ -148,112 +148,102 @@ div.ui-selectoneradio label {
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
+						<p:outputPanel id="pnFiltros" styleClass="BordNone">
+							<h1>Relatório de Faturas</h1>
 
-						<h1>Relatório de Faturas</h1>
+							<p:separator styleClass="SeparatorFull" />
 
-						<p:separator styleClass="SeparatorFull" />
+							<p:panelGrid columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+								<h:panelGroup styleClass="md-combo">
+									<h:outputText for="filtroPeriodo" value="Período de criação:" />
+									<p:selectOneMenu id="filtroPeriodo"
+										value="#{relatorioFaturaMB.filtroPeriodo}">
+										<p:ajax process="@this" update="@form"
+											listener="#{relatorioFaturaMB.actionTrocaDatasCriacao}" />
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="O" itemLabel="Ontem" />
+										<f:selectItem itemValue="H" itemLabel="Hoje" />
+										<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+										<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+										<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+										<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+										<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+									</p:selectOneMenu>
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText for="inicio" value="Data de criação de:" />
+									<p:calendar id="inicio" value="#{relatorioFaturaMB.inicio}" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText for="fim" value="Data de criação até:" />
+									<p:calendar id="fim" value="#{relatorioFaturaMB.fim}" />
+								</h:panelGroup>
+							</p:panelGrid>
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+								<h:panelGroup>
+									<h:outputText for="filtroPaciente" value="Paciente:" />
+									<p:autoComplete id="filtroPaciente"
+										value="#{relatorioFaturaMB.paciente}"
+										completeMethod="#{relatorioFaturaMB.sugestoesPacientes}"
+										var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+										converter="paciente" forceSelection="true" scrollHeight="400"
+										minQueryLength="3">
 
-						<p:panelGrid columns="3" layout="grid"
-							styleClass="ui-panelgrid-blank ui-fluid form-group">
-							<h:panelGroup styleClass="md-combo">
-								<h:outputText for="filtroPeriodo"
-									value="Período de criação:" />
-								<p:selectOneMenu id="filtroPeriodo"
-									value="#{relatorioFaturaMB.filtroPeriodo}">
-									<p:ajax process="@this" update="@form"
-										listener="#{relatorioFaturaMB.actionTrocaDatasCriacao}" />
-									<f:selectItem itemValue="" itemLabel="Selecione" />
-									<f:selectItem itemValue="O" itemLabel="Ontem" />
-									<f:selectItem itemValue="H" itemLabel="Hoje" />
-									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
-									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
-									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
-									<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
-									<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
-								</p:selectOneMenu>
-							</h:panelGroup>
-							<h:panelGroup>
-								<h:outputText for="inicio" value="Data de criação de:" />
-								<p:calendar id="inicio"
-									value="#{relatorioFaturaMB.inicio}" />
-							</h:panelGroup>
-							<h:panelGroup>
-								<h:outputText for="fim" value="Data de criação até:" />
-								<p:calendar id="fim" value="#{relatorioFaturaMB.fim}" />
-							</h:panelGroup>
-						</p:panelGrid>
-						<p:panelGrid columns="2" layout="grid"
-							styleClass="ui-panelgrid-blank ui-fluid form-group">
-							<h:panelGroup>
-								<h:outputText for="filtroPaciente" value="Paciente:" />
-								<p:autoComplete id="filtroPaciente"
-									value="#{relatorioFaturaMB.paciente}"
-									completeMethod="#{relatorioFaturaMB.sugestoesPacientes}"
-									var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-									converter="paciente" forceSelection="true" scrollHeight="400"
-									minQueryLength="3">
+										<p:column headerText="Nome">
+											<h:outputText value="#{p.dadosBasico.nome}" />
+										</p:column>
+										<p:column headerText="Celular">
+											<h:outputText value="#{p.dadosBasico.celular}" />
+										</p:column>
+										<p:column headerText="Nome da Mãe">
+											<h:outputText value="#{p.nomeMae}" />
+										</p:column>
 
-									<p:column headerText="Nome">
-										<h:outputText value="#{p.dadosBasico.nome}" />
-									</p:column>
-									<p:column headerText="Celular">
-										<h:outputText value="#{p.dadosBasico.celular}" />
-									</p:column>
-									<p:column headerText="Nome da Mãe">
-										<h:outputText value="#{p.nomeMae}" />
-									</p:column>
+									</p:autoComplete>
+								</h:panelGroup>
+								<h:panelGroup>
+									<h:outputText for="filtroProfissional" value="Profissional:" />
+									<p:autoComplete id="filtroProfissional"
+										value="#{relatorioFaturaMB.profissional}"
+										completeMethod="#{relatorioFaturaMB.sugestoesProfissionais}"
+										var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+										converter="profissional" forceSelection="true"
+										scrollHeight="400">
+									</p:autoComplete>
+								</h:panelGroup>
+							</p:panelGrid>
 
-								</p:autoComplete>
-							</h:panelGroup>
-							<h:panelGroup>
-								<h:outputText for="filtroProfissional" value="Profissional:" />
-								<p:autoComplete id="filtroProfissional"
-									value="#{relatorioFaturaMB.profissional}"
-									completeMethod="#{relatorioFaturaMB.sugestoesProfissionais}"
-									var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-									converter="profissional" forceSelection="true"
-									scrollHeight="400">
-								</p:autoComplete>
-							</h:panelGroup>
-						</p:panelGrid>
+							<p:panelGrid id="filtro" columns="2"
+								columnClasses="ui-grid-col-12" layout="grid"
+								styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;">
 
-						<p:panelGrid id="filtro" columns="2"
-							columnClasses="ui-grid-col-12" layout="grid"
-							styleClass="ui-panelgrid-blank"
-							style="border:0px none; background-color:transparent;">
-
-							<h:panelGroup>
-								<p:outputLabel value="Tipo da Fatura : " />
-								<p:selectOneRadio value="#{relatorioFaturaMB.tipoFatura}">
-									<f:selectItem itemValue="" itemLabel="Todos" />
-									<f:selectItem itemValue="RP" itemLabel="Recebimento de paciente" />
-									<f:selectItem itemValue="PP" itemLabel="Pagamento de profissional" />
-								</p:selectOneRadio>
-							</h:panelGroup>
-						</p:panelGrid>
-
-						<div class="EmptyBox5"></div>
+								<h:panelGroup>
+									<p:outputLabel value="Tipo da Fatura : " />
+									<p:selectOneRadio value="#{relatorioFaturaMB.tipoFatura}">
+										<f:selectItem itemValue="" itemLabel="Todos" />
+										<f:selectItem itemValue="RP"
+											itemLabel="Recebimento de paciente" />
+										<f:selectItem itemValue="PP"
+											itemLabel="Pagamento de profissional" />
+									</p:selectOneRadio>
+								</h:panelGroup>
+							</p:panelGrid>
+						</p:outputPanel>
 
 						<div class="SeparatorFull"></div>
 
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank ui-fluid form-group">
-							<p:commandButton id="pesquisar" icon="fa fa-search White"
-								value="Pesquisar"
+							<p:commandButton icon="fa fa-search White" value="Pesquisar"
 								actionListener="#{relatorioFaturaMB.actionFiltrar}"
-								update="dtPrincipal" tabindex="1" process="@this,pnPrincipal"
+								update="dtPrincipal" process="@this,pnFiltros"
 								styleClass="OrangeButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o"
-								value="Limpar"
+							<p:commandButton icon="White fa fa-file-o" value="Limpar"
 								actionListener="#{relatorioFaturaMB.actionNew}"
-								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1" />
-							<ui:remove>
-							<p:commandButton immediate="true" value="Excel" ajax="false"
-								icon="White fa fa-file-excel-o" styleClass="GreenButton">
-								<p:dataExporter encoding="iso-8859-1" type="xls"
-									target="dtPrincipal" fileName="planoTratamento" />
-							</p:commandButton>
-							</ui:remove>
+								update="pnFiltros" process="@this" />
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"
@@ -263,16 +253,14 @@ div.ui-selectoneradio label {
 									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-									<p:fileDownload
-										value="#{relatorioFaturaMB.arquivoDownload}" />
+									<p:fileDownload value="#{relatorioFaturaMB.arquivoDownload}" />
 
 									<p:menuitem value="Exportar tabela para PDF"
 										icon="fa fa fa-file-pdf-o"
 										actionListener="#{relatorioFaturaMB.exportarTabela('pdf')}"
 										ajax="false" process="dtPrincipal,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{relatorioFaturaMB.arquivoDownload}" />
+										<p:fileDownload value="#{relatorioFaturaMB.arquivoDownload}" />
 									</p:menuitem>
 								</p:splitButton>
 							</h:panelGroup>
@@ -281,10 +269,10 @@ div.ui-selectoneradio label {
 						<div class="EmptyBox20"></div>
 
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-							id="dtPrincipal"
-							value="#{relatorioFaturaMB.faturas}" var="m"
+							id="dtPrincipal" value="#{relatorioFaturaMB.entityList}" var="m"
 							rows="20" paginator="true" rowKey="#{m}"
-							paginatorPosition="bottom" binding="#{relatorioFaturaMB.tabelaFatura}">
+							paginatorPosition="bottom"
+							binding="#{relatorioFaturaMB.tabelaFatura}">
 							<f:facet name="header">Faturas</f:facet>
 							<p:column filterBy="#{m.tipoFaturaStr}"
 								sortBy="#{m.tipoFaturaStr}"
@@ -293,19 +281,16 @@ div.ui-selectoneradio label {
 								<f:facet name="header">
 									<h:outputText value="Tipo da fatura" />
 								</f:facet>
-								<h:outputText value="#{m.tipoFaturaStr}"
-									/>
-							</p:column>								
-							<p:column filterBy="#{m.pacienteNome}"
-								sortBy="#{m.pacienteNome}"
+								<h:outputText value="#{m.tipoFaturaStr}" />
+							</p:column>
+							<p:column filterBy="#{m.pacienteNome}" sortBy="#{m.pacienteNome}"
 								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
 								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Paciente" />
 								</f:facet>
-								<h:outputText value="#{m.pacienteNome}"
-									/>
-							</p:column>							
+								<h:outputText value="#{m.pacienteNome}" />
+							</p:column>
 							<p:column filterBy="#{m.profissionalNome}"
 								sortBy="#{m.profissionalNome}"
 								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
@@ -313,10 +298,10 @@ div.ui-selectoneradio label {
 								<f:facet name="header">
 									<h:outputText value="Profissional" />
 								</f:facet>
-								<h:outputText value="#{m.profissionalNome}"
-									/>
+								<h:outputText value="#{m.profissionalNome}" />
 							</p:column>
-							<p:column filterBy="#{m.descricaoPlanoTratamento}" sortBy="#{m.descricaoPlanoTratamento}"
+							<p:column filterBy="#{m.descricaoPlanoTratamento}"
+								sortBy="#{m.descricaoPlanoTratamento}"
 								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
 								filterMatchMode="contains">
 								<f:facet name="header">
@@ -330,7 +315,7 @@ div.ui-selectoneradio label {
 									<h:outputText value="Data de criação" />
 								</f:facet>
 								<h:outputText value="#{m.dataCriacaoStr}" />
-							</p:column>							
+							</p:column>
 							<p:column filterBy="#{m.valor}" sortBy="#{m.valor}"
 								filterMatchMode="contains" style="text-align:right">
 								<f:facet name="header">

@@ -400,7 +400,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public String getStatus(Fatura fatura) {
         if (getTotal(fatura).subtract(getTotalPago(fatura)).doubleValue() <= 0)
             return "Pago";
-        return "Pendente";
+        return "A Receber";
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
@@ -456,7 +456,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), Mes.getMesAtual(),
                     ValidacaoLancamento.NAO_VALIDADO);
             BigDecimal vAReceber = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAReceber));
-            ContaSingleton.getInstance().getContaFromOrigem(this.paciente).setSaldo(vAReceber.subtract(vAPagar));
+            if (this.paciente != null)
+                ContaSingleton.getInstance().getContaFromOrigem(this.paciente).setSaldo(vAReceber.subtract(vAPagar));
         } catch (Exception e) {
             e.printStackTrace();
             addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_BUSCAR_REGISTROS));

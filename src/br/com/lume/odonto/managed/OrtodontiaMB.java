@@ -137,7 +137,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     @Override
     public void actionNew(ActionEvent event) {
         setEntity(null);
-        setOrcamentoSelecionado(new Orcamento());
+        this.orcamentos = new ArrayList<Orcamento>();
         try {
             Dominio dominioProcedimentoPadrao = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("ortodontia", "procedimento_padrao", "PP");
             Procedimento procedimentoPadrao = ProcedimentoSingleton.getInstance().getBo().findByCodigoProcedimento(Integer.parseInt(dominioProcedimentoPadrao.getNome()),
@@ -157,6 +157,11 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             PrimeFaces.current().ajax().update(":lume:tabView:fimTratamento");
             PrimeFaces.current().ajax().update(":lume:tabView:utilizaConvenio");
             PrimeFaces.current().ajax().update(":lume:tabView:procedimentoPadrao");
+            PrimeFaces.current().ajax().update(":lume:tabView:dtProcedimentosOrtodontia");   
+            PrimeFaces.current().ajax().update(":lume:tabView:dtProcedimentosPanel");
+            PrimeFaces.current().ajax().update(":lume:tabView:dtOrcamentosOrtodontia");
+            
+            
             
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

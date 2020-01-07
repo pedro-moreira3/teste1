@@ -64,30 +64,26 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     private boolean visivel;
 
-   
-
     private CategoriaMotivo categoria;
 
     public List<Lancamento> lancamentosValidar;
-
-
 
     private TipoCategoria tipoCategoria;
 
     private List<TipoCategoria> tiposCategoria;
 
-  //  private TipoCategoriaBO tipoCategoriaBO;
+    //  private TipoCategoriaBO tipoCategoriaBO;
 
     private String tipo = "Pagar";
 
     private String tipoOrigem = "J";
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaLancamento;
 
     public LancamentoContabilMB() {
         super(LancamentoContabilSingleton.getInstance().getBo());
-      
+
         this.geraLista();
         this.setClazz(LancamentoContabil.class);
         try {
@@ -161,9 +157,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void geraListaSugestoes() {
         try {
-            
+
             long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
-            
+
             dadosBasicos = new ArrayList<>();
             List<Origem> origens = OrigemSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             for (Origem f : origens) {
@@ -208,6 +204,13 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                 l.setDataValidado(data);
                 l.setValidadoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
                 l.setValidado(Status.SIM);
+
+                if (!Status.SIM.equals(l.getPagamentoConferido())) {
+                    l.setDataConferido(data);
+                    l.setConferidoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
+                    l.setPagamentoConferido(Status.SIM);
+                }
+
                 LancamentoSingleton.getInstance().getBo().merge(l);
                 List<LancamentoContabil> lancamentosContabeis = l.getLancamentosContabeis();
                 for (LancamentoContabil lancamentoContabil : lancamentosContabeis) {
@@ -237,8 +240,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             }
             if (this.getEntity().getTipo().equals("Pagar") && !isPagamentoProfissional) {
                 if (this.getEntity().getValor().compareTo(BigDecimal.ZERO) > 0) {
-                    this.getEntity().setValor((this.getEntity().getValor().negate()));    
-                }                
+                    this.getEntity().setValor((this.getEntity().getValor().negate()));
+                }
             }
         } else {
             LancamentoContabil lc = LancamentoContabilSingleton.getInstance().getBo().findByTipoInicial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
@@ -254,9 +257,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void carregaTela() {
-       // if (this.getEntity().getTipo().equals("Pagar")) {
-       //     this.getEntity().setValor((this.getEntity().getValor().negate()));
-       // }
+        // if (this.getEntity().getTipo().equals("Pagar")) {
+        //     this.getEntity().setValor((this.getEntity().getValor().negate()));
+        // }
         categoria = getEntity().getMotivo().getCategoria();
         tipoCategoria = getEntity().getMotivo().getCategoria().getTipoCategoria();
     }
@@ -315,7 +318,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Contas a Pagar e Receber", tabelaLancamento, type);
     }

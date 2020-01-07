@@ -1,6 +1,5 @@
 package br.com.lume.odonto.managed;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -20,116 +19,99 @@ import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Paciente;
-import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.odonto.entity.RelatorioFatura;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
-import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
-import br.com.lume.relatorioFatura.RelatorioFaturaSingleton;
 
 @ManagedBean
 @ViewScoped
-public class RelatorioFaturaMB extends LumeManagedBean<RelatorioFatura> {
+public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
     private static final long serialVersionUID = 1L;
 
     private Logger log = Logger.getLogger(RelatorioFaturaMB.class);
 
-    private List<RelatorioFatura> faturas = new ArrayList<>();
-
     private Date inicio, fim;
 
     private Paciente paciente;
-    
-    private Profissional profissional;   
-    
+
+    private Profissional profissional;
+
     private String filtroPeriodo;
 
     private String tipoFatura;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
-    
+
     public RelatorioFaturaMB() {
-        super(RelatorioFaturaSingleton.getInstance().getBo());      
-        this.setClazz(RelatorioFatura.class);  
+        super(FaturaSingleton.getInstance().getBo());
+        this.setClazz(Fatura.class);
     }
-    
+
     public List<Paciente> sugestoesPacientes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
-    
+
     public List<Profissional> sugestoesProfissionais(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-    }    
-    
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    }
+
     public List<Convenio> sugestoesConvenios(String query) {
-        return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-    }       
+        return ConvenioSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    }
 
     public void actionFiltrar(ActionEvent event) {
         if (inicio != null && fim != null && inicio.getTime() > fim.getTime()) {
             this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
-        }else if(inicio == null && fim == null && paciente == null && profissional == null && tipoFatura == null) {
+        } else if (inicio == null && fim == null && paciente == null && profissional == null && tipoFatura == null) {
             this.addError("Escolha pelo menos um filtro para gerar o relatório.", "");
-        }
-        else {            
-            Long idProfissional = null;
-            Long idPaciente = null;
-            if(profissional != null) {
-                idProfissional = profissional.getId();
-            }              
-            if(paciente != null) {
-                idPaciente = paciente.getId();
-            }
-                 
-            faturas = RelatorioFaturaSingleton.getInstance().getBo().listAllByFilter(                    
-                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), tipoFatura, inicio, fim, idPaciente, idProfissional);           
+        } else {
+            setEntityList(FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, inicio, fim, paciente, profissional));
         }
     }
 
-    public void actionTrocaDatasCriacao() {        
-        try {            
+    public void actionTrocaDatasCriacao() {
+        try {
             setInicio(getDataInicio(filtroPeriodo));
             setFim(getDataFim(filtroPeriodo));
-          //  actionFiltrar(null);            
+            //  actionFiltrar(null);            
         } catch (Exception e) {
             log.error("Erro no actionTrocaDatasCriacao", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
     }
-    
-    public Date getDataFim(String filtro) {        
+
+    public Date getDataFim(String filtro) {
         Date dataFim = null;
         try {
             Calendar c = Calendar.getInstance();
             if ("O".equals(filtro)) {
-                c.add(Calendar.DAY_OF_MONTH, -1);  
+                c.add(Calendar.DAY_OF_MONTH, -1);
                 dataFim = c.getTime();
-            }else if(filtro == null) { 
+            } else if (filtro == null) {
                 dataFim = null;
-            } else { 
+            } else {
                 dataFim = c.getTime();
-            } 
+            }
             return dataFim;
         } catch (Exception e) {
             log.error("Erro no getDataFim", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             return null;
         }
-    }    
-    
-    public Date getDataInicio(String filtro) {        
+    }
+
+    public Date getDataInicio(String filtro) {
         Date dataInicio = null;
         try {
             Calendar c = Calendar.getInstance();
-                if ("O".equals(filtro)) {
-                c.add(Calendar.DAY_OF_MONTH, -1);                
-                dataInicio = c.getTime(); 
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataInicio = c.getTime();
             } else if ("H".equals(filtro)) { //Hoje                
-                dataInicio = c.getTime(); 
+                dataInicio = c.getTime();
             } else if ("S".equals(filtro)) { //Últimos 7 dias              
                 c.add(Calendar.DAY_OF_MONTH, -7);
                 dataInicio = c.getTime();
@@ -152,8 +134,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<RelatorioFatura> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             return null;
         }
-    }    
-    
+    }
 
     @Override
     public void actionNew(ActionEvent arg0) {
@@ -161,7 +142,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<RelatorioFatura> {
         fim = null;
         super.actionNew(arg0);
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Relatório de faturas", tabelaFatura, type);
     }
@@ -190,43 +171,28 @@ public class RelatorioFaturaMB extends LumeManagedBean<RelatorioFatura> {
         this.filtroPeriodo = filtroPeriodo;
     }
 
-    
     public Paciente getPaciente() {
         return paciente;
     }
-    
+
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
     }
 
-    
     public Profissional getProfissional() {
         return profissional;
     }
 
-    
     public void setProfissional(Profissional profissional) {
         this.profissional = profissional;
     }
 
-    
     public String getTipoFatura() {
         return tipoFatura;
     }
 
-    
     public void setTipoFatura(String tipoFatura) {
         this.tipoFatura = tipoFatura;
-    }
-
-    
-    public List<RelatorioFatura> getFaturas() {
-        return faturas;
-    }
-
-    
-    public void setFaturas(List<RelatorioFatura> faturas) {
-        this.faturas = faturas;
     }
 
     public DataTable getTabelaFatura() {

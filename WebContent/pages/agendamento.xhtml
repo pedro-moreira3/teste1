@@ -665,9 +665,8 @@ div.ui-selectoneradio label {
 
 										<h:panelGroup style="display:block;margin-left:3px;">
 											<p:selectBooleanCheckbox id="checkFiltro"
-												value="#{agendamentoMB.checkFiltro}">
-												<p:ajax event="change" process="@this,:lume:dadosFiltroAg"
-													listener="#{agendamentoMB.marcarFiltros}" />
+												value="#{agendamentoMB.checkFiltro}">												
+													 <p:ajax update=":lume:dadosFiltroAg" process="@this" listener="#{agendamentoMB.marcarFiltros}" />
 											</p:selectBooleanCheckbox>
 											<p:outputLabel for="checkFiltro" value="Marcar todos" />
 										</h:panelGroup>

@@ -22,7 +22,6 @@ import br.com.lume.common.util.UtilsFrontEnd;
 // import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.EmpresaSingleton;
@@ -62,7 +61,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
     // private PacienteBO pacienteBO;
 
     private String login;
-    
+
     private String erroLogin;
 
     //private SistemaBO sistemaBO;
@@ -89,15 +88,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
     public String actionLogin() {
         try {
             JSFHelper.getSession().invalidate();
-            
-            if(!this.getEntity().getUsuStrLogin().toUpperCase().equals("faruk.zahra@lumetec.com.br".toUpperCase()) &&
-                    !this.getEntity().getUsuStrLogin().toUpperCase().equals("mariana.mamp27@gmail.com".toUpperCase()) &&
-                    !this.getEntity().getUsuStrLogin().toUpperCase().equals("alvaro@consultoriolegal.com.br".toUpperCase()) && 
-                    !this.getEntity().getUsuStrLogin().toUpperCase().equals("mariana.pepino@facialclin.com.br".toUpperCase())
-                    ) {
-                this.addError("Sistema em manutenção", "");
-                return "";
-            }
+
             Usuario userLogin = LoginSingleton.getInstance().getBo().doLogin(this.getEntity(), sistema);
             Usuario usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(userLogin.getUsuStrLogin());
             List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByUsuario(usuario);
@@ -144,11 +135,11 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                 this.getLumeSecurity().setObjetosPermitidos(objetosPermitidos);
 
             }
-        } catch(UsuarioBloqueadoException ub) {
+        } catch (UsuarioBloqueadoException ub) {
             this.addError("Erro no login", "Senha inválida", true);
             log.error("Erro ao efetuar login.", ub);
             return "";
-        } catch(SenhaInvalidaException si) {
+        } catch (SenhaInvalidaException si) {
             this.addError("Erro no login", "Senha inválida", true);
             log.error("Erro ao efetuar login.", si);
             return "";
