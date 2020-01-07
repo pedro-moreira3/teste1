@@ -275,9 +275,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             setTarifas(TarifaSingleton.getInstance().getBo().listByForma(getFormaPagamento(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             setShowProduto(Boolean.TRUE);
         } else {
-            if (getDataPagamento() == null) {
-                getDataPagamento();
-            }
             setShowProduto(Boolean.FALSE);
             setParcela(1);
         }
@@ -317,6 +314,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         setFormaPagamento("DI");
         setValor(getTotalNaoPlanejado(getEntity()));
         setDataPagamento(new Date());
+        setDataCredito(null);
     }
 
     public void actionPersistLancamento() {
