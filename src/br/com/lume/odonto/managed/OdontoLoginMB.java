@@ -231,14 +231,17 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
         Profissional profissional = UtilsFrontEnd.getProfissionalLogado();
         Paciente paciente = UtilsFrontEnd.getPacienteLogado();
         String actionLoginRetorno = "";
+
+        boolean goToTutorial = false;
         if (profissional != null || paciente != null) {
             if (paciente != null) {
                 actionLoginRetorno = "pacienteExterno.jsf";
             } else {
                 Boolean mostrarTutorial = new Boolean(this.getLumeSecurity().getUsuario().getUsuChaTutorial());
-                if (mostrarTutorial) {
-                    actionLoginRetorno = "tutorial.jsf";
-                } else if (profissional.getPerfil().equals(OdontoPerfil.DENTISTA)) {
+                if (mostrarTutorial)
+                    goToTutorial = true;
+
+                if (profissional.getPerfil().equals(OdontoPerfil.DENTISTA)) {
                     actionLoginRetorno = "paciente.jsf";
                 } else if (profissional.getPerfil().equals(OdontoPerfil.ORCAMENTADOR)) {
                     actionLoginRetorno = "paciente.jsf";
@@ -261,9 +264,12 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                 }
             }
         }
+
         if (!actionLoginRetorno.equals("")) {
-            JSFHelper.redirect(actionLoginRetorno);
+            goToTutorial = false;
+            JSFHelper.redirect((goToTutorial ? "tutorial.jsf?next=" : "") + actionLoginRetorno);
         }
+
         return "";
     }
 

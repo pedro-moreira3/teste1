@@ -8,15 +8,19 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 
+import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -64,7 +68,7 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     }
 
     public List<Paciente> geraSugestoesPaciente(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void persistRetorno(Retorno r) {
@@ -154,6 +158,19 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     public void setDataFim(Date dataFim) {
         this.dataFim = dataFim;
+    }
+    
+    public Agendamento getProximoAgendamentoPaciente(Retorno retorno) {
+        return AgendamentoSingleton.getInstance().getBo().findDataProximoAgendamentoPaciente(retorno.getPaciente(), Calendar.getInstance().getTime());
+    }
+
+    public String getStatusDescricao(Agendamento agendamento) {
+        try {
+            return StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getDescricao();
+        } catch (Exception e) {
+
+        }
+        return "";
     }
 
     
