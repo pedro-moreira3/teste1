@@ -17,6 +17,7 @@ import org.primefaces.event.SelectEvent;
 
 import br.com.lume.categoriaMotivo.CategoriaMotivoSingleton;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
@@ -91,6 +92,15 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
+    }
+
+    public void validarLC(LancamentoContabil lc) {
+        try {
+            LancamentoContabilSingleton.getInstance().validaLC(lc, UtilsFrontEnd.getProfissionalLogado());
+        } catch (Exception e) {
+            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
     }
 
