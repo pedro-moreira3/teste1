@@ -55,7 +55,8 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     private List<AparelhoOrtodontico> aparelhos;
     private AparelhoOrtodontico aparelhoSelecionado;
     private Procedimento procedimentoExtra;
-
+    private BigDecimal valorProcedimento;
+    
     //EXPORTAÇÃO TABELA
     private DataTable tabelaPlanoOrtodontico;
 
@@ -110,8 +111,8 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                         ultimoSequencial++;
                         ptp.setSequencial((int) ultimoSequencial);
                         ptp.setProcedimento(getEntity().getProcedimentoPadrao());
-                        ptp.setValor(getEntity().getProcedimentoPadrao().getValor());
-                        ptp.setValorDesconto(getEntity().getProcedimentoPadrao().getValor());
+                        ptp.setValor(valorProcedimento);
+                        ptp.setValorDesconto(valorProcedimento);
                         ptp.setPlanoTratamento(getEntity());
                         ptp.setOrtodontico(true);
                         getEntity().getPlanoTratamentoProcedimentos().add(ptp);
@@ -144,6 +145,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             atualizaValorProcedimento(procedimentoPadrao);
             getEntity().setProcedimentoPadrao(procedimentoPadrao);
+            valorProcedimento = procedimentoPadrao.getValor();     
             getEntity().setBconvenio(true);
             BigDecimal valor = new BigDecimal(0);
             if (this.getEntity().getProcedimentoPadrao().getValor() == null)
@@ -501,5 +503,15 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     public void setTabelaPlanoOrtodontico(DataTable tabelaPlanoOrtodontico) {
         this.tabelaPlanoOrtodontico = tabelaPlanoOrtodontico;
+    }
+
+    
+    public BigDecimal getValorProcedimento() {
+        return valorProcedimento;
+    }
+
+    
+    public void setValorProcedimento(BigDecimal valorProcedimento) {
+        this.valorProcedimento = valorProcedimento;
     }
 }
