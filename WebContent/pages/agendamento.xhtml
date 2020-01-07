@@ -169,9 +169,9 @@ div.ui-selectoneradio label {
 			</p:dialog>
 		</h:panelGroup>
 
-		<p:dialog id="eventDialog" widgetVar="eventDialog" header="Agendamento"
-			resizable="false" responsive="true" width="calc(100% - 2px)"
-			height="100%" position="0,0" modal="true"
+		<p:dialog id="eventDialog" widgetVar="eventDialog"
+			header="Agendamento" resizable="false" responsive="true"
+			width="calc(100% - 2px)" height="100%" position="0,0" modal="true"
 			style="position:absolute !important;" appendToBody="true"
 			focus="paciente">
 
@@ -503,17 +503,17 @@ div.ui-selectoneradio label {
 				<div class="card card-w-title">
 					<h1 style="margin-bottom: 5px">Agendamento</h1>
 					<br />
-					
+
 					<p:panel id="pnAgnd" styleClass="NoChildPadding"
 						style="margin: 0 auto; margin-bottom: 10px;border: none">
-						
+
 						<p:fieldset id="filtrosShow"
 							legend="#{agendamentoMB.dentista ? 'Legenda' : 'Filtro'}"
 							toggleable="true" toggleSpeed="500"
 							collapsed="#{agendamentoMB.profissional == null and agendamentoMB.pacientePesquisado == null}">
-							
+
 							<p:outputPanel id="dadosFiltroAg">
-								
+
 								<p:panelGrid columns="1" layout="grid"
 									styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 									style="border:0px none; background-color:transparent;"
@@ -521,38 +521,39 @@ div.ui-selectoneradio label {
 
 									<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'S'}">
 
-										<p:panelGrid id="formularioPrincipal" columns="2" layout="grid"
+										<p:panelGrid id="formularioPrincipal" columns="2"
+											layout="grid"
 											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 											style="border:0px none; background-color:transparent;">
 
-											<h:panelGroup styleClass="md-inputfield">												
-													<p:autoComplete dropdown="true" queryDelay="1000"
-														value="#{agendamentoMB.pacientePesquisado}" id="pacienteSelecionado"
-														minQueryLength="3" scrollHeight="400"
-														completeMethod="#{agendamentoMB.geraSugestoes}" var="p"
-														itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-														converter="paciente" forceSelection="true"
-														disabled="#{agendamentoMB.entity.id != 0}"
-														required="#{!agendamentoMB.visivel}"
-														styleClass="paciente tallerAutoComplete">
-								
-														<p:column headerText="Nome">
-															<h:outputText value="#{p.dadosBasico.nome}" />
-														</p:column>
-														<p:column headerText="Celular">
-															<h:outputText value="#{p.dadosBasico.celular}" />
-														</p:column>
-														<p:column headerText="Nome da Mãe">
-															<h:outputText value="#{p.nomeMae}" />
-														</p:column>
-								
-													<p:ajax
-														listener="#{agendamentoMB.carregarAgenda}"
+											<h:panelGroup styleClass="md-inputfield">
+												<p:autoComplete dropdown="true" queryDelay="1000"
+													value="#{agendamentoMB.pacientePesquisado}"
+													id="pacienteSelecionado" minQueryLength="3"
+													scrollHeight="400"
+													completeMethod="#{agendamentoMB.geraSugestoes}" var="p"
+													itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+													converter="paciente" forceSelection="true"
+													disabled="#{agendamentoMB.entity.id != 0}"
+													required="#{!agendamentoMB.visivel}"
+													styleClass="paciente tallerAutoComplete">
+
+													<p:column headerText="Nome">
+														<h:outputText value="#{p.dadosBasico.nome}" />
+													</p:column>
+													<p:column headerText="Celular">
+														<h:outputText value="#{p.dadosBasico.celular}" />
+													</p:column>
+													<p:column headerText="Nome da Mãe">
+														<h:outputText value="#{p.nomeMae}" />
+													</p:column>
+
+													<p:ajax listener="#{agendamentoMB.carregarAgenda}"
 														process="@this" />
-													</p:autoComplete>
-													<p:outputLabel for="pacienteSelecionado" value="Paciente" />
-												
-												
+												</p:autoComplete>
+												<p:outputLabel for="pacienteSelecionado" value="Paciente" />
+
+
 											</h:panelGroup>
 
 											<h:panelGroup></h:panelGroup>
@@ -606,9 +607,8 @@ div.ui-selectoneradio label {
 														itemLabel="#{profissional.dadosBasico.prefixoNome}"
 														itemValue="#{profissional}" />
 
-													<p:ajax
-														listener="#{agendamentoMB.carregarAgenda}"
-														process="@this" update="btBloqueioAgenda"/>
+													<p:ajax listener="#{agendamentoMB.carregarAgenda}"
+														process="@this" update="btBloqueioAgenda" />
 
 												</p:selectOneMenu>
 
@@ -639,7 +639,7 @@ div.ui-selectoneradio label {
 										</p:dataTable>
 
 									</p:outputPanel>
-									
+
 									<p:outputPanel rendered="#{agendamentoMB.visualizacao != 'S'}">
 										<h:panelGroup styleClass="md-inputfield">
 											<p:calendar id="initialDateSolo1" required="false"
@@ -649,14 +649,14 @@ div.ui-selectoneradio label {
 												timeZone="#{lumeSecurity.timeZone}" navigator="true"
 												yearRange="-100:+10"
 												style="margin-top:10px;margin-bottom:10px;display: inline-block;">
-												
-												<p:ajax event="dateSelect" process="@this"/>
-													
+
+												<p:ajax event="dateSelect" process="@this" />
+
 											</p:calendar>
 											<p:outputLabel for="initialDateSolo1" value="Data" />
 										</h:panelGroup>
 									</p:outputPanel>
-									
+
 									<p:outputPanel>
 
 										<h:outputLabel value="Mostrar os agendamentos : " />
@@ -665,8 +665,9 @@ div.ui-selectoneradio label {
 
 										<h:panelGroup style="display:block;margin-left:3px;">
 											<p:selectBooleanCheckbox id="checkFiltro"
-												value="#{agendamentoMB.checkFiltro}">												
-													 <p:ajax update=":lume:dadosFiltroAg" process="@this" listener="#{agendamentoMB.marcarFiltros}" />
+												value="#{agendamentoMB.checkFiltro}">
+												<p:ajax update=":lume:dadosFiltroAg" process="@this"
+													listener="#{agendamentoMB.marcarFiltros}" />
 											</p:selectBooleanCheckbox>
 											<p:outputLabel for="checkFiltro" value="Marcar todos" />
 										</h:panelGroup>
@@ -677,8 +678,7 @@ div.ui-selectoneradio label {
 											value="#{agendamentoMB.filtroAgendamento}" layout="grid"
 											columns="4">
 
-											<p:ajax process="@this"
-												update=":lume:schedule,:lume:dadosFiltroAg"/>
+											<p:ajax process="@this" update=":lume:dadosFiltroAg" />
 
 											<f:selectItem
 												itemLabel="&lt;div&gt;&lt;div class='agendamentoAfastamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Bloqueio&lt;/div&gt;"
@@ -725,28 +725,29 @@ div.ui-selectoneradio label {
 										</p:selectManyCheckbox>
 									</p:outputPanel>
 								</p:panelGrid>
-								
+
 								<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'S'}">
-									
+
 									<p:panelGrid columns="4" layout="grid"
 										styleClass="ui-panelgrid-blank form-group ui-fluid">
-										
+
 										<p:commandButton value="Pesquisar" type="button">
-											<p:ajax process="@this" event="click" listener="#{agendamentoMB.carregarAgenda()}"/>
+											<p:ajax process="@this" event="click"
+												listener="#{agendamentoMB.carregarAgenda()}" />
 										</p:commandButton>
-										
+
 										<p:commandButton value="Imprimir" type="button"
 											onclick="printSchedule()" icon="White fa fa-print"
 											styleClass="NavyButton">
 										</p:commandButton>
-										
+
 										<p:commandButton id="btBloqueioAgenda"
 											value="Bloqueio de Agenda" icon="White fa fa-calendar White"
 											styleClass="RedButton"
 											onclick="resize('#lume\\:dlgBloqueio');PF('dlgBloqueio').show();"
 											disabled="#{agendamentoMB.profissional == null}"
 											update=":lume:dtAfastamento" />
-										
+
 										<p:commandButton value="Exportar para Google Agenda"
 											type="button" icon="White fa fa-google White"
 											onclick="handleClientLoad();resize('#lume\\:dlgGoogleAgenda');PF('dlgGoogleAgenda').show();" />
@@ -760,10 +761,10 @@ div.ui-selectoneradio label {
 													process="@this" />
 											</p:commandButton>
 										</ui:remove>
-										
+
 									</p:panelGrid>
 								</p:outputPanel>
-								
+
 								<p:outputPanel rendered="#{agendamentoMB.visualizacao != 'S'}">
 									<p:panelGrid columns="1" layout="grid"
 										styleClass="ui-panelgrid-blank form-group ui-fluid">
@@ -773,11 +774,11 @@ div.ui-selectoneradio label {
 										</p:commandButton>
 									</p:panelGrid>
 								</p:outputPanel>
-								
+
 							</p:outputPanel>
 						</p:fieldset>
 					</p:panel>
-					
+
 					<p:selectOneButton value="#{agendamentoMB.visualizacao}"
 						id="selectVisualizacao" unselectable="false">
 						<f:selectItem itemLabel="Calendário" itemValue="S" />
@@ -788,13 +789,15 @@ div.ui-selectoneradio label {
 							oncomplete="atualizaGraficos();"
 							process=":lume:selectVisualizacao" />
 					</p:selectOneButton>
-					
+
 					<p:separator styleClass="SeparatorFull" />
-					
+
 					<p:outputPanel id="agendamentoVisualizacao">
 						<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'S'}">
 							<p:remoteCommand name="updateSchedule"
-								update=":lume:formularioPrincipal" actionListener="#{agendamentoMB.carregarAgenda()}" process=":lume:schedule" />
+								update=":lume:formularioPrincipal"
+								actionListener="#{agendamentoMB.carregarAgenda()}"
+								process=":lume:schedule" />
 							<p:schedule id="schedule" value="#{agendamentoMB.schedule}"
 								axisFormat="HH:mm" slotEventOverlap="false"
 								style="width:100%;heigth:100%;margin: 0 auto;display: inline-block;"
@@ -803,7 +806,7 @@ div.ui-selectoneradio label {
 								view="agendaDay" timeFormat="HH:mm" minTime="07:00"
 								maxTime="21:00" allDaySlot="false" draggable="false"
 								resizable="false" initialDate="#{agendamentoMB.initialDate}">
-								
+
 								<p:ajax event="viewChange" process="@this"
 									update=":lume:formularioPrincipal" />
 								<p:ajax event="dateSelect"
@@ -815,19 +818,19 @@ div.ui-selectoneradio label {
 									update=":lume:pnAgendamento,:lume:botoesAgenda"
 									listener="#{agendamentoMB.onEventSelect}"
 									oncomplete="handleDialogRequest(xhr, status, args);" />
-									
+
 							</p:schedule>
 						</p:outputPanel>
-						
+
 						<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'C'}">
 							<div id="chartCadeiras" class="chartCadeiras"></div>
 						</p:outputPanel>
-						
+
 						<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'P'}">
 							<div id="chartAtendimentos" class="chartProfissionais"></div>
 						</p:outputPanel>
 					</p:outputPanel>
-					
+
 					<p:remoteCommand name="updateVisualizacao"
 						update=":lume:agendamentoVisualizacao" />
 					<p:remoteCommand name="loadProfissionaisChart"
@@ -836,7 +839,7 @@ div.ui-selectoneradio label {
 					<p:remoteCommand name="loadCadeirasChart"
 						actionListener="#{agendamentoMB.loadChartCadeiras()}"
 						immediate="true" />
-						
+
 				</div>
 			</div>
 		</div>
