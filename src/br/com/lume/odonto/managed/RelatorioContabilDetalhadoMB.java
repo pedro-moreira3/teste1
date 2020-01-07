@@ -36,13 +36,13 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
 
     private String extrato, forma = "T";
 
-    private BigDecimal saldoInicial, saldoFinal;   
+    private BigDecimal saldoInicial, saldoFinal;
 
     private NumberFormat formatter;
 
     public RelatorioContabilDetalhadoMB() {
         super(LancamentoContabilSingleton.getInstance().getBo());
-        formatter = NumberFormat.getCurrencyInstance(this.getLumeSecurity().getLocale());      
+        formatter = NumberFormat.getCurrencyInstance(this.getLumeSecurity().getLocale());
         this.setClazz(LancamentoContabil.class);
         this.carregarDatasIniciais();
         this.filtra();
@@ -68,23 +68,12 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else {
                 lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listAllByPeriodo(inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                lancamentoContabeis = removeLancamentosNaoValidados();
                 this.geraExtrato();
             }
         } catch (Exception e) {
             log.error(e);
             e.printStackTrace();
         }
-    }
-
-    private List<LancamentoContabil> removeLancamentosNaoValidados() {
-        List<LancamentoContabil> aux = new ArrayList<>();
-        for (LancamentoContabil lancamentoContabil : lancamentoContabeis) {
-            if (lancamentoContabil.getLancamento() == null || "S".equals(lancamentoContabil.getLancamento().getValidado())) {
-                aux.add(lancamentoContabil);
-            }
-        }
-        return aux;
     }
 
     private void geraExtrato() {
