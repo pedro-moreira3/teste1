@@ -13,13 +13,13 @@
 						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
 
-							<p:outputLabel for="inicio" value="Inicio : " />
+							<p:outputLabel for="inicio" value="Data de crédito Inicio : " />
 							<p:calendar id="inicio" value="#{relatorioRecebimentoMB.inicio}" autocomplete="off" pattern="dd/MM/yyyy" mask="true" required="true" />
 
-							<p:outputLabel for="fim" value="Fim : " />
+							<p:outputLabel for="fim" value="Data de crédito Fim : " />
 							<p:calendar id="fim" value="#{relatorioRecebimentoMB.fim}" autocomplete="off" pattern="dd/MM/yyyy" mask="true" required="true" />
 
-							<p:outputLabel for="status" value="Status : " />
+							<p:outputLabel for="status" value="Status: " />
 							<p:selectOneMenu id="status" value="#{relatorioRecebimentoMB.status}">							
 								<f:selectItems value="#{relatorioRecebimentoMB.statuss}" var="status" itemLabel="#{status}" itemValue="#{status}" />
 							</p:selectOneMenu>
@@ -110,19 +110,19 @@
 								</f:facet>
 								<h:outputText value="#{lancamento.numeroParcela}" />
 							</p:column>														
-							<p:column filterBy="#{lancamento.pacienteNome}"
-								sortBy="#{lancamento.pacienteNome}" filterMatchMode="contains">
+							<p:column filterBy="#{lancamento.fatura.paciente.dadosBasico.nome}"
+								sortBy="#{lancamento.fatura.paciente.dadosBasico.nome}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Paciente" />
 								</f:facet>
-								<h:outputText value="#{lancamento.pacienteNome}" />
+								<h:outputText value="#{lancamento.fatura.paciente.dadosBasico.nome}" />
 							</p:column>
-							<p:column filterBy="#{lancamento.descricaoPlanoTratamento}" sortBy="#{lancamento.descricaoPlanoTratamento}"
+							<p:column filterBy="#{lancamento.planoTratamentoProcedimento.planoTratamento.descricao}" sortBy="#{lancamento.planoTratamentoProcedimento.planoTratamento.descricao}"
 								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Plano de Tratamento" />
 								</f:facet>
-								<h:outputText value="#{lancamento.descricaoPlanoTratamento}" />
+								<h:outputText value="#{lancamento.planoTratamentoProcedimento.planoTratamento.descricao}" />
 							</p:column>
 							<p:column filterBy="#{lancamento.valor}" sortBy="#{lancamento.valor}" filterMatchMode="contains">
 								<f:facet name="header">
