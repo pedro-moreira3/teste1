@@ -234,6 +234,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
                 denteSelecionado.getRegioes().add(new RegiaoDente(statusDenteDenteSelecionado, 'C', denteSelecionado));
                 //statusDenteDenteSelecionado = new StatusDente();
                 DenteSingleton.getInstance().getBo().persist(denteSelecionado);
+                denteSelecionado = DenteSingleton.getInstance().getBo().find(denteSelecionado); 
             }
         } catch (Exception e) {
             log.error("Erro no actionPersistRegioes", e);

@@ -97,7 +97,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     private boolean desabilitaExcluir;
 
-    private List<Objeto> objetosPerfil; 
+    private List<Objeto> objetosPerfil;
 
     private List<SelectItem> objetosPerfilChecks;
 
@@ -114,7 +114,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     public ProfissionalMB() {
         super(ProfissionalSingleton.getInstance().getBo());
-     
+
         this.setClazz(Profissional.class);
         carregarObjetosPerfis();
         try {
@@ -157,8 +157,11 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         Usuario usuario = null;
         try {
             usuario = UsuarioSingleton.getInstance().getBo().find(idUsuarioAux);
-            String senha = UsuarioSingleton.getInstance().getBo().resetSenha(usuario);
-            this.addInfo("Senha resetada com sucesso, foi enviada por email. A nova senha é : " + senha, "");
+            UsuarioSingleton.getInstance().getBo().resetSenha(usuario);
+            this.addInfo("Um email com link para alteração de senha foi enviado ao usuário.", "");
+
+            //String senha = UsuarioSingleton.getInstance().getBo().resetSenha(usuario);
+            //this.addInfo("Senha resetada com sucesso, foi enviada por email. A nova senha é : " + senha, "");
         } catch (ServidorEmailDesligadoException sed) {
             this.addError(sed.getLocalizedMessage(), "");
             log.error("Erro ao reenviar e-mail.", sed);
@@ -245,19 +248,18 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         Usuario usuario = null;
         try {
             carregarObjetosProfissional();
-            
+
             if (getEntity().getDadosBasico().getDataNascimento() != null && Utils.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
                 addError("Data de nascimento inválida.", "");
                 return;
             }
-            
-            if(((this.getEntity().getDadosBasico().getCelular() != null) && (!this.getEntity().getDadosBasico().getCelular().isEmpty())) &&
-                    ((this.getEntity().getDadosBasico().getTelefone() != null) && (!this.getEntity().getDadosBasico().getTelefone().isEmpty()))) {
-                
+
+            if (((this.getEntity().getDadosBasico().getCelular() != null) && (!this.getEntity().getDadosBasico().getCelular().isEmpty())) && ((this.getEntity().getDadosBasico().getTelefone() != null) && (!this.getEntity().getDadosBasico().getTelefone().isEmpty()))) {
+
                 DadosBasicoSingleton.getInstance().getBo().validaTelefone(this.getEntity().getDadosBasico());
             }
 
-            ProfissionalSingleton.getInstance().getBo().validaProfissionalDuplicadoEmpresa(this.getEntity(), emailSalvo,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            ProfissionalSingleton.getInstance().getBo().validaProfissionalDuplicadoEmpresa(this.getEntity(), emailSalvo, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(this.getEntity().getDadosBasico().getEmail().toUpperCase());
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if (usuario == null) {
@@ -342,7 +344,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
-    
+
     public static String handleFoto(byte[] data, String nomeImagem) throws Exception {
         File targetFile = null;
         if (nomeImagem != null && !nomeImagem.equals("")) {

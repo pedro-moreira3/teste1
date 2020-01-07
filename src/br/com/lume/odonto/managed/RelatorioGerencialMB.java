@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.KeyValue;
 import br.com.lume.odonto.entity.Paciente;
@@ -165,7 +166,11 @@ public class RelatorioGerencialMB extends LumeManagedBean<Paciente> {
             profissionaisMaisRentaveis = RelatorioGerencialSingleton.getInstance().getBo().findProfissionaisMaisRentaveis(inicio, fim, empresa);
             agendamentosHorario = RelatorioGerencialSingleton.getInstance().getBo().findAgendamentosHorario(inicio, fim, empresa);
             minutosOciosos = minutosAgendados - minutosUtilizados;
-            taxaDeOcupacao = (int) (minutosUtilizados / 60) * 100 / UtilsFrontEnd.getEmpresaLogada().getCapacidadeInstalada();
+            
+          //  int workingDays = Utils.getNumDiasUteis(inicio, fim);
+            int workingDays = 5;
+            int horas = (int) ((UtilsFrontEnd.getEmpresaLogada().getEmpIntHorasUteisSemanal() / 6) * workingDays); 
+            taxaDeOcupacao = (int) (((minutosUtilizados / 60) / horas) * 100);
         } catch (Exception e) {
             log.error("Erro no actionFiltrar", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

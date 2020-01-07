@@ -169,7 +169,11 @@ public class KitMB extends LumeManagedBean<Kit> {
         }
     }
 
+    //TODO - Solução para contornar a falha de itens nao sendo removidos dos kits.]
+    // Construir forma mais simples com entityList direto sem passar por listas cópias.
     public void remover() throws Exception {
+        if(this.getEntity().getKitItens() != null)
+            this.getEntity().getKitItens().remove(this.getKitItem());
         try {
             KitItemSingleton.getInstance().getBo().remove(this.getKitItem());
         } catch (BusinessException e) {
