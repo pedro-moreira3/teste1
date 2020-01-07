@@ -14,6 +14,7 @@ import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.RelatorioRecebimento;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -29,7 +30,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
 
    // private List<Lancamento> Lancamentos = new ArrayList<>();
     
-    private List<RelatorioRecebimento> Lancamentos = new ArrayList<>();
+    private List<Lancamento> lancamentos = new ArrayList<>();
 
     private Date inicio, fim;
 
@@ -62,13 +63,16 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
                 if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
                     this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
                 } else {
-                 //   this.Lancamentos = LancamentoSingleton.getInstance().getBo().listAllByPeriodoAndStatus(this.inicio, this.fim, this.status, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                    this.Lancamentos = RelatorioRecebimentoSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), status, inicio, fim);
                     this.somaValor = new BigDecimal(0);
-                    for (RelatorioRecebimento l : this.Lancamentos) {
+                    List<Lancamento> lancamentosFiltrados = LancamentoSingleton.getInstance().getBo().filterRelatorioRecebimentos(UtilsFrontEnd.getEmpresaLogada(),inicio, fim);
+                    for (Lancamento l : lancamentosFiltrados) {                      
                         this.somaValor = this.somaValor.add(l.getValor()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        if(l.getStatus().equals(this.status) && l.getTipo().equals("RP")) {
+                            this.lancamentos.add(l);
+                        }
                     }
-                    if (this.Lancamentos == null || this.Lancamentos.isEmpty()) {
+                    
+                    if (this.lancamentos == null || this.lancamentos.isEmpty()) {
                         this.addError(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"), "");
                         this.log.error(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"));
                     }
@@ -107,12 +111,12 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         this.fim = fim;
     }
 
-    public List<RelatorioRecebimento> getLancamentos() {
-        return this.Lancamentos;
+    public List<Lancamento> getLancamentos() {
+        return this.lancamentos;
     }
 
-    public void setLancamentos(List<RelatorioRecebimento> lancamentos) {
-        this.Lancamentos = lancamentos;
+    public void setLancamentos(List<Lancamento> lancamentos) {
+        this.lancamentos = lancamentos;
     }
 
     public BigDecimal getSomaValor() {

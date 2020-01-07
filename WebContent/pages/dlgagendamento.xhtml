@@ -196,13 +196,8 @@
 					<p:selectOneMenu id="profissionalAgend" styleClass="tallerCombo"
 						value="#{agendamentoMB.profissionalDentroAgenda}"
 						converter="profissional" filter="true" filterMatchMode="contains">
-						<p:ajax listener="#{agendamentoMB.validarAfastamentoProfissional}"
-							process="@this" />
-						<p:ajax
-							listener="#{agendamentoMB.validaHoraUtilProfissionalCombo}"
-							process="@this" />
-						<p:ajax listener="#{agendamentoMB.calculaDataFim}" process="@this"
-							update="fim" />
+						<p:ajax listener="#{agendamentoMB.listenerAlterouProfissional}" process="@this"
+							update="fim" />		
 						<f:selectItem itemValue="#{null}"
 							itemLabel="Selecione um profissional" />
 						<f:selectItems value="#{agendamentoMB.profissionais}"
