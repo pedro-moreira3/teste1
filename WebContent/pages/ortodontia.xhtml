@@ -336,7 +336,8 @@ li.orcamento-li {
 									<p:outputLabel for="valorProcedimentoPadrao"
 										value="Valor procedimento : " />
 									<p:inputNumber id="valorProcedimentoPadrao"
-										value="#{ortodontiaMB.entity.procedimentoPadrao.valor}"
+										value="#{ortodontiaMB.valorProcedimento}"
+										disabled="#{ortodontiaMB.entity.id != null or ortodontiaMB.entity.id > 0}"
 										required="true" maxlength="13" maxValue="9999999999.99"
 										decimalSeparator="," symbol="R$ " thousandSeparator="." />
 									<p:outputLabel for="utilizaConvenio"
@@ -617,7 +618,7 @@ li.orcamento-li {
 				process="@this, :lume:tabView:planoOrtodontico"
 				actionListener="#{ortodontiaMB.actionPersist}"
 				icon="White fa fa-save White" styleClass="GreenButton"
-				update=":lume:tabView:pnMainOrtodontia, :lume:tabView:planoOrtodontico">
+				update=":lume:tabView:pnMainOrtodontia, :lume:tabView:planoOrtodontico,:lume:tabView:valorProcedimentoPadrao">
 			</p:commandButton>
 			<p:column />
 			<p:column />
