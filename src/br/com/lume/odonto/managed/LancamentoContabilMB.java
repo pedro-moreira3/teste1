@@ -98,6 +98,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void validarLC(LancamentoContabil lc) {
         try {
             LancamentoContabilSingleton.getInstance().validaLC(lc, UtilsFrontEnd.getProfissionalLogado());
+            this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         } catch (Exception e) {
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
             LogIntelidenteSingleton.getInstance().makeLog(e);
