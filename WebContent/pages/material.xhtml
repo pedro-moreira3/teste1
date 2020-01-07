@@ -201,7 +201,7 @@
 									<p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"		                            	
 		                                style="border:0px none; background-color:transparent;">
 		                                <h:panelGroup styleClass="md-combo">
-			                                <p:outputLabel for="valor" value="Valor do volume:" rendered="#{materialMB.estoqueCompleto}" />
+			                                <p:outputLabel for="valor" value="Valor total dos volumes:" rendered="#{materialMB.estoqueCompleto}" />
 			                                <p:inputNumber id="valor" value="#{materialMB.entity.valorUnidadeInformado}" required="true" maxlength="13" maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
 			                                    thousandSeparator="." rendered="#{materialMB.estoqueCompleto and materialMB.entity.id == 0}">			                                    	
 			                                    <p:ajax update=":lume:pnEntrada" process=":lume:valor,@this" listener="#{materialMB.valorTotal}" />		                                    
