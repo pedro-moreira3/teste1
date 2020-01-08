@@ -351,6 +351,44 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
+    
+    public void actionPersistLancamentoGenerico() {
+        try {
+            if (getValor().compareTo(getTotalNaoPlanejado(getEntity())) > 0) {
+                this.addError("Informe um valor menor que o total restante de planejamento!", "");
+                return;
+            }
+
+            Calendar now = Calendar.getInstance();
+            Calendar data = Calendar.getInstance();
+            data.setTime(getDataCredito());
+            if ("CC".equals(getFormaPagamento())) {
+                BigDecimal valorOriginalDividio = getValor().divide(new BigDecimal(getParcela()), 2, RoundingMode.HALF_UP);
+                BigDecimal diferenca = valorOriginalDividio.multiply(new BigDecimal(getParcela())).subtract(getValor());
+                for (int i = 1; i <= getParcela(); i++) {
+                    if (i == getParcela()) {
+                        valorOriginalDividio = valorOriginalDividio.subtract(diferenca);
+                    }
+                    LancamentoSingleton.getInstance().novoLancamentoGenerico(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
+                            UtilsFrontEnd.getProfissionalLogado());
+
+                    data.add(Calendar.MONTH, 1);
+                }
+            } else {
+                LancamentoSingleton.getInstance().novoLancamentoGenerico(getEntity(), getValor(), getFormaPagamento(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
+                        UtilsFrontEnd.getProfissionalLogado());
+
+            }
+
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+        }
+        
+        this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+        PrimeFaces.current().executeScript("PF('dlgNewLancamento').hide()");
+        
+    }
 
     public String getStyleBySaldoPaciente() throws Exception {
         if (getPaciente() == null || getPaciente().getId() == null || getPaciente().getId().longValue() == 0)

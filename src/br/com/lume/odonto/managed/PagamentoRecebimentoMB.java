@@ -35,6 +35,7 @@ import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.FaturaItem;
+import br.com.lume.odonto.entity.FaturaItem.SALDO;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Motivo;
@@ -64,27 +65,22 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
     private Date dataInicio, dataFim;
     private String filtroPeriodo;
     private DadosBasico fornecedorFiltroSelecionado;
+    private Fatura faturaPagamento;
     
     //NOVO PAGAMENTO
     private TipoCategoria tipoCategoria;
     private CategoriaMotivo categoria;
-    private Date dataPagamento;
     private BigDecimal valorPagar = new BigDecimal(0);
     private DadosBasico fornecedorSelecionado = null;
     private Motivo motivo;
-    private Dominio formaPagamento;
-    private Tarifa tarifa;
-    private int parcelas = 0;
     private Profissional profissionalCriacao;
     
     private List<SelectItem> dadosBasicos;
     private List<TipoCategoria> tiposCategoria;
     private List<CategoriaMotivo> categorias;
     private List<Motivo> motivos;
-    private List<Dominio> formasPagamento;
-    private List<Tarifa> tarifas;
     
-    private List<Lancamento> lancamentosFatura;
+    private List<FaturaItem> itensPagamento;
     private List<FaturaItem> faturas;
     private List<Profissional> profissionais;
 
@@ -95,26 +91,21 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
     private String filtroPeriodoRecebimento;
     private DataTable tabelaRecebimento;
     private Paciente pacienteFiltro;
+    private Fatura faturaRecebimento;
     
     //NOVO RECEBIMENTO
     private Paciente pacienteSelecionado;
     private TipoCategoria tipoCategoriaRecebimento;
     private CategoriaMotivo categoriaRecebimento;
-    private Date dataRecebimento;
     private BigDecimal valorReceber = new BigDecimal(0);
     private Motivo motivoRecebimento;
-    private Dominio formaRecebimento;
-    private Tarifa tarifaRecebimento;
-    private int parcelasRecebimento = 0;
     private Profissional profissionalCriacaoRecebimento;
     
     private List<TipoCategoria> tiposCategoriaRecebimento;
     private List<CategoriaMotivo> categoriasRecebimento;
     private List<Motivo> motivosRecebimento;
-    private List<Dominio> formasRecebimento;
-    private List<Tarifa> tarifasRecebimento;
     
-    private List<Lancamento> lancamentosFaturaRecebimento;
+    private List<FaturaItem> itensRecebimento;
     private List<FaturaItem> faturasRecebimento;
     private List<Paciente> pacientes;
     
@@ -125,23 +116,10 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
         geraListaSugestoesPagamento();
         geraListaSugestoesRecebimento();
         carregarTiposCategoria();
-        carregarFormasPagamento();
         carregarCategorias();
         carregarMotivos();
-        carregarTarifas();
         carregarProfissionais();
-        
-        PrimeFaces.current().executeScript("PF(':lume:dlgNovoRecebimento').update();");
 
-    }
-    
-    public void cancelarFatura(FaturaItem fatura) {
-        try {
-            FaturaSingleton.getInstance().inativaFatura(fatura.getFatura(), UtilsFrontEnd.getProfissionalLogado());
-        } catch (Exception e) {
-            this.log.error("Erro ao cancelar", e);
-            this.addError("Erro ao inativar.", "Não foi possível inativar a fatura !",true);
-        }
     }
     
     public void actionPersistNovoRecebimento() {
@@ -150,45 +128,35 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
         
         try {
             
-            fatura = FaturaSingleton.getInstance().criaFaturaGenericaPaciente(pacienteSelecionado, 
-                    motivoRecebimento.getDescricao(), valorReceber.doubleValue(),new BigDecimal(0), 
-                    UtilsFrontEnd.getProfissionalLogado());
+            FaturaItem item = FaturaItemSingleton.getInstance().criaItemFaturaGenerica(motivoRecebimento.getDescricao(), 
+                    SALDO.ENTRADA, valorReceber.doubleValue(), new BigDecimal(0), motivoRecebimento);
             
-            Date dataCredito = new Date();
-            
-            if (formaRecebimento.getValor().equals("DI")) {
+            if(this.faturaRecebimento != null) {
                 
-                Calendar c = Calendar.getInstance();
-                dataCredito = c.getTime();
+                fatura = FaturaSingleton.getInstance().getBo().find(this.faturaRecebimento);
+                fatura.getItens().add(item);
                 
-            } else {
-
-                if (this.tarifaRecebimento != null) {
-
-                    Calendar c = Calendar.getInstance();
-                    c.add(Calendar.DAY_OF_MONTH, + this.tarifaRecebimento.getPrazo());
-                    dataCredito = c.getTime();
-                }
+                FaturaSingleton.getInstance().getBo().persist(fatura);
+                
+            }else {                
+                fatura = FaturaSingleton.getInstance().criaFaturaGenerica(pacienteSelecionado, UtilsFrontEnd.getProfissionalLogado(), item);
             }
             
-            if(this.parcelasRecebimento > 0) {
-                
-                BigDecimal valor = new BigDecimal(valorReceber.doubleValue()/this.parcelasRecebimento);
-                
-                for(int i = 0; i < parcelasRecebimento ; i++) {
-                    LancamentoSingleton.getInstance().novoLancamentoGenerico(fatura, valor, formaRecebimento.getValor(), 1,
-                            this.motivoRecebimento, this.dataRecebimento, dataCredito, this.tarifaRecebimento, 
-                            UtilsFrontEnd.getProfissionalLogado());
-                }
-            }else {
-                LancamentoSingleton.getInstance().novoLancamentoGenerico(fatura, valorReceber, formaRecebimento.getValor(), 1,
-                        this.motivoRecebimento, this.dataRecebimento, dataCredito, this.tarifaRecebimento, 
-                        UtilsFrontEnd.getProfissionalLogado());
-            }
+            if(this.itensRecebimento == null)
+                this.itensRecebimento = new LinkedList<FaturaItem>();
+            
+            itensRecebimento.add(item);
+            
+            this.faturaRecebimento = fatura;
+            
+            
+            tipoCategoriaRecebimento = null;
+            categoriaRecebimento = null;
+            valorReceber = new BigDecimal(0);
+            motivoRecebimento = null;
+            
             
             this.addInfo("Sucesso.", "Fatura criada !", true);
-            
-            carregarLancamentosFaturaRecebimento(fatura);
             
         } catch (Exception e) {
             this.addError("Erro ao salvar", "Não foi possível salvar os dados !");
@@ -206,63 +174,74 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
         Profissional profissional = null;
         Origem origem = null;
         Fatura fatura = null;
+        FaturaItem item = null;
         
-        try {            
+        try {
+            
+            item = FaturaItemSingleton.getInstance().criaItemFaturaGenerica(motivo.getDescricao(), SALDO.ENTRADA, valorPagar.doubleValue(), new BigDecimal(0), motivo);
             
             if(this.fornecedorSelecionado.getSexo() != null) {
                 
                 profissional = ProfissionalSingleton.getInstance().getBo().findByDadosBasicos(fornecedorSelecionado);
-                fatura = FaturaSingleton.getInstance().criaFaturaGenericaProfissional(profissional, 
-                        motivo.getDescricao(), valorPagar.doubleValue(),new BigDecimal(0), UtilsFrontEnd.getProfissionalLogado());
+                
+                if(this.faturaPagamento != null) {
+                    fatura = FaturaSingleton.getInstance().getBo().find(this.faturaPagamento);
+                    
+                    item.setFatura(fatura);
+                    fatura.getItens().add(item);
+                    
+                    FaturaSingleton.getInstance().getBo().persist(fatura);
+                }else {
+                    fatura = FaturaSingleton.getInstance().criaFaturaGenerica(profissional, UtilsFrontEnd.getProfissionalLogado(), item);
+                }
                 
             }else if(fornecedorSelecionado.getDocumento() == null && fornecedorSelecionado.getSexo() == null) {
                 
                 origem = OrigemSingleton.getInstance().getBo().findByDadosBasicos(fornecedorSelecionado);
-                fatura = FaturaSingleton.getInstance().criaFaturaGenericaOrigem(origem, motivo.getDescricao(), 
-                        valorPagar.doubleValue(),new BigDecimal(0), UtilsFrontEnd.getProfissionalLogado());
                 
+                if(this.faturaPagamento != null) {
+                    fatura = FaturaSingleton.getInstance().getBo().find(this.faturaPagamento);
+                    
+                    item.setFatura(fatura);
+                    fatura.getItens().add(item);
+                    
+                    FaturaSingleton.getInstance().getBo().persist(fatura);
+                }else {
+                    fatura = FaturaSingleton.getInstance().criaFaturaGenerica(origem, UtilsFrontEnd.getProfissionalLogado(), item);
+                }
+
             }else if(fornecedorSelecionado.getSexo() == null || fornecedorSelecionado.getSexo().isEmpty()) {
                 
                 fornecedor = FornecedorSingleton.getInstance().getBo().findByDadosBasicos(fornecedorSelecionado);
-                fatura = FaturaSingleton.getInstance().criaFaturaGenericaFornecedor(fornecedor, motivo.getDescricao(), 
-                        valorPagar.doubleValue(),new BigDecimal(0), UtilsFrontEnd.getProfissionalLogado());
                 
-                this.setEntity(fatura);
-            }
-            
-            Date dataCredito = new Date();
-            
-            if (formaPagamento.getValor().equals("DI")) {
-                
-                Calendar c = Calendar.getInstance();
-                dataCredito = c.getTime();
-                
-            } else {
-
-                if (this.tarifa != null) {
-
-                    Calendar c = Calendar.getInstance();
-                    c.add(Calendar.DAY_OF_MONTH, + this.tarifa.getPrazo());
-                    dataCredito = c.getTime();
+                if(this.faturaPagamento != null) {
+                    fatura = FaturaSingleton.getInstance().getBo().find(this.faturaPagamento);
+                    
+                    item.setFatura(fatura);
+                    fatura.getItens().add(item);
+                    
+                    FaturaSingleton.getInstance().getBo().persist(fatura);
+                }else {
+                    fatura = FaturaSingleton.getInstance().criaFaturaGenerica(fornecedor, UtilsFrontEnd.getProfissionalLogado(), item);
                 }
+                
             }
             
-            if(this.parcelas > 0) {
-                
-                BigDecimal valor = new BigDecimal(valorPagar.doubleValue()/this.parcelas);
-                
-                for(int i = 0; i < parcelas ; i++) {
-                    LancamentoSingleton.getInstance().novoLancamentoGenerico(fatura, valor, formaPagamento.getValor(), 1,
-                            this.motivo, this.dataPagamento, dataCredito, this.tarifa, UtilsFrontEnd.getProfissionalLogado());
-                }
-            } else {
-                LancamentoSingleton.getInstance().novoLancamentoGenerico(fatura, valorPagar, formaPagamento.getValor(), 1, this.motivo, this.dataPagamento, dataCredito, this.tarifa,
-                        UtilsFrontEnd.getProfissionalLogado());
-            }
+            if(this.itensPagamento == null)
+                this.itensPagamento = new LinkedList<FaturaItem>();
+            
+            itensPagamento.add(item);
+            
+            this.faturaPagamento = fatura;
+            
+            
+            tipoCategoria = null;
+            categoria = null;
+            valorPagar = new BigDecimal(0);
+            motivo = null;
+            
             
             this.addInfo("Sucesso.", "Fatura criada !", true);
-            
-            carregarLancamentosFatura();
             
         } catch (Exception e) {
             this.addError("Erro ao salvar", "Não foi possível salvar os dados !");
@@ -275,30 +254,21 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
     }
     
     public void limparTelaRecebimento() {
+        this.faturaRecebimento = null;
         tipoCategoriaRecebimento = null;
         categoriaRecebimento = null;
-        dataRecebimento = null;
         valorReceber = new BigDecimal(0);
         pacienteSelecionado = null;
         motivoRecebimento = null;
-        formaRecebimento = null;
-        tarifaRecebimento = null;
-        lancamentosFaturaRecebimento = null;
-        parcelasRecebimento = 0;
     }
     
     public void limparTela() {
-        this.setEntity(null);
+        this.faturaPagamento = null;
         tipoCategoria = null;
         categoria = null;
-        dataPagamento = null;
         valorPagar = new BigDecimal(0);
         fornecedorSelecionado = null;
         motivo = null;
-        formaPagamento = null;
-        tarifa = null;
-        lancamentosFatura = null;
-        parcelas = 0;
     }
     
     public void pesquisarRecebimento() {
@@ -399,78 +369,6 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
         return "";
     }
     
-    public void visualizarFaturaRecebimento(FaturaItem fatura) {
-        try {
-            
-            this.pacienteSelecionado = fatura.getFatura().getPaciente();
-            
-            this.lancamentosFaturaRecebimento = new LinkedList<Lancamento>();
-
-            this.lancamentosFaturaRecebimento.addAll(LancamentoSingleton.getInstance().getBo().
-                    listLancamentosFromFatura(fatura.getFatura(), true));
-            this.lancamentosFaturaRecebimento.addAll(LancamentoSingleton.getInstance().getBo().
-                    listLancamentosFromFatura(fatura.getFatura(), false));
-
-            if (!this.lancamentosFaturaRecebimento.isEmpty()) {
-                this.motivoRecebimento = this.lancamentosFaturaRecebimento.get(0).getLancamentosContabeis().get(0).getMotivo();
-                this.categoriaRecebimento = this.motivoRecebimento.getCategoria();
-                this.tipoCategoriaRecebimento = this.motivoRecebimento.getCategoria().getTipoCategoria();
-                this.formaRecebimento = DominioSingleton.getInstance().getBo().
-                        findByObjetoAndTipoAndValor("pagamento", "forma", this.lancamentosFaturaRecebimento.get(0).getFormaPagamento());
-                this.dataRecebimento= this.lancamentosFaturaRecebimento.get(0).getDataPagamento();
-                this.tarifaRecebimento = this.lancamentosFaturaRecebimento.get(0).getTarifa();
-                this.valorReceber = LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura.getFatura(), false);
-            }
-            
-        } catch (Exception e) {
-            this.log.error("Erro no visualizarFatura", e);
-            this.addError("Erro ao carregar dados.", "Não é possível visualizar a fatura !", true);
-        }
-    }
-    
-    public void visualizarFatura(FaturaItem fatura){
-        
-        try {
-            
-            this.setEntity(fatura.getFatura());
-
-            if (fatura.getFatura().getFornecedor() != null) {
-
-                this.fornecedorSelecionado = fatura.getFatura().getFornecedor().getDadosBasico();
-
-            } else if (fatura.getFatura().getOrigem() != null) {
-                
-                this.fornecedorSelecionado = fatura.getFatura().getOrigem().getDadosBasico();
-                
-            } else if (fatura.getFatura().getProfissional() != null) {
-                
-                this.fornecedorSelecionado = fatura.getFatura().getProfissional().getDadosBasico(); 
-
-            }
-            
-            this.lancamentosFatura = new LinkedList<Lancamento>();
-
-            this.lancamentosFatura.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(this.getEntity(), true));
-            this.lancamentosFatura.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(this.getEntity(), false));
-
-            if (!this.lancamentosFatura.isEmpty()) {
-                this.motivo = this.lancamentosFatura.get(0).getLancamentosContabeis().get(0).getMotivo();
-                this.categoria = this.motivo.getCategoria();
-                this.tipoCategoria = this.motivo.getCategoria().getTipoCategoria();
-                this.formaPagamento = DominioSingleton.getInstance().getBo().
-                        findByObjetoAndTipoAndValor("pagamento", "forma", this.lancamentosFatura.get(0).getFormaPagamento());
-                this.dataPagamento = this.lancamentosFatura.get(0).getDataPagamento();
-                this.tarifa = this.lancamentosFatura.get(0).getTarifa();
-                this.valorPagar = LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(this.getEntity(), false);
-            }
-            
-        } catch (Exception e) {
-            this.log.error("Erro no visualizarFatura", e);
-            this.addError("Erro ao carregar dados.", "Não é possível visualizar a fatura !", true);
-        }
-        
-    }
-    
     public void carregarProfissionais(){
         try {
             
@@ -483,36 +381,6 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
         }
     }
     
-    public void carregarFormasPagamento() {
-        try {
-            this.formasPagamento = DominioSingleton.getInstance().getBo().listByObjetoAndTipo("pagamento", "forma");
-            this.formasRecebimento = this.formasPagamento;
-        } catch (Exception e) {
-            this.log.error("Erro no carregarFormasPagamento", e);
-            this.addError("Erro ao carregar registros", "Não foi carregar as formas de pagamento !", true);
-        }
-    }
-    
-    public void carregarTarifas() {
-        try {
-            if(this.formaPagamento != null)
-                this.setTarifas(TarifaSingleton.getInstance().getBo().listByForma(this.formaPagamento.getValor(), 
-                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            else
-                this.tarifas = TarifaSingleton.getInstance().getBo().listAll(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            
-            if(this.formaRecebimento != null)
-                this.setTarifas(TarifaSingleton.getInstance().getBo().listByForma(this.formaPagamento.getValor(), 
-                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            else
-                this.tarifasRecebimento = TarifaSingleton.getInstance().getBo().listAll(
-                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        }catch (Exception e) {
-            this.log.error("Erro no carregarTarifas", e);
-            this.addError("Erro ao carregar os registros", "Não foi carregar as tarifas !", true);
-        }
-    }
-    
     public void carregarTiposCategoria() {
         try {
             this.tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listAll();
@@ -520,36 +388,6 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
         } catch (Exception e) {
             this.log.error("Erro no carregarTiposCategoria",e);
             this.addError("Erro ao listar registros", "Não foi possível carregar os tipos", true);
-        }
-    }
-    
-    public void carregarLancamentosFatura() {
-        try {
-            
-            if(this.lancamentosFatura == null);
-                this.lancamentosFatura = new LinkedList<Lancamento>();
-            
-            this.lancamentosFatura.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), true));
-            this.lancamentosFatura.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), false));
-            
-        } catch (Exception e) {
-            this.log.error("Erro no carregarLancamentosFatura",e);
-            this.addError("Erro ao listar registros", "Não foi possível carregar os lançamentos", true);
-        }
-    }
-    
-    public void carregarLancamentosFaturaRecebimento(Fatura fatura) {
-        try {
-            
-            if(this.lancamentosFaturaRecebimento == null);
-                this.lancamentosFaturaRecebimento = new LinkedList<Lancamento>();
-            
-            this.lancamentosFaturaRecebimento.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(fatura, true));
-            this.lancamentosFaturaRecebimento.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(fatura, false));
-            
-        } catch (Exception e) {
-            this.log.error("Erro no carregarLancamentosFatura",e);
-            this.addError("Erro ao listar registros", "Não foi possível carregar os lançamentos", true);
         }
     }
     
@@ -899,14 +737,6 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
         this.motivos = motivos;
     }
 
-    public Date getDataPagamento() {
-        return dataPagamento;
-    }
-
-    public void setDataPagamento(Date dataPagamento) {
-        this.dataPagamento = dataPagamento;
-    }
-
     public BigDecimal getValorPagar() {
         return valorPagar;
     }
@@ -931,52 +761,12 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
         this.motivo = motivo;
     }
 
-    public List<Lancamento> getLancamentosFatura() {
-        return lancamentosFatura;
-    }
-
-    public void setLancamentosFatura(List<Lancamento> lancamentosFatura) {
-        this.lancamentosFatura = lancamentosFatura;
-    }
-
-    public List<Dominio> getFormasPagamento() {
-        return formasPagamento;
-    }
-
-    public void setFormasPagamento(List<Dominio> formasPagamento) {
-        this.formasPagamento = formasPagamento;
-    }
-
-    public Dominio getFormaPagamento() {
-        return formaPagamento;
-    }
-
-    public void setFormaPagamento(Dominio formaPagamento) {
-        this.formaPagamento = formaPagamento;
-    }
-
     public List<FaturaItem> getFaturas() {
         return faturas;
     }
 
     public void setFaturas(List<FaturaItem> faturas) {
         this.faturas = faturas;
-    }
-
-    public List<Tarifa> getTarifas() {
-        return tarifas;
-    }
-
-    public void setTarifas(List<Tarifa> tarifas) {
-        this.tarifas = tarifas;
-    }
-
-    public Tarifa getTarifa() {
-        return tarifa;
-    }
-
-    public void setTarifa(Tarifa tarifa) {
-        this.tarifa = tarifa;
     }
 
     public DadosBasico getFornecedorFiltroSelecionado() {
@@ -1035,14 +825,6 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
         this.pacientes = pacientes;
     }
 
-    public int getParcelas() {
-        return parcelas;
-    }
-
-    public void setParcelas(int parcelas) {
-        this.parcelas = parcelas;
-    }
-
     public Paciente getPacienteSelecionado() {
         return pacienteSelecionado;
     }
@@ -1067,14 +849,6 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
         this.categoriaRecebimento = categoriaRecebimento;
     }
 
-    public Date getDataRecebimento() {
-        return dataRecebimento;
-    }
-
-    public void setDataRecebimento(Date dataRecebimento) {
-        this.dataRecebimento = dataRecebimento;
-    }
-
     public BigDecimal getValorReceber() {
         return valorReceber;
     }
@@ -1089,30 +863,6 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
 
     public void setMotivoRecebimento(Motivo motivoRecebimento) {
         this.motivoRecebimento = motivoRecebimento;
-    }
-
-    public Dominio getFormaRecebimento() {
-        return formaRecebimento;
-    }
-
-    public void setFormaRecebimento(Dominio formaRecebimento) {
-        this.formaRecebimento = formaRecebimento;
-    }
-
-    public Tarifa getTarifaRecebimento() {
-        return tarifaRecebimento;
-    }
-
-    public void setTarifaRecebimento(Tarifa tarifaRecebimento) {
-        this.tarifaRecebimento = tarifaRecebimento;
-    }
-
-    public int getParcelasRecebimento() {
-        return parcelasRecebimento;
-    }
-
-    public void setParcelasRecebimento(int parcelasRecebimento) {
-        this.parcelasRecebimento = parcelasRecebimento;
     }
 
     public List<TipoCategoria> getTiposCategoriaRecebimento() {
@@ -1137,30 +887,6 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
 
     public void setMotivosRecebimento(List<Motivo> motivosRecebimento) {
         this.motivosRecebimento = motivosRecebimento;
-    }
-
-    public List<Dominio> getFormasRecebimento() {
-        return formasRecebimento;
-    }
-
-    public void setFormasRecebimento(List<Dominio> formasRecebimento) {
-        this.formasRecebimento = formasRecebimento;
-    }
-
-    public List<Tarifa> getTarifasRecebimento() {
-        return tarifasRecebimento;
-    }
-
-    public void setTarifasRecebimento(List<Tarifa> tarifasRecebimento) {
-        this.tarifasRecebimento = tarifasRecebimento;
-    }
-
-    public List<Lancamento> getLancamentosFaturaRecebimento() {
-        return lancamentosFaturaRecebimento;
-    }
-
-    public void setLancamentosFaturaRecebimento(List<Lancamento> lancamentosFaturaRecebimento) {
-        this.lancamentosFaturaRecebimento = lancamentosFaturaRecebimento;
     }
 
     public List<FaturaItem> getFaturasRecebimento() {
@@ -1193,6 +919,38 @@ public class PagamentoRecebimentoMB extends LumeManagedBean<Fatura> {
 
     public void setProfissionalCriacaoRecebimento(Profissional profissionalCriacaoRecebimento) {
         this.profissionalCriacaoRecebimento = profissionalCriacaoRecebimento;
+    }
+
+    public List<FaturaItem> getItensRecebimento() {
+        return itensRecebimento;
+    }
+
+    public void setItensRecebimento(List<FaturaItem> itensRecebimento) {
+        this.itensRecebimento = itensRecebimento;
+    }
+
+    public List<FaturaItem> getItensPagamento() {
+        return itensPagamento;
+    }
+
+    public void setItensPagamento(List<FaturaItem> itensPagamento) {
+        this.itensPagamento = itensPagamento;
+    }
+
+    public Fatura getFaturaPagamento() {
+        return faturaPagamento;
+    }
+
+    public void setFaturaPagamento(Fatura faturaPagamento) {
+        this.faturaPagamento = faturaPagamento;
+    }
+
+    public Fatura getFaturaRecebimento() {
+        return faturaRecebimento;
+    }
+
+    public void setFaturaRecebimento(Fatura faturaRecebimento) {
+        this.faturaRecebimento = faturaRecebimento;
     }
 
 }   
