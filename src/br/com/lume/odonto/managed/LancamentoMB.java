@@ -316,7 +316,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
 
     private void geraLancamentoContabil(Lancamento l) throws Exception {
         LancamentoContabil lc = new LancamentoContabil();
-        Motivo motivo = MotivoSingleton.getInstance().getBo().findBySigla(Motivo.RECEBIMENTO_PACIENTE);
+        Motivo motivo = MotivoSingleton.getInstance().getBo().findBySigla(Motivo.RECEBIMENTO_PACIENTE );
         lc.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         lc.setTipo(motivo.getTipo());
         lc.setDadosBasico(paciente.getDadosBasico());
