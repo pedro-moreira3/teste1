@@ -325,6 +325,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             }
 
             Calendar now = Calendar.getInstance();
+            now.setTime(getDataPagamento());
             Calendar data = Calendar.getInstance();
             data.setTime(getDataCredito());
             if ("CC".equals(getFormaPagamento())) {
