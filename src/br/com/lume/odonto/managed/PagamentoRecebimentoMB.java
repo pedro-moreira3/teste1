@@ -15,14 +15,12 @@ import javax.faces.model.SelectItemGroup;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.event.SelectEvent;
 
 import br.com.lume.categoriaMotivo.CategoriaMotivoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
-import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.faturamento.FaturaItemSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
@@ -30,9 +28,7 @@ import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.motivo.MotivoSingleton;
 import br.com.lume.odonto.entity.CategoriaMotivo;
-import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.DadosBasico;
-import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.FaturaItem.SALDO;
@@ -42,12 +38,10 @@ import br.com.lume.odonto.entity.Motivo;
 import br.com.lume.odonto.entity.Origem;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.odonto.entity.TipoCategoria;
 import br.com.lume.origem.OrigemSingleton;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
-import br.com.lume.tarifa.TarifaSingleton;
 import br.com.lume.tipoCategoria.TipoCategoriaSingleton;
 
 @ManagedBean

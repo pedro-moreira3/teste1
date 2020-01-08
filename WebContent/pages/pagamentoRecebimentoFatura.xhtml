@@ -78,7 +78,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								value="#{pagamentoRecebimentoMB.fornecedorSelecionado}"
 								style="min-width:0px;margin-top:10px;margin-bottom:10px;"
 								filter="true" filterMatchMode="contains"
-								disabled="#{pagamentoRecebimentoMB.fornecedorSelecionado}">
+								disabled="#{pagamentoRecebimentoMB.fornecedorSelecionado != null}">
 
 								<p:ajax event="itemSelect" process="@this" immediate="true"/>
 
