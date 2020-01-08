@@ -9,7 +9,7 @@
 						rendered="#{guestPreferences.profileMode == 'inline' and guestPreferences.menuLayout != 'menu-layout-static menu-layout-horizontal' and sessionManaged.caminhoImagemProfile != null}">
 						<div class="profile"></div>
 					</ui:fragment>
-					<p:remoteCommand name="rc" update=":menuform:menu" />
+					<p:remoteCommand name="rc" update=":menuform:menu" process="@this"/>
 					<po:menu widgetVar="me" id="menu" model="#{menuMB.menuModel}" />
 				</div>
 			</div>

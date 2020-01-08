@@ -288,16 +288,18 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
             this.addError(OdontoMensagens.getMensagem("erro.local.material.inalterado"), "",true);
         } else {
             try {                  
-                 //atualizando somente o estoque, caso tenha sido alterada por outro usuário por exempl
-                setEntity(EstoqueSingleton.getInstance().getBo().find(getEntity().getId()));                                  
-             
-                this.getEntity().getMaterial().setDataMovimentacao(new Date());
-                               
-                EstoqueSingleton.getInstance().transferencia(this.getEntity().getMaterial(),  this.getEntity().getLocal(), this.getLocal(), quantidadeMovimentada, EstoqueSingleton.MOVIMENTACAO_MATERIAL_MOVIMENTAR, UtilsFrontEnd.getProfissionalLogado()); 
+                if(this.getLocal().equals(this.getEntity().getLocal())) {
+                    this.addError("Local de origem nao pode ser o mesmo do local de destino", "",true);  
+                }else {
+                    //atualizando somente o estoque, caso tenha sido alterada por outro usuário por exempl
+                    setEntity(EstoqueSingleton.getInstance().getBo().find(getEntity().getId())); 
+                    this.getEntity().getMaterial().setDataMovimentacao(new Date());
+                    EstoqueSingleton.getInstance().transferencia(this.getEntity().getMaterial(),  this.getEntity().getLocal(), this.getLocal(), quantidadeMovimentada, EstoqueSingleton.MOVIMENTACAO_MATERIAL_MOVIMENTAR, UtilsFrontEnd.getProfissionalLogado()); 
+                    this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "",true);
+                    this.actionNew(event);
+                    this.geraLista();
+                }
                
-                this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "",true);
-                this.actionNew(event);
-                this.geraLista();
             } catch (Exception e) {
                 log.error("Erro no actionPersist", e);
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
