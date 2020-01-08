@@ -133,9 +133,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 					<p:commandButton id="new" icon="ui-icon-add"
 						actionListener="#{planoTratamentoMB.actionNew}"
-						update=":lume:tabView:mainViewPT, :lume:tabView:pgPt"
+						update=":lume:tabView:mainViewPT, :lume:tabView:pgPt, :lume:tabView:pnCriarPT"
 						onclick="PF('dlgPt').show();" value="Novo Plano de Tratamento"
-						process="@this" styleClass="NavyButton" />
+						process="@this,:lume:tabView:pnCriarPT" styleClass="NavyButton" />
 					<h:panelGroup rendered="#{planoTratamentoMB.admin}">
 						<p:commandButton id="ptinicial" icon="White fa fa-file-o"
 							value="Criar P.T. Inicial"

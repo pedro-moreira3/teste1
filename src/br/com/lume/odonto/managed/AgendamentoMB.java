@@ -190,7 +190,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
             tempoConsulta = UtilsFrontEnd.getProfissionalLogado().getTempoConsulta();
             carregarCadeiras();
-            filtroAgendamento.addAll(Arrays.asList("F", "A", "I", "S", "O", "E", "B", "N", "P", "G", "H"));
+            filtroAgendamento.addAll(Arrays.asList("A", "I", "S", "O", "E", "B", "N", "P", "G", "H"));
             initialDate = Calendar.getInstance().getTime();
             convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
@@ -213,6 +213,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public void carregarAgenda() {
         limpaPacienteSelecionado();
         carregarScheduleTarefas();
+        this.horasUteisProfissional = getHorasUteisProfissional();
+        PrimeFaces.current().ajax().update(":lume:dadosFiltroAg");
         PrimeFaces.current().ajax().update(":lume:schedule");
     }
 

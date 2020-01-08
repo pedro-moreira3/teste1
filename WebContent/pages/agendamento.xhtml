@@ -547,12 +547,10 @@ div.ui-selectoneradio label {
 													<p:column headerText="Nome da Mãe">
 														<h:outputText value="#{p.nomeMae}" />
 													</p:column>
-
-													<p:ajax listener="#{agendamentoMB.carregarAgenda}"
-														process="@this" />
+													
 												</p:autoComplete>
+												
 												<p:outputLabel for="pacienteSelecionado" value="Paciente" />
-
 
 											</h:panelGroup>
 
@@ -607,8 +605,7 @@ div.ui-selectoneradio label {
 														itemLabel="#{profissional.dadosBasico.prefixoNome}"
 														itemValue="#{profissional}" />
 
-													<p:ajax listener="#{agendamentoMB.carregarAgenda}"
-														process="@this" update="btBloqueioAgenda" />
+													<p:ajax process="@this" update="btBloqueioAgenda" />
 
 												</p:selectOneMenu>
 
@@ -617,27 +614,29 @@ div.ui-selectoneradio label {
 
 										</p:panelGrid>
 
-										<p:outputLabel value="Disponibilidade:"
-											rendered="#{agendamentoMB.horasUteisProfissional != null}" />
+										<h:panelGroup id="horasUteisPrincipal" 
+											rendered="#{agendamentoMB.horasUteisProfissional != null and agendamentoMB.profissional != null}">
+											
+											<p:outputLabel value="Disponibilidade:"/>
 
-										<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-											id="dtHorasUteisPrincipal"
-											value="#{agendamentoMB.horasUteisProfissional}" var="hup"
-											rowKey="#{hup}"
-											rendered="#{agendamentoMB.horasUteisProfissional != null}"
-											style="margin-top:10px;margin-bottom:10px">
+											<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+												id="dtHorasUteisPrincipal"
+												value="#{agendamentoMB.horasUteisProfissional}" var="hup"
+												rowKey="#{hup}"
+												style="margin-top:10px;margin-bottom:10px">
 
-											<p:column headerText="Dia">
-												<h:outputText value="#{hup.diaDaSemana}" />
-											</p:column>
-											<p:column headerText="Hora Inicial">
-												<h:outputText value="#{hup.horaIniStr}" />
-											</p:column>
-											<p:column headerText="Hora Final">
-												<h:outputText value="#{hup.horaFimStr}" />
-											</p:column>
-										</p:dataTable>
-
+												<p:column headerText="Dia">
+													<h:outputText value="#{hup.diaDaSemana}" />
+												</p:column>
+												<p:column headerText="Hora Inicial">
+													<h:outputText value="#{hup.horaIniStr}" />
+												</p:column>
+												<p:column headerText="Hora Final">
+													<h:outputText value="#{hup.horaFimStr}" />
+												</p:column>
+											</p:dataTable>
+											
+										</h:panelGroup>
 									</p:outputPanel>
 
 									<p:outputPanel rendered="#{agendamentoMB.visualizacao != 'S'}">
@@ -657,16 +656,16 @@ div.ui-selectoneradio label {
 										</h:panelGroup>
 									</p:outputPanel>
 
-									<p:outputPanel>
+									<p:outputPanel id="pnSecundario">
 
-										<h:outputLabel value="Mostrar os agendamentos : " />
+										<h:outputLabel value="Mostrar os agendamentos: " />
 
 										<br />
 
 										<h:panelGroup style="display:block;margin-left:3px;">
 											<p:selectBooleanCheckbox id="checkFiltro"
 												value="#{agendamentoMB.checkFiltro}">
-												<p:ajax update=":lume:dadosFiltroAg" process="@this"
+												<p:ajax update=":lume:pnSecundario" process="@this"
 													listener="#{agendamentoMB.marcarFiltros}" />
 											</p:selectBooleanCheckbox>
 											<p:outputLabel for="checkFiltro" value="Marcar todos" />
@@ -678,7 +677,7 @@ div.ui-selectoneradio label {
 											value="#{agendamentoMB.filtroAgendamento}" layout="grid"
 											columns="4">
 
-											<p:ajax process="@this" update=":lume:dadosFiltroAg" />
+											<p:ajax process="@this" />
 
 											<f:selectItem
 												itemLabel="&lt;div&gt;&lt;div class='agendamentoAfastamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Bloqueio&lt;/div&gt;"
@@ -732,8 +731,10 @@ div.ui-selectoneradio label {
 										styleClass="ui-panelgrid-blank form-group ui-fluid">
 
 										<p:commandButton value="Pesquisar" type="button">
-											<p:ajax process="@this" event="click"
-												listener="#{agendamentoMB.carregarAgenda()}" />
+										
+											<p:ajax process="@this,:lume:pacienteSelecionado" event="click"
+												listener="#{agendamentoMB.carregarAgenda()}"/>
+												
 										</p:commandButton>
 
 										<p:commandButton value="Imprimir" type="button"
