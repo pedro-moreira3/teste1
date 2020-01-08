@@ -547,8 +547,6 @@ div.ui-selectoneradio label {
 													<p:column headerText="Nome da Mãe">
 														<h:outputText value="#{p.nomeMae}" />
 													</p:column>
-
-													<p:ajax	process="@this" />
 													
 												</p:autoComplete>
 												
@@ -734,7 +732,7 @@ div.ui-selectoneradio label {
 
 										<p:commandButton value="Pesquisar" type="button">
 										
-											<p:ajax process="@this" event="click"
+											<p:ajax process="@this,:lume:pacienteSelecionado" event="click"
 												listener="#{agendamentoMB.carregarAgenda()}"/>
 												
 										</p:commandButton>
