@@ -196,8 +196,8 @@
 					<p:selectOneMenu id="profissionalAgend" styleClass="tallerCombo"
 						value="#{agendamentoMB.profissionalDentroAgenda}"
 						converter="profissional" filter="true" filterMatchMode="contains">
-						<p:ajax listener="#{agendamentoMB.listenerAlterouProfissional}" process="@this"
-							update="fim" />		
+						<p:ajax listener="#{agendamentoMB.listenerAlterouProfissional}"
+							process="@this" update="fim" />
 						<f:selectItem itemValue="#{null}"
 							itemLabel="Selecione um profissional" />
 						<f:selectItems value="#{agendamentoMB.profissionais}"
@@ -406,8 +406,7 @@
 					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.chegouAs)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.chegouAs)}">
-					<p:ajax event="dateSelect" process="@this" update="@this" />
-					<f:ajax event="change" execute="@this" render="lastDate" />
+					<p:ajax event="close" process="@this" update="@this" />
 				</p:calendar>
 				<p:outputLabel for="chegouAs" value="Chegou às" />
 				<p:message styleClass="msg" for="chegouAs" />
@@ -417,8 +416,7 @@
 					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.iniciouAs)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.iniciouAs)}">
-					<p:ajax event="dateSelect" process="@this" update="@this" />
-					<f:ajax event="change" execute="@this" render="lastDate" />
+					<p:ajax event="close" process="@this" update="@this" />
 				</p:calendar>
 				<p:outputLabel for="iniciouAs" value="Iniciou atend. às" />
 				<p:message styleClass="msg" for="iniciouAs" />
@@ -429,8 +427,7 @@
 					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.finalizouAs)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.finalizouAs)}">
-					<p:ajax event="dateSelect" process="@this" update="@this" />
-					<f:ajax event="change" execute="@this" render="lastDate" />
+					<p:ajax event="close" process="@this" update="@this" />
 				</p:calendar>
 				<p:outputLabel for="finalizouAs" value="Finalizou atend. às" />
 				<p:message styleClass="msg" for="finalizouAs" />
@@ -594,7 +591,8 @@
 					responsive="true" required="false" converter="agendamentoPlanoDash">
 					<f:facet name="sourceCaption">Disponíveis</f:facet>
 					<f:facet name="targetCaption">Selecionados</f:facet>
-					<p:ajax event="transfer" process="@this" listener="#{agendamentoMB.verificaProcedimentos()}"/>					
+					<p:ajax event="transfer" process="@this"
+						listener="#{agendamentoMB.verificaProcedimentos()}" />
 				</p:pickList>
 			</h:panelGroup>
 
