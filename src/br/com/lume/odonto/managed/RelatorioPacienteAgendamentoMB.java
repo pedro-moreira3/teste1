@@ -21,8 +21,10 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
+import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
+import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
@@ -61,7 +63,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
     
-    private List<String> filtroAtendimento;
+    private List<String> filtroAtendimento = new ArrayList<String>();
  
     private List<String> status; 
     
@@ -71,7 +73,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         
     public static final String SEM_RETORNO_FUTURO = "SRR";
     
-    private boolean checkFiltro = false;
+    private boolean checkFiltro = true;
     
    
     
@@ -82,6 +84,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         if(this.listaConvenios == null)
             this.listaConvenios = new ArrayList<>();        
         this.sugestoesConvenios("todos");
+        marcarFiltros();
     }
     
     public List<Paciente> sugestoesPacientes(String query) {
@@ -96,6 +99,15 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         }
     }
 
+    public String getStatusDescricao(Agendamento agendamento) {
+        try {
+            return StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getDescricao();
+        } catch (Exception e) {
+
+        }
+        return "";
+    }
+    
     public void actionFiltrar(ActionEvent event){
       
             
@@ -219,6 +231,13 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     public String formatarData(Date data) {
         if (data != null) {
             return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", new Locale("PT BR")).format(data);
+        }
+        return "";
+    }
+    
+    public String formatarDataSemHora(Date data) {
+        if (data != null) {
+            return new SimpleDateFormat("dd/MM/yyyy", new Locale("PT BR")).format(data);
         }
         return "";
     }

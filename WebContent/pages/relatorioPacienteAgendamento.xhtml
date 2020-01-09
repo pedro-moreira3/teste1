@@ -266,7 +266,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 						</p:panelGrid>
 							<p:outputPanel id="pnFiltroStatus" style="margin:20px;">
 
-									<p:outputLabel value="Status do agendamento atual: " />
+									<p:outputLabel value="Status do último agendamento " />
 
 									<br /><br />
 
@@ -394,7 +394,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 							</h:panelGroup>
 						</p:panelGrid>
 						</p:fieldset>
-
 					<p:outputPanel>
 						<p:dataTable id="dtPrincipal" widgetVar="dtPrincipal"
 							value="#{relatorioPacienteAgendamentoMB.pacientes}"
@@ -438,12 +437,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 									value="#{relatorioPacienteAgendamentoMB.formatarData(p.ultimoAgendamento.inicio)}" />
 							</p:column>
 							<p:column
-								filterBy="#{p.ultimoAgendamento.statusDescricao}"
-								sortBy="#{p.ultimoAgendamento.statusDescricao}"
+								filterBy="#{relatorioAtendimentoMB.getStatusDescricao(p.ultimoAgendamento)}"
+								sortBy="#{relatorioAtendimentoMB.getStatusDescricao(p.ultimoAgendamento)}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Status Último Agendamento">
 								<h:outputText
-									value="#{p.ultimoAgendamento.statusDescricao}" />
+									value="#{relatorioAtendimentoMB.getStatusDescricao(p.ultimoAgendamento)}" />
 							</p:column>
 							<p:column filterBy="#{p.proximoAgendamento.inicio}"
 								sortBy="#{p.proximoAgendamento.inicio}"
@@ -452,18 +451,18 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 									value="#{relatorioPacienteAgendamentoMB.formatarData(p.proximoAgendamento.inicio)}" />
 							</p:column>		
 							<p:column
-								filterBy="#{p.proximoAgendamento.statusDescricao}"
-								sortBy="#{p.proximoAgendamento.statusDescricao}"
+								filterBy="#{relatorioAtendimentoMB.getStatusDescricao(p.proximoAgendamento)}"
+								sortBy="#{relatorioAtendimentoMB.getStatusDescricao(p.proximoAgendamento)}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Status Próximo Agendamento">
 								<h:outputText
-									value="#{p.proximoAgendamento.statusDescricao}" />
+									value="#{relatorioAtendimentoMB.getStatusDescricao(p.proximoAgendamento)}" />
 							</p:column>		
 							<p:column filterBy="#{p.proximoRetorno.dataRetorno}"
 								sortBy="#{p.proximoRetorno.dataRetorno}"
 								filterMatchMode="contains" headerText="Data Próximo Retorno">
 								<h:outputText
-									value="#{relatorioPacienteAgendamentoMB.formatarData(p.proximoRetorno.dataRetorno)}" />
+									value="#{relatorioPacienteAgendamentoMB.formatarDataSemHora(p.proximoRetorno.dataRetorno)}" />
 							</p:column>																								
 						</p:dataTable>
 					</p:outputPanel>
