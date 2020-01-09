@@ -146,8 +146,7 @@
 							</p:inputMask>
 							<p:commandButton id="cepsearch" icon="White fa fa-search White"
 								actionListener="#{pacienteMB.actionBuscaCep}"
-								update=":lume:endereco,:lume:bairro,:lume:cidade,:lume:estado"
-								process="@this,:lume:cep" />
+								update="@parent:@parent" process="@this, @parent" />
 						</h:panelGroup>
 
 						<p:outputLabel for="endereco" value="Endereço : "
