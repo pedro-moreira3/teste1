@@ -28,24 +28,24 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
 
     private Logger log = Logger.getLogger(RelatorioRecebimentoMB.class);
 
-   // private List<Lancamento> Lancamentos = new ArrayList<>();
-    
+    // private List<Lancamento> Lancamentos = new ArrayList<>();
+
     private List<Lancamento> lancamentos = new ArrayList<>();
 
     private Date inicio, fim;
 
     private String status;
 
-    private BigDecimal somaValor = new BigDecimal(0);   
+    private BigDecimal somaValor = new BigDecimal(0);
 
     public final List<String> statuss;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
-    
+
     public RelatorioRecebimentoMB() {
         super(RelatorioRecebimentoSingleton.getInstance().getBo());
-      
+
         this.setClazz(RelatorioRecebimento.class);
         this.statuss = new ArrayList<>();
         this.statuss.add(Lancamento.AGENDADO);
@@ -54,28 +54,27 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         this.statuss.add(Lancamento.CANCELADO);
         this.statuss.add(Lancamento.PAGO);
         this.statuss.add(Lancamento.PENDENTE);
-        this.filtra();
+        //this.filtra();
     }
 
     public void filtra() {
         try {
-            if (this.status != null) {
-                if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
-                    this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
-                } else {
-                    this.somaValor = new BigDecimal(0);
-                    List<Lancamento> lancamentosFiltrados = LancamentoSingleton.getInstance().getBo().filterRelatorioRecebimentos(UtilsFrontEnd.getEmpresaLogada(),inicio, fim);
-                    for (Lancamento l : lancamentosFiltrados) {                      
-                        this.somaValor = this.somaValor.add(l.getValor()).setScale(2, BigDecimal.ROUND_HALF_UP);
-                        if(l.getStatus().equals(this.status) && l.getTipo().equals("RP")) {
-                            this.lancamentos.add(l);
-                        }
+            if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
+                this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
+            } else {
+                this.lancamentos = new ArrayList<>();
+                this.somaValor = new BigDecimal(0);
+                List<Lancamento> lancamentosFiltrados = LancamentoSingleton.getInstance().getBo().filterRelatorioRecebimentos(UtilsFrontEnd.getEmpresaLogada(), inicio, fim);
+                for (Lancamento l : lancamentosFiltrados) {
+                    this.somaValor = this.somaValor.add(l.getValor()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    if ((this.status == null || this.status.isEmpty() || l.getStatus().equals(this.status)) && "RP".equals(l.getFatura().getTipoFatura().getRotulo())) {
+                        this.lancamentos.add(l);
                     }
-                    
-                    if (this.lancamentos == null || this.lancamentos.isEmpty()) {
-                        this.addError(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"), "");
-                        this.log.error(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"));
-                    }
+                }
+
+                if (this.lancamentos == null || this.lancamentos.isEmpty()) {
+                    this.addError(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"), "");
+                    this.log.error(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"));
                 }
             }
         } catch (Exception e) {
@@ -90,7 +89,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         this.status = null;
         super.actionNew(arg0);
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Relatório de recebimentos", tabelaRelatorio, type);
     }
@@ -135,7 +134,6 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         this.status = status;
     }
 
-    
     public List<String> getStatuss() {
         return statuss;
     }

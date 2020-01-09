@@ -1,5 +1,8 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
 		<div class="ui-g ui-fluid">
@@ -10,36 +13,53 @@
 						<h1>Relatório de Recebimentos</h1>
 						<div class="SeparatorFull"></div>
 
-						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+						<p:panelGrid columns="4"
+							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+							layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
 
 							<p:outputLabel for="inicio" value="Data de crédito Inicio : " />
-							<p:calendar id="inicio" value="#{relatorioRecebimentoMB.inicio}" autocomplete="off" pattern="dd/MM/yyyy" mask="true" required="true" />
+							<p:calendar id="inicio" value="#{relatorioRecebimentoMB.inicio}"
+								autocomplete="off" pattern="dd/MM/yyyy" mask="true"
+								required="true" />
 
 							<p:outputLabel for="fim" value="Data de crédito Fim : " />
-							<p:calendar id="fim" value="#{relatorioRecebimentoMB.fim}" autocomplete="off" pattern="dd/MM/yyyy" mask="true" required="true" />
+							<p:calendar id="fim" value="#{relatorioRecebimentoMB.fim}"
+								autocomplete="off" pattern="dd/MM/yyyy" mask="true"
+								required="true" />
 
 							<p:outputLabel for="status" value="Status: " />
-							<p:selectOneMenu id="status" value="#{relatorioRecebimentoMB.status}">							
-								<f:selectItems value="#{relatorioRecebimentoMB.statuss}" var="status" itemLabel="#{status}" itemValue="#{status}" />
+							<p:selectOneMenu id="status"
+								value="#{relatorioRecebimentoMB.status}">
+								<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+								<f:selectItems value="#{relatorioRecebimentoMB.statuss}"
+									var="status" itemLabel="#{status}" itemValue="#{status}" />
 							</p:selectOneMenu>
 
 						</p:panelGrid>
 
 						<div class="SeparatorFull"></div>
-						
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="pesquisar" icon="fa fa-search White" value="Pesquisar" actionListener="#{relatorioRecebimentoMB.filtra}"
-								update="dtPrincipal,pnPrincipal" process="@this,pnPrincipal,inicio,fim" styleClass="OrangeButton" />
-							
+
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="pesquisar" icon="fa fa-search White"
+								value="Pesquisar"
+								actionListener="#{relatorioRecebimentoMB.filtra}"
+								update="dtPrincipal,pnPrincipal"
+								process="@this,pnPrincipal,inicio,fim" styleClass="OrangeButton" />
+
 							<ui:remove>
-							<p:commandButton value="Excel" ajax="false" icon="White fa fa-file-excel-o" styleClass="GreenButton">
-								<p:dataExporter encoding="iso-8859-1" type="xls" target="dtPrincipal" fileName="RelatorioLancamento" />
-							</p:commandButton>
+								<p:commandButton value="Excel" ajax="false"
+									icon="White fa fa-file-excel-o" styleClass="GreenButton">
+									<p:dataExporter encoding="iso-8859-1" type="xls"
+										target="dtPrincipal" fileName="RelatorioLancamento" />
+								</p:commandButton>
 							</ui:remove>
-														
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Limpar" actionListener="#{relatorioRecebimentoMB.actionNew}"
-								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1"/>
+
+							<p:commandButton id="new" icon="White fa fa-file-o"
+								value="Limpar"
+								actionListener="#{relatorioRecebimentoMB.actionNew}"
+								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1" />
 
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
@@ -77,64 +97,83 @@
 
 						<div class="EmptyBox20"></div>
 
-						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{relatorioRecebimentoMB.lancamentos}" var="lancamento" rows="10"
-							paginator="true" rowKey="#{lancamento}" paginatorPosition="bottom" binding="#{relatorioRecebimentoMB.tabelaRelatorio}">
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							id="dtPrincipal" value="#{relatorioRecebimentoMB.lancamentos}"
+							var="lancamento" rows="10" paginator="true"
+							rowKey="#{lancamento}" paginatorPosition="bottom"
+							binding="#{relatorioRecebimentoMB.tabelaRelatorio}">
 							<f:facet name="header">Lançamentos</f:facet>
-							<p:column filterBy="#{lancamento.dataPagamentoStr}" sortBy="#{lancamento.dataPagamentoStrOrd}" filterMatchMode="contains">
+							<p:column filterBy="#{lancamento.dataPagamentoStr}"
+								sortBy="#{lancamento.dataPagamentoStrOrd}"
+								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Data Pagamento" />
 								</f:facet>
 								<h:outputText value="#{lancamento.dataPagamentoStr}" />
 							</p:column>
-							<p:column filterBy="#{lancamento.dataCreditoStr}" sortBy="#{lancamento.dataCreditoStr}" filterMatchMode="contains">
+							<p:column filterBy="#{lancamento.dataCreditoStr}"
+								sortBy="#{lancamento.dataCreditoStr}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Data Crédito" />
 								</f:facet>
-								<h:outputText value="#{lancamento.dataCreditoStr}" title="#{lancamento.id}"/>
+								<h:outputText value="#{lancamento.dataCreditoStr}"
+									title="#{lancamento.id}" />
 							</p:column>
-							<p:column filterBy="#{lancamento.status}" sortBy="#{lancamento.status}" filterMatchMode="contains">
+							<p:column filterBy="#{lancamento.status}"
+								sortBy="#{lancamento.status}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Status" />
 								</f:facet>
 								<h:outputText value="#{lancamento.status}" />
 							</p:column>
-							<p:column filterBy="#{lancamento.formaPagamento}" filterMatchMode="contains">
+							<p:column filterBy="#{lancamento.formaPagamento}"
+								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Forma" />
 								</f:facet>
 								<h:outputText value="#{lancamento.formaPagamento}" />
 							</p:column>
-							<p:column filterBy="#{lancamento.numeroParcela}" sortBy="#{lancamento.numeroParcela}" filterMatchMode="contains">
+							<p:column filterBy="#{lancamento.numeroParcela}"
+								sortBy="#{lancamento.numeroParcela}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Parcela" />
 								</f:facet>
 								<h:outputText value="#{lancamento.numeroParcela}" />
-							</p:column>														
-							<p:column filterBy="#{lancamento.fatura.paciente.dadosBasico.nome}"
-								sortBy="#{lancamento.fatura.paciente.dadosBasico.nome}" filterMatchMode="contains">
+							</p:column>
+							<p:column
+								filterBy="#{lancamento.fatura.paciente.dadosBasico.nome}"
+								sortBy="#{lancamento.fatura.paciente.dadosBasico.nome}"
+								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Paciente" />
 								</f:facet>
-								<h:outputText value="#{lancamento.fatura.paciente.dadosBasico.nome}" />
+								<h:outputText
+									value="#{lancamento.fatura.paciente.dadosBasico.nome}" />
 							</p:column>
-							<p:column filterBy="#{lancamento.planoTratamentoProcedimento.planoTratamento.descricao}" sortBy="#{lancamento.planoTratamentoProcedimento.planoTratamento.descricao}"
+							<p:column
+								filterBy="#{lancamento.planoTratamentoProcedimento.planoTratamento.descricao}"
+								sortBy="#{lancamento.planoTratamentoProcedimento.planoTratamento.descricao}"
 								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Plano de Tratamento" />
 								</f:facet>
-								<h:outputText value="#{lancamento.planoTratamentoProcedimento.planoTratamento.descricao}" />
+								<h:outputText
+									value="#{lancamento.planoTratamentoProcedimento.planoTratamento.descricao}" />
 							</p:column>
-							<p:column filterBy="#{lancamento.valor}" sortBy="#{lancamento.valor}" filterMatchMode="contains">
+							<p:column filterBy="#{lancamento.valor}"
+								sortBy="#{lancamento.valor}" filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Valor (R$) " />
 								</f:facet>
 								<h:outputText value="#{lancamento.valor}">
-									<f:convertNumber currencySymbol="R$" type="currency" locale="#{lumeSecurity.locale}" />
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 								<f:facet name="footer">
 									<h:outputText value="Total " />
 									<h:outputText value="#{relatorioRecebimentoMB.somaValor}">
-										<f:convertNumber currencySymbol="R$" type="currency" minFractionDigits="2"/>
+										<f:convertNumber currencySymbol="R$" type="currency"
+											minFractionDigits="2" />
 									</h:outputText>
 								</f:facet>
 							</p:column>
