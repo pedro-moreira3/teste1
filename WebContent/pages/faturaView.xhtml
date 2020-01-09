@@ -215,14 +215,14 @@ body .sideChkBox .ui-chkbox-label {
 								<p:inputText
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}"
 									id="planoTratamentoFatura" readonly="true"
-									value="#{faturaPagtoMB.getPTFromFaturaRepasse(faturaPagtoMB.entity).descricao}" />
+									value="#{faturaPagtoMB.entity.dadosTabelaRepassePlanoTratamento.descricao}" />
 								<h:outputText
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}"
 									for="planoTratamentoDestaFatura" value="Plano de Tratamento:" />
 								<p:inputText
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}"
 									id="planoTratamentoDestaFatura"
-									value="#{faturaPagtoMB.getPTFromFaturaOrigem(faturaPagtoMB.entity).descricao}"
+									value="#{faturaPagtoMB.entity.dadosTabelaPT.descricao}"
 									readonly="true" />
 
 								<h:outputText for="dataCriacao" value="Data Criação:" />
@@ -236,7 +236,7 @@ body .sideChkBox .ui-chkbox-label {
 								<p:inputText
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}"
 									id="pacienteFaturaOrigem" readonly="true"
-									value="#{faturaPagtoMB.getPTFromFaturaRepasse(faturaPagtoMB.entity).paciente.dadosBasico.nome}" />
+									value="#{faturaPagtoMB.entity.dadosTabelaRepassePlanoTratamento.paciente.dadosBasico.nome}" />
 								<p:column
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}" />
 								<p:column
@@ -247,25 +247,25 @@ body .sideChkBox .ui-chkbox-label {
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
 								<p:panel id="valorTotal" header="Valor Total">
 									<h:outputText
-										value="#{faturaPagtoMB.getTotal(faturaPagtoMB.entity)}">
+										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalFatura}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
 								<p:panel id="valorPago" header="Valor Pago">
 									<h:outputText
-										value="#{faturaPagtoMB.getTotalPago(faturaPagtoMB.entity)}">
+										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalPago}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
 								<p:panel id="valorNaoPago" header="Valor Não Pago">
 									<h:outputText
-										value="#{faturaPagtoMB.getTotalNaoPago(faturaPagtoMB.entity)}">
+										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPago}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
 								<p:panel id="valorNaoPlanejado" header="Valor Não Planejado">
 									<h:outputText
-										value="#{faturaPagtoMB.getTotalNaoPlanejado(faturaPagtoMB.entity)}">
+										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
@@ -496,7 +496,7 @@ body .sideChkBox .ui-chkbox-label {
 			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
 				process="@this" update="pnlNewLancamento" styleClass="OrangeButton"
 				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
-				disabled="#{faturaPagtoMB.getTotalNaoPlanejado(faturaPagtoMB.entity) le 0}"
+				disabled="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0}"
 				actionListener="#{faturaPagtoMB.actionNewLancamento}"
 				oncomplete="PF('dlgNewLancamento').show()" />
 			<p:commandButton value="Visualizar Impressão" icon="fa fa-print"

@@ -3,7 +3,6 @@ package br.com.lume.odonto.managed;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -209,10 +208,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         return PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaRepasse(fatura);
     }
 
-    public PlanoTratamento getPTFromFaturaOrigem(Fatura origem) {
-        return PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(origem);
-    }
-
     public boolean isPermiteExcluirLancamento() {
         return isAdmin() || isAdministrador();
     }
@@ -258,12 +253,28 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 fim.set(Calendar.MILLISECOND, 999);
             }
 
-            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), Arrays.asList(getPtSelecionados()),
-                    (inicio == null ? null : inicio.getTime()), (fim == null ? null : fim.getTime()), Fatura.StatusFatura.getTipoFromRotulo(getStatus())));
+            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), (inicio == null ? null : inicio.getTime()),
+                    (fim == null ? null : fim.getTime()), Fatura.StatusFatura.getTipoFromRotulo(getStatus())));
+            getEntityList().forEach(fatura -> {
+                updateValues(fatura);
+            });
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
+    }
+
+    private void updateValues(Fatura fatura) {
+        fatura.setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
+        fatura.setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(fatura));
+        fatura.setDadosTabelaRepasseTotalNaoPago(FaturaSingleton.getInstance().getTotalNaoPago(fatura));
+        fatura.setDadosTabelaRepasseTotalNaoPlanejado(FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura));
+        fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura));
+        fatura.setDadosTabelaPT(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(fatura));
+
+        fatura.setDadosTabelaStatusFatura("A Receber");
+        if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
+            fatura.setDadosTabelaStatusFatura("Recebido");
     }
 
     public void changePaciente() {
@@ -312,14 +323,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         setParcela(1);
         setShowProduto(false);
         setFormaPagamento("DI");
-        setValor(getTotalNaoPlanejado(getEntity()));
+        setValor(getEntity().getDadosTabelaRepasseTotalNaoPlanejado());
         setDataPagamento(new Date());
         setDataCredito(null);
     }
 
     public void actionPersistLancamento() {
         try {
-            if (getValor().compareTo(getTotalNaoPlanejado(getEntity())) > 0) {
+            if (getValor().compareTo(getEntity().getDadosTabelaRepasseTotalNaoPlanejado()) > 0) {
                 this.addError("Informe um valor menor que o total restante de planejamento!", "");
                 return;
             }
@@ -347,15 +358,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             }
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             PrimeFaces.current().executeScript("PF('dlgNewLancamento').hide()");
+            updateValues(getEntity());
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
-    
+
     public void actionPersistLancamentoGenerico() {
         try {
-            if (getValor().compareTo(getTotalNaoPlanejado(getEntity())) > 0) {
+            if (getValor().compareTo(getEntity().getDadosTabelaRepasseTotalNaoPlanejado()) > 0) {
                 this.addError("Informe um valor menor que o total restante de planejamento!", "");
                 return;
             }
@@ -385,10 +397,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
-        
+
         this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         PrimeFaces.current().executeScript("PF('dlgNewLancamento').hide()");
-        
+
     }
 
     public String getStyleBySaldoPaciente() throws Exception {
@@ -412,32 +424,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), false, false));
         }
         return lancamentosSearch;
-    }
-
-    public BigDecimal getTotal(Fatura fatura) {
-        return FaturaSingleton.getInstance().getTotal(fatura);
-    }
-
-    public BigDecimal getTotalPago(Fatura fatura) {
-        return FaturaSingleton.getInstance().getTotalPago(fatura);
-    }
-
-    public BigDecimal getTotalNaoPago(Fatura fatura) {
-        return FaturaSingleton.getInstance().getTotalNaoPago(fatura);
-    }
-
-    public BigDecimal getTotalNaoPlanejado(Fatura fatura) {
-        return FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura);
-    }
-
-    public BigDecimal getTotalRestante(Fatura fatura) {
-        return FaturaSingleton.getInstance().getTotalRestante(fatura);
-    }
-
-    public String getStatus(Fatura fatura) {
-        if (getTotal(fatura).subtract(getTotalPago(fatura)).doubleValue() <= 0)
-            return "Pago";
-        return "A Receber";
     }
 
     public List<Paciente> sugestoesPacientes(String query) {

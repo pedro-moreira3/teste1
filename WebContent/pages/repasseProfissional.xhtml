@@ -259,6 +259,13 @@
 													</h:outputText>
 												</p:column>
 
+												<p:column width="80" headerText="Status"
+													filterBy="#{f.dadosTabelaStatusFatura}"
+													sortBy="#{f.dadosTabelaStatusFatura}"
+													filterMatchMode="contains">
+													<h:outputText value="#{f.dadosTabelaStatusFatura}" />
+												</p:column>
+
 											</p:dataTable>
 										</p:outputPanel>
 

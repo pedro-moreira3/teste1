@@ -42,7 +42,8 @@
 							<span> <b><h:outputText value="Valor Total" /></b>
 							</span>
 							<br />
-							<span> <h:outputText value="#{faturaPagtoMB.getTotal(f)}">
+							<span> <h:outputText
+									value="#{f.dadosTabelaRepasseTotalFatura}">
 									<f:convertNumber currencySymbol="R$ " type="currency" />
 								</h:outputText>
 							</span>
@@ -54,7 +55,7 @@
 							</span>
 							<br />
 							<span> <h:outputText
-									value="#{faturaPagtoMB.getTotalPago(f)}">
+									value="#{f.dadosTabelaRepasseTotalPago}">
 									<f:convertNumber currencySymbol="R$ " type="currency" />
 								</h:outputText>
 							</span>
@@ -66,7 +67,7 @@
 							</span>
 							<br />
 							<span> <h:outputText
-									value="#{faturaPagtoMB.getTotalRestante(f)}">
+									value="#{f.dadosTabelaRepasseTotalRestante}">
 									<f:convertNumber currencySymbol="R$ " type="currency" />
 								</h:outputText>
 							</span>
@@ -107,9 +108,10 @@
 					<p:separator styleClass="SeparatorFull" />
 					<div
 						style="width: calc(100% - 22px); border: 1px solid #bdbdbd; padding: 10px;">
-						<p:selectBooleanCheckbox style="display: inline-flex; width: 100%;"
-							itemLabel="Mostrar lançamentos cancelados."
-							value="#{show}" disabled="true" />
+						<p:selectBooleanCheckbox
+							style="display: inline-flex; width: 100%;"
+							itemLabel="Mostrar lançamentos cancelados." value="#{show}"
+							disabled="true" />
 					</div>
 					<table width="100%"
 						style="border: 1px solid #bdbdbd; border-collapse: collapse; margin-top: 10px;">

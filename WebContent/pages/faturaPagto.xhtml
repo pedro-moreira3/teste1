@@ -133,49 +133,47 @@
 							sortBy="#{f.dataCriacaoStr}">
 							<h:outputText value="#{f.dataCriacaoStr}" />
 						</p:column>
-						<p:column
-							filterBy="#{faturaPagtoMB.getPTFromFaturaOrigem(f).descricao}"
-							sortBy="#{faturaPagtoMB.getPTFromFaturaOrigem(f).descricao}"
-							filterMatchMode="contains" headerText="Plano de Tratamento">
-							<h:outputText
-								value="#{faturaPagtoMB.getPTFromFaturaOrigem(f).descricao}" />
+						<p:column filterBy="#{f.dadosTabelaPT.descricao}"
+							sortBy="#{f.dadosTabelaPT.descricao}" filterMatchMode="contains"
+							headerText="Plano de Tratamento">
+							<h:outputText value="#{f.dadosTabelaPT.descricao}" />
 						</p:column>
-						<p:column filterBy="#{faturaPagtoMB.getTotal(f)}"
+						<p:column filterBy="#{f.dadosTabelaRepasseTotalFatura}"
 							headerText="Valor total da fatura" filterMatchMode="contains"
-							sortBy="#{faturaPagtoMB.getTotal(f)}">
-							<h:outputText value="#{faturaPagtoMB.getTotal(f)}">
+							sortBy="#{f.dadosTabelaRepasseTotalFatura}">
+							<h:outputText value="#{f.dadosTabelaRepasseTotalFatura}">
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
 						</p:column>
 
-						<p:column filterBy="#{faturaPagtoMB.getTotalPago(f)}"
+						<p:column filterBy="#{f.dadosTabelaRepasseTotalPago}"
 							headerText="Valor total pago" filterMatchMode="contains"
-							sortBy="#{faturaPagtoMB.getTotalPago(f)}">
-							<h:outputText value="#{faturaPagtoMB.getTotalPago(f)}">
+							sortBy="#{f.dadosTabelaRepasseTotalPago}">
+							<h:outputText value="#{f.dadosTabelaRepasseTotalPago}">
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
 						</p:column>
 
-						<p:column filterBy="#{faturaPagtoMB.getTotalNaoPago(f)}"
+						<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPago}"
 							headerText="Valor total não pago" filterMatchMode="contains"
-							sortBy="#{faturaPagtoMB.getTotalNaoPago(f)}">
-							<h:outputText value="#{faturaPagtoMB.getTotalNaoPago(f)}">
+							sortBy="#{f.dadosTabelaRepasseTotalNaoPago}">
+							<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPago}">
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
 						</p:column>
 
-						<p:column filterBy="#{faturaPagtoMB.getTotalNaoPlanejado(f)}"
+						<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}"
 							headerText="Valor total não planejado" filterMatchMode="contains"
-							sortBy="#{faturaPagtoMB.getTotalNaoPlanejado(f)}">
-							<h:outputText value="#{faturaPagtoMB.getTotalNaoPlanejado(f)}">
+							sortBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
+							<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
 						</p:column>
 
 						<p:column width="80" headerText="Status"
-							filterBy="#{faturaPagtoMB.getStatus(f)}"
-							sortBy="#{faturaPagtoMB.getStatus(f)}" filterMatchMode="contains">
-							<h:outputText value="#{faturaPagtoMB.getStatus(f)}" />
+							filterBy="#{f.dadosTabelaStatusFatura}"
+							sortBy="#{f.dadosTabelaStatusFatura}" filterMatchMode="contains">
+							<h:outputText value="#{f.dadosTabelaStatusFatura}" />
 						</p:column>
 
 					</p:dataTable>
