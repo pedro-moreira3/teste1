@@ -336,7 +336,7 @@
 					<div class="Container25 Responsive100 Fnone">
 						<p:commandButton id="persistPaciente" icon="White fa fa-save"
 							process="@this,:lume:pnNovoPaciente" value="Salvar"
-							update=":lume:pnNovoPaciente, :lume:paciente, :lume:planoTratamento, :lume:procedimentos, :lume:pnConflito"
+							update=":lume:pnNovoPaciente, :lume:paciente, :lume:planoTratamento, :lume:procedimentos, :lume:pnConflito, :lume:pnBtpaciente"
 							actionListener="#{agendamentoMB.actionPersistPacienteVerificaConflito}"
 							oncomplete="PF()" styleClass="GreenButton">
 						</p:commandButton>
