@@ -341,6 +341,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void carregarAgendamentos() {
         try {
             historicoAgendamentos = AgendamentoSingleton.getInstance().getBo().listByPaciente(getEntity());
+            historicoAgendamentos.forEach(ag -> {
+                ag.setDadosTabelaStatusAntigoDetalhado(StatusAgendamentoUtil.findBySigla(ag.getStatusNovo()));
+            });
         } catch (Exception e) {
             log.error("Erro no carregarAgendamentos", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
