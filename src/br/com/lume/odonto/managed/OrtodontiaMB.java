@@ -29,6 +29,7 @@ import br.com.lume.odonto.entity.Orcamento;
 import br.com.lume.odonto.entity.OrcamentoItem;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
+import br.com.lume.odonto.entity.PlanoTratamento.PlanoTratamentoTipo;
 import br.com.lume.odonto.entity.PlanoTratamentoAparelho;
 import br.com.lume.odonto.entity.PlanoTratamentoDiagnostico;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
@@ -56,7 +57,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     private AparelhoOrtodontico aparelhoSelecionado;
     private Procedimento procedimentoExtra;
     private BigDecimal valorProcedimento;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaPlanoOrtodontico;
 
@@ -145,7 +146,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             atualizaValorProcedimento(procedimentoPadrao);
             getEntity().setProcedimentoPadrao(procedimentoPadrao);
-            valorProcedimento = procedimentoPadrao.getValor();     
+            valorProcedimento = procedimentoPadrao.getValor();
             getEntity().setBconvenio(true);
             BigDecimal valor = new BigDecimal(0);
             if (this.getEntity().getProcedimentoPadrao().getValor() == null)
@@ -159,12 +160,10 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             PrimeFaces.current().ajax().update(":lume:tabView:fimTratamento");
             PrimeFaces.current().ajax().update(":lume:tabView:utilizaConvenio");
             PrimeFaces.current().ajax().update(":lume:tabView:procedimentoPadrao");
-            PrimeFaces.current().ajax().update(":lume:tabView:dtProcedimentosOrtodontia");   
+            PrimeFaces.current().ajax().update(":lume:tabView:dtProcedimentosOrtodontia");
             PrimeFaces.current().ajax().update(":lume:tabView:dtProcedimentosPanel");
             PrimeFaces.current().ajax().update(":lume:tabView:dtOrcamentosOrtodontia");
-            
-            
-            
+
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -268,7 +267,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void atualizaOrcamentos() throws Exception {
-        setOrcamentos(OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(getEntity(), true));
+        setOrcamentos(OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(getEntity(), PlanoTratamentoTipo.ORTO));
         for (Orcamento orcamento : orcamentos)
             OrcamentoSingleton.getInstance().recalculaValores(orcamento);
     }
@@ -506,12 +505,10 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         this.tabelaPlanoOrtodontico = tabelaPlanoOrtodontico;
     }
 
-    
     public BigDecimal getValorProcedimento() {
         return valorProcedimento;
     }
 
-    
     public void setValorProcedimento(BigDecimal valorProcedimento) {
         this.valorProcedimento = valorProcedimento;
     }

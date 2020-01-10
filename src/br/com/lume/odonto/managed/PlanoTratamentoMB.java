@@ -966,11 +966,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         PrimeFaces.current().executeScript("PF('dlgNewPlanejamento').hide()");
     }
 
-    public void cancelaLancamentos() throws Exception {
-        for (Orcamento o : OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(getEntity()))
-            cancelaLancamentos(o);
-    }
-
     public void cancelaLancamentos(Orcamento o) throws Exception {
         OrcamentoSingleton.getInstance().inativaOrcamento(o, UtilsFrontEnd.getProfissionalLogado());
     }
