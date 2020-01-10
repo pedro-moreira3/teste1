@@ -12,13 +12,12 @@ import br.com.lume.afastamento.AfastamentoSingleton;
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
-//import br.com.lume.odonto.bo.AfastamentoBO;
-//import br.com.lume.odonto.bo.AgendamentoBO;
-//import br.com.lume.odonto.bo.DominioBO;
-//import br.com.lume.odonto.bo.ProfissionalBO;
+// import br.com.lume.odonto.bo.AfastamentoBO;
+// import br.com.lume.odonto.bo.AgendamentoBO;
+// import br.com.lume.odonto.bo.DominioBO;
+// import br.com.lume.odonto.bo.ProfissionalBO;
 import br.com.lume.odonto.entity.Afastamento;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Dominio;
@@ -58,7 +57,7 @@ public class AfastamentoProfissionalMB extends LumeManagedBean<Afastamento> {
     public AfastamentoProfissionalMB() {
         super(AfastamentoSingleton.getInstance().getBo());
         this.setClazz(Afastamento.class);
-    //    this.agendamentoBO = new AgendamentoBO();
+        //    this.agendamentoBO = new AgendamentoBO();
 //        this.dominioBO = new DominioBO();
         this.profissional = UtilsFrontEnd.getProfissionalLogado();
     }
@@ -115,11 +114,17 @@ public class AfastamentoProfissionalMB extends LumeManagedBean<Afastamento> {
             throw new DataIgualException();
         }
         for (Agendamento agendamento : agendamentos) {
-            if ((!((agendamento.getStatusNovo().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) || (agendamento.getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) || (agendamento.getStatusNovo().equals(
-                    StatusAgendamentoUtil.CANCELADO.getSigla())) || (agendamento.getStatusNovo().equals(
-                            StatusAgendamentoUtil.ATENDIDO.getSigla())))) && (((agendamento.getInicio().getTime() <= this.getEntity().getInicio().getTime()) && (agendamento.getFim().getTime() >= this.getEntity().getInicio().getTime())) || ((agendamento.getInicio().getTime() <= this.getEntity().getFim().getTime()) && (agendamento.getFim().getTime() >= this.getEntity().getFim().getTime())) || ((this.getEntity().getInicio().getTime() >= agendamento.getInicio().getTime()) && (this.getEntity().getFim().getTime() <= agendamento.getFim().getTime())) || ((this.getEntity().getInicio().getTime() <= agendamento.getInicio().getTime()) && (this.getEntity().getFim().getTime() >= agendamento.getFim().getTime())))) {
+            /*
+             * if ((!((agendamento.getStatusNovo().equals(StatusAgendamentoUtil.REMARCADO.getSigla())) || (agendamento.getStatusNovo().equals(StatusAgendamentoUtil.FALTA.getSigla())) ||
+             * (agendamento.getStatusNovo().equals( StatusAgendamentoUtil.CANCELADO.getSigla())) || (agendamento.getStatusNovo().equals( StatusAgendamentoUtil.ATENDIDO.getSigla())))) &&
+             * (((agendamento.getInicio().getTime() <= this.getEntity().getInicio().getTime()) && (agendamento.getFim().getTime() >= this.getEntity().getInicio().getTime())) ||
+             * ((agendamento.getInicio().getTime() <= this.getEntity().getFim().getTime()) && (agendamento.getFim().getTime() >= this.getEntity().getFim().getTime())) ||
+             * ((this.getEntity().getInicio().getTime() >= agendamento.getInicio().getTime()) && (this.getEntity().getFim().getTime() <= agendamento.getFim().getTime())) ||
+             * ((this.getEntity().getInicio().getTime() <= agendamento.getInicio().getTime()) && (this.getEntity().getFim().getTime() >= agendamento.getFim().getTime())))) { throw new
+             * DataComAgendamentosException(); }
+             */
+            if (AgendamentoSingleton.getInstance().isConflictingAg(agendamento, this.getEntity().getInicio(), this.getEntity().getFim()))
                 throw new DataComAgendamentosException();
-            }
         }
         for (Afastamento afastamento : AfastamentoSingleton.getInstance().getBo().listByProfissional((this.profissional))) {
             if (((afastamento.getInicio().getTime() <= this.getEntity().getInicio().getTime()) && (afastamento.getFim().getTime() >= this.getEntity().getInicio().getTime())) || ((afastamento.getInicio().getTime() <= this.getEntity().getFim().getTime()) && (afastamento.getFim().getTime() >= this.getEntity().getFim().getTime())) || ((this.getEntity().getInicio().getTime() >= afastamento.getInicio().getTime()) && (this.getEntity().getFim().getTime() <= afastamento.getFim().getTime())) || ((this.getEntity().getInicio().getTime() <= afastamento.getInicio().getTime()) && (this.getEntity().getFim().getTime() >= afastamento.getFim().getTime()))) {
