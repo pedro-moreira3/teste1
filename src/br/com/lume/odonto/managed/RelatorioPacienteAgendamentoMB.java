@@ -8,33 +8,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
-import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Paciente;
-import br.com.lume.odonto.entity.PlanoTratamento;
-import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
-import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
-import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
-import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
-import br.com.lume.profissional.ProfissionalSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -65,7 +55,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     
     private List<String> filtroAtendimento = new ArrayList<String>();
  
-    private List<String> status; 
+    private List<String> filtroStatusAgendamento; 
     
     public static final String SEM_ULTIMO_AGENDAMENTO = "SUA";
         
@@ -75,6 +65,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     
     private boolean checkFiltro = true;
     
+    private boolean desabilitaStatusAgendamento = false;
    
     
     public RelatorioPacienteAgendamentoMB() {
@@ -108,19 +99,48 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         return "";
     }
     
+    
+    public void mostrarOsPacientes() {
+        if(getFiltroStatusAgendamento().contains(SEM_ULTIMO_AGENDAMENTO)) {
+            this.checkFiltro = false;
+            filtroAtendimento = new ArrayList<String>();
+            this.desabilitaStatusAgendamento = true;
+        }else {
+            this.desabilitaStatusAgendamento = false;
+        }
+    }
     public void actionFiltrar(ActionEvent event){
       
             
             try {
-                if (inicio != null && fim != null && inicio.getTime() > fim.getTime()) {
+                if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
                     this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
                 }
                 else {
-                    pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamento
-                            (inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),filtroStatusPaciente);
-              //      mbproc.setListaProcedimentos(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPaciente(PacienteSingleton.getInstance().getBo().find(5650l)));
+                    this.pacientes = new ArrayList<Paciente>();
+                    if(getFiltroStatusAgendamento().contains(SEM_ULTIMO_AGENDAMENTO)) {
+                        this.pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteSemAgendamento
+                                (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente);
+                    }else {
+                        this.pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamento
+                                (this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente);                        
+                        for (Paciente paciente : pacientes) {
+                            if(paciente.getUltimoAgendamento() != null) {
+                                if(!filtroAtendimento.contains(paciente.getUltimoAgendamento().getStatusNovo())) {
+                                    this.pacientes.remove(paciente);
+                                }
+                            }                            
+                        }                       
+                    }                 
+                    
+                    if(getFiltroStatusAgendamento().contains(SEM_AGENDAMENTO_FUTURO)) {
+                        pacientes.removeIf(paciente -> paciente.getProximoAgendamento() != null);
+                    }
+                    if(getFiltroStatusAgendamento().contains(SEM_RETORNO_FUTURO)) {
+                        pacientes.removeIf(paciente -> paciente.getProximoRetorno() != null);
+                    }
+                    
                 }
-
                 this.sugestoesConvenios("todos");
             } catch (Exception e) {
                 // TODO Auto-generated catch block
@@ -340,23 +360,32 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     }
 
     
-    public List<String> getStatus() {
-        return status;
-    }
-
-    
-    public void setStatus(List<String> status) {
-        this.status = status;
-    }
-
-    
     public String getFiltroStatusPaciente() {
         return filtroStatusPaciente;
     }
-
     
     public void setFiltroStatusPaciente(String filtroStatusPaciente) {
         this.filtroStatusPaciente = filtroStatusPaciente;
+    }
+
+    
+    public List<String> getFiltroStatusAgendamento() {
+        return filtroStatusAgendamento;
+    }
+
+    
+    public void setFiltroStatusAgendamento(List<String> filtroStatusAgendamento) {
+        this.filtroStatusAgendamento = filtroStatusAgendamento;
+    }
+
+    
+    public boolean isDesabilitaStatusAgendamento() {
+        return desabilitaStatusAgendamento;
+    }
+
+    
+    public void setDesabilitaStatusAgendamento(boolean desabilitaStatusAgendamento) {
+        this.desabilitaStatusAgendamento = desabilitaStatusAgendamento;
     }
 
 }

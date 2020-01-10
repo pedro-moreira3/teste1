@@ -264,14 +264,31 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 							</h:panelGroup>
 
 						</p:panelGrid>
+							<p:outputPanel style="margin:20px;">
+								<h:outputLabel value="Mostrar os pacientes: " />
+								<br />
+								<p:selectManyCheckbox
+									value="#{relatorioPacienteAgendamentoMB.filtroStatusAgendamento}" layout="grid"
+									columns="6">
+									<f:selectItem itemLabel="Sem agendamentos" itemValue="SUA"
+										itemEscaped="false" />
+										<f:selectItem itemLabel="Sem agendamento futuro" itemValue="SAF"
+										itemEscaped="false" />
+									<f:selectItem itemLabel="Sem retorno futuro" itemValue="SRR"
+										itemEscaped="false" />							
+										<p:ajax
+									listener="#{relatorioPacienteAgendamentoMB.mostrarOsPacientes()}"
+									process="@this,pnFiltroStatus" update="pnFiltroStatus"/>
+								</p:selectManyCheckbox>
+							</p:outputPanel>						
 							<p:outputPanel id="pnFiltroStatus" style="margin:20px;">
 
-									<p:outputLabel value="Status do último agendamento " />
+									<p:outputLabel value="Status do último agendamento: " />
 
 									<br /><br />
 
 									<h:panelGroup style="display:block;margin-left:3px;">
-										<p:selectBooleanCheckbox id="checkFiltro"
+										<p:selectBooleanCheckbox id="checkFiltro" disabled="#{relatorioPacienteAgendamentoMB.desabilitaStatusAgendamento}"
 											value="#{relatorioPacienteAgendamentoMB.checkFiltro}">
 											<p:ajax event="change" process="@this"
 												update=":lume:pnFiltroStatus"
@@ -282,7 +299,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 
 									<br />
 
-									<p:selectManyCheckbox
+									<p:selectManyCheckbox disabled="#{relatorioPacienteAgendamentoMB.desabilitaStatusAgendamento}"
 										value="#{relatorioPacienteAgendamentoMB.filtroAtendimento}"
 										layout="grid" columns="4" process="@this"
 										update=":lume:filtroRelatorio">
@@ -331,22 +348,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 									</p:selectManyCheckbox>
 
 								</p:outputPanel>
-
-						<p:outputPanel style="margin:20px;">
-
-							<h:outputLabel value="Mostrar os pacientes " />
-							<br />
-							<p:selectManyCheckbox
-								value="#{relatorioPacienteAgendamentoMB.status}" layout="grid"
-								columns="6">
-								<f:selectItem itemLabel="Sem último agendamento" itemValue="SUA"
-									itemEscaped="false" />
-									<f:selectItem itemLabel="Sem agendamento futuro" itemValue="SAF"
-									itemEscaped="false" />
-								<f:selectItem itemLabel="Sem retorno futuro" itemValue="SRR"
-									itemEscaped="false" />							
-							</p:selectManyCheckbox>
-						</p:outputPanel>
 					
 						<div class="EmptyBox5"></div>
 
