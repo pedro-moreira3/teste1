@@ -123,14 +123,17 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                                 (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente);
                     }else {
                         this.pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamento
-                                (this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente);                        
-                        for (Paciente paciente : pacientes) {
-                            if(paciente.getUltimoAgendamento() != null) {
-                                if(!filtroAtendimento.contains(paciente.getUltimoAgendamento().getStatusNovo())) {
-                                    this.pacientes.remove(paciente);
-                                }
-                            }                            
-                        }                       
+                                (this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente);   
+                        if(pacientes != null) {
+                            List<Paciente> pacientesTemp = new ArrayList<Paciente>(pacientes);
+                            for (Paciente paciente : pacientesTemp) {
+                                if(paciente.getUltimoAgendamento() != null) {
+                                    if(!filtroAtendimento.contains(paciente.getUltimoAgendamento().getStatusNovo())) {
+                                        this.pacientes.remove(paciente);
+                                    }
+                                }                            
+                            }  
+                        }
                     }                 
                     
                     if(getFiltroStatusAgendamento().contains(SEM_AGENDAMENTO_FUTURO)) {
