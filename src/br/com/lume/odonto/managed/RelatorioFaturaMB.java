@@ -68,7 +68,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         } else if (inicio == null && fim == null && paciente == null && profissional == null && tipoFatura == null) {
             this.addError("Escolha pelo menos um filtro para gerar o relatório.", "");
         } else {
-            setEntityList(FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, inicio, fim, paciente, profissional));
+//            setEntityList(FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, inicio, fim, paciente, profissional));
         }
     }
 
