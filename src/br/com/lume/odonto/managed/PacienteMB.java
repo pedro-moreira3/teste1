@@ -56,7 +56,6 @@ import br.com.lume.itemAnamnese.ItemAnamneseSingleton;
 import br.com.lume.odonto.biometria.ImpressaoDigital;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Anamnese;
-import br.com.lume.odonto.entity.Conta;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Especialidade;
@@ -152,9 +151,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
 
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
-        String url = request.getRequestURL().toString();       
-        
-        if(url.contains("paciente.jsf")) {
+        String url = request.getRequestURL().toString();
+
+        if (url.contains("paciente.jsf")) {
             pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(super.getEntity());
             if ((profissionalLogado == null || profissionalLogado.getPerfil().equals(
                     OdontoPerfil.DENTISTA)) && (UtilsFrontEnd.getEmpresaLogada() == null || UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false)) {
@@ -188,7 +187,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             } catch (Exception e) {
                 log.error("Erro no PacienteMB", e);
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            }    
+            }
         }
     }
 
@@ -489,7 +488,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.geraLista();
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), true);
             if (novoPaciente) {
-                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getEntity(),null, null, null, null);            
+                ContaSingleton.getInstance().criaConta(ContaSingleton.TIPO_CONTA.PACIENTE, UtilsFrontEnd.getProfissionalLogado(), BigDecimal.ZERO, getEntity(), null, null, null, null);
                 PrimeFaces.current().executeScript("PF('dlgFichaPaciente').hide()");
             }
         } catch (DataNascimentoException dne) {
@@ -595,11 +594,11 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     public void geraLista() {
         try {
             if (UtilsFrontEnd.getProfissionalLogado() != null) {
-              //  if (!filtroStatus.equals("T")) {
-              //      setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), filtroStatus));
-               // } else {
+                if (!filtroStatus.equals("T")) {
+                    setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), filtroStatus));
+                } else {
                     setEntityList(PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-              //  }
+                }
             }
 
         } catch (Exception e) {
