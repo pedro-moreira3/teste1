@@ -6,7 +6,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.context.SessionScoped;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 import javax.faces.bean.ViewScoped;
@@ -33,7 +32,7 @@ import br.com.lume.procedimento.ProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 
 @ManagedBean
-@SessionScoped
+@ViewScoped
 public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> {
 
     private static final long serialVersionUID = 1L;
