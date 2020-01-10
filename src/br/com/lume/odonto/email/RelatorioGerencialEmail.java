@@ -14,15 +14,14 @@ import org.quartz.JobExecutionException;
 
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.util.EnviaEmail;
-import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
-//import br.com.lume.odonto.bo.ProfissionalBO;
-//import br.com.lume.odonto.bo.RelatorioGerencialBO;
+// import br.com.lume.odonto.bo.ProfissionalBO;
+// import br.com.lume.odonto.bo.RelatorioGerencialBO;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.relatorioGerencial.RelatorioGerencialSingleton;
 import br.com.lume.security.EmpresaSingleton;
-//import br.com.lume.security.bo.EmpresaBO;
+// import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 
 public class RelatorioGerencialEmail implements Job {
@@ -40,8 +39,8 @@ public class RelatorioGerencialEmail implements Job {
 
     public void doRelatorioGerencialEmail() {
         try {
-          //  ProfissionalBO profissionalBO = new ProfissionalBO();
-      //      EmpresaBO empresaBO = new EmpresaBO();
+            //  ProfissionalBO profissionalBO = new ProfissionalBO();
+            //      EmpresaBO empresaBO = new EmpresaBO();
             List<String> perfis = new ArrayList<>();
             perfis.add(OdontoPerfil.ADMINISTRADOR);
             perfis.add(OdontoPerfil.ADMINISTRADOR_CLINICA);
@@ -59,7 +58,7 @@ public class RelatorioGerencialEmail implements Job {
                     String email = profissional.getDadosBasico().getEmail();
                     if (email != null) {
                         Map<String, String> valores = new HashMap<>();
-                       // RelatorioGerencialBO bo = new RelatorioGerencialBO();
+                        // RelatorioGerencialBO bo = new RelatorioGerencialBO();
 
                         valores.put("#relatorio", RelatorioGerencialSingleton.getInstance().getBo().gerarRelatorioEmail(empresa));
                         valores.put("#cliente", profissional.getDadosBasico().getNome());
@@ -67,8 +66,8 @@ public class RelatorioGerencialEmail implements Job {
                         // TODO TIRAR ISSO
                         //email = "faruk.zahra@lumetec.com.br";
 
-                        EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", email, "Intelidente - " + empresa.getEmpStrNme() + " - Resumo diário - " + Utils.dateToString(hoje, "dd/MM/yyyy"),
-                                EnviaEmail.buscarTemplate(valores, EnviaEmail.RESUMO_DIARIO), Mensagens.getMensagemOffLine("email.smtpHost.prod"));
+                        EnviaEmail.enviaEmail("no-reply@intelidente.com", email, "Intelidente - " + empresa.getEmpStrNme() + " - Resumo diário - " + Utils.dateToString(hoje, "dd/MM/yyyy"),
+                                EnviaEmail.buscarTemplate(valores, EnviaEmail.RESUMO_DIARIO));
                     }
                 }
             }

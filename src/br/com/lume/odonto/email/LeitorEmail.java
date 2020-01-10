@@ -12,14 +12,13 @@ import org.quartz.JobExecutionException;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.util.EnviaEmail;
-import br.com.lume.common.util.Mensagens;
-//import br.com.lume.odonto.bo.AgendamentoBO;
-//import br.com.lume.odonto.bo.PlanoBO;
+// import br.com.lume.odonto.bo.AgendamentoBO;
+// import br.com.lume.odonto.bo.PlanoBO;
 import br.com.lume.odonto.entity.Plano;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.plano.PlanoSingleton;
 import br.com.lume.security.EmpresaSingleton;
-//import br.com.lume.security.bo.EmpresaBO;
+// import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 
 public class LeitorEmail implements Job {
@@ -37,9 +36,9 @@ public class LeitorEmail implements Job {
 
     public void doLeitorEmail() {
         try {
-          //  AgendamentoBO agendamentoBO = new AgendamentoBO();
-           // EmpresaBO empresaBO = new EmpresaBO();
-          //  PlanoBO planoBO = new PlanoBO();
+            //  AgendamentoBO agendamentoBO = new AgendamentoBO();
+            // EmpresaBO empresaBO = new EmpresaBO();
+            //  PlanoBO planoBO = new PlanoBO();
             List<Empresa> empresas = EmpresaSingleton.getInstance().getBo().getAllEmpresas(true);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
             for (Empresa empresa : empresas) {
@@ -62,8 +61,7 @@ public class LeitorEmail implements Job {
                             Map<String, String> valores = new HashMap<>();
                             valores.put("#qtd_agendamentos", plano.getConsultas() + "");
                             valores.put("#data", simpleDateFormat.format(empresa.getEmpDtmExpiracao()));
-                            EnviaEmail.enviaEmailOffLine("no-reply@intelidente.com", "ariel.pires@lumetec.com.br", "Limite da Franquia", EnviaEmail.buscarTemplate(valores, EnviaEmail.PLANO_FINALIZANDO),
-                                    Mensagens.getMensagemOffLine("email.smtpHost.prod"));
+                            EnviaEmail.enviaEmail("no-reply@intelidente.com", "ariel.pires@lumetec.com.br", "Limite da Franquia", EnviaEmail.buscarTemplate(valores, EnviaEmail.PLANO_FINALIZANDO));
                         }
                     }
                 }
