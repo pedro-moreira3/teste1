@@ -155,22 +155,23 @@ public class AtestadoMB extends LumeManagedBean<Atestado> {
     public List<CID> geraSugestoes(String query) {
         List<CID> suggestions = new ArrayList<>();
         try {
-            cids = CidSingleton.getInstance().getBo().listAll();
+            //cids = CidSingleton.getInstance().getBo().listAll();
+            suggestions = CidSingleton.getInstance().getBo().listSugestoesComplete(query, false);
         } catch (Exception e) {
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS);
         }
-        for (CID c : cids) {
-            if (c.getLabel().toLowerCase().contains(query.toLowerCase())) {
-                suggestions.add(c);
-            }
-        }
-        Collections.sort(suggestions, new Comparator<CID>() {
-
-            @Override
-            public int compare(CID o1, CID o2) {
-                return o1.getLabel().compareToIgnoreCase(o2.getLabel());
-            }
-        });
+//        for (CID c : cids) {
+//            if (c.getLabel().toLowerCase().contains(query.toLowerCase())) {
+//                suggestions.add(c);
+//            }
+//        }
+//        Collections.sort(suggestions, new Comparator<CID>() {
+//
+//            @Override
+//            public int compare(CID o1, CID o2) {
+//                return o1.getLabel().compareToIgnoreCase(o2.getLabel());
+//            }
+//        });
         return suggestions;
     }
 

@@ -78,12 +78,13 @@
 								<p:ajax update="pnAtestadoPrincipal, pnAtestado" />
 							</p:selectOneMenu>
 
-							<p:outputLabel for="cid" value="CID : " />
+							<p:outputLabel for="cid" value="CID: " />
 
 							<p:autoComplete queryDelay="1000" value="#{atestadoMB.cid}"
 								id="cid" completeMethod="#{atestadoMB.geraSugestoes}" var="c"
 								itemLabel="#{c.label}" itemValue="#{c}" converter="cid"
-								forceSelection="true" scrollHeight="500" minQueryLength="3">
+								forceSelection="true" scrollHeight="500" minQueryLength="3"
+								dropdown="true">
 								<p:ajax event="itemSelect" listener="#{atestadoMB.handleSelect}" />
 							</p:autoComplete>
 

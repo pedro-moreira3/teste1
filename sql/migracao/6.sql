@@ -37,4 +37,46 @@ WHERE O.OBJ_STR_DES = 'Repasse dos Profissionais'
 
 UPDATE SEG_OBJETO SET OBJ_INT_ORDEM = 11 WHERE OBJ_STR_DES = 'Relatório de Relacionamento';
 
+CREATE OR REPLACE FUNCTION inteli.unaccent_string(
+	text)
+    RETURNS text
+    LANGUAGE 'sql'
+    IMMUTABLE STRICT 
+AS $function$
+SELECT UPPER(translate(
+    LOWER(
+        translate(
+            UPPER($1),
+            'âãäåāăąÁÂÃÄÅĂĄèééêëēĕėęěĒĔĖĘĚìíîïìĩīĭÌÍÎÏÌĨĪĬóôõöōŏőÒÓÔÕÖŌŎŐùúûüũūŭůÙÚÛÜŨŪŬŮçÇ',
+            'aaaaaaaaaaaaaaaeeeeeeeeeeeeeeeiiiiiiiiiiiiiiiiooooooooooooooouuuuuuuuuuuuuuuucc'
+        )
+    ),
+    'âãäåāăąÁÂÃÄÅĂĄèééêëēĕėęěĒĔĖĘĚìíîïìĩīĭÌÍÎÏÌĨĪĬóôõöōŏőÒÓÔÕÖŌŎŐùúûüũūŭůÙÚÛÜŨŪŬŮçÇ',
+    'aaaaaaaaaaaaaaaeeeeeeeeeeeeeeeiiiiiiiiiiiiiiiiooooooooooooooouuuuuuuuuuuuuuuucc'
+));
+$function$;
+
+UPDATE FATURA SET ID_EMPRESA = (
+    SELECT ID_EMPRESA
+    FROM PACIENTE
+    WHERE ID = FATURA.PACIENTE_ID
+) WHERE PACIENTE_ID IS NOT NULL;
+
+UPDATE FATURA SET ID_EMPRESA = (
+    SELECT ID_EMPRESA
+    FROM PROFISSIONAL
+    WHERE ID = FATURA.profissional_id
+) WHERE profissional_id IS NOT NULL;
+
+UPDATE FATURA SET ID_EMPRESA = (
+    SELECT ID_EMPRESA
+    FROM FORNECEDOR
+    WHERE ID = FATURA.fornecedor_id
+) WHERE fornecedor_id IS NOT NULL;
+
+UPDATE FATURA SET ID_EMPRESA = (
+    SELECT ID_EMPRESA
+    FROM ORIGEM
+    WHERE ID = FATURA.origem_id
+) WHERE origem_id IS NOT NULL;
   
