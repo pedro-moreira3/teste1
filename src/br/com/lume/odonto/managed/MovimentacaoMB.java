@@ -549,6 +549,12 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
         this.getSelectedItem().setSelected(false);
         this.setSelectedItem(null);
     }
+    
+     public void handleSelectLocal() {
+      this.filtraLocal(this.getDigitacaoLocal());
+     this.setLocal(null);
+      this.setSelectedLocal();
+      }
 
     public void onNodeSelectLocal(NodeSelectEvent event) {
         this.setLocal((Local) (event.getTreeNode().getData()));
