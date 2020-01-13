@@ -405,7 +405,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 							selectionMode="single" filterDelay="1000" binding="#{relatorioPacienteAgendamentoMB.tabelaRelatorio}">
 							<f:facet name="header">Pacientes</f:facet>
 							<p:column
-								filterBy="#{p.dadosBasico.nome}"
 								sortBy="#{p.dadosBasico.nome}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Paciente">								
@@ -413,7 +412,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 									process="@this" title="#{p.id}"
 									actionListener="#{tabPacienteMB.loadPaciente(p)}"
 									oncomplete="PF('dlgFichaPaciente').show();"
-									update=":lume:pnPrincipalFicha, @parent(:lume:pnPrincipalFichaHeader), @parent(:lume:tabViewOutPanel), @parent(:lume:buttonsFichaPaciente)"/>									
+									update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>									
 							</p:column>	
 							<p:column
 								filterBy="#{p.convenio.dadosBasico.nome}"
