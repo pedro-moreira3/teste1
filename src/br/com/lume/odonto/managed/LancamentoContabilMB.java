@@ -265,6 +265,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             }
         }
         super.actionPersist(event);
+        
+        getEntity().setValor(null);
+        getEntity().setData(null);
     }
 
     public void carregaTela() {
