@@ -139,7 +139,7 @@
       						<p:outputPanel id="pnMaterial" styleClass="BordNone">              		     
                     		    <p:panelGrid columns="2" columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
 		                            <p:column rendered="#{materialMB.estoqueCompleto}">       
-		                                <p:tree filterBy="#{local.descricao}" required="true" filterMatchMode="contains" value="#{materialMB.rootLocal}" var="local" rendered="#{materialMB.entity.id == 0}" id="tbLocalTree" selection="#{materialMB.selectedLocal}"
+		                                <p:tree filterBy="#{local.descricaoParaFiltro}" required="true" filterMatchMode="contains" value="#{materialMB.rootLocal}" var="local" rendered="#{materialMB.entity.id == 0}" id="tbLocalTree" selection="#{materialMB.selectedLocal}"
 		                                    selectionMode="single">
 		                                    <p:ajax event="select" listener="#{materialMB.onNodeSelectLocal}" update=":lume:localText" process="@this" />
 		                                    <p:ajax event="unselect" listener="#{materialMB.onNodeUnselectLocal}" />
@@ -152,7 +152,7 @@
 		                                <h:outputText id="localText" value="#{materialMB.digitacaoLocal}"></h:outputText>		                                
 		                            </p:column>
 		                            <p:column>
-		                                <p:tree filterBy="#{item.descricao}" required="true" filterMatchMode="contains" value="#{materialMB.root}" var="item" rendered="#{materialMB.entity.id == 0}" id="tbItemTree" selection="#{materialMB.selectedItem}" 
+		                                <p:tree filterBy="#{item.descricaoParaFiltro}" required="true" filterMatchMode="contains" value="#{materialMB.root}" var="item" rendered="#{materialMB.entity.id == 0}" id="tbItemTree" selection="#{materialMB.selectedItem}" 
 		                                selectionMode="single">
 		                                    <p:ajax event="select" listener="#{materialMB.onNodeSelect}" update=":lume:itemText" process="@this" />
 		                                    <p:ajax event="unselect" listener="#{materialMB.onNodeUnselect}" />

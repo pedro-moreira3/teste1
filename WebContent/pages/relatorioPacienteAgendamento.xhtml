@@ -422,13 +422,18 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 								<h:outputText
 									value="#{p.convenio.dadosBasico.nome}" />
 							</p:column>
-							<p:column
-								filterBy="#{p.dadosBasico.celular}"
-								sortBy="#{p.dadosBasico.celular}"
+							<p:column width="10%"
+								filterBy="#{p.dadosBasico.telefoneStr}"
+								sortBy="#{p.dadosBasico.telefoneStr}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Celular">
 								<h:outputText
-									value="#{p.dadosBasico.celular}" />
+									value="#{p.dadosBasico.telefoneStr}" />
+								<p:button id="whats" icon="White fa fa-whatsapp"
+									rendered="#{p.dadosBasico.telefoneStr != null}"
+									onclick="window.open('#{relatorioPacienteAgendamentoMB.getUrlWpp(p)}'); return false;"
+									styleClass="GreenButton" style="margin-left:10px;" />
+								<p:tooltip for="whats" value="Enviar mensagem" />	
 							</p:column>
 							<p:column filterBy="#{p.ultimoAgendamento.inicio}"
 								sortBy="#{p.ultimoAgendamento.inicio}"
