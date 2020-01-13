@@ -160,9 +160,9 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                             emprestado.setDetalhes(item.getDetalhamento());
                             emprestado.setQuantidade(item.getQuantidade());
                             //TODO trocar para objetos local?                              
-                            if(!this.emprestados.contains(emprestado)) {
+                          //  if(!this.emprestados.contains(emprestado)) {
                                 this.emprestados.add(emprestado);    
-                            }
+                         //   }
                         }  
                     
                     }

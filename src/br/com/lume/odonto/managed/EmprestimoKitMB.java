@@ -497,10 +497,8 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
     public void carregaItem() {
         this.setEnableDisponibilizar(false);
         
-       // this.geraEstoquesDisponiveis(kitItensPendentes.getItem());
- 
-        KitItem kitItem = this.kitItensPendentes.get(0);
-        
+       // this.geraEstoquesDisponiveis(kitItensPendentes.getItem());      
+        KitItem kitItem = this.kitItemSelecionado;
         try {
             this.setEstoquesDisponiveis(EstoqueSingleton.getInstance().getBo().listAllByEmpresaAndItem (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),kitItem.getItem()));
         } catch (Exception e) {

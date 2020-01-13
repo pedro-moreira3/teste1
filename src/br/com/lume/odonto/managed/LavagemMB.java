@@ -364,10 +364,18 @@ public class LavagemMB extends LumeManagedBean<Lavagem> {
                       //      MaterialSingleton.getInstance().getBo().refresh(lk.getEmprestimoUnitario().getMaterial());
                                
                             Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "FINALIZACAO_DEVOLUCAO_LAVAGEM");
-                            EstoqueSingleton.getInstance().transferencia(lk.getEmprestimoKit().getMaterial(),localOrigem,lk.getEmprestimoKit().getMaterial().getEstoque().get(0).getLocal(),new BigDecimal(lk.getQuantidade())
-                                    ,EstoqueSingleton.DEVOLUCAO_LAVAGEM_FINALIZAR,UtilsFrontEnd.getProfissionalLogado());
+                            if(lk.getEmprestimoKit() != null) {
+                                EstoqueSingleton.getInstance().transferencia(lk.getEmprestimoKit().getMaterial(),localOrigem,lk.getEmprestimoKit().getMaterial().getEstoque().get(0).getLocal(),new BigDecimal(lk.getQuantidade())
+                                        ,EstoqueSingleton.DEVOLUCAO_LAVAGEM_FINALIZAR,UtilsFrontEnd.getProfissionalLogado());
+                               // MaterialSingleton.getInstance().getBo().persist(lk.getEmprestimoKit().getMaterial());// Atualizando estoque
+                            }else {
+                                EstoqueSingleton.getInstance().transferencia(lk.getEmprestimoUnitario().getMaterial(),localOrigem,lk.getEmprestimoUnitario().getMaterial().getEstoque().get(0).getLocal(),new BigDecimal(lk.getQuantidade())
+                                        ,EstoqueSingleton.DEVOLUCAO_LAVAGEM_FINALIZAR,UtilsFrontEnd.getProfissionalLogado());  
+                              //  MaterialSingleton.getInstance().getBo().persist(lk.getEmprestimoKit().getMaterial());// Atualizando estoque
+                            }
                             
-                            MaterialSingleton.getInstance().getBo().persist(lk.getEmprestimoUnitario().getMaterial());// Atualizando estoque
+                            
+                            
                         
                         } else {
                             List<Material> material = MaterialSingleton.getInstance().getBo().listAllAtivosByEmpresaAndItem(lk.getItem(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());

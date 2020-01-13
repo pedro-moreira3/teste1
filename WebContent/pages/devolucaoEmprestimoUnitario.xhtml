@@ -88,7 +88,7 @@
 
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMateriais" value="#{emprestimoUnitarioMB.emprestimoUnitariosDevolucao}" var="emprestimoUnitario" rows="15" paginator="true"
                             rowKey="#{emprestimoUnitario}" selection="#{emprestimoUnitarioMB.entity}" selectionMode="single" paginatorPosition="bottom" binding="#{emprestimoUnitarioMB.tabelaEmprestimoUnitario}">
-                            <p:ajax event="rowSelect" update=":lume:devolucao,:lume:pnCampos" listener="#{emprestimoUnitarioMB.atualizaTela}" />
+                            <p:ajax event="rowSelect" update=":lume:devolucao,:lume:pnCampos,:lume:lavar" listener="#{emprestimoUnitarioMB.atualizaTela}" />
                             <f:facet name="header">Materiais</f:facet>
                             <p:column filterBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}" sortBy="#{emprestimoUnitario.profissional.dadosBasico.prefixoNome}"
                             		filterMatchMode="contains" filterFunction="#{emprestimoUnitarioMB.filtroSemAcento}"

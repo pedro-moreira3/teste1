@@ -24,7 +24,8 @@
                        <f:facet name="message">
                             <h:outputText value="Você tem certeza que deseja remover esta Reserva?" />
                     	</f:facet>
-                        <p:commandButton style="color:#ffffff !important" id="confirm" icon="fa fa-trash-o" value="Confirmar" oncomplete="PF('confirmDialog').hide()" process="@this" update=":lume:dtReserva, :lume:dtReserva" 
+                        <p:commandButton style="color:#ffffff !important" id="confirm" icon="fa fa-trash-o" value="Confirmar" oncomplete="PF('confirmDialog').hide();PF('dtReserva').filter()" 
+                        process="@this" update=":lume:dtReserva" 
                         actionListener="#{reservaMB.actionRemove}"  styleClass="GreenButton" />
                         <p:commandButton style="color:#ffffff !important" value="Cancelar" oncomplete="PF('confirmDialog').hide()" icon="White fa fa-file-o" styleClass="RedButton">
                         </p:commandButton>
@@ -194,9 +195,9 @@
 						</p:panelGrid>
                         <div class="EmptyBox20"></div>
                     </p:outputPanel>
-						<br />
+						<br />						
                         <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtReserva" value="#{reservaMB.reservas}" var="reserva" rows="15" paginator="true"
-                            rowKey="#{reserva}" paginatorPosition="bottom" binding="#{reservaMB.tabelaReserva}">
+                            rowKey="#{reserva}" paginatorPosition="bottom" binding="#{reservaMB.tabelaReserva}" widgetVar="dtReserva">
                             
                             <p:ajax event="rowSelect"  listener="#{reservaMB.carregaTelaGeral}" />
                             
@@ -251,8 +252,7 @@
                             <p:column filterBy="#{reserva.dataStr}" sortBy="#{reserva.dataStrOrd}" filterMatchMode="contains" headerText="Data do Cadastro">
                                 <h:outputText value="#{reserva.dataStr}" />
                             </p:column>
-                        </p:dataTable>
-                        
+                        </p:dataTable>                       
 					<ui:include src="pacienteFicha.xhtml" />
 					<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 					

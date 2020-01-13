@@ -221,9 +221,9 @@ public class ReservaMB extends LumeManagedBean<Reserva> {
         //ReservaKitSingleton.getInstance().getBo().removeByReserva(reserva);
         //ReservaKitSingleton.getInstance().getBo().remove(entity)
         for (ReservaKit reskit : this.getReservaKits()) {
-            if (reskit.getId() != null && reskit.getId() == 0 || !this.getEntity().getReservaKits().contains(reskit)) {
+        //    if (reskit.getId() != null && reskit.getId() == 0 || !this.getEntity().getReservaKits().contains(reskit)) {
                 this.getEntity().getReservaKits().add(reskit);
-            }
+       //     }
         }
         if ((this.getReservaKits() == null) || (this.getReservaKits().size() < 1)) {
             log.error(OdontoMensagens.getMensagem("error.reservakits.vazio"));

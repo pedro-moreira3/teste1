@@ -161,6 +161,48 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
             }
         }
     }
+    
+  public void actionLavagemMaterial() {
+ 
+  if (this.getEntity().getQuantidade().longValue() < this.getQuantidadeDevolvida().longValue()) {
+      this.addWarn(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "",true);
+  } else {
+      try {
+          BigDecimal quantidadeParaLavar = this.getQuantidadeDevolvida();
+          // O que nÃ£o vai pra lavagem Ã© devolvido
+          BigDecimal quantidadeParaDevolver = this.getEntity().getQuantidade().subtract(quantidadeParaLavar);
+          // Algo a devolver?
+          if (quantidadeParaDevolver.compareTo(BigDecimal.ZERO) != 0) {             
+              // Devolvendo sobras
+              Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_UNITARIA");
+              EstoqueSingleton.getInstance().transferencia(this.getEntity().getMaterial(),localOrigem,this.getEntity().getMaterial().getEstoque().get(0).getLocal()
+                      ,quantidadeParaDevolver,EstoqueSingleton.DEVOLUCAO_UNITARIA,UtilsFrontEnd.getProfissionalLogado());
+              MaterialSingleton.getInstance().getBo().persist(this.getEntity().getMaterial());
+           
+          }
+          this.getEntity().setStatus(EmprestimoKit.UTILIZADO_UNITARIO);
+          if (quantidadeParaLavar.compareTo(BigDecimal.ZERO) > 0) {
+              new LavagemMB().lavar(this.getEntity(), quantidadeParaLavar.longValue());
+          }
+          
+          Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_UNITARIA");                    
+          Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "ENTREGA_LAVAGEM_DEVOLUCAO_UNITARIA");
+          EstoqueSingleton.getInstance().transferencia(this.getEntity().getMaterial(),localOrigem,localDestino,
+                  quantidadeParaLavar,EstoqueSingleton.ENTREGA_LAVAGEM_UNITARIA,UtilsFrontEnd.getProfissionalLogado());          
+          
+          MaterialSingleton.getInstance().getBo().persist(this.getEntity().getMaterial());
+          
+          this.getbO().persist(this.getEntity());// Atualizando emprestimoUnitario
+          //super.actionNew(event);
+          this.geraLista();
+          this.setEnableDevolucao(false);
+          this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
+      } catch (Exception e) {
+          this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
+          log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
+      }
+  }
+}
 
     public void atualizaTela() {
         this.setEnableDevolucao(true);

@@ -79,4 +79,11 @@ UPDATE FATURA SET ID_EMPRESA = (
     FROM ORIGEM
     WHERE ID = FATURA.origem_id
 ) WHERE origem_id IS NOT NULL;
+
+
+------------------- acima ja rodado -------------------------------
+
+
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'ENTREGA_LAVAGEM_DEVOLUCAO_UNITARIA','SI',emp_int_cod,'N' FROM seg_empresa;
+
   
