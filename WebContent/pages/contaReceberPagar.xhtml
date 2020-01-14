@@ -314,11 +314,10 @@ body .ui-selectoneradio td label {
 											filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
 											<h:outputText value="#{lc.motivo.descricao}" />
 										</p:column>
-										<p:column filterBy="#{lc.valor}" sortBy="#{lc.valor}"
+										<p:column filterBy="#{lancamentoContabilMB.valorLancamento(lc)}" sortBy="#{lancamentoContabilMB.valorLancamento(lc)}"
 											style="text-align:right" filterMatchMode="contains"
 											headerText="Valor(R$)">
-											<h:outputText value="#{lc.valor}">
-												<f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+											<h:outputText value="#{lancamentoContabilMB.valorLancamento(lc)}">
 											</h:outputText>
 										</p:column>
 										<p:column headerText="Data" filterBy="#{lc.dataStr}"

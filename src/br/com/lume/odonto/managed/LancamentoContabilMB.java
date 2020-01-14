@@ -1,11 +1,14 @@
 package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -268,6 +271,15 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         
         getEntity().setValor(null);
         getEntity().setData(null);
+    }
+    
+    public String valorLancamento(LancamentoContabil lancamento) {
+        Locale Local = new Locale("pt", "BR");
+
+        double value = lancamento.getValor().doubleValue();
+        DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
+        
+        return "R$ " + df.format(value);
     }
 
     public void carregaTela() {
