@@ -107,7 +107,7 @@ body .sideChkBox .ui-chkbox-label {
 							yearRange="-10:+10">
 							<p:ajax event="dateSelect"
 								listener="#{faturaPagtoMB.handleSelectPagamento}"
-								update="pnlNewLancamento" process="@this, pnlNewLancamento"/>
+								update="pnlNewLancamento" process="@this, pnlNewLancamento" />
 						</p:calendar>
 						<p:message for="dataPagamento" styleClass="msg" />
 					</h:panelGroup>
@@ -361,13 +361,13 @@ body .sideChkBox .ui-chkbox-label {
 										</p:confirm>
 									</p:commandButton>
 									<p:commandButton styleClass="GreenButton" icon="fa fa-check"
-										title="Conferir Lançamento" update="@parent:@parent"
+										title="Recebido" update="@parent:@parent"
 										actionListener="#{faturaPagtoMB.confereLancamentoRepasse(l)}"
 										process="@this"
 										rendered="#{(repasseProfissional == null and repasseProfissional != 'S') and (showNewLancamento != null and showNewLancamento == 'S')}"
 										disabled="#{l.pagamentoConferido == 'S' or !l.ativo}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
-											message="Você tem certeza que confirma o pagamento deste lançamento?">
+											message="Você confirma este recebimento?">
 										</p:confirm>
 									</p:commandButton>
 									<p:commandButton styleClass="GreenButton" icon="fa fa-check"
