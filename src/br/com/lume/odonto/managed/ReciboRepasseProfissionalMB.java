@@ -120,10 +120,12 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                                 repasse.getFaturaItem().getValorComDesconto().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)));
                         lancamento.setDadosTabelaValorProcComPercItem(String.format("R$ %.2f", repasse.getFaturaItem().getValorComDesconto().doubleValue()) + " (" + String.format("%.2f%%",
                                 lancamento.getDadosTabelaPercItem().doubleValue()) + ")");
-                        lancamento.setDadosTabelaValorTotalCustosDiretos(PlanoTratamentoProcedimentoCustoSingleton.getInstance().getCustoDiretoFromPTP(lancamento.getPtp()));
+                        lancamento.setDadosTabelaValorTotalCustosDiretos(
+                                PlanoTratamentoProcedimentoCustoSingleton.getInstance().getCustoDiretoFromPTP(lancamento.getPtp()).setScale(2, BigDecimal.ROUND_HALF_UP));
                         lancamento.setDadosTabelaValorRecebidoComFormaPagto(
                                 String.format("R$ %.2f", repasse.getLancamentoOrigem().getValor()) + " " + repasse.getLancamentoOrigem().getFormaPagamentoStr());
-                        lancamento.setDadosTabelaValorTaxasETarifas(LancamentoContabilSingleton.getInstance().getTaxasAndTarifasForLancamentoRecebimento(repasse.getLancamentoOrigem()));
+                        lancamento.setDadosTabelaValorTaxasETarifas(
+                                LancamentoContabilSingleton.getInstance().getTaxasAndTarifasForLancamentoRecebimento(repasse.getLancamentoOrigem()).setScale(2, BigDecimal.ROUND_HALF_UP));
                         if (Profissional.PORCENTAGEM.equals(repasse.getRepasseFaturas().getTipoCalculo())) {
                             lancamento.setDadosTabelaValorRepasse(String.format("%.2f%%", repasse.getRepasseFaturas().getValorCalculo()));
                             lancamento.setDadosTabelaMetodoRepasse("POR");
@@ -136,24 +138,29 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
                         // Calculos necessários para mostragem da explicação do cálculo
                         lancamento.setDadosCalculoPercLancamentoFatura(repasse.getLancamentoOrigem().getValor().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
-                        lancamento.setDadosCalculoPercTaxa((repasse.getLancamentoOrigem().getTarifa() != null ? repasse.getLancamentoOrigem().getTarifa().getTaxa() : BigDecimal.ZERO));
+                        lancamento.setDadosCalculoPercTaxa(
+                                (repasse.getLancamentoOrigem().getTarifa() != null ? repasse.getLancamentoOrigem().getTarifa().getTaxa().divide(BigDecimal.valueOf(100)) : BigDecimal.ZERO));
                         lancamento.setDadosCalculoValorTaxa(lancamento.getDadosCalculoPercTaxa().multiply(repasse.getLancamentoOrigem().getValor()));
                         lancamento.setDadosCalculoValorTarifa((repasse.getLancamentoOrigem().getTarifa() != null ? repasse.getLancamentoOrigem().getTarifa().getTarifa() : BigDecimal.ZERO));
                         lancamento.setDadosCalculoPercTributo(repasse.getLancamentoOrigem().getTributoPerc());
-                        lancamento.setDadosCalculoValorTributo(repasse.getLancamentoOrigem().getTributoPerc().multiply(repasse.getLancamentoOrigem().getValor()));
+                        lancamento.setDadosCalculoValorTributo(repasse.getLancamentoOrigem().getTributoPerc().multiply(repasse.getLancamentoOrigem().getValor()).setScale(2, BigDecimal.ROUND_HALF_UP));
                         lancamento.setDadosCalculoPercCustoDireto(lancamento.getDadosTabelaValorTotalCustosDiretos().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
                         lancamento.setDadosCalculoValorCustoDiretoRateado(
                                 lancamento.getDadosTabelaValorTotalCustosDiretos().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP).multiply(
                                         repasse.getLancamentoOrigem().getValor()));
                         lancamento.setDadosCalculoTotalReducao(lancamento.getDadosCalculoValorTaxa().add(lancamento.getDadosCalculoValorTarifa()).add(lancamento.getDadosCalculoValorTributo()));
-                        lancamento.setDadosCalculoRecebidoMenosReducao(repasse.getLancamentoOrigem().getValor().subtract(lancamento.getDadosCalculoTotalReducao()));
+                        lancamento.setDadosCalculoRecebidoMenosReducao(
+                                repasse.getLancamentoOrigem().getValor().subtract(lancamento.getDadosCalculoTotalReducao()).setScale(2, BigDecimal.ROUND_HALF_UP));
 
-                        lancamento.setDadosCalculoValorItemSemCusto(repasse.getFaturaItem().getValorComDesconto().subtract(lancamento.getDadosTabelaValorTotalCustosDiretos()));
+                        lancamento.setDadosCalculoValorItemSemCusto(
+                                repasse.getFaturaItem().getValorComDesconto().subtract(lancamento.getDadosTabelaValorTotalCustosDiretos()).setScale(2, BigDecimal.ROUND_HALF_UP));
                         lancamento.setDadosCalculoPercItemSemCusto(lancamento.getDadosCalculoValorItemSemCusto().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
                         lancamento.setDadosCalculoInvPercItemSemCusto(BigDecimal.valueOf(1).subtract(lancamento.getDadosCalculoPercItemSemCusto()));
-                        lancamento.setDadosCalculoReducaoCustoDireto(lancamento.getDadosCalculoRecebidoMenosReducao().multiply(lancamento.getDadosCalculoInvPercItemSemCusto()));
+                        lancamento.setDadosCalculoReducaoCustoDireto(
+                                lancamento.getDadosCalculoRecebidoMenosReducao().multiply(lancamento.getDadosCalculoInvPercItemSemCusto()).setScale(2, BigDecimal.ROUND_HALF_UP));
 
-                        lancamento.setDadosCalculoValorARepassarSemCusto(lancamento.getDadosCalculoRecebidoMenosReducao().subtract(lancamento.getDadosCalculoReducaoCustoDireto()));
+                        lancamento.setDadosCalculoValorARepassarSemCusto(
+                                lancamento.getDadosCalculoRecebidoMenosReducao().subtract(lancamento.getDadosCalculoReducaoCustoDireto()).setScale(2, BigDecimal.ROUND_HALF_UP));
                     } catch (Exception e) {
                         lancamento.setPtp(null);
                     }

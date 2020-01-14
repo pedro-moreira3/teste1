@@ -133,11 +133,11 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
                         fatura.setDadosTabelaRepassePTP(ptp);
                         fatura.setDadosTabelaRepassePlanoTratamento(repasseObject.getFaturaOrigem().getItensFiltered().get(
                                 0).getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento());
-                        fatura.setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
-                        fatura.setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(fatura));
-                        fatura.setDadosTabelaRepasseTotalNaoPago(FaturaSingleton.getInstance().getTotalNaoPago(fatura));
-                        fatura.setDadosTabelaRepasseTotalNaoPlanejado(FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura));
-                        fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura));
+                        fatura.setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));
+                        fatura.setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));
+                        fatura.setDadosTabelaRepasseTotalNaoPago(FaturaSingleton.getInstance().getTotalNaoPago(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));
+                        fatura.setDadosTabelaRepasseTotalNaoPlanejado(FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));
+                        fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));
 
                         fatura.setDadosTabelaStatusFatura("A Pagar");
                         if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
