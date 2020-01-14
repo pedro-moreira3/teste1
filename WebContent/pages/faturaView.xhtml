@@ -107,14 +107,14 @@ body .sideChkBox .ui-chkbox-label {
 							yearRange="-10:+10">
 							<p:ajax event="dateSelect"
 								listener="#{faturaPagtoMB.handleSelectPagamento}"
-								update="pnlNewLancamento" process="@this, pnlNewLancamento" />
+								update="pnlNewLancamento" process="@this, pnlNewLancamento"/>
 						</p:calendar>
 						<p:message for="dataPagamento" styleClass="msg" />
 					</h:panelGroup>
 					<h:panelGroup styleClass="lumeField">
 						<p:outputLabel for="dataCredito" value="Data de Crédito:" />
 						<p:calendar id="dataCredito" value="#{faturaPagtoMB.dataCredito}"
-							required="true" pattern="dd/MM/yyyy" showWeeksBar="false"
+							pattern="dd/MM/yyyy" showWeeksBar="false"
 							locale="#{lumeSecurity.locale}"
 							timeZone="#{lumeSecurity.timeZone}" navigator="true"
 							yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}" />
