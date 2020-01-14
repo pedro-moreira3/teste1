@@ -201,11 +201,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<h:panelGroup>
 								<h:outputText for="inicio" value="Data de criação de:" />
 								<p:calendar id="inicio"
-									value="#{relatorioPlanoTratamentoMB.inicio}" />
+									value="#{relatorioPlanoTratamentoMB.inicio}">									
+								</p:calendar>
 							</h:panelGroup>
 							<h:panelGroup>
 								<h:outputText for="fim" value="Data de criação até:" />
-								<p:calendar id="fim" value="#{relatorioPlanoTratamentoMB.fim}" />
+								<p:calendar id="fim" value="#{relatorioPlanoTratamentoMB.fim}">								
+								</p:calendar>
 							</h:panelGroup>
 						</p:panelGrid>
 						<p:panelGrid columns="3" layout="grid"
@@ -348,7 +350,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:commandButton id="pesquisar" icon="fa fa-search White"
 								value="Pesquisar"
 								actionListener="#{relatorioPlanoTratamentoMB.actionFiltrar}"
-								update="dtPrincipal" tabindex="1" process="@this,pnPrincipal"
+								update="dtPrincipal" process="@this, pnPrincipal"
 								styleClass="OrangeButton" />
 
 							<p:commandButton id="new" icon="White fa fa-file-o"
