@@ -289,6 +289,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             setShowProduto(Boolean.FALSE);
             setParcela(1);
         }
+        
+        handleSelectPagamento();
     }
 
     public void atualizaDataCredito() {
@@ -325,7 +327,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         setFormaPagamento("DI");
         setValor(getEntity().getDadosTabelaRepasseTotalNaoPlanejado());
         setDataPagamento(new Date());
-        setDataCredito(null);
+        handleSelectPagamento();
     }
 
     public void actionPersistLancamento() {
@@ -335,6 +337,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 return;
             }
 
+            if(this.dataCredito == null || this.dataPagamento == null) {
+                this.addError("Não foi possível gerar o lançamento", "Preencha todos os campos corretamente !");
+                return;
+            }
+            
             Calendar now = Calendar.getInstance();
             now.setTime(getDataPagamento());
             Calendar data = Calendar.getInstance();
@@ -369,6 +376,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         try {
             if (getValor().compareTo(getEntity().getDadosTabelaRepasseTotalNaoPlanejado()) > 0) {
                 this.addError("Informe um valor menor que o total restante de planejamento!", "");
+                return;
+            }
+            
+            if(this.dataCredito == null || this.dataPagamento == null) {
+                this.addError("Não foi possível gerar o lançamento", "Preencha todos os campos corretamente !");
                 return;
             }
 
@@ -425,7 +437,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
         return lancamentosSearch;
     }
-
+    
     public List<Paciente> sugestoesPacientes(String query) {
         return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
