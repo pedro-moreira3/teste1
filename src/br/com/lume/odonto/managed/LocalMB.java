@@ -35,7 +35,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     private static final long serialVersionUID = 1L;
 
     private Logger log = Logger.getLogger(LocalMB.class);
-    private String tipo;
+    private String passivelEmprestimo;
 
     private String descricao;
 
@@ -69,10 +69,8 @@ public class LocalMB extends LumeManagedBean<Local> {
     @Override
     public void actionPersist(ActionEvent event) {
         boolean error = false;
-        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        if (this.tipo != null && !this.tipo.equals("")) {
-            this.getEntity().setTipo(this.tipo);
-        }
+        this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());      
+        this.getEntity().setPassivelEmprestimo(this.passivelEmprestimo);
         if (this.selectedLocalPai != null) {
             if (((Local) this.selectedLocalPai.getData()).getDescricao().equals("RAIZ")) {
                 this.getEntity().setLocalPai(null);
@@ -125,7 +123,7 @@ public class LocalMB extends LumeManagedBean<Local> {
         this.setSelectedPai();
         this.setEntity((Local) this.selectedLocal.getData());
         this.setDescricao(this.getEntity().getDescricao());
-       this.tipo = "";
+       this.passivelEmprestimo = "S";
     }
 
   
@@ -163,28 +161,28 @@ public class LocalMB extends LumeManagedBean<Local> {
         }
     }
 
-    public List<Local> getEstoques() {
-        List<Local> locais = new ArrayList<>();
-        try {
-            locais = LocalSingleton.getInstance().getBo().listByEmpresaAndTipo(ESTOQUE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-          
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-        }
-        return locais;
-    }
-
-    public List<Local> getConsultorios() {
-        List<Local> locais = new ArrayList<>();
-        try {
-            locais = LocalSingleton.getInstance().getBo().listByEmpresaAndTipo(CONSULTORIO, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-        }
-        return locais;
-    }
+//    public List<Local> getEstoques() {
+//        List<Local> locais = new ArrayList<>();
+//        try {
+//            locais = LocalSingleton.getInstance().getBo().listByEmpresaAndTipo(ESTOQUE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//          
+//        } catch (Exception e) {
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+//            this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+//        }
+//        return locais;
+//    }
+//
+//    public List<Local> getConsultorios() {
+//        List<Local> locais = new ArrayList<>();
+//        try {
+//            locais = LocalSingleton.getInstance().getBo().listByEmpresaAndTipo(CONSULTORIO, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//        } catch (Exception e) {
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+//            this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+//        }
+//        return locais;
+//    }
 
     public void chargeTree(TreeNode root) {
         List<TreeNode> nodes = new ArrayList<>();
@@ -237,7 +235,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     public void carregarEditar(Local local) {
         this.setEntity(local);
         this.descricao = local.getDescricao();
-        this.tipo = getEntity().getTipo();
+        this.passivelEmprestimo = getEntity().getPassivelEmprestimo();
     }
     
     public List<Local> getLocais() {
@@ -245,7 +243,7 @@ public class LocalMB extends LumeManagedBean<Local> {
         try {
             locais = LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());  
        
-            locais.removeIf(n -> (n.getDescricaoTipo() == null || n.getDescricaoTipo().equals(""))); 
+           // locais.removeIf(n -> (n.getDescricaoTipo() == null || n.getDescricaoTipo().equals(""))); 
             
             Collections.sort(locais);
         } catch (Exception e) {
@@ -263,7 +261,7 @@ public class LocalMB extends LumeManagedBean<Local> {
             } else {
                 this.setDisable(true);
                 this.getEntity().setTipo(local.getTipo());
-                this.tipo = "";
+                this.passivelEmprestimo = "S";
             }
             this.getSelectedLocalPai().setSelected(false);
             this.setSelectedLocalPai(event.getTreeNode());
@@ -277,7 +275,7 @@ public class LocalMB extends LumeManagedBean<Local> {
         this.setDisable(false);
         try {
             this.getEntity().setTipo(((Local) this.getSelectedLocal().getData()).getTipo());
-            this.tipo = "";
+            this.passivelEmprestimo = "S";
         } catch (Exception e) {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
@@ -295,13 +293,13 @@ public class LocalMB extends LumeManagedBean<Local> {
         this.descricao = descricao;
     }
 
-    public String getTipo() {
-        return this.tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
+//    public String getTipo() {
+//        return this.tipo;
+//    }
+//
+//    public void setTipo(String tipo) {
+//        this.tipo = tipo;
+//    }
 
     public TreeNode getRoot() {
         return this.root;
@@ -350,4 +348,14 @@ public class LocalMB extends LumeManagedBean<Local> {
     private static final String LOCAL = "local";
 
     private static final String OBJETO = "tipo";
+
+    
+    public String getPassivelEmprestimo() {
+        return passivelEmprestimo;
+    }
+
+    
+    public void setPassivelEmprestimo(String passivelEmprestimo) {
+        this.passivelEmprestimo = passivelEmprestimo;
+    }
 }

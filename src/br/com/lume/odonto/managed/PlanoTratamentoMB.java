@@ -800,6 +800,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
+    
+    public String getNomeProfissionalLogado() {
+        return UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome();
+    }
 
     public void closeEvolucao() throws Exception {
         carregarPlanoTratamentoProcedimentos();

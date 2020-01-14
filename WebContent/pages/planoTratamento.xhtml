@@ -1691,7 +1691,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							value="Finalizado às: #{planoTratamentoMB.dateNowFormat}" />
 						<br />
 						<h:outputText
-							value="Por: #{planoTratamentoMB.entity.profissional.dadosBasico.nome}" />
+							value="Por: #{planoTratamentoMB.nomeProfissionalLogado}" />
 						<br />
 						<ui:repeat var="face"
 							value="#{procedimento.planoTratamentoProcedimentoFaces}">

@@ -220,7 +220,7 @@
                                 		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Descrição">
                                     <h:outputText value="#{estoqueSelecionado.material.item.descricao}" title="#{estoqueSelecionado.material.id}" />
                                 </p:column>
-                                <p:column filterBy="#{estoqueSelecionado.quantidade}" sortBy="#{mestoqueSelecionado.quantidade}" filterMatchMode="contains" headerText="Quantidade Atual">
+                                <p:column filterBy="#{estoqueSelecionado.quantidade}" sortBy="#{estoqueSelecionado.quantidade}" filterMatchMode="contains" headerText="Quantidade Atual">
                                     <h:outputText value="#{estoqueSelecionado.quantidade}">
                                         <f:convertNumber />
                                     </h:outputText>
@@ -234,7 +234,7 @@
                                 		filterMatchMode="contains" filterFunction="#{emprestimoKitMB.filtroSemAcento}" headerText="Lote">
                                     <h:outputText value="#{estoqueSelecionado.material.lote}" />
                                 </p:column>
-                                <p:column filterBy="#estoqueSelecionado.material.dataValidadeStr}" sortBy="#{estoqueSelecionado.material.dataValidade}" filterMatchMode="contains" headerText="Validade">
+                                <p:column filterBy="#estoqueSelecionado.material.dataValidadeStr}" sortBy="#{estoqueSelecionado.material.dataValidadeStr}" filterMatchMode="contains" headerText="Validade">
                                     <h:outputText value="#{estoqueSelecionado.material.dataValidadeStr}" />
                                 </p:column>
                                 <p:column filterBy="#{estoqueSelecionado.local.descricao}" sortBy="#{estoqueSelecionado.local.descricao}"

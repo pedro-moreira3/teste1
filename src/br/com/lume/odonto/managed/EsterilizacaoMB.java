@@ -702,11 +702,11 @@ public class EsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
                         } else if (lk.getEmprestimoUnitario() != null) {
                             lk.getEmprestimoUnitario().setQuantidade(lk.getEmprestimoUnitario().getQuantidade().subtract(new BigDecimal(lk.getQuantidade())));
                             EmprestimoUnitarioSingleton.getInstance().getBo().persist(lk.getEmprestimoUnitario());// Atualizando estoque
-                            MaterialSingleton.getInstance().getBo().refresh(lk.getEmprestimoUnitario().getMaterial());
+                         //   MaterialSingleton.getInstance().getBo().refresh(lk.getEmprestimoUnitario().getMaterial());
                             //lk.getEmprestimoUnitario().getMaterial().setQuantidadeAtual(lk.getEmprestimoUnitario().getMaterial().getQuantidadeAtual().add(new BigDecimal(lk.getQuantidade())));
                             
                             Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "MATERIAL_ESTERELIZADO_DEVOLUCAO_LAVAGEM");
-                            EstoqueSingleton.getInstance().transferencia(lk.getEmprestimoKit().getMaterial(),localOrigem,lk.getEmprestimoKit().getMaterial().getEstoque().get(0).getLocal(),new BigDecimal(lk.getQuantidade()),EstoqueSingleton.DEVOLUCAO_ESTERILIZACAO_ESTERILIZADO,UtilsFrontEnd.getProfissionalLogado());
+                            EstoqueSingleton.getInstance().transferencia(lk.getEmprestimoUnitario().getMaterial(),localOrigem,lk.getEmprestimoUnitario().getMaterial().getEstoque().get(0).getLocal(),new BigDecimal(lk.getQuantidade()),EstoqueSingleton.DEVOLUCAO_ESTERILIZACAO_ESTERILIZADO,UtilsFrontEnd.getProfissionalLogado());
                             
                             MaterialSingleton.getInstance().getBo().persist(lk.getEmprestimoUnitario().getMaterial());// Atualizando estoque
                             //MaterialLogSingleton.getInstance().getBo().persist(new MaterialLog(null, lk.getEmprestimoUnitario(), lk.getEmprestimoUnitario().getMaterial(), profissionalLogado,

@@ -352,7 +352,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
         try {
             if (quantidade.intValue() != 0) {
               //  materiaisDisponiveis = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(item, quantidade.intValue(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                estoquesDisponiveis = EstoqueSingleton.getInstance().getBo().listAllDisponiveisByEmpresaItemAndQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), item, quantidade);
+                estoquesDisponiveis = EstoqueSingleton.getInstance().getBo().listAllDisponiveisByEmpresaItemAndQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), item, quantidade,true);
                 if (estoquesDisponiveis.isEmpty() || estoquesDisponiveis == null) {
                     this.addWarn(OdontoMensagens.getMensagem("emprestimoUnitario.materiais.vazio"), "",true);
                 }

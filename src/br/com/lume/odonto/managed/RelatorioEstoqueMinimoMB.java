@@ -76,7 +76,7 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
         try {
             itemDetalhamento = ItemSingleton.getInstance().getBo().find(relatorioEstoqueMinimo.getId()); 
             if(itemDetalhamento != null) {
-                detalhes = EstoqueSingleton.getInstance().getBo().listAllDisponiveisByEmpresaItemAndQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),itemDetalhamento,new BigDecimal(0));
+                detalhes = EstoqueSingleton.getInstance().getBo().listAllDisponiveisByEmpresaItemAndQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),itemDetalhamento,new BigDecimal(0),false);
                 this.quantidadeTotal = new BigDecimal(0);
                 this.valorTotal = new BigDecimal(0);
                 this.custoMedio = new BigDecimal(0);               
@@ -91,8 +91,7 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                 montaKitsEmprestados(detalhes);
                 montaUnitarioEmprestados(detalhes);
                 montaEmLavagem(detalhes);
-                montaEmEsterilizacao(detalhes);
-                //TODO unitario, lavagel, esterilizacao, 
+                montaEmEsterilizacao(detalhes);                
                 if(this.valorTotal.compareTo(BigDecimal.ZERO) != 0 && this.quantidadeTotal.compareTo(BigDecimal.ZERO) != 0) {                   
                     this.custoMedio = this.valorTotal.divide(this.quantidadeTotal, MathContext.DECIMAL32);    
                 }                
@@ -113,9 +112,7 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                 kits = EmprestimoKitSingleton.getInstance().getBo().listByEmpresaAndMaterialComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),estoque.getMaterial());
                 if(kits != null && !kits.isEmpty()) {
          
-                    for (EmprestimoKit kit : kits) {
-                        //TODO verificar se sao esses os status emprestados mesmo kit.getReservaKit().getStatus().equals("PE") kit.getReservaKit().getStatus().equals("EN")       
-                        //para colocar nesse if
+                    for (EmprestimoKit kit : kits) {                       
                         if(kit.getReservaKit().getExcluido().equals("N") && kit.getReservaKit().getReserva().getExcluido().equals("N") && !kit.getReservaKit().getStatus().equals("FI")) {
                             if(kit.getReservaKit().getStatus().equals(EmprestimoKit.ENTREGUE) || kit.getReservaKit().getStatus().equals(EmprestimoKit.PENDENTE)) {
                                 MateriaisEmprestados emprestado = new MateriaisEmprestados();
@@ -124,7 +121,7 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                                 }else if(kit.getReservaKit().getStatus().equals(EmprestimoKit.ENTREGUE)) {
                                     emprestado.setLocal("Kit emprestado - entregue");
                                 }
-                              
+                                emprestado.setId(kit.getId());
                                 emprestado.setDetalhes(kit.getReservaKit().getDetalhamento());
                                 emprestado.setQuantidade(kit.getQuantidade());
                                 //TODO trocar para objetos local?   
@@ -151,21 +148,20 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
             try {
                 unitarios = EmprestimoUnitarioSingleton.getInstance().getBo().listByEmpresaAndMaterialComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),estoque.getMaterial());
                 if(unitarios != null && !unitarios.isEmpty()) {
-                    for (EmprestimoUnitario item : unitarios) {
-                        //TODO verificar se sao esses os status emprestados mesmo kit.getReservaKit().getStatus().equals("PE") kit.getReservaKit().getStatus().equals("EN")       
-                        //para colocar nesse if
+                    for (EmprestimoUnitario item : unitarios) {                    
                         if(item.getMaterial().getExcluido().equals("N")) {
                             MateriaisEmprestados emprestado = new MateriaisEmprestados();
+                            emprestado.setId(item.getId());
                             emprestado.setLocal("Empréstimo unitário");
                             emprestado.setDetalhes(item.getDetalhamento());
-                            emprestado.setQuantidade(item.getQuantidade());
-                            //TODO trocar para objetos local?                              
-                          //  if(!this.emprestados.contains(emprestado)) {
+                            emprestado.setQuantidade(item.getQuantidade());                                      
+                            if(!this.emprestados.contains(emprestado)) {
                                 this.emprestados.add(emprestado);    
-                         //   }
+                            }
+                               
                         }  
                     
-                    }
+                    }                  
                
                 }
             } catch (Exception e) {
@@ -197,10 +193,10 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                             emprestado.setLocal("Item em lavagem");
                             emprestado.setDetalhes(item.getDetalhamento());
                             emprestado.setQuantidade(new BigDecimal(item.getQuantidade()) );
-                            //TODO trocar para objetos local?                              
-                           // if(!this.emprestados.contains(emprestado)) {
+                            emprestado.setId(item.getId());                                                 
+                            if(!this.emprestados.contains(emprestado)) {
                                 this.emprestados.add(emprestado);    
-                          //  }
+                            }
                         }  
                     
                     }
@@ -227,9 +223,7 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                     esterilizacoes.addAll(estItens);
                 }
                 if(esterilizacoes != null && !esterilizacoes.isEmpty()) {
-                    for (EsterilizacaoKit item : esterilizacoes) {
-                        //TODO verificar se sao esses os status emprestados mesmo kit.getReservaKit().getStatus().equals("PE") kit.getReservaKit().getStatus().equals("EN")       
-                        //para colocar nesse if
+                    for (EsterilizacaoKit item : esterilizacoes) {                       
                         if(item.getExcluido().equals("N")) {
                             MateriaisEmprestados emprestado = new MateriaisEmprestados();
                             emprestado.setLocal("Item em esterilização");
@@ -239,11 +233,11 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
                                         " Data da solicitação da esterilização: " + item.getEsterilizacao().getDataStr());
                                 
                             }
-                            emprestado.setQuantidade(new BigDecimal(item.getQuantidade()) );
-                            //TODO trocar para objetos local?                              
-                         //   if(!this.emprestados.contains(emprestado)) {
+                            emprestado.setId(item.getId());
+                            emprestado.setQuantidade(new BigDecimal(item.getQuantidade()) );                                                  
+                            if(!this.emprestados.contains(emprestado)) {
                                 this.emprestados.add(emprestado);    
-                         //   }
+                            }
                         }  
                     
                     }

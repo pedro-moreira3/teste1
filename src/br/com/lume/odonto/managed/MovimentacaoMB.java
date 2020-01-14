@@ -155,7 +155,7 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
 
     public void carregaTela() {
         try {
-            this.setDigitacaoLocal(this.getEntity().getLocal().getDescricao());
+           // this.setDigitacaoLocal(this.getEntity().getLocal().getDescricao());
             this.setLocal(this.getEntity().getLocal());
             this.setProcedencia(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor(OBJETO, TIPO, this.getEntity().getMaterial().getProcedencia()));
             this.setItem(this.getEntity().getMaterial().getItem());
