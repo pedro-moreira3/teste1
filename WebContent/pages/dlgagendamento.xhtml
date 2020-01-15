@@ -383,7 +383,7 @@
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.fim)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.fim)}">
 					<p:ajax event="close"
-						listener="#{agendamentoMB.onCalendarAgChange}" process="@this" />
+						listener="#{agendamentoMB.onCalendarAgChangeDataFim}" process="@this" />
 				</p:calendar>
 				<p:outputLabel for="fim" value="Data/Hora Final" />
 				<p:message styleClass="msg" for="fim" />

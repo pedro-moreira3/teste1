@@ -1387,6 +1387,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         atualizaCadeiraSelecionada();
         validaHoraUtilProfissional();
     }
+    
+    public void onCalendarAgChangeDataFim() {      
+        atualizaCadeiraSelecionada();
+        validaHoraUtilProfissional();
+    }
 
     public void marcarFiltros() {
         if (this.checkFiltro) {
