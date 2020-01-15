@@ -126,12 +126,12 @@
 								</f:facet>
 								<h:outputText value="#{lancamento.status}" />
 							</p:column>
-							<p:column filterBy="#{lancamento.formaPagamento}"
+							<p:column filterBy="#{lancamento.formaPagamentoStr}"
 								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Forma" />
 								</f:facet>
-								<h:outputText value="#{lancamento.formaPagamento}" />
+								<h:outputText value="#{lancamento.formaPagamentoStr}" />
 							</p:column>
 							<p:column filterBy="#{lancamento.numeroParcela}"
 								sortBy="#{lancamento.numeroParcela}" filterMatchMode="contains">
