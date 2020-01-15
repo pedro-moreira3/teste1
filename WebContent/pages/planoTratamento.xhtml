@@ -733,7 +733,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 										actionListener="#{planoTratamentoMB.carregaOrcamentos}"
 										update=":lume:tabView:orcamentoViewTable"
 										styleClass="NavyButton" process="@this"
-										disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
+										disabled="#{planoTratamentoMB.entity.status == 'S'}" />
 								</h:panelGroup>
 								<h:panelGroup rendered="#{planoTratamentoMB.admin}">
 									<p:commandButton id="devolucao" icon="White fa fa-times-circle"
@@ -1183,7 +1183,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					actionListener="#{planoTratamentoMB.actionNewOrcamento}"
 					update=":lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView,:lume:tabView:panelDescObs"
 					value="Novo Orçamento" process="@this" styleClass="NavyButton"
-					disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
+					disabled="#{planoTratamentoMB.entity.status == 'S'}" />
 			</p:panelGrid>
 
 			<p:dataTable filterDelay="1500" reflow="true"
