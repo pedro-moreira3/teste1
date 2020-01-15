@@ -178,7 +178,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
         this.setClazz(Agendamento.class);
         try {
-            if (UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.DENTISTA) && UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false) {
+            if (UtilsFrontEnd.getProfissionalLogado().getPerfil().equals(OdontoPerfil.DENTISTA) && UtilsFrontEnd.getEmpresaLogada().isEmpBolDentistaAdmin() == false && false) {
                 visivelDadosPaciente = false;
             }
             gmt = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndValor("agendamento", "hora", "GM").getNome();
@@ -1387,8 +1387,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         atualizaCadeiraSelecionada();
         validaHoraUtilProfissional();
     }
-    
-    public void onCalendarAgChangeDataFim() {      
+
+    public void onCalendarAgChangeDataFim() {
         atualizaCadeiraSelecionada();
         validaHoraUtilProfissional();
     }
