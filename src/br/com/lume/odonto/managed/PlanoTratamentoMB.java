@@ -26,7 +26,6 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.model.DualListModel;
 
-import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.log.LogIntelidenteSingleton;
@@ -34,9 +33,9 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
-import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.dente.DenteSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.evolucao.EvolucaoSingleton;
@@ -330,7 +329,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
 
                 this.criaRetorno();
-              //  cancelaAgendamentos();
+                //  cancelaAgendamentos();
                 PrimeFaces.current().executeScript("PF('devolver').hide()");
             }
             PlanoTratamentoSingleton.getInstance().encerrarPlanoTratamento(getEntity(), this.justificativa, UtilsFrontEnd.getProfissionalLogado());
@@ -511,6 +510,24 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             return new Integer(-1);
         }
         return new Integer(0);
+    }
+
+    public boolean isMostraMensagemConvenioNaoVigente() {
+        PlanoTratamentoProcedimento ptp = new PlanoTratamentoProcedimento();
+        ptp.setProcedimento(procedimentoSelecionado);
+        ptp.setPlanoTratamento(getEntity());
+        return isMostraMensagemConvenioNaoVigente(ptp);
+    }
+
+    public boolean isMostraMensagemConvenioNaoVigente(PlanoTratamentoProcedimento ptp) {
+        try {
+            if (ptp.getProcedimento() != null)
+                return ConvenioProcedimentoSingleton.getInstance().isUsingConvenio(ptp.getPlanoTratamento(),
+                        ptp.getProcedimento()) && !ConvenioProcedimentoSingleton.getInstance().isConvenioAtivoEVigente(ptp.getPlanoTratamento(), ptp.getProcedimento());
+        } catch (Exception e) {
+
+        }
+        return false;
     }
 
     public void actionAdicionarProcedimento(ActionEvent event) {
@@ -800,7 +817,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
-    
+
     public String getNomeProfissionalLogado() {
         return UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome();
     }

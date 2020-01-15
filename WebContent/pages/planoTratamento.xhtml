@@ -7,6 +7,17 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<style>
+.ConvenioInativo {
+	width: 100%;
+	background-color: #dc3545;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+	text-align: center;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	color: white;
+}
+
 .buttonSmaller .ui-picklist-buttons-cell .ui-button {
 	width: 33px !important;
 }
@@ -832,7 +843,16 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 							<p:column sortBy="#{plano.procedimento.descricao}"
 								headerText="Procedimento">
-								<h:outputText value="#{plano.procedimento.descricao}" />
+								<p:outputPanel style="position: relative">
+									<h:outputText value="#{plano.procedimento.descricao}" />
+									<p:outputPanel
+										rendered="#{planoTratamentoMB.isMostraMensagemConvenioNaoVigente(plano)}">
+										<div class="ConvenioInativo" style="margin-top: 5px;">
+											<h:outputText
+												value="Convênio inativo ou está fora da data de vigência. O valor original será considerado." />
+										</div>
+									</p:outputPanel>
+								</p:outputPanel>
 							</p:column>
 							<p:column sortBy="#{plano.denteRegiao}" headerText="Dente/Região"
 								width="200">
@@ -1039,9 +1059,24 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							converter="procedimento" forceSelection="true" scrollHeight="400"
 							minQueryLength="3">
 							<p:ajax event="itemSelect" process="@this"
-								update=":lume:tabView:facesProcedimento" />
+								update=":lume:tabView:facesProcedimento, :lume:tabView:convenioInativo" />
 						</p:autoComplete>
+					</p:panelGrid>
 
+					<p:panelGrid columns="1" layout="grid" id="convenioInativo"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						<p:outputPanel
+							rendered="#{planoTratamentoMB.mostraMensagemConvenioNaoVigente}">
+							<div class="ConvenioInativo">
+								<h:outputText
+									value="Convênio inativo ou está fora da data de vigência. O valor original será considerado." />
+							</div>
+						</p:outputPanel>
+					</p:panelGrid>
+
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-g-3, ui-g-9"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 						<h:outputText value="Dente/Região" />
 						<p:selectOneMenu value="#{planoTratamentoMB.denteRegiaoEscolhida}"
 							filterMatchMode="contains" filter="true">
