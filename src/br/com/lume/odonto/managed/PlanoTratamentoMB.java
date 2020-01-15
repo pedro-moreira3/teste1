@@ -803,7 +803,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     this.calculaRepasse(ptp);
                     salvaProcedimento(ptp);
 
-                    RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado());
+                    try {
+                        RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado());
+                    }catch (Exception e) {
+                        addError("Erro ao salvar registro", e.getMessage());
+                    }
                 }
             }
             carregarPlanoTratamentoProcedimentos();

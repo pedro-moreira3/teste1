@@ -123,7 +123,13 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
 
     @Override
     public void actionRemove(ActionEvent event) {
-        super.actionRemove(event);
+        try {
+            ProcedimentoSingleton.getInstance().getBo().remove(this.getEntity(), UtilsFrontEnd.getProfissionalLogado().getId());
+            this.addInfo("Sucesso ao remover registro.", "Procedimento removido !", true);
+        } catch (Exception e) {
+            this.log.error("Erro no actionRemove", e);
+            this.addError("Erro ao remover registro", "Não foi possível remover o procedimento.", true);
+        }
         this.geralist();
     }
 
