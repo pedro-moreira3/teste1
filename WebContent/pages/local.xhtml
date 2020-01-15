@@ -23,15 +23,11 @@
 									<p:outputLabel for="descricao" value="Descrição: " />
 									<p:inputText id="descricao" value="#{localMB.descricao}"  required="true" maxlength="50" />				                               
 								</h:panelGroup>
-								<h:panelGroup styleClass="md-combo"> 
-								
-									<p:outputLabel for="tipo" value="Tipo: " />
-									<p:selectOneMenu required="true" id="tipo" value="#{localMB.tipo}" disabled="#{localMB.disable}" >
-										<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
-										<f:selectItem itemValue="ES" itemLabel="Estoque" />
-										<f:selectItem itemValue="CO" itemLabel="Consultório" />
-										<f:selectItem itemValue="PA" itemLabel="Patrimônio" />
-										<f:selectItem itemValue="SM" itemLabel="Sala de materiais" />
+								<h:panelGroup styleClass="md-combo"> 								
+									<p:outputLabel for="passivelEmprestimo" value="Passível de Empréstimo? " />
+									<p:selectOneMenu required="true" id="passivelEmprestimo" value="#{localMB.passivelEmprestimo}" disabled="#{localMB.disable}" >										
+										<f:selectItem itemValue="S" itemLabel="Sim" />
+										<f:selectItem itemValue="N" itemLabel="Não" />										
 									</p:selectOneMenu>				
 								</h:panelGroup>								                      	                                
 							</p:panelGrid> 				
@@ -101,9 +97,9 @@
 	                        			filterFunction="#{localMB.filtroSemAcento}">
 	                            <h:outputText value="#{local.descricao}" title="#{local.id}" />
 	                        </p:column>
-	                        <p:column filterBy="#{local.tipo}" sortBy="#{local.descricaoTipo}" filterMatchMode="contains" width="20%" headerText="Tipo"
+	                        <p:column filterBy="#{local.descricaoPassivelEmprestimo}" sortBy="#{local.descricaoPassivelEmprestimo}" filterMatchMode="contains" width="20%" headerText="Passível de Empréstimo"
 	                            filterFunction="#{localMB.filtroSemAcento}">
-	                            <h:outputText value="#{local.descricaoTipo}" />
+	                            <h:outputText value="#{local.descricaoPassivelEmprestimo}" />
 	                        </p:column>                     
 					</p:dataTable>                  							
 				</p:outputPanel>	

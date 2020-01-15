@@ -80,11 +80,9 @@ UPDATE FATURA SET ID_EMPRESA = (
     WHERE ID = FATURA.origem_id
 ) WHERE origem_id IS NOT NULL;
 
+INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'ENTREGA_LAVAGEM_DEVOLUCAO_UNITARIA','SI',emp_int_cod,'N' FROM seg_empresa;
 
 ------------------- acima ja rodado -------------------------------
-
-
-INSERT INTO local (descricao, tipo, id_empresa, excluido) SELECT distinct 'ENTREGA_LAVAGEM_DEVOLUCAO_UNITARIA','SI',emp_int_cod,'N' FROM seg_empresa;
 
 DROP VIEW REPASSE_MIGRACAO;
 DROP VIEW REPASSE_FATURAS_CREATE;
@@ -143,3 +141,9 @@ WHERE RP.ID_PROFISSIONAL IS NOT NULL
 GROUP BY PTP.ID, P.DESCRICAO, F.ID, FI.ID, PP.ID, RP.DATA, RP.DATA_PAGAMENTO, RP.ID_PROFISSIONAL
 HAVING COALESCE(SUM(RI_R.VALOR), 0) > 0 OR COALESCE(SUM(RI_L.VALOR), 0) + COALESCE(SUM(RI_P.VALOR), 0) > 0
 ORDER BY PTP.ID ASC;
+
+ALTER TABLE LOCAL ADD COLUMN PASSIVEL_EMPRESTIMO VARCHAR(1) NOT NULL DEFAULT 'S';
+  
+update LOCAL set passivel_emprestimo = 'N' where id_empresa = 41 and tipo = 'ES';
+
+ALTER TABLE LOCAL alter column tipo drop not null; 

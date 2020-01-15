@@ -26,6 +26,7 @@ import br.com.lume.odonto.entity.Fatura.TipoFatura;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -77,6 +78,11 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
                     fatura.setDadosTabelaRepasseTotalNaoPago(FaturaSingleton.getInstance().getTotalNaoPago(fatura));
                     fatura.setDadosTabelaRepasseTotalNaoPlanejado(FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura));
                     fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura));
+                    fatura.setDadosTabelaPT(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(fatura));
+
+                    fatura.setDadosTabelaStatusFatura("A Receber");
+                    if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
+                        fatura.setDadosTabelaStatusFatura("Recebido");
                 });
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);

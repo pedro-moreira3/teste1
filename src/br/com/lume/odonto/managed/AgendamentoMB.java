@@ -734,7 +734,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void calculaDataFim() {
-        if (this.getInicio() != null && profissionalDentroAgenda != null && profissionalDentroAgenda.getTempoConsulta() != null && profissionalDentroAgenda.getTempoConsulta() != 0 && getEntity().getId() == 0) {
+        if (this.getInicio() != null && profissionalDentroAgenda != null && profissionalDentroAgenda.getTempoConsulta() != null && profissionalDentroAgenda.getTempoConsulta() != 0) {
             Calendar c = Calendar.getInstance();
             c.setTime(this.getInicio());
             c.add(Calendar.MINUTE, profissionalDentroAgenda.getTempoConsulta());
@@ -1383,7 +1383,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void onCalendarAgChange() {
-        // calculaDataFim();
+        calculaDataFim();
         atualizaCadeiraSelecionada();
         validaHoraUtilProfissional();
     }

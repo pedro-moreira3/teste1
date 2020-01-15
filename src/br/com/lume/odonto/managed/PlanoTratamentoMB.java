@@ -330,7 +330,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
 
                 this.criaRetorno();
-                cancelaAgendamentos();
+              //  cancelaAgendamentos();
                 PrimeFaces.current().executeScript("PF('devolver').hide()");
             }
             PlanoTratamentoSingleton.getInstance().encerrarPlanoTratamento(getEntity(), this.justificativa, UtilsFrontEnd.getProfissionalLogado());
@@ -800,6 +800,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
+    
+    public String getNomeProfissionalLogado() {
+        return UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome();
+    }
 
     public void closeEvolucao() throws Exception {
         carregarPlanoTratamentoProcedimentos();
@@ -815,20 +819,20 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         setPlanoTratamentoProcedimentoSelecionado(null);
     }
 
-    public void cancelaAgendamentos() {
-        try {
-            List<AgendamentoPlanoTratamentoProcedimento> aptps = AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoProcedimento(planoTratamentoProcedimentos);
-            if (aptps != null && !aptps.isEmpty()) {
-                for (AgendamentoPlanoTratamentoProcedimento aptp : aptps) {
-                    aptp.getAgendamento().setStatusNovo(StatusAgendamentoUtil.CANCELADO.getSigla());
-                    aptp.getAgendamento().setDescricao("Cancelado automaticamente pela finalização do plano de tratamento.");
-                    AgendamentoSingleton.getInstance().getBo().persist(aptp.getAgendamento());
-                }
-            }
-        } catch (Exception e) {
-            log.error(OdontoMensagens.getMensagem("plano.cancela.agendamento"), e);
-        }
-    }
+//    public void cancelaAgendamentos() {
+//        try {
+//            List<AgendamentoPlanoTratamentoProcedimento> aptps = AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoProcedimento(planoTratamentoProcedimentos);
+//            if (aptps != null && !aptps.isEmpty()) {
+//                for (AgendamentoPlanoTratamentoProcedimento aptp : aptps) {
+//                    aptp.getAgendamento().setStatusNovo(StatusAgendamentoUtil.CANCELADO.getSigla());
+//                    aptp.getAgendamento().setDescricao("Cancelado automaticamente pela finalização do plano de tratamento.");
+//                    AgendamentoSingleton.getInstance().getBo().persist(aptp.getAgendamento());
+//                }
+//            }
+//        } catch (Exception e) {
+//            log.error(OdontoMensagens.getMensagem("plano.cancela.agendamento"), e);
+//        }
+//    }
 
     public boolean verificaAgendamento() {
         List<PlanoTratamentoProcedimento> ptpsFinalizados = new ArrayList<>();

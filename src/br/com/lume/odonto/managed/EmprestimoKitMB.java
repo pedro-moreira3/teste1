@@ -500,7 +500,8 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
        // this.geraEstoquesDisponiveis(kitItensPendentes.getItem());      
         KitItem kitItem = this.kitItemSelecionado;
         try {
-            this.setEstoquesDisponiveis(EstoqueSingleton.getInstance().getBo().listAllByEmpresaAndItem (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),kitItem.getItem()));
+            this.setEstoquesDisponiveis(EstoqueSingleton.getInstance().getBo().listAllDisponiveisByEmpresaItemAndQuantidade
+                    (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),kitItem.getItem(),new BigDecimal(0),true));
         } catch (Exception e) {
             log.error("Erro no carregaItem", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);

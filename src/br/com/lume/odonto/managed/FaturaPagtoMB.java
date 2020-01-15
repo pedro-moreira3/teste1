@@ -170,6 +170,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         try {
             LancamentoSingleton.getInstance().inativaLancamento(l, UtilsFrontEnd.getProfissionalLogado());
             this.addInfo("Sucesso", "Lançamento cancelado com sucesso!", true);
+            updateValues(getEntity());
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Falha ao cancelar o lançamento!", true);
@@ -289,7 +290,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             setShowProduto(Boolean.FALSE);
             setParcela(1);
         }
-        
+
         handleSelectPagamento();
     }
 
@@ -325,6 +326,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         setParcela(1);
         setShowProduto(false);
         setFormaPagamento("DI");
+        setTarifa(null);
         setValor(getEntity().getDadosTabelaRepasseTotalNaoPlanejado());
         setDataPagamento(new Date());
         handleSelectPagamento();
@@ -337,11 +339,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 return;
             }
 
-            if(this.dataCredito == null || this.dataPagamento == null) {
+            if (this.dataCredito == null || this.dataPagamento == null) {
                 this.addError("Não foi possível gerar o lançamento", "Preencha todos os campos corretamente !");
                 return;
             }
-            
+
             Calendar now = Calendar.getInstance();
             now.setTime(getDataPagamento());
             Calendar data = Calendar.getInstance();
@@ -378,8 +380,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 this.addError("Informe um valor menor que o total restante de planejamento!", "");
                 return;
             }
-            
-            if(this.dataCredito == null || this.dataPagamento == null) {
+
+            if (this.dataCredito == null || this.dataPagamento == null) {
                 this.addError("Não foi possível gerar o lançamento", "Preencha todos os campos corretamente !");
                 return;
             }
@@ -437,7 +439,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
         return lancamentosSearch;
     }
-    
+
     public List<Paciente> sugestoesPacientes(String query) {
         return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
