@@ -314,10 +314,13 @@ body .ui-selectoneradio td label {
 											filterFunction="#{lancamentoContabilMB.filtroSemAcento}">
 											<h:outputText value="#{lc.motivo.descricao}" />
 										</p:column>
-										<p:column filterBy="#{lancamentoContabilMB.valorLancamento(lc)}" sortBy="#{lancamentoContabilMB.valorLancamento(lc)}"
+										<p:column
+											filterBy="#{lancamentoContabilMB.valorLancamento(lc)}"
+											sortBy="#{lancamentoContabilMB.valorLancamento(lc)}"
 											style="text-align:right" filterMatchMode="contains"
 											headerText="Valor(R$)">
-											<h:outputText value="#{lancamentoContabilMB.valorLancamento(lc)}">
+											<h:outputText
+												value="#{lancamentoContabilMB.valorLancamento(lc)}">
 											</h:outputText>
 										</p:column>
 										<p:column headerText="Data" filterBy="#{lc.dataStr}"
@@ -379,7 +382,7 @@ body .ui-selectoneradio td label {
 											<h:outputText value="#{lc.dataPagamentoStr}" />
 										</p:column>
 										<p:column headerText="Data Crédito"
-											filterBy="#{lc.dataCreditoStr}" sortBy="#{lc.dataCreditoStr}"
+											filterBy="#{lc.dataCreditoStr}" sortBy="#{lc.dataCredito}"
 											filterMatchMode="contains">
 											<p:calendar id="dtCreditoLancamento"
 												value="#{lc.dataCredito}" pattern="dd/MM/yyyy"
