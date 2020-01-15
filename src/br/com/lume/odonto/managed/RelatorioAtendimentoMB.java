@@ -75,7 +75,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     private List<String> listaConvenios;
 
-    private boolean checkFiltro = false;
+    private boolean checkFiltro = true;
     private boolean imprimirCabecalho = true;
     private boolean novoAgendamento = true;
 
@@ -92,6 +92,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
             this.listaConvenios = new LinkedList<String>();
         
         sugestoesConvenios("todos");
+        marcarFiltros();
     }
 
     public void popularLista() {
