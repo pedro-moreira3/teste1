@@ -326,6 +326,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         setParcela(1);
         setShowProduto(false);
         setFormaPagamento("DI");
+        setTarifa(null);
         setValor(getEntity().getDadosTabelaRepasseTotalNaoPlanejado());
         setDataPagamento(new Date());
         handleSelectPagamento();
