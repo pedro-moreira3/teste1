@@ -63,7 +63,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         
     public static final String SEM_RETORNO_FUTURO = "SRR";
     
-    private boolean checkFiltro = true;
+    private boolean checkFiltro = false;
     
     private boolean desabilitaStatusAgendamento = false;
    
@@ -74,8 +74,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         
         if(this.listaConvenios == null)
             this.listaConvenios = new ArrayList<>();        
-        this.sugestoesConvenios("todos");
-        marcarFiltros();
+        this.sugestoesConvenios("todos");      
     }
     
     public List<Paciente> sugestoesPacientes(String query) {

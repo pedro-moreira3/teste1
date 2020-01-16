@@ -508,7 +508,7 @@ div.ui-selectoneradio label {
 						style="margin: 0 auto; margin-bottom: 10px;border: none">
 
 						<p:fieldset id="filtrosShow"
-							legend="#{agendamentoMB.dentista ? 'Legenda' : 'Filtro'}"
+							legend="Filtros"
 							toggleable="true" toggleSpeed="500"
 							collapsed="#{agendamentoMB.profissional == null and agendamentoMB.pacientePesquisado == null}">
 
@@ -517,7 +517,7 @@ div.ui-selectoneradio label {
 								<p:panelGrid columns="1" layout="grid"
 									styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 									style="border:0px none; background-color:transparent;"
-									rendered="#{!agendamentoMB.dentista}">
+									>
 
 									<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'S'}">
 
@@ -572,27 +572,12 @@ div.ui-selectoneradio label {
 
 											<h:panelGroup></h:panelGroup>
 
-											<h:panelGroup styleClass="md-inputfield"
-												rendered="#{agendamentoMB.dentista}">
-												<p:calendar id="initialDateSolo" required="false"
-													value="#{agendamentoMB.initialDate}" pattern="dd/MM/yyyy"
-													mask="true" showWeeksBar="false"
-													locale="#{lumeSecurity.locale}"
-													timeZone="#{lumeSecurity.timeZone}" navigator="true"
-													yearRange="-100:+10"
-													style="margin-top:10px;margin-bottom:10px;display: inline-block;">
-
-													<p:ajax event="dateSelect" process="@this" />
-
-												</p:calendar>
-
-												<p:outputLabel for="initialDateSolo" value="Data" />
-											</h:panelGroup>
+											
 
 											<h:panelGroup styleClass="md-combo"
-												rendered="#{!agendamentoMB.dentista}">
+												>
 
-												<p:selectOneMenu id="profissional"
+												<p:selectOneMenu id="profissional" disabled="#{agendamentoMB.dentista}"
 													value="#{agendamentoMB.profissional}"
 													converter="profissional" filter="true"
 													filterMatchMode="contains"

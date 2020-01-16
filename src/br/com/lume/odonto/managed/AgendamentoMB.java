@@ -154,9 +154,6 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private Retorno retorno;
 
     private Date initialDate;
-
-    private String statusNovoTemp = "";
-
     //S - Scheduler, C - Cadeiras, P - Profissional
     private String visualizacao = "S";
 
@@ -169,6 +166,12 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private Date dataAgendamentoInicial;
     private Date dataAgendamentoFinal;
     private List<Afastamento> afastamentos = new ArrayList<>();
+    
+    private Date chegouAsEstadoInicial = null; 
+    
+    private Date iniciouAsEstadoInicial = null;
+    
+    private Date finalizaouAsEstadoInicial = null;
 
     public AgendamentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
@@ -189,7 +192,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
             tempoConsulta = UtilsFrontEnd.getProfissionalLogado().getTempoConsulta();
             carregarCadeiras();
-            filtroAgendamento.addAll(Arrays.asList("A", "I", "S", "O", "E", "B", "N", "P", "G", "H"));
+            filtroAgendamento.addAll(Arrays.asList("F","A", "I", "S", "O", "E", "B", "N", "P", "G", "H"));
             initialDate = Calendar.getInstance().getTime();
             convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
@@ -234,7 +237,6 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
         UtilsFrontEnd.setPacienteSelecionado(this.getEntity().getPaciente());
         this.setEntity(this.getEntity());
-        this.statusNovoTemp = getEntity().getStatusNovo();
 
         this.setInicio(this.getEntity().getInicio());
         this.setFim(this.getEntity().getFim());
@@ -352,13 +354,13 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.setPlanoTratamentos(null);
         this.setPlanoTratamentoSelecionado(null);
         this.setProcedimentosPickList(new DualListModel<AgendamentoPlanoTratamentoProcedimento>());
-        this.statusNovoTemp = "";
     }
 
     @Override
     public void actionPersist(ActionEvent event) {
 
-        if ((procedimentosPickList.getSource().isEmpty() && procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado == null) || (!procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado != null)) {
+        if ((procedimentosPickList.getSource().isEmpty() && procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado == null) 
+                || (!procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado != null)) {
 
             //items para adicionar
             List<AgendamentoPlanoTratamentoProcedimento> paraInserir = new ArrayList<>();
@@ -559,20 +561,27 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                 if (validaCadeira()) {
                                     //dlg = true;
 
-                                    if (!this.statusNovoTemp.equals("") && this.statusNovoTemp.equals(this.getEntity().getStatusNovo())) {
+                                //    this.chegouAsEstadoInicial = this.getEntity().getChegouAs();         
+                                //    this.iniciouAsEstadoInicial = this.getEntity().getIniciouAs();      
+                                 //   this.finalizaouAsEstadoInicial = this.getEntity().getFinalizouAs();   
+                                    
+                                   // if (!this.statusNovoTemp.equals("") && this.statusNovoTemp.equals(this.getEntity().getStatusNovo())) {
                                         if (this.getEntity().getStatusNovo().matches("S|N|I|O|A")) {
-                                            if (this.getEntity().getChegouAs() != null && this.getEntity().getFinalizouAs() != null) {
+                                            if (this.getEntity().getChegouAs() != null && this.getEntity().getFinalizouAs() != null 
+                                                    && this.finalizaouAsEstadoInicial != this.getEntity().getFinalizouAs()) {
                                                 this.getEntity().setStatusNovo("A");
                                                 this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.atendido"), "");
-                                            } else if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() == null && this.getEntity().getFinalizouAs() == null) {
+                                            } else if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() == null && this.getEntity().getFinalizouAs() == null 
+                                                    && this.chegouAsEstadoInicial != this.getEntity().getChegouAs()) {
                                                 this.getEntity().setStatusNovo("I");
                                                 this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.clientenaclinica"), "");
-                                            } else if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() != null && this.getEntity().getFinalizouAs() == null) {
+                                            } else if (this.getEntity().getChegouAs() != null && this.getEntity().getIniciouAs() != null && this.getEntity().getFinalizouAs() == null 
+                                                    && this.iniciouAsEstadoInicial != this.getEntity().getIniciouAs()) {
                                                 this.getEntity().setStatusNovo("O");
                                                 this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.ematendimento"), "");
                                             }
                                         }
-                                    }
+                                //    }
 
 //                                    if (this.getEntity().getIniciouAs() == null && this.getEntity().getChegouAs() != null && (!this.getEntity().getStatusNovo().equals(
 //                                            StatusAgendamentoUtil.CANCELADO.getSigla()) || !this.getEntity().getStatusNovo().equals(
@@ -1023,6 +1032,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         cal.setTime(date);
         cal.add(Calendar.MINUTE, tempoConsulta);
         this.setFim(cal.getTime());
+        
+        this.chegouAsEstadoInicial = null;         
+        this.iniciouAsEstadoInicial = null;
+        this.finalizaouAsEstadoInicial = null;
+        
         //profissional = null;
         profissionalDentroAgenda = null;
         cadeiraDentroAgenda = null;
@@ -1095,14 +1109,17 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
             agendamento = (Agendamento) obj;
 
-            profissionalDentroAgenda = agendamento.getProfissional();
-            cadeiraDentroAgenda = agendamento.getCadeira();
-
+            this.profissionalDentroAgenda = agendamento.getProfissional();
+            this.cadeiraDentroAgenda = agendamento.getCadeira();        
+            this.chegouAsEstadoInicial = agendamento.getChegouAs();         
+            this.iniciouAsEstadoInicial = agendamento.getIniciouAs();      
+            this.finalizaouAsEstadoInicial = agendamento.getFinalizouAs();      
+            
             UtilsFrontEnd.setPacienteSelecionado(agendamento.getPaciente());
             this.setEntity(agendamento);
             this.setInicio(this.getEntity().getInicio());
             this.setFim(this.getEntity().getFim());
-
+            
             this.setPacienteSelecionado(agendamento.getPaciente());
             this.setJustificativa(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("agendamento", "justificativa", this.getEntity().getJustificativa()));
             this.setStatus(this.getEntity().getStatusNovo());
@@ -1889,12 +1906,34 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         this.dataAgendamentoFinal = dataAgendamentoFinal;
     }
 
-    public String getStatusNovoTemp() {
-        return statusNovoTemp;
+    
+    public Date getChegouAsEstadoInicial() {
+        return chegouAsEstadoInicial;
     }
 
-    public void setStatusNovoTemp(String statusNovoTemp) {
-        this.statusNovoTemp = statusNovoTemp;
+    
+    public void setChegouAsEstadoInicial(Date chegouAsEstadoInicial) {
+        this.chegouAsEstadoInicial = chegouAsEstadoInicial;
+    }
+
+    
+    public Date getIniciouAsEstadoInicial() {
+        return iniciouAsEstadoInicial;
+    }
+
+    
+    public void setIniciouAsEstadoInicial(Date iniciouAsEstadoInicial) {
+        this.iniciouAsEstadoInicial = iniciouAsEstadoInicial;
+    }
+
+    
+    public Date getFinalizaouAsEstadoInicial() {
+        return finalizaouAsEstadoInicial;
+    }
+
+    
+    public void setFinalizaouAsEstadoInicial(Date finalizaouAsEstadoInicial) {
+        this.finalizaouAsEstadoInicial = finalizaouAsEstadoInicial;
     }
 
 }

@@ -406,7 +406,7 @@
 					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.chegouAs)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.chegouAs)}">
-					<p:ajax event="close" process="@this" update="@this" />
+					<p:ajax event="change" process="@this" />
 				</p:calendar>
 				<p:outputLabel for="chegouAs" value="Chegou às" />
 				<p:message styleClass="msg" for="chegouAs" />
@@ -416,7 +416,7 @@
 					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.iniciouAs)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.iniciouAs)}">
-					<p:ajax event="close" process="@this" update="@this" />
+					<p:ajax event="change" process="@this" />						
 				</p:calendar>
 				<p:outputLabel for="iniciouAs" value="Iniciou atend. às" />
 				<p:message styleClass="msg" for="iniciouAs" />
@@ -427,7 +427,7 @@
 					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.finalizouAs)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.finalizouAs)}">
-					<p:ajax event="close" process="@this" update="@this" />
+					<p:ajax event="change" process="@this" />				
 				</p:calendar>
 				<p:outputLabel for="finalizouAs" value="Finalizou atend. às" />
 				<p:message styleClass="msg" for="finalizouAs" />
