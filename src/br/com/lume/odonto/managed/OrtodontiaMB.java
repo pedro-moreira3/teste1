@@ -38,6 +38,7 @@ import br.com.lume.orcamento.OrcamentoSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.procedimento.ProcedimentoSingleton;
+import br.com.lume.repasse.RepasseFaturasSingleton;
 import br.com.lume.security.entity.Empresa;
 
 /**
@@ -330,6 +331,13 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             OrcamentoSingleton.getInstance().aprovaOrcamento(orcamento, null, UtilsFrontEnd.getProfissionalLogado());
             atualizaOrcamentos();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+
+            try {
+                RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoDeOrcamentoRecemAprovado(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
+            } catch (Exception e) {
+                addError("Erro", "Falha na criação do comissionamento. " + e.getMessage());
+            }
+
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             LogIntelidenteSingleton.getInstance().makeLog(e);
