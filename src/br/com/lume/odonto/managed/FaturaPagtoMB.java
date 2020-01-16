@@ -88,11 +88,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         super(FaturaSingleton.getInstance().getBo());
         this.setClazz(Fatura.class);
         try {
-            Calendar daysAgo = Calendar.getInstance();
-            daysAgo.add(Calendar.DAY_OF_MONTH, -7);
-            setInicio(daysAgo.getTime());
-            Calendar now = Calendar.getInstance();
-            setFim(now.getTime());
+            //Calendar daysAgo = Calendar.getInstance();
+            //daysAgo.add(Calendar.DAY_OF_MONTH, -7);
+            //setInicio(daysAgo.getTime());
+            //Calendar now = Calendar.getInstance();
+            //setFim(now.getTime());
+
             setFormasPagamento(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma"));
             setListaStatus(new ArrayList<>());
             getListaStatus().add(Fatura.StatusFatura.PAGO.getRotulo());
