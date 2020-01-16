@@ -156,6 +156,18 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
    
     }
 
+    public String descricaoStatusPaciente(String status) {
+        
+        if(status.equals("T"))
+            return "Todos";
+        if(status.equals("A"))
+            return "Ativos";
+        if(status.equals("I"))
+            return "Inativos";
+        
+        return"";
+    }
+    
     public void actionTrocaDatasCriacao() {
         try {
             setInicio(getDataInicio(filtroPeriodo));
