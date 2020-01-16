@@ -172,3 +172,5 @@ CREATE TABLE ENVIO_EMAIL_DESTINATARIO (
 	EMAIL VARCHAR(255) NOT NULL,
 	ENVIO_EMAIL_ID BIGINT NOT NULL REFERENCES ENVIO_EMAIL(ID)
 );
+
+------------------- acima ja rodado -------------------------------
