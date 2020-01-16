@@ -64,8 +64,8 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     public static final String SEM_RETORNO_FUTURO = "SRR";
     
     private boolean checkFiltro = false;
-    
     private boolean desabilitaStatusAgendamento = false;
+    private boolean imprimirCabecalho = true;
    
     
     public RelatorioPacienteAgendamentoMB() {
@@ -388,6 +388,14 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     
     public void setDesabilitaStatusAgendamento(boolean desabilitaStatusAgendamento) {
         this.desabilitaStatusAgendamento = desabilitaStatusAgendamento;
+    }
+
+    public boolean isImprimirCabecalho() {
+        return imprimirCabecalho;
+    }
+
+    public void setImprimirCabecalho(boolean imprimirCabecalho) {
+        this.imprimirCabecalho = imprimirCabecalho;
     }
 
 }
