@@ -285,7 +285,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 
 									<p:outputLabel value="Status do último agendamento: " />
 
-									<br /><br />
+									<br />
+									<br />
 
 									<h:panelGroup style="display:block;margin-left:3px;">
 										<p:selectBooleanCheckbox id="checkFiltro" disabled="#{relatorioPacienteAgendamentoMB.desabilitaStatusAgendamento}"
@@ -539,7 +540,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 								</h1>
 
 								<p:outputPanel
-									rendered="#{relatorioAtendimentoMB.imprimirCabecalho}">
+									rendered="#{relatorioPacienteAgendamentoMB.imprimirCabecalho}">
 
 									<br />
 
@@ -551,7 +552,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 
 											<h2
 												style="text-align: left; font-size: 14px !important; margin: 0; margin-top: 10px; margin-bottom: 10px; font-weight: bold;">
-												ATENDIMENTO</h2>
+												AGENDAMENTO</h2>
 
 											<th>Último agendamento de:</th>
 											<th>Último agendamento até:</th>
@@ -587,7 +588,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 										<tr style="text-align: left; font-size: 14px !important;">
 
 											<td><h:outputText
-													value="#{relatorioPacienteAgendamentoMB.filtroStatusPaciente}" />
+													value="#{relatorioPacienteAgendamentoMB.descricaoStatusPaciente(relatorioPacienteAgendamentoMB.filtroStatusPaciente)}" />
 											</td>
 											
 											<td><h:outputText
@@ -596,8 +597,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 
 										</tr>
 									</table>
-
-									<br />
 
 									<h2
 										style="text-align: left; font-size: 14px !important; margin: 0; margin-top: 10px; margin-bottom: 10px; font-weight: bold;">
