@@ -614,7 +614,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								style="float:left;margin-left: 10px;" title="Novo Odontograma"
 								actionListener="#{planoTratamentoMB.actionNewOdontograma}"
 								update=":lume:tabView:removeOdontograma" process="@this"
-								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
+								disabled="#{planoTratamentoMB.entity.status == 'S'}" />
 							<p:commandButton icon="White fa fa-trash-o"
 								id="removeOdontograma"
 								actionListener="#{planoTratamentoMB.removeOdontograma}"
