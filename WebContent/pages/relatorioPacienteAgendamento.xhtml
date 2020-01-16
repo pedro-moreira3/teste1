@@ -363,6 +363,15 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 								styleClass="OrangeButton" />
 
 							<h:panelGroup>
+								<p:commandButton value="Imprimir"
+									oncomplete="PF('dlgConfirmarCabecalho').show();"
+									icon="White fa fa-print"
+									update=":lume:dlgGerarRelatorio,:lume:dlgConfirmarCabecalho"
+									styleClass=""
+									process="@this,:lume:dlgConfirmarCabecalho,:lume:filtroRelatorio" />
+							</h:panelGroup>
+
+							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"
 									styleClass="GreenSplitButton"
@@ -472,8 +481,261 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 						</p:dataTable>
 					</p:outputPanel>
 
-		<ui:include src="pacienteFicha.xhtml" />
-		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
+
+					<p:dialog id="dlgConfirmarCabecalho"
+						widgetVar="dlgConfirmarCabecalho" responsive="true"
+						icon="pi pi-exclamation-triangle" width="300px" modal="true"
+						draggable="false" blockScroll="true" positionTop="0"
+						positionLeft="0" style="overflow:hidden !important;">
+
+						<h:panelGroup style="margin:16px;">
+							<p:selectBooleanCheckbox id="cabecalho"
+								value="#{relatorioPacienteAgendamentoMB.imprimirCabecalho}">
+								<p:ajax event="change" process="@this" update=":lume:dlgGerarRelatorio" />
+							</p:selectBooleanCheckbox>
+							<p:outputLabel for="cabecalho" value="Imprimir cabeçalho" />
+						</h:panelGroup>
+
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<h:panelGroup>
+								<p:commandButton value="Fechar"
+									oncomplete="PF('dlgConfirmarCabecalho').hide();" />
+							</h:panelGroup>
+
+							<h:panelGroup>
+								<p:commandButton value="Confirmar" onstart="imprimirTabela();"
+									oncomplete="PF('dlgConfirmarCabecalho').hide();" />
+							</h:panelGroup>
+
+						</p:panelGrid>
+
+					</p:dialog>
+
+
+					<p:dialog id="dlgGerarRelatorio"
+						widgetVar="dlgGerarRelatorio" header="Relatório"
+						responsive="true" modal="true">
+
+						<div class="table">
+							<p:outputPanel id="relatorio">
+
+								<h1 style="font-size: 20px !important;">
+									<h:outputText value="RELATÓRIO" />
+								</h1>
+
+								<br />
+
+								<h1
+									style="font-size: 16px !important; margin: 0; margin-top: 10px; margin-bottom: 10px; font-weight: bold;">
+									<h:outputText value="#{relatorioAtendimentoMB.nomeClinica()}" />
+								</h1>
+
+								<h1
+									style="font-size: 14px !important; margin: 0; margin-top: -5px; margin-bottom: 5px;">
+									<h:outputText
+										value="#{relatorioAtendimentoMB.telefoneClinica()}" />
+								</h1>
+
+								<p:outputPanel
+									rendered="#{relatorioAtendimentoMB.imprimirCabecalho}">
+
+									<br />
+
+									<table style="width: 100%; font-size: 12px;"
+										class="firstRowBold">
+
+										<tr
+											style="text-align: left; font-weight: bold; margin-top: 20px !important;">
+
+											<h2
+												style="text-align: left; font-size: 14px !important; margin: 0; margin-top: 10px; margin-bottom: 10px; font-weight: bold;">
+												ATENDIMENTO</h2>
+
+											<th>Último agendamento de:</th>
+											<th>Último agendamento até:</th>
+											<th>Paciente:</th>
+											
+
+										</tr>
+
+										<tr style="text-align: left;">
+
+											<td><h:outputText
+													value="#{relatorioPacienteAgendamentoMB.formatarData(relatorioPacienteAgendamentoMB.inicio)}" />
+											</td>
+
+											<td><h:outputText
+													value="#{relatorioPacienteAgendamentoMB.formatarData(relatorioPacienteAgendamentoMB.fim)}" />
+											</td>
+
+											<td><h:outputText
+													value="#{relatorioPacienteAgendamentoMB.paciente.dadosBasico.nome}" />
+											</td>
+
+										</tr>
+
+										<tr
+											style="text-align: left; font-weight: bold; margin-top: 20px !important;">
+
+											<th>Status dos pacientes:</th>
+											<th>Convênio:</th>
+
+										</tr>
+
+										<tr style="text-align: left; font-size: 14px !important;">
+
+											<td><h:outputText
+													value="#{relatorioPacienteAgendamentoMB.filtroStatusPaciente}" />
+											</td>
+											
+											<td><h:outputText
+													value="#{relatorioPacienteAgendamentoMB.filtroPorConvenio}" />
+											</td>
+
+										</tr>
+									</table>
+
+									<br />
+
+									<h2
+										style="text-align: left; font-size: 14px !important; margin: 0; margin-top: 10px; margin-bottom: 10px; font-weight: bold;">
+										PACIENTES</h2>
+
+									<br />
+									
+									<h:panelGroup>
+										<h:outputLabel value="Mostrar os pacientes:" />
+										<br />
+									</h:panelGroup>
+									
+									<h:panelGroup style="margin:20px;">
+										<p:selectManyCheckbox
+											value="#{relatorioPacienteAgendamentoMB.filtroStatusAgendamento}"
+											layout="grid" columns="6">
+											<f:selectItem itemLabel="Sem agendamentos" itemValue="SUA"
+												itemEscaped="false" />
+											<f:selectItem itemLabel="Sem agendamento futuro"
+												itemValue="SAF" itemEscaped="false" />
+											<f:selectItem itemLabel="Sem retorno futuro" itemValue="SRR"
+												itemEscaped="false" />
+											<p:ajax
+												listener="#{relatorioPacienteAgendamentoMB.mostrarOsPacientes()}"
+												process="@this,pnFiltroStatus" update="pnFiltroStatus" />
+										</p:selectManyCheckbox>
+									</h:panelGroup>
+									
+									<br />
+									<br />
+									
+									<h:panelGroup>
+										<p:outputLabel value="Status do último agendamento: " />
+
+										<br />
+										<br />
+									</h:panelGroup>
+									
+									<p:selectManyCheckbox
+											disabled="#{relatorioPacienteAgendamentoMB.desabilitaStatusAgendamento}"
+											value="#{relatorioPacienteAgendamentoMB.filtroAtendimento}"
+											layout="grid" columns="4">
+
+											<p:ajax process="@this" />
+
+											<f:selectItem
+												itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Atendidos&lt;/div&gt;"
+												itemValue="A" itemEscaped="false" />
+											<f:selectItem
+												itemLabel="&lt;div&gt;&lt;div class='agendamentoConsultaInicial legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Consulta Inicial&lt;/div&gt;"
+												itemValue="G" itemEscaped="false" />
+											<f:selectItem
+												itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
+												itemValue="C" itemEscaped="false" />
+											<f:selectItem
+												itemLabel="&lt;div&gt;&lt;div class='agendamentoErroAgendamento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Erro de Agendamento&lt;/div&gt;"
+												itemValue="D" itemEscaped="false" />
+											<f:selectItem
+												itemLabel="&lt;div&gt;&lt;div class='clienteNaClinica legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cliente na Clínica&lt;/div&gt;"
+												itemValue="I" itemEscaped="false" />
+											<f:selectItem
+												itemLabel="&lt;div&gt;&lt;div class='agendamentoConfirmado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Confirmados&lt;/div&gt;"
+												itemValue="S" itemEscaped="false" />
+											<f:selectItem
+												itemLabel="&lt;div&gt;&lt;div class='emAtendimento legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Em Atendimento&lt;/div&gt;"
+												itemValue="O" itemEscaped="false" />
+											<f:selectItem
+												itemLabel="&lt;div&gt;&lt;div class='agendamentoEncaixe legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Encaixe&lt;/div&gt;"
+												itemValue="E" itemEscaped="false" />
+											<f:selectItem
+												itemLabel="&lt;div&gt;&lt;div class='agendamentoEncaixeAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Encaixe Atendido&lt;/div&gt;"
+												itemValue="H" itemEscaped="false" />
+											<f:selectItem
+												itemLabel="&lt;div&gt;&lt;div class='agendamentoFalta legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Falta&lt;/div&gt;"
+												itemValue="B" itemEscaped="false" />
+											<f:selectItem
+												itemLabel="&lt;div&gt;&lt;div class='agendamentoNaoConfirmado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Não Confirmado&lt;/div&gt;"
+												itemValue="N" itemEscaped="false" />
+											<f:selectItem
+												itemLabel="&lt;div&gt;&lt;div class='agendamentoPrecadastro legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Agendado pelo Paciente&lt;/div&gt;"
+												itemValue="P" itemEscaped="false" />
+											<f:selectItem
+												itemLabel="&lt;div&gt;&lt;div class='agendamentoRemarcado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Remarcado&lt;/div&gt;"
+												itemValue="R" itemEscaped="false" />
+										</p:selectManyCheckbox>
+
+									</p:outputPanel>
+
+									<br />
+
+								<table style="width: 100%; font-size: 10px; text-align: left;">
+
+									<tr style="text-align: center; margin: 5px;">
+										<th style="border: 1px solid;">Paciente</th>
+										<th style="border: 1px solid;">Convênio</th>
+										<th style="border: 1px solid;">Celular</th>
+										<th style="border: 1px solid;">Data último agendamento</th>
+										<th style="border: 1px solid;">Status último agendamento</th>
+										<th style="border: 1px solid;">Data próximo agendamento</th>
+										<th style="border: 1px solid;">Status próximo agendamento</th>
+										<th style="border: 1px solid;">Data próximo retorno</th>
+									</tr>
+
+									<c:forEach var="p"
+										items="#{relatorioPacienteAgendamentoMB.pacientes}">
+										<tr>
+											<td><h:outputText
+													value="#{p.dadosBasico.nome}" /></td>
+											<td><h:outputText
+													value="#{p.convenio.dadosBasico.nome}" /></td>
+											<td><h:outputText
+													value="#{p.dadosBasico.telefoneStr}" /></td>
+											<td><h:outputText
+													value="#{relatorioPacienteAgendamentoMB.formatarData(p.ultimoAgendamento.inicio)}" />
+											</td>
+											<td><h:outputText
+													value="#{relatorioAtendimentoMB.getStatusDescricao(p.ultimoAgendamento)}" /></td>
+											<td><h:outputText
+													value="#{relatorioPacienteAgendamentoMB.formatarData(p.proximoAgendamento.inicio)}" /></td>
+											<td><h:outputText
+													value="#{relatorioAtendimentoMB.getStatusDescricao(p.proximoAgendamento)}" />
+											</td>
+											<td><h:outputText
+													value="#{relatorioPacienteAgendamentoMB.formatarDataSemHora(p.proximoRetorno.dataRetorno)}" />
+											</td>
+										</tr>
+									</c:forEach>
+
+								</table>
+
+								<br />
+							</p:outputPanel>
+						</div>
+
+					</p:dialog>
+
+					<ui:include src="pacienteFicha.xhtml" />
+					<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 				</div>
 			</div>
@@ -492,7 +754,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 			}
 
 			function imprimirTabela() {
-				var toPrint = document.getElementById("lume:relatorioTabela");
+				var toPrint = document.getElementById("lume:relatorio");
 				var newWin = window.open("");
 				newWin.visible = false;
 				newWin.document
