@@ -403,26 +403,27 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
-    private boolean finalizaProcedimento() {
-        boolean aux = true;
+    private boolean finalizaProcedimento() throws Exception {     
         this.ptps2Finalizar = new ArrayList<>();
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
             if (ptp.getStatus() == null || !"F".equals(ptp.getStatus())) {
                 ptp.setDataFinalizado(null);
-                ptp.setFinalizadoPorProfissional(null);
-                break;
-            }
-            if (ptp.getFinalizadoPorProfissional() == null) {
-                this.ptps2Finalizar.add(ptp);
-                aux = false;
+                ptp.setFinalizadoPorProfissional(null);               
+            }else{
+                //verifica se ptp ja estava finalizado anteriormente
+                PlanoTratamentoProcedimento ptpBanco = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(ptp.getId());
+                if(!"F".equals(ptpBanco.getStatus())) {
+                    this.ptps2Finalizar.add(ptp);
+                }             
             }
         }
-        if (!aux) {
+        if (this.ptps2Finalizar != null && !this.ptps2Finalizar.isEmpty()) {
             this.descricaoEvolucao = null;
             PrimeFaces.current().executeScript("PF('evolucao').show()");
             FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("lume:tabView:evolucaoView");
+            return false;
         }
-        return aux;
+        return true;
     }
 
     public void salvaProcedimento(PlanoTratamentoProcedimento ptp) throws Exception {
