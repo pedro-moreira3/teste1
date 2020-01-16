@@ -614,7 +614,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								style="float:left;margin-left: 10px;" title="Novo Odontograma"
 								actionListener="#{planoTratamentoMB.actionNewOdontograma}"
 								update=":lume:tabView:removeOdontograma" process="@this"
-								disabled="#{planoTratamentoMB.entity.status == 'S'}" />
+								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 							<p:commandButton icon="White fa fa-trash-o"
 								id="removeOdontograma"
 								actionListener="#{planoTratamentoMB.removeOdontograma}"
@@ -1247,7 +1247,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						actionListener="#{planoTratamentoMB.actionRemoveOrcamento(orcamento)}"
 						update=":lume:tabView:tbViewOrcamento" styleClass="NavyButton"
 						title="Cancelar Orçamento"
-						disabled="#{orcamento.aprovado or planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}">
+						disabled="#{orcamento.aprovado or planoTratamentoMB.entity.status == 'S'}">
 						<p:confirm header="Confirmação"
 							message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
 					</p:commandButton>
