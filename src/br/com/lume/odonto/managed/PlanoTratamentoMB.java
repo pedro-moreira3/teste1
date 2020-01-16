@@ -805,7 +805,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
                     try {
                         RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado());
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         addError("Erro ao salvar registro", e.getMessage());
                     }
                 }
@@ -1100,8 +1100,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
             orcamentoSelecionado.setQuantidadeParcelas(1);
             OrcamentoSingleton.getInstance().aprovaOrcamento(orcamentoSelecionado, null, UtilsFrontEnd.getProfissionalLogado());
-            addInfo("Aprovação com " + orcamentoPerc + "% de desconto aplicado!", "");
+            addInfo("Sucesso", "Aprovação com " + orcamentoPerc + "% de desconto aplicado!");
             carregaOrcamentos();
+
+            try {
+                RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoDeOrcamentoRecemAprovado(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
+            } catch (Exception e) {
+                addError("Erro", "Falha na criação do comissionamento. " + e.getMessage());
+            }
+
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionPersist OrcamentoMB", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
