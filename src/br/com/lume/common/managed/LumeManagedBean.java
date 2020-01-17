@@ -215,18 +215,9 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     }
 
     private void addMessage(Severity severity, String summary, String detail, String type, boolean sendPrimefacesError) {
-        if (sendPrimefacesError) {
-            if (MessageType.TYPE_INFO.equals(type))
-                type = MessageType.TYPE_SUCCESS;
-            PrimeFaces.current().executeScript("mostraDialogo('" + summary + "', '" + detail + "', '" + type + "')");
-            // FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, summary, detail));
-        } else {
-            summary = summary.replace("\n", "\\r\\n");
-            if (severity == FacesMessage.SEVERITY_ERROR || severity == FacesMessage.SEVERITY_FATAL)
-                PrimeFaces.current().executeScript("message('', '" + summary + " " + detail + "', '" + type + "')");
-            else
-                PrimeFaces.current().executeScript("message('', '" + summary + " " + detail + "', '" + type + "', true)");
-        }
+        if (MessageType.TYPE_INFO.equals(type))
+            type = MessageType.TYPE_SUCCESS;
+        PrimeFaces.current().executeScript("mostraDialogo('" + summary + "', '" + detail + "', '" + type + "')");
     }
 
     public BO<E> getbO() {
