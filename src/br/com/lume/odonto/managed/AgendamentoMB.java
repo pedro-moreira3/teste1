@@ -285,6 +285,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
         atualizaPickList();
     }
+    
+    public void agendarNoRelatorioRelacionamento(Paciente pac,Profissional pro) {      
+        onDateSelect(null);
+        profissional = pro;
+       profissionalDentroAgenda = pro;   
+       setPacienteSelecionado(pac);
+       atualizaPickList();
+    }
+    
+    
 
     public boolean isReserva() {
         try {
@@ -1024,15 +1034,19 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void onDateSelect(SelectEvent selectEvent) {
-        Date date = (Date) selectEvent.getObject();
+        if(selectEvent != null) {
+            Date date = (Date) selectEvent.getObject();
+            this.setInicio(date);
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            cal.add(Calendar.MINUTE, tempoConsulta);
+            this.setFim(cal.getTime());
+        }
+     
         this.setEntity(new Agendamento());
         this.setPacienteSelecionado(null);
         this.setPlanoTratamentoSelecionado(null);
-        this.setInicio(date);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(date);
-        cal.add(Calendar.MINUTE, tempoConsulta);
-        this.setFim(cal.getTime());
+     
         
         this.chegouAsEstadoInicial = null;         
         this.iniciouAsEstadoInicial = null;
