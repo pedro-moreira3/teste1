@@ -276,13 +276,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public void filaAtendimento(Agendamento a) {
         if (a != null) {
             profissional = a.getProfissional();
-            profissionalDentroAgenda = profissional;
-            pacienteSelecionado = a.getPaciente();
+            profissionalDentroAgenda = profissional;             
+            setPacienteSelecionado(a.getPaciente());
         } else {
             profissional = null;
             profissionalDentroAgenda = profissional;
             pacienteSelecionado = null;
         }
+        atualizaPickList();
     }
 
     public boolean isReserva() {
