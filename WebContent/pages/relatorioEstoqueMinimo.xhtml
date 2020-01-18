@@ -33,8 +33,8 @@
 								<p:rowToggler />
 							</p:column>
 	                        <p:column filterBy="#{estoque.local.descricao}" sortBy="#{estoque.local.descricao}"
-	                        		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="8%" headerText="Local"
-	                            rendered="#{materialMB.estoqueCompleto}">
+	                        		filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" width="8%" headerText="Local"
+	                            rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}">
 	                            <h:outputText value="#{estoque.local.descricao}" />
 	                        </p:column>
 	                        <p:column filterBy="#{estoque.quantidade}" sortBy="#{estoque.quantidade}" width="10%"
@@ -42,18 +42,18 @@
 	                            <h:outputText value="#{estoque.quantidade}">
 	                                <f:convertNumber />
 	                            </h:outputText>
-	                            <h:outputLabel value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
+	                            <h:outputLabel value="#{relatorioEstoqueMinimoMB.getUnidadeString(relatorioEstoqueMinimoMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
 	                        </p:column>
 	                        <p:column filterBy="#{estoque.material.valor}" sortBy="#{estoque.material.valor}" width="11%" style="text-align:right"
 	                        		filterMatchMode="contains" headerText="Valor da Unidade(R$)"
-	                            rendered="#{materialMB.estoqueCompleto}">
+	                            rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}">
 	                            <h:outputText value="#{estoque.material.valor}">
 	                                <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2" locale="#{lumeSecurity.locale}" />
 	                            </h:outputText>
 	                        </p:column>
 	                       <p:column filterBy="#{estoque.material.valorTotal}" sortBy="#{estoque.material.valorTotal}" width="11%" style="text-align:right"
 	                       			filterMatchMode="contains" headerText="Valor Total(R$)"
-	                            rendered="#{materialMB.estoqueCompleto}">
+	                            rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}">
 	                            <h:outputText value="#{estoque.material.valorTotal}">
 	                                <f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="2" locale="#{lumeSecurity.locale}" />
 	                            </h:outputText>
@@ -63,7 +63,7 @@
 	                            <h:outputText value="#{estoque.material.dataCadastroStr}" />
 	                        </p:column>
 	                        <p:column filterBy="#{estoque.material.dataMovimentacaoStr}" sortBy="#{estoque.material.dataMovimentacao}" width="9%" filterMatchMode="contains" headerText="Dt. Últ. Movimentação"
-	                            rendered="#{!materialMB.estoqueCompleto}">
+	                            rendered="#{!relatorioEstoqueMinimoMB.estoqueCompleto}">
 	                            <h:outputText value="#{estoque.material.dataMovimentacaoStr}" />
 	                        </p:column>
 	                        <p:rowExpansion>
@@ -114,8 +114,8 @@
 	                        rowKey="#{estoque}" paginatorPosition="bottom" >	                      
 	                        <f:facet name="header">Materiais indisponíveis para uso</f:facet>
 	                        <p:column filterBy="#{emprestado.detalhes}" sortBy="#{emprestado.detalhes}"
-	                        		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="20%" headerText="Situação"
-	                            rendered="#{materialMB.estoqueCompleto}">
+	                        		filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" width="20%" headerText="Situação"
+	                            rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}">
 	                            <h:outputText value="#{emprestado.local}" />
 	                        </p:column>
 	                        <p:column filterBy="#{emprestado.quantidade}" sortBy="#{emprestado.quantidade}" width="10%"
@@ -125,8 +125,8 @@
 	                            </h:outputText>	                          
 	                        </p:column>
 	                        <p:column filterBy="#{emprestado.detalhes}" sortBy="#{emprestado.detalhes}"
-	                        		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="70%" headerText="Detalhe"
-	                            rendered="#{materialMB.estoqueCompleto}">
+	                        		filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" width="70%" headerText="Detalhe"
+	                            rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}">
 	                            <h:outputText value="#{emprestado.detalhes}" />
 	                        </p:column>                                           
 	                    </p:dataTable> 	
@@ -138,6 +138,33 @@
 					styleClass="NavyButton" oncomplete="PF('dlgDetalhes').hide()" />
 			</p:panelGrid>
 		</p:dialog>
+        <p:dialog id="dlgMaterialLog" widgetVar="dlgMaterialLog" header="Logs do Material" modal="true" width="90%">
+            <p:dataTable filterDelay="1500"  id="dtMaterialLog" reflow="true" emptyMessage="" value="#{relatorioEstoqueMinimoMB.listaTransferenciasEstoque}" var="m" rows="20" paginator="true" paginatorPosition="bottom">
+                <p:column filterBy="#{m.localOrigem.descricao}" sortBy="#{m.localOrigem.descricao}" filterMatchMode="contains" headerText="Local de origem">
+                    <h:outputText value="#{m.localOrigem.descricao}" title="#{m.localOrigem.descricao}" />
+                </p:column>
+                <p:column filterBy="#{m.localDestino.descricao}" sortBy="#{m.localDestino.descricao}" filterMatchMode="contains" headerText="Local de destino">
+                    <h:outputText value="#{m.localDestino.descricao}" />
+                </p:column>
+                <p:column filterBy="#{m.descricao}" sortBy="#{m.descricao}" filterMatchMode="contains" headerText="Descrição">
+                    <h:outputText value="#{m.descricao}" />
+                </p:column>
+                <p:column filterBy="#{m.quantidade}" sortBy="#{m.quantidade}" filterMatchMode="contains" headerText="Quantidade">
+                    <h:outputText value="#{m.quantidade}" />
+                </p:column>                            
+                <p:column filterBy="#{m.profissional.dadosBasico.nome}" sortBy="#{m.profissional.dadosBasico.nome}" filterMatchMode="contains" headerText="Prof.">
+                    <h:outputText value="#{m.profissional.dadosBasico.nome}" />
+                </p:column>
+                <p:column filterBy="#{m.dataStr}" sortBy="#{m.data}" filterMatchMode="contains" headerText="Data">
+                    <h:outputText value="#{m.dataStr}" />
+                </p:column>
+            </p:dataTable>
+            <br />
+            <div class="SeparatorFull"></div>
+            <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                <p:commandButton id="fechar" icon="White fa fa-close" value="Fechar" process="@this" styleClass="RedButton" oncomplete="PF('dlgMaterialLog').hide()" />
+            </p:panelGrid>
+        </p:dialog>		
 	
 	
 		<div class="ui-g ui-fluid">
@@ -214,11 +241,14 @@
 						rowKey="#{m}" paginatorPosition="bottom" binding="#{relatorioEstoqueMinimoMB.tabelaEstoque}">
 						<f:facet name="header">Itens</f:facet>
 						
-						<p:column headerText="Detalhes" width="8%">									 	
+						<p:column headerText="Ações" width="8%">									 	
 						 	<p:commandButton class="" icon="fa fa-eye White" update=":lume:dtDetalhes,:lume:dtEmprestimos,:lume:painelQuantidades,:lume:dlgDetalhes" title="Detalhes" process="@this" 
-						 	actionListener="#{relatorioEstoqueMinimoMB.detalhes(m)}"
+						 	actionListener="#{relatorioEstoqueMinimoMB.log(m)}"
 						 	oncomplete="PF('dlgDetalhes').show()"
                                  style="width:33px !important" />
+                            <h:outputText value="&#160;" /><h:outputText value="&#160;" />                                
+       						<p:commandButton  icon="White fa fa-search" oncomplete="PF('dlgMaterialLog').show();" update=":lume:dtMaterialLog" title="Log de transferências" process="@this"
+                                actionListener="#{relatorioEstoqueMinimoMB.carregarMaterialLog(material)}" style="width:33px !important" />      
                         </p:column>	
 						<p:column filterBy="#{m.item}" sortBy="#{m.item}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" headerText="Item">							
 							<h:outputText value="#{m.item}" title="#{m.id}"/>

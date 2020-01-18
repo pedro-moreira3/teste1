@@ -2,7 +2,6 @@ package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,30 +13,26 @@ import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
-import br.com.lume.common.util.Status;
+import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.emprestimoKit.EmprestimoKitSingleton;
 import br.com.lume.emprestimoUnitario.EmprestimoUnitarioSingleton;
-import br.com.lume.esterilizacao.EsterilizacaoSingleton;
 import br.com.lume.esterilizacaoKit.EsterilizacaoKitSIngleton;
 import br.com.lume.estoque.EstoqueSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.lavagemKit.LavagemKitSingleton;
-import br.com.lume.material.MaterialSingleton;
 import br.com.lume.odonto.entity.EmprestimoKit;
 import br.com.lume.odonto.entity.EmprestimoUnitario;
-import br.com.lume.odonto.entity.Esterilizacao;
 import br.com.lume.odonto.entity.EsterilizacaoKit;
 import br.com.lume.odonto.entity.Estoque;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.LavagemKit;
 import br.com.lume.odonto.entity.MateriaisEmprestados;
 import br.com.lume.odonto.entity.Material;
-import br.com.lume.odonto.entity.MaterialEmprestado;
-import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.RelatorioEstoqueMinimo;
-import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.odonto.entity.TransferenciaEstoque;
 import br.com.lume.relatorioEstoqueMinimo.RelatorioEstoqueMinimoSingleton;
+import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -64,12 +59,23 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
     private boolean mostrarSomenteEstoqueMinimo;
     
     private List<MateriaisEmprestados> emprestados = new ArrayList<>();
+    
+    private List<TransferenciaEstoque> listaTransferenciasEstoque;
 
     public RelatorioEstoqueMinimoMB() {
         super(RelatorioEstoqueMinimoSingleton.getInstance().getBo());
      
         this.setClazz(RelatorioEstoqueMinimo.class);
         this.filtra();
+    }
+    
+    public void carregarMaterialLog(Material material) {
+        try {
+            listaTransferenciasEstoque = TransferenciaEstoqueSingleton.getInstance().getBo().listByMaterial(material);
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
     }
 
     public void detalhes(RelatorioEstoqueMinimo relatorioEstoqueMinimo) {
@@ -363,6 +369,16 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
     
     public void setEmprestados(List<MateriaisEmprestados> emprestados) {
         this.emprestados = emprestados;
+    }
+
+    
+    public List<TransferenciaEstoque> getListaTransferenciasEstoque() {
+        return listaTransferenciasEstoque;
+    }
+
+    
+    public void setListaTransferenciasEstoque(List<TransferenciaEstoque> listaTransferenciasEstoque) {
+        this.listaTransferenciasEstoque = listaTransferenciasEstoque;
     }
 
 }
