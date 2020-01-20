@@ -135,11 +135,10 @@ div.ui-selectoneradio label {
 
 					<p:separator styleClass="SeparatorFull" />
 					<div class="EmptyBox20"></div>
-
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						id="dtAtendimento" value="#{filaAtendimentoMB.agendamentos}"
 						var="a" rows="15" paginator="true" rowKey="#{a}"
-						paginatorPosition="bottom"
+						paginatorPosition="bottom" widgetVar="dtAtendimento"
 						binding="#{filaAtendimentoMB.tabelaAtendimento}">
 						<f:facet name="header">Agendamentos</f:facet>
 						<p:column filterBy="#{a.profissional.dadosBasico.nome}"
@@ -181,8 +180,8 @@ div.ui-selectoneradio label {
 							headerText="Con./Part.">
 							<h:outputText value="#{a.paciente.siglaConvenio}" />
 						</p:column>
-						<p:column filterBy="#{a.statusDescricao}"
-							sortBy="#{a.statusDescricao}" filterMatchMode="contains"
+						<p:column filterBy="#{a.statusDescricaoAntiga}"
+							sortBy="#{a.statusDescricaoAntiga}" filterMatchMode="contains"
 							headerText="Status" width="15%"
 							filterFunction="#{filaAtendimentoMB.filtroSemAcento}">
 							<p:selectOneMenu value="#{a.statusNovo}"
@@ -231,7 +230,7 @@ div.ui-selectoneradio label {
 								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
 								<p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}"
-									process="@this" update=":lume:dtAtendimento" />
+									process="@this" event="close" update=":lume:dtAtendimento" />
 							</p:calendar>
 						</p:column>
 						<p:column filterBy="#{a.iniciouAsStr}"
@@ -241,7 +240,7 @@ div.ui-selectoneradio label {
 								showButtonPanel="true"
 								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
-								<p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}"
+								<p:ajax event="close" listener="#{filaAtendimentoMB.persistAgendamento(a)}"
 									process="@this" update=":lume:dtAtendimento" />
 							</p:calendar>
 						</p:column>
@@ -252,7 +251,7 @@ div.ui-selectoneradio label {
 								showButtonPanel="true"
 								disabled="#{!filaAtendimentoMB.liberaEdicao or filaAtendimentoMB.filtroTomorrow or filaAtendimentoMB.isDisableFieldsAg(a)}"
 								timeOnly="true">
-								<p:ajax listener="#{filaAtendimentoMB.persistAgendamento(a)}"
+								<p:ajax event="close" listener="#{filaAtendimentoMB.persistAgendamento(a)}"
 									process="@this" update=":lume:dtAtendimento" />
 							</p:calendar>
 						</p:column>
@@ -355,10 +354,14 @@ div.ui-selectoneradio label {
 										styleClass="ui-panelgrid-blank form-group ui-fluid botoesAgenda">
 										<h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
 											<p:commandButton id="persist" icon="White fa fa-save"
-												process="pnAgendamento" value="Salvar"
-												actionListener="#{agendamentoMB.actionPersist}"
-												oncomplete="btBloqueioAgenda();handleDialogRequest(xhr, status, args);"
-												styleClass="GreenButton" />
+									process=":lume:pnAgendamento, @this" value="Salvar"
+									rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
+									actionListener="#{agendamentoMB.actionPersist}"
+									update=":lume:pnAgendamento"
+									oncomplete="handleDialogRequest(xhr, status, args);PF('dtAtendimento').filter()"
+									styleClass="GreenButton" />	
+												
+												
 										</h:panelGroup>
 										<p:commandButton icon="White fa fa-close" value="Fechar"
 											process="@this" onclick="PF('eventDialog').hide()" />

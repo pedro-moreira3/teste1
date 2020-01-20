@@ -192,7 +192,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 									value="Período de último agendamento:" />
 								<p:selectOneMenu id="filtroPeriodo"
 									value="#{relatorioPacienteAgendamentoMB.filtroPeriodo}">
-									<p:ajax process="@this" update="inicio, fim"
+									<p:ajax process="@this" update="inicioFiltro, fimFiltro"
 										listener="#{relatorioPacienteAgendamentoMB.actionTrocaDatasCriacao}" />
 									<f:selectItem itemValue="" itemLabel="Selecione" />
 									<f:selectItem itemValue="O" itemLabel="Ontem" />									
@@ -204,13 +204,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 								</p:selectOneMenu>
 							</h:panelGroup>
 							<h:panelGroup>
-								<h:outputText for="inicio" value="Último agendamento de:" />
-								<p:calendar id="inicio"
+								<h:outputText for="inicioFiltro" value="Último agendamento de:" />
+								<p:calendar id="inicioFiltro"
 									value="#{relatorioPacienteAgendamentoMB.inicio}" />
 							</h:panelGroup>
 							<h:panelGroup>
-								<h:outputText for="fim" value="Último agendamento até:" />
-								<p:calendar id="fim" value="#{relatorioPacienteAgendamentoMB.fim}" />
+								<h:outputText for="fimFiltro" value="Último agendamento até:" />
+								<p:calendar id="fimFiltro" value="#{relatorioPacienteAgendamentoMB.fim}" />
 							</h:panelGroup>
 						</p:panelGrid>						
 						<p:panelGrid columns="3" layout="grid"
@@ -360,7 +360,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 							<p:commandButton id="pesquisar" icon="fa fa-search White"
 								value="Pesquisar"
 								actionListener="#{relatorioPacienteAgendamentoMB.actionFiltrar}"
-								update=":lume:dtPrincipal" tabindex="1" process="@this,:lume:filtroRelatorio"
+								update=":lume:dtPrincipalRelatorio" tabindex="1" process="@this,:lume:filtroRelatorio"
 								styleClass="OrangeButton" />
 
 							<h:panelGroup>
@@ -377,7 +377,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 									value="Exportar tabela para Excel"
 									styleClass="GreenSplitButton"
 									actionListener="#{relatorioPacienteAgendamentoMB.exportarTabela('xls')}"
-									ajax="false" process="dtPrincipal,@this" update="@this"
+									ajax="false" process="dtPrincipalRelatorio,@this" update="@this"
 									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
@@ -387,7 +387,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 									<p:menuitem value="Exportar tabela para PDF"
 										icon="fa fa fa-file-pdf-o"
 										actionListener="#{relatorioPacienteAgendamentoMB.exportarTabela('pdf')}"
-										ajax="false" process="dtPrincipal,@this" immediate="true"
+										ajax="false" process="dtPrincipalRelatorio,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 										<p:fileDownload
 											value="#{relatorioPacienteAgendamentoMB.arquivoDownload}" />
@@ -395,7 +395,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 									<p:menuitem value="Exportar tabela para CSV"
 										icon="fa fa fa-file-pdf-o"
 										actionListener="#{relatorioPacienteAgendamentoMB.exportarTabela('csv')}"
-										ajax="false" process="dtPrincipal,@this" immediate="true"
+										ajax="false" process="dtPrincipalRelatorio,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 										<p:fileDownload
 											value="#{relatorioPacienteAgendamentoMB.arquivoDownload}" />
@@ -406,14 +406,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 						</p:panelGrid>
 						</p:fieldset>
 					<p:outputPanel>
-						<p:dataTable id="dtPrincipal" widgetVar="dtPrincipal"
+						<p:dataTable id="dtPrincipalRelatorio" widgetVar="dtPrincipalRelatorio"
 							value="#{relatorioPacienteAgendamentoMB.pacientes}"
 							var="p" rowKey="#{p}" rows="10"
 							paginator="true" paginatorPosition="bottom" reflow="true"
 							emptyMessage=""
 							selection="#{relatorioPacienteAgendamentoMB.entity}"
 							selectionMode="single" filterDelay="1000" binding="#{relatorioPacienteAgendamentoMB.tabelaRelatorio}">
-							<f:facet name="header">Pacientes</f:facet>
+							<f:facet name="header">Pacientes</f:facet>							
 							<p:column
 								sortBy="#{p.dadosBasico.nome}" filterBy="#{p.dadosBasico.nome}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
@@ -452,36 +452,77 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 									value="#{relatorioPacienteAgendamentoMB.formatarData(p.ultimoAgendamento.inicio)}" />
 							</p:column>
 							<p:column
-								filterBy="#{relatorioAtendimentoMB.getStatusDescricao(p.ultimoAgendamento)}"
-								sortBy="#{relatorioAtendimentoMB.getStatusDescricao(p.ultimoAgendamento)}"
+								filterBy="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.ultimoAgendamento)}"
+								sortBy="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.ultimoAgendamento)}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Status Último Agendamento">
 								<h:outputText
-									value="#{relatorioAtendimentoMB.getStatusDescricao(p.ultimoAgendamento)}" />
+									value="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.ultimoAgendamento)}" />
 							</p:column>
 							<p:column filterBy="#{p.proximoAgendamento.inicio}"
 								sortBy="#{p.proximoAgendamento.inicio}"
 								filterMatchMode="contains" headerText="Data Próximo Agendamento">
+								<p:commandButton icon="fa fa fa-calendar" rendered="#{p.proximoAgendamento.inicio eq '' or p.proximoAgendamento.inicio eq null}"
+									oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');" title="Agendar"
+									process="@this" action="#{agendamentoMB.agendarNoRelatorioRelacionamento(p,p.ultimoAgendamento.profissional)}"
+									update="lume:pnAgendamento" style="width: 33px !important" />								
 								<h:outputText
 									value="#{relatorioPacienteAgendamentoMB.formatarData(p.proximoAgendamento.inicio)}" />
 							</p:column>		
 							<p:column
-								filterBy="#{relatorioAtendimentoMB.getStatusDescricao(p.proximoAgendamento)}"
-								sortBy="#{relatorioAtendimentoMB.getStatusDescricao(p.proximoAgendamento)}"
+								filterBy="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.proximoAgendamento)}"
+								sortBy="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.proximoAgendamento)}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Status Próximo Agendamento">
 								<h:outputText
-									value="#{relatorioAtendimentoMB.getStatusDescricao(p.proximoAgendamento)}" />
+									value="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.proximoAgendamento)}" />
 							</p:column>		
 							<p:column filterBy="#{p.proximoRetorno.dataRetorno}"
 								sortBy="#{p.proximoRetorno.dataRetorno}"
 								filterMatchMode="contains" headerText="Data Próximo Retorno">
+								<ui:remove> <p:commandButton icon="fa fa fa-mail-reply" rendered="#{p.proximoRetorno.dataRetorno eq '' or p.proximoRetorno.dataRetorno eq null}"
+									oncomplete="PF('dlgViewRetorno').show();" title="Marcar Retorno"
+									process="@this" action="#{relatorioPacienteAgendamentoMB.agendarRetorno(p)}"
+									update="lume:pnAgendamento,:lume:dlgViewRetorno" style="width: 33px !important" />
+								</ui:remove>				
 								<h:outputText
-									value="#{relatorioPacienteAgendamentoMB.formatarDataSemHora(p.proximoRetorno.dataRetorno)}" />
+									value="#{relatorioPacienteAgendamentoMB.formatarDataSemHora(p.proximoRetorno.dataRetorno)}" />									
 							</p:column>																								
 						</p:dataTable>
 					</p:outputPanel>
 
+					<p:dialog widgetVar="eventDialog" header="Agendamento"
+						resizable="false" id="pnAgendamento" responsive="true"
+						position="10,10" modal="true"
+						style="position:absolute !important;" appendToBody="true">
+
+						<div class="Container100 Responsive100 NoIndent">
+							<div class="Container100 ui-fluid NoPadding">
+								<div class="Card" style="margin-top: -35px">
+
+									<ui:include src="dlgagendamento.xhtml" />
+
+									<p:separator styleClass="SeparatorFull" />
+									<p:panelGrid columns="4" layout="grid"
+										styleClass="ui-panelgrid-blank form-group ui-fluid botoesAgenda">
+										<h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
+											<p:commandButton id="persist" icon="White fa fa-save"
+									process=":lume:pnAgendamento, @this" value="Salvar"
+									rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
+									actionListener="#{agendamentoMB.actionPersist}"
+									update=":lume:pnAgendamento"
+									oncomplete="handleDialogRequest(xhr, status, args);PF('dtPrincipalRelatorio').filter()"
+									styleClass="GreenButton" />
+												
+										</h:panelGroup>
+										<p:commandButton icon="White fa fa-close" value="Fechar"
+											process="@this" onclick="PF('eventDialog').hide()" />
+									</p:panelGrid>
+
+								</div>
+							</div>
+						</div>
+					</p:dialog>
 
 					<p:dialog id="dlgConfirmarCabecalho"
 						widgetVar="dlgConfirmarCabecalho" responsive="true"
@@ -513,6 +554,70 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 						</p:panelGrid>
 
 					</p:dialog>
+					
+		<p:dialog appendTo=":lume:" maximizable="false" modal="true"
+			minimizable="false" resizable="false" responsive="true"
+			widgetVar="dlgViewRetorno" width="80%" id="dlgViewRetorno">
+			<f:facet name="header">
+				<p:outputPanel id="viewRetornoHeader">
+					Cadastro de retorno
+				</p:outputPanel>
+			</f:facet>
+			<p:outputPanel id="viewRetorno">
+				<div class="ui-g ui-fluid">
+					<div class="ui-g-12 ui-lg-12">
+						<p:panelGrid columns="4" layout="grid"
+							columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+							<h:outputLabel value="Paciente:" />
+							<h:outputLabel value="#{relatorioPacienteAgendamentoMB.retorno.paciente}" />							
+							<h:outputLabel value="Status : " />
+							<p:selectOneMenu value="#{relatorioPacienteAgendamentoMB.retorno.retornar}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione uma opção" />
+								<f:selectItem itemLabel="Pendente" itemValue="P" />
+								<f:selectItem itemLabel="Agendado" itemValue="A" />
+								<f:selectItem itemLabel="Aguardando Retorno" itemValue="R" />
+								<f:selectItem itemLabel="Não conseguimos Contato" itemValue="N" />
+								<f:selectItem itemLabel="Ligar Novamente" itemValue="L" />
+								<f:selectItem itemLabel="Cancelado" itemValue="C" />
+							</p:selectOneMenu>
+							<p:outputLabel value="Data Contato : " for="dtContato" />
+							<p:calendar id="dtContato" required="true"
+								value="#{relatorioPacienteAgendamentoMB.retorno.dataRetorno}" pattern="dd/MM/yyyy"
+								mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-100:+10" styleClass="dtContato" />
+							<p:outputLabel for="observacoesretornocadastro"
+								value="Observações : " />
+							<p:inputTextarea id="observacoesretornocadastro" rows="3"
+								cols="33" value="#{relatorioPacienteAgendamentoMB.retorno.observacoes}"
+								maxlength="200" />
+							<h:outputLabel value="Plano de Tratamento : " />
+							<h:outputText
+								value="#{relatorioPacienteAgendamentoMB.retorno.planoTratamento.descricao}" />
+							<h:outputLabel value="Data Finalização Plano de Tratamento : " />
+							<h:outputText
+								value="#{relatorioPacienteAgendamentoMB.retorno.planoTratamento.dataFinalizadoStr}" />
+
+							<p:outputLabel for="detalhesRetorno" value="Detalhes do contato : " />
+							<p:inputTextarea id="detalhesRetorno" rows="3" cols="33" value="#{relatorioPacienteAgendamentoMB.retorno.detalhesContato}" maxlength="200" />
+
+						</p:panelGrid>
+					</div>
+				</div>
+			</p:outputPanel>
+			<p:separator styleClass="SeparatorFull" />
+			<p:panelGrid columns="2" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton icon="White fa fa-save" value="Salvar"
+					actionListener="#{relatorioPacienteAgendamentoMB.actionPersistRetorno}"
+					update=":lume:dtPrincipalRelatorio" process="@this, :lume:viewRetorno"
+					styleClass="GreenButton" />
+				<p:commandButton icon="White fa fa-close" value="Fechar"
+					styleClass="NavyButton" oncomplete="PF('dlgViewRetorno').hide();PF('dtPrincipalRelatorio').filter();" />
+			</p:panelGrid>
+		</p:dialog>					
 
 
 					<p:dialog id="dlgGerarRelatorio"
@@ -530,13 +635,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 
 								<h1
 									style="font-size: 16px !important; margin: 0; margin-top: 10px; margin-bottom: 10px; font-weight: bold;">
-									<h:outputText value="#{relatorioAtendimentoMB.nomeClinica()}" />
+									<h:outputText value="#{relatorioPacienteAgendamentoMB.nomeClinica()}" />
 								</h1>
 
 								<h1
 									style="font-size: 14px !important; margin: 0; margin-top: -5px; margin-bottom: 5px;">
 									<h:outputText
-										value="#{relatorioAtendimentoMB.telefoneClinica()}" />
+										value="#{relatorioPacienteAgendamentoMB.telefoneClinica()}" />
 								</h1>
 
 								<p:outputPanel
@@ -713,11 +818,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 													value="#{relatorioPacienteAgendamentoMB.formatarData(p.ultimoAgendamento.inicio)}" />
 											</td>
 											<td><h:outputText
-													value="#{relatorioAtendimentoMB.getStatusDescricao(p.ultimoAgendamento)}" /></td>
+													value="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.ultimoAgendamento)}" /></td>
 											<td><h:outputText
 													value="#{relatorioPacienteAgendamentoMB.formatarData(p.proximoAgendamento.inicio)}" /></td>
 											<td><h:outputText
-													value="#{relatorioAtendimentoMB.getStatusDescricao(p.proximoAgendamento)}" />
+													value="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.proximoAgendamento)}" />
 											</td>
 											<td><h:outputText
 													value="#{relatorioPacienteAgendamentoMB.formatarDataSemHora(p.proximoRetorno.dataRetorno)}" />
@@ -733,7 +838,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
 
 					</p:dialog>
 
-					<ui:include src="pacienteFicha.xhtml" />
+				
 					<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 				</div>
