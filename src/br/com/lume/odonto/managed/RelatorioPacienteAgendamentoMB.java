@@ -13,6 +13,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
@@ -23,8 +24,10 @@ import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.retorno.RetornoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -62,6 +65,8 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     public static final String SEM_AGENDAMENTO_FUTURO = "SAF";
         
     public static final String SEM_RETORNO_FUTURO = "SRR";
+        
+    public Retorno retorno;
     
     private boolean checkFiltro = false;
     private boolean desabilitaStatusAgendamento = false;
@@ -262,6 +267,36 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         return null;
     }
     
+    public String nomeClinica() {
+        return UtilsFrontEnd.getEmpresaLogada().getEmpStrNmefantasia();
+    }
+
+    public String telefoneClinica() {
+        return UtilsFrontEnd.getEmpresaLogada().getEmpChaFone();
+    }
+    
+    public void agendarRetorno(Paciente p) {
+        retorno = new Retorno();
+        retorno.setPaciente(paciente);
+        if(p.getProximoAgendamento() != null) {
+            retorno.setAgendamento(p.getProximoAgendamento());    
+        }        
+        
+        if(p.getProximoAgendamento()!= null && p.getProximoAgendamento().getPlanoTratamento() != null) {
+            retorno.setPlanoTratamento( p.getProximoAgendamento().getPlanoTratamento());
+        }      
+    }
+    
+    public void actionPersistRetorno(ActionEvent event) {
+        try {
+            RetornoSingleton.getInstance().getBo().persist(retorno);          
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            e.printStackTrace();
+        }
+    
+    }    
+    
     public String formatarData(Date data) {
         if (data != null) {
             return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", new Locale("PT BR")).format(data);
@@ -410,4 +445,13 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         this.imprimirCabecalho = imprimirCabecalho;
     }
 
+    
+    public Retorno getRetorno() {
+        return retorno;
+    }
+
+    
+    public void setRetorno(Retorno retorno) {
+        this.retorno = retorno;
+    }
 }

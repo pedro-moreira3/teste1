@@ -354,10 +354,14 @@ div.ui-selectoneradio label {
 										styleClass="ui-panelgrid-blank form-group ui-fluid botoesAgenda">
 										<h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
 											<p:commandButton id="persist" icon="White fa fa-save"
-												process="pnAgendamento" value="Salvar" update="dtAtendimento"
-												actionListener="#{agendamentoMB.actionPersist}"
-												oncomplete="btBloqueioAgenda();handleDialogRequest(xhr, status, args);PF('dtAtendimento').filter()"
-												styleClass="GreenButton" />
+									process=":lume:pnAgendamento, @this" value="Salvar"
+									rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
+									actionListener="#{agendamentoMB.actionPersist}"
+									update=":lume:pnAgendamento"
+									oncomplete="handleDialogRequest(xhr, status, args);PF('dtAtendimento').filter()"
+									styleClass="GreenButton" />	
+												
+												
 										</h:panelGroup>
 										<p:commandButton icon="White fa fa-close" value="Fechar"
 											process="@this" onclick="PF('eventDialog').hide()" />
