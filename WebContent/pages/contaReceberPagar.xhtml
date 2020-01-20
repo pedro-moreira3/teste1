@@ -211,7 +211,8 @@ body .ui-selectoneradio td label {
 												actionListener="#{lancamentoContabilMB.actionPersist}"
 												update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil"
 												process="@this,dadosBasicos,motivo,data,valor"
-												styleClass="GreenButton" />
+												oncomplete="PF('dtLancamentoContabil').filter()"
+												styleClass="GreenButton" />												
 											<p:commandButton id="delete" icon="White fa fa-trash-o"
 												value="Excluir"
 												actionListener="#{lancamentoContabilMB.actionRemove}"
@@ -263,9 +264,38 @@ body .ui-selectoneradio td label {
 										</p:panelGrid>
 									</p:outputPanel>
 									<div class="EmptyBox20"></div>
+							
+							
+							<p:panelGrid columns="4"
+											columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+											layout="grid" styleClass="ui-panelgrid-blank"
+											style="border:0px none; background-color:transparent;" id="filtroPrincipalDatas">
 
+											<p:outputLabel for="inicioLancamento" value="Inicio : " />
+											<p:calendar id="inicioLancamento" value="#{lancamentoContabilMB.inicio}"
+												pattern="dd/MM/yyyy" mask="true" required="false" />
+
+											<p:outputLabel for="fimLancamento" value="Fim : " />
+											<p:calendar id="fimLancamento" value="#{lancamentoContabilMB.fim}"
+												pattern="dd/MM/yyyy" mask="true" required="false" />
+
+										</p:panelGrid>
+
+										<div class="SeparatorFull"></div>
+										<p:panelGrid columns="4" layout="grid"
+											styleClass="ui-panelgrid-blank form-group ui-fluid">
+											<p:commandButton id="pesquisarLancamentos" icon="fa fa-search White"
+												value="Pesquisar"
+												actionListener="#{lancamentoContabilMB.geraLista}"
+												update="filtroPrincipalDatas,dtLancamentoContabil" process="@this,filtroPrincipalDatas"
+												oncomplete="PF('dtLancamentoContabil').filter()"
+												styleClass="OrangeButton" />											
+										</p:panelGrid>
+							
+							
+									<div class="EmptyBox20"></div>
 									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-										id="dtLancamentoContabil"
+										id="dtLancamentoContabil" widgetVar="dtLancamentoContabil"
 										value="#{lancamentoContabilMB.lancamentoContabeis}" var="lc"
 										rows="15" paginator="true"
 										selection="#{lancamentoContabilMB.entity}"
