@@ -28,6 +28,9 @@
 									itemValue="#{p}" converter="paciente" required="true" size="48"
 									scrollHeight="400">
 
+									<p:column headerText="Código" style="text-align: center;">
+										<h:outputText value="#{p.id}" />
+									</p:column>
 									<p:column headerText="Nome">
 										<h:outputText value="#{p.dadosBasico.nome}" />
 									</p:column>

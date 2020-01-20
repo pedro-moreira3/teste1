@@ -52,6 +52,9 @@
 								converter="paciente" forceSelection="true" scrollHeight="400"
 								minQueryLength="3">
 
+								<p:column headerText="Código" style="text-align: center;">
+									<h:outputText value="#{p.id}" />
+								</p:column>
 								<p:column headerText="Nome">
 									<h:outputText value="#{p.dadosBasico.nome}" />
 								</p:column>
@@ -100,10 +103,11 @@
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="new5" icon="White fa fa-file-o" value="Novo Contrato"
+							<p:commandButton id="new5" icon="White fa fa-file-o"
+								value="Novo Contrato"
 								actionListener="#{documentoGenericoMB.actionNew}"
 								update=":lume:pnDocumentoGenerico,:lume:pnDocumentoGenericoPrincipal,:lume:dtDocumentoGenerico"
-								immediate="true" tabindex="1" process="@this" />							
+								immediate="true" tabindex="1" process="@this" />
 							<h:panelGroup rendered="#{documentoGenericoMB.liberaBotao}">
 								<p:commandButton id="persist5" icon="White fa fa-save"
 									value="Gerar Documento"
@@ -122,24 +126,23 @@
 									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-									<p:fileDownload
-										value="#{documentoGenericoMB.arquivoDownload}" />
+									<p:fileDownload value="#{documentoGenericoMB.arquivoDownload}" />
 
 									<p:menuitem value="Exportar tabela para PDF"
 										icon="fa fa fa-file-pdf-o"
 										actionListener="#{documentoGenericoMB.exportarTabela('pdf')}"
-										ajax="false" process="dtDocumentoGenerico,@this" immediate="true"
+										ajax="false" process="dtDocumentoGenerico,@this"
+										immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{documentoGenericoMB.arquivoDownload}" />
+										<p:fileDownload value="#{documentoGenericoMB.arquivoDownload}" />
 									</p:menuitem>
 									<p:menuitem value="Exportar tabela para CSV"
 										icon="fa fa fa-file-pdf-o"
 										actionListener="#{documentoGenericoMB.exportarTabela('csv')}"
-										ajax="false" process="dtDocumentoGenerico,@this" immediate="true"
+										ajax="false" process="dtDocumentoGenerico,@this"
+										immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{documentoGenericoMB.arquivoDownload}" />
+										<p:fileDownload value="#{documentoGenericoMB.arquivoDownload}" />
 									</p:menuitem>
 								</p:splitButton>
 							</h:panelGroup>
@@ -154,7 +157,8 @@
 						id="dtDocumentoGenerico" value="#{documentoGenericoMB.entityList}"
 						var="rct" rows="7" paginator="true"
 						selection="#{documentoGenericoMB.entity}" selectionMode="single"
-						rowKey="#{rct}" paginatorPosition="bottom" binding="#{documentoGenericoMB.tabelaDocumento}">
+						rowKey="#{rct}" paginatorPosition="bottom"
+						binding="#{documentoGenericoMB.tabelaDocumento}">
 						<p:ajax event="rowSelect"
 							update=":lume:pnDocumentoGenerico,:lume:pnDocumentoGenericoPrincipal"
 							listener="#{documentoGenericoMB.atualizaTela}" />

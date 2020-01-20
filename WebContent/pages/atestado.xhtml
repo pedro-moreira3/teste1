@@ -51,6 +51,9 @@
 								converter="paciente" forceSelection="true" scrollHeight="400"
 								minQueryLength="3">
 
+								<p:column headerText="Código" style="text-align: center;">
+									<h:outputText value="#{p.id}" />
+								</p:column>
 								<p:column headerText="Nome">
 									<h:outputText value="#{p.dadosBasico.nome}" />
 								</p:column>
@@ -112,8 +115,8 @@
 
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="new3" icon="White fa fa-file-o" value="Novo Atestado"
-								actionListener="#{atestadoMB.actionNew}"
+							<p:commandButton id="new3" icon="White fa fa-file-o"
+								value="Novo Atestado" actionListener="#{atestadoMB.actionNew}"
 								update=":lume:pnAtestado,:lume:pnAtestadoPrincipal,:lume:dtAtestado"
 								immediate="true" tabindex="1" process="@this" />
 							<h:panelGroup rendered="#{atestadoMB.liberaBotao}">
@@ -124,7 +127,7 @@
 									process=":lume:pnAtestadoPrincipal"
 									disabled="#{atestadoMB.entity.id != 0}"
 									styleClass="GreenButton" />
-							</h:panelGroup>							
+							</h:panelGroup>
 
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
@@ -135,24 +138,21 @@
 									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-									<p:fileDownload
-										value="#{atestadoMB.arquivoDownload}" />
+									<p:fileDownload value="#{atestadoMB.arquivoDownload}" />
 
 									<p:menuitem value="Exportar tabela para PDF"
 										icon="fa fa fa-file-pdf-o"
 										actionListener="#{atestadoMB.exportarTabela('pdf')}"
 										ajax="false" process="dtAtestado,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{atestadoMB.arquivoDownload}" />
+										<p:fileDownload value="#{atestadoMB.arquivoDownload}" />
 									</p:menuitem>
 									<p:menuitem value="Exportar tabela para CSV"
 										icon="fa fa fa-file-pdf-o"
 										actionListener="#{atestadoMB.exportarTabela('csv')}"
 										ajax="false" process="dtAtestado,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{atestadoMB.arquivoDownload}" />
+										<p:fileDownload value="#{atestadoMB.arquivoDownload}" />
 									</p:menuitem>
 								</p:splitButton>
 							</h:panelGroup>
@@ -164,7 +164,8 @@
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						id="dtAtestado" value="#{atestadoMB.entityList}" var="att"
 						rows="7" paginator="true" selection="#{atestadoMB.entity}"
-						selectionMode="single" rowKey="#{att}" paginatorPosition="bottom" binding="#{atestadoMB.tabelaAtestado}">
+						selectionMode="single" rowKey="#{att}" paginatorPosition="bottom"
+						binding="#{atestadoMB.tabelaAtestado}">
 						<p:ajax event="rowSelect"
 							update=":lume:pnAtestado,:lume:pnAtestadoPrincipal"
 							listener="#{atestadoMB.atualizaTela}" />

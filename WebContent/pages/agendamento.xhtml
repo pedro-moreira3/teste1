@@ -282,6 +282,9 @@ div.ui-selectoneradio label {
 								required="#{!agendamentoMB.visivel}"
 								styleClass="paciente tallerAutoComplete">
 
+								<p:column headerText="Código" style="text-align: center;">
+									<h:outputText value="#{p.id}" />
+								</p:column>
 								<p:column headerText="Nome">
 									<h:outputText value="#{p.dadosBasico.nome}" />
 								</p:column>
@@ -507,17 +510,15 @@ div.ui-selectoneradio label {
 					<p:panel id="pnAgnd" styleClass="NoChildPadding"
 						style="margin: 0 auto; margin-bottom: 10px;border: none">
 
-						<p:fieldset id="filtrosShow"
-							legend="Filtros"
-							toggleable="true" toggleSpeed="500"
+						<p:fieldset id="filtrosShow" legend="Filtros" toggleable="true"
+							toggleSpeed="500"
 							collapsed="#{agendamentoMB.profissional == null and agendamentoMB.pacientePesquisado == null}">
 
 							<p:outputPanel id="dadosFiltroAg">
 
 								<p:panelGrid columns="1" layout="grid"
 									styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
-									style="border:0px none; background-color:transparent;"
-									>
+									style="border:0px none; background-color:transparent;">
 
 									<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'S'}">
 
@@ -537,6 +538,9 @@ div.ui-selectoneradio label {
 													disabled="#{agendamentoMB.entity.id != 0}"
 													styleClass="paciente tallerAutoComplete">
 
+													<p:column headerText="Código" style="text-align: center;">
+														<h:outputText value="#{p.id}" />
+													</p:column>
 													<p:column headerText="Nome">
 														<h:outputText value="#{p.dadosBasico.nome}" />
 													</p:column>
@@ -572,12 +576,12 @@ div.ui-selectoneradio label {
 
 											<h:panelGroup></h:panelGroup>
 
-											
 
-											<h:panelGroup styleClass="md-combo"
-												>
 
-												<p:selectOneMenu id="profissional" disabled="#{agendamentoMB.dentista}"
+											<h:panelGroup styleClass="md-combo">
+
+												<p:selectOneMenu id="profissional"
+													disabled="#{agendamentoMB.dentista}"
 													value="#{agendamentoMB.profissional}"
 													converter="profissional" filter="true"
 													filterMatchMode="contains"

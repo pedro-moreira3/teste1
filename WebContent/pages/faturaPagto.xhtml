@@ -44,6 +44,9 @@
 								converter="paciente" forceSelection="true" scrollHeight="400"
 								minQueryLength="3" queryDelay="1000">
 
+								<p:column headerText="Código" style="text-align: center;">
+									<h:outputText value="#{p.id}" />
+								</p:column>
 								<p:column headerText="Nome">
 									<h:outputText value="#{p.dadosBasico.nome}" />
 								</p:column>

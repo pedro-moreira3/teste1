@@ -235,6 +235,9 @@
 						required="#{!agendamentoMB.visivel}"
 						styleClass="paciente tallerAutoComplete">
 
+						<p:column headerText="Código" style="text-align: center;">
+							<h:outputText value="#{p.id}" />
+						</p:column>
 						<p:column headerText="Nome">
 							<h:outputText value="#{p.dadosBasico.nome}" />
 						</p:column>
@@ -261,8 +264,8 @@
 							title="Cadastro do Paciente"
 							oncomplete="PF('dlgFichaPaciente').show()" />
 						<p:commandButton id="novoPaciente"
-							rendered="#{!agendamentoMB.visivel}"
-							icon="fa fa-plus White" title="Novo Paciente"
+							rendered="#{!agendamentoMB.visivel}" icon="fa fa-plus White"
+							title="Novo Paciente"
 							update=":lume:pnNovoPaciente, :lume:pnBtpaciente"
 							immediate="true" actionListener="#{agendamentoMB.novoPaciente}" />
 						<p:commandButton id="cancelarNovoPaciente"
@@ -383,7 +386,8 @@
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.fim)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.fim)}">
 					<p:ajax event="close"
-						listener="#{agendamentoMB.onCalendarAgChangeDataFim}" process="@this" />
+						listener="#{agendamentoMB.onCalendarAgChangeDataFim}"
+						process="@this" />
 				</p:calendar>
 				<p:outputLabel for="fim" value="Data/Hora Final" />
 				<p:message styleClass="msg" for="fim" />
@@ -416,7 +420,7 @@
 					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.iniciouAs)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.iniciouAs)}">
-					<p:ajax event="close" process="@this" />						
+					<p:ajax event="close" process="@this" />
 				</p:calendar>
 				<p:outputLabel for="iniciouAs" value="Iniciou atend. às" />
 				<p:message styleClass="msg" for="iniciouAs" />
@@ -427,7 +431,7 @@
 					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.finalizouAs)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.finalizouAs)}">
-					<p:ajax event="close" process="@this" />				
+					<p:ajax event="close" process="@this" />
 				</p:calendar>
 				<p:outputLabel for="finalizouAs" value="Finalizou atend. às" />
 				<p:message styleClass="msg" for="finalizouAs" />
