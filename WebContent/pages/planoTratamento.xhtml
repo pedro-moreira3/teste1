@@ -1244,8 +1244,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:commandButton icon="fa fa-trash" process="@this"
 						actionListener="#{planoTratamentoMB.actionRemoveOrcamento(orcamento)}"
 						update=":lume:tabView:tbViewOrcamento" styleClass="NavyButton"
-						title="Cancelar Orçamento"
-						disabled="#{orcamento.aprovado or planoTratamentoMB.entity.status == 'S'}">
+						title="Cancelar Orçamento">
 						<p:confirm header="Confirmação"
 							message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
 					</p:commandButton>
