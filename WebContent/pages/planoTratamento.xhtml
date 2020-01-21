@@ -256,22 +256,20 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<p:outputLabel value="#{planoTratamento.statusDescritivo}" />
 					</p:column>
-					<p:column
-						filterBy="#{planoTratamentoMB.getTotalPT(planoTratamento)}"
-						sortBy="#{planoTratamentoMB.getTotalPT(planoTratamento)}"
+					<p:column filterBy="#{planoTratamento.valor}"
+						sortBy="#{planoTratamento.valor}"
 						rendered="#{planoTratamentoMB.temPermissaoExtra}"
 						filterMatchMode="contains" headerText="Valor Original">
-						<h:outputText
-							value="#{planoTratamentoMB.getTotalPT(planoTratamento)}">
+						<h:outputText value="#{planoTratamento.valor}">
 							<f:convertNumber currencySymbol="R$" type="currency"
 								locale="#{lumeSecurity.locale}" />
 						</h:outputText>
 					</p:column>
-					<p:column filterBy="#{planoTratamento.valor}"
-						sortBy="#{planoTratamento.valor}"
+					<p:column filterBy="#{planoTratamento.valorTotalRestante}"
+						sortBy="#{planoTratamento.valorTotalRestante}"
 						rendered="#{planoTratamentoMB.temPermissaoExtra}"
 						filterMatchMode="contains" headerText="Valor Restante à Pagar">
-						<h:outputText value="#{planoTratamento.valor}">
+						<h:outputText value="#{planoTratamento.valorTotalRestante}">
 							<f:convertNumber currencySymbol="R$" type="currency"
 								locale="#{lumeSecurity.locale}" />
 						</h:outputText>

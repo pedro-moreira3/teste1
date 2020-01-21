@@ -294,6 +294,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     if (pt.getStatus().equals(Status.SIM) && contemPlanoTratamentoProcedimentoAberto(pt.getPlanoTratamentoProcedimentos())) {
                         pt.setValor(BigDecimal.ZERO);
                     }
+                    pt.setValor(getTotalPT(pt));
+                    pt.setValorTotalRestante(pt.getValor().subtract(PlanoTratamentoSingleton.getInstance().getTotalPago(pt)));
                 }
             }
         } catch (Exception e) {
@@ -403,18 +405,18 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
-    private boolean finalizaProcedimento() throws Exception {     
+    private boolean finalizaProcedimento() throws Exception {
         this.ptps2Finalizar = new ArrayList<>();
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
             if (ptp.getStatus() == null || !"F".equals(ptp.getStatus())) {
                 ptp.setDataFinalizado(null);
-                ptp.setFinalizadoPorProfissional(null);               
-            }else{
+                ptp.setFinalizadoPorProfissional(null);
+            } else {
                 //verifica se ptp ja estava finalizado anteriormente
                 PlanoTratamentoProcedimento ptpBanco = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(ptp.getId());
-                if(!"F".equals(ptpBanco.getStatus())) {
+                if (!"F".equals(ptpBanco.getStatus())) {
                     this.ptps2Finalizar.add(ptp);
-                }             
+                }
             }
         }
         if (this.ptps2Finalizar != null && !this.ptps2Finalizar.isEmpty()) {
