@@ -14,6 +14,7 @@ import br.com.lume.common.exception.business.SenhaInvalidaException;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.exception.business.UsuarioBloqueadoException;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
@@ -287,7 +288,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
     public void actionResetSenha() {
         try {
             if (this.getEntity().getUsuStrLogin() != null && !this.getEntity().getUsuStrLogin().equals("")) {
-                UsuarioSingleton.getInstance().getBo().resetSenha(this.getEntity());
+                EnviaEmail.envioResetSenha(this.getEntity());
                 this.addInfo(Mensagens.getMensagem("lumeSecurity.login.reset.sucesso"), "");
             } else {
                 this.addError(Mensagens.getMensagem("lumeSecurity.login.reset.login.obrigatorio"), "");
