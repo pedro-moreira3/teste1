@@ -171,8 +171,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				<ui:param name="showNewLancamento" value="N" />
 				<ui:param name="faturaGenerica" value="F" />
 			</ui:include>
-			<p:remoteCommand name="onCloseFaturaView"
-				process="@this" update=":lume:dtPrincipal, :lume:dtPrincipal"
+			<p:remoteCommand name="onCloseFaturaView" process="@this"
+				update=":lume:dtPrincipal, :lume:dtPrincipal"
 				actionListener="#{relatorioFaturaMB.actionFiltrar}" />
 		</p:outputPanel>
 
@@ -253,6 +253,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 													converter="paciente" forceSelection="true"
 													scrollHeight="400" minQueryLength="3">
 
+													<p:column headerText="Código" style="text-align: center;">
+														<h:outputText value="#{p.id}" />
+													</p:column>
 													<p:column headerText="Nome">
 														<h:outputText value="#{p.dadosBasico.nome}" />
 													</p:column>
@@ -294,12 +297,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 													itemLabel="Pagamento de profissional" />
 												<f:selectItem itemValue="PF"
 													itemLabel="Pagamento de fornecedor" />
-													
-												<p:ajax process="@this"/>
-													
+
+												<p:ajax process="@this" />
+
 											</p:selectOneRadio>
 										</h:panelGroup>
-										
+
 									</p:panelGrid>
 
 								</p:panelGrid>
@@ -337,7 +340,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									</p:splitButton>
 								</h:panelGroup>
 							</p:panelGrid>
-							
+
 						</p:fieldset>
 
 						<div class="EmptyBox20"></div>
@@ -347,7 +350,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							rows="20" paginator="true" rowKey="#{m}"
 							paginatorPosition="bottom"
 							binding="#{relatorioFaturaMB.tabelaFatura}">
-							
+
 							<f:facet name="header">Faturas</f:facet>
 
 							<p:column headerText="Ações">
@@ -370,74 +373,76 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
 								filterMatchMode="contains"
 								sortBy="#{relatorioFaturaMB.descricaoOrigemFatura(m)}">
-								
-								<h:outputText value="#{relatorioFaturaMB.descricaoOrigemFatura(m)}"
-									rendered="#{m.paciente == null}"/>
-								
+
+								<h:outputText
+									value="#{relatorioFaturaMB.descricaoOrigemFatura(m)}"
+									rendered="#{m.paciente == null}" />
+
 								<p:commandLink value="#{m.paciente.dadosBasico.nome}"
 									process="@this" title="#{m.paciente.id}"
 									actionListener="#{tabPacienteMB.loadPaciente(m.paciente)}"
 									oncomplete="PF('dlgFichaPaciente').show();"
 									update=":lume:pnPrincipalFicha, @parent(:lume:pnPrincipalFichaHeader), @parent(:lume:tabViewOutPanel), @parent(:lume:buttonsFichaPaciente)"
-									rendered="#{m.paciente != null}"/>
-								
+									rendered="#{m.paciente != null}" />
+
 							</p:column>
-							
+
 							<p:column headerText="Descrição da fatura"
 								filterBy="#{relatorioFaturaMB.descricaoFatura(m)}"
 								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
 								filterMatchMode="contains"
 								sortBy="#{relatorioFaturaMB.descricaoFatura(m)}">
-								
-								<h:outputText value="#{relatorioFaturaMB.descricaoFatura(m)}"/>
-								
+
+								<h:outputText value="#{relatorioFaturaMB.descricaoFatura(m)}" />
+
 							</p:column>
-							
+
 							<p:column headerText="Data de criação"
 								filterBy="#{relatorioFaturaMB.converterData(m.dataCriacao)}"
 								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
 								filterMatchMode="contains"
 								sortBy="#{relatorioFaturaMB.converterData(m.dataCriacao)}">
-								
-								<h:outputText value="#{relatorioFaturaMB.converterData(m.dataCriacao)}"/>
-								
+
+								<h:outputText
+									value="#{relatorioFaturaMB.converterData(m.dataCriacao)}" />
+
 							</p:column>
-							
+
 							<p:column headerText="Tipo do saldo"
 								sortBy="#{relatorioFaturaMB.tipoSaldoFatura(m)}"
 								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
 								filterMatchMode="contains"
 								filterBy="#{relatorioFaturaMB.tipoSaldoFatura(m)}">
-							
-								<h:outputText value="#{relatorioFaturaMB.tipoSaldoFatura(m)}"/>
-							
+
+								<h:outputText value="#{relatorioFaturaMB.tipoSaldoFatura(m)}" />
+
 							</p:column>
 
 							<p:column headerText="Valor da fatura"
 								sortBy="#{relatorioFaturaMB.valorFatura(m)}"
 								filterMatchMode="contains"
 								filterBy="#{relatorioFaturaMB.valorFatura(m)}">
-							
-								<h:outputText value="#{relatorioFaturaMB.valorFatura(m)}"/>
-							
+
+								<h:outputText value="#{relatorioFaturaMB.valorFatura(m)}" />
+
 							</p:column>
-							
+
 							<p:column headerText="Valor pago"
 								sortBy="#{relatorioFaturaMB.valorPagoFatura(m)}"
 								filterMatchMode="contains"
 								filterBy="#{relatorioFaturaMB.valorPagoFatura(m)}">
-							
-								<h:outputText value="#{relatorioFaturaMB.valorPagoFatura(m)}"/>
-							
+
+								<h:outputText value="#{relatorioFaturaMB.valorPagoFatura(m)}" />
+
 							</p:column>
-							
+
 							<p:column headerText="Valor a pagar"
 								sortBy="#{relatorioFaturaMB.valorPagarFatura(m)}"
 								filterMatchMode="contains"
 								filterBy="#{relatorioFaturaMB.valorPagarFatura(m)}">
-							
-								<h:outputText value="#{relatorioFaturaMB.valorPagarFatura(m)}"/>
-							
+
+								<h:outputText value="#{relatorioFaturaMB.valorPagarFatura(m)}" />
+
 							</p:column>
 
 
@@ -446,10 +451,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				</div>
 			</div>
 		</div>
-		
+
 		<ui:include src="pacienteFicha.xhtml" />
 		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
-		
+
 		<script type="text/javascript">
 			function handleDialogRequest(xhr, tipoFatura, args) {
 				if (args.justificativa == true) {

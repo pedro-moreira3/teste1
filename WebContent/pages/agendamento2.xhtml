@@ -157,6 +157,9 @@ div.ui-selectoneradio label {
 										styleClass="paciente MarRight5 Wid70"
 										style="width:70% !important">
 
+										<p:column headerText="Código" style="text-align: center;">
+											<h:outputText value="#{p.id}" />
+										</p:column>
 										<p:column headerText="Nome">
 											<h:outputText value="#{p.dadosBasico.nome}" />
 										</p:column>

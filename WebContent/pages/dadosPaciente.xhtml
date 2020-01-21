@@ -22,6 +22,20 @@
 
 				<h:panelGroup id="foto" style="font-style: italic;">
 					<div class="Container100">
+						<p:outputPanel
+							rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}">
+							<div
+								style="border: 1px solid #cccccc; padding: 10px; font-style: normal;">
+								<table style="width: 100%;">
+									<tr>
+										<td style="width: 115px;"><h:outputText value="Código: " /></td>
+										<td style="text-align: right"><h:outputText
+												value="#{pacienteMB.entity.id}" /></td>
+									</tr>
+								</table>
+							</div>
+						</p:outputPanel>
+
 						<p:graphicImage styleClass="Fleft"
 							value="#{pacienteMB.imagemUsuario}" stream="false"
 							style="width:100%;"
@@ -365,6 +379,9 @@
 							itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 							converter="paciente" forceSelection="true"
 							styleClass="paciente tallerAutoComplete">
+							<p:column headerText="Código" style="text-align: center;">
+								<h:outputText value="#{p.id}" />
+							</p:column>
 							<p:column headerText="Nome">
 								<h:outputText value="#{p.dadosBasico.nome}" />
 							</p:column>

@@ -199,14 +199,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<h:outputText for="dataInicial"
 												value="Data de agendamento de:" />
 											<p:calendar id="dataInicial"
-												value="#{relatorioAtendimentoMB.dataInicio}" autocomplete="false"/>
+												value="#{relatorioAtendimentoMB.dataInicio}"
+												autocomplete="false" />
 										</h:panelGroup>
 
 										<h:panelGroup>
 											<h:outputText for="dataFinal"
 												value="Data de agendamento até:" />
 											<p:calendar id="dataFinal"
-												value="#{relatorioAtendimentoMB.dataFim}" autocomplete="false"/>
+												value="#{relatorioAtendimentoMB.dataFim}"
+												autocomplete="false" />
 										</h:panelGroup>
 
 										<h:panelGroup>
@@ -218,6 +220,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												converter="paciente" forceSelection="true"
 												scrollHeight="400" minQueryLength="3" queryDelay="1000">
 
+												<p:column headerText="Código" style="text-align: center;">
+													<h:outputText value="#{p.id}" />
+												</p:column>
 												<p:column headerText="Nome">
 													<h:outputText value="#{p.dadosBasico.nome}" />
 												</p:column>
@@ -233,14 +238,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										</h:panelGroup>
 
 										<h:panelGroup>
-											<h:outputText for="filtroProfissional" value="Dentista executor:" />
+											<h:outputText for="filtroProfissional"
+												value="Dentista executor:" />
 											<p:autoComplete id="filtroProfissional"
 												value="#{relatorioAtendimentoMB.filtroPorProfissional}"
 												completeMethod="#{relatorioAtendimentoMB.sugestoesProfissionais}"
-												var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}" itemValue="#{p}"
-												converter="profissional" forceSelection="true"
-												scrollHeight="400" queryDelay="1000" dropdown="true">
-												
+												var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
+												itemValue="#{p}" converter="profissional"
+												forceSelection="true" scrollHeight="400" queryDelay="1000"
+												dropdown="true">
+
 												<p:ajax event="itemSelect" process="@this" />
 
 											</p:autoComplete>
@@ -252,9 +259,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:autoComplete id="filtroProfissionalUltAlteracao"
 												value="#{relatorioAtendimentoMB.filtroPorProfissionalUltAlteracao}"
 												completeMethod="#{relatorioAtendimentoMB.sugestoesProfissionalUltAlteracao}"
-												var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}" itemValue="#{p}"
-												converter="profissional" forceSelection="true"
-												scrollHeight="400" queryDelay="1000" dropdown="true">
+												var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
+												itemValue="#{p}" converter="profissional"
+												forceSelection="true" scrollHeight="400" queryDelay="1000"
+												dropdown="true">
 												<p:ajax event="itemSelect" process="@this" />
 											</p:autoComplete>
 										</h:panelGroup>
@@ -358,7 +366,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												action="#{relatorioAtendimentoMB.popularLista}"
 												icon="White fa fa-search"
 												update=":lume:dtRelAtendimento,:lume:dlgGerarRelatorioTabela,:lume:filtroRelatorio"
-												process="@this,:lume:filtroRelatorio" styleClass="NavyButton"/>
+												process="@this,:lume:filtroRelatorio"
+												styleClass="NavyButton" />
 										</h:panelGroup>
 
 										<h:panelGroup>
@@ -448,21 +457,23 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								sortBy="#{atendimento.paciente.dadosBasico.nome}"
 								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								headerText="Paciente">
-								
+
 								<p:commandLink value="#{atendimento.paciente.dadosBasico.nome}"
 									process="@this" title="#{atendimento.paciente.id}"
 									actionListener="#{tabPacienteMB.loadPaciente(atendimento.paciente)}"
 									oncomplete="PF('dlgFichaPaciente').show()"
-									update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
-								
+									update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+
 							</p:column>
 
-							<p:column filterBy="#{atendimento.paciente.dadosBasico.telefoneStr}"
+							<p:column
+								filterBy="#{atendimento.paciente.dadosBasico.telefoneStr}"
 								sortBy="#{atendimento.paciente.dadosBasico.telefoneStr}"
 								filterMatchMode="contains" headerText="Telefone">
-								
-								<h:outputText value="#{atendimento.paciente.dadosBasico.telefoneStr}" />
-								
+
+								<h:outputText
+									value="#{atendimento.paciente.dadosBasico.telefoneStr}" />
+
 								<p:button id="whats" icon="White fa fa-whatsapp"
 									rendered="#{atendimento.paciente.dadosBasico.celular != null}"
 									onclick="window.open('#{relatorioAtendimentoMB.getUrlWpp(atendimento.paciente)}'); return false;"
@@ -530,36 +541,36 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:column>
 
 							<ui:remove>
-							<p:column
-								filterBy="#{atendimento.proximoAgendamentoPaciente.inicio}"
-								sortBy="#{atendimento.proximoAgendamentoPaciente.inicio}"
-								filterMatchMode="contains"
-								headerText="Data do agendamento futuro">
-								<p:commandButton id="btnNovoAgendamento"
-									rendered="#{!atendimento.getStatusNovo().equals('F') || relatorioAtendimentoMB.verificarStatusAgendamentoFuturo(atendimento)}"
-									action="#{agendamentoMB.popularAgendamento(atendimento)}"
-									icon="fa fa fa-calendar" process="@this"
-									oncomplete="PF('dlgAgendamento').show();"
-									update=":lume:pnAgendamento">
-									<p:ajax
-										listener="#{relatorioAtendimentoMB.setNovoAgendamento(true)}" />
-									<p:ajax
-										listener="#{relatorioAtendimentoMB.verificarNovoAgendamento()}" />
-								</p:commandButton>
-								<p:tooltip for="btnNovoAgendamento" value="Agendar" />
-								<h:outputText
-									value="#{relatorioAtendimentoMB.formatarData(atendimento.proximoAgendamentoPaciente.inicio)}" />
-							</p:column>
+								<p:column
+									filterBy="#{atendimento.proximoAgendamentoPaciente.inicio}"
+									sortBy="#{atendimento.proximoAgendamentoPaciente.inicio}"
+									filterMatchMode="contains"
+									headerText="Data do agendamento futuro">
+									<p:commandButton id="btnNovoAgendamento"
+										rendered="#{!atendimento.getStatusNovo().equals('F') || relatorioAtendimentoMB.verificarStatusAgendamentoFuturo(atendimento)}"
+										action="#{agendamentoMB.popularAgendamento(atendimento)}"
+										icon="fa fa fa-calendar" process="@this"
+										oncomplete="PF('dlgAgendamento').show();"
+										update=":lume:pnAgendamento">
+										<p:ajax
+											listener="#{relatorioAtendimentoMB.setNovoAgendamento(true)}" />
+										<p:ajax
+											listener="#{relatorioAtendimentoMB.verificarNovoAgendamento()}" />
+									</p:commandButton>
+									<p:tooltip for="btnNovoAgendamento" value="Agendar" />
+									<h:outputText
+										value="#{relatorioAtendimentoMB.formatarData(atendimento.proximoAgendamentoPaciente.inicio)}" />
+								</p:column>
 
-							<p:column
-								filterBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}"
-								sortBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}"
-								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
-								filterMatchMode="contains"
-								headerText="Status do agendamento futuro">
-								<h:outputText
-									value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" />
-							</p:column>
+								<p:column
+									filterBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}"
+									sortBy="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}"
+									filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
+									filterMatchMode="contains"
+									headerText="Status do agendamento futuro">
+									<h:outputText
+										value="#{relatorioAtendimentoMB.getStatusDescricao(atendimento.proximoAgendamentoPaciente)}" />
+								</p:column>
 							</ui:remove>
 
 						</p:dataTable>

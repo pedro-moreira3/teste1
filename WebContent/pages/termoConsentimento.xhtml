@@ -50,6 +50,9 @@
 								itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 								converter="paciente" forceSelection="true" scrollHeight="400">
 
+								<p:column headerText="Código" style="text-align: center;">
+									<h:outputText value="#{p.id}" />
+								</p:column>
 								<p:column headerText="Nome">
 									<h:outputText value="#{p.dadosBasico.nome}" />
 								</p:column>
@@ -113,9 +116,10 @@
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="newTermo" icon="White fa fa-file-o"
-								value="Novo Termo de Consentimento" actionListener="#{termoConsentimentoMB.actionNew}"
+								value="Novo Termo de Consentimento"
+								actionListener="#{termoConsentimentoMB.actionNew}"
 								update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo"
-								immediate="true" tabindex="1" process="@this" />							
+								immediate="true" tabindex="1" process="@this" />
 							<h:panelGroup rendered="#{termoConsentimentoMB.liberaBotao}">
 								<p:commandButton id="persistTermo" icon="White fa fa-save"
 									value="Gerar Termo"
@@ -136,8 +140,7 @@
 									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-									<p:fileDownload
-										value="#{termoConsentimentoMB.arquivoDownload}" />
+									<p:fileDownload value="#{termoConsentimentoMB.arquivoDownload}" />
 
 									<p:menuitem value="Exportar tabela para PDF"
 										icon="fa fa fa-file-pdf-o"
@@ -167,7 +170,8 @@
 						id="dtTermo" value="#{termoConsentimentoMB.entityList}" var="tct"
 						rows="7" paginator="true"
 						selection="#{termoConsentimentoMB.entity}" selectionMode="single"
-						rowKey="#{tct}" paginatorPosition="bottom" binding="#{termoConsentimentoMB.tabelaTermo}">
+						rowKey="#{tct}" paginatorPosition="bottom"
+						binding="#{termoConsentimentoMB.tabelaTermo}">
 						<p:ajax event="rowSelect"
 							update=":lume:pnTermoConsentimentoPrincipal,:lume:pnTermoConsentimento,:lume:dtTermo"
 							listener="#{termoConsentimentoMB.atualizaTela}" />

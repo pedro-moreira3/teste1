@@ -201,12 +201,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<h:panelGroup>
 								<h:outputText for="inicio" value="Data de criação de:" />
 								<p:calendar id="inicio"
-									value="#{relatorioPlanoTratamentoMB.inicio}">									
+									value="#{relatorioPlanoTratamentoMB.inicio}">
 								</p:calendar>
 							</h:panelGroup>
 							<h:panelGroup>
 								<h:outputText for="fim" value="Data de criação até:" />
-								<p:calendar id="fim" value="#{relatorioPlanoTratamentoMB.fim}">								
+								<p:calendar id="fim" value="#{relatorioPlanoTratamentoMB.fim}">
 								</p:calendar>
 							</h:panelGroup>
 						</p:panelGrid>
@@ -254,6 +254,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									converter="paciente" forceSelection="true" scrollHeight="400"
 									minQueryLength="3">
 
+									<p:column headerText="Código" style="text-align: center;">
+										<h:outputText value="#{p.id}" />
+									</p:column>
 									<p:column headerText="Nome">
 										<h:outputText value="#{p.dadosBasico.nome}" />
 									</p:column>

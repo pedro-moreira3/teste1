@@ -50,6 +50,9 @@
 								converter="paciente" forceSelection="true" scrollHeight="400"
 								minQueryLength="3">
 
+								<p:column headerText="Código" style="text-align: center;">
+									<h:outputText value="#{p.id}" />
+								</p:column>
 								<p:column headerText="Nome">
 									<h:outputText value="#{p.dadosBasico.nome}" />
 								</p:column>
@@ -97,10 +100,11 @@
 						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="4" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="new5" icon="White fa fa-file-o" value="Novo Pedido de Exame"
+							<p:commandButton id="new5" icon="White fa fa-file-o"
+								value="Novo Pedido de Exame"
 								actionListener="#{pedidoExameMB.actionNew}"
 								update=":lume:pnPedidoExame,:lume:pnPedidoExamePrincipal,:lume:dtPedidoExame"
-								immediate="true" tabindex="1" process="@this" />							
+								immediate="true" tabindex="1" process="@this" />
 							<h:panelGroup rendered="#{pedidoExameMB.liberaBotao}">
 								<p:commandButton id="persist5" icon="White fa fa-save"
 									value="Gerar Documento"
@@ -120,24 +124,21 @@
 									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-									<p:fileDownload
-										value="#{pedidoExameMB.arquivoDownload}" />
+									<p:fileDownload value="#{pedidoExameMB.arquivoDownload}" />
 
 									<p:menuitem value="Exportar tabela para PDF"
 										icon="fa fa fa-file-pdf-o"
 										actionListener="#{pedidoExameMB.exportarTabela('pdf')}"
 										ajax="false" process="dtPedidoExame,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{pedidoExameMB.arquivoDownload}" />
+										<p:fileDownload value="#{pedidoExameMB.arquivoDownload}" />
 									</p:menuitem>
 									<p:menuitem value="Exportar tabela para CSV"
 										icon="fa fa fa-file-pdf-o"
 										actionListener="#{pedidoExameMB.exportarTabela('csv')}"
 										ajax="false" process="dtPedidoExame,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{pedidoExameMB.arquivoDownload}" />
+										<p:fileDownload value="#{pedidoExameMB.arquivoDownload}" />
 									</p:menuitem>
 								</p:splitButton>
 							</h:panelGroup>
@@ -152,7 +153,8 @@
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						id="dtPedidoExame" value="#{pedidoExameMB.entityList}" var="rct"
 						rows="7" paginator="true" selection="#{pedidoExameMB.entity}"
-						selectionMode="single" rowKey="#{rct}" paginatorPosition="bottom" binding="#{pedidoExameMB.tabelaExame}">
+						selectionMode="single" rowKey="#{rct}" paginatorPosition="bottom"
+						binding="#{pedidoExameMB.tabelaExame}">
 						<p:ajax event="rowSelect"
 							update=":lume:pnPedidoExame,:lume:pnPedidoExamePrincipal"
 							listener="#{pedidoExameMB.atualizaTela}" />
