@@ -132,11 +132,18 @@
 							</p:fieldset>
 							<br />
 
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+								<p:commandButton value="Gerar Recibo dos Repasses Selecionados"
+									process="@this, :lume:tabViewRepasses:dtRepasseLancamentos"
+									actionListener="#{reciboRepasseProfissionalMB.prepararRecibo}"
+									update=":lume:gerarReciboPnl" />
+							</p:panelGrid>
+
 							<p:dataTable value="#{reciboRepasseProfissionalMB.lancamentos}"
 								var="lancamento" filterDelay="1000" reflow="true"
 								emptyMessage="Nenhum repasse encontrado"
-								id="dtRepasseLancamentos" rows="15" paginator="true"
-								paginatorPosition="bottom" rowKey="#{lancamento}"
+								id="dtRepasseLancamentos" rowKey="#{lancamento}"
 								selection="#{reciboRepasseProfissionalMB.lancamentosSelecionados}"
 								binding="#{reciboRepasseProfissionalMB.tabelaLancamentos}">
 								<f:facet name="header">
@@ -496,13 +503,6 @@
 								</p:rowExpansion>
 							</p:dataTable>
 
-							<p:panelGrid columns="4" layout="grid"
-								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
-								<p:commandButton value="Gerar Recibo dos Repasses Selecionados"
-									process="@this, :lume:tabViewRepasses:dtRepasseLancamentos"
-									actionListener="#{reciboRepasseProfissionalMB.prepararRecibo}"
-									update=":lume:gerarReciboPnl" />
-							</p:panelGrid>
 						</p:tab>
 
 						<p:tab title="Histórico de Recibos">
