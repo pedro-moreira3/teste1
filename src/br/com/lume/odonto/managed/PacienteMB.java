@@ -429,6 +429,11 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     @Override
     public void setEntity(Paciente entity) {
         pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(entity);
+        try {
+            convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        } catch (Exception e) {            
+            e.printStackTrace();
+        }
         UtilsFrontEnd.setPacienteLogado(entity);
         this.actionAnamneseNew(null);
         super.setEntity(entity);
