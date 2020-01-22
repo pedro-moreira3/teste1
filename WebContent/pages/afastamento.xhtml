@@ -11,15 +11,15 @@
                         style="border:0px none; background-color:transparent;">
 
                         <p:outputLabel for="inicioAfastamento" value="Inicio : " />
-                        <p:calendar id="inicioAfastamento" value="#{afastamentoMB.inicio}" mindate="01/01/2000 00:00" minHour="00" pattern="dd/MM/yyyy HH:mm" locale="#{lumeSecurity.locale}" required="true" mask="true">
+                        <p:calendar id="inicioAfastamento" value="#{afastamentoMB.inicio}" mindate="01/01/2000 00:00" minHour="00" pattern="dd/MM/yyyy HH:mm" locale="#{lumeSecurity.locale}" mask="true">
                         </p:calendar>
 
                         <p:outputLabel for="fimAfastamento" value="Fim : " />
-                        <p:calendar id="fimAfastamento" value="#{afastamentoMB.fim}" maxdate="31/12/2099 23:59" maxHour="23" pattern="dd/MM/yyyy HH:mm" locale="#{lumeSecurity.locale}" required="true" mask="true">
+                        <p:calendar id="fimAfastamento" value="#{afastamentoMB.fim}" maxdate="31/12/2099 23:59" maxHour="23" pattern="dd/MM/yyyy HH:mm" locale="#{lumeSecurity.locale}" mask="true">
                         </p:calendar>
 
                         <p:outputLabel for="tipo" value="Tipo : " />
-                        <p:selectOneMenu id="tipo" value="#{afastamentoMB.dominioSelecionado}" converter="dominio" required="true">
+                        <p:selectOneMenu id="tipo" value="#{afastamentoMB.dominioSelecionado}" converter="dominio">
                             <f:selectItem itemValue="#{null}" itemLabel="Selecione um tipo" />
                             <f:selectItems value="#{afastamentoMB.dominios}" var="tp" itemValue="#{tp}" itemLabel="#{tp.nome}" />
                         </p:selectOneMenu>
@@ -52,21 +52,28 @@
 
                 <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtAfastamento" value="#{afastamentoMB.afastamentos}" var="afa" rows="7" paginator="true" selection="#{afastamentoMB.entity}"
                     selectionMode="single" rowKey="#{afa}" paginatorPosition="bottom">
-                    <p:ajax event="rowSelect" update=":lume:pnAfastamento" listener="#{afastamentoMB.carregaTela}" process="@this" resetValues="true"/>
+                    
+                    <p:ajax event="rowSelect" listener="#{afastamentoMB.carregaTela}" process="@this, :lume:pnAfastamento" update=":lume:pnAfastamento"/>
+                    
                     <f:facet name="header">Bloqueios</f:facet>
+                    
                     <p:column headerText="Tipo" sortBy="#{afastamentoMB.getAfastamentoTipoStr(afa)}"
                     	filterBy="#{afastamentoMB.getAfastamentoTipoStr(afa)}" filterMatchMode="contains">
                         <h:outputText value="#{afastamentoMB.getAfastamentoTipoStr(afa)}" />
                     </p:column>
+                    
                     <p:column headerText="Inicio" sortBy="#{afa.inicio}" filterBy="#{afa.inicioStr}" filterMatchMode="contains">
                         <h:outputText value="#{afa.inicioStr}" />
                     </p:column>
+                    
                     <p:column headerText="Fim" sortBy="#{afa.fim}" filterBy="#{afa.fimStr}" filterMatchMode="contains">
                         <h:outputText value="#{afa.fimStr}" />
                     </p:column>
+                    
                     <p:column headerText="Validado" sortBy="#{afa.valido}" filterBy="#{afa.valido}" filterMatchMode="contains">
                         <h:outputText value="#{afa.valido}" />
                     </p:column>
+                    
                 </p:dataTable>
             </div>
         </div>
