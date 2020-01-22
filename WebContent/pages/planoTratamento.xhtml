@@ -256,22 +256,20 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<p:outputLabel value="#{planoTratamento.statusDescritivo}" />
 					</p:column>
-					<p:column
-						filterBy="#{planoTratamentoMB.getTotalPT(planoTratamento)}"
-						sortBy="#{planoTratamentoMB.getTotalPT(planoTratamento)}"
+					<p:column filterBy="#{planoTratamento.valor}"
+						sortBy="#{planoTratamento.valor}"
 						rendered="#{planoTratamentoMB.temPermissaoExtra}"
 						filterMatchMode="contains" headerText="Valor Original">
-						<h:outputText
-							value="#{planoTratamentoMB.getTotalPT(planoTratamento)}">
+						<h:outputText value="#{planoTratamento.valor}">
 							<f:convertNumber currencySymbol="R$" type="currency"
 								locale="#{lumeSecurity.locale}" />
 						</h:outputText>
 					</p:column>
-					<p:column filterBy="#{planoTratamento.valor}"
-						sortBy="#{planoTratamento.valor}"
+					<p:column filterBy="#{planoTratamento.valorTotalRestante}"
+						sortBy="#{planoTratamento.valorTotalRestante}"
 						rendered="#{planoTratamentoMB.temPermissaoExtra}"
 						filterMatchMode="contains" headerText="Valor Restante à Pagar">
-						<h:outputText value="#{planoTratamento.valor}">
+						<h:outputText value="#{planoTratamento.valorTotalRestante}">
 							<f:convertNumber currencySymbol="R$" type="currency"
 								locale="#{lumeSecurity.locale}" />
 						</h:outputText>
@@ -1246,8 +1244,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<p:commandButton icon="fa fa-trash" process="@this"
 						actionListener="#{planoTratamentoMB.actionRemoveOrcamento(orcamento)}"
 						update=":lume:tabView:tbViewOrcamento" styleClass="NavyButton"
-						title="Cancelar Orçamento"
-						disabled="#{orcamento.aprovado or planoTratamentoMB.entity.status == 'S'}">
+						title="Cancelar Orçamento">
 						<p:confirm header="Confirmação"
 							message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
 					</p:commandButton>
