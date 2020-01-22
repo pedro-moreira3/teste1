@@ -22,6 +22,7 @@
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 
+
 					<p:fieldset legend="Filtros" collapsed="true" toggleable="true">
 						<p:panelGrid columns="2" layout="grid"
 							columnClasses="ui-g-6, ui-g-6"
@@ -123,11 +124,11 @@
 									styleClass="NavyButton" />
 							</h:panelGroup>
 						</p:column>
-						<p:column sortBy="#{paciente.id}"
-							filterBy="#{paciente.id}" width="100"
+						<p:column sortBy="#{paciente.codigo}"
+							filterBy="#{paciente.codigo}" width="100"
 							filterMatchMode="contains" headerText="Código"
 							filterFunction="#{pacienteMB.filtroSemAcento}">
-							<h:outputText value="#{paciente.id}" />
+							<h:outputText value="#{paciente.codigo}" />
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.nome}"
 							filterBy="#{paciente.dadosBasico.nomeStr}"

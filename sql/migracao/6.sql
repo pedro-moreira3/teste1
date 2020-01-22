@@ -174,3 +174,5 @@ CREATE TABLE ENVIO_EMAIL_DESTINATARIO (
 );
 
 ------------------- acima ja rodado -------------------------------
+
+ALTER TABLE PACIENTE ADD COLUMN CODIGO TEXT NULL;

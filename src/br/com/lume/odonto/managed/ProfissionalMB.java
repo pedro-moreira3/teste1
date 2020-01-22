@@ -30,6 +30,7 @@ import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
+import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
@@ -108,7 +109,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
     private boolean renderedPhotoCam;
 
     private byte[] data;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaProfissional;
 
@@ -157,7 +158,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         Usuario usuario = null;
         try {
             usuario = UsuarioSingleton.getInstance().getBo().find(idUsuarioAux);
-            UsuarioSingleton.getInstance().getBo().resetSenha(usuario);
+            EnviaEmail.envioResetSenha(usuario);
             this.addInfo("Um email com link para alteração de senha foi enviado ao usuário.", "");
 
             //String senha = UsuarioSingleton.getInstance().getBo().resetSenha(usuario);
@@ -467,7 +468,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());
         }
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Profissionais", tabelaProfissional, type);
     }

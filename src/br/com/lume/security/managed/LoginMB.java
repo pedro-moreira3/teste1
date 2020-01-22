@@ -1,10 +1,6 @@
 package br.com.lume.security.managed;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -98,9 +94,9 @@ public class LoginMB extends LumeManagedBean<Usuario> {
      * Método para reconfiguração de senha do usuário. O método verifica se o email usado está cadastrado, se não estiver é apresentada uma mensagem de erro, caso esteja cadastrado, é instanciado um
      * novo objeto Usuário, em seguida é gerada e enviada uma mensagen para o email do usuário para configuração de uma nova senha.
      * 
-     * @param void
-     *            - não há parâmetros.
-     * @return void - Não há retorno.
+     * @param  void
+     *                  - não há parâmetros.
+     * @return      void - Não há retorno.
      */
     public void actionResetSenha() {
         try {
@@ -109,22 +105,7 @@ public class LoginMB extends LumeManagedBean<Usuario> {
             } else {
                 Usuario usuarioTrocaSenha = UsuarioSingleton.getInstance().getBo().findByEmail(getConfirmacaoEmail());
                 if (usuarioTrocaSenha != null) {
-                    String hash = new br.com.lume.odonto.util.RandomString(100).nextString();
-                    usuarioTrocaSenha.setTokenAcesso(hash);
-                    Date dataAtual = Calendar.getInstance().getTime();
-                    usuarioTrocaSenha.setDataToken(dataAtual);
-                    UsuarioSingleton.getInstance().getBo().persist(usuarioTrocaSenha);
-
-                    //  Utils.enviarEmailUsuario(usuarioTrocaSenha, "recuperacao");
-
-                    Map<String, String> valores = new HashMap<>();
-                    valores.put("#token", usuarioTrocaSenha.getTokenAcesso());
-
-                    String mensagem = EnviaEmail.buscarTemplate(valores, EnviaEmail.RESET);
-                    mensagem.replaceAll("#token", usuarioTrocaSenha.getTokenAcesso());
-
-                    EnviaEmail.enviaEmail(usuarioTrocaSenha.getUsuStrEml(), "Solicitação de troca de senha", mensagem);
-
+                    EnviaEmail.envioResetSenha(usuarioTrocaSenha);
                     addInfo("Sucesso!", "E-mail enviado com sucesso!");
                 } else {
                     addError("Erro!", Mensagens.getMensagem("login.email.nao.cadastrado"));

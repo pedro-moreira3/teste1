@@ -29,8 +29,8 @@
 								<table style="width: 100%;">
 									<tr>
 										<td style="width: 115px;"><h:outputText value="Código: " /></td>
-										<td style="text-align: right"><h:outputText
-												value="#{pacienteMB.entity.id}" /></td>
+										<td style="text-align: right"><p:inputText
+												value="#{pacienteMB.entity.codigo}" /></td>
 									</tr>
 								</table>
 							</div>
@@ -380,7 +380,7 @@
 							converter="paciente" forceSelection="true"
 							styleClass="paciente tallerAutoComplete">
 							<p:column headerText="Código" style="text-align: center;">
-								<h:outputText value="#{p.id}" />
+								<h:outputText value="#{p.codigo}" />
 							</p:column>
 							<p:column headerText="Nome">
 								<h:outputText value="#{p.dadosBasico.nome}" />
