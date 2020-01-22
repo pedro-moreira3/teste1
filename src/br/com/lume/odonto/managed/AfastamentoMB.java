@@ -156,6 +156,7 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
         this.setEntity(new Afastamento());
         this.setInicio(null);
         this.setFim(null);
+        this.setDominioSelecionado(null);
     }
 
     public Profissional getProfissional() {
