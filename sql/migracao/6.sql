@@ -173,6 +173,6 @@ CREATE TABLE ENVIO_EMAIL_DESTINATARIO (
 	ENVIO_EMAIL_ID BIGINT NOT NULL REFERENCES ENVIO_EMAIL(ID)
 );
 
-------------------- acima ja rodado -------------------------------
 
 ALTER TABLE PACIENTE ADD COLUMN CODIGO TEXT NULL;
+------------------- acima ja rodado -------------------------------
