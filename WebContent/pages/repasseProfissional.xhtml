@@ -188,10 +188,10 @@
 
 													<p:commandLink
 														value="#{f.dadosTabelaRepassePaciente.dadosBasico.nome}"
-														process="@this" title="#{f.dadosTabelaRepassePaciente.id}"
+														process="@this, :lume:tabView:pnDadosPaciente" title="#{f.dadosTabelaRepassePaciente.id}"
 														actionListener="#{tabPacienteMB.loadPaciente(f.dadosTabelaRepassePaciente)}"
 														oncomplete="PF('dlgFichaPaciente').show()"
-														update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+														update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 
 												</p:column>
 												<p:column
