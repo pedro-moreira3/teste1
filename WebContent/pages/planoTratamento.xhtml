@@ -106,7 +106,6 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 	margin-top: 8px;
 }
 </style>
-
 	<div class="ui-g ui-fluid">
 		<div class="ui-g-12 ui-lg-12">
 			<p:outputPanel id="mainViewPT">
@@ -155,6 +154,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							actionListener="#{planoTratamentoMB.actionPTInicial}"
 							disabled="#{planoTratamentoMB.paciente == null}" />
 					</h:panelGroup>
+					
 					<h:panelGroup>
 						<p:splitButton icon="White fa fa fa-file-excel-o"
 							value="Exportar tabela para Excel" styleClass="GreenSplitButton"
@@ -168,12 +168,13 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:menuitem value="Exportar tabela para PDF"
 								icon="fa fa fa-file-pdf-o"
 								actionListener="#{planoTratamentoMB.exportarTabela('pdf')}"
-								ajax="false" process="dtPlanoTratamento,@this" immediate="true"
+								ajax="false" process="dtPlanoTratamento,@this" immediate="true" 
 								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 								<p:fileDownload value="#{planoTratamentoMB.arquivoDownload}" />
 							</p:menuitem>
 						</p:splitButton>
 					</h:panelGroup>
+					
 				</p:panelGrid>
 
 				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
@@ -661,8 +662,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</f:facet>
 
 		<p:outputPanel id="pnViewPlanoTratamento"
-			style="max-height: calc(100% - 54px); height: calc(100% - 54px);"
-			styleClass="">
+			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+			
 			<p:scrollPanel mode="native"
 				style="position: relative; width: 100%; height: 100%;">
 				<div class="ui-g ui-fluid">
@@ -1312,12 +1313,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 					<h:panelGroup>
 						<p:outputLabel value="Descrição:" for="descricaoOrcamento" />
-						<p:inputText id="descricaoOrcamento" style="width:100%"
+						<p:inputText id="descricaoOrcamento" style="width:100%" rendered="#{planoTratamentoMB.orcamentoSelecionado.descricao != null}"
 							value="#{planoTratamentoMB.orcamentoSelecionado.descricao}" />
 					</h:panelGroup>
 					<h:panelGroup>
 						<p:outputLabel value="Observações:" for="observacaoOrcamento" />
-						<p:inputText id="observacaoOrcamento" style="width:100%"
+						<p:inputText id="observacaoOrcamento" style="width:100%" rendered="#{planoTratamentoMB.orcamentoSelecionado.observacoes != null}"
 							value="#{planoTratamentoMB.orcamentoSelecionado.observacoes}" />
 					</h:panelGroup>
 
