@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -387,11 +388,17 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByTitular(paciente2Inativar, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Paciente paciente : pacientes) {
                 if (paciente.getStatus().equals(Status.ATIVO)) {
+                    paciente.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
+                    paciente.setDataUltimaAlteracao(new Date());
+
                     paciente.setStatus(Status.INATIVO);
                     paciente.setJustificativa(this.getEntity().getJustificativa());
                     this.getbO().persist(paciente);
                 }
             }
+            paciente2Inativar.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
+            paciente2Inativar.setDataUltimaAlteracao(new Date());
+
             paciente2Inativar.setStatus(Status.INATIVO);
             PacienteSingleton.getInstance().getBo().persist(paciente2Inativar);
             this.geraLista();
@@ -409,11 +416,17 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             for (Paciente paciente : pacientes) {
                 if ((paciente.getJustificativa() != null && paciente.getJustificativa().equals(
                         this.getEntity().getJustificativa())) || (paciente.getJustificativa() == null && this.getEntity().getJustificativa() == null)) {
+                    paciente.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
+                    paciente.setDataUltimaAlteracao(new Date());
+
                     paciente.setJustificativa(null);
                     paciente.setStatus(Status.ATIVO);
                     this.getbO().persist(paciente);
                 }
             }
+            paciente2Ativar.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
+            paciente2Ativar.setDataUltimaAlteracao(new Date());
+
             paciente2Ativar.setJustificativa(null);
             paciente2Ativar.setStatus(Status.ATIVO);
             PacienteSingleton.getInstance().getBo().persist(paciente2Ativar);
@@ -431,7 +444,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(entity);
         try {
             convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        } catch (Exception e) {            
+        } catch (Exception e) {
             e.printStackTrace();
         }
         UtilsFrontEnd.setPacienteLogado(entity);
