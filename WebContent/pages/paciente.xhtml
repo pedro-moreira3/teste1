@@ -34,7 +34,7 @@
 									<f:selectItem itemLabel="Inativos" itemValue="I" />
 									<f:selectItem itemLabel="Todos" itemValue="T" />
 									<p:ajax listener="#{pacienteMB.geraLista}" process="@this"
-										update="dtPrincipalPacientes" />
+										update="dtPrincipalPacientes" oncomplete="PF('dtPrincipalPacientes').filter();" />
 								</p:selectOneMenu>
 							</h:panelGroup>
 						</p:panelGrid>
