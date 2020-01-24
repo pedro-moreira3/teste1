@@ -115,7 +115,7 @@
 
 							<p:outputLabel for="nome" value="Nome : " />
 							<p:inputText id="nome"
-								value="#{pacienteMB.entity.dadosBasico.nome}" required="true"
+								value="#{pacienteMB.entity.dadosBasico.nome}"
 								maxlength="200" />
 
 							<p:outputLabel for="nomePreferencial"
@@ -221,8 +221,7 @@
 								rendered="#{pacienteMB.visivelDadosPaciente}">
 								<p:inputText id="telCelular"
 									value="#{pacienteMB.entity.dadosBasico.celular}"
-									onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}"
-									required="true" />
+									onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}" />
 								<p:button icon="White fa fa-whatsapp"
 									disabled="#{pacienteMB.getUrlWpp(pacienteMB.entity) == null}"
 									onclick="window.open('#{pacienteMB.getUrlWpp(pacienteMB.entity)}'); return false;"
