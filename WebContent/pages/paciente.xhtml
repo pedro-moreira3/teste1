@@ -34,7 +34,7 @@
 									<f:selectItem itemLabel="Inativos" itemValue="I" />
 									<f:selectItem itemLabel="Todos" itemValue="T" />
 									<p:ajax listener="#{pacienteMB.geraLista}" process="@this"
-										update="dtPrincipalPacientes" />
+										update="dtPrincipalPacientes" oncomplete="PF('dtPrincipalPacientes').filter();" />
 								</p:selectOneMenu>
 							</h:panelGroup>
 						</p:panelGrid>
@@ -44,9 +44,9 @@
 						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
 						<p:commandButton id="new" icon="ui-icon-add"
 							styleClass="BotaoCrud" actionListener="#{pacienteMB.actionNew}"
-							update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
+							update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
 							value="Novo Paciente" oncomplete="PF('dlgFichaPaciente').show()"
-							process="@this" />
+							process="@this, :lume:tabView:pnDadosPaciente" />
 
 						<h:panelGroup>
 							<p:splitButton icon="White fa fa fa-file-excel-o"
@@ -135,10 +135,10 @@
 							filterMatchMode="contains" headerText="Nome"
 							filterFunction="#{pacienteMB.filtroSemAcento}">
 							<p:commandLink value="#{paciente.dadosBasico.nome}"
-								process="@this" title="#{paciente.id}"
+								process="@this,:lume:tabView:pnDadosPaciente" title="#{paciente.id}"
 								actionListener="#{tabPacienteMB.loadPaciente(paciente)}"
 								oncomplete="PF('dlgFichaPaciente').show()"
-								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+								update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.responsavel}"
 							filterBy="#{paciente.dadosBasico.responsavel}"

@@ -125,10 +125,10 @@
 							filterFunction="#{faturaPagtoMB.filtroSemAcento}">
 
 							<p:commandLink value="#{f.paciente.dadosBasico.nome}"
-								process="@this" title="#{f.paciente.id}"
+								process="@this, :lume:tabView:pnDadosPaciente" title="#{f.paciente.id}"
 								actionListener="#{tabPacienteMB.loadPaciente(f.paciente)}"
 								oncomplete="PF('dlgFichaPaciente').show()"
-								update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+								update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 
 						</p:column>
 						<p:column filterBy="#{f.dataCriacaoStr}"

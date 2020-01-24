@@ -16,428 +16,441 @@
 </style>
 	<div class="ui-g ui-fluid">
 		<div class="ui-g-12 ui-lg-12">
-			<p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10"
-				layout="grid" styleClass="ui-panelgrid-blank"
-				style="border:0px none; background-color:transparent;">
+			<p:outputPanel id="pnDadosPaciente">
+				<p:panelGrid columns="2"
+					columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+					styleClass="ui-panelgrid-blank"
+					style="border:0px none; background-color:transparent;">
 
-				<h:panelGroup id="foto" style="font-style: italic;">
-					<div class="Container100">
-						<p:outputPanel
-							rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}">
-							<div
-								style="border: 1px solid #cccccc; padding: 10px; font-style: normal;">
-								<table style="width: 100%;">
-									<tr>
-										<td style="width: 115px;"><h:outputText value="Código: " /></td>
-										<td style="text-align: right"><p:inputText
-												value="#{pacienteMB.entity.codigo}" /></td>
-									</tr>
-								</table>
-							</div>
-						</p:outputPanel>
+					<h:panelGroup id="foto" style="font-style: italic;">
+						<div class="Container100">
+							<p:outputPanel
+								rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}">
+								<div
+									style="border: 1px solid #cccccc; padding: 10px; font-style: normal;">
+									<table style="width: 100%;">
+										<tr>
+											<td style="width: 115px;"><h:outputText value="Código: " /></td>
+											<td style="text-align: right"><p:inputText
+													value="#{pacienteMB.entity.codigo}" /></td>
+										</tr>
+									</table>
+								</div>
+							</p:outputPanel>
 
-						<p:graphicImage styleClass="Fleft"
-							value="#{pacienteMB.imagemUsuario}" stream="false"
-							style="width:100%;"
-							rendered="#{pacienteMB.imagemUsuario != null}" />
-						<h:graphicImage name="sem-imagem-avatar.png" styleClass="Fleft"
-							style="width:100%;" library="images"
-							rendered="#{pacienteMB.imagemUsuario == null}" />
+							<p:graphicImage styleClass="Fleft"
+								value="#{pacienteMB.imagemUsuario}" stream="false"
+								style="width:100%;"
+								rendered="#{pacienteMB.imagemUsuario != null}" />
+							<h:graphicImage name="sem-imagem-avatar.png" styleClass="Fleft"
+								style="width:100%;" library="images"
+								rendered="#{pacienteMB.imagemUsuario == null}" />
 
-						<p:outputPanel
-							rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}">
-							<div style="border: 1px solid #cccccc; padding: 10px;">
-								<table style="width: 100%;">
-									<tr>
-										<td style="width: 115px;"><h:outputText
-												value="Data de Criação: " /></td>
-										<td style="text-align: right"><p:outputPanel
-												rendered="#{pacienteMB.entity.dataCriacao != null}">
-												<h:outputText value="#{pacienteMB.entity.dataCriacaoStr}" />
-											</p:outputPanel> <p:outputPanel
-												rendered="#{pacienteMB.entity.dataCriacao == null}">
-												<h:outputText value="Sem histórico da data de criação" />
-											</p:outputPanel></td>
-									</tr>
-									<tr>
-										<td style="width: 115px;"><h:outputText
-												value="Criado Por: " /></td>
-										<td style="text-align: right"><p:outputPanel
-												rendered="#{pacienteMB.entity.criadoPor != 0}">
-												<h:outputText
-													value="#{pacienteMB.getProfissionalName(pacienteMB.entity.criadoPor)}" />
-											</p:outputPanel> <p:outputPanel
-												rendered="#{pacienteMB.entity.criadoPor == 0}">
-												<h:outputText
-													value="Sem histórico do responsável pela criação" />
-											</p:outputPanel></td>
-									</tr>
-									<td></td>
-									<tr>
-										<td style="width: 115px;"><h:outputText
-												value="Data de Alteração: " /></td>
-										<td style="text-align: right"><p:outputPanel
-												rendered="#{pacienteMB.entity.dataUltimaAlteracao != null}">
-												<h:outputText
-													value="#{pacienteMB.entity.dataUltimaAlteracaosStr}" />
-											</p:outputPanel> <p:outputPanel
-												rendered="#{pacienteMB.entity.dataUltimaAlteracao == null}">
-												<h:outputText value="Sem histórico da data de alteração" />
-											</p:outputPanel></td>
-									</tr>
-									<tr>
-										<td style="width: 115px;"><h:outputText
-												value="Alterado Por: " /></td>
-										<td style="text-align: right"><p:outputPanel
-												rendered="#{pacienteMB.entity.alteradoPor != 0}">
-												<h:outputText
-													value="#{pacienteMB.getProfissionalName(pacienteMB.entity.alteradoPor)}" />
-											</p:outputPanel> <p:outputPanel
-												rendered="#{pacienteMB.entity.alteradoPor == 0}">
-												<h:outputText
-													value="Sem histórico do responsável pela alteração" />
-											</p:outputPanel></td>
-									</tr>
-								</table>
-							</div>
-						</p:outputPanel>
-					</div>
-				</h:panelGroup>
-				<p:fieldset legend="Dados Pessoais" toggleable="true"
-					collapsed="false">
+							<p:outputPanel
+								rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}">
+								<div style="border: 1px solid #cccccc; padding: 10px;">
+									<table style="width: 100%;">
+										<tr>
+											<td style="width: 115px;"><h:outputText
+													value="Data de Criação: " /></td>
+											<td style="text-align: right"><p:outputPanel
+													rendered="#{pacienteMB.entity.dataCriacao != null}">
+													<h:outputText value="#{pacienteMB.entity.dataCriacaoStr}" />
+												</p:outputPanel> <p:outputPanel
+													rendered="#{pacienteMB.entity.dataCriacao == null}">
+													<h:outputText value="Sem histórico da data de criação" />
+												</p:outputPanel></td>
+										</tr>
+										<tr>
+											<td style="width: 115px;"><h:outputText
+													value="Criado Por: " /></td>
+											<td style="text-align: right"><p:outputPanel
+													rendered="#{pacienteMB.entity.criadoPor != 0}">
+													<h:outputText
+														value="#{pacienteMB.getProfissionalName(pacienteMB.entity.criadoPor)}" />
+												</p:outputPanel> <p:outputPanel
+													rendered="#{pacienteMB.entity.criadoPor == 0}">
+													<h:outputText
+														value="Sem histórico do responsável pela criação" />
+												</p:outputPanel></td>
+										</tr>
+										<td></td>
+										<tr>
+											<td style="width: 115px;"><h:outputText
+													value="Data de Alteração: " /></td>
+											<td style="text-align: right"><p:outputPanel
+													rendered="#{pacienteMB.entity.dataUltimaAlteracao != null}">
+													<h:outputText
+														value="#{pacienteMB.entity.dataUltimaAlteracaosStr}" />
+												</p:outputPanel> <p:outputPanel
+													rendered="#{pacienteMB.entity.dataUltimaAlteracao == null}">
+													<h:outputText value="Sem histórico da data de alteração" />
+												</p:outputPanel></td>
+										</tr>
+										<tr>
+											<td style="width: 115px;"><h:outputText
+													value="Alterado Por: " /></td>
+											<td style="text-align: right"><p:outputPanel
+													rendered="#{pacienteMB.entity.alteradoPor != 0}">
+													<h:outputText
+														value="#{pacienteMB.getProfissionalName(pacienteMB.entity.alteradoPor)}" />
+												</p:outputPanel> <p:outputPanel
+													rendered="#{pacienteMB.entity.alteradoPor == 0}">
+													<h:outputText
+														value="Sem histórico do responsável pela alteração" />
+												</p:outputPanel></td>
+										</tr>
+									</table>
+								</div>
+							</p:outputPanel>
+						</div>
+					</h:panelGroup>
+					<p:fieldset legend="Dados Pessoais" toggleable="true"
+						collapsed="false">
 
-					<p:panelGrid columns="4"
-						columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-						layout="grid" styleClass="ui-panelgrid-blank"
-						style="border:0px none; background-color:transparent;">
+						<p:panelGrid columns="4"
+							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+							layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
 
-						<p:outputLabel for="nome" value="Nome : " />
-						<p:inputText id="nome"
-							value="#{pacienteMB.entity.dadosBasico.nome}" required="true"
-							maxlength="200" />
+							<p:outputLabel for="nome" value="Nome : " />
+							<p:inputText id="nome"
+								value="#{pacienteMB.entity.dadosBasico.nome}" required="true"
+								maxlength="200" />
 
-						<p:outputLabel for="nomePreferencial" value="Nome Preferencial : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:inputText id="nomePreferencial"
-							value="#{pacienteMB.entity.dadosBasico.nomePreferencial}"
-							maxlength="200" rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:outputLabel for="nomePreferencial"
+								value="Nome Preferencial : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:inputText id="nomePreferencial"
+								value="#{pacienteMB.entity.dadosBasico.nomePreferencial}"
+								maxlength="200" rendered="#{pacienteMB.visivelDadosPaciente}" />
 
-						<p:outputLabel for="nomeMae" value="Nome da Mãe : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:inputText id="nomeMae" value="#{pacienteMB.entity.nomeMae}"
-							maxlength="200" rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:outputLabel for="nomeMae" value="Nome da Mãe : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:inputText id="nomeMae" value="#{pacienteMB.entity.nomeMae}"
+								maxlength="200" rendered="#{pacienteMB.visivelDadosPaciente}" />
 
-						<p:outputLabel for="email" value="E-Mail : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:inputText id="email"
-							value="#{pacienteMB.entity.dadosBasico.email}" maxlength="200"
-							rendered="#{pacienteMB.visivelDadosPaciente}" required="false">
-						</p:inputText>
+							<p:outputLabel for="email" value="E-Mail : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:inputText id="email"
+								value="#{pacienteMB.entity.dadosBasico.email}" maxlength="200"
+								rendered="#{pacienteMB.visivelDadosPaciente}" required="false">
+							</p:inputText>
 
-						<p:outputLabel id="lblDocumento" for="documento" value="CPF : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:inputMask id="documento" required="false"
-							validatorMessage="CPF inválido"
-							value="#{pacienteMB.entity.dadosBasico.documento}"
-							mask="999.999.999-99"
-							rendered="#{pacienteMB.visivelDadosPaciente}">
-							<f:validator validatorId="documentoValidator" />
-						</p:inputMask>
-
-						<p:outputLabel for="rg" value="RG : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:inputText id="rg" value="#{pacienteMB.entity.dadosBasico.rg}"
-							maxlength="12" rendered="#{pacienteMB.visivelDadosPaciente}" />
-
-						<p:outputLabel for="cep" value="CEP : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<h:panelGroup style="display: flex !important;"
-							rendered="#{pacienteMB.visivelDadosPaciente}">
-							<p:inputMask id="cep"
-								value="#{pacienteMB.entity.dadosBasico.cep}" maxlength="8"
-								mask="99999-999">
-								<f:validator validatorId="cepValidator" />
+							<p:outputLabel id="lblDocumento" for="documento" value="CPF : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:inputMask id="documento" required="false"
+								validatorMessage="CPF inválido"
+								value="#{pacienteMB.entity.dadosBasico.documento}"
+								mask="999.999.999-99"
+								rendered="#{pacienteMB.visivelDadosPaciente}">
+								<f:validator validatorId="documentoValidator" />
 							</p:inputMask>
-							<p:commandButton id="cepsearch" icon="White fa fa-search White"
-								actionListener="#{pacienteMB.actionBuscaCep}"
-								update="endereco, bairro, cidade" process="@this, @parent" />
-						</h:panelGroup>
 
-						<p:outputLabel for="endereco" value="Endereço : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:inputText id="endereco"
-							value="#{pacienteMB.entity.dadosBasico.endereco}" maxlength="200"
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:outputLabel for="rg" value="RG : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:inputText id="rg" value="#{pacienteMB.entity.dadosBasico.rg}"
+								maxlength="12" rendered="#{pacienteMB.visivelDadosPaciente}" />
 
-						<p:outputLabel for="numero" value="Número : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:inputText id="numero"
-							value="#{pacienteMB.entity.dadosBasico.numero}" maxlength="6"
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:outputLabel for="cep" value="CEP : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<h:panelGroup style="display: flex !important;"
+								rendered="#{pacienteMB.visivelDadosPaciente}">
+								<p:inputMask id="cep"
+									value="#{pacienteMB.entity.dadosBasico.cep}" maxlength="8"
+									mask="99999-999">
+									<f:validator validatorId="cepValidator" />
+								</p:inputMask>
+								<p:commandButton id="cepsearch" icon="White fa fa-search White"
+									actionListener="#{pacienteMB.actionBuscaCep}"
+									update="endereco, bairro, cidade" process="@this, @parent" />
+							</h:panelGroup>
 
-						<p:outputLabel for="bairro" value="Bairro : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:inputText id="bairro"
-							value="#{pacienteMB.entity.dadosBasico.bairro}" maxlength="200"
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:outputLabel for="endereco" value="Endereço : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:inputText id="endereco"
+								value="#{pacienteMB.entity.dadosBasico.endereco}"
+								maxlength="200" rendered="#{pacienteMB.visivelDadosPaciente}" />
 
-						<p:outputLabel for="complemento" value="Complemento : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:inputText id="complemento"
-							value="#{pacienteMB.entity.dadosBasico.complemento}"
-							maxlength="100" rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:outputLabel for="numero" value="Número : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:inputText id="numero"
+								value="#{pacienteMB.entity.dadosBasico.numero}" maxlength="6"
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
-						<p:outputLabel for="cidade" value="Cidade : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:inputText id="cidade"
-							value="#{pacienteMB.entity.dadosBasico.cidade}" maxlength="200"
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:outputLabel for="bairro" value="Bairro : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:inputText id="bairro"
+								value="#{pacienteMB.entity.dadosBasico.bairro}" maxlength="200"
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
-						<p:outputLabel for="estado" value="Estado : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:selectOneMenu id="estado"
-							value="#{pacienteMB.entity.dadosBasico.uf}"
-							rendered="#{pacienteMB.visivelDadosPaciente}">
-							<f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
-							<f:selectItems value="#{pacienteMB.listUF}" var="uf"
-								itemValue="#{uf}" itemLabel="#{uf.nome}" />
-						</p:selectOneMenu>
+							<p:outputLabel for="complemento" value="Complemento : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:inputText id="complemento"
+								value="#{pacienteMB.entity.dadosBasico.complemento}"
+								maxlength="100" rendered="#{pacienteMB.visivelDadosPaciente}" />
 
-						<p:outputLabel for="telResidencia" value="Telefone Residencial : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:inputText id="telResidencia"
-							value="#{pacienteMB.entity.dadosBasico.telefone}"
-							onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}"
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:outputLabel for="cidade" value="Cidade : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:inputText id="cidade"
+								value="#{pacienteMB.entity.dadosBasico.cidade}" maxlength="200"
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
-						<p:outputLabel for="telCelular" value="Celular : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<h:panelGroup style="display: flex !important;"
-							rendered="#{pacienteMB.visivelDadosPaciente}">
-							<p:inputText id="telCelular"
-								value="#{pacienteMB.entity.dadosBasico.celular}"
+							<p:outputLabel for="estado" value="Estado : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:selectOneMenu id="estado"
+								value="#{pacienteMB.entity.dadosBasico.uf}"
+								rendered="#{pacienteMB.visivelDadosPaciente}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione um Estado" />
+								<f:selectItems value="#{pacienteMB.listUF}" var="uf"
+									itemValue="#{uf}" itemLabel="#{uf.nome}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel for="telResidencia"
+								value="Telefone Residencial : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:inputText id="telResidencia"
+								value="#{pacienteMB.entity.dadosBasico.telefone}"
 								onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}"
-								required="true" />
-							<p:button icon="White fa fa-whatsapp"
-								disabled="#{pacienteMB.getUrlWpp(pacienteMB.entity) == null}"
-								onclick="window.open('#{pacienteMB.getUrlWpp(pacienteMB.entity)}'); return false;"
-								styleClass="GreenButton" />
-						</h:panelGroup>
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
-						<p:outputLabel for="dtNascimento" value="Data de Nascimento : " />
-						<p:calendar id="dtNascimento"
-							value="#{pacienteMB.entity.dadosBasico.dataNascimento}"
-							pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
-							locale="#{lumeSecurity.locale}"
-							timeZone="#{lumeSecurity.timeZone}" navigator="true"
-							yearRange="-100:+10" maxdate="#{odontoMB.sysdate}">
-							<p:ajax event="dateSelect" update="lblResponsavel,lblDocumento"
-								listener="#{pacienteMB.validaIdade}" />
-						</p:calendar>
+							<p:outputLabel for="telCelular" value="Celular : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<h:panelGroup style="display: flex !important;"
+								rendered="#{pacienteMB.visivelDadosPaciente}">
+								<p:inputText id="telCelular"
+									value="#{pacienteMB.entity.dadosBasico.celular}"
+									onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}"
+									required="true" />
+								<p:button icon="White fa fa-whatsapp"
+									disabled="#{pacienteMB.getUrlWpp(pacienteMB.entity) == null}"
+									onclick="window.open('#{pacienteMB.getUrlWpp(pacienteMB.entity)}'); return false;"
+									styleClass="GreenButton" />
+							</h:panelGroup>
 
-						<p:outputLabel for="sexo" value="Sexo : " />
-						<p:selectOneRadio id="sexo"
-							value="#{pacienteMB.entity.dadosBasico.sexo}">
-							<f:selectItem itemLabel="Masculino" itemValue="M" />
-							<f:selectItem itemLabel="Feminino" itemValue="F" />
-						</p:selectOneRadio>
+							<p:outputLabel for="dtNascimento" value="Data de Nascimento : " />
+							<p:calendar id="dtNascimento"
+								value="#{pacienteMB.entity.dadosBasico.dataNascimento}"
+								pattern="dd/MM/yyyy" mask="true" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-100:+10" maxdate="#{odontoMB.sysdate}">
+								<p:ajax event="dateSelect" update="lblResponsavel,lblDocumento"
+									listener="#{pacienteMB.validaIdade}" />
+							</p:calendar>
 
-						<p:outputLabel for="particularidades" value="Particularidades : " />
-						<p:inputTextarea id="particularidades" rows="3" cols="33"
-							value="#{pacienteMB.entity.dadosBasico.particularidades}"
-							maxlength="500" />
+							<p:outputLabel for="sexo" value="Sexo : " />
+							<p:selectOneRadio id="sexo"
+								value="#{pacienteMB.entity.dadosBasico.sexo}">
+								<f:selectItem itemLabel="Masculino" itemValue="M" />
+								<f:selectItem itemLabel="Feminino" itemValue="F" />
+							</p:selectOneRadio>
 
-					</p:panelGrid>
-				</p:fieldset>
-			</p:panelGrid>
+							<p:outputLabel for="particularidades" value="Particularidades : " />
+							<p:inputTextarea id="particularidades" rows="3" cols="33"
+								value="#{pacienteMB.entity.dadosBasico.particularidades}"
+								maxlength="500" />
 
-
-			<p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10"
-				layout="grid" styleClass="ui-panelgrid-blank"
-				style="border:0px none; background-color:transparent;">
-				<p:column></p:column>
-				<p:fieldset legend="Convênio" toggleable="true" collapsed="false">
-					<p:panelGrid columns="4"
-						columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-						layout="grid" styleClass="ui-panelgrid-blank"
-						style="border:0px none; background-color:transparent;">
-						<p:outputLabel for="convenio" value="#{dominioMB.convenio} : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:selectOneMenu id="convenio"
-							value="#{pacienteMB.entity.convenio}" converter="convenio"
-							autoWidth="false" rendered="#{pacienteMB.visivelDadosPaciente}">
-							<f:selectItem itemValue="#{null}"
-								itemLabel="Sem #{dominioMB.convenio}" />
-							<f:selectItems value="#{pacienteMB.convenios}" var="convenio"
-								itemValue="#{convenio}" itemLabel="#{convenio.dadosBasico.nome}" />
-						</p:selectOneMenu>
-
-						<p:outputLabel id="lblnumeroPlano" for="numeroPlano"
-							value="Carteira do Convênio : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:inputText id="numeroPlano"
-							value="#{pacienteMB.entity.numeroPlano}" maxlength="50"
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
+						</p:panelGrid>
+					</p:fieldset>
+				</p:panelGrid>
 
 
-						<p:outputLabel for="titular" value="Titular : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:autoComplete queryDelay="1000"
-							value="#{pacienteMB.entity.titular}" id="titular"
-							completeMethod="#{pacienteMB.geraSugestoesPaciente}" var="p"
-							itemLabel="#{p.dadosBasico.nomeDocumento}" itemValue="#{p}"
-							converter="paciente" size="46" forceSelection="true"
-							scrollHeight="400" maxlength="200" minQueryLength="3"
-							rendered="#{pacienteMB.visivelDadosPaciente}">
-						</p:autoComplete>
-					</p:panelGrid>
-				</p:fieldset>
-			</p:panelGrid>
+				<p:panelGrid columns="2"
+					columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+					styleClass="ui-panelgrid-blank"
+					style="border:0px none; background-color:transparent;">
+					<p:column></p:column>
+					<p:fieldset legend="Convênio" toggleable="true" collapsed="false">
+						<p:panelGrid columns="4"
+							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+							layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="convenio" value="#{dominioMB.convenio} : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:selectOneMenu id="convenio"
+								value="#{pacienteMB.entity.convenio}" converter="convenio"
+								autoWidth="false" rendered="#{pacienteMB.visivelDadosPaciente}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Sem #{dominioMB.convenio}" />
+								<f:selectItems value="#{pacienteMB.convenios}" var="convenio"
+									itemValue="#{convenio}"
+									itemLabel="#{convenio.dadosBasico.nome}" />
+							</p:selectOneMenu>
+
+							<p:outputLabel id="lblnumeroPlano" for="numeroPlano"
+								value="Carteira do Convênio : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:inputText id="numeroPlano"
+								value="#{pacienteMB.entity.numeroPlano}" maxlength="50"
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 
-			<p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10"
-				layout="grid" styleClass="ui-panelgrid-blank"
-				style="border:0px none; background-color:transparent;">
-				<p:column></p:column>
-				<p:fieldset legend="Responsável Legal" toggleable="true"
-					collapsed="false">
-					<p:panelGrid columns="4"
-						columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-						layout="grid" styleClass="ui-panelgrid-blank"
-						style="border:0px none; background-color:transparent;">
-
-						<p:outputLabel id="lblCPFResponsavel" for="cpfresponsavel"
-							value="CPF do Responsável :" />
-						<p:inputMask id="cpfresponsavel" required="false"
-							validatorMessage="CPF inválido"
-							value="#{pacienteMB.entity.dadosBasico.cpfresponsavel}"
-							mask="999.999.999-99">
-							<f:validator validatorId="documentoValidator"
-								disabled="#{!pacienteMB.responsavel}" />
-						</p:inputMask>
-
-						<p:outputLabel id="lblResponsavel" for="responsavel"
-							value="Nome do Responsável : " />
-						<p:inputText id="responsavel" required="#{pacienteMB.responsavel}"
-							value="#{pacienteMB.entity.dadosBasico.responsavel}"
-							maxlength="100" />
-
-						<p:outputLabel for="telefoneResponsavel"
-							value="Telefone do Responsável : " />
-						<p:inputText id="telefoneResponsavel"
-							value="#{pacienteMB.entity.dadosBasico.telefoneResponsavel}"
-							onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}" />
-
-					</p:panelGrid>
-				</p:fieldset>
-			</p:panelGrid>
-			<p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10"
-				layout="grid" styleClass="ui-panelgrid-blank"
-				style="border:0px none; background-color:transparent;">
-				<p:column></p:column>
-				<p:fieldset legend="Outros dados" toggleable="true"
-					collapsed="false">
-
-					<p:panelGrid columns="4"
-						columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-						layout="grid" styleClass="ui-panelgrid-blank"
-						style="border:0px none; background-color:transparent;">
-
-						<p:outputLabel for="indicacao" value="Como chegou na clínica: "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:selectOneMenu id="indicacao" value="#{pacienteMB.indicacao}"
-							converter="dominio" autoWidth="false"
-							rendered="#{pacienteMB.visivelDadosPaciente}">
-							<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
-							<f:selectItems value="#{pacienteMB.indicacoes}" var="indicacao"
-								itemValue="#{indicacao}" itemLabel="#{indicacao.nome}" />
-							<p:ajax event="itemSelect" process="@this"
-								update="legado,pnlPacAntigo"
-								listener="#{pacienteMB.mudaIndicacao}" />
-						</p:selectOneMenu>
-					</p:panelGrid>
+							<p:outputLabel for="titular" value="Titular : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:autoComplete queryDelay="1000"
+								value="#{pacienteMB.entity.titular}" id="titular"
+								completeMethod="#{pacienteMB.geraSugestoesPaciente}" var="p"
+								itemLabel="#{p.dadosBasico.nomeDocumento}" itemValue="#{p}"
+								converter="paciente" size="46" forceSelection="true"
+								scrollHeight="400" maxlength="200" minQueryLength="3"
+								rendered="#{pacienteMB.visivelDadosPaciente}">
+							</p:autoComplete>
+						</p:panelGrid>
+					</p:fieldset>
+				</p:panelGrid>
 
 
-					<p:panelGrid columns="4" id="pnlPacAntigo"
-						columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-						layout="grid" styleClass="ui-panelgrid-blank"
-						style="border:0px none; background-color:transparent;">
+				<p:panelGrid columns="2"
+					columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+					styleClass="ui-panelgrid-blank"
+					style="border:0px none; background-color:transparent;">
+					<p:column></p:column>
+					<p:fieldset legend="Responsável Legal" toggleable="true"
+						collapsed="false">
+						<p:panelGrid columns="4"
+							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+							layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
 
-						<p:outputLabel for="outros" value="Outros: "
-							rendered="#{pacienteMB.showOutros()}" />
-						<p:inputText id="outros" rendered="#{pacienteMB.showOutros()}"
-							value="#{pacienteMB.entity.indicacao}" required="false"
-							maxlength="200" />
-						<p:outputLabel for="pacienteIndicacao"
-							value="Selecione o Paciente que indicou: "
-							rendered="#{pacienteMB.showPaciente()}" />
-						<p:autoComplete dropdown="true" queryDelay="1000"
-							rendered="#{pacienteMB.showPaciente()}"
-							value="#{pacienteMB.entity.indicacaoPaciente}"
-							id="pacienteIndicacao" minQueryLength="3" scrollHeight="400"
-							completeMethod="#{pacienteMB.geraSugestoes}" var="p"
-							itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
-							converter="paciente" forceSelection="true"
-							styleClass="paciente tallerAutoComplete">
-							<p:column headerText="Código" style="text-align: center;">
-								<h:outputText value="#{p.codigo}" />
-							</p:column>
-							<p:column headerText="Nome">
-								<h:outputText value="#{p.dadosBasico.nome}" />
-							</p:column>
-							<p:column headerText="Celular">
-								<h:outputText value="#{p.dadosBasico.celular}" />
-							</p:column>
-							<p:column headerText="Nome da Mãe">
-								<h:outputText value="#{p.nomeMae}" />
-							</p:column>
-						</p:autoComplete>
+							<p:outputLabel id="lblCPFResponsavel" for="cpfresponsavel"
+								value="CPF do Responsável :" />
+							<p:inputMask id="cpfresponsavel" required="false"
+								validatorMessage="CPF inválido"
+								value="#{pacienteMB.entity.dadosBasico.cpfresponsavel}"
+								mask="999.999.999-99">
+								<f:validator validatorId="documentoValidator"
+									disabled="#{!pacienteMB.responsavel}" />
+							</p:inputMask>
 
-						<p:outputLabel for="profissionalIndicacao" value="Profissional"
-							rendered="#{pacienteMB.showProfissional()}" />
-						<p:selectOneMenu id="profissionalIndicacao"
-							styleClass="tallerCombo"
-							rendered="#{pacienteMB.showProfissional()}"
-							value="#{pacienteMB.entity.indicacaoProfissional}"
-							converter="profissional" filter="true" filterMatchMode="contains">
-							<f:selectItem itemValue="#{null}"
-								itemLabel="Selecione o profissional que indicou" />
-							<f:selectItems value="#{pacienteMB.profissionais}"
-								var="profissional"
-								itemLabel="#{profissional.dadosBasico.prefixoNome}"
-								itemValue="#{profissional}" />
-						</p:selectOneMenu>
+							<p:outputLabel id="lblResponsavel" for="responsavel"
+								value="Nome do Responsável : " />
+							<p:inputText id="responsavel"
+								required="#{pacienteMB.responsavel}"
+								value="#{pacienteMB.entity.dadosBasico.responsavel}"
+								maxlength="100" />
 
-					</p:panelGrid>
-					<p:panelGrid columns="4"
-						columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-						layout="grid" styleClass="ui-panelgrid-blank"
-						style="border:0px none; background-color:transparent;">
-						<p:outputLabel for="legado" value="Paciente antigo? : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<p:selectBooleanCheckbox id="legado"
-							value="#{pacienteMB.entity.legado}" />
+							<p:outputLabel for="telefoneResponsavel"
+								value="Telefone do Responsável : " />
+							<p:inputText id="telefoneResponsavel"
+								value="#{pacienteMB.entity.dadosBasico.telefoneResponsavel}"
+								onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}" />
 
-						<p:outputLabel for="dataCriacaoPaciente" value="Data Registro : "
-							rendered="#{pacienteMB.entity.dataCriacao != null and pacienteMB.visivelDadosPaciente}" />
-						<p:inputText id="dataCriacaoPaciente"
-							value="#{pacienteMB.entity.dataCriacaoStr}" readonly="true"
-							rendered="#{pacienteMB.entity.dataCriacao != null and pacienteMB.visivelDadosPaciente}" />
+						</p:panelGrid>
+					</p:fieldset>
+				</p:panelGrid>
+				<p:panelGrid columns="2"
+					columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+					styleClass="ui-panelgrid-blank"
+					style="border:0px none; background-color:transparent;">
+					<p:column></p:column>
+					<p:fieldset legend="Outros dados" toggleable="true"
+						collapsed="false">
 
-						<p:outputLabel for="foto" value="Foto : "
-							rendered="#{pacienteMB.visivelDadosPaciente}" />
-						<h:panelGroup rendered="#{pacienteMB.visivelDadosPaciente}">
-							<div class="Container70">
-								<p:commandButton value="Tirar Foto" process="@this"
-									update=":lume:pnTirarFoto" icon="White fa fa-camera"
-									disabled="#{pacienteMB.entity.id == null}"
-									styleClass="NavyButton" oncomplete="PF('dlgTirarFoto').show();"
-									actionListener="#{pacienteMB.renderedPhotoCam}" />
-							</div>
-						</h:panelGroup>
-					</p:panelGrid>
-				</p:fieldset>
-			</p:panelGrid>
+						<p:panelGrid columns="4"
+							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+							layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+							<p:outputLabel for="indicacao" value="Como chegou na clínica: "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:selectOneMenu id="indicacao" value="#{pacienteMB.indicacao}"
+								converter="dominio" autoWidth="false"
+								rendered="#{pacienteMB.visivelDadosPaciente}">
+								<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
+								<f:selectItems value="#{pacienteMB.indicacoes}" var="indicacao"
+									itemValue="#{indicacao}" itemLabel="#{indicacao.nome}" />
+								<p:ajax event="itemSelect" process="@this"
+									update="legado,pnlPacAntigo"
+									listener="#{pacienteMB.mudaIndicacao}" />
+							</p:selectOneMenu>
+						</p:panelGrid>
+
+
+						<p:panelGrid columns="4" id="pnlPacAntigo"
+							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+							layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+
+							<p:outputLabel for="outros" value="Outros: "
+								rendered="#{pacienteMB.showOutros()}" />
+							<p:inputText id="outros" rendered="#{pacienteMB.showOutros()}"
+								value="#{pacienteMB.entity.indicacao}" required="false"
+								maxlength="200" />
+							<p:outputLabel for="pacienteIndicacao"
+								value="Selecione o Paciente que indicou: "
+								rendered="#{pacienteMB.showPaciente()}" />
+							<p:autoComplete dropdown="true" queryDelay="1000"
+								rendered="#{pacienteMB.showPaciente()}"
+								value="#{pacienteMB.entity.indicacaoPaciente}"
+								id="pacienteIndicacao" minQueryLength="3" scrollHeight="400"
+								completeMethod="#{pacienteMB.geraSugestoes}" var="p"
+								itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+								converter="paciente" forceSelection="true"
+								styleClass="paciente tallerAutoComplete">
+								<p:column headerText="Código" style="text-align: center;">
+									<h:outputText value="#{p.codigo}" />
+								</p:column>
+								<p:column headerText="Nome">
+									<h:outputText value="#{p.dadosBasico.nome}" />
+								</p:column>
+								<p:column headerText="Celular">
+									<h:outputText value="#{p.dadosBasico.celular}" />
+								</p:column>
+								<p:column headerText="Nome da Mãe">
+									<h:outputText value="#{p.nomeMae}" />
+								</p:column>
+							</p:autoComplete>
+
+							<p:outputLabel for="profissionalIndicacao" value="Profissional"
+								rendered="#{pacienteMB.showProfissional()}" />
+							<p:selectOneMenu id="profissionalIndicacao"
+								styleClass="tallerCombo"
+								rendered="#{pacienteMB.showProfissional()}"
+								value="#{pacienteMB.entity.indicacaoProfissional}"
+								converter="profissional" filter="true"
+								filterMatchMode="contains">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione o profissional que indicou" />
+								<f:selectItems value="#{pacienteMB.profissionais}"
+									var="profissional"
+									itemLabel="#{profissional.dadosBasico.prefixoNome}"
+									itemValue="#{profissional}" />
+							</p:selectOneMenu>
+
+						</p:panelGrid>
+						<p:panelGrid columns="4"
+							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+							layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="legado" value="Paciente antigo? : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:selectBooleanCheckbox id="legado"
+								value="#{pacienteMB.entity.legado}" />
+
+							<p:outputLabel for="dataCriacaoPaciente" value="Data Registro : "
+								rendered="#{pacienteMB.entity.dataCriacao != null and pacienteMB.visivelDadosPaciente}" />
+							<p:inputText id="dataCriacaoPaciente"
+								value="#{pacienteMB.entity.dataCriacaoStr}" readonly="true"
+								rendered="#{pacienteMB.entity.dataCriacao != null and pacienteMB.visivelDadosPaciente}" />
+
+							<p:outputLabel for="foto" value="Foto : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<h:panelGroup rendered="#{pacienteMB.visivelDadosPaciente}">
+								<div class="Container70">
+									<p:commandButton value="Tirar Foto" process="@this"
+										update=":lume:pnTirarFoto" icon="White fa fa-camera"
+										disabled="#{pacienteMB.entity.id == null}"
+										styleClass="NavyButton"
+										oncomplete="PF('dlgTirarFoto').show();"
+										actionListener="#{pacienteMB.renderedPhotoCam}" />
+								</div>
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:fieldset>
+				</p:panelGrid>
+			</p:outputPanel>
 		</div>
 	</div>
 

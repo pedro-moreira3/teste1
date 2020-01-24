@@ -231,10 +231,10 @@
                                 	headerText="Paciente">
                                 
                                 <p:commandLink value="#{reserva.agendamento.paciente.dadosBasico.nome}"
-									process="@this" title="#{reserva.agendamento.paciente.id}"
+									process="@this, :lume:tabView:pnDadosPaciente" title="#{reserva.agendamento.paciente.id}"
 									actionListener="#{tabPacienteMB.loadPaciente(reserva.agendamento.paciente)}"
 									oncomplete="PF('dlgFichaPaciente').show()"
-									update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
+									update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
 									
                             </p:column>
                             <p:column filterBy="#{reserva.agendamento.inicioStr}" sortBy="#{reserva.agendamento.inicioStr}"

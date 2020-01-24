@@ -179,11 +179,11 @@
 									sortBy="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}">
 									<p:commandLink
 										value="#{lancamento.ptp.planoTratamento.paciente.dadosBasico.nome}"
-										process="@this"
+										process="@this, :lume:tabView:pnDadosPaciente"
 										title="#{lancamento.ptp.planoTratamento.paciente.id}"
 										actionListener="#{tabPacienteMB.loadPaciente(lancamento.ptp.planoTratamento.paciente)}"
 										oncomplete="PF('dlgFichaPaciente').show()"
-										update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+										update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 								</p:column>
 
 								<p:column filterMatchMode="contains" headerText="Valor Fatura"

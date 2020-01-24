@@ -41,11 +41,11 @@
 
 					<p:commandLink
 						value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
-						process="@this" rendered="#{false}"
+						process="@this, :lume:tabView:pnDadosPaciente" rendered="#{false}"
 						title="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.id}"
 						actionListener="#{tabPacienteMB.loadPaciente(custo.planoTratamentoProcedimento.planoTratamento.paciente)}"
 						oncomplete="PF('dlgFichaPaciente').show()"
-						update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+						update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 					<h:outputText
 						value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}" />
 

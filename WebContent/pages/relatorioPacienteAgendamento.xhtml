@@ -431,11 +431,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterBy="#{p.dadosBasico.nome}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Paciente">
-								<p:commandLink value="#{p.dadosBasico.nome}" process="@this"
+								<p:commandLink value="#{p.dadosBasico.nome}" process="@this, :lume:tabView:pnDadosPaciente"
 									title="#{p.id}"
 									actionListener="#{tabPacienteMB.loadPaciente(p)}"
 									oncomplete="PF('dlgFichaPaciente').show();"
-									update=":lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+									update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 							</p:column>
 							<p:column filterBy="#{p.convenio.dadosBasico.nome}"
 								sortBy="#{p.convenio.dadosBasico.nome}"
