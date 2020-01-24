@@ -454,6 +454,13 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     @Override
     public void actionPersist(ActionEvent event) {
+        if (getEntity().getDadosBasico() == null || getEntity().getDadosBasico().getNome() == null || getEntity().getDadosBasico().getNome().isEmpty()) {
+            addError("Erro", "É necessário informar o nome do paciente!");
+        }
+        if (getEntity().getDadosBasico() == null || getEntity().getDadosBasico().getCelular() == null || getEntity().getDadosBasico().getCelular().isEmpty()) {
+            addError("Erro", "É necessário informar o celular do paciente!");
+        }
+
         Usuario usuario = null;
         try {
             if (getEntity().getDadosBasico().getDataNascimento() != null && Utils.validaDataNascimento(getEntity().getDadosBasico().getDataNascimento()) == false) {
