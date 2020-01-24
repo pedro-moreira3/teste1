@@ -431,7 +431,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterBy="#{p.dadosBasico.nome}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Paciente">
-								<p:commandLink value="#{p.dadosBasico.nome}" process="@this, :lume:tabView:pnDadosPaciente"
+								<p:commandLink value="#{p.dadosBasico.nome}" process="@this"
 									title="#{p.id}"
 									actionListener="#{tabPacienteMB.loadPaciente(p)}"
 									oncomplete="PF('dlgFichaPaciente').show();"

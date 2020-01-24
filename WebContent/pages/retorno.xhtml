@@ -255,7 +255,7 @@
 								</ui:remove>
 
 								<p:commandLink value="#{retorno.paciente.dadosBasico.nome}"
-									process="@this, :lume:tabView:pnDadosPaciente" title="#{retorno.paciente.id}"
+									process="@this" title="#{retorno.paciente.id}"
 									actionListener="#{tabPacienteMB.loadPaciente(retorno.paciente)}"
 									oncomplete="PF('dlgFichaPaciente').show()"
 									update=":lume:tabView:pnDadosPaciente,:lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
