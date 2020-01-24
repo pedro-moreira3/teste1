@@ -454,11 +454,19 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     @Override
     public void actionPersist(ActionEvent event) {
+        boolean erroValidacoes = false;
         if (getEntity().getDadosBasico() == null || getEntity().getDadosBasico().getNome() == null || getEntity().getDadosBasico().getNome().isEmpty()) {
             addError("Erro", "É necessário informar o nome do paciente!");
+            erroValidacoes = true;
         }
         if (getEntity().getDadosBasico() == null || getEntity().getDadosBasico().getCelular() == null || getEntity().getDadosBasico().getCelular().isEmpty()) {
             addError("Erro", "É necessário informar o celular do paciente!");
+            erroValidacoes = true;
+        }
+
+        if (erroValidacoes) {
+            geraLista();
+            return;
         }
 
         Usuario usuario = null;
@@ -534,6 +542,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+        }
+
+        try {
+            setEntity(getbO().find(getEntity()));
+        } catch (Exception e) {
+            // TODO: handle exception
         }
     }
 
