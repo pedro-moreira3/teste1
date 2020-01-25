@@ -270,7 +270,21 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										itemValue="#{agendamento}" />
 								</p:selectOneMenu>
 							</h:panelGroup>
+							<h:panelGroup>
+								<h:outputText for="filtroProfissional"
+									value="Dentista do último Agendamento" />
+								<p:autoComplete id="filtroProfissional"
+									value="#{relatorioPacienteAgendamentoMB.filtroPorProfissional}"
+									completeMethod="#{relatorioPacienteAgendamentoMB.sugestoesProfissionais}"
+									var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
+									itemValue="#{p}" converter="profissional"
+									forceSelection="true" scrollHeight="400" queryDelay="1000"
+									dropdown="true">
 
+									<p:ajax event="itemSelect" process="@this" />
+
+								</p:autoComplete>
+							</h:panelGroup>
 						</p:panelGrid>
 						<p:outputPanel style="margin:20px;">
 							<h:outputLabel value="Mostrar os pacientes: " />
@@ -431,7 +445,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterBy="#{p.dadosBasico.nome}"
 								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Paciente">
-								<p:commandLink value="#{p.dadosBasico.nome}" process="@this, :lume:tabView:pnDadosPaciente"
+								<p:commandLink value="#{p.dadosBasico.nome}" process="@this"
 									title="#{p.id}"
 									actionListener="#{tabPacienteMB.loadPaciente(p)}"
 									oncomplete="PF('dlgFichaPaciente').show();"
@@ -453,6 +467,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									onclick="window.open('#{relatorioPacienteAgendamentoMB.getUrlWpp(p)}'); return false;"
 									styleClass="GreenButton" style="margin-left:10px;" />
 								<p:tooltip for="whats" value="Enviar mensagem" />
+							</p:column>
+							<p:column filterBy="#{p.ultimoAgendamento.profissional.dadosBasico.nome}"
+								sortBy="#{p.ultimoAgendamento.profissional.dadosBasico.nome}"
+								filterMatchMode="contains" headerText="Dentista Último Agendamento">
+								<h:outputText
+									value="#{p.ultimoAgendamento.profissional.dadosBasico.nome}" />
 							</p:column>
 							<p:column filterBy="#{p.ultimoAgendamento.inicio}"
 								sortBy="#{p.ultimoAgendamento.inicio}"

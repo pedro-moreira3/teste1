@@ -41,7 +41,7 @@
 
 					<p:commandLink
 						value="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
-						process="@this, :lume:tabView:pnDadosPaciente" rendered="#{false}"
+						process="@this" rendered="#{false}"
 						title="#{custo.planoTratamentoProcedimento.planoTratamento.paciente.id}"
 						actionListener="#{tabPacienteMB.loadPaciente(custo.planoTratamentoProcedimento.planoTratamento.paciente)}"
 						oncomplete="PF('dlgFichaPaciente').show()"

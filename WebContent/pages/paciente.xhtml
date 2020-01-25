@@ -21,7 +21,7 @@
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-
+				<h1>Paciente</h1>
 
 					<p:fieldset legend="Filtros" collapsed="true" toggleable="true">
 						<p:panelGrid columns="2" layout="grid"
@@ -46,7 +46,7 @@
 							styleClass="BotaoCrud" actionListener="#{pacienteMB.actionNew}"
 							update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
 							value="Novo Paciente" oncomplete="PF('dlgFichaPaciente').show()"
-							process="@this, :lume:tabView:pnDadosPaciente" />
+							process="@this" />
 
 						<h:panelGroup>
 							<p:splitButton icon="White fa fa fa-file-excel-o"
@@ -194,7 +194,7 @@
 
 		<ui:include src="pacienteFicha.xhtml" />
 		<p:remoteCommand name="onHidePacienteFicha" process="@this"
-			update=":lume:dtPrincipalPacientes" />
+			update=":lume:dtPrincipalPacientes" actionListener="#{pacienteMB.geraLista}" />
 
 		<p:dialog id="dlgCarregarPacientes" header="Carregar Pacientes"
 			widgetVar="dlgCarregarPacientes" responsive="true" modal="true"

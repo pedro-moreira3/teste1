@@ -152,7 +152,7 @@ div.ui-selectoneradio label {
 							filterMatchMode="contains" headerText="#{dominioMB.cliente}"
 							filterFunction="#{filaAtendimentoMB.filtroSemAcento}">
 							<p:commandLink value="#{a.paciente.dadosBasico.nome}"
-								process="@this, :lume:tabView:pnDadosPaciente" title="#{a.paciente.id}"
+								process="@this" title="#{a.paciente.id}"
 								actionListener="#{tabPacienteMB.loadPaciente(a.paciente)}"
 								oncomplete="PF('dlgFichaPaciente').show()"
 								update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>

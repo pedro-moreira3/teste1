@@ -24,9 +24,11 @@ import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 
 @ManagedBean
@@ -52,6 +54,8 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     private String filtroPorConvenio;
     
     private String filtroStatusPaciente;
+    
+    private Profissional filtroPorProfissional;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
@@ -84,6 +88,10 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     
     public List<Paciente> sugestoesPacientes(String query) {
         return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    }
+    
+    public List<Profissional> sugestoesProfissionais(String query) {
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), true);
     }
     
     public void marcarFiltros() {
@@ -127,7 +135,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                                 (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente);
                     }else {
                         this.pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamento
-                                (this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente);   
+                                (this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente,this.filtroPorProfissional);   
                         if(pacientes != null) {
                             List<Paciente> pacientesTemp = new ArrayList<Paciente>(pacientes);
                             for (Paciente paciente : pacientesTemp) {
@@ -453,5 +461,15 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     
     public void setRetorno(Retorno retorno) {
         this.retorno = retorno;
+    }
+
+    
+    public Profissional getFiltroPorProfissional() {
+        return filtroPorProfissional;
+    }
+
+    
+    public void setFiltroPorProfissional(Profissional filtroPorProfissional) {
+        this.filtroPorProfissional = filtroPorProfissional;
     }
 }
