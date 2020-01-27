@@ -192,14 +192,15 @@ div.ui-selectoneradio label {
 
 							<p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid"
-								id="botoesAgenda">
+
+								id="botoesAgenda">							
 								<p:commandButton id="persist" icon="White fa fa-save"
 									process=":lume:pnAgendamento, @this" value="Salvar"
-									rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
+									rendered="#{agendamentoMB.habilitaSalvar}"
 									actionListener="#{agendamentoMB.actionPersist}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
-									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);location.reload();"
-									styleClass="GreenButton" />
+									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);PF('eventDialog').hide()"
+									styleClass="GreenButton" />	
 								<p:button id="whats" icon="White fa fa-whatsapp"
 									onclick="window.open('#{agendamentoMB.getUrlWpp(agendamentoMB.entity)}'); return false;"
 									value="Enviar Whatsapp" styleClass="GreenButton"
