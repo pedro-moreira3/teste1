@@ -198,13 +198,13 @@ div.ui-selectoneradio label {
 									rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
 									actionListener="#{agendamentoMB.actionPersist}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
-									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);"
+									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);location.reload();"
 									styleClass="GreenButton" />
 								<p:button id="whats" icon="White fa fa-whatsapp"
 									onclick="window.open('#{agendamentoMB.getUrlWpp(agendamentoMB.entity)}'); return false;"
 									value="Enviar Whatsapp" styleClass="GreenButton"
 									disabled="#{agendamentoMB.getUrlWpp(agendamentoMB.entity) == null}"
-									immediate="true"
+									immediate="true" 
 									rendered="#{agendamentoMB.entity != null and agendamentoMB.entity.id > 0}" />
 								<p:commandButton icon="White fa fa-close" value="Fechar"
 									process="@this" onclick="PF('eventDialog').hide()"
