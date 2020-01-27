@@ -207,11 +207,13 @@ div.ui-selectoneradio label {
 									disabled="#{agendamentoMB.getUrlWpp(agendamentoMB.entity) == null}"
 									immediate="true" 
 									rendered="#{agendamentoMB.entity != null and agendamentoMB.entity.id > 0}" />
+								
 								<p:commandButton icon="White fa fa-close" value="Fechar"
 									process="@this" onclick="PF('eventDialog').hide()"
 									actionListener="#{agendamentoMB.handleClose}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
-									oncomplete="PF('myschedule').update();" />
+									 />
+								
 								<p:commandButton id="confirmarPreCadastro"
 									icon="White fa fa-save" process="pnAgendamento"
 									value="Confirmar Pré Agendamento"
