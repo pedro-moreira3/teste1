@@ -188,14 +188,13 @@
 			
 			function startTimer() {				
 			var open = PF('loading').isVisible();
-				//console.log(open);
+				console.log(open);
 				if(!open){				
-					t = setTimeout("PF('loading').show();", 100);	
+					t = setTimeout("PF('loading').show();", 100);					
 				}				
 			}
-			function stopTimer() {				
-				clearTimeout(t);				
-				x = setTimeout("PF('loading').hide();", 400);
+			function stopTimer() {		
+				x = setTimeout("PF('loading').hide();", 800);		
 			}
 			//]]>
 		</script>
