@@ -27,7 +27,9 @@ body div.ui-widget-content.ui-tabs {
 
 			<p:tab id="tab1" title="Dados Cadastrais"
 				disabled="#{pacienteMB.entity.id == null}">
-				<ui:include src="dadosPaciente.xhtml" />
+				<p:outputPanel id="tab1Panel">
+					<ui:include src="dadosPaciente.xhtml" />
+				</p:outputPanel>
 			</p:tab>
 
 			<p:tab id="tab2" title="Anamnese"
@@ -78,7 +80,7 @@ body div.ui-widget-content.ui-tabs {
 			</p:tab>
 
 		</p:tabView>
-		
+
 	</p:outputPanel>
 
 </ui:composition>

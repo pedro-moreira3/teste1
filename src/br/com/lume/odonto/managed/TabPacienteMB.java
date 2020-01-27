@@ -6,6 +6,7 @@ import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.tabview.TabView;
 import org.primefaces.event.TabChangeEvent;
 
@@ -206,8 +207,9 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
 
     public void loadPaciente(Paciente paciente) {
         try {
-            this.tabview.setActiveIndex(0);
             this.pacienteMB.setEntity(paciente);
+            this.tabview.setActiveIndex(0);
+            PrimeFaces.current().ajax().update(":lume:tabView:tab1:tab1Panel");
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
@@ -216,8 +218,8 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
 
     public void loadPacienteRO(Paciente paciente, String namePanel) {
         try {
-            this.tabview.setActiveIndex(0);
             this.pacienteMB.abreReadOnly(paciente, namePanel);
+            this.tabview.setActiveIndex(0);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
