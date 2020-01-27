@@ -186,15 +186,17 @@
 			ga('create', 'UA-100802286-3', 'auto');
 			ga('send', 'pageview');			
 			
-			function startTimer() {				
-			var open = PF('loading').isVisible();
-				console.log(open);
-				if(!open){				
-					t = setTimeout("PF('loading').show();", 100);					
+		
+			
+			function startTimer() {	
+				
+			var open = PF('loading').isVisible();	
+				if(!open && jaExisteLoading == false){				
+					t = setTimeout("PF('loading').show();", 200);						
 				}				
 			}
-			function stopTimer() {		
-				x = setTimeout("PF('loading').hide();", 800);		
+			function stopTimer() {					
+				x = setTimeout("PF('loading').hide();", 500);			
 			}
 			//]]>
 		</script>
