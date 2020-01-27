@@ -199,7 +199,7 @@ div.ui-selectoneradio label {
 									rendered="#{agendamentoMB.habilitaSalvar}"
 									actionListener="#{agendamentoMB.actionPersist}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
-									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);PF('eventDialog').hide()"
+									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);"
 									styleClass="GreenButton" />	
 								<p:button id="whats" icon="White fa fa-whatsapp"
 									onclick="window.open('#{agendamentoMB.getUrlWpp(agendamentoMB.entity)}'); return false;"
