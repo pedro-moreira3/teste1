@@ -208,10 +208,10 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     public void loadPaciente(Paciente paciente) {
         try {
             this.pacienteMB.setEntity(paciente);
-            this.tabview.setActiveIndex(0);
-            PrimeFaces.current().ajax().update(":lume:tabView:tab1:tab1Panel");
+            this.tabview.setActiveIndex(0);          
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
+            e.printStackTrace();
             this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
         }
     }
@@ -219,10 +219,10 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
     public void loadPacienteRO(Paciente paciente, String namePanel) {
         try {
             this.pacienteMB.abreReadOnly(paciente, namePanel);
-            this.tabview.setActiveIndex(0);
-            PrimeFaces.current().ajax().update(":lume:tabView:tab1:tab1Panel");
+            this.tabview.setActiveIndex(0);           
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
+            e.printStackTrace();
             this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
         }
     }
