@@ -814,15 +814,18 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							widgetVar="procedimentosTableInPT"
 							id="dtProcedimentosSelecionadospt" var="plano"
+<<<<<<< Upstream, based on origin/backend
 							value="#{planoTratamentoMB.planoTratamentoProcedimentos}">
 
+=======
+							value="#{planoTratamentoMB.planoTratamentoProcedimentos}"
+							rows="10" paginator="true" paginatorPosition="bottom">							
+>>>>>>> b95fa50 correcao cac 1548993
 							<f:facet name="header">
 								<h:outputText
 									value="Procedimentos do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
 							</f:facet>
-
 							<p:column headerText="Ações" styleClass="TexAlCenter" width="120">
-
 								<p:commandButton styleClass="NavyButton" icon="fa fa-eye"
 									process="@this"
 									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
@@ -886,6 +889,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									thousandSeparator="."
 									rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"
 									disabled="#{plano.planoTratamento.status == 'S' or planoTratamento.status == 'E' or plano.excluido eq 'S'}">
+									<p:ajax event="change"></p:ajax>
 								</p:inputNumber>
 								<h:outputText value="#{plano.valorDesconto}"
 									rendered="#{!planoTratamentoMB.temPermissaoTrocarValor}">
@@ -907,6 +911,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									styleClass="lumeField"
 									style="width: 35px;display: inline-block;">
 									<f:selectItem itemLabel="" itemValue="F" />
+									<p:ajax event="change"></p:ajax>
 								</p:selectManyCheckbox>
 								<p:commandButton icon="White fa fa-gear"
 									title="Finalizar Novamente"
