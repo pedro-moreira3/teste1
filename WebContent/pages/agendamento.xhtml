@@ -192,25 +192,28 @@ div.ui-selectoneradio label {
 
 							<p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid"
-								id="botoesAgenda">
+
+								id="botoesAgenda">							
 								<p:commandButton id="persist" icon="White fa fa-save"
-									process=":lume:pnAgendamento, @this" value="Salvar"
-									rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
+									process="@this" value="Salvar"
+									rendered="#{agendamentoMB.habilitaSalvar}"
 									actionListener="#{agendamentoMB.actionPersist}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
-									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);location.reload();"
-									styleClass="GreenButton" />
+									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);"
+									styleClass="GreenButton" />	
 								<p:button id="whats" icon="White fa fa-whatsapp"
 									onclick="window.open('#{agendamentoMB.getUrlWpp(agendamentoMB.entity)}'); return false;"
 									value="Enviar Whatsapp" styleClass="GreenButton"
 									disabled="#{agendamentoMB.getUrlWpp(agendamentoMB.entity) == null}"
 									immediate="true" 
 									rendered="#{agendamentoMB.entity != null and agendamentoMB.entity.id > 0}" />
+								
 								<p:commandButton icon="White fa fa-close" value="Fechar"
 									process="@this" onclick="PF('eventDialog').hide()"
 									actionListener="#{agendamentoMB.handleClose}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
-									oncomplete="PF('myschedule').update();" />
+									 />
+								
 								<p:commandButton id="confirmarPreCadastro"
 									icon="White fa fa-save" process="pnAgendamento"
 									value="Confirmar Pré Agendamento"
