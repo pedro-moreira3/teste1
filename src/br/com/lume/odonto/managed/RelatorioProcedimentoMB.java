@@ -74,11 +74,9 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
         if(filtroProcedimento == null) {
             this.filtroProcedimento = new ArrayList<String>();
         }
-        
-        Calendar calendario = Calendar.getInstance();
-        this.setDataFim(calendario.getTime());
-        calendario.add(Calendar.DAY_OF_MONTH, -7);
-        this.setDataInicio(calendario.getTime());
+        filtroPeriodo = "S";
+        this.dataInicio = getDataInicio(filtroPeriodo);
+        this.dataFim = getDataFim(filtroPeriodo);
         
         if(this.listaConvenios == null)
             this.listaConvenios = new ArrayList<String>();
@@ -93,8 +91,9 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
             
             if(validarIntervaloDatas()) {
                 
-                this.listaProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(this.dataInicio, this.dataFim, this.dataFinalizacaoInicio,
-                        this.dataFinalizacaoFim, this.filtroPorPaciente, 
+                this.listaProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().
+                        listByDataAndProfissionalAndPaciente(Utils.formataComecoDia(this.dataInicio), Utils.formataFimDia(this.dataFim), Utils.formataComecoDia(this.dataFinalizacaoInicio),
+                                Utils.formataFimDia(this.dataFinalizacaoFim), this.filtroPorPaciente, 
                         this.filtroPorProfissional, this.filtroPorPlanoTratamento, this.getConvenio(filtroPorConvenio), this.filtroPorProcedimento,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 
                 if(!this.filtroProcedimento.isEmpty())
@@ -107,6 +106,10 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
+    
+    
+
+    
     
     public String formatarData(Date data) {
         if(data != null) {
@@ -313,7 +316,7 @@ public class RelatorioProcedimentoMB extends LumeManagedBean<PlanoTratamentoProc
     }
     
     public String statusProcedimento(String status) {
-        return (status.equals("F") ? "Finalizado" : "Não finalizado");
+        return (status.equals("F") ? "Executado" : "Não executado");
     }
     
     public Profissional getFiltroPorProfissional() {
