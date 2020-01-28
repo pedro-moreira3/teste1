@@ -814,8 +814,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							widgetVar="procedimentosTableInPT"
 							id="dtProcedimentosSelecionadospt" var="plano"
-							value="#{planoTratamentoMB.planoTratamentoProcedimentos}">
-
+							value="#{planoTratamentoMB.planoTratamentoProcedimentos}"
+							rows="10" paginator="true" paginatorPosition="bottom">
 							<f:facet name="header">
 								<h:outputText
 									value="Procedimentos do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
