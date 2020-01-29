@@ -25,11 +25,13 @@
 					<p:outputPanel rendered="#{orcamentoImpressaoMB.showLogo}">
 						<div style="width: 100%;">
 							<img src="/imagens/#{orcamentoImpressaoMB.logo}" height="50"
-								width="180" style="margin-left: 50%; transform: translateX(-50%);" />
+								width="180"
+								style="margin-left: 50%; transform: translateX(-50%);" />
 						</div>
 					</p:outputPanel>
-					<br /><br />
-					
+					<br />
+					<br />
+
 					<div style="width: 100%; text-align: center;">
 						<span style="font-size: 18px;"><b>Orçamento</b></span>
 					</div>
@@ -188,17 +190,19 @@
 							</c:forEach>
 						</p:outputPanel>
 					</table>
-					<br/>
+					<br />
 					<div style="width: 100%; text-align: center;">
 						<span style="font-size: 14px;"><b>Observações: </b>#{o.observacoes}</span>
-					</div>					
+					</div>
 					<p:separator styleClass="SeparatorFull" />
 					<div class="Container100 Responsive100" align="right">
-						<h:outputText
-							value="* Orçamento válido por 15 dias. Anualmente os valores são reajustados."
+						<h:outputText value="* Orçamento versão #{o.nVersao}"
 							styleClass="observacao-orcamento" />
 						<br />
-
+						<h:outputText
+							value="** Orçamento válido por 15 dias. Anualmente os valores são reajustados."
+							styleClass="observacao-orcamento" />
+						<br />
 					</div>
 					<br />
 					<br />
