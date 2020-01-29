@@ -409,17 +409,17 @@ body .sideChkBox .ui-chkbox-label {
 										<f:convertNumber type="percent" maxFractionDigits="2" />
 									</h:outputText>
 								</p:column>
-								<p:column sortBy="#{l.dataCreditoStr}"
-									filterMatchMode="contains" width="100"
-									filterBy="#{l.dataCreditoStr}" headerText="Data de Crédito"
-									style="#{l != null and !l.ativo ? 'color: red' : ''}">
-									<h:outputText value="#{l.dataCreditoStr}" />
-								</p:column>
 								<p:column sortBy="#{l.dataPagamentoStr}"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterMatchMode="contains" filterBy="#{l.dataPagamentoStr}"
 									width="100" headerText="Data de Pagamento">
 									<h:outputText value="#{l.dataPagamentoStr}" />
+								</p:column>
+								<p:column sortBy="#{l.dataCreditoStr}"
+									filterMatchMode="contains" width="100"
+									filterBy="#{l.dataCreditoStr}" headerText="Data de Crédito"
+									style="#{l != null and !l.ativo ? 'color: red' : ''}">
+									<h:outputText value="#{l.dataCreditoStr}" />
 								</p:column>
 								<p:column sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
 									width="100" filterMatchMode="contains"

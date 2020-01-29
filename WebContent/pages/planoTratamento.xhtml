@@ -154,7 +154,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							actionListener="#{planoTratamentoMB.actionPTInicial}"
 							disabled="#{planoTratamentoMB.paciente == null}" />
 					</h:panelGroup>
-					
+
 					<h:panelGroup>
 						<p:splitButton icon="White fa fa fa-file-excel-o"
 							value="Exportar tabela para Excel" styleClass="GreenSplitButton"
@@ -168,13 +168,13 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:menuitem value="Exportar tabela para PDF"
 								icon="fa fa fa-file-pdf-o"
 								actionListener="#{planoTratamentoMB.exportarTabela('pdf')}"
-								ajax="false" process="dtPlanoTratamento,@this" immediate="true" 
+								ajax="false" process="dtPlanoTratamento,@this" immediate="true"
 								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 								<p:fileDownload value="#{planoTratamentoMB.arquivoDownload}" />
 							</p:menuitem>
 						</p:splitButton>
 					</h:panelGroup>
-					
+
 				</p:panelGrid>
 
 				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
@@ -663,7 +663,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 		<p:outputPanel id="pnViewPlanoTratamento"
 			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
-			
+
 			<p:scrollPanel mode="native"
 				style="position: relative; width: 100%; height: 100%;">
 				<div class="ui-g ui-fluid">
@@ -766,6 +766,26 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							update=":lume:tabView:dtProcedimentosSelecionadospt"
 							name="atualizaSubTotalDesconto" />
 
+						<p:fieldset legend="Filtro dos Procedimentos">
+							<p:panelGrid columns="4" layout="grid"
+								columnClasses="ui-g-6, ui-g-6"
+								styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+								<h:panelGroup styleClass="md-combo">
+									<p:outputLabel for="statusProcedimentos"
+										value="Status dos Procedimentos " />
+									<p:selectOneMenu id="statusProcedimentos"
+										value="#{planoTratamentoMB.filtroStatusProcedimento}">
+										<f:selectItem itemLabel="Ativos" itemValue="N" />
+										<f:selectItem itemLabel="Cancelados" itemValue="S" />
+										<f:selectItem itemLabel="Todos" itemValue="T" />
+										<p:ajax
+											listener="#{planoTratamentoMB.carregarPlanoTratamentoProcedimentos}"
+											process="@this" update="dtProcedimentosSelecionadospt" />
+									</p:selectOneMenu>
+								</h:panelGroup>
+							</p:panelGrid>
+						</p:fieldset>
+
 						<p:panelGrid columns="3" layout="grid"
 							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 							<p:commandButton icon="ui-icon-add" value="Novo Procedimento"
@@ -781,23 +801,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								disabled="#{planoTratamentoMB.odontogramas == null or planoTratamentoMB.odontogramas.isEmpty()}"
 								value="Ver odontograma" />
 						</p:panelGrid>
-						<p:panelGrid columns="4" layout="grid"
-							columnClasses="ui-g-6, ui-g-6"
-							styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
-							<h:panelGroup styleClass="md-combo">
-								<p:outputLabel for="statusProcedimentos"
-									value="Status dos Procedimentos " />
-								<p:selectOneMenu id="statusProcedimentos"
-									value="#{planoTratamentoMB.filtroStatusProcedimento}">
-									<f:selectItem itemLabel="Ativos" itemValue="N" />
-									<f:selectItem itemLabel="Cancelados" itemValue="S" />
-									<f:selectItem itemLabel="Todos" itemValue="T" />
-									<p:ajax
-										listener="#{planoTratamentoMB.carregarPlanoTratamentoProcedimentos}"
-										process="@this" update="dtProcedimentosSelecionadospt" />
-								</p:selectOneMenu>
-							</h:panelGroup>
-						</p:panelGrid>
+
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							widgetVar="procedimentosTableInPT"
 							id="dtProcedimentosSelecionadospt" var="plano"
@@ -872,6 +876,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
 									rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"
 									disabled="#{plano.planoTratamento.status == 'S' or planoTratamento.status == 'E' or plano.excluido eq 'S'}">
+									<p:ajax event="change"></p:ajax>
 								</p:inputNumber>
 								<h:outputText value="#{plano.valorDesconto}"
 									rendered="#{!planoTratamentoMB.temPermissaoTrocarValor}">
@@ -893,6 +898,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									styleClass="lumeField"
 									style="width: 35px;display: inline-block;">
 									<f:selectItem itemLabel="" itemValue="F" />
+									<p:ajax event="change"></p:ajax>
 								</p:selectManyCheckbox>
 								<p:commandButton icon="White fa fa-gear"
 									title="Finalizar Novamente"
@@ -1313,12 +1319,14 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 					<h:panelGroup>
 						<p:outputLabel value="Descrição:" for="descricaoOrcamento" />
-						<p:inputText id="descricaoOrcamento" style="width:100%" rendered="#{planoTratamentoMB.orcamentoSelecionado.descricao != null}"
+						<p:inputText id="descricaoOrcamento" style="width:100%"
+							rendered="#{planoTratamentoMB.orcamentoSelecionado.descricao != null}"
 							value="#{planoTratamentoMB.orcamentoSelecionado.descricao}" />
 					</h:panelGroup>
 					<h:panelGroup>
 						<p:outputLabel value="Observações:" for="observacaoOrcamento" />
-						<p:inputText id="observacaoOrcamento" style="width:100%" rendered="#{planoTratamentoMB.orcamentoSelecionado.observacoes != null}"
+						<p:inputText id="observacaoOrcamento" style="width:100%"
+							rendered="#{planoTratamentoMB.orcamentoSelecionado.observacoes != null}"
 							value="#{planoTratamentoMB.orcamentoSelecionado.observacoes}" />
 					</h:panelGroup>
 

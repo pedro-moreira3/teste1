@@ -235,7 +235,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 									<h:panelGroup styleClass="md-combo">
 										<h:outputText for="filtroPeriodoFinalizacao"
-											value="Período de finalização do procedimento:" />
+											value="Período de execução do procedimento:" />
 
 										<p:selectOneMenu id="filtroPeriodoFinalizacao"
 											value="#{relatorioProcedimentoMB.filtroPeriodoFinalizacao}">
@@ -256,14 +256,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 									<h:panelGroup>
 										<h:outputText for="dataFinalizacaoInicial"
-											value="Data de finalização do procedimento de:" />
+											value="Data de execução do procedimento de:" />
 										<p:calendar id="dataFinalizacaoInicial"
 											value="#{relatorioProcedimentoMB.dataFinalizacaoInicio}" />
 									</h:panelGroup>
 
 									<h:panelGroup>
 										<h:outputText for="dataFinalizacaoFinal"
-											value="Data de finalização do procedimento até:" />
+											value="Data de execução do procedimento até:" />
 										<p:calendar id="dataFinalizacaoFinal"
 											value="#{relatorioProcedimentoMB.dataFinalizacaoFim}" />
 									</h:panelGroup>
@@ -529,7 +529,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterBy="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}"
 								sortBy="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}"
 								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Satus do procedimento">
+								filterMatchMode="contains" headerText="Staus do procedimento">
 								<h:outputText
 									value="#{relatorioProcedimentoMB.statusProcedimento(procedimento.status)}" />
 							</p:column>
@@ -546,7 +546,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:column filterBy="#{procedimento.dataFinalizado}"
 								sortBy="#{procedimento.dataFinalizado}"
 								filterMatchMode="contains"
-								headerText="Data de finalização do procedimento">
+								headerText="Data de execução do procedimento">
 								<h:outputText
 									value="#{relatorioProcedimentoMB.formatarData(procedimento.dataFinalizado)}" />
 							</p:column>

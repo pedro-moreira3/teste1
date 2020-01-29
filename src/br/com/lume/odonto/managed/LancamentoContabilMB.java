@@ -85,8 +85,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     //EXPORTAÇÃO TABELA
     private DataTable tabelaLancamento;
 
-    private Date inicio,fim;
-    
+    private Date inicio, fim;
+
     public LancamentoContabilMB() {
         super(LancamentoContabilSingleton.getInstance().getBo());
         this.setClazz(LancamentoContabil.class);
@@ -161,16 +161,16 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         try {
             tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listAll();
             categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
-            lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listByEmpresaAndData(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),inicio,fim);
+            lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listByEmpresaAndData(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), inicio, fim);
             carrearListasPorTipoPagamento();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
-        if(lancamentoContabeis != null) {
-            lancamentoContabeis.sort((o1, o2) -> o2.getData().compareTo(o1.getData()));    
+        if (lancamentoContabeis != null) {
+            lancamentoContabeis.sort((o1, o2) -> o2.getData().compareTo(o1.getData()));
         }
-        
+
         // Collections.reverse(lancamentoContabeis);
     }
 
@@ -222,31 +222,45 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void actionValidarLancamento(Lancamento l) {
+        List<LancamentoContabil> lancamentosContabeisProntos = new ArrayList<>();
         try {
             if (l != null) {
+                List<LancamentoContabil> lancamentosContabeis = l.getLancamentosContabeis();
+                for (LancamentoContabil lancamentoContabil : lancamentosContabeis) {
+                    lancamentoContabil.setData(l.getDataCredito());
+                    this.getbO().persist(lancamentoContabil);
+                    lancamentosContabeisProntos.add(lancamentoContabil);
+                }
+
                 Date data = Calendar.getInstance().getTime();
                 l.setDataValidado(data);
                 l.setValidadoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
                 l.setValidado(Status.SIM);
-
                 if (!Status.SIM.equals(l.getPagamentoConferido())) {
                     l.setDataConferido(data);
                     l.setConferidoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
                     l.setPagamentoConferido(Status.SIM);
                 }
-
                 LancamentoSingleton.getInstance().getBo().merge(l);
-                List<LancamentoContabil> lancamentosContabeis = l.getLancamentosContabeis();
-                for (LancamentoContabil lancamentoContabil : lancamentosContabeis) {
-                    lancamentoContabil.setData(l.getDataCredito());
-                    this.getbO().persist(lancamentoContabil);
-                }
+
                 this.carregarLancamentosValidar();
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             }
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+            // Desfaz os LC salvos
+            lancamentosContabeisProntos.forEach(lc -> {
+                try {
+                    lc.setData(null);
+                    this.getbO().persist(lc);
+                } catch (Exception ex) {
+                    // TODO: handle exception
+                }
+            });
+            // Como todos os atributos de 'l' (lançamento) são alterados ao mesmo tempo,
+            //   caso haja problema nenhum é salvo, por isso nada é voltado.
+
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
         }
     }
 
@@ -276,20 +290,20 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             } else {
                 this.addInfo("Valor do saldo inical salvo.", "");
             }
-        }        
+        }
         super.actionPersist(event);
-        
+
         getEntity().setValor(null);
         getEntity().setData(null);
         geraLista();
     }
-    
+
     public String valorLancamento(LancamentoContabil lancamento) {
         Locale Local = new Locale("pt", "BR");
 
         double value = lancamento.getValor().doubleValue();
         DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
-        
+
         return "R$ " + df.format(value);
     }
 
@@ -464,22 +478,18 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         this.tabelaLancamento = tabelaLancamento;
     }
 
-    
     public Date getFim() {
         return fim;
     }
 
-    
     public void setFim(Date fim) {
         this.fim = fim;
     }
 
-    
     public Date getInicio() {
         return inicio;
     }
 
-    
     public void setInicio(Date inicio) {
         this.inicio = inicio;
     }
