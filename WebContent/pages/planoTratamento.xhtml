@@ -31,6 +31,13 @@
 	display: flex;
 }
 
+.CardTextParent .CardInfo {
+	border: 1px solid #bdbdbd;
+	border-radius: 3px;
+	width: 49.5%;
+	padding: 12px 16px;
+}
+
 .CardTextParent .CardText {
 	text-align: center;
 	border: 1px solid #bdbdbd;
@@ -1299,38 +1306,38 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</p:panelGrid>
 	</p:dialog>
 
-	<p:dialog id="orcamentoView" widgetVar="dlgViewOrcamento"
-		responsive="true" modal="true" appendTo=":lume" resizable="false"
+	<p:dialog widgetVar="dlgViewOrcamento" responsive="true" modal="true"
+		appendTo=":lume" resizable="false"
 		onHide="PF('dlgViewOrcamento').toggleMaximize();"
 		onShow="PF('dlgViewOrcamento').toggleMaximize();">
 		<f:facet name="header">
 			<h:outputText id="orcamentoViewHeader"
 				value="Orçamento do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
 		</f:facet>
-		<p:outputPanel
+		<p:outputPanel id="orcamentoView"
 			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
 			<p:scrollPanel mode="native"
 				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
 
-				<p:panelGrid columns="2"
-					columnClasses="ui-grid-col-12,ui-grid-col-12" layout="grid"
-					styleClass="ui-panelgrid-blank" id="panelDescObs"
-					style="border:0px none; background-color:transparent;">
+				<p:outputPanel id="panelDescObs">
+					<div class="CardTextParent">
+						<h:panelGroup styleClass="CardInfo">
+							<p:outputLabel value="Descrição:" for="descricaoOrcamento" />
+							<p:inputText id="descricaoOrcamento" style="width:100%"
+								rendered="#{planoTratamentoMB.orcamentoSelecionado.descricao != null}"
+								value="#{planoTratamentoMB.orcamentoSelecionado.descricao}" />
+						</h:panelGroup>
+						<div style="width: 1%" />
+						<h:panelGroup styleClass="CardInfo">
+							<p:outputLabel value="Observações:" for="observacaoOrcamento" />
+							<p:inputText id="observacaoOrcamento" style="width:100%"
+								rendered="#{planoTratamentoMB.orcamentoSelecionado.observacoes != null}"
+								value="#{planoTratamentoMB.orcamentoSelecionado.observacoes}" />
+						</h:panelGroup>
+					</div>
+				</p:outputPanel>
 
-					<h:panelGroup>
-						<p:outputLabel value="Descrição:" for="descricaoOrcamento" />
-						<p:inputText id="descricaoOrcamento" style="width:100%"
-							rendered="#{planoTratamentoMB.orcamentoSelecionado.descricao != null}"
-							value="#{planoTratamentoMB.orcamentoSelecionado.descricao}" />
-					</h:panelGroup>
-					<h:panelGroup>
-						<p:outputLabel value="Observações:" for="observacaoOrcamento" />
-						<p:inputText id="observacaoOrcamento" style="width:100%"
-							rendered="#{planoTratamentoMB.orcamentoSelecionado.observacoes != null}"
-							value="#{planoTratamentoMB.orcamentoSelecionado.observacoes}" />
-					</h:panelGroup>
-
-				</p:panelGrid>
+				<br />
 
 				<p:outputPanel id="pnViewOrcamento">
 					<p:remoteCommand name="attValores" process="@this"
@@ -1423,7 +1430,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								required="#{planoTratamentoMB.orcamentoSelecionado != null}"
 								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 								symbol="R$ " thousandSeparator="."
-								disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}">
+								disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}">
 								<p:ajax process="@this" oncomplete="attValores()" />
 							</p:inputNumber>
 						</p:column>
@@ -1438,11 +1445,19 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</p:column>
 						<p:column headerText="Incluso?" width="50">
 							<p:selectBooleanCheckbox value="#{procedimento.incluso}"
-								disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}">
+								disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}">
 								<p:ajax process="@this" />
 							</p:selectBooleanCheckbox>
 						</p:column>
 					</p:dataTable>
+					<p:outputPanel id="versaoOrcamento">
+						<div
+							style="width: calc(100% - 10px); text-align: right; padding: 5px;">
+							<i><h:outputText
+									value="Versão atual do orçamento:
+							#{planoTratamentoMB.orcamentoSelecionado.nVersao}" /></i>
+						</div>
+					</p:outputPanel>
 					<br />
 					<p:fieldset legend="Desconto" toggleable="true" collapsed="true"
 						style="margin: 0;">
@@ -1452,7 +1467,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<h:outputText value="Tipo do Desconto" />
 							<p:selectOneMenu
 								rendered="#{planoTratamentoMB.orcamentoSelecionado != null}"
-								disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
+								disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
 								value="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo}">
 								<f:selectItem itemValue="P" itemLabel="Porcentagem" />
 								<f:selectItem itemValue="V" itemLabel="Valor" />
@@ -1463,7 +1478,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<h:outputText value="Valor do Desconto" />
 							<h:panelGroup id="orcamentoDescontoValor">
 								<p:inputNumber
-									disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
+									disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
 									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
 									styleClass="taller" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
@@ -1471,7 +1486,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									<p:ajax process="@this" oncomplete="attValores()" />
 								</p:inputNumber>
 								<p:inputNumber
-									disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
+									disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
 									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
 									styleClass="taller" maxlength="13" maxValue="9999999999.99"
 									decimalSeparator="," symbol="%" thousandSeparator="."
@@ -1493,7 +1508,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								actionListener="#{planoTratamentoMB.newPlanejamento}"
 								update=":lume:tabView:pnlNewPlanejamento"
 								oncomplete="PF('dlgNewPlanejamento').show()"
-								disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}" />
+								disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}" />
 						</p:panelGrid>
 
 						<p:dataTable filterDelay="1500" reflow="true"
@@ -1508,7 +1523,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:commandButton title="Excluir planejamento" icon="fa fa-trash"
 									styleClass="RedButton" process="@this" update="dtPlanejamento"
 									actionListener="#{planoTratamentoMB.removePlanejamento(lancPlanejamento)}"
-									disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}" />
+									disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}" />
 							</p:column>
 							<p:column headerText="Forma de pagamento"
 								filterMatchMode="contains"
@@ -1555,10 +1570,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<p:panelGrid columns="4" layout="grid" id="buttonsDlgOrcamentoView"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="White fa fa-save" value="Salvar"
-				process="@this, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader,:lume:tabView:panelDescObs"
+				process="@this, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader,:lume:tabView:panelDescObs, :lume:tabView:versaoOrcamento"
 				actionListener="#{planoTratamentoMB.actionPersistOrcamento}"
 				styleClass="GreenButton"
-				disabled="#{planoTratamentoMB.orcamentoSelecionado.id != null and planoTratamentoMB.orcamentoSelecionado.id != 0}"
+				disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
 				update=":lume:tabView:orcamentoViewTable, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView,:lume:tabView:panelDescObs" />
 			<p:commandButton icon="White fa fa-print"
 				value="Visualizar Impressão" process="@this"
