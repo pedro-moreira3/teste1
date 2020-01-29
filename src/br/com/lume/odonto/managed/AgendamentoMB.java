@@ -702,6 +702,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         validaProfissionalEmAgendamento();
     }
 
+    //FIXME - Arrumar pra testar se orcamento ta aprovado!
     public void verificaProcedimentos() {
         List<AgendamentoPlanoTratamentoProcedimento> aptps = procedimentosPickList.getTarget();
 
