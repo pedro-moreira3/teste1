@@ -118,22 +118,178 @@ li.orcamento-li {
 		</div>
 	</div>
 
-	<p:dialog appendTo=":lume" widgetVar="dlgOrcamentoPlanoOrtodontico"
+	<ui:remove>
+	<p:dialog id="dlgPreviewOrcamentoOrto"
+		widgetVar="dlgPreviewOrcamentoOrto" appendTo=":lume" responsive="true"
+		modal="true" width="60%">
+
+		<f:facet name="header">
+			<h:outputText value="Orçamentos" />
+		</f:facet>
+
+		<p:outputPanel id="previewOrcamento">
+			<p:panelGrid columns="2" layout="grid" id="botoesOrcamentoPTOrto"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+				<p:commandButton id="newOrcamentoOrto" icon="ui-icon-add"
+					actionListener="#{ortodontiaMB.actionNewOrcamento}"
+					update=":lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView,:lume:tabView:panelDescObs"
+					value="Novo Orçamento" process="@this" styleClass="NavyButton"
+					disabled="#{planoTratamentoMB.entity.status == 'S'}" />
+
+			</p:panelGrid>
+
+			<p:dataTable filterDelay="1500" reflow="true"
+				emptyMessage="Nenhum orçamento cadastrado" id="dtPreviewOrcamentos"
+				widgetVar="dtPreviewOrcamentos" var="orcamento"
+				value="#{ortodontiaMB.orcamentos}" rows="10" paginator="true"
+				paginatorPosition="bottom"
+				selection="#{ortodontiaMB.orcamentoSelecionado}"
+				rowKey="#{orcamento}">
+
+				<f:facet name="header">
+					<h:outputText
+						value="Orçamentos do Plano Ortodôntico '#{ortodontiaMB.entity.descricao}'" />
+				</f:facet>
+				<ui:remove>
+					<p:column width="120" headerText="Editar">
+						<p:commandButton styleClass="NavyButton" icon="fa fa-eye">
+
+
+
+						</p:commandButton>
+						<p:commandButton icon="White fa fa-print" process="@this"
+							update=":lume:tabView:orcamentoInclude"
+							actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
+							oncomplete="PF('dlgPrintOrcamento').show()"
+							styleClass="NavyButton" />
+						<p:commandButton icon="fa fa-trash" process="@this"
+							actionListener="#{ortodontiaMB.actionRemoveOrcamento(orcamento)}"
+							update=":lume:tabView:tbViewOrcamento" styleClass="NavyButton"
+							title="Cancelar Orçamento">
+							<p:confirm header="Confirmação"
+								message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
+						</p:commandButton>
+						<p:commandButton process="@this"
+							disable="#{orcamento.aprovado == 'S'}"
+							oncomplete="PF('dlgNovoReajusteOrcamento').show();"
+							icon="fa fa-dollar" styleClass="NavyButton">
+
+							<p:ajax listener="#{ortodontiaMB.actionEditOrcamento(orcamento)}"
+								process="@this" />
+
+						</p:commandButton>
+
+					</p:column>
+				</ui:remove>
+				<p:column headerText="Descrição" filterBy="#{orcamento.descricao}"
+					filterMatchMode="contains" sortBy="#{orcamento.descricao}">
+					<h:outputText value="#{orcamento.descricao}" />
+				</p:column>
+
+				<p:column headerText="Data de Criação"
+					filterBy="#{orcamento.dataCriacao}" filterMatchMode="contains"
+					sortBy="#{orcamento.dataCriacao}">
+					<h:outputText value="#{orcamento.dataCriacao}">
+						<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Valor Total"
+					filterBy="#{orcamento.valorTotal}" filterMatchMode="contains"
+					sortBy="#{orcamento.valorTotal}">
+					<h:outputText value="#{orcamento.valorTotal}">
+						<f:convertNumber type="currency" currencySymbol="R$"
+							maxFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Aprovado?" filterBy="#{orcamento.aprovadoStr}"
+					filterMatchMode="contains" sortBy="#{orcamento.aprovadoStr}">
+					<h:outputText value="#{orcamento.aprovadoStr}" />
+				</p:column>
+
+				<p:column headerText="Índice de reajuste">
+					<h:outputText value="#{orcamento.indiceReajuste.reajuste}">
+						<f:convertNumber type="currency" currencySymbol="%"
+							maxFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Observações"
+					filterBy="#{orcamento.observacoes}" filterMatchMode="contains"
+					sortBy="#{orcamento.observacoes}">
+					<h:outputText value="#{orcamento.observacoes}" />
+				</p:column>
+
+			</p:dataTable>
+		</p:outputPanel>
+
+	</p:dialog>
+	</ui:remove>
+
+	<p:dialog id="dlgNovoReajusteOrcamento"
+		widgetVar="dlgNovoReajusteOrcamento" width="30%" responsive="true"
+		modal="true" appendTo=":lume">
+
+		<p:panelGrid columns="1" layout="grid"
+			styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+			<h:panelGroup>
+				<p:outputLabel value="Informe o percentual de reajuste" />
+				<p:inputNumber value="#{ortodontiaMB.indiceReajuste}" symbol="%"
+					maxlength="100" decimalPlaces="2" symbolPosition="s">
+
+					<p:ajax process="@this" />
+
+				</p:inputNumber>
+			</h:panelGroup>
+
+		</p:panelGrid>
+
+		<p:panelGrid columns="3" layout="grid"
+			styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+			<p:commandButton value="Aplicar reajuste" icon="fa fa-save"
+				styleClass="GreenButton">
+
+				<p:ajax process="@this"
+					listener="#{ortodontiaMB.actionPersistReajuste}"
+					oncomplete="PF('dlgNovoReajusteOrcamento').hide();"
+					update=":lume:tabView:dtOrcamentosOrtodontia"/>
+
+			</p:commandButton>
+
+			<h:panelGroup></h:panelGroup>
+
+			<p:commandButton value="Fechar" icon="fa fa-close"
+				styleClass="NavyButton"
+				oncomplete="PF('dlgNovoReajusteOrcamento').hide();" />
+
+		</p:panelGrid>
+
+	</p:dialog>
+
+	<p:dialog id="dlgOrcamentoPlanoOrtodontico" appendTo=":lume" widgetVar="dlgOrcamentoPlanoOrtodontico"
 		responsive="true" modal="true"
 		onHide="PF('dlgOrcamentoPlanoOrtodontico').toggleMaximize();"
 		onShow="PF('dlgOrcamentoPlanoOrtodontico').toggleMaximize();">
+		
 		<f:facet name="header">
 			<p:outputPanel id="orcamentoPlanoOrtodonticoHeader">
 				<h:outputText
 					value="Orçamento - Manutenção Ortodôntica do paciente #{ortodontiaMB.paciente.dadosBasico.nome}" />
 			</p:outputPanel>
 		</f:facet>
+
 		<p:outputPanel id="orcamentoPlanoOrtodontico"
 			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+			
 			<p:scrollPanel mode="native"
 				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
 				<p:outputPanel id="pnViewOrcamentoOrtodontico">
 					<div class="CardTextParent">
+
 						<h:panelGroup styleClass="CardText">
 							<span> <b><h:outputText value="Valor Total" /></b>
 							</span>
@@ -146,6 +302,7 @@ li.orcamento-li {
 							</span>
 						</h:panelGroup>
 						<div style="width: 1%" />
+
 						<h:panelGroup styleClass="CardText">
 							<span> <b><h:outputText value="Valor Pago" /></b>
 							</span>
@@ -157,7 +314,9 @@ li.orcamento-li {
 								</h:outputText>
 							</span>
 						</h:panelGroup>
+
 						<div style="width: 1%" />
+
 						<h:panelGroup styleClass="CardText">
 							<span> <b><h:outputText value="Desconto" /></b>
 							</span>
@@ -174,6 +333,7 @@ li.orcamento-li {
 								</h:outputText>
 							</span>
 						</h:panelGroup>
+
 						<div style="width: 1%" />
 						<h:panelGroup styleClass="CardText">
 							<span> <b><h:outputText value="Valor a Pagar" /></b>
@@ -231,6 +391,15 @@ li.orcamento-li {
 							</h:outputText>
 						</p:column>
 
+						<p:column headerText="Reajuste" filterMatchMode="contains"
+							style="width: 80px;"
+							filterBy="#{ortodontiaMB.orcamentoSelecionado.indiceReajuste.reajuste}"
+							sortBy="#{ortodontiaMB.orcamentoSelecionado.indiceReajuste.reajuste}">
+							<h:outputText value="#{o.indiceReajuste.reajuste}">
+
+							</h:outputText>
+						</p:column>
+
 						<p:column headerText="Incluso?" width="50">
 							<p:selectBooleanCheckbox value="#{procedimento.incluso}"
 								disabled="#{ortodontiaMB.entity.status == 'S'}" />
@@ -273,9 +442,11 @@ li.orcamento-li {
 							</h:panelGroup>
 						</p:panelGrid>
 					</p:fieldset>
+
 				</p:outputPanel>
 			</p:scrollPanel>
 		</p:outputPanel>
+
 		<p:panelGrid columns="4" layout="grid"
 			id="buttonsDlgOrcamentoOrtodonticoView"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
@@ -302,18 +473,21 @@ li.orcamento-li {
 				process="@this" onclick="PF('dlgOrcamentoPlanoOrtodontico').hide();"
 				styleClass="NavyButton" />
 		</p:panelGrid>
+
 	</p:dialog>
 
 	<p:dialog id="dlgPlanoOrtodontico" appendTo=":lume"
 		widgetVar="dlgPlanoOrtodontico" responsive="true" modal="true"
 		onHide="PF('dlgPlanoOrtodontico').toggleMaximize();"
 		onShow="PF('dlgPlanoOrtodontico').toggleMaximize();">
+
 		<f:facet name="header">
 			<p:outputPanel id="planoOrtodonticoHeader">
 				<h:outputText
 					value="Manutenção Ortodôntica do paciente #{ortodontiaMB.paciente.dadosBasico.nome}" />
 			</p:outputPanel>
 		</f:facet>
+
 		<p:outputPanel id="planoOrtodontico"
 			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
 			<p:scrollPanel mode="native"
@@ -379,10 +553,12 @@ li.orcamento-li {
 										value="#{ortodontiaMB.entity.fimStr}" readonly="true"
 										disabled="#{ortodontiaMB.entity.id != null or ortodontiaMB.entity.id > 0}" />
 								</p:panelGrid>
+
 								<p:panelGrid columns="4"
 									columnClasses="ui-grid-col-3,ui-grid-col-5,ui-grid-col-2,ui-grid-col-2"
 									layout="grid" styleClass="ui-panelgrid-blank"
 									style="border:0px none; background-color:transparent;">
+
 									<p:outputLabel value="Procedimento Ortodôntico : "
 										for="procedimentoPadrao" />
 									<p:autoComplete dropdown="true" queryDelay="1000"
@@ -400,6 +576,7 @@ li.orcamento-li {
 											listener="#{ortodontiaMB.atualizaValorProcedimento()}" />
 									</p:autoComplete>
 								</p:panelGrid>
+
 							</p:fieldset>
 							<br />
 
@@ -488,7 +665,8 @@ li.orcamento-li {
 									style="border:0px none; background-color:transparent;"
 									rendered="#{ortodontiaMB.admin}">
 									<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
-										layout="grid" styleClass="ui-panelgrid-blank" id="dtProcedimentosPanel"
+										layout="grid" styleClass="ui-panelgrid-blank"
+										id="dtProcedimentosPanel"
 										style="border:0px none; background-color:transparent;">
 										<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 											id="dtProcedimentosOrtodontia" var="ptp"
@@ -529,30 +707,49 @@ li.orcamento-li {
 
 											<p:panelGrid columns="2" layout="grid"
 												styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
 												<p:commandButton icon="White fa fa-gear White"
-													value="Novo Orçamento" styleClass="OrangeButton"
-													action="#{ortodontiaMB.actionNewOrcamento}" process="@this"
-													update=":lume:tabView:orcamentoPlanoOrtodonticoHeader,
-															:lume:tabView:orcamentoPlanoOrtodontico">
+													value="Gerar Orçamento" styleClass="OrangeButton"
+													action="#{ortodontiaMB.actionNewOrcamento}"
+													process="@this,:lume:tabView:dtOrcamentosOrtodontia"
+													update=":lume:tabView:dtOrcamentosOrtodontia">
 												</p:commandButton>
+
 											</p:panelGrid>
+
 											<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 												id="dtOrcamentosOrtodontia" var="o"
 												value="#{ortodontiaMB.orcamentos}" rows="5" paginator="true"
 												paginatorPosition="bottom">
+
 												<f:facet name="header">Orçamentos</f:facet>
+
 												<p:column width="120" headerText="Editar">
-													<p:commandButton process="@this"
-														actionListener="#{ortodontiaMB.actionEditOrcamento(o)}"
-														update=":lume:tabView:orcamentoPlanoOrtodontico, :lume:tabView:orcamentoPlanoOrtodonticoHeader, :lume:tabView:buttonsDlgOrcamentoOrtodonticoView"
-														onclick="PF('dlgOrcamentoPlanoOrtodontico').show();"
-														styleClass="NavyButton" icon="fa fa-eye"
-														title="Editar Dados" />
+													<p:commandButton styleClass="NavyButton" icon="fa fa-eye"
+														title="Editar Dados">
+
+														<p:ajax
+															process="@this,:lume:tabView:pnViewOrcamentoOrtodontico"
+															oncomplete="PF('dlgOrcamentoPlanoOrtodontico').show();"
+															listener="#{ortodontiaMB.actionEditOrcamento(o)}"
+															update=":lume:tabView:pnViewOrcamentoOrtodontico, :lume:tabView:buttonsDlgOrcamentoOrtodonticoView, :lume:tabView:orcamentoPlanoOrtodontico" />
+
+													</p:commandButton>
+													
 													<p:commandButton icon="White fa fa-print" process="@this"
 														actionListener="#{ortodontiaMB.setOrcamentoSelecionado(o)}"
 														update=":lume:tabView:orcamentoIncludeOrtodontico"
 														oncomplete="PF('dlgPrintOrcamentoO').show()"
 														styleClass="NavyButton" title="Imprimir Orçamento" />
+													<p:commandButton process="@this"
+														disable="#{orcamento.aprovado == 'S'}"
+														oncomplete="PF('dlgNovoReajusteOrcamento').show();"
+														icon="fa fa-dollar" styleClass="NavyButton">
+
+														<p:ajax listener="#{ortodontiaMB.actionEditOrcamento(o)}"
+															process="@this" />
+
+													</p:commandButton>
 													<p:commandButton icon="fa fa-trash" process="@this"
 														actionListener="#{ortodontiaMB.actionRemoveOrcamento(o)}"
 														update=":lume:tabView:dtOrcamentosOrtodontia"
@@ -562,6 +759,7 @@ li.orcamento-li {
 															message="Deseja cancelar o orçamento?"
 															icon="ui-icon-alert" />
 													</p:commandButton>
+													
 												</p:column>
 												<p:column filterBy="#{o.dataAprovacaoStr}"
 													filterMatchMode="contains" styleClass="cabecalho"
@@ -588,6 +786,16 @@ li.orcamento-li {
 												<p:column headerText="Parcelas">
 													<h:outputText value="#{o.quantidadeParcelas}" />
 												</p:column>
+
+												<p:column headerText="Reajuste" filterMatchMode="contains"
+													style="width: 80px;"
+													filterBy="#{o.indiceReajuste.reajuste}"
+													sortBy="#{o.indiceReajuste.reajuste}">
+													<h:outputText value="#{o.indiceReajuste.reajuste}">
+
+													</h:outputText>
+												</p:column>
+
 												<p:column headerText="Valor Total">
 													<h:outputText value="#{o.valorTotal}">
 														<f:convertNumber currencySymbol="R$" type="currency"
