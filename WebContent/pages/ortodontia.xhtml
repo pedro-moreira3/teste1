@@ -232,7 +232,7 @@ li.orcamento-li {
 		widgetVar="dlgNovoReajusteOrcamento" width="30%" responsive="true"
 		modal="true" appendTo=":lume">
 
-		<p:panelGrid columns="1" layout="grid"
+		<p:panelGrid id="pnNovoReajusteOrcamento" columns="1" layout="grid"
 			styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 			<h:panelGroup>
@@ -742,7 +742,7 @@ li.orcamento-li {
 														oncomplete="PF('dlgPrintOrcamentoO').show()"
 														styleClass="NavyButton" title="Imprimir Orçamento" />
 													<p:commandButton process="@this"
-														disable="#{orcamento.aprovado == 'S'}"
+														disable="#{orcamento.isAprovado}"
 														oncomplete="PF('dlgNovoReajusteOrcamento').show();"
 														icon="fa fa-dollar" styleClass="NavyButton">
 

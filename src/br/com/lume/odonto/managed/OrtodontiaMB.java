@@ -65,7 +65,6 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     private BigDecimal valorProcedimento;
     
     private BigDecimal indiceReajuste;
-    private Orcamento orcamentoPlano;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaPlanoOrtodontico;
@@ -90,15 +89,6 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         } catch (Exception e) {
             return BigDecimal.ZERO;
         }
-    }
-
-    public void actionEditPlanoOrto(Orcamento orcamento) {
-        this.orcamentoPlano = orcamento;
-    }
-    
-    public void actionShowOrcamento(Orcamento orcamento) {
-        this.orcamentoSelecionado = orcamento;
-        this.orcamentoPlano = orcamento;
     }
     
     //TODO - Estudar o início/fim para planos de tratamento não ortodônticos também.
@@ -339,27 +329,10 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
 
-    }    
-
-    public void teste() {
-        PlanoTratamento p;
-        try {
-            p = PlanoTratamentoSingleton.getInstance().getBo().find(new Long(29831));
-            if(p!= null)
-                PlanoTratamentoSingleton.getInstance().getBo().remove(p);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
     }
     
     public void actionPersistOrcamento() {
         try {
-            
-            if(this.orcamentoSelecionado == null) {
-                if(this.orcamentoPlano != null)
-                    this.orcamentoSelecionado = orcamentoPlano;
-            }
             
             if(orcamentoSelecionado != null) {
                 if(orcamentoSelecionado.getIndiceReajuste() != null) {
@@ -431,7 +404,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                 this.orcamentos.remove(orcamentoSelecionado);
             }else{
                 OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado());
-                atualizaOrcamentos();
+                //atualizaOrcamentos();
             }
             
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -448,7 +421,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     public void actionAprovaOrcamento(Orcamento orcamento) {
         try {
             OrcamentoSingleton.getInstance().aprovaOrcamento(orcamento, null, UtilsFrontEnd.getProfissionalLogado());
-            atualizaOrcamentos();
+            //atualizaOrcamentos();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
 
             try {
@@ -469,7 +442,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             PlanoTratamento pt = this.getEntity();
             
             IndiceReajuste reajuste = IndiceReajusteSingleton.getInstance().criaReajusteByPT(pt, UtilsFrontEnd.getProfissionalLogado(), this.indiceReajuste);
-            orcamentoSelecionado = OrcamentoSingleton.getInstance().aplicarReajuste(this.getOrcamentoSelecionado(),reajuste);
+            orcamentoSelecionado = OrcamentoSingleton.getInstance().aplicarReajuste(this.getOrcamentoSelecionado(), reajuste, UtilsFrontEnd.getProfissionalLogado());
             
             orcamentoSelecionado.setIndiceReajuste(reajuste);
             
@@ -483,6 +456,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             orcamentos.add(orcamentoSelecionado);
             
             this.indiceReajuste = null;
+            PrimeFaces.current().ajax().update(":lume:tabView:pnNovoReajusteOrcamento");
             
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Não foi possível aplicar o reajuste");
@@ -675,11 +649,4 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         this.indiceReajuste = indiceReajuste;
     }
 
-    public Orcamento getOrcamentoPlano() {
-        return orcamentoPlano;
-    }
-
-    public void setOrcamentoPlano(Orcamento orcamentoPlano) {
-        this.orcamentoPlano = orcamentoPlano;
-    }
 }
