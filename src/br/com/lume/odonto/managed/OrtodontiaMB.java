@@ -132,34 +132,36 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                         ptp.setOrtodontico(true);
                         getEntity().getPlanoTratamentoProcedimentos().add(ptp);
                     }
-                }
-                
-                if(this.getEntity().getReajustes() == null)
-                    this.getEntity().setReajustes(new ArrayList<IndiceReajuste>());
-                
-                for(Orcamento orcamento : orcamentos) {
-                    if(orcamento.getIndiceReajuste() != null) {
-                        this.getEntity().getReajustes().add(orcamento.getIndiceReajuste());
-                        
-                        this.getbO().getDao().detachObject(this.getEntity());
-                        
-                        this.getbO().merge(getEntity());
-                        this.setEntity(this.getbO().find(this.getEntity()));
-                        
-                        orcamento.setIndiceReajuste(getEntity().getReajustes().get(getEntity().getReajustes().size()-1));
-                        this.actionPersistOrcamento(orcamento);
-                    }else{
-                        
-                        this.getbO().getDao().detachObject(this.getEntity());
-                        this.getbO().merge(getEntity());
-                        this.setEntity(this.getbO().find(this.getEntity()));
-                        
-                        this.actionPersistOrcamento(orcamento);
+                    
+                    this.getbO().persist(this.getEntity());
+                }else {
+                    if(this.getEntity().getReajustes() == null)
+                        this.getEntity().setReajustes(new ArrayList<IndiceReajuste>());
+                    
+                    for(Orcamento orcamento : orcamentos) {
+                        if(orcamento.getIndiceReajuste() != null) {
+                            this.getEntity().getReajustes().add(orcamento.getIndiceReajuste());
+                            
+                            this.getbO().getDao().detachObject(this.getEntity());
+                            
+                            this.getbO().merge(getEntity());
+                            this.setEntity(this.getbO().find(this.getEntity()));
+                            
+                            orcamento.setIndiceReajuste(getEntity().getReajustes().get(getEntity().getReajustes().size()-1));
+                            this.actionPersistOrcamento(orcamento);
+                        }else{
+                            
+                            this.getbO().getDao().detachObject(this.getEntity());
+                            this.getbO().merge(getEntity());
+                            this.setEntity(this.getbO().find(this.getEntity()));
+                            
+                            this.actionPersistOrcamento(orcamento);
+                        }
                     }
                 }
-                
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
 
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                
                 carregarTela();
                 atualizaOrcamentos();
             }
@@ -310,20 +312,17 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     public void actionNewOrcamento() {
         try {
             
-            List<OrcamentoProcedimento> orcProcedimentos = new ArrayList<OrcamentoProcedimento>();
-            List<PlanoTratamentoProcedimento> ptp = new ArrayList<PlanoTratamentoProcedimento>();
+            List<OrcamentoItem> orcamentosItens = OrcamentoItemSingleton.getInstance().getBo().listAllOrcamentosProcedimentosOrcados(this.getEntity());
             
-            for(PlanoTratamentoProcedimento planoPTP : this.getEntity().getPlanoTratamentoProcedimentos()) {
-                orcProcedimentos = OrcamentoProcedimentoSingleton.getInstance().orcamentoProcedimentoFromPtp(planoPTP);
-                if(orcProcedimentos != null || !orcProcedimentos.isEmpty()) {
-                    ptp.add(planoPTP);
+            if(orcamentosItens == null || orcamentosItens.isEmpty()) {
+                for(Orcamento orcamento : this.orcamentos) {
+                    for(OrcamentoItem orcamentoItem : orcamento.getItens()) {
+                        orcamentosItens.add(orcamentoItem);
+                    }
                 }
             }
             
-            this.orcamentos = OrcamentoSingleton.getInstance().getBo().listByPlanoTratamentoOrtodontico(this.getEntity());
-            
-            if(ptp != null || !ptp.isEmpty()) {
-
+            if(orcamentosItens.size() < this.getEntity().getPlanoTratamentoProcedimentos().size()) {
                 List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().preparaOrcamentoFromPTOrto(getEntity());
                 
                 for(Orcamento orcamento : orcamentos) {
@@ -337,6 +336,9 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                     this.orcamentos.add(orcamento);
                 }
                 
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            }else {
+                this.addWarn("Não é possível gerar mais orçamentos !","Todos os procedimentos já foram orçados.");
             }
             
         } catch (Exception e) {
@@ -350,36 +352,34 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         try {
             
             if(orcamentoSelecionado != null) {
-                if(orcamentoSelecionado.getIndiceReajuste() != null) {
-                    if(this.getEntity().getReajustes() == null)
-                        this.getEntity().setReajustes(new ArrayList<IndiceReajuste>());
-                    
-                    this.getEntity().getReajustes().add(orcamentoSelecionado.getIndiceReajuste());
-                    
-                }
                 
                 orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
                 OrcamentoSingleton.getInstance().recalculaValores(orcamentoSelecionado);
                 
-                OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado);
+                if(this.getEntity().getReajustes() == null)
+                    this.getEntity().setReajustes(new ArrayList<IndiceReajuste>());
+                
+                if(orcamentoSelecionado.getIndiceReajuste() != null) {
+                    this.getEntity().getReajustes().add(orcamentoSelecionado.getIndiceReajuste());
+                    
+                    this.getbO().getDao().detachObject(this.getEntity());
+                    
+                    this.getbO().merge(getEntity());
+                    this.setEntity(this.getbO().find(this.getEntity()));
+                    
+                    orcamentoSelecionado.setIndiceReajuste(getEntity().getReajustes().get(getEntity().getReajustes().size()-1));
+                    this.actionPersistOrcamento(orcamentoSelecionado);
+                }else{
+                    
+                    this.getbO().getDao().detachObject(this.getEntity());
+                    this.getbO().merge(getEntity());
+                    this.setEntity(this.getbO().find(this.getEntity()));
+                    
+                    this.actionPersistOrcamento(orcamentoSelecionado);
+                }
+                
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             }
-            
-//            if (orcamentoSelecionado.getDataCriacao() == null) {
-//                orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
-//                orcamentoSelecionado.setDataCriacao(new Date());
-//            }
-//            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
-//            OrcamentoSingleton.getInstance().recalculaValores(orcamentoSelecionado);
-//            
-//            if(this.getEntity().getReajustes() == null)
-//                this.getEntity().setReajustes(new ArrayList<IndiceReajuste>());
-//            
-//            this.getEntity().getReajustes().add(orcamentoSelecionado.getIndiceReajuste());
-//                        
-//            setOrcamentoSelecionado(OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado));
-//            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-//            atualizaOrcamentos();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -438,7 +438,6 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     public void actionAprovaOrcamento(Orcamento orcamento) {
         try {
             OrcamentoSingleton.getInstance().aprovaOrcamento(orcamento, null, UtilsFrontEnd.getProfissionalLogado());
-            //atualizaOrcamentos();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
 
             try {
@@ -462,15 +461,6 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             orcamentoSelecionado = OrcamentoSingleton.getInstance().aplicarReajuste(this.getOrcamentoSelecionado(), reajuste, UtilsFrontEnd.getProfissionalLogado());
             
             orcamentoSelecionado.setIndiceReajuste(reajuste);
-            
-            List<Orcamento> os = new ArrayList<Orcamento>(orcamentos);
-            
-            for(Orcamento o : os) {
-                if(o.getId() == orcamentoSelecionado.getId())
-                    orcamentos.remove(o);
-            }
-            
-            orcamentos.add(orcamentoSelecionado);
             
             this.indiceReajuste = null;
             PrimeFaces.current().ajax().update(":lume:tabView:pnNovoReajusteOrcamento");
