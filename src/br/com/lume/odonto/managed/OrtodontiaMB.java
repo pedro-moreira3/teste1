@@ -132,34 +132,36 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                         ptp.setOrtodontico(true);
                         getEntity().getPlanoTratamentoProcedimentos().add(ptp);
                     }
-                }
-                
-                if(this.getEntity().getReajustes() == null)
-                    this.getEntity().setReajustes(new ArrayList<IndiceReajuste>());
-                
-                for(Orcamento orcamento : orcamentos) {
-                    if(orcamento.getIndiceReajuste() != null) {
-                        this.getEntity().getReajustes().add(orcamento.getIndiceReajuste());
-                        
-                        this.getbO().getDao().detachObject(this.getEntity());
-                        
-                        this.getbO().merge(getEntity());
-                        this.setEntity(this.getbO().find(this.getEntity()));
-                        
-                        orcamento.setIndiceReajuste(getEntity().getReajustes().get(getEntity().getReajustes().size()-1));
-                        this.actionPersistOrcamento(orcamento);
-                    }else{
-                        
-                        this.getbO().getDao().detachObject(this.getEntity());
-                        this.getbO().merge(getEntity());
-                        this.setEntity(this.getbO().find(this.getEntity()));
-                        
-                        this.actionPersistOrcamento(orcamento);
+                    
+                    this.getbO().persist(this.getEntity());
+                }else {
+                    if(this.getEntity().getReajustes() == null)
+                        this.getEntity().setReajustes(new ArrayList<IndiceReajuste>());
+                    
+                    for(Orcamento orcamento : orcamentos) {
+                        if(orcamento.getIndiceReajuste() != null) {
+                            this.getEntity().getReajustes().add(orcamento.getIndiceReajuste());
+                            
+                            this.getbO().getDao().detachObject(this.getEntity());
+                            
+                            this.getbO().merge(getEntity());
+                            this.setEntity(this.getbO().find(this.getEntity()));
+                            
+                            orcamento.setIndiceReajuste(getEntity().getReajustes().get(getEntity().getReajustes().size()-1));
+                            this.actionPersistOrcamento(orcamento);
+                        }else{
+                            
+                            this.getbO().getDao().detachObject(this.getEntity());
+                            this.getbO().merge(getEntity());
+                            this.setEntity(this.getbO().find(this.getEntity()));
+                            
+                            this.actionPersistOrcamento(orcamento);
+                        }
                     }
                 }
-                
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
 
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                
                 carregarTela();
                 atualizaOrcamentos();
             }
@@ -312,6 +314,14 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             
             List<OrcamentoItem> orcamentosItens = OrcamentoItemSingleton.getInstance().getBo().listAllOrcamentosProcedimentosOrcados(this.getEntity());
             
+            if(orcamentosItens == null || orcamentosItens.isEmpty()) {
+                for(Orcamento orcamento : this.orcamentos) {
+                    for(OrcamentoItem orcamentoItem : orcamento.getItens()) {
+                        orcamentosItens.add(orcamentoItem);
+                    }
+                }
+            }
+            
             if(orcamentosItens.size() < this.getEntity().getPlanoTratamentoProcedimentos().size()) {
                 List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().preparaOrcamentoFromPTOrto(getEntity());
                 
@@ -342,18 +352,32 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         try {
             
             if(orcamentoSelecionado != null) {
-                if(orcamentoSelecionado.getIndiceReajuste() != null) {
-                    if(this.getEntity().getReajustes() == null)
-                        this.getEntity().setReajustes(new ArrayList<IndiceReajuste>());
-                    
-                    this.getEntity().getReajustes().add(orcamentoSelecionado.getIndiceReajuste());
-                    
-                }
                 
                 orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
                 OrcamentoSingleton.getInstance().recalculaValores(orcamentoSelecionado);
                 
-                OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado);
+                if(this.getEntity().getReajustes() == null)
+                    this.getEntity().setReajustes(new ArrayList<IndiceReajuste>());
+                
+                if(orcamentoSelecionado.getIndiceReajuste() != null) {
+                    this.getEntity().getReajustes().add(orcamentoSelecionado.getIndiceReajuste());
+                    
+                    this.getbO().getDao().detachObject(this.getEntity());
+                    
+                    this.getbO().merge(getEntity());
+                    this.setEntity(this.getbO().find(this.getEntity()));
+                    
+                    orcamentoSelecionado.setIndiceReajuste(getEntity().getReajustes().get(getEntity().getReajustes().size()-1));
+                    this.actionPersistOrcamento(orcamentoSelecionado);
+                }else{
+                    
+                    this.getbO().getDao().detachObject(this.getEntity());
+                    this.getbO().merge(getEntity());
+                    this.setEntity(this.getbO().find(this.getEntity()));
+                    
+                    this.actionPersistOrcamento(orcamentoSelecionado);
+                }
+                
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             }
         } catch (Exception e) {

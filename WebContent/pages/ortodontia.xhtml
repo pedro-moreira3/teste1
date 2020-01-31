@@ -452,10 +452,10 @@ li.orcamento-li {
 			id="buttonsDlgOrcamentoOrtodonticoView"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="White fa fa-save" value="Salvar"
-				process="@this, :lume:tabView:orcamentoPlanoOrtodontico"
+				process="@this"
 				actionListener="#{ortodontiaMB.actionPersistOrcamento}"
 				styleClass="GreenButton"
-				update=":lume:tabView:orcamentoPlanoOrtodontico, :lume:tabView:dtOrcamentosOrtodontia, :lume:tabView:buttonsDlgOrcamentoOrtodonticoView"
+				update=":lume:tabView:dtOrcamentosOrtodontia, :lume:tabView:buttonsDlgOrcamentoOrtodonticoView"
 				disabled="#{ortodontiaMB.entity.status == 'S' or ortodontiaMB.orcamentoSelecionado.aprovado}" />
 			<p:commandButton icon="White fa fa-print"
 				value="Visualizar Impressão" process="@this"
