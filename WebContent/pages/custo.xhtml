@@ -13,19 +13,22 @@
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 					<h:inputHidden id="idCusto" value="#{custoMB.entity.id}" />
+					<h1>Registro de Custos Diretos</h1>
+					<div class="SeparatorFull"></div>
+
 					<p:outputPanel id="pnCusto" styleClass="BordNone">
-						<h1>Registro de Custos Diretos</h1>
-						<div class="SeparatorFull"></div>
 						<p:panelGrid columns="2"
 							columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
 							styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
+
 							<p:outputLabel for="paciente" value="#{dominioMB.cliente} :" />
 							<p:autoComplete dropdown="true" queryDelay="1000" size="42"
 								minQueryLength="3" value="#{custoMB.paciente}" id="paciente"
 								completeMethod="#{custoMB.geraSugestoes}" var="p"
 								itemLabel="#{p.dadosBasico.nomeDocumento}" itemValue="#{p}"
-								converter="paciente" required="true" scrollHeight="400">
+								converter="paciente" required="true" scrollHeight="400"
+								disabled="#{custoMB.entity.id != null and custoMB.entity.id != 0}">
 
 								<p:column headerText="Código" style="text-align: center;">
 									<h:outputText value="#{p.codigo}" />
@@ -40,14 +43,14 @@
 									<h:outputText value="#{p.nomeMae}" />
 								</p:column>
 
-
 								<p:ajax event="itemSelect" listener="#{custoMB.handleSelect}"
 									process="paciente" update=":lume:dtCusto,:lume:pnCusto" />
 							</p:autoComplete>
+
 							<p:outputLabel for="planoTratamento"
 								value="#{dominioMB.planoTratamento} : " />
 							<p:selectOneMenu id="planoTratamento" required="true"
-								disabled="#{custoMB.paciente == null}"
+								disabled="#{custoMB.paciente == null or custoMB.entity.id != null and custoMB.entity.id != 0}"
 								value="#{custoMB.planoTratamento}" converter="planoTratamento">
 								<f:selectItem itemLabel="Selecione um plano" value="#{null}" />
 								<f:selectItems value="#{custoMB.planoTratamentos}" var="pt"
@@ -55,14 +58,15 @@
 								<p:ajax update=":lume:botoes,:lume:pnCusto"
 									listener="#{custoMB.handleSelectPT}" />
 							</p:selectOneMenu>
+
 							<p:outputLabel for="planoTratamentoProcedimento"
 								value="Procedimento : " />
 							<p:selectOneMenu id="planoTratamentoProcedimento" required="true"
-								disabled="#{custoMB.planoTratamento == null}"
-								value="#{custoMB.planoTratamentoProcedimento}"
+								disabled="#{custoMB.planoTratamento == null or custoMB.entity.id != null and custoMB.entity.id != 0}"
+								value="#{custoMB.entity.planoTratamentoProcedimento}"
 								converter="planoTratamentoProcedimento">
 								<f:selectItem itemLabel="Selecione um procedimento"
-									value="#{null}" />
+									itemValue="#{null}" />
 								<f:selectItems value="#{custoMB.planoTratamentoProcedimentos}"
 									var="ptp" itemValue="#{ptp}"
 									itemLabel="#{ptp.descricaoCompleta}" />
@@ -70,74 +74,75 @@
 
 							<p:outputLabel for="dtRegistro" value="Data : " />
 							<p:calendar id="dtRegistro" required="true"
-								value="#{custoMB.dataRegistro}" pattern="dd/MM/yyyy" mask="true"
-								showWeeksBar="false" locale="#{lumeSecurity.locale}"
+								value="#{custoMB.entity.dataRegistro}" pattern="dd/MM/yyyy"
+								mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}"
 								timeZone="#{lumeSecurity.timeZone}" navigator="true"
 								yearRange="-100:+10" maxdate="#{odontoMB.sysdate}"
 								disabled="#{custoMB.planoTratamento == null}">
 							</p:calendar>
+
 							<p:outputLabel for="valorCusto" value="Custo : " />
 							<p:inputNumber id="valorCusto"
 								disabled="#{custoMB.planoTratamento == null}"
-								value="#{custoMB.valor}" required="true" maxlength="10"
+								value="#{custoMB.entity.valor}" required="true" maxlength="10"
 								maxValue="99999999.99" decimalSeparator="," symbol=""
 								thousandSeparator="." />
+
 							<p:outputLabel for="descricaoCusto" value="Descrição do custo : " />
-							<p:inputTextarea id="descricaoCusto" value="#{custoMB.descricao}"
-								required="true" maxlength="100"
-								disabled="#{custoMB.planoTratamento == null}" />
+							<p:inputTextarea id="descricaoCusto"
+								value="#{custoMB.entity.descricao}" required="true"
+								maxlength="100" disabled="#{custoMB.planoTratamento == null}" />
+
 						</p:panelGrid>
+					</p:outputPanel>
 
 
-						<div class="SeparatorFull"></div>
-						<p:outputPanel id="botoes" styleClass="BordNone">
-							<p:panelGrid columns="4" layout="grid"
-								styleClass="ui-panelgrid-blank form-group ui-fluid">
-								<p:commandButton id="new" value="Novo Registro de Custo"
-									icon="White fa fa-file-o" actionListener="#{custoMB.actionNew}"
-									update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
-									process=":lume:pnCusto,@this"
-									disabled="#{custoMB.planoTratamento == null}" />
-								<p:commandButton id="persist" value="Salvar"
-									icon="White fa fa-save"
-									actionListener="#{custoMB.actionPersist}"
-									update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
-									process=":lume:pnCusto,@this"
-									disabled="#{custoMB.planoTratamento == null}"
-									styleClass="GreenButton" />
-								<p:commandButton id="delete" icon="White fa fa-trash-o"
-									value="Excluir" actionListener="#{custoMB.actionRemove}"
-									update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
-									process=":lume:pnCusto,@this"
-									disabled="#{custoMB.desabilitaExclusao()}"
-									styleClass="RedButton" />
-								<p:splitButton icon="White fa fa fa-file-excel-o"
-									value="Exportar tabela para Excel"
-									styleClass="GreenSplitButton"
-									actionListener="#{custoMB.exportarTabela('xls')}" ajax="false"
-									process="dtCusto,@this" update="@this" immediate="true"
+					<div class="SeparatorFull"></div>
+					<p:outputPanel id="botoes" styleClass="BordNone">
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="new" value="Novo Registro de Custo"
+								icon="White fa fa-file-o" actionListener="#{custoMB.actionNew}"
+								update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
+								process="@this" disabled="#{custoMB.planoTratamento == null}" />
+							<p:commandButton id="persist" value="Salvar"
+								icon="White fa fa-save"
+								actionListener="#{custoMB.actionPersist}"
+								update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
+								process=":lume:pnCusto,@this"
+								disabled="#{custoMB.planoTratamento == null}"
+								styleClass="GreenButton" />
+							<p:commandButton id="delete" icon="White fa fa-trash-o"
+								value="Excluir" actionListener="#{custoMB.actionRemove}"
+								update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
+								process=":lume:pnCusto,@this"
+								disabled="#{custoMB.desabilitaExclusao()}"
+								styleClass="RedButton" />
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{custoMB.exportarTabela('xls')}" ajax="false"
+								process="dtCusto,@this" update="@this" immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+								<p:fileDownload value="#{custoMB.arquivoDownload}" />
+
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{custoMB.exportarTabela('pdf')}" ajax="false"
+									process="dtCusto,@this" immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-
 									<p:fileDownload value="#{custoMB.arquivoDownload}" />
+								</p:menuitem>
+								<p:menuitem value="Exportar tabela para CSV"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{custoMB.exportarTabela('csv')}" ajax="false"
+									process="dtCusto,@this" immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload value="#{custoMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
 
-									<p:menuitem value="Exportar tabela para PDF"
-										icon="fa fa fa-file-pdf-o"
-										actionListener="#{custoMB.exportarTabela('pdf')}" ajax="false"
-										process="dtCusto,@this" immediate="true"
-										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload value="#{custoMB.arquivoDownload}" />
-									</p:menuitem>
-									<p:menuitem value="Exportar tabela para CSV"
-										icon="fa fa fa-file-pdf-o"
-										actionListener="#{custoMB.exportarTabela('csv')}" ajax="false"
-										process="dtCusto,@this" immediate="true"
-										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload value="#{custoMB.arquivoDownload}" />
-									</p:menuitem>
-								</p:splitButton>
-
-							</p:panelGrid>
-						</p:outputPanel>
+						</p:panelGrid>
 					</p:outputPanel>
 
 					<div class="EmptyBox20"></div>
@@ -146,7 +151,7 @@
 					<p:dataTable filterDelay="1500" reflow="true" var="custo"
 						value="#{custoMB.custos}" paginator="true" rows="20"
 						paginatorPosition="bottom" id="dtCusto" emptyMessage=""
-						selection="#{custoMB.custoSelecionado}" selectionMode="single"
+						selection="#{custoMB.entity}" selectionMode="single"
 						rowKey="#{custo}" binding="#{custoMB.tabelaCusto}">
 						<p:ajax event="rowSelect" update=":lume:pnCusto,:lume:botoes"
 							listener="#{custoMB.carrega}" />
