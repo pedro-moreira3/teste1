@@ -47,7 +47,7 @@ public class RelatorioContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public RelatorioContabilMB() {
         super(LancamentoContabilSingleton.getInstance().getBo());
-        formatter = NumberFormat.getCurrencyInstance(this.getLumeSecurity().getLocale());      
+        formatter = NumberFormat.getCurrencyInstance(this.getLumeSecurity().getLocale());
         this.setClazz(LancamentoContabil.class);
         this.carregarDatasIniciais();
         this.filtra();
@@ -191,7 +191,8 @@ public class RelatorioContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     private void saldoInicial() {
         saldoInicial = new BigDecimal(0);
-        List<LancamentoContabilRelatorio> lcs = LancamentoContabilSingleton.getInstance().getBo().listByPeriodoAnterior(inicio, forma, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        //List<LancamentoContabilRelatorio> lcs = LancamentoContabilSingleton.getInstance().getBo().listByPeriodoAnterior(inicio, forma, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        List<LancamentoContabilRelatorio> lcs = LancamentoContabilSingleton.getInstance().getBo().listByPeriodoAnteriorCorrigido(inicio, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         for (LancamentoContabilRelatorio lc : lcs) {
             BigDecimal valor = lc.getValor();
             valor = valor.abs();

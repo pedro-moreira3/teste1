@@ -45,12 +45,12 @@ public class RelatorioContabilDetalhadoMB extends LumeManagedBean<LancamentoCont
         formatter = NumberFormat.getCurrencyInstance(this.getLumeSecurity().getLocale());
         this.setClazz(LancamentoContabil.class);
         this.carregarDatasIniciais();
-        this.filtra();
+        //this.filtra();
     }
 
     public void onTabChange(TabChangeEvent event) {
         System.out.println(event.getTab().getId());
-        if (event.getTab().getId().contains("tab3")) {
+        if (event.getTab().getId().contains("tab4")) {
             this.filtra();
         }
     }
