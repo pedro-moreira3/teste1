@@ -282,6 +282,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (!this.getEntity().isBconvenio())
             this.getEntity().setBconvenio(true);
         abreNovoPtDialog();
+
+        getEntity().setDescricao("PT " + Utils.dateToString(new Date()));
     }
 
     public void carregarPlanosTratamento() {
