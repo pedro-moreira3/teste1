@@ -515,6 +515,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<div class="ui-g ui-fluid">
 				<div class="ui-g-12 ui-lg-12">
 					<h:panelGroup id="pnCriarPT">
+
 						<p:panelGrid columns="2"
 							columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid"
 							styleClass="ui-panelgrid-blank"
@@ -522,6 +523,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:outputLabel value="Descrição:" />
 							<h:panelGroup>
 								<p:inputText id="planoTratamentoDescricao"
+									onfocus="this.select();"
 									value="#{planoTratamentoMB.entity.descricao}"
 									required="#{planoTratamentoMB.novoPtDialogAberto}"
 									onkeypress="if (event.keyCode == 13) { return false; }" />

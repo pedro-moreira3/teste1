@@ -212,7 +212,7 @@ body .ui-selectoneradio td label {
 												update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil"
 												process="@this,dadosBasicos,motivo,data,valor"
 												oncomplete="PF('dtLancamentoContabil').filter()"
-												styleClass="GreenButton" />												
+												styleClass="GreenButton" />
 											<p:commandButton id="delete" icon="White fa fa-trash-o"
 												value="Excluir"
 												actionListener="#{lancamentoContabilMB.actionRemove}"
@@ -264,35 +264,39 @@ body .ui-selectoneradio td label {
 										</p:panelGrid>
 									</p:outputPanel>
 									<div class="EmptyBox20"></div>
-							
-							
-							<p:panelGrid columns="4"
-											columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-											layout="grid" styleClass="ui-panelgrid-blank"
-											style="border:0px none; background-color:transparent;" id="filtroPrincipalDatas">
 
-											<p:outputLabel for="inicioLancamento" value="Inicio : " />
-											<p:calendar id="inicioLancamento" value="#{lancamentoContabilMB.inicio}"
-												pattern="dd/MM/yyyy" mask="true" required="false" />
 
-											<p:outputLabel for="fimLancamento" value="Fim : " />
-											<p:calendar id="fimLancamento" value="#{lancamentoContabilMB.fim}"
-												pattern="dd/MM/yyyy" mask="true" required="false" />
+									<p:panelGrid columns="4"
+										columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+										layout="grid" styleClass="ui-panelgrid-blank"
+										style="border:0px none; background-color:transparent;"
+										id="filtroPrincipalDatas">
 
-										</p:panelGrid>
+										<p:outputLabel for="inicioLancamento" value="Inicio : " />
+										<p:calendar id="inicioLancamento"
+											value="#{lancamentoContabilMB.inicio}" pattern="dd/MM/yyyy"
+											mask="true" required="false" />
 
-										<div class="SeparatorFull"></div>
-										<p:panelGrid columns="4" layout="grid"
-											styleClass="ui-panelgrid-blank form-group ui-fluid">
-											<p:commandButton id="pesquisarLancamentos" icon="fa fa-search White"
-												value="Pesquisar"
-												actionListener="#{lancamentoContabilMB.geraLista}"
-												update="filtroPrincipalDatas,dtLancamentoContabil" process="@this,filtroPrincipalDatas"
-												oncomplete="PF('dtLancamentoContabil').filter()"
-												styleClass="OrangeButton" />											
-										</p:panelGrid>
-							
-							
+										<p:outputLabel for="fimLancamento" value="Fim : " />
+										<p:calendar id="fimLancamento"
+											value="#{lancamentoContabilMB.fim}" pattern="dd/MM/yyyy"
+											mask="true" required="false" />
+
+									</p:panelGrid>
+
+									<div class="SeparatorFull"></div>
+									<p:panelGrid columns="4" layout="grid"
+										styleClass="ui-panelgrid-blank form-group ui-fluid">
+										<p:commandButton id="pesquisarLancamentos"
+											icon="fa fa-search White" value="Pesquisar"
+											actionListener="#{lancamentoContabilMB.geraLista}"
+											update="filtroPrincipalDatas,dtLancamentoContabil"
+											process="@this,filtroPrincipalDatas"
+											oncomplete="PF('dtLancamentoContabil').filter()"
+											styleClass="OrangeButton" />
+									</p:panelGrid>
+
+
 									<div class="EmptyBox20"></div>
 									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 										id="dtLancamentoContabil" widgetVar="dtLancamentoContabil"
@@ -461,9 +465,9 @@ body .ui-selectoneradio td label {
 											styleClass="ui-panelgrid-blank form-group ui-fluid">
 											<p:commandButton id="pesquisar" icon="fa fa-search White"
 												value="Pesquisar"
+												process="@this, :lume:tv:inicio, :lume:tv:fim"
 												actionListener="#{relatorioContabilMB.filtra}"
-												update="extrato" process="@this,extrato,inicio,fim"
-												styleClass="OrangeButton" />
+												update=":lume:tv:extrato" styleClass="OrangeButton" />
 											<p:commandButton id="limpar" icon="White fa fa-file-o"
 												value="Limpar" update="inicio, fim" process="@this"
 												actionListener="#{relatorioContabilMB.actionLimpar}" />

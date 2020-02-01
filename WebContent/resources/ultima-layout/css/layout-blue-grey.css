@@ -1457,7 +1457,7 @@ body {
 
 @media (min-width: 1025px) {
   .layout-wrapper .topbar-items {
-    float: right;
+    float: right !important;
     margin: 0;
     padding: 5px 0 0 0;
     list-style-type: none;
