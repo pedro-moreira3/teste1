@@ -484,13 +484,19 @@
 					label="Subir imagem de perfil"
 					invalidFileMessage="Selecione um arquivo com estensão '.gif, .jpg, .jpeg ou .png'"
 					invalidSizeMessage="Arquivo muito grande! Tamanho não suportado."
-					auto="true" sizeLimit="100000" update="photoPacienteUpload"
-					fileUploadListener="#{pacienteMB.uploadPhotoImg}"
+					auto="true" sizeLimit="1000000" update="photoPacienteUpload,botoesGirar"
+					fileUploadListener="#{pacienteMB.uploadPhotoImg}" 
 					styleClass="BotaoCrud cyan-btn" icon="fa fa-cloud-upload" />
 				<p:outputPanel id="photoPacienteUpload" style="position: relative;">
 					<p:graphicImage value="#{pacienteMB.scFoto}" stream="false"
 						style="max-height: 300px; max-width: 300px; margin-left: 50%; transform: translateX(-50%);" />
 				</p:outputPanel>
+				<p:panelGrid columns="2" layout="grid" rendered="#{pacienteMB.scFoto ne null}" id="botoesGirar"
+					styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding forceSpaceBetweenCell">
+					<p:commandButton value="Girar imagem" icon="White fa fa-rotate-right"
+						type="button" actionListener="#{pacienteMB.rodarImagem}" styleClass="NavyButton" />
+						
+				</p:panelGrid>
 			</p:outputPanel>
 
 			<p:outputPanel rendered="#{pacienteMB.metodoImagem == 'C'}">

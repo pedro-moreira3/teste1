@@ -299,6 +299,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             addError("Erro", "Falha ao realizar upload. " + e.getMessage());
         }
     }
+    
+    public void rodarImagem() {
+        if(uploadedFile != null) {
+           System.out.println(uploadedFile.getFileName()); 
+        }
+    }
 
     public void upload(FileUploadEvent event) {
         try {
