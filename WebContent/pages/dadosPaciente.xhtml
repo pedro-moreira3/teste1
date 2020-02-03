@@ -439,7 +439,7 @@
 							<h:panelGroup rendered="#{pacienteMB.visivelDadosPaciente}">
 								<div class="Container70">
 									<p:commandButton value="Tirar Foto" process="@this"
-										update=":lume:pnTirarFoto" icon="White fa fa-camera"
+										update=":lume:pnTirarFoto,:lume:photoPacienteUpload,:lume:photoPaciente" icon="White fa fa-camera"
 										disabled="#{pacienteMB.entity.id == null}"
 										styleClass="NavyButton"
 										oncomplete="PF('dlgTirarFoto').show();"
