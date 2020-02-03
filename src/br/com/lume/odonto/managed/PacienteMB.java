@@ -329,11 +329,11 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
            // System.out.println(uploadedFile.getFileName());
            
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(rotatedImage, "jpg", baos);
+            ImageIO.write(rotatedImage, FilenameUtils.getExtension(uploadedFile.getFileName()), baos);
             data = baos.toByteArray();
-            scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));
+            scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));           
             System.out.println(scFoto);
-           // ImageIO.write(rotatedImage, FilenameUtils.getExtension(uploadedFile.getFileName()), new File(uploadedFile.getFileName()));
+            ImageIO.write(rotatedImage, FilenameUtils.getExtension(uploadedFile.getFileName()), new File(uploadedFile.getFileName()));
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
