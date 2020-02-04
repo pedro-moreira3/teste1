@@ -877,6 +877,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:column headerText="Face" width="200">
 								<h:outputText value="#{plano.label}" />
 							</p:column>
+							
 							<p:column rendered="#{planoTratamentoMB.temPermissaoExtra}"
 								sortBy="#{plano.valorDescontoLabel}" headerText="Valor(R$)"
 								id="clValor" width="90px;">
@@ -885,7 +886,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									decimalSeparator="," symbol="R$ " thousandSeparator="."
 									rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"
 									disabled="#{plano.planoTratamento.status == 'S' or planoTratamento.status == 'E' or plano.excluido eq 'S'}">
-									<p:ajax event="change"></p:ajax>
+									
+									<p:ajax event="change" listener="#{planoTratamentoMB.validarAlteracao(plano)}" update="valortroca"/>
+									
 								</p:inputNumber>
 								<h:outputText value="#{plano.valorDesconto}"
 									rendered="#{!planoTratamentoMB.temPermissaoTrocarValor}">
@@ -900,6 +903,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									</h:outputText>
 								</f:facet>
 							</p:column>
+							
 							<p:column headerText="Executado" width="100"
 								styleClass="hideOnEdit">
 								<p:selectManyCheckbox id="status" value="#{plano.statuss}"
@@ -1426,15 +1430,22 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							</h:outputText>
 						</p:column>
 						<p:column headerText="Valor" filterMatchMode="contains"
-							style="width: 200px;" filterBy="#{procedimento.valor}"
-							sortBy="#{procedimento.valor}">
-							<p:inputNumber value="#{procedimento.valor}"
+							style="width: 200px;" filterBy="#{planoTratamentoMB.convertValor(procedimento.valor)}"
+							sortBy="#{planoTratamentoMB.convertValor(procedimento.valor)}">
+							<p:inputNumber id="valorProcedimentoOrcamento" value="#{procedimento.valor}"
 								required="#{planoTratamentoMB.orcamentoSelecionado != null}"
 								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 								symbol="R$ " thousandSeparator="."
+								rendered="#{planoTratamentoMB.temPermissaoTrocarValor}"
 								disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}">
+								
 								<p:ajax process="@this" oncomplete="attValores()" />
+								<p:ajax event="change" listener="#{planoTratamentoMB.validarAlteracao(procedimento)}" update="valorProcedimentoOrcamento"/>
+								
 							</p:inputNumber>
+							<h:outputText rendered="#{!planoTratamentoMB.temPermissaoTrocarValor}" value="#{procedimento.valor}">
+								<f:convertNumber currencySymbol="R$" type="currency" />
+							</h:outputText>
 						</p:column>
 						<p:column headerText="Desconto" filterMatchMode="contains"
 							style="width: 80px;" rendered="false"
