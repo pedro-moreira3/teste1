@@ -360,13 +360,13 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                         valorOriginalDividio = valorOriginalDividio.subtract(diferenca);
                     }
                     LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
-                            UtilsFrontEnd.getProfissionalLogado());
+                            UtilsFrontEnd.getProfissionalLogado(),null);
                     //persistLancamento(getParcela(), getEntity(), valorOriginalDividio, getFormaPagamento(), Calendar.getInstance().getTime(), data.getTime(), getTarifa());
                     data.add(Calendar.MONTH, 1);
                 }
             } else {
                 LancamentoSingleton.getInstance().novoLancamento(getEntity(), getValor(), getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
-                        UtilsFrontEnd.getProfissionalLogado());
+                        UtilsFrontEnd.getProfissionalLogado(),null);
                 //persistLancamento(getParcela(), getEntity(), getValor(), getFormaPagamento(), Calendar.getInstance().getTime(), data.getTime(), getTarifa());
             }
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
