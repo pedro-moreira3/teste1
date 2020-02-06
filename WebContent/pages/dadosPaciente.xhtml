@@ -511,7 +511,7 @@
 				</p:panelGrid>
 			</p:outputPanel>
 			<p:panelGrid columns="3" layout="grid" id="botoesGirar"
-					styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding forceSpaceBetweenCell">
+					styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding forceSpaceBetweenCell" rendered="false">
 					<p:outputPanel></p:outputPanel>
 						<p:commandButton value="Girar Imagem" icon="White fa fa-repeat"
 						process="@this,:lume:photoPacienteUpload,:lume:photoPaciente" styleClass="NavyButton" rendered="#{pacienteMB.scFoto ne null}"

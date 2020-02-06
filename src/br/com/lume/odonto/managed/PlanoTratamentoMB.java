@@ -1101,8 +1101,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                         orcamentoSelecionado.setDescontoValor(orcamentoSelecionado.getValorTotal().multiply(UtilsFrontEnd.getProfissionalLogado().getDesconto()));
                     }
                 }
-                this.addError(OdontoMensagens.getMensagem("erro.orcamento.desconto.maior"), "");
-                return;
+                //sem desconto na tela, nao precisa validar se profissional tem desconto...
+                if(!(orcamentoSelecionado.getDescontoValor().compareTo(new BigDecimal(0)) == 0)) {
+                    addError(OdontoMensagens.getMensagem("erro.orcamento.desconto.maior"), "");
+                    return;    
+                }
+                
+                
             }
 
             orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));

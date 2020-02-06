@@ -48,16 +48,16 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
     public CustoMB() {
         super(CustoSingleton.getInstance().getBo());
         this.setClazz(PlanoTratamentoProcedimentoCusto.class);
-        try {
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            custos = new ArrayList<>();
-            if (paciente != null && paciente.getId() != null) {
-                this.carregaListaCusto();
-            }
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
-            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-        }
+      //  try {
+           // pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+          //  custos = new ArrayList<>();
+          //  if (paciente != null && paciente.getId() != null) {
+           //     this.carregaListaCusto();
+        //    }
+      //  } catch (Exception e) {
+      //      this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+      //      log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+      //  }
     }
 
     @Override

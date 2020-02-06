@@ -343,10 +343,10 @@ body .sideChkBox .ui-chkbox-label {
 								id="lancamentosFatura">
 								<f:facet name="header">Lançamentos da Fatura</f:facet>
 								<p:column style="width:16px"
-									rendered="#{(repasseProfissional != null and repasseProfissional == 'S') and (faturaPagtoMB.hasRequisitosCumprir(l))}">
+									rendered="true">
 									<p:rowToggler />
 								</p:column>
-								<p:column headerText="Ações" width="100" exportable="false"
+								<p:column headerText="Ações" width="10%" exportable="false" 
 									rendered="#{(showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.admin)
 											 or (repasseProfissional != null or repasseProfissional == 'S')}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
@@ -389,59 +389,59 @@ body .sideChkBox .ui-chkbox-label {
 										disabled="#{faturaPagtoMB.buscaPTPOrigemRepasse(l) == null}">
 									</p:commandButton>
 								</p:column>
-								<p:column styleClass="cabecalho"
+								<p:column styleClass="cabecalho" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{l.formaPagamentoStr}"
 									headerText="Forma de Pagamento" sortBy="#{l.formaPagamentoStr}">
 									<h:outputText value="#{l.formaPagamentoStr}" />
 								</p:column>
-								<p:column sortBy="#{l.valor}" filterMatchMode="contains"
+								<p:column sortBy="#{l.valor}" filterMatchMode="contains" width="10%"
 									filterBy="#{l.valor}" headerText="Valor"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.valor}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:column>
-								<p:column sortBy="#{l.tributo}" filterMatchMode="contains"
+								<p:column sortBy="#{l.tributo}" filterMatchMode="contains" width="10%"
 									filterBy="#{l.tributo}" headerText="Tributos"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.tributoPerc}">
 										<f:convertNumber type="percent" maxFractionDigits="2" />
 									</h:outputText>
 								</p:column>
-								<p:column sortBy="#{l.dataPagamentoStr}"
+								<p:column sortBy="#{l.dataPagamentoStr}" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterMatchMode="contains" filterBy="#{l.dataPagamentoStr}"
-									width="100" headerText="Data de Pagamento">
+									 headerText="Data de Pagamento">
 									<h:outputText value="#{l.dataPagamentoStr}" />
 								</p:column>
 								<p:column sortBy="#{l.dataCreditoStr}"
-									filterMatchMode="contains" width="100"
+									filterMatchMode="contains" width="10%"
 									filterBy="#{l.dataCreditoStr}" headerText="Data de Crédito"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.dataCreditoStr}" />
 								</p:column>
-								<p:column sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
-									width="100" filterMatchMode="contains"
+								<p:column sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}" width="10%"
+									 filterMatchMode="contains"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
 									headerText="Validado?">
 									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
 								</p:column>
 								<p:column sortBy="#{l.validadoPorProfissional.dadosBasico.nome}"
-									filterMatchMode="contains"
+									filterMatchMode="contains" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{l.validadoPorProfissional.dadosBasico.nome}"
 									headerText="Validado Por">
 									<h:outputText
 										value="#{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
-								<p:column headerText="Status" sortBy="#{l.status}" width="200"
+								<p:column headerText="Status" sortBy="#{l.status}" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterMatchMode="contains" filterBy="#{l.status}">
 									<h:outputText value="#{l.status}" />
 								</p:column>
-								<p:column headerText="Fatura Item" width="500"
+								<p:column headerText="Fatura Item" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}">
 									<h:outputText
@@ -456,7 +456,7 @@ body .sideChkBox .ui-chkbox-label {
 												rendered="#{faturaPagtoMB.isTodosRequisitosFeitos(l)}"
 												style="color: green; font-weight: bold;">
 												<h:outputText
-													value="Este lançamento está elegível para validação pois," />
+													value="Este lançamento está elegível para validação" />
 											</p:outputPanel>
 											<p:outputPanel
 												rendered="#{!faturaPagtoMB.isTodosRequisitosFeitos(l)}"
@@ -483,7 +483,220 @@ body .sideChkBox .ui-chkbox-label {
 										</ui:repeat>
 
 									</p:panelGrid>
-								</p:rowExpansion>
+									
+									
+									
+									<p:outputPanel
+										rendered="#{l.dadosTabelaMetodoRepasse == 'POR'}"
+										style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
+										<div style="padding: 10px;">
+											<div style="width: 100%; padding: 5px; text-align: center">
+												(<b>Valor Recebido</b> - <b>Taxas/Tarifas</b> - <b>Tributos</b>
+												- <b>Custos Diretos</b>) * <b>Perc. Repasse</b>
+											</div>
+											<p:separator styleClass="SeparatorFull" />
+											<table style="width: 100%" class="traceRepasse">
+												<tr>
+													<th colspan="8">Procedimento</th>
+													<th colspan="4">Valor Recebido</th>
+												</tr>
+												<tr>
+													<td colspan="8"><h:outputText
+															value="#{l.rfl.faturaItem.descricaoItem}" /></td>
+													<td colspan="4"><h:outputText
+															value="#{l.rfl.lancamentoOrigem.valor}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<th colspan="4">Item de dedução</th>
+													<th colspan="4">Base de cálculo</th>
+													<th colspan="4">Valor da dedução</th>
+												</tr>
+												<tr>
+													<td colspan="4">Taxa</td>
+													<td colspan="4"><h:outputText
+															value="#{l.dadosCalculoPercTaxa}">
+															<f:convertNumber maxFractionDigits="2" type="percent" />
+														</h:outputText></td>
+													<td colspan="4"><h:outputText
+															value="#{l.dadosCalculoValorTaxa}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<td colspan="4">Tarifa</td>
+													<td colspan="4"></td>
+													<td colspan="4"><h:outputText
+															value="#{l.dadosCalculoValorTarifa}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<td colspan="4">Tributo</td>
+													<td colspan="4"><h:outputText
+															value="#{l.dadosCalculoPercTributo}">
+															<f:convertNumber maxFractionDigits="2" type="percent" />
+														</h:outputText></td>
+													<td colspan="4"><h:outputText
+															value="#{l.dadosCalculoValorTributo}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<td colspan="8">Total:</td>
+													<td colspan="4"><h:outputText
+															value="#{l.dadosCalculoTotalReducao}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<td colspan="8">Valor recebido descontando as deduções
+														acima:</td>
+													<td colspan="4"><h:outputText
+															value="#{l.dadosCalculoRecebidoMenosReducao}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<th colspan="1">Valor do procedimento</th>
+													<th colspan="1">Valor Custos Diretos</th>
+													<th colspan="1">Valor sem custos diretos</th>
+													<th colspan="1">Valor total da fatura</th>
+													<th colspan="2">Percentual Item/Fatura</th>
+													<th colspan="2">Percentual de dedução</th>
+													<th colspan="4">Valor a deduzir do pagamento</th>
+												</tr>
+												<tr>
+													<td colspan="1"><h:outputText
+															value="#{l.rfl.faturaItem.valorComDesconto}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="1"><h:outputText
+															value="#{l.dadosTabelaValorTotalCustosDiretos}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="1"><h:outputText
+															value="#{l.dadosCalculoValorItemSemCusto}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="1"><h:outputText
+															value="#{l.dadosTabelaValorTotalFatura}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="2"><h:outputText
+															value="#{l.dadosCalculoPercItemSemCusto}">
+															<f:convertNumber maxFractionDigits="2" type="percent" />
+														</h:outputText></td>
+													<td colspan="2"><h:outputText
+															value="#{l.dadosCalculoInvPercItemSemCusto}">
+															<f:convertNumber maxFractionDigits="2" type="percent" />
+														</h:outputText></td>
+													<td colspan="4"><h:outputText
+															value="#{l.dadosCalculoReducaoCustoDireto}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<td colspan="8">Valor sem descontos e custos diretos:</td>
+													<td colspan="4"><h:outputText
+															value="#{l.dadosCalculoValorARepassarSemCusto}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<th colspan="4">Profissional</th>
+													<th colspan="4">Percentual de repasse</th>
+													<th colspan="4">Valor do repasse</th>
+												</tr>
+												<tr>
+													<td colspan="4"><h:outputText
+															value="#{l.fatura.profissional.dadosBasico.nome}" /></td>
+													<td colspan="4"><h:outputText
+															value="#{l.dadosTabelaValorRepasse}" /></td>
+													<td colspan="4"><h:outputText
+															value="#{l.valor}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+											</table>
+										</div>
+									</p:outputPanel>
+
+									<p:outputPanel
+										rendered="#{l.dadosTabelaMetodoRepasse == 'PRO'}"
+										style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
+										<div style="padding: 10px;">
+											<div style="width: 100%; padding: 5px; text-align: center">
+												(<b>Valor Recebido</b> / <b>Valor total da fatura</b>) * <b>Valor
+													de Repasse</b>
+											</div>
+											<p:separator styleClass="SeparatorFull" />
+											<table style="width: 100%" class="traceRepassePro">
+												<tr>
+													<th colspan="8">Procedimento</th>
+													<th colspan="4">Valor Recebido</th>
+												</tr>
+												<tr>
+													<td colspan="8"><h:outputText
+															value="#{l.rfl.faturaItem.descricaoItem}" /></td>
+													<td colspan="4"><h:outputText
+															value="#{l.rfl.lancamentoOrigem.valor}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<th colspan="2">Valor recebido</th>
+													<th colspan="2">Valor total da fatura</th>
+													<th colspan="2">Percentual Recebido/Total fatura</th>
+													<th colspan="2">Valor de Repasse do procedimento</th>
+													<th colspan="4">Valor do Repasse</th>
+												</tr>
+												<tr>
+													<td colspan="2"><h:outputText
+															value="#{l.rfl.lancamentoOrigem.valor}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="2"><h:outputText
+															value="#{l.dadosTabelaValorTotalFatura}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="2"><h:outputText
+															value="#{l.dadosCalculoPercLancamentoFatura}">
+															<f:convertNumber maxFractionDigits="2" type="percent" />
+														</h:outputText></td>
+													<td colspan="2"><h:outputText
+															value="#{l.dadosTabelaValorRepasse}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="4"><h:outputText
+															value="#{l.valor}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+											</table>
+										</div>
+									</p:outputPanel>
+								</p:rowExpansion>																		
+								
 							</p:dataTable>
 
 						</div>
