@@ -196,3 +196,8 @@ CREATE TABLE indice_reajuste(
 
 ALTER TABLE orcamento ADD COLUMN id_indice_reajuste bigint REFERENCES INDICE_REAJUSTE(ID);
 ALTER TABLE INDICE_REAJUSTE ADD COLUMN PROFISSIONAL_CRIACAO_ID BIGINT REFERENCES PROFISSIONAL(ID);
+
+ALTER TABLE repasse_faturas_lancamento ALTER COLUMN lancamento_origem_id DROP NOT NULL;
+ALTER TABLE repasse_faturas ALTER COLUMN fatura_origem_id DROP NOT NULL;
+ALTER TABLE repasse_faturas_item ALTER COLUMN fatura_item_origem_id DROP NOT NULL;
+ALTER TABLE repasse_faturas_lancamento ALTER COLUMN fatura_item_id DROP NOT NULL;

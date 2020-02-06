@@ -1131,12 +1131,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionRemoveOrcamento(ActionEvent event) {
         try {
-            cancelaLancamentos(this.orcamentoSelecionado);
-            OrcamentoSingleton.getInstance().inativaOrcamento(this.orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
+            if(isDentistaAdmin()) {
+                cancelaLancamentos(this.orcamentoSelecionado);
+                OrcamentoSingleton.getInstance().inativaOrcamento(this.orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
 
-            this.addError(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
-            carregaTelaOrcamento(getEntity());
-            this.orcamentoSelecionado = null;
+                this.addError(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
+                carregaTelaOrcamento(getEntity());
+                this.orcamentoSelecionado = null;
+            }else {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Somente o administrador do sistema pode cancelar o orçamento.");
+            }
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
@@ -1449,7 +1453,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public boolean isTemPermissaoTrocarValor() {
-        if (this.getEntity().isBconvenio())
+        if (this.getEntity().isBconvenio() && this.getEntity().getConvenio() != null)
             if (this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE) || UtilsFrontEnd.getProfissionalLogado().getTipoRemuneracao().equals(Profissional.FIXO))
                 return false;
         return temPermissaoExtra(false);
