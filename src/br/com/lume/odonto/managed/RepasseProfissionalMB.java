@@ -32,6 +32,7 @@ import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RepasseFaturas;
 import br.com.lume.odonto.entity.RepasseFaturasItem;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
+import br.com.lume.odonto.entity.Requisito;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
@@ -221,15 +222,18 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
                         fatura.setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));
                         fatura.setDadosTabelaRepasseTotalNaoPago(FaturaSingleton.getInstance().getTotalNaoPago(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));
                         fatura.setDadosTabelaRepasseTotalNaoPlanejado(FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));
-                        fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));                     
+                                                                    
+                        fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));    
+                        
                     } catch (Exception e) {
                         // TODO: handle exception
                     }
                     List<Lancamento> lancamentosCalculados = new ArrayList<Lancamento>();
                     fatura.setDadosTabelaStatusFatura("Paga");
                     boolean  faturaAPagar = false;
+                    boolean  validaParaPagamento = true;
                     for (Lancamento lancamento : fatura.getLancamentos()) {
-                        try {
+                        try { 
                             
                             // Setando Objetos Gerais
                             RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(lancamento);   
@@ -237,6 +241,16 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
                             lancamento.setRfl(repasse);
                             lancamento.setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
 
+                            //Só vamos deixar valor a pagar para lancamentos validos de acordo com a regra da empresa
+                            List<Requisito> todosRequisitos = RepasseFaturasLancamentoSingleton.getInstance().getRequisitosValidaLancamentoFromRepasseFatura(UtilsFrontEnd.getEmpresaLogada(), lancamento);
+                            if(validaParaPagamento && todosRequisitos != null && todosRequisitos.size() > 0) {
+                                validaParaPagamento = false;
+                                fatura.setDadosTabelaRepasseTotalRestante(new BigDecimal(0));   
+                            } 
+                            for (Requisito req : todosRequisitos) {
+                                System.out.println(req.getDescricao());    
+                            }
+                            
                             // Calculos necessários para mostragem na tabela
                             lancamento.setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(repasse.getFaturaItem().getFatura()));
                             lancamento.setDadosTabelaPercItem(

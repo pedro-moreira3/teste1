@@ -276,7 +276,7 @@ body .sideChkBox .ui-chkbox-label {
 								paginator="true" rowKey="#{fi}" paginatorPosition="bottom">
 								<f:facet name="header">Itens</f:facet>
 								<p:column style="width:16px"
-									rendered="#{(repasseProfissional != null and repasseProfissional == 'S') and (faturaPagtoMB.hasRequisitosCumprir(l))}">
+									rendered="#{(repasseProfissional != null and repasseProfissional == 'S')}">
 									<p:rowToggler />
 								</p:column>
 								<p:column headerText="Ações" width="100" exportable="false"
