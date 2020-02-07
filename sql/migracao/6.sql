@@ -201,3 +201,6 @@ ALTER TABLE repasse_faturas_lancamento ALTER COLUMN lancamento_origem_id DROP NO
 ALTER TABLE repasse_faturas ALTER COLUMN fatura_origem_id DROP NOT NULL;
 ALTER TABLE repasse_faturas_item ALTER COLUMN fatura_item_origem_id DROP NOT NULL;
 ALTER TABLE repasse_faturas_lancamento ALTER COLUMN fatura_item_id DROP NOT NULL;
+
+update procedimento set valor_repasse = 0 where valor_repasse is null;
+ALTER TABLE procedimento ALTER COLUMN valor_repasse SET DEFAULT 0;
