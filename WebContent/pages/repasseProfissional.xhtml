@@ -178,10 +178,12 @@
 												rows="20" paginator="true" rowKey="#{f}"
 												paginatorPosition="bottom" widgetVar="dtPrincipalFaturaPP"
 												selection="#{repasseProfissionalMB.faturasSelecionadas}"
-												binding="#{repasseProfissionalMB.tabelaRepasse}">
+												binding="#{repasseProfissionalMB.tabelaRepasse}" disabledSelection="#{f.dadosTabelaRepasseTotalRestante == 0}">
 
 												<f:facet name="header">Faturas</f:facet>
-												<p:column selectionMode="multiple" style="width:16px;" />
+												
+												<p:column selectionMode="multiple" style="width:16px;"  />
+												
 												<p:column width="50" headerText="Detalhes">
 													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
 														title="Visualizar Fatura"
