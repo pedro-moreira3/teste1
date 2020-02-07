@@ -204,3 +204,9 @@ ALTER TABLE repasse_faturas_lancamento ALTER COLUMN fatura_item_id DROP NOT NULL
 
 update procedimento set valor_repasse = 0 where valor_repasse is null;
 ALTER TABLE procedimento ALTER COLUMN valor_repasse SET DEFAULT 0;
+
+
+ALTER TABLE SEG_EMPRESA ADD COLUMN VALIDAR_GERA_RECIBO_VALOR_ZERADO VARCHAR(1) NOT NULL DEFAULT 'N';
+                     
+      
+     
