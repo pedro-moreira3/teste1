@@ -336,7 +336,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
 
                 this.criaRetorno();
-                //  cancelaAgendamentos();
+                // cancelaAgendamentos();
                 PrimeFaces.current().executeScript("PF('devolver').hide()");
             }
             PlanoTratamentoSingleton.getInstance().encerrarPlanoTratamento(getEntity(), this.justificativa, UtilsFrontEnd.getProfissionalLogado());
