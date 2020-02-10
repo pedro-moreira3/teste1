@@ -92,10 +92,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         this.setClazz(LancamentoContabil.class);
         try {
             Calendar c = Calendar.getInstance();
-            fim = c.getTime();
-            c.add(Calendar.MONTH, 3);
-            fim = c.getTime();
-            c.add(Calendar.MONTH, -6);
+            fim = new Date();
+           // c.add(Calendar.MONTH, 3);
+           // fim = c.getTime();
+            c.set(Calendar.DAY_OF_MONTH, 1);
             inicio = c.getTime();
             this.geraLista();
             this.carregarLancamentosValidar();
