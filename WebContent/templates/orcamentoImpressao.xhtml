@@ -4,7 +4,11 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core">
-
+<style>
+.preformatted {
+    white-space: pre-wrap;
+}
+</style>
 	<p:remoteCommand name="attPrintOrcamento"
 		update=":lume:tabView:orcamentoViewPrint, :lume:tabView:orcamentoViewPrintHeader" />
 	<p:dialog widgetVar="dlgPrintOrcamento" responsive="true" modal="true"
@@ -192,7 +196,10 @@
 					</table>
 					<br />
 					<div style="width: 100%; text-align: center;">
-						<span style="font-size: 14px;"><b>Observações: </b>#{o.observacoes}</span>
+						<span style="font-size: 14px;"><b>Observações: </b><br/>						
+						
+						<h:outputText value="#{o.observacoes}" styleClass="preformatted" />
+						</span>
 					</div>
 					<p:separator styleClass="SeparatorFull" />
 					<div class="Container100 Responsive100" align="right">

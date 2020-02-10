@@ -1232,9 +1232,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<p:outputPanel id="orcamentoViewTable">
 			<p:panelGrid columns="2" layout="grid" id="botoesOrcamentoPT"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-				<p:commandButton id="newOrcamento" icon="ui-icon-add"
+				<p:commandButton id="newOrcamento" icon="ui-icon-add" 
 					actionListener="#{planoTratamentoMB.actionNewOrcamento}"
-					update=":lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView,:lume:tabView:panelDescObs"
+					update=":lume:tabView:panelDescObs,:lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView,:lume:tabView:panelDescObs"
 					value="Novo Orçamento" process="@this" styleClass="NavyButton"
 					disabled="#{planoTratamentoMB.entity.status == 'S'}" />
 			</p:panelGrid>
@@ -1253,11 +1253,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				<p:column width="120" headerText="Editar">
 					<p:commandButton process="@this"
 						actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
-						update=":lume:tabView:orcamentoViewTable, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView"
-						onclick="PF('dlgViewOrcamento').show();" styleClass="NavyButton"
+						update=":lume:tabView:panelDescObs,:lume:tabView:orcamentoViewTable, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView"
+						oncomplete="PF('dlgViewOrcamento').show();" styleClass="NavyButton" 
 						icon="fa fa-eye" />
 					<p:commandButton icon="White fa fa-print" process="@this"
-						update=":lume:tabView:orcamentoInclude"
+						update=""
 						actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
 						oncomplete="PF('dlgPrintOrcamento').show()"
 						styleClass="NavyButton" />
@@ -1323,28 +1323,28 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		<p:outputPanel id="orcamentoView"
 			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
 			<p:scrollPanel mode="native"
-				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
-
-				<p:outputPanel id="panelDescObs">
-					<div class="CardTextParent">
-						<h:panelGroup styleClass="CardInfo">
-							<p:outputLabel value="Descrição:" for="descricaoOrcamento" />
-							<p:inputTextarea  id="descricaoOrcamento"
-								rendered="true" rows="6" cols="33"
-								value="#{planoTratamentoMB.orcamentoSelecionado.descricao}" >
-								</p:inputTextarea>
-								
-								
-						</h:panelGroup>
-						<div style="width: 1%" />
-						<h:panelGroup styleClass="CardInfo">
-							<p:outputLabel value="Observações:" for="observacaoOrcamento" />
-							<p:inputText id="observacaoOrcamento" style="width:100%"
-								rendered="true"
-								value="#{planoTratamentoMB.orcamentoSelecionado.observacoes}" />
-						</h:panelGroup>
-					</div>
-				</p:outputPanel>
+				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">				
+					<p:panelGrid columns="2" layout="grid" id="panelDescObs"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						
+							<h:panelGroup>
+								<p:outputLabel for="descricaoOrcamento"
+									value="Descrição:" />													
+								 <p:inputTextarea  value="#{planoTratamentoMB.orcamentoSelecionado.descricao}" id="descricaoOrcamento" rows="5" 
+								 cols="500" counter="display1" maxlength="200" counterTemplate="{0} caracteres disponíveis." autoResize="true" />
+    								<br />
+    								<h:outputText id="display1" />		
+							</h:panelGroup>								
+							<h:panelGroup >
+								<p:outputLabel for="observacaoOrcamento"
+									value="Observações:" />
+								 <p:inputTextarea value="#{planoTratamentoMB.orcamentoSelecionado.observacoes}" id="observacaoOrcamento" rows="5" 
+								 cols="500" counter="display" maxlength="400" counterTemplate="{0} caracteres disponíveis." autoResize="true" />
+    								<br />
+    								<h:outputText id="display" />	
+							</h:panelGroup>						
+						
+					</p:panelGrid>
 
 				<br />
 
