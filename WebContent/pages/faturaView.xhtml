@@ -348,7 +348,7 @@ body .sideChkBox .ui-chkbox-label {
 								</p:column>
 								<p:column headerText="Ações" width="10%" exportable="false" 
 									rendered="#{(showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.admin)
-											 or (repasseProfissional != null or repasseProfissional == 'S')}">
+											 and faturaPagtoMB.entity.tipoFatura.rotulo != 'PP'}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
 										title="Cancelar lançamento" disabled="#{!l.ativo}"
 										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
@@ -371,7 +371,7 @@ body .sideChkBox .ui-chkbox-label {
 										</p:confirm>
 									</p:commandButton>
 									<p:commandButton styleClass="GreenButton" icon="fa fa-check"
-										title="Validar Lançamento" update="@parent:@parent"
+										title="Validar Lançamento" update="@parent:@parent" 
 										actionListener="#{faturaPagtoMB.validaLancamentoRepasse(l)}"
 										process="@this"
 										rendered="#{(repasseProfissional != null and repasseProfissional == 'S')}"

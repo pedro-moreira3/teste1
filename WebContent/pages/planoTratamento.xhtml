@@ -1329,15 +1329,18 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<div class="CardTextParent">
 						<h:panelGroup styleClass="CardInfo">
 							<p:outputLabel value="Descrição:" for="descricaoOrcamento" />
-							<p:inputText id="descricaoOrcamento" style="width:100%"
-								rendered="#{planoTratamentoMB.orcamentoSelecionado.descricao != null}"
-								value="#{planoTratamentoMB.orcamentoSelecionado.descricao}" />
+							<p:inputTextarea  id="descricaoOrcamento"
+								rendered="true" rows="6" cols="33"
+								value="#{planoTratamentoMB.orcamentoSelecionado.descricao}" >
+								</p:inputTextarea>
+								
+								
 						</h:panelGroup>
 						<div style="width: 1%" />
 						<h:panelGroup styleClass="CardInfo">
 							<p:outputLabel value="Observações:" for="observacaoOrcamento" />
 							<p:inputText id="observacaoOrcamento" style="width:100%"
-								rendered="#{planoTratamentoMB.orcamentoSelecionado.observacoes != null}"
+								rendered="true"
 								value="#{planoTratamentoMB.orcamentoSelecionado.observacoes}" />
 						</h:panelGroup>
 					</div>

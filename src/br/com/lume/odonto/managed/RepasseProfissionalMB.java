@@ -101,7 +101,7 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
             this.dataFim = fim.getTime();
 
             setStatus("A pagar");
-            pesquisar();
+         //   pesquisar();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Não foi possivel carregar a tela.", true);
@@ -209,9 +209,11 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
                 });
 
             if (getEntityList() != null) {
-                getEntityList().forEach(fatura -> {                   
+              
+                getEntityList().forEach(fatura -> { 
+                    RepasseFaturas repasseObject = null;
                     try {
-                        RepasseFaturas repasseObject = RepasseFaturasSingleton.getInstance().getBo().getFaturaOrigemFromRepasse(fatura);
+                        repasseObject = RepasseFaturasSingleton.getInstance().getBo().getFaturaOrigemFromRepasse(fatura);
                         RepasseFaturasItem repasseItem = RepasseFaturasItemSingleton.getInstance().getBo().getItemOrigemFromRepasse(fatura.getItensFiltered().get(0));
                         PlanoTratamentoProcedimento ptp = PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasseItem.getFaturaItemOrigem());
                         fatura.setDadosTabelaRepassePaciente(repasseObject.getFaturaOrigem().getPaciente());
@@ -222,8 +224,10 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
                         fatura.setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));
                         fatura.setDadosTabelaRepasseTotalNaoPago(FaturaSingleton.getInstance().getTotalNaoPago(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));
                         fatura.setDadosTabelaRepasseTotalNaoPlanejado(FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));
-                                                                    
-                        fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));    
+                           
+                        fatura.setDadosTabelaRepasseTotalRestante(new BigDecimal(0)); 
+                        
+                      //  fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));    
                         
                     } catch (Exception e) {
                         // TODO: handle exception
@@ -231,25 +235,53 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
                     List<Lancamento> lancamentosCalculados = new ArrayList<Lancamento>();
                     fatura.setDadosTabelaStatusFatura("Paga");
                     boolean  faturaAPagar = false;
-                    boolean  validaParaPagamento = true;
+                  //  boolean  validaParaPagamento = true;
+                    BigDecimal total = new BigDecimal(0);
                     for (Lancamento lancamento : fatura.getLancamentos()) {
-                        try { 
-                            
+                        try {                             
                             // Setando Objetos Gerais
                             RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(lancamento);   
                             
                             lancamento.setRfl(repasse);
                             lancamento.setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
-
+                            lancamento.setPlanoTratamentoProcedimento(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
                             //Só vamos deixar valor a pagar para lancamentos validos de acordo com a regra da empresa
                             List<Requisito> todosRequisitos = RepasseFaturasLancamentoSingleton.getInstance().getRequisitosValidaLancamentoFromRepasseFatura(UtilsFrontEnd.getEmpresaLogada(), lancamento);
-                            if(validaParaPagamento && todosRequisitos != null && todosRequisitos.size() > 0) {
-                                validaParaPagamento = false;
-                                fatura.setDadosTabelaRepasseTotalRestante(new BigDecimal(0));   
+                            boolean requisitoFalhou = false;
+                            if(todosRequisitos != null && todosRequisitos.size() > 0) {
+                                for (Requisito req : todosRequisitos) {
+                                    if(!req.isRequisitoFeito()) {
+                                        requisitoFalhou = true;
+                                    }
+                               }
                             } 
-                            for (Requisito req : todosRequisitos) {
-                                System.out.println(req.getDescricao());    
+//                            if(lancamento.getPtp().getPlanoTratamento().getPaciente().getDadosBasico().getNome().equals("Jayne Lima")) {
+//                                System.out.println(lancamento.getValor());   
+//                                System.out.println(requisitoFalhou);    
+//                            }
+                            
+                            if(!requisitoFalhou) {  
+//                                for (Lancamento lancamentoOrigem : repasseObject.getFaturaOrigem().getLancamentos()) {
+//                                    if(lancamentoOrigem.getValidado().equals("S") && lancamentoOrigem.getConferidoPorProfissional() != null) {
+//                                        total = total.add(lancamento.getValor());                 
+//                                        fatura.setDadosTabelaRepasseTotalRestante(total);           
+//                                    }
+//                                }
+                                if(lancamento.getConferidoPorProfissional() == null) {
+                                    total = total.add(lancamento.getValor());                 
+                                    fatura.setDadosTabelaRepasseTotalRestante(total);    
+                                }
+                                     
                             }
+                          //  else {
+                           //     fatura.setDadosTabelaRepasseTotalRestante(new BigDecimal(0)); 
+                           // }
+                            //else {
+                           //     validaParaPagamento = false;
+                           // }
+                                
+                             
+                             
                             
                             // Calculos necessários para mostragem na tabela
                             lancamento.setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(repasse.getFaturaItem().getFatura()));
@@ -342,10 +374,24 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
             for (Lancamento l : fatura.getLancamentos()) {
                 lancamentos.add(l);
                 if(l.getValorDesconto().compareTo(new BigDecimal(0)) == 0) {
-                    if(UtilsFrontEnd.getEmpresaLogada().getValidarGeraReciboValorZerado().equals("S")) {
+                    if(UtilsFrontEnd.getEmpresaLogada().getValidarGeraReciboValorZerado().equals("S") || l.getConferidoPorProfissional() == null) {
                         lancamentos.remove(l);
                     }
                 }
+                
+                List<Requisito> todosRequisitos = RepasseFaturasLancamentoSingleton.getInstance().getRequisitosValidaLancamentoFromRepasseFatura(UtilsFrontEnd.getEmpresaLogada(), l);
+                boolean requisitoFalhou = false;
+                if(todosRequisitos != null && todosRequisitos.size() > 0) {
+                    for (Requisito req : todosRequisitos) {
+                        if(!req.isRequisitoFeito()) {
+                            requisitoFalhou = true;
+                        }
+                   }
+                }
+                if(requisitoFalhou) {
+                    lancamentos.remove(l);
+                }
+                
             }
                if (fatura.getLancamentos() == null || Arrays.asList(fatura.getLancamentos()).size() == 0) {
                  addError("Erro", "É necessário escolher ao menos uma fatura.");
@@ -418,12 +464,31 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
             for (Fatura fatura : faturasSelecionadas) {
               
                 for (Lancamento l : fatura.getLancamentos()) {
-                    if (ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().findReciboValidoForLancamento(l) != null) {
-                        addError("Erro", "Existem lançamentos na lista de repasse que já estão em outros recibos!");
-                        return;
-                    }
+                    
                     lancamentos.add(l);
+                    List<Requisito> todosRequisitos = RepasseFaturasLancamentoSingleton.getInstance().getRequisitosValidaLancamentoFromRepasseFatura(UtilsFrontEnd.getEmpresaLogada(), l);
+                    boolean requisitoFalhou = false;
+                    if(todosRequisitos != null && todosRequisitos.size() > 0) {
+                        for (Requisito req : todosRequisitos) {
+                            if(!req.isRequisitoFeito()) {
+                                requisitoFalhou = true;
+                            }
+                       }
+                    }
+                    if(requisitoFalhou) {
+                        lancamentos.remove(l);
+                    }
+                    if(l.getConferidoPorProfissional() != null) {
+                        lancamentos.remove(l);
+                    }
+                    
                 }
+//                for (Lancamento l : lancamentos) {
+//                    if (ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().findReciboValidoForLancamento(l) != null ) {
+//                        addError("Erro", "Existem lançamentos na lista de repasse que já estão em outros recibos!");
+//                        return;
+//                    }
+//                }
                 
             }
             

@@ -262,7 +262,7 @@
 												</p:column>
 
 												<p:column filterBy="#{f.dadosTabelaRepasseTotalPago}"
-													headerText="Valor total pago" filterMatchMode="contains"
+													headerText="Valor já pago" filterMatchMode="contains"
 													sortBy="#{f.dadosTabelaRepasseTotalPago}">
 													<h:outputText value="#{f.dadosTabelaRepasseTotalPago}">
 														<f:convertNumber currencySymbol="R$ " type="currency" />
@@ -270,7 +270,7 @@
 												</p:column>
 
 												<p:column filterBy="#{f.dadosTabelaRepasseTotalRestante}"
-													headerText="Valor à pagar"
+													headerText="Valor liberado para repasse"
 													filterMatchMode="contains"
 													sortBy="#{f.dadosTabelaRepasseTotalRestante}">
 													<h:outputText value="#{f.dadosTabelaRepasseTotalRestante}">
