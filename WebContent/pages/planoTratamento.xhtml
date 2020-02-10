@@ -1595,6 +1595,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				value="Visualizar Impressão" process="@this"
 				update=":lume:tabView:orcamentoInclude"
 				oncomplete="PF('dlgPrintOrcamento').show()"
+				actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamentoSelecionado)}"
 				disabled="#{planoTratamentoMB.orcamentoSelecionado.id == null or planoTratamentoMB.orcamentoSelecionado.id == 0}"
 				styleClass="NavyButton">
 			</p:commandButton>

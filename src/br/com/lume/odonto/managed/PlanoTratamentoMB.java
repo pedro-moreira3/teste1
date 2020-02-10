@@ -116,6 +116,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private Procedimento procedimentoSelecionado;
 
     private List<Dominio> justificativas;
+    
+    private boolean imprimirSemValores = false;
 
     private String filtroStatus = "T";
 
@@ -158,6 +160,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     @ManagedProperty(value = "#{pacienteMB}")
     private PacienteMB pacienteMB;
+    private boolean renderizarValoresProcedimentos = true;
 
     public PlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());
@@ -176,6 +179,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         loadDentesCombo();
         loadGruposDentes();
         carregarStatusDente();
+    }
+    
+    public void imprimirSemValoresListener() {
+        renderizarValoresProcedimentos = true;
+        if(imprimirSemValores) {
+            renderizarValoresProcedimentos = false;
+        }
+        
     }
 
     public String getDateNowFormat() {
@@ -1130,6 +1141,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void actionEditOrcamento(Orcamento orcamento) {
+        this.imprimirSemValores = false;
         this.orcamentoSelecionado = orcamento;
         orcamentoSelecionado.setValorPago(getTotalPago());
     }
@@ -2116,6 +2128,26 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void setValorDescontoAlterar(BigDecimal valorDescontoAlterar) {
         this.valorDescontoAlterar = valorDescontoAlterar;
+    }
+
+    
+    public boolean isImprimirSemValores() {
+        return imprimirSemValores;
+    }
+
+    
+    public void setImprimirSemValores(boolean imprimirSemValores) {
+        this.imprimirSemValores = imprimirSemValores;
+    }
+
+    
+    public boolean isRenderizarValoresProcedimentos() {
+        return renderizarValoresProcedimentos;
+    }
+
+    
+    public void setRenderizarValoresProcedimentos(boolean renderizarValoresProcedimentos) {
+        this.renderizarValoresProcedimentos = renderizarValoresProcedimentos;
     }
 
 }
