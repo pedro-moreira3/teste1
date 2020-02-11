@@ -92,10 +92,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         this.setClazz(LancamentoContabil.class);
         try {
             Calendar c = Calendar.getInstance();
-            fim = c.getTime();
-            c.add(Calendar.MONTH, 3);
-            fim = c.getTime();
-            c.add(Calendar.MONTH, -6);
+            fim = new Date();
+           // c.add(Calendar.MONTH, 3);
+           // fim = c.getTime();
+            c.set(Calendar.DAY_OF_MONTH, 1);
             inicio = c.getTime();
             this.geraLista();
             this.carregarLancamentosValidar();
@@ -222,42 +222,11 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     }
 
     public void actionValidarLancamento(Lancamento l) {
-        List<LancamentoContabil> lancamentosContabeisProntos = new ArrayList<>();
         try {
-            if (l != null) {
-                List<LancamentoContabil> lancamentosContabeis = l.getLancamentosContabeis();
-                for (LancamentoContabil lancamentoContabil : lancamentosContabeis) {
-                    lancamentoContabil.setData(l.getDataCredito());
-                    this.getbO().persist(lancamentoContabil);
-                    lancamentosContabeisProntos.add(lancamentoContabil);
-                }
-
-                Date data = Calendar.getInstance().getTime();
-                l.setDataValidado(data);
-                l.setValidadoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
-                l.setValidado(Status.SIM);
-                if (!Status.SIM.equals(l.getPagamentoConferido())) {
-                    l.setDataConferido(data);
-                    l.setConferidoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
-                    l.setPagamentoConferido(Status.SIM);
-                }
-                LancamentoSingleton.getInstance().getBo().merge(l);
-
-                this.carregarLancamentosValidar();
-                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-            }
-        } catch (Exception e) {
-            // Desfaz os LC salvos
-            lancamentosContabeisProntos.forEach(lc -> {
-                try {
-                    lc.setData(null);
-                    this.getbO().persist(lc);
-                } catch (Exception ex) {
-                    // TODO: handle exception
-                }
-            });
-            // Como todos os atributos de 'l' (lançamento) são alterados ao mesmo tempo,
-            //   caso haja problema nenhum é salvo, por isso nada é voltado.
+           LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l,UtilsFrontEnd.getProfissionalLogado());    
+            this.carregarLancamentosValidar();
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+        } catch (Exception e) {         
 
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);

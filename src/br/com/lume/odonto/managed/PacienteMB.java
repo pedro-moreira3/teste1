@@ -1,7 +1,12 @@
 package br.com.lume.odonto.managed;
 
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,6 +26,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
 import javax.servlet.http.HttpServletRequest;
 
@@ -34,6 +40,7 @@ import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
+import org.primefaces.shaded.commons.io.FilenameUtils;
 
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.anamnese.AnamneseSingleton;
@@ -297,6 +304,41 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             addError("Erro", "Falha ao realizar upload. " + e.getMessage());
+        }
+    }
+    
+    public void rodarImagem(ActionEvent event) {
+        if(uploadedFile != null) {           
+           try {
+               
+            InputStream in = new ByteArrayInputStream(uploadedFile.getContents());
+            BufferedImage image = ImageIO.read(in);
+            
+            final double rads = Math.toRadians(90);
+            final double sin = Math.abs(Math.sin(rads));
+            final double cos = Math.abs(Math.cos(rads));
+            final int w = (int) Math.floor(image.getWidth() * cos + image.getHeight() * sin);
+            final int h = (int) Math.floor(image.getHeight() * cos + image.getWidth() * sin);
+            final BufferedImage rotatedImage = new BufferedImage(w, h, image.getType());
+            final AffineTransform at = new AffineTransform();
+            at.translate(w / 2, h / 2);
+            at.rotate(rads,0, 0);
+            at.translate(-image.getWidth() / 2, -image.getHeight() / 2);
+            final AffineTransformOp rotateOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+            rotateOp.filter(image,rotatedImage);
+           // System.out.println(uploadedFile.getFileName());
+           
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(rotatedImage, FilenameUtils.getExtension(uploadedFile.getFileName()), baos);
+            data = baos.toByteArray();
+            scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));           
+            System.out.println(scFoto);
+            ImageIO.write(rotatedImage, FilenameUtils.getExtension(uploadedFile.getFileName()), new File(uploadedFile.getFileName()));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+           
         }
     }
 

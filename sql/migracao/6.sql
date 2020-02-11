@@ -178,9 +178,6 @@ ALTER TABLE PACIENTE ADD COLUMN CODIGO TEXT NULL;
 ------------------- acima ja rodado -------------------------------
 
 
-
-
-
 ALTER TABLE ORCAMENTO ADD COLUMN VERSAO VARCHAR(1) NOT NULL DEFAULT 'N';
 ALTER TABLE ORCAMENTO ADD COLUMN N_VERSAO NUMERIC(8) NULL;
 ALTER TABLE ORCAMENTO ADD COLUMN ORCAMENTO_ORIGINAL_ID BIGINT NULL REFERENCES ORCAMENTO(ID);
@@ -196,3 +193,19 @@ CREATE TABLE indice_reajuste(
 
 ALTER TABLE orcamento ADD COLUMN id_indice_reajuste bigint REFERENCES INDICE_REAJUSTE(ID);
 ALTER TABLE INDICE_REAJUSTE ADD COLUMN PROFISSIONAL_CRIACAO_ID BIGINT REFERENCES PROFISSIONAL(ID);
+
+--------------------- acima ja rodado -------------------------------
+
+ALTER TABLE repasse_faturas_lancamento ALTER COLUMN lancamento_origem_id DROP NOT NULL;
+ALTER TABLE repasse_faturas ALTER COLUMN fatura_origem_id DROP NOT NULL;
+ALTER TABLE repasse_faturas_item ALTER COLUMN fatura_item_origem_id DROP NOT NULL;
+ALTER TABLE repasse_faturas_lancamento ALTER COLUMN fatura_item_id DROP NOT NULL;
+
+update procedimento set valor_repasse = 0 where valor_repasse is null;
+ALTER TABLE procedimento ALTER COLUMN valor_repasse SET DEFAULT 0;
+
+
+ALTER TABLE SEG_EMPRESA ADD COLUMN VALIDAR_GERA_RECIBO_VALOR_ZERADO VARCHAR(1) NOT NULL DEFAULT 'N';
+                     
+      
+     

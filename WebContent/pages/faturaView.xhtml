@@ -346,7 +346,7 @@ body .sideChkBox .ui-chkbox-label {
 									rendered="#{(repasseProfissional != null and repasseProfissional == 'S') and (faturaPagtoMB.hasRequisitosCumprir(l))}">
 									<p:rowToggler />
 								</p:column>
-								<p:column headerText="Ações" width="100" exportable="false"
+								<p:column headerText="Ações" width="10%" exportable="false"
 									rendered="#{(showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.admin)
 											 or (repasseProfissional != null or repasseProfissional == 'S')}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
@@ -389,59 +389,59 @@ body .sideChkBox .ui-chkbox-label {
 										disabled="#{faturaPagtoMB.buscaPTPOrigemRepasse(l) == null}">
 									</p:commandButton>
 								</p:column>
-								<p:column styleClass="cabecalho"
+								<p:column styleClass="cabecalho" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{l.formaPagamentoStr}"
 									headerText="Forma de Pagamento" sortBy="#{l.formaPagamentoStr}">
 									<h:outputText value="#{l.formaPagamentoStr}" />
 								</p:column>
-								<p:column sortBy="#{l.valor}" filterMatchMode="contains"
+								<p:column sortBy="#{l.valor}" filterMatchMode="contains" width="10%"
 									filterBy="#{l.valor}" headerText="Valor"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.valor}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:column>
-								<p:column sortBy="#{l.tributo}" filterMatchMode="contains"
+								<p:column sortBy="#{l.tributo}" filterMatchMode="contains" width="10%"
 									filterBy="#{l.tributo}" headerText="Tributos"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.tributoPerc}">
 										<f:convertNumber type="percent" maxFractionDigits="2" />
 									</h:outputText>
 								</p:column>
-								<p:column sortBy="#{l.dataPagamentoStr}"
+								<p:column sortBy="#{l.dataPagamentoStr}" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterMatchMode="contains" filterBy="#{l.dataPagamentoStr}"
-									width="100" headerText="Data de Pagamento">
+									 headerText="Data de Pagamento">
 									<h:outputText value="#{l.dataPagamentoStr}" />
 								</p:column>
 								<p:column sortBy="#{l.dataCreditoStr}"
-									filterMatchMode="contains" width="100"
+									filterMatchMode="contains" width="10%"
 									filterBy="#{l.dataCreditoStr}" headerText="Data de Crédito"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.dataCreditoStr}" />
 								</p:column>
 								<p:column sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
-									width="100" filterMatchMode="contains"
+									width="10%" filterMatchMode="contains"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
 									headerText="Validado?">
 									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
 								</p:column>
 								<p:column sortBy="#{l.validadoPorProfissional.dadosBasico.nome}"
-									filterMatchMode="contains"
+									filterMatchMode="contains" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{l.validadoPorProfissional.dadosBasico.nome}"
 									headerText="Validado Por">
 									<h:outputText
 										value="#{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
-								<p:column headerText="Status" sortBy="#{l.status}" width="200"
+								<p:column headerText="Status" sortBy="#{l.status}" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterMatchMode="contains" filterBy="#{l.status}">
 									<h:outputText value="#{l.status}" />
 								</p:column>
-								<p:column headerText="Fatura Item" width="500"
+								<p:column headerText="Fatura Item" width="20%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}">
 									<h:outputText

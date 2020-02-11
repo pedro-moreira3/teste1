@@ -4,7 +4,11 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:c="http://java.sun.com/jstl/core">
-
+<style>
+.preformatted {
+    white-space: pre-wrap;
+}
+</style>
 	<p:remoteCommand name="attPrintOrcamento"
 		update=":lume:tabView:orcamentoViewPrint, :lume:tabView:orcamentoViewPrintHeader" />
 	<p:dialog widgetVar="dlgPrintOrcamento" responsive="true" modal="true"
@@ -167,8 +171,9 @@
 						<tr style="border: 1px solid #bdbdbd; border-bottom: none;">
 							<th
 								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Descrição</th>
-							<th
-								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 200px;">Valor</th>
+							<th  
+								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 200px; 
+								display:#{(planoTratamentoMB.renderizarValoresProcedimentos)?'table-cell':'none'};" >Valor</th>
 							<th
 								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; width: 100px;">Incluso?</th>
 						</tr>
@@ -178,7 +183,8 @@
 									<td
 										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: left; padding: 5px;">#{procedimento.descricao}</td>
 									<td
-										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px;"><h:outputText
+										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: center; padding: 5px; 
+										display:#{(planoTratamentoMB.renderizarValoresProcedimentos)?'table-cell':'none'};"><h:outputText
 											value="#{procedimento.valor}">
 											<f:convertNumber type="currency" currencySymbol="R$"
 												maxFractionDigits="2" />
@@ -192,7 +198,10 @@
 					</table>
 					<br />
 					<div style="width: 100%; text-align: center;">
-						<span style="font-size: 14px;"><b>Observações: </b>#{o.observacoes}</span>
+						<span style="font-size: 14px;"><b>Observações: </b><br/>						
+						
+						<h:outputText value="#{o.observacoes}" styleClass="preformatted" />
+						</span>
 					</div>
 					<p:separator styleClass="SeparatorFull" />
 					<div class="Container100 Responsive100" align="right">
@@ -215,6 +224,16 @@
 
 			</p:scrollPanel>
 		</p:outputPanel>
+		<br/>
+			<h:panelGroup style="display:block;margin-left:3px;">
+					<p:selectBooleanCheckbox id="checkFiltro"
+						value="#{planoTratamentoMB.imprimirSemValores}">
+						<p:ajax event="change" process="@this,lume:tabView:orcamento2PrintInterno"
+							update=":lume:tabView:orcamento2PrintInterno"
+							listener="#{planoTratamentoMB.imprimirSemValoresListener}" />
+					</p:selectBooleanCheckbox>
+					<p:outputLabel for="checkFiltro" value="Imprimir sem mostrar os valores dos procedimentos" />
+				</h:panelGroup>
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="fa fa-print" value="Imprimir" process="@this">

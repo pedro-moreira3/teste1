@@ -439,7 +439,7 @@
 							<h:panelGroup rendered="#{pacienteMB.visivelDadosPaciente}">
 								<div class="Container70">
 									<p:commandButton value="Tirar Foto" process="@this"
-										update=":lume:pnTirarFoto" icon="White fa fa-camera"
+										update=":lume:pnTirarFoto,:lume:photoPacienteUpload,:lume:photoPaciente" icon="White fa fa-camera"
 										disabled="#{pacienteMB.entity.id == null}"
 										styleClass="NavyButton"
 										oncomplete="PF('dlgTirarFoto').show();"
@@ -476,21 +476,20 @@
 
 		<h:panelGroup id="pnTirarFoto">
 
-			<p:outputPanel rendered="#{pacienteMB.metodoImagem == 'U'}">
-				<br />
+			<p:outputPanel rendered="#{pacienteMB.metodoImagem == 'U'}">				
 				<p:fileUpload value="#{pacienteMB.uploadedFile}" multiple="false"
 					mode="advanced" dragDropSupport="true" rendered="true"
 					allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
 					label="Subir imagem de perfil"
 					invalidFileMessage="Selecione um arquivo com estensão '.gif, .jpg, .jpeg ou .png'"
 					invalidSizeMessage="Arquivo muito grande! Tamanho não suportado."
-					auto="true" sizeLimit="100000" update="photoPacienteUpload"
-					fileUploadListener="#{pacienteMB.uploadPhotoImg}"
+					auto="true" sizeLimit="1000000" update="photoPacienteUpload,botoesGirar"
+					fileUploadListener="#{pacienteMB.uploadPhotoImg}" 
 					styleClass="BotaoCrud cyan-btn" icon="fa fa-cloud-upload" />
 				<p:outputPanel id="photoPacienteUpload" style="position: relative;">
 					<p:graphicImage value="#{pacienteMB.scFoto}" stream="false"
-						style="max-height: 300px; max-width: 300px; margin-left: 50%; transform: translateX(-50%);" />
-				</p:outputPanel>
+						style="max-height: 230px; max-width: 230px; margin-left: 50%; transform: translateX(-50%);" />
+				</p:outputPanel>				
 			</p:outputPanel>
 
 			<p:outputPanel rendered="#{pacienteMB.metodoImagem == 'C'}">
@@ -504,14 +503,22 @@
 					styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding"
 					style="border:0px none; background-color:transparent;">
 					<p:photoCam widgetVar="pc" listener="#{pacienteMB.onCapture}"
-						update="photoPaciente" rendered="#{pacienteMB.renderedPhotoCam}" />
+						update="photoPaciente,botoesGirar" rendered="#{pacienteMB.renderedPhotoCam}" />
 					<p:outputPanel id="photoPaciente">
 						<p:graphicImage value="#{pacienteMB.scFoto}" stream="false"
 							style="max-height: 300px; max-width: 300px; margin-left: 50%; transform: translateX(-50%);" />
 					</p:outputPanel>
 				</p:panelGrid>
 			</p:outputPanel>
-
+			<p:panelGrid columns="3" layout="grid" id="botoesGirar"
+					styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding forceSpaceBetweenCell" rendered="false">
+					<p:outputPanel></p:outputPanel>
+						<p:commandButton value="Girar Imagem" icon="White fa fa-repeat"
+						process="@this,:lume:photoPacienteUpload,:lume:photoPaciente" styleClass="NavyButton" rendered="#{pacienteMB.scFoto ne null}"
+						actionListener="#{pacienteMB.rodarImagem}" 
+						update=":lume:photoPacienteUpload,:lume:photoPaciente" />					
+					<p:outputPanel></p:outputPanel>	
+				</p:panelGrid>
 		</h:panelGroup>
 
 		<br />
