@@ -111,7 +111,7 @@ public class Exportacoes implements Serializable{
                         BigDecimal valor = (BigDecimal) obj;
                         DecimalFormat decFormat = new DecimalFormat("#,###,##0.00");
                         
-                        celula.setCellValue(decFormat.format(valor));
+                        celula.setCellValue(valor.doubleValue());
                         
                     }else if(obj instanceof Date) {
                         
@@ -125,7 +125,7 @@ public class Exportacoes implements Serializable{
                         String txt = (String) obj;
                         Double value = null;
                         
-                        if(txt.contains("R$")) {
+                        if(txt.contains("R$") || txt.contains("[^0-9,.-]")) {
                             txt = getValueFromString(txt);
                             value = Double.valueOf(txt);
                             
