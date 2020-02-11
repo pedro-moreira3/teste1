@@ -24,11 +24,9 @@ import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.conta.ContaSingleton;
 import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
-import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
-import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Fatura.TipoFatura;
@@ -44,7 +42,6 @@ import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
-import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
@@ -120,7 +117,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public boolean hasRequisitosCumprir(Lancamento lancamentoRepasse) {
-        List<Requisito> todosRequisitos = getRequisitosValidaLancamentoFromRepasseFatura(lancamentoRepasse);
+        List<Requisito> todosRequisitos = null;
+        if(lancamentoRepasse != null) {
+           todosRequisitos = getRequisitosValidaLancamentoFromRepasseFatura(lancamentoRepasse);
+        }
         return todosRequisitos != null && todosRequisitos.size() > 0;
     }
 
@@ -441,70 +441,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), true, false));
             lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), false, false));
         }
-        
-        List<Lancamento> lancamentos = new ArrayList<Lancamento>(); 
-        lancamentosSearch.forEach(lancamento -> {
-            try {
-                // Setando Objetos Gerais
-                RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(lancamento);   
-                
-                lancamento.setRfl(repasse);
-                lancamento.setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
-
-                // Calculos necessários para mostragem na tabela
-                lancamento.setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(repasse.getFaturaItem().getFatura()));
-                lancamento.setDadosTabelaPercItem(
-                        repasse.getFaturaItem().getValorComDesconto().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)));
-                lancamento.setDadosTabelaValorProcComPercItem(String.format("R$ %.2f", repasse.getFaturaItem().getValorComDesconto().doubleValue()) + " (" + String.format("%.2f%%",
-                        lancamento.getDadosTabelaPercItem().doubleValue()) + ")");
-                lancamento.setDadosTabelaValorTotalCustosDiretos(
-                        PlanoTratamentoProcedimentoCustoSingleton.getInstance().getCustoDiretoFromPTP(lancamento.getPtp()).setScale(2, BigDecimal.ROUND_HALF_UP));
-                lancamento.setDadosTabelaValorRecebidoComFormaPagto(
-                        String.format("R$ %.2f", repasse.getLancamentoRepasse().getValor()) + " " + repasse.getLancamentoRepasse().getFormaPagamentoStr());
-                lancamento.setDadosTabelaValorTaxasETarifas(
-                        LancamentoContabilSingleton.getInstance().getTaxasAndTarifasForLancamentoRecebimento(repasse.getLancamentoRepasse()).setScale(2, BigDecimal.ROUND_HALF_UP));
-                if (Profissional.PORCENTAGEM.equals(repasse.getRepasseFaturas().getTipoCalculo())) {
-                    lancamento.setDadosTabelaValorRepasse(String.format("%.2f%%", repasse.getRepasseFaturas().getValorCalculo()));
-                    lancamento.setDadosTabelaMetodoRepasse("POR");
-                } else if (Profissional.PROCEDIMENTO.equals(repasse.getRepasseFaturas().getTipoCalculo())) {
-                    BigDecimal valorRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(lancamento.getPtp());
-                    lancamento.setDadosTabelaValorRepasse(String.format("R$ %.2f", valorRepasse.doubleValue()));
-                    lancamento.setDadosTabelaMetodoRepasse("PRO");
-                }
-                lancamento.setDadosTabelaMetodoRepasseComValor(lancamento.getDadosTabelaMetodoRepasse() + " - " + lancamento.getDadosTabelaValorRepasse());
-
-                // Calculos necessários para mostragem da explicação do cálculo
-                lancamento.setDadosCalculoPercLancamentoFatura(repasse.getLancamentoRepasse().getValor().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
-                lancamento.setDadosCalculoPercTaxa(
-                        (repasse.getLancamentoRepasse().getTarifa() != null ? repasse.getLancamentoRepasse().getTarifa().getTaxa().divide(BigDecimal.valueOf(100)) : BigDecimal.ZERO));
-                lancamento.setDadosCalculoValorTaxa(lancamento.getDadosCalculoPercTaxa().multiply(repasse.getLancamentoRepasse().getValor()));
-                lancamento.setDadosCalculoValorTarifa((repasse.getLancamentoRepasse().getTarifa() != null ? repasse.getLancamentoRepasse().getTarifa().getTarifa() : BigDecimal.ZERO));
-                lancamento.setDadosCalculoPercTributo(repasse.getLancamentoRepasse().getTributoPerc());
-                lancamento.setDadosCalculoValorTributo(repasse.getLancamentoRepasse().getTributoPerc().multiply(repasse.getLancamentoRepasse().getValor()).setScale(2, BigDecimal.ROUND_HALF_UP));
-                lancamento.setDadosCalculoPercCustoDireto(lancamento.getDadosTabelaValorTotalCustosDiretos().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
-                lancamento.setDadosCalculoValorCustoDiretoRateado(
-                        lancamento.getDadosTabelaValorTotalCustosDiretos().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP).multiply(
-                                repasse.getLancamentoRepasse().getValor()));
-                lancamento.setDadosCalculoTotalReducao(lancamento.getDadosCalculoValorTaxa().add(lancamento.getDadosCalculoValorTarifa()).add(lancamento.getDadosCalculoValorTributo()));
-                lancamento.setDadosCalculoRecebidoMenosReducao(
-                        repasse.getLancamentoRepasse().getValor().subtract(lancamento.getDadosCalculoTotalReducao()).setScale(2, BigDecimal.ROUND_HALF_UP));
-
-                lancamento.setDadosCalculoValorItemSemCusto(
-                        repasse.getFaturaItem().getValorComDesconto().subtract(lancamento.getDadosTabelaValorTotalCustosDiretos()).setScale(2, BigDecimal.ROUND_HALF_UP));
-                lancamento.setDadosCalculoPercItemSemCusto(lancamento.getDadosCalculoValorItemSemCusto().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
-                lancamento.setDadosCalculoInvPercItemSemCusto(BigDecimal.valueOf(1).subtract(lancamento.getDadosCalculoPercItemSemCusto()));
-                lancamento.setDadosCalculoReducaoCustoDireto(
-                        lancamento.getDadosCalculoRecebidoMenosReducao().multiply(lancamento.getDadosCalculoInvPercItemSemCusto()).setScale(2, BigDecimal.ROUND_HALF_UP));
-
-                lancamento.setDadosCalculoValorARepassarSemCusto(
-                        lancamento.getDadosCalculoRecebidoMenosReducao().subtract(lancamento.getDadosCalculoReducaoCustoDireto()).setScale(2, BigDecimal.ROUND_HALF_UP));
-            } catch (Exception e) {
-                lancamento.setPtp(null);
-            }
-            lancamentos.add(lancamento);
-        });
-        
-        return lancamentos;
+        return lancamentosSearch;
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
