@@ -111,11 +111,7 @@ public class Exportacoes implements Serializable{
                         BigDecimal valor = (BigDecimal) obj;
                         DecimalFormat decFormat = new DecimalFormat("#,###,##0.00");
                         
-                        CellStyle style = workbook.createCellStyle();
-                        style.setDataFormat(dataFormat.getFormat("###.###,##"));
-                        
                         celula.setCellValue(decFormat.format(valor));
-                        celula.setCellStyle(style);
                         
                     }else if(obj instanceof Date) {
                         
@@ -134,7 +130,6 @@ public class Exportacoes implements Serializable{
                             value = Double.valueOf(txt);
                             
                             CellStyle style = workbook.createCellStyle();
-                            style.setDataFormat(dataFormat.getFormat("###.###,##"));
 
                             celula.setCellValue(value);
                             celula.setCellStyle(style);
@@ -389,7 +384,7 @@ public class Exportacoes implements Serializable{
                 }
             }
             
-            return aux.replaceAll("[^0-9.,]", "");
+            return aux.replaceAll("[^0-9.,-]", "");
         }catch (Exception e) {
             return null;
         }
