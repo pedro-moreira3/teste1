@@ -1477,7 +1477,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public boolean isTemPermissaoTrocarValor() {
         if (this.getEntity().isBconvenio() && this.getEntity().getConvenio() != null)
-            if (this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE) || UtilsFrontEnd.getProfissionalLogado().getTipoRemuneracao().equals(Profissional.FIXO))
+          //  if (this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE) || UtilsFrontEnd.getProfissionalLogado().getTipoRemuneracao().equals(Profissional.FIXO))
+            if (UtilsFrontEnd.getProfissionalLogado().getTipoRemuneracao().equals(Profissional.FIXO))
                 return false;
         return temPermissaoExtra(false);
     }
@@ -1518,7 +1519,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             
             if(this.getEntity().isBconvenio()) {
                 
-                if(!this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE)) {
+             //   if(!this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE)) {
                     
                     BigDecimal diferenca = new BigDecimal(0);
                     BigDecimal valorDesconto = new BigDecimal(0);
@@ -1540,9 +1541,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                         }
                     }
                     
-                }else {
-                    this.addWarn("Erro ao salvar registro", "Não é possível alterar o valor.");
-                }
+             //   }else {
+             //       this.addWarn("Erro ao salvar registro", "Não é possível alterar o valor.");
+             //   }
+                //    atualizaValorTotal();
+                 //   this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 
             }
             
