@@ -1,0 +1,250 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+	
+	<ui:include src="pacienteFicha.xhtml" />	
+	
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<p:tabView id="tabViewRepasseProfissional">
+						<p:tab title="Repasse Com Recibo">
+							<div class="ui-g ui-fluid">
+							<div class="ui-g-12 ui-lg-12">
+							<div class="card card-w-title">
+								<h1>Repasse dos Profissionais</h1>								
+								<p:fieldset legend="Filtros">
+									<p:outputPanel id="filtros">
+							
+										<p:panelGrid columns="3" layout="grid"
+											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+											style="border:0px none; background-color:transparent;">
+											<h:panelGroup styleClass="md-combo" style="margin-top:8px">
+												<p:selectOneMenu id="filtroPeriodoRepasses"
+													value="#{repasseProfissionalComReciboMB.filtroPeriodo}">					
+													<f:selectItem itemValue="" itemLabel="Selecione" />
+													<f:selectItem itemValue="O" itemLabel="Ontem" />
+													<f:selectItem itemValue="H" itemLabel="Hoje" />
+													<f:selectItem itemValue="MA" itemLabel="Mês Anterior" />
+													<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+													<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+													<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+													<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+													<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />					
+													<p:ajax process="@this"
+														update="dataInicio dataFim"
+														listener="#{repasseProfissionalComReciboMB.actionTrocaDatas}" />
+												</p:selectOneMenu>
+												<p:outputLabel for="filtroPeriodoRepasses"
+													value="Período de execução dos procedimentos:" />
+											</h:panelGroup>
+											<h:panelGroup>
+												<p:outputLabel for="dataInicio"
+													value="Data Inicial da execução os Procedimentos:" />
+												<p:calendar id="dataInicio"
+													value="#{repasseProfissionalComReciboMB.dataInicio}"
+													autocomplete="false" />
+											</h:panelGroup>
+			
+											<h:panelGroup>
+												<p:outputLabel for="dataFim"
+													value="Data Final da execução os Procedimentos:" />
+												<p:calendar id="dataFim"
+													value="#{repasseProfissionalComReciboMB.dataFim}"
+													autocomplete="false" />
+											</h:panelGroup>
+										</p:panelGrid>
+										<p:panelGrid columns="2" layout="grid"
+											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+											style="border:0px none; background-color:transparent;">
+										<h:panelGroup>
+											<p:outputLabel for="fitroProfissional"
+													value="Profissional:" />
+												<p:autoComplete dropdown="true" queryDelay="1000"
+													size="35" value="#{repasseProfissionalComReciboMB.profissional}"
+													id="fitroProfissional" minQueryLength="3"
+													completeMethod="#{repasseProfissionalComReciboMB.geraSugestoesProfissional}"
+													var="profissional"
+													itemLabel="#{profissional.dadosBasico.prefixoNome}"
+													itemValue="#{profissional}" converter="profissional"
+													forceSelection="true">
+												</p:autoComplete>
+											</h:panelGroup>
+										</p:panelGrid>
+										<p:panelGrid columns="6" layout="grid"
+											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+											style="border:0px none; background-color:transparent;">
+											<p:outputLabel for="mesesAnteriores"
+												value="Buscar todos os procedimentos executados sem repasse (ignora data):  " />
+											<p:selectBooleanCheckbox id="mesesAnteriores"
+												value="#{repasseProfissionalComReciboMB.mesesAnteriores}" />	
+											<p:outputLabel for="semPendencias"
+												value="Mostrar apenas repasses sem pendências: " />
+											<p:selectBooleanCheckbox id="semPendencias"
+												value="#{repasseProfissionalComReciboMB.semPendencias}" />	
+											<p:outputLabel for="procedimentosNaoExecutados"
+												value="Mostrar procedimentos agendados e não executados (ignoraData): " />
+											<p:selectBooleanCheckbox id="procedimentosNaoExecutados"
+												value="#{repasseProfissionalComReciboMB.procedimentosNaoExecutados}" />														
+										</p:panelGrid>	
+										<p:panelGrid columns="3" layout="grid"
+											styleClass="ui-panelgrid-blank form-group ui-fluid">
+
+											<p:commandButton id="pesquisarNovoRepasse"
+												icon="White fa fa-search" value="Pesquisar"
+												styleClass="OrangeButton"
+												actionListener="#{repasseProfissionalComReciboMB.pesquisar}"
+												process="@this, :lume:tabViewRepasseProfissional:filtros"
+												update=":lume:tabViewRepasseProfissional:dtPrincipal" />
+
+											<h:panelGroup>
+												<p:splitButton icon="White fa fa fa-file-excel-o"
+													value="Exportar tabela para Excel"
+													styleClass="GreenSplitButton"
+													actionListener="#{repasseProfissionalComReciboMB.exportarTabela('xls')}"
+													ajax="false" process="dtPrincipal, @this"
+													update="@this" immediate="true"
+													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+													<p:fileDownload
+														value="#{repasseProfissionalComReciboMB.arquivoDownload}" />
+
+													<p:menuitem value="Exportar tabela para PDF"
+														icon="fa fa fa-file-pdf-o"
+														actionListener="#{repasseProfissionalComReciboMB.exportarTabela('pdf')}"
+														ajax="false" process="dtPrincipal, @this"
+														immediate="true"
+														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+														<p:fileDownload
+															value="#{repasseProfissionalComReciboMB.arquivoDownload}" />
+													</p:menuitem>
+												</p:splitButton>
+											</h:panelGroup>
+										</p:panelGrid>
+									</p:outputPanel>
+									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+											id="dtPrincipal"
+											value="#{repasseProfissionalComReciboMB.entityList}" var="ptp"
+											rows="20" paginator="true" rowKey="#{ptp}"
+											paginatorPosition="bottom" widgetVar="dtPrincipal"
+											binding="#{repasseProfissionalComReciboMB.tabelaRepasse}">
+
+											<f:facet name="header">Procedimentos</f:facet>
+
+												<p:column width="5%" headerText="Ações">												
+												</p:column>
+												<p:column
+													filterBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
+													sortBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
+													filterMatchMode="contains"
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Profissional" />
+													</f:facet>
+													<h:outputText
+														value="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}" />
+												</p:column>
+												<p:column
+													filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
+													sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
+													filterMatchMode="contains"
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Paciente" />
+													</f:facet>
+
+													<p:commandLink
+														value="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
+														process="@this" title="#{ptp.planoTratamento.paciente.id}"
+														actionListener="#{tabPacienteMB.loadPaciente(ptp.planoTratamento.paciente)}"
+														oncomplete="PF('dlgFichaPaciente').show()"
+														update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+
+												</p:column>
+												<p:column
+													filterBy="#{ptp.planoTratamento.descricao}"
+													sortBy="#{ptp.planoTratamento.descricao}"
+													filterMatchMode="contains"
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Plano de tratamento" />
+													</f:facet>
+													<h:outputText
+														value="#{ptp.planoTratamento.descricao}" />
+												</p:column>
+												<p:column
+													filterBy="#{ptp.descricaoCompletaComFace}"
+													sortBy="#{ptp.descricaoCompletaComFace}"
+													filterMatchMode="contains"
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Procedimento" />
+													</f:facet>
+													<h:outputText
+														value="#{ptp.descricaoCompletaComFace}" />
+												</p:column>
+												<p:column filterBy="#{ptp.dataFinalizadoStr}"
+													headerText="Data de Execução" filterMatchMode="contains"
+													sortBy="#{ptp.dataFinalizadoStr}">
+													<h:outputText value="#{ptp.dataFinalizadoStr}" />
+												</p:column>
+
+												<p:column filterBy="#{repasseProfissionalComReciboMB.valorTotal(ptp)}"
+													headerText="Valor total"
+													filterMatchMode="contains"
+													sortBy="#{repasseProfissionalComReciboMB.valorTotal(ptp)}">
+													<h:outputText value="#{repasseProfissionalComReciboMB.valorTotal(ptp)}">
+														<f:convertNumber currencySymbol="R$ " type="currency" />
+													</h:outputText>
+												</p:column>
+
+												<p:column filterBy="#{repasseProfissionalComReciboMB.valorPago(ptp)}"
+													headerText="Valor pago" filterMatchMode="contains"
+													sortBy="#{repasseProfissionalComReciboMB.valorPago(ptp)}">
+													<h:outputText value="#{repasseProfissionalComReciboMB.valorPago(ptp)}">
+														<f:convertNumber currencySymbol="R$ " type="currency" />
+													</h:outputText>
+												</p:column>
+
+												<p:column filterBy="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}"
+													headerText="Valor liberado para pagamento"
+													filterMatchMode="contains"
+													sortBy="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}">
+													<h:outputText value="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}">
+														<f:convertNumber currencySymbol="R$ " type="currency" />
+													</h:outputText>
+												</p:column>
+												<p:column width="80" headerText="Status"
+													filterBy="#{repasseProfissionalComReciboMB.status(ptp)}"
+													sortBy="#{repasseProfissionalComReciboMB.status(ptp)}"
+													filterMatchMode="contains">
+													<h:outputText value="#{repasseProfissionalComReciboMB.status(ptp)}" />
+												</p:column>
+
+											</p:dataTable>									
+								</p:fieldset>	
+							</div>
+							</div>
+							</div>									
+						</p:tab>
+							
+						<p:tab title="Recibos Emitidos">
+
+						</p:tab>
+					</p:tabView>
+
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			//<![CDATA[
+
+			//]]>
+		</script>
+	</ui:define>
+</ui:composition>

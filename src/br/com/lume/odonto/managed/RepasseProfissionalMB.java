@@ -79,7 +79,7 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
             this.dataFim = fim.getTime();
 
             setStatus(2);
-            pesquisar();
+          //  pesquisar();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Não foi possivel carregar a tela.", true);
