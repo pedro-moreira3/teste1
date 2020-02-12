@@ -384,7 +384,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 if (!paraInserir.contains(aptpExistente)) {
                     aptpExistente.setAtivo(false);
                 }
+                      
                 paraInserir.add(aptpExistente);
+              
             }
 
             this.getEntity().setPlanoTratamentoProcedimentosAgendamento(paraInserir);
@@ -437,6 +439,18 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             }
                             AgendamentoSingleton.getInstance().getBo().persist(this.getEntity(), UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada().getEmpStrEstoque(),
                                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                            
+                            //salvando dentista executor, pois ja sabemos quem deve receber. somente se ptp nao estiver finalizado.
+                            for (AgendamentoPlanoTratamentoProcedimento agendamentoPlanoTratamentoProcedimento : this.getEntity().getPlanoTratamentoProcedimentosAgendamento()) {
+                                if(agendamentoPlanoTratamentoProcedimento.getPlanoTratamentoProcedimento() != null &&
+                                        agendamentoPlanoTratamentoProcedimento.getPlanoTratamentoProcedimento().getDataFinalizado() == null) {
+                                    agendamentoPlanoTratamentoProcedimento.getPlanoTratamentoProcedimento().setDentistaExecutor(profissionalDentroAgenda);                              
+                                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(agendamentoPlanoTratamentoProcedimento.getPlanoTratamentoProcedimento());    
+                                }
+                                                                
+                            }
+                       
+                            
                             if (retorno != null) {
                                 retorno.setAgendamento(getEntity());
                                 retorno.setRetornar("A");
