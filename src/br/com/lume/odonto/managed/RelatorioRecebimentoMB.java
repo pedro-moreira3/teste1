@@ -89,6 +89,16 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         this.status = null;
         super.actionNew(arg0);
     }
+    
+    public String planoTratamentoFromLancamento(Lancamento lancamento) {
+        
+        String planoTratamento = lancamento.getFatura().getItens().get(0).getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao(); 
+        
+        if(planoTratamento != null)
+            return planoTratamento;
+        return null;
+        
+    }
 
     public void exportarTabela(String type) {
         exportarTabela("Relatório de recebimentos", tabelaRelatorio, type);

@@ -151,14 +151,14 @@
 									value="#{lancamento.fatura.paciente.dadosBasico.nome}" />
 							</p:column>
 							<p:column
-								filterBy="#{lancamento.planoTratamentoProcedimento.planoTratamento.descricao}"
-								sortBy="#{lancamento.planoTratamentoProcedimento.planoTratamento.descricao}"
+								filterBy="#{relatorioRecebimentoMB.planoTratamentoFromLancamento(lancamento)}"
+								sortBy="#{relatorioRecebimentoMB.planoTratamentoFromLancamento(lancamento)}"
 								filterMatchMode="contains">
 								<f:facet name="header">
 									<h:outputText value="Plano de Tratamento" />
 								</f:facet>
 								<h:outputText
-									value="#{lancamento.planoTratamentoProcedimento.planoTratamento.descricao}" />
+									value="#{relatorioRecebimentoMB.planoTratamentoFromLancamento(lancamento)}" />
 							</p:column>
 							<p:column filterBy="#{lancamento.valor}"
 								sortBy="#{lancamento.valor}" filterMatchMode="contains">

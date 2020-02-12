@@ -1,32 +1,24 @@
 package br.com.lume.common.util;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
 import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.compress.utils.ByteUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
 import org.primefaces.component.api.UIColumn;
@@ -109,7 +101,46 @@ public class Exportacoes implements Serializable{
                 }
                 
                 Cell celula = linhaPlanilha.createCell(j);
-                celula.setCellValue(this.formatar(tabelaColunas.get(colunasValidas.get(j)).getSortBy()));
+                
+                DataFormat dataFormat = workbook.createDataFormat();
+                Object obj = tabelaColunas.get(colunasValidas.get(j)).getSortBy();
+                
+                if(obj != null) {
+                    if(obj instanceof BigDecimal) {
+                        
+                        BigDecimal valor = (BigDecimal) obj;
+                        DecimalFormat decFormat = new DecimalFormat("#,###,##0.00");
+                        
+                        celula.setCellValue(valor.doubleValue());
+                        
+                    }else if(obj instanceof Date) {
+                        
+                        Date data = (Date) obj;
+                        
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss",new Locale("PT BR"));
+                        celula.setCellValue(sdf.format(data));
+                        
+                    }else if(obj instanceof String) {
+                        
+                        String txt = (String) obj;
+                        Double value = null;
+                        
+                        if(txt.contains("R$") || txt.contains("[^0-9,.-]")) {
+                            txt = getValueFromString(txt);
+                            value = Double.valueOf(txt);
+                            
+                            CellStyle style = workbook.createCellStyle();
+
+                            celula.setCellValue(value);
+                            celula.setCellStyle(style);
+                        }else {
+                            celula.setCellValue(txt);
+                        }
+                        
+                    }
+                }
+                
+                //celula.setCellValue(this.formatar(tabelaColunas.get(colunasValidas.get(j)).getSortBy()));
                 
             }
             
@@ -330,7 +361,6 @@ public class Exportacoes implements Serializable{
         if(header != null && table != null && type != null) {
             switch(type) {
                 case "xls":
-                    //alterarArquivo();
                     return this.exportarTabelaExcel(header, table);
                 case "pdf":
                     return this.exportarTabelaPDF(header, table);
@@ -342,35 +372,23 @@ public class Exportacoes implements Serializable{
         return null;
     }
     
-//    public void alterarArquivo() {
-//        
-//        File file = new File("C:\\Users\\eduardo.tremarin\\Desktop\\Eduardo\\intelidente\\afastamento.xhtml");
-//        
-//        try(BufferedReader bReader = new BufferedReader(new FileReader(file));
-//                BufferedWriter bWriter = new BufferedWriter(new FileWriter(file, true))){
-//            
-//            ArrayList<String> listaString = new ArrayList<String>();
-//            StringBuilder sb = new StringBuilder();
-//            
-//            String idTabela = "";
-//            String managedBean = "";
-//            String metodoExportacao = "";
-//            
-//            String linha = "";
-//            
-//            while(bReader.ready()) {
-//                
-//                linha = bReader.readLine();
-//                
-//                
-//                
-//            }
-//            
-//        }catch (Exception e) {
-//            this.log.error("Erro no alterarArquivo");
-//        }
-//        
-//    }
+    private String getValueFromString(String txt) {
+        try {
+            String aux = "";
+            for(int i = 0 ; i < txt.length(); i++) {
+                if( txt.charAt(i) == ',' ) {
+                    aux += ".";
+                }else if(txt.charAt(i) == '.') {
+                }else {
+                    aux += txt.charAt(i);
+                }
+            }
+            
+            return aux.replaceAll("[^0-9.,-]", "");
+        }catch (Exception e) {
+            return null;
+        }
+    }
     
         
 }
