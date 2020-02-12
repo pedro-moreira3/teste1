@@ -1370,6 +1370,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionAdicionarStatusDente() {
         try {
+            if(denteSelecionado == null && !enableRegioes) {
+                this.addError("Escolha um dente ou região para inserir um diagnóstico.", "");
+                return;
+            }
             if (denteSelecionado != null) {
                 if (denteSelecionado.getRegioes() != null && !denteSelecionado.getRegioes().isEmpty()) {
                     for (RegiaoDente rd : denteSelecionado.getRegioes()) {
