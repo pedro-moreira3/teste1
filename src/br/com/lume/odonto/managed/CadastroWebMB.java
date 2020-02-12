@@ -182,6 +182,7 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
             this.getEntity().setValidarRepasseLancamentoOrigemValidado("S");
             this.getEntity().setAdicionarLogoOrcamento("S");
             this.getEntity().setRepasseAdicionaTributos("S");
+            this.getEntity().setValidarGeraReciboValorZerado("N");
             EmpresaSingleton.getInstance().getBo().persist(this.getEntity());
             LocalSingleton.getInstance().createLocaisDefault(EmpresaSingleton.getInstance().getBo().find(this.getEntity()).getEmpIntCod());
             

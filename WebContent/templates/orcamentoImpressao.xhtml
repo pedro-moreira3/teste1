@@ -9,18 +9,17 @@
     white-space: pre-wrap;
 }
 </style>
-	<p:remoteCommand name="attPrintOrcamento"
-		update=":lume:tabView:orcamentoViewPrint, :lume:tabView:orcamentoViewPrintHeader" />
+	
 	<p:dialog widgetVar="dlgPrintOrcamento" responsive="true" modal="true"
 		appendTo=":lume" resizable="false"
 		onHide="PF('dlgPrintOrcamento').toggleMaximize();"
-		onShow="PF('dlgPrintOrcamento').toggleMaximize();attPrintOrcamento();">
+		onShow="PF('dlgPrintOrcamento').toggleMaximize();">
 		<f:facet name="header">
 			<h:outputText id="orcamentoViewPrintHeader"
 				value="Orçamento do Plano de Tratamento '#{pt.descricao}'" />
 		</f:facet>
 		<p:outputPanel id="orcamentoViewPrint"
-			style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+			style="max-height: calc(100% - 100px); height: calc(100% - 100px);">
 			<p:scrollPanel mode="native"
 				style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
 
@@ -232,7 +231,7 @@
 							update=":lume:tabView:orcamento2PrintInterno"
 							listener="#{planoTratamentoMB.imprimirSemValoresListener}" />
 					</p:selectBooleanCheckbox>
-					<p:outputLabel for="checkFiltro" value="Imprimir sem mostrar os valores dos procedimentos" />
+					<p:outputLabel for="checkFiltro" value="Não mostrar valores dos procedimentos na impressão" />
 				</h:panelGroup>
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
@@ -240,7 +239,7 @@
 				<p:printer target=":lume:tabView:orcamento2PrintInterno" />
 			</p:commandButton>
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
-				oncomplete="PF('dlgPrintOrcamento').hide()" />
+				oncomplete="PF('dlgPrintOrcamento').hide()"/>
 		</p:panelGrid>
 	</p:dialog>
 

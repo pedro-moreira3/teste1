@@ -1257,7 +1257,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						oncomplete="PF('dlgViewOrcamento').show();" styleClass="NavyButton" 
 						icon="fa fa-eye" />
 					<p:commandButton icon="White fa fa-print" process="@this"
-						update=""
+						update=":lume:tabView:orcamentoViewPrint, :lume:tabView:orcamentoViewPrintHeader"
 						actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
 						oncomplete="PF('dlgPrintOrcamento').show()"
 						styleClass="NavyButton" />
@@ -1593,7 +1593,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				update=":lume:tabView:orcamentoViewTable, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView,:lume:tabView:panelDescObs" />
 			<p:commandButton icon="White fa fa-print"
 				value="Visualizar Impressão" process="@this"
-				update=":lume:tabView:orcamentoInclude"
+				update=":lume:tabView:orcamentoInclude,:lume:tabView:orcamentoViewPrint, :lume:tabView:orcamentoViewPrintHeader"
 				oncomplete="PF('dlgPrintOrcamento').show()"
 				actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamentoSelecionado)}"
 				disabled="#{planoTratamentoMB.orcamentoSelecionado.id == null or planoTratamentoMB.orcamentoSelecionado.id == 0}"
