@@ -9,12 +9,11 @@
     white-space: pre-wrap;
 }
 </style>
-	<p:remoteCommand name="attPrintOrcamento"
-		update=":lume:tabView:orcamentoViewPrint, :lume:tabView:orcamentoViewPrintHeader" />
+	
 	<p:dialog widgetVar="dlgPrintOrcamento" responsive="true" modal="true"
 		appendTo=":lume" resizable="false"
 		onHide="PF('dlgPrintOrcamento').toggleMaximize();"
-		onShow="PF('dlgPrintOrcamento').toggleMaximize();attPrintOrcamento();">
+		onShow="PF('dlgPrintOrcamento').toggleMaximize();">
 		<f:facet name="header">
 			<h:outputText id="orcamentoViewPrintHeader"
 				value="Orçamento do Plano de Tratamento '#{pt.descricao}'" />
@@ -240,7 +239,7 @@
 				<p:printer target=":lume:tabView:orcamento2PrintInterno" />
 			</p:commandButton>
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
-				oncomplete="PF('dlgPrintOrcamento').hide()" />
+				oncomplete="PF('dlgPrintOrcamento').hide()"/>
 		</p:panelGrid>
 	</p:dialog>
 

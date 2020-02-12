@@ -1141,9 +1141,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void actionEditOrcamento(Orcamento orcamento) {
-        this.imprimirSemValores = false;
-        this.orcamentoSelecionado = orcamento;
-        orcamentoSelecionado.setValorPago(getTotalPago());
+        if(orcamento != null) {
+            this.imprimirSemValores = false;
+            this.orcamentoSelecionado = orcamento;
+            orcamentoSelecionado.setValorPago(getTotalPago());
+        }
     }
 
     public void actionRemoveOrcamento(ActionEvent event) {
