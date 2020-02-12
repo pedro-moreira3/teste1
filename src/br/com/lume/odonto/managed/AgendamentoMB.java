@@ -440,12 +440,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             AgendamentoSingleton.getInstance().getBo().persist(this.getEntity(), UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada().getEmpStrEstoque(),
                                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                             
+                           
+                            
                             //salvando dentista executor, pois ja sabemos quem deve receber. somente se ptp nao estiver finalizado.
-                            for (AgendamentoPlanoTratamentoProcedimento agendamentoPlanoTratamentoProcedimento : this.getEntity().getPlanoTratamentoProcedimentosAgendamento()) {
-                                if(agendamentoPlanoTratamentoProcedimento.getPlanoTratamentoProcedimento() != null &&
-                                        agendamentoPlanoTratamentoProcedimento.getPlanoTratamentoProcedimento().getDataFinalizado() == null) {
-                                    agendamentoPlanoTratamentoProcedimento.getPlanoTratamentoProcedimento().setDentistaExecutor(profissionalDentroAgenda);                              
-                                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(agendamentoPlanoTratamentoProcedimento.getPlanoTratamentoProcedimento());    
+                            for (AgendamentoPlanoTratamentoProcedimento aptp : this.getEntity().getPlanoTratamentoProcedimentosAgendamento()) {                                
+                                if(aptp.getPlanoTratamentoProcedimento() != null &&
+                                        aptp.getPlanoTratamentoProcedimento().getDataFinalizado() == null) {
+                                    PlanoTratamentoProcedimentoSingleton.getInstance().alteraDentistaExecutor(aptp.getPlanoTratamentoProcedimento(),profissionalDentroAgenda);
+                                    PlanoTratamentoProcedimentoSingleton.getInstance().verificaRepasses(aptp.getPlanoTratamentoProcedimento());
                                 }
                                                                 
                             }
