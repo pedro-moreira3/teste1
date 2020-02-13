@@ -945,11 +945,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:commandButton id="persistPlanoTratamento"
 								icon="White fa fa-save" value="Salvar procedimentos"
 								actionListener="#{planoTratamentoMB.actionPersist}"
-								update=":lume:tabView:pnViewPlanoTratamento,:lume:tabView:dtProcedimentosSelecionadospt,
+								update=":lume:tabView:dtProcedimentosSelecionadospt,:lume:tabView:pnViewPlanoTratamento,:lume:tabView:dtProcedimentosSelecionadospt,
 									:lume:tabView:dtPlanoTratamento, :lume:tabView:evolucaoView, :lume:tabView:botoesFinalizaPT"
 								process=":lume:tabView:pnViewPlanoTratamento,@this"
 								styleClass="GreenButton"
-								oncomplete="handleDialogRequest(xhr, status, args);"
+								oncomplete="handleDialogRequest(xhr, status, args);PF('procedimentosTableInPT').filter()"
 								disabled="#{planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 						</p:panelGrid>
 					</div>
