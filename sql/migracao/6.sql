@@ -236,3 +236,5 @@ WHERE O.OBJ_STR_DES ILIKE 'Pagamentos/Recebimentos'
 update plano_tratamento_procedimento set dentista_executor_id = finalizado_por
 where dentista_executor_id is null and data_finalizado is not null
 
+alter table repasse_faturas ADD COLUMN plano_tratamento_procedimento_id BIGINT REFERENCES plano_tratamento_procedimento(ID);
+
