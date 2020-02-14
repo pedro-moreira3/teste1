@@ -8,6 +8,8 @@
 	
 	<ui:include src="pacienteFicha.xhtml" />	
 	
+	<ui:include src="ptpCustoDireto.xhtml" />
+	
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -143,7 +145,7 @@
 													filterMatchMode="contains"
 													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
 													<f:facet name="header">
-														<h:outputText value="Profissional" />
+														<h:outputText value="Dentista Executor" />
 													</f:facet>
 													<h:outputText
 														value="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}" />
@@ -194,12 +196,18 @@
 												</p:column>
 
 												<p:column filterBy="#{repasseProfissionalComReciboMB.valorTotal(ptp)}"
-													headerText="Valor total"
+													headerText="Valor total de repasse"
 													filterMatchMode="contains"
 													sortBy="#{repasseProfissionalComReciboMB.valorTotal(ptp)}">
+													
+													<p:commandLink													
+													process="@this" title="verificar custos diretos"
+													actionListener="#{pTPCustoDiretoMB.abreDialog(ptp)}"													
+													update=":lume:pnPTPCustoDireto, :lume:pnPTPCustoDiretoHeader" >
 													<h:outputText value="#{repasseProfissionalComReciboMB.valorTotal(ptp)}">
 														<f:convertNumber currencySymbol="R$ " type="currency" />
 													</h:outputText>
+													</p:commandLink>
 												</p:column>
 
 												<p:column filterBy="#{repasseProfissionalComReciboMB.valorPago(ptp)}"
@@ -211,20 +219,13 @@
 												</p:column>
 
 												<p:column filterBy="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}"
-													headerText="Valor liberado para pagamento"
+													headerText="Valor disponível para repasse"
 													filterMatchMode="contains"
 													sortBy="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}">
 													<h:outputText value="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}">
 														<f:convertNumber currencySymbol="R$ " type="currency" />
 													</h:outputText>
 												</p:column>
-												<p:column width="80" headerText="Status"
-													filterBy="#{repasseProfissionalComReciboMB.status(ptp)}"
-													sortBy="#{repasseProfissionalComReciboMB.status(ptp)}"
-													filterMatchMode="contains">
-													<h:outputText value="#{repasseProfissionalComReciboMB.status(ptp)}" />
-												</p:column>
-
 											</p:dataTable>									
 								</p:fieldset>	
 							</div>

@@ -26,7 +26,6 @@ import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
-import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional;
@@ -47,7 +46,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
     private String filtroPeriodoRepasses = "M", filtroPeriodoRecibos = "M", descricao, observacao;
     private Date dataInicioRepasses, dataFimRepasses, dataInicioRecibos, dataFimRecibos;
-    boolean lancSemRecibo = true, lancValidadosOnly = false, recibosFindCancelados = false, lancMesesAnterioresRepasse = false,procedimentosNaoExecutados = false;
+    boolean lancSemRecibo = true, lancValidadosOnly = false, recibosFindCancelados = false, lancMesesAnterioresRepasse = false;
     private Profissional profissionalRepasses, profissionalRecibos;
     private List<Lancamento> lancamentos;
     private Lancamento[] lancamentosSelecionados;
@@ -78,15 +77,6 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO));
         pesquisarRecibos();
     }
-    
-    public BigDecimal getTotalFatura(Fatura fatura) {
-        return FaturaSingleton.getInstance().getTotal(fatura);
-         
-    }
-    
-    public BigDecimal getTotalJaPago(Fatura fatura) {        
-        return FaturaSingleton.getInstance().getTotalPago(fatura);
-    }
 
     public void aprovarRecibo(ReciboRepasseProfissional r) {
         ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(r, UtilsFrontEnd.getProfissionalLogado());
@@ -113,24 +103,15 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     }
 
     public void pesquisarRepasses() {
-        try {
+        try {  
+            
             setLancamentos(LancamentoSingleton.getInstance().getBo().listLancamentosRepasse(UtilsFrontEnd.getEmpresaLogada(), getProfissionalRepasses(), isLancSemRecibo(), isLancValidadosOnly(),
                     isLancMesesAnterioresRepasse()));
             if (getLancamentos() != null && !getLancamentos().isEmpty()) {
-                
-                //TODO aqui remover os itens que nao estao no range de data
-                // if(getDataInicioRepasses() != null && getDataFimRepasses() != null) {
-                //     repasse.getLancamentoRepasse().get
-                // }
-                // , getDataInicioRepasses(), getDataFimRepasses(),procedimentosNaoExecutados
-                
                 getLancamentos().forEach(lancamento -> {
                     try {
                         // Setando Objetos Gerais
-                        RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(lancamento);
-                        
-                  
-                        
+                        RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(lancamento);
                         lancamento.setRfl(repasse);
                         lancamento.setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
 
@@ -143,9 +124,9 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                         lancamento.setDadosTabelaValorTotalCustosDiretos(
                                 PlanoTratamentoProcedimentoCustoSingleton.getInstance().getCustoDiretoFromPTP(lancamento.getPtp()).setScale(2, BigDecimal.ROUND_HALF_UP));
                         lancamento.setDadosTabelaValorRecebidoComFormaPagto(
-                                String.format("R$ %.2f", repasse.getLancamentoRepasse().getValor()) + " " + repasse.getLancamentoRepasse().getFormaPagamentoStr());
+                                String.format("R$ %.2f", repasse.getLancamentoOrigem().getValor()) + " " + repasse.getLancamentoOrigem().getFormaPagamentoStr());
                         lancamento.setDadosTabelaValorTaxasETarifas(
-                                LancamentoContabilSingleton.getInstance().getTaxasAndTarifasForLancamentoRecebimento(repasse.getLancamentoRepasse()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                                LancamentoContabilSingleton.getInstance().getTaxasAndTarifasForLancamentoRecebimento(repasse.getLancamentoOrigem()).setScale(2, BigDecimal.ROUND_HALF_UP));
                         if (Profissional.PORCENTAGEM.equals(repasse.getRepasseFaturas().getTipoCalculo())) {
                             lancamento.setDadosTabelaValorRepasse(String.format("%.2f%%", repasse.getRepasseFaturas().getValorCalculo()));
                             lancamento.setDadosTabelaMetodoRepasse("POR");
@@ -157,20 +138,20 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                         lancamento.setDadosTabelaMetodoRepasseComValor(lancamento.getDadosTabelaMetodoRepasse() + " - " + lancamento.getDadosTabelaValorRepasse());
 
                         // Calculos necessários para mostragem da explicação do cálculo
-                        lancamento.setDadosCalculoPercLancamentoFatura(repasse.getLancamentoRepasse().getValor().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
+                        lancamento.setDadosCalculoPercLancamentoFatura(repasse.getLancamentoOrigem().getValor().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
                         lancamento.setDadosCalculoPercTaxa(
-                                (repasse.getLancamentoRepasse().getTarifa() != null ? repasse.getLancamentoRepasse().getTarifa().getTaxa().divide(BigDecimal.valueOf(100)) : BigDecimal.ZERO));
-                        lancamento.setDadosCalculoValorTaxa(lancamento.getDadosCalculoPercTaxa().multiply(repasse.getLancamentoRepasse().getValor()));
-                        lancamento.setDadosCalculoValorTarifa((repasse.getLancamentoRepasse().getTarifa() != null ? repasse.getLancamentoRepasse().getTarifa().getTarifa() : BigDecimal.ZERO));
-                        lancamento.setDadosCalculoPercTributo(repasse.getLancamentoRepasse().getTributoPerc());
-                        lancamento.setDadosCalculoValorTributo(repasse.getLancamentoRepasse().getTributoPerc().multiply(repasse.getLancamentoRepasse().getValor()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                                (repasse.getLancamentoOrigem().getTarifa() != null ? repasse.getLancamentoOrigem().getTarifa().getTaxa().divide(BigDecimal.valueOf(100)) : BigDecimal.ZERO));
+                        lancamento.setDadosCalculoValorTaxa(lancamento.getDadosCalculoPercTaxa().multiply(repasse.getLancamentoOrigem().getValor()));
+                        lancamento.setDadosCalculoValorTarifa((repasse.getLancamentoOrigem().getTarifa() != null ? repasse.getLancamentoOrigem().getTarifa().getTarifa() : BigDecimal.ZERO));
+                        lancamento.setDadosCalculoPercTributo(repasse.getLancamentoOrigem().getTributoPerc());
+                        lancamento.setDadosCalculoValorTributo(repasse.getLancamentoOrigem().getTributoPerc().multiply(repasse.getLancamentoOrigem().getValor()).setScale(2, BigDecimal.ROUND_HALF_UP));
                         lancamento.setDadosCalculoPercCustoDireto(lancamento.getDadosTabelaValorTotalCustosDiretos().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
                         lancamento.setDadosCalculoValorCustoDiretoRateado(
                                 lancamento.getDadosTabelaValorTotalCustosDiretos().divide(lancamento.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP).multiply(
-                                        repasse.getLancamentoRepasse().getValor()));
+                                        repasse.getLancamentoOrigem().getValor()));
                         lancamento.setDadosCalculoTotalReducao(lancamento.getDadosCalculoValorTaxa().add(lancamento.getDadosCalculoValorTarifa()).add(lancamento.getDadosCalculoValorTributo()));
                         lancamento.setDadosCalculoRecebidoMenosReducao(
-                                repasse.getLancamentoRepasse().getValor().subtract(lancamento.getDadosCalculoTotalReducao()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                                repasse.getLancamentoOrigem().getValor().subtract(lancamento.getDadosCalculoTotalReducao()).setScale(2, BigDecimal.ROUND_HALF_UP));
 
                         lancamento.setDadosCalculoValorItemSemCusto(
                                 repasse.getFaturaItem().getValorComDesconto().subtract(lancamento.getDadosTabelaValorTotalCustosDiretos()).setScale(2, BigDecimal.ROUND_HALF_UP));
@@ -205,7 +186,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         if (getEntity().getReciboLancamentos() != null && !getEntity().getReciboLancamentos().isEmpty()) {
             getEntity().getReciboLancamentos().forEach(repasseRecibo -> {
                 try {
-                    RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(repasseRecibo.getLancamento());
+                    RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(repasseRecibo.getLancamento());
                     repasseRecibo.getLancamento().setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
                 } catch (Exception e) {
                     repasseRecibo.getLancamento().setPtp(null);
@@ -560,16 +541,6 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
     public void setLancMesesAnterioresRepasse(boolean lancMesesAnterioresRepasse) {
         this.lancMesesAnterioresRepasse = lancMesesAnterioresRepasse;
-    }
-
-    
-    public boolean isProcedimentosNaoExecutados() {
-        return procedimentosNaoExecutados;
-    }
-
-    
-    public void setProcedimentosNaoExecutados(boolean procedimentosNaoExecutados) {
-        this.procedimentosNaoExecutados = procedimentosNaoExecutados;
     }
 
 }
