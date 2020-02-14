@@ -102,7 +102,6 @@ public class Exportacoes implements Serializable{
                 
                 Cell celula = linhaPlanilha.createCell(j);
                 
-                DataFormat dataFormat = workbook.createDataFormat();
                 Object obj = tabelaColunas.get(colunasValidas.get(j)).getSortBy();
                 
                 if(obj != null) {
