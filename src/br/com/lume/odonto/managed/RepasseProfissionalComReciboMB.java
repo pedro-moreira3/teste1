@@ -25,8 +25,11 @@ import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.entity.RepasseFaturas;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.repasse.RepasseFaturasItemSingleton;
+import br.com.lume.repasse.RepasseFaturasSingleton;
 
 /**
  * @author ariel.pires
@@ -149,6 +152,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     
     public BigDecimal valorTotal(PlanoTratamentoProcedimento ptp) {
         //FaturaSingleton.getInstance().getItemOrigemFromRepasse
+      if(ptp.getRepasseFatura() != null && ptp.getRepasseFatura().getFaturaRepasse() != null) {
+          return FaturaSingleton.getInstance().getValorTotal(ptp.getRepasseFatura().getFaturaRepasse());           
+      }  
         return new BigDecimal(0);
     }
     

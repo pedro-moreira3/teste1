@@ -197,11 +197,11 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 					<p:column headerText="Ações" style="width:140px">
 						<p:commandButton styleClass="NavyButton" icon="fa fa-eye"
-							oncomplete="PF('dlgViewPlanoTratamento').show()"
+							oncomplete="PF('procedimentosTableInPT').filter();PF('dlgViewPlanoTratamento').show()"
 							update=":lume:tabView:mainViewPT, :lume:tabView:viewPlanoTratamento, :lume:tabView:pnViewPlanoTratamento"
 							process="@this"
 							actionListener="#{planoTratamentoMB.carregaDlgProcedimentos(planoTratamento)}"
-							title="Gerenciar Plano de Tratamento">
+							title="Gerenciar Plano de Tratamento" >
 						</p:commandButton>
 						<h:panelGroup rendered="#{planoTratamentoMB.temPermissaoExtra}">
 							<p:commandButton id="geraNegociacao" icon="fa fa-legal"
@@ -561,7 +561,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 					<p:panelGrid columns="1" layout="grid"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-						<p:commandButton icon="White fa fa-save" value="Salvar"
+						<p:commandButton icon="White fa fa-save" value="Salvar" oncomplete="PF('procedimentosTableInPT').filter();"
 							styleClass="GreenButton" process="@this, :lume:tabView:pnCriarPT"
 							update=":lume:tabView:mainViewPT, :lume:tabView:pnViewPlanoTratamento, :lume:tabView:pnCriarPT"
 							actionListener="#{planoTratamentoMB.actionPersist}" />
