@@ -204,10 +204,9 @@ ALTER TABLE repasse_faturas_lancamento ALTER COLUMN fatura_item_id DROP NOT NULL
 update procedimento set valor_repasse = 0 where valor_repasse is null;
 ALTER TABLE procedimento ALTER COLUMN valor_repasse SET DEFAULT 0;
 
-
-ALTER TABLE SEG_EMPRESA ADD COLUMN VALIDAR_GERA_RECIBO_VALOR_ZERADO VARCHAR(1) NOT NULL DEFAULT 'N';
-                     
 -------------------- acima ja rodado -------------------------------
+
+ALTER TABLE SEG_EMPRESA ADD COLUMN VALIDAR_GERA_RECIBO_VALOR_ZERADO VARCHAR(1) NOT NULL DEFAULT 'N';  
  
 INSERT INTO SEG_OBJETO(OBJ_INT_CODPAI, OBJ_STR_DES, OBJ_CHA_STS, OBJ_STR_CAMINHO,
                        SIS_INT_COD, OBJ_INT_ORDEM, OBJ_CHA_TIPO, OBJ_STR_ICON)
@@ -233,4 +232,7 @@ LEFT JOIN SEG_OBJETO O
 	ON O.OBJ_INT_COD = OP.OBJ_INT_COD
 WHERE O.OBJ_STR_DES ILIKE 'Pagamentos/Recebimentos'
   AND O.OBJ_CHA_STS = 'A';
+
+update plano_tratamento_procedimento set dentista_executor_id = finalizado_por
+where dentista_executor_id is null and data_finalizado is not null
 
