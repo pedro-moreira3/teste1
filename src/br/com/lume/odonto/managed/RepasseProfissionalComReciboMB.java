@@ -11,6 +11,7 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.rmi.CORBA.Util;
 
 import org.primefaces.component.datatable.DataTable;
 
@@ -19,11 +20,16 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.faturamento.FaturaSingleton;
+import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.entity.RepasseFaturas;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.repasse.RepasseFaturasItemSingleton;
+import br.com.lume.repasse.RepasseFaturasSingleton;
 
 /**
  * @author ariel.pires
@@ -41,7 +47,6 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private Date dataInicio;
     private Date dataFim;
     private Profissional profissional;  
-   // private String status;
 
     private String filtroPeriodo = "MA";
     
@@ -52,26 +57,6 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         super(PlanoTratamentoProcedimentoSingleton.getInstance().getBo());
         this.setClazz(PlanoTratamentoProcedimento.class);
         try { 
-//            Calendar now = Calendar.getInstance();
-//            setMes(now.get(Calendar.MONTH) + 1);
-//
-//            Calendar inicio = Calendar.getInstance();
-//            inicio.setTime(new Date());
-//            inicio.set(Calendar.DAY_OF_MONTH, 1);
-//            inicio.set(Calendar.HOUR_OF_DAY, 0);
-//            inicio.set(Calendar.MINUTE, 0);
-//            inicio.set(Calendar.SECOND, 0);
-//            inicio.set(Calendar.MILLISECOND, 0);
-//            this.dataInicio = inicio.getTime();
-//            Calendar fim = Calendar.getInstance();
-//            fim.setTime(new Date());
-//            fim.set(Calendar.DAY_OF_MONTH, fim.getActualMaximum(Calendar.DAY_OF_MONTH));
-//            fim.set(Calendar.HOUR_OF_DAY, 23);
-//            fim.set(Calendar.MINUTE, 59);
-//            fim.set(Calendar.SECOND, 59);
-//            fim.set(Calendar.MILLISECOND, 999);
-//            this.dataFim = fim.getTime();
-
            // setStatus("A pagar");
             actionTrocaDatas(null);
         } catch (Exception e) {
@@ -154,7 +139,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public void pesquisar() {
         try { 
             
-         setEntityList(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listParaRepasseProfissionais(dataInicio,dataFim,profissional,mesesAnteriores,procedimentosNaoExecutados));
+         setEntityList(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listParaRepasseProfissionais(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),dataInicio,dataFim,profissional,mesesAnteriores,procedimentosNaoExecutados));
         
          //TODO semPendenciasvou ter que pegar depois, pois as pendencias vem de varios lugares, nao somente do PTP
          
@@ -166,6 +151,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     }
     
     public BigDecimal valorTotal(PlanoTratamentoProcedimento ptp) {
+        //FaturaSingleton.getInstance().getItemOrigemFromRepasse
+      if(ptp.getRepasseFatura() != null && ptp.getRepasseFatura().getFaturaRepasse() != null) {
+          return FaturaSingleton.getInstance().getValorTotal(ptp.getRepasseFatura().getFaturaRepasse());           
+      }  
         return new BigDecimal(0);
     }
     
@@ -175,11 +164,31 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     
     public BigDecimal valorDisponivel(PlanoTratamentoProcedimento ptp) {
         return new BigDecimal(0);
-    }
+    }    
     
-    public String status(PlanoTratamentoProcedimento ptp) {
-        return "";
-    }
+//    public BigDecimal getValorTotal(Fatura fatura) {
+//        BigDecimal valorTotal = BigDecimal.ZERO;
+//        for (FaturaItem item : fatura.getItensFiltered())
+//            valorTotal = valorTotal.add(new BigDecimal(item.getValorItem()));
+//        return valorTotal;
+//    }
+//
+//    public BigDecimal getTotalPago(Fatura fatura) {
+//        return LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, true);
+//    }
+//
+//    public BigDecimal getTotalNaoPago(Fatura fatura) {
+//        return LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, false);
+//    }
+//
+//    public BigDecimal getTotalNaoPlanejado(Fatura fatura) {
+//        return getTotal(fatura).subtract(getTotalPago(fatura)).subtract(getTotalNaoPago(fatura));
+//    }
+//
+//    public BigDecimal getTotalRestante(Fatura fatura) {
+//        return getTotal(fatura).subtract(getTotalPago(fatura));
+//    }
+    
 
     public List<Profissional> geraSugestoesProfissional(String query) {
         List<Profissional> sugestoes = new ArrayList<>();

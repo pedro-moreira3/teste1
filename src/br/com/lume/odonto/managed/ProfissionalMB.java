@@ -428,10 +428,15 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     public void actionInativar(ActionEvent event) {
         try {
-            this.getEntity().setStatus(Status.INATIVO);
-            this.actionPersist(event);
+            if(ProfissionalSingleton.getInstance().inativarProfissional(this.getEntity(), UtilsFrontEnd.getProfissionalLogado())) {
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            }else {
+                this.addError("Erro ao inativar profissional", "");
+            }
+            
             PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
         } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");
             e.printStackTrace();
         }
     }

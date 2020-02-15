@@ -819,6 +819,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 if (ptp.isFinalizado() && ptp.getFinalizadoPorProfissional() == null) {
                     ptp.setDataFinalizado(new Date());
                     ptp.setFinalizadoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
+                    ptp.setDentistaExecutor(UtilsFrontEnd.getProfissionalLogado());
                     this.calculaRepasse(ptp);
                     salvaProcedimento(ptp);
 
