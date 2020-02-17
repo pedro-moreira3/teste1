@@ -448,7 +448,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                         aptp.getPlanoTratamentoProcedimento().getDataFinalizado() == null) {
                                     if(aptp.getPlanoTratamentoProcedimento().getDentistaExecutor() == null || !profissionalDentroAgenda.equals(aptp.getPlanoTratamentoProcedimento().getDentistaExecutor())) {
                                         PlanoTratamentoProcedimentoSingleton.getInstance().alteraDentistaExecutor(aptp.getPlanoTratamentoProcedimento(),profissionalDentroAgenda);
-                                        PlanoTratamentoProcedimentoSingleton.getInstance().verificaRepasses(aptp.getPlanoTratamentoProcedimento());    
+                                        PlanoTratamentoProcedimentoSingleton.getInstance().verificaRepasses(this.getEntity(), aptp.getPlanoTratamentoProcedimento());    
                                     }
                                 }
                                                                 
@@ -462,11 +462,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             }
                             profissionalDentroAgenda = null;
 
-                            try {
-                                RepasseFaturasSingleton.getInstance().verificaAgendamentoRepasse(getEntity(), UtilsFrontEnd.getProfissionalLogado());
-                            } catch (Exception e) {
-                                // Log...
-                            }
+//                            try {
+//                                RepasseFaturasSingleton.getInstance().verificaAgendamentoRepasse(getEntity(), UtilsFrontEnd.getProfissionalLogado());
+//                            } catch (Exception e) {
+//                                // Log...
+//                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                             this.actionNew(event);
