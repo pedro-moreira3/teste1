@@ -35,7 +35,9 @@ public class PTPCustoDiretoMB extends LumeManagedBean<PlanoTratamentoProcediment
 
     public void abreDialog(PlanoTratamentoProcedimento ptp) {
         setEntity(ptp);
-        setCustos(PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().listFromPlanoTratamentoProcedimento(getEntity()));
+        if(ptp.getPlanoTratamentoProcedimentoCustos() != null) {
+            setCustos(ptp.getPlanoTratamentoProcedimentoCustos());
+        }
         PrimeFaces.current().executeScript("PF('dlgPTPCustoDireto').show()");
     }
 
