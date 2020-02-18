@@ -6,6 +6,33 @@
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
 	
+		<style>
+.centerPanels .ui-panel .ui-panel-titlebar, .centerPanels .ui-panel .ui-panel-content
+	{
+	text-align: center;
+}
+
+.lancamentoExplain.ui-panelgrid.form-group .ui-panelgrid-cell {
+	padding: 7px 16px;
+}
+
+.lancamentoExplain.ui-panelgrid.form-group .ui-panelgrid-cell:nth-child(1)
+	{
+	padding-top: 0;
+}
+
+.lessPaddingSides .ui-panelgrid-cell {
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+}
+
+.traceRepasse tr:nth-child(3), .traceRepasse tr:nth-child(9),
+	.traceRepasse tr:nth-child(12) {
+	height: 40px;
+	vertical-align: bottom;
+}
+</style>	
+	
 		<p:outputPanel id="viewFaturaRepasse">
 			<ui:include src="faturaView.xhtml">
 				<ui:param name="showNewLancamento" value="N" />
@@ -279,204 +306,219 @@
 		</p:dialog>
 		
 		<p:dialog id="dlgCalculoRepasse" widgetVar="dlgCalculoRepasse" header="Cálculo de Repasse" responsive="true" modal="true" width="60%">
-			<p:panel id="pnCalculoRepasse" styleClass="BordNone">
-									<p:outputPanel
-										rendered="#{repasseProfissionalComReciboMB.entity.dentistaExecutor.tipoRemuneracao == 'POR'}"
-										style="width: 100%; position: relative; left: 20%; transform: translateX(-20%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
-										<div style="padding: 10px;">
-											<div style="width: 100%; padding: 5px; text-align: center">
-												(<b>Valor Recebido</b> - <b>Taxas/Tarifas</b> - <b>Tributos</b>
-												- <b>Custos Diretos</b>) * <b>Perc. Repasse</b>
-											</div>
-											<p:separator styleClass="SeparatorFull" />
-											<table style="width: 100%" class="traceRepasse">
-												<tr>
-													<th colspan="8">Procedimento</th>
-													<th colspan="4">Valor Recebido</th>
-												</tr>
-												<tr>
-													<td colspan="8"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.rfl.faturaItem.descricaoItem}" /></td>
-													<td colspan="4"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.rfl.lancamentoOrigem.valor}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-												</tr>
-												<tr>
-													<th colspan="4">Item de dedução</th>
-													<th colspan="4">Base de cálculo</th>
-													<th colspan="4">Valor da dedução</th>
-												</tr>
-												<tr>
-													<td colspan="4">Taxa</td>
-													<td colspan="4"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosCalculoPercTaxa}">
-															<f:convertNumber maxFractionDigits="2" type="percent" />
-														</h:outputText></td>
-													<td colspan="4"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosCalculoValorTaxa}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-												</tr>
-												<tr>
-													<td colspan="4">Tarifa</td>
-													<td colspan="4"></td>
-													<td colspan="4"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosCalculoValorTarifa}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-												</tr>
-												<tr>
-													<td colspan="4">Tributo</td>
-													<td colspan="4"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosCalculoPercTributo}">
-															<f:convertNumber maxFractionDigits="2" type="percent" />
-														</h:outputText></td>
-													<td colspan="4"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosCalculoValorTributo}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-												</tr>
-												<tr>
-													<td colspan="8">Total:</td>
-													<td colspan="4"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosCalculoTotalReducao}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-												</tr>
-												<tr>
-													<td colspan="8">Valor recebido descontando as deduções
-														acima:</td>
-													<td colspan="4"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosCalculoRecebidoMenosReducao}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-												</tr>
-												<tr>
-													<th colspan="1">Valor do procedimento</th>
-													<th colspan="1">Valor Custos Diretos</th>
-													<th colspan="1">Valor sem custos diretos</th>
-													<th colspan="1">Valor total da fatura</th>
-													<th colspan="2">Percentual Item/Fatura</th>
-													<th colspan="2">Percentual de dedução</th>
-													<th colspan="4">Valor a deduzir do pagamento</th>
-												</tr>
-												<tr>
-													<td colspan="1"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.rfl.faturaItem.valorComDesconto}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-													<td colspan="1"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosTabelaValorTotalCustosDiretos}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-													<td colspan="1"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosCalculoValorItemSemCusto}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-													<td colspan="1"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosTabelaValorTotalFatura}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-													<td colspan="2"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosCalculoPercItemSemCusto}">
-															<f:convertNumber maxFractionDigits="2" type="percent" />
-														</h:outputText></td>
-													<td colspan="2"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosCalculoInvPercItemSemCusto}">
-															<f:convertNumber maxFractionDigits="2" type="percent" />
-														</h:outputText></td>
-													<td colspan="4"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosCalculoReducaoCustoDireto}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-												</tr>
-												<tr>
-													<td colspan="8">Valor sem descontos e custos diretos:</td>
-													<td colspan="4"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosCalculoValorARepassarSemCusto}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-												</tr>
-												<tr>
-													<th colspan="4">Profissional</th>
-													<th colspan="4">Percentual de repasse</th>
-													<th colspan="4">Valor do repasse</th>
-												</tr>
-												<tr>
-													<td colspan="4"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.fatura.profissional.dadosBasico.nome}" /></td>
-													<td colspan="4"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosTabelaValorRepasse}" /></td>
-													<td colspan="4"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.valor}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-												</tr>
-											</table>
-										</div>
-									</p:outputPanel>
+			<p:panel id="pnCalculoRepasse">
+				<p:repeat value="#{repasseProfissionalComReciboMB.lancamentosCalculados}" var="lancamentoCalculado">							     
+				<p:outputPanel
+					rendered="#{lancamentoCalculado.dadosTabelaMetodoRepasse == 'POR'}"
+					style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
+					<div style="padding: 10px;">
+						<div style="width: 100%; padding: 5px; text-align: center">
+							(<b>Valor Recebido</b> - <b>Taxas/Tarifas</b> - <b>Tributos</b>
+							- <b>Custos Diretos</b>) * <b>Perc. Repasse</b>
+						</div>
+						<p:separator styleClass="SeparatorFull" />
+						<table style="width: 100%" class="traceRepasse">
+							<tr>
+								<th colspan="8">Procedimento</th>
+								<th colspan="4">Valor Recebido</th>
+							</tr>
+							<tr>
+								<td colspan="8"><h:outputText
+										value="#{lancamentoCalculado.rfl.faturaItem.descricaoItem}" /></td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.rfl.lancamentoOrigem.valor}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+							</tr>
+							<tr>
+								<th colspan="4">Item de dedução</th>
+								<th colspan="4">Base de cálculo</th>
+								<th colspan="4">Valor da dedução</th>
+							</tr>
+							<tr>
+								<td colspan="4">Taxa</td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.dadosCalculoPercTaxa}">
+										<f:convertNumber maxFractionDigits="2" type="percent" />
+									</h:outputText></td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.dadosCalculoValorTaxa}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+							</tr>
+							<tr>
+								<td colspan="4">Tarifa</td>
+								<td colspan="4"></td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.dadosCalculoValorTarifa}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+							</tr>
+							<tr>
+								<td colspan="4">Tributo</td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.dadosCalculoPercTributo}">
+										<f:convertNumber maxFractionDigits="2" type="percent" />
+									</h:outputText></td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.dadosCalculoValorTributo}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+							</tr>
+							<tr>
+								<td colspan="8">Total:</td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.dadosCalculoTotalReducao}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+							</tr>
+							<tr>
+								<td colspan="8">Valor recebido descontando as deduções
+									acima:</td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.dadosCalculoRecebidoMenosReducao}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+							</tr>
+							<tr>
+								<th colspan="1">Valor do procedimento</th>
+								<th colspan="1">Valor Custos Diretos</th>
+								<th colspan="1">Valor sem custos diretos</th>
+								<th colspan="1">Valor total da fatura</th>
+								<th colspan="2">Percentual Item/Fatura</th>
+								<th colspan="2">Percentual de dedução</th>
+								<th colspan="4">Valor a deduzir do pagamento</th>
+							</tr>
+							<tr>
+								<td colspan="1"><h:outputText
+										value="#{lancamentoCalculado.rfl.faturaItem.valorComDesconto}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+								<td colspan="1"><h:outputText
+										value="#{lancamentoCalculado.dadosTabelaValorTotalCustosDiretos}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+								<td colspan="1"><h:outputText
+										value="#{lancamentoCalculado.dadosCalculoValorItemSemCusto}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+								<td colspan="1"><h:outputText
+										value="#{lancamentoCalculado.dadosTabelaValorTotalFatura}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+								<td colspan="2"><h:outputText
+										value="#{lancamentoCalculado.dadosCalculoPercItemSemCusto}">
+										<f:convertNumber maxFractionDigits="2" type="percent" />
+									</h:outputText></td>
+								<td colspan="2"><h:outputText
+										value="#{lancamentoCalculado.dadosCalculoInvPercItemSemCusto}">
+										<f:convertNumber maxFractionDigits="2" type="percent" />
+									</h:outputText></td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.dadosCalculoReducaoCustoDireto}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+							</tr>
+							<tr>
+								<td colspan="8">Valor sem descontos e custos diretos:</td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.dadosCalculoValorARepassarSemCusto}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+							</tr>
+							<tr>
+								<th colspan="4">Profissional</th>
+								<th colspan="4">Percentual de repasse</th>
+								<th colspan="4">Valor do repasse</th>
+							</tr>
+							<tr>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.fatura.profissional.dadosBasico.nome}" /></td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.dadosTabelaValorRepasse}" /></td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.valor}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+							</tr>
+						</table>
+					</div>
+				</p:outputPanel>
 
-									<p:outputPanel
-										rendered="#{repasseProfissionalComReciboMB.entity.dentistaExecutor.tipoRemuneracao == 'PRO'}"
-										style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
-										<div style="padding: 10px;">
-											<div style="width: 100%; padding: 5px; text-align: center">
-												(<b>Valor Recebido</b> / <b>Valor total da fatura</b>) * <b>Valor
-													de Repasse</b>
-											</div>
-											<p:separator styleClass="SeparatorFull" />
-											<table style="width: 100%" class="traceRepassePro">
-												<tr>
-													<th colspan="12">Procedimento</th>													
-												</tr>
-												<tr>
-													<td colspan="12"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.rfl.faturaItem.descricaoItem}" /></td>													
-												</tr>
-												<tr>
-													<th colspan="3">Valor recebido do paciente</th>
-													<th colspan="3">Valor total da fatura</th>
-													<th colspan="3">Percentual Recebido do Total fatura</th>
-													<th colspan="3">Valor de Repasse do procedimento</th>													
-												</tr>
-												<tr>
-													<td colspan="3"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.rfl.lancamentoOrigem.valor}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-													<td colspan="3"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosTabelaValorTotalFatura}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>
-													<td colspan="3"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosCalculoPercLancamentoFatura}">
-															<f:convertNumber maxFractionDigits="2" type="percent" />
-														</h:outputText></td>
-													<td colspan="3"><h:outputText
-															value="#{repasseProfissionalComReciboMB.lancamentoCalculado.dadosTabelaValorRepasse}">
-															<f:convertNumber currencySymbol="R$"
-																maxFractionDigits="2" type="currency" />
-														</h:outputText></td>													
-												</tr>
-											</table>
-										</div>
-									</p:outputPanel>	              
+				<p:outputPanel
+					rendered="#{lancamentoCalculado.dadosTabelaMetodoRepasse == 'PRO'}"
+					style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
+					<div style="padding: 10px;">
+						<div style="width: 100%; padding: 5px; text-align: center">
+							(<b>Valor Recebido</b> / <b>Valor total da fatura</b>) * <b>Valor
+								de Repasse</b>
+						</div>
+						<p:separator styleClass="SeparatorFull" />
+						<table style="width: 100%" class="traceRepassePro">
+							<tr>
+								<th colspan="8">Procedimento</th>
+								<th colspan="4">Valor Recebido</th>
+							</tr>
+							<tr>
+								<td colspan="8"><h:outputText
+										value="#{lancamentoCalculado.rfl.faturaItem.descricaoItem}" /></td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.rfl.lancamentoOrigem.valor}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+							</tr>
+							<tr>
+								<th colspan="2">Valor recebido</th>
+								<th colspan="2">Valor total da fatura</th>
+								<th colspan="2">Percentual Recebido/Total fatura</th>
+								<th colspan="2">Valor de Repasse do procedimento</th>
+								<th colspan="4">Valor do Repasse</th>
+							</tr>
+							<tr>
+								<td colspan="2"><h:outputText
+										value="#{lancamentoCalculado.rfl.lancamentoOrigem.valor}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+								<td colspan="2"><h:outputText
+										value="#{lancamentoCalculado.dadosTabelaValorTotalFatura}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+								<td colspan="2"><h:outputText
+										value="#{lancamentoCalculado.dadosCalculoPercLancamentoFatura}">
+										<f:convertNumber maxFractionDigits="2" type="percent" />
+									</h:outputText></td>
+								<td colspan="2"><h:outputText
+										value="#{lancamentoCalculado.dadosTabelaValorRepasse}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+								<td colspan="4"><h:outputText
+										value="#{lancamentoCalculado.valor}">
+										<f:convertNumber currencySymbol="R$"
+											maxFractionDigits="2" type="currency" />
+									</h:outputText></td>
+							</tr>
+						</table>
+					</div>
+				</p:outputPanel>
+				</p:repeat>			
+									     
 			</p:panel>
 		</p:dialog>
 		<p:dialog appendTo=":lume" closable="false" widgetVar="dlgGerarRecibo"
@@ -626,7 +668,7 @@
 											<p:selectBooleanCheckbox id="semPendencias"
 												value="#{repasseProfissionalComReciboMB.semPendencias}" />	
 											<p:outputLabel for="procedimentosNaoExecutados"
-												value="Mostrar procedimentos agendados e não executados (ignoraData): " />
+												value="Mostrar procedimentos agendados e não executados (ignora data): " />
 											<p:selectBooleanCheckbox id="procedimentosNaoExecutados"
 												value="#{repasseProfissionalComReciboMB.procedimentosNaoExecutados}" />														
 										</p:panelGrid>	
@@ -695,7 +737,7 @@
 													title="Visualizar Cálculo Repasse"
 													oncomplete="PF('dlgCalculoRepasse').show();"
 													actionListener="#{repasseProfissionalComReciboMB.mostraCalculoRepasse(ptp)}"
-													process="@this" disabled="#{repasseProfissionalComReciboMB.getFaturaFromPtp(ptp) eq null}"
+													process="@this" disabled="#{repasseProfissionalComReciboMB.lancamentosCalculados eq null}"
 													update=":lume:pnCalculoRepasse" />												
 												</p:column>
 												<p:column

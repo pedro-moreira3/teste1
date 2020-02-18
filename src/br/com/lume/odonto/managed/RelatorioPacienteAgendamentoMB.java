@@ -143,7 +143,10 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                                     if(!filtroAtendimento.contains(paciente.getUltimoAgendamento().getStatusNovo())) {
                                         this.pacientes.remove(paciente);
                                     }
-                                }                            
+                                }  
+                                if(paciente.getUltimoAgendamento().getInicio().after(this.fim)) {
+                                    this.pacientes.remove(paciente);
+                                }
                             }  
                         }
                     }                 
