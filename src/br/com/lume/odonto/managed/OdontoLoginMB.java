@@ -209,12 +209,18 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
         if (profissionais != null && !profissionais.isEmpty()) {
             for (Profissional profissional : profissionais) {
                 try {
-                    String empStrNme = EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()).getEmpStrNme();
-                    logins.add(new Login(profissional.getPerfil(), profissional.getId(), profissional.getIdEmpresa(), "Profissional da clínica " + empStrNme));
+                    if(!profissional.getStatus().equals("I")) {
+                        String empStrNme = EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()).getEmpStrNme();
+                        logins.add(new Login(profissional.getPerfil(), profissional.getId(), profissional.getIdEmpresa(), "Profissional da clínica " + empStrNme));
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+            logins.sort((emp1, emp2) -> {
+                String aux = emp1.getDescricao();
+                return aux.compareTo(emp2.getDescricao());
+            });
         }
         return logins;
     }
