@@ -187,7 +187,18 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
             getEntity().getReciboLancamentos().forEach(repasseRecibo -> {
                 try {
                     RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(repasseRecibo.getLancamento());
-                    repasseRecibo.getLancamento().setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
+                        if(repasse != null) {
+                            repasseRecibo.getLancamento().setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
+                        }
+                    //quando nao tem repasse de origem    
+                    if(repasse == null) {
+                        repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(repasseRecibo.getLancamento());
+                        if(repasse != null) {
+                           // repasse.getRepasseFaturas().getFaturaRepasse().getItensFiltered().get(0);
+                            repasseRecibo.getLancamento().setPtp(repasse.getRepasseFaturas().getPlanoTratamentoProcedimento());
+                        }                        
+                    }
+                    
                 } catch (Exception e) {
                     repasseRecibo.getLancamento().setPtp(null);
                 }
