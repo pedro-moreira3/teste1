@@ -449,7 +449,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                     
                                     if(aptp.getPlanoTratamentoProcedimento().getDentistaExecutor() == null || 
                                             !profissionalDentroAgenda.equals(aptp.getPlanoTratamentoProcedimento().getDentistaExecutor()) ||
-                                            "Não atendido".equals(this.getEntity().getStatusAgendamento().getDescricao())) {
+                                            "Não Atendido".equals(this.getEntity().getStatusAgendamento().getDescricao())) {
                                         
                                         PlanoTratamentoProcedimentoSingleton.getInstance().alteraDentistaExecutor(aptp.getPlanoTratamentoProcedimento(), profissionalDentroAgenda);
                                         PlanoTratamentoProcedimentoSingleton.getInstance().verificaRepasses(aptp.getPlanoTratamentoProcedimento(), UtilsFrontEnd.getProfissionalLogado());
