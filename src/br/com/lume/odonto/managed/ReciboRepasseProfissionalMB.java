@@ -80,8 +80,9 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
     public void aprovarRecibo(ReciboRepasseProfissional r) {
         ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(r, UtilsFrontEnd.getProfissionalLogado());
-        addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+        addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));        
         pesquisarRecibos();
+        PrimeFaces.current().executeScript("PF('dtPrincipal').filter()");
     }
 
     public void onTabChange(TabChangeEvent event) {

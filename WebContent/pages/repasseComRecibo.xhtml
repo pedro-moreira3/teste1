@@ -47,7 +47,7 @@
 	<ui:include src="pacienteFicha.xhtml" />	
 	<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 	
-		<p:dialog id="dlgPendencias" widgetVar="dlgPendencias" header="Pendências" responsive="true" modal="true" width="25%">
+		<p:dialog id="dlgPendencias" widgetVar="dlgPendencias" header="Pendências" responsive="true" modal="true" width="40%">
 			<p:panel id="pnPendencias" styleClass="BordNone">
 				<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">                    
                     <p:repeat value="#{repasseProfissionalComReciboMB.pendencias}" var="pendencia">						
@@ -582,7 +582,9 @@
 					<p:commandButton styleClass="GreenButton" value="Gerar Recibo"
 						update="detalhesNovoRecibo,:lume:tabViewRepasseProfissional:dtPrincipal"
 						process="@this,detalhesNovoRecibo"
-						actionListener="#{repasseProfissionalComReciboMB.gerarRecibo}" />
+						actionListener="#{repasseProfissionalComReciboMB.gerarRecibo}" 
+						oncomplete="PF('dtPrincipal').filter()"
+						/>
 					<p:commandButton styleClass="NavyButton" value="Fechar"
 						process="@this"
 						actionListener="#{repasseProfissionalComReciboMB.cancelarRecibo}" />
@@ -658,21 +660,38 @@
 												</p:autoComplete>
 											</h:panelGroup>
 										</p:panelGrid>
-										<p:panelGrid columns="6" layout="grid"
+										<p:panelGrid columns="8" layout="grid" id="pnFiltroStatus"
 											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 											style="border:0px none; background-color:transparent;">
-											<p:outputLabel for="mesesAnteriores"
-												value="Buscar todos os procedimentos executados sem recibos aprovados (ignora data):  " />
-											<p:selectBooleanCheckbox id="mesesAnteriores"
-												value="#{repasseProfissionalComReciboMB.mesesAnteriores}" />	
-											<p:outputLabel for="semPendencias"
-												value="Mostrar apenas repasses sem pendências: " />
-											<p:selectBooleanCheckbox id="semPendencias"
-												value="#{repasseProfissionalComReciboMB.semPendencias}" />	
-											<p:outputLabel for="procedimentosNaoExecutados"
-												value="Mostrar procedimentos agendados e não executados (ignora data): " />
-											<p:selectBooleanCheckbox id="procedimentosNaoExecutados"
-												value="#{repasseProfissionalComReciboMB.procedimentosNaoExecutados}" />														
+											
+												<p:outputLabel for="semPendencias"
+													value="Buscar somente disponíveis para repasse: " />
+												<p:selectBooleanCheckbox id="semPendencias" disabled="#{repasseProfissionalComReciboMB.mesesAnteriores}"
+												value="#{repasseProfissionalComReciboMB.semPendencias}" >
+													<p:ajax listener="#{repasseProfissionalComReciboMB.mudaFiltroSemPendencia()}"
+													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
+													</p:selectBooleanCheckbox>
+																					
+												<p:outputLabel for="mesesAnteriores"
+													value="Buscar todos os procedimentos executados sem pagamentos (ignora data):  " />
+												<p:selectBooleanCheckbox id="mesesAnteriores" disabled="#{repasseProfissionalComReciboMB.semPendencias}"
+												value="#{repasseProfissionalComReciboMB.mesesAnteriores}" >
+													<p:ajax listener="#{repasseProfissionalComReciboMB.mudaFiltroComPendencia()}"
+													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
+												</p:selectBooleanCheckbox>
+											
+										
+												<p:outputLabel for="procedimentosNaoExecutados"
+													value="Mostrar procedimentos agendados e não executados (ignora data): " />
+												<p:selectBooleanCheckbox id="procedimentosNaoExecutados"
+													value="#{repasseProfissionalComReciboMB.procedimentosNaoExecutados}" />		
+										
+											
+												<p:outputLabel for="mostrarRepasseAntigo"
+													value="Mostrar planos de tratamento do repasse antigo: " />
+												<p:selectBooleanCheckbox id="mostrarRepasseAntigo"
+													value="#{repasseProfissionalComReciboMB.mostrarRepasseAntigo}" />
+																																	
 										</p:panelGrid>	
 										<p:panelGrid columns="3" layout="grid"
 											styleClass="ui-panelgrid-blank form-group ui-fluid">
@@ -682,7 +701,9 @@
 												styleClass="OrangeButton"
 												actionListener="#{repasseProfissionalComReciboMB.pesquisar}"
 												process="@this, :lume:tabViewRepasseProfissional:filtros"
-												update=":lume:tabViewRepasseProfissional:dtPrincipal" />
+												update=":lume:tabViewRepasseProfissional:dtPrincipal" 
+												oncomplete="PF('dtPrincipal').filter()"
+												/>
 
 											<h:panelGroup>
 												<p:splitButton icon="White fa fa fa-file-excel-o"
@@ -728,18 +749,25 @@
 											>
 											<f:facet name="header">Procedimentos</f:facet>
 											<p:column selectionMode="multiple" style="width:16px;" />
-												<p:column width="10%" headerText="Ações">
+												<p:column width="12%" headerText="Ações">
 													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
 													title="Visualizar Fatura"
 													oncomplete="PF('dlgFaturaView').show();"
 													actionListener="#{faturaPagtoMB.visualizaFatura(repasseProfissionalComReciboMB.getFaturaFromPtp(ptp))}"
-													process="@this" disabled="#{repasseProfissionalComReciboMB.getFaturaFromPtp(ptp) eq null}"
+													process="@this" disabled="#{repasseProfissionalComReciboMB.getFaturaFromPtp(ptp) eq null  or 
+													repasseProfissionalComReciboMB.getFaturaFromPtp(ptp).ativo eq 'N' }"
 													update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 													<p:commandButton icon="fa fa-calculator" styleClass="NavyButton"
 													title="Visualizar Cálculo Repasse"													
 													actionListener="#{repasseProfissionalComReciboMB.mostraCalculoRepasse(ptp)}"
 													process="@this"
-													update=":lume:pnCalculoRepasse" />												
+													update=":lume:pnCalculoRepasse" />
+													<p:commandButton icon="fa fa-dollar" styleClass="NavyButton"
+													title="Calcular Repasse manual"													
+													actionListener="#{repasseProfissionalComReciboMB.faturaManual(ptp)}"
+													oncomplete="PF('dtPrincipal').filter()"
+													process="@this"
+													update="dtPrincipal,:lume:pnCalculoRepasse" />			
 												</p:column>
 												<p:column
 													filterBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
@@ -938,7 +966,7 @@
 								<f:facet name="header">
 									<h:outputText value="Recibos de Repasses" />
 								</f:facet>
-								<p:column headerText="Ações" width="150">
+								<p:column headerText="Ações" width="15%">
 									<p:commandButton title="Visualizar Recibo"
 										styleClass="NavyButton" icon="fa fa-eye" process="@this"
 										update=":lume:visualizarReciboPnl"
@@ -964,27 +992,27 @@
 										</p:confirm>
 									</p:commandButton>
 								</p:column>
-								<p:column headerText="Profissional" filterMatchMode="contains"
+								<p:column headerText="Profissional" filterMatchMode="contains" width="20%"
 									filterBy="#{recibo.profissional.dadosBasico.nome}"
 									sortBy="#{recibo.profissional.dadosBasico.nome}">
 									<h:outputText value="#{recibo.profissional.dadosBasico.nome}" />
 								</p:column>
-								<p:column headerText="Descrição" filterMatchMode="contains"
+								<p:column headerText="Descrição" filterMatchMode="contains" width="20%"
 									filterBy="#{recibo.descricao}" sortBy="#{recibo.descricao}">
 									<h:outputText value="#{recibo.descricao}" />
 								</p:column>
-								<p:column headerText="Aprovado?" filterMatchMode="contains"
-									width="100" filterBy="#{recibo.aprovadoStr}"
+								<p:column headerText="Aprovado?" filterMatchMode="contains" width="10%"
+									 filterBy="#{recibo.aprovadoStr}"
 									sortBy="#{recibo.aprovadoStr}">
 									<h:outputText value="#{recibo.aprovadoStr}" />
 								</p:column>
-								<p:column headerText="Qtde. Repasses" filterMatchMode="contains"
-									width="200" filterBy="#{recibo.quantidadeRepasses}"
+								<p:column headerText="Qtde. Repasses" filterMatchMode="contains" width="5%"
+									 filterBy="#{recibo.quantidadeRepasses}"
 									sortBy="#{recibo.quantidadeRepasses}">
 									<h:outputText value="#{recibo.quantidadeRepasses}" />
 								</p:column>
-								<p:column headerText="Valor Total de Repasse"
-									filterMatchMode="contains" width="200"
+								<p:column headerText="Valor Total de Repasse" width="10%"
+									filterMatchMode="contains" 
 									filterBy="#{recibo.valorTotalRepasse}"
 									sortBy="#{recibo.valorTotalRepasse}">
 									<h:outputText value="#{recibo.valorTotalRepasse}">
