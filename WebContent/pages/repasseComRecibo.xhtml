@@ -53,10 +53,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 				<ui:param name="showNewLancamento" value="N" />
 				<ui:param name="repasseProfissional" value="S" />
 			</ui:include>
-			<p:remoteCommand name="onCloseFaturaView"
-				process="@this, :lume:tabViewRepasseProfissional:filtros"
-				update=":lume:tabViewRepasseProfissional:dtPrincipal"
-				actionListener="#{repasseProfissionalMB.pesquisar}" />
+			<p:remoteCommand name="onCloseFaturaView" />
 		</p:outputPanel>
 	
 	<ui:include src="pacienteFicha.xhtml" />	
@@ -696,7 +693,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
 												<p:outputLabel for="procedimentosNaoExecutados"
-													value="Mostrar procedimentos agendados e não executados (ignora data): " />
+													value="Mostrar procedimentos com executor ainda não executados (ignora data): " />
 												
 												<p:selectBooleanCheckbox id="mostrarRepasseAntigo" disabled="#{repasseProfissionalComReciboMB.semPendencias}"
 													value="#{repasseProfissionalComReciboMB.mostrarRepasseAntigo}" >
@@ -704,7 +701,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
 												<p:outputLabel for="mostrarRepasseAntigo"
-													value="Mostrar planos de tratamento do repasse antigo: " />
+													value="Mostrar somente planos de tratamento do repasse antigo: " />
 												
 																																	
 										</p:panelGrid>	
@@ -756,7 +753,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 											id="dtPrincipal"
 											value="#{repasseProfissionalComReciboMB.entityList}" var="ptp"
-											rows="30" paginator="true" rowKey="#{ptp}"
+											paginator="false" rowKey="#{ptp}"
 											paginatorPosition="bottom" widgetVar="dtPrincipal"
 											binding="#{repasseProfissionalComReciboMB.tabelaRepasse}"
 											selection="#{repasseProfissionalComReciboMB.ptpsSelecionados}"
@@ -765,7 +762,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 											<p:column selectionMode="multiple" style="width:16px;" />
 												<p:column width="12%" headerText="Ações">
 													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
-													title="Visualizar Fatura"
+													title="Detalhes do repasse"
 													oncomplete="PF('dlgFaturaView').show();"
 													actionListener="#{faturaPagtoMB.visualizaFatura(repasseProfissionalComReciboMB.getFaturaFromPtp(ptp))}"
 													process="@this" disabled="#{repasseProfissionalComReciboMB.getFaturaFromPtp(ptp) eq null  or 
