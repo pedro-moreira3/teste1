@@ -382,12 +382,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     //se nao tem, vamos do jeito antigo:
                     //tentando pegar do lancamento de origem:
                     if (repasse == null) {
-                        List<RepasseFaturasLancamento> repasseFaturaLancamentos = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoOrigem(
+                        repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(
                                 lancamentoCalculado);
-                        if (repasseFaturaLancamentos != null && repasseFaturaLancamentos.size() != 0) {
-                            repasse = repasseFaturaLancamentos.get(0);
-                            repasseFaturas = repasseFaturaLancamentos.get(0).getRepasseFaturas();
-                        }
+                       
                     }
                     //nao conseguimos achar repasse
                     if (repasse == null) {
@@ -547,8 +544,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     }
 
     public Fatura getFaturaFromPtp(PlanoTratamentoProcedimento ptp) {
-        if (ptp.getRepasseFatura() != null && ptp.getRepasseFatura().getFaturaRepasse() != null) {
-            return ptp.getRepasseFatura().getFaturaRepasse();
+        if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
+            return  RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp).getFaturaRepasse();
         } else {
             //repasse antigo, quando ainda nao tinha ptp no repasse fatura
             RepasseFaturasItem repasseFaturasItem = RepasseFaturasItemSingleton.getInstance().getBo().getItemOrigemFromRepasse(ptp);
