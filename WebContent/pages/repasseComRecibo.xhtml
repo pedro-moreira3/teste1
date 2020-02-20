@@ -31,6 +31,11 @@
 	height: 40px;
 	vertical-align: bottom;
 }
+
+.pnFiltroStatus .ui-panelgrid-cell.ui-g-1 {
+    width: 2% !important;
+}
+
 </style>	
 	
 		<p:outputPanel id="viewFaturaRepasse">
@@ -644,37 +649,45 @@
 												</p:autoComplete>
 											</h:panelGroup>
 										</p:panelGrid>
-										<p:panelGrid columns="4" layout="grid" id="pnFiltroStatus"
-											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+										<p:panelGrid columns="4" layout="grid" id="pnFiltroStatus" columnClasses="ui-g-1,ui-g-5,ui-g-1,ui-g-5"
+											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding pnFiltroStatus"
 											style="border:0px none; background-color:transparent;">
-											
-												<p:outputLabel for="semPendencias"
-													value="Buscar somente disponíveis para repasse: " />
-												<p:selectBooleanCheckbox id="semPendencias" disabled="#{repasseProfissionalComReciboMB.executadosSemPagamentos}"
+											<p:selectBooleanCheckbox id="semPendencias" disabled="#{repasseProfissionalComReciboMB.executadosSemPagamentos or 
+											repasseProfissionalComReciboMB.procedimentosNaoExecutados or repasseProfissionalComReciboMB.mostrarRepasseAntigo
+											}"
 												value="#{repasseProfissionalComReciboMB.semPendencias}" >
-													<p:ajax listener="#{repasseProfissionalComReciboMB.mudaFiltroSemPendencia()}"
+													<p:ajax 
 													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
-																					
-												<p:outputLabel for="executadosSemPagamentos"
-													value="Buscar todos os procedimentos executados sem pagamentos" />
+												<p:outputLabel for="semPendencias"
+													value="Buscar somente disponíveis para repasse: " />
+												
 												<p:selectBooleanCheckbox id="executadosSemPagamentos" disabled="#{repasseProfissionalComReciboMB.semPendencias}"
 												value="#{repasseProfissionalComReciboMB.executadosSemPagamentos}" >
-													<p:ajax listener="#{repasseProfissionalComReciboMB.mudaFiltroComPendencia()}"
+													<p:ajax 
 													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
-												</p:selectBooleanCheckbox>
+												</p:selectBooleanCheckbox>									
+												<p:outputLabel for="executadosSemPagamentos"
+													value="Buscar todos os procedimentos executados:" />
+												
 											
-										
+												<p:selectBooleanCheckbox id="procedimentosNaoExecutados" disabled="#{repasseProfissionalComReciboMB.semPendencias 
+												or repasseProfissionalComReciboMB.executadosSemPagamentos}"
+													value="#{repasseProfissionalComReciboMB.procedimentosNaoExecutados}" >
+													<p:ajax 
+													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
+													</p:selectBooleanCheckbox>
 												<p:outputLabel for="procedimentosNaoExecutados"
 													value="Mostrar procedimentos agendados e não executados (ignora data): " />
-												<p:selectBooleanCheckbox id="procedimentosNaoExecutados"
-													value="#{repasseProfissionalComReciboMB.procedimentosNaoExecutados}" />		
-										
-											
+												
+												<p:selectBooleanCheckbox id="mostrarRepasseAntigo" disabled="#{repasseProfissionalComReciboMB.semPendencias}"
+													value="#{repasseProfissionalComReciboMB.mostrarRepasseAntigo}" >
+													<p:ajax 
+													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
+													</p:selectBooleanCheckbox>
 												<p:outputLabel for="mostrarRepasseAntigo"
 													value="Mostrar planos de tratamento do repasse antigo: " />
-												<p:selectBooleanCheckbox id="mostrarRepasseAntigo"
-													value="#{repasseProfissionalComReciboMB.mostrarRepasseAntigo}" />
+												
 																																	
 										</p:panelGrid>	
 										<p:panelGrid columns="3" layout="grid"
