@@ -47,8 +47,7 @@ public class PTPCustoDiretoMB extends LumeManagedBean<PlanoTratamentoProcediment
             getEntity().setDataCustoDiretoValidado(new Date());
             getEntity().setCustoDiretoValidadoPor(UtilsFrontEnd.getProfissionalLogado());
             PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(getEntity());
-            addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
-            PrimeFaces.current().executeScript("PF('dtPrincipal').filter()");
+            addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));           
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));
