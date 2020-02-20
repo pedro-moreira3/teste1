@@ -5,7 +5,7 @@
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
-	
+
 		<style>
 .centerPanels .ui-panel .ui-panel-titlebar, .centerPanels .ui-panel .ui-panel-content
 	{
@@ -31,8 +31,16 @@
 	height: 40px;
 	vertical-align: bottom;
 }
-</style>	
-	
+
+body .fakeTable.ui-datatable tbody tr.ui-datatable-even {
+	background: none;
+}
+
+body.layout-compact .fakeTable.ui-datatable thead th {
+	display: none;
+}
+</style>
+
 		<p:outputPanel id="viewFaturaRepasse">
 			<ui:include src="faturaView.xhtml">
 				<ui:param name="showNewLancamento" value="N" />
@@ -43,20 +51,23 @@
 				update=":lume:tabViewRepasseProfissional:dtPrincipal"
 				actionListener="#{repasseProfissionalMB.pesquisar}" />
 		</p:outputPanel>
-	
-	<ui:include src="pacienteFicha.xhtml" />	
-	<p:remoteCommand name="onHidePacienteFicha" process="@this" />
-	
-		<p:dialog id="dlgPendencias" widgetVar="dlgPendencias" header="Pendências" responsive="true" modal="true" width="40%">
+
+		<ui:include src="pacienteFicha.xhtml" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
+
+		<p:dialog id="dlgPendencias" widgetVar="dlgPendencias"
+			header="Pendências" responsive="true" modal="true" width="40%">
 			<p:panel id="pnPendencias" styleClass="BordNone">
-				<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">                    
-                    <p:repeat value="#{repasseProfissionalComReciboMB.pendencias}" var="pendencia">						
+				<p:panelGrid columns="1" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+					<p:repeat value="#{repasseProfissionalComReciboMB.pendencias}"
+						var="pendencia">
 						<li style="margin-left: 10px;"><span>#{pendencia}</span></li>
-					</p:repeat>  
-				</p:panelGrid>	              
+					</p:repeat>
+				</p:panelGrid>
 			</p:panel>
 		</p:dialog>
-		
+
 		<p:dialog widgetVar="dlgImprimirRecibo" resizable="false"
 			header="Imprimir recibo de pagamento"
 			onHide="PF('dlgImprimirRecibo').toggleMaximize();"
@@ -202,7 +213,7 @@
 			</p:panelGrid>
 		</p:dialog>
 
-		
+
 		<p:dialog widgetVar="dlgVisualizarRecibo" resizable="false"
 			header="Visualizar recibo de pagamento"
 			onHide="PF('dlgVisualizarRecibo').toggleMaximize();"
@@ -306,221 +317,234 @@
 					process="@this" oncomplete="PF('dlgVisualizarRecibo').hide()" />
 			</p:panelGrid>
 		</p:dialog>
-		
-		<p:dialog id="dlgCalculoRepasse" widgetVar="dlgCalculoRepasse" header="Cálculo de Repasse" responsive="true" modal="true" width="60%">
-			<p:panel id="pnCalculoRepasse">
-				<p:repeat value="#{repasseProfissionalComReciboMB.lancamentosCalculados}" var="lancamentoCalculado">							     
-				<p:outputPanel
-					rendered="#{lancamentoCalculado.dadosTabelaMetodoRepasse == 'POR'}"
-					style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
-					<div style="padding: 10px;">
-						<div style="width: 100%; padding: 5px; text-align: center">
-							(<b>Valor Recebido</b> - <b>Taxas/Tarifas</b> - <b>Tributos</b>
-							- <b>Custos Diretos</b>) * <b>Perc. Repasse</b>
-						</div>
-						<p:separator styleClass="SeparatorFull" />
-						<table style="width: 100%" class="traceRepasse">
-							<tr>
-								<th colspan="8">Procedimento</th>
-								<th colspan="4">Valor Recebido</th>
-							</tr>
-							<tr>
-								<td colspan="8"><h:outputText
-										value="#{lancamentoCalculado.rfl.faturaItem.descricaoItem}" /></td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.rfl.lancamentoOrigem.valor}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-							</tr>
-							<tr>
-								<th colspan="4">Item de dedução</th>
-								<th colspan="4">Base de cálculo</th>
-								<th colspan="4">Valor da dedução</th>
-							</tr>
-							<tr>
-								<td colspan="4">Taxa</td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.dadosCalculoPercTaxa}">
-										<f:convertNumber maxFractionDigits="2" type="percent" />
-									</h:outputText></td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.dadosCalculoValorTaxa}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-							</tr>
-							<tr>
-								<td colspan="4">Tarifa</td>
-								<td colspan="4"></td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.dadosCalculoValorTarifa}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-							</tr>
-							<tr>
-								<td colspan="4">Tributo</td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.dadosCalculoPercTributo}">
-										<f:convertNumber maxFractionDigits="2" type="percent" />
-									</h:outputText></td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.dadosCalculoValorTributo}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-							</tr>
-							<tr>
-								<td colspan="8">Total:</td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.dadosCalculoTotalReducao}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-							</tr>
-							<tr>
-								<td colspan="8">Valor recebido descontando as deduções
-									acima:</td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.dadosCalculoRecebidoMenosReducao}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-							</tr>
-							<tr>
-								<th colspan="1">Valor do procedimento</th>
-								<th colspan="1">Valor Custos Diretos</th>
-								<th colspan="1">Valor sem custos diretos</th>
-								<th colspan="1">Valor total da fatura</th>
-								<th colspan="2">Percentual Item/Fatura</th>
-								<th colspan="2">Percentual de dedução</th>
-								<th colspan="4">Valor a deduzir do pagamento</th>
-							</tr>
-							<tr>
-								<td colspan="1"><h:outputText
-										value="#{lancamentoCalculado.rfl.faturaItem.valorComDesconto}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-								<td colspan="1"><h:outputText
-										value="#{lancamentoCalculado.dadosTabelaValorTotalCustosDiretos}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-								<td colspan="1"><h:outputText
-										value="#{lancamentoCalculado.dadosCalculoValorItemSemCusto}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-								<td colspan="1"><h:outputText
-										value="#{lancamentoCalculado.dadosTabelaValorTotalFatura}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-								<td colspan="2"><h:outputText
-										value="#{lancamentoCalculado.dadosCalculoPercItemSemCusto}">
-										<f:convertNumber maxFractionDigits="2" type="percent" />
-									</h:outputText></td>
-								<td colspan="2"><h:outputText
-										value="#{lancamentoCalculado.dadosCalculoInvPercItemSemCusto}">
-										<f:convertNumber maxFractionDigits="2" type="percent" />
-									</h:outputText></td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.dadosCalculoReducaoCustoDireto}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-							</tr>
-							<tr>
-								<td colspan="8">Valor sem descontos e custos diretos:</td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.dadosCalculoValorARepassarSemCusto}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-							</tr>
-							<tr>
-								<th colspan="4">Profissional</th>
-								<th colspan="4">Percentual de repasse</th>
-								<th colspan="4">Valor do repasse</th>
-							</tr>
-							<tr>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.fatura.profissional.dadosBasico.nome}" /></td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.dadosTabelaValorRepasse}" /></td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.valor}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-							</tr>
-						</table>
-					</div>
-				</p:outputPanel>
 
-				<p:outputPanel
-					rendered="#{lancamentoCalculado.dadosTabelaMetodoRepasse == 'PRO'}"
-					style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
-					<div style="padding: 10px;">
-						<div style="width: 100%; padding: 5px; text-align: center">
-							(<b>Valor Recebido</b> / <b>Valor total da fatura</b>) * <b>Valor
-								de Repasse</b>
+		<p:dialog id="dlgCalculoRepasse" widgetVar="dlgCalculoRepasse"
+			header="Cálculo de Repasse" responsive="true" modal="true"
+			width="60%">
+			<p:panel id="pnCalculoRepasse">
+				<p:repeat
+					value="#{repasseProfissionalComReciboMB.lancamentosCalculados}"
+					var="lancamentoCalculado">
+					<p:outputPanel
+						rendered="#{lancamentoCalculado.dadosTabelaMetodoRepasse == 'POR'}"
+						style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
+						<div style="padding: 10px;">
+							<div style="width: 100%; padding: 5px; text-align: center">
+								(<b>Valor Recebido</b> - <b>Taxas/Tarifas</b> - <b>Tributos</b>
+								- <b>Custos Diretos</b>) * <b>Perc. Repasse</b>
+							</div>
+							<p:separator styleClass="SeparatorFull" />
+							<p:dataTable value="#{repasseProfissionalComReciboMB.oneValue}"
+								styleClass="fakeTable">
+								<p:column>
+									<table style="width: 100%" class="traceRepasse">
+										<tr>
+											<th colspan="8">Procedimento</th>
+											<th colspan="4">Valor Recebido</th>
+										</tr>
+										<tr>
+											<td colspan="8"><h:outputText
+													value="#{lancamentoCalculado.rfl.faturaItem.descricaoItem}" /></td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.rfl.lancamentoOrigem.valor}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+										</tr>
+										<tr>
+											<th colspan="4">Item de dedução</th>
+											<th colspan="4">Base de cálculo</th>
+											<th colspan="4">Valor da dedução</th>
+										</tr>
+										<tr>
+											<td colspan="4">Taxa</td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.dadosCalculoPercTaxa}">
+													<f:convertNumber maxFractionDigits="2" type="percent" />
+												</h:outputText></td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.dadosCalculoValorTaxa}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+										</tr>
+										<tr>
+											<td colspan="4">Tarifa</td>
+											<td colspan="4"></td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.dadosCalculoValorTarifa}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+										</tr>
+										<tr>
+											<td colspan="4">Tributo</td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.dadosCalculoPercTributo}">
+													<f:convertNumber maxFractionDigits="2" type="percent" />
+												</h:outputText></td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.dadosCalculoValorTributo}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+										</tr>
+										<tr>
+											<td colspan="8">Total:</td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.dadosCalculoTotalReducao}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+										</tr>
+										<tr>
+											<td colspan="8">Valor recebido descontando as deduções
+												acima:</td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.dadosCalculoRecebidoMenosReducao}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+										</tr>
+										<tr>
+											<th colspan="1">Valor do procedimento</th>
+											<th colspan="1">Valor Custos Diretos</th>
+											<th colspan="1">Valor sem custos diretos</th>
+											<th colspan="1">Valor total da fatura</th>
+											<th colspan="2">Percentual Item/Fatura</th>
+											<th colspan="2">Percentual de dedução</th>
+											<th colspan="4">Valor a deduzir do pagamento</th>
+										</tr>
+										<tr>
+											<td colspan="1"><h:outputText
+													value="#{lancamentoCalculado.rfl.faturaItem.valorComDesconto}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+											<td colspan="1"><h:outputText
+													value="#{lancamentoCalculado.dadosTabelaValorTotalCustosDiretos}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+											<td colspan="1"><h:outputText
+													value="#{lancamentoCalculado.dadosCalculoValorItemSemCusto}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+											<td colspan="1"><h:outputText
+													value="#{lancamentoCalculado.dadosTabelaValorTotalFatura}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+											<td colspan="2"><h:outputText
+													value="#{lancamentoCalculado.dadosCalculoPercItemSemCusto}">
+													<f:convertNumber maxFractionDigits="2" type="percent" />
+												</h:outputText></td>
+											<td colspan="2"><h:outputText
+													value="#{lancamentoCalculado.dadosCalculoInvPercItemSemCusto}">
+													<f:convertNumber maxFractionDigits="2" type="percent" />
+												</h:outputText></td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.dadosCalculoReducaoCustoDireto}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+										</tr>
+										<tr>
+											<td colspan="8">Valor sem descontos e custos diretos:</td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.dadosCalculoValorARepassarSemCusto}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+										</tr>
+										<tr>
+											<th colspan="4">Profissional</th>
+											<th colspan="4">Percentual de repasse</th>
+											<th colspan="4">Valor do repasse</th>
+										</tr>
+										<tr>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.fatura.profissional.dadosBasico.nome}" /></td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.dadosTabelaValorRepasse}" /></td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.valor}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+										</tr>
+									</table>
+								</p:column>
+							</p:dataTable>
 						</div>
-						<p:separator styleClass="SeparatorFull" />
-						<table style="width: 100%" class="traceRepassePro">
-							<tr>
-								<th colspan="8">Procedimento</th>
-								<th colspan="4">Valor Recebido</th>
-							</tr>
-							<tr>
-								<td colspan="8"><h:outputText
-										value="#{lancamentoCalculado.rfl.faturaItem.descricaoItem}" /></td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.rfl.lancamentoOrigem.valor}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-							</tr>
-							<tr>
-								<th colspan="2">Valor recebido</th>
-								<th colspan="2">Valor total da fatura</th>
-								<th colspan="2">Percentual Recebido/Total fatura</th>
-								<th colspan="2">Valor de Repasse do procedimento</th>
-								<th colspan="4">Valor do Repasse</th>
-							</tr>
-							<tr>
-								<td colspan="2"><h:outputText
-										value="#{lancamentoCalculado.rfl.lancamentoOrigem.valor}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-								<td colspan="2"><h:outputText
-										value="#{lancamentoCalculado.dadosTabelaValorTotalFatura}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-								<td colspan="2"><h:outputText
-										value="#{lancamentoCalculado.dadosCalculoPercLancamentoFatura}">
-										<f:convertNumber maxFractionDigits="2" type="percent" />
-									</h:outputText></td>
-								<td colspan="2"><h:outputText
-										value="#{lancamentoCalculado.dadosTabelaValorRepasse}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-								<td colspan="4"><h:outputText
-										value="#{lancamentoCalculado.valor}">
-										<f:convertNumber currencySymbol="R$"
-											maxFractionDigits="2" type="currency" />
-									</h:outputText></td>
-							</tr>
-						</table>
-					</div>
-				</p:outputPanel>
-				</p:repeat>			
-									     
+					</p:outputPanel>
+
+					<p:outputPanel
+						rendered="#{lancamentoCalculado.dadosTabelaMetodoRepasse == 'PRO'}"
+						style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
+						<div style="padding: 10px;">
+							<div style="width: 100%; padding: 5px; text-align: center">
+								(<b>Valor Recebido</b> / <b>Valor total da fatura</b>) * <b>Valor
+									de Repasse</b>
+							</div>
+							<p:separator styleClass="SeparatorFull" />
+							<p:dataTable value="#{repasseProfissionalComReciboMB.oneValue}">
+								<p:column>
+									<table style="width: 100%" class="traceRepassePro">
+										<tr>
+											<th colspan="8">Procedimento</th>
+											<th colspan="4">Valor Recebido</th>
+										</tr>
+										<tr>
+											<td colspan="8"><h:outputText
+													value="#{lancamentoCalculado.rfl.faturaItem.descricaoItem}" /></td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.rfl.lancamentoOrigem.valor}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+										</tr>
+										<tr>
+											<th colspan="2">Valor recebido</th>
+											<th colspan="2">Valor total da fatura</th>
+											<th colspan="2">Percentual Recebido/Total fatura</th>
+											<th colspan="2">Valor de Repasse do procedimento</th>
+											<th colspan="4">Valor do Repasse</th>
+										</tr>
+										<tr>
+											<td colspan="2"><h:outputText
+													value="#{lancamentoCalculado.rfl.lancamentoOrigem.valor}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+											<td colspan="2"><h:outputText
+													value="#{lancamentoCalculado.dadosTabelaValorTotalFatura}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+											<td colspan="2"><h:outputText
+													value="#{lancamentoCalculado.dadosCalculoPercLancamentoFatura}">
+													<f:convertNumber maxFractionDigits="2" type="percent" />
+												</h:outputText></td>
+											<td colspan="2"><h:outputText
+													value="#{lancamentoCalculado.dadosTabelaValorRepasse}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+											<td colspan="4"><h:outputText
+													value="#{lancamentoCalculado.valor}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText></td>
+										</tr>
+									</table>
+								</p:column>
+							</p:dataTable>
+						</div>
+					</p:outputPanel>
+				</p:repeat>
+
 			</p:panel>
 		</p:dialog>
 		<p:dialog appendTo=":lume" closable="false" widgetVar="dlgGerarRecibo"
@@ -582,16 +606,15 @@
 					<p:commandButton styleClass="GreenButton" value="Gerar Recibo"
 						update="detalhesNovoRecibo,:lume:tabViewRepasseProfissional:dtPrincipal"
 						process="@this,detalhesNovoRecibo"
-						actionListener="#{repasseProfissionalComReciboMB.gerarRecibo}" 
-						oncomplete="PF('dtPrincipal').filter()"
-						/>
+						actionListener="#{repasseProfissionalComReciboMB.gerarRecibo}"
+						oncomplete="PF('dtPrincipal').filter()" />
 					<p:commandButton styleClass="NavyButton" value="Fechar"
 						process="@this"
 						actionListener="#{repasseProfissionalComReciboMB.cancelarRecibo}" />
 				</p:panelGrid>
 			</p:outputPanel>
 		</p:dialog>
-		
+
 
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
@@ -599,175 +622,177 @@
 					<p:tabView id="tabViewRepasseProfissional">
 						<p:tab title="Repasse Com Recibo">
 							<div class="ui-g ui-fluid">
-							<div class="ui-g-12 ui-lg-12">
-							<div class="card card-w-title">
-								<h1>Repasse dos Profissionais</h1>								
-								<p:fieldset legend="Filtros">
-									<p:outputPanel id="filtros">
-							
-										<p:panelGrid columns="3" layout="grid"
-											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
-											style="border:0px none; background-color:transparent;">
-											<h:panelGroup styleClass="md-combo" style="margin-top:8px">
-												<p:selectOneMenu id="filtroPeriodoRepasses"
-													value="#{repasseProfissionalComReciboMB.filtroPeriodo}">					
-													<f:selectItem itemValue="" itemLabel="Selecione" />
-													<f:selectItem itemValue="O" itemLabel="Ontem" />
-													<f:selectItem itemValue="H" itemLabel="Hoje" />
-													<f:selectItem itemValue="MA" itemLabel="Mês Anterior" />
-													<f:selectItem itemValue="M" itemLabel="Mês Atual" />
-													<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
-													<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
-													<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
-													<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />					
-													<p:ajax process="@this"
-														update="dataInicio dataFim"
-														listener="#{repasseProfissionalComReciboMB.actionTrocaDatas}" />
-												</p:selectOneMenu>
-												<p:outputLabel for="filtroPeriodoRepasses"
-													value="Período de execução dos procedimentos:" />
-											</h:panelGroup>
-											<h:panelGroup>
-												<p:outputLabel for="dataInicio"
-													value="Data Inicial da execução os Procedimentos:" />
-												<p:calendar id="dataInicio"
-													value="#{repasseProfissionalComReciboMB.dataInicio}"
-													autocomplete="false" />
-											</h:panelGroup>
-			
-											<h:panelGroup>
-												<p:outputLabel for="dataFim"
-													value="Data Final da execução os Procedimentos:" />
-												<p:calendar id="dataFim"
-													value="#{repasseProfissionalComReciboMB.dataFim}"
-													autocomplete="false" />
-											</h:panelGroup>
-										</p:panelGrid>
-										<p:panelGrid columns="2" layout="grid"
-											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
-											style="border:0px none; background-color:transparent;">
-										<h:panelGroup>
-											<p:outputLabel for="fitroProfissional"
-													value="Profissional:" />
-												<p:autoComplete dropdown="true" queryDelay="1000"
-													size="35" value="#{repasseProfissionalComReciboMB.profissional}"
-													id="fitroProfissional" minQueryLength="3"
-													completeMethod="#{repasseProfissionalComReciboMB.geraSugestoesProfissional}"
-													var="profissional"
-													itemLabel="#{profissional.dadosBasico.prefixoNome}"
-													itemValue="#{profissional}" converter="profissional"
-													forceSelection="true">
-												</p:autoComplete>
-											</h:panelGroup>
-										</p:panelGrid>
-										<p:panelGrid columns="8" layout="grid" id="pnFiltroStatus"
-											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
-											style="border:0px none; background-color:transparent;">
-											
-												<p:outputLabel for="semPendencias"
-													value="Buscar somente disponíveis para repasse: " />
-												<p:selectBooleanCheckbox id="semPendencias" disabled="#{repasseProfissionalComReciboMB.mesesAnteriores}"
-												value="#{repasseProfissionalComReciboMB.semPendencias}" >
-													<p:ajax listener="#{repasseProfissionalComReciboMB.mudaFiltroSemPendencia()}"
-													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
+								<div class="ui-g-12 ui-lg-12">
+									<div class="card card-w-title">
+										<h1>Repasse dos Profissionais</h1>
+										<p:fieldset legend="Filtros">
+											<p:outputPanel id="filtros">
+
+												<p:panelGrid columns="3" layout="grid"
+													styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+													style="border:0px none; background-color:transparent;">
+													<h:panelGroup styleClass="md-combo" style="margin-top:8px">
+														<p:selectOneMenu id="filtroPeriodoRepasses"
+															value="#{repasseProfissionalComReciboMB.filtroPeriodo}">
+															<f:selectItem itemValue="" itemLabel="Selecione" />
+															<f:selectItem itemValue="O" itemLabel="Ontem" />
+															<f:selectItem itemValue="H" itemLabel="Hoje" />
+															<f:selectItem itemValue="MA" itemLabel="Mês Anterior" />
+															<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+															<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+															<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+															<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+															<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+															<p:ajax process="@this" update="dataInicio dataFim"
+																listener="#{repasseProfissionalComReciboMB.actionTrocaDatas}" />
+														</p:selectOneMenu>
+														<p:outputLabel for="filtroPeriodoRepasses"
+															value="Período de execução dos procedimentos:" />
+													</h:panelGroup>
+													<h:panelGroup>
+														<p:outputLabel for="dataInicio"
+															value="Data Inicial da execução os Procedimentos:" />
+														<p:calendar id="dataInicio"
+															value="#{repasseProfissionalComReciboMB.dataInicio}"
+															autocomplete="false" />
+													</h:panelGroup>
+
+													<h:panelGroup>
+														<p:outputLabel for="dataFim"
+															value="Data Final da execução os Procedimentos:" />
+														<p:calendar id="dataFim"
+															value="#{repasseProfissionalComReciboMB.dataFim}"
+															autocomplete="false" />
+													</h:panelGroup>
+												</p:panelGrid>
+												<p:panelGrid columns="2" layout="grid"
+													styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+													style="border:0px none; background-color:transparent;">
+													<h:panelGroup>
+														<p:outputLabel for="fitroProfissional"
+															value="Profissional:" />
+														<p:autoComplete dropdown="true" queryDelay="1000"
+															size="35"
+															value="#{repasseProfissionalComReciboMB.profissional}"
+															id="fitroProfissional" minQueryLength="3"
+															completeMethod="#{repasseProfissionalComReciboMB.geraSugestoesProfissional}"
+															var="profissional"
+															itemLabel="#{profissional.dadosBasico.prefixoNome}"
+															itemValue="#{profissional}" converter="profissional"
+															forceSelection="true">
+														</p:autoComplete>
+													</h:panelGroup>
+												</p:panelGrid>
+												<p:panelGrid columns="8" layout="grid" id="pnFiltroStatus"
+													styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+													style="border:0px none; background-color:transparent;">
+
+													<p:outputLabel for="semPendencias"
+														value="Buscar somente disponíveis para repasse: " />
+													<p:selectBooleanCheckbox id="semPendencias"
+														disabled="#{repasseProfissionalComReciboMB.mesesAnteriores}"
+														value="#{repasseProfissionalComReciboMB.semPendencias}">
+														<p:ajax
+															listener="#{repasseProfissionalComReciboMB.mudaFiltroSemPendencia()}"
+															process="@this,pnFiltroStatus" update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
-																					
-												<p:outputLabel for="mesesAnteriores"
-													value="Buscar todos os procedimentos executados sem pagamentos (ignora data):  " />
-												<p:selectBooleanCheckbox id="mesesAnteriores" disabled="#{repasseProfissionalComReciboMB.semPendencias}"
-												value="#{repasseProfissionalComReciboMB.mesesAnteriores}" >
-													<p:ajax listener="#{repasseProfissionalComReciboMB.mudaFiltroComPendencia()}"
-													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
-												</p:selectBooleanCheckbox>
-											
-										
-												<p:outputLabel for="procedimentosNaoExecutados"
-													value="Mostrar procedimentos agendados e não executados (ignora data): " />
-												<p:selectBooleanCheckbox id="procedimentosNaoExecutados"
-													value="#{repasseProfissionalComReciboMB.procedimentosNaoExecutados}" />		
-										
-											
-												<p:outputLabel for="mostrarRepasseAntigo"
-													value="Mostrar planos de tratamento do repasse antigo: " />
-												<p:selectBooleanCheckbox id="mostrarRepasseAntigo"
-													value="#{repasseProfissionalComReciboMB.mostrarRepasseAntigo}" />
-																																	
-										</p:panelGrid>	
-										<p:panelGrid columns="3" layout="grid"
-											styleClass="ui-panelgrid-blank form-group ui-fluid">
 
-											<p:commandButton id="pesquisarNovoRepasse"
-												icon="White fa fa-search" value="Pesquisar"
-												styleClass="OrangeButton"
-												actionListener="#{repasseProfissionalComReciboMB.pesquisar}"
-												process="@this, :lume:tabViewRepasseProfissional:filtros"
-												update=":lume:tabViewRepasseProfissional:dtPrincipal" 
-												oncomplete="PF('dtPrincipal').filter()"
-												/>
+													<p:outputLabel for="mesesAnteriores"
+														value="Buscar todos os procedimentos executados sem pagamentos (ignora data):  " />
+													<p:selectBooleanCheckbox id="mesesAnteriores"
+														disabled="#{repasseProfissionalComReciboMB.semPendencias}"
+														value="#{repasseProfissionalComReciboMB.mesesAnteriores}">
+														<p:ajax
+															listener="#{repasseProfissionalComReciboMB.mudaFiltroComPendencia()}"
+															process="@this,pnFiltroStatus" update="pnFiltroStatus" />
+													</p:selectBooleanCheckbox>
 
-											<h:panelGroup>
-												<p:splitButton icon="White fa fa fa-file-excel-o"
-													value="Exportar tabela para Excel"
-													styleClass="GreenSplitButton"
-													actionListener="#{repasseProfissionalComReciboMB.exportarTabela('xls')}"
-													ajax="false" process="dtPrincipal, @this"
-													update="@this" immediate="true"
-													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-													<p:fileDownload
-														value="#{repasseProfissionalComReciboMB.arquivoDownload}" />
+													<p:outputLabel for="procedimentosNaoExecutados"
+														value="Mostrar procedimentos agendados e não executados (ignora data): " />
+													<p:selectBooleanCheckbox id="procedimentosNaoExecutados"
+														value="#{repasseProfissionalComReciboMB.procedimentosNaoExecutados}" />
 
-													<p:menuitem value="Exportar tabela para PDF"
-														icon="fa fa fa-file-pdf-o"
-														actionListener="#{repasseProfissionalComReciboMB.exportarTabela('pdf')}"
-														ajax="false" process="dtPrincipal, @this"
-														immediate="true"
-														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-														<p:fileDownload
-															value="#{repasseProfissionalComReciboMB.arquivoDownload}" />
-													</p:menuitem>
-												</p:splitButton>
-											</h:panelGroup>
-										</p:panelGrid>
-									</p:outputPanel>
-									
-									<p:panelGrid columns="4" layout="grid"
-										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
-										<p:commandButton value="Gerar Recibo dos Repasses Selecionados"
-											process="@this, :lume:tabViewRepasseProfissional:dtPrincipal"
-											actionListener="#{repasseProfissionalComReciboMB.prepararRecibo}"
-											update=":lume:gerarReciboPnl" />
-									</p:panelGrid>
-									
-									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-											id="dtPrincipal"
-											value="#{repasseProfissionalComReciboMB.entityList}" var="ptp"
-											rows="30" paginator="true" rowKey="#{ptp}"
-											paginatorPosition="bottom" widgetVar="dtPrincipal"
-											binding="#{repasseProfissionalComReciboMB.tabelaRepasse}"
-											selection="#{repasseProfissionalComReciboMB.ptpsSelecionados}"
-											>
-											<f:facet name="header">Procedimentos</f:facet>
-											<p:column selectionMode="multiple" style="width:16px;" />
+
+													<p:outputLabel for="mostrarRepasseAntigo"
+														value="Mostrar planos de tratamento do repasse antigo: " />
+													<p:selectBooleanCheckbox id="mostrarRepasseAntigo"
+														value="#{repasseProfissionalComReciboMB.mostrarRepasseAntigo}" />
+
+												</p:panelGrid>
+												<p:panelGrid columns="3" layout="grid"
+													styleClass="ui-panelgrid-blank form-group ui-fluid">
+
+													<p:commandButton id="pesquisarNovoRepasse"
+														icon="White fa fa-search" value="Pesquisar"
+														styleClass="OrangeButton"
+														actionListener="#{repasseProfissionalComReciboMB.pesquisar}"
+														process="@this, :lume:tabViewRepasseProfissional:filtros"
+														update=":lume:tabViewRepasseProfissional:dtPrincipal"
+														oncomplete="PF('dtPrincipal').filter()" />
+
+													<h:panelGroup>
+														<p:splitButton icon="White fa fa fa-file-excel-o"
+															value="Exportar tabela para Excel"
+															styleClass="GreenSplitButton"
+															actionListener="#{repasseProfissionalComReciboMB.exportarTabela('xls')}"
+															ajax="false" process="dtPrincipal, @this" update="@this"
+															immediate="true"
+															onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+															<p:fileDownload
+																value="#{repasseProfissionalComReciboMB.arquivoDownload}" />
+
+															<p:menuitem value="Exportar tabela para PDF"
+																icon="fa fa fa-file-pdf-o"
+																actionListener="#{repasseProfissionalComReciboMB.exportarTabela('pdf')}"
+																ajax="false" process="dtPrincipal, @this"
+																immediate="true"
+																onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+																<p:fileDownload
+																	value="#{repasseProfissionalComReciboMB.arquivoDownload}" />
+															</p:menuitem>
+														</p:splitButton>
+													</h:panelGroup>
+												</p:panelGrid>
+											</p:outputPanel>
+
+											<p:panelGrid columns="4" layout="grid"
+												styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
+												<p:commandButton
+													value="Gerar Recibo dos Repasses Selecionados"
+													process="@this, :lume:tabViewRepasseProfissional:dtPrincipal"
+													actionListener="#{repasseProfissionalComReciboMB.prepararRecibo}"
+													update=":lume:gerarReciboPnl" />
+											</p:panelGrid>
+
+											<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+												id="dtPrincipal"
+												value="#{repasseProfissionalComReciboMB.entityList}"
+												var="ptp" rows="30" paginator="true" rowKey="#{ptp}"
+												paginatorPosition="bottom" widgetVar="dtPrincipal"
+												binding="#{repasseProfissionalComReciboMB.tabelaRepasse}"
+												selection="#{repasseProfissionalComReciboMB.ptpsSelecionados}">
+												<f:facet name="header">Procedimentos</f:facet>
+												<p:column selectionMode="multiple" style="width:16px;" />
 												<p:column width="12%" headerText="Ações">
 													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
-													title="Visualizar Fatura"
-													oncomplete="PF('dlgFaturaView').show();"
-													actionListener="#{faturaPagtoMB.visualizaFatura(repasseProfissionalComReciboMB.getFaturaFromPtp(ptp))}"
-													process="@this" disabled="#{repasseProfissionalComReciboMB.getFaturaFromPtp(ptp) eq null  or 
+														title="Visualizar Fatura"
+														oncomplete="PF('dlgFaturaView').show();"
+														actionListener="#{faturaPagtoMB.visualizaFatura(repasseProfissionalComReciboMB.getFaturaFromPtp(ptp))}"
+														process="@this"
+														disabled="#{repasseProfissionalComReciboMB.getFaturaFromPtp(ptp) eq null  or 
 													repasseProfissionalComReciboMB.getFaturaFromPtp(ptp).ativo eq 'N' }"
-													update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
-													<p:commandButton icon="fa fa-calculator" styleClass="NavyButton"
-													title="Visualizar Cálculo Repasse"													
-													actionListener="#{repasseProfissionalComReciboMB.mostraCalculoRepasse(ptp)}"
-													process="@this"
-													update=":lume:pnCalculoRepasse" />
-													<p:commandButton icon="fa fa-dollar" styleClass="NavyButton"
-													title="Calcular Repasse manual"													
-													actionListener="#{repasseProfissionalComReciboMB.faturaManual(ptp)}"
-													oncomplete="PF('dtPrincipal').filter()"
-													process="@this"
-													update="dtPrincipal,:lume:pnCalculoRepasse" />			
+														update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+													<p:commandButton icon="fa fa-calculator"
+														styleClass="NavyButton" title="Visualizar Cálculo Repasse"
+														actionListener="#{repasseProfissionalComReciboMB.mostraCalculoRepasse(ptp)}"
+														process="@this" update=":lume:pnCalculoRepasse" />
+													<p:commandButton icon="fa fa-dollar"
+														styleClass="NavyButton" title="Calcular Repasse manual"
+														actionListener="#{repasseProfissionalComReciboMB.faturaManual(ptp)}"
+														oncomplete="PF('dtPrincipal').filter()" process="@this"
+														update="dtPrincipal,:lume:pnCalculoRepasse" />
 												</p:column>
 												<p:column
 													filterBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
@@ -797,10 +822,9 @@
 														update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 
 												</p:column>
-												<p:column
-													filterBy="#{ptp.planoTratamento.descricao}"
+												<p:column filterBy="#{ptp.planoTratamento.descricao}"
 													sortBy="#{ptp.planoTratamento.descricao}"
-													filterMatchMode="contains" 
+													filterMatchMode="contains"
 													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
 													<f:facet name="header">
 														<h:outputText value="Plano de tratamento" />
@@ -808,16 +832,14 @@
 													<h:outputText title="#{ptp.id}"
 														value="#{ptp.planoTratamento.descricao}" />
 												</p:column>
-												<p:column
-													filterBy="#{ptp.descricaoCompletaComFace}"
+												<p:column filterBy="#{ptp.descricaoCompletaComFace}"
 													sortBy="#{ptp.descricaoCompletaComFace}"
 													filterMatchMode="contains"
 													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
 													<f:facet name="header">
 														<h:outputText value="Procedimento" />
 													</f:facet>
-													<h:outputText
-														value="#{ptp.descricaoCompletaComFace}" />
+													<h:outputText value="#{ptp.descricaoCompletaComFace}" />
 												</p:column>
 												<p:column filterBy="#{ptp.dataFinalizadoStr}"
 													headerText="Data de Execução" filterMatchMode="contains"
@@ -825,57 +847,63 @@
 													<h:outputText value="#{ptp.dataFinalizadoStr}" />
 												</p:column>
 
-												<p:column filterBy="#{repasseProfissionalComReciboMB.valorTotal(ptp)}"
+												<p:column
+													filterBy="#{repasseProfissionalComReciboMB.valorTotal(ptp)}"
 													headerText="Valor total de repasse"
 													filterMatchMode="contains"
-													sortBy="#{repasseProfissionalComReciboMB.valorTotal(ptp)}">													
-													<p:commandLink													
-													process="@this" title="verificar custos diretos"
-													actionListener="#{pTPCustoDiretoMB.abreDialog(ptp)}"													
-													update=":lume:pnPTPCustoDireto, :lume:pnPTPCustoDiretoHeader,:lume:buttonsPTPCustoDireto" >
-													<h:outputText value="#{repasseProfissionalComReciboMB.valorTotal(ptp)}">
-														<f:convertNumber currencySymbol="R$ " type="currency" />
-													</h:outputText>
+													sortBy="#{repasseProfissionalComReciboMB.valorTotal(ptp)}">
+													<p:commandLink process="@this"
+														title="verificar custos diretos"
+														actionListener="#{pTPCustoDiretoMB.abreDialog(ptp)}"
+														update=":lume:pnPTPCustoDireto, :lume:pnPTPCustoDiretoHeader,:lume:buttonsPTPCustoDireto">
+														<h:outputText
+															value="#{repasseProfissionalComReciboMB.valorTotal(ptp)}">
+															<f:convertNumber currencySymbol="R$ " type="currency" />
+														</h:outputText>
 													</p:commandLink>
 												</p:column>
 
-												<p:column filterBy="#{repasseProfissionalComReciboMB.valorPago(ptp)}"
+												<p:column
+													filterBy="#{repasseProfissionalComReciboMB.valorPago(ptp)}"
 													headerText="Valor pago" filterMatchMode="contains"
 													sortBy="#{repasseProfissionalComReciboMB.valorPago(ptp)}">
-													<h:outputText value="#{repasseProfissionalComReciboMB.valorPago(ptp)}">
+													<h:outputText
+														value="#{repasseProfissionalComReciboMB.valorPago(ptp)}">
 														<f:convertNumber currencySymbol="R$ " type="currency" />
 													</h:outputText>
 												</p:column>
 
-												<p:column filterBy="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}"
+												<p:column
+													filterBy="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}"
 													headerText="Valor disponível para repasse"
 													filterMatchMode="contains"
-													sortBy="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}">	
-													<p:commandLink													
-													process="@this" title="verificar pendências"
-													actionListener="#{repasseProfissionalComReciboMB.verificaPendencias(ptp)}"	
-													oncomplete="PF('dlgPendencias').show()"												
-													update=":lume:dlgPendencias" >
-													<h:outputText value="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}" style="color: #{ repasseProfissionalComReciboMB.existemPendencias(ptp) ?'red':'none'}">
-														<f:convertNumber currencySymbol="R$ " type="currency" />
-													</h:outputText>
+													sortBy="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}">
+													<p:commandLink process="@this" title="verificar pendências"
+														actionListener="#{repasseProfissionalComReciboMB.verificaPendencias(ptp)}"
+														oncomplete="PF('dlgPendencias').show()"
+														update=":lume:dlgPendencias">
+														<h:outputText
+															value="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}"
+															style="color: #{ repasseProfissionalComReciboMB.existemPendencias(ptp) ?'red':'none'}">
+															<f:convertNumber currencySymbol="R$ " type="currency" />
+														</h:outputText>
 													</p:commandLink>
 												</p:column>
-											</p:dataTable>									
-								</p:fieldset>	
+											</p:dataTable>
+										</p:fieldset>
+									</div>
+								</div>
 							</div>
-							</div>
-							</div>									
 						</p:tab>
-						
-						
-						
-						
-						
-						
-						
-						
-							
+
+
+
+
+
+
+
+
+
 						<p:tab title="Recibos Emitidos">
 							<p:fieldset legend="Filtros">
 								<p:panelGrid columns="3" layout="grid"
@@ -992,27 +1020,28 @@
 										</p:confirm>
 									</p:commandButton>
 								</p:column>
-								<p:column headerText="Profissional" filterMatchMode="contains" width="20%"
-									filterBy="#{recibo.profissional.dadosBasico.nome}"
+								<p:column headerText="Profissional" filterMatchMode="contains"
+									width="20%" filterBy="#{recibo.profissional.dadosBasico.nome}"
 									sortBy="#{recibo.profissional.dadosBasico.nome}">
 									<h:outputText value="#{recibo.profissional.dadosBasico.nome}" />
 								</p:column>
-								<p:column headerText="Descrição" filterMatchMode="contains" width="20%"
-									filterBy="#{recibo.descricao}" sortBy="#{recibo.descricao}">
+								<p:column headerText="Descrição" filterMatchMode="contains"
+									width="20%" filterBy="#{recibo.descricao}"
+									sortBy="#{recibo.descricao}">
 									<h:outputText value="#{recibo.descricao}" />
 								</p:column>
-								<p:column headerText="Aprovado?" filterMatchMode="contains" width="10%"
-									 filterBy="#{recibo.aprovadoStr}"
+								<p:column headerText="Aprovado?" filterMatchMode="contains"
+									width="10%" filterBy="#{recibo.aprovadoStr}"
 									sortBy="#{recibo.aprovadoStr}">
 									<h:outputText value="#{recibo.aprovadoStr}" />
 								</p:column>
-								<p:column headerText="Qtde. Repasses" filterMatchMode="contains" width="5%"
-									 filterBy="#{recibo.quantidadeRepasses}"
+								<p:column headerText="Qtde. Repasses" filterMatchMode="contains"
+									width="5%" filterBy="#{recibo.quantidadeRepasses}"
 									sortBy="#{recibo.quantidadeRepasses}">
 									<h:outputText value="#{recibo.quantidadeRepasses}" />
 								</p:column>
 								<p:column headerText="Valor Total de Repasse" width="10%"
-									filterMatchMode="contains" 
+									filterMatchMode="contains"
 									filterBy="#{recibo.valorTotalRepasse}"
 									sortBy="#{recibo.valorTotalRepasse}">
 									<h:outputText value="#{recibo.valorTotalRepasse}">
@@ -1022,14 +1051,14 @@
 								</p:column>
 							</p:dataTable>
 						</p:tab>
-						
-						
-						
-						
-						
-						
-						
-						
+
+
+
+
+
+
+
+
 					</p:tabView>
 
 				</div>
