@@ -2,6 +2,7 @@ package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,6 +11,8 @@ import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
@@ -87,33 +90,40 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public FaturaPagtoMB() {
         super(FaturaSingleton.getInstance().getBo());
         this.setClazz(Fatura.class);
-        try {
-            //Calendar daysAgo = Calendar.getInstance();
-            //daysAgo.add(Calendar.DAY_OF_MONTH, -7);
-            //setInicio(daysAgo.getTime());
-            //Calendar now = Calendar.getInstance();
-            //setFim(now.getTime());
-
-            setFormasPagamento(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma"));
-            setListaStatus(new ArrayList<>());
-            getListaStatus().add(Fatura.StatusFatura.PAGO.getRotulo());
-            getListaStatus().add(Fatura.StatusFatura.PENDENTE.getRotulo());
-            getListaStatus().add(Fatura.StatusFatura.TODOS.getRotulo());
-            setStatus(Fatura.StatusFatura.PENDENTE.getRotulo());
-            setShowLancamentosCancelados(false);
-            carregarProfissionais();
-
-            String idpaciente = JSFHelper.getRequest().getParameter("id");
-            if (idpaciente != null && !idpaciente.isEmpty()) {
-                Paciente pac = PacienteSingleton.getInstance().getBo().find(Long.parseLong(idpaciente));
-                if (pac != null) {
-                    this.setPaciente(pac);
-                    pesquisar();
+        
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String url = request.getRequestURL().toString();
+        if (!url.contains("repasseComRecibo")) {
+        
+            try {
+                //Calendar daysAgo = Calendar.getInstance();
+                //daysAgo.add(Calendar.DAY_OF_MONTH, -7);
+                //setInicio(daysAgo.getTime());
+                //Calendar now = Calendar.getInstance();
+                //setFim(now.getTime());
+    
+                setFormasPagamento(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma"));
+                setListaStatus(new ArrayList<>());
+                getListaStatus().add(Fatura.StatusFatura.PAGO.getRotulo());
+                getListaStatus().add(Fatura.StatusFatura.PENDENTE.getRotulo());
+                getListaStatus().add(Fatura.StatusFatura.TODOS.getRotulo());
+                setStatus(Fatura.StatusFatura.PENDENTE.getRotulo());
+                setShowLancamentosCancelados(false);
+                carregarProfissionais();
+    
+                String idpaciente = JSFHelper.getRequest().getParameter("id");
+                if (idpaciente != null && !idpaciente.isEmpty()) {
+                    Paciente pac = PacienteSingleton.getInstance().getBo().find(Long.parseLong(idpaciente));
+                    if (pac != null) {
+                        this.setPaciente(pac);
+                        pesquisar();
+                    }
                 }
+            } catch (Exception e) {
+                LogIntelidenteSingleton.getInstance().makeLog(e);
             }
-        } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
+       // System.out.println("FaturaPagtoMB" + new Timestamp(System.currentTimeMillis()));
     }
 
     public boolean hasRequisitosCumprir(Lancamento lancamentoRepasse) {

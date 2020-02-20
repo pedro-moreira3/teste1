@@ -1,6 +1,7 @@
 package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,7 +13,9 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.servlet.http.HttpServletRequest;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
@@ -59,17 +62,27 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     //EXPORTAÇÃO TABELA
     private DataTable tabelaLancamentos, tabelaRecibos;
 
-    public ReciboRepasseProfissionalMB() {
-        super(ReciboRepasseProfissionalSingleton.getInstance().getBo());
+    public ReciboRepasseProfissionalMB() {        
+        super(ReciboRepasseProfissionalSingleton.getInstance().getBo());        
         this.setClazz(ReciboRepasseProfissional.class);
-        try {
+        
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String url = request.getRequestURL().toString();
+        if (!url.contains("repasseComRecibo")) {
+            try {
+                setFiltroStatus(StatusRecibo.TODOS);
+                actionTrocaDatasCriacaoRepasses(null);
+                actionTrocaDatasCriacaoRecibos(null);
+                pesquisarRepasses();
+            } catch (Exception e) {
+                LogIntelidenteSingleton.getInstance().makeLog(e);
+            }
+        }else {
             setFiltroStatus(StatusRecibo.TODOS);
             actionTrocaDatasCriacaoRepasses(null);
             actionTrocaDatasCriacaoRecibos(null);
-            pesquisarRepasses();
-        } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
+        //System.out.println("ReciboRepasseProfissionalMB" + new Timestamp(System.currentTimeMillis()));
     }
 
     public void cancelarRecibo(ReciboRepasseProfissional r) {

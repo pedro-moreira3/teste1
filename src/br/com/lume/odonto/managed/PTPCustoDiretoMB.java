@@ -3,6 +3,7 @@
  */
 package br.com.lume.odonto.managed;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class PTPCustoDiretoMB extends LumeManagedBean<PlanoTratamentoProcediment
     public PTPCustoDiretoMB() {
         super(PlanoTratamentoProcedimentoSingleton.getInstance().getBo());
         this.setClazz(PlanoTratamentoProcedimento.class);
+       // System.out.println("PTPCustoDiretoMB" + new Timestamp(System.currentTimeMillis()));
     }
 
     public void abreDialog(PlanoTratamentoProcedimento ptp) {

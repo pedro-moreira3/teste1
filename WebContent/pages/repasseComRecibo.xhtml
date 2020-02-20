@@ -764,15 +764,15 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
 													title="Detalhes do repasse"
 													oncomplete="PF('dlgFaturaView').show();"
-													actionListener="#{faturaPagtoMB.visualizaFatura(repasseProfissionalComReciboMB.getFaturaFromPtp(ptp))}"
-													process="@this" disabled="#{repasseProfissionalComReciboMB.getFaturaFromPtp(ptp) eq null  or 
-													repasseProfissionalComReciboMB.getFaturaFromPtp(ptp).ativo eq 'N' }"
+													actionListener="#{faturaPagtoMB.visualizaFatura(ptp.fatura)}"
+													process="@this" disabled="#{ptp.fatura eq null  or 
+													ptp.fatura.ativo eq 'N' }"
 													update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 													<p:commandButton icon="fa fa-calculator" styleClass="NavyButton"
 													title="Visualizar Cálculo Repasse"													
 													actionListener="#{repasseProfissionalComReciboMB.mostraCalculoRepasse(ptp)}"
-													process="@this" disabled="#{repasseProfissionalComReciboMB.getFaturaFromPtp(ptp) eq null  or 
-													repasseProfissionalComReciboMB.getFaturaFromPtp(ptp).ativo eq 'N' }"
+													process="@this" disabled="#{ptp.fatura eq null  or 
+													ptp.fatura.ativo eq 'N' }"
 													update=":lume:pnCalculoRepasse" />
 													<p:commandButton icon="fa fa-dollar" styleClass="NavyButton"
 													title="Recalcular Repasse"	 rendered="#{repasseProfissionalComReciboMB.admin}"												
@@ -836,38 +836,38 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													<h:outputText value="#{ptp.dataFinalizadoStr}" />
 												</p:column>
 
-												<p:column filterBy="#{repasseProfissionalComReciboMB.valorTotal(ptp)}"
+												<p:column filterBy="#{ptp.valorTotal}"
 													headerText="Valor total de repasse"
 													filterMatchMode="contains"
-													sortBy="#{repasseProfissionalComReciboMB.valorTotal(ptp)}">													
+													sortBy="#{ptp.valorTotal}">													
 													<p:commandLink													
 													process="@this" title="verificar custos diretos"
 													actionListener="#{pTPCustoDiretoMB.abreDialog(ptp)}"													
 													update=":lume:pnPTPCustoDireto, :lume:pnPTPCustoDiretoHeader,:lume:buttonsPTPCustoDireto" >
-													<h:outputText value="#{repasseProfissionalComReciboMB.valorTotal(ptp)}">
+													<h:outputText value="#{ptp.valorTotal}">
 														<f:convertNumber currencySymbol="R$ " type="currency" />
 													</h:outputText>
 													</p:commandLink>
 												</p:column>
 
-												<p:column filterBy="#{repasseProfissionalComReciboMB.valorPago(ptp)}"
+												<p:column filterBy="#{ptp.valorPago}"
 													headerText="Valor pago" filterMatchMode="contains"
-													sortBy="#{repasseProfissionalComReciboMB.valorPago(ptp)}">
-													<h:outputText value="#{repasseProfissionalComReciboMB.valorPago(ptp)}">
+													sortBy="#{ptp.valorPago}">
+													<h:outputText value="#{ptp.valorPago}">
 														<f:convertNumber currencySymbol="R$ " type="currency" />
 													</h:outputText>
 												</p:column>
 
-												<p:column filterBy="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}"
+												<p:column filterBy="#{ptp.valorDisponivel}"
 													headerText="Valor disponível para repasse"
 													filterMatchMode="contains"
-													sortBy="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}">	
+													sortBy="#{ptp.valorDisponivel}">	
 													<p:commandLink													
 													process="@this" title="verificar pendências"
 													actionListener="#{repasseProfissionalComReciboMB.verificaPendencias(ptp)}"	
 													oncomplete="PF('dlgPendencias').show()"												
 													update=":lume:dlgPendencias" >
-													<h:outputText value="#{repasseProfissionalComReciboMB.valorDisponivel(ptp)}" style="color: #{ repasseProfissionalComReciboMB.existemPendencias(ptp) ?'red':'none'}">
+													<h:outputText value="#{ptp.valorDisponivel}" style="color: #{ repasseProfissionalComReciboMB.existemPendencias(ptp) ?'red':'none'}">
 														<f:convertNumber currencySymbol="R$ " type="currency" />
 													</h:outputText>
 													</p:commandLink>

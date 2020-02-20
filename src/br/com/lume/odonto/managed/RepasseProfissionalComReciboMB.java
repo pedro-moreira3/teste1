@@ -1,6 +1,7 @@
 package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,6 +109,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Não foi possivel carregar a tela.", true);
         }
+        //System.out.println("RepasseProfissionalComReciboMB" + new Timestamp(System.currentTimeMillis()));
     }
 
     public void prepararRecibo() {
@@ -125,8 +127,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         lancamentoParaRecibo = new ArrayList<Lancamento>();
         for (PlanoTratamentoProcedimento ptp : ptpsSelecionados) {
             if (!existemPendencias(ptp)) {
-                Fatura fatura = getFaturaFromPtp(ptp);
-                if(fatura != null) {
+                Fatura fatura = ptp.getFatura();
+                if (fatura != null) {
                     List<Lancamento> lancamentos = fatura.getLancamentos();
                     Profissional dentistaExecutor = ptp.getDentistaExecutor();
                     for (Lancamento lancamento : lancamentos) {
@@ -178,7 +180,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             } else {
                 if (!ReciboRepasseProfissionalSingleton.getInstance().gerarRecibo(lancamentosParaGerarRecibo, this.descricao, this.observacao, UtilsFrontEnd.getProfissionalLogado()))
                     throw new Exception();
-                pesquisar();
+                // pesquisar();
                 setPtpsSelecionados(null);
                 PrimeFaces.current().executeScript("PF('dlgGerarRecibo').hide()");
                 addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
@@ -191,7 +193,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public void aprovarRecibo(ReciboRepasseProfissional r) {
         ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(r, UtilsFrontEnd.getProfissionalLogado());
         addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
-        pesquisar();
+        // pesquisar();
     }
 
     public void preparaVisualizacao(ReciboRepasseProfissional recibo) {
@@ -280,54 +282,64 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         }
     }
 
-   // public void mudaFiltroSemPendencia() {
-  //     executadosSemPagamentos = false;
-  //  }
-
-   // public void mudaFiltroComPendencia() {
-   //     semPendencias = false;
-    //}
-
     public void pesquisar() {
         try {
-
             setEntityList(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listParaRepasseProfissionais(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), dataInicio, dataFim,
                     profissional, executadosSemPagamentos, procedimentosNaoExecutados, mostrarRepasseAntigo));
 
-            //precisa deixar apenas ptp sem pendencias
-            //pensar uma maneira melhor de tratar isso
-            //preciso retirar se ja tiver recibo aprovado...
-            //pensar uma maneira melhor de tratar isso            
-//            if (executadosSemPagamentos && getEntityList() != null && getEntityList().size() > 0) {
-//                List<PlanoTratamentoProcedimento> semMesesAnteriores = new ArrayList<PlanoTratamentoProcedimento>();
-//                semMesesAnteriores.addAll(getEntityList());
+//            if (semPendencias && getEntityList() != null && getEntityList().size() > 0) {
+//                //getEntityList().removeIf(ptp -> (existemPendencias(ptp) || valorDisponivel(ptp).compareTo(new BigDecimal(0)) == 0));
+//                List<PlanoTratamentoProcedimento> semPendencias = new ArrayList<PlanoTratamentoProcedimento>();
+//                semPendencias.addAll(getEntityList());
 //                for (PlanoTratamentoProcedimento ptp : getEntityList()) {
-//                    Fatura fatura = getFaturaFromPtp(ptp);
-//                    if (fatura != null && fatura.getLancamentos() != null) {
-//                        for (Lancamento lancamento : fatura.getLancamentos()) {
-//                            if (lancamento.getReciboRepasseAtivo() != null && lancamento.getReciboRepasseAtivo().getRecibo() != null && lancamento.getReciboRepasseAtivo().getRecibo().getAprovado() != null && lancamento.getReciboRepasseAtivo().getRecibo().getAprovado().equals(
-//                                    "S")) {
-//                                semMesesAnteriores.remove(ptp);
-//                            }
-//
-//                        }
+//                    if (existemPendencias(ptp) || valorDisponivel(ptp).compareTo(new BigDecimal(0)) == 0) {
+//                        semPendencias.remove(ptp);
 //                    }
 //                }
-//                setEntityList(semMesesAnteriores);
-//            }
+//                setEntityList(semPendencias);
+//            }            
 
-            //precisa deixar apenas ptp sem pendencias
-            //pensar uma maneira melhor de tratar isso
-            if (semPendencias && getEntityList() != null && getEntityList().size() > 0) {
-                List<PlanoTratamentoProcedimento> semPendencias = new ArrayList<PlanoTratamentoProcedimento>();
-                semPendencias.addAll(getEntityList());
-                for (PlanoTratamentoProcedimento ptp : getEntityList()) {
-                    if (existemPendencias(ptp) || valorDisponivel(ptp).compareTo(new BigDecimal(0)) == 0) {
-                        semPendencias.remove(ptp);
+            List<PlanoTratamentoProcedimento> novaLista = new ArrayList<PlanoTratamentoProcedimento>();
+            novaLista.addAll(getEntityList());
+            if (getEntityList() != null && getEntityList().size() > 0) {
+                //precisa deixar apenas ptp sem pendencias
+                //pensar uma maneira melhor de tratar isso
+                for (PlanoTratamentoProcedimento ptp : getEntityList()) {                
+                    if (semPendencias && existemPendencias(ptp)) {
+                        novaLista.remove(ptp);
                     }
                 }
-                setEntityList(semPendencias);
-            }
+                
+                setEntityList(new ArrayList<PlanoTratamentoProcedimento>());
+                for (PlanoTratamentoProcedimento ptp : novaLista) {
+                    if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
+                        RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
+                        if (repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
+                            ptp.setFatura(repasseFaturas.getFaturaRepasse());
+                        }
+                    } else {
+                        //repasse antigo, quando ainda nao tinha ptp no repasse fatura
+                        RepasseFaturasItem repasseFaturasItem = RepasseFaturasItemSingleton.getInstance().getBo().getItemOrigemFromRepasse(ptp);
+                        if (repasseFaturasItem != null && repasseFaturasItem.getFaturaItemRepasse() != null && repasseFaturasItem.getFaturaItemRepasse().getFatura() != null) {
+                            ptp.setFatura(repasseFaturasItem.getFaturaItemRepasse().getFatura());
+                        }
+                    } 
+                    if(ptp.getFatura() != null) {
+                        ptp.setValorTotal(FaturaSingleton.getInstance().getTotal(ptp.getFatura()));  
+                        ptp.setValorPago(FaturaSingleton.getInstance().getTotalPago(ptp.getFatura()));
+                        ptp.setValorDisponivel(ptp.getValorTotal().subtract(ptp.getValorPago()));  
+                    }
+                    if(ptp.getValorTotal() == null) {
+                        ptp.setValorTotal(new BigDecimal(0));
+                    }
+                    if(ptp.getValorDisponivel() == null) {
+                        ptp.setValorDisponivel(new BigDecimal(0));
+                    }
+                    getEntityList().add(ptp);
+                }
+                
+                
+            }           
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -341,9 +353,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
             if (ptp.getPlanoTratamento().getRegistroAntigo() != null && ptp.getPlanoTratamento().getRegistroAntigo().equals("S")) {
                 this.addError("Erro", "Plano de tratamento criado no modelo antigo. realizar o repasse na aba de Repasse Antigo.", true);
-            } 
+            }
             RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), ptp.getDentistaExecutor());
-            addInfo("Sucesso", "Repasse recalculado!");           
+            addInfo("Sucesso", "Repasse recalculado!");
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -355,7 +367,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         //TODO hoje so mostra calculo quando tem  lancamento de origem, ou seja, quando empresa validar pagamento do paciente antes de receber.
         //if(validaPagamentoPaciente) {
         setEntity(ptp);
-        Fatura fatura = getFaturaFromPtp(ptp);
+        Fatura fatura = ptp.getFatura();
         // List<Lancamento> lancamentos =  fatura.getLancamentos();  
 
         // Fatura faturaOrigem = fatura.getRepassesOriginamEstaFatura().get(0).getFaturaOrigem();
@@ -382,35 +394,34 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     //se nao tem, vamos do jeito antigo:
                     //tentando pegar do lancamento de origem:
                     if (repasse == null) {
-                        repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(
-                                lancamentoCalculado);
-                       
+                        repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(lancamentoCalculado);
+
                     }
                     //nao conseguimos achar repasse
-                    if (repasse != null) {                  
+                    if (repasse != null) {
 
                         //PARA INATIVAR OS
                         //RepasseFaturasItemSingleton.getInstance().inativaItemRepasseProfissional(getFaturaFromPtp(ptp).getItens().get(0), 
                         //        repasseFaturas, ptp.getDentistaExecutor(), true);
-    
+
                         lancamentoCalculado.setRfl(repasse);
-    
+
                         //por prioridade pegamos o lancamento de origem, se nao tivermos é pq a fatura foi gerada
                         //sem ter orcamento nem fatura de cliente, portanto pegamos do destino.
                         Lancamento lancamentoParaCalculo = repasse.getLancamentoOrigem();
                         if (lancamentoParaCalculo == null) {
                             lancamentoParaCalculo = repasse.getLancamentoRepasse();
                         }
-    
+
                         lancamentoCalculado.setPtp(ptp);
-    
+
                         // Calculos necessários para mostragem na tabela
                         lancamentoCalculado.setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
                         lancamentoCalculado.setDadosTabelaPercItem(
                                 fatura.getItensFiltered().get(0).getValorComDesconto().divide(lancamentoCalculado.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP).multiply(
                                         BigDecimal.valueOf(100)));
-                        lancamentoCalculado.setDadosTabelaValorProcComPercItem(String.format("R$ %.2f",
-                                fatura.getItensFiltered().get(0).getValorComDesconto().doubleValue()) + " (" + String.format("%.2f%%", lancamentoCalculado.getDadosTabelaPercItem().doubleValue()) + ")");
+                        lancamentoCalculado.setDadosTabelaValorProcComPercItem(String.format("R$ %.2f", fatura.getItensFiltered().get(0).getValorComDesconto().doubleValue()) + " (" + String.format(
+                                "%.2f%%", lancamentoCalculado.getDadosTabelaPercItem().doubleValue()) + ")");
                         lancamentoCalculado.setDadosTabelaValorTotalCustosDiretos(
                                 PlanoTratamentoProcedimentoCustoSingleton.getInstance().getCustoDiretoFromPTP(lancamentoCalculado.getPtp()).setScale(2, BigDecimal.ROUND_HALF_UP));
                         lancamentoCalculado.setDadosTabelaValorRecebidoComFormaPagto(String.format("R$ %.2f", lancamentoParaCalculo.getValor()) + " " + lancamentoParaCalculo.getFormaPagamentoStr());
@@ -425,9 +436,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             lancamentoCalculado.setDadosTabelaMetodoRepasse("PRO");
                         }
                         lancamentoCalculado.setDadosTabelaMetodoRepasseComValor(lancamentoCalculado.getDadosTabelaMetodoRepasse() + " - " + lancamentoCalculado.getDadosTabelaValorRepasse());
-    
+
                         // Calculos necessários para mostragem da explicação do cálculo
-                        lancamentoCalculado.setDadosCalculoPercLancamentoFatura(lancamentoParaCalculo.getValor().divide(lancamentoCalculado.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
+                        lancamentoCalculado.setDadosCalculoPercLancamentoFatura(
+                                lancamentoParaCalculo.getValor().divide(lancamentoCalculado.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
                         lancamentoCalculado.setDadosCalculoPercTaxa(
                                 (lancamentoParaCalculo.getTarifa() != null ? lancamentoParaCalculo.getTarifa().getTaxa().divide(BigDecimal.valueOf(100)) : BigDecimal.ZERO));
                         lancamentoCalculado.setDadosCalculoValorTaxa(lancamentoCalculado.getDadosCalculoPercTaxa().multiply(lancamentoParaCalculo.getValor()));
@@ -443,7 +455,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                 lancamentoCalculado.getDadosCalculoValorTaxa().add(lancamentoCalculado.getDadosCalculoValorTarifa()).add(lancamentoCalculado.getDadosCalculoValorTributo()));
                         lancamentoCalculado.setDadosCalculoRecebidoMenosReducao(
                                 lancamentoParaCalculo.getValor().subtract(lancamentoCalculado.getDadosCalculoTotalReducao()).setScale(2, BigDecimal.ROUND_HALF_UP));
-    
+
                         lancamentoCalculado.setDadosCalculoValorItemSemCusto(
                                 fatura.getItensFiltered().get(0).getValorComDesconto().subtract(lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos()).setScale(2, BigDecimal.ROUND_HALF_UP));
                         lancamentoCalculado.setDadosCalculoPercItemSemCusto(
@@ -451,10 +463,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         lancamentoCalculado.setDadosCalculoInvPercItemSemCusto(BigDecimal.valueOf(1).subtract(lancamentoCalculado.getDadosCalculoPercItemSemCusto()));
                         lancamentoCalculado.setDadosCalculoReducaoCustoDireto(
                                 lancamentoCalculado.getDadosCalculoRecebidoMenosReducao().multiply(lancamentoCalculado.getDadosCalculoInvPercItemSemCusto()).setScale(2, BigDecimal.ROUND_HALF_UP));
-    
+
                         lancamentoCalculado.setDadosCalculoValorARepassarSemCusto(
                                 lancamentoCalculado.getDadosCalculoRecebidoMenosReducao().subtract(lancamentoCalculado.getDadosCalculoReducaoCustoDireto()).setScale(2, BigDecimal.ROUND_HALF_UP));
-                        lancamentosCalculados.add(lancamentoCalculado);                    
+                        lancamentosCalculados.add(lancamentoCalculado);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -476,8 +488,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
         if (ptp.getPlanoTratamento().getRegistroAntigo() != null && ptp.getPlanoTratamento().getRegistroAntigo().equals("S")) {
             pendencias.add("Plano de tratamento criado no modelo antigo. realizar o repasse na aba de Repasse Antigo.");
-        }
-
+        }        
+        if(ptp.getDentistaExecutor() != null && Profissional.FIXO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
+            pendencias.add("Dentista executor com tipo de remuneração fixa");            
+            
+        }        
         if (this.validaConferenciaCustosDiretos && (ptp.getCustoDiretoValido() == null || ptp.getCustoDiretoValido().equals("N"))) {
             pendencias.add("Custos diretos ainda não conferidos;");
         }
@@ -491,9 +506,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                 pendencias.add("Não existe orçamento aprovado para o paciente;");
             }
         }
-        if (this.validaPagamentoPaciente && getFaturaFromPtp(ptp) == null) {
+        if (this.validaPagamentoPaciente && ptp.getFatura() == null) {
             pendencias.add("Paciente ainda não pagou o procedimento;");
         }
+        
+        
 
         if (pendencias == null || pendencias.size() == 0) {
             pendencias.add("Sem pendência!");
@@ -511,9 +528,13 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                 return true;
             }
             //TODO verificar esse caso
-            if (this.validaPagamentoPaciente && getFaturaFromPtp(ptp) == null) {
+            if (this.validaPagamentoPaciente && ptp.getFatura() == null) {
                 return true;
             }
+            
+            if(ptp.getDentistaExecutor() != null && Profissional.FIXO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
+                return true;
+            } 
 
         } catch (Exception e) {
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
@@ -524,40 +545,22 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         return false;
     }
 
-    public BigDecimal valorTotal(PlanoTratamentoProcedimento ptp) {
-        return FaturaSingleton.getInstance().getTotal(getFaturaFromPtp(ptp));
-    }
-
-    public BigDecimal valorPago(PlanoTratamentoProcedimento ptp) {
-        if (getFaturaFromPtp(ptp) != null) {
-            return FaturaSingleton.getInstance().getTotalPago(getFaturaFromPtp(ptp));
-        }
-        return new BigDecimal(0);
-    }
-
-    public BigDecimal valorDisponivel(PlanoTratamentoProcedimento ptp) {
-        if (!existemPendencias(ptp)) {
-            return valorTotal(ptp).subtract(valorPago(ptp));
-        }
-        return new BigDecimal(0);
-    }
-
-    public Fatura getFaturaFromPtp(PlanoTratamentoProcedimento ptp) {
-        if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
-            RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
-            if(repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
-                return repasseFaturas.getFaturaRepasse();
-            }
-        } else {
-            //repasse antigo, quando ainda nao tinha ptp no repasse fatura
-            RepasseFaturasItem repasseFaturasItem = RepasseFaturasItemSingleton.getInstance().getBo().getItemOrigemFromRepasse(ptp);
-            if (repasseFaturasItem == null || repasseFaturasItem.getFaturaItemRepasse() == null || repasseFaturasItem.getFaturaItemRepasse().getFatura() == null) {
-                return null;
-            }
-            return repasseFaturasItem.getFaturaItemRepasse().getFatura();
-        }
-        return null;
-    }
+//    public Fatura getFaturaFromPtp(PlanoTratamentoProcedimento ptp) {
+//        if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
+//            RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
+//            if(repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
+//                return repasseFaturas.getFaturaRepasse();
+//            }
+//        } else {
+//            //repasse antigo, quando ainda nao tinha ptp no repasse fatura
+//            RepasseFaturasItem repasseFaturasItem = RepasseFaturasItemSingleton.getInstance().getBo().getItemOrigemFromRepasse(ptp);
+//            if (repasseFaturasItem == null || repasseFaturasItem.getFaturaItemRepasse() == null || repasseFaturasItem.getFaturaItemRepasse().getFatura() == null) {
+//                return null;
+//            }
+//            return repasseFaturasItem.getFaturaItemRepasse().getFatura();
+//        }
+//        return null;
+//    }
 
     public List<Profissional> geraSugestoesProfissional(String query) {
         List<Profissional> sugestoes = new ArrayList<>();
@@ -613,14 +616,6 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public void setTabelaRepasse(DataTable tabelaRepasse) {
         this.tabelaRepasse = tabelaRepasse;
     }
-
-//    public String getStatus() {
-//        return status;
-//    }
-//
-//    public void setStatus(String status) {
-//        this.status = status;
-//    }
 
     public boolean isSemPendencias() {
         return semPendencias;
@@ -770,12 +765,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         return Arrays.asList(new Object());
     }
 
-    
     public boolean isExecutadosSemPagamentos() {
         return executadosSemPagamentos;
     }
 
-    
     public void setExecutadosSemPagamentos(boolean executadosSemPagamentos) {
         this.executadosSemPagamentos = executadosSemPagamentos;
     }
