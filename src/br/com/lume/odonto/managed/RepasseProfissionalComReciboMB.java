@@ -342,7 +342,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             } else {
                 this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
             }
-            RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, ptp.getDentistaExecutor(), ptp.getDentistaExecutor());
+            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), ptp.getDentistaExecutor());
         } catch (Exception e) {
 
             e.printStackTrace();
