@@ -36,6 +36,16 @@
     width: 2% !important;
 }
 
+body .fakeTable.ui-datatable tbody tr.ui-datatable-even {
+	background: none;
+}
+
+body.layout-compact .fakeTable.ui-datatable thead th {
+	display: none;
+}
+
+
+
 </style>	
 	
 		<p:outputPanel id="viewFaturaRepasse">
@@ -310,6 +320,8 @@
 							- <b>Custos Diretos</b>) * <b>Perc. Repasse</b>
 						</div>
 						<p:separator styleClass="SeparatorFull" />
+						<p:dataTable value="#{repasseProfissionalComReciboMB.oneValue}">
+						<p:column>
 						<table style="width: 100%" class="traceRepasse">
 							<tr>
 								<th colspan="8">Procedimento</th>
@@ -448,6 +460,8 @@
 									</h:outputText></td>
 							</tr>
 						</table>
+						</p:column>
+						</p:dataTable>
 					</div>
 				</p:outputPanel>
 
@@ -460,6 +474,8 @@
 								de Repasse</b>
 						</div>
 						<p:separator styleClass="SeparatorFull" />
+						<p:dataTable value="#{repasseProfissionalComReciboMB.oneValue}">
+						<p:column>
 						<table style="width: 100%" class="traceRepassePro">
 							<tr>
 								<th colspan="8">Procedimento</th>
@@ -508,6 +524,8 @@
 									</h:outputText></td>
 							</tr>
 						</table>
+						</p:column>
+						</p:dataTable>
 					</div>
 				</p:outputPanel>
 				</p:repeat>			
