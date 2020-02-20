@@ -568,8 +568,7 @@
 					<p:commandButton styleClass="GreenButton" value="Gerar Recibo"
 						update="detalhesNovoRecibo,:lume:tabViewRepasseProfissional:dtPrincipal"
 						process="@this,detalhesNovoRecibo"
-						actionListener="#{repasseProfissionalComReciboMB.gerarRecibo}" 
-						oncomplete="PF('dtPrincipal').filter()"
+						actionListener="#{repasseProfissionalComReciboMB.gerarRecibo}" 						
 						/>
 					<p:commandButton styleClass="NavyButton" value="Fechar"
 						process="@this"
@@ -589,8 +588,7 @@
 							<div class="card card-w-title">
 								<h1>Repasse dos Profissionais</h1>								
 								<p:fieldset legend="Filtros">
-									<p:outputPanel id="filtros">
-							
+									<p:outputPanel id="filtros">							
 										<p:panelGrid columns="3" layout="grid"
 											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 											style="border:0px none; background-color:transparent;">
@@ -652,16 +650,16 @@
 											
 												<p:outputLabel for="semPendencias"
 													value="Buscar somente disponíveis para repasse: " />
-												<p:selectBooleanCheckbox id="semPendencias" disabled="#{repasseProfissionalComReciboMB.mesesAnteriores}"
+												<p:selectBooleanCheckbox id="semPendencias" disabled="#{repasseProfissionalComReciboMB.executadosSemPagamentos}"
 												value="#{repasseProfissionalComReciboMB.semPendencias}" >
 													<p:ajax listener="#{repasseProfissionalComReciboMB.mudaFiltroSemPendencia()}"
 													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
 																					
-												<p:outputLabel for="mesesAnteriores"
-													value="Buscar todos os procedimentos executados sem pagamentos (ignora data):  " />
-												<p:selectBooleanCheckbox id="mesesAnteriores" disabled="#{repasseProfissionalComReciboMB.semPendencias}"
-												value="#{repasseProfissionalComReciboMB.mesesAnteriores}" >
+												<p:outputLabel for="executadosSemPagamentos"
+													value="Buscar todos os procedimentos executados sem pagamentos" />
+												<p:selectBooleanCheckbox id="executadosSemPagamentos" disabled="#{repasseProfissionalComReciboMB.semPendencias}"
+												value="#{repasseProfissionalComReciboMB.executadosSemPagamentos}" >
 													<p:ajax listener="#{repasseProfissionalComReciboMB.mudaFiltroComPendencia()}"
 													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
 												</p:selectBooleanCheckbox>
@@ -687,8 +685,7 @@
 												styleClass="OrangeButton"
 												actionListener="#{repasseProfissionalComReciboMB.pesquisar}"
 												process="@this, :lume:tabViewRepasseProfissional:filtros"
-												update=":lume:tabViewRepasseProfissional:dtPrincipal" 
-												oncomplete="PF('dtPrincipal').filter()"
+												update=":lume:tabViewRepasseProfissional:dtPrincipal" 											
 												/>
 
 											<h:panelGroup>
@@ -750,9 +747,8 @@
 													repasseProfissionalComReciboMB.getFaturaFromPtp(ptp).ativo eq 'N' }"
 													update=":lume:pnCalculoRepasse" />
 													<p:commandButton icon="fa fa-dollar" styleClass="NavyButton"
-													title="Calcular Repasse manual"	 rendered="#{repasseProfissionalComReciboMB.admin}"												
-													actionListener="#{repasseProfissionalComReciboMB.faturaManual(ptp)}"
-													oncomplete="PF('dtPrincipal').filter()"
+													title="Recalcular Repasse"	 rendered="#{repasseProfissionalComReciboMB.admin}"												
+													actionListener="#{repasseProfissionalComReciboMB.faturaManual(ptp)}"													
 													process="@this"
 													update="dtPrincipal,:lume:pnCalculoRepasse" />			
 												</p:column>

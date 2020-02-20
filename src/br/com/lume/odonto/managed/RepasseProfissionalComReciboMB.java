@@ -53,7 +53,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private static final long serialVersionUID = 1L;
     //private Logger log = Logger.getLogger(FaturaPagtoMB.class);
 
-    private boolean mesesAnteriores = false, semPendencias = true, procedimentosNaoExecutados = false, mostrarRepasseAntigo = false;
+    private boolean executadosSemPagamentos = false, semPendencias = true, procedimentosNaoExecutados = false, mostrarRepasseAntigo = false;
 
     //FILTROS
     private Date dataInicio;
@@ -126,20 +126,22 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         for (PlanoTratamentoProcedimento ptp : ptpsSelecionados) {
             if (!existemPendencias(ptp)) {
                 Fatura fatura = getFaturaFromPtp(ptp);
-                List<Lancamento> lancamentos = fatura.getLancamentos();
-                Profissional dentistaExecutor = ptp.getDentistaExecutor();
-                for (Lancamento lancamento : lancamentos) {
-                    if (lancamento.getAtivoStr().equals("Sim") && lancamento.getConferidoPorProfissional() == null) {
-                        Double valor = (lancamento.getValorComDesconto() == null || lancamento.getValorComDesconto().doubleValue() == 0d ? lancamento.getValor().doubleValue() : lancamento.getValorComDesconto().doubleValue());
-                        if (getProfissionaisRecibo() == null || getProfissionaisRecibo().indexOf(dentistaExecutor) < 0) {
-                            this.profissionaisReciboLancamentos.put(dentistaExecutor, new Integer(1));
-                            this.profissionaisReciboValores.put(dentistaExecutor, valor);
-                            this.profissionaisRecibo.add(dentistaExecutor);
-                        } else {
-                            this.profissionaisReciboLancamentos.put(dentistaExecutor, this.profissionaisReciboLancamentos.get(dentistaExecutor) + 1);
-                            this.profissionaisReciboValores.put(dentistaExecutor, this.profissionaisReciboValores.get(dentistaExecutor) + valor);
+                if(fatura != null) {
+                    List<Lancamento> lancamentos = fatura.getLancamentos();
+                    Profissional dentistaExecutor = ptp.getDentistaExecutor();
+                    for (Lancamento lancamento : lancamentos) {
+                        if (lancamento.getAtivoStr().equals("Sim") && lancamento.getConferidoPorProfissional() == null) {
+                            Double valor = (lancamento.getValorComDesconto() == null || lancamento.getValorComDesconto().doubleValue() == 0d ? lancamento.getValor().doubleValue() : lancamento.getValorComDesconto().doubleValue());
+                            if (getProfissionaisRecibo() == null || getProfissionaisRecibo().indexOf(dentistaExecutor) < 0) {
+                                this.profissionaisReciboLancamentos.put(dentistaExecutor, new Integer(1));
+                                this.profissionaisReciboValores.put(dentistaExecutor, valor);
+                                this.profissionaisRecibo.add(dentistaExecutor);
+                            } else {
+                                this.profissionaisReciboLancamentos.put(dentistaExecutor, this.profissionaisReciboLancamentos.get(dentistaExecutor) + 1);
+                                this.profissionaisReciboValores.put(dentistaExecutor, this.profissionaisReciboValores.get(dentistaExecutor) + valor);
+                            }
+                            lancamentoParaRecibo.add(lancamento);
                         }
-                        lancamentoParaRecibo.add(lancamento);
                     }
                 }
             }
@@ -279,7 +281,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     }
 
     public void mudaFiltroSemPendencia() {
-        mesesAnteriores = false;
+        executadosSemPagamentos = false;
     }
 
     public void mudaFiltroComPendencia() {
@@ -290,13 +292,13 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         try {
 
             setEntityList(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listParaRepasseProfissionais(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), dataInicio, dataFim,
-                    profissional, mesesAnteriores, procedimentosNaoExecutados, mostrarRepasseAntigo));
+                    profissional, executadosSemPagamentos, procedimentosNaoExecutados, mostrarRepasseAntigo));
 
             //precisa deixar apenas ptp sem pendencias
             //pensar uma maneira melhor de tratar isso
             //preciso retirar se ja tiver recibo aprovado...
             //pensar uma maneira melhor de tratar isso            
-            if (mesesAnteriores && getEntityList() != null && getEntityList().size() > 0) {
+            if (executadosSemPagamentos && getEntityList() != null && getEntityList().size() > 0) {
                 List<PlanoTratamentoProcedimento> semMesesAnteriores = new ArrayList<PlanoTratamentoProcedimento>();
                 semMesesAnteriores.addAll(getEntityList());
                 for (PlanoTratamentoProcedimento ptp : getEntityList()) {
@@ -339,11 +341,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
             if (ptp.getPlanoTratamento().getRegistroAntigo() != null && ptp.getPlanoTratamento().getRegistroAntigo().equals("S")) {
                 this.addError("Erro", "Plano de tratamento criado no modelo antigo. realizar o repasse na aba de Repasse Antigo.", true);
-            } else {
-                this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
-            }
-            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), ptp.getDentistaExecutor());            
-            
+            } 
+            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), ptp.getDentistaExecutor());
+            addInfo("Sucesso", "Repasse recalculado!");           
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -545,7 +545,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
     public Fatura getFaturaFromPtp(PlanoTratamentoProcedimento ptp) {
         if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
-            return  RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp).getFaturaRepasse();
+            RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
+            if(repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
+                return repasseFaturas.getFaturaRepasse();
+            }
         } else {
             //repasse antigo, quando ainda nao tinha ptp no repasse fatura
             RepasseFaturasItem repasseFaturasItem = RepasseFaturasItemSingleton.getInstance().getBo().getItemOrigemFromRepasse(ptp);
@@ -554,7 +557,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             }
             return repasseFaturasItem.getFaturaItemRepasse().getFatura();
         }
-
+        return null;
     }
 
     public List<Profissional> geraSugestoesProfissional(String query) {
@@ -756,14 +759,6 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         this.lancamentoParaRecibo = lancamentoParaRecibo;
     }
 
-    public boolean isMesesAnteriores() {
-        return mesesAnteriores;
-    }
-
-    public void setMesesAnteriores(boolean mesesAnteriores) {
-        this.mesesAnteriores = mesesAnteriores;
-    }
-
     public boolean isMostrarRepasseAntigo() {
         return mostrarRepasseAntigo;
     }
@@ -774,6 +769,16 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
     public Object getOneValue() {
         return Arrays.asList(new Object());
+    }
+
+    
+    public boolean isExecutadosSemPagamentos() {
+        return executadosSemPagamentos;
+    }
+
+    
+    public void setExecutadosSemPagamentos(boolean executadosSemPagamentos) {
+        this.executadosSemPagamentos = executadosSemPagamentos;
     }
 
 }
