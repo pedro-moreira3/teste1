@@ -414,7 +414,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 											maxFractionDigits="2" type="currency" />
 									</h:outputText></td>
 								<td colspan="1"><h:outputText
-										value="#{lancamentoCalculado.dadosTabelaValorTotalFatura}">
+										value="#{lancamentoCalculado.dadosTabelaValorTotalFaturaOrigem}">
 										<f:convertNumber currencySymbol="R$"
 											maxFractionDigits="2" type="currency" />
 									</h:outputText></td>
@@ -501,7 +501,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 											maxFractionDigits="2" type="currency" />
 									</h:outputText></td>
 								<td colspan="2"><h:outputText
-										value="#{lancamentoCalculado.dadosTabelaValorTotalFatura}">
+										value="#{lancamentoCalculado.dadosTabelaValorTotalFaturaOrigem}">
 										<f:convertNumber currencySymbol="R$"
 											maxFractionDigits="2" type="currency" />
 									</h:outputText></td>
@@ -586,7 +586,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 				<p:panelGrid columns="2" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
 					<p:commandButton styleClass="GreenButton" value="Gerar Recibo"
-						update="detalhesNovoRecibo,:lume:tabViewRepasseProfissional:dtPrincipal"
+						update="detalhesNovoRecibo,:lume:tabViewRepasseProfissional:dtPrincipalRepasse"
 						process="@this,detalhesNovoRecibo"
 						actionListener="#{repasseProfissionalComReciboMB.gerarRecibo}" 						
 						/>
@@ -675,7 +675,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
 												<p:outputLabel for="semPendencias"
-													value="Buscar somente disponíveis para repasse: " />
+													value="Buscar somente disponíveis para repasse " />
 												
 												<p:selectBooleanCheckbox id="executadosSemPagamentos" disabled="#{repasseProfissionalComReciboMB.semPendencias}"
 												value="#{repasseProfissionalComReciboMB.executadosSemPagamentos}" >
@@ -683,7 +683,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
 												</p:selectBooleanCheckbox>									
 												<p:outputLabel for="executadosSemPagamentos"
-													value="Buscar todos os procedimentos executados:" />
+													value="Buscar todos os procedimentos executados (ignora data)" />
 												
 											
 												<p:selectBooleanCheckbox id="procedimentosNaoExecutados" disabled="#{repasseProfissionalComReciboMB.semPendencias 
@@ -693,7 +693,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
 												<p:outputLabel for="procedimentosNaoExecutados"
-													value="Mostrar procedimentos com executor ainda não executados (ignora data): " />
+													value="Mostrar procedimentos com executor ainda não executados (ignora data) " />
 												
 												<p:selectBooleanCheckbox id="mostrarRepasseAntigo" disabled="#{repasseProfissionalComReciboMB.semPendencias}"
 													value="#{repasseProfissionalComReciboMB.mostrarRepasseAntigo}" >
@@ -701,7 +701,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													process="@this,pnFiltroStatus" update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
 												<p:outputLabel for="mostrarRepasseAntigo"
-													value="Mostrar somente planos de tratamento do repasse antigo: " />
+													value="Mostrar somente planos de tratamento do repasse antigo " />
 												
 																																	
 										</p:panelGrid>	
@@ -713,8 +713,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												styleClass="OrangeButton"
 												actionListener="#{repasseProfissionalComReciboMB.pesquisar}"
 												process="@this, :lume:tabViewRepasseProfissional:filtros"
-												update=":lume:tabViewRepasseProfissional:dtPrincipal" 		
-												oncomplete="PF('dtPrincipal').filter();"									
+												update=":lume:tabViewRepasseProfissional:dtPrincipalRepasse" 		
+												oncomplete="PF('dtPrincipalRepasse').filter();"									
 												/>
 
 											<h:panelGroup>
@@ -722,7 +722,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													value="Exportar tabela para Excel"
 													styleClass="GreenSplitButton"
 													actionListener="#{repasseProfissionalComReciboMB.exportarTabela('xls')}"
-													ajax="false" process="dtPrincipal, @this"
+													ajax="false" process=":lume:tabViewRepasseProfissional:dtPrincipalRepasse, @this"
 													update="@this" immediate="true"
 													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
@@ -732,7 +732,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													<p:menuitem value="Exportar tabela para PDF"
 														icon="fa fa fa-file-pdf-o"
 														actionListener="#{repasseProfissionalComReciboMB.exportarTabela('pdf')}"
-														ajax="false" process="dtPrincipal, @this"
+														ajax="false" process=":lume:tabViewRepasseProfissional:dtPrincipalRepasse, @this"
 														immediate="true"
 														onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 														<p:fileDownload
@@ -746,16 +746,16 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									<p:panelGrid columns="4" layout="grid"
 										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding moreSpace">
 										<p:commandButton value="Gerar Recibo dos Repasses Selecionados"
-											process="@this, :lume:tabViewRepasseProfissional:dtPrincipal"
+											process="@this, :lume:tabViewRepasseProfissional:dtPrincipalRepasse"
 											actionListener="#{repasseProfissionalComReciboMB.prepararRecibo}"
 											update=":lume:gerarReciboPnl" />
 									</p:panelGrid>
 									
 									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-											id="dtPrincipal"
+											id="dtPrincipalRepasse"
 											value="#{repasseProfissionalComReciboMB.entityList}" var="ptp"
 											paginator="false" rowKey="#{ptp}"
-											paginatorPosition="bottom" widgetVar="dtPrincipal"
+											paginatorPosition="bottom" widgetVar="dtPrincipalRepasse"
 											binding="#{repasseProfissionalComReciboMB.tabelaRepasse}"
 											selection="#{repasseProfissionalComReciboMB.ptpsSelecionados}"
 											>
@@ -779,8 +779,13 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													title="Recalcular Repasse"	 rendered="#{repasseProfissionalComReciboMB.admin}"												
 													actionListener="#{repasseProfissionalComReciboMB.faturaManual(ptp)}"													
 													process="@this"
-													oncomplete="PF('dtPrincipal').filter();"
-													update="dtPrincipal,:lume:pnCalculoRepasse" />			
+													oncomplete="PF('dtPrincipalRepasse').filter();"
+													update=":lume:tabViewRepasseProfissional:dtPrincipalRepasse,:lume:pnCalculoRepasse" >
+														<p:confirm header="Confirmação" icon="ui-icon-alert"
+														escape="false"
+														message="Cofirma o recálculo de repasse de profissional?">
+														</p:confirm>
+													</p:commandButton>			
 												</p:column>
 												<p:column
 													filterBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
@@ -1036,7 +1041,11 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 							</p:dataTable>
 						</p:tab>
 						
-						
+						<p:tab title="Repasse Antigo">
+
+							<ui:include src="faturamento.xhtml"></ui:include>
+
+						</p:tab>
 						
 						
 						
