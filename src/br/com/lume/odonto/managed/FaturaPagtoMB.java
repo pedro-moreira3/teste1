@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -125,30 +124,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         // System.out.println("FaturaPagtoMB" + new Timestamp(System.currentTimeMillis()));
     }
 
-    public Double getValorNaoPagoDisponivel(Fatura faturaRepasse) {
-        List<Lancamento> lancamentoDisponiveis = faturaRepasse.getLancamentos().stream().filter(l -> "N".equals(l.getValidado()) && isTodosRequisitosFeitos(l)).collect(Collectors.toList());
-        return LancamentoSingleton.getInstance().sumLancamentos(lancamentoDisponiveis);
-    }
-
     public boolean hasRequisitosCumprir(Lancamento lancamentoRepasse) {
-        List<Requisito> todosRequisitos = null;
-        if (lancamentoRepasse != null) {
-            todosRequisitos = getRequisitosValidaLancamentoFromRepasseFatura(lancamentoRepasse);
-        }
-        return todosRequisitos != null && todosRequisitos.size() > 0;
+        return FaturaSingleton.getInstance().hasRequisitosCumprir(UtilsFrontEnd.getEmpresaLogada(), lancamentoRepasse);
     }
 
     public boolean isTodosRequisitosFeitos(Lancamento lancamentoRepasse) {
-        List<Requisito> todosRequisitos = getRequisitosValidaLancamentoFromRepasseFatura(lancamentoRepasse);
-        if (todosRequisitos != null && todosRequisitos.size() > 0) {
-            List<Requisito> requisitosNaoFeitos = todosRequisitos.stream().filter(requisito -> !requisito.isRequisitoFeito()).collect(Collectors.toList());
-            return !(requisitosNaoFeitos != null && requisitosNaoFeitos.size() > 0);
-        } else
-            return true;
+        return FaturaSingleton.getInstance().isTodosRequisitosFeitos(UtilsFrontEnd.getEmpresaLogada(), lancamentoRepasse);
     }
 
     public List<Requisito> getRequisitosValidaLancamentoFromRepasseFatura(Lancamento lancamentoRepasse) {
-        return RepasseFaturasLancamentoSingleton.getInstance().getRequisitosValidaLancamentoFromRepasseFatura(UtilsFrontEnd.getEmpresaLogada(), lancamentoRepasse);
+        return FaturaSingleton.getInstance().getRequisitosValidaLancamentoFromRepasseFatura(UtilsFrontEnd.getEmpresaLogada(), lancamentoRepasse);
     }
 
     private void carregarProfissionais() throws Exception {
