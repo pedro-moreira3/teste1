@@ -135,7 +135,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     List<Lancamento> lancamentos = fatura.getLancamentos();
                     Profissional dentistaExecutor = ptp.getDentistaExecutor();
                     for (Lancamento lancamento : lancamentos) {
-                        if (lancamento.getAtivoStr().equals("Sim") && lancamento.getConferidoPorProfissional() == null) {
+                        
+                        
+                        if (lancamento.getAtivoStr().equals("Sim") && (lancamento.getValidado().equals("S") || !lancamento.getValidado().equals("S") &&
+                                FaturaSingleton.getInstance().isTodosRequisitosFeitos(UtilsFrontEnd.getEmpresaLogada(), lancamento)
+                                )) {
                             Double valor = (lancamento.getValorComDesconto() == null || lancamento.getValorComDesconto().doubleValue() == 0d ? lancamento.getValor().doubleValue() : lancamento.getValorComDesconto().doubleValue());
                             if (getProfissionaisRecibo() == null || getProfissionaisRecibo().indexOf(dentistaExecutor) < 0) {
                                 this.profissionaisReciboLancamentos.put(dentistaExecutor, new Integer(1));
@@ -319,10 +323,18 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         if (repasseFaturasItem != null && repasseFaturasItem.getFaturaItemRepasse() != null && repasseFaturasItem.getFaturaItemRepasse().getFatura() != null) {
                             ptp.setFatura(repasseFaturasItem.getFaturaItemRepasse().getFatura());
                         }
+<<<<<<< Upstream, based on origin/backend
                     }
                     if (ptp.getFatura() != null) {
                         ptp.setValorTotal(FaturaSingleton.getInstance().getTotal(ptp.getFatura()));
 
+=======
+                    } 
+                    ptp.setValorPago(new BigDecimal(0));
+                    if(ptp.getFatura() != null) {
+                        ptp.setValorTotal(FaturaSingleton.getInstance().getTotal(ptp.getFatura()));  
+                        
+>>>>>>> 7ce29db correcoes repasse
                         FaturaSingleton.getInstance().getTotalPago(ptp.getFatura());
 
                         ptp.setValorPago(FaturaSingleton.getInstance().getTotalPago(ptp.getFatura()));
@@ -403,6 +415,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
             RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado());
             addInfo("Sucesso", "Repasse recalculado!");
+            pesquisar();
         } catch (Exception e) {
             e.printStackTrace();
         }
