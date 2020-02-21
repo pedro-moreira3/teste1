@@ -12,7 +12,9 @@ import java.util.Locale;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -133,11 +135,18 @@ public class FaturamentoMB extends LumeManagedBean<PlanoTratamentoProcedimento> 
      //   custoBO = new CustoBO();
      //   motivoBO = new MotivoBO();
         this.setClazz(PlanoTratamentoProcedimento.class);
-        this.carregarPlanoTratamentoProcedimentos();
+        
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String url = request.getRequestURL().toString();
+        if (!url.contains("repasseComRecibo")) {
+            this.carregarPlanoTratamentoProcedimentos();
+        }
         mes = Calendar.getInstance().get(Calendar.MONTH) + 1;
         Empresa empresalogada = UtilsFrontEnd.getEmpresaLogada();
         nomeClinica = empresalogada.getEmpStrNme() != null ? empresalogada.getEmpStrNme() : "";
         endTelefoneClinica = (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() + " - " : "") + (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() + "/" : "") + (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() + " - " : "") + (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
+   
+    
     }
 
     public void carregarRepasseItens() {

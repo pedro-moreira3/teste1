@@ -87,7 +87,7 @@
 				update="buttonsPTPCustoDireto" styleClass="GreenButton"
 				disabled="#{pTPCustoDiretoMB.entity.custoDiretoValido == 'S' or !pTPCustoDiretoMB.admin}"
 				actionListener="#{pTPCustoDiretoMB.validarCustosDiretos}"
-				oncomplete="PF('dtPrincipal').filter();"
+				oncomplete="PF('dtPrincipalRepasse').filter();"
 				>
 				<p:confirm header="Confirmação" icon="ui-icon-alert" escape="false"
 					message="Você tem certeza que deseja validar a conferência dos custos diretos? &lt;br/&gt; Esta é uma operação irreversível!">
