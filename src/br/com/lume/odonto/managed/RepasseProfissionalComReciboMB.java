@@ -322,9 +322,15 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         ptp.setValorTotal(FaturaSingleton.getInstance().getTotal(ptp.getFatura()));  
                         ptp.setValorPago(FaturaSingleton.getInstance().getTotalPago(ptp.getFatura()));
                         
-                        ptp.setValorDisponivel(ptp.getValorTotal().subtract(ptp.getValorPago()));  
-                        
-                        //FaturaSingleton.getInstance().getValorNaoPagoDisponivel(ptp.getFatura());
+                        //ptp.setValorDisponivel(ptp.getValorTotal().subtract(ptp.getValorPago()));  
+                       // ptp.setValorDisponivel(new BigDecimal(FaturaSingleton.getInstance().getValorNaoPagoDisponivel(ptp.getFatura())));
+                        BigDecimal valorDisponivel = new BigDecimal(0);
+                        for (Lancamento lancamento : ptp.getFatura().getLancamentos()) {     
+                            if(lancamento.isAtivo() && lancamento.getValidado().equals("N")) {
+                                valorDisponivel = valorDisponivel.add(lancamento.getValor());
+                            }    
+                        }
+                        ptp.setValorDisponivel(valorDisponivel);                        
                     }
                     if(ptp.getValorTotal() == null) {
                         ptp.setValorTotal(new BigDecimal(0));
@@ -533,8 +539,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         if (this.validaExecucaoProcedimento && (ptp.getDataFinalizado() == null || ptp.getDentistaExecutor() == null)) {
             pendencias.add("Procedimento ainda não executado;");
         }
-        if (this.validaPagamentoPaciente && ptp.getFatura() != null && (ptp.getFatura().getLancamentos() == null || ptp.getFatura().getLancamentos().size() == 0 )) {          
-            
+        if (this.validaPagamentoPaciente && ptp.getFatura() != null && (ptp.getFatura().getLancamentos() == null || ptp.getFatura().getLancamentos().size() == 0 )) {    
             pendencias.add("Paciente ainda não pagou o procedimento;");
         }
         if (this.validaConferenciaCustosDiretos && (ptp.getCustoDiretoValido() == null || ptp.getCustoDiretoValido().equals("N"))) {
