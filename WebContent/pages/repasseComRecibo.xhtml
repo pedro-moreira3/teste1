@@ -778,6 +778,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													title="Recalcular Repasse"	 rendered="#{repasseProfissionalComReciboMB.admin}"												
 													actionListener="#{repasseProfissionalComReciboMB.faturaManual(ptp)}"													
 													process="@this"
+													oncomplete="PF('dtPrincipal').filter();"
 													update="dtPrincipal,:lume:pnCalculoRepasse" />			
 												</p:column>
 												<p:column

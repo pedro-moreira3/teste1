@@ -353,11 +353,15 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
             if (ptp.getPlanoTratamento().getRegistroAntigo() != null && ptp.getPlanoTratamento().getRegistroAntigo().equals("S")) {
                 this.addError("Erro", "Plano de tratamento criado no modelo antigo. realizar o repasse na aba de Repasse Antigo.", true);
+                return;
             }
+            if(ptp.getDentistaExecutor() != null && Profissional.FIXO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
+                this.addError("Erro", "Dentista executor com tipo de remuneração fixa");     
+                return;                
+            }              
             RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), ptp.getDentistaExecutor());
             addInfo("Sucesso", "Repasse recalculado!");
         } catch (Exception e) {
-
             e.printStackTrace();
         }
     }
@@ -487,10 +491,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         pendencias = new ArrayList<String>();
 
         if (ptp.getPlanoTratamento().getRegistroAntigo() != null && ptp.getPlanoTratamento().getRegistroAntigo().equals("S")) {
-            pendencias.add("Plano de tratamento criado no modelo antigo. realizar o repasse na aba de Repasse Antigo.");
+            pendencias.add("Plano de tratamento criado no modelo antigo. realizar o repasse na aba de Repasse Antigo;");
         }        
         if(ptp.getDentistaExecutor() != null && Profissional.FIXO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
-            pendencias.add("Dentista executor com tipo de remuneração fixa");            
+            pendencias.add("Dentista executor com tipo de remuneração fixa;");            
             
         }        
         if (this.validaConferenciaCustosDiretos && (ptp.getCustoDiretoValido() == null || ptp.getCustoDiretoValido().equals("N"))) {
@@ -521,20 +525,29 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public boolean existemPendencias(PlanoTratamentoProcedimento ptp) {
 
         try {
+            if (ptp.getPlanoTratamento().getRegistroAntigo() != null && ptp.getPlanoTratamento().getRegistroAntigo().equals("S")) {
+                return true;
+            }        
+            if(ptp.getDentistaExecutor() != null && Profissional.FIXO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
+                return true;           
+                
+            }        
             if (this.validaConferenciaCustosDiretos && (ptp.getCustoDiretoValido() == null || ptp.getCustoDiretoValido().equals("N"))) {
                 return true;
             }
             if (this.validaExecucaoProcedimento && (ptp.getDataFinalizado() == null || ptp.getDentistaExecutor() == null)) {
                 return true;
             }
-            //TODO verificar esse caso
+            if (this.validaPagamentoPaciente) {
+                if (ptp.getOrcamentoProcedimentos() == null || ptp.getOrcamentoProcedimentos().size() == 0 || ptp.getOrcamentoProcedimentos().get(
+                        0).getOrcamentoItem() == null || ptp.getOrcamentoProcedimentos().get(
+                                0).getOrcamentoItem().getOrcamento() == null || !ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getOrcamento().isAprovado()) {
+                    return true;
+                }
+            }
             if (this.validaPagamentoPaciente && ptp.getFatura() == null) {
                 return true;
             }
-            
-            if(ptp.getDentistaExecutor() != null && Profissional.FIXO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
-                return true;
-            } 
 
         } catch (Exception e) {
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
