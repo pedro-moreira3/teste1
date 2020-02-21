@@ -299,19 +299,12 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 //                setEntityList(semPendencias);
 //            }            
 
-            List<PlanoTratamentoProcedimento> novaLista = new ArrayList<PlanoTratamentoProcedimento>();
-            novaLista.addAll(getEntityList());
+           
+            //novaLista.addAll(getEntityList());
             if (getEntityList() != null && getEntityList().size() > 0) {
-                //precisa deixar apenas ptp sem pendencias
-                //pensar uma maneira melhor de tratar isso
-                for (PlanoTratamentoProcedimento ptp : getEntityList()) {                
-                    if (semPendencias && existemPendencias(ptp)) {
-                        novaLista.remove(ptp);
-                    }
-                }
-                
-                setEntityList(new ArrayList<PlanoTratamentoProcedimento>());
-                for (PlanoTratamentoProcedimento ptp : novaLista) {
+                   
+                List<PlanoTratamentoProcedimento> novaLista = new ArrayList<PlanoTratamentoProcedimento>();
+                for (PlanoTratamentoProcedimento ptp : getEntityList()) {
                     if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
                         RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
                         if (repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
@@ -335,7 +328,15 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     if(ptp.getValorDisponivel() == null) {
                         ptp.setValorDisponivel(new BigDecimal(0));
                     }
-                    getEntityList().add(ptp);
+                    novaLista.add(ptp);
+                }
+                
+                //precisa deixar apenas ptp sem pendencias
+                //pensar uma maneira melhor de tratar isso
+                for (PlanoTratamentoProcedimento ptp : novaLista) {                
+                    if (semPendencias && existemPendencias(ptp)) {
+                        getEntityList().remove(ptp);
+                    }
                 }
                 
                 
@@ -490,19 +491,6 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public void verificaPendencias(PlanoTratamentoProcedimento ptp) {
         pendencias = new ArrayList<String>();
 
-        if (ptp.getPlanoTratamento().getRegistroAntigo() != null && ptp.getPlanoTratamento().getRegistroAntigo().equals("S")) {
-            pendencias.add("Plano de tratamento criado no modelo antigo. realizar o repasse na aba de Repasse Antigo;");
-        }        
-        if(ptp.getDentistaExecutor() != null && Profissional.FIXO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
-            pendencias.add("Dentista executor com tipo de remuneração fixa;");            
-            
-        }        
-        if (this.validaConferenciaCustosDiretos && (ptp.getCustoDiretoValido() == null || ptp.getCustoDiretoValido().equals("N"))) {
-            pendencias.add("Custos diretos ainda não conferidos;");
-        }
-        if (this.validaExecucaoProcedimento && (ptp.getDataFinalizado() == null || ptp.getDentistaExecutor() == null)) {
-            pendencias.add("Procedimento ainda não executado;");
-        }
         if (this.validaPagamentoPaciente) {
             if (ptp.getOrcamentoProcedimentos() == null || ptp.getOrcamentoProcedimentos().size() == 0 || ptp.getOrcamentoProcedimentos().get(
                     0).getOrcamentoItem() == null || ptp.getOrcamentoProcedimentos().get(
@@ -510,8 +498,21 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                 pendencias.add("Não existe orçamento aprovado para o paciente;");
             }
         }
+        if (ptp.getPlanoTratamento().getRegistroAntigo() != null && ptp.getPlanoTratamento().getRegistroAntigo().equals("S")) {
+            pendencias.add("Plano de tratamento criado no modelo antigo. realizar o repasse na aba de Repasse Antigo;");
+        }        
+        if(ptp.getDentistaExecutor() != null && Profissional.FIXO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
+            pendencias.add("Dentista executor com tipo de remuneração fixa;");            
+            
+        } 
+        if (this.validaExecucaoProcedimento && (ptp.getDataFinalizado() == null || ptp.getDentistaExecutor() == null)) {
+            pendencias.add("Procedimento ainda não executado;");
+        }
         if (this.validaPagamentoPaciente && ptp.getFatura() == null) {
             pendencias.add("Paciente ainda não pagou o procedimento;");
+        }
+        if (this.validaConferenciaCustosDiretos && (ptp.getCustoDiretoValido() == null || ptp.getCustoDiretoValido().equals("N"))) {
+            pendencias.add("Custos diretos ainda não conferidos;");
         }
         
         
