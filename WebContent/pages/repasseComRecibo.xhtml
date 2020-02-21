@@ -306,6 +306,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 		</p:dialog>
 		
 		<p:dialog id="dlgCalculoRepasse" widgetVar="dlgCalculoRepasse" header="Cálculo de Repasse" responsive="true" modal="true" width="60%">
+			<p:scrollPanel mode="native" style="position: relative; width: 100%; height: 100%;">
 			<p:panel id="pnCalculoRepasse">
 				<p:repeat value="#{repasseProfissionalComReciboMB.lancamentosCalculados}" var="lancamentoCalculado">							     
 				<p:outputPanel
@@ -528,6 +529,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 				</p:repeat>			
 									     
 			</p:panel>
+			</p:scrollPanel>
 		</p:dialog>
 		<p:dialog appendTo=":lume" closable="false" widgetVar="dlgGerarRecibo"
 			header="Gerar recibo de pagamento" modal="true" width="70%">
