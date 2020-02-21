@@ -339,7 +339,6 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     }
                 }
                 
-                
             }           
 
         } catch (Exception e) {

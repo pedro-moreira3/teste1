@@ -713,7 +713,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												styleClass="OrangeButton"
 												actionListener="#{repasseProfissionalComReciboMB.pesquisar}"
 												process="@this, :lume:tabViewRepasseProfissional:filtros"
-												update=":lume:tabViewRepasseProfissional:dtPrincipal" 											
+												update=":lume:tabViewRepasseProfissional:dtPrincipal" 		
+												oncomplete="PF('dtPrincipal').filter();"									
 												/>
 
 											<h:panelGroup>
