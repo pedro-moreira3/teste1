@@ -125,6 +125,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         // System.out.println("FaturaPagtoMB" + new Timestamp(System.currentTimeMillis()));
     }
 
+    public Double getValorNaoPagoDisponivel(Fatura faturaRepasse) {
+        List<Lancamento> lancamentoDisponiveis = faturaRepasse.getLancamentos().stream().filter(l -> "N".equals(l.getValidado()) && isTodosRequisitosFeitos(l)).collect(Collectors.toList());
+        return LancamentoSingleton.getInstance().sumLancamentos(lancamentoDisponiveis);
+    }
+
     public boolean hasRequisitosCumprir(Lancamento lancamentoRepasse) {
         List<Requisito> todosRequisitos = null;
         if (lancamentoRepasse != null) {
