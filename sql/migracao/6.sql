@@ -240,3 +240,13 @@ update plano_tratamento_procedimento set dentista_executor_id = finalizado_por
 where dentista_executor_id is null and data_finalizado is not null
 
 --TODO verificar como popular plano_tratamento_procedimento_id do repasse_faturas para os antigos, quando so tinha procedimento
+
+
+
+
+
+
+
+
+ALTER TABLE PROFISSIONAL ADD COLUMN CRIADO_POR_ID BIGINT NULL REFERENCES PROFISSIONAL(ID);
+ALTER TABLE PROFISSIONAL ADD COLUMN DATA_CRIACAO TIMESTAMP(10) NULL;
