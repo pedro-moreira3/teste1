@@ -22,9 +22,11 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
+import br.com.lume.faturamento.FaturaItemSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
@@ -438,19 +440,22 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             for (Lancamento lancamento : lancamentos) {
                 try {
                     Lancamento lancamentoCalculado = lancamento;
-
-                    fatura.getRepassesOriginamEstaFatura();
-                    //verificando se conseguimos pegar pelo  ptp
-                    RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getBo().findByPtp(ptp);
                     RepasseFaturasLancamento repasse = null;
-                    if (repasseFaturas != null) {
-                        repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseFromRepasseFaturas(repasseFaturas);
-                    }
+                    FaturaItem itemOrigem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
+
+//                    ********** Código Removido pq esse getFaturaRepasseFromRepasseFaturas ta fazendo besteira
+//                    ********** Dúvida fala com o poncio                    
+//                    fatura.getRepassesOriginamEstaFatura();
+//                    //verificando se conseguimos pegar pelo  ptp
+//                    RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getBo().findByPtp(ptp);
+//                    if (repasseFaturas != null) {
+//                        repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseFromRepasseFaturas(repasseFaturas);
+//                    }
+
                     //se nao tem, vamos do jeito antigo:
-                    //tentando pegar do lancamento de origem:
+                    //tentando pegar do lancamento de origem:                    
                     if (repasse == null) {
                         repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(lancamentoCalculado);
-
                     }
                     //nao conseguimos achar repasse
                     if (repasse != null) {
@@ -479,9 +484,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             lancamentoCalculado.setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
                         }
 
-                        lancamentoCalculado.setDadosTabelaPercItem(
-                                fatura.getItensFiltered().get(0).getValorComDesconto().divide(lancamentoCalculado.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP).multiply(
-                                        BigDecimal.valueOf(100)));
+                        lancamentoCalculado.setDadosTabelaPercItem(repasse.getRepasseFaturas().getFaturaRepasse().getItensFiltered().get(0).getValorComDesconto().divide(
+                                lancamentoCalculado.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)));
                         lancamentoCalculado.setDadosTabelaValorProcComPercItem(String.format("R$ %.2f", fatura.getItensFiltered().get(0).getValorComDesconto().doubleValue()) + " (" + String.format(
                                 "%.2f%%", lancamentoCalculado.getDadosTabelaPercItem().doubleValue()) + ")");
                         lancamentoCalculado.setDadosTabelaValorTotalCustosDiretos(
@@ -490,7 +494,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         lancamentoCalculado.setDadosTabelaValorTaxasETarifas(
                                 LancamentoContabilSingleton.getInstance().getTaxasAndTarifasForLancamentoRecebimento(lancamentoParaCalculo).setScale(2, BigDecimal.ROUND_HALF_UP));
                         if (Profissional.PORCENTAGEM.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
-                            lancamentoCalculado.setDadosTabelaValorRepasse(String.format("%.2f%%", repasseFaturas.getValorCalculo()));
+                            lancamentoCalculado.setDadosTabelaValorRepasse(String.format("%.2f%%", repasse.getRepasseFaturas().getValorCalculo()));
                             lancamentoCalculado.setDadosTabelaMetodoRepasse("POR");
                         } else if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
                             BigDecimal valorRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(lancamentoCalculado.getPtp());
@@ -524,9 +528,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                 lancamentoParaCalculo.getValor().subtract(lancamentoCalculado.getDadosCalculoTotalReducao()).setScale(2, BigDecimal.ROUND_HALF_UP));
 
                         lancamentoCalculado.setDadosCalculoValorItemSemCusto(
-                                fatura.getItensFiltered().get(0).getValorComDesconto().subtract(lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                                itemOrigem.getValorComDesconto().subtract(lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos()).setScale(2, BigDecimal.ROUND_HALF_UP));
                         lancamentoCalculado.setDadosCalculoPercItemSemCusto(
-                                lancamentoCalculado.getDadosCalculoValorItemSemCusto().divide(lancamentoCalculado.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
+                                lancamentoCalculado.getDadosCalculoValorItemSemCusto().divide(lancamentoCalculado.getDadosTabelaValorTotalFaturaOrigem(), 4, BigDecimal.ROUND_HALF_UP));
                         lancamentoCalculado.setDadosCalculoInvPercItemSemCusto(BigDecimal.valueOf(1).subtract(lancamentoCalculado.getDadosCalculoPercItemSemCusto()));
                         lancamentoCalculado.setDadosCalculoReducaoCustoDireto(
                                 lancamentoCalculado.getDadosCalculoRecebidoMenosReducao().multiply(lancamentoCalculado.getDadosCalculoInvPercItemSemCusto()).setScale(2, BigDecimal.ROUND_HALF_UP));
