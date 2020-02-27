@@ -306,7 +306,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 										type="currency" />
 								</h:outputText>
 							</p:column>
-							<p:column filterMatchMode="contains" headerText="Validado?"
+							<p:column filterMatchMode="contains" headerText="Pago?"
 								filterBy="#{reciboLancamento.lancamento.validadoStr}"
 								sortBy="#{reciboLancamento.lancamento.validadoStr}" width="100">
 								<h:outputText value="#{reciboLancamento.lancamento.validadoStr}" />
@@ -736,7 +736,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 															update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
 													<p:outputLabel for="mostrarRepasseAntigo"
-														value="Mostrar somente planos de tratamento do repasse antigo " />
+														value="Mostrar somente repasses antigos" />
 
 
 												</p:panelGrid>
@@ -1023,14 +1023,14 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 										styleClass="NavyButton" icon="fa fa-eye" process="@this"
 										update=":lume:visualizarReciboPnl"
 										action="#{reciboRepasseProfissionalMB.preparaVisualizacao(recibo)}" />
-									<p:commandButton title="Aprovar Recibo"
-										styleClass="GreenButton" icon="fa fa-check"
+									<p:commandButton title="Pagar" styleClass="GreenButton"
+										icon="fa fa-check"
 										actionListener="#{reciboRepasseProfissionalMB.aprovarRecibo(recibo)}"
 										process="@this" update="dtRecibos"
 										disabled="#{!recibo.ativo || recibo.aprovado == 'S'}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											escape="false"
-											message="Você tem certeza que deseja aprovar este recibo? &lt;br/&gt; Os lançamentos &lt;b&gt;não validados&lt;/b&gt; serão validados neste momento, completando o repasse. &lt;br/&gt; Os lançamentos &lt;b&gt;já validados&lt;/b&gt; seguirão como estão, já validados e com histórico de pagamento.">
+											message="Você tem certeza que deseja aprovar o pagamento este recibo? &lt;br/&gt; Os lançamentos &lt;b&gt;não pagos&lt;/b&gt; serão pagos neste momento, completando o repasse. &lt;br/&gt; Os lançamentos &lt;b&gt;já validados&lt;/b&gt; seguirão como estão, já pagos e com histórico de pagamento.">
 										</p:confirm>
 									</p:commandButton>
 									<p:commandButton title="Cancelar Recibo" styleClass="RedButton"
@@ -1054,7 +1054,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									sortBy="#{recibo.descricao}">
 									<h:outputText value="#{recibo.descricao}" />
 								</p:column>
-								<p:column headerText="Aprovado?" filterMatchMode="contains"
+								<p:column headerText="Pago?" filterMatchMode="contains"
 									width="10%" filterBy="#{recibo.aprovadoStr}"
 									sortBy="#{recibo.aprovadoStr}">
 									<h:outputText value="#{recibo.aprovadoStr}" />
