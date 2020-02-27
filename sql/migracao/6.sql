@@ -243,10 +243,11 @@ where dentista_executor_id is null and data_finalizado is not null
 
 
 
-
-
-
-
-
 ALTER TABLE PROFISSIONAL ADD COLUMN CRIADO_POR_ID BIGINT NULL REFERENCES PROFISSIONAL(ID);
 ALTER TABLE PROFISSIONAL ADD COLUMN DATA_CRIACAO TIMESTAMP(10) NULL;
+
+-------------------- acima ja rodado -------------------------------
+
+UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_CAMINHO = 'reciboRepasseProfissional.jsf';
+UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Repasse dos Profissionais por Fatura' WHERE OBJ_STR_CAMINHO = 'repasseProfissional.jsf';
+UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Repasse dos Profissionais' WHERE OBJ_STR_CAMINHO = 'repasseComRecibo.jsf';
