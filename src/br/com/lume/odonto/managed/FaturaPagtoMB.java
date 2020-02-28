@@ -188,6 +188,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
          */
         setEntity(fatura);
         setShowLancamentosCancelados(false);
+        updateValues(fatura);
     }
 
     public PlanoTratamentoProcedimento buscaPTPOrigemRepasse(Lancamento l) {
@@ -282,6 +283,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         fatura.setDadosTabelaRepasseTotalNaoPlanejado(FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura));
         fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura));
         fatura.setDadosTabelaPT(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(fatura));
+        if (fatura.getTipoFatura() == Fatura.TipoFatura.PAGAMENTO_PROFISSIONAL)
+            fatura.setDadosTabelaRepassePlanoTratamento(fatura.getDadosTabelaPT());
 
         fatura.setDadosTabelaStatusFatura("A Receber");
         if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
