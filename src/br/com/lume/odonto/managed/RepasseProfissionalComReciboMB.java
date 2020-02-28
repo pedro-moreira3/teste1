@@ -553,6 +553,38 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         }
 
     }
+    
+    public void mudaCheckbox(String checkbox) {
+        if(checkbox.equals("semPendencias")) {
+            semPendencias = true;
+            executadosSemPagamentos = false;
+            procedimentosNaoExecutados = false;
+            mostrarRepasseAntigo = false;
+        }else if(checkbox.equals("executadosSemPagamentos")) {           
+            executadosSemPagamentos = true;
+            procedimentosNaoExecutados = false;
+            semPendencias = false;
+            mostrarRepasseAntigo = false;
+        }else if(checkbox.equals("procedimentosNaoExecutados")) {           
+            procedimentosNaoExecutados = true;
+            executadosSemPagamentos = false;  
+            semPendencias = false;
+            mostrarRepasseAntigo = false;
+        }else if(checkbox.equals("mostrarRepasseAntigo")) {           
+            mostrarRepasseAntigo = true;
+            procedimentosNaoExecutados = false;  
+            executadosSemPagamentos = false;  
+            semPendencias = false;
+        }
+        
+        
+        if(executadosSemPagamentos || procedimentosNaoExecutados || mostrarRepasseAntigo) {
+            semPendencias = false;
+        }
+        if(executadosSemPagamentos) {
+            procedimentosNaoExecutados = false;
+        }
+    }
 
     public void verificaPendencias(PlanoTratamentoProcedimento ptp) {
         pendencias = new ArrayList<String>();
