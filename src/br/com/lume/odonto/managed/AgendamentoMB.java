@@ -372,7 +372,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
         if ((procedimentosPickList.getSource().isEmpty() && procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado == null) || (!procedimentosPickList.getTarget().isEmpty() && planoTratamentoSelecionado != null)) {
 
-            //items para adicionar
+            //itens para adicionar
             List<AgendamentoPlanoTratamentoProcedimento> paraInserir = new ArrayList<>();
             for (AgendamentoPlanoTratamentoProcedimento aptpNovo : this.insereAgendamento(procedimentosPickList.getTarget())) {
                 aptpNovo.setAgendamento(getEntity());
@@ -443,12 +443,17 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                            
                             
                             //salvando dentista executor, pois ja sabemos quem deve receber. somente se ptp nao estiver finalizado.
-                            for (AgendamentoPlanoTratamentoProcedimento aptp : this.getEntity().getPlanoTratamentoProcedimentosAgendamento()) {                                
+                            for (AgendamentoPlanoTratamentoProcedimento aptp : this.getEntity().getPlanoTratamentoProcedimentosAgendamento()) {
                                 if(aptp.getPlanoTratamentoProcedimento() != null &&
                                         aptp.getPlanoTratamentoProcedimento().getDataFinalizado() == null) {
-                                    if(aptp.getPlanoTratamentoProcedimento().getDentistaExecutor() == null || !profissionalDentroAgenda.equals(aptp.getPlanoTratamentoProcedimento().getDentistaExecutor())) {
-                                        PlanoTratamentoProcedimentoSingleton.getInstance().alteraDentistaExecutor(aptp.getPlanoTratamentoProcedimento(),profissionalDentroAgenda);
-                                        PlanoTratamentoProcedimentoSingleton.getInstance().verificaRepasses(aptp.getPlanoTratamentoProcedimento());    
+                                    
+                                    if(aptp.getPlanoTratamentoProcedimento().getDentistaExecutor() == null || 
+                                            !profissionalDentroAgenda.equals(aptp.getPlanoTratamentoProcedimento().getDentistaExecutor()) ||
+                                            "Não Atendido".equals(this.getEntity().getStatusAgendamento().getDescricao())) {
+                                        
+                                        PlanoTratamentoProcedimentoSingleton.getInstance().alteraDentistaExecutor(aptp.getPlanoTratamentoProcedimento(), profissionalDentroAgenda);
+                                        PlanoTratamentoProcedimentoSingleton.getInstance().verificaRepasses(aptp.getPlanoTratamentoProcedimento(), UtilsFrontEnd.getProfissionalLogado());
+                                        
                                     }
                                 }
                                                                 
@@ -462,11 +467,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             }
                             profissionalDentroAgenda = null;
 
-                            try {
-                                RepasseFaturasSingleton.getInstance().verificaAgendamentoRepasse(getEntity(), UtilsFrontEnd.getProfissionalLogado());
-                            } catch (Exception e) {
-                                // Log...
-                            }
+//                            try {
+//                                RepasseFaturasSingleton.getInstance().verificaAgendamentoRepasse(getEntity(), UtilsFrontEnd.getProfissionalLogado());
+//                            } catch (Exception e) {
+//                                // Log...
+//                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                             this.actionNew(event);
@@ -485,11 +490,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             AgendamentoSingleton.getInstance().getBo().persist(this.getEntity());
                             this.actionNew(event);
 
-                            try {
-                                RepasseFaturasSingleton.getInstance().verificaAgendamentoRepasse(getEntity(), UtilsFrontEnd.getProfissionalLogado());
-                            } catch (Exception e) {
-                                // Log...
-                            }
+//                            try {
+//                                RepasseFaturasSingleton.getInstance().verificaAgendamentoRepasse(getEntity(), UtilsFrontEnd.getProfissionalLogado());
+//                            } catch (Exception e) {
+//                                // Log...
+//                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                             PrimeFaces.current().ajax().addCallbackParam("dlg", true);

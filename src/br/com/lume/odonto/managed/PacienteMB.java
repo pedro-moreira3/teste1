@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -122,6 +124,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private byte[] data;
 
     private boolean renderedPhotoCam;
+
+    private String image2Delete;
 
     private List<String> errosCarregarPaciente;
 
@@ -260,6 +264,11 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         renderedPhotoCam = true;
     }
 
+    public void removePhoto(ActionEvent event) {
+        this.image2Delete = this.getEntity().getNomeImagem();
+        this.getEntity().setNomeImagem(null);
+    }
+
     public void actionSalvarFoto(ActionEvent event) {
         try {
             this.getEntity().setNomeImagem(handleFoto(data, this.getEntity().getNomeImagem()));
@@ -277,7 +286,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
         if (targetFile == null || !targetFile.exists()) {
             nomeImagem = /** ultils */
-                    "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
+                    "FOTO_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
             targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
         }
         FileImageOutputStream imageOutput = new FileImageOutputStream(targetFile);
@@ -306,39 +315,39 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             addError("Erro", "Falha ao realizar upload. " + e.getMessage());
         }
     }
-    
+
     public void rodarImagem(ActionEvent event) {
-        if(uploadedFile != null) {           
-           try {
-               
-            InputStream in = new ByteArrayInputStream(uploadedFile.getContents());
-            BufferedImage image = ImageIO.read(in);
-            
-            final double rads = Math.toRadians(90);
-            final double sin = Math.abs(Math.sin(rads));
-            final double cos = Math.abs(Math.cos(rads));
-            final int w = (int) Math.floor(image.getWidth() * cos + image.getHeight() * sin);
-            final int h = (int) Math.floor(image.getHeight() * cos + image.getWidth() * sin);
-            final BufferedImage rotatedImage = new BufferedImage(w, h, image.getType());
-            final AffineTransform at = new AffineTransform();
-            at.translate(w / 2, h / 2);
-            at.rotate(rads,0, 0);
-            at.translate(-image.getWidth() / 2, -image.getHeight() / 2);
-            final AffineTransformOp rotateOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
-            rotateOp.filter(image,rotatedImage);
-           // System.out.println(uploadedFile.getFileName());
-           
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(rotatedImage, FilenameUtils.getExtension(uploadedFile.getFileName()), baos);
-            data = baos.toByteArray();
-            scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));           
-            System.out.println(scFoto);
-            ImageIO.write(rotatedImage, FilenameUtils.getExtension(uploadedFile.getFileName()), new File(uploadedFile.getFileName()));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-           
+        if (uploadedFile != null) {
+            try {
+
+                InputStream in = new ByteArrayInputStream(uploadedFile.getContents());
+                BufferedImage image = ImageIO.read(in);
+
+                final double rads = Math.toRadians(90);
+                final double sin = Math.abs(Math.sin(rads));
+                final double cos = Math.abs(Math.cos(rads));
+                final int w = (int) Math.floor(image.getWidth() * cos + image.getHeight() * sin);
+                final int h = (int) Math.floor(image.getHeight() * cos + image.getWidth() * sin);
+                final BufferedImage rotatedImage = new BufferedImage(w, h, image.getType());
+                final AffineTransform at = new AffineTransform();
+                at.translate(w / 2, h / 2);
+                at.rotate(rads, 0, 0);
+                at.translate(-image.getWidth() / 2, -image.getHeight() / 2);
+                final AffineTransformOp rotateOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+                rotateOp.filter(image, rotatedImage);
+                // System.out.println(uploadedFile.getFileName());
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ImageIO.write(rotatedImage, FilenameUtils.getExtension(uploadedFile.getFileName()), baos);
+                data = baos.toByteArray();
+                scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));
+                System.out.println(scFoto);
+                ImageIO.write(rotatedImage, FilenameUtils.getExtension(uploadedFile.getFileName()), new File(uploadedFile.getFileName()));
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -346,7 +355,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         try {
             UploadedFile file = event.getFile();
             InputStream inputStream = file.getInputstream();
-            errosCarregarPaciente = carregarPacienteSingleton.getInstance().getBo().carregarPacientes(inputStream, UtilsFrontEnd.getEmpresaLogada());
+            errosCarregarPaciente = carregarPacienteSingleton.getInstance().getBo().carregarPacientes(inputStream, UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getProfissionalLogado());
             geraLista();
 
             if (filtroStatus.equals("A")) {
@@ -559,6 +568,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.getEntity().setDataUltimaAlteracao(Calendar.getInstance().getTime());
             if (getEntity().getId() == null || getEntity().getId() == 0) {
                 getEntity().setDataCriacao(Calendar.getInstance().getTime());
+            }
+            
+            try {
+                if(this.image2Delete != null && !this.image2Delete.isEmpty()) {
+                    Files.deleteIfExists(Paths.get(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + this.image2Delete));
+                }
+            } catch (Exception e) {
+                // TODO: handle exception
             }
 
             boolean novoPaciente = getEntity().getId() == null || getEntity().getId().longValue() == 0;

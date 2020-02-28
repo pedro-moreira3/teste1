@@ -3,6 +3,7 @@
  */
 package br.com.lume.odonto.managed;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -31,11 +32,14 @@ public class PTPCustoDiretoMB extends LumeManagedBean<PlanoTratamentoProcediment
     public PTPCustoDiretoMB() {
         super(PlanoTratamentoProcedimentoSingleton.getInstance().getBo());
         this.setClazz(PlanoTratamentoProcedimento.class);
+       // System.out.println("PTPCustoDiretoMB" + new Timestamp(System.currentTimeMillis()));
     }
 
     public void abreDialog(PlanoTratamentoProcedimento ptp) {
         setEntity(ptp);
-        setCustos(PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().listFromPlanoTratamentoProcedimento(getEntity()));
+        if(ptp.getPlanoTratamentoProcedimentoCustos() != null) {
+            setCustos(ptp.getPlanoTratamentoProcedimentoCustos());
+        }
         PrimeFaces.current().executeScript("PF('dlgPTPCustoDireto').show()");
     }
 
@@ -45,7 +49,7 @@ public class PTPCustoDiretoMB extends LumeManagedBean<PlanoTratamentoProcediment
             getEntity().setDataCustoDiretoValidado(new Date());
             getEntity().setCustoDiretoValidadoPor(UtilsFrontEnd.getProfissionalLogado());
             PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(getEntity());
-            addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+            addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));           
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             addError("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));

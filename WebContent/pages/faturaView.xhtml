@@ -342,11 +342,11 @@ body .sideChkBox .ui-chkbox-label {
 								paginator="true" rowKey="#{l}" paginatorPosition="bottom"
 								id="lancamentosFatura">
 								<f:facet name="header">Lançamentos da Fatura</f:facet>
-								<p:column style="width:16px"
-									rendered="#{(repasseProfissional != null and repasseProfissional == 'S') and (faturaPagtoMB.hasRequisitosCumprir(l))}">
+								<p:column style="width: 16px;"
+									rendered="#{(repasseProfissional != null and repasseProfissional == 'S')}">
 									<p:rowToggler />
 								</p:column>
-								<p:column headerText="Ações" width="10%" exportable="false"
+								<p:column headerText="Ações" width="70" exportable="false"
 									rendered="#{(showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.admin)
 											 or (repasseProfissional != null or repasseProfissional == 'S')}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
@@ -395,24 +395,24 @@ body .sideChkBox .ui-chkbox-label {
 									headerText="Forma de Pagamento" sortBy="#{l.formaPagamentoStr}">
 									<h:outputText value="#{l.formaPagamentoStr}" />
 								</p:column>
-								<p:column sortBy="#{l.valor}" filterMatchMode="contains" width="10%"
-									filterBy="#{l.valor}" headerText="Valor"
+								<p:column sortBy="#{l.valor}" filterMatchMode="contains"
+									filterBy="#{l.valor}" headerText="Valor" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.valor}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:column>
-								<p:column sortBy="#{l.tributo}" filterMatchMode="contains" width="10%"
-									filterBy="#{l.tributo}" headerText="Tributos"
+								<p:column sortBy="#{l.tributo}" filterMatchMode="contains"
+									filterBy="#{l.tributo}" headerText="Tributos" width="5%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.tributoPerc}">
 										<f:convertNumber type="percent" maxFractionDigits="2" />
 									</h:outputText>
 								</p:column>
-								<p:column sortBy="#{l.dataPagamentoStr}" width="10%"
+								<p:column sortBy="#{l.dataPagamentoStr}"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterMatchMode="contains" filterBy="#{l.dataPagamentoStr}"
-									 headerText="Data de Pagamento">
+									width="10%" headerText="Data de Pagamento">
 									<h:outputText value="#{l.dataPagamentoStr}" />
 								</p:column>
 								<p:column sortBy="#{l.dataCreditoStr}"
@@ -422,7 +422,7 @@ body .sideChkBox .ui-chkbox-label {
 									<h:outputText value="#{l.dataCreditoStr}" />
 								</p:column>
 								<p:column sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
-									width="10%" filterMatchMode="contains"
+									width="5%" filterMatchMode="contains"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
 									headerText="Validado?">
@@ -436,53 +436,74 @@ body .sideChkBox .ui-chkbox-label {
 									<h:outputText
 										value="#{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
-								<p:column headerText="Status" sortBy="#{l.status}" width="10%"
+								<p:column headerText="Status" sortBy="#{l.status}" width="15%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterMatchMode="contains" filterBy="#{l.status}">
 									<h:outputText value="#{l.status}" />
 								</p:column>
-								<p:column headerText="Fatura Item" width="20%"
+								<p:column headerText="Fatura Item" width="25%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}">
 									<h:outputText
+										rendered="#{faturaPagtoMB.mostraProcedimentoOrigemRepasse(l)}"
 										value="Referente à '#{faturaPagtoMB.buscaProcedimentoOrigemRepasse(l)}'" />
 								</p:column>
 								<p:rowExpansion>
-									<p:panelGrid columns="1" layout="grid"
-										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding lancamentoExplain">
 
-										<h:panelGroup>
-											<p:outputPanel
-												rendered="#{faturaPagtoMB.isTodosRequisitosFeitos(l)}"
-												style="color: green; font-weight: bold;">
-												<h:outputText
-													value="Este lançamento está elegível para validação pois," />
-											</p:outputPanel>
-											<p:outputPanel
-												rendered="#{!faturaPagtoMB.isTodosRequisitosFeitos(l)}"
-												style="color: red; font-weight: bold;">
-												<h:outputText
-													value="Este lançamento não está elegível para validação pois," />
-											</p:outputPanel>
-										</h:panelGroup>
+									<p:outputPanel
+										rendered="#{faturaPagtoMB.hasRequisitosCumprir(l)}">
+										<p:panelGrid columns="1" layout="grid"
+											styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding lancamentoExplain">
 
-										<ui:repeat var="requisito"
-											value="#{faturaPagtoMB.getRequisitosValidaLancamentoFromRepasseFatura(l)}">
+											<h:panelGroup>
+												<p:outputPanel
+													rendered="#{faturaPagtoMB.isTodosRequisitosFeitos(l)}"
+													style="color: green; font-weight: bold;">
+													<h:outputText
+														value="Este lançamento está elegível para validação pois," />
+												</p:outputPanel>
+												<p:outputPanel
+													rendered="#{!faturaPagtoMB.isTodosRequisitosFeitos(l)}"
+													style="color: red; font-weight: bold;">
+													<h:outputText
+														value="Este lançamento não está elegível para validação pois," />
+												</p:outputPanel>
+											</h:panelGroup>
+
+											<ui:repeat var="requisito"
+												value="#{faturaPagtoMB.getRequisitosValidaLancamentoFromRepasseFatura(l)}">
+												<div style="display: flex;">
+													<img
+														src="../images/#{requisito.requisitoFeito ? 'ok' : 'no'}.png"
+														style="width: 24px;" />
+													<div
+														style="width: calc(100% - 24px); height: 24px; line-height: 24px; margin-left: 10px;">
+														<h:outputText rendered="#{requisito.requisitoFeito}"
+															style="color: green" value="#{requisito.descricao}" />
+														<h:outputText rendered="#{!requisito.requisitoFeito}"
+															style="color: red" value="#{requisito.descricao}" />
+													</div>
+												</div>
+											</ui:repeat>
+
+										</p:panelGrid>
+									</p:outputPanel>
+
+									<p:outputPanel
+										rendered="#{!faturaPagtoMB.hasRequisitosCumprir(l)}">
+										<p:panelGrid columns="1" layout="grid"
+											styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding lancamentoExplain">
 											<div style="display: flex;">
-												<img
-													src="../images/#{requisito.requisitoFeito ? 'ok' : 'no'}.png"
-													style="width: 24px;" />
+												<img src="../images/ok.png" style="width: 24px;" />
 												<div
 													style="width: calc(100% - 24px); height: 24px; line-height: 24px; margin-left: 10px;">
-													<h:outputText rendered="#{requisito.requisitoFeito}"
-														style="color: green" value="#{requisito.descricao}" />
-													<h:outputText rendered="#{!requisito.requisitoFeito}"
-														style="color: red" value="#{requisito.descricao}" />
+													<h:outputText style="color: green"
+														value="Não existem requisitos a serem cumpridos!" />
 												</div>
 											</div>
-										</ui:repeat>
+										</p:panelGrid>
+									</p:outputPanel>
 
-									</p:panelGrid>
 								</p:rowExpansion>
 							</p:dataTable>
 

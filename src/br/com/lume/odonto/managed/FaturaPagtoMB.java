@@ -6,10 +6,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
@@ -87,54 +88,52 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public FaturaPagtoMB() {
         super(FaturaSingleton.getInstance().getBo());
         this.setClazz(Fatura.class);
-        try {
-            //Calendar daysAgo = Calendar.getInstance();
-            //daysAgo.add(Calendar.DAY_OF_MONTH, -7);
-            //setInicio(daysAgo.getTime());
-            //Calendar now = Calendar.getInstance();
-            //setFim(now.getTime());
 
-            setFormasPagamento(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma"));
-            setListaStatus(new ArrayList<>());
-            getListaStatus().add(Fatura.StatusFatura.PAGO.getRotulo());
-            getListaStatus().add(Fatura.StatusFatura.PENDENTE.getRotulo());
-            getListaStatus().add(Fatura.StatusFatura.TODOS.getRotulo());
-            setStatus(Fatura.StatusFatura.PENDENTE.getRotulo());
-            setShowLancamentosCancelados(false);
-            carregarProfissionais();
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String url = request.getRequestURL().toString();
+        if (!url.contains("repasseComRecibo")) {
 
-            String idpaciente = JSFHelper.getRequest().getParameter("id");
-            if (idpaciente != null && !idpaciente.isEmpty()) {
-                Paciente pac = PacienteSingleton.getInstance().getBo().find(Long.parseLong(idpaciente));
-                if (pac != null) {
-                    this.setPaciente(pac);
-                    pesquisar();
+            try {
+                //Calendar daysAgo = Calendar.getInstance();
+                //daysAgo.add(Calendar.DAY_OF_MONTH, -7);
+                //setInicio(daysAgo.getTime());
+                //Calendar now = Calendar.getInstance();
+                //setFim(now.getTime());
+
+                setFormasPagamento(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma"));
+                setListaStatus(new ArrayList<>());
+                getListaStatus().add(Fatura.StatusFatura.PAGO.getRotulo());
+                getListaStatus().add(Fatura.StatusFatura.PENDENTE.getRotulo());
+                getListaStatus().add(Fatura.StatusFatura.TODOS.getRotulo());
+                setStatus(Fatura.StatusFatura.PENDENTE.getRotulo());
+                setShowLancamentosCancelados(false);
+                carregarProfissionais();
+
+                String idpaciente = JSFHelper.getRequest().getParameter("id");
+                if (idpaciente != null && !idpaciente.isEmpty()) {
+                    Paciente pac = PacienteSingleton.getInstance().getBo().find(Long.parseLong(idpaciente));
+                    if (pac != null) {
+                        this.setPaciente(pac);
+                        pesquisar();
+                    }
                 }
+            } catch (Exception e) {
+                LogIntelidenteSingleton.getInstance().makeLog(e);
             }
-        } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
+        // System.out.println("FaturaPagtoMB" + new Timestamp(System.currentTimeMillis()));
     }
 
     public boolean hasRequisitosCumprir(Lancamento lancamentoRepasse) {
-        List<Requisito> todosRequisitos = null;
-        if(lancamentoRepasse != null) {
-           todosRequisitos = getRequisitosValidaLancamentoFromRepasseFatura(lancamentoRepasse);
-        }
-        return todosRequisitos != null && todosRequisitos.size() > 0;
+        return FaturaSingleton.getInstance().hasRequisitosCumprir(UtilsFrontEnd.getEmpresaLogada(), lancamentoRepasse);
     }
 
     public boolean isTodosRequisitosFeitos(Lancamento lancamentoRepasse) {
-        List<Requisito> todosRequisitos = getRequisitosValidaLancamentoFromRepasseFatura(lancamentoRepasse);
-        if (todosRequisitos != null && todosRequisitos.size() > 0) {
-            List<Requisito> requisitosNaoFeitos = todosRequisitos.stream().filter(requisito -> !requisito.isRequisitoFeito()).collect(Collectors.toList());
-            return !(requisitosNaoFeitos != null && requisitosNaoFeitos.size() > 0);
-        } else
-            return true;
+        return FaturaSingleton.getInstance().isTodosRequisitosFeitos(UtilsFrontEnd.getEmpresaLogada(), lancamentoRepasse);
     }
 
     public List<Requisito> getRequisitosValidaLancamentoFromRepasseFatura(Lancamento lancamentoRepasse) {
-        return RepasseFaturasLancamentoSingleton.getInstance().getRequisitosValidaLancamentoFromRepasseFatura(UtilsFrontEnd.getEmpresaLogada(), lancamentoRepasse);
+        return FaturaSingleton.getInstance().getRequisitosValidaLancamentoFromRepasseFatura(UtilsFrontEnd.getEmpresaLogada(), lancamentoRepasse);
     }
 
     private void carregarProfissionais() throws Exception {
@@ -189,6 +188,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
          */
         setEntity(fatura);
         setShowLancamentosCancelados(false);
+        updateValues(fatura);
     }
 
     public PlanoTratamentoProcedimento buscaPTPOrigemRepasse(Lancamento l) {
@@ -206,7 +206,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(l);
         if (repasse != null)
             return repasse.getFaturaItem().getDescricaoItem();
-        return "N/A";
+        return "";
+    }
+
+    public boolean mostraProcedimentoOrigemRepasse(Lancamento l) {
+        RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(l);
+        if (repasse != null)
+            return (repasse.getFaturaItem().getDescricaoItem() != null && !repasse.getFaturaItem().getDescricaoItem().isEmpty());
+        return false;
     }
 
     public PlanoTratamento getPTFromFaturaRepasse(Fatura fatura) {
@@ -276,6 +283,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         fatura.setDadosTabelaRepasseTotalNaoPlanejado(FaturaSingleton.getInstance().getTotalNaoPlanejado(fatura));
         fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura));
         fatura.setDadosTabelaPT(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(fatura));
+        if (fatura.getTipoFatura() == Fatura.TipoFatura.PAGAMENTO_PROFISSIONAL)
+            fatura.setDadosTabelaRepassePlanoTratamento(fatura.getDadosTabelaPT());
 
         fatura.setDadosTabelaStatusFatura("A Receber");
         if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
@@ -360,13 +369,13 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                         valorOriginalDividio = valorOriginalDividio.subtract(diferenca);
                     }
                     LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
-                            UtilsFrontEnd.getProfissionalLogado(),null);
+                            UtilsFrontEnd.getProfissionalLogado(), null);
                     //persistLancamento(getParcela(), getEntity(), valorOriginalDividio, getFormaPagamento(), Calendar.getInstance().getTime(), data.getTime(), getTarifa());
                     data.add(Calendar.MONTH, 1);
                 }
             } else {
                 LancamentoSingleton.getInstance().novoLancamento(getEntity(), getValor(), getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
-                        UtilsFrontEnd.getProfissionalLogado(),null);
+                        UtilsFrontEnd.getProfissionalLogado(), null);
                 //persistLancamento(getParcela(), getEntity(), getValor(), getFormaPagamento(), Calendar.getInstance().getTime(), data.getTime(), getTarifa());
             }
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");

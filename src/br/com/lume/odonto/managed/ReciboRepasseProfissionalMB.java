@@ -12,7 +12,9 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.servlet.http.HttpServletRequest;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
@@ -62,14 +64,24 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     public ReciboRepasseProfissionalMB() {
         super(ReciboRepasseProfissionalSingleton.getInstance().getBo());
         this.setClazz(ReciboRepasseProfissional.class);
-        try {
+
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        String url = request.getRequestURL().toString();
+        if (!url.contains("repasseComRecibo")) {
+            try {
+                setFiltroStatus(StatusRecibo.TODOS);
+                actionTrocaDatasCriacaoRepasses(null);
+                actionTrocaDatasCriacaoRecibos(null);
+                pesquisarRepasses();
+            } catch (Exception e) {
+                LogIntelidenteSingleton.getInstance().makeLog(e);
+            }
+        } else {
             setFiltroStatus(StatusRecibo.TODOS);
             actionTrocaDatasCriacaoRepasses(null);
             actionTrocaDatasCriacaoRecibos(null);
-            pesquisarRepasses();
-        } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
+        //System.out.println("ReciboRepasseProfissionalMB" + new Timestamp(System.currentTimeMillis()));
     }
 
     public void cancelarRecibo(ReciboRepasseProfissional r) {
@@ -82,6 +94,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(r, UtilsFrontEnd.getProfissionalLogado());
         addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         pesquisarRecibos();
+        PrimeFaces.current().executeScript("PF('dtPrincipal').filter()");
     }
 
     public void onTabChange(TabChangeEvent event) {
@@ -103,8 +116,8 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     }
 
     public void pesquisarRepasses() {
-        try {  
-            
+        try {
+
             setLancamentos(LancamentoSingleton.getInstance().getBo().listLancamentosRepasse(UtilsFrontEnd.getEmpresaLogada(), getProfissionalRepasses(), isLancSemRecibo(), isLancValidadosOnly(),
                     isLancMesesAnterioresRepasse()));
             if (getLancamentos() != null && !getLancamentos().isEmpty()) {
@@ -187,7 +200,18 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
             getEntity().getReciboLancamentos().forEach(repasseRecibo -> {
                 try {
                     RepasseFaturasLancamento repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(repasseRecibo.getLancamento());
-                    repasseRecibo.getLancamento().setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
+                    if (repasse != null) {
+                        repasseRecibo.getLancamento().setPtp(PlanoTratamentoProcedimentoSingleton.getInstance().getProcedimentoFromFaturaItem(repasse.getFaturaItem()));
+                    }
+                    //quando nao tem repasse de origem    
+                    if (repasse == null) {
+                        repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(repasseRecibo.getLancamento());
+                        if (repasse != null) {
+                            // repasse.getRepasseFaturas().getFaturaRepasse().getItensFiltered().get(0);
+                            repasseRecibo.getLancamento().setPtp(repasse.getRepasseFaturas().getPlanoTratamentoProcedimento());
+                        }
+                    }
+                    repasseRecibo.setValorTotalRepassar(FaturaSingleton.getInstance().getTotal(repasseRecibo.getLancamento().getFatura()));
                 } catch (Exception e) {
                     repasseRecibo.getLancamento().setPtp(null);
                 }

@@ -28,6 +28,7 @@ import org.primefaces.model.UploadedFile;
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Endereco;
 import br.com.lume.common.util.EnviaEmail;
@@ -244,6 +245,15 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         }
     }
 
+    public String getProfissionalName(long l) {
+        try {
+            return ProfissionalSingleton.getInstance().getBo().find(l).getDadosBasico().getNome();
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+        return null;
+    }
+
     @Override
     public void actionPersist(ActionEvent event) {
         Usuario usuario = null;
@@ -428,12 +438,12 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     public void actionInativar(ActionEvent event) {
         try {
-            if(ProfissionalSingleton.getInstance().inativarProfissional(this.getEntity(), UtilsFrontEnd.getProfissionalLogado())) {
+            if (ProfissionalSingleton.getInstance().inativarProfissional(this.getEntity(), UtilsFrontEnd.getProfissionalLogado())) {
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-            }else {
+            } else {
                 this.addError("Erro ao inativar profissional", "");
             }
-            
+
             PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "");

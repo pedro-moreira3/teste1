@@ -116,7 +116,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private Procedimento procedimentoSelecionado;
 
     private List<Dominio> justificativas;
-    
+
     private boolean imprimirSemValores = false;
 
     private String filtroStatus = "T";
@@ -180,13 +180,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         loadGruposDentes();
         carregarStatusDente();
     }
-    
+
     public void imprimirSemValoresListener() {
         renderizarValoresProcedimentos = true;
-        if(imprimirSemValores) {
+        if (imprimirSemValores) {
             renderizarValoresProcedimentos = false;
         }
-        
+
     }
 
     public String getDateNowFormat() {
@@ -349,6 +349,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 this.criaRetorno();
                 // cancelaAgendamentos();
                 PrimeFaces.current().executeScript("PF('devolver').hide()");
+
+                for (Orcamento orcamento : OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(getEntity()))
+                    OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
             }
             PlanoTratamentoSingleton.getInstance().encerrarPlanoTratamento(getEntity(), this.justificativa, UtilsFrontEnd.getProfissionalLogado());
             this.justificativa = null;
@@ -1114,12 +1117,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     }
                 }
                 //sem desconto na tela, nao precisa validar se profissional tem desconto...
-                if(!(orcamentoSelecionado.getDescontoValor().compareTo(new BigDecimal(0)) == 0)) {
+                if (!(orcamentoSelecionado.getDescontoValor().compareTo(new BigDecimal(0)) == 0)) {
                     addError(OdontoMensagens.getMensagem("erro.orcamento.desconto.maior"), "");
-                    return;    
+                    return;
                 }
-                
-                
+
             }
 
             orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
@@ -1142,7 +1144,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void actionEditOrcamento(Orcamento orcamento) {
-        if(orcamento != null) {
+        if (orcamento != null) {
             this.imprimirSemValores = false;
             this.orcamentoSelecionado = orcamento;
             orcamentoSelecionado.setValorPago(getTotalPago());
@@ -1151,14 +1153,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionRemoveOrcamento(ActionEvent event) {
         try {
-            if(isDentistaAdmin()) {
+            if (isDentistaAdmin()) {
                 cancelaLancamentos(this.orcamentoSelecionado);
                 OrcamentoSingleton.getInstance().inativaOrcamento(this.orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
 
                 this.addError(Mensagens.getMensagem(Mensagens.REGISTRO_REMOVIDO_COM_SUCESSO), "");
                 carregaTelaOrcamento(getEntity());
                 this.orcamentoSelecionado = null;
-            }else {
+            } else {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Somente o administrador do sistema pode cancelar o orçamento.");
             }
         } catch (Exception e) {
@@ -1371,7 +1373,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionAdicionarStatusDente() {
         try {
-            if(denteSelecionado == null && !enableRegioes) {
+            if (denteSelecionado == null && !enableRegioes) {
                 this.addError("Escolha um dente ou região para inserir um diagnóstico.", "");
                 return;
             }
@@ -1478,7 +1480,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public boolean isTemPermissaoTrocarValor() {
         if (this.getEntity().isBconvenio() && this.getEntity().getConvenio() != null)
-          //  if (this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE) || UtilsFrontEnd.getProfissionalLogado().getTipoRemuneracao().equals(Profissional.FIXO))
+            //  if (this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE) || UtilsFrontEnd.getProfissionalLogado().getTipoRemuneracao().equals(Profissional.FIXO))
             if (UtilsFrontEnd.getProfissionalLogado().getTipoRemuneracao().equals(Profissional.FIXO))
                 return false;
         return temPermissaoExtra(false);
@@ -1510,85 +1512,85 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private void atualizaJSFElm(String id) {
         FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add(id);
     }
-    
+
     public String convertValor(BigDecimal v) {
         return String.valueOf(v.doubleValue());
     }
 
     public void validarAlteracao(PlanoTratamentoProcedimento ptp) {
         try {
-            
-            if(this.getEntity().isBconvenio()) {
-                
-             //   if(!this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE)) {
-                    
-                    BigDecimal diferenca = new BigDecimal(0);
-                    BigDecimal valorDesconto = new BigDecimal(0);
-                    BigDecimal valor = new BigDecimal(0);
-                    
-                    if(ConvenioProcedimentoSingleton.getInstance().isConvenioAtivoEVigente(this.getEntity(), ptp.getProcedimento()))
-                        valor = ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(ptp.getConvenio(), ptp.getProcedimento()).getValor();
-                    
-                    diferenca = valor.subtract(ptp.getValorDesconto());
-                    
-                    if(diferenca.doubleValue() > 0) {
-                        valorDesconto = (diferenca.divide(valor, BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100));
-                        
-                        if (valorDesconto.doubleValue() > UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue()) {
-                            this.addError("Erro ao salvar registro", "Não é possível dar desconto maior que " + UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue() + "%");
-                            ptp.setValorDesconto(valor);
-                            
-                            return;
-                        }
+
+            if (this.getEntity().isBconvenio()) {
+
+                //   if(!this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE)) {
+
+                BigDecimal diferenca = new BigDecimal(0);
+                BigDecimal valorDesconto = new BigDecimal(0);
+                BigDecimal valor = new BigDecimal(0);
+
+                if (ConvenioProcedimentoSingleton.getInstance().isConvenioAtivoEVigente(this.getEntity(), ptp.getProcedimento()))
+                    valor = ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(ptp.getConvenio(), ptp.getProcedimento()).getValor();
+
+                diferenca = valor.subtract(ptp.getValorDesconto());
+
+                if (diferenca.doubleValue() > 0) {
+                    valorDesconto = (diferenca.divide(valor, BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100));
+
+                    if (valorDesconto.doubleValue() > UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue()) {
+                        this.addError("Erro ao salvar registro", "Não é possível dar desconto maior que " + UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue() + "%");
+                        ptp.setValorDesconto(valor);
+
+                        return;
                     }
-                    
-             //   }else {
-             //       this.addWarn("Erro ao salvar registro", "Não é possível alterar o valor.");
-             //   }
+                }
+
+                //   }else {
+                //       this.addWarn("Erro ao salvar registro", "Não é possível alterar o valor.");
+                //   }
                 //    atualizaValorTotal();
-                 //   this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                
+                //   this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+
             }
-            
+
         } catch (Exception e) {
             this.addError(Mensagens.ERRO_AO_SALVAR_REGISTRO, "");
         }
     }
-    
+
     public void validarAlteracao(OrcamentoItem oi) {
         try {
-            
-            if(this.getEntity().isBconvenio()) {
-                
-                if(!this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE)) {
-                    
+
+            if (this.getEntity().isBconvenio()) {
+
+                if (!this.getEntity().getConvenio().getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE)) {
+
                     BigDecimal diferenca = new BigDecimal(0);
                     BigDecimal valorDesconto = new BigDecimal(0);
                     BigDecimal valor = new BigDecimal(0);
-                    
-                    if(ConvenioProcedimentoSingleton.getInstance().isConvenioAtivoEVigente(this.getEntity(), oi.getOrigemProcedimento().getPlanoTratamentoProcedimento().getProcedimento()))
-                        valor = ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(
-                                oi.getOrigemProcedimento().getPlanoTratamentoProcedimento().getConvenio(), oi.getOrigemProcedimento().getPlanoTratamentoProcedimento().getProcedimento()).getValor();
-                    
+
+                    if (ConvenioProcedimentoSingleton.getInstance().isConvenioAtivoEVigente(this.getEntity(), oi.getOrigemProcedimento().getPlanoTratamentoProcedimento().getProcedimento()))
+                        valor = ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(oi.getOrigemProcedimento().getPlanoTratamentoProcedimento().getConvenio(),
+                                oi.getOrigemProcedimento().getPlanoTratamentoProcedimento().getProcedimento()).getValor();
+
                     diferenca = valor.subtract(oi.getValor());
-                    
-                    if(diferenca.doubleValue() > 0) {
+
+                    if (diferenca.doubleValue() > 0) {
                         valorDesconto = (diferenca.divide(valor, BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100));
-                        
+
                         if (valorDesconto.doubleValue() > UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue()) {
                             this.addError("Erro ao salvar registro", "Não é possível dar desconto maior que " + UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue() + "%");
                             oi.setValor(valor);
-                            
+
                             return;
                         }
                     }
-                    
-                }else {
+
+                } else {
                     this.addWarn("Erro ao salvar registro", "Não é possível alterar o valor.");
                 }
-                
+
             }
-            
+
         } catch (Exception e) {
             this.addError(Mensagens.ERRO_AO_SALVAR_REGISTRO, "");
         }
@@ -2140,22 +2142,18 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.valorDescontoAlterar = valorDescontoAlterar;
     }
 
-    
     public boolean isImprimirSemValores() {
         return imprimirSemValores;
     }
 
-    
     public void setImprimirSemValores(boolean imprimirSemValores) {
         this.imprimirSemValores = imprimirSemValores;
     }
 
-    
     public boolean isRenderizarValoresProcedimentos() {
         return renderizarValoresProcedimentos;
     }
 
-    
     public void setRenderizarValoresProcedimentos(boolean renderizarValoresProcedimentos) {
         this.renderizarValoresProcedimentos = renderizarValoresProcedimentos;
     }

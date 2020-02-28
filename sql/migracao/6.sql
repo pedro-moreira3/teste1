@@ -206,6 +206,9 @@ ALTER TABLE procedimento ALTER COLUMN valor_repasse SET DEFAULT 0;
 
 -------------------- acima ja rodado -------------------------------
 
+alter table repasse_faturas ADD COLUMN plano_tratamento_procedimento_id BIGINT REFERENCES plano_tratamento_procedimento(ID);
+-------------------- acima ja rodado -------------------------------
+
 ALTER TABLE SEG_EMPRESA ADD COLUMN VALIDAR_GERA_RECIBO_VALOR_ZERADO VARCHAR(1) NOT NULL DEFAULT 'N';  
  
 INSERT INTO SEG_OBJETO(OBJ_INT_CODPAI, OBJ_STR_DES, OBJ_CHA_STS, OBJ_STR_CAMINHO,
@@ -236,5 +239,15 @@ WHERE O.OBJ_STR_DES ILIKE 'Pagamentos/Recebimentos'
 update plano_tratamento_procedimento set dentista_executor_id = finalizado_por
 where dentista_executor_id is null and data_finalizado is not null
 
-alter table repasse_faturas ADD COLUMN plano_tratamento_procedimento_id BIGINT REFERENCES plano_tratamento_procedimento(ID);
---TODO verificar como popular esse acima para os antigos
+--TODO verificar como popular plano_tratamento_procedimento_id do repasse_faturas para os antigos, quando so tinha procedimento
+
+
+
+ALTER TABLE PROFISSIONAL ADD COLUMN CRIADO_POR_ID BIGINT NULL REFERENCES PROFISSIONAL(ID);
+ALTER TABLE PROFISSIONAL ADD COLUMN DATA_CRIACAO TIMESTAMP(10) NULL;
+
+-------------------- acima ja rodado -------------------------------
+
+UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_CAMINHO = 'reciboRepasseProfissional.jsf';
+UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Repasse dos Profissionais por Fatura' WHERE OBJ_STR_CAMINHO = 'repasseProfissional.jsf';
+UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Repasse dos Profissionais' WHERE OBJ_STR_CAMINHO = 'repasseComRecibo.jsf';

@@ -258,7 +258,7 @@
 									value="#{cadastroEmpresaMB.entity.empBolRetirarMascaraTelefone}" />
 
 								<p:outputLabel
-									value="Validar recebiento do paciente para permitir pagamento do profissional " />
+									value="Validar recebimento do paciente para permitir pagamento do profissional " />
 								<p:selectBooleanCheckbox
 									value="#{cadastroEmpresaMB.entity.validarRepasseLancamentoOrigemValidadoBool}" />
 
@@ -271,12 +271,12 @@
 									value="Validar se os custos diretos do procedimento já foram conferidos para permitir repasse profissional " />
 								<p:selectBooleanCheckbox
 									value="#{cadastroEmpresaMB.entity.validarRepasseConfereCustoDiretoBool}" />
-
+<ui:remove>
 								<p:outputLabel
 									value="Marque se você não quer que procedimentos com valor zerado apareçam no recibo de profissionais " />
 								<p:selectBooleanCheckbox
 									value="#{cadastroEmpresaMB.entity.validarGeraReciboValorZeradoBool}" />
-
+</ui:remove>
 
 								<p:outputLabel value="Inserir logo no orçamento" />
 								<p:selectBooleanCheckbox
