@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -122,6 +124,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private byte[] data;
 
     private boolean renderedPhotoCam;
+
+    private String image2Delete;
 
     private List<String> errosCarregarPaciente;
 
@@ -258,6 +262,11 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void renderedPhotoCam(ActionEvent event) {
         renderedPhotoCam = true;
+    }
+
+    public void removePhoto(ActionEvent event) {
+        this.image2Delete = this.getEntity().getNomeImagem();
+        this.getEntity().setNomeImagem(null);
     }
 
     public void actionSalvarFoto(ActionEvent event) {
@@ -559,6 +568,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             this.getEntity().setDataUltimaAlteracao(Calendar.getInstance().getTime());
             if (getEntity().getId() == null || getEntity().getId() == 0) {
                 getEntity().setDataCriacao(Calendar.getInstance().getTime());
+            }
+            
+            try {
+                if(this.image2Delete != null && !this.image2Delete.isEmpty()) {
+                    Files.deleteIfExists(Paths.get(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + this.image2Delete));
+                }
+            } catch (Exception e) {
+                // TODO: handle exception
             }
 
             boolean novoPaciente = getEntity().getId() == null || getEntity().getId().longValue() == 0;

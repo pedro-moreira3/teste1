@@ -437,14 +437,20 @@
 							<p:outputLabel for="foto" value="Foto : "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<h:panelGroup rendered="#{pacienteMB.visivelDadosPaciente}">
-								<div class="Container70">
+								<p:panelGrid columns="2"
+							layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 									<p:commandButton value="Tirar Foto" process="@this"
 										update=":lume:pnTirarFoto,:lume:photoPacienteUpload,:lume:photoPaciente" icon="White fa fa-camera"
 										disabled="#{pacienteMB.entity.id == null}"
 										styleClass="NavyButton"
 										oncomplete="PF('dlgTirarFoto').show();"
 										actionListener="#{pacienteMB.renderedPhotoCam}" />
-								</div>
+									<p:commandButton value="Remover Foto" process="@this"
+										update=":lume:tabView:foto" icon="White fa fa-camera"
+										disabled="#{pacienteMB.entity.id == null}"
+										styleClass="NavyButton"
+										actionListener="#{pacienteMB.removePhoto}" />
+								</p:panelGrid>
 							</h:panelGroup>
 						</p:panelGrid>
 					</p:fieldset>
