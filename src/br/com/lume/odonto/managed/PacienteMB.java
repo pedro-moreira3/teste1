@@ -277,7 +277,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
         if (targetFile == null || !targetFile.exists()) {
             nomeImagem = /** ultils */
-                    "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
+                    "FOTO_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
             targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
         }
         FileImageOutputStream imageOutput = new FileImageOutputStream(targetFile);
