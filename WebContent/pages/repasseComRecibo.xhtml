@@ -43,6 +43,21 @@ body .fakeTable.ui-datatable tbody tr.ui-datatable-even {
 body.layout-compact .fakeTable.ui-datatable thead th {
 	display: none;
 }
+
+@media only screen and (max-width: 1500px) {
+	.dlgCalculoRepasse .dlgCalculoRepassePnl {
+		width: 100% !important;
+	}
+}
+
+@media only screen and (max-width: 1000px) {
+	.dlgCalculoRepasse {
+		width: 80% !important;
+	}
+	.dlgCalculoRepasse .dlgCalculoRepassePnl {
+		width: 100% !important;
+	}
+}
 </style>
 
 		<p:outputPanel id="viewFaturaRepasse">
@@ -331,7 +346,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 
 		<p:dialog id="dlgCalculoRepasse" widgetVar="dlgCalculoRepasse"
 			header="Cálculo de Repasse" responsive="true" modal="true"
-			width="60%">
+			width="60%" styleClass="dlgCalculoRepasse">
 			<p:scrollPanel mode="native"
 				style="position: relative; width: 100%; height: 100%;">
 				<p:panel id="pnCalculoRepasse">
@@ -340,7 +355,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 						var="lancamentoCalculado">
 						<p:outputPanel
 							rendered="#{lancamentoCalculado.dadosTabelaMetodoRepasse == 'POR'}"
-							style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;">
+							style="width: 70%; position: relative; left: 50%; transform: translateX(-50%); padding-top: 10px; padding-bottom: 10px; border: solid 1px gray;"
+							styleClass="dlgCalculoRepassePnl">
 							<div style="padding: 10px;">
 								<div style="width: 100%; padding: 5px; text-align: center">
 									(<b>Valor Recebido</b> - <b>Taxas/Tarifas</b> - <b>Tributos</b>
