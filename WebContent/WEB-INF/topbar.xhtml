@@ -46,7 +46,28 @@
 		.layout-wrapper .topbar-items>li>ul {
 			top: 32px;
 		}
+		
+		#botaoTrial {
+		    position: absolute;
+		    top: 10px;
+		    left: 290px;
+		   		  
+		    z-index: 9999;
+		}
 	</style>
+	
+	<ui:fragment>
+		<div style="position: relative;">
+			<div id="botaoTrial">
+				<a style="margin-top: 10px !important; color: white;">					
+					<h:form>
+						<p:commandButton  value="#{odontoLoginMB.msgTrial}" styleClass="RedButton" action="cadastroPagamento.jsf" 
+							icon="White fa fa-money White Fs16" ajax="false" rendered="#{odontoLoginMB.trial}" onclick="this.form.target='_blank'" style="font-size: 10px !important;"/>
+					</h:form>
+				</a>
+			</div>			
+		</div>
+	</ui:fragment>
 	
 	<div class="topbar clearfix">
 		<div class="topbar-left">
@@ -134,24 +155,9 @@
 						</li>
 					</ui:fragment>
 				</li>
-				<li>
-					<ui:fragment>
-						<li>
-							<a style="margin-top: 10px !important; color: white;">
-								<div class="FontLatoBlack White Opac80 Fleft DispBlock AlertaPayPal" >
-									<h:form>
-										<p:commandButton  value="#{odontoLoginMB.msgTrial}" styleClass="RedButton" action="cadastroPagamento.jsf" 
-											icon="White fa fa-money White Fs16" ajax="false" rendered="#{odontoLoginMB.trial}" onclick="this.form.target='_blank'" style="font-size: 10px !important;"/>
-									</h:form>
-								</div>
-							</a>
-							<ul>
-								<h:panelGroup id="trial">
-								</h:panelGroup>
-							</ul>
-						</li>
-					</ui:fragment>
-				</li>
+				
+					
+				
 				
 			<ui:remove>
 				<a id="menu-resize-btn" class="topbar-link Animated03"><h:graphicImage name="images/menu-resize-btn-icon.svg" id="menu-resize-btn"
