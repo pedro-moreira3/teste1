@@ -67,7 +67,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private String filtroPeriodo = "MA";
 
     private List<String> pendencias = new ArrayList<String>();
-
+   
+    private boolean validaPagamentoPacienteOrtodontico;
     private boolean validaPagamentoPaciente;
     private boolean validaConferenciaCustosDiretos;
     private boolean validaExecucaoProcedimento;
@@ -104,6 +105,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         try {
             Empresa empresa = EmpresaSingleton.getInstance().getBo().find(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             validaPagamentoPaciente = empresa.getValidarRepasseLancamentoOrigemValidadoBool();
+            validaPagamentoPacienteOrtodontico = empresa.getValidarRepasseLancamentoOrigemValidadoOrtodonticoBool();
             validaConferenciaCustosDiretos = empresa.getValidarRepasseConfereCustoDiretoBool();
             validaExecucaoProcedimento = empresa.getValidarRepasseProcedimentoFinalizadoBool();
 
@@ -331,7 +333,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         // ptp.setValorDisponivel(new BigDecimal(FaturaSingleton.getInstance().getValorNaoPagoDisponivel(ptp.getFatura())));
                         BigDecimal valorDisponivel = new BigDecimal(0);
                         for (Lancamento lancamento : ptp.getFatura().getLancamentos()) {
-                            if (validaPagamentoPaciente) {
+                            if ((validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) || (this.validaPagamentoPacienteOrtodontico && ptp.getPlanoTratamento().isOrtodontico())) {
                                 if (lancamento.isAtivo() && lancamento.getValidado().equals("N")) {
                                     RepasseFaturasLancamento rfl = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(lancamento);
                                     if (rfl != null && rfl.getLancamentoOrigem() != null) {
@@ -424,7 +426,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         List<Lancamento> lancamentosTemp = new ArrayList<Lancamento>();
         lancamentosTemp.addAll(lancamentos);
         for (Lancamento lancamento : lancamentosTemp) {
-            if (validaPagamentoPaciente) {
+            if ((validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) || (this.validaPagamentoPacienteOrtodontico && ptp.getPlanoTratamento().isOrtodontico())) {
                 Lancamento lancamentoDeOrigem = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(lancamento).getLancamentoOrigem();
                 if (lancamentoDeOrigem == null || lancamentoDeOrigem.getValidadoPorProfissional() == null) {
                     lancamentos.remove(lancamento);
@@ -443,6 +445,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     RepasseFaturasLancamento repasse = null;
                     FaturaItem itemOrigem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
 
+                    if(itemOrigem == null) {
+                        addError("Cálculo", "Cálculo disponível somente após pagamento do paciente.");
+                        return;
+                    }
+                    
 //                    ********** Código Removido pq esse getFaturaRepasseFromRepasseFaturas ta fazendo besteira
 //                    ********** Dúvida fala com o poncio                    
 //                    fatura.getRepassesOriginamEstaFatura();
@@ -589,7 +596,12 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public void verificaPendencias(PlanoTratamentoProcedimento ptp) {
         pendencias = new ArrayList<String>();
 
-        if (this.validaPagamentoPaciente) {
+        if (this.validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) {
+            if (!OrcamentoSingleton.getInstance().isProcedimentoTemOrcamentoAprovado(ptp)) {
+                pendencias.add("Não existe orçamento aprovado para o paciente;");
+            }
+        }
+        if (this.validaPagamentoPacienteOrtodontico  && ptp.getPlanoTratamento().isOrtodontico()) {
             if (!OrcamentoSingleton.getInstance().isProcedimentoTemOrcamentoAprovado(ptp)) {
                 pendencias.add("Não existe orçamento aprovado para o paciente;");
             }
@@ -608,11 +620,18 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         //    pendencias.add("Paciente ainda não pagou o procedimento;");
         // }
 
-        if (validaPagamentoPaciente) {
+        if (validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) {
             if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0) {
                 pendencias.add("Paciente ainda não pagou o procedimento - verifique os recebimentos;");
             }
         }
+        
+        if (validaPagamentoPacienteOrtodontico && ptp.getPlanoTratamento().isOrtodontico()) {
+            if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0) {
+                pendencias.add("Paciente ainda não pagou o procedimento - verifique os recebimentos;");
+            }
+        }
+        
 
         if (this.validaConferenciaCustosDiretos && (ptp.getCustoDiretoValido() == null || ptp.getCustoDiretoValido().equals("N"))) {
             pendencias.add("Custos diretos ainda não conferidos;");
@@ -643,7 +662,12 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             //if (this.validaPagamentoPaciente && ptp.getFatura() != null && (ptp.getFatura().getLancamentos() == null || ptp.getFatura().getLancamentos().size() == 0 )) {    
             //    return true;
             //}
-            if (validaPagamentoPaciente) {
+            if (validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) {
+                if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0) {
+                    return true;
+                }
+            }
+            if (validaPagamentoPacienteOrtodontico && ptp.getPlanoTratamento().isOrtodontico()) {
                 if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0) {
                     return true;
                 }
@@ -884,6 +908,16 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
     public void setExecutadosSemPagamentos(boolean executadosSemPagamentos) {
         this.executadosSemPagamentos = executadosSemPagamentos;
+    }
+
+    
+    public boolean isValidaPagamentoPacienteOrtodontico() {
+        return validaPagamentoPacienteOrtodontico;
+    }
+
+    
+    public void setValidaPagamentoPacienteOrtodontico(boolean validaPagamentoPacienteOrtodontico) {
+        this.validaPagamentoPacienteOrtodontico = validaPagamentoPacienteOrtodontico;
     }
 
 }
