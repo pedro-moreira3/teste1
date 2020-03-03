@@ -408,6 +408,8 @@ body .sideChkBox .ui-chkbox-label {
 									<h:outputText rendered="#{!repasseProfissional == 'S'}" value="#{l.tributoPerc}">
 										<f:convertNumber type="percent" maxFractionDigits="2" />
 									</h:outputText>
+									<h:outputText rendered="#{repasseProfissional == 'S'}" value="0%">
+									</h:outputText>
 								</p:column>
 								<p:column sortBy="#{l.dataPagamentoStr}"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
