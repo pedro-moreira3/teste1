@@ -429,6 +429,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         PrimeFaces.current().executeScript("PF('dlgNewLancamento').hide()");
 
     }
+    
+    public double tributoLancamento(Lancamento lancamento) {
+        
+        return 0;
+    }
 
     public String getStyleBySaldoPaciente() throws Exception {
         if (getPaciente() == null || getPaciente().getId() == null || getPaciente().getId().longValue() == 0)

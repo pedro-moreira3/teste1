@@ -741,7 +741,7 @@ li.orcamento-li {
 													<p:commandButton process="@this"
 														disable="#{orcamento.isAprovado}"
 														oncomplete="PF('dlgNovoReajusteOrcamento').show();"
-														icon="fa fa-dollar" styleClass="NavyButton">
+														icon="fa fa-dollar" styleClass="NavyButton" title="Aplicar reajuste IGPM">
 
 														<p:ajax listener="#{ortodontiaMB.actionEditOrcamento(o)}"
 															process="@this" />
