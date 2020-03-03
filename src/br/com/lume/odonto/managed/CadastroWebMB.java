@@ -180,6 +180,7 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
             this.getEntity().setValidarRepasseProcedimentoFinalizado("S");          
             this.getEntity().setValidarRepasseConfereCustoDireto("S");
             this.getEntity().setValidarRepasseLancamentoOrigemValidado("S");
+            this.getEntity().setValidarRepasseLancamentoOrigemValidadoOrtodontico("S");
             this.getEntity().setAdicionarLogoOrcamento("S");
             this.getEntity().setRepasseAdicionaTributos("S");
             this.getEntity().setValidarGeraReciboValorZerado("N");

@@ -427,9 +427,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         lancamentosTemp.addAll(lancamentos);
         for (Lancamento lancamento : lancamentosTemp) {
             if ((validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) || (this.validaPagamentoPacienteOrtodontico && ptp.getPlanoTratamento().isOrtodontico())) {
-                Lancamento lancamentoDeOrigem = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(lancamento).getLancamentoOrigem();
-                if (lancamentoDeOrigem == null || lancamentoDeOrigem.getValidadoPorProfissional() == null) {
-                    lancamentos.remove(lancamento);
+                if(RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(lancamento) != null) {
+                    Lancamento lancamentoDeOrigem = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(lancamento).getLancamentoOrigem();
+                    if (lancamentoDeOrigem == null || lancamentoDeOrigem.getValidadoPorProfissional() == null) {
+                        lancamentos.remove(lancamento);
+                    }  
                 }
             }
         }
