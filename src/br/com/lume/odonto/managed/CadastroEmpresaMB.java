@@ -100,7 +100,11 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
         OutputStream outStream = new FileOutputStream(targetFile);
         outStream.write(buffer);
         outStream.close();
-        return targetFile.getName();
+        
+        String nme = targetFile.getName();
+        initialStream.close();
+        
+        return nme;
     }
 
     public List<UF> getListUF() {

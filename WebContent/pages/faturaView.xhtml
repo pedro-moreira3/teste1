@@ -405,8 +405,10 @@ body .sideChkBox .ui-chkbox-label {
 								<p:column sortBy="#{l.tributo}" filterMatchMode="contains"
 									filterBy="#{l.tributo}" headerText="Tributos" width="5%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
-									<h:outputText value="#{l.tributoPerc}">
+									<h:outputText rendered="#{!repasseProfissional == 'S'}" value="#{l.tributoPerc}">
 										<f:convertNumber type="percent" maxFractionDigits="2" />
+									</h:outputText>
+									<h:outputText rendered="#{repasseProfissional == 'S'}" value="0%">
 									</h:outputText>
 								</p:column>
 								<p:column sortBy="#{l.dataPagamentoStr}"

@@ -255,29 +255,7 @@
 								<p:outputLabel
 									value="Retirar as mascaras de telefone do cadastro de paciente? " />
 								<p:selectBooleanCheckbox
-									value="#{cadastroEmpresaMB.entity.empBolRetirarMascaraTelefone}" />
-
-								<p:outputLabel
-									value="Validar recebimento do paciente para permitir pagamento do profissional " />
-								<p:selectBooleanCheckbox
-									value="#{cadastroEmpresaMB.entity.validarRepasseLancamentoOrigemValidadoBool}" />
-
-								<p:outputLabel
-									value="Validar se o procedimento foi executado para permitir repasse profissional " />
-								<p:selectBooleanCheckbox
-									value="#{cadastroEmpresaMB.entity.validarRepasseProcedimentoFinalizadoBool}" />
-
-								<p:outputLabel
-									value="Validar se os custos diretos do procedimento já foram conferidos para permitir repasse profissional " />
-								<p:selectBooleanCheckbox
-									value="#{cadastroEmpresaMB.entity.validarRepasseConfereCustoDiretoBool}" />
-<ui:remove>
-								<p:outputLabel
-									value="Marque se você não quer que procedimentos com valor zerado apareçam no recibo de profissionais " />
-								<p:selectBooleanCheckbox
-									value="#{cadastroEmpresaMB.entity.validarGeraReciboValorZeradoBool}" />
-</ui:remove>
-
+									value="#{cadastroEmpresaMB.entity.empBolRetirarMascaraTelefone}" />	
 								<p:outputLabel value="Inserir logo no orçamento" />
 								<p:selectBooleanCheckbox
 									value="#{cadastroEmpresaMB.entity.adicionarLogoOrcamentoBool}" />
@@ -306,6 +284,37 @@
 								</h:panelGroup>
 
 							</p:panelGrid>
+						</p:fieldset>
+						<p:fieldset legend="Parâmetros do Sistema - Configurações de Repasse para Profissional">
+							<p:panelGrid columns="4"
+								columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+								layout="grid" styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;"
+								id="pnEmpresaFlagsRepasse">
+								<p:outputLabel
+									value="Validar recebimento do paciente para permitir pagamento do profissional " />
+								<p:selectBooleanCheckbox
+									value="#{cadastroEmpresaMB.entity.validarRepasseLancamentoOrigemValidadoBool}" />
+								<p:outputLabel
+									value="Plano Ortodôntico: Validar recebimento do paciente para permitir pagamento do profissional " />
+								<p:selectBooleanCheckbox
+									value="#{cadastroEmpresaMB.entity.validarRepasseLancamentoOrigemValidadoOrtodonticoBool}" />
+								<p:outputLabel
+									value="Validar se o procedimento foi executado para permitir repasse profissional " />
+								<p:selectBooleanCheckbox
+									value="#{cadastroEmpresaMB.entity.validarRepasseProcedimentoFinalizadoBool}" />
+
+								<p:outputLabel
+									value="Validar se os custos diretos do procedimento já foram conferidos para permitir repasse profissional " />
+								<p:selectBooleanCheckbox
+									value="#{cadastroEmpresaMB.entity.validarRepasseConfereCustoDiretoBool}" />
+<ui:remove>
+								<p:outputLabel
+									value="Marque se você não quer que procedimentos com valor zerado apareçam no recibo de profissionais " />
+								<p:selectBooleanCheckbox
+									value="#{cadastroEmpresaMB.entity.validarGeraReciboValorZeradoBool}" />
+</ui:remove>
+						</p:panelGrid>
 						</p:fieldset>
 
 						<br />

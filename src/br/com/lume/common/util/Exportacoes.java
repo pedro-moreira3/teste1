@@ -2,6 +2,7 @@ package br.com.lume.common.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -162,6 +163,13 @@ public class Exportacoes implements Serializable{
             
         }catch(Exception e) {
             this.log.error("Erro ao exportar Tabela Excel", e);
+        }finally {
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                this.log.error("Erro ao exportar Tabela Excel", e);
+                e.printStackTrace();
+            }
         }
         
         return null;
