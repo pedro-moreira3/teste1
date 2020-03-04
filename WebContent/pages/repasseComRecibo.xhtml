@@ -12,7 +12,6 @@
 	text-align: center;
 }
 
-
 .lancamentoExplain.ui-panelgrid.form-group .ui-panelgrid-cell {
 	padding: 7px 16px;
 }
@@ -770,7 +769,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 
 													<p:selectBooleanCheckbox id="semPendencias"
 														value="#{repasseProfissionalComReciboMB.semPendencias}">
-														<p:ajax process="@this,pnFiltroStatus" event="check"
+														<p:ajax process="@this,pnFiltroStatus"
 															listener="#{repasseProfissionalComReciboMB.mudaCheckbox('semPendencias')}"
 															update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
