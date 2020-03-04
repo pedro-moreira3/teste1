@@ -70,7 +70,7 @@ li.orcamento-li {
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 					<p:commandButton id="newOrtodontia" icon="White fa fa-file-o"
 						value="Nova Manutenção Orto"
-						actionListener="#{ortodontiaMB.actionNew}" process="@this"
+						actionListener="#{ortodontiaMB.actionNew}" process="@this" update="gerarOrcamentoPorProcedimento"
 						oncomplete="PF('dlgPlanoOrtodontico').show()" immediate="true" />
 				</p:panelGrid>
 
@@ -659,7 +659,7 @@ li.orcamento-li {
 
 							<p:fieldset id="fsProcedimentosEValores"
 								legend="Procedimentos e Valores" toggleable="true"
-								collapsed="#{ortodontiaMB.entity.id == null or ortodontiaMB.entity.id == 0}">
+								collapsed="false">
 								<p:panelGrid columns="2"
 									columnClasses="ui-grid-col-6,ui-grid-col-6" layout="grid"
 									styleClass="ui-panelgrid-blank"
@@ -706,6 +706,14 @@ li.orcamento-li {
 										<p:panelGrid id="pnOrcamentos" columns="1" layout="grid"
 											styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
+
+											<p:panelGrid columns="1" layout="grid"
+												styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+												<p:selectBooleanCheckbox style="width:100% !important" id="gerarOrcamentoPorProcedimento" itemLabel="Gerar um orçamento para cada procedimento"														
+														value="#{ortodontiaMB.gerarOrcamentoPorProcedimento}">	
+														<p:ajax process="@this"/>													
+												</p:selectBooleanCheckbox>												
+											</p:panelGrid>
 											<p:panelGrid columns="2" layout="grid"
 												styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
@@ -720,7 +728,7 @@ li.orcamento-li {
 
 											<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 												id="dtOrcamentosOrtodontia" var="o"
-												value="#{ortodontiaMB.orcamentos}" rows="5" paginator="true"
+												value="#{ortodontiaMB.orcamentos}" rows="6" paginator="true"
 												paginatorPosition="bottom">
 
 												<f:facet name="header">Orçamentos</f:facet>
