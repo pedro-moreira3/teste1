@@ -368,18 +368,12 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									<p:column>
 										<table style="width: 100%" class="traceRepasse">
 											<tr>
-												<th colspan="4">Procedimento</th>
-												<th colspan="4">Custo Direto</th>
+												<th colspan="8">Procedimento</th>
 												<th colspan="4">Valor</th>
 											</tr>
 											<tr>
-												<td colspan="4"><h:outputText
+												<td colspan="8"><h:outputText
 														value="#{lancamentoCalculado.rfl.faturaItem.descricaoItem}" /></td>
-												<td colspan="4"><h:outputText
-														value="#{lancamentoCalculado.dadosTabelaValorTotalCustosDiretos}">
-														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
-															type="currency" />
-													</h:outputText></td>
 												<td colspan="4"><h:outputText
 														value="#{lancamentoCalculado.dadosCalculoPercItemFaturaStr}">
 														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
