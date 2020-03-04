@@ -15,6 +15,7 @@
  */
 package org.primefaces.ultima.view.file;
 
+import java.io.IOException;
 import java.io.InputStream;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
@@ -31,6 +32,13 @@ public class FileDownloadView {
 	public FileDownloadView() {        
         InputStream stream = ((ServletContext)FacesContext.getCurrentInstance().getExternalContext().getContext()).getResourceAsStream("/resources/demo/images/optimus.jpg");
 		file = new DefaultStreamedContent(stream, "image/jpg", "downloaded_optimus.jpg");
+		
+		try {
+            stream.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 	}
 
     public StreamedContent getFile() {

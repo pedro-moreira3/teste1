@@ -352,9 +352,11 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     }
 
     public void upload(FileUploadEvent event) {
+        InputStream inputStream = null;
+        
         try {
             UploadedFile file = event.getFile();
-            InputStream inputStream = file.getInputstream();
+            inputStream = file.getInputstream();
             errosCarregarPaciente = carregarPacienteSingleton.getInstance().getBo().carregarPacientes(inputStream, UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getProfissionalLogado());
             geraLista();
 
@@ -370,6 +372,15 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         } catch (Exception e) {
             log.error(e);
             this.addError("Erro ao carregar arquivo.", "");
+            e.printStackTrace();
+        }finally {
+            try {
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                log.error(e);
+                this.addError("Erro ao carregar arquivo.", "");
+            }
         }
     }
 

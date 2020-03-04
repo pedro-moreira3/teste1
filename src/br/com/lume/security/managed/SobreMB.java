@@ -1,5 +1,6 @@
 package br.com.lume.security.managed;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -34,8 +35,10 @@ public class SobreMB {
     }
 
     private void buscaInformacoesBanco() {
+        InputStream resourceAsStream = null;
+        
         try {
-            InputStream resourceAsStream = SobreMB.class.getResourceAsStream("/META-INF/persistence.xml");
+            resourceAsStream = SobreMB.class.getResourceAsStream("/META-INF/persistence.xml");
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             try {
                 DocumentBuilder db = dbf.newDocumentBuilder();
@@ -57,6 +60,12 @@ public class SobreMB {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            try {
+                resourceAsStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

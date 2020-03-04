@@ -95,6 +95,8 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
             this.getbO().persist(this.getEntity());
             fileout.close();
             this.arquivo = null;
+            
+            inputstream.close();
         }
     }
 

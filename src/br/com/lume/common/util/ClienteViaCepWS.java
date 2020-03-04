@@ -1,6 +1,7 @@
 package br.com.lume.common.util;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Serializable;
@@ -16,13 +17,14 @@ public class ClienteViaCepWS implements Serializable {
 
     public static String buscarCep(String cep) {
         String json;
-
+        BufferedReader br = null;
+        
         try {
             URL url = new URL("http://viacep.com.br/ws/" + cep + "/json");
             URLConnection urlConnection = url.openConnection();
             InputStream is = urlConnection.getInputStream();
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(is, "UTF8"));
+            br = new BufferedReader(new InputStreamReader(is, "UTF8"));
 
             StringBuilder jsonSb = new StringBuilder();
 
@@ -30,8 +32,14 @@ public class ClienteViaCepWS implements Serializable {
 
             json = jsonSb.toString();
 
-        } catch (Exception e) {
+        }catch (Exception e) {
             throw new RuntimeException(e);
+        }finally {
+            try {
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return json;

@@ -23,7 +23,11 @@ public class LaunchService {
         int ResponseStatus = response.getStatus();
 
         if (ResponseStatus == 200) {
-            return response.readEntity(ContifyResponse.class);
+            ContifyResponse r = response.readEntity(ContifyResponse.class);
+            
+            response.close();
+            
+            return r;
         }
 
         response.close();
