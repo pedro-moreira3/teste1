@@ -26,8 +26,9 @@
 	padding-right: 5px !important;
 }
 
-.traceRepasse tr:nth-child(3), .traceRepasse tr:nth-child(9),
-	.traceRepasse tr:nth-child(12) {
+.traceRepasse tr:nth-child(3), .traceRepasse tr:nth-child(5),
+	.traceRepasse tr:nth-child(12), .traceRepassePro tr:nth-child(1),
+	.traceRepassePro tr:nth-child(3), .traceRepassePro tr:nth-child(5) {
 	height: 40px;
 	vertical-align: bottom;
 }
@@ -367,12 +368,37 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									<p:column>
 										<table style="width: 100%" class="traceRepasse">
 											<tr>
-												<th colspan="8">Procedimento</th>
+												<th colspan="4">Procedimento</th>
+												<th colspan="4">Custo Direto</th>
+												<th colspan="4">Valor</th>
+											</tr>
+											<tr>
+												<td colspan="4"><h:outputText
+														value="#{lancamentoCalculado.rfl.faturaItem.descricaoItem}" /></td>
+												<td colspan="4"><h:outputText
+														value="#{lancamentoCalculado.dadosTabelaValorTotalCustosDiretos}">
+														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+															type="currency" />
+													</h:outputText></td>
+												<td colspan="4"><h:outputText
+														value="#{lancamentoCalculado.rfl.faturaItem.valorComDesconto}">
+														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+															type="currency" />
+													</h:outputText></td>
+											</tr>
+											<tr>
+												<th colspan="4">Plano de Tratamento</th>
+												<th colspan="4">Valor total da Fatura</th>
 												<th colspan="4">Valor Recebido</th>
 											</tr>
 											<tr>
-												<td colspan="8"><h:outputText
-														value="#{lancamentoCalculado.rfl.faturaItem.descricaoItem}" /></td>
+												<td colspan="4"><h:outputText
+														value="#{lancamentoCalculado.ptp.planoTratamento.descricao}" /></td>
+												<td colspan="4"><h:outputText
+														value="#{lancamentoCalculado.dadosTabelaValorTotalFaturaOrigem}">
+														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+															type="currency" />
+													</h:outputText></td>
 												<td colspan="4"><h:outputText
 														value="#{lancamentoCalculado.rfl.lancamentoOrigem.valor}">
 														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
@@ -380,7 +406,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													</h:outputText></td>
 											</tr>
 											<tr>
-												<th colspan="4">Item de dedução</th>
+												<th colspan="4">Deduções</th>
 												<th colspan="4">Base de cálculo</th>
 												<th colspan="4">Valor da dedução</th>
 											</tr>
@@ -418,57 +444,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													</h:outputText></td>
 											</tr>
 											<tr>
-												<td colspan="8">Total:</td>
+												<td colspan="4">Custo Direto</td>
 												<td colspan="4"><h:outputText
-														value="#{lancamentoCalculado.dadosCalculoTotalReducao}">
-														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
-															type="currency" />
-													</h:outputText></td>
-											</tr>
-											<tr>
-												<td colspan="8">Valor recebido descontando as deduções
-													acima:</td>
-												<td colspan="4"><h:outputText
-														value="#{lancamentoCalculado.dadosCalculoRecebidoMenosReducao}">
-														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
-															type="currency" />
-													</h:outputText></td>
-											</tr>
-											<tr>
-												<th colspan="1">Valor do procedimento</th>
-												<th colspan="1">Valor Custos Diretos</th>
-												<th colspan="1">Valor sem custos diretos</th>
-												<th colspan="1">Valor total da fatura</th>
-												<th colspan="2">Percentual Item/Fatura</th>
-												<th colspan="2">Percentual de dedução</th>
-												<th colspan="4">Valor a deduzir do pagamento</th>
-											</tr>
-											<tr>
-												<td colspan="1"><h:outputText
-														value="#{lancamentoCalculado.rfl.faturaItem.valorComDesconto}">
-														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
-															type="currency" />
-													</h:outputText></td>
-												<td colspan="1"><h:outputText
-														value="#{lancamentoCalculado.dadosTabelaValorTotalCustosDiretos}">
-														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
-															type="currency" />
-													</h:outputText></td>
-												<td colspan="1"><h:outputText
-														value="#{lancamentoCalculado.dadosCalculoValorItemSemCusto}">
-														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
-															type="currency" />
-													</h:outputText></td>
-												<td colspan="1"><h:outputText
-														value="#{lancamentoCalculado.dadosTabelaValorTotalFaturaOrigem}">
-														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
-															type="currency" />
-													</h:outputText></td>
-												<td colspan="2"><h:outputText
-														value="#{lancamentoCalculado.dadosCalculoPercItemSemCusto}">
-														<f:convertNumber maxFractionDigits="2" type="percent" />
-													</h:outputText></td>
-												<td colspan="2"><h:outputText
 														value="#{lancamentoCalculado.dadosCalculoInvPercItemSemCusto}">
 														<f:convertNumber maxFractionDigits="2" type="percent" />
 													</h:outputText></td>
@@ -479,13 +456,81 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													</h:outputText></td>
 											</tr>
 											<tr>
-												<td colspan="8">Valor sem descontos e custos diretos:</td>
+												<td colspan="8">Total:</td>
+												<td colspan="4"><h:outputText
+														value="#{lancamentoCalculado.dadosCalculoTotalReducao}">
+														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+															type="currency" />
+													</h:outputText></td>
+											</tr>
+											<tr>
+												<ui:remove>
+													Antigo usado abaixo: dadosCalculoRecebidoMenosReducao
+												</ui:remove>
+												<td colspan="8">Valor recebido descontando as deduções
+													acima:</td>
 												<td colspan="4"><h:outputText
 														value="#{lancamentoCalculado.dadosCalculoValorARepassarSemCusto}">
 														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 															type="currency" />
 													</h:outputText></td>
 											</tr>
+
+											<ui:remove>
+												<tr>
+													<th colspan="1">Valor do procedimento</th>
+													<th colspan="1">Valor Custos Diretos</th>
+													<th colspan="1">Valor sem custos diretos</th>
+													<th colspan="1">Valor total da fatura</th>
+													<th colspan="2">Percentual Item/Fatura</th>
+													<th colspan="2">Percentual de dedução</th>
+													<th colspan="4">Valor a deduzir do pagamento</th>
+												</tr>
+												<tr>
+													<td colspan="1"><h:outputText
+															value="#{lancamentoCalculado.rfl.faturaItem.valorComDesconto}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="1"><h:outputText
+															value="#{lancamentoCalculado.dadosTabelaValorTotalCustosDiretos}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="1"><h:outputText
+															value="#{lancamentoCalculado.dadosCalculoValorItemSemCusto}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="1"><h:outputText
+															value="#{lancamentoCalculado.dadosTabelaValorTotalFaturaOrigem}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+													<td colspan="2"><h:outputText
+															value="#{lancamentoCalculado.dadosCalculoPercItemSemCusto}">
+															<f:convertNumber maxFractionDigits="2" type="percent" />
+														</h:outputText></td>
+													<td colspan="2"><h:outputText
+															value="#{lancamentoCalculado.dadosCalculoInvPercItemSemCusto}">
+															<f:convertNumber maxFractionDigits="2" type="percent" />
+														</h:outputText></td>
+													<td colspan="4"><h:outputText
+															value="#{lancamentoCalculado.dadosCalculoReducaoCustoDireto}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+												<tr>
+													<td colspan="8">Valor sem descontos e custos diretos:</td>
+													<td colspan="4"><h:outputText
+															value="#{lancamentoCalculado.dadosCalculoValorARepassarSemCusto}">
+															<f:convertNumber currencySymbol="R$"
+																maxFractionDigits="2" type="currency" />
+														</h:outputText></td>
+												</tr>
+											</ui:remove>
+
 											<tr>
 												<th colspan="4">Profissional</th>
 												<th colspan="4">Percentual de repasse</th>
@@ -522,11 +567,30 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 										<table style="width: 100%" class="traceRepassePro">
 											<tr>
 												<th colspan="8">Procedimento</th>
-												<th colspan="4">Valor Recebido</th>
+												<th colspan="4">Valor</th>
 											</tr>
 											<tr>
 												<td colspan="8"><h:outputText
 														value="#{lancamentoCalculado.rfl.faturaItem.descricaoItem}" /></td>
+												<td colspan="4"><h:outputText
+														value="#{lancamentoCalculado.rfl.faturaItem.valorComDesconto}">
+														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+															type="currency" />
+													</h:outputText></td>
+											</tr>
+											<tr>
+												<th colspan="4">Plano de Tratamento</th>
+												<th colspan="4">Valor total da Fatura</th>
+												<th colspan="4">Valor Recebido</th>
+											</tr>
+											<tr>
+												<td colspan="4"><h:outputText
+														value="#{lancamentoCalculado.ptp.planoTratamento.descricao}" /></td>
+												<td colspan="4"><h:outputText
+														value="#{lancamentoCalculado.dadosTabelaValorTotalFaturaOrigem}">
+														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+															type="currency" />
+													</h:outputText></td>
 												<td colspan="4"><h:outputText
 														value="#{lancamentoCalculado.rfl.lancamentoOrigem.valor}">
 														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
@@ -534,28 +598,16 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													</h:outputText></td>
 											</tr>
 											<tr>
-												<th colspan="2">Valor recebido</th>
-												<th colspan="2">Valor total da fatura</th>
-												<th colspan="2">Percentual Recebido/Total fatura</th>
-												<th colspan="2">Valor de Repasse do procedimento</th>
+												<th colspan="4">Percentual Recebido/Total fatura</th>
+												<th colspan="4">Base de cálculo do repasse</th>
 												<th colspan="4">Valor do Repasse</th>
 											</tr>
 											<tr>
-												<td colspan="2"><h:outputText
-														value="#{lancamentoCalculado.rfl.lancamentoOrigem.valor}">
-														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
-															type="currency" />
-													</h:outputText></td>
-												<td colspan="2"><h:outputText
-														value="#{lancamentoCalculado.dadosTabelaValorTotalFaturaOrigem}">
-														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
-															type="currency" />
-													</h:outputText></td>
-												<td colspan="2"><h:outputText
+												<td colspan="4"><h:outputText
 														value="#{lancamentoCalculado.dadosCalculoPercLancamentoFatura}">
 														<f:convertNumber maxFractionDigits="2" type="percent" />
 													</h:outputText></td>
-												<td colspan="2"><h:outputText
+												<td colspan="4"><h:outputText
 														value="#{lancamentoCalculado.dadosTabelaValorRepasse}">
 														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 															type="currency" />
@@ -714,34 +766,38 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													columnClasses="ui-g-1,ui-g-5,ui-g-1,ui-g-5"
 													styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding pnFiltroStatus"
 													style="border:0px none; background-color:transparent;">
-													
-													<p:selectBooleanCheckbox id="semPendencias"														
+
+													<p:selectBooleanCheckbox id="semPendencias"
 														value="#{repasseProfissionalComReciboMB.semPendencias}">
-														<p:ajax process="@this,pnFiltroStatus" listener="#{repasseProfissionalComReciboMB.mudaCheckbox('semPendencias')}"
+														<p:ajax process="@this,pnFiltroStatus" event="check"
+															listener="#{repasseProfissionalComReciboMB.mudaCheckbox('semPendencias')}"
 															update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
 													<p:outputLabel for="semPendencias"
 														value="Buscar somente disponíveis para repasse " />
-													
-													<p:selectBooleanCheckbox id="executadosSemPagamentos"														
+
+													<p:selectBooleanCheckbox id="executadosSemPagamentos"
 														value="#{repasseProfissionalComReciboMB.executadosSemPagamentos}">
-														<p:ajax process="@this,pnFiltroStatus" listener="#{repasseProfissionalComReciboMB.mudaCheckbox('executadosSemPagamentos')}"
+														<p:ajax process="@this,pnFiltroStatus"
+															listener="#{repasseProfissionalComReciboMB.mudaCheckbox('executadosSemPagamentos')}"
 															update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
 													<p:outputLabel for="executadosSemPagamentos"
 														value="Buscar todos os procedimentos executados" />
-													
-													<p:selectBooleanCheckbox id="procedimentosNaoExecutados"														
+
+													<p:selectBooleanCheckbox id="procedimentosNaoExecutados"
 														value="#{repasseProfissionalComReciboMB.procedimentosNaoExecutados}">
-														<p:ajax process="@this,pnFiltroStatus" listener="#{repasseProfissionalComReciboMB.mudaCheckbox('procedimentosNaoExecutados')}"
+														<p:ajax process="@this,pnFiltroStatus"
+															listener="#{repasseProfissionalComReciboMB.mudaCheckbox('procedimentosNaoExecutados')}"
 															update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
 													<p:outputLabel for="procedimentosNaoExecutados"
 														value="Mostrar procedimentos com executor ainda não executados (ignora data) " />
-													
-													<p:selectBooleanCheckbox id="mostrarRepasseAntigo"														
+
+													<p:selectBooleanCheckbox id="mostrarRepasseAntigo"
 														value="#{repasseProfissionalComReciboMB.mostrarRepasseAntigo}">
-														<p:ajax process="@this,pnFiltroStatus" listener="#{repasseProfissionalComReciboMB.mudaCheckbox('mostrarRepasseAntigo')}"
+														<p:ajax process="@this,pnFiltroStatus"
+															listener="#{repasseProfissionalComReciboMB.mudaCheckbox('mostrarRepasseAntigo')}"
 															update="pnFiltroStatus" />
 													</p:selectBooleanCheckbox>
 													<p:outputLabel for="mostrarRepasseAntigo"
