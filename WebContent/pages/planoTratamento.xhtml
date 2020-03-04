@@ -971,7 +971,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 	<p:dialog id="justificativaRemove" widgetVar="dlgJustificativaRemove"
 		responsive="true" modal="true" appendTo=":lume" resizable="false"
-		width="600">
+		width="600" onHide="atualizaSubTotalDesconto();PF('procedimentosTableInPT').filter()">
 		<p:ajax event="close"
 			listener="#{planoTratamentoMB.fechaJustifivaticaRemove}"
 			update=":lume:tabView:pnViewPlanoTratamento" />
@@ -1050,7 +1050,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 	</p:dialog>
 
 	<p:dialog id="novoProcedimento" widgetVar="dlgNovoProcedimento"
-		closable="false" responsive="true" modal="true" appendTo=":lume"
+		closable="false" responsive="true" modal="true" appendTo=":lume" onHide="atualizaSubTotalDesconto();PF('procedimentosTableInPT').filter()"
 		resizable="false" header="#{planoTratamentoMB.headerProcedimentoEdit}"
 		width="50%">
 		<p:outputPanel id="pgProcedimento">
@@ -1317,7 +1317,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 	<p:dialog widgetVar="dlgViewOrcamento" responsive="true" modal="true"
 		appendTo=":lume" resizable="false"
-		onHide="PF('dlgViewOrcamento').toggleMaximize();"
+		onHide="PF('dlgViewOrcamento').toggleMaximize();atualizaSubTotalDesconto();PF('procedimentosTableInPT').filter()"
 		onShow="PF('dlgViewOrcamento').toggleMaximize();">
 		<f:facet name="header">
 			<h:outputText id="orcamentoViewHeader"

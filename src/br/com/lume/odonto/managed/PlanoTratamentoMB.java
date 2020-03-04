@@ -1208,7 +1208,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     orcamentoProcedimento.getOrcamentoItem().getOrcamento() != null && 
                             orcamentoProcedimento.getOrcamentoItem().getOrcamento().getAprovado() != null &&
                                     orcamentoProcedimento.getOrcamentoItem().getOrcamento().getAprovado().equals("S") 
-                                    && orcamentoProcedimento.getOrcamentoItem().getOrcamento().isAtivo()) {
+                                    && orcamentoProcedimento.getOrcamentoItem().getOrcamento().isAtivo() &&
+                                    orcamentoProcedimento.getOrcamentoItem().isIncluso()                
+                    ) {
                 return true;                
             }
             
