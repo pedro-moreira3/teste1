@@ -48,6 +48,7 @@ import br.com.lume.odonto.entity.Odontograma;
 import br.com.lume.odonto.entity.Orcamento;
 import br.com.lume.odonto.entity.OrcamentoItem;
 import br.com.lume.odonto.entity.OrcamentoPlanejamento;
+import br.com.lume.odonto.entity.OrcamentoProcedimento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
@@ -1199,6 +1200,21 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             log.error("Erro no actionPersist OrcamentoMB", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
+    }
+    
+    public boolean ptpEstaOrcamentoAprovado(PlanoTratamentoProcedimento ptp) {
+        for (OrcamentoProcedimento orcamentoProcedimento : ptp.getOrcamentoProcedimentos()) {
+            if(orcamentoProcedimento.getOrcamentoItem() != null && 
+                    orcamentoProcedimento.getOrcamentoItem().getOrcamento() != null && 
+                            orcamentoProcedimento.getOrcamentoItem().getOrcamento().getAprovado() != null &&
+                                    orcamentoProcedimento.getOrcamentoItem().getOrcamento().getAprovado().equals("S") 
+                                    && orcamentoProcedimento.getOrcamentoItem().getOrcamento().isAtivo()) {
+                return true;                
+            }
+            
+        }
+        
+        return false;
     }
 
     public String getHeaderProcedimentoEdit() {
