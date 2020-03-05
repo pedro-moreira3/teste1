@@ -32,6 +32,7 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamento;
+import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamentoDadosImutaveis;
 import br.com.lume.odonto.entity.RepasseFaturas;
 import br.com.lume.odonto.entity.RepasseFaturasItem;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
@@ -110,6 +111,12 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             validaExecucaoProcedimento = empresa.getValidarRepasseProcedimentoFinalizadoBool();
 
             actionTrocaDatas(null);
+
+            //List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().findReciboLancamentoInvalido();
+            ////List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().listAll();
+            //for (ReciboRepasseProfissionalLancamento rrpl : rrpls)
+            //    rrpl.setDados(new ReciboRepasseProfissionalLancamentoDadosImutaveis(rrpl));
+            //ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().mergeBatch(rrpls);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Não foi possivel carregar a tela.", true);
