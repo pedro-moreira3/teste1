@@ -1418,7 +1418,12 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 planoTratamentoProcedimentos = this.converteParaAgendamentoPlanoTratamentoProcedimento(
                         PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listProcedimentosPickListAgendamento(planoTratamentoSelecionado.getId(), this.getEntity().getId(), true, false));
             }
-
+            //para planos orto mostramos somente a proxima manutencao e não todas em aberto
+            if(planoTratamentoSelecionado.isOrtodontico()) {
+                AgendamentoPlanoTratamentoProcedimento primeiroPtp = planoTratamentoProcedimentos.get(0);
+                planoTratamentoProcedimentos = new ArrayList<AgendamentoPlanoTratamentoProcedimento>();
+                planoTratamentoProcedimentos.add(primeiroPtp);
+            }
             procedimentosPickList = new DualListModel<>(planoTratamentoProcedimentos != null ? planoTratamentoProcedimentos : new ArrayList<AgendamentoPlanoTratamentoProcedimento>(),
                     this.getEntity().getPlanoTratamentoProcedimentosAgendamento() != null ? this.getEntity().getPlanoTratamentoProcedimentosAgendamento() : new ArrayList<AgendamentoPlanoTratamentoProcedimento>());
         } else {
