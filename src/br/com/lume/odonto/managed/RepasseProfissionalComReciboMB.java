@@ -505,6 +505,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             lancamentoCalculado.setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
                         } else {
                             lancamentoCalculado.setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
+                            addError("Cálculo", "Cálculo disponível somente após pagamento do paciente.");
+                            return;
                         }
 
                         lancamentoCalculado.setDadosTabelaPercItem(repasse.getRepasseFaturas().getFaturaRepasse().getItensFiltered().get(0).getValorComDesconto().divide(
@@ -541,18 +543,30 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         lancamentoCalculado.setDadosCalculoValorTarifa((lancamentoParaCalculo.getTarifa() != null ? lancamentoParaCalculo.getTarifa().getTarifa() : BigDecimal.ZERO));
                         lancamentoCalculado.setDadosCalculoPercTributo(lancamentoParaCalculo.getTributoPerc());
                         lancamentoCalculado.setDadosCalculoValorTributo(lancamentoParaCalculo.getTributoPerc().multiply(lancamentoParaCalculo.getValor()).setScale(2, BigDecimal.ROUND_HALF_UP));
-                        lancamentoCalculado.setDadosCalculoPercCustoDireto(
-                                lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos().divide(lancamentoCalculado.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
-                        lancamentoCalculado.setDadosCalculoValorCustoDiretoRateado(
-                                lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos().divide(lancamentoCalculado.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP).multiply(
-                                        lancamentoParaCalculo.getValor()));
-                        lancamentoCalculado.setDadosCalculoTotalReducao(
-                                lancamentoCalculado.getDadosCalculoValorTaxa().add(lancamentoCalculado.getDadosCalculoValorTarifa()).add(lancamentoCalculado.getDadosCalculoValorTributo()));
+                        if(lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos() != null && lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos().compareTo(new BigDecimal(0)) != 0) {
+                            lancamentoCalculado.setDadosCalculoPercCustoDireto(
+                                    lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos().divide(lancamentoCalculado.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
+                            lancamentoCalculado.setDadosCalculoValorCustoDiretoRateado(
+                                    lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos().divide(lancamentoCalculado.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP).multiply(
+                                            lancamentoParaCalculo.getValor()));
+                            lancamentoCalculado.setDadosCalculoValorItemSemCusto(
+                                    itemOrigem.getValorComDesconto().subtract(lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                        }else {
+                            lancamentoCalculado.setDadosCalculoValorItemSemCusto(
+                                    itemOrigem.getValorComDesconto().setScale(2, BigDecimal.ROUND_HALF_UP));
+                        }
+                       
+                        if(lancamentoCalculado.getDadosCalculoValorTarifa() != null && lancamentoCalculado.getDadosCalculoValorTarifa().compareTo(new BigDecimal(0)) != 0) {
+                            lancamentoCalculado.setDadosCalculoTotalReducao(
+                                    lancamentoCalculado.getDadosCalculoValorTaxa().add(lancamentoCalculado.getDadosCalculoValorTarifa()).add(lancamentoCalculado.getDadosCalculoValorTributo()));
+                        }else {
+                            lancamentoCalculado.setDadosCalculoTotalReducao(new BigDecimal(0)); 
+                        }
+                        
                         lancamentoCalculado.setDadosCalculoRecebidoMenosReducao(
                                 lancamentoParaCalculo.getValor().subtract(lancamentoCalculado.getDadosCalculoTotalReducao()).setScale(2, BigDecimal.ROUND_HALF_UP));
 
-                        lancamentoCalculado.setDadosCalculoValorItemSemCusto(
-                                itemOrigem.getValorComDesconto().subtract(lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos()).setScale(2, BigDecimal.ROUND_HALF_UP));
+                        
                         lancamentoCalculado.setDadosCalculoPercItemSemCusto(
                                 lancamentoCalculado.getDadosCalculoValorItemSemCusto().divide(lancamentoCalculado.getDadosTabelaValorTotalFaturaOrigem(), 4, BigDecimal.ROUND_HALF_UP));
                         lancamentoCalculado.setDadosCalculoInvPercItemSemCusto(BigDecimal.valueOf(1).subtract(lancamentoCalculado.getDadosCalculoPercItemSemCusto()));
