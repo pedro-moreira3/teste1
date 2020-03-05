@@ -438,14 +438,42 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     this.ptps2Finalizar.add(ptp);
                 }
             }
-        }
+        }       
         if (this.ptps2Finalizar != null && !this.ptps2Finalizar.isEmpty()) {
+            if(this.ptps2Finalizar.get(0).getPlanoTratamento().isOrtodontico()) {
+                if(this.ptps2Finalizar.size() > 1) {
+                    addError("Para planos ortodônticos, é permitido executar somente um procedimento por vez.", "");
+                    return false;
+                }
+               if(!verificaSeExecutadoPrimeiroLista(planoTratamentoProcedimentos,this.ptps2Finalizar.get(0))) {
+                   addError("Para planos ortodônticos, é permitido executar somente o primeiro procedimento disponível.", "");
+
+                   return false;
+               }
+            }
             this.descricaoEvolucao = null;
             PrimeFaces.current().executeScript("PF('evolucao').show()");
             FacesContext.getCurrentInstance().getPartialViewContext().getRenderIds().add("lume:tabView:evolucaoView");
             return false;
         }
         return true;
+    }
+    //para ortodontico é obrigatorio finalizar na ordem
+    public boolean verificaSeExecutadoPrimeiroLista(List<PlanoTratamentoProcedimento> listaPtp,PlanoTratamentoProcedimento ptpParaVerificar) throws Exception {
+        //pegando o primero ptp que esta disponivel para execucao:
+        PlanoTratamentoProcedimento primeiroDisponivelParaExecucao = null;
+        for (PlanoTratamentoProcedimento ptp : listaPtp) {            
+            PlanoTratamentoProcedimento ptpBanco = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().find(ptp.getId());
+            if (!"F".equals(ptpBanco.getStatus())) {
+                primeiroDisponivelParaExecucao = ptp;
+                break;
+            }         
+        } 
+        
+        if(primeiroDisponivelParaExecucao != null && ptpParaVerificar.equals(primeiroDisponivelParaExecucao)) {
+            return true;
+        }
+        return false;
     }
 
     public void salvaProcedimento(PlanoTratamentoProcedimento ptp) throws Exception {
