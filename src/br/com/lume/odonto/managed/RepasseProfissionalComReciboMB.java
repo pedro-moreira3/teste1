@@ -439,16 +439,16 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         }
         List<Lancamento> lancamentosTemp = new ArrayList<Lancamento>();
         lancamentosTemp.addAll(lancamentos);
-        for (Lancamento lancamento : lancamentosTemp) {
-            if ((validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) || (this.validaPagamentoPacienteOrtodontico && ptp.getPlanoTratamento().isOrtodontico())) {
-                if (RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(lancamento) != null) {
-                    Lancamento lancamentoDeOrigem = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(lancamento).getLancamentoOrigem();
-                    if (lancamentoDeOrigem == null || lancamentoDeOrigem.getValidadoPorProfissional() == null) {
-                        lancamentos.remove(lancamento);
-                    }
-                }
-            }
-        }
+//        for (Lancamento lancamento : lancamentosTemp) {
+//            if ((validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) || (this.validaPagamentoPacienteOrtodontico && ptp.getPlanoTratamento().isOrtodontico())) {
+//                if (RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(lancamento) != null) {
+//                    Lancamento lancamentoDeOrigem = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasse(lancamento).getLancamentoOrigem();
+//                    if (lancamentoDeOrigem == null || lancamentoDeOrigem.getValidadoPorProfissional() == null) {
+//                        lancamentos.remove(lancamento);
+//                    }
+//                }
+//            }
+//        }
 
         //TODO verificar como vamos mostrar quando tiver maid de um lançamento...
         //   for (Lancamento lancamento : lancamentos) {
@@ -594,7 +594,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         if (lancamentosCalculados != null && lancamentosCalculados.size() > 0) {
             PrimeFaces.current().executeScript("PF('dlgCalculoRepasse').show();");
         } else {
-            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
+            this.addError("Erro", "Erro ao buscar cálculo, recalcule o repasse.", true);
         }
 
     }
