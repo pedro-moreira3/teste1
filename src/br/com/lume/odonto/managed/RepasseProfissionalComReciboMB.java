@@ -409,8 +409,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     }
                 }
             }
-
-            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado());
+            
+            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(),ptp.getFatura());
             addInfo("Sucesso", "Repasse recalculado!");
         } catch (Exception e) {
             e.printStackTrace();
