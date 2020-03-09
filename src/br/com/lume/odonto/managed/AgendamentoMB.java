@@ -80,7 +80,6 @@ import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
-import br.com.lume.repasse.RepasseFaturasSingleton;
 import br.com.lume.reserva.ReservaSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 import br.com.lume.security.PerfilSingleton;
@@ -214,11 +213,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void carregarAgenda() {
-        limpaPacienteSelecionado();
+        //limpaPacienteSelecionado();
         carregarScheduleTarefas();
         this.horasUteisProfissional = getHorasUteisProfissional();
-        PrimeFaces.current().ajax().update(":lume:dadosFiltroAg");
-        PrimeFaces.current().ajax().update(":lume:schedule");
+        //PrimeFaces.current().ajax().update(":lume:dadosFiltroAg");
+        //PrimeFaces.current().ajax().update(":lume:schedule");
     }
 
     public void atualizaPacientePosFicha() {
@@ -384,9 +383,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 if (!paraInserir.contains(aptpExistente)) {
                     aptpExistente.setAtivo(false);
                 }
-                      
+
                 paraInserir.add(aptpExistente);
-              
+
             }
 
             this.getEntity().setPlanoTratamentoProcedimentosAgendamento(paraInserir);
@@ -439,27 +438,22 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             }
                             AgendamentoSingleton.getInstance().getBo().persist(this.getEntity(), UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada().getEmpStrEstoque(),
                                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                            
-                           
-                            
+
                             //salvando dentista executor, pois ja sabemos quem deve receber. somente se ptp nao estiver finalizado.
                             for (AgendamentoPlanoTratamentoProcedimento aptp : this.getEntity().getPlanoTratamentoProcedimentosAgendamento()) {
-                                if(aptp.getPlanoTratamentoProcedimento() != null &&
-                                        aptp.getPlanoTratamentoProcedimento().getDataFinalizado() == null) {
-                                    
-                                    if(aptp.getPlanoTratamentoProcedimento().getDentistaExecutor() == null || 
-                                            !profissionalDentroAgenda.equals(aptp.getPlanoTratamentoProcedimento().getDentistaExecutor()) ||
-                                            "Não Atendido".equals(this.getEntity().getStatusAgendamento().getDescricao())) {
-                                        
+                                if (aptp.getPlanoTratamentoProcedimento() != null && aptp.getPlanoTratamentoProcedimento().getDataFinalizado() == null) {
+
+                                    if (aptp.getPlanoTratamentoProcedimento().getDentistaExecutor() == null || !profissionalDentroAgenda.equals(
+                                            aptp.getPlanoTratamentoProcedimento().getDentistaExecutor()) || "Não Atendido".equals(this.getEntity().getStatusAgendamento().getDescricao())) {
+
                                         PlanoTratamentoProcedimentoSingleton.getInstance().alteraDentistaExecutor(aptp.getPlanoTratamentoProcedimento(), profissionalDentroAgenda);
                                         PlanoTratamentoProcedimentoSingleton.getInstance().verificaRepasses(aptp.getPlanoTratamentoProcedimento(), UtilsFrontEnd.getProfissionalLogado());
-                                        
+
                                     }
                                 }
-                                                                
+
                             }
-                       
-                            
+
                             if (retorno != null) {
                                 retorno.setAgendamento(getEntity());
                                 retorno.setRetornar("A");
@@ -508,7 +502,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 //this.refreshEntity();
             }
             validaHabilitaSalvar();
-            carregarScheduleTarefas();
+            //carregarScheduleTarefas();
         } else {
             this.addError(OdontoMensagens.getMensagem("erro.agendamento.planotratamento.vazio"), "");
         }
@@ -1132,6 +1126,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public void onEventSelect(SelectEvent selectEvent) {
 
         Agendamento agendamento = null;
+        if (selectEvent.getObject() == null) {
+            addError("Erro", "Houve um problema na solicitação, tente novamente!");
+            return;
+        }
 
         Object obj = ((ScheduleEvent) selectEvent.getObject()).getData();
 

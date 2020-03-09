@@ -248,12 +248,12 @@
 
 		<div class="layout-main">
 			<h:form id="lume">
+				<ui:include src="../pages/pacienteFicha.xhtml" />
 				<p:growl id="view-log" showDetail="true" escape="false"
 					globalOnly="true" life="4000">
 					<p:autoUpdate />
 				</p:growl>
-				<p:ajaxStatus onstart="startTimer();"
-					onsuccess="stopTimer();"
+				<p:ajaxStatus onstart="startTimer();" onsuccess="stopTimer();"
 					onerror="stopTimer();" />
 				<p:dialog modal="true" widgetVar="loading" draggable="false"
 					closable="false" showHeader="false" resizable="false">

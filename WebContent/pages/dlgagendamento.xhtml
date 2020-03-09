@@ -35,7 +35,7 @@
 		});
 	</script>
 
-	<ui:include src="pacienteFicha.xhtml" />
+
 	<p:remoteCommand name="onHidePacienteFicha" process="@this"
 		actionListener="#{agendamentoMB.atualizaPacientePosFicha()}" />
 
@@ -332,7 +332,7 @@
 
 						<p:inputText id="numeroPlanoRapido"
 							value="#{agendamentoMB.paciente.numeroPlano}" maxlength="50" />
-						<p:outputLabel id="lblnumeroPlanoRapido" for="numeroPlano"
+						<p:outputLabel id="lblnumeroPlanoRapido" for="numeroPlanoRapido"
 							value="Carteira do Convênio : " />
 					</h:panelGroup>
 					<p:separator styleClass="SeparatorFull" />
