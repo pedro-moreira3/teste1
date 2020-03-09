@@ -32,7 +32,6 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamento;
-import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamentoDadosImutaveis;
 import br.com.lume.odonto.entity.RepasseFaturas;
 import br.com.lume.odonto.entity.RepasseFaturasItem;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
@@ -112,10 +111,12 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
             actionTrocaDatas(null);
 
-            //List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().findReciboLancamentoInvalido();
-            ////List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().listAll();
-            //for (ReciboRepasseProfissionalLancamento rrpl : rrpls)
+            ////List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().findReciboLancamentoInvalido();
+            //List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().listAll();
+            //for (ReciboRepasseProfissionalLancamento rrpl : rrpls) {
             //    rrpl.setDados(new ReciboRepasseProfissionalLancamentoDadosImutaveis(rrpl));
+            //    ReciboRepasseProfissionalLancamentoDadosImutaveisSingleton.getInstance().getBo().persist(rrpl.getDados());
+            //}
             //ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().mergeBatch(rrpls);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -409,8 +410,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     }
                 }
             }
-            
-            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(),ptp.getFatura());
+
+            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura());
             addInfo("Sucesso", "Repasse recalculado!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -543,7 +544,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         lancamentoCalculado.setDadosCalculoValorTarifa((lancamentoParaCalculo.getTarifa() != null ? lancamentoParaCalculo.getTarifa().getTarifa() : BigDecimal.ZERO));
                         lancamentoCalculado.setDadosCalculoPercTributo(lancamentoParaCalculo.getTributoPerc());
                         lancamentoCalculado.setDadosCalculoValorTributo(lancamentoParaCalculo.getTributoPerc().multiply(lancamentoParaCalculo.getValor()).setScale(2, BigDecimal.ROUND_HALF_UP));
-                        if(lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos() != null && lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos().compareTo(new BigDecimal(0)) != 0) {
+                        if (lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos() != null && lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos().compareTo(new BigDecimal(0)) != 0) {
                             lancamentoCalculado.setDadosCalculoPercCustoDireto(
                                     lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos().divide(lancamentoCalculado.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
                             lancamentoCalculado.setDadosCalculoValorCustoDiretoRateado(
@@ -551,22 +552,20 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                             lancamentoParaCalculo.getValor()));
                             lancamentoCalculado.setDadosCalculoValorItemSemCusto(
                                     itemOrigem.getValorComDesconto().subtract(lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos()).setScale(2, BigDecimal.ROUND_HALF_UP));
-                        }else {
-                            lancamentoCalculado.setDadosCalculoValorItemSemCusto(
-                                    itemOrigem.getValorComDesconto().setScale(2, BigDecimal.ROUND_HALF_UP));
+                        } else {
+                            lancamentoCalculado.setDadosCalculoValorItemSemCusto(itemOrigem.getValorComDesconto().setScale(2, BigDecimal.ROUND_HALF_UP));
                         }
-                       
-                        if(lancamentoCalculado.getDadosCalculoValorTarifa() != null && lancamentoCalculado.getDadosCalculoValorTarifa().compareTo(new BigDecimal(0)) != 0) {
+
+                        if (lancamentoCalculado.getDadosCalculoValorTarifa() != null && lancamentoCalculado.getDadosCalculoValorTarifa().compareTo(new BigDecimal(0)) != 0) {
                             lancamentoCalculado.setDadosCalculoTotalReducao(
                                     lancamentoCalculado.getDadosCalculoValorTaxa().add(lancamentoCalculado.getDadosCalculoValorTarifa()).add(lancamentoCalculado.getDadosCalculoValorTributo()));
-                        }else {
-                            lancamentoCalculado.setDadosCalculoTotalReducao(new BigDecimal(0)); 
+                        } else {
+                            lancamentoCalculado.setDadosCalculoTotalReducao(new BigDecimal(0));
                         }
-                        
+
                         lancamentoCalculado.setDadosCalculoRecebidoMenosReducao(
                                 lancamentoParaCalculo.getValor().subtract(lancamentoCalculado.getDadosCalculoTotalReducao()).setScale(2, BigDecimal.ROUND_HALF_UP));
 
-                        
                         lancamentoCalculado.setDadosCalculoPercItemSemCusto(
                                 lancamentoCalculado.getDadosCalculoValorItemSemCusto().divide(lancamentoCalculado.getDadosTabelaValorTotalFaturaOrigem(), 4, BigDecimal.ROUND_HALF_UP));
                         lancamentoCalculado.setDadosCalculoInvPercItemSemCusto(BigDecimal.valueOf(1).subtract(lancamentoCalculado.getDadosCalculoPercItemSemCusto()));
