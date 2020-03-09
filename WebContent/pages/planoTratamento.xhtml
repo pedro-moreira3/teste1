@@ -1766,6 +1766,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			listener="#{planoTratamentoMB.closeEvolucao}" process="@this" />
 		<p:outputPanel id="evolucaoView">
 			<p:panelGrid columns="1" layout="grid"
+				style="max-height: 500px; overflow-y: auto;"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
 				<h:panelGroup styleClass="lumeField">
 					<ui:repeat var="procedimento"
