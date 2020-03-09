@@ -32,7 +32,6 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamento;
-import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamentoDadosImutaveis;
 import br.com.lume.odonto.entity.RepasseFaturas;
 import br.com.lume.odonto.entity.RepasseFaturasItem;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
@@ -58,7 +57,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private static final long serialVersionUID = 1L;
     //private Logger log = Logger.getLogger(FaturaPagtoMB.class);
 
-    private boolean executadosSemPagamentos = false, semPendencias = true, procedimentosNaoExecutados = false, mostrarRepasseAntigo = false;
+    private boolean semPendencias = true, procedimentosNaoExecutados = false, mostrarRepasseAntigo = false;
 
     //FILTROS
     private Date dataInicio;
@@ -84,15 +83,15 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private List<Profissional> profissionaisRecibo;
     private HashMap<Profissional, Integer> profissionaisReciboLancamentos;
     private HashMap<Profissional, Double> profissionaisReciboValores;
-
+    private HashMap<PlanoTratamentoProcedimento, List<Lancamento>> ptpsValidosComLancamentos = new HashMap<PlanoTratamentoProcedimento, List<Lancamento>>();
     private List<Lancamento> lancamentosCalculados;
 
     private ReciboRepasseProfissional reciboRepasseProfissional;
     private List<ReciboRepasseProfissional> listaRecibos;
 
     private List<Lancamento> lancamentoParaRecibo;
-
-    public Integer getQtdeLancamentosFromProfissional(Profissional profissional) {
+    
+       public Integer getQtdeLancamentosFromProfissional(Profissional profissional) {
         return this.profissionaisReciboLancamentos.get(profissional);
     }
 
@@ -112,10 +111,12 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
             actionTrocaDatas(null);
 
-            //List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().findReciboLancamentoInvalido();
-            ////List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().listAll();
-            //for (ReciboRepasseProfissionalLancamento rrpl : rrpls)
+            ////List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().findReciboLancamentoInvalido();
+            //List<ReciboRepasseProfissionalLancamento> rrpls = ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().listAll();
+            //for (ReciboRepasseProfissionalLancamento rrpl : rrpls) {
             //    rrpl.setDados(new ReciboRepasseProfissionalLancamentoDadosImutaveis(rrpl));
+            //    ReciboRepasseProfissionalLancamentoDadosImutaveisSingleton.getInstance().getBo().persist(rrpl.getDados());
+            //}
             //ReciboRepasseProfissionalLancamentoSingleton.getInstance().getBo().mergeBatch(rrpls);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -138,12 +139,12 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         }
         lancamentoParaRecibo = new ArrayList<Lancamento>();
         for (PlanoTratamentoProcedimento ptp : ptpsSelecionados) {
-            if (!existemPendencias(ptp)) {
-                Fatura fatura = ptp.getFatura();
-                if (fatura != null) {
-                    List<Lancamento> lancamentos = fatura.getLancamentos();
+            if (!existemPendencias(ptp) ) {
+             //   Fatura fatura = ptp.getFatura();
+              //  if (fatura != null) {
+                  //  List<Lancamento> lancamentos = fatura.getLancamentos();
                     Profissional dentistaExecutor = ptp.getDentistaExecutor();
-                    for (Lancamento lancamento : lancamentos) {
+                    for (Lancamento lancamento : ptpsValidosComLancamentos.get(ptp)) {
                         if (lancamento.getAtivoStr().equals("Sim") && lancamento.getConferidoPorProfissional() == null) {
                             Double valor = (lancamento.getValorComDesconto() == null || lancamento.getValorComDesconto().doubleValue() == 0d ? lancamento.getValor().doubleValue() : lancamento.getValorComDesconto().doubleValue());
                             if (getProfissionaisRecibo() == null || getProfissionaisRecibo().indexOf(dentistaExecutor) < 0) {
@@ -154,10 +155,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                 this.profissionaisReciboLancamentos.put(dentistaExecutor, this.profissionaisReciboLancamentos.get(dentistaExecutor) + 1);
                                 this.profissionaisReciboValores.put(dentistaExecutor, this.profissionaisReciboValores.get(dentistaExecutor) + valor);
                             }
+                            
                             lancamentoParaRecibo.add(lancamento);
                         }
                     }
-                }
+             //   }
             }
         }
 
@@ -298,7 +300,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         try {
             setEntityList(new ArrayList<PlanoTratamentoProcedimento>());
             setEntityList(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listParaRepasseProfissionais(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), dataInicio, dataFim,
-                    profissional, executadosSemPagamentos, procedimentosNaoExecutados, mostrarRepasseAntigo));
+                    profissional, procedimentosNaoExecutados, mostrarRepasseAntigo));
 
 //            if (semPendencias && getEntityList() != null && getEntityList().size() > 0) {
 //                //getEntityList().removeIf(ptp -> (existemPendencias(ptp) || valorDisponivel(ptp).compareTo(new BigDecimal(0)) == 0));
@@ -339,6 +341,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         //ptp.setValorDisponivel(ptp.getValorTotal().subtract(ptp.getValorPago()));  
                         // ptp.setValorDisponivel(new BigDecimal(FaturaSingleton.getInstance().getValorNaoPagoDisponivel(ptp.getFatura())));
                         BigDecimal valorDisponivel = new BigDecimal(0);
+                        ptpsValidosComLancamentos.put(ptp, new ArrayList<Lancamento>());
                         for (Lancamento lancamento : ptp.getFatura().getLancamentos()) {
                             if ((validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) || (this.validaPagamentoPacienteOrtodontico && ptp.getPlanoTratamento().isOrtodontico())) {
                                 if (lancamento.isAtivo() && lancamento.getValidado().equals("N")) {
@@ -347,6 +350,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                         Lancamento lancamentoDeOrigem = rfl.getLancamentoOrigem();
                                         if (lancamentoDeOrigem != null && lancamentoDeOrigem.getValidadoPorProfissional() != null) {
                                             valorDisponivel = valorDisponivel.add(lancamento.getValor());
+                                            ptpsValidosComLancamentos.get(ptp).add(lancamento);
                                         }
                                     }
 
@@ -354,6 +358,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             } else {
                                 if (lancamento.isAtivo() && lancamento.getValidado().equals("N")) {
                                     valorDisponivel = valorDisponivel.add(lancamento.getValor());
+                                   
+                                    ptpsValidosComLancamentos.get(ptp).add(lancamento);
                                 }
                             }
 
@@ -409,8 +415,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     }
                 }
             }
-            
-            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(),ptp.getFatura());
+
+            RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura());
             addInfo("Sucesso", "Repasse recalculado!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -543,7 +549,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         lancamentoCalculado.setDadosCalculoValorTarifa((lancamentoParaCalculo.getTarifa() != null ? lancamentoParaCalculo.getTarifa().getTarifa() : BigDecimal.ZERO));
                         lancamentoCalculado.setDadosCalculoPercTributo(lancamentoParaCalculo.getTributoPerc());
                         lancamentoCalculado.setDadosCalculoValorTributo(lancamentoParaCalculo.getTributoPerc().multiply(lancamentoParaCalculo.getValor()).setScale(2, BigDecimal.ROUND_HALF_UP));
-                        if(lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos() != null && lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos().compareTo(new BigDecimal(0)) != 0) {
+                        if (lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos() != null && lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos().compareTo(new BigDecimal(0)) != 0) {
                             lancamentoCalculado.setDadosCalculoPercCustoDireto(
                                     lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos().divide(lancamentoCalculado.getDadosTabelaValorTotalFatura(), 4, BigDecimal.ROUND_HALF_UP));
                             lancamentoCalculado.setDadosCalculoValorCustoDiretoRateado(
@@ -551,22 +557,20 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                             lancamentoParaCalculo.getValor()));
                             lancamentoCalculado.setDadosCalculoValorItemSemCusto(
                                     itemOrigem.getValorComDesconto().subtract(lancamentoCalculado.getDadosTabelaValorTotalCustosDiretos()).setScale(2, BigDecimal.ROUND_HALF_UP));
-                        }else {
-                            lancamentoCalculado.setDadosCalculoValorItemSemCusto(
-                                    itemOrigem.getValorComDesconto().setScale(2, BigDecimal.ROUND_HALF_UP));
+                        } else {
+                            lancamentoCalculado.setDadosCalculoValorItemSemCusto(itemOrigem.getValorComDesconto().setScale(2, BigDecimal.ROUND_HALF_UP));
                         }
-                       
-                        if(lancamentoCalculado.getDadosCalculoValorTarifa() != null && lancamentoCalculado.getDadosCalculoValorTarifa().compareTo(new BigDecimal(0)) != 0) {
+
+                        if (lancamentoCalculado.getDadosCalculoValorTarifa() != null && lancamentoCalculado.getDadosCalculoValorTarifa().compareTo(new BigDecimal(0)) != 0) {
                             lancamentoCalculado.setDadosCalculoTotalReducao(
                                     lancamentoCalculado.getDadosCalculoValorTaxa().add(lancamentoCalculado.getDadosCalculoValorTarifa()).add(lancamentoCalculado.getDadosCalculoValorTributo()));
-                        }else {
-                            lancamentoCalculado.setDadosCalculoTotalReducao(new BigDecimal(0)); 
+                        } else {
+                            lancamentoCalculado.setDadosCalculoTotalReducao(new BigDecimal(0));
                         }
-                        
+
                         lancamentoCalculado.setDadosCalculoRecebidoMenosReducao(
                                 lancamentoParaCalculo.getValor().subtract(lancamentoCalculado.getDadosCalculoTotalReducao()).setScale(2, BigDecimal.ROUND_HALF_UP));
 
-                        
                         lancamentoCalculado.setDadosCalculoPercItemSemCusto(
                                 lancamentoCalculado.getDadosCalculoValorItemSemCusto().divide(lancamentoCalculado.getDadosTabelaValorTotalFaturaOrigem(), 4, BigDecimal.ROUND_HALF_UP));
                         lancamentoCalculado.setDadosCalculoInvPercItemSemCusto(BigDecimal.valueOf(1).subtract(lancamentoCalculado.getDadosCalculoPercItemSemCusto()));
@@ -601,33 +605,21 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
     public void mudaCheckbox(String checkbox) {
         if (checkbox.equals("semPendencias") && semPendencias == true) {
-            semPendencias = true;
-            executadosSemPagamentos = false;
+            semPendencias = true;          
             procedimentosNaoExecutados = false;
-            mostrarRepasseAntigo = false;
-        } else if (checkbox.equals("executadosSemPagamentos") && executadosSemPagamentos == true) {
-            executadosSemPagamentos = true;
-            procedimentosNaoExecutados = false;
-            semPendencias = false;
             mostrarRepasseAntigo = false;
         } else if (checkbox.equals("procedimentosNaoExecutados") && procedimentosNaoExecutados == true) {
-            procedimentosNaoExecutados = true;
-            executadosSemPagamentos = false;
+            procedimentosNaoExecutados = true;           
             semPendencias = false;
             mostrarRepasseAntigo = false;
         } else if (checkbox.equals("mostrarRepasseAntigo") && mostrarRepasseAntigo == true) {
             mostrarRepasseAntigo = true;
-            procedimentosNaoExecutados = false;
-            executadosSemPagamentos = false;
+            procedimentosNaoExecutados = false;          
             semPendencias = false;
         }
-
-        if (executadosSemPagamentos || procedimentosNaoExecutados || mostrarRepasseAntigo) {
+        if (procedimentosNaoExecutados || mostrarRepasseAntigo) {
             semPendencias = false;
-        }
-        if (executadosSemPagamentos) {
-            procedimentosNaoExecutados = false;
-        }
+        }       
     }
 
     public void verificaPendencias(PlanoTratamentoProcedimento ptp) {
@@ -938,20 +930,21 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         return Arrays.asList(new Object());
     }
 
-    public boolean isExecutadosSemPagamentos() {
-        return executadosSemPagamentos;
-    }
-
-    public void setExecutadosSemPagamentos(boolean executadosSemPagamentos) {
-        this.executadosSemPagamentos = executadosSemPagamentos;
-    }
-
     public boolean isValidaPagamentoPacienteOrtodontico() {
         return validaPagamentoPacienteOrtodontico;
     }
 
     public void setValidaPagamentoPacienteOrtodontico(boolean validaPagamentoPacienteOrtodontico) {
         this.validaPagamentoPacienteOrtodontico = validaPagamentoPacienteOrtodontico;
+    }
+ 
+    public HashMap<PlanoTratamentoProcedimento, List<Lancamento>> getPtpsValidosComLancamentos() {
+        return ptpsValidosComLancamentos;
+    }
+
+    
+    public void setPtpsValidosComLancamentos(HashMap<PlanoTratamentoProcedimento, List<Lancamento>> ptpsValidosComLancamentos) {
+        this.ptpsValidosComLancamentos = ptpsValidosComLancamentos;
     }
 
 }
