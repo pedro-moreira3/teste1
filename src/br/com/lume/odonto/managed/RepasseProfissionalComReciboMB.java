@@ -300,7 +300,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         try {
             setEntityList(new ArrayList<PlanoTratamentoProcedimento>());
             setEntityList(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listParaRepasseProfissionais(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), dataInicio, dataFim,
-                    profissional, procedimentosNaoExecutados, mostrarRepasseAntigo));
+                    profissional,false, procedimentosNaoExecutados, mostrarRepasseAntigo));
 
 //            if (semPendencias && getEntityList() != null && getEntityList().size() > 0) {
 //                //getEntityList().removeIf(ptp -> (existemPendencias(ptp) || valorDisponivel(ptp).compareTo(new BigDecimal(0)) == 0));
