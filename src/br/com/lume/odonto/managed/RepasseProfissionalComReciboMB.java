@@ -57,7 +57,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private static final long serialVersionUID = 1L;
     //private Logger log = Logger.getLogger(FaturaPagtoMB.class);
 
-    private boolean executadosSemPagamentos = false, semPendencias = true, procedimentosNaoExecutados = false, mostrarRepasseAntigo = false;
+    private boolean semPendencias = true, procedimentosNaoExecutados = false, mostrarRepasseAntigo = false;
 
     //FILTROS
     private Date dataInicio;
@@ -299,7 +299,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         try {
             setEntityList(new ArrayList<PlanoTratamentoProcedimento>());
             setEntityList(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listParaRepasseProfissionais(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), dataInicio, dataFim,
-                    profissional, executadosSemPagamentos, procedimentosNaoExecutados, mostrarRepasseAntigo));
+                    profissional, procedimentosNaoExecutados, mostrarRepasseAntigo));
 
 //            if (semPendencias && getEntityList() != null && getEntityList().size() > 0) {
 //                //getEntityList().removeIf(ptp -> (existemPendencias(ptp) || valorDisponivel(ptp).compareTo(new BigDecimal(0)) == 0));
@@ -600,33 +600,21 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
     public void mudaCheckbox(String checkbox) {
         if (checkbox.equals("semPendencias") && semPendencias == true) {
-            semPendencias = true;
-            executadosSemPagamentos = false;
+            semPendencias = true;          
             procedimentosNaoExecutados = false;
-            mostrarRepasseAntigo = false;
-        } else if (checkbox.equals("executadosSemPagamentos") && executadosSemPagamentos == true) {
-            executadosSemPagamentos = true;
-            procedimentosNaoExecutados = false;
-            semPendencias = false;
             mostrarRepasseAntigo = false;
         } else if (checkbox.equals("procedimentosNaoExecutados") && procedimentosNaoExecutados == true) {
-            procedimentosNaoExecutados = true;
-            executadosSemPagamentos = false;
+            procedimentosNaoExecutados = true;           
             semPendencias = false;
             mostrarRepasseAntigo = false;
         } else if (checkbox.equals("mostrarRepasseAntigo") && mostrarRepasseAntigo == true) {
             mostrarRepasseAntigo = true;
-            procedimentosNaoExecutados = false;
-            executadosSemPagamentos = false;
+            procedimentosNaoExecutados = false;          
             semPendencias = false;
         }
-
-        if (executadosSemPagamentos || procedimentosNaoExecutados || mostrarRepasseAntigo) {
+        if (procedimentosNaoExecutados || mostrarRepasseAntigo) {
             semPendencias = false;
-        }
-        if (executadosSemPagamentos) {
-            procedimentosNaoExecutados = false;
-        }
+        }       
     }
 
     public void verificaPendencias(PlanoTratamentoProcedimento ptp) {
@@ -935,14 +923,6 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
     public Object getOneValue() {
         return Arrays.asList(new Object());
-    }
-
-    public boolean isExecutadosSemPagamentos() {
-        return executadosSemPagamentos;
-    }
-
-    public void setExecutadosSemPagamentos(boolean executadosSemPagamentos) {
-        this.executadosSemPagamentos = executadosSemPagamentos;
     }
 
     public boolean isValidaPagamentoPacienteOrtodontico() {

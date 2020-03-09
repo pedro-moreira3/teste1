@@ -884,16 +884,6 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													</p:selectBooleanCheckbox>
 													<p:outputLabel for="semPendencias"
 														value="Buscar somente disponíveis para repasse " />
-
-													<p:selectBooleanCheckbox id="executadosSemPagamentos"
-														value="#{repasseProfissionalComReciboMB.executadosSemPagamentos}">
-														<p:ajax process="@this,pnFiltroStatus"
-															listener="#{repasseProfissionalComReciboMB.mudaCheckbox('executadosSemPagamentos')}"
-															update="pnFiltroStatus" />
-													</p:selectBooleanCheckbox>
-													<p:outputLabel for="executadosSemPagamentos"
-														value="Buscar todos os procedimentos executados" />
-
 													<p:selectBooleanCheckbox id="procedimentosNaoExecutados"
 														value="#{repasseProfissionalComReciboMB.procedimentosNaoExecutados}">
 														<p:ajax process="@this,pnFiltroStatus"
@@ -990,7 +980,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														styleClass="NavyButton" title="Recalcular Repasse"
 														rendered="#{repasseProfissionalComReciboMB.admin}"
 														actionListener="#{repasseProfissionalComReciboMB.faturaManual(ptp)}"
-														process="@this"
+														process="@this,dtPrincipalRepasse"
 														oncomplete="PF('dtPrincipalRepasse').filter();"
 														update=":lume:tabViewRepasseProfissional:dtPrincipalRepasse,:lume:pnCalculoRepasse">
 														<p:confirm header="Confirmação" icon="ui-icon-alert"
@@ -1048,7 +1038,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												</p:column>
 												<p:column filterBy="#{ptp.dataFinalizadoStr}"
 													headerText="Data de Execução" filterMatchMode="contains"
-													sortBy="#{ptp.dataFinalizadoStr}">
+													sortBy="#{ptp.dataFinalizado}">
 													<h:outputText value="#{ptp.dataFinalizadoStr}" />
 												</p:column>
 
