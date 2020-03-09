@@ -62,7 +62,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     private List<AparelhoOrtodontico> aparelhos;
     private AparelhoOrtodontico aparelhoSelecionado;
     private Procedimento procedimentoExtra;
-    private BigDecimal valorProcedimento;    
+    private BigDecimal valorProcedimento;
     private BigDecimal indiceReajuste;
     private boolean gerarOrcamentoPorProcedimento = false;
 
@@ -118,6 +118,10 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                     getEntity().setValorTotalDesconto(PlanoTratamentoSingleton.getInstance().calculaValorTotal(getEntity()));
                     getEntity().setPlanoTratamentoProcedimentos(new ArrayList<>());
 
+                    if(this.getEntity().isBconvenio() && getPaciente().getConvenio() != null) {
+                        this.getEntity().setConvenio(getPaciente().getConvenio());
+                    }
+                    
                     long qtd = getEntity().getMeses();
                     long ultimoSequencial = 0l;
                     //qtd = (qtd > 12l ? 12 : qtd);
