@@ -1232,87 +1232,95 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		modal="true" appendTo=":lume" resizable="false"
 		header="Orçamentos para P.T. '#{planoTratamentoMB.entity.descricao}'"
 		width="70%">
-		<p:outputPanel id="orcamentoViewTable">
-			<p:panelGrid columns="2" layout="grid" id="botoesOrcamentoPT"
-				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-				<p:commandButton id="newOrcamento" icon="ui-icon-add"
-					actionListener="#{planoTratamentoMB.actionNewOrcamento}"
-					update=":lume:tabView:panelDescObs,:lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView,:lume:tabView:panelDescObs"
-					value="Novo Orçamento" process="@this" styleClass="NavyButton"
-					disabled="#{planoTratamentoMB.entity.status == 'S'}" />
-			</p:panelGrid>
 
-			<p:dataTable filterDelay="1500" reflow="true"
-				emptyMessage="Nenhum orçamento cadastrado" id="tbViewOrcamento"
-				widgetVar="tbViewOrcamento" var="orcamento"
-				value="#{planoTratamentoMB.orcamentos}" rows="10" paginator="true"
-				paginatorPosition="bottom"
-				selection="#{planoTratamentoMB.orcamentoSelecionado}"
-				rowKey="#{orcamento}">
-				<f:facet name="header">
-					<h:outputText
-						value="Orçamentos do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
-				</f:facet>
-				<p:column width="120" headerText="Editar">
-					<p:commandButton process="@this"
-						actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
-						update=":lume:tabView:panelDescObs,:lume:tabView:orcamentoViewTable, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView"
-						oncomplete="PF('dlgViewOrcamento').show();"
-						styleClass="NavyButton" icon="fa fa-eye" />
-					<p:commandButton icon="White fa fa-print" process="@this"
-						update=":lume:tabView:orcamentoViewPrint, :lume:tabView:orcamentoViewPrintHeader"
-						actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
-						oncomplete="PF('dlgPrintOrcamento').show()"
+		<p:outputPanel style="max-height: 80vh">
+			<p:scrollPanel mode="native" style="border: none; overflow-x: none;">
+
+				<p:outputPanel id="orcamentoViewTable">
+					<p:panelGrid columns="2" layout="grid" id="botoesOrcamentoPT"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+						<p:commandButton id="newOrcamento" icon="ui-icon-add"
+							actionListener="#{planoTratamentoMB.actionNewOrcamento}"
+							update=":lume:tabView:panelDescObs,:lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView,:lume:tabView:panelDescObs"
+							value="Novo Orçamento" process="@this" styleClass="NavyButton"
+							disabled="#{planoTratamentoMB.entity.status == 'S'}" />
+					</p:panelGrid>
+
+					<p:dataTable filterDelay="1500" reflow="true" style="height: 100%"
+						emptyMessage="Nenhum orçamento cadastrado" id="tbViewOrcamento"
+						widgetVar="tbViewOrcamento" var="orcamento"
+						value="#{planoTratamentoMB.orcamentos}" rows="10" paginator="true"
+						paginatorPosition="bottom"
+						selection="#{planoTratamentoMB.orcamentoSelecionado}"
+						rowKey="#{orcamento}">
+						<f:facet name="header">
+							<h:outputText
+								value="Orçamentos do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
+						</f:facet>
+						<p:column width="120" headerText="Editar">
+							<p:commandButton process="@this"
+								actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
+								update=":lume:tabView:panelDescObs,:lume:tabView:orcamentoViewTable, :lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView"
+								oncomplete="PF('dlgViewOrcamento').show();"
+								styleClass="NavyButton" icon="fa fa-eye" />
+							<p:commandButton icon="White fa fa-print" process="@this"
+								update=":lume:tabView:orcamentoViewPrint, :lume:tabView:orcamentoViewPrintHeader"
+								actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
+								oncomplete="PF('dlgPrintOrcamento').show()"
+								styleClass="NavyButton" />
+							<p:commandButton icon="fa fa-trash" process="@this"
+								actionListener="#{planoTratamentoMB.actionRemoveOrcamento(orcamento)}"
+								update=":lume:tabView:tbViewOrcamento" styleClass="NavyButton"
+								title="Cancelar Orçamento">
+								<p:confirm header="Confirmação"
+									message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
+							</p:commandButton>
+						</p:column>
+						<p:column headerText="Descrição" filterBy="#{orcamento.descricao}"
+							filterMatchMode="contains" sortBy="#{orcamento.descricao}">
+							<h:outputText value="#{orcamento.descricao}" />
+						</p:column>
+						<p:column headerText="Data de Criação"
+							filterBy="#{orcamento.dataCriacao}" filterMatchMode="contains"
+							sortBy="#{orcamento.dataCriacao}">
+							<h:outputText value="#{orcamento.dataCriacao}">
+								<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Valor Total"
+							filterBy="#{orcamento.valorTotal}" filterMatchMode="contains"
+							sortBy="#{orcamento.valorTotal}">
+							<h:outputText value="#{orcamento.valorTotal}">
+								<f:convertNumber type="currency" currencySymbol="R$"
+									maxFractionDigits="2" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Aprovado?"
+							filterBy="#{orcamento.aprovadoStr}" filterMatchMode="contains"
+							sortBy="#{orcamento.aprovadoStr}">
+							<h:outputText value="#{orcamento.aprovadoStr}" />
+						</p:column>
+						<p:column headerText="Observações"
+							filterBy="#{orcamento.observacoes}" filterMatchMode="contains"
+							sortBy="#{orcamento.observacoes}">
+							<h:outputText value="#{orcamento.observacoes}" />
+						</p:column>
+					</p:dataTable>
+				</p:outputPanel>
+				<br />
+				<div class="SeparatorFull"></div>
+				<p:panelGrid columns="4" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+					<p:column />
+					<p:column />
+					<p:column />
+					<p:commandButton icon="White fa fa-close" value="Fechar"
+						process="@this" onclick="PF('dlgOrcamentos').hide();"
 						styleClass="NavyButton" />
-					<p:commandButton icon="fa fa-trash" process="@this"
-						actionListener="#{planoTratamentoMB.actionRemoveOrcamento(orcamento)}"
-						update=":lume:tabView:tbViewOrcamento" styleClass="NavyButton"
-						title="Cancelar Orçamento">
-						<p:confirm header="Confirmação"
-							message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
-					</p:commandButton>
-				</p:column>
-				<p:column headerText="Descrição" filterBy="#{orcamento.descricao}"
-					filterMatchMode="contains" sortBy="#{orcamento.descricao}">
-					<h:outputText value="#{orcamento.descricao}" />
-				</p:column>
-				<p:column headerText="Data de Criação"
-					filterBy="#{orcamento.dataCriacao}" filterMatchMode="contains"
-					sortBy="#{orcamento.dataCriacao}">
-					<h:outputText value="#{orcamento.dataCriacao}">
-						<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
-					</h:outputText>
-				</p:column>
-				<p:column headerText="Valor Total"
-					filterBy="#{orcamento.valorTotal}" filterMatchMode="contains"
-					sortBy="#{orcamento.valorTotal}">
-					<h:outputText value="#{orcamento.valorTotal}">
-						<f:convertNumber type="currency" currencySymbol="R$"
-							maxFractionDigits="2" />
-					</h:outputText>
-				</p:column>
-				<p:column headerText="Aprovado?" filterBy="#{orcamento.aprovadoStr}"
-					filterMatchMode="contains" sortBy="#{orcamento.aprovadoStr}">
-					<h:outputText value="#{orcamento.aprovadoStr}" />
-				</p:column>
-				<p:column headerText="Observações"
-					filterBy="#{orcamento.observacoes}" filterMatchMode="contains"
-					sortBy="#{orcamento.observacoes}">
-					<h:outputText value="#{orcamento.observacoes}" />
-				</p:column>
-			</p:dataTable>
+				</p:panelGrid>
+
+			</p:scrollPanel>
 		</p:outputPanel>
-		<br />
-		<div class="SeparatorFull"></div>
-		<p:panelGrid columns="4" layout="grid"
-			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:column />
-			<p:column />
-			<p:column />
-			<p:commandButton icon="White fa fa-close" value="Fechar"
-				process="@this" onclick="PF('dlgOrcamentos').hide();"
-				styleClass="NavyButton" />
-		</p:panelGrid>
 	</p:dialog>
 
 	<p:dialog widgetVar="dlgViewOrcamento" responsive="true" modal="true"
