@@ -69,7 +69,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 			<p:remoteCommand name="onCloseFaturaView" />
 		</p:outputPanel>
 
-		<ui:include src="pacienteFicha.xhtml" />
+		
 		<p:remoteCommand name="onHidePacienteFicha" process="@this"
 			update=":lume:tabViewRepasseProfissional:dtPrincipalRepasse"
 			oncomplete="PF('dtPrincipalRepasse').filter();"
@@ -101,7 +101,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 
 					<p:outputPanel style="padding: 10px;" id="impressHere">
 						<div style="font-size: 10pt">
-
+<ui:remove>
 							<p:outputPanel
 								rendered="#{reciboRepasseProfissionalMB.entity.aprovado != 'S'}">
 								<div
@@ -109,8 +109,10 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									<h:outputText escape="false"
 										value="Este recibo ainda não foi &lt;b&gt;aprovado&lt;/b&gt;, portanto não reflete o valor real de repasse" />
 								</div>
+							
 								<br />
 							</p:outputPanel>
+								</ui:remove>
 							<div style="width: 100%; display: flex">
 								<h:panelGroup
 									style="text-align: center; border: 1px solid #bdbdbd; width: 24.25%; padding: 12px 16px;">
@@ -193,7 +195,11 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														value="#{reciboLancamento.lancamento.ptp.descricaoCompletaComFace}" /></td>
 												<td
 													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.lancamento.ptp.dataFinalizadoStr}" /></td>
+														value="#{reciboLancamento.lancamento.ptp.dataFinalizado}" >
+														<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+														</h:outputText>
+														
+														</td>
 												<td
 													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
 														value="#{reciboLancamento.lancamento.ptp.planoTratamento.descricao}" /></td>
@@ -252,6 +258,9 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 							<div style="width: 100%; height: 80px;">
 								<div
 									style="width: 40%; height: 40px; border-bottom: solid 1px black;"></div>
+									<span> <h:outputText
+											value="#{reciboRepasseProfissionalMB.entity.profissional.dadosBasico.nome}" />
+									</span>
 								<div
 									style="width: 40%; height: 40px; line-height: 40px; font-weight: bold; text-align: center;">
 									<h:outputText
@@ -302,7 +311,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									<f:convertNumber currencySymbol="R$ " type="currency" />
 								</h:outputText>
 							</p:panel>
-							<p:panel header="Aprovado?">
+							<p:panel header="Pago?">
 								<h:outputText
 									value="#{reciboRepasseProfissionalMB.entity.aprovadoStr}" />
 							</p:panel>
@@ -463,9 +472,10 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 		<p:dialog id="dlgCalculoRepasse" widgetVar="dlgCalculoRepasse"
 			header="Cálculo de Repasse" responsive="true" modal="true"
 			width="60%" styleClass="dlgCalculoRepasse">
-			<p:scrollPanel mode="native"
-				style="position: relative; width: 100%; height: 100%;">
-				<p:panel id="pnCalculoRepasse">
+			<p:panel id="pnCalculoRepasse"
+				style="max-height: 80vh; overflow-y: auto; overflow-x: none;">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: 100%; height: 100%; border: none;">
 					<p:repeat
 						value="#{repasseProfissionalComReciboMB.lancamentosCalculados}"
 						var="lancamentoCalculado">
@@ -734,8 +744,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 						</p:outputPanel>
 					</p:repeat>
 
-				</p:panel>
-			</p:scrollPanel>
+				</p:scrollPanel>
+			</p:panel>
 		</p:dialog>
 		<p:dialog appendTo=":lume" closable="false" widgetVar="dlgGerarRecibo"
 			header="Gerar recibo de pagamento" modal="true" width="70%">
@@ -884,16 +894,6 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													</p:selectBooleanCheckbox>
 													<p:outputLabel for="semPendencias"
 														value="Buscar somente disponíveis para repasse " />
-
-													<p:selectBooleanCheckbox id="executadosSemPagamentos"
-														value="#{repasseProfissionalComReciboMB.executadosSemPagamentos}">
-														<p:ajax process="@this,pnFiltroStatus"
-															listener="#{repasseProfissionalComReciboMB.mudaCheckbox('executadosSemPagamentos')}"
-															update="pnFiltroStatus" />
-													</p:selectBooleanCheckbox>
-													<p:outputLabel for="executadosSemPagamentos"
-														value="Buscar todos os procedimentos executados" />
-
 													<p:selectBooleanCheckbox id="procedimentosNaoExecutados"
 														value="#{repasseProfissionalComReciboMB.procedimentosNaoExecutados}">
 														<p:ajax process="@this,pnFiltroStatus"
@@ -990,7 +990,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														styleClass="NavyButton" title="Recalcular Repasse"
 														rendered="#{repasseProfissionalComReciboMB.admin}"
 														actionListener="#{repasseProfissionalComReciboMB.faturaManual(ptp)}"
-														process="@this"
+														process="@this,dtPrincipalRepasse"
 														oncomplete="PF('dtPrincipalRepasse').filter();"
 														update=":lume:tabViewRepasseProfissional:dtPrincipalRepasse,:lume:pnCalculoRepasse">
 														<p:confirm header="Confirmação" icon="ui-icon-alert"
@@ -1048,7 +1048,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												</p:column>
 												<p:column filterBy="#{ptp.dataFinalizadoStr}"
 													headerText="Data de Execução" filterMatchMode="contains"
-													sortBy="#{ptp.dataFinalizadoStr}">
+													sortBy="#{ptp.dataFinalizado}">
 													<h:outputText value="#{ptp.dataFinalizadoStr}" />
 												</p:column>
 
