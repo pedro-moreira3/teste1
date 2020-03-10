@@ -195,8 +195,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														value="#{reciboLancamento.lancamento.ptp.descricaoCompletaComFace}" /></td>
 												<td
 													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.lancamento.ptp.dataFinalizado}" >
-														<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+														value="#{reciboLancamento.lancamento.ptp.dataFinalizadoStr}" >
+													
 														</h:outputText>
 														
 														</td>
@@ -224,7 +224,9 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														value="#{reciboLancamento.dados.planoTratamentoProcedimento}" /></td>
 												<td
 													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.dados.dataExecucao}" /></td>
+														value="#{reciboLancamento.dados.dataExecucao}" >
+														<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+														</h:outputText></td>
 												<td
 													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
 														value="#{reciboLancamento.dados.planoTratamento}" /></td>
@@ -259,13 +261,9 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								<div
 									style="width: 40%; height: 40px; border-bottom: solid 1px black;"></div>
 									<span> <h:outputText
-											value="#{reciboRepasseProfissionalMB.entity.profissional.dadosBasico.nome}" />
+											value="#{reciboRepasseProfissionalMB.entity.profissional.dadosBasico.nome} - #{reciboRepasseProfissionalMB.entity.profissional.dadosBasico.documento}" />
 									</span>
-								<div
-									style="width: 40%; height: 40px; line-height: 40px; font-weight: bold; text-align: center;">
-									<h:outputText
-										value="#{reciboRepasseProfissionalMB.entity.profissional.dadosBasico.nome}#{(reciboRepasseProfissionalMB.entity.profissional.dadosBasico.documento != null and !reciboRepasseProfissionalMB.entity.profissional.dadosBasico.documento.isEmpty() ? ' - ' + reciboRepasseProfissionalMB.entity.profissional.dadosBasico.documento : '')}" />
-								</div>
+								
 							</div>
 						</div>
 
