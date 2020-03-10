@@ -69,7 +69,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 			<p:remoteCommand name="onCloseFaturaView" />
 		</p:outputPanel>
 
-		
+		<ui:include src="pacienteFicha.xhtml" />
 		<p:remoteCommand name="onHidePacienteFicha" process="@this"
 			update=":lume:tabViewRepasseProfissional:dtPrincipalRepasse"
 			oncomplete="PF('dtPrincipalRepasse').filter();"
