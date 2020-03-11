@@ -12,6 +12,12 @@ body div.ui-widget-content.ui-tabs {
 }
 </style>
 
+	<p:remoteCommand name="attTabViewPaciente"
+		oncomplete="PF('dlgFichaPaciente').show()" process="@this"
+		actionListener="#{pacienteMB.fazNada()}"
+		update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha,
+			:lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+
 	<p:outputPanel id="tabViewOutPanel">
 		<p:tabView id="tabViewPaciente"
 			style="padding: 0 15px 15px 15px; min-height: calc(100% - 17px)"
@@ -27,55 +33,60 @@ body div.ui-widget-content.ui-tabs {
 				</p:outputPanel>
 			</p:tab>
 
-			<p:outputPanel
-				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}">
-				<p:tab id="tab2" title="Anamnese"
-					disabled="#{pacienteMB.entity.id == null}">
-					<ui:include src="anamnese.xhtml" />
-				</p:tab>
+			<p:tab id="tab2" title="Anamnese"
+				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="anamnese.xhtml" />
+			</p:tab>
 
-				<ui:remove>
-					<p:tab id="tab3" title="Odontograma"
-						disabled="#{pacienteMB.entity.id == null}">
-						<ui:include src="odontograma.xhtml" />
-					</p:tab>
-				</ui:remove>
-
-				<p:tab id="tab9" title="Manutenção Orto"
+			<ui:remove>
+				<p:tab id="tab3" title="Odontograma"
+					rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
 					disabled="#{pacienteMB.entity.id == null}">
-					<ui:include src="ortodontia.xhtml" />
+					<ui:include src="odontograma.xhtml" />
 				</p:tab>
+			</ui:remove>
 
-				<p:tab id="tab8" title="Plano de Tratamento"
-					disabled="#{pacienteMB.entity.id == null}">
-					<ui:include src="planoTratamento.xhtml" />
-				</p:tab>
+			<p:tab id="tab9" title="Manutenção Orto"
+				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="ortodontia.xhtml" />
+			</p:tab>
 
-				<p:tab id="tab7" title="Periograma" rendered="#{false}"
-					disabled="#{pacienteMB.entity.id == null}">
-					<ui:include src="periograma.xhtml" />
-				</p:tab>
+			<p:tab id="tab8" title="Plano de Tratamento"
+				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="planoTratamento.xhtml" />
+			</p:tab>
 
-				<p:tab id="tab5" title="Evolução"
-					disabled="#{pacienteMB.entity.id == null}">
-					<ui:include src="evolucao.xhtml" />
-				</p:tab>
+			<p:tab id="tab7" title="Periograma" rendered="#{false}"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="periograma.xhtml" />
+			</p:tab>
 
-				<p:tab id="tab6" title="Exames"
-					disabled="#{pacienteMB.entity.id == null}">
-					<ui:include src="exame.xhtml" />
-				</p:tab>
+			<p:tab id="tab5" title="Evolução"
+				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="evolucao.xhtml" />
+			</p:tab>
 
-				<p:tab id="tab10" title="Frequência"
-					disabled="#{pacienteMB.entity.id == null}">
-					<ui:include src="historicoagendamentos.xhtml" />
-				</p:tab>
+			<p:tab id="tab6" title="Exames"
+				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="exame.xhtml" />
+			</p:tab>
 
-				<p:tab id="tab11" title="Financeiro"
-					disabled="#{pacienteMB.entity.id == null}">
-					<ui:include src="pacienteFinanceiro.xhtml" />
-				</p:tab>
-			</p:outputPanel>
+			<p:tab id="tab10" title="Frequência"
+				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="historicoagendamentos.xhtml" />
+			</p:tab>
+
+			<p:tab id="tab11" title="Financeiro"
+				rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}"
+				disabled="#{pacienteMB.entity.id == null}">
+				<ui:include src="pacienteFinanceiro.xhtml" />
+			</p:tab>
 
 		</p:tabView>
 

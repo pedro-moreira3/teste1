@@ -135,10 +135,9 @@
 							filterMatchMode="contains" headerText="Nome"
 							filterFunction="#{pacienteMB.filtroSemAcento}">
 							<p:commandLink value="#{paciente.dadosBasico.nome}"
-								process="@this,:lume:tabViewPaciente:pnDadosPaciente" title="#{paciente.id}"
+								process="@this" title="#{paciente.id}"
 								actionListener="#{tabPacienteMB.loadPaciente(paciente)}"
-								oncomplete="PF('dlgFichaPaciente').show()"
-								update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+								oncomplete="attTabViewPaciente();" />
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.responsavel}"
 							filterBy="#{paciente.dadosBasico.responsavel}"
