@@ -34,7 +34,7 @@ public class RelatorioGerencialEmail implements Job {
     }
 
     public static void main(String[] args) {
-        new RelatorioGerencialEmail().doRelatorioGerencialEmail();
+        //new RelatorioGerencialEmail().doRelatorioGerencialEmail();
     }
 
     public void doRelatorioGerencialEmail() {
