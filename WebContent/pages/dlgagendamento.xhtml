@@ -258,7 +258,7 @@
 							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
 							process="@this"
 							disabled="#{agendamentoMB.pacienteSelecionado == null}"
-							update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
+							update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
 							actionListener="#{tabPacienteMB.loadPacienteRO(agendamentoMB.pacienteSelecionado, 'dlgFichaPaciente')}"
 							icon="fa fa-eye White" immediate="true"
 							title="Cadastro do Paciente"

@@ -8,8 +8,8 @@
                 		<h:outputText value="#{g}" />
                 	</p:outputPanel>
                 	<p:outputPanel rendered="#{planoTratamentoMB.entity != null and planoTratamentoMB.entity.id != 0 and planoTratamentoMB.odontogramaSelecionado.id != 0}">
-                		<p:commandLink oncomplete="resize('#lume\\:tabView\\:dlgProcedimento');PF('dlgProcedimento').show();" process="@this"
-                			action="#{planoTratamentoMB.carregaProcedimentos}" value="#{g}" update=":lume:tabView:dlgProcedimento">
+                		<p:commandLink oncomplete="resize('#lume\\:tabViewPaciente\\:dlgProcedimento');PF('dlgProcedimento').show();" process="@this"
+                			action="#{planoTratamentoMB.carregaProcedimentos}" value="#{g}" update=":lume:tabViewPaciente:dlgProcedimento">
 	                        <f:param name="dente" value="#{g}" />
 	                    </p:commandLink>
                 	</p:outputPanel>
@@ -21,8 +21,8 @@
                 		</div>
                 	</p:outputPanel>
                 	<p:outputPanel rendered="#{planoTratamentoMB.entity != null and planoTratamentoMB.entity.id != 0 and planoTratamentoMB.odontogramaSelecionado.id != 0}">
-                		<p:commandLink oncomplete="resize('#lume\\:tabView\\:dlgProcedimento');PF('dlgProcedimento').show();" process="@this"
-                			action="#{planoTratamentoMB.carregaProcedimentos}" update=":lume:tabView:dlgProcedimento">
+                		<p:commandLink oncomplete="resize('#lume\\:tabViewPaciente\\:dlgProcedimento');PF('dlgProcedimento').show();" process="@this"
+                			action="#{planoTratamentoMB.carregaProcedimentos}" update=":lume:tabViewPaciente:dlgProcedimento">
 	                		<div style="background: url(../images/odontograma/#{g}.png) no-repeat; height: 120px; background-position: top;">
 	                			<h:outputText escape="false" value="#{planoTratamentoMB.diagnosticosDente(g,'')}"/>
 	                		</div>

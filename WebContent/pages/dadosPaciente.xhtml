@@ -439,14 +439,14 @@
 								<p:panelGrid columns="2" layout="grid"
 									styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 									<p:commandButton value="Tirar Foto" process="@this"
-										update=":lume:pnTirarFoto,:lume:photoPacienteUpload,:lume:photoPaciente"
+										update=":lume:tabViewPaciente:pnTirarFoto,:lume:tabViewPaciente:photoPacienteUpload,:lume:tabViewPaciente:photoPaciente"
 										icon="White fa fa-camera"
 										disabled="#{pacienteMB.entity.id == null}"
 										styleClass="NavyButton"
 										oncomplete="PF('dlgTirarFoto').show();"
 										actionListener="#{pacienteMB.renderedPhotoCam}" />
 									<p:commandButton value="Remover Foto" process="@this"
-										update=":lume:tabView:foto" icon="White fa fa-camera"
+										update=":lume:tabViewPaciente:foto" icon="White fa fa-camera"
 										disabled="#{pacienteMB.entity.id == null}"
 										styleClass="NavyButton"
 										actionListener="#{pacienteMB.removePhoto}" />
@@ -472,7 +472,7 @@
 				<p:selectOneMenu id="photoChoice" value="#{pacienteMB.metodoImagem}">
 					<f:selectItem itemValue="C" itemLabel="Captura por webcam" />
 					<f:selectItem itemValue="U" itemLabel="Upload de imagem" />
-					<p:ajax update=":lume:tabView:pnTirarFoto" />
+					<p:ajax update=":lume:tabViewPaciente:pnTirarFoto" />
 				</p:selectOneMenu>
 			</h:panelGroup>
 
@@ -524,10 +524,10 @@
 				rendered="false">
 				<p:outputPanel></p:outputPanel>
 				<p:commandButton value="Girar Imagem" icon="White fa fa-repeat"
-					process="@this,:lume:photoPacienteUpload,:lume:photoPaciente"
+					process="@this,:lume:tabViewPaciente:photoPacienteUpload,:lume:tabViewPaciente:photoPaciente"
 					styleClass="NavyButton" rendered="#{pacienteMB.scFoto ne null}"
 					actionListener="#{pacienteMB.rodarImagem}"
-					update=":lume:photoPacienteUpload,:lume:photoPaciente" />
+					update=":lume:tabViewPaciente:photoPacienteUpload,:lume:tabViewPaciente:photoPaciente" />
 				<p:outputPanel></p:outputPanel>
 			</p:panelGrid>
 		</h:panelGroup>
@@ -540,7 +540,8 @@
 			<p:commandButton value="Salvar" icon="White fa fa-save"
 				process="@this" styleClass="GreenButton"
 				actionListener="#{pacienteMB.actionSalvarFoto}"
-				oncomplete="PF('dlgTirarFoto').hide();" update=":lume:foto" />
+				oncomplete="PF('dlgTirarFoto').hide();"
+				update=":lume:tabViewPaciente:foto" />
 			<p:commandButton value="Fechar" icon="White fa fa-close"
 				process="@this" oncomplete="PF('dlgTirarFoto').hide();" />
 		</p:panelGrid>

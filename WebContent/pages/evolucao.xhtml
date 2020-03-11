@@ -15,7 +15,7 @@
 					<p:commandButton icon="ui-icon-add"
 						oncomplete="PF('dlgEvolucao').show()" value="Nova Evolução"
 						actionListener="#{evolucaoMB.actionNew}"
-						update=":lume:tabView:pnEvolucao, :lume:tabView:viewEvolucao"
+						update=":lume:tabViewPaciente:pnEvolucao, :lume:tabViewPaciente:viewEvolucao"
 						process="@this" />
 					<h:panelGroup></h:panelGroup>
 					<h:panelGroup>
@@ -44,7 +44,7 @@
 					rows="15" paginator="true" paginatorPosition="bottom"
 					selection="#{evolucaoMB.entity}" selectionMode="single"
 					rowKey="#{evolucao}" binding="#{evolucaoMB.tabelaEvolucao}">
-					<p:ajax event="rowSelect" update=":lume:tabView:pnEvolucao" />
+					<p:ajax event="rowSelect" update=":lume:tabViewPaciente:pnEvolucao" />
 					<f:facet name="header">Evolução</f:facet>
 					<p:column filterBy="#{evolucaoMB.getInfoPTPFromEvolucao(evolucao)}"
 						sortBy="#{evolucaoMB.getInfoPTPFromEvolucao(evolucao)}"
@@ -105,8 +105,8 @@
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="White fa fa-save White" value="Salvar"
 				actionListener="#{evolucaoMB.actionPersist}"
-				styleClass="GreenButton" update=":lume:tabView:viewEvolucao"
-				process="@this, :lume:tabView:pnEvolucao"
+				styleClass="GreenButton" update=":lume:tabViewPaciente:viewEvolucao"
+				process="@this, :lume:tabViewPaciente:pnEvolucao"
 				disabled="#{evolucaoMB.entity.excluido == 'S'}" />
 			<p:column />
 			<p:column />

@@ -41,7 +41,7 @@
 			<p:commandButton icon="fa fa-save" value="Salvar"
 				process="@this, :lume:tabViewOutPanel"
 				rendered="#{tabPacienteMB.indexTabView == 0}"
-				styleClass="GreenButton" update=":lume:tabView:foto"
+				styleClass="GreenButton" update=":lume:tabViewPaciente:foto"
 				actionListener="#{pacienteMB.actionPersist}" />
 			<p:column rendered="#{tabPacienteMB.indexTabView != 0}" />
 			<p:column />
