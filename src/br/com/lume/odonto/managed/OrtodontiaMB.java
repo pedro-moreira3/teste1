@@ -193,16 +193,16 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                 this.getEntity().getProcedimentoPadrao().setValor(valor);
 
             // PrimeFaces.current().executeScript("PF('dlgOrcamentoOrtodontia').show()");
-            PrimeFaces.current().ajax().update(":lume:tabView:descricaoPlano");
-            PrimeFaces.current().ajax().update(":lume:tabView:valorProcedimentoPadrao");
-            PrimeFaces.current().ajax().update(":lume:tabView:inicioTratamento");
-            PrimeFaces.current().ajax().update(":lume:tabView:meses");
-            PrimeFaces.current().ajax().update(":lume:tabView:fimTratamento");
-            PrimeFaces.current().ajax().update(":lume:tabView:utilizaConvenio");
-            PrimeFaces.current().ajax().update(":lume:tabView:procedimentoPadrao");
-            PrimeFaces.current().ajax().update(":lume:tabView:dtProcedimentosOrtodontia");
-            PrimeFaces.current().ajax().update(":lume:tabView:dtProcedimentosPanel");
-            PrimeFaces.current().ajax().update(":lume:tabView:dtOrcamentosOrtodontia");
+            PrimeFaces.current().ajax().update(":lume:tabViewPaciente:descricaoPlano");
+            PrimeFaces.current().ajax().update(":lume:tabViewPaciente:valorProcedimentoPadrao");
+            PrimeFaces.current().ajax().update(":lume:tabViewPaciente:inicioTratamento");
+            PrimeFaces.current().ajax().update(":lume:tabViewPaciente:meses");
+            PrimeFaces.current().ajax().update(":lume:tabViewPaciente:fimTratamento");
+            PrimeFaces.current().ajax().update(":lume:tabViewPaciente:utilizaConvenio");
+            PrimeFaces.current().ajax().update(":lume:tabViewPaciente:procedimentoPadrao");
+            PrimeFaces.current().ajax().update(":lume:tabViewPaciente:dtProcedimentosOrtodontia");
+            PrimeFaces.current().ajax().update(":lume:tabViewPaciente:dtProcedimentosPanel");
+            PrimeFaces.current().ajax().update(":lume:tabViewPaciente:dtOrcamentosOrtodontia");
 
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -216,8 +216,14 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     private void atualizaValorProcedimento(Procedimento procedimento) {
         try {
-            BigDecimal valorConv = ProcedimentoSingleton.getInstance().getValorProcedimentoConvenio(procedimento, getEntity().getConvenio());
-            procedimento.setValor(valorConv);
+            BigDecimal valorConv = new BigDecimal(0);
+            
+            if(this.getEntity().isBconvenio() && getPaciente().getConvenio() != null)
+                valorConv = ProcedimentoSingleton.getInstance().getValorProcedimentoConvenio(procedimento, getPaciente().getConvenio());
+            else
+                valorConv = ProcedimentoSingleton.getInstance().getValorProcedimentoConvenio(procedimento, null);
+            
+            this.valorProcedimento = valorConv;
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
@@ -311,7 +317,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         for (Orcamento orcamento : orcamentos)
             OrcamentoSingleton.getInstance().recalculaValores(orcamento);
         
-        PrimeFaces.current().ajax().update(":lume:tabView:dtOrcamentosOrtodontia");
+        PrimeFaces.current().ajax().update(":lume:tabViewPaciente:dtOrcamentosOrtodontia");
     }
 
     public void actionNewOrcamento() {
@@ -329,7 +335,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             
             if(orcamentosItens.size() < this.getEntity().getPlanoTratamentoProcedimentos().size()) {
                 List<Orcamento> orcamentos;
-                if(!gerarOrcamentoPorProcedimento) {                
+                if(!gerarOrcamentoPorProcedimento) {
                     orcamentos = OrcamentoSingleton.getInstance().preparaOrcamentoFromPTOrto(getEntity());
                 }else {
                     orcamentos = OrcamentoSingleton.getInstance().preparaOrcamentoFromPTOrtoPorProcedimento(getEntity());
@@ -337,7 +343,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                     for(Orcamento orcamento : orcamentos) {
                         orcamento.setOrtodontico(true);
                         orcamento.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
-                        orcamento.setValorProcedimentoOrtodontico(getEntity().getProcedimentoPadrao().getValor());
+                        orcamento.setValorProcedimentoOrtodontico(this.valorProcedimento);
                         //long qtd = getEntity().getMeses() - PlanoTratamentoProcedimentoSingleton.getInstance().getBo().findQtdFinalizadosPTPOrtodontia(getEntity().getId());
                         //qtd = (qtd > 12l ? 12 : qtd);
                         orcamento.setQuantidadeParcelas(orcamento.getItens().size());
@@ -474,7 +480,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             orcamentoSelecionado.setIndiceReajuste(reajuste);
             
             this.indiceReajuste = null;
-            PrimeFaces.current().ajax().update(":lume:tabView:pnNovoReajusteOrcamento");
+            PrimeFaces.current().ajax().update(":lume:tabViewPaciente:pnNovoReajusteOrcamento");
             
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Não foi possível aplicar o reajuste");
@@ -488,7 +494,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             instance.setTime(getEntity().getInicio());
             instance.add(Calendar.MONTH, getEntity().getMeses() - 1);
             getEntity().setFim(instance.getTime());
-            PrimeFaces.current().ajax().update(":lume:tabView:fimTratamento");
+            PrimeFaces.current().ajax().update(":lume:tabViewPaciente:fimTratamento");
         }
     }
 
