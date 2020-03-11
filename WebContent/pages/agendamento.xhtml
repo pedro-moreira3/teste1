@@ -718,6 +718,7 @@ div.ui-selectoneradio label {
 										styleClass="ui-panelgrid-blank form-group ui-fluid">
 
 										<p:commandButton value="Pesquisar"
+											onsuccess="updateSchedule()"
 											process="@this, :lume:pacienteSelecionado"
 											actionListener="#{agendamentoMB.carregarAgenda()}" />
 
@@ -780,7 +781,7 @@ div.ui-selectoneradio label {
 					<p:outputPanel id="agendamentoVisualizacao">
 						<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'S'}">
 							<p:remoteCommand name="updateSchedule"
-								update=":lume:schedule"
+								update=":lume:schedule, :lume:initialDate"
 								actionListener="#{agendamentoMB.carregarAgenda()}"
 								process="@this" />
 							<p:schedule id="schedule" value="#{agendamentoMB.schedule}"
@@ -1156,6 +1157,7 @@ div.ui-selectoneradio label {
 			}
 
 			function handleDialogRequest(xhr, status, args) {
+				console.log('handleDialogRequest2');
 				console.debug('handleDialogRequest');
 				console.debug(args);
 				if (args.remarcado == true) {
@@ -1166,7 +1168,7 @@ div.ui-selectoneradio label {
 					window.scrollTo(0, 0);
 				}
 				if (args.hora == false) {
-					PF('insertConfirmation').show()
+					PF('insertConfirmation').show();
 				}
 				if (args.dlg == true) {
 					PF('eventDialog').hide();
