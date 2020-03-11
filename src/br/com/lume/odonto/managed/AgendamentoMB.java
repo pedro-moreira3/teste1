@@ -990,7 +990,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                         }
                     }
                 } catch (Exception e) {
-                    // TODO: handle exception
+                    e.printStackTrace();
                 }
 
             }
@@ -1284,13 +1284,13 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         return justificativas;
     }
 
-  //  public void novoPaciente(ActionEvent event) {
-   //     visivel = true;
-  //  }
+    public void novoPaciente(ActionEvent event) {
+        visivel = true;
+    }
 
-   // public void cancelarNovoPaciente(ActionEvent event) {
-  //      visivel = false;
-  //  }
+    public void cancelarNovoPaciente(ActionEvent event) {
+        visivel = false;
+    }
 
     public void mostrarTelefones(ActionEvent event) {
         telefonesVisiveis = true;
@@ -1715,7 +1715,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void actionCancelConflitoPaciente() {
-      //  cancelarNovoPaciente(null);
+        cancelarNovoPaciente(null);
         paciente = new Paciente();
     }
 
@@ -1733,7 +1733,6 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 PrimeFaces.current().executeScript("PF('dlgPacienteConflito').show()");
             } else {
                 actionPersistPaciente(null);
-                PrimeFaces.current().executeScript("PF('dlgNovoPaciente').hide()");           
             }
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
