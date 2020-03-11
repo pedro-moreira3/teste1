@@ -69,10 +69,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 			<p:remoteCommand name="onCloseFaturaView" />
 		</p:outputPanel>
 
-		<p:remoteCommand name="onHidePacienteFicha" process="@this"
-			update=":lume:tabViewRepasseProfissional:dtPrincipalRepasse"
-			oncomplete="PF('dtPrincipalRepasse').filter();"
-			actionListener="#{repasseProfissionalComReciboMB.pesquisar}" />
+		
+		<p:remoteCommand name="onHidePacienteFicha" />
 
 		<p:dialog id="dlgPendencias" widgetVar="dlgPendencias"
 			header="Pendências" responsive="true" modal="true" width="40%">
@@ -100,7 +98,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 
 					<p:outputPanel style="padding: 10px;" id="impressHere">
 						<div style="font-size: 10pt">
-
+<ui:remove>
 							<p:outputPanel
 								rendered="#{reciboRepasseProfissionalMB.entity.aprovado != 'S'}">
 								<div
@@ -108,8 +106,10 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									<h:outputText escape="false"
 										value="Este recibo ainda não foi &lt;b&gt;aprovado&lt;/b&gt;, portanto não reflete o valor real de repasse" />
 								</div>
+							
 								<br />
 							</p:outputPanel>
+								</ui:remove>
 							<div style="width: 100%; display: flex">
 								<h:panelGroup
 									style="text-align: center; border: 1px solid #bdbdbd; width: 24.25%; padding: 12px 16px;">
@@ -192,7 +192,11 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														value="#{reciboLancamento.lancamento.ptp.descricaoCompletaComFace}" /></td>
 												<td
 													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.lancamento.ptp.dataFinalizadoStr}" /></td>
+														value="#{reciboLancamento.lancamento.ptp.dataFinalizadoStr}" >
+													
+														</h:outputText>
+														
+														</td>
 												<td
 													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
 														value="#{reciboLancamento.lancamento.ptp.planoTratamento.descricao}" /></td>
@@ -217,7 +221,9 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														value="#{reciboLancamento.dados.planoTratamentoProcedimento}" /></td>
 												<td
 													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
-														value="#{reciboLancamento.dados.dataExecucao}" /></td>
+														value="#{reciboLancamento.dados.dataExecucao}" >
+														<f:convertDateTime pattern="dd/MM/yyyy HH:mm:ss" />
+														</h:outputText></td>
 												<td
 													style="border: 1px solid #bdbdbd; padding: 5px; text-align: center;"><h:outputText
 														value="#{reciboLancamento.dados.planoTratamento}" /></td>
@@ -251,11 +257,10 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 							<div style="width: 100%; height: 80px;">
 								<div
 									style="width: 40%; height: 40px; border-bottom: solid 1px black;"></div>
-								<div
-									style="width: 40%; height: 40px; line-height: 40px; font-weight: bold; text-align: center;">
-									<h:outputText
-										value="#{reciboRepasseProfissionalMB.entity.profissional.dadosBasico.nome}#{(reciboRepasseProfissionalMB.entity.profissional.dadosBasico.documento != null and !reciboRepasseProfissionalMB.entity.profissional.dadosBasico.documento.isEmpty() ? ' - ' + reciboRepasseProfissionalMB.entity.profissional.dadosBasico.documento : '')}" />
-								</div>
+									<span> <h:outputText
+											value="#{reciboRepasseProfissionalMB.entity.profissional.dadosBasico.nome} - #{reciboRepasseProfissionalMB.entity.profissional.dadosBasico.documento}" />
+									</span>
+								
 							</div>
 						</div>
 
@@ -301,7 +306,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									<f:convertNumber currencySymbol="R$ " type="currency" />
 								</h:outputText>
 							</p:panel>
-							<p:panel header="Aprovado?">
+							<p:panel header="Pago?">
 								<h:outputText
 									value="#{reciboRepasseProfissionalMB.entity.aprovadoStr}" />
 							</p:panel>
@@ -386,7 +391,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								filterBy="#{reciboLancamento.valorTotalRepassar}"
 								sortBy="#{reciboLancamento.valorTotalRepassar}" width="10%">
 								<h:outputText value="#{reciboLancamento.valorTotalRepassar}">
-									<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+									<f:convertNumber currencySymbol="R$" maxFractionDigits="2" 
 										type="currency" />
 								</h:outputText>
 							</p:column>
@@ -395,7 +400,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								filterBy="#{reciboLancamento.dados.valorTotal}"
 								sortBy="#{reciboLancamento.dados.valorTotal}" width="10%">
 								<h:outputText value="#{reciboLancamento.dados.valorTotal}">
-									<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+									<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 										type="currency" />
 								</h:outputText>
 							</p:column>
@@ -404,7 +409,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								filterBy="#{reciboLancamento.dados.valorJaPago}"
 								sortBy="#{reciboLancamento.dados.valorJaPago}" width="10%">
 								<h:outputText value="#{reciboLancamento.dados.valorJaPago}">
-									<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+									<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 										type="currency" />
 								</h:outputText>
 							</p:column>
@@ -415,7 +420,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								sortBy="#{reciboLancamento.lancamento.valorComDesconto}"
 								width="10%">
 								<h:outputText value="#{reciboLancamento.lancamento.valor}">
-									<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+									<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 										type="currency" />
 								</h:outputText>
 							</p:column>
@@ -424,7 +429,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								filterBy="#{reciboLancamento.dados.valorAPagar}"
 								sortBy="#{reciboLancamento.dados.valorAPagar}" width="10%">
 								<h:outputText value="#{reciboLancamento.dados.valorAPagar}">
-									<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+									<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 										type="currency" />
 								</h:outputText>
 							</p:column>

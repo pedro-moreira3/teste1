@@ -189,14 +189,15 @@
 		
 			
 			function startTimer() {	
-				
-			var open = PF('loading').isVisible();	
-				if(!open){				
-					t = setTimeout("PF('loading').show();", 200);						
-				}				
+				PF('loading').show();
+			//var open = PF('loading').isVisible();	
+			//	if(!open){				
+				//	t = setTimeout("PF('loading').show();", 200);						
+			//	}				
 			}
-			function stopTimer() {					
-				x = setTimeout("PF('loading').hide();", 500);			
+			function stopTimer() {	
+				PF('loading').hide();
+			//	x = setTimeout("PF('loading').hide();", 500);			
 			}
 			//]]>
 		</script>
@@ -254,7 +255,7 @@
 					<p:autoUpdate />
 				</p:growl>
 				<p:ajaxStatus onstart="startTimer();" onsuccess="stopTimer();"
-					onerror="stopTimer();" />
+					onerror="stopTimer();" oncomplete="stopTimer();"/>
 				<p:dialog modal="true" widgetVar="loading" draggable="false"
 					closable="false" showHeader="false" resizable="false">
 					<p:graphicImage value="/images/loading.gif" />

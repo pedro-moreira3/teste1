@@ -83,15 +83,15 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private List<Profissional> profissionaisRecibo;
     private HashMap<Profissional, Integer> profissionaisReciboLancamentos;
     private HashMap<Profissional, Double> profissionaisReciboValores;
-
+    private HashMap<PlanoTratamentoProcedimento, List<Lancamento>> ptpsValidosComLancamentos = new HashMap<PlanoTratamentoProcedimento, List<Lancamento>>();
     private List<Lancamento> lancamentosCalculados;
 
     private ReciboRepasseProfissional reciboRepasseProfissional;
     private List<ReciboRepasseProfissional> listaRecibos;
 
     private List<Lancamento> lancamentoParaRecibo;
-
-    public Integer getQtdeLancamentosFromProfissional(Profissional profissional) {
+    
+       public Integer getQtdeLancamentosFromProfissional(Profissional profissional) {
         return this.profissionaisReciboLancamentos.get(profissional);
     }
 
@@ -139,12 +139,12 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         }
         lancamentoParaRecibo = new ArrayList<Lancamento>();
         for (PlanoTratamentoProcedimento ptp : ptpsSelecionados) {
-            if (!existemPendencias(ptp)) {
-                Fatura fatura = ptp.getFatura();
-                if (fatura != null) {
-                    List<Lancamento> lancamentos = fatura.getLancamentos();
+            if (!existemPendencias(ptp) ) {
+             //   Fatura fatura = ptp.getFatura();
+              //  if (fatura != null) {
+                  //  List<Lancamento> lancamentos = fatura.getLancamentos();
                     Profissional dentistaExecutor = ptp.getDentistaExecutor();
-                    for (Lancamento lancamento : lancamentos) {
+                    for (Lancamento lancamento : ptpsValidosComLancamentos.get(ptp)) {
                         if (lancamento.getAtivoStr().equals("Sim") && lancamento.getConferidoPorProfissional() == null) {
                             Double valor = (lancamento.getValorComDesconto() == null || lancamento.getValorComDesconto().doubleValue() == 0d ? lancamento.getValor().doubleValue() : lancamento.getValorComDesconto().doubleValue());
                             if (getProfissionaisRecibo() == null || getProfissionaisRecibo().indexOf(dentistaExecutor) < 0) {
@@ -155,10 +155,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                 this.profissionaisReciboLancamentos.put(dentistaExecutor, this.profissionaisReciboLancamentos.get(dentistaExecutor) + 1);
                                 this.profissionaisReciboValores.put(dentistaExecutor, this.profissionaisReciboValores.get(dentistaExecutor) + valor);
                             }
+                            
                             lancamentoParaRecibo.add(lancamento);
                         }
                     }
-                }
+             //   }
             }
         }
 
@@ -340,6 +341,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         //ptp.setValorDisponivel(ptp.getValorTotal().subtract(ptp.getValorPago()));  
                         // ptp.setValorDisponivel(new BigDecimal(FaturaSingleton.getInstance().getValorNaoPagoDisponivel(ptp.getFatura())));
                         BigDecimal valorDisponivel = new BigDecimal(0);
+                        ptpsValidosComLancamentos.put(ptp, new ArrayList<Lancamento>());
                         for (Lancamento lancamento : ptp.getFatura().getLancamentos()) {
                             if ((validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) || (this.validaPagamentoPacienteOrtodontico && ptp.getPlanoTratamento().isOrtodontico())) {
                                 if (lancamento.isAtivo() && lancamento.getValidado().equals("N")) {
@@ -348,6 +350,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                         Lancamento lancamentoDeOrigem = rfl.getLancamentoOrigem();
                                         if (lancamentoDeOrigem != null && lancamentoDeOrigem.getValidadoPorProfissional() != null) {
                                             valorDisponivel = valorDisponivel.add(lancamento.getValor());
+                                            ptpsValidosComLancamentos.get(ptp).add(lancamento);
                                         }
                                     }
 
@@ -355,6 +358,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             } else {
                                 if (lancamento.isAtivo() && lancamento.getValidado().equals("N")) {
                                     valorDisponivel = valorDisponivel.add(lancamento.getValor());
+                                   
+                                    ptpsValidosComLancamentos.get(ptp).add(lancamento);
                                 }
                             }
 
@@ -931,6 +936,15 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
     public void setValidaPagamentoPacienteOrtodontico(boolean validaPagamentoPacienteOrtodontico) {
         this.validaPagamentoPacienteOrtodontico = validaPagamentoPacienteOrtodontico;
+    }
+ 
+    public HashMap<PlanoTratamentoProcedimento, List<Lancamento>> getPtpsValidosComLancamentos() {
+        return ptpsValidosComLancamentos;
+    }
+
+    
+    public void setPtpsValidosComLancamentos(HashMap<PlanoTratamentoProcedimento, List<Lancamento>> ptpsValidosComLancamentos) {
+        this.ptpsValidosComLancamentos = ptpsValidosComLancamentos;
     }
 
 }
