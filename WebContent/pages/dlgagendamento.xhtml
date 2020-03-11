@@ -187,7 +187,6 @@
 
 		<p:panelGrid columns="5" layout="grid" columnClasses="ui-g-3, ui-g-6"
 			styleClass="ui-panelgrid-blank form-group ui-fluid">
-
 			<p:panelGrid columns="1" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
 				<h:panelGroup style="display: flex;margin-right:20px;"
@@ -195,7 +194,7 @@
 					<p:outputLabel for="profissionalAgend" value="Profissional" />
 					<p:selectOneMenu id="profissionalAgend" styleClass="tallerCombo"
 						value="#{agendamentoMB.profissionalDentroAgenda}"
-						converter="profissional" filter="true" filterMatchMode="contains">
+						converter="profissional" filter="true" filterMatchMode="contains" >
 						<p:ajax listener="#{agendamentoMB.listenerAlterouProfissional}"
 							process="@this" update="fim" />
 						<f:selectItem itemValue="#{null}"

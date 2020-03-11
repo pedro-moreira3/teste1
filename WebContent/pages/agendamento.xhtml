@@ -720,7 +720,9 @@ div.ui-selectoneradio label {
 										<p:commandButton value="Pesquisar"
 											onsuccess="updateSchedule()"
 											process="@this, :lume:pacienteSelecionado"
-											actionListener="#{agendamentoMB.carregarAgenda()}" />
+											actionListener="#{agendamentoMB.carregarAgenda()}" 
+											oncomplete="updateSchedule();"
+											/>
 
 										<p:commandButton value="Imprimir" type="button"
 											onclick="printSchedule()" icon="White fa fa-print"
