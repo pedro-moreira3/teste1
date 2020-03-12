@@ -211,6 +211,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
         carregarScheduleTarefas();
     }
+    
+    public List<Profissional> sugestoesProfissionais(String query) {
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
+    }
 
     public void carregarAgenda() {
         //limpaPacienteSelecionado();
@@ -469,7 +473,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                             this.actionNew(event);
-                            PrimeFaces.current().ajax().addCallbackParam("dlg", true);
+                            //PrimeFaces.current().ajax().addCallbackParam("dlg", true);
+                            PrimeFaces.current().executeScript("PF('eventDialog').hide()");
                             //profissional = null;
                         } catch (BusinessException e) {
                             this.addError(OdontoMensagens.getMensagem("erro.agendamento.exclusao.procedimento.emprestimo"), "");
@@ -491,7 +496,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                            PrimeFaces.current().ajax().addCallbackParam("dlg", true);
+                           // PrimeFaces.current().ajax().addCallbackParam("dlg", true);
+                            PrimeFaces.current().executeScript("PF('eventDialog').hide()");
                         } catch (Exception e) {
                             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
                             log.error("actionPersist", e);

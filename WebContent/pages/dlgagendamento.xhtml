@@ -192,18 +192,19 @@
 				<h:panelGroup style="display: flex;margin-right:20px;"
 					styleClass="md-combo">
 					<p:outputLabel for="profissionalAgend" value="Profissional" />
-					<p:selectOneMenu id="profissionalAgend" styleClass="tallerCombo"
+					
+					<p:autoComplete id="profissionalAgend" styleClass="paciente tallerAutoComplete"
+						required="true"
 						value="#{agendamentoMB.profissionalDentroAgenda}"
-						converter="profissional" filter="true" filterMatchMode="contains" >
-						<p:ajax listener="#{agendamentoMB.listenerAlterouProfissional}"
-							process="@this" update="fim" />
-						<f:selectItem itemValue="#{null}"
-							itemLabel="Selecione um profissional" />
-						<f:selectItems value="#{agendamentoMB.profissionais}"
-							var="profissional"
-							itemLabel="#{profissional.dadosBasico.prefixoNome}"
-							itemValue="#{profissional}" />
-					</p:selectOneMenu>
+						completeMethod="#{agendamentoMB.sugestoesProfissionais}"
+						var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
+						itemValue="#{p}" converter="profissional"
+						forceSelection="true" scrollHeight="400" queryDelay="1000"
+						dropdown="true">
+						<p:ajax event="itemSelect" process="@this" listener="#{agendamentoMB.listenerAlterouProfissional}" update="fim"/>
+					</p:autoComplete>
+					
+					
 					<p:message styleClass="msg" for="profissionalAgend" />
 					<ui:remove>
 						<p:outputPanel id="btnVisualizarProfissional"
