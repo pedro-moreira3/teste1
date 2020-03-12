@@ -898,7 +898,12 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
             @Override
             public void loadEvents(Date start, Date end) {
-                initialDate = start;
+                
+                if(!initialDate.equals(start)) {
+                    initialDate = start; 
+                    PrimeFaces.current().executeScript("updateSchedule()");
+                }
+                
 
                 if (AgendamentoMB.this.isDentista()) {
                     profissional = UtilsFrontEnd.getProfissionalLogado();
