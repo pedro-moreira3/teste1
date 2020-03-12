@@ -115,31 +115,51 @@
 
 							<p:outputLabel for="nome" value="Nome : " />
 							<p:inputText id="nome"
-								value="#{pacienteMB.entity.dadosBasico.nome}" maxlength="200" />
+								value="#{pacienteMB.entity.dadosBasico.nome}" maxlength="100" />
 
 							<p:outputLabel for="nomePreferencial"
 								value="Nome Preferencial : "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="nomePreferencial"
 								value="#{pacienteMB.entity.dadosBasico.nomePreferencial}"
-								maxlength="200" rendered="#{pacienteMB.visivelDadosPaciente}" />
+								maxlength="100" rendered="#{pacienteMB.visivelDadosPaciente}" />
+
+							<p:outputLabel for="telCelular" value="Celular : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<h:panelGroup style="display: flex !important;"
+								rendered="#{pacienteMB.visivelDadosPaciente}">
+								<p:inputText id="telCelular" maxlength="20"
+									value="#{pacienteMB.entity.dadosBasico.celular}"
+									onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}" />
+								<p:button icon="White fa fa-whatsapp"
+									disabled="#{pacienteMB.getUrlWpp(pacienteMB.entity) == null}"
+									onclick="window.open('#{pacienteMB.getUrlWpp(pacienteMB.entity)}'); return false;"
+									styleClass="GreenButton" />
+							</h:panelGroup>
+							<p:outputLabel for="telResidencia"
+								value="Telefone Residencial : "
+								rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:inputText id="telResidencia" maxlength="20"
+								value="#{pacienteMB.entity.dadosBasico.telefone}"
+								onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}"
+								rendered="#{pacienteMB.visivelDadosPaciente}" />	
 
 							<p:outputLabel for="nomeMae" value="Nome da Mãe : "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="nomeMae" value="#{pacienteMB.entity.nomeMae}"
-								maxlength="200" rendered="#{pacienteMB.visivelDadosPaciente}" />
+								maxlength="100" rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="email" value="E-Mail : "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="email"
-								value="#{pacienteMB.entity.dadosBasico.email}" maxlength="200"
+								value="#{pacienteMB.entity.dadosBasico.email}" maxlength="100"
 								rendered="#{pacienteMB.visivelDadosPaciente}" required="false">
 							</p:inputText>
 
 							<p:outputLabel id="lblDocumento" for="documento" value="CPF : "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputMask id="documento" required="false"
-								validatorMessage="CPF inválido"
+								validatorMessage="CPF inválido" maxlength="20"
 								value="#{pacienteMB.entity.dadosBasico.documento}"
 								mask="999.999.999-99"
 								rendered="#{pacienteMB.visivelDadosPaciente}">
@@ -174,13 +194,13 @@
 							<p:outputLabel for="numero" value="Número : "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="numero"
-								value="#{pacienteMB.entity.dadosBasico.numero}" maxlength="6"
+								value="#{pacienteMB.entity.dadosBasico.numero}" maxlength="20"
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="bairro" value="Bairro : "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="bairro"
-								value="#{pacienteMB.entity.dadosBasico.bairro}" maxlength="200"
+								value="#{pacienteMB.entity.dadosBasico.bairro}" maxlength="100"
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="complemento" value="Complemento : "
@@ -192,7 +212,7 @@
 							<p:outputLabel for="cidade" value="Cidade : "
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 							<p:inputText id="cidade"
-								value="#{pacienteMB.entity.dadosBasico.cidade}" maxlength="200"
+								value="#{pacienteMB.entity.dadosBasico.cidade}" maxlength="100"
 								rendered="#{pacienteMB.visivelDadosPaciente}" />
 
 							<p:outputLabel for="estado" value="Estado : "
@@ -206,26 +226,7 @@
 									itemValue="#{uf}" itemLabel="#{uf.nome}" />
 							</p:selectOneMenu>
 
-							<p:outputLabel for="telResidencia"
-								value="Telefone Residencial : "
-								rendered="#{pacienteMB.visivelDadosPaciente}" />
-							<p:inputText id="telResidencia"
-								value="#{pacienteMB.entity.dadosBasico.telefone}"
-								onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}"
-								rendered="#{pacienteMB.visivelDadosPaciente}" />
-
-							<p:outputLabel for="telCelular" value="Celular : "
-								rendered="#{pacienteMB.visivelDadosPaciente}" />
-							<h:panelGroup style="display: flex !important;"
-								rendered="#{pacienteMB.visivelDadosPaciente}">
-								<p:inputText id="telCelular"
-									value="#{pacienteMB.entity.dadosBasico.celular}"
-									onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}" />
-								<p:button icon="White fa fa-whatsapp"
-									disabled="#{pacienteMB.getUrlWpp(pacienteMB.entity) == null}"
-									onclick="window.open('#{pacienteMB.getUrlWpp(pacienteMB.entity)}'); return false;"
-									styleClass="GreenButton" />
-							</h:panelGroup>
+													
 
 							<p:outputLabel for="dtNascimento" value="Data de Nascimento : " />
 							<p:calendar id="dtNascimento"
@@ -331,7 +332,7 @@
 
 							<p:outputLabel for="telefoneResponsavel"
 								value="Telefone do Responsável : " />
-							<p:inputText id="telefoneResponsavel"
+							<p:inputText id="telefoneResponsavel" maxlength="20"
 								value="#{pacienteMB.entity.dadosBasico.telefoneResponsavel}"
 								onfocus="#{lumeSecurity.empresa.empBolRetirarMascaraTelefone == false ? 'mascaraTelefone()' : ''}" />
 
