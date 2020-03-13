@@ -225,11 +225,6 @@ div.ui-selectoneradio label {
 			</div>
 		</p:dialog>
 
-		<p:poll interval="60" oncomplete="PF('myschedule').update();"
-			id="poll" immediate="true" async="true" global="false"
-			process="@this" />
-
-
 
 		<p:dialog id="dlgNovoAgendamento" widgetVar="dlgNovoAgendamento"
 			width="900px" height="700px" responsive="true"
@@ -1161,9 +1156,9 @@ div.ui-selectoneradio label {
 			}
 
 			function handleDialogRequest(xhr, status, args) {
-				console.log('handleDialogRequest2');
-				console.debug('handleDialogRequest');
-				console.debug(args);
+				//console.log('handleDialogRequest2');
+				//console.debug('handleDialogRequest');
+				//console.debug(args);
 				if (args.remarcado == true) {
 					PF('remarcado').show();
 				}
