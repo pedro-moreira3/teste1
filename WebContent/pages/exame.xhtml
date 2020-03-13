@@ -26,30 +26,30 @@
 		src="${request.contextPath}/resources/wPaint/plugins/file/wPaint.menu.main.file.min.js"></script>
 	<script>
 		var doPaint = function() {
-			if ($("#lume\\:tabView\\:arquivoBase64").val() != "") {
-				$("#lume\\:tabView\\:paint").wPaint();
-				$("#lume\\:tabView\\:paint").wPaint("image",
-						$("#lume\\:tabView\\:arquivoBase64").val());
+			if ($("#lume\\:tabViewPaciente\\:arquivoBase64").val() != "") {
+				$("#lume\\:tabViewPaciente\\:paint").wPaint();
+				$("#lume\\:tabViewPaciente\\:paint").wPaint("image",
+						$("#lume\\:tabViewPaciente\\:arquivoBase64").val());
 				$('div#_wPaint_menu').css('position', 'absolute');
 			}
 		}
 
 		var doView = function() {
-			if ($("#lume\\:tabView\\:viewArquivoBase64").val() != "") {
-				$("#lume\\:tabView\\:view").wPaint();
-				$("#lume\\:tabView\\:view").wPaint("image",
-						$("#lume\\:tabView\\:viewArquivoBase64").val());
+			if ($("#lume\\:tabViewPaciente\\:viewArquivoBase64").val() != "") {
+				$("#lume\\:tabViewPaciente\\:view").wPaint();
+				$("#lume\\:tabViewPaciente\\:view").wPaint("image",
+						$("#lume\\:tabViewPaciente\\:viewArquivoBase64").val());
 				$('div#_wPaint_menu').css('position', 'absolute');
 			}
 		}
 
 		var saveImage = function() {
-			var imageData = $("#lume\\:tabView\\:paint").wPaint("image");
-			$("#lume\\:tabView\\:arquivoBase64").val(imageData);
+			var imageData = $("#lume\\:tabViewPaciente\\:paint").wPaint("image");
+			$("#lume\\:tabViewPaciente\\:arquivoBase64").val(imageData);
 		}
 	</script>
 	<style>
-#lume\3a tabView\3a exame>div.ui-fileupload-buttonbar {
+#lume\3a tabViewPaciente\3a exame>div.ui-fileupload-buttonbar {
 	width: 30%;
 }
 
@@ -94,7 +94,7 @@
 						readonly="true" />
 					<p:commandButton icon="White fa fa-trash-o"
 						actionListener="#{exameMB.removeFile}"
-						update=":lume:tabView:pnPrincipalExame" process="@this"
+						update=":lume:tabViewPaciente:pnPrincipalExame" process="@this"
 						styleClass="RedButton" />
 					<p:outputLabel for="nomeAnexo" value="Arquivo Anexado" />
 					<p:message for="nomeAnexo" styleClass="msg" />
@@ -114,8 +114,8 @@
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="fa fa-save" value="Salvar"
-				process="@this, :lume:tabView:pnPrincipalExame"
-				update=":lume:tabView:tbExame"
+				process="@this, :lume:tabViewPaciente:pnPrincipalExame"
+				update=":lume:tabViewPaciente:tbExame"
 				actionListener="#{exameMB.actionPersist}" styleClass="GreenButton" />
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
 				oncomplete="PF('dlgViewExame').hide()"
@@ -124,7 +124,7 @@
 	</p:dialog>
 
 	<p:remoteCommand id="carregaPdf" name="carregaPdf" process="@this"
-		update=":lume:tabView:media,:lume:tabView:dlgPdf"
+		update=":lume:tabViewPaciente:media,:lume:tabViewPaciente:dlgPdf"
 		oncomplete="PF('viewDialogPdf').show();" />
 	<div class="Container100 Responsive100 NoIndent">
 		<div class="Container100 ui-fluid NoPadding">
@@ -135,7 +135,7 @@
 					<p:commandButton id="newExame" icon="ui-icon-add" value="Novo"
 						actionListener="#{exameMB.actionNew}"
 						onsuccess="PF('dlgViewExame').show()"
-						update=":lume:tabView:pnPrincipalExame" process="@this" />
+						update=":lume:tabViewPaciente:pnPrincipalExame" process="@this" />
 				</p:panelGrid>
 				<div class="EmptyBox20"></div>
 
@@ -149,11 +149,11 @@
 						<p:column width="80" headerText="Ações">
 							<p:commandButton icon="White fa fa-eye"
 								actionListener="#{exameMB.setEntity(exame)}"
-								update=":lume:tabView:pnPrincipalExame" process="@this"
+								update=":lume:tabViewPaciente:pnPrincipalExame" process="@this"
 								styleClass="NavyButton" oncomplete="PF('dlgViewExame').show()" />
 							<p:commandButton icon="White fa fa-trash-o"
 								actionListener="#{exameMB.actionRemove(exame)}"
-								update=":lume:tabView:tbExame" process="@this"
+								update=":lume:tabViewPaciente:tbExame" process="@this"
 								styleClass="RedButton" />
 						</p:column>
 						<p:column sortBy="#{exame.descricao}"
@@ -170,7 +170,7 @@
 							<p:commandButton action="#{exameMB.actionEditFile}"
 								icon="White fa fa-save" process="@this"
 								oncomplete="PF('viewDialogResponsivo').show();PF('viewDialogResponsivo').toggleMaximize();"
-								update=":lume:tabView:pnResponsivo"
+								update=":lume:tabViewPaciente:pnResponsivo"
 								rendered="#{!exameMB.validaPdf(exame)}">
 								<f:setPropertyActionListener target="#{exameMB.entity}"
 									value="#{exame}" />
@@ -178,7 +178,7 @@
 							<p:commandButton action="#{exameMB.actionEditFile}"
 								icon="White fa fa-eye" process="@this" immediate="true"
 								oncomplete="carregaPdf();"
-								update=":lume:tabView:media,:lume:tabView:dlgPdf"
+								update=":lume:tabViewPaciente:media,:lume:tabViewPaciente:dlgPdf"
 								rendered="#{exameMB.validaPdf(exame)}">
 								<f:setPropertyActionListener target="#{exameMB.entity}"
 									value="#{exame}" />
@@ -189,7 +189,7 @@
 							<p:commandButton action="#{exameMB.actionEditFile2}"
 								icon="White fa fa-save" process="@this"
 								oncomplete="PF('viewDialog').show();PF('viewDialog').toggleMaximize();"
-								update=":lume:tabView:pnResponsivoEditar"
+								update=":lume:tabViewPaciente:pnResponsivoEditar"
 								disabled="#{exameMB.validaPdf(exame) or exame.anexoAlterado == null}">
 								<f:setPropertyActionListener target="#{exameMB.entity}"
 									value="#{exame}" />
@@ -199,7 +199,7 @@
 							<p:commandButton action="#{exameMB.actionEditFile}"
 								disabled="#{exameMB.validaPdf(exame)}" styleClass="NavyButton" icon="fa fa-eye"
 								process="@this" immediate="true"
-								update=":lume:tabView:paint,:lume:tabView:arquivoBase64"
+								update=":lume:tabViewPaciente:paint,:lume:tabViewPaciente:arquivoBase64"
 								oncomplete="doPaint();PF('editDialog').show();">
 								<f:setPropertyActionListener target="#{exameMB.entity}"
 									value="#{exame}" />
@@ -237,8 +237,8 @@
 		</div>
 		<p:commandButton id="persistNewFile" icon="White fa fa-save"
 			value="Salvar" actionListener="#{exameMB.actionPersistNewFile}"
-			process="@this,:lume:tabView:arquivoBase64" onclick="saveImage()"
-			update=":lume:tabView:dtExame"
+			process="@this,:lume:tabViewPaciente:arquivoBase64" onclick="saveImage()"
+			update=":lume:tabViewPaciente:dtExame"
 			oncomplete="PF('editDialog').hide();$('div#_wPaint_menu').hide();"
 			styleClass="GreenButton" />
 	</p:dialog>

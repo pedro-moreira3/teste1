@@ -11,11 +11,11 @@
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton id="newAnamnese" icon="ui-icon-add" value="Nova Anamnese"
 				actionListener="#{pacienteMB.actionAnamneseNew}" 
-				update=":lume:tabView:painelEspecialidades, :lume:tabView:painelPerguntasEspecialidades, :lume:tabView:dtAnamnese,:lume:tabView:persistAnamnese"
-				process="@this,:lume:tabView:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />
+				update=":lume:tabViewPaciente:painelEspecialidades, :lume:tabViewPaciente:painelPerguntasEspecialidades, :lume:tabViewPaciente:dtAnamnese,:lume:tabViewPaciente:persistAnamnese"
+				process="@this,:lume:tabViewPaciente:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />
 			<p:commandButton id="deleteAnamnese" icon="White fa fa-trash-o White"
 				value="Excluir" actionListener="#{pacienteMB.actionAnamneseRemove}"
-				update=":lume:tabView:perguntasEspecialidade, :lume:tabView:especialidade, :lume:tabView:dtAnamnese"
+				update=":lume:tabViewPaciente:perguntasEspecialidade, :lume:tabViewPaciente:especialidade, :lume:tabViewPaciente:dtAnamnese"
 				process="@this" disabled="#{pacienteMB.pacienteAnamnese.id == null}"
 				rendered="#{pacienteMB.admin}" styleClass="RedButton" />
 
@@ -49,13 +49,13 @@
 				rowKey="#{pacienteAnamnese}" paginatorPosition="bottom"
 				binding="#{pacienteMB.tabelaAnamnese}">
 				<p:ajax event="rowSelect"
-					update=":lume:tabView:pnPrincipalAnamnese, :lume:tabView:botoesControleTbAnamnese" />
+					update=":lume:tabViewPaciente:pnPrincipalAnamnese, :lume:tabViewPaciente:botoesControleTbAnamnese" />
 				<f:facet name="header">Anamneses</f:facet>
 				<p:column headerText="Ações" style="width:100px">
 				<p:commandButton id="visualizarAnamnese" icon="fa fa-eye" title="Visualizar Anamnese"
 				actionListener="#{pacienteMB.setPacienteAnamnese(pacienteAnamnese)}" 
-				update=":lume:tabView:painelEspecialidades, :lume:tabView:painelPerguntasEspecialidades, :lume:tabView:dtAnamnese,:lume:tabView:persistAnamnese"
-				process="@this,:lume:tabView:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />
+				update=":lume:tabViewPaciente:painelEspecialidades, :lume:tabViewPaciente:painelPerguntasEspecialidades, :lume:tabViewPaciente:dtAnamnese,:lume:tabViewPaciente:persistAnamnese"
+				process="@this,:lume:tabViewPaciente:persistAnamnese" oncomplete="PF('dlgAnamnesePaciente').show();" />
 									
 				</p:column>
 				<p:column filterBy="#{pacienteAnamnese.id}"
@@ -119,8 +119,8 @@
 											>
 						<p:commandButton id="ciar" icon="ui-icon-add" value="Preencher Anamnese" rendered="#{!pacienteMB.mostrarPerguntasAnamnese}"
 						actionListener="#{pacienteMB.mostrarPerguntasAnamnese}"
-						update=":lume:tabView:perguntasEspecialidade,:lume:tabView:painelEspecialidades,:lume:tabView:painelPerguntasEspecialidades,:lume:tabView:especialidade" 
-						process="@this,:lume:tabView:especialidade,:lume:tabView:painelEspecialidades" oncomplete="" />
+						update=":lume:tabViewPaciente:perguntasEspecialidade,:lume:tabViewPaciente:painelEspecialidades,:lume:tabViewPaciente:painelPerguntasEspecialidades,:lume:tabViewPaciente:especialidade" 
+						process="@this,:lume:tabViewPaciente:especialidade,:lume:tabViewPaciente:painelEspecialidades" oncomplete="" />
 						</p:panelGrid>							
 						</p:outputPanel>
 
@@ -250,8 +250,8 @@
 			<p:outputPanel  id="persistAnamnese">
 				<p:commandButton  icon="White fa fa-save White" rendered="#{pacienteMB.habilitaSalvar}"
 					value="Salvar" actionListener="#{pacienteMB.actionAnamnesePersist}"
-					update=":lume:tabView:especialidade, :lume:tabView:perguntasEspecialidade, :lume:tabView:dtAnamnese"
-					process="@this, :lume:tabView:especialidade, :lume:tabView:perguntasEspecialidade"
+					update=":lume:tabViewPaciente:especialidade, :lume:tabViewPaciente:perguntasEspecialidade, :lume:tabViewPaciente:dtAnamnese"
+					process="@this, :lume:tabViewPaciente:especialidade, :lume:tabViewPaciente:perguntasEspecialidade"
 					disabled="#{pacienteMB.readonly and false}" styleClass="GreenButton" />			
 				</p:outputPanel>
 			<p:outputPanel></p:outputPanel>

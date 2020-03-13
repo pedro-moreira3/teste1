@@ -189,14 +189,15 @@
 		
 			
 			function startTimer() {	
-				
-			var open = PF('loading').isVisible();	
-				if(!open){				
-					t = setTimeout("PF('loading').show();", 200);						
-				}				
+				PF('loading').show();
+			//var open = PF('loading').isVisible();	
+			//	if(!open){				
+				//	t = setTimeout("PF('loading').show();", 200);						
+			//	}				
 			}
-			function stopTimer() {					
-				x = setTimeout("PF('loading').hide();", 500);			
+			function stopTimer() {	
+				PF('loading').hide();
+			//	x = setTimeout("PF('loading').hide();", 500);			
 			}
 			//]]>
 		</script>
@@ -248,13 +249,13 @@
 
 		<div class="layout-main">
 			<h:form id="lume">
+				<ui:include src="../pages/pacienteFicha.xhtml" />
 				<p:growl id="view-log" showDetail="true" escape="false"
 					globalOnly="true" life="4000">
 					<p:autoUpdate />
 				</p:growl>
-				<p:ajaxStatus onstart="startTimer();"
-					onsuccess="stopTimer();"
-					onerror="stopTimer();" />
+				<p:ajaxStatus onstart="startTimer();" onsuccess="stopTimer();"
+					onerror="stopTimer();" oncomplete="stopTimer();"/>
 				<p:dialog modal="true" widgetVar="loading" draggable="false"
 					closable="false" showHeader="false" resizable="false">
 					<p:graphicImage value="/images/loading.gif" />

@@ -44,7 +44,7 @@
 						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
 						<p:commandButton id="new" icon="ui-icon-add"
 							styleClass="BotaoCrud" actionListener="#{pacienteMB.actionNew}"
-							update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
+							update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
 							value="Novo Paciente" oncomplete="PF('dlgFichaPaciente').show()"
 							process="@this" />
 
@@ -135,10 +135,9 @@
 							filterMatchMode="contains" headerText="Nome"
 							filterFunction="#{pacienteMB.filtroSemAcento}">
 							<p:commandLink value="#{paciente.dadosBasico.nome}"
-								process="@this,:lume:tabView:pnDadosPaciente" title="#{paciente.id}"
+								process="@this" title="#{paciente.id}"
 								actionListener="#{tabPacienteMB.loadPaciente(paciente)}"
-								oncomplete="PF('dlgFichaPaciente').show()"
-								update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+								oncomplete="attTabViewPaciente();" />
 						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.responsavel}"
 							filterBy="#{paciente.dadosBasico.responsavel}"
@@ -192,7 +191,7 @@
 			</div>
 		</div>
 
-		<ui:include src="pacienteFicha.xhtml" />
+		
 		<p:remoteCommand name="onHidePacienteFicha" process="@this"
 			update=":lume:dtPrincipalPacientes" actionListener="#{pacienteMB.geraLista}" />
 

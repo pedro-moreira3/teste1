@@ -35,7 +35,7 @@
 		});
 	</script>
 
-	<ui:include src="pacienteFicha.xhtml" />
+
 	<p:remoteCommand name="onHidePacienteFicha" process="@this"
 		actionListener="#{agendamentoMB.atualizaPacientePosFicha()}" />
 
@@ -187,24 +187,24 @@
 
 		<p:panelGrid columns="5" layout="grid" columnClasses="ui-g-3, ui-g-6"
 			styleClass="ui-panelgrid-blank form-group ui-fluid">
-
 			<p:panelGrid columns="1" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
 				<h:panelGroup style="display: flex;margin-right:20px;"
 					styleClass="md-combo">
 					<p:outputLabel for="profissionalAgend" value="Profissional" />
-					<p:selectOneMenu id="profissionalAgend" styleClass="tallerCombo"
+					
+					<p:autoComplete id="profissionalAgend" styleClass="paciente tallerAutoComplete"
+						required="true"
 						value="#{agendamentoMB.profissionalDentroAgenda}"
-						converter="profissional" filter="true" filterMatchMode="contains">
-						<p:ajax listener="#{agendamentoMB.listenerAlterouProfissional}"
-							process="@this" update="fim" />
-						<f:selectItem itemValue="#{null}"
-							itemLabel="Selecione um profissional" />
-						<f:selectItems value="#{agendamentoMB.profissionais}"
-							var="profissional"
-							itemLabel="#{profissional.dadosBasico.prefixoNome}"
-							itemValue="#{profissional}" />
-					</p:selectOneMenu>
+						completeMethod="#{agendamentoMB.sugestoesProfissionais}"
+						var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
+						itemValue="#{p}" converter="profissional"
+						forceSelection="true" scrollHeight="400" queryDelay="1000"
+						dropdown="true">
+						<p:ajax event="itemSelect" process="@this" listener="#{agendamentoMB.listenerAlterouProfissional}" update="fim"/>
+					</p:autoComplete>
+					
+					
 					<p:message styleClass="msg" for="profissionalAgend" />
 					<ui:remove>
 						<p:outputPanel id="btnVisualizarProfissional"
@@ -258,14 +258,14 @@
 							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
 							process="@this"
 							disabled="#{agendamentoMB.pacienteSelecionado == null}"
-							update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
+							update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
 							actionListener="#{tabPacienteMB.loadPacienteRO(agendamentoMB.pacienteSelecionado, 'dlgFichaPaciente')}"
 							icon="fa fa-eye White" immediate="true"
 							title="Cadastro do Paciente"
 							oncomplete="PF('dlgFichaPaciente').show()" />
 						<p:commandButton id="novoPaciente"
 							rendered="#{!agendamentoMB.visivel}" icon="fa fa-plus White"
-							title="Novo Paciente"
+							title="Novo Paciente" disabled="#{agendamentoMB.entity.id != 0}" 
 							update=":lume:pnNovoPaciente, :lume:pnBtpaciente"
 							immediate="true" actionListener="#{agendamentoMB.novoPaciente}" />
 						<p:commandButton id="cancelarNovoPaciente"
@@ -332,7 +332,7 @@
 
 						<p:inputText id="numeroPlanoRapido"
 							value="#{agendamentoMB.paciente.numeroPlano}" maxlength="50" />
-						<p:outputLabel id="lblnumeroPlanoRapido" for="numeroPlano"
+						<p:outputLabel id="lblnumeroPlanoRapido" for="numeroPlanoRapido"
 							value="Carteira do Convênio : " />
 					</h:panelGroup>
 					<p:separator styleClass="SeparatorFull" />

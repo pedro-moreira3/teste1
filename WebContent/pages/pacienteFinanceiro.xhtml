@@ -196,7 +196,7 @@ hr.hrSaldo {
 			<p:splitButton icon="White fa fa fa-file-excel-o"
 				value="Exportar tabela para Excel" styleClass="GreenSplitButton"
 				actionListener="#{pacienteMB.exportarTabelaFinanceiro('xls')}"
-				ajax="false" process=":lume:tabView:dtPrincipalFinanceiro, @this"
+				ajax="false" process=":lume:tabViewPacientePaciente:dtPrincipalFinanceiro, @this"
 				update="@this" immediate="true"
 				onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
@@ -205,7 +205,7 @@ hr.hrSaldo {
 				<p:menuitem value="Exportar tabela para PDF"
 					icon="fa fa fa-file-pdf-o"
 					actionListener="#{pacienteMB.exportarTabelaFinanceiro('pdf')}"
-					ajax="false" process=":lume:tabView:dtPrincipalFinanceiro, @this"
+					ajax="false" process=":lume:tabViewPacientePaciente:dtPrincipalFinanceiro, @this"
 					immediate="true"
 					onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 					<p:fileDownload value="#{pacienteMB.arquivoDownload}" />

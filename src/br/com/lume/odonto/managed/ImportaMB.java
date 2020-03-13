@@ -176,7 +176,7 @@ public class ImportaMB implements Serializable {
         dados.setCep(this.validaNull(tokens.nextToken()));
         dados.setUf(this.validaNull(tokens.nextToken()));
         dados.setEmail(this.validaNull(tokens.nextToken()));
-        dados.setNumero(Integer.parseInt(this.validaNull(tokens.nextToken())));
+        dados.setNumero(this.validaNull(tokens.nextToken()));
         dados.setComplemento(this.validaNull(tokens.nextToken()));
         dados.setExcluido(Status.NAO);
         dados.setResponsavel(this.validaNull(tokens.nextToken()));

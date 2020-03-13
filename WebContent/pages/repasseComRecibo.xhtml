@@ -69,11 +69,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 			<p:remoteCommand name="onCloseFaturaView" />
 		</p:outputPanel>
 
-		<ui:include src="pacienteFicha.xhtml" />
-		<p:remoteCommand name="onHidePacienteFicha" process="@this"
-			update=":lume:tabViewRepasseProfissional:dtPrincipalRepasse"
-			oncomplete="PF('dtPrincipalRepasse').filter();"
-			actionListener="#{repasseProfissionalComReciboMB.pesquisar}" />
+		
+		<p:remoteCommand name="onHidePacienteFicha" />
 
 		<p:dialog id="dlgPendencias" widgetVar="dlgPendencias"
 			header="Pendências" responsive="true" modal="true" width="40%">
@@ -394,7 +391,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								filterBy="#{reciboLancamento.valorTotalRepassar}"
 								sortBy="#{reciboLancamento.valorTotalRepassar}" width="10%">
 								<h:outputText value="#{reciboLancamento.valorTotalRepassar}">
-									<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+									<f:convertNumber currencySymbol="R$" maxFractionDigits="2" 
 										type="currency" />
 								</h:outputText>
 							</p:column>
@@ -403,7 +400,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								filterBy="#{reciboLancamento.dados.valorTotal}"
 								sortBy="#{reciboLancamento.dados.valorTotal}" width="10%">
 								<h:outputText value="#{reciboLancamento.dados.valorTotal}">
-									<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+									<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 										type="currency" />
 								</h:outputText>
 							</p:column>
@@ -412,7 +409,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								filterBy="#{reciboLancamento.dados.valorJaPago}"
 								sortBy="#{reciboLancamento.dados.valorJaPago}" width="10%">
 								<h:outputText value="#{reciboLancamento.dados.valorJaPago}">
-									<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+									<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 										type="currency" />
 								</h:outputText>
 							</p:column>
@@ -423,7 +420,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								sortBy="#{reciboLancamento.lancamento.valorComDesconto}"
 								width="10%">
 								<h:outputText value="#{reciboLancamento.lancamento.valor}">
-									<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+									<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 										type="currency" />
 								</h:outputText>
 							</p:column>
@@ -432,7 +429,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								filterBy="#{reciboLancamento.dados.valorAPagar}"
 								sortBy="#{reciboLancamento.dados.valorAPagar}" width="10%">
 								<h:outputText value="#{reciboLancamento.dados.valorAPagar}">
-									<f:convertNumber currencySymbol="R$" maxIntegerDigits="2"
+									<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 										type="currency" />
 								</h:outputText>
 							</p:column>
@@ -1022,7 +1019,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														process="@this" title="#{ptp.planoTratamento.paciente.id}"
 														actionListener="#{tabPacienteMB.loadPaciente(ptp.planoTratamento.paciente)}"
 														oncomplete="PF('dlgFichaPaciente').show()"
-														update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+														update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 
 												</p:column>
 												<p:column filterBy="#{ptp.planoTratamento.descricao}"

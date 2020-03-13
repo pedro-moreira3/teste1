@@ -258,7 +258,7 @@
 									process="@this" title="#{retorno.paciente.id}"
 									actionListener="#{tabPacienteMB.loadPaciente(retorno.paciente)}"
 									oncomplete="PF('dlgFichaPaciente').show()"
-									update=":lume:tabView:pnDadosPaciente,:lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+									update=":lume:tabViewPaciente:pnDadosPaciente,:lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 
 							</p:column>
 							<p:column filterBy="#{retorno.paciente.dadosBasico.responsavel}"

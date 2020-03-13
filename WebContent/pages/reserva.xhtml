@@ -234,7 +234,7 @@
 									process="@this" title="#{reserva.agendamento.paciente.id}"
 									actionListener="#{tabPacienteMB.loadPaciente(reserva.agendamento.paciente)}"
 									oncomplete="PF('dlgFichaPaciente').show()"
-									update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
+									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"/>
 									
                             </p:column>
                             <p:column filterBy="#{reserva.agendamento.inicioStr}" sortBy="#{reserva.agendamento.inicioStr}"
@@ -253,7 +253,7 @@
                                 <h:outputText value="#{reserva.dataStr}" />
                             </p:column>
                         </p:dataTable>                       
-					<ui:include src="pacienteFicha.xhtml" />
+					
 					<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 					
                 </div>

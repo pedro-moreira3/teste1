@@ -70,15 +70,15 @@
 					styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
 					<p:commandButton icon="ui-icon-add" value="Novo Periograma"
 						actionListener="#{periogramaMB.actionNew}" process="@this"
-						update=":lume:tabView:pnPeriogramaView, :lume:tabView:pnPeriogramaViewHeader"
+						update=":lume:tabViewPaciente:pnPeriogramaView, :lume:tabViewPaciente:pnPeriogramaViewHeader"
 						oncomplete="PF('dlgPeriogramaView').show()" />
 					<p:commandButton icon="White fa fa-file-o" value="Comparar Periogramas"
 						process="@this" actionListener="#{periogramaMB.carregaComparacao}"
-						update=":lume:tabView:compararView, :lume:tabView:compararViewHeader"
-						oncomplete="PF('dlgComparar').show();resize('#lume\\:tabView\\:dlgComparar');" />
+						update=":lume:tabViewPaciente:compararView, :lume:tabViewPaciente:compararViewHeader"
+						oncomplete="PF('dlgComparar').show();resize('#lume\\:tabViewPaciente\\:dlgComparar');" />
 					<p:commandButton icon="White fa fa-trash" value="Excluir Periograma"
 						process="@this" actionListener="#{periogramaMB.actionRemove}"
-						update=":lume:tabView:periogramaMainView" styleClass="RedButton"
+						update=":lume:tabViewPaciente:periogramaMainView" styleClass="RedButton"
 						disabled="#{periogramaMB.entity.id == null or periogramaMB.entity.id == 0}" />
 					
 					<h:panelGroup>
@@ -110,12 +110,12 @@
 					selection="#{periogramaMB.entity}" selectionMode="single"
 					rowKey="#{dto}" paginatorPosition="bottom">
 					<f:facet name="header">Periograma</f:facet>
-					<p:ajax event="rowSelect" update=":lume:tabView:periogramaMainView" />
+					<p:ajax event="rowSelect" update=":lume:tabViewPaciente:periogramaMainView" />
 
 					<p:column headerText="Ações" style="width:140px">
 						<p:commandButton styleClass="NavyButton" icon="fa fa-eye"
 							oncomplete="PF('dlgPeriogramaView').show()"
-							update=":lume:tabView:periogramaMainView, :lume:tabView:pnPeriogramaViewHeader, :lume:tabView:pnPeriogramaView"
+							update=":lume:tabViewPaciente:periogramaMainView, :lume:tabViewPaciente:pnPeriogramaViewHeader, :lume:tabViewPaciente:pnPeriogramaView"
 							actionListener="#{periogramaMB.actionSelecionarPeriograma(dto)}"
 							title="Gerenciar Periograma" process="@this">
 						</p:commandButton>
@@ -472,13 +472,13 @@
 			<p:commandButton id="persistPeriograma" icon="White fa fa-save White"
 				value="Salvar" styleClass="GreenButton"
 				oncomplete="drawMultSeries();"
-				process="@this, :lume:tabView:pnPeriogramaView"
-				update=":lume:tabView:pnPeriogramaView, :lume:tabView:periogramaMainView"
+				process="@this, :lume:tabViewPaciente:pnPeriogramaView"
+				update=":lume:tabViewPaciente:pnPeriogramaView, :lume:tabViewPaciente:periogramaMainView"
 				actionListener="#{periogramaMB.actionPersist}" />
 			<p:commandButton icon="White fa fa-file-o" value="Comparar"
 				process="@this"
-				update=":lume:tabView:compararView, :lume:tabView:compararViewHeader"
-				oncomplete="PF('dlgComparar').show();resize('#lume\\:tabView\\:dlgComparar');"
+				update=":lume:tabViewPaciente:compararView, :lume:tabViewPaciente:compararViewHeader"
+				oncomplete="PF('dlgComparar').show();resize('#lume\\:tabViewPaciente\\:dlgComparar');"
 				actionListener="#{periogramaMB.carregaComparacaoPeriogramaA}" />
 			<p:column />
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
@@ -572,7 +572,7 @@
 								</p:selectOneMenu>
 							</h:panelGroup>
 							
-							<p:commandButton value="Comparar" process="@this" oncomplete="drawMultSeriesDialog();" update=":lume:tabView:compararView" />
+							<p:commandButton value="Comparar" process="@this" oncomplete="drawMultSeriesDialog();" update=":lume:tabViewPaciente:compararView" />
 						</p:panelGrid>
 						
 						<div id="periogramaChartVestibular28ate11"></div>

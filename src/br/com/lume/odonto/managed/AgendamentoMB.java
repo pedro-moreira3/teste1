@@ -16,6 +16,9 @@ import java.util.Locale;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import javax.faces.push.Push;
+import javax.faces.push.PushContext;
+import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -80,7 +83,6 @@ import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
-import br.com.lume.repasse.RepasseFaturasSingleton;
 import br.com.lume.reserva.ReservaSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 import br.com.lume.security.PerfilSingleton;
@@ -125,6 +127,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private PlanoTratamento planoTratamentoSelecionado;
 
     private List<PlanoTratamento> planoTratamentos;
+    
+    @Inject @Push
+    private PushContext someChannel;
 
     private boolean visivel = false, horaUtilValida, responsavel = false, mostraFinalizados = false, telefonesVisiveis = false;
     //private boolean dlg;
@@ -212,13 +217,17 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
         carregarScheduleTarefas();
     }
+    
+    public List<Profissional> sugestoesProfissionais(String query) {
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
+    }
 
     public void carregarAgenda() {
-        limpaPacienteSelecionado();
+        //limpaPacienteSelecionado();
         carregarScheduleTarefas();
         this.horasUteisProfissional = getHorasUteisProfissional();
-        PrimeFaces.current().ajax().update(":lume:dadosFiltroAg");
-        PrimeFaces.current().ajax().update(":lume:schedule");
+        //PrimeFaces.current().ajax().update(":lume:dadosFiltroAg");
+        //PrimeFaces.current().ajax().update(":lume:schedule");
     }
 
     public void atualizaPacientePosFicha() {
@@ -384,9 +393,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 if (!paraInserir.contains(aptpExistente)) {
                     aptpExistente.setAtivo(false);
                 }
-                      
+
                 paraInserir.add(aptpExistente);
-              
+
             }
 
             this.getEntity().setPlanoTratamentoProcedimentosAgendamento(paraInserir);
@@ -439,27 +448,22 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             }
                             AgendamentoSingleton.getInstance().getBo().persist(this.getEntity(), UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada().getEmpStrEstoque(),
                                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                            
-                           
-                            
+
                             //salvando dentista executor, pois ja sabemos quem deve receber. somente se ptp nao estiver finalizado.
                             for (AgendamentoPlanoTratamentoProcedimento aptp : this.getEntity().getPlanoTratamentoProcedimentosAgendamento()) {
-                                if(aptp.getPlanoTratamentoProcedimento() != null &&
-                                        aptp.getPlanoTratamentoProcedimento().getDataFinalizado() == null) {
-                                    
-                                    if(aptp.getPlanoTratamentoProcedimento().getDentistaExecutor() == null || 
-                                            !profissionalDentroAgenda.equals(aptp.getPlanoTratamentoProcedimento().getDentistaExecutor()) ||
-                                            "Não Atendido".equals(this.getEntity().getStatusAgendamento().getDescricao())) {
-                                        
+                                if (aptp.getPlanoTratamentoProcedimento() != null && aptp.getPlanoTratamentoProcedimento().getDataFinalizado() == null) {
+
+                                    if (aptp.getPlanoTratamentoProcedimento().getDentistaExecutor() == null || !profissionalDentroAgenda.equals(
+                                            aptp.getPlanoTratamentoProcedimento().getDentistaExecutor()) || "Não Atendido".equals(this.getEntity().getStatusAgendamento().getDescricao())) {
+
                                         PlanoTratamentoProcedimentoSingleton.getInstance().alteraDentistaExecutor(aptp.getPlanoTratamentoProcedimento(), profissionalDentroAgenda);
                                         PlanoTratamentoProcedimentoSingleton.getInstance().verificaRepasses(aptp.getPlanoTratamentoProcedimento(), UtilsFrontEnd.getProfissionalLogado());
-                                        
+
                                     }
                                 }
-                                                                
+
                             }
-                       
-                            
+
                             if (retorno != null) {
                                 retorno.setAgendamento(getEntity());
                                 retorno.setRetornar("A");
@@ -474,8 +478,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                            someChannel.send("teste");
                             this.actionNew(event);
-                            PrimeFaces.current().ajax().addCallbackParam("dlg", true);
+                            //PrimeFaces.current().ajax().addCallbackParam("dlg", true);
+                            PrimeFaces.current().executeScript("PF('eventDialog').hide()");
                             //profissional = null;
                         } catch (BusinessException e) {
                             this.addError(OdontoMensagens.getMensagem("erro.agendamento.exclusao.procedimento.emprestimo"), "");
@@ -497,7 +503,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                            PrimeFaces.current().ajax().addCallbackParam("dlg", true);
+                            someChannel.send("teste");
+                           // PrimeFaces.current().ajax().addCallbackParam("dlg", true);
+                            PrimeFaces.current().executeScript("PF('eventDialog').hide()");
                         } catch (Exception e) {
                             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
                             log.error("actionPersist", e);
@@ -508,7 +516,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 //this.refreshEntity();
             }
             validaHabilitaSalvar();
-            carregarScheduleTarefas();
+            //carregarScheduleTarefas();
         } else {
             this.addError(OdontoMensagens.getMensagem("erro.agendamento.planotratamento.vazio"), "");
         }
@@ -898,7 +906,12 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
             @Override
             public void loadEvents(Date start, Date end) {
-                initialDate = start;
+                
+                if(!initialDate.equals(start)) {
+                    initialDate = start; 
+                    PrimeFaces.current().executeScript("updateSchedule()");
+                }
+                
 
                 if (AgendamentoMB.this.isDentista()) {
                     profissional = UtilsFrontEnd.getProfissionalLogado();
@@ -996,7 +1009,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                         }
                     }
                 } catch (Exception e) {
-                    // TODO: handle exception
+                    e.printStackTrace();
                 }
 
             }
@@ -1132,6 +1145,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public void onEventSelect(SelectEvent selectEvent) {
 
         Agendamento agendamento = null;
+        if (selectEvent.getObject() == null) {
+            addError("Erro", "Houve um problema na solicitação, tente novamente!");
+            return;
+        }
 
         Object obj = ((ScheduleEvent) selectEvent.getObject()).getData();
 
@@ -1969,6 +1986,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     public void setFinalizaouAsEstadoInicial(Date finalizaouAsEstadoInicial) {
         this.finalizaouAsEstadoInicial = finalizaouAsEstadoInicial;
+    }
+
+    
+    public PushContext getSomeChannel() {
+        return someChannel;
+    }
+
+    
+    public void setSomeChannel(PushContext someChannel) {
+        this.someChannel = someChannel;
     }
 
 }

@@ -176,8 +176,7 @@ div.ui-selectoneradio label {
 			focus="paciente">
 
 			<p:ajax event="close" listener="#{agendamentoMB.handleClose}"
-				update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
-				oncomplete="PF('myschedule').update();" />
+				update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda" />
 
 
 			<div class="Container100 Responsive100 NoIndent">
@@ -192,28 +191,26 @@ div.ui-selectoneradio label {
 
 							<p:panelGrid columns="4" layout="grid"
 								styleClass="ui-panelgrid-blank form-group ui-fluid"
-
-								id="botoesAgenda">							
+								id="botoesAgenda">
 								<p:commandButton id="persist" icon="White fa fa-save"
 									process="@this" value="Salvar"
 									rendered="#{agendamentoMB.habilitaSalvar}"
 									actionListener="#{agendamentoMB.actionPersist}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
 									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);"
-									styleClass="GreenButton" />	
+									styleClass="GreenButton" />
 								<p:button id="whats" icon="White fa fa-whatsapp"
 									onclick="window.open('#{agendamentoMB.getUrlWpp(agendamentoMB.entity)}'); return false;"
 									value="Enviar Whatsapp" styleClass="GreenButton"
 									disabled="#{agendamentoMB.getUrlWpp(agendamentoMB.entity) == null}"
-									immediate="true" 
+									immediate="true"
 									rendered="#{agendamentoMB.entity != null and agendamentoMB.entity.id > 0}" />
-								
+
 								<p:commandButton icon="White fa fa-close" value="Fechar"
 									process="@this" onclick="PF('eventDialog').hide()"
 									actionListener="#{agendamentoMB.handleClose}"
-									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
-									 />
-								
+									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda" />
+
 								<p:commandButton id="confirmarPreCadastro"
 									icon="White fa fa-save" process="pnAgendamento"
 									value="Confirmar Pré Agendamento"
@@ -228,11 +225,8 @@ div.ui-selectoneradio label {
 			</div>
 		</p:dialog>
 
-		<p:poll interval="60" oncomplete="PF('myschedule').update();"
-			id="poll" immediate="true" async="true" global="false"
-			process="@this" />
-
-
+<f:websocket channel="someChannel"
+onmessage="function(m){console.log(m);PF('myschedule').update();}" />
 
 		<p:dialog id="dlgNovoAgendamento" widgetVar="dlgNovoAgendamento"
 			width="900px" height="700px" responsive="true"
@@ -721,8 +715,11 @@ div.ui-selectoneradio label {
 										styleClass="ui-panelgrid-blank form-group ui-fluid">
 
 										<p:commandButton value="Pesquisar"
+											onsuccess="updateSchedule()"
 											process="@this, :lume:pacienteSelecionado"
-											actionListener="#{agendamentoMB.carregarAgenda()}" />
+											actionListener="#{agendamentoMB.carregarAgenda()}" 
+											oncomplete="updateSchedule();"
+											/>
 
 										<p:commandButton value="Imprimir" type="button"
 											onclick="printSchedule()" icon="White fa fa-print"
@@ -766,26 +763,28 @@ div.ui-selectoneradio label {
 							</p:outputPanel>
 						</p:fieldset>
 					</p:panel>
-
+<ui:remove>
 					<p:selectOneButton value="#{agendamentoMB.visualizacao}"
 						id="selectVisualizacao" unselectable="false">
 						<f:selectItem itemLabel="Calendário" itemValue="S" />
+						
 						<f:selectItem itemLabel="Agenda Cadeira" itemValue="C" />
 						<f:selectItem itemLabel="Agenda Profissional" itemValue="P" />
+					
 						<p:ajax
 							update=":lume:agendamentoVisualizacao, :lume:filtrosShow,:lume:schedule"
 							oncomplete="atualizaGraficos();"
 							process=":lume:selectVisualizacao" />
 					</p:selectOneButton>
-
+	</ui:remove>
 					<p:separator styleClass="SeparatorFull" />
 
 					<p:outputPanel id="agendamentoVisualizacao">
 						<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'S'}">
 							<p:remoteCommand name="updateSchedule"
-								update=":lume:formularioPrincipal"
+								update=":lume:schedule, :lume:initialDate"
 								actionListener="#{agendamentoMB.carregarAgenda()}"
-								process=":lume:schedule" />
+								process="@this" />
 							<p:schedule id="schedule" value="#{agendamentoMB.schedule}"
 								axisFormat="HH:mm" slotEventOverlap="false"
 								style="width:100%;heigth:100%;margin: 0 auto;display: inline-block;"
@@ -999,8 +998,8 @@ div.ui-selectoneradio label {
 					loadCadeirasChart();
 				//else if(value == 'S')
 				//	updateVisualizacao();
-				if (PF('myschedule'))
-					PF('myschedule').update();
+				//if (PF('myschedule'))
+//					PF('myschedule').update();
 				updateSchedule();
 			}
 
@@ -1159,8 +1158,9 @@ div.ui-selectoneradio label {
 			}
 
 			function handleDialogRequest(xhr, status, args) {
-				console.debug('handleDialogRequest');
-				console.debug(args);
+				//console.log('handleDialogRequest2');
+				//console.debug('handleDialogRequest');
+				//console.debug(args);
 				if (args.remarcado == true) {
 					PF('remarcado').show();
 				}
@@ -1169,7 +1169,7 @@ div.ui-selectoneradio label {
 					window.scrollTo(0, 0);
 				}
 				if (args.hora == false) {
-					PF('insertConfirmation').show()
+					PF('insertConfirmation').show();
 				}
 				if (args.dlg == true) {
 					PF('eventDialog').hide();
@@ -1178,17 +1178,21 @@ div.ui-selectoneradio label {
 				}
 			}
 
-			$(document).ready(function() {
+		/*	$(document).ready(function() {
 				$('.fc-prev-button').click(function() {
 					updateSchedule();
+					console.log("a");
+					
 				});
 				$('.fc-next-button').click(function() {
 					updateSchedule();
+					console.log("b");
 				});
 				$('.fc-today-button').click(function() {
 					updateSchedule();
+					console.log("c");
 				});
-			});
+			});*/
 
 			//]]>
 		</script>

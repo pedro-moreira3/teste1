@@ -227,8 +227,8 @@
 			<h:panelGroup style="display:block;margin-left:3px;">
 					<p:selectBooleanCheckbox id="checkFiltro"
 						value="#{planoTratamentoMB.imprimirSemValores}">
-						<p:ajax event="change" process="@this,lume:tabView:orcamento2PrintInterno"
-							update=":lume:tabView:orcamento2PrintInterno"
+						<p:ajax event="change" process="@this,lume:tabViewPaciente:orcamento2PrintInterno"
+							update=":lume:tabViewPaciente:orcamento2PrintInterno"
 							listener="#{planoTratamentoMB.imprimirSemValoresListener}" />
 					</p:selectBooleanCheckbox>
 					<p:outputLabel for="checkFiltro" value="Não mostrar valores dos procedimentos na impressão" />
@@ -236,7 +236,7 @@
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="fa fa-print" value="Imprimir" process="@this">
-				<p:printer target=":lume:tabView:orcamento2PrintInterno" />
+				<p:printer target=":lume:tabViewPaciente:orcamento2PrintInterno" />
 			</p:commandButton>
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
 				oncomplete="PF('dlgPrintOrcamento').hide()"/>

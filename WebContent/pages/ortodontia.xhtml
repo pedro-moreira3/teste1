@@ -84,7 +84,7 @@ li.orcamento-li {
 					<p:column headerText="Ações" style="width:50px">
 						<p:commandButton styleClass="NavyButton" icon="fa fa-eye"
 							oncomplete="PF('dlgPlanoOrtodontico').show()"
-							update=":lume:tabView:planoOrtodonticoHeader, :lume:tabView:planoOrtodontico"
+							update=":lume:tabViewPaciente:planoOrtodonticoHeader, :lume:tabViewPaciente:planoOrtodontico"
 							process="@this" title="Gerenciar Plano de Tratamento"
 							actionListener="#{ortodontiaMB.actionCarregarPlano(planoTratamento)}">
 						</p:commandButton>
@@ -133,7 +133,7 @@ li.orcamento-li {
 
 					<p:commandButton id="newOrcamentoOrto" icon="ui-icon-add"
 						actionListener="#{ortodontiaMB.actionNewOrcamento}"
-						update=":lume:tabView:pnViewOrcamento, :lume:tabView:orcamentoViewHeader, :lume:tabView:buttonsDlgOrcamentoView,:lume:tabView:panelDescObs"
+						update=":lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:orcamentoViewHeader, :lume:tabViewPaciente:buttonsDlgOrcamentoView,:lume:tabViewPaciente:panelDescObs"
 						value="Novo Orçamento" process="@this" styleClass="NavyButton"
 						disabled="#{planoTratamentoMB.entity.status == 'S'}" />
 
@@ -159,13 +159,13 @@ li.orcamento-li {
 
 							</p:commandButton>
 							<p:commandButton icon="White fa fa-print" process="@this"
-								update=":lume:tabView:orcamentoInclude"
+								update=":lume:tabViewPaciente:orcamentoInclude"
 								actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
 								oncomplete="PF('dlgPrintOrcamento').show()"
 								styleClass="NavyButton" />
 							<p:commandButton icon="fa fa-trash" process="@this"
 								actionListener="#{ortodontiaMB.actionRemoveOrcamento(orcamento)}"
-								update=":lume:tabView:tbViewOrcamento" styleClass="NavyButton"
+								update=":lume:tabViewPaciente:tbViewOrcamento" styleClass="NavyButton"
 								title="Cancelar Orçamento">
 								<p:confirm header="Confirmação"
 									message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
@@ -256,7 +256,7 @@ li.orcamento-li {
 				styleClass="GreenButton" process="@this"
 				actionListener="#{ortodontiaMB.actionPersistReajuste}"
 				oncomplete="PF('dlgNovoReajusteOrcamento').hide();"
-				update=":lume:tabView:dtOrcamentosOrtodontia">
+				update=":lume:tabViewPaciente:dtOrcamentosOrtodontia">
 
 			</p:commandButton>
 
@@ -420,7 +420,7 @@ li.orcamento-li {
 								<f:selectItem itemValue="P" itemLabel="Porcentagem" />
 								<f:selectItem itemValue="V" itemLabel="Valor" />
 								<p:ajax process="@this"
-									update=":lume:tabView:orcamentoOrtodonticoDescontoValor" />
+									update=":lume:tabViewPaciente:orcamentoOrtodonticoDescontoValor" />
 							</p:selectOneMenu>
 
 							<h:outputText value="Valor do Desconto" />
@@ -455,19 +455,19 @@ li.orcamento-li {
 				process="@this"
 				actionListener="#{ortodontiaMB.actionPersistOrcamento}"
 				styleClass="GreenButton"
-				update=":lume:tabView:dtOrcamentosOrtodontia, :lume:tabView:buttonsDlgOrcamentoOrtodonticoView"
+				update=":lume:tabViewPaciente:dtOrcamentosOrtodontia, :lume:tabViewPaciente:buttonsDlgOrcamentoOrtodonticoView"
 				disabled="#{ortodontiaMB.entity.status == 'S' or ortodontiaMB.orcamentoSelecionado.aprovado}" />
 			<p:commandButton icon="White fa fa-print"
 				value="Visualizar Impressão" process="@this"
 				oncomplete="PF('dlgPrintOrcamentoO').show()" styleClass="NavyButton"
-				update=":lume:tabView:orcamentoIncludeOrtodontico"
+				update=":lume:tabViewPaciente:orcamentoIncludeOrtodontico"
 				disabled="#{ortodontiaMB.orcamentoSelecionado.id == null or ortodontiaMB.orcamentoSelecionado.id == 0}">
 			</p:commandButton>
 			<p:commandButton icon="White fa fa-gear" value="Aprovar Orçamento"
 				actionListener="#{ortodontiaMB.actionAprovaOrcamento}"
-				process="@this, :lume:tabView:orcamentoPlanoOrtodontico"
+				process="@this, :lume:tabViewPaciente:orcamentoPlanoOrtodontico"
 				styleClass="OrangeButton"
-				update=":lume:tabView:buttonsDlgOrcamentoOrtodonticoView, :lume:tabView:orcamentoPlanoOrtodontico, :lume:tabView:dtOrcamentosOrtodontia"
+				update=":lume:tabViewPaciente:buttonsDlgOrcamentoOrtodonticoView, :lume:tabViewPaciente:orcamentoPlanoOrtodontico, :lume:tabViewPaciente:dtOrcamentosOrtodontia"
 				disabled="#{ortodontiaMB.entity.status == 'S' or ortodontiaMB.orcamentoSelecionado.id == null or ortodontiaMB.orcamentoSelecionado.id == 0
 								or ortodontiaMB.orcamentoSelecionado.aprovado}" />
 			<p:commandButton icon="White fa fa-close" value="Fechar"
@@ -574,7 +574,7 @@ li.orcamento-li {
 										inputStyle="width:500px;">
 										<p:ajax event="itemSelect" process="@this"
 											update="valorProcedimentoPadrao"
-											listener="#{ortodontiaMB.atualizaValorProcedimento()}" />
+											listener="#{ortodontiaMB.atualizaValorProcedimento()}"/>
 									</p:autoComplete>
 								</p:panelGrid>
 
@@ -602,7 +602,7 @@ li.orcamento-li {
 										<p:commandButton id="adicionarDiagnostico"
 											icon="White fa fa-plus White"
 											actionListener="#{ortodontiaMB.actionAdicionarDiagnostico}"
-											update=":lume:tabView:dtDiagnosticos,@this"
+											update=":lume:tabViewPaciente:dtDiagnosticos,@this"
 											process="diagnostico,@this"
 											disabled="#{ortodontiaMB.diagnosticoSelecionado == null}" />
 									</h:panelGroup>
@@ -621,7 +621,7 @@ li.orcamento-li {
 										<p:commandButton id="adicionarAparelho"
 											icon="White fa fa-plus White"
 											actionListener="#{ortodontiaMB.actionAdicionarAparelho}"
-											update=":lume:tabView:dtAparelhos,@this"
+											update=":lume:tabViewPaciente:dtAparelhos,@this"
 											process="aparelho,@this"
 											disabled="#{ortodontiaMB.aparelhoSelecionado == null}" />
 									</h:panelGroup>
@@ -636,7 +636,7 @@ li.orcamento-li {
 										<p:column width="33px">
 											<p:commandButton icon="White fa fa-minus White"
 												actionListener="#{ortodontiaMB.actionRemoverDiagnostico(d)}"
-												update=":lume:tabView:dtDiagnosticos" process="@this" />
+												update=":lume:tabViewPaciente:dtDiagnosticos" process="@this" />
 										</p:column>
 									</p:dataTable>
 									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
@@ -650,7 +650,7 @@ li.orcamento-li {
 										<p:column width="33px">
 											<p:commandButton icon="White fa fa-minus White"
 												actionListener="#{ortodontiaMB.actionRemoverAparelho(d)}"
-												update=":lume:tabView:dtAparelhos" process="@this" />
+												update=":lume:tabViewPaciente:dtAparelhos" process="@this" />
 										</p:column>
 									</p:dataTable>
 								</p:panelGrid>
@@ -720,8 +720,8 @@ li.orcamento-li {
 												<p:commandButton icon="White fa fa-gear White"
 													value="Gerar Orçamento" styleClass="OrangeButton"
 													action="#{ortodontiaMB.actionNewOrcamento}"
-													process="@this,:lume:tabView:dtOrcamentosOrtodontia"
-													update=":lume:tabView:dtOrcamentosOrtodontia">
+													process="@this,:lume:tabViewPaciente:dtOrcamentosOrtodontia"
+													update=":lume:tabViewPaciente:dtOrcamentosOrtodontia">
 												</p:commandButton>
 
 											</p:panelGrid>
@@ -738,12 +738,12 @@ li.orcamento-li {
 														title="Editar Dados" process="@this"
 														oncomplete="PF('dlgOrcamentoPlanoOrtodontico').show();"
 														actionListener="#{ortodontiaMB.actionEditOrcamento(o)}"
-														update=":lume:tabView:orcamentoPlanoOrtodontico, :lume:tabView:buttonsDlgOrcamentoOrtodonticoView">
+														update=":lume:tabViewPaciente:orcamentoPlanoOrtodontico, :lume:tabViewPaciente:buttonsDlgOrcamentoOrtodonticoView">
 													</p:commandButton>
 
 													<p:commandButton icon="White fa fa-print" process="@this"
 														actionListener="#{ortodontiaMB.setOrcamentoSelecionado(o)}"
-														update=":lume:tabView:orcamentoIncludeOrtodontico"
+														update=":lume:tabViewPaciente:orcamentoIncludeOrtodontico"
 														oncomplete="PF('dlgPrintOrcamentoO').show()"
 														styleClass="NavyButton" title="Imprimir Orçamento" />
 													<p:commandButton process="@this"
@@ -757,7 +757,7 @@ li.orcamento-li {
 													</p:commandButton>
 													<p:commandButton icon="fa fa-trash" process="@this"
 														actionListener="#{ortodontiaMB.actionRemoveOrcamento(o)}"
-														update=":lume:tabView:dtOrcamentosOrtodontia, :lume:tabView:fsProcedimentosEValores"
+														update=":lume:tabViewPaciente:dtOrcamentosOrtodontia, :lume:tabViewPaciente:fsProcedimentosEValores"
 														styleClass="RedButton" title="Cancelar Orçamento"
 														disabled="#{o.aprovado or ortodontiaMB.entity.status == 'S'}">
 														<p:confirm header="Confirmação"
@@ -828,10 +828,10 @@ li.orcamento-li {
 		<p:panelGrid columns="4" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton value="Salvar" id="salvar"
-				process="@this, :lume:tabView:planoOrtodontico"
+				process="@this, :lume:tabViewPaciente:planoOrtodontico"
 				actionListener="#{ortodontiaMB.actionPersist}"
 				icon="White fa fa-save White" styleClass="GreenButton"
-				update=":lume:tabView:pnMainOrtodontia, :lume:tabView:planoOrtodontico,:lume:tabView:valorProcedimentoPadrao">
+				update=":lume:tabViewPaciente:pnMainOrtodontia, :lume:tabViewPaciente:planoOrtodontico,:lume:tabViewPaciente:valorProcedimentoPadrao">
 			</p:commandButton>
 			<p:column />
 			<p:column />

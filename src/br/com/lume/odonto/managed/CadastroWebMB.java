@@ -236,7 +236,7 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
         dadosBasico.setCep(this.getEntity().getEmpChaCep());
         dadosBasico.setEndereco(this.getEntity().getEmpStrEndereco());
         dadosBasico.setTelefone(this.getEntity().getEmpChaFone());
-        dadosBasico.setNumero(0);
+        dadosBasico.setNumero("");
         filial = new Filial();
         filial.setDadosBasico(dadosBasico);
         filial.setIdEmpresa(this.getEntity().getEmpIntCod());

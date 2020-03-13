@@ -183,7 +183,7 @@
 										title="#{lancamento.ptp.planoTratamento.paciente.id}"
 										actionListener="#{tabPacienteMB.loadPaciente(lancamento.ptp.planoTratamento.paciente)}"
 										oncomplete="PF('dlgFichaPaciente').show()"
-										update=":lume:tabView:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+										update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 								</p:column>
 
 								<p:column filterMatchMode="contains" headerText="Valor Fatura"
@@ -657,7 +657,7 @@
 			</div>
 		</div>
 
-		<ui:include src="pacienteFicha.xhtml" />
+		
 		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 		<p:dialog widgetVar="dlgVisualizarRecibo" resizable="false"

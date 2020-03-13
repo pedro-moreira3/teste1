@@ -3,7 +3,7 @@ package br.com.lume.odonto.managed;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
-import javax.faces.bean.ViewScoped;
+import javax.faces.bean.RequestScoped;
 
 import org.apache.log4j.Logger;
 import org.primefaces.component.tabview.TabView;
@@ -22,7 +22,7 @@ import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
  * @author ricardo.poncio
  */
 @ManagedBean
-@ViewScoped
+@RequestScoped
 public class TabPacienteMB extends LumeManagedBean<Paciente> {
 
     private static final long serialVersionUID = -5181569186377576508L;

@@ -8,7 +8,7 @@
 
 	<p:remoteCommand id="carregaRegioes" name="carregaRegioes"
 		actionListener="#{odontogramaTextoMB.carregaRegioes}" process="@this"
-		update=":lume:tabView:dtFaces" />
+		update=":lume:tabViewPaciente:dtFaces" />
 
 
 	<p:panel id="pnOdontogramaTexto" header="Cadastro de Odontograma Texto">
@@ -54,7 +54,7 @@
 			paginator="true" selection="#{odontogramaTextoMB.regiaoDente}"
 			selectionMode="single" rowKey="#{regiaoDente}"
 			paginatorPosition="bottom">
-			<p:ajax event="rowSelect" update=":lume:tabView:pnOdontogramaTexto" />
+			<p:ajax event="rowSelect" update=":lume:tabViewPaciente:pnOdontogramaTexto" />
 			<f:facet name="header">Faces</f:facet>
 			<p:column sortBy="#{regiaoDente.dente.descricao}"
 				filterBy="#{regiaoDente.dente.descricao}" filterMatchMode="contains"
@@ -96,7 +96,7 @@
 				
 				process="observacoes2,@this"
 				oncomplete="carregarListaOdontograma();carregarOdontograma();"
-				update=":lume:tabView:dtFaces" />
+				update=":lume:tabViewPaciente:dtFaces" />
 		</p:panel>
 	</p:panel>
 

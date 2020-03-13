@@ -57,7 +57,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private static final long serialVersionUID = 1L;
     //private Logger log = Logger.getLogger(FaturaPagtoMB.class);
 
-    private boolean executadosSemPagamentos = false, semPendencias = true, procedimentosNaoExecutados = false, mostrarRepasseAntigo = false;
+    private boolean semPendencias = true, procedimentosNaoExecutados = false, mostrarRepasseAntigo = false;
 
     //FILTROS
     private Date dataInicio;
@@ -300,7 +300,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         try {
             setEntityList(new ArrayList<PlanoTratamentoProcedimento>());
             setEntityList(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listParaRepasseProfissionais(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), dataInicio, dataFim,
-                    profissional,false, procedimentosNaoExecutados, mostrarRepasseAntigo));
+                    profissional, procedimentosNaoExecutados, mostrarRepasseAntigo));
 
 //            if (semPendencias && getEntityList() != null && getEntityList().size() > 0) {
 //                //getEntityList().removeIf(ptp -> (existemPendencias(ptp) || valorDisponivel(ptp).compareTo(new BigDecimal(0)) == 0));
@@ -945,16 +945,6 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     
     public void setPtpsValidosComLancamentos(HashMap<PlanoTratamentoProcedimento, List<Lancamento>> ptpsValidosComLancamentos) {
         this.ptpsValidosComLancamentos = ptpsValidosComLancamentos;
-    }
-
-    
-    public boolean isExecutadosSemPagamentos() {
-        return executadosSemPagamentos;
-    }
-
-    
-    public void setExecutadosSemPagamentos(boolean executadosSemPagamentos) {
-        this.executadosSemPagamentos = executadosSemPagamentos;
     }
 
 }
