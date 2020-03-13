@@ -224,10 +224,10 @@ div.ui-selectoneradio label {
 				</div>
 			</div>
 		</p:dialog>
-
+<ui:remove>
 <f:websocket channel="someChannel"
 onmessage="function(m){console.log(m);PF('myschedule').update();}" />
-
+</ui:remove>
 		<p:dialog id="dlgNovoAgendamento" widgetVar="dlgNovoAgendamento"
 			width="900px" height="700px" responsive="true"
 			header="Novo Agendamento" resizable="false" modal="true">
