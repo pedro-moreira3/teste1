@@ -23,7 +23,7 @@
 			<artifactId>postgresql</artifactId>
 			<version>42.2.5</version>
 		</dependency>
-		<!-- BEGIN SYSTEM DEPENDENCIES -->
+		<!-- BEGIN SYSTEM DEPENDENCIES -->		
 		<dependency>
 			<groupId>br.com.lume</groupId>
 			<artifactId>lumeerp</artifactId>
@@ -31,6 +31,14 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/WebContent/WEB-INF/lib/lumeerp.jar</systemPath>
 		</dependency>
+				<!-- https://mvnrepository.com/artifact/javax.faces/javax.faces-api -->
+		<dependency>
+		    <groupId>javax.faces</groupId>
+		    <artifactId>javax.faces-api</artifactId>
+		    <version>2.1</version>
+		    <scope>provided</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>NBioBSPJNISigned</groupId>
 			<artifactId>NBioBSPJNISigned</artifactId>
