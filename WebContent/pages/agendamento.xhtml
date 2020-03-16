@@ -224,13 +224,10 @@ div.ui-selectoneradio label {
 				</div>
 			</div>
 		</p:dialog>
-
-		<p:poll interval="60" oncomplete="PF('myschedule').update();"
-			id="poll" immediate="true" async="true" global="false"
-			process="@this" />
-
-
-
+<ui:remove>
+<f:websocket channel="someChannel"
+onmessage="function(m){console.log(m);PF('myschedule').update();}" />
+</ui:remove>
 		<p:dialog id="dlgNovoAgendamento" widgetVar="dlgNovoAgendamento"
 			width="900px" height="700px" responsive="true"
 			header="Novo Agendamento" resizable="false" modal="true">
@@ -766,18 +763,20 @@ div.ui-selectoneradio label {
 							</p:outputPanel>
 						</p:fieldset>
 					</p:panel>
-
+<ui:remove>
 					<p:selectOneButton value="#{agendamentoMB.visualizacao}"
 						id="selectVisualizacao" unselectable="false">
 						<f:selectItem itemLabel="Calendário" itemValue="S" />
+						
 						<f:selectItem itemLabel="Agenda Cadeira" itemValue="C" />
 						<f:selectItem itemLabel="Agenda Profissional" itemValue="P" />
+					
 						<p:ajax
 							update=":lume:agendamentoVisualizacao, :lume:filtrosShow,:lume:schedule"
 							oncomplete="atualizaGraficos();"
 							process=":lume:selectVisualizacao" />
 					</p:selectOneButton>
-
+	</ui:remove>
 					<p:separator styleClass="SeparatorFull" />
 
 					<p:outputPanel id="agendamentoVisualizacao">
@@ -1159,9 +1158,9 @@ div.ui-selectoneradio label {
 			}
 
 			function handleDialogRequest(xhr, status, args) {
-				console.log('handleDialogRequest2');
-				console.debug('handleDialogRequest');
-				console.debug(args);
+				//console.log('handleDialogRequest2');
+				//console.debug('handleDialogRequest');
+				//console.debug(args);
 				if (args.remarcado == true) {
 					PF('remarcado').show();
 				}
