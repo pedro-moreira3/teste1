@@ -181,13 +181,17 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
            
           }
           this.getEntity().setStatus(EmprestimoKit.UTILIZADO_UNITARIO);
-          if (quantidadeParaLavar.compareTo(BigDecimal.ZERO) > 0) {
-              new LavagemMB().lavar(this.getEntity(), quantidadeParaLavar.longValue());
-          }
+         // if (quantidadeParaLavar.compareTo(BigDecimal.ZERO) > 0) {
+         //     new LavagemMB().lavar(this.getEntity(), quantidadeParaLavar.longValue());
+         // }
           
-          Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_UNITARIA");                    
-          Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "ENTREGA_LAVAGEM_DEVOLUCAO_UNITARIA");
-          EstoqueSingleton.getInstance().transferencia(this.getEntity().getMaterial(),localOrigem,localDestino,
+          Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_UNITARIA");       
+          //antigo
+        
+          //novo processo
+          Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.EM_LAVAGEM);          
+          
+          EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(this.getEntity().getMaterial(),localOrigem,localDestino,
                   quantidadeParaLavar,EstoqueSingleton.ENTREGA_LAVAGEM_UNITARIA,UtilsFrontEnd.getProfissionalLogado());          
           
           MaterialSingleton.getInstance().getBo().persist(this.getEntity().getMaterial());

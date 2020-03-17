@@ -1,0 +1,149 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions">
+    <ui:define name="content">
+    
+    <style>
+    
+    
+ .table-no-select-all .ui-chkbox .ui-chkbox-all .ui-widget {
+     display: none !important;
+}
+    
+   
+    
+    </style>
+    
+        <div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+                    <p:outputPanel styleClass="BordNone">
+                        <h1>Consumo Avulso</h1>
+                        <div class="SeparatorFull"></div>
+                        <br />                    
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                         <p:commandButton id="new" icon="White fa fa-file-o" value="Novo Consumo Avulso"
+                      	 oncomplete="PF('dtEstoque').filter();PF('dtEstoque').clearSelection();PF('dtEstoque').clearFilters();PF('dlgConsumo').show();" actionListener="#{consumoAvulsoMB.buscaEstoques}" 
+                      	 update="dtEstoque,pnEstoque" immediate="true" process="@this"/>
+                        	<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{consumoAvulsoMB.exportarTabela('xls')}"
+									ajax="false" process="dtConsumo,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{consumoAvulsoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{consumoAvulsoMB.exportarTabela('pdf')}"
+										ajax="false" process="dtConsumo,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{consumoAvulsoMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{consumoAvulsoMB.exportarTabela('csv')}"
+										ajax="false" process="dtConsumo,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{consumoAvulsoMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+                        
+                        </p:panelGrid>
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" widgetVar="dtConsumo" id="dtConsumo" value="#{consumoAvulsoMB.transferencias}" var="t" rows="15" paginator="true"
+						rowKey="#{m}" paginatorPosition="bottom" binding="#{consumoAvulsoMB.tabelaConsumo}" styleClass="table-no-select-all">
+						<f:facet name="header">Materiais Consumidos</f:facet>	
+                                
+						<p:column filterBy="#{t.material.item.descricao}" sortBy="#{t.material.item.descricao}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" 
+						headerText="Item">							
+							<h:outputText value="#{t.material.item.descricao}" title="#{m.id}"/>
+						</p:column>						
+						<p:column  filterBy="#{t.dataStr}" sortBy="#{t.dataStr}" filterMatchMode="contains" headerText="Data do Consumo">												
+							<h:outputLabel value="#{t.dataStr}"/>
+						</p:column>
+						<p:column  filterBy="#{t.quantidade}" sortBy="#{t.quantidade}" filterMatchMode="contains" headerText="Quantidade">												
+							<h:outputLabel value="#{t.quantidade}"/>
+						</p:column>
+						<p:column  filterBy="#{t.profissional.dadosBasico.nome}" sortBy="#{t.profissional.dadosBasico.nome}" filterMatchMode="contains" headerText="Profissional">												
+							<h:outputLabel value="#{t.profissional.dadosBasico.nome}"/>
+						</p:column>
+						<p:column  filterBy="#{t.descricao}" sortBy="#{t.descricao}" filterMatchMode="contains" headerText="Descrição">												
+							<h:outputLabel value="#{t.descricao}"/>
+						</p:column>
+					</p:dataTable>  
+                        <br />                      
+                        
+                     
+                     
+                    </p:outputPanel>
+                       <p:dialog id="dlgConsumo" widgetVar="dlgConsumo" header="Novo Consumo Avulso" responsive="true" modal="true" width="50%">
+                        <p:panel id="pnConsumo" styleClass="BordNone">                            
+							<br />
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							id="dtEstoque" widgetVar="dtEstoque" value="#{consumoAvulsoMB.estoquesDisponiveisParaConsumo}" var="estoque"
+							rows="6" paginator="true" selection="#{consumoAvulsoMB.enviarParaConsumo}"
+							selectionMode="single" rowKey="#{estoque}"
+							paginatorPosition="bottom" >
+							<p:ajax event="rowSelect" update=":lume:pnEstoque"/>
+							<f:facet name="header">Selecione o material para consumir</f:facet>
+							<p:column filterBy="#{estoque.material.item.descricaoLimpa}"
+								sortBy="#{estoque.material.item.descricao}" filterMatchMode="contains"
+								headerText="Descrição" filterFunction="#{movimentacaoMB.filtroSemAcento}">
+								<h:outputText value="#{estoque.material.item.descricao}"
+									title="#{estoque.material.id}" />
+							</p:column>
+							<p:column filterBy="#{estoque.quantidade}"
+								sortBy="#{estoque.quantidade}" filterMatchMode="contains"
+								headerText="Quantidade Atual">
+								<h:outputText value="#{estoque.quantidade}">
+									<f:convertNumber />
+								</h:outputText>								
+							</p:column>
+							<p:column filterBy="#{estoque.local.descricao}"
+								sortBy="#{estoque.local.descricao}" filterMatchMode="contains"
+								headerText="Local" filterFunction="#{consumoAvulsoMB.filtroSemAcento}">
+								<h:outputText value="#{estoque.local.descricao}" />
+							</p:column>
+						</p:dataTable>						
+						  <p:panel id="pnEstoque" styleClass="BordNone"> 
+						  	<p:outputLabel for="quantidadeParaConsumir"
+								value="Quantidade: " />
+							<p:column>
+								<p:inputText id="quantidadeParaConsumir"
+									value="#{consumoAvulsoMB.quantidadeParaConsumo}" maxlength="10"
+									required="true" onkeypress="validaNumeros(event)" />								
+							</p:column>
+							<br />
+							<h:panelGroup>
+								<p:outputLabel for="observacao" value="Observação:" />
+								<p:inputTextarea
+									value="#{consumoAvulsoMB.observacao}"
+									id="observacao" rows="5" cols="500" counter="display"
+									maxlength="400" counterTemplate="{0} caracteres disponíveis."
+									autoResize="true" />
+								<br />
+								<h:outputText id="display" />
+							</h:panelGroup>							
+							<br />
+						  </p:panel>
+                            
+                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                                <p:commandButton id="persistConsumo" icon="White fa fa-save" value="Salvar" actionListener="#{consumoAvulsoMB.actionConsumir}"
+                                    update=":lume:dtConsumo,pnConsumo," process="@this ,:lume:pnConsumo,dtConsumo" oncomplete="PF('dtConsumo').filter();"
+                                    styleClass="GreenButton" />
+                                <p:commandButton id="fechar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlgConsumo').hide();" immediate="true" />    
+                            </p:panelGrid>
+                            <div class="EmptyBox20"></div>
+                        </p:panel>
+                    </p:dialog>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

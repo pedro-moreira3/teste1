@@ -55,8 +55,9 @@ public class RelatorioDescarteMB extends LumeManagedBean<Material>{
     
     public void pesquisar() {
         try {
-            materiais = MaterialSingleton.getInstance().getBo().listAtivosByDataAndEmpresaAndItemAndQuantidadeAndProfissional(dataInicio, dataFim, movimentacaoInicio, movimentacaoFim, item, 
-                    profissionalDescarte, lote, validadeInicio, validadeFinal, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            //TODO corretamente
+           // materiais = MaterialSingleton.getInstance().getBo().listAtivosByDataAndEmpresaAndItemAndQuantidadeAndProfissional(dataInicio, dataFim, movimentacaoInicio, movimentacaoFim, item, 
+           //         profissionalDescarte, lote, validadeInicio, validadeFinal, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             log.error("Erro ao pesquisar relatorio Descarte", e);
             this.addError("Erro na consulta.", "Não foi possível carregar os registros", true);

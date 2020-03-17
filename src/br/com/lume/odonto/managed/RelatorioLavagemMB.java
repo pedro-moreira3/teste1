@@ -15,21 +15,28 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.item.ItemSingleton;
 import br.com.lume.lavagem.LavagemSingleton;
 import br.com.lume.lavagemKit.LavagemKitSingleton;
+import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Lavagem;
 import br.com.lume.odonto.entity.LavagemKit;
+import br.com.lume.odonto.entity.Material;
+import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.entity.TransferenciaEstoque;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
 @ManagedBean
 @ViewScoped
-public class RelatorioLavagemMB extends LumeManagedBean<Lavagem> {
+public class RelatorioLavagemMB extends LumeManagedBean<TransferenciaEstoque> {
 
     private static final long serialVersionUID = 1L;
 
-    private Logger log = Logger.getLogger(LavagemMB.class);
+    private Logger log = Logger.getLogger(RelatorioLavagemMB.class);
 
-    private List<Lavagem> Lavagens = new ArrayList<>();
+    private List<TransferenciaEstoque> transferenciaEstoques = new ArrayList<>();
 
     private Date inicio, fim, inicioFinalizacao, fimFinalizacao;
     
@@ -37,21 +44,28 @@ public class RelatorioLavagemMB extends LumeManagedBean<Lavagem> {
 
     private String filtroPeriodoFinalizacao;
     
+    private Item filtroItem;
+    
+    private Profissional filtroProfissional;
 
-    private List<LavagemKit> itens;
     
     //EXPORTAÇÃO TABELA
-    private DataTable tabelaRelatorio;
-    private DataTable tabelaAnalitica;
+    private DataTable tabelaRelatorio; 
+    
+    private List<TransferenciaEstoque> listaTransferenciasEstoque;
 
     public RelatorioLavagemMB() {
-        super(LavagemSingleton.getInstance().getBo());
-        this.setClazz(Lavagem.class);
+        super(TransferenciaEstoqueSingleton.getInstance().getBo());
+        this.setClazz(TransferenciaEstoque.class);
        // this.filtra();
     }
-
-    public void mostraItens() throws Exception {
-        this.setItens(LavagemKitSingleton.getInstance().getBo().listByLavagem(this.getEntity()));
+    
+    public List<Profissional> sugestoesProfissionais(String query) {
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteProfissional(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), true);
+    }
+    
+    public List<Item> sugestoesItens(String query) {
+        return ItemSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void filtra() {
@@ -59,9 +73,11 @@ public class RelatorioLavagemMB extends LumeManagedBean<Lavagem> {
             if ((this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime())
                     || (this.inicioFinalizacao != null && this.fimFinalizacao != null && this.inicioFinalizacao.getTime() > this.fimFinalizacao.getTime())) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
-            } else {
-                this.Lavagens = LavagemSingleton.getInstance().getBo().listAllByPeriodo(this.inicio, this.fim,this.inicioFinalizacao,this.fimFinalizacao, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                if (this.Lavagens == null || this.Lavagens.isEmpty()) {
+            } else {               
+                this.transferenciaEstoques = TransferenciaEstoqueSingleton.getInstance().getBo().listAllLavagensByPeriodo(this.inicio, this.fim,
+                        this.inicioFinalizacao,this.fimFinalizacao, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),this.filtroItem,this.filtroProfissional);
+                
+                if (this.transferenciaEstoques == null || this.transferenciaEstoques.isEmpty()) {
                     this.addError(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"), "");
                     this.log.error(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"));
                 }
@@ -71,6 +87,16 @@ public class RelatorioLavagemMB extends LumeManagedBean<Lavagem> {
         }
 
     }
+    
+    public void carregarMaterialLog(TransferenciaEstoque transferencia) {
+        try {
+            listaTransferenciasEstoque = TransferenciaEstoqueSingleton.getInstance().getBo().listByMaterial(transferencia.getMaterial());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
+    }
+    
     public void actionTrocaDatasCriacao() {
         try {
             setInicio(getDataInicio(filtroPeriodo));
@@ -155,19 +181,7 @@ public class RelatorioLavagemMB extends LumeManagedBean<Lavagem> {
 
     public void exportarTabela(String type) {
         this.exportarTabela("", tabelaRelatorio, type);
-    }
-    
-    public void exportarTabelaAnalitica(String type) {
-        this.exportarTabela("", tabelaAnalitica, type);
-    }
-    
-    public List<Lavagem> getLavagens() {
-        return this.Lavagens;
-    }
-
-    public void setLavagens(List<Lavagem> lavagens) {
-        this.Lavagens = lavagens;
-    }
+    }   
 
     public Date getInicio() {
         return this.inicio;
@@ -184,23 +198,7 @@ public class RelatorioLavagemMB extends LumeManagedBean<Lavagem> {
     public void setFim(Date fim) {
         this.fim = fim;
     }
-
-    public List<LavagemKit> getItens() {
-        return this.itens;
-    }
-
-    public void setItens(List<LavagemKit> itens) {
-        this.itens = itens;
-    }
-
-    public DataTable getTabelaAnalitica() {
-        return tabelaAnalitica;
-    }
-
-    public void setTabelaAnalitica(DataTable tabelaAnalitica) {
-        this.tabelaAnalitica = tabelaAnalitica;
-    }
-
+    
     public DataTable getTabelaRelatorio() {
         return tabelaRelatorio;
     }
@@ -247,6 +245,46 @@ public class RelatorioLavagemMB extends LumeManagedBean<Lavagem> {
     
     public void setFiltroPeriodoFinalizacao(String filtroPeriodoFinalizacao) {
         this.filtroPeriodoFinalizacao = filtroPeriodoFinalizacao;
+    }
+
+    
+    public List<TransferenciaEstoque> getTransferenciaEstoques() {
+        return transferenciaEstoques;
+    }
+
+    
+    public void setTransferenciaEstoques(List<TransferenciaEstoque> transferenciaEstoques) {
+        this.transferenciaEstoques = transferenciaEstoques;
+    }
+
+    
+    public Item getFiltroItem() {
+        return filtroItem;
+    }
+
+    
+    public void setFiltroItem(Item filtroItem) {
+        this.filtroItem = filtroItem;
+    }
+
+    
+    public Profissional getFiltroProfissional() {
+        return filtroProfissional;
+    }
+
+    
+    public void setFiltroProfissional(Profissional filtroProfissional) {
+        this.filtroProfissional = filtroProfissional;
+    }
+
+    
+    public List<TransferenciaEstoque> getListaTransferenciasEstoque() {
+        return listaTransferenciasEstoque;
+    }
+
+    
+    public void setListaTransferenciasEstoque(List<TransferenciaEstoque> listaTransferenciasEstoque) {
+        this.listaTransferenciasEstoque = listaTransferenciasEstoque;
     }
 
 }
