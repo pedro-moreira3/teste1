@@ -525,6 +525,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             addError("Erro", "É necessário informar o celular do paciente!");
             erroValidacoes = true;
         }
+        if (responsavel) {
+            addError("Erro", "Paciente com menos de 18 anos, favor informar o nome do responsável!");
+            erroValidacoes = true;
+        }
+        
+        
 
         if (erroValidacoes) {
             geraLista();
