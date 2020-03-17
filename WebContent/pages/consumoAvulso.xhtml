@@ -17,13 +17,16 @@
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
                     <p:outputPanel styleClass="BordNone">
-                        <h1>Consumo Avulso</h1>
+                        <h1>Consumo e Descarte Avulso</h1>
                         <div class="SeparatorFull"></div>
                         <br />                    
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
                          <p:commandButton id="new" icon="White fa fa-file-o" value="Novo Consumo Avulso"
                       	 oncomplete="PF('dtEstoque').filter();PF('dtEstoque').clearSelection();PF('dtEstoque').clearFilters();PF('dlgConsumo').show();" actionListener="#{consumoAvulsoMB.buscaEstoques}" 
                       	 update="dtEstoque,pnEstoque" immediate="true" process="@this"/>
+                      	 <p:commandButton id="newDescarte" icon="White fa fa-file-o" value="Novo Descarte Avulso"
+                      	 oncomplete="PF('dtEstoqueDescarte').filter();PF('dtEstoqueDescarte').clearSelection();PF('dtEstoqueDescarte').clearFilters();PF('dlgDescarte').show();" actionListener="#{consumoAvulsoMB.buscaEstoquesDescarte}" 
+                      	 update="dtEstoqueDescarte,pnEstoqueDescarte" immediate="true" process="@this"/>
                         	<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"
@@ -58,7 +61,7 @@
                         </p:panelGrid>
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" widgetVar="dtConsumo" id="dtConsumo" value="#{consumoAvulsoMB.transferencias}" var="t" rows="15" paginator="true"
 						rowKey="#{m}" paginatorPosition="bottom" binding="#{consumoAvulsoMB.tabelaConsumo}" styleClass="table-no-select-all">
-						<f:facet name="header">Materiais Consumidos</f:facet>	
+						<f:facet name="header">Materiais Consumidos ou Descartados</f:facet>	
                                 
 						<p:column filterBy="#{t.material.item.descricao}" sortBy="#{t.material.item.descricao}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" 
 						headerText="Item">							
@@ -84,6 +87,25 @@
                     </p:outputPanel>
                        <p:dialog id="dlgConsumo" widgetVar="dlgConsumo" header="Novo Consumo Avulso" responsive="true" modal="true" width="50%">
                         <p:panel id="pnConsumo" styleClass="BordNone">                            
+							<br />
+							<p:panelGrid columns="1"  layout="grid" styleClass="ui-panelgrid-blank"
+                                style="border:0px none; background-color:transparent;" id="painelPesquisa">
+								<p:outputPanel style="margin-top:10px">
+									<p:outputLabel for="filtro" value="Item: " />                                
+									<p:inputText id="filtro" value="#{consumoAvulsoMB.textoPesquisa}">
+									</p:inputText> 
+								</p:outputPanel>
+                    		</p:panelGrid>                     
+		                    <p:panelGrid columns="6" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+		                        style="border:0px none; background-color:transparent;">                                
+		                        <p:commandButton id="pesquisar" icon="White fa fa-search" value="Pesquisar" 
+		                        actionListener="#{consumoAvulsoMB.pesquisaItens('consumo')}" update=":lume:dtEstoque"
+		                            process="@this,painelPesquisa" styleClass="OrangeButton" />						
+								<h:panelGroup></h:panelGroup>                            
+								<h:panelGroup></h:panelGroup>
+								<h:panelGroup></h:panelGroup>
+								<h:panelGroup></h:panelGroup>
+		                    </p:panelGrid>              
 							<br />
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtEstoque" widgetVar="dtEstoque" value="#{consumoAvulsoMB.estoquesDisponiveisParaConsumo}" var="estoque"
@@ -142,6 +164,85 @@
                             <div class="EmptyBox20"></div>
                         </p:panel>
                     </p:dialog>
+                       <p:dialog id="dlgDescarte" widgetVar="dlgDescarte" header="Novo Descarte Avulso" responsive="true" modal="true" width="50%">
+                        <p:panel id="pnDescarte" styleClass="BordNone">                            
+							<br />
+							<p:panelGrid columns="1"  layout="grid" styleClass="ui-panelgrid-blank"
+                                style="border:0px none; background-color:transparent;" id="painelPesquisa2">
+								<p:outputPanel style="margin-top:10px">
+									<p:outputLabel for="filtroDescarte" value="Item: " />                                
+									<p:inputText id="filtroDescarte" value="#{consumoAvulsoMB.textoPesquisa}">
+									</p:inputText> 
+								</p:outputPanel>
+                    		</p:panelGrid>                     
+		                    <p:panelGrid columns="6" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+		                        style="border:0px none; background-color:transparent;">                                
+		                        <p:commandButton id="pesquisarDescarte" icon="White fa fa-search" value="Pesquisar" 
+		                        actionListener="#{consumoAvulsoMB.pesquisaItens('descarte')}" update=":lume:dtEstoqueDescarte"
+		                            process="@this,painelPesquisa2" styleClass="OrangeButton" />						
+								<h:panelGroup></h:panelGroup>                            
+								<h:panelGroup></h:panelGroup>
+								<h:panelGroup></h:panelGroup>
+								<h:panelGroup></h:panelGroup>
+		                    </p:panelGrid>              
+							<br />
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							id="dtEstoqueDescarte" widgetVar="dtEstoqueDescarte" value="#{consumoAvulsoMB.estoquesDisponiveisParaDescarte}" var="estoque"
+							rows="6" paginator="true" selection="#{consumoAvulsoMB.enviarParaDescarte}"
+							selectionMode="single" rowKey="#{estoque}"
+							paginatorPosition="bottom" >
+							<p:ajax event="rowSelect" update=":lume:pnEstoqueDescarte"/>
+							<f:facet name="header">Selecione o material para descartar</f:facet>
+							<p:column filterBy="#{estoque.material.item.descricaoLimpa}"
+								sortBy="#{estoque.material.item.descricao}" filterMatchMode="contains"
+								headerText="Descrição" filterFunction="#{movimentacaoMB.filtroSemAcento}">
+								<h:outputText value="#{estoque.material.item.descricao}"
+									title="#{estoque.material.id}" />
+							</p:column>
+							<p:column filterBy="#{estoque.quantidade}"
+								sortBy="#{estoque.quantidade}" filterMatchMode="contains"
+								headerText="Quantidade Atual">
+								<h:outputText value="#{estoque.quantidade}">
+									<f:convertNumber />
+								</h:outputText>								
+							</p:column>
+							<p:column filterBy="#{estoque.local.descricao}"
+								sortBy="#{estoque.local.descricao}" filterMatchMode="contains"
+								headerText="Local" filterFunction="#{consumoAvulsoMB.filtroSemAcento}">
+								<h:outputText value="#{estoque.local.descricao}" />
+							</p:column>
+						</p:dataTable>						
+						  <p:panel id="pnEstoqueDescarte" styleClass="BordNone"> 
+						  	<p:outputLabel for="quantidadeParaDescarte"
+								value="Quantidade: " />
+							<p:column>
+								<p:inputText id="quantidadeParaDescarte"
+									value="#{consumoAvulsoMB.quantidadeParaDescarte}" maxlength="10"
+									required="true" onkeypress="validaNumeros(event)" />								
+							</p:column>
+							<br />
+							<h:panelGroup>
+								<p:outputLabel for="observacaoDescarte" value="Justificativa:" />
+								<p:inputTextarea
+									value="#{consumoAvulsoMB.observacao}"
+									id="observacaoDescarte" rows="5" cols="500" counter="displayDescarte"
+									maxlength="400" counterTemplate="{0} caracteres disponíveis."
+									autoResize="true" />
+								<br />
+								<h:outputText id="displayDescarte" />
+							</h:panelGroup>							
+							<br />
+						  </p:panel>
+                            
+                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                                <p:commandButton id="persistDescarte" icon="White fa fa-save" value="Salvar" actionListener="#{consumoAvulsoMB.actionDescartar}"
+                                    update=":lume:dtEstoqueDescarte,pnDescarte" process="@this ,:lume:pnDescarte,dtConsumo" oncomplete="PF('dtConsumo').filter();"
+                                    styleClass="GreenButton" />
+                                <p:commandButton id="fecharDescarte" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlgDescarte').hide();" immediate="true" />    
+                            </p:panelGrid>
+                            <div class="EmptyBox20"></div>
+                        </p:panel>
+                    </p:dialog>                    
                 </div>
             </div>
         </div>

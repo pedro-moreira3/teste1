@@ -259,8 +259,8 @@ UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Repasse dos Profissionais' WHERE OBJ_STR_CA
 
 ALTER TABLE LOCAL ADD COLUMN DISPONIVEL_PARA_USO VARCHAR(1) NOT NULL DEFAULT 'S';
 
-INSERT INTO local (descricao, tipo, id_empresa, excluido,PASSIVEL_EMPRESTIMO,DISPONIVEL_PARA_USO) 
-SELECT distinct 'Para Lavar','SI',emp_int_cod,'N','N','N' FROM seg_empresa;
+--INSERT INTO local (descricao, tipo, id_empresa, excluido,PASSIVEL_EMPRESTIMO,DISPONIVEL_PARA_USO) 
+--SELECT distinct 'Para Lavar','SI',emp_int_cod,'N','N','N' FROM seg_empresa;
 
 INSERT INTO local (descricao, tipo, id_empresa, excluido,PASSIVEL_EMPRESTIMO,DISPONIVEL_PARA_USO) 
 SELECT distinct 'Em Lavagem','SI',emp_int_cod,'N','N','N' FROM seg_empresa;

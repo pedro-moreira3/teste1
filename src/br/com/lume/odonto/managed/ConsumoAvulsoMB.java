@@ -1,7 +1,10 @@
 package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -22,6 +25,7 @@ import br.com.lume.local.LocalSingleton;
 import br.com.lume.logLavagem.LogLavagemSingleton;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Estoque;
+import br.com.lume.odonto.entity.HorasUteisProfissional;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.LogLavagem;
@@ -44,13 +48,21 @@ public class ConsumoAvulsoMB extends LumeManagedBean<Local> {
     
     private List<Estoque> estoquesDisponiveisParaConsumo = new ArrayList<>();
     
+    private List<Estoque> estoquesDisponiveisParaDescarte = new ArrayList<>();
+    
     private Estoque enviarParaConsumo;
     
+    private Estoque enviarParaDescarte;
+    
     private BigDecimal quantidadeParaConsumo;
+    
+    private BigDecimal quantidadeParaDescarte;
     
     private String observacao;
     
     private List <TransferenciaEstoque> transferencias;
+    
+    private String textoPesquisa;
     
     public ConsumoAvulsoMB() {
         super(LocalSingleton.getInstance().getBo()); 
@@ -68,11 +80,20 @@ public class ConsumoAvulsoMB extends LumeManagedBean<Local> {
             this.estoquesJaConsumidos = 
                     EstoqueSingleton.getInstance().getBo().listAllByLocal(LocalSingleton.getInstance().getBo().getLocalPorDescricao
                             (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.CONSUMIDO));
+            this.estoquesJaConsumidos.addAll(EstoqueSingleton.getInstance().getBo().listAllByLocal(LocalSingleton.getInstance().getBo().getLocalPorDescricao
+                            (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.DESCARTADO)));
             transferencias = new ArrayList<TransferenciaEstoque>();
             for (Estoque estoque : estoquesJaConsumidos) {
                 transferencias.addAll(TransferenciaEstoqueSingleton.getInstance().getBo().listByEstoqueDestino(estoque));
             }
            
+            Collections.sort(transferencias, new Comparator<TransferenciaEstoque>() {
+
+                @Override
+                public int compare(TransferenciaEstoque o1, TransferenciaEstoque o2) {
+                    return o1.getData().before(o2.getData()) ? 1 : -1;
+                }
+            });
             
         } catch (Exception e1) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
@@ -80,11 +101,43 @@ public class ConsumoAvulsoMB extends LumeManagedBean<Local> {
         }
     }
     
+    public void pesquisaItens(String tipo) {
+       
+            try {
+                if(tipo.equals("consumo")) {                  
+                    this.estoquesDisponiveisParaConsumo = EstoqueSingleton.getInstance().getBo().listAllConsumoByEmpresaComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),textoPesquisa);               
+                    this.quantidadeParaConsumo = null;                
+                }
+                if(tipo.equals("descarte")) {     
+                    this.estoquesDisponiveisParaDescarte = EstoqueSingleton.getInstance().getBo().listAllByEmpresaComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),textoPesquisa);
+                    this.quantidadeParaDescarte = null;                 
+                }
+                actionNew(null);
+            } catch (Exception e) {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+                e.printStackTrace();
+            }
+      
+        
+    }
+    
     public void buscaEstoques() {
-        try {
-           
-            this.estoquesDisponiveisParaConsumo = EstoqueSingleton.getInstance().getBo().listAllConsumoByEmpresaComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        try {         
+            this.estoquesDisponiveisParaConsumo = null;          
             this.quantidadeParaConsumo = null;
+            this.observacao = null;
+            actionNew(null);
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+            e.printStackTrace();
+        }
+    }
+    
+    public void buscaEstoquesDescarte() {
+        try {           
+            this.estoquesDisponiveisParaDescarte = null;
+            this.quantidadeParaDescarte = null;
+            this.observacao = null;
             actionNew(null);
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
@@ -121,7 +174,7 @@ public class ConsumoAvulsoMB extends LumeManagedBean<Local> {
                 this.addError("Selecione o material para consumir", "");
             }
             if(enviarParaConsumo.getQuantidade().compareTo(quantidadeParaConsumo) == -1) {
-                this.addError("Quantidade informada Ã© maior que quantidade do material", "");
+                this.addError("Quantidade informada é maior que quantidade do material", "");
             }else {
                 Local localOrigem = enviarParaConsumo.getLocal();
                 Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.CONSUMIDO);            
@@ -146,7 +199,41 @@ public class ConsumoAvulsoMB extends LumeManagedBean<Local> {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
-    }    
+    } 
+    
+    public void actionDescartar(ActionEvent event) {
+        try {
+            if(enviarParaDescarte == null) {
+                this.addError("Selecione o material para descartar", "");
+            }
+            if(enviarParaDescarte.getQuantidade().compareTo(quantidadeParaDescarte) == -1) {
+                this.addError("Quantidade informada é maior que quantidade do material", "");
+            }else {
+                Local localOrigem = enviarParaDescarte.getLocal();
+                Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.DESCARTADO);            
+              if(observacao != null && !observacao.equals("")) {
+                  observacao = EstoqueSingleton.ENVIO_DESCARTE + ": " + observacao;
+              }else {
+                  this.addError("Para descarte, é necessário informar a justificativa", "");
+                  return;
+              } 
+                EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(enviarParaDescarte.getMaterial(),localOrigem,localDestino,quantidadeParaDescarte,
+                        observacao,UtilsFrontEnd.getProfissionalLogado());            
+                LogLavagem logLavagem = new LogLavagem(localOrigem,localDestino,enviarParaDescarte.getMaterial(),UtilsFrontEnd.getProfissionalLogado(),new Date(),quantidadeParaDescarte);
+                LogLavagemSingleton.getInstance().getBo().persist(logLavagem);
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                actionNew(null);   
+                buscarConsumidos();
+                PrimeFaces.current().executeScript("PF('dtEstoqueDescarte').filter();PF('dlgDescarte').hide();");
+                
+            }         
+            
+        
+        } catch (Exception e) {
+            log.error("Erro no actionPersist", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+        }
+    }     
 
 
 
@@ -267,6 +354,46 @@ public class ConsumoAvulsoMB extends LumeManagedBean<Local> {
     
     public void setObservacao(String observacao) {
         this.observacao = observacao;
+    }
+
+    
+    public List<Estoque> getEstoquesDisponiveisParaDescarte() {
+        return estoquesDisponiveisParaDescarte;
+    }
+
+    
+    public void setEstoquesDisponiveisParaDescarte(List<Estoque> estoquesDisponiveisParaDescarte) {
+        this.estoquesDisponiveisParaDescarte = estoquesDisponiveisParaDescarte;
+    }
+
+    
+    public Estoque getEnviarParaDescarte() {
+        return enviarParaDescarte;
+    }
+
+    
+    public void setEnviarParaDescarte(Estoque enviarParaDescarte) {
+        this.enviarParaDescarte = enviarParaDescarte;
+    }
+
+    
+    public BigDecimal getQuantidadeParaDescarte() {
+        return quantidadeParaDescarte;
+    }
+
+    
+    public void setQuantidadeParaDescarte(BigDecimal quantidadeParaDescarte) {
+        this.quantidadeParaDescarte = quantidadeParaDescarte;
+    }
+
+    
+    public String getTextoPesquisa() {
+        return textoPesquisa;
+    }
+
+    
+    public void setTextoPesquisa(String textoPesquisa) {
+        this.textoPesquisa = textoPesquisa;
     }
 
 
