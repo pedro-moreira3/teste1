@@ -415,9 +415,9 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
         this.setLocais(new ArrayList<Local>());
         try {
             if (this.getDigitacaoLocal() != null) {
-                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacaoLocal(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getDigitacaoLocal(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
             } else {
-                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
             }
             Collections.sort(this.getLocais());
         } catch (Exception e) {
@@ -659,7 +659,7 @@ public class MovimentacaoMB extends LumeManagedBean<Estoque> {
 
     public static final String DEVOLVIDO = "D";
 
-    public static final String DESCARTE = "DE";
+   // public static final String DESCARTE = "DE";
 
     public Date getDateHoje() {
         return dateHoje;

@@ -71,6 +71,8 @@ public class LocalMB extends LumeManagedBean<Local> {
         boolean error = false;
         this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());      
         this.getEntity().setPassivelEmprestimo(this.passivelEmprestimo);
+        //itens em processo de lavagem, esterilizacao, ou em uso nao estao disponiveis
+        this.getEntity().setDisponivelParaUso("S");
         if (this.selectedLocalPai != null) {
             if (((Local) this.selectedLocalPai.getData()).getDescricao().equals("RAIZ")) {
                 this.getEntity().setLocalPai(null);
@@ -241,7 +243,7 @@ public class LocalMB extends LumeManagedBean<Local> {
     public List<Local> getLocais() {
         List<Local> locais = new ArrayList<>();
         try {
-            locais = LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());  
+            locais = LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false);  
        
            // locais.removeIf(n -> (n.getDescricaoTipo() == null || n.getDescricaoTipo().equals(""))); 
             

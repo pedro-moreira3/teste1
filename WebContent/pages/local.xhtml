@@ -82,9 +82,10 @@
 							</h:panelGroup>
 
 						</p:panelGrid>						
-													
-						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtLocal" value="#{localMB.locais}" var="local" rows="15" paginator="true" selection="#{localMB.entity}"
-	                        selectionMode="single" rowKey="#{local}" paginatorPosition="bottom" binding="#{localMB.tabelaLocal}">	                        
+
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtLocal" value="#{localMB.locais}" var="local" rows="15" paginator="true"
+							selection="#{localMB.entity}" selectionMode="single" rowKey="#{local}" paginatorPosition="bottom" paginatorAlwaysVisible="false" binding="#{localMB.tabelaLocal}">
+								                        	                        
 	                        <f:facet name="header">Locais</f:facet>
 							 <p:column headerText="Ações" width="20%">
 							 	<p:commandButton styleClass="NavyButton" icon="fa fa-eye" oncomplete="PF('dlg').show();" update=":lume:pnDlg,:lume:dtLocal" title="Editar" process="@this"

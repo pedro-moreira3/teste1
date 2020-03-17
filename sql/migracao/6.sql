@@ -251,3 +251,144 @@ ALTER TABLE PROFISSIONAL ADD COLUMN DATA_CRIACAO TIMESTAMP(10) NULL;
 UPDATE SEG_OBJETO SET OBJ_CHA_STS = 'I' WHERE OBJ_STR_CAMINHO = 'reciboRepasseProfissional.jsf';
 UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Repasse dos Profissionais por Fatura' WHERE OBJ_STR_CAMINHO = 'repasseProfissional.jsf';
 UPDATE SEG_OBJETO SET OBJ_STR_DES = 'Repasse dos Profissionais' WHERE OBJ_STR_CAMINHO = 'repasseComRecibo.jsf';
+
+
+
+--------- AINDA NAO RODADO, ESTOQUE -----------
+
+
+ALTER TABLE LOCAL ADD COLUMN DISPONIVEL_PARA_USO VARCHAR(1) NOT NULL DEFAULT 'S';
+
+INSERT INTO local (descricao, tipo, id_empresa, excluido,PASSIVEL_EMPRESTIMO,DISPONIVEL_PARA_USO) 
+SELECT distinct 'Para Lavar','SI',emp_int_cod,'N','N','N' FROM seg_empresa;
+
+INSERT INTO local (descricao, tipo, id_empresa, excluido,PASSIVEL_EMPRESTIMO,DISPONIVEL_PARA_USO) 
+SELECT distinct 'Em Lavagem','SI',emp_int_cod,'N','N','N' FROM seg_empresa;
+
+INSERT INTO local (descricao, tipo, id_empresa, excluido,PASSIVEL_EMPRESTIMO,DISPONIVEL_PARA_USO) 
+SELECT distinct 'Para Esterilizar','SI',emp_int_cod,'N','N','N' FROM seg_empresa;
+
+INSERT INTO local (descricao, tipo, id_empresa, excluido,PASSIVEL_EMPRESTIMO,DISPONIVEL_PARA_USO) 
+SELECT distinct 'Em Esterilização','SI',emp_int_cod,'N','N','N' FROM seg_empresa;
+
+INSERT INTO local (descricao, tipo, id_empresa, excluido,PASSIVEL_EMPRESTIMO,DISPONIVEL_PARA_USO) 
+SELECT distinct 'Empacotado','SI',emp_int_cod,'N','N','N' FROM seg_empresa;
+
+INSERT INTO local (descricao, tipo, id_empresa, excluido,PASSIVEL_EMPRESTIMO,DISPONIVEL_PARA_USO) 
+SELECT distinct 'Descartado','SI',emp_int_cod,'N','N','N' FROM seg_empresa;
+
+update  SEG_OBJETO set OBJ_STR_DES = 'Processo de Lavagem' WHERE OBJ_STR_DES = 'Devolução da Lavagem';
+
+delete from OBJETO_PROFISSIONAL where  OBJ_INT_COD in (
+SELECT
+    (
+        SELECT OBJ_INT_COD FROM SEG_OBJETO
+        WHERE OBJ_STR_DES = 'Entrega para Lavagem Manual'
+        LIMIT 1
+    )
+    )    
+    
+CREATE TABLE LOG_LAVAGEM(
+	ID SERIAL PRIMARY KEY,
+	ID_LOCAL_ORIGEM BIGINT REFERENCES LOCAL(ID),
+	ID_LOCAL_DESTINO BIGINT REFERENCES LOCAL(ID),
+	ID_MATERIAL BIGINT REFERENCES MATERIAL(ID),
+	ID_PROFISSIONAL BIGINT REFERENCES PROFISSIONAL(ID),	
+	DATA timestamp without time zone,
+	QUANTIDADE BIGINT
+)  
+
+update  SEG_OBJETO set OBJ_STR_DES = 'Processo de Esterilização' WHERE OBJ_STR_DES = 'Devolução da Esterilização';
+
+CREATE TABLE LOG_ESTERILIZACAO(
+	ID SERIAL PRIMARY KEY,
+	ID_LOCAL_ORIGEM BIGINT REFERENCES LOCAL(ID),
+	ID_LOCAL_DESTINO BIGINT REFERENCES LOCAL(ID),
+	ID_MATERIAL BIGINT REFERENCES MATERIAL(ID),
+	ID_PROFISSIONAL BIGINT REFERENCES PROFISSIONAL(ID),	
+	DATA timestamp without time zone,
+	QUANTIDADE BIGINT
+) 
+
+alter table estoque ADD COLUMN data_validade TIMESTAMP(10)
+
+UPDATE SEG_OBJETO SET OBJ_INT_ORDEM = 1 WHERE OBJ_STR_DES = 'Processo de Lavagem';
+UPDATE SEG_OBJETO SET OBJ_INT_ORDEM = 2 WHERE OBJ_STR_DES = 'Processo de Esterilização';
+UPDATE SEG_OBJETO SET OBJ_INT_ORDEM = 3 WHERE OBJ_STR_DES = 'Relatório de Lavagem';
+UPDATE SEG_OBJETO SET OBJ_INT_ORDEM = 4 WHERE OBJ_STR_DES = 'Relatório de Esterilização';
+
+INSERT INTO local (descricao, tipo, id_empresa, excluido,PASSIVEL_EMPRESTIMO,DISPONIVEL_PARA_USO) 
+SELECT distinct 'Descartado','SI',emp_int_cod,'N','N','N' FROM seg_empresa;
+
+INSERT INTO local (descricao, tipo, id_empresa, excluido,PASSIVEL_EMPRESTIMO,DISPONIVEL_PARA_USO) 
+SELECT distinct 'Material Devolvido','SI',emp_int_cod,'N','N','N' FROM seg_empresa;
+
+
+ALTER TABLE TRANSFERENCIA_ESTOQUE DROP COLUMN ID_LOCAL_ORIGEM;
+ALTER TABLE TRANSFERENCIA_ESTOQUE DROP COLUMN ID_LOCAL_DESTINO;
+ALTER TABLE TRANSFERENCIA_ESTOQUE ADD COLUMN ID_ESTOQUE_ORIGEM BIGINT REFERENCES ESTOQUE(ID);
+ALTER TABLE TRANSFERENCIA_ESTOQUE ADD COLUMN ID_ESTOQUE_DESTINO BIGINT REFERENCES ESTOQUE(ID);
+
+ALTER TABLE LOCAL ADD COLUMN DESCONSIDERA_DO_ESTOQUE VARCHAR(1) NOT NULL DEFAULT 'N';
+
+update local set DESCONSIDERA_DO_ESTOQUE = 'S' where descricao = 'Descartado';
+update local set DESCONSIDERA_DO_ESTOQUE = 'S' where descricao = 'Material Devolvido';
+update local set DESCONSIDERA_DO_ESTOQUE = 'S' where descricao = 'COMPRA';
+
+
+insert into dominio (objeto,tipo,nome,valor,editavel,excluido,id_empresa)
+values( 'material','justificativa','Erro nos dados','ED',true,'N',41)
+
+INSERT INTO local (descricao, tipo, id_empresa, excluido,PASSIVEL_EMPRESTIMO,DISPONIVEL_PARA_USO) 
+SELECT distinct 'Consumido','SI',emp_int_cod,'N','N','N' FROM seg_empresa;
+
+
+ 
+INSERT INTO SEG_OBJETO(OBJ_INT_CODPAI, OBJ_STR_DES, OBJ_CHA_STS, OBJ_STR_CAMINHO,
+                       SIS_INT_COD, OBJ_INT_ORDEM, OBJ_CHA_TIPO, OBJ_STR_ICON)
+SELECT
+	OBJ_INT_COD, 'Consumo Avulso',
+	'A', 'consumoAvulso.jsf',
+	123, MAX(OBJ_INT_ORDEM) + 1,
+	'T', NULL
+FROM SEG_OBJETO
+WHERE OBJ_STR_DES ILIKE 'FINANCEIRO'
+GROUP BY OBJ_INT_COD, OBJ_INT_ORDEM
+LIMIT 1;
+
+INSERT INTO OBJETO_PROFISSIONAL(OBJ_INT_COD, ID_PROFISSIONAL)
+SELECT
+	(
+		SELECT OBJ_INT_COD FROM SEG_OBJETO
+		WHERE OBJ_STR_DES LIKE 'Consumo Avulso'
+		LIMIT 1
+	),
+	OP.ID_PROFISSIONAL
+FROM OBJETO_PROFISSIONAL OP
+LEFT JOIN SEG_OBJETO O
+	ON O.OBJ_INT_COD = OP.OBJ_INT_COD
+WHERE O.OBJ_STR_DES ILIKE 'Pagamentos/Recebimentos'
+  AND O.OBJ_CHA_STS = 'A';
+
+update seg_objeto set obj_int_codpai = 36 where OBJ_STR_DES = 'Consumo Avulso';  
+  
+--TODO deletar estoques SI antigos, criar
+Emprestado
+Reservado
+
+
+"KIT_UTILIZADO_CONSUMIDO"
+"EMPRESTIMO_UNITARIO"
+"DEVOLUCAO_UNITARIA"
+"CANCELAMENTO_EMPRESTIMO_KIT"
+"EMPRESTIMO_KIT"
+"DEVOLUCAO_KIT_LAVAGEM"
+"KIT_UTILIZADO_DEVOLVIDO"
+"KIT_NAO_UTILIZADO"
+"DEVOLUCAO_KIT"
+"EXCLUSAO_RESERVA_KIT"
+"EXCLUSAO_RESERVA"
+"CANCELAMENTO_RESERVA"
+
+
+--------- AINDA NAO RODADO, ESTOQUE -----------
