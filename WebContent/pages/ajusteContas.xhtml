@@ -61,6 +61,11 @@
 						binding="#{ajusteContasMB.tabelaAjustes}">
 						<f:facet name="header">Ajuste de Contas</f:facet>
 
+						<p:column headerText="Origem" filterBy="#{ajuste.origemStr}"
+							sortBy="#{ajuste.origemStr}">
+							<h:outputText value="#{ajuste.origemStr}" />
+						</p:column>
+
 						<p:column headerText="Valor" filterBy="#{ajuste.valor}"
 							sortBy="#{ajuste.valor}">
 							<h:outputText value="#{ajuste.valor}">

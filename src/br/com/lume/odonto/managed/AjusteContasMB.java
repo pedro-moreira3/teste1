@@ -3,8 +3,8 @@ package br.com.lume.odonto.managed;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 
 import org.primefaces.component.datatable.DataTable;
 
@@ -15,7 +15,7 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.AjusteContas;
 
-@ManagedBean
+@Named
 @ViewScoped
 public class AjusteContasMB extends LumeManagedBean<AjusteContas> {
 
