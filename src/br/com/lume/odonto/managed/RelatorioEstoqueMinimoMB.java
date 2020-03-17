@@ -227,17 +227,17 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<Estoque> {
     }
     
     public void montaEmLavagem(Item item) throws Exception {
-        List<Estoque> estoques = EstoqueSingleton.getInstance().getParaLavagemPorItem(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),item);
-        for (Estoque estoque : estoques) {
-            if(estoque.getQuantidade().compareTo(new BigDecimal(0)) > 0) {
-                MateriaisEmprestados emprestado = new MateriaisEmprestados();
-                emprestado.setLocal("Lavagem");
-                emprestado.setDetalhes("Material separado para lavagem");
-                emprestado.setQuantidade(estoque.getQuantidade());
-                emprestado.setId(estoque.getId());     
-                this.emprestados.add(emprestado); 
-            }
-        }
+//        List<Estoque> estoques = EstoqueSingleton.getInstance().getParaLavagemPorItem(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),item);
+//        for (Estoque estoque : estoques) {
+//            if(estoque.getQuantidade().compareTo(new BigDecimal(0)) > 0) {
+//                MateriaisEmprestados emprestado = new MateriaisEmprestados();
+//                emprestado.setLocal("Lavagem");
+//                emprestado.setDetalhes("Material separado para lavagem");
+//                emprestado.setQuantidade(estoque.getQuantidade());
+//                emprestado.setId(estoque.getId());     
+//                this.emprestados.add(emprestado); 
+//            }
+//        }
        estoques = EstoqueSingleton.getInstance().getEmLavagemPorItem(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),item);
         for (Estoque estoque : estoques) {      
             if(estoque.getQuantidade().compareTo(new BigDecimal(0)) > 0) {

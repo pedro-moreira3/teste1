@@ -525,7 +525,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             addError("Erro", "É necessário informar o celular do paciente!");
             erroValidacoes = true;
         }
-        if (responsavel && getEntity().getDadosBasico().getResponsavel() == null || getEntity().getDadosBasico().getResponsavel().isEmpty()) {
+        if (getEntity().getDadosBasico().getDataNascimento() != null && responsavel &&
+                (getEntity().getDadosBasico().getResponsavel() == null || getEntity().getDadosBasico().getResponsavel().isEmpty())) {
             addError("Erro", "Paciente com menos de 18 anos, favor informar o nome do responsável!");
             erroValidacoes = true;
         }

@@ -186,7 +186,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
                    }else {
                        //envia para lavagem
                        Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_KIT_LAVAGEM");
-                       Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.PARA_LAVAGEM);
+                       Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.EM_LAVAGEM);
                        EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(cm.getMaterial(),localOrigem,localDestino,qtdDevolvida,EstoqueSingleton.DEVOLUCAO_KIT_LAVAGEM,UtilsFrontEnd.getProfissionalLogado());            
                        cm.setQuantidade(qtdDevolvida); 
                        cm.setStatus(EmprestimoKit.UTILIZADO_KIT);
@@ -266,7 +266,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
             
                 Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_KIT_LAVAGEM");
               
-                Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.PARA_LAVAGEM);
+                Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.EM_LAVAGEM);
                 EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(cm.getMaterial(),localOrigem,localDestino,cm.getQuantidadeDevolvida(),EstoqueSingleton.DEVOLUCAO_KIT_LAVAGEM,UtilsFrontEnd.getProfissionalLogado());            
                 cm.setQuantidade(cm.getQuantidadeDevolvida());          
             }

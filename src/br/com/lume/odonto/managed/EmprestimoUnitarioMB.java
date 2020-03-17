@@ -189,7 +189,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
           //antigo
         
           //novo processo
-          Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.PARA_LAVAGEM);          
+          Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.EM_LAVAGEM);          
           
           EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(this.getEntity().getMaterial(),localOrigem,localDestino,
                   quantidadeParaLavar,EstoqueSingleton.ENTREGA_LAVAGEM_UNITARIA,UtilsFrontEnd.getProfissionalLogado());          

@@ -62,15 +62,15 @@
 						
 						<p:column selectionMode="multiple" style="width:16px;text-align:center" />
 						
-						 <p:ajax event="rowSelect" process="@this" update=":lume:actionLavar, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+						 <p:ajax event="rowSelect" process="@this" update=":lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
                                 listener="#{lavagemMB.habilitaBotoes()}" />
-                         <p:ajax event="rowUnselect" process="@this" update=":lume:actionLavar, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+                         <p:ajax event="rowUnselect" process="@this" update=":lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
                                 listener="#{lavagemMB.habilitaBotoes()}" />       
-                         <p:ajax event="rowSelectCheckbox" process="@this" update=":lume:actionLavar, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+                         <p:ajax event="rowSelectCheckbox" process="@this" update=":lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
                                 listener="#{lavagemMB.habilitaBotoes()}" />
-                         <p:ajax event="rowUnselectCheckbox" process="@this" update=":lume:actionLavar, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+                         <p:ajax event="rowUnselectCheckbox" process="@this" update=":lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
                                 listener="#{lavagemMB.habilitaBotoes()}" />
-                         <p:ajax event="toggleSelect" process="@this" update=":lume:actionLavar, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+                         <p:ajax event="toggleSelect" process="@this" update=":lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
                                 listener="#{lavagemMB.habilitaBotoes()}" />
                                 
 						<p:column filterBy="#{m.material.item.descricao}" sortBy="#{m.material.item.descricao}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" 
@@ -86,12 +86,7 @@
                         <p:outputPanel id="pnButton" styleClass="BordNone">
                         	<br />
                             <div class="SeparatorFull"></div>
-                            <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">                           
-                            	<p:commandButton id="actionLavar" icon="White fa  fa fa-file-o" value="Iniciar Lavagem" actionListener="#{lavagemMB.actionLavar}"
-                                    disabled="#{!lavagemMB.enableLavar}" update="dtLavagensSolicitas,:lume:pnButton" process="@this,:lume:pnButton" oncomplete="PF('dtLavagensSolicitas').filter();PF('dtLavagensSolicitas').clearSelection();">
-                                    <p:confirm header="Confirmação" message="Deseja iniciar a lavagem desse material?" icon="ui-icon-alert" />
-                                    </p:commandButton>
-                                
+                            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"> 
                                 <p:commandButton id="actionEsterilizar" icon="White fa  fa-bitbucket" value="Enviar para Esterilização" actionListener="#{lavagemMB.actionEsterilizar}"
                                     disabled="#{!lavagemMB.enableEsterilizacao}" update=":lume:dtLavagensSolicitas,:lume:pnButton" process="@this,:lume:pnButton" styleClass="GreenButton" 
                                     oncomplete="PF('dtLavagensSolicitas').filter();PF('dtLavagensSolicitas').clearSelection();">

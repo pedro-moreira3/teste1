@@ -138,9 +138,9 @@ public class LavagemMB extends LumeManagedBean<Local> {
         boolean todosParaLavagem = true;
         boolean todosEmLavagem = true;
         for (Estoque estoqueSelecionado : estoquesSelecionados) {
-            if(!estoqueSelecionado.getLocal().getDescricao().equals(EstoqueSingleton.PARA_LAVAGEM)) {
-                todosParaLavagem = false;
-            }
+           // if(!estoqueSelecionado.getLocal().getDescricao().equals(EstoqueSingleton.PARA_LAVAGEM)) {
+            //    todosParaLavagem = false;
+            //}
             if(!estoqueSelecionado.getLocal().getDescricao().equals(EstoqueSingleton.EM_LAVAGEM)) {
                 todosEmLavagem = false;
             }
@@ -205,7 +205,7 @@ public class LavagemMB extends LumeManagedBean<Local> {
                 this.addError("Quantidade informada é maior que quantidade do material", "");
             }else {
                 Local localOrigem = enviarParaLavagem.getLocal();
-                Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.PARA_LAVAGEM);            
+                Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.EM_LAVAGEM);            
               
                 EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(enviarParaLavagem.getMaterial(),localOrigem,localDestino,quantidadeParaLavagem,
                         EstoqueSingleton.ENVIO_LAVAGEM_MANUAL,UtilsFrontEnd.getProfissionalLogado());            
@@ -267,27 +267,27 @@ public class LavagemMB extends LumeManagedBean<Local> {
         }
     }
 
-    public void actionLavar(ActionEvent event) {
-        try {  
-            
-            Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.EM_LAVAGEM);
-            
-            for (Estoque estoqueSelecionado : estoquesSelecionados) {
-                Local localOrigem = estoqueSelecionado.getLocal();
-                EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(estoqueSelecionado.getMaterial(),localOrigem,localDestino,new BigDecimal(1),
-                        EstoqueSingleton.ENVIO_LAVAGEM,UtilsFrontEnd.getProfissionalLogado());            
-                LogLavagem logLavagem = new LogLavagem(localOrigem,localDestino,estoqueSelecionado.getMaterial(),UtilsFrontEnd.getProfissionalLogado(),new Date(),new BigDecimal(1));
-                LogLavagemSingleton.getInstance().getBo().persist(logLavagem);
-            }
-            
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-            actionNew(null);
-        } catch (Exception e) {
-            log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
-            e.printStackTrace();
-        }
-    }
+//    public void actionLavar(ActionEvent event) {
+//        try {  
+//            
+//            Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.EM_LAVAGEM);
+//            
+//            for (Estoque estoqueSelecionado : estoquesSelecionados) {
+//                Local localOrigem = estoqueSelecionado.getLocal();
+//                EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(estoqueSelecionado.getMaterial(),localOrigem,localDestino,new BigDecimal(1),
+//                        EstoqueSingleton.ENVIO_LAVAGEM,UtilsFrontEnd.getProfissionalLogado());            
+//                LogLavagem logLavagem = new LogLavagem(localOrigem,localDestino,estoqueSelecionado.getMaterial(),UtilsFrontEnd.getProfissionalLogado(),new Date(),new BigDecimal(1));
+//                LogLavagemSingleton.getInstance().getBo().persist(logLavagem);
+//            }
+//            
+//            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+//            actionNew(null);
+//        } catch (Exception e) {
+//            log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
+//            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+//            e.printStackTrace();
+//        }
+//    }
     
     public void actionEsterilizar(ActionEvent event) {
         try {
@@ -323,8 +323,8 @@ public class LavagemMB extends LumeManagedBean<Local> {
         try {       
             
            
-            List<Estoque> estoques = EstoqueSingleton.getInstance().getParaLavagem(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            estoques.addAll(EstoqueSingleton.getInstance().getEmLavagem(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+           // List<Estoque> estoques = EstoqueSingleton.getInstance().getParaLavagem(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            List<Estoque> estoques = EstoqueSingleton.getInstance().getEmLavagem(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             List<Estoque> estoqueDesmembrado = new ArrayList<Estoque>();          
             Long id = 1l;
             for (Estoque estoque : estoques) {
