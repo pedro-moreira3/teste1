@@ -87,7 +87,7 @@
                     </p:outputPanel>
                        <p:dialog id="dlgConsumo" widgetVar="dlgConsumo" header="Novo Consumo Avulso" responsive="true" modal="true" width="50%">
                         <p:panel id="pnConsumo" styleClass="BordNone">                            
-							<br />
+						
 							<p:panelGrid columns="1"  layout="grid" styleClass="ui-panelgrid-blank"
                                 style="border:0px none; background-color:transparent;" id="painelPesquisa">
 								<p:outputPanel style="margin-top:10px">
@@ -106,7 +106,7 @@
 								<h:panelGroup></h:panelGroup>
 								<h:panelGroup></h:panelGroup>
 		                    </p:panelGrid>              
-							<br />
+							
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtEstoque" widgetVar="dtEstoque" value="#{consumoAvulsoMB.estoquesDisponiveisParaConsumo}" var="estoque"
 							rows="6" paginator="true" selection="#{consumoAvulsoMB.enviarParaConsumo}"
@@ -146,7 +146,7 @@
 								<p:outputLabel for="observacao" value="Observação:" />
 								<p:inputTextarea
 									value="#{consumoAvulsoMB.observacao}"
-									id="observacao" rows="5" cols="500" counter="display"
+									id="observacao" rows="3" cols="500" counter="display"
 									maxlength="400" counterTemplate="{0} caracteres disponíveis."
 									autoResize="true" />
 								<br />
@@ -166,7 +166,7 @@
                     </p:dialog>
                        <p:dialog id="dlgDescarte" widgetVar="dlgDescarte" header="Novo Descarte Avulso" responsive="true" modal="true" width="50%">
                         <p:panel id="pnDescarte" styleClass="BordNone">                            
-							<br />
+							
 							<p:panelGrid columns="1"  layout="grid" styleClass="ui-panelgrid-blank"
                                 style="border:0px none; background-color:transparent;" id="painelPesquisa2">
 								<p:outputPanel style="margin-top:10px">
@@ -185,7 +185,7 @@
 								<h:panelGroup></h:panelGroup>
 								<h:panelGroup></h:panelGroup>
 		                    </p:panelGrid>              
-							<br />
+							
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 							id="dtEstoqueDescarte" widgetVar="dtEstoqueDescarte" value="#{consumoAvulsoMB.estoquesDisponiveisParaDescarte}" var="estoque"
 							rows="6" paginator="true" selection="#{consumoAvulsoMB.enviarParaDescarte}"
@@ -225,13 +225,12 @@
 								<p:outputLabel for="observacaoDescarte" value="Justificativa:" />
 								<p:inputTextarea
 									value="#{consumoAvulsoMB.observacao}"
-									id="observacaoDescarte" rows="5" cols="500" counter="displayDescarte"
+									id="observacaoDescarte" rows="3" cols="500" counter="displayDescarte"
 									maxlength="400" counterTemplate="{0} caracteres disponíveis."
 									autoResize="true" />
 								<br />
 								<h:outputText id="displayDescarte" />
-							</h:panelGroup>							
-							<br />
+							</h:panelGroup>	
 						  </p:panel>
                             
                             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
