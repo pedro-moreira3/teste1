@@ -909,7 +909,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 
                 if(!initialDate.equals(start)) {
                     initialDate = start; 
-                    PrimeFaces.current().executeScript("updateSchedule()");
+                    PrimeFaces.current().executeScript("updateSchedule2()");
                 }
                 
 

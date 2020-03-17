@@ -224,10 +224,10 @@ div.ui-selectoneradio label {
 				</div>
 			</div>
 		</p:dialog>
-<ui:remove>
-<f:websocket channel="someChannel"
-onmessage="function(m){console.log(m);PF('myschedule').update();}" />
-</ui:remove>
+		<ui:remove>
+			<f:websocket channel="someChannel"
+				onmessage="function(m){console.log(m);PF('myschedule').update();}" />
+		</ui:remove>
 		<p:dialog id="dlgNovoAgendamento" widgetVar="dlgNovoAgendamento"
 			width="900px" height="700px" responsive="true"
 			header="Novo Agendamento" resizable="false" modal="true">
@@ -717,9 +717,8 @@ onmessage="function(m){console.log(m);PF('myschedule').update();}" />
 										<p:commandButton value="Pesquisar"
 											onsuccess="updateSchedule()"
 											process="@this, :lume:pacienteSelecionado"
-											actionListener="#{agendamentoMB.carregarAgenda()}" 
-											oncomplete="updateSchedule();"
-											/>
+											actionListener="#{agendamentoMB.carregarAgenda()}"
+											oncomplete="updateSchedule();" />
 
 										<p:commandButton value="Imprimir" type="button"
 											onclick="printSchedule()" icon="White fa fa-print"
@@ -763,24 +762,26 @@ onmessage="function(m){console.log(m);PF('myschedule').update();}" />
 							</p:outputPanel>
 						</p:fieldset>
 					</p:panel>
-<ui:remove>
-					<p:selectOneButton value="#{agendamentoMB.visualizacao}"
-						id="selectVisualizacao" unselectable="false">
-						<f:selectItem itemLabel="Calendário" itemValue="S" />
-						
-						<f:selectItem itemLabel="Agenda Cadeira" itemValue="C" />
-						<f:selectItem itemLabel="Agenda Profissional" itemValue="P" />
-					
-						<p:ajax
-							update=":lume:agendamentoVisualizacao, :lume:filtrosShow,:lume:schedule"
-							oncomplete="atualizaGraficos();"
-							process=":lume:selectVisualizacao" />
-					</p:selectOneButton>
-	</ui:remove>
+					<ui:remove>
+						<p:selectOneButton value="#{agendamentoMB.visualizacao}"
+							id="selectVisualizacao" unselectable="false">
+							<f:selectItem itemLabel="Calendário" itemValue="S" />
+
+							<f:selectItem itemLabel="Agenda Cadeira" itemValue="C" />
+							<f:selectItem itemLabel="Agenda Profissional" itemValue="P" />
+
+							<p:ajax
+								update=":lume:agendamentoVisualizacao, :lume:filtrosShow,:lume:schedule"
+								oncomplete="atualizaGraficos();"
+								process=":lume:selectVisualizacao" />
+						</p:selectOneButton>
+					</ui:remove>
 					<p:separator styleClass="SeparatorFull" />
 
 					<p:outputPanel id="agendamentoVisualizacao">
 						<p:outputPanel rendered="#{agendamentoMB.visualizacao == 'S'}">
+							<p:remoteCommand name="updateSchedule2"
+								update=":lume:initialDate" process="@this" />
 							<p:remoteCommand name="updateSchedule"
 								update=":lume:schedule, :lume:initialDate"
 								actionListener="#{agendamentoMB.carregarAgenda()}"
