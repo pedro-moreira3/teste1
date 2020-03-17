@@ -29,6 +29,13 @@
 										<f:selectItem itemValue="S" itemLabel="Sim" />
 										<f:selectItem itemValue="N" itemLabel="Não" />										
 									</p:selectOneMenu>				
+								</h:panelGroup>	
+								<h:panelGroup styleClass="md-combo"> 								
+									<p:outputLabel for="disponivelRetornoEsterilizacao" value="Local pode ser usado na devolução de esterilização? " />
+									<p:selectOneMenu required="true" id="disponivelRetornoEsterilizacao" value="#{localMB.disponivelRetornoEsterilizacao}" disabled="#{localMB.disable}" >										
+										<f:selectItem itemValue="S" itemLabel="Sim" />
+										<f:selectItem itemValue="N" itemLabel="Não" />										
+									</p:selectOneMenu>				
 								</h:panelGroup>								                      	                                
 							</p:panelGrid> 				
 							<br />
@@ -94,14 +101,19 @@
 							 	<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmation').show();" update=":lume:pnDlg" title="Remover" process="@this"
 	                                 style="width:33px !important" actionListener="#{localMB.carregarEditar(local)}"/>
 	                        </p:column>								                                           
-	                        <p:column filterBy="#{local.descricao}" sortBy="#{local.descricao}" filterMatchMode="contains" width="30%" headerText="Descrição"
+	                        <p:column filterBy="#{local.descricao}" sortBy="#{local.descricao}" filterMatchMode="contains" width="50%" headerText="Descrição"
 	                        			filterFunction="#{localMB.filtroSemAcento}">
 	                            <h:outputText value="#{local.descricao}" title="#{local.id}" />
 	                        </p:column>
-	                        <p:column filterBy="#{local.descricaoPassivelEmprestimo}" sortBy="#{local.descricaoPassivelEmprestimo}" filterMatchMode="contains" width="20%" headerText="Passível de Empréstimo"
+	                        <p:column filterBy="#{local.descricaoPassivelEmprestimo}" sortBy="#{local.descricaoPassivelEmprestimo}" filterMatchMode="contains" width="15%" headerText="Passível de Empréstimo"
 	                            filterFunction="#{localMB.filtroSemAcento}">
 	                            <h:outputText value="#{local.descricaoPassivelEmprestimo}" />
-	                        </p:column>                     
+	                        </p:column>      
+	                        <p:column filterBy="#{local.descricaoDisponivelRetornoEsterilizacao}" sortBy="#{local.descricaoDisponivelRetornoEsterilizacao}" filterMatchMode="contains" width="15%" 
+	                        headerText="Aparece no retorno da esterilização"
+	                            filterFunction="#{localMB.filtroSemAcento}">
+	                            <h:outputText value="#{local.descricaoDisponivelRetornoEsterilizacao}" />
+	                        </p:column>      	                                       
 					</p:dataTable>                  							
 				</p:outputPanel>	
 				</div>						

@@ -35,7 +35,10 @@ public class LocalMB extends LumeManagedBean<Local> {
     private static final long serialVersionUID = 1L;
 
     private Logger log = Logger.getLogger(LocalMB.class);
+   
     private String passivelEmprestimo;
+    
+    private String disponivelRetornoEsterilizacao;
 
     private String descricao;
 
@@ -71,6 +74,8 @@ public class LocalMB extends LumeManagedBean<Local> {
         boolean error = false;
         this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());      
         this.getEntity().setPassivelEmprestimo(this.passivelEmprestimo);
+        this.getEntity().setDisponivelRetornoEsterilizacao(this.disponivelRetornoEsterilizacao);
+        this.getEntity().setDesconsideraDoEstoque("N");
         //itens em processo de lavagem, esterilizacao, ou em uso nao estao disponiveis
         this.getEntity().setDisponivelParaUso("S");
         if (this.selectedLocalPai != null) {
@@ -126,6 +131,7 @@ public class LocalMB extends LumeManagedBean<Local> {
         this.setEntity((Local) this.selectedLocal.getData());
         this.setDescricao(this.getEntity().getDescricao());
        this.passivelEmprestimo = "S";
+       this.disponivelRetornoEsterilizacao = "S";
     }
 
   
@@ -238,6 +244,7 @@ public class LocalMB extends LumeManagedBean<Local> {
         this.setEntity(local);
         this.descricao = local.getDescricao();
         this.passivelEmprestimo = getEntity().getPassivelEmprestimo();
+        this.disponivelRetornoEsterilizacao = getEntity().getDisponivelRetornoEsterilizacao();
     }
     
     public List<Local> getLocais() {
@@ -264,6 +271,7 @@ public class LocalMB extends LumeManagedBean<Local> {
                 this.setDisable(true);
                 this.getEntity().setTipo(local.getTipo());
                 this.passivelEmprestimo = "S";
+                this.disponivelRetornoEsterilizacao = "S";
             }
             this.getSelectedLocalPai().setSelected(false);
             this.setSelectedLocalPai(event.getTreeNode());
@@ -278,6 +286,7 @@ public class LocalMB extends LumeManagedBean<Local> {
         try {
             this.getEntity().setTipo(((Local) this.getSelectedLocal().getData()).getTipo());
             this.passivelEmprestimo = "S";
+            this.disponivelRetornoEsterilizacao = "S";
         } catch (Exception e) {
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
@@ -359,5 +368,16 @@ public class LocalMB extends LumeManagedBean<Local> {
     
     public void setPassivelEmprestimo(String passivelEmprestimo) {
         this.passivelEmprestimo = passivelEmprestimo;
+    }
+
+    
+    public String getDisponivelRetornoEsterilizacao() {
+        return disponivelRetornoEsterilizacao;
+    }
+
+    
+    
+    public void setDisponivelRetornoEsterilizacao(String disponivelRetornoEsterilizacao) {
+        this.disponivelRetornoEsterilizacao = disponivelRetornoEsterilizacao;
     }
 }

@@ -112,9 +112,10 @@ public class EsterilizacaoMB extends LumeManagedBean<Local> {
         this.setLocais(new ArrayList<Local>());
         try {
             if (this.getLocalSelecionadoDevolucao() != null) {
-                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getLocalSelecionadoDevolucao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
+                this.setLocais(LocalSingleton.getInstance().getBo().
+                        listByEmpresaAndDescricaoParcialLocaisEsterilizacao(this.getLocalSelecionadoDevolucao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
             } else {
-                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
+                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaLocaisEsterilizacao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
             }
             Collections.sort(this.getLocais());
         } catch (Exception e) {
