@@ -13,7 +13,8 @@ public class CustomExternalContext extends ExternalContextWrapper {
 
     @Override
     public String encodeWebsocketURL(String url) {
-        return super.encodeWebsocketURL(url).replaceFirst("ws://", "wss://");
+        return super.encodeWebsocketURL(url);
+       // return super.encodeWebsocketURL(url).replaceFirst("ws://", "wss://");
     }
 
     public static class Factory extends ExternalContextFactory {
