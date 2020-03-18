@@ -15,70 +15,90 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
-import br.com.lume.esterilizacao.EsterilizacaoSingleton;
-import br.com.lume.esterilizacaoKit.EsterilizacaoKitSIngleton;
-import br.com.lume.material.MaterialSingleton;
-import br.com.lume.odonto.entity.Esterilizacao;
-import br.com.lume.odonto.entity.EsterilizacaoKit;
+import br.com.lume.item.ItemSingleton;
+import br.com.lume.lavagem.LavagemSingleton;
+import br.com.lume.lavagemKit.LavagemKitSingleton;
+import br.com.lume.odonto.entity.Item;
+import br.com.lume.odonto.entity.Lavagem;
+import br.com.lume.odonto.entity.LavagemKit;
 import br.com.lume.odonto.entity.Material;
+import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.entity.TransferenciaEstoque;
 import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
 @ManagedBean
 @ViewScoped
-public class RelatorioEsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
+public class RelatorioEsterilizacaoMB extends LumeManagedBean<TransferenciaEstoque> {
 
     private static final long serialVersionUID = 1L;
 
-    private Logger log = Logger.getLogger(EsterilizacaoMB.class);
+    private Logger log = Logger.getLogger(RelatorioEsterilizacaoMB.class);
 
-    private List<Esterilizacao> esterilizacoes = new ArrayList<>();
+    private List<TransferenciaEstoque> transferenciaEstoques = new ArrayList<>();
 
-    private List<EsterilizacaoKit> itens;
-
-    private List<Material> descartes;
-    
-    //EXPORTAÇÕES TABELA
-    private DataTable tabelaRelatorio;
-    private DataTable tabelaAnalitica;
-    private DataTable tabelaDescartes;
-    
+    private Date inicio, fim, inicioFinalizacao, fimFinalizacao;
     
     private String filtroPeriodo;
 
-    private String filtroPeriodoFinalizacao;    
+    private String filtroPeriodoFinalizacao;
     
-    private Date inicio, fim,inicioFinalizacao,fimFinalizacao;    
+    private Item filtroItem;
+    
+    private Profissional filtroProfissional;
+
+    
+    //EXPORTAÇÃO TABELA
+    private DataTable tabelaRelatorio; 
+    
+    private List<TransferenciaEstoque> listaTransferenciasEstoque;
 
     public RelatorioEsterilizacaoMB() {
-        super(EsterilizacaoSingleton.getInstance().getBo());   
-        this.setClazz(Esterilizacao.class);
-      //  this.filtra();
+        super(TransferenciaEstoqueSingleton.getInstance().getBo());
+        this.setClazz(TransferenciaEstoque.class);
+       // this.filtra();
     }
-
-    public void mostraItens() throws Exception {
-        this.setItens(EsterilizacaoKitSIngleton.getInstance().getBo().listByEsterilizacao(this.getEntity()));
+    
+    public List<Profissional> sugestoesProfissionais(String query) {
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteProfissional(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), true);
+    }
+    
+    public List<Item> sugestoesItens(String query) {
+        return ItemSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public void filtra() {
         try {
-            if ((inicio != null && fim != null && inicio.getTime() > fim.getTime()) 
-                    || (inicioFinalizacao != null && fimFinalizacao != null && inicioFinalizacao.getTime() > fimFinalizacao.getTime())) {
+            if ((this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime())
+                    || (this.inicioFinalizacao != null && this.fimFinalizacao != null && this.inicioFinalizacao.getTime() > this.fimFinalizacao.getTime())) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
-            } else {
-                esterilizacoes = EsterilizacaoSingleton.getInstance().getBo().listAllByPeriodo(inicio, fim,inicioFinalizacao,fimFinalizacao, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                if (esterilizacoes == null || esterilizacoes.isEmpty()) {
+            } else {               
+                this.transferenciaEstoques = TransferenciaEstoqueSingleton.getInstance().getBo().listAllEsterilizacoesByPeriodo(this.inicio, this.fim,
+                        this.inicioFinalizacao,this.fimFinalizacao, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),this.filtroItem,this.filtroProfissional);
+                
+                if (this.transferenciaEstoques == null || this.transferenciaEstoques.isEmpty()) {
                     this.addError(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"), "");
-                    log.error(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"));
+                    this.log.error(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"));
                 }
-                descartes = MaterialSingleton.getInstance().getBo().listDescartePeriodo(inicio, fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             }
         } catch (Exception e) {
-            log.error(e);
+            this.log.error(e);
+        }
+
+    }
+    
+    public void carregarMaterialLog(TransferenciaEstoque transferencia) {
+        try {
+            listaTransferenciasEstoque = TransferenciaEstoqueSingleton.getInstance().getBo().listByMaterial(transferencia.getMaterial());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
     
-    public void actionTrocaDatasCriacao() {        
-        try {            
+    public void actionTrocaDatasCriacao() {
+        try {
             setInicio(getDataInicio(filtroPeriodo));
             setFim(getDataFim(filtroPeriodo));
           //  actionFiltrar(null);            
@@ -88,16 +108,16 @@ public class RelatorioEsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
         }
     }
     
-    public void actionTrocaDatasFinal() {        
+    public void actionTrocaDatasFinal() {
         try {
             setInicioFinalizacao(getDataInicio(filtroPeriodoFinalizacao));
-            setFimFinalizacao(getDataFim(filtroPeriodoFinalizacao));        
+            setFimFinalizacao(getDataFim(filtroPeriodoFinalizacao));
          //   actionFiltrar(null);
         } catch (Exception e) {
             log.error("Erro no actionTrocaDatasFinal", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
-    }   
+    }    
     
     public Date getDataInicio(String filtro) {        
         Date dataInicio = null;
@@ -132,12 +152,12 @@ public class RelatorioEsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
         }
     }  
     
-    public Date getDataFim(String filtro) {        
+    public Date getDataFim(String filtro) {
         Date dataFim = null;
         try {
             Calendar c = Calendar.getInstance();
             if ("O".equals(filtro)) {
-                c.add(Calendar.DAY_OF_MONTH, -1);  
+                c.add(Calendar.DAY_OF_MONTH, -1);
                 dataFim = c.getTime();
             }else if(filtro == null) { 
                 dataFim = null;
@@ -150,119 +170,41 @@ public class RelatorioEsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             return null;
         }
-    }      
+    }     
 
     @Override
     public void actionNew(ActionEvent arg0) {
+        this.inicio = null;
+        this.fim = null;
         super.actionNew(arg0);
     }
 
     public void exportarTabela(String type) {
-        this.exportarTabela("Relatório Esterilizações", tabelaRelatorio, type);
+        this.exportarTabela("", tabelaRelatorio, type);
+    }   
+
+    public Date getInicio() {
+        return this.inicio;
+    }
+
+    public void setInicio(Date inicio) {
+        this.inicio = inicio;
+    }
+
+    public Date getFim() {
+        return this.fim;
+    }
+
+    public void setFim(Date fim) {
+        this.fim = fim;
     }
     
-    public void exportarTabelaAnalitica(String type) {
-        this.exportarTabela("Relatório Analítico Esterilizações", getTabelaAnalitica(), type);
-    }
-    
-    public void exportarTabelaDescartes(String type) {
-        this.exportarTabela("Relatório de descartes Esterilizações", getTabelaDescartes(), type);
-    }
-    
-    public List<Esterilizacao> getesterilizacoes() {
-        return esterilizacoes;
-    }
-
-    public void setesterilizacoes(List<Esterilizacao> lavagens) {
-        esterilizacoes = lavagens;
-    }
-
-    public List<EsterilizacaoKit> getItens() {
-        return itens;
-    }
-
-    public void setItens(List<EsterilizacaoKit> itens) {
-        this.itens = itens;
-    }
-
-    public List<Esterilizacao> getEsterilizacoes() {
-        return esterilizacoes;
-    }
-
-    public void setEsterilizacoes(List<Esterilizacao> esterilizacoes) {
-        this.esterilizacoes = esterilizacoes;
-    }
-
-    public List<Material> getDescartes() {
-        return descartes;
-    }
-
-    public void setDescartes(List<Material> descartes) {
-        this.descartes = descartes;
-    }
-
     public DataTable getTabelaRelatorio() {
         return tabelaRelatorio;
     }
 
     public void setTabelaRelatorio(DataTable tabelaRelatorio) {
         this.tabelaRelatorio = tabelaRelatorio;
-    }
-
-    public DataTable getTabelaAnalitica() {
-        return tabelaAnalitica;
-    }
-
-    public void setTabelaAnalitica(DataTable tabelaAnalitica) {
-        this.tabelaAnalitica = tabelaAnalitica;
-    }
-
-    public DataTable getTabelaDescartes() {
-        return tabelaDescartes;
-    }
-
-    public void setTabelaDescartes(DataTable tabelaDescartes) {
-        this.tabelaDescartes = tabelaDescartes;
-    }
-
-    
-    public String getFiltroPeriodo() {
-        return filtroPeriodo;
-    }
-
-    
-    public void setFiltroPeriodo(String filtroPeriodo) {
-        this.filtroPeriodo = filtroPeriodo;
-    }
-
-    
-    public Date getFimFinalizacao() {
-        return fimFinalizacao;
-    }
-
-    
-    public void setFimFinalizacao(Date fimFinalizacao) {
-        this.fimFinalizacao = fimFinalizacao;
-    }
-
-    
-    public Date getInicio() {
-        return inicio;
-    }
-
-    
-    public void setInicio(Date inicio) {
-        this.inicio = inicio;
-    }
-
-    
-    public Date getFim() {
-        return fim;
-    }
-
-    
-    public void setFim(Date fim) {
-        this.fim = fim;
     }
 
     
@@ -276,6 +218,26 @@ public class RelatorioEsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
     }
 
     
+    public Date getFimFinalizacao() {
+        return fimFinalizacao;
+    }
+
+    
+    public void setFimFinalizacao(Date fimFinalizacao) {
+        this.fimFinalizacao = fimFinalizacao;
+    }
+
+    
+    public String getFiltroPeriodo() {
+        return filtroPeriodo;
+    }
+
+    
+    public void setFiltroPeriodo(String filtroPeriodo) {
+        this.filtroPeriodo = filtroPeriodo;
+    }
+
+    
     public String getFiltroPeriodoFinalizacao() {
         return filtroPeriodoFinalizacao;
     }
@@ -283,6 +245,46 @@ public class RelatorioEsterilizacaoMB extends LumeManagedBean<Esterilizacao> {
     
     public void setFiltroPeriodoFinalizacao(String filtroPeriodoFinalizacao) {
         this.filtroPeriodoFinalizacao = filtroPeriodoFinalizacao;
+    }
+
+    
+    public List<TransferenciaEstoque> getTransferenciaEstoques() {
+        return transferenciaEstoques;
+    }
+
+    
+    public void setTransferenciaEstoques(List<TransferenciaEstoque> transferenciaEstoques) {
+        this.transferenciaEstoques = transferenciaEstoques;
+    }
+
+    
+    public Item getFiltroItem() {
+        return filtroItem;
+    }
+
+    
+    public void setFiltroItem(Item filtroItem) {
+        this.filtroItem = filtroItem;
+    }
+
+    
+    public Profissional getFiltroProfissional() {
+        return filtroProfissional;
+    }
+
+    
+    public void setFiltroProfissional(Profissional filtroProfissional) {
+        this.filtroProfissional = filtroProfissional;
+    }
+
+    
+    public List<TransferenciaEstoque> getListaTransferenciasEstoque() {
+        return listaTransferenciasEstoque;
+    }
+
+    
+    public void setListaTransferenciasEstoque(List<TransferenciaEstoque> listaTransferenciasEstoque) {
+        this.listaTransferenciasEstoque = listaTransferenciasEstoque;
     }
 
 }

@@ -24,8 +24,7 @@
 
 					<h:panelGroup id="foto" style="font-style: italic;">
 						<div class="Container100">
-							<p:outputPanel
-								rendered="#{pacienteMB.entity.id != null and pacienteMB.entity.id != 0}">
+							<p:outputPanel>
 								<div
 									style="border: 1px solid #cccccc; padding: 10px; font-style: normal;">
 									<table style="width: 100%;">
@@ -325,8 +324,7 @@
 
 							<p:outputLabel id="lblResponsavel" for="responsavel"
 								value="Nome do Responsável : " />
-							<p:inputText id="responsavel"
-								required="#{pacienteMB.responsavel}"
+							<p:inputText id="responsavel"							
 								value="#{pacienteMB.entity.dadosBasico.responsavel}"
 								maxlength="100" />
 

@@ -16,6 +16,9 @@ import java.util.Locale;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+//import javax.faces.push.Push;
+//import javax.faces.push.PushContext;
+//import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -124,6 +127,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private PlanoTratamento planoTratamentoSelecionado;
 
     private List<PlanoTratamento> planoTratamentos;
+    
+   // @Inject @Push
+    //private PushContext someChannel;
 
     private boolean visivel = false, horaUtilValida, responsavel = false, mostraFinalizados = false, telefonesVisiveis = false;
     //private boolean dlg;
@@ -472,6 +478,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                       //     someChannel.send("teste");
                             this.actionNew(event);
                             //PrimeFaces.current().ajax().addCallbackParam("dlg", true);
                             PrimeFaces.current().executeScript("PF('eventDialog').hide()");
@@ -496,6 +503,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                        //    someChannel.send("teste");
                            // PrimeFaces.current().ajax().addCallbackParam("dlg", true);
                             PrimeFaces.current().executeScript("PF('eventDialog').hide()");
                         } catch (Exception e) {
@@ -901,7 +909,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                 
                 if(!initialDate.equals(start)) {
                     initialDate = start; 
-                    PrimeFaces.current().executeScript("updateSchedule()");
+                    PrimeFaces.current().executeScript("updateSchedule2()");
                 }
                 
 
@@ -1979,5 +1987,15 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     public void setFinalizaouAsEstadoInicial(Date finalizaouAsEstadoInicial) {
         this.finalizaouAsEstadoInicial = finalizaouAsEstadoInicial;
     }
+
+    
+//    public PushContext getSomeChannel() {
+//        return someChannel;
+//    }
+//
+//    
+//    public void setSomeChannel(PushContext someChannel) {
+//        this.someChannel = someChannel;
+//    }
 
 }

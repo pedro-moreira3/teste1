@@ -21,12 +21,14 @@ import br.com.lume.esterilizacaoKit.EsterilizacaoKitSIngleton;
 import br.com.lume.estoque.EstoqueSingleton;
 import br.com.lume.item.ItemSingleton;
 import br.com.lume.lavagemKit.LavagemKitSingleton;
+import br.com.lume.local.LocalSingleton;
 import br.com.lume.odonto.entity.EmprestimoKit;
 import br.com.lume.odonto.entity.EmprestimoUnitario;
 import br.com.lume.odonto.entity.EsterilizacaoKit;
 import br.com.lume.odonto.entity.Estoque;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.LavagemKit;
+import br.com.lume.odonto.entity.Local;
 import br.com.lume.odonto.entity.MateriaisEmprestados;
 import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.RelatorioEstoqueMinimo;
@@ -36,13 +38,16 @@ import br.com.lume.transferenciaEstoque.TransferenciaEstoqueSingleton;
 
 @ManagedBean
 @ViewScoped
-public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMinimo> {
+public class RelatorioEstoqueMinimoMB extends LumeManagedBean<Estoque> {
 
     private static final long serialVersionUID = 1L;
 
     private Logger log = Logger.getLogger(RelatorioEstoqueMinimoMB.class);
 
-    private List<RelatorioEstoqueMinimo> materiais = new ArrayList<>();
+   // private List<RelatorioEstoqueMinimo> materiais = new ArrayList<>();
+    
+    //TODO substituir a lista de materiais pela lista de estoque
+    //private List<RelatorioEstoqueMinimo> estoques = new ArrayList<>();
     
     private List<Estoque> detalhes = new ArrayList<>();
     
@@ -55,49 +60,92 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
     
     //EXPORTAÇÃO TABELA
     private DataTable tabelaEstoque;
-    
-    private boolean mostrarSomenteEstoqueMinimo;
+
     
     private List<MateriaisEmprestados> emprestados = new ArrayList<>();
     
     private List<TransferenciaEstoque> listaTransferenciasEstoque;
+    
+    private String local;    
+    private List<Local> locais;
+    
+    private List<Estoque> estoques = new ArrayList<>();
 
     public RelatorioEstoqueMinimoMB() {
-        super(RelatorioEstoqueMinimoSingleton.getInstance().getBo());
+        super(EstoqueSingleton.getInstance().getBo());
      
-        this.setClazz(RelatorioEstoqueMinimo.class);
+        this.setClazz(Estoque.class);
         this.filtra();
     }
     
-    public void carregarMaterialLog(Material material) {
+    public void carregarMaterialLog(Estoque estoque) {
         try {
-            listaTransferenciasEstoque = TransferenciaEstoqueSingleton.getInstance().getBo().listByMaterial(material);
+            listaTransferenciasEstoque = TransferenciaEstoqueSingleton.getInstance().getBo().listByEstoqueDestino(estoque);
+            listaTransferenciasEstoque.addAll(TransferenciaEstoqueSingleton.getInstance().getBo().listByEstoqueOrigem(estoque));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
-
-    public void detalhes(RelatorioEstoqueMinimo relatorioEstoqueMinimo) {
+    
+    public List<String> filtraLocal(String digitacao) {
+        this.setLocal(digitacao);
+        this.filtraLocais();
+        return this.convert(this.getLocais());
+    }
+    
+    public void filtraLocais() {
+        this.setLocais(new ArrayList<Local>());
         try {
-            itemDetalhamento = ItemSingleton.getInstance().getBo().find(relatorioEstoqueMinimo.getId()); 
+            if (this.getLocal() != null) {
+                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getLocal(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true));
+            } else {
+                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true));
+            }
+            Collections.sort(this.getLocais());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
+    }
+    
+    public void handleSelectLocal() {
+        this.filtraLocal(this.getLocal());     
+        }
+    
+    public List<String> convert(@SuppressWarnings("rawtypes") List objects) {
+        List<String> strings = new ArrayList<>();
+        for (Object object : objects) {
+            if (object instanceof Item) {
+                strings.add(((Item) object).getDescricao());
+            } else if (object instanceof Local) {
+                strings.add(((Local) object).getDescricao());
+            }
+        }
+        return strings;
+    }
+    
+
+    public void detalhes(Estoque estoque) {
+        try {
+            itemDetalhamento = estoque.getMaterial().getItem(); 
             if(itemDetalhamento != null) {
-                detalhes = EstoqueSingleton.getInstance().getBo().listAllDisponiveisByEmpresaItemAndQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),itemDetalhamento,new BigDecimal(0),false);
+              //  detalhes = EstoqueSingleton.getInstance().getBo().listAllDisponiveisByEmpresaItemAndQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),itemDetalhamento,new BigDecimal(0),false);
                 this.quantidadeTotal = new BigDecimal(0);
                 this.valorTotal = new BigDecimal(0);
                 this.custoMedio = new BigDecimal(0);               
-                for (Estoque estoque : detalhes) {
+              //  for (Estoque estoque : detalhes) {
                     this.quantidadeTotal = estoque.getQuantidade().add(this.quantidadeTotal);
                     this.valorTotal = this.valorTotal.add(estoque.getMaterial().getValor().multiply(estoque.getQuantidade()));
                     //montando todos os emprestimos                  
-                }        
+              //  }        
                
                     this.emprestados = new ArrayList<MateriaisEmprestados>();
-                
+                detalhes.add(estoque); 
                 montaKitsEmprestados(detalhes);
                 montaUnitarioEmprestados(detalhes);
-                montaEmLavagem(detalhes);
-                montaEmEsterilizacao(detalhes);                
+                montaEmLavagem(itemDetalhamento);
+                montaEmEsterilizacao(itemDetalhamento);                
                 if(this.valorTotal.compareTo(BigDecimal.ZERO) != 0 && this.quantidadeTotal.compareTo(BigDecimal.ZERO) != 0) {                   
                     this.custoMedio = this.valorTotal.divide(this.quantidadeTotal, MathContext.DECIMAL32);    
                 }                
@@ -178,81 +226,55 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
             
     }
     
-    public void montaEmLavagem(List<Estoque> estoques) {
-        for (Estoque estoque : estoques) {
-            List<LavagemKit> lavagens = new ArrayList<LavagemKit>();
-            try {
-                List<LavagemKit> lavagensKit =  LavagemKitSingleton.getInstance().getBo().listKitByEmpresaAndMaterialComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),estoque.getMaterial());
-                List<LavagemKit> lavagensItens = LavagemKitSingleton.getInstance().getBo().listUnitarioByEmpresaAndMaterialComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),estoque.getMaterial());
-                if(lavagensKit != null) {
-                    lavagens.addAll(lavagensKit);
-                }
-                if(lavagensItens != null) {
-                    lavagens.addAll(lavagensItens);
-                }
-                if(lavagens != null && !lavagens.isEmpty()) {
-                    for (LavagemKit item : lavagens) {
-                        //TODO verificar se sao esses os status emprestados mesmo kit.getReservaKit().getStatus().equals("PE") kit.getReservaKit().getStatus().equals("EN")       
-                        //para colocar nesse if
-                        if(item.getExcluido().equals("N")) {
-                            MateriaisEmprestados emprestado = new MateriaisEmprestados();
-                            emprestado.setLocal("Item em lavagem");
-                            emprestado.setDetalhes(item.getDetalhamento());
-                            emprestado.setQuantidade(new BigDecimal(item.getQuantidade()) );
-                            emprestado.setId(item.getId());                                                 
-                            if(!this.emprestados.contains(emprestado)) {
-                                this.emprestados.add(emprestado);    
-                            }
-                        }  
-                    
-                    }
-               
-                }
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }           
+    public void montaEmLavagem(Item item) throws Exception {
+//        List<Estoque> estoques = EstoqueSingleton.getInstance().getParaLavagemPorItem(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),item);
+//        for (Estoque estoque : estoques) {
+//            if(estoque.getQuantidade().compareTo(new BigDecimal(0)) > 0) {
+//                MateriaisEmprestados emprestado = new MateriaisEmprestados();
+//                emprestado.setLocal("Lavagem");
+//                emprestado.setDetalhes("Material separado para lavagem");
+//                emprestado.setQuantidade(estoque.getQuantidade());
+//                emprestado.setId(estoque.getId());     
+//                this.emprestados.add(emprestado); 
+//            }
+//        }
+       estoques = EstoqueSingleton.getInstance().getEmLavagemPorItem(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),item);
+        for (Estoque estoque : estoques) {      
+            if(estoque.getQuantidade().compareTo(new BigDecimal(0)) > 0) {
+                MateriaisEmprestados emprestado = new MateriaisEmprestados();
+                emprestado.setLocal("Lavagem");
+                emprestado.setDetalhes("Material em processo de lavagem");
+                emprestado.setQuantidade(estoque.getQuantidade());
+                emprestado.setId(estoque.getId());  
+                this.emprestados.add(emprestado);    
+            }
         }    
             
     }
     
-    public void montaEmEsterilizacao(List<Estoque> estoques) {
+    public void montaEmEsterilizacao(Item item) throws Exception {
+        List<Estoque> estoques = EstoqueSingleton.getInstance().getParaEsterilizacaoPorItem(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),item);
         for (Estoque estoque : estoques) {
-            List<EsterilizacaoKit> esterilizacoes = new ArrayList<EsterilizacaoKit>();
-            try {
-                List<EsterilizacaoKit> estKit = EsterilizacaoKitSIngleton.getInstance().getBo().listKitByEmpresaAndMaterialComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),estoque.getMaterial());
-                List<EsterilizacaoKit> estItens = EsterilizacaoKitSIngleton.getInstance().getBo().listUnitarioByEmpresaAndMaterialComQuantidade(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),estoque.getMaterial());
-                if(estKit != null) {
-                    esterilizacoes.addAll(estKit);
-                }
-                if(estItens != null) {
-                    esterilizacoes.addAll(estItens);
-                }
-                if(esterilizacoes != null && !esterilizacoes.isEmpty()) {
-                    for (EsterilizacaoKit item : esterilizacoes) {                       
-                        if(item.getExcluido().equals("N")) {
-                            MateriaisEmprestados emprestado = new MateriaisEmprestados();
-                            emprestado.setLocal("Item em esterilização");
-                            emprestado.setDetalhes(item.getDetalhamento());
-                            if(item.getDetalhamento().equals("")) {
-                                emprestado.setDetalhes("Agendamento não encontrado - Descrição esterilização: " + item.getEsterilizacao().getDescricao() +
-                                        " Data da solicitação da esterilização: " + item.getEsterilizacao().getDataStr());
-                                
-                            }
-                            emprestado.setId(item.getId());
-                            emprestado.setQuantidade(new BigDecimal(item.getQuantidade()) );                                                  
-                            if(!this.emprestados.contains(emprestado)) {
-                                this.emprestados.add(emprestado);    
-                            }
-                        }  
-                    
-                    }
+            if(estoque.getQuantidade().compareTo(new BigDecimal(0)) > 0) {
+                MateriaisEmprestados emprestado = new MateriaisEmprestados();
+                emprestado.setLocal("Esterilização");
+                emprestado.setDetalhes("Material separado para esterilização");
+                emprestado.setQuantidade(estoque.getQuantidade());
+                emprestado.setId(estoque.getId());   
+                this.emprestados.add(emprestado);     
+            }
                
-                }
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }           
+        }
+       estoques = EstoqueSingleton.getInstance().getEmEsterilizacaoPorItem(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),item);
+        for (Estoque estoque : estoques) {  
+            if(estoque.getQuantidade().compareTo(new BigDecimal(0)) > 0) {
+                MateriaisEmprestados emprestado = new MateriaisEmprestados();
+                emprestado.setLocal("Esterilização");
+                emprestado.setDetalhes("Material em processo de esterilização");
+                emprestado.setQuantidade(estoque.getQuantidade());
+                emprestado.setId(estoque.getId());  
+                this.emprestados.add(emprestado);
+            }
         }    
             
     }    
@@ -262,16 +284,27 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
     }
     
     public void filtra() {  
-        this.materiais = RelatorioEstoqueMinimoSingleton.getInstance().getBo().listAllByFilterToReportGroupByItemFiltrado(mostrarSomenteEstoqueMinimo, filtroItem, filtroTipo,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-    }
+       
+        //Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),  getLocal);
+        
+        
+        //this.materiais = RelatorioEstoqueMinimoSingleton.getInstance().getBo().listAllByFilterToReportGroupByItemFiltrado(mostrarSomenteEstoqueMinimo, filtroItem, filtroTipo,
+        //        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        
+        this.estoques = EstoqueSingleton.getInstance().getBo().listAllByFilterToReportGroupByItemFiltrado( filtroItem, filtroTipo,
+                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),local);
+        
+        
+    }   
+    
 
-    public List<RelatorioEstoqueMinimo> getMateriais() {
-        return this.materiais;
-    }
-
-    public void setMateriais(List<RelatorioEstoqueMinimo> materiais) {
-        this.materiais = materiais;
-    }
+//    public List<RelatorioEstoqueMinimo> getMateriais() {
+//        return this.materiais;
+//    }
+//
+//    public void setMateriais(List<RelatorioEstoqueMinimo> materiais) {
+//        this.materiais = materiais;
+//    }
 
     public DataTable getTabelaEstoque() {
         return tabelaEstoque;
@@ -302,14 +335,7 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
     }
 
     
-    public boolean isMostrarSomenteEstoqueMinimo() {
-        return mostrarSomenteEstoqueMinimo;
-    }
 
-    
-    public void setMostrarSomenteEstoqueMinimo(boolean mostrarSomenteEstoqueMinimo) {
-        this.mostrarSomenteEstoqueMinimo = mostrarSomenteEstoqueMinimo;
-    }
 
     
     public List<Estoque> getDetalhes() {
@@ -379,6 +405,36 @@ public class RelatorioEstoqueMinimoMB extends LumeManagedBean<RelatorioEstoqueMi
     
     public void setListaTransferenciasEstoque(List<TransferenciaEstoque> listaTransferenciasEstoque) {
         this.listaTransferenciasEstoque = listaTransferenciasEstoque;
+    }
+
+    
+    public List<Local> getLocais() {
+        return locais;
+    }
+
+    
+    public void setLocais(List<Local> locais) {
+        this.locais = locais;
+    }
+
+    
+    public String getLocal() {
+        return local;
+    }
+
+    
+    public void setLocal(String local) {
+        this.local = local;
+    }
+
+    
+    public List<Estoque> getEstoques() {
+        return estoques;
+    }
+
+    
+    public void setEstoques(List<Estoque> estoques) {
+        this.estoques = estoques;
     }
 
 }

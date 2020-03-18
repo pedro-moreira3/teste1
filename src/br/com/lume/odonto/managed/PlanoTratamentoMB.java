@@ -1721,13 +1721,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void carregarStatusDente() {
-        HashSet<StatusDente> hashSet = new HashSet<>();
-        statusDente = StatusDenteSingleton.getInstance().getBo().listAllTemplate(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        hashSet.addAll(statusDente);
-        statusDenteEmpresa = StatusDenteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        hashSet.addAll(statusDenteEmpresa);
-        statusDente = new ArrayList<>(hashSet);
-        statusDente.sort((o1, o2) -> o1.getDescricao().compareTo(o2.getDescricao()));
+        if(UtilsFrontEnd.getProfissionalLogado() != null) {
+            HashSet<StatusDente> hashSet = new HashSet<>();
+            statusDente = StatusDenteSingleton.getInstance().getBo().listAllTemplate(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            hashSet.addAll(statusDente);
+            statusDenteEmpresa = StatusDenteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            hashSet.addAll(statusDenteEmpresa);
+            statusDente = new ArrayList<>(hashSet);
+            statusDente.sort((o1, o2) -> o1.getDescricao().compareTo(o2.getDescricao())); 
+        }
+       
     }
     // ================================================= TELA ================================================ //
 
