@@ -16,9 +16,12 @@ import java.util.Locale;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
+import javax.faces.push.Push;
+import javax.faces.push.PushContext;
 //import javax.faces.push.Push;
 //import javax.faces.push.PushContext;
 //import javax.inject.Inject;
+import javax.inject.Inject;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -179,6 +182,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private Date iniciouAsEstadoInicial = null;
 
     private Date finalizaouAsEstadoInicial = null;
+    
+     @Inject @Push
+    private PushContext someChannel;
 
     public AgendamentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
@@ -478,7 +484,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                       //     someChannel.send("teste");
+                            someChannel.send("teste");
                             this.actionNew(event);
                             //PrimeFaces.current().ajax().addCallbackParam("dlg", true);
                             PrimeFaces.current().executeScript("PF('eventDialog').hide()");
@@ -503,7 +509,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                        //    someChannel.send("teste");
+                            someChannel.send("teste");
                            // PrimeFaces.current().ajax().addCallbackParam("dlg", true);
                             PrimeFaces.current().executeScript("PF('eventDialog').hide()");
                         } catch (Exception e) {
@@ -1986,6 +1992,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     public void setFinalizaouAsEstadoInicial(Date finalizaouAsEstadoInicial) {
         this.finalizaouAsEstadoInicial = finalizaouAsEstadoInicial;
+    }
+
+    
+    public PushContext getSomeChannel() {
+        return someChannel;
+    }
+
+    
+    public void setSomeChannel(PushContext someChannel) {
+        this.someChannel = someChannel;
     }
 
     
