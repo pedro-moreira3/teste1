@@ -98,16 +98,21 @@
                             </p:panelGrid>
                         </p:outputPanel>
                         
-                        <p:dialog id="descartar" widgetVar="descartar" header="Descartar" responsive="true" modal="true">
-                            <p:panel id="pnDescartar" style="display: inline-block;">
-                                <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+                        <p:dialog id="descartar" widgetVar="descartar" header="Descartar" responsive="true" modal="true" width="30%">
+                            <p:panel id="pnDescartar" style="display: inline-block;">                               
+                                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank"
                                     style="border:0px none; background-color:transparent;">
-                                    <p:outputLabel for="justificativa" value="Justificativa : " />
-                                    <p:selectOneMenu id="justificativa" required="true" value="#{esterilizacaoMB.justificativa}" converter="dominio">
-                                        <f:selectItem itemValue="#{null}" itemLabel="Selecione uma justificativa" />
-                                        <f:selectItems value="#{esterilizacaoMB.justificativas}" var="justificativa" itemLabel="#{justificativa.nome}" itemValue="#{justificativa}" />
-                                    </p:selectOneMenu>
-                                </p:panelGrid>
+		                             <h:panelGroup>
+										<p:outputLabel for="justificativa" value="Justificativa:" />
+										<p:inputTextarea  required="true"
+											value="#{esterilizacaoMB.justificativa}"
+											id="justificativa" rows="3" cols="500" counter="displayDescarte"
+											maxlength="400" counterTemplate="{0} caracteres disponíveis."
+											autoResize="true" />
+										<br />
+										<h:outputText id="displayDescarte" />
+									</h:panelGroup>	
+                                </p:panelGrid>  
                                 <p:separator class="SeparatorFull" />
                                 <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
                                     <p:commandButton id="persistDescartar" icon="White fa fa-save" value="Salvar" actionListener="#{esterilizacaoMB.actionDescarte}"
