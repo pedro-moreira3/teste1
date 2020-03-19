@@ -17,11 +17,12 @@ public class CustomExternalContext extends ExternalContextWrapper {
        // System.out.println("teste: " + encodeWebsocketURL);        
        
         if(encodeWebsocketURL.contains("ltdeapp07")) {
-            System.out.println("a: " + encodeWebsocketURL);     
+          //  System.out.println("a: " + encodeWebsocketURL);     
         //    return encodeWebsocketURL.replace("ltdeapp07", "dev-intelidente");
-            return encodeWebsocketURL.replace("ltdeapp07", "localhost");
+           // return encodeWebsocketURL.replace("ltdeapp07", "localhost");
          //   return encodeWebsocketURL;
             //8443
+            return encodeWebsocketURL;
         }else {
             System.out.println("b: " + encodeWebsocketURL);
             
