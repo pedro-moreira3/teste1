@@ -23,6 +23,7 @@ public class CustomExternalContext extends ExternalContextWrapper {
          //   return encodeWebsocketURL;
             //8443
             return encodeWebsocketURL;
+            
         }else {
             System.out.println("b: " + encodeWebsocketURL);
             
