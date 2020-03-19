@@ -18,8 +18,9 @@ public class CustomExternalContext extends ExternalContextWrapper {
        
         if(encodeWebsocketURL.contains("ltdeapp07")) {
             System.out.println("a: " + encodeWebsocketURL);     
-            return encodeWebsocketURL.replace("ltdeapp07", "dev-intelidente");
+        //    return encodeWebsocketURL.replace("ltdeapp07", "dev-intelidente");
         //    return encodeWebsocketURL.replace("ltdeapp07", "localhost");
+            return encodeWebsocketURL;
             //8443
         }else {
             System.out.println("b: " + encodeWebsocketURL);
