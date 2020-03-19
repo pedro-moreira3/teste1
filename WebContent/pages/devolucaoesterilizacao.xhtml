@@ -5,19 +5,19 @@
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
                     <p:outputPanel styleClass="BordNone">
-                        <h1>Devolução da Esterilização</h1>
+                        <h1>Processo de Esterilização</h1>
                         <div class="SeparatorFull"></div>
-                        <br />
-                        
-                        <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank"
-                        			style="border:0px none; background-color:transparent;">
-
-							<h:panelGroup>
+                        <br />                    
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">
+                         <p:commandButton id="new" icon="White fa fa-file-o" value="Nova Esterilização Manual"
+                      	 actionListener="#{esterilizacaoMB.buscaEstoques}" 
+                      	 update="pnEsterilizacao" process="@this"/>
+                        	<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"
 									styleClass="GreenSplitButton"
-									actionListener="#{esterilizacaoMB.exportarTabela('xls')}"
-									ajax="false" process="dtEsterilizacoesSolicitadas,@this" update="@this"
+									actionListener="#{esterilizacaoMB.exportarTabelaDevolucao('xls')}"
+									ajax="false" process="dtEsterilizacoesSolicitas,@this" update="@this"
 									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
@@ -26,172 +26,186 @@
 
 									<p:menuitem value="Exportar tabela para PDF"
 										icon="fa fa fa-file-pdf-o"
-										actionListener="#{esterilizacaoMB.exportarTabela('pdf')}"
-										ajax="false" process="dtEsterilizacoesSolicitadas,@this" immediate="true"
+										actionListener="#{esterilizacaoMB.exportarTabelaDevolucao('pdf')}"
+										ajax="false" process="dtEsterilizacoesSolicitas,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 										<p:fileDownload
-											value="#{conferenciaMB.arquivoDownload}" />
+											value="#{esterilizacaoMB.arquivoDownload}" />
 									</p:menuitem>
 									<p:menuitem value="Exportar tabela para CSV"
 										icon="fa fa fa-file-pdf-o"
-										actionListener="#{esterilizacaoMB.exportarTabela('csv')}"
-										ajax="false" process="dtEsterilizacoesSolicitadas,@this" immediate="true"
+										actionListener="#{esterilizacaoMB.exportarTabelaDevolucao('csv')}"
+										ajax="false" process="dtEsterilizacoesSolicitas,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 										<p:fileDownload
 											value="#{esterilizacaoMB.arquivoDownload}" />
 									</p:menuitem>
 								</p:splitButton>
 							</h:panelGroup>
-
-						</p:panelGrid>
                         
-                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtEsterilizacoesSolicitadas" value="#{esterilizacaoMB.esterilizacaoDataModel}" var="esterilizacaoSolicitada" rows="20"
-                            paginator="true" selection="#{esterilizacaoMB.esterilizacaoSelecionadas}" rowKey="#{esterilizacaoSolicitada}" paginatorPosition="bottom" binding="#{esterilizacaoMB.tabelaEsterilizacao}">
-                            <f:facet name="header">Esterilizações Solicitadas</f:facet>
+                        </p:panelGrid>
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" widgetVar="dtEsterilizacoesSolicitas" id="dtEsterilizacoesSolicitas" value="#{esterilizacaoMB.estoquesParaEsterilizar}" var="m" rows="15" paginator="true"
+						rowKey="#{m}" paginatorPosition="bottom" binding="#{esterilizacaoMB.tabelaDevolucao}" selection="#{esterilizacaoMB.estoquesSelecionados}" >
+						<f:facet name="header">Materiais para Esterilizar</f:facet>	
 
-                            <p:column selectionMode="multiple" style="width:16px;text-align:center" />
+						<p:column selectionMode="multiple" style="width:16px;text-align:center" />
 
-                            <p:ajax event="rowSelect" process="@this" update=":lume:dtKits, :lume:dtEsterilizacoesSolicitadas, :lume:devolucao, :lume:esterilizado, :lume:pnButton"
-                                listener="#{esterilizacaoMB.habilitaDevolucao}" />
-                            <p:ajax event="rowSelectCheckbox" process="@this" update=":lume:dtKits, :lume:dtEsterilizacoesSolicitadas, :lume:devolucao, :lume:esterilizado, :lume:pnButton"
-                                listener="#{esterilizacaoMB.habilitaDevolucao}" />
-                            <p:ajax event="rowUnselectCheckbox" process="@this" update=":lume:dtKits, :lume:dtEsterilizacoesSolicitadas, :lume:devolucao, :lume:esterilizado, :lume:pnButton"
-                                listener="#{esterilizacaoMB.habilitaDevolucao}" />
-                            <p:ajax event="toggleSelect" process="@this" update=":lume:dtKits, :lume:dtEsterilizacoesSolicitadas, :lume:devolucao, :lume:esterilizado, :lume:pnButton"
-                                listener="#{esterilizacaoMB.habilitaDevolucao}" />
-
-
-                            <p:column filterBy="#{esterilizacaoSolicitada.descricao}" sortBy="#{esterilizacaoSolicitada.descricao}" filterMatchMode="contains" headerText="Descrição"
-                            		filterFunction="#{esterilizacaoMB.filtroSemAcento}">
-                                <h:outputText value="#{esterilizacaoSolicitada.descricao}" title="#{esterilizacaoSolicitada.id}" />
-                            </p:column>
-                            <p:column filterBy="#{esterilizacaoSolicitada.observacao}" sortBy="#{esterilizacaoSolicitada.observacao}" filterMatchMode="contains" headerText="Observação"
-                            		filterFunction="#{esterilizacaoMB.filtroSemAcento}">
-                                <h:outputText value="#{esterilizacaoSolicitada.observacao}" />
-                            </p:column>
-
-                            <p:column filterBy="#{esterilizacaoSolicitada.solicitante.dadosBasico.prefixoNome}" sortBy="#{esterilizacaoSolicitada.solicitante.dadosBasico.prefixoNome}"
-                                filterMatchMode="contains" headerText="Solicitante" filterFunction="#{esterilizacaoMB.filtroSemAcento}">
-                                <h:outputText value="#{esterilizacaoSolicitada.solicitante.dadosBasico.prefixoNome}" />
-                            </p:column>
-                            <p:column filterBy="#{esterilizacaoSolicitada.profissional.dadosBasico.prefixoNome}" sortBy="#{esterilizacaoSolicitada.profissional.dadosBasico.prefixoNome}"
-                                filterMatchMode="contains" headerText="Esterilizador" filterFunction="#{esterilizacaoMB.filtroSemAcento}">
-                                <h:outputText value="#{esterilizacaoSolicitada.profissional.dadosBasico.prefixoNome}" />
-                            </p:column>
-                            <p:column filterBy="#{esterilizacaoSolicitada.status}" sortBy="#{esterilizacaoSolicitada.status}" filterMatchMode="contains" headerText="Status"
-                            		filterFunction="#{esterilizacaoMB.filtroSemAcento}">
-                                <h:outputText value="#{esterilizacaoSolicitada.status}" />
-                            </p:column>
-
-                            <p:column filterBy="#{esterilizacaoSolicitada.dataValidadeStr}" sortBy="#{esterilizacaoSolicitada.dataValidadeStr}" filterMatchMode="contains" headerText="Data de Validade">
-                                <h:outputText value="#{esterilizacaoSolicitada.dataValidadeStr}" />
-                            </p:column>
-                            <p:column filterBy="#{esterilizacaoSolicitada.dataStr}" sortBy="#{esterilizacaoSolicitada.dataStrOrd}" filterMatchMode="contains" headerText="Data do Pedido">
-                                <h:outputText value="#{esterilizacaoSolicitada.dataStr}" />
-                            </p:column>
-                            <p:column filterBy="#{esterilizacaoSolicitada.resumo}" sortBy="#{esterilizacaoSolicitada.resumo}" filterMatchMode="contains" headerText="Resumo"
-                            		filterFunction="#{esterilizacaoMB.filtroSemAcento}">
-                                <h:outputText value="#{esterilizacaoSolicitada.resumo}" />
-                            </p:column>
-                        </p:dataTable>
-                        <h:panelGroup id="pnButton">
+                        <p:ajax event="rowSelect" process="@this" update=":lume:actionEsterilizar, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+                            listener="#{esterilizacaoMB.habilitaBotoes()}" />
+                        <p:ajax event="rowUnselect" process="@this" update=":lume:actionEsterilizar, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+                            listener="#{esterilizacaoMB.habilitaBotoes()}" />
+                        <p:ajax event="rowSelectCheckbox" process="@this" update=":lume:actionEsterilizar, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+                            listener="#{esterilizacaoMB.habilitaBotoes()}" />
+                        <p:ajax event="rowUnselectCheckbox" process="@this" update=":lume:actionEsterilizar, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+                            listener="#{esterilizacaoMB.habilitaBotoes()}" />  
+                        <p:ajax event="toggleSelect" process="@this" update=":lume:actionEsterilizar, :lume:devolucao, :lume:actionEsterilizar,:lume:pnButton"
+                            listener="#{esterilizacaoMB.habilitaBotoes()}" />  
+                               
+						<p:column filterBy="#{m.material.item.descricao}" sortBy="#{m.material.item.descricao}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" 
+						headerText="Item">							
+							<h:outputText value="#{m.material.item.descricao}" title="#{m.id}"/>
+						</p:column>
+						<p:column  filterBy="#{m.local.descricao}" sortBy="#{m.local.descricao}" filterMatchMode="contains" headerText="Status">												
+							<h:outputLabel value="#{m.local.descricao}"/>
+						</p:column>
+					</p:dataTable>  
+                        <br />
+                        <p:outputPanel id="pnButton" styleClass="BordNone">
                         	<br />
-                            <p:separator styleClass="SeparatorFull" />
-                            <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-                                <p:commandButton id="empacotado" icon="White fa fa-th-large" value="Empacotado" actionListener="#{esterilizacaoMB.actionEmpacotar}"
-                                    disabled="#{!esterilizacaoMB.enableDevolucao}" update=":lume:dtKits, :lume:dtEsterilizacoesSolicitadas,:lume:pnButton" process=":lume:dtKits, @this" />
-                                <p:commandButton id="esterilizado" icon="White fa fa-spinner" value="Em Esterilização" actionListener="#{esterilizacaoMB.actionEsterilizacao}"
-                                    disabled="#{!esterilizacaoMB.enableDevolucao}" update=":lume:dtKits, :lume:dtEsterilizacoesSolicitadas,:lume:pnButton" process=":lume:dtKits, @this"
-                                    styleClass="GreenButton" />
-                                <p:commandButton id="devolucao" icon="White fa fa-sun-o" value="Esterilizado" actionListener="#{esterilizacaoMB.setaValidade}"
-                                    disabled="#{!esterilizacaoMB.enableDevolucao}" update=":lume:dtKits,:lume:dtEsterilizacoesSolicitadas,:lume:pnButton" oncomplete="PF('esterilizar').show()"
-                                    process=":lume:dtKits, @this" styleClass="OrangeButton">
+                            <div class="SeparatorFull"></div>
+                            <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">   
+                                  
+                                  <p:commandButton id="actionEmpacotar" icon="White fa fa-th-large" value="Empacotado" actionListener="#{esterilizacaoMB.actionEmpacotar}"
+                                    disabled="#{!esterilizacaoMB.enableEmpacotado}" update=":lume:dtEsterilizacoesSolicitas,:lume:pnButton" process="@this,:lume:pnButton"
+                                    oncomplete="PF('dtEsterilizacoesSolicitas').filter();PF('dtEsterilizacoesSolicitas').clearSelection();">
+                                    <p:confirm header="Confirmação" message="Deseja enviar esse material para empacotamento?" icon="ui-icon-alert" />
+                                    </p:commandButton>                             
+                                                    
+                            	<p:commandButton id="actionEsterilizar" icon="White fa  fa fa-bitbucket" value="Esterilizado" actionListener="#{esterilizacaoMB.actionEsterilizar}"
+                                    disabled="#{!esterilizacaoMB.enableEsterilizacao}" update="dtEsterilizacoesSolicitas,:lume:pnButton,pnDevolver" process="@this,:lume:pnButton" 
+                                    oncomplete="PF('dtEsterilizacoesSolicitas').filter();PF('dtEsterilizacoesSolicitas').clearSelection();" styleClass="GreenButton">
+                                    <p:confirm header="Confirmação" message="Deseja iniciar a esterilização desse material?" icon="ui-icon-alert" />
+                                    </p:commandButton>
+                                <p:commandButton id="devolucao" icon="White fa fa-gavel" value="Finalizar Esterilização" actionListener="#{esterilizacaoMB.finalizarEsterilizacao}"                                
+                                oncomplete="PF('dlgEsterilizado').show();" disabled="#{!esterilizacaoMB.enableEsterilizado}"
+                                    update=":lume:dtEsterilizacoesSolicitas,:lume:pnButton,pnDevolver" process=" @this" styleClass="OrangeButton" />
+                                
+                                <p:commandButton id="actionDescartar" icon="White fa fa-trash" value="Descartar" onclick="PF('descartar').show()"
+                                    update=" :lume:dtEsterilizacoesSolicitas,:lume:pnButton" process=" @this" styleClass="RedButton" rendered="#{esterilizacaoMB.admin}"
+                                    disabled="#{esterilizacaoMB.estoquesSelecionados == null}">
+                                    <p:confirm header="Confirmação" message="Os itens selecionados serão retirado do estoque, deseja confirmar?" icon="ui-icon-alert" />
                                 </p:commandButton>
                             </p:panelGrid>
-                        </h:panelGroup>
-                        <p:dataTable filterDelay="1500"  reflow="true" emptyMessage="#{esterilizacaoMB.msg}" id="dtKits" selection="#{esterilizacaoMB.esterilizacaoKitSelecionada}" selectionMode="single"
-                            value="#{esterilizacaoMB.kitsSolicitados}" rowKey="#{kit}" var="kit" rows="7" paginator="true" paginatorPosition="bottom">
-                            <f:facet name="header">Detalhes</f:facet>
-                            <p:ajax event="rowSelect" update=":lume:pnButton2" process=":lume:dtKits" />
-                            <p:column filterBy="#{kit.kit.descricao}" sortBy="#{kit.kit.descricao}" filterMatchMode="contains" headerText="Kit">
-                                <h:outputText value="#{kit.kit.descricao}" title="#{kit.id}" />
-                            </p:column>
-                            <p:column filterBy="#{kit.item.descricaoLimpa}" sortBy="#{kit.item.descricao}" filterMatchMode="contains" headerText="Item">
-                                <h:outputText value="#{kit.item.descricao}" />
-                            </p:column>
-                            <p:column filterBy="#{kit.quantidade}" sortBy="#{kit.quantidade}" filterMatchMode="contains" headerText="Quantidade">
-                                <h:outputText value="#{kit.quantidade}" />
-                            </p:column>
-                        </p:dataTable>
-                        <br />
-                        <h:panelGroup id="pnButton2">
-                            <p:separator styleClass="SeparatorFull" />
-                            <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-                                <p:commandButton id="actionDescartar" icon="White fa fa-trash-o" value="Descartar" onclick="PF('descartar').show()"
-                                    disabled="#{esterilizacaoMB.esterilizacaoKitSelecionada == null || esterilizacaoMB.esterilizacaoKitSelecionada.esterilizacao.clinica == false}"
-                                    update=":lume:dtKits, :lume:dtEsterilizacoesSolicitadas,:lume:pnButton2" process=":lume:dtKits, @this" styleClass="RedButton">
-                                    <p:confirm header="Confirmação" message="Este item será retirado do estoque, deseja confirmar?" icon="ui-icon-alert" />
-                                </p:commandButton>
+                        </p:outputPanel>
+                        
+                        <p:dialog id="descartar" widgetVar="descartar" header="Descartar" responsive="true" modal="true" width="30%">
+                            <p:panel id="pnDescartar" style="display: inline-block;">                               
+                                 <p:panelGrid columns="1" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank"
+                                    style="border:0px none; background-color:transparent;">
+		                             <h:panelGroup>
+										<p:outputLabel for="justificativa" value="Justificativa:" />
+										<p:inputTextarea  required="true"
+											value="#{esterilizacaoMB.justificativa}"
+											id="justificativa" rows="3" cols="500" counter="displayDescarte"
+											maxlength="400" counterTemplate="{0} caracteres disponíveis."
+											autoResize="true" />
+										<br />
+										<h:outputText id="displayDescarte" />
+									</h:panelGroup>	
+                                </p:panelGrid>  
+                                <p:separator class="SeparatorFull" />
+                                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                                    <p:commandButton id="persistDescartar" icon="White fa fa-save" value="Salvar" actionListener="#{esterilizacaoMB.actionDescarte}"
+                                        update=":lume:justificativa, :lume:dtEsterilizacoesSolicitas,:lume:pnButton, :lume:pnDescartar,pnButton"
+                                        process=":lume:justificativa, @this, :lume:pnDescartar,:lume:pnButton" 
+                                        styleClass="GreenButton" />
+                                    <p:commandButton id="fecharDescartar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('descartar').hide();" immediate="true" />    
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:dialog>
+                        <p:dialog id="dlgEsterilizado" widgetVar="dlgEsterilizado" header="Finalizar Esterilização" responsive="true" modal="true" width="35%">
+                            <p:panel id="pnDevolver" styleClass="BordNone">
+                                <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+                                    style="border:0px none; background-color:transparent;">
+ 									<p:outputLabel for="validade" value="Validade : " />
+                                    <p:calendar id="validade" value="#{esterilizacaoMB.dataValidade}" required="true" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}"
+                                        timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-0:+1" mask="true" />                                 
+                                </p:panelGrid>
+                                <p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+                                    style="border:0px none; background-color:transparent;">
+                                    <p:outputLabel for="localDestino" value="Local de destino:" />									
+									<p:autoComplete queryDelay="1000" id="localDestino" required="true"
+									value="#{esterilizacaoMB.localSelecionadoDevolucao}" minQueryLength="1"
+									completeMethod="#{esterilizacaoMB.filtraLocal}" styleClass="profissional"
+									 dropdown="true"  forceSelection="true">
+									<p:ajax event="itemSelect"
+										listener="#{esterilizacaoMB.handleSelectLocal}"
+										update="" />
+									</p:autoComplete>                                    
+								</p:panelGrid>                                    
+                                <p:separator class="SeparatorFull" />
+                                <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                                    <p:commandButton id="persistDevolver" icon="White fa fa-save" value="Salvar" actionListener="#{esterilizacaoMB.actionEsterilizado}"
+                                        update=":lume:localDestino, :lume:dtEsterilizacoesSolicitas,:lume:pnButton, pnDevolver"
+                                        process=":lume:localDestino, @this, :lume:pnDevolver,pnDevolver,:lume:pnButton" 
+                                        styleClass="GreenButton" />
+                                        <p:commandButton id="fecharEsterilizado" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlgEsterilizado').hide();" immediate="true" />
+                                </p:panelGrid>
+                            </p:panel>
+                        </p:dialog>                        
+
+                    </p:outputPanel>
+                       <p:dialog id="dlgEsterilizacaoManual" widgetVar="dlgEsterilizacaoManual" header="Nova Esterilização Manual" responsive="true" modal="true" width="50%">
+                        <p:panel id="pnEsterilizacao" styleClass="BordNone">                            
+							<br />
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							id="dtEstoque" widgetVar="dtEstoque" value="#{esterilizacaoMB.estoquesParaEsterilizacaoMaterial}" var="estoque"
+							rows="6" paginator="true" selection="#{esterilizacaoMB.enviarParaEsterilizacao}"
+							selectionMode="single" rowKey="#{estoque}"
+							paginatorPosition="bottom" >
+							<p:ajax event="rowSelect" update=":lume:pnEstoque"/>
+							<f:facet name="header">Selecione o Material para enviar para esterilizacao</f:facet>
+							<p:column filterBy="#{estoque.material.item.descricaoLimpa}"
+								sortBy="#{estoque.material.item.descricao}" filterMatchMode="contains"
+								headerText="Descrição" filterFunction="#{movimentacaoMB.filtroSemAcento}">
+								<h:outputText value="#{estoque.material.item.descricao}"
+									title="#{estoque.material.id}" />
+							</p:column>
+							<p:column filterBy="#{estoque.quantidade}"
+								sortBy="#{estoque.quantidade}" filterMatchMode="contains"
+								headerText="Quantidade Atual">
+								<h:outputText value="#{estoque.quantidade}">
+									<f:convertNumber />
+								</h:outputText>								
+							</p:column>
+							<p:column filterBy="#{estoque.local.descricao}"
+								sortBy="#{estoque.local.descricao}" filterMatchMode="contains"
+								headerText="Local" filterFunction="#{esterilizacaoMB.filtroSemAcento}">
+								<h:outputText value="#{estoque.local.descricao}" />
+							</p:column>
+						</p:dataTable>						
+						  <p:panel id="pnEstoque" styleClass="BordNone"> 
+						  	<p:outputLabel for="quantidadeParaEsterilizar"
+								value="Quantidade para enviar para esterilização" />
+							<p:column>
+								<p:inputText id="quantidadeParaEsterilizar"
+									value="#{esterilizacaoMB.quantidadeParaEsterilizacao}" maxlength="10"
+									required="true" onkeypress="validaNumeros(event)" />								
+							</p:column>
+							 <br />
+						  <br />
+						  </p:panel>
+						 
+                            
+                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                                <p:commandButton id="persistEsterilizar" icon="White fa fa-save" value="Enviar para esterilização" actionListener="#{esterilizacaoMB.actionEsterilizarManual}"
+                                    update=":lume:dtEsterilizacoesSolicitas,pnButton,pnEsterilizacao,quantidadeParaEsterilizar" process="@this,pnEstoque"
+                                    styleClass="GreenButton" />
+                                <p:commandButton id="fecharEsterilizacaoManual" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlgEsterilizacaoManual').hide();" immediate="true" />    
                             </p:panelGrid>
                             <div class="EmptyBox20"></div>
-                        </h:panelGroup>
-                        
-                        <p:dialog id="descartar" widgetVar="descartar" header="Descartar" responsive="true" modal="true">
-                            <p:outputPanel id="pnDescartar" styleClass="BordNone">
-                                <h:panelGroup styleClass="lumeField" id="pnJustificativaDescarte">
-                                    <p:outputLabel for="quantidadeDescarte" value="Quantidade descartada : " />
-                                    <p:inputText id="quantidadeDescarte" required="true" value="#{esterilizacaoMB.quantidadeDescarte}">
-                                        <f:validateLongRange minimum="1" />
-                                    </p:inputText>
-                                    <p:message for="quantidadeDescarte" styleClass="msg" />
-                                </h:panelGroup>
-                                <h:panelGroup styleClass="lumeField">
-                                    <p:outputLabel for="justificativa" value="Justificativa : " />
-                                    <p:selectOneMenu id="justificativa" required="true" value="#{esterilizacaoMB.justificativa}" converter="dominio">
-                                        <f:selectItem itemValue="#{null}" itemLabel="Selecione uma justificativa" />
-                                        <f:selectItems value="#{esterilizacaoMB.justificativas}" var="justificativa" itemLabel="#{justificativa.nome}" itemValue="#{justificativa}" />
-                                    </p:selectOneMenu>
-                                    <p:message for="justificativa" styleClass="msg" />
-                                </h:panelGroup>
-                                <p:separator styleClass="SeparatorFull" />
-                                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-                                    <p:commandButton id="persistDescartar" icon="White fa fa-save" value="Salvar" actionListener="#{esterilizacaoMB.actionDescarte}"
-                                        update=":lume:quantidadeDescarte, :lume:justificativa,:lume:dtKits, :lume:dtEsterilizacoesSolicitadas,:lume:pnButton, :lume:pnDescartar"
-                                        process=":lume:quantidadeDescarte, :lume:justificativa,:lume:dtKits, @this, :lume:pnDescartar" oncomplete="handleDialogRequest(xhr, status, args)"
-                                        styleClass="GreenButton" />
-                                </p:panelGrid>
-                        	</p:outputPanel>
-                        </p:dialog>
-                        <p:dialog id="esterilizar" widgetVar="esterilizar" header="Esterilizado" responsive="true" modal="true">
-                            <p:outputPanel styleClass="BordNone">
-                                <h:panelGroup styleClass="lumeField" id="pnJustificativa">
-                                    <p:outputLabel for="validade" value="Validade : " />
-                                    <p:calendar id="validade" value="#{esterilizacaoMB.dataValidade}" required="true" pattern="dd/MM/yyyy" showWeeksBar="false" locale="#{lumeSecurity.locale}"
-                                        mindate="#{esterilizacaoMB.dataAtual}" timeZone="#{lumeSecurity.timeZone}" navigator="true" yearRange="-0:+1" mask="true" />
-                                    <p:message for="validade" styleClass="msg" />
-                                </h:panelGroup>
-                                <p:separator styleClass="SeparatorFull" />
-                                <p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-                                    <p:commandButton id="persistDevolver" icon="White fa fa-save" value="Salvar" actionListener="#{esterilizacaoMB.actionDevolucao}"
-                                        update=":lume:validade ,:lume:dtKits, :lume:dtEsterilizacoesSolicitadas,:lume:pnButton" process=":lume:validade,:lume:dtKits, @this"
-                                        oncomplete="handleDialogRequest(xhr, status, args)" styleClass="GreenButton" />
-                                </p:panelGrid>
-                            </p:outputPanel>
-                        </p:dialog>
-
-
-                        <script type="text/javascript">
-																									function handleDialogRequest(xhr, status, args) {
-																										if (args.esterilizar == true) {
-																											PF('esterilizar').hide();
-																										}
-																										if (args.descartar == true) {
-																											PF('descartar').hide();
-																										}
-
-																									}
-																								</script>
-                    </p:outputPanel>
+                        </p:panel>
+                    </p:dialog>
                 </div>
             </div>
         </div>

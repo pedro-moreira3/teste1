@@ -9,7 +9,6 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
@@ -24,7 +23,6 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.emprestimoKit.EmprestimoKitSingleton;
 import br.com.lume.estoque.EstoqueSingleton;
-import br.com.lume.item.ItemSingleton;
 import br.com.lume.kitItem.KitItemSingleton;
 import br.com.lume.local.LocalSingleton;
 import br.com.lume.material.MaterialSingleton;
@@ -36,7 +34,6 @@ import br.com.lume.odonto.entity.Estoque;
 import br.com.lume.odonto.entity.Item;
 import br.com.lume.odonto.entity.KitItem;
 import br.com.lume.odonto.entity.Local;
-import br.com.lume.odonto.entity.Material;
 import br.com.lume.odonto.entity.MaterialConsumido;
 import br.com.lume.odonto.entity.MaterialLog;
 import br.com.lume.odonto.entity.Paciente;
@@ -64,14 +61,10 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
     private List<KitItem> kitItensPendentes, kitItensRemovidos;
 
     private KitItem kitItemSelecionado;
-
-    //private List<Material> materiaisDisponiveis;
    
     private List<Estoque> estoquesDisponiveis;
 
     private List<EmprestimoKit> materiais, materiaisUnitario;
-
-   // private List<Material> materiaisSelecionado;
     
     private Estoque estoqueSelecionado;
 
@@ -114,47 +107,6 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
         
     }
     
-    public List<Paciente> sugestoesPacientes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-    }
-    
-    public List<Profissional> sugestoesProfissionais(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-    } 
-
-    public void geraLista() {
-        try {
-            this.setMateriaisUnitario(EmprestimoKitSingleton.getInstance().getBo().listByEmpresaAndStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            this.setKitsDisponibilizados(ReservaKitSingleton.getInstance().getBo().listKitsDevolucao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            this.setKitsPendentes(ReservaKitSingleton.getInstance().getBo().listByStatusReservaDataProfissionalPaciente(EmprestimoKit.PENDENTE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.dataInicio, this.dataFim, this.filtroPorProfissional, this.filtroPorPaciente));
-            
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
-            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-        }
-    }
-
-    @Override
-    public void actionPersist(ActionEvent event) {
-        try {
-            this.getbO().persist(this.getEntity());
-            this.limpaMateriais();
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
-        } catch (Exception e) {
-            log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
-        }
-    }
-
-    public void actionPersistLowProfile(ActionEvent event) {
-        try {
-            this.getbO().persist(this.getEntity());
-        } catch (Exception e) {
-            log.error("Erro no actionPersist", e);
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
-        }
-    }
-
     public void actionDevolucao(ActionEvent event) {
         try {
             this.devolveMateriais(event);
@@ -172,56 +124,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
             log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
         }
     }
-
-//    public void actionLavagemMaterial(ActionEvent event) {
-//        if (this.getEntity().getQuantidade().compareTo(this.getEntity().getQuantidadeDevolvida()) < 0) {
-//            this.addError(OdontoMensagens.getMensagem("devolucao.acima.emprestado"), "",true);
-//        } else {
-//            try {
-//                // O que nÃ£o vai pra lavagem Ã© devolvido
-//                BigDecimal quantidadeDevolver = this.getEntity().getQuantidade().subtract(this.getEntity().getQuantidadeDevolvida());
-//                // Algo a devolver?
-//                if (quantidadeDevolver.compareTo(BigDecimal.ZERO) != 0) {
-//                    MaterialSingleton.getInstance().getBo().refresh(getEntity().getMaterial());
-//                    this.getEntity().getMaterial().setQuantidadeAtual(this.getEntity().getMaterial().getQuantidadeAtual().add(quantidadeDevolver));
-//                    MaterialSingleton.getInstance().getBo().persist(this.getEntity().getMaterial());// Atualizando estoque
-//                    this.getEntity().setQuantidade(this.getEntity().getQuantidadeDevolvida());
-//                }
-//                this.getEntity().setStatus(EmprestimoKit.LAVAGEM_UNITARIO);
-//                if (this.getEntity().getQuantidadeDevolvida().compareTo(BigDecimal.ZERO) > 0) {
-//                    new LavagemMB().lavar(this.getEntity(), this.getEntity().getQuantidadeDevolvida().longValue());
-//                }
-//                this.getbO().persist(this.getEntity());// Atualizando emprestimo unitario
-//                this.actionNew(event);
-//                this.geraLista();
-//                this.setEnableDevolucao(false);
-//                this.setEnableLavagem(false);
-//                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
-//            } catch (Exception e) {
-//                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
-//                log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
-//            }
-//        }
-//    }
-
-    public void actionLavagem(ActionEvent event) {
-        try {
-            this.lavaMateriais(event);
-            // atualiza a reserva para finalizada;
-            this.getReservaKit().setDevolvidoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
-            this.getReservaKit().setStatus(EmprestimoKit.FINALIZADO);
-            this.getReservaKit().setDataFinalizado(new Date());
-            ReservaKitSingleton.getInstance().getBo().persist(this.getReservaKit());
-            this.actionNew(event);
-            this.setReservaKit(null);
-            this.setMateriais(null);
-            this.geraLista();
-            this.setEnableLavagem(false);
-        } catch (Exception e) {
-            log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
-        }
-    }
-
+    
     private void devolveMateriais(ActionEvent event) throws BusinessException, TechnicalException, Exception {
         for (EmprestimoKit cm : this.getMateriais()) {
             BigDecimal quantidadeUtilizada;
@@ -283,11 +186,10 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
                    }else {
                        //envia para lavagem
                        Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_KIT_LAVAGEM");
-                       Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "ENTREGA_LAVAGEM_MANUAL");
-                       EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,localDestino,qtdDevolvida,EstoqueSingleton.DEVOLUCAO_KIT_LAVAGEM,UtilsFrontEnd.getProfissionalLogado());            
+                       Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.EM_LAVAGEM);
+                       EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(cm.getMaterial(),localOrigem,localDestino,qtdDevolvida,EstoqueSingleton.DEVOLUCAO_KIT_LAVAGEM,UtilsFrontEnd.getProfissionalLogado());            
                        cm.setQuantidade(qtdDevolvida); 
                        cm.setStatus(EmprestimoKit.UTILIZADO_KIT);
-                       new LavagemMB().lavar(cm, qtdDevolvida.longValue());
                    }
                }
            // }
@@ -297,6 +199,65 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
         }
         this.limpaMateriais();
     }
+    
+    public List<Paciente> sugestoesPacientes(String query) {
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    }
+    
+    public List<Profissional> sugestoesProfissionais(String query) {
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    } 
+
+    public void geraLista() {
+        try {
+            this.setMateriaisUnitario(EmprestimoKitSingleton.getInstance().getBo().listByEmpresaAndStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            this.setKitsDisponibilizados(ReservaKitSingleton.getInstance().getBo().listKitsDevolucao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            this.setKitsPendentes(ReservaKitSingleton.getInstance().getBo().listByStatusReservaDataProfissionalPaciente(EmprestimoKit.PENDENTE, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.dataInicio, this.dataFim, this.filtroPorProfissional, this.filtroPorPaciente));
+            
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
+    }
+
+    @Override
+    public void actionPersist(ActionEvent event) {
+        try {
+            this.getbO().persist(this.getEntity());
+            this.limpaMateriais();
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
+        } catch (Exception e) {
+            log.error("Erro no actionPersist", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
+        }
+    }
+
+    public void actionPersistLowProfile(ActionEvent event) {
+        try {
+            this.getbO().persist(this.getEntity());
+        } catch (Exception e) {
+            log.error("Erro no actionPersist", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
+        }
+    }
+
+    public void actionLavagem(ActionEvent event) {
+        try {
+            this.lavaMateriais(event);
+            // atualiza a reserva para finalizada;
+            this.getReservaKit().setDevolvidoPorProfissional(UtilsFrontEnd.getProfissionalLogado());
+            this.getReservaKit().setStatus(EmprestimoKit.FINALIZADO);
+            this.getReservaKit().setDataFinalizado(new Date());
+            ReservaKitSingleton.getInstance().getBo().persist(this.getReservaKit());
+            this.actionNew(event);
+            this.setReservaKit(null);
+            this.setMateriais(null);
+            this.geraLista();
+            this.setEnableLavagem(false);
+        } catch (Exception e) {
+            log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
+        }
+    }
 
     private void lavaMateriais(ActionEvent event) throws Exception {
         for (EmprestimoKit cm : this.getMateriais()) {
@@ -304,15 +265,14 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
             if (cm.getQuantidadeDevolvida().compareTo(new BigDecimal(0)) > 0) {// enviando para lavagem, se nao tiver nada material 
             
                 Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "DEVOLUCAO_KIT_LAVAGEM");
-                Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "ENTREGA_LAVAGEM_MANUAL");
-                EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,localDestino,cm.getQuantidadeDevolvida(),EstoqueSingleton.DEVOLUCAO_KIT_LAVAGEM,UtilsFrontEnd.getProfissionalLogado());            
+              
+                Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), EstoqueSingleton.EM_LAVAGEM);
+                EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(cm.getMaterial(),localOrigem,localDestino,cm.getQuantidadeDevolvida(),EstoqueSingleton.DEVOLUCAO_KIT_LAVAGEM,UtilsFrontEnd.getProfissionalLogado());            
                 cm.setQuantidade(cm.getQuantidadeDevolvida());          
             }
           
             cm.setStatus(EmprestimoKit.UTILIZADO_KIT);
-            if (cm.getQuantidadeDevolvida().compareTo(BigDecimal.ZERO) > 0) {
-                new LavagemMB().lavar(cm, cm.getQuantidadeDevolvida().longValue());
-            }
+
             this.setEntity(cm);
             this.actionPersistLowProfile(event);
         }
@@ -347,11 +307,6 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
 
     public void actionVerificaDisponibiliza() {
         if (estoqueSelecionado != null) {
-           
-          
-        
-       
-        
             if (estoqueSelecionado.getQuantidade().intValue() >= kitItemSelecionado.getQuantidade()) {
                 this.setEnableDisponibilizar(true);
             } else {
@@ -377,7 +332,6 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
             } else {
                 this.actionPersistLowProfile(event);
             }
-           // MaterialLogSingleton.getInstance().getBo().persistBatch(logs);
             this.setEntity(new EmprestimoKit());
         } catch (Exception e) {
             log.info(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
@@ -386,8 +340,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
     }
 
     private void retiraQuantidades() throws Exception {
-        BigDecimal quantidadeRetirar = new BigDecimal(kitItemSelecionado.getQuantidade());
-        List<MaterialLog> logs = new ArrayList<>();    
+        BigDecimal quantidadeRetirar = new BigDecimal(kitItemSelecionado.getQuantidade());  
             if (quantidadeRetirar.doubleValue() != 0d) {              
                     
                     Local localDestino = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "EMPRESTIMO_KIT");                    
@@ -434,12 +387,10 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
                 }
             }
             if (this.getMateriais() != null) {
-                for (EmprestimoKit cm : this.getMateriais()) {
-                    BigDecimal quantidadeDevolvida = cm.getQuantidade();
+                for (EmprestimoKit cm : this.getMateriais()) {                 
                     // devolvendo o material    
                     MaterialSingleton.getInstance().getBo().refresh(cm.getMaterial());
-                   // cm.getMaterial().setQuantidadeAtual(cm.getMaterial().getQuantidadeAtual().add(quantidadeDevolvida));
-
+              
                     Local localOrigem = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "CANCELAMENTO_EMPRESTIMO_KIT");
                     EstoqueSingleton.getInstance().transferencia(cm.getMaterial(),localOrigem,cm.getMaterial().getEstoque().get(0).getLocal(),cm.getQuantidade(),EstoqueSingleton.EMPRESTIMO_KIT_CANCELAR,UtilsFrontEnd.getProfissionalLogado());
                                         
@@ -551,48 +502,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
 
     public void setKitItensPendentes(List<KitItem> kitItensPendentes) {
         this.kitItensPendentes = kitItensPendentes;
-    }
-
-    public void geraEstoquesDisponiveis() {
-//        List<Estoque> estoques = new ArrayList<>();
-//        Integer quantidadeTotal = 0;
-//        BigDecimal quantidadeRetirada = new BigDecimal(0);
-//        if (this.getKitItemSelecionado() != null && this.getReservaKit() != null) {
-//            quantidadeTotal = this.getKitItemSelecionado().getQuantidade().intValue() * this.getReservaKit().getQuantidade().intValue();
-//            try {
-//                List<Material> materiaisAtivos;
-//                if (!this.getKitItemSelecionado().getItem().getCategoria().equals("S")) {
-//                    materiaisAtivos = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(this.getKitItemSelecionado().getItem(), quantidadeTotal.intValue(),
-//                            UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-//                } else {
-//                    List<Item> itensFilhos = ItemSingleton.getInstance().getBo().listByPai(this.getKitItemSelecionado().getItem().getId(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-//                    materiaisAtivos = MaterialSingleton.getInstance().getBo().listAtivosByEmpresaAndItemAndQuantidade(itensFilhos, quantidadeTotal.intValue(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-//                }
-//                for (Material material : materiaisAtivos) {
-//                    material.setQuantidadeRetirada(new BigDecimal(quantidadeTotal));
-//                    
-//                    
-//                    if (quantidadeRetirada.floatValue() <= EstoqueSingleton.getInstance().getBo().findByMaterialLocal(material,material.getEstoque().get(0).getLocal()).getQuantidade().floatValue()) {
-//                        materiais.add(material);
-//                    }
-//                }
-//                Collections.sort(materiais);
-//                this.setMateriaisDisponiveis(materiais);
-//                if (this.getMateriaisDisponiveis().isEmpty()) {
-//                    if (FacesContext.getCurrentInstance().getMessageList().isEmpty()) {
-//                        this.addInfo(OdontoMensagens.getMensagem("devolucao.itens.vazio"), "",true);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "",true);
-//                log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-//            }
-//        }
-    }
-
-   // public List<Material> getMateriaisDisponiveis() {
-   //     return materiaisDisponiveis;
-   // }
+    } 
 
     public List<EmprestimoKit> getMateriais() {
         return materiais;
@@ -606,11 +516,8 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
     }
 
     public void limpaMateriais() {
-     //   this.setMateriaisSelecionado(null);
         this.setEstoqueSelecionado(null);
-       // this.setMateriaisDisponiveis(null);
         this.setEstoquesDisponiveis(null);
-        // setKitItemSelecionado(null);
         this.setEnableDisponibilizar(false);
         this.geraItensPendentes();
         this.validaEntrega();
@@ -668,10 +575,6 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
         exportarTabela("Materiais disponibilizados", getTabelaDevolucaoMateriais(), type);
     }
 
-   // public void setMateriaisDisponiveis(List<Material> materiaisDisponiveis) {
-    //    this.materiaisDisponiveis = materiaisDisponiveis;
-  //  }
-
     public void setMateriais(List<EmprestimoKit> materiais) {
         this.materiais = materiais;
     }
@@ -683,10 +586,6 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
     public void setEnableDevolucao(boolean enableDevolucao) {
         this.enableDevolucao = enableDevolucao;
     }
-
-//    public void setMateriaisSelecionado(List<Material> materiaisSelecionado) {
-//        this.materiaisSelecionado = materiaisSelecionado;
-//    }
 
     public EmprestimoKit getMaterial() {
         return material;
@@ -794,10 +693,6 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
     public void setEnableNaoUtilizado(boolean enableNaoUtilizado) {
         this.enableNaoUtilizado = enableNaoUtilizado;
     }
-
-//    public List<Material> getMateriaisSelecionado() {
-//        return materiaisSelecionado;
-//    }
 
     public Integer getQuantidadeReservaKit() {
         return this.getReservaKit() != null && this.getReservaKit().getQuantidade() != null ? this.getReservaKit().getQuantidade().intValue() : 0;

@@ -128,7 +128,7 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
                 //SOMENTE ADICIONADO, DEPOIS SERA TUDO TRANSFERENCIA E NAO ADICIONAR
                 
                 Local ajuste = LocalSingleton.getInstance().getBo().getLocalPorDescricao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),"AJUSTE");         
-                BigDecimal quantidadeAnterior = EstoqueSingleton.getInstance().getQuantidadeMaterial(estoque.getMaterial());
+                BigDecimal quantidadeAnterior = estoque.getQuantidade();
                 EstoqueSingleton.getInstance().transferencia(estoque.getMaterial(), estoque.getLocal(), ajuste, conferenciaMaterial.getValorAlterado(), descricao, UtilsFrontEnd.getProfissionalLogado());
                 
                 conferenciaMaterial.setConferencia(conferencias.get(0));

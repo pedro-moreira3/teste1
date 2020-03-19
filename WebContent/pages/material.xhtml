@@ -13,7 +13,8 @@
      				<h1>Entrada de Materiais no Estoque</h1>
                      <div class="SeparatorFull"></div>                  
                     <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-                      	<p:commandButton id="new" icon="White fa fa-file-o" value="Nova Entrada de Materiais" oncomplete="PF('dlgEntrada').show();" actionListener="#{materialMB.actionNew}" update=":lume:pnMaterial,:lume:dtMaterial,:lume:tbLocalTree,:lume:tbItemTree" immediate="true" />
+                      	<p:commandButton id="new" icon="White fa fa-file-o" value="Nova Entrada de Materiais"
+                      	 oncomplete="PF('dlgEntrada').show();" actionListener="#{materialMB.actionNew}" update=":lume:pnMaterial,:lume:dtMaterial,:lume:tbLocalTree,:lume:tbItemTree" immediate="true" />
 
 						<h:panelGroup>
 							<p:splitButton icon="White fa fa fa-file-excel-o"
@@ -50,15 +51,9 @@
                         rowKey="#{material}" paginatorPosition="bottom" binding="#{materialMB.tabelaMaterial}">
                       
                         <f:facet name="header">Materiais</f:facet>
-						 <p:column headerText="Ações" width="12%">
-						 
-						 
-						 
-						 	<p:commandButton styleClass="NavyButton" icon="fa fa-eye" oncomplete="PF('dlgEntrada').show();" update=":lume:pnEntradaDlg" title="Editar" process="@this"
-                                actionListener="#{materialMB.carregarEditar(material)}" style="width:33px !important" />
-							<h:outputText value="&#160;" /><h:outputText value="&#160;" />                                
+						 <p:column headerText="Ações" width="12%">		                                
                             <p:commandButton class="GreenButton" icon="White fa fa-mail-forward" oncomplete="PF('dlg').show();" process="@this"
-                                actionListener="#{materialMB.carregarEntity(material)}" style="width:33px !important" title="Devolver"/>
+                                actionListener="#{materialMB.carregarEntity(material)}" style="width:33px !important" title="Devolver" update=":lume:pnJustificativa"/>
 							<h:outputText value="&#160;" /><h:outputText value="&#160;" />                                
        						<p:commandButton  icon="White fa fa-search" oncomplete="PF('dlgMaterialLog').show();" update=":lume:dtMaterialLog" title="Log" process="@this"
                                 actionListener="#{materialMB.carregarMaterialLog(material)}" style="width:33px !important" />                                                                
@@ -71,7 +66,7 @@
                             <h:outputText value="#{material.item.descricao}" title="#{material.id}" />
                         </p:column>
                         <p:column filterBy="#{material.locais}" sortBy="#{material.locais}"
-                        		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="8%" headerText="Local"
+                        		filterMatchMode="contains" filterFunction="#{materialMB.filtroSemAcento}" width="8%" headerText="Locais"
                             rendered="#{materialMB.estoqueCompleto}">
                             <h:outputText value="#{material.locais}" />
                         </p:column>
@@ -325,16 +320,19 @@
                             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
                                 <p:outputLabel for="quantidadeDevolvida" value="Quantidade à ser devolvida: " />
-                                <p:column>
-                                    
+                                <p:column>                                    
 									<p:inputNumber maxValue="99999999.9999" minValue="0.0000" id="quantidadeDevolvida" value="#{materialMB.quantidadePacotes}" required="true" >						
-							</p:inputNumber>                                    
-                                    
+							</p:inputNumber> 
                                     
                                     <h:outputLabel value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
                                 </p:column>
 
-                                <p:outputLabel for="justificativa" value="Justificativa : " />
+                                <p:outputLabel for="local" value="Local atual do Material: " />
+                                <p:selectOneMenu id="local" required="true" value="#{materialMB.localSelecionadoDevolucao}" converter="local">                                    
+                                    <f:selectItems value="#{materialMB.locaisSelecionadosDevolucao}" var="local" itemLabel="#{local.descricao}" itemValue="#{local}" />
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="justificativa" value="Justificativa: " />
                                 <p:selectOneMenu id="justificativa" required="true" value="#{materialMB.justificativa}" converter="dominio">
                                     <f:selectItem itemValue="#{null}" itemLabel="Selecione" />
                                     <f:selectItems value="#{materialMB.justificativas}" var="justificativa" itemLabel="#{justificativa.nome}" itemValue="#{justificativa}" />
@@ -353,11 +351,11 @@
                     </p:dialog>
                     <p:dialog id="dlgMaterialLog" widgetVar="dlgMaterialLog" header="Logs do Material" modal="true" width="90%">
                         <p:dataTable filterDelay="1500"  id="dtMaterialLog" reflow="true" emptyMessage="" value="#{materialMB.listaTransferenciasEstoque}" var="m" rows="20" paginator="true" paginatorPosition="bottom">
-                            <p:column filterBy="#{m.localOrigem.descricao}" sortBy="#{m.localOrigem.descricao}" filterMatchMode="contains" headerText="Local de origem">
-                                <h:outputText value="#{m.localOrigem.descricao}" title="#{m.localOrigem.descricao}" />
+                            <p:column filterBy="#{m.estoqueOrigem.local.descricao}" sortBy="#{m.estoqueOrigem.local.descricao}" filterMatchMode="contains" headerText="Local de origem">
+                                <h:outputText value="#{m.estoqueOrigem.local.descricao}" title="#{m.estoqueOrigem.local.descricao}" />
                             </p:column>
-                            <p:column filterBy="#{m.localDestino.descricao}" sortBy="#{m.localDestino.descricao}" filterMatchMode="contains" headerText="Local de destino">
-                                <h:outputText value="#{m.localDestino.descricao}" />
+                            <p:column filterBy="#{m.estoqueDestino.local.descricao}" sortBy="#{m.estoqueDestino.local.descricao}" filterMatchMode="contains" headerText="Local de destino">
+                                <h:outputText value="#{m.estoqueDestino.local.descricao}" />
                             </p:column>
                             <p:column filterBy="#{m.descricao}" sortBy="#{m.descricao}" filterMatchMode="contains" headerText="Descrição">
                                 <h:outputText value="#{m.descricao}" />

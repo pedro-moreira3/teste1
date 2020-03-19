@@ -139,10 +139,10 @@
 							 	<p:commandButton class="RedButton" icon="fa fa-trash-o" oncomplete="PF('confirmation').show();" update=":lume:pnDlg,:lume:tbDtPrincipal" title="Remover" process="@this"
 	                                 style="width:33px !important" actionListener="#{fornecedorMB.carregarEditar(fornecedor)}"/>
 	                        </p:column>								
-							<p:column filterBy="#{fornecedor.dadosBasico.nome}" sortBy="#{fornecedor.dadosBasico.nome}" filterMatchMode="contains" headerText="Nome" filterFunction="#{localMB.filtroSemAcento}">
+							<p:column filterBy="#{fornecedor.dadosBasico.nome}" sortBy="#{fornecedor.dadosBasico.nome}" filterMatchMode="contains" headerText="Nome" filterFunction="#{fornecedorMB.filtroSemAcento}">
 								<h:outputText value="#{fornecedor.dadosBasico.nome}" title="#{fornecedor.id}"/>
 							</p:column>
-							<p:column filterBy="#{fornecedor.dadosBasico.bairro}" sortBy="#{fornecedor.dadosBasico.bairro}" filterMatchMode="contains" headerText="Bairro" filterFunction="#{localMB.filtroSemAcento}">
+							<p:column filterBy="#{fornecedor.dadosBasico.bairro}" sortBy="#{fornecedor.dadosBasico.bairro}" filterMatchMode="contains" headerText="Bairro" filterFunction="#{fornecedorMB.filtroSemAcento}">
 								<h:outputText value="#{fornecedor.dadosBasico.bairro}" />
 							</p:column>
 							<p:column filterBy="#{fornecedor.dadosBasico.celular}" sortBy="#{fornecedor.dadosBasico.celular}" filterMatchMode="contains"
@@ -150,7 +150,7 @@
 								<h:outputText value="#{fornecedor.dadosBasico.celular}" />
 							</p:column>
 							<p:column filterBy="#{fornecedor.dadosBasico.responsavel}" sortBy="#{fornecedor.dadosBasico.responsavel}" filterMatchMode="contains"
-								headerText="Contato" filterFunction="#{localMB.filtroSemAcento}">
+								headerText="Contato" filterFunction="#{fornecedorMB.filtroSemAcento}">
 								<h:outputText value="#{fornecedor.dadosBasico.responsavel}" />
 							</p:column>
 						</p:dataTable>

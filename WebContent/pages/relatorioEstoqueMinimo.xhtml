@@ -42,7 +42,7 @@
 	                            <h:outputText value="#{estoque.quantidade}">
 	                                <f:convertNumber />
 	                            </h:outputText>
-	                            <h:outputLabel value="#{relatorioEstoqueMinimoMB.getUnidadeString(relatorioEstoqueMinimoMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
+	                            <h:outputLabel value="#{materialMB.getUnidadeString(materialMB.item)}" styleClass="unidadeMedidaString" disabled="true" />
 	                        </p:column>
 	                        <p:column filterBy="#{estoque.material.valor}" sortBy="#{estoque.material.valor}" width="11%" style="text-align:right"
 	                        		filterMatchMode="contains" headerText="Valor da Unidade(R$)"
@@ -181,21 +181,30 @@
 							</p:inputText> 
 						</p:outputPanel>
 						<p:outputPanel>                                
-							<h:outputText for="filtroPeriodo"
-								value="Tipo" />
-							<p:selectOneMenu id="filtroPeriodo"
+							<h:outputText for="filtroTipo"
+								value="Tipo:" />
+							<p:selectOneMenu id="filtroTipo"
 								value="#{relatorioEstoqueMinimoMB.filtroTipo}">
 								<f:selectItem itemValue="" itemLabel="Selecione" />																
 								<f:selectItem itemValue="C" itemLabel="Consumo" />
 								<f:selectItem itemValue="I" itemLabel="Instrumental" />									
 							</p:selectOneMenu>
 						</p:outputPanel>
-						<p:outputPanel></p:outputPanel> 							
+						<p:outputPanel>
+						  <p:outputLabel for="local" value="Local:" />
+								<p:autoComplete queryDelay="1000" id="local" style="margin-top: 9px !important;"
+									value="#{relatorioEstoqueMinimoMB.local}" minQueryLength="1"
+									completeMethod="#{relatorioEstoqueMinimoMB.filtraLocal}"
+									 dropdown="true"  forceSelection="true">
+									<p:ajax event="itemSelect"
+										listener="#{relatorioEstoqueMinimoMB.handleSelectLocal}"
+										update="" />
+								</p:autoComplete>
+						</p:outputPanel> 							
                     </p:panelGrid>
                     <p:panelGrid columns="1"  layout="grid" styleClass="ui-panelgrid-blank"
                                 style="border:0px none; background-color:transparent;" id="painelPesquisa2">                    
-                    	<p:selectBooleanCheckbox style="width:100%;" value="#{relatorioEstoqueMinimoMB.mostrarSomenteEstoqueMinimo}" 
-                    	itemLabel="Mostrar somente itens com quantidade abaixo ou igual ao estoque mínimo configurado"/>
+                    
 					</p:panelGrid>       
                     <p:panelGrid columns="6" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
                         style="border:0px none; background-color:transparent;">                                
@@ -237,44 +246,30 @@
                     </p:panelGrid>                
 
 					<div class="EmptyBox20"></div>
-					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{relatorioEstoqueMinimoMB.materiais}" var="m" rows="20" paginator="true"
-						rowKey="#{m}" paginatorPosition="bottom" binding="#{relatorioEstoqueMinimoMB.tabelaEstoque}">
-						<f:facet name="header">Itens</f:facet>
-						
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtMaterial" value="#{relatorioEstoqueMinimoMB.estoques}" var="e" rows="20" paginator="true"
+						rowKey="#{e}" paginatorPosition="bottom" binding="#{relatorioEstoqueMinimoMB.tabelaEstoque}">
+						<f:facet name="header">Itens</f:facet>						
 						<p:column headerText="Ações" width="8%">									 	
 						 	<p:commandButton class="" icon="fa fa-eye White" update=":lume:dtDetalhes,:lume:dtEmprestimos,:lume:painelQuantidades,:lume:dlgDetalhes" title="Detalhes" process="@this" 
-						 	actionListener="#{relatorioEstoqueMinimoMB.log(m)}"
+						 	actionListener="#{relatorioEstoqueMinimoMB.detalhes(e)}"
 						 	oncomplete="PF('dlgDetalhes').show()"
                                  style="width:33px !important" />
                             <h:outputText value="&#160;" /><h:outputText value="&#160;" />                                
        						<p:commandButton  icon="White fa fa-search" oncomplete="PF('dlgMaterialLog').show();" update=":lume:dtMaterialLog" title="Log de transferências" process="@this"
-                                actionListener="#{relatorioEstoqueMinimoMB.carregarMaterialLog(material)}" style="width:33px !important" />      
+                                actionListener="#{relatorioEstoqueMinimoMB.carregarMaterialLog(e)}" style="width:33px !important" />      
                         </p:column>	
-						<p:column filterBy="#{m.item}" sortBy="#{m.item}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" headerText="Item">							
-							<h:outputText value="#{m.item}" title="#{m.id}"/>
+						<p:column filterBy="#{e.material.item.descricao}" sortBy="#{e.material.item.descricao}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" headerText="Item">							
+							<h:outputText value="#{e.material.item.descricao}" title="#{e.id}"/>
 						</p:column>
-						<p:column  filterBy="#{m.somaQuantidadeAtual}" sortBy="#{m.somaQuantidadeAtual}" filterMatchMode="contains" headerText="Quantidade Atual Disponível">												
-							<h:outputLabel value="#{m.somaQuantidadeAtual} #{m.unidadeMedidaStr}" disabled="true" style="color: #{(m.somaQuantidadeAtual le m.estoqueMinimo)?'red':'none'}"/>
+						<p:column filterBy="#{e.local.descricao}" sortBy="#{e.local.descricao}" filterMatchMode="contains" filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" headerText="Item">							
+							<h:outputText value="#{e.local.descricao}" title="#{e.id}"/>
 						</p:column>
-						<p:column  filterBy="#{m.estoqueMinimo}" sortBy="#{m.estoqueMinimo}" filterMatchMode="contains" headerText="Estoque Mínimo">							
-							<h:outputLabel value="#{m.estoqueMinimo} #{m.unidadeMedidaStr}" disabled="true" style="color: #{(m.somaQuantidadeAtual le m.estoqueMinimo)?'red':'none'}"/>
+						<p:column  filterBy="#{e.quantidade}" sortBy="#{e.quantidade}" filterMatchMode="contains" headerText="Quantidade">												
+							<h:outputLabel value="#{e.quantidade}" disabled="true"/>
 						</p:column>
-						<p:column filterBy="#{m.valorUltimaCompra}" sortBy="#{m.valorUltimaCompra}" filterMatchMode="contains" 
-						rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}" headerText="Valor Unit. Últ. Compra(R$)">							
-							<h:outputText value="#{m.valorUltimaCompra}">
-								<f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
-							</h:outputText>
-						</p:column>
-						<p:column filterBy="#{m.valorMedio}" sortBy="#{m.valorMedio}" filterMatchMode="contains" 
-						rendered="#{relatorioEstoqueMinimoMB.estoqueCompleto}" headerText="Valor Unit. Médio">						
-							<h:outputText value="#{m.valorMedio}">
-								<f:convertNumber currencySymbol="R$" type="currency" maxFractionDigits="5" locale="#{lumeSecurity.locale}" />
-							</h:outputText>
-						</p:column>
-                        <p:column filterBy="#{m.tipoStr}" sortBy="#{m.tipoStr}" filterMatchMode="contains" 
-                        filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" headerText="Tipo">
-                            
-                            <h:outputText value="#{m.tipoStr}"/>
+                        <p:column filterBy="#{e.material.item.tipoStr}" sortBy="#{e.material.item.tipoStr}" filterMatchMode="contains" 
+                        filterFunction="#{relatorioEstoqueMinimoMB.filtroSemAcento}" headerText="Tipo">                            
+                            <h:outputText value="#{e.material.item.tipoStr}"/>
                         </p:column>
 					</p:dataTable>
 

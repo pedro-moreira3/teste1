@@ -193,7 +193,7 @@ public class RelatorioEntradaSaidaMaterialMB extends LumeManagedBean<RelatorioEn
             
             this.itens = (ItemSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada));
             this.profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
-            this.locais = (LocalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada));
+            this.locais = (LocalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada,false));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
