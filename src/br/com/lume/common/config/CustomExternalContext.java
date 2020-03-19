@@ -23,7 +23,8 @@ public class CustomExternalContext extends ExternalContextWrapper {
          //   return encodeWebsocketURL;
             //8443
             //return encodeWebsocketURL;
-            return encodeWebsocketURL.replace("ltdeapp07:8080", "dev-intelidente.lumetec.com.br");
+          //  return encodeWebsocketURL.replace("ltdeapp07:8080", "dev-intelidente.lumetec.com.br");
+            return encodeWebsocketURL.replace("ltdeapp07", "dev-intelidente.lumetec.com.br");
             
             
         }else {
