@@ -51,7 +51,7 @@ public class LavagemMB extends LumeManagedBean<Local> {
 
     private String data;
 
-    private Dominio justificativa;
+    private String justificativa;
 
     private boolean enableDevolucao, enableEsterilizacao, enableLavar;
 
@@ -106,9 +106,9 @@ public class LavagemMB extends LumeManagedBean<Local> {
         this.setLocais(new ArrayList<Local>());
         try {
             if (this.getLocalSelecionadoDevolucao() != null) {
-                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcial(this.getLocalSelecionadoDevolucao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
+                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaAndDescricaoParcialLocaisEsterilizacao(this.getLocalSelecionadoDevolucao(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
             } else {
-                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
+                this.setLocais(LocalSingleton.getInstance().getBo().listByEmpresaLocaisEsterilizacao(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false));
             }
             Collections.sort(this.getLocais());
         } catch (Exception e) {
@@ -231,7 +231,7 @@ public class LavagemMB extends LumeManagedBean<Local> {
         for (Estoque estoqueSelecionado : estoquesSelecionados) {
             Local localOrigem = estoqueSelecionado.getLocal();
             EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(estoqueSelecionado.getMaterial(), localOrigem, 
-                    descarte, new BigDecimal(1), EstoqueSingleton.DESCARTAR_LAVAGEM + ". Justificativa: " + this.getJustificativa().getNome(), UtilsFrontEnd.getProfissionalLogado());
+                    descarte, new BigDecimal(1), EstoqueSingleton.DESCARTAR_LAVAGEM + ". Justificativa: " + this.getJustificativa(), UtilsFrontEnd.getProfissionalLogado());
             
             LogLavagem logLavagem = new LogLavagem(estoqueSelecionado.getLocal(),descarte,estoqueSelecionado.getMaterial(),UtilsFrontEnd.getProfissionalLogado(),new Date(),new BigDecimal(1));
             LogLavagemSingleton.getInstance().getBo().persist(logLavagem);
@@ -372,14 +372,6 @@ public class LavagemMB extends LumeManagedBean<Local> {
         this.enableEsterilizacao = enableEsterilizacao;
     }
 
-    public Dominio getJustificativa() {
-        return justificativa;
-    }
-
-    public void setJustificativa(Dominio justificativa) {
-        this.justificativa = justificativa;
-    }
-
     public List<Dominio> getJustificativas() {
         List<Dominio> justificativas = new ArrayList<>();
         try {
@@ -483,6 +475,16 @@ public class LavagemMB extends LumeManagedBean<Local> {
     
     public void setEstoquesSelecionados(List<Estoque> estoquesSelecionados) {
         this.estoquesSelecionados = estoquesSelecionados;
+    }
+
+    
+    public String getJustificativa() {
+        return justificativa;
+    }
+
+    
+    public void setJustificativa(String justificativa) {
+        this.justificativa = justificativa;
     }
 
 }

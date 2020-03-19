@@ -41,7 +41,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Local> {
 
     private Date dataValidade;
 
-    private Dominio justificativa;
+    private String justificativa;
 
     private boolean enableEmpacotado, enableEsterilizacao, enableEsterilizado;
 
@@ -249,7 +249,7 @@ public class EsterilizacaoMB extends LumeManagedBean<Local> {
         for (Estoque estoqueSelecionado : estoquesSelecionados) {
             Local localOrigem = estoqueSelecionado.getLocal();
             EstoqueSingleton.getInstance().transferenciaPersisteLocalSistema(estoqueSelecionado.getMaterial(), localOrigem, 
-                    descarte, new BigDecimal(1), EstoqueSingleton.DESCARTAR_ESTERILIZACAO + ". Justificativa: " + this.getJustificativa().getNome(), UtilsFrontEnd.getProfissionalLogado());
+                    descarte, new BigDecimal(1), EstoqueSingleton.DESCARTAR_ESTERILIZACAO + ". Justificativa: " + this.getJustificativa(), UtilsFrontEnd.getProfissionalLogado());
             
             LogEsterilizacao logEsterilizacao = new LogEsterilizacao(estoqueSelecionado.getLocal(),descarte,estoqueSelecionado.getMaterial(),UtilsFrontEnd.getProfissionalLogado(),new Date(),new BigDecimal(1));
             LogEsterilizacaoSingleton.getInstance().getBo().persist(logEsterilizacao);
@@ -391,13 +391,6 @@ public class EsterilizacaoMB extends LumeManagedBean<Local> {
         this.enableEsterilizacao = enableEsterilizacao;
     }
 
-    public Dominio getJustificativa() {
-        return justificativa;
-    }
-
-    public void setJustificativa(Dominio justificativa) {
-        this.justificativa = justificativa;
-    }
 
     public List<Dominio> getJustificativas() {
         List<Dominio> justificativas = new ArrayList<>();
@@ -522,6 +515,16 @@ public class EsterilizacaoMB extends LumeManagedBean<Local> {
     
     public void setEstoquesSelecionados(List<Estoque> estoquesSelecionados) {
         this.estoquesSelecionados = estoquesSelecionados;
+    }
+
+    
+    public String getJustificativa() {
+        return justificativa;
+    }
+
+    
+    public void setJustificativa(String justificativa) {
+        this.justificativa = justificativa;
     }  
 
 

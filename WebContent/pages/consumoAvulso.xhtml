@@ -96,15 +96,13 @@
 									</p:inputText> 
 								</p:outputPanel>
                     		</p:panelGrid>                     
-		                    <p:panelGrid columns="6" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+		                    <p:panelGrid columns="3" columnClasses="ui-grid-col-4,ui-grid-col-4,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
 		                        style="border:0px none; background-color:transparent;">                                
 		                        <p:commandButton id="pesquisar" icon="White fa fa-search" value="Pesquisar" 
 		                        actionListener="#{consumoAvulsoMB.pesquisaItens('consumo')}" update=":lume:dtEstoque"
 		                            process="@this,painelPesquisa" styleClass="OrangeButton" />						
 								<h:panelGroup></h:panelGroup>                            
-								<h:panelGroup></h:panelGroup>
-								<h:panelGroup></h:panelGroup>
-								<h:panelGroup></h:panelGroup>
+								<h:panelGroup></h:panelGroup>							
 		                    </p:panelGrid>              
 							
 						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
@@ -175,7 +173,7 @@
 									</p:inputText> 
 								</p:outputPanel>
                     		</p:panelGrid>                     
-		                    <p:panelGrid columns="6" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+		                    <p:panelGrid columns="3" columnClasses="ui-grid-col-4,ui-grid-col-4,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
 		                        style="border:0px none; background-color:transparent;">                                
 		                        <p:commandButton id="pesquisarDescarte" icon="White fa fa-search" value="Pesquisar" 
 		                        actionListener="#{consumoAvulsoMB.pesquisaItens('descarte')}" update=":lume:dtEstoqueDescarte"

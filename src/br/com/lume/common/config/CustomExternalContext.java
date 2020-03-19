@@ -13,7 +13,21 @@ public class CustomExternalContext extends ExternalContextWrapper {
 
     @Override
     public String encodeWebsocketURL(String url) {
-        return super.encodeWebsocketURL(url).replaceFirst("ws://", "wss://");
+        String encodeWebsocketURL = super.encodeWebsocketURL(url);
+       // System.out.println("teste: " + encodeWebsocketURL);        
+       
+        if(encodeWebsocketURL.contains("ltdeapp07")) {
+            System.out.println("a: " + encodeWebsocketURL);     
+            return encodeWebsocketURL.replace("ltdeapp07:8080", "dev-intelidente.lumetec.com.br");
+        //    return encodeWebsocketURL.replace("ltdeapp07", "localhost");
+            //8443
+        }else {
+            System.out.println("b: " + encodeWebsocketURL);
+            
+            return encodeWebsocketURL.replaceFirst("ws://", "wss://").replace("azprintelidenteapp", "sistema.intelidente.com");
+        }
+       
+        
     }
 
     public static class Factory extends ExternalContextFactory {
