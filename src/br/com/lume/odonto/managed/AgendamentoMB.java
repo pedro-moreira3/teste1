@@ -225,7 +225,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
     
     public List<Profissional> sugestoesProfissionais(String query) {
-        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
+        return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false);
     }
 
     public void carregarAgenda() {
