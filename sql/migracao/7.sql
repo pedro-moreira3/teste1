@@ -114,3 +114,8 @@ FROM OBJETO_PROFISSIONAL OP
 LEFT JOIN SEG_OBJETO O
 	ON O.OBJ_INT_COD = OP.OBJ_INT_COD
 WHERE O.OBJ_STR_DES = 'Pagamentos/Recebimentos';
+
+alter table tarifa add column status varchar(1);
+alter table tarifa add column ultima_alteracao_por bigint references PROFISSIONAL(ID);
+update tarifa set status = 'A' where excluido = 'N'
+update tarifa set status = 'N' where excluido = 'S'
