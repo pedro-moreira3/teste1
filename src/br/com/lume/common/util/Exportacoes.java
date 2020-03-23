@@ -181,11 +181,8 @@ public class Exportacoes implements Serializable{
         try {
             
             ArrayList<Integer> colunasValidas = validarColunas(table);
-            
             Document documento = new Document(PageSize.A4.rotate(),30,30,30,30);
-            
             ByteArrayOutputStream outputData = new ByteArrayOutputStream();            
-            
             PdfWriter pdfWriter = PdfWriter.getInstance(documento, outputData);
             
             documento.open();
@@ -334,8 +331,7 @@ public class Exportacoes implements Serializable{
                     
                     if(tabelaColunas.get(j).isExportable()) {
                         
-                        if( !((tabelaColunas.get(j).getChildren().toString().contains("HtmlPanelGroup")) || (tabelaColunas.get(j).getChildren().toString().contains("CommandButton")) ||
-                                (tabelaColunas.get(j).getChildren().toString().contains("Button"))) ) {
+                        if( !((tabelaColunas.get(j).getChildren().toString().contains("HtmlPanelGroup"))) ) {
                             colunasValidas.add(j);
                         }
                         
@@ -360,7 +356,6 @@ public class Exportacoes implements Serializable{
         }else if(obj instanceof String){
             return (String) obj;
         }
-        
         return "";
     }
     
