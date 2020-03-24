@@ -55,6 +55,34 @@ public class AjusteContasMB extends LumeManagedBean<AjusteContas> {
         }
     }
 
+    public PlanoTratamento extractPTFromAC(AjusteContas ac) {
+        return AjusteContasSingleton.getInstance().extractPTFromAC(ac);
+    }
+
+    public String getAjusteFromAC(AjusteContas ac) {
+        try {
+            if (ac.getOrigensPTP() != null)
+                return "Fatura " + ac.getOrigensPTP().getFaturaAjuste().getId().longValue();
+            else if (ac.getOrigensRepasse() != null)
+                return "Fatura " + ac.getOrigensRepasse().getFaturaAjuste().getId().longValue();
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+        return null;
+    }
+
+    public String getOrigemFromAC(AjusteContas ac) {
+        try {
+            if (ac.getOrigensPTP() != null)
+                return "Fatura " + ac.getOrigensPTP().getFaturaOrigem().getId().longValue();
+            else if (ac.getOrigensRepasse() != null)
+                return "Fatura " + ac.getOrigensRepasse().getRepasseFaturas().getFaturaRepasse().getId().longValue();
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+        return null;
+    }
+
     public List<Paciente> geraSugestoes(String query) {
         return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }

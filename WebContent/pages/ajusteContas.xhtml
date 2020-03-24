@@ -5,6 +5,22 @@
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
+
+		<style>
+.centerPanels .ui-panel .ui-panel-titlebar, .centerPanels .ui-panel .ui-panel-content
+	{
+	text-align: center;
+}
+
+.lessPaddingSides .ui-panelgrid-cell {
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+}
+</style>
+
+		<ui:include src="faturaView.xhtml" />
+		<p:remoteCommand name="onCloseFaturaView" process="@this" />
+
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -116,37 +132,135 @@
 						binding="#{ajusteContasMB.tabelaAjustes}">
 						<f:facet name="header">Ajuste de Contas</f:facet>
 
+						<p:column style="width:16px">
+							<p:rowToggler />
+						</p:column>
+
 						<p:column headerText="Origem" filterBy="#{ajuste.origemStr}"
-							sortBy="#{ajuste.origemStr}">
+							sortBy="#{ajuste.origemStr}" width="20%">
 							<h:outputText value="#{ajuste.origemStr}" />
 						</p:column>
 
+						<p:column headerText="Plano de Tratamento"
+							filterBy="#{ajusteContasMB.extractPTFromAC(ajuste).descricao}"
+							sortBy="#{ajusteContasMB.extractPTFromAC(ajuste).descricao}"
+							width="15%">
+							<h:outputText
+								value="#{ajusteContasMB.extractPTFromAC(ajuste).descricao}" />
+						</p:column>
+
 						<p:column headerText="Valor" filterBy="#{ajuste.valor}"
-							sortBy="#{ajuste.valor}">
+							sortBy="#{ajuste.valor}" width="7.5%">
 							<h:outputText value="#{ajuste.valor}">
 								<f:convertNumber currencySymbol="R$" type="currency"
 									maxFractionDigits="2" />
 							</h:outputText>
 						</p:column>
 
-						<p:column headerText="Tipo"
+						<p:column headerText="Tipo" width="7.5%"
 							filterBy="#{ajuste.tipoPagamento.descricao}"
 							sortBy="#{ajuste.tipoPagamento.descricao}">
 							<h:outputText value="#{ajuste.tipoPagamento.descricao}" />
 						</p:column>
 
-						<p:column headerText="Status"
+						<p:column headerText="Status" width="10%"
 							filterBy="#{ajuste.status.descricao}"
 							sortBy="#{ajuste.status.descricao}">
 							<h:outputText value="#{ajuste.status.descricao}" />
 						</p:column>
 
-						<p:column headerText="Data de Criação"
+						<p:column headerText="Data de Criação" width="10%"
 							filterBy="#{ajuste.dataCriacao}" sortBy="#{ajuste.dataCriacao}">
 							<h:outputText value="#{ajuste.dataCriacao}">
 								<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 							</h:outputText>
 						</p:column>
+
+						<p:column headerText="Fatura de Origem" filterMatchMode="contains"
+							filterBy="#{ajusteContasMB.getOrigemFromAC(ajuste)}"
+							sortBy="#{ajusteContasMB.getOrigemFromAC(ajuste)}" width="10%">
+							<p:outputPanel rendered="#{ajuste.origensPTP != null}">
+								<p:commandLink process="@this"
+									title="Visualizar Fatura Original de Recebimento"
+									value="#{ajusteContasMB.getOrigemFromAC(ajuste)}"
+									actionListener="#{faturaPagtoMB.visualizaFatura(ajuste.origensPTP.faturaOrigem)}"
+									oncomplete="PF('dlgFaturaView').show();"
+									update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+							</p:outputPanel>
+							<p:outputPanel rendered="#{ajuste.origensRepasse != null}">
+								<p:commandLink process="@this"
+									title="Visualizar Fatura Original de Repasse"
+									value="#{ajusteContasMB.getOrigemFromAC(ajuste)}"
+									actionListener="#{faturaPagtoMB.visualizaFatura(ajuste.origensRepasse.repasseFaturas.faturaRepasse)}"
+									oncomplete="PF('dlgFaturaView').show();"
+									update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+							</p:outputPanel>
+						</p:column>
+
+						<p:column headerText="Fatura de Ajuste" filterMatchMode="contains"
+							filterBy="#{ajusteContasMB.getAjusteFromAC(ajuste)}"
+							sortBy="#{ajusteContasMB.getAjusteFromAC(ajuste)}" width="10%">
+							<p:outputPanel rendered="#{ajuste.origensPTP != null}">
+								<p:commandLink process="@this"
+									title="Visualizar Fatura de Ajuste do Recebimento"
+									value="#{ajusteContasMB.getAjusteFromAC(ajuste)}"
+									actionListener="#{faturaPagtoMB.visualizaFatura(ajuste.origensPTP.faturaAjuste)}"
+									oncomplete="PF('dlgFaturaView').show();"
+									update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+							</p:outputPanel>
+							<p:outputPanel rendered="#{ajuste.origensRepasse != null}">
+								<p:commandLink process="@this"
+									title="Visualizar Fatura de Ajuste do Repasse"
+									value="#{ajusteContasMB.getAjusteFromAC(ajuste)}"
+									actionListener="#{faturaPagtoMB.visualizaFatura(ajuste.origensRepasse.faturaAjuste)}"
+									oncomplete="PF('dlgFaturaView').show();"
+									update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+							</p:outputPanel>
+						</p:column>
+
+						<p:rowExpansion>
+							<p:outputPanel rendered="#{ajuste.origensPTP != null}">
+								<p:panelGrid columns="3" layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
+									<p:panel header="Valor Total">
+										<h:outputText value="#{ajuste.origensPTP.valorTotal}">
+											<f:convertNumber currencySymbol="R$ " type="currency" />
+										</h:outputText>
+									</p:panel>
+									<p:panel header="Valor Pago">
+										<h:outputText value="#{ajuste.origensPTP.valorPago}">
+											<f:convertNumber currencySymbol="R$ " type="currency" />
+										</h:outputText>
+									</p:panel>
+									<p:panel header="Valor Executado">
+										<h:outputText value="#{ajuste.origensPTP.valorExecutado}">
+											<f:convertNumber currencySymbol="R$ " type="currency" />
+										</h:outputText>
+									</p:panel>
+								</p:panelGrid>
+							</p:outputPanel>
+							<p:outputPanel rendered="#{ajuste.origensRepasse != null}">
+								<p:panelGrid columns="2" layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
+									<p:panel header="Valor Total">
+										<h:outputText value="#{ajuste.origensPTP.valorTotal}">
+											<f:convertNumber currencySymbol="R$ " type="currency" />
+										</h:outputText>
+									</p:panel>
+									<p:panel header="Valor Pago">
+										<h:outputText value="#{ajuste.origensPTP.valorPago}">
+											<f:convertNumber currencySymbol="R$ " type="currency" />
+										</h:outputText>
+									</p:panel>
+								</p:panelGrid>
+							</p:outputPanel>
+							<p:panelGrid columns="1" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
+								<p:panel header="Justificativa">
+									<h:outputText value="#{ajuste.justificativa}" />
+								</p:panel>
+							</p:panelGrid>
+						</p:rowExpansion>
 
 					</p:dataTable>
 
