@@ -40,7 +40,9 @@
 								<h:outputText for="dataInicial"
 									value="Data de criação do procedimento de:" />
 								<p:calendar id="dataInicial"
-									value="#{ajusteContasMB.dataInicio}" />
+									value="#{ajusteContasMB.dataInicio}">
+
+								</p:calendar>
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
@@ -50,14 +52,67 @@
 							</h:panelGroup>
 
 						</p:panelGrid>
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<h:panelGroup styleClass="md-inputfield">
+								<h:outputText for="filtroPaciente" value="Paciente" />
+								<p:autoComplete id="filtroPaciente" dropdown="true"
+									queryDelay="1000" value="#{ajusteContasMB.paciente}"
+									minQueryLength="3" scrollHeight="400"
+									completeMethod="#{ajusteContasMB.geraSugestoes}" var="p"
+									itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+									converter="paciente" forceSelection="true"
+									styleClass="paciente tallerAutoComplete">
+
+									<p:column headerText="Código" style="text-align: center;">
+										<h:outputText value="#{p.codigo}" />
+									</p:column>
+									<p:column headerText="Nome">
+										<h:outputText value="#{p.dadosBasico.nome}" />
+									</p:column>
+									<p:column headerText="Celular">
+										<h:outputText value="#{p.dadosBasico.celular}" />
+									</p:column>
+									<p:column headerText="Nome da Mãe">
+										<h:outputText value="#{p.nomeMae}" />
+									</p:column>
+
+									<p:ajax event="itemSelect"
+										listener="#{ajusteContasMB.actionTrocaPaciente}"
+										update="filtroPT" />
+								</p:autoComplete>
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPT" value="Plano de Tratamento" />
+								<p:selectOneMenu id="filtroPT" value="#{ajusteContasMB.pt}"
+									converter="planoTratamento"
+									disabled="#{ajusteContasMB.pts == null or ajusteContasMB.pts.isEmpty()}">
+									<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
+									<f:selectItems value="#{ajusteContasMB.pts}" var="pt"
+										itemValue="#{pt}" itemLabel="#{pt.descricao}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+
+						</p:panelGrid>
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<p:commandButton icon="fa fa-search" value="Pesquisar"
+								process="@this, :lume:filtroAjuste"
+								update=":lume:dtPrincipalAjustes"
+								actionListener="#{ajusteContasMB.pesquisar}" />
+
+						</p:panelGrid>
 					</p:fieldset>
 					<br />
 
 					<p:dataTable filterDelay="1500" reflow="true"
-						emptyMessage="Nenhum registro encontrado"
-						id="dtPrincipalPacientes" value="#{ajusteContasMB.entityList}"
-						var="ajuste" rows="10" paginator="true" rowKey="#{ajuste}"
-						paginatorPosition="bottom" widgetVar="dtPrincipalAjustes"
+						emptyMessage="Nenhum registro encontrado" id="dtPrincipalAjustes"
+						value="#{ajusteContasMB.entityList}" var="ajuste" rows="10"
+						paginator="true" rowKey="#{ajuste}" paginatorPosition="bottom"
+						widgetVar="dtPrincipalAjustes"
 						binding="#{ajusteContasMB.tabelaAjustes}">
 						<f:facet name="header">Ajuste de Contas</f:facet>
 

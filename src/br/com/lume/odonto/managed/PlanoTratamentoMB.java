@@ -350,7 +350,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 // cancelaAgendamentos();
                 PrimeFaces.current().executeScript("PF('devolver').hide()");
 
-                for (Orcamento orcamento : OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(getEntity()))
+                List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(getEntity());
+                for (Orcamento orcamento : orcamentos)
                     OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
             }
             PlanoTratamentoSingleton.getInstance().encerrarPlanoTratamento(getEntity(), this.justificativa, UtilsFrontEnd.getProfissionalLogado());
@@ -1721,16 +1722,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void carregarStatusDente() {
-        if(UtilsFrontEnd.getProfissionalLogado() != null) {
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
             HashSet<StatusDente> hashSet = new HashSet<>();
             statusDente = StatusDenteSingleton.getInstance().getBo().listAllTemplate(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             hashSet.addAll(statusDente);
             statusDenteEmpresa = StatusDenteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             hashSet.addAll(statusDenteEmpresa);
             statusDente = new ArrayList<>(hashSet);
-            statusDente.sort((o1, o2) -> o1.getDescricao().compareTo(o2.getDescricao())); 
+            statusDente.sort((o1, o2) -> o1.getDescricao().compareTo(o2.getDescricao()));
         }
-       
+
     }
     // ================================================= TELA ================================================ //
 
