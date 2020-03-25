@@ -105,6 +105,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 getListaStatus().add(Fatura.StatusFatura.PAGO.getRotulo());
                 getListaStatus().add(Fatura.StatusFatura.PENDENTE.getRotulo());
                 getListaStatus().add(Fatura.StatusFatura.TODOS.getRotulo());
+                getListaStatus().add(Fatura.StatusFatura.INTERROMPIDO.getRotulo());
                 setStatus(Fatura.StatusFatura.PENDENTE.getRotulo());
                 setShowLancamentosCancelados(false);
                 carregarProfissionais();
