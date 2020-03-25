@@ -1,0 +1,454 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	>
+	<ui:define name="content">
+		<style>
+.ui-growl {
+	z-index: 999999 !important;
+}
+
+.ui-dialog {
+	overflow: auto !important;
+}
+
+div.ui-selectoneradio label {
+	width: auto !important;
+}
+
+.labelInlineParent {
+	padding-top: 0px !important;
+	padding-bottom: 20px !important;
+}
+
+.labelInline label {
+	display: inline !important;
+}
+
+.ui-dialog {
+	overflow: auto !important;
+}
+
+.fc-time-grid-container {
+	height: auto !important;
+}
+
+.ui-growl {
+	z-index: 999999 !important;
+}
+
+div.ui-selectoneradio label {
+	width: auto !important;
+}
+
+.fc-time-grid-event>.fc-content {
+	text-align: left !important;
+}
+
+.fc-toolbar {
+	padding: 0 !important;
+}
+
+.fc .fc-left, .fc .fc-left .fc-button-group, .fc .fc-right .fc-button-group
+	{
+	display: inline-flex !important;
+}
+
+.fc .fc-right .fc-button-group button {
+	width: 100px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell {
+	padding: 0px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:first-child {
+	padding-right: 7px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:last-child {
+	padding-left: 7px !important;
+}
+
+.removeSecondPadding>.ui-panelgrid-content .ui-grid-row .ui-panelgrid-cell:nth-child(1)
+	{
+	padding-top: 0px !important;
+}
+
+.ui-selectmanycheckbox tr td {
+	position: relative;
+	display: inline-flex !important;
+	width: 238px !important
+}
+
+.ui-selectmanycheckbox tr td>div>div:last-child {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.ui-selectmanycheckbox tr td label {
+	position: relative;
+	display: inline-flex !important;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child {
+	position: relative;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child div {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.NoChildPadding>div {
+	padding: 0px !important;
+}
+
+.ui-fluid .ui-buttonset.ui-buttonset-3 .ui-button {
+	width: 33.3% !important;
+}
+
+.ggl-tooltip {
+	background-color: #ffffff;
+	border: 1px solid #e0e0e0;
+	font-family: Arial, Helvetica;
+	font-size: 14px;
+	padding: 8px;
+}
+
+.ggl-tooltip span {
+	font-weight: bold;
+}
+
+.chartCadeiras>div, .chartProfissionais>div {
+	max-width: 100%;
+	overflow: auto;
+	overflow-y: hidden;
+}
+
+/*AJUSTE DO CAMPO FILTRO POR CONVENIO*/
+body .ui-selectonemenu {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+ui-selectonemenu-label {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
+	margin-top: 2.5px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
+	{
+	margin-top: -12px !important;
+}
+
+.ui-datepicker td.reported-day a {
+  font-weight: bold !important;
+}
+
+.ui-datepicker td.holiday a {
+  font-weight: bold !important;
+}
+
+.holiday {
+  color: red !important;
+}
+
+.reported-day {
+  color: blue  !important;
+}
+</style>
+
+<script type="text/javascript">
+  function markHolidaysAndReportedDays(date) {	
+    var holidays = new Array(#{fn:join(agendamentoRapidoMB.getHolidays(), ',')});
+    for (var i = 0; i &lt; holidays.length; i++) {    	
+      if(date.getTime() == new Date(holidays[i]).getTime()) {    	
+        return [true, 'holiday'];
+      }
+    }
+    var reportedDays = new Array(#{fn:join(agendamentoRapidoMB.getReportedDays(), ',')});
+    for (var i = 0; i &lt; reportedDays.length; i++) {    	
+      if(date.getTime() == new Date(reportedDays[i]).getTime()) {    	
+        return [true, 'reported-day'];
+      }
+    }
+    return [true, ''];
+  };
+</script>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<h1>Agendamento Rápido</h1>
+
+					<p:separator styleClass="SeparatorFull" />
+
+					<p:fieldset id="filtroRelatorio" header="Filtro" toggleable="true"
+						toggleSpeed="500">
+						<p:outputPanel>
+							<p:panelGrid columns="1" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+								style="border:0px none; background-color:transparent;">
+
+								<p:outputPanel>
+
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
+										<h:panelGroup>
+											<h:outputText for="filtroProfissional"
+												value="Profissional:" />
+											<p:autoComplete id="filtroProfissional"
+												value="#{agendamentoRapidoMB.filtroPorProfissional}"
+												completeMethod="#{agendamentoRapidoMB.sugestoesProfissionais}"
+												var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
+												itemValue="#{p}" converter="profissional"
+												forceSelection="true" scrollHeight="400" queryDelay="1000"
+												dropdown="true">
+												<p:ajax event="itemSelect" process="@this" />
+											</p:autoComplete>
+										</h:panelGroup>
+									</p:panelGrid>
+									<p:panelGrid columns="5" layout="grid"
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
+										<p:outputPanel>	
+											<h:outputText for="data" value="Data do agendamento:" />								
+											<p:calendar value="#{agendamentoRapidoMB.data}" mode="inline"
+												  pattern="dd/MM/yyyy"
+												  navigator="true" effect="slide"
+												  locale="#{lumeSecurity.locale}"
+												  timeZone="#{lumeSecurity.timeZone}"
+												  readonlyInput="true" beforeShowDay="markHolidaysAndReportedDays"
+												  yearRange="-2:+2" 
+												  id="data" widgetVar="data"
+												  showOtherMonths="true">	
+												   <p:ajax event="dateSelect" update="" global="true" process="@this"  />											 
+											</p:calendar>
+										</p:outputPanel>	
+										<p:outputPanel>	<br/><br/><br/><br/>
+											<p:outputPanel id="pnFiltroStatus">
+											<p:outputLabel value="Legenda: " />	
+												<p:panelGrid columns="1" layout="grid"
+													styleClass="ui-panelgrid-blank ui-fluid form-group">
+													<div class='clienteNaClinica legendaFiltroAgendamento'></div>Mais que 50% Livre;<br/><br/>
+													<div class='agendamentoPrecadastro legendaFiltroAgendamento'></div>Menos que 50% Livre;<br/><br/>
+													<div class='agendamentoNaoConfirmado legendaFiltroAgendamento'></div>Menos que 10% Livre.
+												</p:panelGrid>
+											</p:outputPanel>
+										</p:outputPanel>
+									</p:panelGrid>
+								</p:outputPanel>
+
+								
+
+								<p:outputPanel>
+
+									<p:panelGrid columns="3" layout="grid"
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+										<h:panelGroup>
+											<p:commandButton value="Pesquisar"
+												action="#{agendamentoRapidoMB.popularLista}"
+												icon="White fa fa-search"
+												update=":lume:dtRelAtendimento,:lume:filtroRelatorio"
+												process="@this,:lume:filtroRelatorio"
+												styleClass="NavyButton" />
+										</h:panelGroup>
+									</p:panelGrid>
+
+								</p:outputPanel>
+
+							</p:panelGrid>
+						</p:outputPanel>
+					</p:fieldset>
+
+					<h:panelGroup>
+
+						<p:dataTable id="dtRelAtendimento" widgetVar="dtRelAtendimento"
+							value="#{agendamentoRapidoMB.listaAgendamentos}"
+							var="atendimento" rowKey="#{atendimento}" rows="10"
+							paginator="true" paginatorPosition="bottom" reflow="true"
+							emptyMessage="Nenhum registro encontrado"					
+							selection="#{agendamentoRapidoMB.entity}"
+							selectionMode="single" filterDelay="1000">
+
+							<f:facet name="header">Agendamentos do dia selecionado
+							</f:facet>
+
+							<p:column headerText="Ações">
+								<p:commandButton id="btnView" icon="White fa fa-eye"
+									oncomplete="PF('dlgAgendamento').show();"
+									update=":lume:dlgGerarRelatorio" width="5%"
+									action="#{agendamentoMB.setEntity(atendimento)}"
+									process="@this">
+									<p:ajax
+										listener="#{agendamentoRapidoMB.abreNovoAgendamento()}" />
+									<p:ajax
+										listener="#{agendamentoRapidoMB.setEntity(atendimento)}" />									
+									<p:ajax
+										listener="#{agendamentoMB.popularAgendamento(atendimento)}" />
+									<p:tooltip for="btnView" value="Agendar" />
+								</p:commandButton>
+
+							</p:column>
+
+							<p:column filterBy="#{atendimento.paciente.dadosBasico.nome}"
+								sortBy="#{atendimento.paciente.dadosBasico.nome}"
+								filterFunction="#{agendamentoRapidoMB.filtroSemAcento}"
+								headerText="Paciente">
+
+								<p:commandLink value="#{atendimento.paciente.dadosBasico.nome}"
+									process="@this" title="#{atendimento.paciente.id}"
+									actionListener="#{tabPacienteMB.loadPaciente(atendimento.paciente)}"
+									oncomplete="PF('dlgFichaPaciente').show()"
+									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+
+							</p:column>
+
+							<p:column
+								filterBy="#{atendimento.paciente.dadosBasico.telefoneStr}"
+								sortBy="#{atendimento.paciente.dadosBasico.telefoneStr}"
+								filterMatchMode="contains" headerText="Telefone">
+
+								<h:outputText
+									value="#{atendimento.paciente.dadosBasico.telefoneStr}" />
+
+								<p:button id="whats" icon="White fa fa-whatsapp"
+									rendered="#{atendimento.paciente.dadosBasico.celular != null}"
+									onclick="window.open('#{agendamentoRapidoMB.getUrlWpp(atendimento.paciente)}'); return false;"
+									styleClass="GreenButton" style="margin-left:10px;" />
+								<p:tooltip for="whats" value="Enviar mensagem" />
+							</p:column>
+
+							<p:column
+								filterBy="#{atendimento.paciente.convenio.dadosBasico.nome}"
+								sortBy="#{atendimento.paciente.convenio.dadosBasico.nome}"
+								filterFunction="#{agendamentoRapidoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Convênio">
+								<h:outputText
+									value="#{atendimento.paciente.convenio.dadosBasico.nome}" />
+							</p:column>
+
+							<p:column filterBy="#{atendimento.profissional.dadosBasico.nome}"
+								sortBy="#{atendimento.profissional.dadosBasico.nome}"
+								filterFunction="#{agendamentoRapidoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Dentista executor">
+								<h:outputText
+									value="#{atendimento.profissional.dadosBasico.nome}" />
+							</p:column>
+
+							<p:column filterBy="#{atendimento.dataUltAlteracao}"
+								sortBy="#{atendimento.dataUltAlteracao}"
+								filterMatchMode="contains" headerText="Data última alteração">
+								<h:outputText
+									value="#{agendamentoRapidoMB.formatarData(atendimento.dataUltAlteracao)}" />
+							</p:column>
+
+							<p:column
+								filterBy="#{atendimento.profissionalUltAlteracao.dadosBasico.nome}"
+								sortBy="#{atendimento.profissionalUltAlteracao.dadosBasico.nome}"
+								filterFunction="#{agendamentoRapidoMB.filtroSemAcento}"
+								filterMatchMode="contains"
+								headerText="Última alteração realizada por">
+								<h:outputText
+									value="#{atendimento.profissionalUltAlteracao.dadosBasico.nome}" />
+							</p:column>
+
+							<p:column
+								filterBy="#{atendimento.finalidadeAgendamento.descricao}"
+								sortBy="#{atendimento.finalidadeAgendamento.descricao}"
+								filterFunction="#{agendamentoRapidoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Consulta inicial">
+								<h:outputText
+									value="#{atendimento.finalidadeAgendamento.descricao}" />
+							</p:column>
+
+							<p:column filterBy="#{atendimento.inicio}"
+								sortBy="#{atendimento.inicio}" filterMatchMode="contains"
+								headerText="Data agendada">
+								<h:outputText
+									value="#{agendamentoRapidoMB.formatarData(atendimento.inicio)}" />
+							</p:column>
+
+							<p:column
+								filterBy="#{agendamentoRapidoMB.getStatusDescricao(atendimento)}"
+								sortBy="#{agendamentoRapidoMB.getStatusDescricao(atendimento)}"
+								filterFunction="#{agendamentoRapidoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Status do agendamento">
+								<h:outputText
+									value="#{agendamentoRapidoMB.getStatusDescricao(atendimento)}" />
+							</p:column>
+						</p:dataTable>
+
+					</h:panelGroup>
+
+					
+					<p:dialog widgetVar="dlgAgendamento" header="Agendamento"
+						resizable="false" id="pnAgendamento" responsive="true"
+						modal="true" appendTo=":lume"
+						onHide="PF('dlgAgendamento').toggleMaximize();"
+						onShow="PF('dlgAgendamento').toggleMaximize();">
+
+						<p:outputPanel id="pnDlgAgendamento"
+							style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
+							<p:scrollPanel mode="native"
+								style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
+								<ui:include src="dlgagendamento.xhtml" />
+							</p:scrollPanel>
+						</p:outputPanel>
+
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+							<h:panelGroup
+								rendered="#{agendamentoMB.habilitaSalvar}">
+								<p:commandButton id="persist" icon="White fa fa-save"
+									process="pnAgendamento" value="Salvar"
+									actionListener="#{agendamentoMB.actionPersist}"
+									styleClass="GreenButton"
+									update=":lume:dtRelAtendimento,:lume:filtroRelatorio" />
+							</h:panelGroup>
+							<p:commandButton icon="White fa fa-close" value="Fechar"
+								process="@this"
+								update=":lume:dtRelAtendimento,:lume:filtroRelatorio"
+								onclick="PF('dlgAgendamento').hide()" />
+						</p:panelGrid>
+					</p:dialog>
+
+					
+
+				
+
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			//<![CDATA[
+			function handleDialogRequest(xhr, status, args) {
+				console.debug('handleDialogRequest');
+				console.debug(args);
+				if (args.dlg == true) {
+					PF('eventDialog').hide();
+				} else {
+					window.scrollTo(0, 0);
+				}
+			}
+
+			//]]>
+		</script>
+	</ui:define>
+</ui:composition>
