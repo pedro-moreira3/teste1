@@ -171,7 +171,7 @@
 								disabled="#{!ajusteContasMB.permiteCriarFaturaAjuste(ajuste)}"
 								actionListener="#{ajusteContasMB.criarFaturaAjuste(ajuste)}" />
 							<p:commandButton icon="fa fa-check"
-								title="Gerar fatura de Ajuste" styleClass="GreenButton"
+								title="Resolver Ajuste" styleClass="GreenButton"
 								process="@this" update="dtPrincipalAjustes"
 								disabled="#{!ajusteContasMB.permiteResolverAjuste(ajuste)}"
 								actionListener="#{ajusteContasMB.resolverAjuste(ajuste)}" />
