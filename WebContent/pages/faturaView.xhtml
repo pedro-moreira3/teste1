@@ -403,7 +403,7 @@ body .sideChkBox .ui-chkbox-label {
 										actionListener="#{pTPCustoDiretoMB.abreDialog(faturaPagtoMB.buscaPTPOrigemRepasse(l))}"
 										process="@this"
 										rendered="#{(repasseProfissional != null and repasseProfissional == 'S')}"
-										disabled="#{faturaPagtoMB.buscaPTPOrigemRepasse(l) == null}">
+										disabled="#{faturaPagtoMB.buscaPTPOrigemRepasse(l) == null or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}">
 									</p:commandButton>
 								</p:column>
 								<p:column styleClass="cabecalho" width="10%"

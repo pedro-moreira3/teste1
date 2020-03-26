@@ -17,7 +17,7 @@
 				actionListener="#{repasseProfissionalMB.pesquisar}" />
 		</p:outputPanel>
 
-		
+
 		<p:remoteCommand name="onHidePacienteFicha" process="@this"
 			update=":lume:viewFaturaRepasse" />
 
@@ -91,12 +91,13 @@
 														<h:panelGroup>
 															<p:outputLabel for="status" value="Status: " />
 															<p:selectOneMenu id="status"
+																converter="enumStatusRepasse"
 																value="#{repasseProfissionalMB.status}">
 																<f:selectItem itemValue="#{null}" itemLabel="Todos" />
-																<f:selectItem itemValue="1"
-																	itemLabel="Não disponível para repasse" />
-																<f:selectItem itemValue="2"
-																	itemLabel="Pendente de repasse" />
+																<f:selectItems
+																	value="#{repasseProfissionalMB.statusList}"
+																	var="status" itemLabel="#{status.descricao}"
+																	itemValue="#{status}" />
 															</p:selectOneMenu>
 														</h:panelGroup>
 
