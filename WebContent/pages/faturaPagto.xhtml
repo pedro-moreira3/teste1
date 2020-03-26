@@ -14,7 +14,7 @@
 				update="dtPrincipalFaturaRP" />
 		</p:outputPanel>
 
-		
+
 		<p:remoteCommand name="onHidePacienteFicha" process="@this"
 			update=":lume:viewFatura" />
 
@@ -61,11 +61,10 @@
 						</h:panelGroup>
 						<h:panelGroup>
 							<p:outputLabel for="status" value="Status: " />
-							<p:selectOneMenu id="status" value="#{faturaPagtoMB.status}">
-								<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+							<p:selectOneMenu id="status" value="#{faturaPagtoMB.status}"
+								converter="enumStatusFatura">
 								<f:selectItems value="#{faturaPagtoMB.listaStatus}" var="status"
-									itemLabel="#{status}" itemValue="#{status}" />
-								<p:ajax process="@this" />
+									itemLabel="#{status.descricao}" itemValue="#{status}" />
 							</p:selectOneMenu>
 						</h:panelGroup>
 					</p:panelGrid>
@@ -174,9 +173,9 @@
 						</p:column>
 
 						<p:column width="80" headerText="Status"
-							filterBy="#{f.dadosTabelaStatusFatura}"
-							sortBy="#{f.dadosTabelaStatusFatura}" filterMatchMode="contains">
-							<h:outputText value="#{f.dadosTabelaStatusFatura}" />
+							filterBy="#{f.statusFatura.descricao}"
+							sortBy="#{f.statusFatura.descricao}" filterMatchMode="contains">
+							<h:outputText value="#{f.statusFatura.descricao}" />
 						</p:column>
 
 					</p:dataTable>

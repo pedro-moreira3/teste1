@@ -70,6 +70,32 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
         this.geraLista();
     }
     
+    public void actionInativar(ActionEvent event) {
+        if(this.getEntity() != null) {
+            try {
+                TarifaSingleton.getInstance().inativarTarifa(this.getEntity(), UtilsFrontEnd.getProfissionalLogado());
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Sucesso ao inativar");
+            } catch (Exception e) {
+                this.log.error("Erro no actionInativar");
+                e.printStackTrace();
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO),"Erro ao inativar tarifa");
+            }
+        }
+    }
+    
+    public void actionAtivar(ActionEvent event) {
+        if(this.getEntity() != null) {
+            try {
+                TarifaSingleton.getInstance().ativarTarifa(this.getEntity(), UtilsFrontEnd.getProfissionalLogado());
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Sucesso ao ativar tarifa");
+            } catch (Exception e) {
+                this.log.error("Erro no actionAtivar");
+                e.printStackTrace();
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO),"Erro ao ativar tarifa");
+            }
+        }
+    }
+    
     public void exportarTabela(String type) {
         exportarTabela("Tarifas", tabelaTarifa, type);
     }

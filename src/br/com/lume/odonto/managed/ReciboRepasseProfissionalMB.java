@@ -91,10 +91,15 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     }
 
     public void aprovarRecibo(ReciboRepasseProfissional r) {
-        ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(r, UtilsFrontEnd.getProfissionalLogado());
-        addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
-        pesquisarRecibos();
-        PrimeFaces.current().executeScript("PF('dtPrincipal').filter()");
+        try {
+            ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(r, UtilsFrontEnd.getProfissionalLogado());
+            addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+            pesquisarRecibos();
+            PrimeFaces.current().executeScript("PF('dtPrincipal').filter()");
+        } catch (Exception e) {
+            addInfo("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+            e.printStackTrace();
+        }
     }
 
     public void onTabChange(TabChangeEvent event) {

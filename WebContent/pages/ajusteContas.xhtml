@@ -5,6 +5,22 @@
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
+
+		<style>
+.centerPanels .ui-panel .ui-panel-titlebar, .centerPanels .ui-panel .ui-panel-content
+	{
+	text-align: center;
+}
+
+.lessPaddingSides .ui-panelgrid-cell {
+	padding-left: 5px !important;
+	padding-right: 5px !important;
+}
+</style>
+
+		<ui:include src="faturaView.xhtml" />
+		<p:remoteCommand name="onCloseFaturaView" process="@this" />
+
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -40,7 +56,9 @@
 								<h:outputText for="dataInicial"
 									value="Data de criação do procedimento de:" />
 								<p:calendar id="dataInicial"
-									value="#{ajusteContasMB.dataInicio}" />
+									value="#{ajusteContasMB.dataInicio}">
+
+								</p:calendar>
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
@@ -50,48 +68,240 @@
 							</h:panelGroup>
 
 						</p:panelGrid>
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="statusAjuste" value="Status de Ajuste:" />
+								<p:selectOneMenu id="statusAjuste" converter="enumStatusAjuste"
+									value="#{ajusteContasMB.statusAjuste}">
+									<f:selectItem itemValue="#{nul}" itemLabel="Selecione" />
+									<f:selectItems value="#{ajusteContasMB.statusAjustes}"
+										var="status" itemValue="#{status}"
+										itemLabel="#{status.descricao}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="tipoPagamentoAjuste"
+									value="Tipo de Pagamento:" />
+								<p:selectOneMenu id="tipoPagamentoAjuste"
+									converter="enumTipoPagamentoAjuste"
+									value="#{ajusteContasMB.tipoPagamento}">
+									<f:selectItem itemValue="#{nul}" itemLabel="Selecione" />
+									<f:selectItems value="#{ajusteContasMB.tiposPagamento}"
+										var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="md-inputfield">
+								<h:outputText for="filtroPaciente" value="Paciente" />
+								<p:autoComplete id="filtroPaciente" dropdown="true"
+									queryDelay="1000" value="#{ajusteContasMB.paciente}"
+									minQueryLength="3" scrollHeight="400"
+									completeMethod="#{ajusteContasMB.geraSugestoes}" var="p"
+									itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+									converter="paciente" forceSelection="true"
+									styleClass="paciente tallerAutoComplete">
+
+									<p:column headerText="Código" style="text-align: center;">
+										<h:outputText value="#{p.codigo}" />
+									</p:column>
+									<p:column headerText="Nome">
+										<h:outputText value="#{p.dadosBasico.nome}" />
+									</p:column>
+									<p:column headerText="Celular">
+										<h:outputText value="#{p.dadosBasico.celular}" />
+									</p:column>
+									<p:column headerText="Nome da Mãe">
+										<h:outputText value="#{p.nomeMae}" />
+									</p:column>
+
+									<p:ajax event="itemSelect"
+										listener="#{ajusteContasMB.actionTrocaPaciente}"
+										update="filtroPT" />
+								</p:autoComplete>
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPT" value="Plano de Tratamento" />
+								<p:selectOneMenu id="filtroPT" value="#{ajusteContasMB.pt}"
+									converter="planoTratamento"
+									disabled="#{ajusteContasMB.pts == null or ajusteContasMB.pts.isEmpty()}">
+									<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
+									<f:selectItems value="#{ajusteContasMB.pts}" var="pt"
+										itemValue="#{pt}" itemLabel="#{pt.descricao}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+
+						</p:panelGrid>
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<p:commandButton icon="fa fa-search" value="Pesquisar"
+								process="@this, :lume:filtroAjuste"
+								update=":lume:dtPrincipalAjustes"
+								actionListener="#{ajusteContasMB.pesquisar}" />
+
+						</p:panelGrid>
 					</p:fieldset>
 					<br />
 
 					<p:dataTable filterDelay="1500" reflow="true"
-						emptyMessage="Nenhum registro encontrado"
-						id="dtPrincipalPacientes" value="#{ajusteContasMB.entityList}"
-						var="ajuste" rows="10" paginator="true" rowKey="#{ajuste}"
-						paginatorPosition="bottom" widgetVar="dtPrincipalAjustes"
+						emptyMessage="Nenhum registro encontrado" id="dtPrincipalAjustes"
+						value="#{ajusteContasMB.entityList}" var="ajuste" rows="10"
+						paginator="true" rowKey="#{ajuste}" paginatorPosition="bottom"
+						widgetVar="dtPrincipalAjustes"
 						binding="#{ajusteContasMB.tabelaAjustes}">
 						<f:facet name="header">Ajuste de Contas</f:facet>
 
+						<p:column style="width:16px">
+							<p:rowToggler />
+						</p:column>
+
+						<p:column headerText="Ações" width="100">
+							<p:commandButton icon="fa fa-trash" title="Ignorar Ajuste"
+								styleClass="RedButton" process="@this"
+								update="dtPrincipalAjustes"
+								disabled="#{!ajusteContasMB.permiteIgnorarAjuste(ajuste)}"
+								actionListener="#{ajusteContasMB.ignorarAjuste(ajuste)}" />
+							<p:commandButton icon="fa fa-legal"
+								title="Gerar fatura de Ajuste" styleClass="NavyButton"
+								process="@this" update="dtPrincipalAjustes"
+								disabled="#{!ajusteContasMB.permiteCriarFaturaAjuste(ajuste)}"
+								actionListener="#{ajusteContasMB.criarFaturaAjuste(ajuste)}" />
+							<p:commandButton icon="fa fa-check"
+								title="Resolver Ajuste" styleClass="GreenButton"
+								process="@this" update="dtPrincipalAjustes"
+								disabled="#{!ajusteContasMB.permiteResolverAjuste(ajuste)}"
+								actionListener="#{ajusteContasMB.resolverAjuste(ajuste)}" />
+						</p:column>
+
 						<p:column headerText="Origem" filterBy="#{ajuste.origemStr}"
-							sortBy="#{ajuste.origemStr}">
+							sortBy="#{ajuste.origemStr}" width="20%">
 							<h:outputText value="#{ajuste.origemStr}" />
 						</p:column>
 
+						<p:column headerText="Plano de Tratamento"
+							filterBy="#{ajusteContasMB.extractPTFromAC(ajuste).descricao}"
+							sortBy="#{ajusteContasMB.extractPTFromAC(ajuste).descricao}"
+							width="15%">
+							<h:outputText
+								value="#{ajusteContasMB.extractPTFromAC(ajuste).descricao}" />
+						</p:column>
+
 						<p:column headerText="Valor" filterBy="#{ajuste.valor}"
-							sortBy="#{ajuste.valor}">
+							sortBy="#{ajuste.valor}" width="7.5%">
 							<h:outputText value="#{ajuste.valor}">
 								<f:convertNumber currencySymbol="R$" type="currency"
 									maxFractionDigits="2" />
 							</h:outputText>
 						</p:column>
 
-						<p:column headerText="Tipo"
+						<p:column headerText="Tipo" width="7.5%"
 							filterBy="#{ajuste.tipoPagamento.descricao}"
 							sortBy="#{ajuste.tipoPagamento.descricao}">
 							<h:outputText value="#{ajuste.tipoPagamento.descricao}" />
 						</p:column>
 
-						<p:column headerText="Status"
+						<p:column headerText="Status" width="10%"
 							filterBy="#{ajuste.status.descricao}"
 							sortBy="#{ajuste.status.descricao}">
 							<h:outputText value="#{ajuste.status.descricao}" />
 						</p:column>
 
-						<p:column headerText="Data de Criação"
+						<p:column headerText="Data de Criação" width="10%"
 							filterBy="#{ajuste.dataCriacao}" sortBy="#{ajuste.dataCriacao}">
 							<h:outputText value="#{ajuste.dataCriacao}">
 								<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 							</h:outputText>
 						</p:column>
+
+						<p:column headerText="Fatura de Origem" filterMatchMode="contains"
+							filterBy="#{ajusteContasMB.getOrigemFromAC(ajuste)}"
+							sortBy="#{ajusteContasMB.getOrigemFromAC(ajuste)}" width="10%">
+							<p:outputPanel rendered="#{ajuste.origensPTP != null}">
+								<p:commandLink process="@this"
+									title="Visualizar Fatura Original de Recebimento"
+									value="#{ajusteContasMB.getOrigemFromAC(ajuste)}"
+									actionListener="#{faturaPagtoMB.visualizaFatura(ajuste.origensPTP.faturaOrigem)}"
+									oncomplete="PF('dlgFaturaView').show();"
+									update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+							</p:outputPanel>
+							<p:outputPanel rendered="#{ajuste.origensRepasse != null}">
+								<p:commandLink process="@this"
+									title="Visualizar Fatura Original de Repasse"
+									value="#{ajusteContasMB.getOrigemFromAC(ajuste)}"
+									actionListener="#{faturaPagtoMB.visualizaFatura(ajuste.origensRepasse.repasseFaturas.faturaRepasse)}"
+									oncomplete="PF('dlgFaturaView').show();"
+									update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+							</p:outputPanel>
+						</p:column>
+
+						<p:column headerText="Fatura de Ajuste" filterMatchMode="contains"
+							filterBy="#{ajusteContasMB.getAjusteFromAC(ajuste)}"
+							sortBy="#{ajusteContasMB.getAjusteFromAC(ajuste)}" width="10%">
+							<p:outputPanel rendered="#{ajuste.origensPTP != null}">
+								<p:commandLink process="@this"
+									title="Visualizar Fatura de Ajuste do Recebimento"
+									value="#{ajusteContasMB.getAjusteFromAC(ajuste)}"
+									actionListener="#{faturaPagtoMB.visualizaFatura(ajuste.origensPTP.faturaAjuste)}"
+									oncomplete="PF('dlgFaturaView').show();"
+									update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+							</p:outputPanel>
+							<p:outputPanel rendered="#{ajuste.origensRepasse != null}">
+								<p:commandLink process="@this"
+									title="Visualizar Fatura de Ajuste do Repasse"
+									value="#{ajusteContasMB.getAjusteFromAC(ajuste)}"
+									actionListener="#{faturaPagtoMB.visualizaFatura(ajuste.origensRepasse.faturaAjuste)}"
+									oncomplete="PF('dlgFaturaView').show();"
+									update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+							</p:outputPanel>
+						</p:column>
+
+						<p:rowExpansion>
+							<p:outputPanel rendered="#{ajuste.origensPTP != null}">
+								<p:panelGrid columns="3" layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
+									<p:panel header="Valor Total">
+										<h:outputText value="#{ajuste.origensPTP.valorTotal}">
+											<f:convertNumber currencySymbol="R$ " type="currency" />
+										</h:outputText>
+									</p:panel>
+									<p:panel header="Valor Pago">
+										<h:outputText value="#{ajuste.origensPTP.valorPago}">
+											<f:convertNumber currencySymbol="R$ " type="currency" />
+										</h:outputText>
+									</p:panel>
+									<p:panel header="Valor Executado">
+										<h:outputText value="#{ajuste.origensPTP.valorExecutado}">
+											<f:convertNumber currencySymbol="R$ " type="currency" />
+										</h:outputText>
+									</p:panel>
+								</p:panelGrid>
+							</p:outputPanel>
+							<p:outputPanel rendered="#{ajuste.origensRepasse != null}">
+								<p:panelGrid columns="2" layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
+									<p:panel header="Valor Total">
+										<h:outputText value="#{ajuste.origensRepasse.valorTotal}">
+											<f:convertNumber currencySymbol="R$ " type="currency" />
+										</h:outputText>
+									</p:panel>
+									<p:panel header="Valor Pago">
+										<h:outputText value="#{ajuste.origensRepasse.valorPago}">
+											<f:convertNumber currencySymbol="R$ " type="currency" />
+										</h:outputText>
+									</p:panel>
+								</p:panelGrid>
+							</p:outputPanel>
+							<p:panelGrid columns="1" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
+								<p:panel header="Justificativa">
+									<h:outputText value="#{ajuste.justificativa}" />
+								</p:panel>
+							</p:panelGrid>
+						</p:rowExpansion>
 
 					</p:dataTable>
 

@@ -237,10 +237,26 @@ body .sideChkBox .ui-chkbox-label {
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}"
 									id="pacienteFaturaOrigem" readonly="true"
 									value="#{faturaPagtoMB.entity.dadosTabelaRepassePlanoTratamento.paciente.dadosBasico.nome}" />
-								<p:column
+								<h:outputText for="statusFatura" value="Status da Fatura:"
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}" />
-								<p:column
+								<p:inputText id="statusFatura"
+									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
+									value="#{faturaPagtoMB.entity.statusFatura.descricao}"
+									readonly="true"
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}" />
+
+								<h:outputText for="statusFatura2" value="Status da Fatura:"
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}" />
+								<p:inputText id="statusFatura2"
+									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
+									value="#{faturaPagtoMB.entity.statusFatura.descricao}"
+									readonly="true"
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}" />
+								<p:column
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}" />
+								<p:column
+									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}" />
+
 							</p:panelGrid>
 
 							<p:panelGrid columns="4" layout="grid"
@@ -350,7 +366,8 @@ body .sideChkBox .ui-chkbox-label {
 									rendered="#{(showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.admin)
 											 or (repasseProfissional != null or repasseProfissional == 'S')}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
-										title="Cancelar lançamento" disabled="#{!l.ativo}"
+										title="Cancelar lançamento"
+										disabled="#{!l.ativo or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}"
 										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
 										actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
 										process="@this"
@@ -365,7 +382,7 @@ body .sideChkBox .ui-chkbox-label {
 										actionListener="#{faturaPagtoMB.confereLancamentoRepasse(l)}"
 										process="@this"
 										rendered="#{(repasseProfissional == null and repasseProfissional != 'S') and (showNewLancamento != null and showNewLancamento == 'S')}"
-										disabled="#{l.pagamentoConferido == 'S' or !l.ativo}">
+										disabled="#{l.pagamentoConferido == 'S' or !l.ativo or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											message="Você confirma este recebimento?">
 										</p:confirm>
@@ -386,7 +403,7 @@ body .sideChkBox .ui-chkbox-label {
 										actionListener="#{pTPCustoDiretoMB.abreDialog(faturaPagtoMB.buscaPTPOrigemRepasse(l))}"
 										process="@this"
 										rendered="#{(repasseProfissional != null and repasseProfissional == 'S')}"
-										disabled="#{faturaPagtoMB.buscaPTPOrigemRepasse(l) == null}">
+										disabled="#{faturaPagtoMB.buscaPTPOrigemRepasse(l) == null or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}">
 									</p:commandButton>
 								</p:column>
 								<p:column styleClass="cabecalho" width="10%"
@@ -405,10 +422,12 @@ body .sideChkBox .ui-chkbox-label {
 								<p:column sortBy="#{l.tributo}" filterMatchMode="contains"
 									filterBy="#{l.tributo}" headerText="Tributos" width="5%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
-									<h:outputText rendered="#{!repasseProfissional == 'S'}" value="#{l.tributoPerc}">
+									<h:outputText rendered="#{!repasseProfissional == 'S'}"
+										value="#{l.tributoPerc}">
 										<f:convertNumber type="percent" maxFractionDigits="2" />
 									</h:outputText>
-									<h:outputText rendered="#{repasseProfissional == 'S'}" value="0%">
+									<h:outputText rendered="#{repasseProfissional == 'S'}"
+										value="0%">
 									</h:outputText>
 								</p:column>
 								<p:column sortBy="#{l.dataPagamentoStr}"
@@ -519,7 +538,7 @@ body .sideChkBox .ui-chkbox-label {
 			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
 				process="@this" update="pnlNewLancamento" styleClass="OrangeButton"
 				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
-				disabled="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0}"
+				disabled="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0 or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}"
 				actionListener="#{faturaPagtoMB.actionNewLancamento}"
 				oncomplete="PF('dlgNewLancamento').show()" />
 			<p:commandButton value="Visualizar Impressão" icon="fa fa-print"
