@@ -22,6 +22,7 @@ import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.Fatura.StatusFatura;
 import br.com.lume.odonto.entity.Fatura.TipoFatura;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Paciente;
@@ -37,7 +38,7 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
     private Paciente paciente;
     private boolean showLancamentosCancelados = false;
     private List<Lancamento> lAPagar, lAReceber;
-    private String status;
+    private StatusFatura status;
     private PlanoTratamento[] ptSelecionados = new PlanoTratamento[] {};
 
     //EXPORTAÇÃO TABELA
@@ -70,7 +71,7 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
             }
 
             setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), (inicio == null ? null : inicio.getTime()),
-                    (fim == null ? null : fim.getTime()), Fatura.StatusFatura.getTipoFromRotulo(getStatus())));
+                    (fim == null ? null : fim.getTime()), status));
             if (getEntityList() != null)
                 getEntityList().forEach(fatura -> {
                     fatura.setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
@@ -245,11 +246,11 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
         this.tabelaFatura = tabelaFatura;
     }
 
-    public String getStatus() {
+    public StatusFatura getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusFatura status) {
         this.status = status;
     }
 
