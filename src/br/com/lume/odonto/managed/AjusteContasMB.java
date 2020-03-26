@@ -1,6 +1,7 @@
 package br.com.lume.odonto.managed;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,8 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.AjusteContas;
+import br.com.lume.odonto.entity.AjusteContas.StatusAjuste;
+import br.com.lume.odonto.entity.AjusteContas.TipoPagamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.paciente.PacienteSingleton;
@@ -32,6 +35,8 @@ public class AjusteContasMB extends LumeManagedBean<AjusteContas> {
     private Paciente paciente;
     private Date dataInicio, dataFim;
     private String filtroPeriodo;
+    private StatusAjuste statusAjuste;
+    private TipoPagamento tipoPagamento;
 
     private DataTable tabelaAjustes;
 
@@ -48,7 +53,7 @@ public class AjusteContasMB extends LumeManagedBean<AjusteContas> {
         try {
             if (this.paciente == null)
                 this.pts = new ArrayList<>();
-            setEntityList(AjusteContasSingleton.getInstance().getBo().findByFilters(dataInicio, dataFim, pt, paciente, UtilsFrontEnd.getEmpresaLogada()));
+            setEntityList(AjusteContasSingleton.getInstance().getBo().findByFilters(dataInicio, dataFim, pt, paciente, statusAjuste, tipoPagamento, UtilsFrontEnd.getEmpresaLogada()));
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS));
@@ -160,6 +165,14 @@ public class AjusteContasMB extends LumeManagedBean<AjusteContas> {
         }
     }
 
+    public List<StatusAjuste> getStatusAjustes() {
+        return Arrays.asList(StatusAjuste.values());
+    }
+
+    public List<TipoPagamento> getTiposPagamento() {
+        return Arrays.asList(TipoPagamento.values());
+    }
+
     public Date getDataInicio() {
         return dataInicio;
     }
@@ -214,6 +227,22 @@ public class AjusteContasMB extends LumeManagedBean<AjusteContas> {
 
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
+    }
+
+    public StatusAjuste getStatusAjuste() {
+        return statusAjuste;
+    }
+
+    public void setStatusAjuste(StatusAjuste statusAjuste) {
+        this.statusAjuste = statusAjuste;
+    }
+
+    public TipoPagamento getTipoPagamento() {
+        return tipoPagamento;
+    }
+
+    public void setTipoPagamento(TipoPagamento tipoPagamento) {
+        this.tipoPagamento = tipoPagamento;
     }
 
 }

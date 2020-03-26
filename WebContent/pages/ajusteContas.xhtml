@@ -71,6 +71,29 @@
 						<p:panelGrid columns="2" layout="grid"
 							styleClass="ui-panelgrid-blank ui-fluid form-group">
 
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="statusAjuste" value="Status de Ajuste:" />
+								<p:selectOneMenu id="statusAjuste" converter="enumStatusAjuste"
+									value="#{ajusteContasMB.statusAjuste}">
+									<f:selectItem itemValue="#{nul}" itemLabel="Selecione" />
+									<f:selectItems value="#{ajusteContasMB.statusAjustes}"
+										var="status" itemValue="#{status}"
+										itemLabel="#{status.descricao}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="tipoPagamentoAjuste"
+									value="Tipo de Pagamento:" />
+								<p:selectOneMenu id="tipoPagamentoAjuste"
+									converter="enumTipoPagamentoAjuste"
+									value="#{ajusteContasMB.tipoPagamento}">
+									<f:selectItem itemValue="#{nul}" itemLabel="Selecione" />
+									<f:selectItems value="#{ajusteContasMB.tiposPagamento}"
+										var="tipo" itemValue="#{tipo}" itemLabel="#{tipo.descricao}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+
 							<h:panelGroup styleClass="md-inputfield">
 								<h:outputText for="filtroPaciente" value="Paciente" />
 								<p:autoComplete id="filtroPaciente" dropdown="true"

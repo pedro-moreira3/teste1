@@ -3,6 +3,7 @@ package br.com.lume.odonto.managed;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +31,7 @@ import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.Fatura.StatusFatura;
 import br.com.lume.odonto.entity.Fatura.TipoFatura;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
@@ -60,8 +62,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private List<Dominio> formasPagamento;
     private PlanoTratamento[] ptSelecionados = new PlanoTratamento[] {};
     private List<PlanoTratamento> listaPt;
-    private String status;
-    private List<String> listaStatus;
+    private StatusFatura status;
+    private List<StatusFatura> listaStatus;
     private boolean showLancamentosCancelados = false;
 
     private FaturaItem itemSelecionado;
@@ -101,12 +103,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 //setFim(now.getTime());
 
                 setFormasPagamento(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma"));
-                setListaStatus(new ArrayList<>());
-                getListaStatus().add(Fatura.StatusFatura.PAGO.getRotulo());
-                getListaStatus().add(Fatura.StatusFatura.PENDENTE.getRotulo());
-                getListaStatus().add(Fatura.StatusFatura.TODOS.getRotulo());
-                getListaStatus().add(Fatura.StatusFatura.INTERROMPIDO.getRotulo());
-                setStatus(Fatura.StatusFatura.PENDENTE.getRotulo());
+                setListaStatus(Arrays.asList(Fatura.StatusFatura.values()));
+                setStatus(Fatura.StatusFatura.PENDENTE);
                 setShowLancamentosCancelados(false);
                 carregarProfissionais();
 
@@ -267,7 +265,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             }
 
             setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), (inicio == null ? null : inicio.getTime()),
-                    (fim == null ? null : fim.getTime()), Fatura.StatusFatura.getTipoFromRotulo(getStatus())));
+                    (fim == null ? null : fim.getTime()), this.status));
             getEntityList().forEach(fatura -> {
                 updateValues(fatura);
             });
@@ -430,9 +428,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         PrimeFaces.current().executeScript("PF('dlgNewLancamento').hide()");
 
     }
-    
+
     public double tributoLancamento(Lancamento lancamento) {
-        
+
         return 0;
     }
 
@@ -644,19 +642,19 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.listaPt = listaPt;
     }
 
-    public String getStatus() {
+    public StatusFatura getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusFatura status) {
         this.status = status;
     }
 
-    public List<String> getListaStatus() {
+    public List<StatusFatura> getListaStatus() {
         return listaStatus;
     }
 
-    public void setListaStatus(List<String> listaStatus) {
+    public void setListaStatus(List<StatusFatura> listaStatus) {
         this.listaStatus = listaStatus;
     }
 
