@@ -285,9 +285,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         if (fatura.getTipoFatura() == Fatura.TipoFatura.PAGAMENTO_PROFISSIONAL)
             fatura.setDadosTabelaRepassePlanoTratamento(fatura.getDadosTabelaPT());
 
-        fatura.setDadosTabelaStatusFatura("A Receber");
-        if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
-            fatura.setDadosTabelaStatusFatura("Recebido");
+        //fatura.setDadosTabelaStatusFatura("A Receber");
+        //if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
+        //fatura.setDadosTabelaStatusFatura("Recebido");
     }
 
     public void changePaciente() {
