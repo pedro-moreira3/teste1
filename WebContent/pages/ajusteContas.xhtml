@@ -159,6 +159,24 @@
 							<p:rowToggler />
 						</p:column>
 
+						<p:column headerText="Ações" width="50">
+							<p:commandButton icon="fa fa-trash" title="Ignorar Ajuste"
+								styleClass="RedButton" process="@this"
+								update="dtPrincipalAjustes"
+								disabled="#{!ajusteContasMB.permiteIgnorarAjuste(ajuste)}"
+								actionListener="#{ajusteContasMB.ignorarAjuste(ajuste)}" />
+							<p:commandButton icon="fa fa-legal"
+								title="Gerar fatura de Ajuste" styleClass="NavyButton"
+								process="@this" update="dtPrincipalAjustes"
+								disabled="#{!ajusteContasMB.permiteCriarFaturaAjuste(ajuste)}"
+								actionListener="#{ajusteContasMB.criarFaturaAjuste(ajuste)}" />
+							<p:commandButton icon="fa fa-check"
+								title="Gerar fatura de Ajuste" styleClass="GreenButton"
+								process="@this" update="dtPrincipalAjustes"
+								disabled="#{!ajusteContasMB.permiteResolverAjuste(ajuste)}"
+								actionListener="#{ajusteContasMB.resolverAjuste(ajuste)}" />
+						</p:column>
+
 						<p:column headerText="Origem" filterBy="#{ajuste.origemStr}"
 							sortBy="#{ajuste.origemStr}" width="20%">
 							<h:outputText value="#{ajuste.origemStr}" />

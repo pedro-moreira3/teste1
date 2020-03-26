@@ -60,6 +60,75 @@ public class AjusteContasMB extends LumeManagedBean<AjusteContas> {
         }
     }
 
+    public boolean permiteResolverAjuste(AjusteContas ajuste) {
+        try {
+            AjusteContasSingleton.getInstance().permiteResolverAjuste(ajuste);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public void resolverAjuste(AjusteContas ajuste) {
+        try {
+            AjusteContasSingleton.getInstance().resolverAjuste(ajuste, UtilsFrontEnd.getProfissionalLogado());
+            addInfo("Sucesso", "Ajuste resolvido com sucesso!");
+
+            if (statusAjuste == StatusAjuste.RESOLVIDO) {
+                int idx = getEntityList().indexOf(ajuste);
+                getEntityList().set(idx, AjusteContasSingleton.getInstance().getBo().find(ajuste));
+            } else
+                pesquisar();
+        } catch (Exception e) {
+            addError("Erro", "Falha ao resolver ajuste. " + e.getMessage());
+        }
+    }
+
+    public boolean permiteIgnorarAjuste(AjusteContas ajuste) {
+        try {
+            AjusteContasSingleton.getInstance().permiteIgnorarAjuste(ajuste);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public void ignorarAjuste(AjusteContas ajuste) {
+        try {
+            AjusteContasSingleton.getInstance().ignorarAjuste(ajuste, UtilsFrontEnd.getProfissionalLogado());
+            addInfo("Sucesso", "Ajuste ignorado com sucesso!");
+
+            if (statusAjuste == StatusAjuste.IGNORADO) {
+                int idx = getEntityList().indexOf(ajuste);
+                getEntityList().set(idx, AjusteContasSingleton.getInstance().getBo().find(ajuste));
+            } else
+                pesquisar();
+        } catch (Exception e) {
+            addError("Erro", "Falha ao ignorar ajuste. " + e.getMessage());
+        }
+    }
+
+    public boolean permiteCriarFaturaAjuste(AjusteContas ajuste) {
+        try {
+            AjusteContasSingleton.getInstance().permiteCriarFaturaAjuste(ajuste);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public void criarFaturaAjuste(AjusteContas ajuste) {
+        try {
+            AjusteContasSingleton.getInstance().criarFaturaAjuste(ajuste, UtilsFrontEnd.getProfissionalLogado());
+            addInfo("Sucesso", "Fatura de ajuste criada!");
+
+            int idx = getEntityList().indexOf(ajuste);
+            getEntityList().set(idx, AjusteContasSingleton.getInstance().getBo().find(ajuste));
+        } catch (Exception e) {
+            addError("Erro", "Falha ao gerar fatura. " + e.getMessage());
+        }
+    }
+
     public PlanoTratamento extractPTFromAC(AjusteContas ac) {
         return AjusteContasSingleton.getInstance().extractPTFromAC(ac);
     }
