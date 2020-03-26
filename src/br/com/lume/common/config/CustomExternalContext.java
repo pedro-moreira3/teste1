@@ -19,12 +19,14 @@ public class CustomExternalContext extends ExternalContextWrapper {
            // return encodeWebsocketURL.replace("ltdeapp07:8080", "dev-intelidente.lumetec.com.br:80");
            // return encodeWebsocketURL.replace("ltdeapp07", "dev-intelidente.lumetec.com.br");
            // return encodeWebsocketURL;
-            return encodeWebsocketURL.replace("ltdeapp07:8080", "dev-intelidente.lumetec.com.br:3001");
+            String retorno = encodeWebsocketURL.replace("ltdeapp07", "dev-intelidente.lumetec.com.br");
+            System.out.println(retorno);
+            return retorno;
         }else {
            // System.out.println("b: " + encodeWebsocketURL);            
            // return encodeWebsocketURL.replaceFirst("ws://", "wss://").replace("azprintelidenteapp", "sistema.intelidente.com");
            // return encodeWebsocketURL.replaceFirst("ws://", "wss://").replace("azprintelidenteapp", "sistema.intelidente.com");
-            return encodeWebsocketURL.replaceFirst("ws://", "wss://").replace("azprintelidenteapp:8080", "sistema.intelidente.com:3001");
+            return encodeWebsocketURL.replaceFirst("ws://", "wss://").replace("azprintelidenteapp", "sistema.intelidente.com");
         }
        
         
