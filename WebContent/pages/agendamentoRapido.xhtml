@@ -308,11 +308,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:column>
 							<p:column filterBy="#{atendimento.inicio}"
 								sortBy="#{atendimento.inicio}" filterMatchMode="contains"
-								headerText="Data agendada">
+								headerText="Hora iniício">
 								<h:outputText
 									value="#{agendamentoRapidoMB.formatarData(atendimento.inicio)}" />
 							</p:column>
-
+							<p:column filterBy="#{atendimento.fim}"
+								sortBy="#{atendimento.fim}" filterMatchMode="contains"
+								headerText="Hora Fim">
+								<h:outputText
+									value="#{agendamentoRapidoMB.formatarData(atendimento.fim)}" />
+							</p:column>
 							<p:column
 								filterBy="#{agendamentoRapidoMB.getStatusDescricao(atendimento)}"
 								sortBy="#{agendamentoRapidoMB.getStatusDescricao(atendimento)}"
