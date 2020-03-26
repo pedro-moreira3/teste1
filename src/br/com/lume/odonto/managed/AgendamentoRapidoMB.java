@@ -6,24 +6,16 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
-import org.primefaces.component.datatable.DataTable;
-import org.primefaces.model.chart.PieChartModel;
 
 import br.com.lume.afastamento.AfastamentoSingleton;
 import br.com.lume.agendamento.AgendamentoSingleton;
@@ -33,17 +25,11 @@ import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.UtilsPrimefaces;
-import br.com.lume.convenio.ConvenioSingleton;
-import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
 import br.com.lume.odonto.entity.Afastamento;
 import br.com.lume.odonto.entity.Agendamento;
-import br.com.lume.odonto.entity.Convenio;
-import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.HorasUteisProfissional;
-import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 
 @ManagedBean
@@ -74,9 +60,19 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     private String[] cheio;
     
+    int quantidadeAgendamentosOcupados = 0;   
+    
     public AgendamentoRapidoMB() {
         super(AgendamentoSingleton.getInstance().getBo());   
         this.setClazz(Agendamento.class);
+      
+        try {
+            filtroPorProfissional = ProfissionalSingleton.getInstance().getBo().find(994l);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        populaAgenda();
     }
     
     public void populaAgenda() {
@@ -89,7 +85,118 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 tempoPadraoConsulta = filtroPorProfissional.getTempoConsulta();
             }          
         }
+        calculaPorcentagemOcupada(data);
         popularLista();
+    }
+
+    private void calculaPorcentagemOcupada(Date data) {
+        try { 
+            if(data != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(data);
+                cal.set(Calendar.DAY_OF_MONTH, 1); 
+                int mes=cal.get(Calendar.MONTH);
+                
+               String[] livre = new String[100];                
+               String[] medio = new String[100];                
+               String[] cheio = new String[100];
+               int contaLivre = 0; 
+               int contaMedio = 0; 
+               int contaCheio = 0; 
+                while (mes==cal.get(Calendar.MONTH)) {
+                    cal.set(Calendar.HOUR_OF_DAY, 0);
+                    cal.set(Calendar.MINUTE, 0);
+                    cal.set(Calendar.SECOND, 0);                    
+                    
+                    int quantidadeAgendamentosDia = 0;                  
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(cal.getTime());
+                    int diaDaSemana = c.get(Calendar.DAY_OF_WEEK);                
+                    String diaString = HorasUteisProfissionalSingleton.getInstance().getBo().getDiaDaSemana(diaDaSemana);
+                    List<HorasUteisProfissional> horasUteis  = HorasUteisProfissionalSingleton.getInstance().getBo().listByProfissionalAndDiaDaSemana(filtroPorProfissional, diaString);
+                    
+                    if(horasUteis != null && !horasUteis.isEmpty()) {                                        
+                        c.setTime(horasUteis.get(0).getHoraIni());                            
+                       horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                       c.setTime(horasUteis.get(0).getHoraFim());                
+                       horariopadraoFim = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
+                    }else {
+                        horariopadraoInico = LocalTime.of(8, 0);                        
+                        horariopadraoFim = LocalTime.of(18, 0);
+                    } 
+                    
+                    LocalDateTime from = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoInico);
+                    LocalDateTime to = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoFim); 
+                    long minutes = from.until(to, ChronoUnit.MINUTES);
+                    long quantidadeHorarios = minutes / tempoPadraoConsulta; 
+                    if(quantidadeHorarios != 0l) {
+                        
+                        Date dataPadraoInicio = criaDataComHorario(cal.getTime(),horariopadraoInico);                        
+                        Date dataPadraoFim = criaDataComHorario(cal.getTime(),horariopadraoFim);
+                        List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo()
+                                .listAgendamentosValidosByDatePorProfissional(filtroPorProfissional,Utils.dateToStringSomenteData(cal.getTime()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());                       
+                        List<Afastamento> afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalValidos(filtroPorProfissional, dataPadraoInicio, dataPadraoFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                   
+                        quantidadeAgendamentosDia = agendamentos.size();
+                        
+                        List<Agendamento> listaCriados = criaAgendamentosPorHora(cal.getTime(),quantidadeHorarios,horariopadraoInico);       
+                       
+                        //TODO melhorar forma de contar quantos afastamentos temos
+                        for (Afastamento afastamento : afastamentos) {
+                            for (Agendamento agendamento : listaCriados) {   
+                                //milisegundo estava vindo com valor                          
+                                agendamento.setFim(zeraMiliLegundos(agendamento.getFim()));
+                                agendamento.setInicio(zeraMiliLegundos(agendamento.getInicio()));                                
+                                if(afastamento.getInicio().equals(agendamento.getInicio()) || 
+                                    (afastamento.getInicio().after(agendamento.getInicio()) && afastamento.getInicio().before(agendamento.getFim()))) {
+                                  //  agendamento.setDescricao("Horário bloqueado");
+                                    quantidadeAgendamentosDia++;
+                                }else if(
+                                      (afastamento.getInicio().before(agendamento.getInicio()) && (afastamento.getFim().equals(agendamento.getInicio()) ||
+                                                afastamento.getFim().after(agendamento.getInicio())
+                                                ))) {
+                                    quantidadeAgendamentosDia++;
+                                }
+                            }
+                        }
+                    }
+                    
+                    System.out.println(cal.getTime()); 
+                    System.out.println("quantidade horarios total: " + quantidadeHorarios); 
+                    System.out.println("quantidadeAgendamentosDia: " + quantidadeAgendamentosDia);        
+                 
+                    if(quantidadeHorarios != 0) {
+                        double porcentagemOcupada = (quantidadeAgendamentosDia * 100) / quantidadeHorarios;
+                        
+                        if(porcentagemOcupada <= 50) {
+                            
+                            
+                            
+                            livre[contaLivre] = Utils.dateToStringAgendaComAspas(cal.getTime()).replace(" ", "T");
+                            contaLivre++;
+                        }else if (porcentagemOcupada > 50 && porcentagemOcupada <= 90) {
+                            medio[contaMedio] = Utils.dateToStringAgendaComAspas(cal.getTime()).replace(" ", "T");
+                            contaMedio++;
+                        }else if(porcentagemOcupada > 90) {
+                            cheio[contaCheio] = Utils.dateToStringAgendaComAspas(cal.getTime()).replace(" ", "T");
+                            contaCheio++;
+                        }
+                        System.out.println("porcentagemOcupada: " + porcentagemOcupada);  
+                    }                    
+                    
+                    cal.add(Calendar.DAY_OF_MONTH, 1);
+                }
+                
+                setLivre(livre); 
+                setMedio(medio);
+                setCheio(cheio);
+            }
+
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
+        
     }
 
     public void popularLista() {
@@ -97,7 +204,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
             if(filtroPorProfissional == null) {
                 this.addError("Escolha um profissional", "");
             }else {
-              
+                this.quantidadeAgendamentosOcupados = 0;
                 Calendar c = Calendar.getInstance();
                 c.setTime(data);
                 int diaDaSemana = c.get(Calendar.DAY_OF_WEEK);                
@@ -105,6 +212,8 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 List<HorasUteisProfissional> horasUteis  = HorasUteisProfissionalSingleton.getInstance().getBo().listByProfissionalAndDiaDaSemana(filtroPorProfissional, diaString);
                 
                 if(horasUteis == null || horasUteis.isEmpty()) {
+                    horariopadraoInico = LocalTime.of(8, 0);                        
+                    horariopadraoFim = LocalTime.of(18, 0);
                     observacoes += "Horas Úteis do profissional não estão configuradas para o dia selecionado, verifique o cadastro! Horário padrão: 08:00 às 18:00. ";
                 }else {                    
                     c.setTime(horasUteis.get(0).getHoraIni());                            
@@ -141,27 +250,49 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                     for (Agendamento agendamentoExistente : agendamentos) {
                         if(agendamentoExistente.getInicio().before(dataPadraoInicio) && !agendamentosAnterioresHoraInicio.contains(agendamentoExistente)) {
                             agendamentosAnterioresHoraInicio.add(agendamentoExistente);
+                            this.quantidadeAgendamentosOcupados++;
                             //se tiver agendamento criado antes da hora padrao do profissional,para criar os automaticos posteriormente,
-                            //precisa começar a partir da hora de térmio
-                            if(agendamentoExistente.getFim().after(dataPadraoInicio)) {
-                                c.setTime(agendamentoExistente.getFim());
-                                horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));                                         
-                            }
+                            //precisa começar a partir da hora de término   
+                            LocalTime horariopadraoInicoAux = horariopadraoInico;
+                            while(agendamentoExistente.getFim().after(dataPadraoInicio)) {
+                                horariopadraoInicoAux = horariopadraoInicoAux.plusMinutes(tempoPadraoConsulta);
+                                dataPadraoInicio = criaDataComHorario(data,horariopadraoInicoAux);
+                                c.setTime(dataPadraoInicio);
+                                horariopadraoInicoAux = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
+                            }   
                         }else if(agendamentoExistente.getInicio().after(dataPadraoFim) && !agendamentosAnterioresHoraFim.contains(agendamentoExistente)) {
-                            agendamentosAnterioresHoraFim.add(agendamentoExistente);                                
+                            agendamentosAnterioresHoraFim.add(agendamentoExistente);  
+                            this.quantidadeAgendamentosOcupados++;
                         }else {   
                             paraSubstituir.add(agendamentoExistente);
                         }                            
                     }
                     
-                    List<Agendamento> listaCriados = criaAgendamentosPorHora(quantidadeHorarios,horariopadraoInico);        
-                        
-                        //index++;
-                   // }
-//                    if(!paraRemover.isEmpty()) {
-//                        listaAgendamentos.removeAll(paraRemover);
-//                    }
-                        
+                    List<Agendamento> listaCriados = criaAgendamentosPorHora(data,quantidadeHorarios,horariopadraoInico);       
+                   
+                    //colocando aviso de bloqueio
+                    for (Afastamento afastamento : afastamentos) {
+                        for (Agendamento agendamento : listaCriados) {   
+                            //milisegundo estava vindo com valor                          
+                            agendamento.setFim(zeraMiliLegundos(agendamento.getFim()));
+                            agendamento.setInicio(zeraMiliLegundos(agendamento.getInicio()));
+                            
+                            if(afastamento.getInicio().equals(agendamento.getInicio()) || 
+                                (afastamento.getInicio().after(agendamento.getInicio()) && afastamento.getInicio().before(agendamento.getFim()))) {
+                                agendamento.setDescricao("Horário bloqueado");
+                                this.quantidadeAgendamentosOcupados++;
+                            }else if(
+                                    (afastamento.getInicio().before(agendamento.getInicio()) && (afastamento.getFim().equals(agendamento.getInicio()) ||
+                                            afastamento.getFim().after(agendamento.getInicio())
+                                            
+                                            ))) {
+                                    agendamento.setDescricao("Horário bloqueado");
+                                    this.quantidadeAgendamentosOcupados++;
+                                }
+                          
+                        }
+                    }
+            
                      listaAgendamentos = new ArrayList<Agendamento>();
                     if(!agendamentosAnterioresHoraInicio.isEmpty()) {
                         listaAgendamentos.addAll(0,agendamentosAnterioresHoraInicio);
@@ -177,31 +308,31 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                                     
                                     //agendamento existente esta entre o inicio e fim, entao somente substitui a linha
                                     if(agendamentoExistente.getFim().before(agendamentoCriado.getFim())) {
-                                        listaAgendamentos.set(listaAgendamentos.indexOf(agendamentoCriado),agendamentoExistente) ;
+                                        listaAgendamentos.add(agendamentoExistente) ;
+                                        this.quantidadeAgendamentosOcupados++;
                                         foiAdicionado = true;
                                    //agendamento existente esta entre o inicio mas o fim é maior que proximo, entao inicio do proximo deve receber hora de fim desse    
                                     }else if(agendamentoExistente.getFim().after(agendamentoCriado.getFim())) {
-                                     //   listaAgendamentos.set(listaAgendamentos.indexOf(agendamentoCriado),agendamentoExistente) ;
-                                       //// agendamentoCriado = agendamentoExistente;
-                                        
-                                        //TODO tem que refazer os proximos a partid da ultima data
-                                    }
-                                   
-                                }
-                                
+                                        listaAgendamentos.add(agendamentoExistente) ;
+                                        this.quantidadeAgendamentosOcupados++;
+                                        foiAdicionado = true;
+                                    }                                   
+                                }                                
                               
                             }
                             if(!foiAdicionado) {
-                                listaAgendamentos.add(agendamentoCriado);
+                                if(listaAgendamentos == null || listaAgendamentos.isEmpty() ||
+                                        agendamentoCriado.getInicio().equals(listaAgendamentos.get(listaAgendamentos.size() -1).getFim()) ||
+                                        agendamentoCriado.getInicio().after(listaAgendamentos.get(listaAgendamentos.size() -1).getFim()) ) {
+                                    listaAgendamentos.add(agendamentoCriado);
+                                }                               
                             }
                         }
                     
                     if(!agendamentosAnterioresHoraFim.isEmpty()) {
                         listaAgendamentos.addAll(agendamentosAnterioresHoraFim);
                     }                    
-                }
-                
-               
+                }               
             }
 
         } catch (Exception e) {
@@ -210,17 +341,25 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         }
     } 
     
+    private Date zeraMiliLegundos(Date data) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(data);                        
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
+
     private Date criaDataComHorario(Date data,LocalTime horario) {
         Calendar calendario =   Calendar.getInstance();      
         calendario.setTime(data);
         calendario.set(Calendar.HOUR_OF_DAY, horario.getHour());
         calendario.set(Calendar.MINUTE, horario.getMinute());
         calendario.set(Calendar.SECOND, horario.getSecond());
+        calendario.set(Calendar.MILLISECOND, 0);
         return calendario.getTime();
         
     }
 
-    private List<Agendamento> criaAgendamentosPorHora(long quantidadeHorarios, LocalTime horaInicio) {
+    private List<Agendamento> criaAgendamentosPorHora(Date data,long quantidadeHorarios, LocalTime horaInicio) {
         List<Agendamento> listaCriados = new ArrayList<Agendamento>();
         for (int i = 0; i < quantidadeHorarios; i++) {
             Agendamento agendamento = new Agendamento();      
@@ -277,34 +416,18 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
   
     
-    public String[] getLivre() {    
-      //  if(filtroPorProfissional != null) {
-            return new String[] {"'2020-03-22T00:00:00'","'2020-03-24T00:00:00'","'2020-03-25T00:00:00'"};
-      //  }
-       // return null;
+    public String[] getLivre() {      
+       //     return new String[] {"'2020-03-22T00:00:00'","'2020-03-24T00:00:00'","'2020-03-25T00:00:00'"};
+        return livre;
     }
 
     public String[] getMedio() {  
-     //   if(filtroPorProfissional != null) {
-            return new String[] {"'2020-03-10T00:00:00'","'2020-03-11T00:00:00'"};
-     //   }
-      //  return null;
+        return medio;
     } 
 
     public String[] getCheio() {    
-      //  if(filtroPorProfissional != null) {
-            return new String[] {"'2020-03-07T00:00:00'","'2020-03-08T00:00:00'"};
-     //   }
-     //   return null;
-    } 
-    
-    public String[] getBloqueio() {    
-        //  if(filtroPorProfissional != null) {
-              return new String[] {"'2020-03-07T00:00:00'","'2020-03-08T00:00:00'"};
-       //   }
-       //   return null;
-      } 
-    
+        return cheio;
+    }     
     
     public String formatarData(Date data) {
         if (data != null) {
@@ -378,6 +501,41 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     public void setHorariopadraoFim(LocalTime horariopadraoFim) {
         this.horariopadraoFim = horariopadraoFim;
+    }
+
+    
+    public int getQuantidadeAgendamentosOcupados() {
+        return quantidadeAgendamentosOcupados;
+    }
+
+    
+    public void setQuantidadeAgendamentosOcupados(int quantidadeAgendamentosOcupados) {
+        this.quantidadeAgendamentosOcupados = quantidadeAgendamentosOcupados;
+    }
+
+    
+    public Logger getLog() {
+        return log;
+    }
+
+    
+    public void setLog(Logger log) {
+        this.log = log;
+    }
+
+    
+    public void setLivre(String[] livre) {
+        this.livre = livre;
+    }
+
+    
+    public void setMedio(String[] medio) {
+        this.medio = medio;
+    }
+
+    
+    public void setCheio(String[] cheio) {
+        this.cheio = cheio;
     }
 
 }
