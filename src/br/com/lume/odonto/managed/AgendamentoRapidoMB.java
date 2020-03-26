@@ -143,8 +143,8 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                             agendamentosAnterioresHoraInicio.add(agendamentoExistente);
                             //se tiver agendamento criado antes da hora padrao do profissional,para criar os automaticos posteriormente,
                             //precisa começar a partir da hora de térmio
-                            if(agendamentoExistente.getInicio().after(dataPadraoInicio)) {
-                                c.setTime(agendamentoExistente.getInicio());
+                            if(agendamentoExistente.getFim().after(dataPadraoInicio)) {
+                                c.setTime(agendamentoExistente.getFim());
                                 horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));                                         
                             }
                         }else if(agendamentoExistente.getInicio().after(dataPadraoFim) && !agendamentosAnterioresHoraFim.contains(agendamentoExistente)) {
@@ -165,9 +165,8 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                      listaAgendamentos = new ArrayList<Agendamento>();
                     if(!agendamentosAnterioresHoraInicio.isEmpty()) {
                         listaAgendamentos.addAll(0,agendamentosAnterioresHoraInicio);
-                    }
-                    
-                    if(!paraSubstituir.isEmpty()) {
+                    }                    
+                  
                         for (Agendamento agendamentoCriado : listaCriados) {
                             boolean foiAdicionado = false;
                             for (Agendamento agendamentoExistente : paraSubstituir) {
@@ -179,6 +178,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                                     //agendamento existente esta entre o inicio e fim, entao somente substitui a linha
                                     if(agendamentoExistente.getFim().before(agendamentoCriado.getFim())) {
                                         listaAgendamentos.set(listaAgendamentos.indexOf(agendamentoCriado),agendamentoExistente) ;
+                                        foiAdicionado = true;
                                    //agendamento existente esta entre o inicio mas o fim é maior que proximo, entao inicio do proximo deve receber hora de fim desse    
                                     }else if(agendamentoExistente.getFim().after(agendamentoCriado.getFim())) {
                                      //   listaAgendamentos.set(listaAgendamentos.indexOf(agendamentoCriado),agendamentoExistente) ;
@@ -195,7 +195,6 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                                 listaAgendamentos.add(agendamentoCriado);
                             }
                         }
-                    }
                     
                     if(!agendamentosAnterioresHoraFim.isEmpty()) {
                         listaAgendamentos.addAll(agendamentosAnterioresHoraFim);
