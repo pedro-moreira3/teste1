@@ -68,13 +68,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     public void populaAgenda() {
         if(filtroPorProfissional != null) {
-            observacoes = "";
-            if(filtroPorProfissional.getTempoConsulta() == null || filtroPorProfissional.getTempoConsulta().equals(0)) {
-                observacoes = "Tempo de consulta padrão do profissional não configurado, verifique o cadastro! Tempo padrão 30 minutos. ";
-                this.addWarn(observacoes, "");
-            }else {
-                tempoPadraoConsulta = filtroPorProfissional.getTempoConsulta();
-            }
+          
             calculaPorcentagemOcupada(data);
             popularLista();
         }
@@ -189,10 +183,19 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void popularLista() {
+        
+        
         try { 
             if(filtroPorProfissional == null) {
                 this.addError("Escolha um profissional", "");
-            }else {                
+            }else {    
+                observacoes = "";
+                if(filtroPorProfissional.getTempoConsulta() == null || filtroPorProfissional.getTempoConsulta().equals(0)) {
+                    observacoes = "Tempo de consulta padrão do profissional não configurado, verifique o cadastro! Tempo padrão 30 minutos. ";
+                    this.addWarn(observacoes, "");
+                }else {
+                    tempoPadraoConsulta = filtroPorProfissional.getTempoConsulta();
+                }
                 Calendar c = Calendar.getInstance();
                 c.setTime(data);
                 int diaDaSemana = c.get(Calendar.DAY_OF_WEEK);                
