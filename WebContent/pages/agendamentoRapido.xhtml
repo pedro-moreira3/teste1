@@ -227,7 +227,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-					<h1>Agendamento Rápido</h1>
+					<h1>Agendamento Por Profissional</h1>
 					<p:fieldset id="filtroRelatorio" header="Filtro" toggleable="true"
 						toggleSpeed="500">
 						<p:outputPanel>
@@ -272,7 +272,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												  id="data" widgetVar="data"
 												  showOtherMonths="true">	
 												   <p:ajax event="dateSelect" update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes" 
-												   global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" oncomplete="PF('dtRelagendamento').filter()"/>													    							 
+												   global="true" process="@this" listener="#{agendamentoRapidoMB.popularLista()}" oncomplete="PF('dtRelagendamento').filter()"/>													    							 
 											</p:calendar>
 										</p:outputPanel>	
 										<p:outputPanel rendered="#{agendamentoRapidoMB.filtroPorProfissional != null}">	<br/><br/><br/><br/>
