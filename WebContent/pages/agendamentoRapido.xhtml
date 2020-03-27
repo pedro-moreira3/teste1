@@ -182,25 +182,29 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 </style>
 
 <script type="text/javascript">
-  function markHolidaysAndReportedDays(date) {	
-	//  console.log(date);
-    var holidays = new Array(#{fn:join(agendamentoRapidoMB.getLivre(), ',')});
-    console.log(holidays);
-    for (var i = 0; i &lt; holidays.length; i++) {    	
-      if(date.getTime() == new Date(holidays[i]).getTime()) {    	
+  function alteraCoresCalendario(date) {	
+	 console.log("entrou");
+	 // var teste = document.getElementById("lume:data");
+	//  console.log("----------------");
+	//  console.log(teste);
+	 // console.log(date);
+    var livre = new Array(#{fn:join(agendamentoRapidoMB.getLivre(), ',')});
+    console.log(livre);
+    for (var i = 0; i &lt; livre.length; i++) {    	
+      if(date.getTime() == new Date(livre[i]).getTime()) {    	
         return [true, 'livre'];
       }
     }
-    var reportedDays = new Array(#{fn:join(agendamentoRapidoMB.getMedio(), ',')});
-    for (var i = 0; i &lt; reportedDays.length; i++) {    	
-      if(date.getTime() == new Date(reportedDays[i]).getTime()) {    	
+    var medio = new Array(#{fn:join(agendamentoRapidoMB.getMedio(), ',')});
+    for (var i = 0; i &lt; medio.length; i++) {    	
+      if(date.getTime() == new Date(medio[i]).getTime()) {    	
         return [true, 'medio'];
       }
     }
     
-    var reportedDays = new Array(#{fn:join(agendamentoRapidoMB.getCheio(), ',')});
-    for (var i = 0; i &lt; reportedDays.length; i++) {    	
-      if(date.getTime() == new Date(reportedDays[i]).getTime()) {    	
+    var cheio = new Array(#{fn:join(agendamentoRapidoMB.getCheio(), ',')});
+    for (var i = 0; i &lt; cheio.length; i++) {    	
+      if(date.getTime() == new Date(cheio[i]).getTime()) {    	
         return [true, 'cheio'];
       }
     }
@@ -234,7 +238,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												forceSelection="true" scrollHeight="400" queryDelay="1000"
 												dropdown="true">
 												<p:ajax event="itemSelect" global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" 
-												update="painelCalendario,:lume:dtRelAtendimento,:lume:filtroRelatorio,observacoes" oncomplete="PF('dtRelAtendimento').filter()"
+												update="painelCalendario,:lume:dtRelAtendimento,:lume:filtroRelatorio,observacoes,data" oncomplete="PF('dtRelAtendimento').filter();"
 												/>
 												
 											</p:autoComplete>
@@ -246,17 +250,17 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:outputPanel rendered="#{agendamentoRapidoMB.filtroPorProfissional != null}">	
 											<h:outputText for="data" value="Data do agendamento:" />		
 																
-											<p:calendar value="#{agendamentoRapidoMB.data}" mode="inline" 
+											<p:calendar value="#{agendamentoRapidoMB.data}" mode="inline" rendered="#{agendamentoRapidoMB.filtroPorProfissional != null}"
 												  pattern="dd/MM/yyyy"
 												  navigator="true" effect="slide"
 												  locale="#{lumeSecurity.locale}"
 												  timeZone="#{lumeSecurity.timeZone}"
-												  readonlyInput="true" beforeShowDay="markHolidaysAndReportedDays"
+												  readonlyInput="true" beforeShowDay="alteraCoresCalendario"
 												  yearRange="-2:+2" 
 												  id="data" widgetVar="data"
 												  showOtherMonths="true">	
 												   <p:ajax event="dateSelect" update="painelCalendario,:lume:dtRelAtendimento,:lume:filtroRelatorio,observacoes" 
-												   global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" oncomplete="PF('dtRelAtendimento').filter()"/>											 
+												   global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" oncomplete="alteraCoresCalendario(this);PF('dtRelAtendimento').filter()"/>													    							 
 											</p:calendar>
 										</p:outputPanel>	
 										<p:outputPanel rendered="#{agendamentoRapidoMB.filtroPorProfissional != null}">	<br/><br/><br/><br/>
@@ -266,8 +270,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 													styleClass="ui-panelgrid-blank ui-fluid form-group">
 													<div class='clienteNaClinica legendaFiltroAgendamento'></div>Mais que 50% Livre;<br/><br/>
 													<div class='agendamentoPrecadastro legendaFiltroAgendamento'></div>Menos que 50% Livre;<br/><br/>
-													<div class='agendamentoNaoConfirmado legendaFiltroAgendamento'></div>Menos que 10% Livre;<br/><br/>
-													<div class='agendamentoConsultaInicial legendaFiltroAgendamento'></div>Bloqueio.
+													<div class='agendamentoNaoConfirmado legendaFiltroAgendamento'></div>Menos que 10% Livre;<br/><br/>													
 												</p:panelGrid>
 											</p:outputPanel>
 										</p:outputPanel>
@@ -293,7 +296,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:column headerText="Ações">
 								<p:commandButton id="btnView" icon="White fa fa-calendar"
 									oncomplete="PF('dlgAgendamento').show();"
-									update="" width="5%"
+									update="" width="5%" rendered="#{atendimento.descricao ne 'Horário bloqueado'}"
 									action="#{agendamentoMB.setEntity(atendimento)}"
 									process="@this">
 									<p:ajax
@@ -304,11 +307,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										listener="#{agendamentoMB.popularAgendamento(atendimento)}" />
 									<p:tooltip for="btnView" value="Agendar" />
 								</p:commandButton>
-
+								<h:outputText rendered="#{atendimento.descricao eq 'Horário bloqueado'}"
+									value="Horário bloqueado" />
 							</p:column>
 							<p:column filterBy="#{atendimento.inicio}"
 								sortBy="#{atendimento.inicio}" filterMatchMode="contains"
-								headerText="Hora iniício">
+								headerText="Hora início">
 								<h:outputText
 									value="#{agendamentoRapidoMB.formatarData(atendimento.inicio)}" />
 							</p:column>

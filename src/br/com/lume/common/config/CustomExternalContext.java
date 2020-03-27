@@ -26,7 +26,7 @@ public class CustomExternalContext extends ExternalContextWrapper {
            // System.out.println("b: " + encodeWebsocketURL);            
            // return encodeWebsocketURL.replaceFirst("ws://", "wss://").replace("azprintelidenteapp", "sistema.intelidente.com");
            // return encodeWebsocketURL.replaceFirst("ws://", "wss://").replace("azprintelidenteapp", "sistema.intelidente.com");
-            String retorno = encodeWebsocketURL.replaceFirst("ws://", "wss://").replace("azprintelidenteapp", "sistema.intelidente.com");
+            String retorno = encodeWebsocketURL.replaceFirst("ws://", "wss://").replace("azprintelidenteapp:8080", "sistema.intelidente.com");
             System.out.println(retorno);
             return retorno;
         }
