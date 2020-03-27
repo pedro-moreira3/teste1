@@ -16,6 +16,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 
 import br.com.lume.afastamento.AfastamentoSingleton;
 import br.com.lume.agendamento.AgendamentoSingleton;
@@ -54,25 +55,15 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     private String observacoes = "";
     
-    private String[] livre;
+    private String livre;
     
-    private String[] medio;
+    private String medio;
     
-    private String[] cheio;
-    
-    int quantidadeAgendamentosOcupados = 0;   
+    private String cheio;
     
     public AgendamentoRapidoMB() {
         super(AgendamentoSingleton.getInstance().getBo());   
-        this.setClazz(Agendamento.class);
-      
-        try {
-            filtroPorProfissional = ProfissionalSingleton.getInstance().getBo().find(994l);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        populaAgenda();
+        this.setClazz(Agendamento.class); 
     }
     
     public void populaAgenda() {
@@ -83,10 +74,11 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 this.addWarn(observacoes, "");
             }else {
                 tempoPadraoConsulta = filtroPorProfissional.getTempoConsulta();
-            }          
+            }
+            calculaPorcentagemOcupada(data);
+            popularLista();
         }
-        calculaPorcentagemOcupada(data);
-        popularLista();
+        
     }
 
     private void calculaPorcentagemOcupada(Date data) {
@@ -97,12 +89,10 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 cal.set(Calendar.DAY_OF_MONTH, 1); 
                 int mes=cal.get(Calendar.MONTH);
                 
-               String[] livre = new String[100];                
-               String[] medio = new String[100];                
-               String[] cheio = new String[100];
-               int contaLivre = 0; 
-               int contaMedio = 0; 
-               int contaCheio = 0; 
+               String livre = "";                
+               String medio = "";              
+               String cheio = "";
+            
                 while (mes==cal.get(Calendar.MONTH)) {
                     cal.set(Calendar.HOUR_OF_DAY, 0);
                     cal.set(Calendar.MINUTE, 0);
@@ -161,27 +151,21 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                         }
                     }
                     
-                    System.out.println(cal.getTime()); 
-                    System.out.println("quantidade horarios total: " + quantidadeHorarios); 
-                    System.out.println("quantidadeAgendamentosDia: " + quantidadeAgendamentosDia);        
+                 //   System.out.println(cal.getTime()); 
+                  //  System.out.println("quantidade horarios total: " + quantidadeHorarios); 
+                  //  System.out.println("quantidadeAgendamentosDia: " + quantidadeAgendamentosDia);        
                  
                     if(quantidadeHorarios != 0) {
                         double porcentagemOcupada = (quantidadeAgendamentosDia * 100) / quantidadeHorarios;
                         
-                        if(porcentagemOcupada <= 50) {
-                            
-                            
-                            
-                            livre[contaLivre] = Utils.dateToStringAgendaComAspas(cal.getTime()).replace(" ", "T");
-                            contaLivre++;
-                        }else if (porcentagemOcupada > 50 && porcentagemOcupada <= 90) {
-                            medio[contaMedio] = Utils.dateToStringAgendaComAspas(cal.getTime()).replace(" ", "T");
-                            contaMedio++;
+                        if(porcentagemOcupada < 50) {                            
+                            livre += Utils.dateToStringAgenda(cal.getTime()).replace(" ", "T") + " ";                          
+                        }else if (porcentagemOcupada >= 50 && porcentagemOcupada <= 90) {
+                            medio += Utils.dateToStringAgenda(cal.getTime()).replace(" ", "T") + " ";                      
                         }else if(porcentagemOcupada > 90) {
-                            cheio[contaCheio] = Utils.dateToStringAgendaComAspas(cal.getTime()).replace(" ", "T");
-                            contaCheio++;
+                            cheio += Utils.dateToStringAgenda(cal.getTime()).replace(" ", "T") + " ";                        
                         }
-                        System.out.println("porcentagemOcupada: " + porcentagemOcupada);  
+                   //     System.out.println("porcentagemOcupada: " + porcentagemOcupada);  
                     }                    
                     
                     cal.add(Calendar.DAY_OF_MONTH, 1);
@@ -190,6 +174,11 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 setLivre(livre); 
                 setMedio(medio);
                 setCheio(cheio);
+                PrimeFaces.current().ajax().update(":lume:livre");
+                PrimeFaces.current().ajax().update(":lume:medio");
+                PrimeFaces.current().ajax().update(":lume:cheio");
+                PrimeFaces.current().ajax().update(":lume:data");
+                
             }
 
         } catch (Exception e) {
@@ -203,8 +192,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         try { 
             if(filtroPorProfissional == null) {
                 this.addError("Escolha um profissional", "");
-            }else {
-                this.quantidadeAgendamentosOcupados = 0;
+            }else {                
                 Calendar c = Calendar.getInstance();
                 c.setTime(data);
                 int diaDaSemana = c.get(Calendar.DAY_OF_WEEK);                
@@ -232,14 +220,12 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 long quantidadeHorarios = minutes / tempoPadraoConsulta; 
                 if(quantidadeHorarios != 0l) {
                     
-                             
-                    
                     Date dataPadraoInicio = criaDataComHorario(data,horariopadraoInico);
                     
                     Date dataPadraoFim = criaDataComHorario(data,horariopadraoFim);                   
                     
                     List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo()
-                            .listAgendamentosValidosByDatePorProfissional(filtroPorProfissional,Utils.dateToStringSomenteData(data), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                            .listAgendamentosNaoCanceladosByDatePorProfissional(filtroPorProfissional,Utils.dateToStringSomenteData(data), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                     List<Agendamento> agendamentosAnterioresHoraInicio = new ArrayList<Agendamento>();
                     List<Agendamento> agendamentosAnterioresHoraFim = new ArrayList<Agendamento>();                  
                     List<Agendamento> paraSubstituir = new ArrayList<Agendamento>();
@@ -249,8 +235,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                     //nos horarios padrão, para substituir nos horarios criados
                     for (Agendamento agendamentoExistente : agendamentos) {
                         if(agendamentoExistente.getInicio().before(dataPadraoInicio) && !agendamentosAnterioresHoraInicio.contains(agendamentoExistente)) {
-                            agendamentosAnterioresHoraInicio.add(agendamentoExistente);
-                            this.quantidadeAgendamentosOcupados++;
+                            agendamentosAnterioresHoraInicio.add(agendamentoExistente);                          
                             //se tiver agendamento criado antes da hora padrao do profissional,para criar os automaticos posteriormente,
                             //precisa começar a partir da hora de término   
                             LocalTime horariopadraoInicoAux = horariopadraoInico;
@@ -261,8 +246,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                                 horariopadraoInicoAux = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
                             }   
                         }else if(agendamentoExistente.getInicio().after(dataPadraoFim) && !agendamentosAnterioresHoraFim.contains(agendamentoExistente)) {
-                            agendamentosAnterioresHoraFim.add(agendamentoExistente);  
-                            this.quantidadeAgendamentosOcupados++;
+                            agendamentosAnterioresHoraFim.add(agendamentoExistente);                             
                         }else {   
                             paraSubstituir.add(agendamentoExistente);
                         }                            
@@ -279,15 +263,13 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                             
                             if(afastamento.getInicio().equals(agendamento.getInicio()) || 
                                 (afastamento.getInicio().after(agendamento.getInicio()) && afastamento.getInicio().before(agendamento.getFim()))) {
-                                agendamento.setDescricao("Horário bloqueado");
-                                this.quantidadeAgendamentosOcupados++;
+                                agendamento.setDescricao("Horário bloqueado");                                
                             }else if(
                                     (afastamento.getInicio().before(agendamento.getInicio()) && (afastamento.getFim().equals(agendamento.getInicio()) ||
                                             afastamento.getFim().after(agendamento.getInicio())
                                             
                                             ))) {
-                                    agendamento.setDescricao("Horário bloqueado");
-                                    this.quantidadeAgendamentosOcupados++;
+                                    agendamento.setDescricao("Horário bloqueado");                                   
                                 }
                           
                         }
@@ -307,14 +289,12 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                                         ) {
                                     
                                     //agendamento existente esta entre o inicio e fim, entao somente substitui a linha
-                                    if(agendamentoExistente.getFim().before(agendamentoCriado.getFim())) {
-                                        listaAgendamentos.add(agendamentoExistente) ;
-                                        this.quantidadeAgendamentosOcupados++;
+                                    if(agendamentoExistente.getFim().equals(agendamentoCriado.getFim()) || agendamentoExistente.getFim().before(agendamentoCriado.getFim())) {
+                                        listaAgendamentos.add(agendamentoExistente) ;                                      
                                         foiAdicionado = true;
                                    //agendamento existente esta entre o inicio mas o fim é maior que proximo, entao inicio do proximo deve receber hora de fim desse    
                                     }else if(agendamentoExistente.getFim().after(agendamentoCriado.getFim())) {
-                                        listaAgendamentos.add(agendamentoExistente) ;
-                                        this.quantidadeAgendamentosOcupados++;
+                                        listaAgendamentos.add(agendamentoExistente) ;                                        
                                         foiAdicionado = true;
                                     }                                   
                                 }                                
@@ -416,16 +396,16 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
   
     
-    public String[] getLivre() {      
+    public String getLivre() {      
        //     return new String[] {"'2020-03-22T00:00:00'","'2020-03-24T00:00:00'","'2020-03-25T00:00:00'"};
         return livre;
     }
 
-    public String[] getMedio() {  
+    public String getMedio() {  
         return medio;
     } 
 
-    public String[] getCheio() {    
+    public String getCheio() {    
         return cheio;
     }     
     
@@ -502,17 +482,6 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     public void setHorariopadraoFim(LocalTime horariopadraoFim) {
         this.horariopadraoFim = horariopadraoFim;
     }
-
-    
-    public int getQuantidadeAgendamentosOcupados() {
-        return quantidadeAgendamentosOcupados;
-    }
-
-    
-    public void setQuantidadeAgendamentosOcupados(int quantidadeAgendamentosOcupados) {
-        this.quantidadeAgendamentosOcupados = quantidadeAgendamentosOcupados;
-    }
-
     
     public Logger getLog() {
         return log;
@@ -524,17 +493,17 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     }
 
     
-    public void setLivre(String[] livre) {
+    public void setLivre(String livre) {
         this.livre = livre;
     }
 
     
-    public void setMedio(String[] medio) {
+    public void setMedio(String medio) {
         this.medio = medio;
     }
 
     
-    public void setCheio(String[] cheio) {
+    public void setCheio(String cheio) {
         this.cheio = cheio;
     }
 

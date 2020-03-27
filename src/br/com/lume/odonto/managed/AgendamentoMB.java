@@ -302,6 +302,19 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
         atualizaPickList();
     }
+    
+    public void agendamentoRapido(Agendamento a) {
+        if (a != null) {
+            profissional = a.getProfissional();
+            profissionalDentroAgenda = profissional;
+            setPacienteSelecionado(a.getPaciente());
+        } else {
+            profissional = null;
+            profissionalDentroAgenda = profissional;
+            pacienteSelecionado = null;
+        }
+        atualizaPickList();
+    }
 
     public void agendarNoRelatorioRelacionamento(Paciente pac, Profissional pro) {
         onDateSelect(null);
