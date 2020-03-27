@@ -268,12 +268,18 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												  locale="#{lumeSecurity.locale}"
 												  timeZone="#{lumeSecurity.timeZone}"
 												  readonlyInput="true" beforeShowDay="alteraCoresCalendario"
-												  yearRange="-2:+2" 
+												  yearRange="-2:+2"
 												  id="data" widgetVar="data"
-												  showOtherMonths="true">	
+												  showOtherMonths="true" >	
 												   <p:ajax event="dateSelect" update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes" 
-												   global="true" process="@this" listener="#{agendamentoRapidoMB.popularLista()}" oncomplete="PF('dtRelagendamento').filter()"/>													    							 
+												   global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" oncomplete="PF('dtRelagendamento').filter()"/>	
+												  										    							 
 											</p:calendar>
+											<p:remoteCommand name="atualizaLista"
+												update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes" 
+												process="@this" actionListener="#{agendamentoRapidoMB.populaAgenda()}" oncomplete="PF('dtRelagendamento').filter()"/>
+											
+											
 										</p:outputPanel>	
 										<p:outputPanel rendered="#{agendamentoRapidoMB.filtroPorProfissional != null}">	<br/><br/><br/><br/>
 											<p:outputPanel id="pnFiltroStatus">

@@ -42,8 +42,12 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     private Logger log = Logger.getLogger(AgendamentoMB.class);
  
     private Profissional filtroPorProfissional;
+    
+    private Profissional filtroPorProfissionalAntigo;
 
     private Date data = new Date();
+    
+    private Date dataAnterior = null;
 
     private List<Agendamento> listaAgendamentos;
 
@@ -69,7 +73,9 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     public void populaAgenda() {
         if(filtroPorProfissional != null) {
           
-            calculaPorcentagemOcupada(data);
+         if((filtroPorProfissionalAntigo == null || !filtroPorProfissionalAntigo.equals(filtroPorProfissional)) || (dataAnterior == null || Utils.getMes(data) != Utils.getMes(dataAnterior))) {
+             calculaPorcentagemOcupada(data);
+         }
             popularLista();
         }
         
@@ -86,7 +92,9 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                String livre = "";                
                String medio = "";              
                String cheio = "";
-            
+               setLivre(livre); 
+               setMedio(medio);
+               setCheio(cheio);
                 while (mes==cal.get(Calendar.MONTH)) {
                     cal.set(Calendar.HOUR_OF_DAY, 0);
                     cal.set(Calendar.MINUTE, 0);
@@ -104,65 +112,63 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                        horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
                        c.setTime(horasUteis.get(0).getHoraFim());                
                        horariopadraoFim = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
-                    }else {
-                        horariopadraoInico = LocalTime.of(8, 0);                        
-                        horariopadraoFim = LocalTime.of(18, 0);
-                    } 
-                    
-                    LocalDateTime from = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoInico);
-                    LocalDateTime to = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoFim); 
-                    long minutes = from.until(to, ChronoUnit.MINUTES);
-                    long quantidadeHorarios = minutes / tempoPadraoConsulta; 
-                    if(quantidadeHorarios != 0l) {
-                        
-                        Date dataPadraoInicio = criaDataComHorario(cal.getTime(),horariopadraoInico);                        
-                        Date dataPadraoFim = criaDataComHorario(cal.getTime(),horariopadraoFim);
-                        List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo()
-                                .listAgendamentosValidosByDatePorProfissional(filtroPorProfissional,Utils.dateToStringSomenteData(cal.getTime()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());                       
-                        List<Afastamento> afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalValidos(filtroPorProfissional, dataPadraoInicio, dataPadraoFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                    
-                        quantidadeAgendamentosDia = agendamentos.size();
-                        
-                        List<Agendamento> listaCriados = criaAgendamentosPorHora(cal.getTime(),quantidadeHorarios,horariopadraoInico);       
+                    
+                        LocalDateTime from = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoInico);
+                        LocalDateTime to = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoFim); 
+                        long minutes = from.until(to, ChronoUnit.MINUTES);
+                        long quantidadeHorarios = minutes / tempoPadraoConsulta; 
+                        if(quantidadeHorarios != 0l) {
+                            
+                            Date dataPadraoInicio = criaDataComHorario(cal.getTime(),horariopadraoInico);                        
+                            Date dataPadraoFim = criaDataComHorario(cal.getTime(),horariopadraoFim);
+                            List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo()
+                                    .listAgendamentosValidosByDatePorProfissional(filtroPorProfissional,Utils.dateToStringSomenteData(cal.getTime()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());                       
+                            List<Afastamento> afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalValidos(filtroPorProfissional, dataPadraoInicio, dataPadraoFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                        
-                        //TODO melhorar forma de contar quantos afastamentos temos
-                        for (Afastamento afastamento : afastamentos) {
-                            for (Agendamento agendamento : listaCriados) {   
-                                //milisegundo estava vindo com valor                          
-                                agendamento.setFim(zeraMiliLegundos(agendamento.getFim()));
-                                agendamento.setInicio(zeraMiliLegundos(agendamento.getInicio()));                                
-                                if(afastamento.getInicio().equals(agendamento.getInicio()) || 
-                                    (afastamento.getInicio().after(agendamento.getInicio()) && afastamento.getInicio().before(agendamento.getFim()))) {
-                                  //  agendamento.setDescricao("Horário bloqueado");
-                                    quantidadeAgendamentosDia++;
-                                }else if(
-                                      (afastamento.getInicio().before(agendamento.getInicio()) && (afastamento.getFim().equals(agendamento.getInicio()) ||
-                                                afastamento.getFim().after(agendamento.getInicio())
-                                                ))) {
-                                    quantidadeAgendamentosDia++;
+                            quantidadeAgendamentosDia = agendamentos.size();
+                            
+                            List<Agendamento> listaCriados = criaAgendamentosPorHora(cal.getTime(),quantidadeHorarios,horariopadraoInico);       
+                           
+                            //TODO melhorar forma de contar quantos afastamentos temos
+                            for (Afastamento afastamento : afastamentos) {
+                                for (Agendamento agendamento : listaCriados) {   
+                                    //milisegundo estava vindo com valor                          
+                                    agendamento.setFim(zeraMiliLegundos(agendamento.getFim()));
+                                    agendamento.setInicio(zeraMiliLegundos(agendamento.getInicio()));                                
+                                    if(afastamento.getInicio().equals(agendamento.getInicio()) || 
+                                        (afastamento.getInicio().after(agendamento.getInicio()) && afastamento.getInicio().before(agendamento.getFim()))) {
+                                      //  agendamento.setDescricao("Horário bloqueado");
+                                        quantidadeAgendamentosDia++;
+                                    }else if(
+                                          (afastamento.getInicio().before(agendamento.getInicio()) && (afastamento.getFim().equals(agendamento.getInicio()) ||
+                                                    afastamento.getFim().after(agendamento.getInicio())
+                                                    ))) {
+                                        quantidadeAgendamentosDia++;
+                                    }
                                 }
                             }
                         }
-                    }
-                    
-                 //   System.out.println(cal.getTime()); 
-                  //  System.out.println("quantidade horarios total: " + quantidadeHorarios); 
-                  //  System.out.println("quantidadeAgendamentosDia: " + quantidadeAgendamentosDia);        
-                 
-                    if(quantidadeHorarios != 0) {
-                        double porcentagemOcupada = (quantidadeAgendamentosDia * 100) / quantidadeHorarios;
                         
-                        if(porcentagemOcupada < 50) {                            
-                            livre += Utils.dateToStringAgenda(cal.getTime()).replace(" ", "T") + " ";                          
-                        }else if (porcentagemOcupada >= 50 && porcentagemOcupada <= 90) {
-                            medio += Utils.dateToStringAgenda(cal.getTime()).replace(" ", "T") + " ";                      
-                        }else if(porcentagemOcupada > 90) {
-                            cheio += Utils.dateToStringAgenda(cal.getTime()).replace(" ", "T") + " ";                        
-                        }
-                   //     System.out.println("porcentagemOcupada: " + porcentagemOcupada);  
-                    }                    
-                    
+                     //   System.out.println(cal.getTime()); 
+                      //  System.out.println("quantidade horarios total: " + quantidadeHorarios); 
+                      //  System.out.println("quantidadeAgendamentosDia: " + quantidadeAgendamentosDia);        
+                     
+                        if(quantidadeHorarios != 0) {
+                            double porcentagemOcupada = (quantidadeAgendamentosDia * 100) / quantidadeHorarios;
+                            
+                            if(porcentagemOcupada < 50) {                            
+                                livre += Utils.dateToStringAgenda(cal.getTime()).replace(" ", "T") + " ";                          
+                            }else if (porcentagemOcupada >= 50 && porcentagemOcupada <= 90) {
+                                medio += Utils.dateToStringAgenda(cal.getTime()).replace(" ", "T") + " ";                      
+                            }else if(porcentagemOcupada > 90) {
+                                cheio += Utils.dateToStringAgenda(cal.getTime()).replace(" ", "T") + " ";                        
+                            }
+                       //     System.out.println("porcentagemOcupada: " + porcentagemOcupada);  
+                        }                    
+                    }
                     cal.add(Calendar.DAY_OF_MONTH, 1);
+                    
                 }
                 
                 setLivre(livre); 
@@ -184,11 +190,12 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
 
     public void popularLista() {
         
-        
+        dataAnterior = data;
         try { 
             if(filtroPorProfissional == null) {
                 this.addError("Escolha um profissional", "");
-            }else {    
+            }else {   
+                filtroPorProfissionalAntigo = filtroPorProfissional;
                 observacoes = "";
                 if(filtroPorProfissional.getTempoConsulta() == null || filtroPorProfissional.getTempoConsulta().equals(0)) {
                     observacoes = "Tempo de consulta padrão do profissional não configurado, verifique o cadastro! Tempo padrão 30 minutos. ";
@@ -508,6 +515,26 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     public void setCheio(String cheio) {
         this.cheio = cheio;
+    }
+
+    
+    public Date getDataAnterior() {
+        return dataAnterior;
+    }
+
+    
+    public void setDataAnterior(Date dataAnterior) {
+        this.dataAnterior = dataAnterior;
+    }
+
+    
+    public Profissional getFiltroPorProfissionalAntigo() {
+        return filtroPorProfissionalAntigo;
+    }
+
+    
+    public void setFiltroPorProfissionalAntigo(Profissional filtroPorProfissionalAntigo) {
+        this.filtroPorProfissionalAntigo = filtroPorProfissionalAntigo;
     }
 
 }
