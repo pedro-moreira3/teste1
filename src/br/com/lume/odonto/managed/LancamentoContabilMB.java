@@ -204,7 +204,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                     dadosBasicos.add(f.getDadosBasico());
                 }
             } else if ("Receber".equals(tipo)) {
-                List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+                List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(idEmpresaLogada, Status.ATIVO);
                 for (Paciente f : pacientes) {
                     f.getDadosBasico().setTipoInformacao("Paciente");
                     dadosBasicos.add(f.getDadosBasico());
