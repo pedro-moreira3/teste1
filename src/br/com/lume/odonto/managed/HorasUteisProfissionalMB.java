@@ -43,7 +43,7 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
 
     private boolean visivel = false;
 
-    private Date horaIni, horaFim;
+    private Date horaIni, horaFim, horaIniTarde, horaFimTarde;
 
     public List<HorasUteisProfissional> horasUteisProfissional;
 
@@ -64,6 +64,8 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
         this.setEntity(new HorasUteisProfissional());
         this.setHoraIni(null);
         this.setHoraFim(null);
+        this.setHoraIniTarde(null);
+        this.setHoraFimTarde(null);
     }
 
     @Override
@@ -89,6 +91,8 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
                                 horasUteis.setProfissional(this.profissionalMB.getEntity());
                                 horasUteis.setHoraIni(this.setSegundos(this.getHoraIni()));
                                 horasUteis.setHoraFim(this.setSegundos(this.getHoraFim()));
+                                horasUteis.setHoraIniTarde(this.setSegundos(this.getHoraIniTarde()));
+                                horasUteis.setHoraFimTarde(this.setSegundos(this.getHoraFimTarde()));
                                 HorasUteisProfissionalSingleton.getInstance().getBo().persist(horasUteis);
                                 this.diasSelecionados = new ArrayList<>();
                             }
@@ -171,6 +175,8 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
         }
         this.setHoraIni(this.getEntity().getHoraIni());
         this.setHoraFim(this.getEntity().getHoraFim());
+        this.setHoraIniTarde(this.getEntity().getHoraIniTarde());
+        this.setHoraFimTarde(this.getEntity().getHoraFimTarde());
     }
 
     public void exportarTabela(String type) {
@@ -231,5 +237,21 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
 
     public void setTabelaHorasUteis(DataTable tabelaHorasUteis) {
         this.tabelaHorasUteis = tabelaHorasUteis;
+    }
+
+    public Date getHoraIniTarde() {
+        return horaIniTarde;
+    }
+
+    public void setHoraIniTarde(Date horaIniTarde) {
+        this.horaIniTarde = horaIniTarde;
+    }
+
+    public Date getHoraFimTarde() {
+        return horaFimTarde;
+    }
+
+    public void setHoraFimTarde(Date horaFimTarde) {
+        this.horaFimTarde = horaFimTarde;
     }
 }

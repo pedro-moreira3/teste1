@@ -179,6 +179,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
    font-weight: bold !important; 
 }
 
+.ui-datepicker .ui-state-highlight{
+ background-color: #3CB371 ;
+}
+
+.ui-datepicker-header{
+  display: none !important;
+}
+
 </style>
 
 <script type="text/javascript">
@@ -219,11 +227,18 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
     
     return [true, ''];
   };
+  
 </script>
 
    <h:inputHidden id="livre" value="#{agendamentoRapidoMB.livre}" />
    <h:inputHidden id="medio" value="#{agendamentoRapidoMB.medio}" />
    <h:inputHidden id="cheio" value="#{agendamentoRapidoMB.cheio}" /> 
+   
+		<p:dialog id="dlgBloqueio" widgetVar="dlgBloqueio"
+				header="Bloqueio de Agenda" responsive="true" modal="true"
+				appendToBody="true">
+				<ui:include src="afastamento.xhtml" />
+		</p:dialog>
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -235,13 +250,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 								style="border:0px none; background-color:transparent;">
 
-								<p:outputPanel>
+								<p:outputPanel id="painelComponentes">
 
 									<p:panelGrid columns="2" layout="grid"
-										styleClass="ui-panelgrid-blank ui-fluid form-group">
+										styleClass="ui-panelgrid-blank ui-fluid form-group" id="painelProfissional">
 										<h:panelGroup>
 											<h:outputText for="filtroProfissional"
-												value="Profissional:" />
+												value="Selecione o Profissional:" />
 											<p:autoComplete id="filtroProfissional"
 												value="#{agendamentoRapidoMB.filtroPorProfissional}"
 												completeMethod="#{agendamentoRapidoMB.sugestoesProfissionais}"
@@ -252,32 +267,67 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<p:ajax event="itemSelect" global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" 
 												update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes,data" oncomplete="PF('dtRelagendamento').filter();"
 												/>
-												
 											</p:autoComplete>
 										</h:panelGroup>
 										
-									</p:panelGrid>									
+									</p:panelGrid>
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank ui-fluid form-group" >
+										<h:panelGroup>
+											<h:outputText for="filtroMes"
+												value="Mês:" />
+											<p:selectOneMenu id="filtroMes"
+												style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+												value="#{agendamentoRapidoMB.mes}">									
+												<f:selectItems
+													value="#{agendamentoRapidoMB.sugestoesMes()}"
+													var="mes" itemLabel="#{mes}"
+											itemValue="#{mes}" />
+											<p:ajax event="itemSelect" global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" 
+												update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes,data" oncomplete="PF('dtRelagendamento').filter();"
+												/>
+											</p:selectOneMenu>											
+										</h:panelGroup>
+										
+									</p:panelGrid>	
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
+										<h:panelGroup>
+											<h:outputText for="filtroAno"
+												value="Ano:" />
+											<p:selectOneMenu id="filtroAno"
+												style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+												value="#{agendamentoRapidoMB.ano}">									
+												<f:selectItems
+													value="#{agendamentoRapidoMB.sugestoesAno()}"
+													var="ano" itemLabel="#{ano}"
+													itemValue="#{ano}" />
+													<p:ajax event="itemSelect" global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" 
+												update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes,data" oncomplete="PF('dtRelagendamento').filter();"
+												/>
+											</p:selectOneMenu>	
+										</h:panelGroup>										
+									</p:panelGrid>	
+																																				
 									<p:panelGrid columns="5" layout="grid" id="painelCalendario" 
 										styleClass="ui-panelgrid-blank ui-fluid form-group">
 										<p:outputPanel >	
-											<h:outputText for="data" value="Data do agendamento:" />		
-																
+											<h:outputText for="data" value="Selecione o dia:" />	
 											<p:calendar value="#{agendamentoRapidoMB.data}" mode="inline" 
 												  pattern="dd/MM/yyyy"
-												  navigator="true" effect="slide"
+												  navigator="false" 
 												  locale="#{lumeSecurity.locale}"
 												  timeZone="#{lumeSecurity.timeZone}"
 												  readonlyInput="true" beforeShowDay="alteraCoresCalendario"
 												  yearRange="-2:+2"
 												  id="data" widgetVar="data"
-												  showOtherMonths="true" >	
+												  showOtherMonths="false"
+												  >
 												   <p:ajax event="dateSelect" update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes" 
-												   global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" oncomplete="PF('dtRelagendamento').filter()"/>	
-												  										    							 
+												   global="true" process="@this" listener="#{agendamentoRapidoMB.selecionaDia()}" oncomplete="PF('dtRelagendamento').filter()"/>	
+												 													 								    							 
 											</p:calendar>
-											<p:remoteCommand name="atualizaLista"
-												update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes" 
-												process="@this" actionListener="#{agendamentoRapidoMB.populaAgenda()}" oncomplete="PF('dtRelagendamento').filter()"/>
+											
 											
 											
 										</p:outputPanel>	
@@ -293,6 +343,22 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											</p:outputPanel>
 										</p:outputPanel>
 									</p:panelGrid>
+									<p:panelGrid columns="4" layout="grid" id="painelBotao" 
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
+										<p:outputPanel>	</p:outputPanel>
+										<p:outputPanel>	</p:outputPanel>								
+										<p:commandButton id="encaixe" icon="White fa fa-calendar White"
+										value="Encaixe" actionListener="#{agendamentoMB.agendamentoRapidoEncaixe(agendamentoRapidoMB.filtroPorProfissional)}" 
+										oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
+										update=":lume:dtRelagendamento" tabindex="1" process="@this"
+										styleClass="OrangeButton" />
+										<p:commandButton id="bloqueio" icon="White fa fa-calendar White"
+										value="Bloqueio"
+										update=":lume:dtAfastamento" tabindex="1" process="@this" actionListener="#{agendamentoMB.agendamentoRapidoBloqueio(agendamentoRapidoMB.filtroPorProfissional)}"
+										styleClass="RedButton" />	
+										
+																	
+									</p:panelGrid>			
 								</p:outputPanel>
 								<p:outputPanel>
 									<p:outputLabel id="observacoes" value="#{agendamentoRapidoMB.observacoes}"></p:outputLabel>	
@@ -302,7 +368,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:outputPanel>
 					</p:fieldset>
 
-					<h:panelGroup>
+					<h:panelGroup id="pnAgnd">
 
 						<p:dataTable id="dtRelagendamento" widgetVar="dtRelagendamento"
 							value="#{agendamentoRapidoMB.listaAgendamentos}"
@@ -321,8 +387,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										listener="#{agendamentoRapidoMB.abreNovoAgendamento()}" />
 									<p:ajax
 										listener="#{agendamentoRapidoMB.setEntity(agendamento)}" />									
-									<p:ajax
-										listener="#{agendamentoMB.popularAgendamento(agendamento)}" />
+									
 									<p:tooltip for="btnView" value="Agendar" />
 								</p:commandButton>
 								<h:outputText rendered="#{agendamento.descricao eq 'Horário bloqueado'}"
@@ -348,7 +413,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText
 									value="#{agendamentoRapidoMB.getStatusDescricao(agendamento)}" />
 							</p:column>
-							<f:facet name="header">Agendamentos do dia selecionado
+							<f:facet name="header">Agendamentos do dia #{agendamentoRapidoMB.somenteData()}
 							</f:facet>
 
 
@@ -384,9 +449,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterBy="#{agendamento.finalidadeAgendamento.descricao}"
 								sortBy="#{agendamento.finalidadeAgendamento.descricao}"
 								filterFunction="#{agendamentoRapidoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Consulta inicial">
+								filterMatchMode="contains" headerText="Observações">
 								<h:outputText
-									value="#{agendamento.finalidadeAgendamento.descricao}" />
+									value="#{agendamento.descricao}" />
 							</p:column>
 
 							
@@ -417,10 +482,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									process=":lume:pnAgendamento, @this" value="Salvar"
 									rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
 									actionListener="#{agendamentoMB.actionPersist}"
-									update=":lume:pnAgendamento,dtRelagendamento"
-									oncomplete="handleDialogRequest(xhr, status, args);PF('dtRelagendamento').filter();"
+									update=":lume:pnAgendamento"
+									oncomplete="handleDialogRequest(xhr, status, args);atualizaLista();"
 									styleClass="GreenButton" />	
-												
+									
+									<p:remoteCommand name="atualizaLista" process="@this"
+										update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes,data"
+										actionListener="#{agendamentoRapidoMB.depoisSalvaAgendamento()}" oncomplete="PF('dtRelagendamento').filter();"/>			
 												
 										</h:panelGroup>
 										<p:commandButton icon="White fa fa-close" value="Fechar"

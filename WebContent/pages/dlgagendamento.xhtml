@@ -370,7 +370,7 @@
 
 			<h:panelGroup styleClass="md-inputfield">
 				<p:calendar id="inicio" value="#{agendamentoMB.inicio}"
-					pattern="dd/MM/yyyy HH:mm" mask="true"
+					pattern="dd/MM/yyyy HH:mm" mask="true" timeInput="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.inicio)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.inicio)}">
 					<p:ajax event="close"

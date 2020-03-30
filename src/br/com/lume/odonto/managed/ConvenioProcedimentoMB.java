@@ -17,6 +17,7 @@ import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
@@ -99,12 +100,19 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
     public void actionPersist(ActionEvent event) {
         try {
             if (this.getEntity().getProcedimento() != null && this.getEntity().getValor() != null && this.getEntity().getProcedimento().getCodigoCfo() != null) {
+                
+                if ( (this.getEntity().isZeraId()) || (this.getEntity().getConvenio() != null) ) {
+                    ConvenioProcedimento cp = this.getbO().find(this.getEntity().getId());
+                    cp.setStatus(Status.INATIVO);
+                    this.getbO().persist(cp);
+                    
+                    this.getEntity().setId(0);
+                }
+                
                 this.getEntity().setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
                 this.getEntity().setDataUltimaAlteracao(Calendar.getInstance().getTime());
                 this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                if (this.getEntity().isZeraId()) {
-                    this.getEntity().setId(0);
-                }
+                
                 if (tipoValor.equals("P")) {
                     if ((this.getEntity().getPorcentagem() != null && this.getEntity().getPorcentagem().longValue() >= 0)) {
                         this.getEntity().setValor(this.getEntity().getProcedimento().getValor().multiply(this.getEntity().getPorcentagem().divide(new BigDecimal(100), MathContext.DECIMAL32)));
@@ -134,7 +142,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
-
+    
     public void onTabChange(TabChangeEvent event) {
         if (event.getTab().getTitle().equals("Relatório")) {
             carregarRelatorio();

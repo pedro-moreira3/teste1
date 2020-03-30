@@ -157,7 +157,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
             }
             // descontos = descontoBO.listByEmpresa();
             dominios = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma");
-            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            pacientes = PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), Status.ATIVO);
             this.setValorAgregadoExcedido(BigDecimal.ZERO);
             if (paciente == null) {
                 this.addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "", true);
