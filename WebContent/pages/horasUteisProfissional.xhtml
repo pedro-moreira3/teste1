@@ -1,20 +1,27 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:p="http://primefaces.org/ui"
-	xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
 
 	<style>
-		body .ui-selectmanycheckbox td label {
-			
-		}
-	</style>
+body .ui-selectmanycheckbox td label {
+	
+}
+</style>
 
 	<div class="Container100 Responsive100 NoIndent">
 		<div class="Container100 ui-fluid NoPadding">
 			<div class="Card">
 				<p:outputPanel id="pnHorasUteisPrincipal" styleClass="BordNone">
-					<p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank">
+					<p:panelGrid columns="2"
+						columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+						styleClass="ui-panelgrid-blank">
 						<p:outputLabel for="dias" value="Dias : " />
-						<p:selectManyCheckbox id="dias" value="#{horasUteisProfissionalMB.diasSelecionados}" layout="grid" columns="4">
+						<p:selectManyCheckbox id="dias"
+							value="#{horasUteisProfissionalMB.diasSelecionados}"
+							layout="grid" columns="4">
 							<f:selectItem itemLabel="Domingo" itemValue="DOM" />
 							<f:selectItem itemLabel="Segunda" itemValue="SEG" />
 							<f:selectItem itemLabel="Terça" itemValue="TER" />
@@ -25,35 +32,69 @@
 						</p:selectManyCheckbox>
 					</p:panelGrid>
 
-					<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank">
-						<p:outputLabel for="horaIni" value="Hora Inicial : " />
-						<p:calendar id="horaIni" value="#{horasUteisProfissionalMB.horaIni}" timeOnly="true" pattern="HH:mm" locale="#{lumeSecurity.locale}"
-							required="true" mask="true"/>
-						<p:outputLabel for="horaFim" value="Hora Final : " />
-						<p:calendar id="horaFim" value="#{horasUteisProfissionalMB.horaFim}" timeOnly="true" pattern="HH:mm" locale="#{lumeSecurity.locale}"
-							required="true" mask="true"/>
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="ui-panelgrid-blank ui-fluid form-group">
+						<h:panelGroup>
+							<p:outputLabel for="horaIni" value="Hora inicial manhã: " />
+							<p:calendar id="horaIni"
+								value="#{horasUteisProfissionalMB.horaIni}" timeOnly="true"
+								pattern="HH:mm" locale="#{lumeSecurity.locale}" required="true"
+								mask="true" />
+						</h:panelGroup>
+						<h:panelGroup>
+							<p:outputLabel for="horaFim" value="Hora final manhã: " />
+							<p:calendar id="horaFim"
+								value="#{horasUteisProfissionalMB.horaFim}" timeOnly="true"
+								pattern="HH:mm" locale="#{lumeSecurity.locale}" required="true"
+								mask="true" />
+						</h:panelGroup>
+						<h:panelGroup>
+							<p:outputLabel for="horaIniTarde" value="Hora inicial tarde: " />
+							<p:calendar id="horaIniTarde"
+								value="#{horasUteisProfissionalMB.horaIniTarde}" timeOnly="true"
+								pattern="HH:mm" locale="#{lumeSecurity.locale}" required="true"
+								mask="true" />
+						</h:panelGroup>
+						<h:panelGroup>
+							<p:outputLabel for="horaFimTarde" value="Hora final tarde: " />
+							<p:calendar id="horaFimTarde"
+								value="#{horasUteisProfissionalMB.horaFimTarde}" timeOnly="true"
+								pattern="HH:mm" locale="#{lumeSecurity.locale}" required="true"
+								mask="true" />
+						</h:panelGroup>
 
 					</p:panelGrid>
 
 					<div class="SeparatorFull"></div>
 
-					<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-						<p:commandButton id="persistHorasUteis" icon="White fa fa-save" value="Salvar" actionListener="#{horasUteisProfissionalMB.actionPersist}"
-							process=":lume:tabView:pnHorasUteisPrincipal" update=":lume:tabView:pnHorasUteisPrincipal,:lume:tabView:tbHorasUteisPrincipal"
-							 styleClass="GreenButton" />
-						<p:commandButton id="deleteHorasUteis" icon="White fa fa-trash-o" value="Excluir" actionListener="#{horasUteisProfissionalMB.actionRemove}"
-							update=":lume:tabView:pnHorasUteisPrincipal,:lume:tabView:tbHorasUteisPrincipal" process="@this"
-							disabled="#{horasUteisProfissionalMB.entity.id == null}"  styleClass="RedButton" />
-						<p:commandButton id="newHorasUteis" icon="White fa fa-file-o" value="Novo" actionListener="#{horasUteisProfissionalMB.actionNew}"
-							update=":lume:tabView:pnHorasUteisPrincipal,:lume:tabView:tbHorasUteisPrincipal" immediate="true" tabindex="1"
-							process="@this,:lume:tabView:pnHorasUteisPrincipal"  />
+					<p:panelGrid columns="4" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid">
+						<p:commandButton id="persistHorasUteis" icon="White fa fa-save"
+							value="Salvar"
+							actionListener="#{horasUteisProfissionalMB.actionPersist}"
+							process=":lume:tabView:pnHorasUteisPrincipal"
+							update=":lume:tabView:pnHorasUteisPrincipal,:lume:tabView:tbHorasUteisPrincipal"
+							styleClass="GreenButton" />
+						<p:commandButton id="deleteHorasUteis" icon="White fa fa-trash-o"
+							value="Excluir"
+							actionListener="#{horasUteisProfissionalMB.actionRemove}"
+							update=":lume:tabView:pnHorasUteisPrincipal,:lume:tabView:tbHorasUteisPrincipal"
+							process="@this"
+							disabled="#{horasUteisProfissionalMB.entity.id == null}"
+							styleClass="RedButton" />
+						<p:commandButton id="newHorasUteis" icon="White fa fa-file-o"
+							value="Novo"
+							actionListener="#{horasUteisProfissionalMB.actionNew}"
+							update=":lume:tabView:pnHorasUteisPrincipal,:lume:tabView:tbHorasUteisPrincipal"
+							immediate="true" tabindex="1"
+							process="@this,:lume:tabView:pnHorasUteisPrincipal" />
 
 						<h:panelGroup>
 							<p:splitButton icon="White fa fa fa-file-excel-o"
 								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
 								actionListener="#{horasUteisProfissionalMB.exportarTabela('xls')}"
-								ajax="false" process="dtHorasUteisPrincipal,@this" update="@this"
-								immediate="true"
+								ajax="false" process="dtHorasUteisPrincipal,@this"
+								update="@this" immediate="true"
 								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
 								<p:fileDownload
@@ -62,7 +103,8 @@
 								<p:menuitem value="Exportar tabela para PDF"
 									icon="fa fa fa-file-pdf-o"
 									actionListener="#{horasUteisProfissionalMB.exportarTabela('pdf')}"
-									ajax="false" process="dtHorasUteisPrincipal,@this" immediate="true"
+									ajax="false" process="dtHorasUteisPrincipal,@this"
+									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 									<p:fileDownload
 										value="#{horasUteisProfissionalMB.arquivoDownload}" />
@@ -77,19 +119,38 @@
 				<div class="EmptyBox20"></div>
 
 				<p:outputPanel id="tbHorasUteisPrincipal" styleClass="BordNone">
-					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtHorasUteisPrincipal" value="#{horasUteisProfissionalMB.horasUteisProfissional}" var="hup"
-						rows="7" paginator="true" selection="#{horasUteisProfissionalMB.entity}" selectionMode="single" rowKey="#{hup}" paginatorPosition="bottom" binding="#{horasUteisProfissionalMB.tabelaHorasUteis}">
-						<p:ajax event="rowSelect" update=":lume:tabView:pnHorasUteisPrincipal" listener="#{horasUteisProfissionalMB.atualizaDiasSelecionados}" />
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						id="dtHorasUteisPrincipal"
+						value="#{horasUteisProfissionalMB.horasUteisProfissional}"
+						var="hup" rows="7" paginator="true"
+						selection="#{horasUteisProfissionalMB.entity}"
+						selectionMode="single" rowKey="#{hup}" paginatorPosition="bottom"
+						binding="#{horasUteisProfissionalMB.tabelaHorasUteis}">
+						<p:ajax event="rowSelect"
+							update=":lume:tabView:pnHorasUteisPrincipal"
+							listener="#{horasUteisProfissionalMB.atualizaDiasSelecionados}" />
 						<f:facet name="header">Horas Cadastradas</f:facet>
 
-						<p:column filterBy="#{hup.diaDaSemana}" sortBy="#{hup.diaDaSemana}" filterMatchMode="contains" headerText="Dia">
+						<p:column filterBy="#{hup.diaDaSemana}"
+							sortBy="#{hup.diaDaSemana}" filterMatchMode="contains"
+							headerText="Dia">
 							<h:outputText value="#{hup.diaDaSemana}" />
 						</p:column>
-						<p:column headerText="Hora Inicial" sortBy="#{hup.horaIniStrOrd}" filterBy="#{hup.horaIniStr}" filterMatchMode="contains">
+						<p:column headerText="Hora inicial a manhã" sortBy="#{hup.horaIniStrOrd}"
+							filterBy="#{hup.horaIniStr}" filterMatchMode="contains">
 							<h:outputText value="#{hup.horaIniStr}" />
 						</p:column>
-						<p:column headerText="Hora Final" sortBy="#{hup.horaFimStrOrd}" filterBy="#{hup.horaFimStr}" filterMatchMode="contains">
+						<p:column headerText="Hora final a manhã" sortBy="#{hup.horaFimStrOrd}"
+							filterBy="#{hup.horaFimStr}" filterMatchMode="contains">
 							<h:outputText value="#{hup.horaFimStr}" />
+						</p:column>
+						<p:column headerText="Hora inicial a tarde" sortBy="#{hup.horaIniTardeStrOrd}"
+							filterBy="#{hup.horaIniTardeStr}" filterMatchMode="contains">
+							<h:outputText value="#{hup.horaIniTardeStr}" />
+						</p:column>
+						<p:column headerText="Hora final a tarde" sortBy="#{hup.horaFimTardeStrOrd}"
+							filterBy="#{hup.horaFimTardeStr}" filterMatchMode="contains">
+							<h:outputText value="#{hup.horaFimTardeStr}" />
 						</p:column>
 					</p:dataTable>
 				</p:outputPanel>

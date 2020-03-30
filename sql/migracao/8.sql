@@ -21,3 +21,6 @@ FROM OBJETO_PROFISSIONAL OP
 LEFT JOIN SEG_OBJETO O
 	ON O.OBJ_INT_COD = OP.OBJ_INT_COD
 WHERE O.OBJ_STR_DES = 'Paciente';
+
+alter table horas_uteis_profissional add column HORA_INI_TARDE TIME;
+alter table horas_uteis_profissional add column HORA_FIM_TARDE TIME;
