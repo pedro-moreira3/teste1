@@ -86,6 +86,10 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
             PrimeFaces.current().ajax().addCallbackParam("validado", false);
             if (GenericValidator.validarRangeData(this.getInicio(), this.getFim(), true)) {
                 this.validaData();
+                if(dominioSelecionado == null) {
+                    this.addError("Selecione um tipo para o bloqueio", "");
+                    return;
+                }
                 this.getEntity().setTipo(dominioSelecionado.getValor());
 
                 this.getEntity().setProfissional(agendamentoMB.getProfissional());
