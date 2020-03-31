@@ -27,3 +27,10 @@ alter table horas_uteis_profissional add column HORA_FIM_TARDE TIME;
 alter table convenio_procedimento add column status varchar(1);
 update convenio_procedimento set status = 'A' where excluido = 'N';
 update convenio_procedimento set status = 'I' where excluido = 'S';
+
+alter table seg_empresa add column PROFISSIONAL_HORA_INICIAL_MANHA TIME DEFAULT '08:00:00';
+alter table seg_empresa add column PROFISSIONAL_HORA_FINAL_MANHA TIME DEFAULT '12:00:00';
+alter table seg_empresa add column PROFISSIONAL_HORA_INICIAL_TARDE TIME DEFAULT '13:00:00';
+alter table seg_empresa add column PROFISSIONAL_HORA_FINAL_TARDE TIME DEFAULT '18:00:00';
+alter table seg_empresa add column PROFISSIONAL_TEMPO_PADRAO_CONSULTA NUMERIC DEFAULT 30;
+alter table seg_empresa add column PROFISSIONAL_DIAS_SEMANA varchar(100) DEFAULT 'SEG;TER;QUA;QUI;SEX;';

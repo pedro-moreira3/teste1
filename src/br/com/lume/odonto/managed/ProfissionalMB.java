@@ -40,11 +40,13 @@ import br.com.lume.dadosBasico.DadosBasicoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.especialidade.EspecialidadeSingleton;
 import br.com.lume.filial.FilialSingleton;
+import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
 import br.com.lume.objetoProfissional.ObjetoProfissionalSingleton;
 import br.com.lume.odonto.biometria.ImpressaoDigital;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Especialidade;
 import br.com.lume.odonto.entity.Filial;
+import br.com.lume.odonto.entity.HorasUteisProfissional;
 import br.com.lume.odonto.entity.ObjetoProfissional;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ProfissionalEspecialidade;
@@ -56,12 +58,15 @@ import br.com.lume.odonto.exception.TelefoneException;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.ObjetoSingleton;
 import br.com.lume.security.PerfilSingleton;
 import br.com.lume.security.UsuarioSingleton;
+import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.entity.Objeto;
 import br.com.lume.security.entity.Perfil;
 import br.com.lume.security.entity.Usuario;
+import br.com.lume.security.validator.GenericValidator;
 
 @ManagedBean
 @ViewScoped
@@ -254,6 +259,49 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         return null;
     }
 
+    private void gerarHorasPadraoProfissional(Profissional profissional) {
+
+        Empresa clinica;
+        try {
+            List<HorasUteisProfissional> horas = HorasUteisProfissionalSingleton.getInstance().getBo().listByProfissional(profissional);
+
+            if (horas == null || horas.isEmpty()) {
+                
+                clinica = EmpresaSingleton.getInstance().getBo().find(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                String diasSemana[] = clinica.getProfissionalDiasSemana().split(";");
+
+                if (GenericValidator.validarRangeData(clinica.getProfissionalHoraInicialManha(), clinica.getProfissionalHoraFinalManha(), true) && GenericValidator.validarRangeData(
+                        clinica.getProfissionalHoraInicialTarde(), clinica.getProfissionalHoraFinalTarde(),
+                        true) && clinica.getProfissionalHoraFinalManha().before(clinica.getProfissionalHoraInicialTarde())) {
+
+                    for (String diaSemana : diasSemana) {
+                        HorasUteisProfissional horasUteis = new HorasUteisProfissional();
+                        horasUteis.setId(0l);
+                        horasUteis.setExcluido(Status.NAO);
+                        horasUteis.setDiaDaSemana(diaSemana);
+                        horasUteis.setProfissional(profissional);
+                        horasUteis.setHoraIni(clinica.getProfissionalHoraInicialManha());
+                        horasUteis.setHoraFim(clinica.getProfissionalHoraFinalManha());
+                        horasUteis.setHoraIniTarde(clinica.getProfissionalHoraInicialTarde());
+                        horasUteis.setHoraFimTarde(clinica.getProfissionalHoraFinalTarde());
+                        HorasUteisProfissionalSingleton.getInstance().getBo().persist(horasUteis);
+                    }
+
+                } else {
+                    this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Inconsistência nos horários dos profissionais");
+                    return;
+                }
+
+                if (profissional.getTempoConsulta() == null || profissional.getTempoConsulta() == 0)
+                    profissional.setTempoConsulta(clinica.getProfissionalTempoPadraoConsulta());
+            }
+
+        } catch (Exception e) {
+            this.addError("Não foi possível salvar", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void actionPersist(ActionEvent event) {
         Usuario usuario = null;
@@ -308,7 +356,9 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
                     this.getEntity().getProfissionalFilials().add(pf);
                 }
             }
+
             ProfissionalSingleton.getInstance().getBo().persist(this.getEntity());
+            this.gerarHorasPadraoProfissional(getEntity());
             if (this.getEntity().equals(UtilsFrontEnd.getEmpresaLogada())) {
                 UtilsFrontEnd.setProfissionalLogado(this.getEntity());
             }

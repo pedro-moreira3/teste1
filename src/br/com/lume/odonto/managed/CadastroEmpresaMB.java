@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -39,6 +41,8 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     private Profissional profissional;
 
     private List<Afiliacao> afiliacoes;
+    
+    private List<String> diasSelecionados = new ArrayList<>();
 
     @ManagedProperty(value = "#{menuMB}")
     private MenuMB menuMB;
@@ -53,7 +57,16 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     public void actionPersist(ActionEvent event) {
         try {
             // TODO Auto-generated method stub
+            
+            String diasSemana = "";
+            for(String dia : getDiasSelecionados()) {
+                diasSemana += dia = ";";
+            }
+            
+            this.getEntity().setProfissionalDiasSemana(diasSemana);
+            
             super.actionPersist(event);
+            
             UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(getEntity()));
             menuMB.carregarMenu();
 
@@ -69,6 +82,12 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
             setEntity(UtilsFrontEnd.getEmpresaLogada());
             profissional = ProfissionalSingleton.getInstance().getBo().findAdminInicial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.afiliacoes = AfiliacaoSingleton.getInstance().getBo().getAllAfiliacao();
+            
+            String dias[] = this.getEntity().getProfissionalDiasSemana().split(";");
+            Arrays.stream(dias).forEach(dia -> {
+                getDiasSelecionados().add(dia);
+            });
+            
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error("Erro ao buscar registros", e);
@@ -133,6 +152,20 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
 
     public void setAfiliacoes(List<Afiliacao> afiliacoes) {
         this.afiliacoes = afiliacoes;
+    }
+
+    /**
+     * @return the diasSelecionados
+     */
+    public List<String> getDiasSelecionados() {
+        return diasSelecionados;
+    }
+
+    /**
+     * @param diasSelecionados the diasSelecionados to set
+     */
+    public void setDiasSelecionados(List<String> diasSelecionados) {
+        this.diasSelecionados = diasSelecionados;
     }
 
 }
