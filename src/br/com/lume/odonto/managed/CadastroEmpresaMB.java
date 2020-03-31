@@ -29,6 +29,7 @@ import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.managed.MenuMB;
+import br.com.lume.security.validator.GenericValidator;
 
 @ManagedBean
 @ViewScoped
@@ -57,6 +58,28 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     public void actionPersist(ActionEvent event) {
         try {
             // TODO Auto-generated method stub
+
+            if(this.getEntity().getProfissionalHoraInicialManha() != null && this.getEntity().getProfissionalHoraFinalManha() != null) {
+                if(!GenericValidator.validarRangeData(this.getEntity().getProfissionalHoraInicialManha(), 
+                        this.getEntity().getProfissionalHoraFinalManha(), true)) {
+                    this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                    return;
+                }
+            }else if(this.getEntity().getProfissionalHoraInicialTarde() != null && this.getEntity().getProfissionalHoraFinalTarde() != null) {
+                if(GenericValidator.validarRangeData(this.getEntity().getProfissionalHoraInicialTarde(),
+                        this.getEntity().getProfissionalHoraFinalTarde(),true)) {
+                    this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                    return;
+                }
+            }else if(this.diasSelecionados.isEmpty()){
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), 
+                        "É necessário que seja selecionado, no mínimo um dia da semana para os horários de profissional.");
+                return;
+            } else {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), 
+                        "É necessário o preenchimento de no mínimo um turno nos horários de profissional.");
+                return;
+            }
             
             String diasSemana = "";
             for(String dia : getDiasSelecionados()) {
