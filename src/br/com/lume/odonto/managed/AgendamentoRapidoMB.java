@@ -90,6 +90,24 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         mes = Utils.getMesTexto(data);
         ano = cal.get(Calendar.YEAR);
         
+        tempoPadraoConsulta = UtilsFrontEnd.getEmpresaLogada().getTempoPadraoConsulta();
+        if(UtilsFrontEnd.getEmpresaLogada().getHoraInicialManha() != null) {
+            cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraInicialManha());                            
+            horariopadraoInico = getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));          
+        }
+        if(UtilsFrontEnd.getEmpresaLogada().getHoraFinalManha() != null) {
+            cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraFinalManha());                            
+            horariopadraoFim = getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));   
+        }
+        if(UtilsFrontEnd.getEmpresaLogada().getHoraInicialTarde() != null) {
+            cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraInicialTarde());                            
+            horariopadraoInicoTarde = getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));           
+        }
+        if(UtilsFrontEnd.getEmpresaLogada().getHoraFinalTarde() != null) {
+            cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraFinalTarde());                            
+            horariopadraoFimTarde = getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+        }
+       
     }
     
     public void populaAgenda() {
