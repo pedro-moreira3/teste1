@@ -56,7 +56,11 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     private LocalTime horariopadraoInico = LocalTime.of(8, 0);
     
-    private LocalTime horariopadraoFim = LocalTime.of(18, 0);
+    private LocalTime horariopadraoFim = LocalTime.of(12, 0);
+    
+    private LocalTime horariopadraoInicoTarde = LocalTime.of(13, 0);
+    
+    private LocalTime horariopadraoFimTarde = LocalTime.of(18, 0);
     
     private String observacoes = "";
     
@@ -69,6 +73,9 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     private String mes;
     
     private int ano;
+    
+    List<Agendamento> agendamentosAnterioresHoraInicio = new ArrayList<Agendamento>();
+    List<Agendamento> agendamentosAnterioresHoraFim = new ArrayList<Agendamento>();     
     
     public AgendamentoRapidoMB() {
         super(AgendamentoSingleton.getInstance().getBo());   
@@ -149,35 +156,54 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                     String diaString = HorasUteisProfissionalSingleton.getInstance().getBo().getDiaDaSemana(diaDaSemana);
                     List<HorasUteisProfissional> horasUteis  = HorasUteisProfissionalSingleton.getInstance().getBo().listByProfissionalAndDiaDaSemana(filtroPorProfissional, diaString);
                     
-                    if(horasUteis != null && !horasUteis.isEmpty()) {                                        
-                        c.setTime(horasUteis.get(0).getHoraIni());                            
-                       horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
-                       c.setTime(horasUteis.get(0).getHoraFim());                
-                       horariopadraoFim = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
-                   
-                    
-                        LocalDateTime from = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoInico);
-                        LocalDateTime to = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoFim); 
-                        long minutes = from.until(to, ChronoUnit.MINUTES);
-                        long quantidadeHorarios = minutes / tempoPadraoConsulta; 
-                        if(quantidadeHorarios != 0l) {
+                    if(horasUteis != null && !horasUteis.isEmpty()) {   
+                        long quantidadeHorariosManha = 0l;
+                        long quantidadeHorariosTarde = 0l;
+                        if(horasUteis.get(0).getHoraIni() != null && horasUteis.get(0).getHoraFim() != null) {
+                            c.setTime(horasUteis.get(0).getHoraIni());                            
+                            horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                            c.setTime(horasUteis.get(0).getHoraFim());                
+                            horariopadraoFim = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
+                            LocalDateTime fromManha = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoInico);
+                            LocalDateTime toManha = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoFim); 
+                            long minutes = fromManha.until(toManha, ChronoUnit.MINUTES);    
+                            quantidadeHorariosManha = minutes / tempoPadraoConsulta; 
+                        }
+                        if(horasUteis.get(0).getHoraIniTarde() != null && horasUteis.get(0).getHoraFimTarde() != null) {
+                            c.setTime(horasUteis.get(0).getHoraIniTarde());                            
+                            horariopadraoInicoTarde = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                            c.setTime(horasUteis.get(0).getHoraFimTarde());                
+                            horariopadraoFimTarde = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
+                            LocalDateTime fromTarde = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoInicoTarde);
+                            LocalDateTime toTarde = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoFimTarde);                         
+                            long minutes = fromTarde.until(toTarde, ChronoUnit.MINUTES);
+                            quantidadeHorariosTarde = minutes / tempoPadraoConsulta;
+                        } 
+                         
+                        int quantidadeSubstituidos = 0;
+                       
+                        if(quantidadeHorariosManha != 0l || quantidadeHorariosTarde != 0l) {
+                            
+
+                            List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo()
+                                    .listAgendamentosNaoCanceladosByDatePorProfissional(filtroPorProfissional,Utils.dateToStringSomenteData(cal.getTime()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());                       
+                            
                             
                             Date dataPadraoInicio = criaDataComHorario(cal.getTime(),horariopadraoInico);                        
                             Date dataPadraoFim = criaDataComHorario(cal.getTime(),horariopadraoFim);
-                            List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo()
-                                    .listAgendamentosNaoCanceladosByDatePorProfissional(filtroPorProfissional,Utils.dateToStringSomenteData(cal.getTime()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());                       
                             List<Afastamento> afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicio, dataPadraoFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                       
-                            
-                          
+                            Date dataPadraoInicioTarde = criaDataComHorario(cal.getTime(),horariopadraoInicoTarde);                        
+                            Date dataPadraoFimTarde = criaDataComHorario(cal.getTime(),horariopadraoFimTarde);
+                            afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioTarde, 
+                                     dataPadraoFimTarde, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));   
                             
                             quantidadeAgendamentosDia = agendamentos.size();
                             
-                            List<Agendamento> listaCriados = criaAgendamentosPorHora(cal.getTime(),quantidadeHorarios,horariopadraoInico);       
-                           
+                            List<Agendamento> listaCriados = criaAgendamentosPorHora(cal.getTime(),quantidadeHorariosManha,horariopadraoInico,quantidadeHorariosManha,horariopadraoInicoTarde);       
+                           // listaCriados.addAll(criaAgendamentosPorHora(cal.getTime(),quantidadeHorariosManha,horariopadraoInicoTarde));      
                             
-                            quantidadeHorarios = substituiAgendamentos(listaCriados, agendamentos).size();
-                            
+                             quantidadeSubstituidos = substituiAgendamentos(listaCriados, agendamentos).size();
+                        
                             //TODO melhorar forma de contar quantos afastamentos temos
                             for (Afastamento afastamento : afastamentos) {
                                 for (Agendamento agendamento : listaCriados) {   
@@ -202,8 +228,8 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                       //  System.out.println("quantidade horarios total: " + quantidadeHorarios); 
                       //  System.out.println("quantidadeAgendamentosDia: " + quantidadeAgendamentosDia);        
                      
-                        if(quantidadeHorarios != 0) {
-                            double porcentagemOcupada = (quantidadeAgendamentosDia * 100) / quantidadeHorarios;
+                        if(quantidadeSubstituidos != 0) {
+                            double porcentagemOcupada = (quantidadeAgendamentosDia * 100) / quantidadeSubstituidos;
                             
                             if(porcentagemOcupada < 50) {                            
                                 livre += Utils.dateToStringAgenda(cal.getTime()).replace(" ", "T") + " ";                          
@@ -263,14 +289,26 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 
                 if(horasUteis == null || horasUteis.isEmpty()) {
                     horariopadraoInico = LocalTime.of(8, 0);                        
-                    horariopadraoFim = LocalTime.of(18, 0);
-                    observacoes += "Horas Úteis do profissional não estão configuradas para o dia selecionado, verifique o cadastro! Horário padrão: 08:00 às 18:00. ";
+                    horariopadraoFim = LocalTime.of(12, 0);
+                    horariopadraoInicoTarde = LocalTime.of(13, 0);                        
+                    horariopadraoFimTarde = LocalTime.of(18, 0);
+                    observacoes += "Horas Úteis do profissional não estão configuradas para o dia selecionado, utilizando horário padrão da clínica ";
                 }else {                    
-                    c.setTime(horasUteis.get(0).getHoraIni());                            
-                   horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
-                   c.setTime(horasUteis.get(0).getHoraFim());                
-                   horariopadraoFim = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
-                   observacoes += "Horário de trabalho cadastrado para o profissional no dia selecionado: De " + horariopadraoInico + " até " + horariopadraoFim + ";";
+                   if(horasUteis.get(0).getHoraIni() != null && horasUteis.get(0).getHoraFim() != null) {
+                       c.setTime(horasUteis.get(0).getHoraIni());                            
+                       horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                       c.setTime(horasUteis.get(0).getHoraFim());                
+                       horariopadraoFim = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                   }
+                   if(horasUteis.get(0).getHoraIniTarde() != null && horasUteis.get(0).getHoraFimTarde() != null) {
+                       c.setTime(horasUteis.get(0).getHoraIniTarde());                            
+                       horariopadraoInicoTarde = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                       c.setTime(horasUteis.get(0).getHoraFimTarde());                
+                       horariopadraoFimTarde = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                   }
+                    observacoes += "Horário de trabalho cadastrado para o profissional no dia selecionado: "
+                            + "manhã: De " + horariopadraoInico + " até " + horariopadraoFim + " "
+                            + "tarde: De " + horariopadraoInicoTarde + " até " + horariopadraoFimTarde + " ";
                 }                
                 if(observacoes != null && !observacoes.isEmpty()) {
                     observacoes = "*** Observações: " + observacoes;
@@ -279,43 +317,37 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 LocalDateTime from = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoInico);
                 LocalDateTime to = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoFim); 
                 long minutes = from.until(to, ChronoUnit.MINUTES);
-                long quantidadeHorarios = minutes / tempoPadraoConsulta; 
-                if(quantidadeHorarios != 0l) {
+                long quantidadeHorariosManha = minutes / tempoPadraoConsulta; 
+                
+                LocalDateTime fromTarde = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoInicoTarde);
+                LocalDateTime toTarde = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoFimTarde); 
+                long minutesTarde = fromTarde.until(toTarde, ChronoUnit.MINUTES);
+                long quantidadeHorariosTarde = minutesTarde / tempoPadraoConsulta; 
+                
+                if(quantidadeHorariosManha != 0l || quantidadeHorariosTarde != 0l) {
                     
-                    Date dataPadraoInicio = criaDataComHorario(data,horariopadraoInico);
-                    
-                    Date dataPadraoFim = criaDataComHorario(data,horariopadraoFim);                   
+              
                     
                     List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo()
-                            .listAgendamentosNaoCanceladosByDatePorProfissional(filtroPorProfissional,Utils.dateToStringSomenteData(data), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                    List<Agendamento> agendamentosAnterioresHoraInicio = new ArrayList<Agendamento>();
-                    List<Agendamento> agendamentosAnterioresHoraFim = new ArrayList<Agendamento>();                  
+                            .listAgendamentosNaoCanceladosByDatePorProfissional(filtroPorProfissional,Utils.dateToStringSomenteData(data), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());                              
                     List<Agendamento> paraSubstituir = new ArrayList<Agendamento>();
-                    List<Afastamento> afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicio, dataPadraoFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                   
-                    //populando agendamentos anteriores e posteriores a data padrãoo do profissional e adicionando agendamentos já existentes
-                    //nos horarios padrão, para substituir nos horarios criados
-                    for (Agendamento agendamentoExistente : agendamentos) {
-                        if(agendamentoExistente.getInicio().before(dataPadraoInicio) && !agendamentosAnterioresHoraInicio.contains(agendamentoExistente)) {
-                            agendamentosAnterioresHoraInicio.add(agendamentoExistente);                          
-                            //se tiver agendamento criado antes da hora padrao do profissional,para criar os automaticos posteriormente,
-                            //precisa começar a partir da hora de término   
-                            LocalTime horariopadraoInicoAux = horariopadraoInico;
-                            while(agendamentoExistente.getFim().after(dataPadraoInicio)) {
-                                horariopadraoInicoAux = horariopadraoInicoAux.plusMinutes(tempoPadraoConsulta);
-                                dataPadraoInicio = criaDataComHorario(data,horariopadraoInicoAux);
-                                c.setTime(dataPadraoInicio);
-                                horariopadraoInicoAux = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
-                            }   
-                        }else if(agendamentoExistente.getInicio().after(dataPadraoFim) && !agendamentosAnterioresHoraFim.contains(agendamentoExistente)) {
-                            agendamentosAnterioresHoraFim.add(agendamentoExistente);                             
-                        }else {   
-                            paraSubstituir.add(agendamentoExistente);
-                        }                            
-                    }
                     
-                    List<Agendamento> listaCriados = criaAgendamentosPorHora(data,quantidadeHorarios,horariopadraoInico);       
+                    Date dataPadraoInicioManha = criaDataComHorario(data,horariopadraoInico);                    
+                    Date dataPadraoFimManha = criaDataComHorario(data,horariopadraoFim);  
+                    List<Afastamento> afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioManha, 
+                            dataPadraoFimManha, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                    Date dataPadraoInicioTarde = criaDataComHorario(data,horariopadraoInicoTarde);                    
+                    Date dataPadraoFimTarde = criaDataComHorario(data,horariopadraoFimTarde);  
+                    afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioTarde, 
+                            dataPadraoFimTarde, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                    
                    
+                    paraSubstituir.addAll(populaAgendamentos(agendamentos,dataPadraoInicioManha,dataPadraoFimManha,dataPadraoInicioTarde,dataPadraoFimTarde));
+                 
+                    
+                    List<Agendamento> listaCriados = criaAgendamentosPorHora(data,quantidadeHorariosManha,horariopadraoInico, quantidadeHorariosTarde, horariopadraoInicoTarde);       
+                  //  listaCriados.addAll(criaAgendamentosPorHora(data,quantidadeHorariosTarde,horariopadraoInico));        
+                    
                     //colocando aviso de bloqueio
                     for (Afastamento afastamento : afastamentos) {
                         for (Agendamento agendamento : listaCriados) {   
@@ -356,7 +388,46 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         }
     } 
     
-    private Collection<? extends Agendamento> substituiAgendamentos(List<Agendamento> listaCriados ,List<Agendamento> paraSubstituir) {
+    private List<Agendamento> populaAgendamentos(List<Agendamento> agendamentos, Date dataInicioManha, Date dataFimManha, Date dataInicioTarde, Date dataFimTarde) {
+        List<Agendamento> paraSubstituir = new ArrayList<Agendamento>();
+        
+        if(dataInicioManha == null && dataFimManha == null && dataInicioTarde != null && dataFimTarde != null) {
+            dataInicioManha = dataInicioTarde;
+            dataFimManha = dataFimTarde;
+        }else if(dataInicioManha != null && dataFimManha != null && dataInicioTarde == null && dataFimTarde == null) {
+            dataInicioTarde = dataInicioManha;
+            dataFimTarde = dataFimManha;
+        }
+        
+        //populando agendamentos anteriores e posteriores a data padrãoo do profissional e adicionando agendamentos já existentes
+        //nos horarios padrão, para substituir nos horarios criados
+        Calendar c = Calendar.getInstance();
+        c.setTime(data);
+        agendamentosAnterioresHoraInicio = new ArrayList<Agendamento>();
+        agendamentosAnterioresHoraFim = new ArrayList<Agendamento>();
+        //TODO VERIFICAR PARA NAO DUPLICAR ESSES REGISTROS
+        for (Agendamento agendamentoExistente : agendamentos) {
+            if(agendamentoExistente.getInicio().before(dataInicioManha) && !agendamentosAnterioresHoraInicio.contains(agendamentoExistente)) {
+                agendamentosAnterioresHoraInicio.add(agendamentoExistente);                          
+                //se tiver agendamento criado antes da hora padrao do profissional,para criar os automaticos posteriormente,
+                //precisa começar a partir da hora de término   
+                LocalTime horariopadraoInicoAux = horariopadraoInico;
+                while(agendamentoExistente.getFim().after(dataInicioManha)) {
+                    horariopadraoInicoAux = horariopadraoInicoAux.plusMinutes(tempoPadraoConsulta);
+                    dataInicioManha = criaDataComHorario(data,horariopadraoInicoAux);
+                    c.setTime(dataInicioManha);
+                    horariopadraoInicoAux = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
+                }   
+            }else if(agendamentoExistente.getInicio().after(dataFimTarde) && !agendamentosAnterioresHoraFim.contains(agendamentoExistente)) {
+                agendamentosAnterioresHoraFim.add(agendamentoExistente);                             
+            }else {   
+                paraSubstituir.add(agendamentoExistente);
+            }                            
+        }
+        return paraSubstituir;
+    }
+
+    private List<Agendamento> substituiAgendamentos(List<Agendamento> listaCriados ,List<Agendamento> paraSubstituir) {
         List<Agendamento> substituidos = new ArrayList<Agendamento>();
         for (Agendamento agendamentoCriado : listaCriados) {
             boolean foiAdicionado = false;
@@ -407,21 +478,28 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         
     }
 
-    private List<Agendamento> criaAgendamentosPorHora(Date data,long quantidadeHorarios, LocalTime horaInicio) {
+    private List<Agendamento> criaAgendamentosPorHora(Date data,long quantidadeHorariosManha, LocalTime horaInicio,long quantidadeHorariosTarde, LocalTime horaInicioTarde) {
         List<Agendamento> listaCriados = new ArrayList<Agendamento>();
-        for (int i = 0; i < quantidadeHorarios; i++) {
-            Agendamento agendamento = new Agendamento();      
-            Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
+        for (int i = 0; i < quantidadeHorariosManha + quantidadeHorariosTarde; i++) {           
+            Agendamento agendamento = new Agendamento();
+            //ja inseriu todas da manha, agora vamos inserir os da tarde
+            if(i == quantidadeHorariosManha) {
+                horaInicio = horaInicioTarde;
+            }
             calendar.setTime(data);
             calendar.set(Calendar.HOUR_OF_DAY, horaInicio.getHour());
             calendar.set(Calendar.MINUTE, horaInicio.getMinute());
-            calendar.set(Calendar.SECOND, horaInicio.getSecond());
+            calendar.set(Calendar.SECOND, horaInicio.getSecond());           
             agendamento.setInicio(calendar.getTime());                       
+            
             horaInicio = horaInicio.plusMinutes(tempoPadraoConsulta);
+           
             calendar.set(Calendar.HOUR_OF_DAY, horaInicio.getHour());
             calendar.set(Calendar.MINUTE, horaInicio.getMinute());
             calendar.set(Calendar.SECOND, horaInicio.getSecond());
             agendamento.setFim(calendar.getTime());
+            
             agendamento.setProfissional(filtroPorProfissional);
             listaCriados.add(agendamento);
         } 
@@ -627,6 +705,26 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     public void setAno(int ano) {
         this.ano = ano;
+    }
+
+    
+    public LocalTime getHorariopadraoInicoTarde() {
+        return horariopadraoInicoTarde;
+    }
+
+    
+    public void setHorariopadraoInicoTarde(LocalTime horariopadraoInicoTarde) {
+        this.horariopadraoInicoTarde = horariopadraoInicoTarde;
+    }
+
+    
+    public LocalTime getHorariopadraoFimTarde() {
+        return horariopadraoFimTarde;
+    }
+
+    
+    public void setHorariopadraoFimTarde(LocalTime horariopadraoFimTarde) {
+        this.horariopadraoFimTarde = horariopadraoFimTarde;
     }
 
 }
