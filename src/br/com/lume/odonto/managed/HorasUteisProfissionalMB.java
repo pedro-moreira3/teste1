@@ -80,31 +80,30 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
         try {
 
             if (verificarRangeData()) {
-                if (this.validaData()) {
-                    if (GenericValidator.validarRangeData(this.getHoraIni(), this.getHoraFim(), true) && GenericValidator.validarRangeData(this.getHoraIniTarde(), this.getHoraFimTarde(), true)) {
-                        for (String selecionado : this.diasSelecionados) {
-                            HorasUteisProfissional horasUteis = new HorasUteisProfissional();
-                            horasUteis.setDiaDaSemana(selecionado);
-                            if (selecionado.equals(this.getEntity().getDiaDaSemana())) {
-                                horasUteis.setId(this.getEntity().getId());
-                            }
-                            horasUteis.setProfissional(this.profissionalMB.getEntity());
-                            horasUteis.setHoraIni(this.setSegundos(this.getHoraIni()));
-                            horasUteis.setHoraFim(this.setSegundos(this.getHoraFim()));
-                            horasUteis.setHoraIniTarde(this.setSegundos(this.getHoraIniTarde()));
-                            horasUteis.setHoraFimTarde(this.setSegundos(this.getHoraFimTarde()));
-                            HorasUteisProfissionalSingleton.getInstance().getBo().persist(horasUteis);
-                            this.diasSelecionados = new ArrayList<>();
-                        }
-                        this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                        this.profissionalAnterior = null;
-                        this.actionNew(event);
-                        this.setHoraIni(null);
-                        this.setHoraFim(null);
-                    } else {
-                        this.addWarn(Mensagens.getMensagem(Mensagens.RANGE_DATA_INVALIDO), "");
+                for (String selecionado : this.diasSelecionados) {
+                    HorasUteisProfissional horasUteis = new HorasUteisProfissional();
+                    horasUteis.setDiaDaSemana(selecionado);
+                    if ((this.getEntity().getId() != null) && 
+                            selecionado.equals(this.getEntity().getDiaDaSemana())) {
+                        horasUteis.setId(this.getEntity().getId());
                     }
+                    horasUteis.setProfissional(this.profissionalMB.getEntity());
+                    if(this.getHoraIni() != null && this.getHoraFim() != null) {
+                        horasUteis.setHoraIni(this.setSegundos(this.getHoraIni()));
+                        horasUteis.setHoraFim(this.setSegundos(this.getHoraFim()));
+                    }
+                    if(this.getHoraIniTarde() != null && this.getHoraFimTarde() != null) {
+                        horasUteis.setHoraIniTarde(this.setSegundos(this.getHoraIniTarde()));
+                        horasUteis.setHoraFimTarde(this.setSegundos(this.getHoraFimTarde()));
+                    }
+                    HorasUteisProfissionalSingleton.getInstance().getBo().persist(horasUteis);
+                    this.diasSelecionados = new ArrayList<>();
                 }
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                this.profissionalAnterior = null;
+                this.actionNew(event);
+                this.setHoraIni(null);
+                this.setHoraFim(null);
             }
 
         } catch (Exception e) {
@@ -129,11 +128,12 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
 
         if (this.getHoraIni() != null && this.getHoraFim() != null) {
             if (GenericValidator.validarRangeData(this.getHoraIni(), this.getHoraFim(), true)) {
-                if((this.getHoraIniTarde() != null && this.getHoraFimTarde() != null) &&
-                        !GenericValidator.validarRangeData(this.getHoraIniTarde(), this.getHoraFimTarde(), true)) {
-                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
-                    return false;
-                }else if(!(this.getHoraIniTarde() == null && this.getHoraFimTarde() == null)) {
+                if((this.getHoraIniTarde() != null && this.getHoraFimTarde() != null)) {
+                    if(!GenericValidator.validarRangeData(this.getHoraIniTarde(), this.getHoraFimTarde(), true)) {
+                        addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                        return false;
+                    }
+                }else if(!(this.getHoraIniTarde() == null && this.getHoraFimTarde() == null)){
                     addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
                     return false;
                 }
@@ -143,11 +143,12 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
             }
         } else if (this.getHoraIniTarde() != null && this.getHoraFimTarde() != null) {
             if (GenericValidator.validarRangeData(this.getHoraIniTarde(), this.getHoraFimTarde(), true)) {
-                if((this.getHoraIni() != null && this.getHoraFim() != null) &&
-                        !GenericValidator.validarRangeData(this.getHoraIni(), this.getHoraFim(), true)) {
-                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
-                    return false;
-                }else if(!(this.getHoraIni() == null && this.getHoraFim() == null)) {
+                if((this.getHoraIni() != null && this.getHoraFim() != null)) {
+                    if(!GenericValidator.validarRangeData(this.getHoraIni(), this.getHoraFim(), true)) {
+                        addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                        return false;
+                    }
+                }else if(!(this.getHoraIni() == null && this.getHoraFim() == null)){
                     addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
                     return false;
                 }

@@ -40,3 +40,5 @@ alter table seg_empresa RENAME PROFISSIONAL_HORA_INICIAL_TARDE TO HORA_INICIAL_T
 alter table seg_empresa RENAME PROFISSIONAL_HORA_FINAL_TARDE TO HORA_FINAL_TARDE;
 alter table seg_empresa RENAME PROFISSIONAL_TEMPO_PADRAO_CONSULTA TO TEMPO_PADRAO_CONSULTA;
 alter table seg_empresa RENAME PROFISSIONAL_DIAS_SEMANA TO DIAS_SEMANA;
+alter table horas_uteis_profissional alter column hora_ini drop not null;
+alter table horas_uteis_profissional alter column hora_fim drop not null;

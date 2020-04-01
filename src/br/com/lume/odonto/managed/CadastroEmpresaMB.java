@@ -62,7 +62,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
             if(verificarRangeData()) {
                 String diasSemana = "";
                 for(String dia : getDiasSelecionados()) {
-                    diasSemana += dia = ";";
+                    diasSemana += dia + ";";
                 }
                 
                 this.getEntity().setDiasSemana(diasSemana);
@@ -88,15 +88,13 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
      */
     private boolean verificarRangeData() {
         
-        if(this.getEntity().getHoraInicialManha() != null && this.getEntity().getHoraFinalManha() != null) {
-            if(GenericValidator.validarRangeData(this.getEntity().getHoraInicialManha(), 
-                    this.getEntity().getHoraFinalManha(), true)) {
-                
-                if((this.getEntity().getHoraInicialTarde() != null && this.getEntity().getHoraFinalTarde() != null) &&
-                        !GenericValidator.validarRangeData(this.getEntity().getHoraInicialTarde(),
-                                this.getEntity().getHoraFinalTarde(),true)) {
-                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
-                    return false;
+        if (this.getEntity().getHoraInicialManha() != null && this.getEntity().getHoraFinalManha() != null) {
+            if (GenericValidator.validarRangeData(this.getEntity().getHoraInicialManha(), this.getEntity().getHoraFinalManha(), true)) {
+                if((this.getEntity().getHoraInicialTarde() != null && this.getEntity().getHoraFinalTarde() != null)) {
+                    if(!GenericValidator.validarRangeData(this.getEntity().getHoraInicialTarde(), this.getEntity().getHoraFinalTarde(), true)) {
+                        this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                        return false;
+                    }
                 }else if(!(this.getEntity().getHoraInicialTarde() == null && this.getEntity().getHoraFinalTarde() == null)){
                     addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
                     return false;
@@ -105,32 +103,29 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
                 addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
                 return false;
             }
-        }else if(this.getEntity().getHoraInicialTarde() != null && this.getEntity().getHoraFinalTarde() != null) {
-            if(GenericValidator.validarRangeData(this.getEntity().getHoraInicialTarde(),
-                    this.getEntity().getHoraFinalTarde(),true)) {
-                if((this.getEntity().getHoraInicialManha() != null && this.getEntity().getHoraFinalManha() != null) &&
-                        !GenericValidator.validarRangeData(this.getEntity().getHoraInicialManha(), 
-                                this.getEntity().getHoraFinalManha(), true)) {
-                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
-                    return false;
-                }else if(!(this.getEntity().getHoraInicialManha() == null && this.getEntity().getHoraFinalManha() == null)) {
+        } else if (this.getEntity().getHoraInicialTarde() != null && this.getEntity().getHoraFinalTarde() != null) {
+            if (GenericValidator.validarRangeData(this.getEntity().getHoraInicialTarde(), this.getEntity().getHoraFinalTarde(), true)) {
+                if((this.getEntity().getHoraInicialManha() != null && this.getEntity().getHoraFinalManha() != null)) {
+                    if(!GenericValidator.validarRangeData(this.getEntity().getHoraInicialManha(), this.getEntity().getHoraFinalManha(), true)) {
+                        addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                        return false;
+                    }
+                }else if(!(this.getEntity().getHoraInicialManha() == null && this.getEntity().getHoraFinalManha() == null)){
                     addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
                     return false;
                 }
             }else {
-                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
                 return false;
             }
-        }else if(this.diasSelecionados.isEmpty()){
-            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), 
-                    "É necessário que seja selecionado, no mínimo um dia da semana para os horários de profissional.");
+        } else if (this.diasSelecionados.isEmpty()) {
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário que seja selecionado, no mínimo um dia da semana para os horários de profissional.");
             return false;
         } else {
-            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), 
-                    "É necessário o preenchimento de no mínimo um turno nos horários de profissional.");
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário o preenchimento de no mínimo um turno nos horários de profissional.");
             return false;
         }
-        
+                
         return true;
     }
     
