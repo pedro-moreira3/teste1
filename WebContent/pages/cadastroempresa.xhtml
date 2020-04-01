@@ -323,7 +323,7 @@
 						</p:fieldset>
 
 						<p:fieldset
-							legend="Parâmetros do Sistema - Configurações de horários padrão para Profissional">
+							legend="Parâmetros do Sistema - Configurações de horários da clínica">
 
 							<p:panelGrid columns="2"
 								columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
@@ -352,25 +352,25 @@
 								<p:calendar id="horaIni"
 									value="#{cadastroEmpresaMB.entity.profissionalHoraInicialManha}"
 									timeOnly="true" pattern="HH:mm" locale="#{lumeSecurity.locale}"
-									required="true" mask="true" timeInput="true" />
+									mask="true" timeInput="true" />
 
 								<p:outputLabel for="horaFim" value="Hora final manhã: " />
 								<p:calendar id="horaFim"
 									value="#{cadastroEmpresaMB.entity.profissionalHoraFinalManha}"
 									timeOnly="true" pattern="HH:mm" locale="#{lumeSecurity.locale}"
-									required="true" mask="true" timeInput="true" />
+									mask="true" timeInput="true" />
 
 								<p:outputLabel for="horaIniTarde" value="Hora inicial tarde: " />
 								<p:calendar id="horaIniTarde"
 									value="#{cadastroEmpresaMB.entity.profissionalHoraInicialTarde}"
 									timeOnly="true" pattern="HH:mm" timeInput="true"
-									locale="#{lumeSecurity.locale}" required="true" mask="true" />
+									locale="#{lumeSecurity.locale}" mask="true" />
 
 								<p:outputLabel for="horaFimTarde" value="Hora final tarde: " />
 								<p:calendar id="horaFimTarde"
 									value="#{cadastroEmpresaMB.entity.profissionalHoraFinalTarde}"
 									timeOnly="true" pattern="HH:mm" timeInput="true"
-									locale="#{lumeSecurity.locale}" required="true" mask="true" />
+									locale="#{lumeSecurity.locale}" mask="true" />
 
 								<p:outputLabel value="Tempo padrão de consulta em minutos:" />
 								<p:inputNumber
