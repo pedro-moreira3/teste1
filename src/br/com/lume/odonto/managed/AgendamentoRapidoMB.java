@@ -90,6 +90,13 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         mes = Utils.getMesTexto(data);
         ano = cal.get(Calendar.YEAR);
         
+     configuraHorarioPadraoClinica();
+       
+    }
+    
+    private void configuraHorarioPadraoClinica() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(data);        
         tempoPadraoConsulta = UtilsFrontEnd.getEmpresaLogada().getTempoPadraoConsulta();
         if(UtilsFrontEnd.getEmpresaLogada().getHoraInicialManha() != null) {
             cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraInicialManha());                            
@@ -107,9 +114,9 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
             cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraFinalTarde());                            
             horariopadraoFimTarde = getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
         }
-       
+        
     }
-    
+
     public void populaAgenda() {
         if(filtroPorProfissional != null) {
             Calendar cal = Calendar.getInstance();
@@ -313,7 +320,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 filtroPorProfissionalAntigo = filtroPorProfissional;
                 observacoes = "";
                 if(filtroPorProfissional.getTempoConsulta() == null || filtroPorProfissional.getTempoConsulta().equals(0)) {
-                    observacoes = "Tempo de consulta padrão do profissional não configurado, verifique o cadastro! Tempo padrão 30 minutos. ";
+                    observacoes = "Tempo de consulta padrão do profissional não configurado, verifique o cadastro! Tempo padrão da clínica: "+tempoPadraoConsulta+" minutos. ";
                     this.addWarn(observacoes, "");
                 }else {
                     tempoPadraoConsulta = filtroPorProfissional.getTempoConsulta();
@@ -325,11 +332,10 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 List<HorasUteisProfissional> horasUteis  = HorasUteisProfissionalSingleton.getInstance().getBo().listByProfissionalAndDiaDaSemana(filtroPorProfissional, diaString);
                 
                 if(horasUteis == null || horasUteis.isEmpty()) {
-                  //  horariopadraoInico = LocalTime.of(8, 0);                        
-                   // horariopadraoFim = LocalTime.of(12, 0);
-                   // horariopadraoInicoTarde = LocalTime.of(13, 0);                        
-                    //horariopadraoFimTarde = LocalTime.of(18, 0);
-                    observacoes += "Horas Úteis do profissional não estão configuradas para o dia selecionado, utilizando horário padrão da clínica ";
+                    configuraHorarioPadraoClinica();
+                    observacoes += "Horas Úteis do profissional não estão configuradas para o dia selecionado. ";
+                    observacoes += "Horário definido na clínica: manhã: De " + horariopadraoInico + " até " + horariopadraoFim + ". ";
+                    observacoes += "tarde: De " + horariopadraoInicoTarde + " até " + horariopadraoFimTarde + ". ";
                 }else {  
                     horariopadraoInico = null;
                     horariopadraoFim = null;
