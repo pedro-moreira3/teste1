@@ -84,7 +84,10 @@
 						console.debug(args.validado);
 						if (args.validado == true) {
 							PF('dlgBloqueio').hide();
-							PF('myschedule').update();
+							if(PF('myschedule') != undefined){
+								PF('myschedule').update();
+							}
+							
 						}
 					}
 				</script>

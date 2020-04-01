@@ -234,11 +234,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
    <h:inputHidden id="medio" value="#{agendamentoRapidoMB.medio}" />
    <h:inputHidden id="cheio" value="#{agendamentoRapidoMB.cheio}" /> 
    
-		<p:dialog id="dlgBloqueio" widgetVar="dlgBloqueio"
-				header="Bloqueio de Agenda" responsive="true" modal="true"
-				appendToBody="true">
-				<ui:include src="afastamento.xhtml" />
-		</p:dialog>
+		
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -331,14 +327,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											
 											
 										</p:outputPanel>	
-										<p:outputPanel rendered="#{agendamentoRapidoMB.filtroPorProfissional != null}">	<br/><br/><br/><br/>
+										<p:outputPanel >	<br/><br/><br/><br/>
 											<p:outputPanel id="pnFiltroStatus">
 											<p:outputLabel value="Legenda: " />	
 												<p:panelGrid columns="1" layout="grid"
 													styleClass="ui-panelgrid-blank ui-fluid form-group">
 													<div class='clienteNaClinica legendaFiltroAgendamento'></div>Mais que 50% Livre;<br/><br/>
 													<div class='agendamentoPrecadastro legendaFiltroAgendamento'></div>Menos que 50% Livre;<br/><br/>
-													<div class='agendamentoNaoConfirmado legendaFiltroAgendamento'></div>Menos que 10% Livre;<br/><br/>													
+													<div class='agendamentoNaoConfirmado legendaFiltroAgendamento'></div>Menos que 20% Livre;<br/><br/>													
 												</p:panelGrid>
 											</p:outputPanel>
 										</p:outputPanel>
@@ -486,9 +482,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									oncomplete="handleDialogRequest(xhr, status, args);atualizaLista();"
 									styleClass="GreenButton" />	
 									
-									<p:remoteCommand name="atualizaLista" process="@this"
-										update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes,data"
-										actionListener="#{agendamentoRapidoMB.depoisSalvaAgendamento()}" oncomplete="PF('dtRelagendamento').filter();"/>			
+									
 												
 										</h:panelGroup>
 										<p:commandButton icon="White fa fa-close" value="Fechar"
@@ -499,7 +493,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</div>
 						</div>
 					</p:dialog>
-					
+					<p:dialog id="dlgBloqueio" widgetVar="dlgBloqueio"
+				header="Bloqueio de Agenda" responsive="true" modal="true" onHide="atualizaLista()"
+				appendToBody="true">
+				<ui:include src="afastamento.xhtml" />
+		</p:dialog>
+					<p:remoteCommand name="atualizaLista" process="@this"
+										update=":lume:painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,:lume:observacoes,:lume:data"
+										actionListener="#{agendamentoRapidoMB.depoisSalvaAgendamento()}" oncomplete="console.log('atualiza');PF('dtRelagendamento').filter();"/>			
 
 				
 
