@@ -1,14 +1,15 @@
 package br.com.lume.security.audit;
 
-import java.util.Map;
+import java.util.List;
 
-import javax.faces.component.UICommand;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.PhaseListener;
+
+import br.com.lume.audit.AuditSingleton;
+import br.com.lume.common.log.LogIntelidenteSingleton;
+import br.com.lume.common.util.UtilsFrontEnd;
 
 public class LifeCycleListener implements PhaseListener {
 
@@ -19,38 +20,24 @@ public class LifeCycleListener implements PhaseListener {
     }
 
     public void beforePhase(PhaseEvent event) {
-        System.out.println("INICIANDO FASE: " + event.getPhaseId());
-        FacesContext context = event.getFacesContext();
-        if (context.isPostback()) {
-            UICommand component = findInvokedCommandComponent(context);
-            if (component != null) {
-                String methodExpression = component.getActionExpression().getExpressionString();
-                System.out.println("Method Called: " + methodExpression);
-            }
+        try {
+            LifeCycleListenerUtils.putParamOnContext(event.getFacesContext(), "TimerStart", AuditTimer.StartCount());
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
     }
 
     public void afterPhase(PhaseEvent event) {
-        System.out.println("FINALIZANDO FASE: " + event.getPhaseId());
-    }
-
-    private UICommand findInvokedCommandComponent(FacesContext context) {
-        UIViewRoot view = context.getViewRoot();
-        Map<String, String> params = context.getExternalContext().getRequestParameterMap();
-
-        if (context.getPartialViewContext().isAjaxRequest()) {
-            return (UICommand) view.findComponent(params.get("javax.faces.source"));
-        } else {
-            for (String clientId : params.keySet()) {
-                UIComponent component = view.findComponent(clientId);
-
-                if (component instanceof UICommand) {
-                    return (UICommand) component;
-                }
-            }
+        try {
+            List<String> methods = LifeCycleListenerUtils.getMethodsCallFromPhaseEvent(event.getFacesContext());
+            String methodsStr = String.join(", ", methods);
+            String hash = LifeCycleListenerUtils.getParamOnContext(event.getFacesContext(), "TimerStart", String.class);
+            Long time = AuditTimer.StopCount(hash);
+            String currentPage = FacesContext.getCurrentInstance().getViewRoot().getViewId();
+            AuditSingleton.getInstance().createAuditReg(currentPage, methodsStr, time, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
         }
-
-        return null;
     }
 
 }

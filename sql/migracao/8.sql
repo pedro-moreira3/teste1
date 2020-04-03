@@ -42,3 +42,15 @@ alter table seg_empresa RENAME PROFISSIONAL_TEMPO_PADRAO_CONSULTA TO TEMPO_PADRA
 alter table seg_empresa RENAME PROFISSIONAL_DIAS_SEMANA TO DIAS_SEMANA;
 alter table horas_uteis_profissional alter column hora_ini drop not null;
 alter table horas_uteis_profissional alter column hora_fim drop not null;
+
+CREATE TABLE AUDIT (
+	ID SERIAL PRIMARY KEY,
+	METHODS TEXT,
+	TIME_EXEC NUMERIC(25),
+	
+	TELA VARCHAR(100),
+	DATA TIMESTAMP(10),
+	
+	EMPRESA_ID BIGINT REFERENCES SEG_EMPRESA(EMP_INT_COD),
+	PROFISSIONAL_ID BIGINT REFERENCES PROFISSIONAL(ID)
+);
