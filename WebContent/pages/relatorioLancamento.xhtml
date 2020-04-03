@@ -115,10 +115,10 @@
 								<h:outputText value="#{lancamento.dataCreditoStr}"
 									title="#{lancamento.id}" />
 							</p:column>
-							<p:column filterBy="#{lancamento.status}"
-								sortBy="#{lancamento.status}" filterMatchMode="contains"
+							<p:column filterBy="#{lancamento.status.descricao}"
+								sortBy="#{lancamento.status.descricao}" filterMatchMode="contains"
 								headerText="Status">
-								<h:outputText value="#{lancamento.status}" />
+								<h:outputText value="#{lancamento.status.descricao}" />
 							</p:column>
 							<p:column filterBy="#{lancamento.formaPagamentoStr}"
 								sortBy="#{lancamento.formaPagamentoStr}"
