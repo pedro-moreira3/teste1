@@ -16,6 +16,8 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.Lancamento.DirecaoLancamento;
+import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
 import br.com.lume.odonto.entity.RelatorioRecebimento;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.relatorioRecebimento.RelatorioRecebimentoSingleton;
@@ -34,11 +36,9 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
 
     private Date inicio, fim;
 
-    private String status;
+    private StatusLancamento status;
 
     private BigDecimal somaValor = new BigDecimal(0);
-
-    public final List<String> statuss;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
@@ -47,13 +47,6 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         super(RelatorioRecebimentoSingleton.getInstance().getBo());
 
         this.setClazz(RelatorioRecebimento.class);
-        this.statuss = new ArrayList<>();
-        this.statuss.add(Lancamento.AGENDADO);
-        this.statuss.add(Lancamento.ATIVO);
-        this.statuss.add(Lancamento.ATRASADO);
-        this.statuss.add(Lancamento.CANCELADO);
-        this.statuss.add(Lancamento.PAGO);
-        this.statuss.add(Lancamento.PENDENTE);
         //this.filtra();
     }
 
@@ -66,8 +59,8 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
                 this.somaValor = new BigDecimal(0);
                 List<Lancamento> lancamentosFiltrados = LancamentoSingleton.getInstance().getBo().filterRelatorioRecebimentos(UtilsFrontEnd.getEmpresaLogada(), inicio, fim);
                 for (Lancamento l : lancamentosFiltrados) {
-                    this.somaValor = this.somaValor.add(l.getValor()).setScale(2, BigDecimal.ROUND_HALF_UP);
-                    if ((this.status == null || this.status.isEmpty() || l.getStatus().equals(this.status)) && "RP".equals(l.getFatura().getTipoFatura().getRotulo())) {
+                    if ((this.status == null || l.getStatus() == this.status) && "RP".equals(l.getFatura().getTipoFatura().getRotulo())) {
+                        this.somaValor = this.somaValor.add(l.getValor()).setScale(2, BigDecimal.ROUND_HALF_UP);
                         this.lancamentos.add(l);
                     }
                 }
@@ -89,15 +82,16 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         this.status = null;
         super.actionNew(arg0);
     }
-    
+
     public String planoTratamentoFromLancamento(Lancamento lancamento) {
-        
-        String planoTratamento = lancamento.getFatura().getItens().get(0).getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao(); 
-        
-        if(planoTratamento != null)
+
+        String planoTratamento = lancamento.getFatura().getItens().get(
+                0).getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao();
+
+        if (planoTratamento != null)
             return planoTratamento;
         return null;
-        
+
     }
 
     public void exportarTabela(String type) {
@@ -136,16 +130,16 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
         this.somaValor = somaValor;
     }
 
-    public String getStatus() {
-        return this.status;
+    public StatusLancamento getStatus() {
+        return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusLancamento status) {
         this.status = status;
     }
 
-    public List<String> getStatuss() {
-        return statuss;
+    public List<StatusLancamento> getStatuss() {
+        return Lancamento.getStatusLancamento(DirecaoLancamento.CREDITO);
     }
 
     public DataTable getTabelaRelatorio() {

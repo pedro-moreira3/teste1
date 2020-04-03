@@ -30,10 +30,11 @@
 
 							<p:outputLabel for="status" value="Status: " />
 							<p:selectOneMenu id="status"
-								value="#{relatorioRecebimentoMB.status}">
+								value="#{relatorioRecebimentoMB.status}" converter="enumStatusLancamento">
 								<f:selectItem itemValue="#{null}" itemLabel="Todos" />
 								<f:selectItems value="#{relatorioRecebimentoMB.statuss}"
-									var="status" itemLabel="#{status}" itemValue="#{status}" />
+									var="status" itemLabel="#{status.descricao}"
+									itemValue="#{status}" />
 							</p:selectOneMenu>
 
 						</p:panelGrid>
@@ -121,31 +122,27 @@
 							</p:column>
 							<p:column filterBy="#{lancamento.formaPagamentoStr}"
 								sortBy="#{lancamento.formaPagamentoStr}"
-								filterMatchMode="contains"
-								headerText="Forma">
+								filterMatchMode="contains" headerText="Forma">
 								<h:outputText value="#{lancamento.formaPagamentoStr}" />
 							</p:column>
 							<p:column filterBy="#{lancamento.numeroParcela}"
-								sortBy="#{lancamento.numeroParcela}"
-								filterMatchMode="contains"
+								sortBy="#{lancamento.numeroParcela}" filterMatchMode="contains"
 								headerText="Parcela">
 								<h:outputText value="#{lancamento.numeroParcela}">
-									<f:convertNumber/>
+									<f:convertNumber />
 								</h:outputText>
 							</p:column>
 							<p:column
 								filterBy="#{lancamento.fatura.paciente.dadosBasico.nome}"
 								sortBy="#{lancamento.fatura.paciente.dadosBasico.nome}"
-								filterMatchMode="contains"
-								headerText="Paciente">
+								filterMatchMode="contains" headerText="Paciente">
 								<h:outputText
 									value="#{lancamento.fatura.paciente.dadosBasico.nome}" />
 							</p:column>
 							<p:column
 								filterBy="#{relatorioRecebimentoMB.planoTratamentoFromLancamento(lancamento)}"
 								sortBy="#{relatorioRecebimentoMB.planoTratamentoFromLancamento(lancamento)}"
-								filterMatchMode="contains"
-								headerText="Plano de Tratamento">
+								filterMatchMode="contains" headerText="Plano de Tratamento">
 								<h:outputText
 									value="#{relatorioRecebimentoMB.planoTratamentoFromLancamento(lancamento)}" />
 							</p:column>

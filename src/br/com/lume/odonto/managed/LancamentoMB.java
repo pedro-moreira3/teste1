@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -37,11 +38,10 @@ import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Desconto;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
 import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Motivo;
 import br.com.lume.odonto.entity.Orcamento;
-import br.com.lume.odonto.entity.OrcamentoItem;
-import br.com.lume.odonto.entity.OrcamentoProcedimento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.Tarifa;
@@ -98,9 +98,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
 
     private String formaPagamento = "DI";
 
-    private String status;
-
-    public final List<String> statuss;
+    private StatusLancamento status;
 
     private List<PlanoTratamento> listPt, listPtSelecionados;
 
@@ -115,19 +113,12 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     private Integer parcela;
 
     private BigDecimal valorAPagar;
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaLancamento;
 
     public LancamentoMB() {
         super(LancamentoSingleton.getInstance().getBo());
-        statuss = new ArrayList<>();
-        statuss.add(Lancamento.AGENDADO);
-        statuss.add(Lancamento.ATIVO);
-        statuss.add(Lancamento.ATRASADO);
-        statuss.add(Lancamento.CANCELADO);
-        statuss.add(Lancamento.PAGO);
-        statuss.add(Lancamento.PENDENTE);
         dataPagamento = Calendar.getInstance().getTime();
         tarifa = new Tarifa();
         formaPagamento = "DI";
@@ -316,7 +307,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
 
     private void geraLancamentoContabil(Lancamento l) throws Exception {
         LancamentoContabil lc = new LancamentoContabil();
-        Motivo motivo = MotivoSingleton.getInstance().getBo().findBySigla(Motivo.RECEBIMENTO_PACIENTE );
+        Motivo motivo = MotivoSingleton.getInstance().getBo().findBySigla(Motivo.RECEBIMENTO_PACIENTE);
         lc.setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         lc.setTipo(motivo.getTipo());
         lc.setDadosBasico(paciente.getDadosBasico());
@@ -566,7 +557,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
             return true;
         }
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Recebimento dos pacientes", tabelaLancamento, type);
     }
@@ -803,15 +794,15 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
         this.fim = fim;
     }
 
-    public List<String> getStatuss() {
-        return statuss;
+    public List<StatusLancamento> getStatuss() {
+        return Arrays.asList(StatusLancamento.values());
     }
 
-    public String getStatus() {
+    public StatusLancamento getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusLancamento status) {
         this.status = status;
     }
 
