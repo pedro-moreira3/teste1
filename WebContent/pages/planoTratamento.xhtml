@@ -801,7 +801,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:commandButton icon="ui-icon-add" value="Novo Procedimento"
 								oncomplete="PF('dlgNovoProcedimento').show()"
 								actionListener="#{planoTratamentoMB.actionNewProcedimento}"
-								update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgProcedimento, :lume:tabViewPaciente:pgProcedimentoBotoes"
+								update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgProcedimento, :lume:tabViewPaciente:pgProcedimentoBotoes,
+									:lume:tabViewPaciente:dtProcedimentosSelecionadospt"
 								process="@this" styleClass="GreenButton"
 								disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}" />
 							<p:commandButton styleClass="NavyButton" process="@this"
@@ -829,7 +830,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									actionListener="#{planoTratamentoMB.editaPlanoTratamentoProcedimento(plano)}"
 									oncomplete="PF('dlgNovoProcedimento').show()" title="Editar"
 									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"
-									update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgProcedimento, :lume:tabViewPaciente:pgProcedimentoBotoes" />
+									update=":lume:tabViewPaciente:pnViewPlanoTratamento, :lume:tabViewPaciente:pgProcedimento, :lume:tabViewPaciente:pgProcedimentoBotoes, @this" />
 								<p:commandButton icon="fa fa-clock-o" process="@this"
 									actionListener="#{planoTratamentoMB.carregaAgendamentosProcedimento(plano)}"
 									oncomplete="PF('dlgListaAgendamentoProcedimento').show()"
@@ -890,7 +891,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 									<p:ajax event="change"
 										listener="#{planoTratamentoMB.validarAlteracao(plano)}"
-										update="valortroca" />
+										update="@this, valortroca" />
 
 								</p:inputNumber>
 								<h:outputText value="#{plano.valorDesconto}"
