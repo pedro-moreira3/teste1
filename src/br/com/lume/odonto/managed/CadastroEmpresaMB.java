@@ -118,11 +118,11 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
                 return false;
             }
-        } else if (this.diasSelecionados.isEmpty()) {
-            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário que seja selecionado, no mínimo um dia da semana para os horários de profissional.");
-            return false;
+      //  } //else if (this.diasSelecionados.isEmpty()) {
+          //  addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário que seja selecionado, no mínimo um dia da semana para os horários de profissional.");
+        //    return false;
         } else {
-            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário o preenchimento de no mínimo um turno nos horários de profissional.");
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário o preenchimento de no mínimo um turno nos horários da clínica.");
             return false;
         }
                 

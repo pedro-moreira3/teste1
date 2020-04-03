@@ -124,6 +124,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
             //se nao for mes atual, selecionamos primeiro dia do próximo mês
             if(Utils.getMesInt(mes) != Utils.getMesInt(Utils.getMesTexto(new Date()))) {
                 cal.set(Calendar.DATE, 1);
+                listaAgendamentos = new ArrayList<Agendamento>();
             }else {
                 Calendar calDia = Calendar.getInstance();
                 calDia.setTime(new Date());  
@@ -131,11 +132,17 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
             }
             cal.set(Calendar.MONTH, Utils.getMesInt(mes));
             cal.set(Calendar.YEAR, ano);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);  
             data = cal.getTime();
          if((filtroPorProfissionalAntigo == null || !filtroPorProfissionalAntigo.equals(filtroPorProfissional)) || (dataAnterior == null || Utils.getMes(data) != Utils.getMes(dataAnterior))) {
              calculaPorcentagemOcupada(data);
          }
-            popularLista();
+         if(Utils.getMesInt(mes) == Utils.getMesInt(Utils.getMesTexto(new Date()))) {
+             popularLista();
+         }
+           
         }else {
             this.addError("Escolha um profissional", "");
         }
@@ -487,19 +494,23 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         List<Agendamento> substituidos = new ArrayList<Agendamento>();
         for (Agendamento agendamentoCriado : listaCriados) {
             boolean foiAdicionado = false;
+            
             for (Agendamento agendamentoExistente : paraSubstituir) {
-                
+              //  System.out.println("a " + agendamentoExistente.getFim());    
+              //  System.out.println("b " + agendamentoCriado.getFim());    
                 if(agendamentoExistente.getInicio().equals(agendamentoCriado.getInicio()) 
                         ||(agendamentoExistente.getInicio().after(agendamentoCriado.getInicio()) && agendamentoExistente.getInicio().before(agendamentoCriado.getFim()))                                        
                         ) {
                     
                     //agendamento existente esta entre o inicio e fim, entao somente substitui a linha
                     if(agendamentoExistente.getFim().equals(agendamentoCriado.getFim()) || agendamentoExistente.getFim().before(agendamentoCriado.getFim())) {
-                        substituidos.add(agendamentoExistente) ;                                      
+                        substituidos.add(agendamentoExistente) ;   
+                        //System.out.println("a");
                         foiAdicionado = true;
                    //agendamento existente esta entre o inicio mas o fim é maior que proximo, entao inicio do proximo deve receber hora de fim desse    
-                    }else if(agendamentoExistente.getFim().after(agendamentoCriado.getFim())) {
-                        substituidos.add(agendamentoExistente) ;                                        
+                    }else if(agendamentoExistente.getFim().after(agendamentoCriado.getFim()) || agendamentoExistente.getFim().equals(agendamentoCriado.getFim())) {
+                        substituidos.add(agendamentoExistente) ;
+                     //   System.out.println("b");
                         foiAdicionado = true;
                     }                                   
                 }                                
@@ -510,6 +521,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                         agendamentoCriado.getInicio().equals(substituidos.get(substituidos.size() -1).getFim()) ||
                         agendamentoCriado.getInicio().after(substituidos.get(substituidos.size() -1).getFim()) ) {
                     substituidos.add(agendamentoCriado);
+                    System.out.println("c");
                 }                               
             }
         }
