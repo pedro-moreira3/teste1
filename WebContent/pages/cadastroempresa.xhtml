@@ -350,31 +350,31 @@
 
 								<p:outputLabel for="horaIni" value="Hora inicial manhã: " />
 								<p:calendar id="horaIni"
-									value="#{cadastroEmpresaMB.entity.profissionalHoraInicialManha}"
+									value="#{cadastroEmpresaMB.entity.horaInicialManha}"
 									timeOnly="true" pattern="HH:mm" locale="#{lumeSecurity.locale}"
 									mask="true" timeInput="true" />
 
 								<p:outputLabel for="horaFim" value="Hora final manhã: " />
 								<p:calendar id="horaFim"
-									value="#{cadastroEmpresaMB.entity.profissionalHoraFinalManha}"
+									value="#{cadastroEmpresaMB.entity.horaFinalManha}"
 									timeOnly="true" pattern="HH:mm" locale="#{lumeSecurity.locale}"
 									mask="true" timeInput="true" />
 
 								<p:outputLabel for="horaIniTarde" value="Hora inicial tarde: " />
 								<p:calendar id="horaIniTarde"
-									value="#{cadastroEmpresaMB.entity.profissionalHoraInicialTarde}"
+									value="#{cadastroEmpresaMB.entity.horaInicialTarde}"
 									timeOnly="true" pattern="HH:mm" timeInput="true"
 									locale="#{lumeSecurity.locale}" mask="true" />
 
 								<p:outputLabel for="horaFimTarde" value="Hora final tarde: " />
 								<p:calendar id="horaFimTarde"
-									value="#{cadastroEmpresaMB.entity.profissionalHoraFinalTarde}"
+									value="#{cadastroEmpresaMB.entity.horaFinalTarde}"
 									timeOnly="true" pattern="HH:mm" timeInput="true"
 									locale="#{lumeSecurity.locale}" mask="true" />
 
 								<p:outputLabel value="Tempo padrão de consulta em minutos:" />
 								<p:inputNumber
-									value="#{cadastroEmpresaMB.entity.profissionalTempoPadraoConsulta}"
+									value="#{cadastroEmpresaMB.entity.tempoPadraoConsulta}"
 									decimalPlaces="0">
 								</p:inputNumber>
 
@@ -390,7 +390,7 @@
 							<p:commandButton id="persist" icon="White fa fa-save"
 								value="Salvar"
 								actionListener="#{cadastroEmpresaMB.actionPersist}"
-								update="@all" process="pnPrincipal" styleClass="GreenButton" />
+								update="pnPrincipal" process="pnPrincipal" styleClass="GreenButton" />
 						</p:panelGrid>
 					</p:outputPanel>
 				</div>

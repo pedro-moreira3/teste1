@@ -59,54 +59,83 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
         try {
             // TODO Auto-generated method stub
 
-            if(this.getEntity().getProfissionalHoraInicialManha() != null && this.getEntity().getProfissionalHoraFinalManha() != null) {
-                if(!GenericValidator.validarRangeData(this.getEntity().getProfissionalHoraInicialManha(), 
-                        this.getEntity().getProfissionalHoraFinalManha(), true)) {
-                    this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
-                    return;
+            if(verificarRangeData()) {
+                String diasSemana = "";
+                for(String dia : getDiasSelecionados()) {
+                    diasSemana += dia + ";";
                 }
-            }else if(this.getEntity().getProfissionalHoraInicialTarde() != null && this.getEntity().getProfissionalHoraFinalTarde() != null) {
-                if(GenericValidator.validarRangeData(this.getEntity().getProfissionalHoraInicialTarde(),
-                        this.getEntity().getProfissionalHoraFinalTarde(),true)) {
-                    this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
-                    return;
-                }
-            }else if(this.diasSelecionados.isEmpty()){
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), 
-                        "É necessário que seja selecionado, no mínimo um dia da semana para os horários de profissional.");
-                return;
-            } else {
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), 
-                        "É necessário o preenchimento de no mínimo um turno nos horários de profissional.");
-                return;
-            }
-            
-            String diasSemana = "";
-            for(String dia : getDiasSelecionados()) {
-                diasSemana += dia = ";";
-            }
-            
-            this.getEntity().setProfissionalDiasSemana(diasSemana);
-            
-            super.actionPersist(event);
-            
-            UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(getEntity()));
-            menuMB.carregarMenu();
+                
+                this.getEntity().setDiasSemana(diasSemana);
+                
+                super.actionPersist(event);
+                
+                UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(getEntity()));
+                menuMB.carregarMenu();
 
-            this.addInfo("Sucesso", "Dados salvos com sucesso!");
+                this.addInfo("Sucesso", "Dados salvos com sucesso!");
+            }
+            
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error("Erro ao buscar registros", e);
         }
     }
 
+    /**
+     * O intervalo de data deve respeitar a regra (dataFinal >= dataInicial). A obrigatoriedade é de preencher ao menos um turno, se um turno estiver preenchido
+     * corretamente e o outro turno, com um horário definido e o outro horário nulo, não será possível salvar o registro.
+     * @return
+     */
+    private boolean verificarRangeData() {
+        
+        if (this.getEntity().getHoraInicialManha() != null && this.getEntity().getHoraFinalManha() != null) {
+            if (GenericValidator.validarRangeData(this.getEntity().getHoraInicialManha(), this.getEntity().getHoraFinalManha(), true)) {
+                if((this.getEntity().getHoraInicialTarde() != null && this.getEntity().getHoraFinalTarde() != null)) {
+                    if(!GenericValidator.validarRangeData(this.getEntity().getHoraInicialTarde(), this.getEntity().getHoraFinalTarde(), true)) {
+                        this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                        return false;
+                    }
+                }else if(!(this.getEntity().getHoraInicialTarde() == null && this.getEntity().getHoraFinalTarde() == null)){
+                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                    return false;
+                }
+            }else {
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                return false;
+            }
+        } else if (this.getEntity().getHoraInicialTarde() != null && this.getEntity().getHoraFinalTarde() != null) {
+            if (GenericValidator.validarRangeData(this.getEntity().getHoraInicialTarde(), this.getEntity().getHoraFinalTarde(), true)) {
+                if((this.getEntity().getHoraInicialManha() != null && this.getEntity().getHoraFinalManha() != null)) {
+                    if(!GenericValidator.validarRangeData(this.getEntity().getHoraInicialManha(), this.getEntity().getHoraFinalManha(), true)) {
+                        addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                        return false;
+                    }
+                }else if(!(this.getEntity().getHoraInicialManha() == null && this.getEntity().getHoraFinalManha() == null)){
+                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                    return false;
+                }
+            }else {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                return false;
+            }
+        } else if (this.diasSelecionados.isEmpty()) {
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário que seja selecionado, no mínimo um dia da semana para os horários de profissional.");
+            return false;
+        } else {
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário o preenchimento de no mínimo um turno nos horários de profissional.");
+            return false;
+        }
+                
+        return true;
+    }
+    
     private void carregarEmpresa() {
         try {
             setEntity(UtilsFrontEnd.getEmpresaLogada());
             profissional = ProfissionalSingleton.getInstance().getBo().findAdminInicial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.afiliacoes = AfiliacaoSingleton.getInstance().getBo().getAllAfiliacao();
             
-            String dias[] = this.getEntity().getProfissionalDiasSemana().split(";");
+            String dias[] = this.getEntity().getDiasSemana().split(";");
             Arrays.stream(dias).forEach(dia -> {
                 getDiasSelecionados().add(dia);
             });

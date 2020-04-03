@@ -38,29 +38,29 @@ body .ui-selectmanycheckbox td label {
 							<p:outputLabel for="horaIni" value="Hora inicial manhã: " />
 							<p:calendar id="horaIni"
 								value="#{horasUteisProfissionalMB.horaIni}" timeOnly="true"
-								pattern="HH:mm" locale="#{lumeSecurity.locale}" required="true"
-								mask="true" />
+								pattern="HH:mm" locale="#{lumeSecurity.locale}"
+								mask="true" timeInput="true"/>
 						</h:panelGroup>
 						<h:panelGroup>
 							<p:outputLabel for="horaFim" value="Hora final manhã: " />
 							<p:calendar id="horaFim"
 								value="#{horasUteisProfissionalMB.horaFim}" timeOnly="true"
-								pattern="HH:mm" locale="#{lumeSecurity.locale}" required="true"
-								mask="true" />
+								pattern="HH:mm" locale="#{lumeSecurity.locale}"
+								mask="true" timeInput="true"/>
 						</h:panelGroup>
 						<h:panelGroup>
 							<p:outputLabel for="horaIniTarde" value="Hora inicial tarde: " />
 							<p:calendar id="horaIniTarde"
 								value="#{horasUteisProfissionalMB.horaIniTarde}" timeOnly="true"
-								pattern="HH:mm" locale="#{lumeSecurity.locale}" required="true"
-								mask="true" />
+								pattern="HH:mm" locale="#{lumeSecurity.locale}"
+								mask="true" timeInput="true"/>
 						</h:panelGroup>
 						<h:panelGroup>
 							<p:outputLabel for="horaFimTarde" value="Hora final tarde: " />
 							<p:calendar id="horaFimTarde"
 								value="#{horasUteisProfissionalMB.horaFimTarde}" timeOnly="true"
-								pattern="HH:mm" locale="#{lumeSecurity.locale}" required="true"
-								mask="true" />
+								pattern="HH:mm" locale="#{lumeSecurity.locale}"
+								mask="true" timeInput="true"/>
 						</h:panelGroup>
 
 					</p:panelGrid>

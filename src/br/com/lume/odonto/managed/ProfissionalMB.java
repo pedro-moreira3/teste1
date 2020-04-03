@@ -268,11 +268,11 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             if (horas == null || horas.isEmpty()) {
                 
                 clinica = EmpresaSingleton.getInstance().getBo().find(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                String diasSemana[] = clinica.getProfissionalDiasSemana().split(";");
+                String diasSemana[] = clinica.getDiasSemana().split(";");
 
-                if (GenericValidator.validarRangeData(clinica.getProfissionalHoraInicialManha(), clinica.getProfissionalHoraFinalManha(), true) && GenericValidator.validarRangeData(
-                        clinica.getProfissionalHoraInicialTarde(), clinica.getProfissionalHoraFinalTarde(),
-                        true) && clinica.getProfissionalHoraFinalManha().before(clinica.getProfissionalHoraInicialTarde())) {
+                if (GenericValidator.validarRangeData(clinica.getHoraInicialManha(), clinica.getHoraFinalManha(), true) && GenericValidator.validarRangeData(
+                        clinica.getHoraInicialTarde(), clinica.getHoraFinalTarde(),
+                        true) && clinica.getHoraFinalManha().before(clinica.getHoraInicialTarde())) {
 
                     for (String diaSemana : diasSemana) {
                         HorasUteisProfissional horasUteis = new HorasUteisProfissional();
@@ -280,10 +280,10 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
                         horasUteis.setExcluido(Status.NAO);
                         horasUteis.setDiaDaSemana(diaSemana);
                         horasUteis.setProfissional(profissional);
-                        horasUteis.setHoraIni(clinica.getProfissionalHoraInicialManha());
-                        horasUteis.setHoraFim(clinica.getProfissionalHoraFinalManha());
-                        horasUteis.setHoraIniTarde(clinica.getProfissionalHoraInicialTarde());
-                        horasUteis.setHoraFimTarde(clinica.getProfissionalHoraFinalTarde());
+                        horasUteis.setHoraIni(clinica.getHoraInicialManha());
+                        horasUteis.setHoraFim(clinica.getHoraFinalManha());
+                        horasUteis.setHoraIniTarde(clinica.getHoraInicialTarde());
+                        horasUteis.setHoraFimTarde(clinica.getHoraFinalTarde());
                         HorasUteisProfissionalSingleton.getInstance().getBo().persist(horasUteis);
                     }
 
@@ -293,7 +293,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
                 }
 
                 if (profissional.getTempoConsulta() == null || profissional.getTempoConsulta() == 0)
-                    profissional.setTempoConsulta(clinica.getProfissionalTempoPadraoConsulta());
+                    profissional.setTempoConsulta(clinica.getTempoPadraoConsulta());
             }
 
         } catch (Exception e) {

@@ -34,3 +34,11 @@ alter table seg_empresa add column PROFISSIONAL_HORA_INICIAL_TARDE TIME DEFAULT 
 alter table seg_empresa add column PROFISSIONAL_HORA_FINAL_TARDE TIME DEFAULT '18:00:00';
 alter table seg_empresa add column PROFISSIONAL_TEMPO_PADRAO_CONSULTA NUMERIC DEFAULT 30;
 alter table seg_empresa add column PROFISSIONAL_DIAS_SEMANA varchar(100) DEFAULT 'SEG;TER;QUA;QUI;SEX;';
+alter table seg_empresa RENAME PROFISSIONAL_HORA_INICIAL_MANHA TO HORA_INICIAL_MANHA;
+alter table seg_empresa RENAME PROFISSIONAL_HORA_FINAL_MANHA TO HORA_FINAL_MANHA;
+alter table seg_empresa RENAME PROFISSIONAL_HORA_INICIAL_TARDE TO HORA_INICIAL_TARDE;
+alter table seg_empresa RENAME PROFISSIONAL_HORA_FINAL_TARDE TO HORA_FINAL_TARDE;
+alter table seg_empresa RENAME PROFISSIONAL_TEMPO_PADRAO_CONSULTA TO TEMPO_PADRAO_CONSULTA;
+alter table seg_empresa RENAME PROFISSIONAL_DIAS_SEMANA TO DIAS_SEMANA;
+alter table horas_uteis_profissional alter column hora_ini drop not null;
+alter table horas_uteis_profissional alter column hora_fim drop not null;

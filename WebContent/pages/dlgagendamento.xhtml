@@ -381,7 +381,7 @@
 				<p:message styleClass="msg" for="inicio" />
 			</h:panelGroup>
 			<h:panelGroup styleClass="md-inputfield">
-				<p:calendar id="fim" value="#{agendamentoMB.fim}"
+				<p:calendar id="fim" value="#{agendamentoMB.fim}" timeInput="true"
 					pattern="dd/MM/yyyy HH:mm" mask="true"
 					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.fim)}"
 					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.fim)}">
