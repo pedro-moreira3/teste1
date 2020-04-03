@@ -21,6 +21,7 @@ public class LifeCycleListener implements PhaseListener {
 
     public void beforePhase(PhaseEvent event) {
         try {
+            // Começo o cronômetro e armazeno o Start no contexto da requisição
             LifeCycleListenerUtils.putParamOnContext(event.getFacesContext(), "TimerStart", AuditTimer.StartCount());
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -29,12 +30,19 @@ public class LifeCycleListener implements PhaseListener {
 
     public void afterPhase(PhaseEvent event) {
         try {
+            // Guardo o contexto da requisição em variável local
+            FacesContext context = event.getFacesContext();
+            
+            // Busco o identificador do Start salvo no beforePhase() e calculo o tempo de execução
+            String hash = LifeCycleListenerUtils.getParamOnContext(context, "TimerStart", String.class);
+            Long time = AuditTimer.StopCount(hash);
+            
+            // Listo os métodos envolvidos na chamada e coloco-os em string
             List<String> methods = LifeCycleListenerUtils.getMethodsCallFromPhaseEvent(event.getFacesContext());
             String methodsStr = String.join(", ", methods);
-            String hash = LifeCycleListenerUtils.getParamOnContext(event.getFacesContext(), "TimerStart", String.class);
-            Long time = AuditTimer.StopCount(hash);
-            String currentPage = FacesContext.getCurrentInstance().getViewRoot().getViewId();
-            AuditSingleton.getInstance().createAuditReg(currentPage, methodsStr, time, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada());
+            
+            // Registro os dados em banco
+            AuditSingleton.getInstance().createAuditReg(context, methodsStr, time, UtilsFrontEnd.getProfissionalLogado());
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
