@@ -342,13 +342,22 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         atualizaPickList();
     }
     
-    public void agendamentoRapidoEncaixe(Profissional p) {
-        setEntity(new Agendamento());
+    public void agendamentoRapidoEncaixe(Date data,Profissional p) {
+        pacienteSelecionado = null;
+        Agendamento agendamento = new Agendamento();
+        this.setInicio(data);
+        this.setFim(data);
+        
+        agendamento.setInicio(data);
+        agendamento.setFim(data);
+        
+        setEntity(agendamento);
        
         if(p != null) {          
             profissionalDentroAgenda = p;
         }          
         PrimeFaces.current().ajax().update(":lume:pnAgendamento");    
+        atualizaPickList();
     }
     
     public void agendamentoRapidoBloqueio(Profissional p) {

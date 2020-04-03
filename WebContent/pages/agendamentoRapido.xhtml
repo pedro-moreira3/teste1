@@ -344,7 +344,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:outputPanel>	</p:outputPanel>
 										<p:outputPanel>	</p:outputPanel>								
 										<p:commandButton id="encaixe" icon="White fa fa-calendar White"
-										value="Encaixe" actionListener="#{agendamentoMB.agendamentoRapidoEncaixe(agendamentoRapidoMB.filtroPorProfissional)}" 
+										value="Encaixe" actionListener="#{agendamentoMB.agendamentoRapidoEncaixe(agendamentoRapidoMB.data,agendamentoRapidoMB.filtroPorProfissional)}" 
 										oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
 										update=":lume:dtRelagendamento" tabindex="1" process="@this"
 										styleClass="OrangeButton" />
@@ -500,7 +500,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 		</p:dialog>
 					<p:remoteCommand name="atualizaLista" process="@this"
 										update=":lume:painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,:lume:observacoes,:lume:data"
-										actionListener="#{agendamentoRapidoMB.depoisSalvaAgendamento()}" oncomplete="console.log('atualiza');PF('dtRelagendamento').filter();"/>			
+										actionListener="#{agendamentoRapidoMB.depoisSalvaAgendamento()}" oncomplete="PF('dtRelagendamento').filter();"/>			
 
 				
 
