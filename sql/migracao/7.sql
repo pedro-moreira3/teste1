@@ -102,6 +102,8 @@ alter table tarifa add column ultima_alteracao_por bigint references PROFISSIONA
 update tarifa set status = 'A' where excluido = 'N'
 update tarifa set status = 'N' where excluido = 'S'
 
+ALTER TABLE fatura ADD status_fatura varchar(100) NULL;
+
 UPDATE FATURA SET STATUS_FATURA = 'R' WHERE STATUS_FATURA = 'Recebido';
 UPDATE FATURA SET STATUS_FATURA = 'A' WHERE STATUS_FATURA = 'A Receber';
 UPDATE FATURA SET STATUS_FATURA = 'T' WHERE STATUS_FATURA = 'Todos';
@@ -119,7 +121,7 @@ UPDATE FATURA SET STATUS_FATURA = (
 	ELSE NULL END
 ) WHERE STATUS_FATURA IS NULL;
 
-ALTER TABLE fatura ADD status_fatura varchar(100) NULL;
+
 -------------------------acima ja rodado ----------------------------------------------------
 
 INSERT INTO SEG_OBJETO(OBJ_INT_CODPAI, OBJ_STR_DES, OBJ_CHA_STS, OBJ_STR_CAMINHO,
