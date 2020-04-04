@@ -350,12 +350,19 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 // cancelaAgendamentos();
                 PrimeFaces.current().executeScript("PF('devolver').hide()");
 
+                boolean faturaInterrompida = false;
                 List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(getEntity());
-                for (Orcamento orcamento : orcamentos)
-                    OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
+                for (Orcamento orcamento : orcamentos) {
+                    boolean interrompida = OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
+                    if (!faturaInterrompida)
+                        faturaInterrompida = interrompida;
+                }
+                if (faturaInterrompida)
+                    this.addWarn("Atenção!", "Uma ou mais faturas foram interrompidas com pendências, verifique a tela de Ajuste de Contas.");
             }
             PlanoTratamentoSingleton.getInstance().encerrarPlanoTratamento(getEntity(), this.justificativa, UtilsFrontEnd.getProfissionalLogado());
             this.justificativa = null;
+
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
             atualizaTela();
         } catch (Exception e) {

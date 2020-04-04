@@ -179,30 +179,46 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
    font-weight: bold !important; 
 }
 
+.ui-datepicker .ui-state-highlight{
+ background-color: #3CB371 ;
+}
+
+.ui-datepicker-header{
+  display: none !important;
+}
+
 </style>
 
 <script type="text/javascript">
+
+
+
+
   function alteraCoresCalendario(date) {	
-	 console.log("entrou");
+	
+	  var livre = document.getElementById("lume:livre").value.split(" ");
+	  var medio = document.getElementById("lume:medio").value.split(" ");
+	  var cheio = document.getElementById("lume:cheio").value.split(" ");
+	 // console.log(x);
+	
 	 // var teste = document.getElementById("lume:data");
 	//  console.log("----------------");
 	//  console.log(teste);
 	 // console.log(date);
-    var livre = new Array(#{fn:join(agendamentoRapidoMB.getLivre(), ',')});
-    console.log(livre);
-    for (var i = 0; i &lt; livre.length; i++) {    	
+//var livre = new Array(#{fn:join(agendamentoRapidoMB.getLivre(), ',')});
+  //  console.log(livre);
+    for (var i = 0; i &lt; livre.length; i++) {     
       if(date.getTime() == new Date(livre[i]).getTime()) {    	
         return [true, 'livre'];
       }
     }
-    var medio = new Array(#{fn:join(agendamentoRapidoMB.getMedio(), ',')});
+    
     for (var i = 0; i &lt; medio.length; i++) {    	
       if(date.getTime() == new Date(medio[i]).getTime()) {    	
         return [true, 'medio'];
       }
     }
-    
-    var cheio = new Array(#{fn:join(agendamentoRapidoMB.getCheio(), ',')});
+      
     for (var i = 0; i &lt; cheio.length; i++) {    	
       if(date.getTime() == new Date(cheio[i]).getTime()) {    	
         return [true, 'cheio'];
@@ -211,11 +227,18 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
     
     return [true, ''];
   };
+  
 </script>
+
+   <h:inputHidden id="livre" value="#{agendamentoRapidoMB.livre}" />
+   <h:inputHidden id="medio" value="#{agendamentoRapidoMB.medio}" />
+   <h:inputHidden id="cheio" value="#{agendamentoRapidoMB.cheio}" /> 
+   
+		
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-					<h1>Agendamento Rápido</h1>
+					<h1>Agendamento Por Profissional</h1>
 					<p:fieldset id="filtroRelatorio" header="Filtro" toggleable="true"
 						toggleSpeed="500">
 						<p:outputPanel>
@@ -223,13 +246,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 								style="border:0px none; background-color:transparent;">
 
-								<p:outputPanel>
+								<p:outputPanel id="painelComponentes">
 
 									<p:panelGrid columns="2" layout="grid"
-										styleClass="ui-panelgrid-blank ui-fluid form-group">
+										styleClass="ui-panelgrid-blank ui-fluid form-group" id="painelProfissional">
 										<h:panelGroup>
 											<h:outputText for="filtroProfissional"
-												value="Profissional:" />
+												value="Selecione o Profissional:" />
 											<p:autoComplete id="filtroProfissional"
 												value="#{agendamentoRapidoMB.filtroPorProfissional}"
 												completeMethod="#{agendamentoRapidoMB.sugestoesProfissionais}"
@@ -238,43 +261,100 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												forceSelection="true" scrollHeight="400" queryDelay="1000"
 												dropdown="true">
 												<p:ajax event="itemSelect" global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" 
-												update="painelCalendario,:lume:dtRelAtendimento,:lume:filtroRelatorio,observacoes,data" oncomplete="PF('dtRelAtendimento').filter();"
+												update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes,data" oncomplete="PF('dtRelagendamento').filter();"
 												/>
-												
 											</p:autoComplete>
 										</h:panelGroup>
 										
-									</p:panelGrid>									
+									</p:panelGrid>
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank ui-fluid form-group" >
+										<h:panelGroup>
+											<h:outputText for="filtroMes"
+												value="Mês:" />
+											<p:selectOneMenu id="filtroMes"
+												style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+												value="#{agendamentoRapidoMB.mes}">									
+												<f:selectItems
+													value="#{agendamentoRapidoMB.sugestoesMes()}"
+													var="mes" itemLabel="#{mes}"
+											itemValue="#{mes}" />
+											<p:ajax event="itemSelect" global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" 
+												update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes,data" oncomplete="PF('dtRelagendamento').filter();"
+												/>
+											</p:selectOneMenu>											
+										</h:panelGroup>
+										
+									</p:panelGrid>	
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
+										<h:panelGroup>
+											<h:outputText for="filtroAno"
+												value="Ano:" />
+											<p:selectOneMenu id="filtroAno"
+												style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+												value="#{agendamentoRapidoMB.ano}">									
+												<f:selectItems
+													value="#{agendamentoRapidoMB.sugestoesAno()}"
+													var="ano" itemLabel="#{ano}"
+													itemValue="#{ano}" />
+													<p:ajax event="itemSelect" global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" 
+												update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes,data" oncomplete="PF('dtRelagendamento').filter();"
+												/>
+											</p:selectOneMenu>	
+										</h:panelGroup>										
+									</p:panelGrid>	
+																																				
 									<p:panelGrid columns="5" layout="grid" id="painelCalendario" 
 										styleClass="ui-panelgrid-blank ui-fluid form-group">
-										<p:outputPanel rendered="#{agendamentoRapidoMB.filtroPorProfissional != null}">	
-											<h:outputText for="data" value="Data do agendamento:" />		
-																
-											<p:calendar value="#{agendamentoRapidoMB.data}" mode="inline" rendered="#{agendamentoRapidoMB.filtroPorProfissional != null}"
+										<p:outputPanel >	
+											<h:outputText for="data" value="Selecione o dia:" />	
+											<p:calendar value="#{agendamentoRapidoMB.data}" mode="inline" 
 												  pattern="dd/MM/yyyy"
-												  navigator="true" effect="slide"
+												  navigator="false" 
 												  locale="#{lumeSecurity.locale}"
 												  timeZone="#{lumeSecurity.timeZone}"
 												  readonlyInput="true" beforeShowDay="alteraCoresCalendario"
-												  yearRange="-2:+2" 
+												  yearRange="-2:+2"
 												  id="data" widgetVar="data"
-												  showOtherMonths="true">	
-												   <p:ajax event="dateSelect" update="painelCalendario,:lume:dtRelAtendimento,:lume:filtroRelatorio,observacoes" 
-												   global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" oncomplete="alteraCoresCalendario(this);PF('dtRelAtendimento').filter()"/>													    							 
+												  showOtherMonths="false"
+												  >
+												   <p:ajax event="dateSelect" update="painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,observacoes" 
+												   global="true" process="@this" listener="#{agendamentoRapidoMB.selecionaDia()}" oncomplete="PF('dtRelagendamento').filter()"/>	
+												 													 								    							 
 											</p:calendar>
+											
+											
+											
 										</p:outputPanel>	
-										<p:outputPanel rendered="#{agendamentoRapidoMB.filtroPorProfissional != null}">	<br/><br/><br/><br/>
+										<p:outputPanel >	<br/><br/><br/><br/>
 											<p:outputPanel id="pnFiltroStatus">
 											<p:outputLabel value="Legenda: " />	
 												<p:panelGrid columns="1" layout="grid"
 													styleClass="ui-panelgrid-blank ui-fluid form-group">
 													<div class='clienteNaClinica legendaFiltroAgendamento'></div>Mais que 50% Livre;<br/><br/>
 													<div class='agendamentoPrecadastro legendaFiltroAgendamento'></div>Menos que 50% Livre;<br/><br/>
-													<div class='agendamentoNaoConfirmado legendaFiltroAgendamento'></div>Menos que 10% Livre;<br/><br/>													
+													<div class='agendamentoNaoConfirmado legendaFiltroAgendamento'></div>Menos que 20% Livre;<br/><br/>													
 												</p:panelGrid>
 											</p:outputPanel>
 										</p:outputPanel>
 									</p:panelGrid>
+									<p:panelGrid columns="4" layout="grid" id="painelBotao" 
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
+										<p:outputPanel>	</p:outputPanel>
+										<p:outputPanel>	</p:outputPanel>								
+										<p:commandButton id="encaixe" icon="White fa fa-calendar White"
+										value="Encaixe" actionListener="#{agendamentoMB.agendamentoRapidoEncaixe(agendamentoRapidoMB.data,agendamentoRapidoMB.filtroPorProfissional)}" 
+										oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
+										update=":lume:dtRelagendamento" tabindex="1" process="@this"
+										styleClass="OrangeButton" />
+										<p:commandButton id="bloqueio" icon="White fa fa-calendar White"
+										value="Bloqueio"
+										update=":lume:dtAfastamento" tabindex="1" process="@this" actionListener="#{agendamentoMB.agendamentoRapidoBloqueio(agendamentoRapidoMB.filtroPorProfissional)}"
+										styleClass="RedButton" />	
+										
+																	
+									</p:panelGrid>			
 								</p:outputPanel>
 								<p:outputPanel>
 									<p:outputLabel id="observacoes" value="#{agendamentoRapidoMB.observacoes}"></p:outputLabel>	
@@ -284,91 +364,90 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:outputPanel>
 					</p:fieldset>
 
-					<h:panelGroup>
+					<h:panelGroup id="pnAgnd">
 
-						<p:dataTable id="dtRelAtendimento" widgetVar="dtRelAtendimento"
+						<p:dataTable id="dtRelagendamento" widgetVar="dtRelagendamento"
 							value="#{agendamentoRapidoMB.listaAgendamentos}"
-							var="atendimento" rowKey="#{atendimento}" 
+							var="agendamento" rowKey="#{agendamento}" 
 							paginator="false"  reflow="true"
 							emptyMessage="Nenhum registro encontrado"					
 							selection="#{agendamentoRapidoMB.entity}"
 							selectionMode="single" filterDelay="1000">
 							<p:column headerText="Ações">
 								<p:commandButton id="btnView" icon="White fa fa-calendar"
-									oncomplete="PF('dlgAgendamento').show();"
-									update="" width="5%" rendered="#{atendimento.descricao ne 'Horário bloqueado'}"
-									action="#{agendamentoMB.setEntity(atendimento)}"
+									oncomplete="PF('eventDialog').show();resize('#lume\\:pnAgendamento');"
+									update="" width="5%" rendered="#{agendamento.descricao ne 'Horário bloqueado'}"
+									action="#{agendamentoMB.agendamentoRapido(agendamento)}"
 									process="@this">
 									<p:ajax
 										listener="#{agendamentoRapidoMB.abreNovoAgendamento()}" />
 									<p:ajax
-										listener="#{agendamentoRapidoMB.setEntity(atendimento)}" />									
-									<p:ajax
-										listener="#{agendamentoMB.popularAgendamento(atendimento)}" />
+										listener="#{agendamentoRapidoMB.setEntity(agendamento)}" />									
+									
 									<p:tooltip for="btnView" value="Agendar" />
 								</p:commandButton>
-								<h:outputText rendered="#{atendimento.descricao eq 'Horário bloqueado'}"
+								<h:outputText rendered="#{agendamento.descricao eq 'Horário bloqueado'}"
 									value="Horário bloqueado" />
 							</p:column>
-							<p:column filterBy="#{atendimento.inicio}"
-								sortBy="#{atendimento.inicio}" filterMatchMode="contains"
+							<p:column filterBy="#{agendamento.inicio}"
+								sortBy="#{agendamento.inicio}" filterMatchMode="contains"
 								headerText="Hora início">
 								<h:outputText
-									value="#{agendamentoRapidoMB.formatarData(atendimento.inicio)}" />
+									value="#{agendamentoRapidoMB.formatarData(agendamento.inicio)}" />
 							</p:column>
-							<p:column filterBy="#{atendimento.fim}"
-								sortBy="#{atendimento.fim}" filterMatchMode="contains"
+							<p:column filterBy="#{agendamento.fim}"
+								sortBy="#{agendamento.fim}" filterMatchMode="contains"
 								headerText="Hora Fim">
 								<h:outputText
-									value="#{agendamentoRapidoMB.formatarData(atendimento.fim)}" />
+									value="#{agendamentoRapidoMB.formatarData(agendamento.fim)}" />
 							</p:column>
 							<p:column
-								filterBy="#{agendamentoRapidoMB.getStatusDescricao(atendimento)}"
-								sortBy="#{agendamentoRapidoMB.getStatusDescricao(atendimento)}"
+								filterBy="#{agendamentoRapidoMB.getStatusDescricao(agendamento)}"
+								sortBy="#{agendamentoRapidoMB.getStatusDescricao(agendamento)}"
 								filterFunction="#{agendamentoRapidoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Status do agendamento">
 								<h:outputText
-									value="#{agendamentoRapidoMB.getStatusDescricao(atendimento)}" />
+									value="#{agendamentoRapidoMB.getStatusDescricao(agendamento)}" />
 							</p:column>
-							<f:facet name="header">Agendamentos do dia selecionado
+							<f:facet name="header">Agendamentos do dia #{agendamentoRapidoMB.somenteData()}
 							</f:facet>
 
 
 
-							<p:column filterBy="#{atendimento.paciente.dadosBasico.nome}"
-								sortBy="#{atendimento.paciente.dadosBasico.nome}"
+							<p:column filterBy="#{agendamento.paciente.dadosBasico.nome}"
+								sortBy="#{agendamento.paciente.dadosBasico.nome}"
 								filterFunction="#{agendamentoRapidoMB.filtroSemAcento}"
 								headerText="Paciente">
 
-								<p:commandLink value="#{atendimento.paciente.dadosBasico.nome}"
-									process="@this" title="#{atendimento.paciente.id}"
-									actionListener="#{tabPacienteMB.loadPaciente(atendimento.paciente)}"
+								<p:commandLink value="#{agendamento.paciente.dadosBasico.nome}"
+									process="@this" title="#{agendamento.paciente.id}"
+									actionListener="#{tabPacienteMB.loadPaciente(agendamento.paciente)}"
 									oncomplete="PF('dlgFichaPaciente').show()"
 									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
 
 							</p:column>
 
 							<p:column
-								filterBy="#{atendimento.paciente.dadosBasico.telefoneStr}"
-								sortBy="#{atendimento.paciente.dadosBasico.telefoneStr}"
+								filterBy="#{agendamento.paciente.dadosBasico.telefoneStr}"
+								sortBy="#{agendamento.paciente.dadosBasico.telefoneStr}"
 								filterMatchMode="contains" headerText="Telefone">
 
 								<h:outputText
-									value="#{atendimento.paciente.dadosBasico.telefoneStr}" />
+									value="#{agendamento.paciente.dadosBasico.telefoneStr}" />
 
 								<p:button id="whats" icon="White fa fa-whatsapp"
-									rendered="#{atendimento.paciente.dadosBasico.celular != null}"
-									onclick="window.open('#{agendamentoRapidoMB.getUrlWpp(atendimento.paciente)}'); return false;"
+									rendered="#{agendamento.paciente.dadosBasico.celular != null}"
+									onclick="window.open('#{agendamentoRapidoMB.getUrlWpp(agendamento.paciente)}'); return false;"
 									styleClass="GreenButton" style="margin-left:10px;" />
 								<p:tooltip for="whats" value="Enviar mensagem" />
 							</p:column>
 							<p:column
-								filterBy="#{atendimento.finalidadeAgendamento.descricao}"
-								sortBy="#{atendimento.finalidadeAgendamento.descricao}"
+								filterBy="#{agendamento.finalidadeAgendamento.descricao}"
+								sortBy="#{agendamento.finalidadeAgendamento.descricao}"
 								filterFunction="#{agendamentoRapidoMB.filtroSemAcento}"
-								filterMatchMode="contains" headerText="Consulta inicial">
+								filterMatchMode="contains" headerText="Observações">
 								<h:outputText
-									value="#{atendimento.finalidadeAgendamento.descricao}" />
+									value="#{agendamento.descricao}" />
 							</p:column>
 
 							
@@ -377,39 +456,51 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 					</h:panelGroup>
 
 					
-					<p:dialog widgetVar="dlgAgendamento" header="Agendamento"
+					<p:dialog widgetVar="eventDialog" header="Agendamento"
 						resizable="false" id="pnAgendamento" responsive="true"
-						modal="true" appendTo=":lume"
-						onHide="PF('dlgAgendamento').toggleMaximize();"
-						onShow="PF('dlgAgendamento').toggleMaximize();">
+						position="10,10" modal="true"
+						style="position:absolute !important;" appendToBody="true">
 
-						<p:outputPanel id="pnDlgAgendamento"
-							style="max-height: calc(100% - 54px); height: calc(100% - 54px);">
-							<p:scrollPanel mode="native"
-								style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">
-								<ui:include src="dlgagendamento.xhtml" />
-							</p:scrollPanel>
-						</p:outputPanel>
+						<div class="Container100 Responsive100 NoIndent">
+							<div class="Container100 ui-fluid NoPadding">
+								<div class="Card" style="margin-top: -35px">
 
-						<p:panelGrid columns="3" layout="grid"
-							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
-							<h:panelGroup
-								rendered="#{agendamentoMB.habilitaSalvar}">
-								<p:commandButton id="persist" icon="White fa fa-save"
-									process="pnAgendamento" value="Salvar"
+									<ui:include src="dlgagendamento.xhtml" />
+
+
+									<p:separator styleClass="SeparatorFull" />
+
+									<p:panelGrid columns="4" layout="grid"
+										styleClass="ui-panelgrid-blank form-group ui-fluid botoesAgenda">
+										<h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
+											<p:commandButton id="persist" icon="White fa fa-save"
+									process=":lume:pnAgendamento, @this" value="Salvar"
+									rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
 									actionListener="#{agendamentoMB.actionPersist}"
-									styleClass="GreenButton"
-									update=":lume:dtRelAtendimento,:lume:filtroRelatorio" />
-							</h:panelGroup>
-							<p:commandButton icon="White fa fa-close" value="Fechar"
-								process="@this"
-								update=":lume:dtRelAtendimento,:lume:filtroRelatorio"
-								onclick="PF('dlgAgendamento').hide()" />
-						</p:panelGrid>
-					</p:dialog>
+									update=":lume:pnAgendamento"
+									oncomplete="handleDialogRequest(xhr, status, args);atualizaLista();"
+									styleClass="GreenButton" />	
+									
+									
+												
+										</h:panelGroup>
+										<p:commandButton icon="White fa fa-close" value="Fechar"
+											process="@this" onclick="PF('eventDialog').hide()" />
+									</p:panelGrid>
 
-					
+								</div>
+							</div>
+						</div>
+					</p:dialog>
+					<p:dialog id="dlgBloqueio" widgetVar="dlgBloqueio"
+				header="Bloqueio de Agenda" responsive="true" modal="true" onHide="atualizaLista()"
+				appendToBody="true">
+				<ui:include src="afastamento.xhtml" />
+		</p:dialog>
+					<p:remoteCommand name="atualizaLista" process="@this"
+										update=":lume:painelCalendario,:lume:dtRelagendamento,:lume:filtroRelatorio,:lume:observacoes,:lume:data"
+										actionListener="#{agendamentoRapidoMB.depoisSalvaAgendamento()}" oncomplete="PF('dtRelagendamento').filter();"/>			
 
 				
 

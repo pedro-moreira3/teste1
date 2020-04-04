@@ -302,6 +302,78 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
         atualizaPickList();
     }
+    
+    public void agendamentoRapido(Agendamento a) {
+        setEntity(a);
+        profissional = a.getProfissional();
+        profissionalDentroAgenda = profissional;
+        
+        this.setInicio(this.getEntity().getInicio());
+        this.setFim(this.getEntity().getFim());
+        
+        if(a.getPaciente() != null) {
+            setPacienteSelecionado(a.getPaciente());
+         
+            cadeiraDentroAgenda = this.getEntity().getCadeira();
+
+            UtilsFrontEnd.setPacienteSelecionado(this.getEntity().getPaciente());
+            this.setEntity(this.getEntity());
+
+          
+            geraAgendamentoAfastamento(this.getEntity().getInicio(), this.getEntity().getFim(), profissionalDentroAgenda);
+           // this.setPacienteSelecionado(this.getEntity().getPaciente());
+            this.setJustificativa(DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("agendamento", "justificativa", this.getEntity().getJustificativa()));
+            this.setStatus(this.getEntity().getStatusNovo());
+            //this.validaAfastamento();
+
+            if (this.getEntity().getPlanoTratamentoProcedimentosAgendamento() != null && this.getEntity().getPlanoTratamentoProcedimentosAgendamento().size() > 0) {
+                this.planoTratamentoSelecionado = this.getEntity().getPlanoTratamentoProcedimentosAgendamento().get(0).getPlanoTratamentoProcedimento().getPlanoTratamento();
+                this.procedimentosPickList.setSource(this.getEntity().getPlanoTratamentoProcedimentosAgendamento());
+            }
+
+         //   validaHabilitaSalvar();
+          //  this.validaHoraUtilProfissional(profissionalDentroAgenda);
+            
+            
+        }else {
+            pacienteSelecionado = null;
+        }          
+        PrimeFaces.current().ajax().update(":lume:pnAgendamento");
+        atualizaPickList();
+    }
+    
+    public void agendamentoRapidoEncaixe(Date data,Profissional p) {
+        pacienteSelecionado = null;
+        Agendamento agendamento = new Agendamento();
+        this.setInicio(data);
+        this.setFim(data);
+        
+        agendamento.setInicio(data);
+        agendamento.setFim(data);
+        
+        setEntity(agendamento);
+       
+        if(p != null) {          
+            profissionalDentroAgenda = p;
+        }          
+        PrimeFaces.current().ajax().update(":lume:pnAgendamento");    
+        atualizaPickList();
+    }
+    
+    public void agendamentoRapidoBloqueio(Profissional p) {
+        setEntity(new Agendamento());
+       
+        if(p != null) {          
+            setProfissional(p);
+            profissionalDentroAgenda = p;
+            PrimeFaces.current().executeScript("PF('dlgBloqueio').show()");
+            PrimeFaces.current().executeScript("resize('#lume\\\\:dlgBloqueio')");        
+            PrimeFaces.current().ajax().update(":lume:pnAgendamento");    
+        }else {
+            this.addError("Selecione o profissional antes de criar um novo bloqueio", "");
+        }          
+    
+    }
 
     public void agendarNoRelatorioRelacionamento(Paciente pac, Profissional pro) {
         onDateSelect(null);

@@ -28,6 +28,8 @@ import br.com.lume.motivo.MotivoSingleton;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.Fatura.DirecaoFatura;
+import br.com.lume.odonto.entity.Fatura.StatusFatura;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Origem;
 import br.com.lume.odonto.entity.Paciente;
@@ -56,6 +58,9 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
     private List<SelectItem> origens;
 
+    private StatusFatura statusFatura;
+    private List<StatusFatura> statussFatura;
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
 
@@ -63,6 +68,8 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         super(FaturaSingleton.getInstance().getBo());
         this.setClazz(Fatura.class);
         geraListaOrigens();
+        
+        this.statussFatura = Fatura.getStatusFaturaLista();
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
@@ -109,7 +116,8 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
                     }
                 }
 
-                setEntityList(FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, inicio, fim, paciente, profissional, fornecedor, origem));
+                setEntityList(
+                        FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, inicio, fim, paciente, profissional, fornecedor, origem, statusFatura));
 
                 getEntityList().forEach(fatura -> {
                     updateValues(fatura);
@@ -400,6 +408,30 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
     public void setOrigens(List<SelectItem> origens) {
         this.origens = origens;
+    }
+
+    public StatusFatura getStatusFatura() {
+        return statusFatura;
+    }
+
+    public void setStatusFatura(StatusFatura statusFatura) {
+        this.statusFatura = statusFatura;
+    }
+
+    public List<StatusFatura> getStatussFatura() {
+        return this.statussFatura;
+    }
+
+    public void atualizaTipoFatura() {
+        if ("RP".equals(this.tipoFatura))
+            this.statussFatura = Fatura.getStatusFaturaLista(DirecaoFatura.CREDITO);
+        else if (this.tipoFatura != null)
+            this.statussFatura = Fatura.getStatusFaturaLista(DirecaoFatura.DEBITO);
+        else
+            this.statussFatura = Fatura.getStatusFaturaLista();
+
+        if (this.statussFatura.indexOf(this.statusFatura) < 0)
+            setTipoFatura(null);
     }
 
 }

@@ -173,13 +173,7 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
     }
 
     public String getNewStatusLancamento(Lancamento l) {
-        if (Arrays.asList(new String[] { Lancamento.PAGO, Lancamento.CANCELADO, Lancamento.ATRASADO }).indexOf(l.getStatus()) >= 0)
-            return l.getStatus();
-        if (l.getFatura().getPaciente() != null)
-            return "A Receber";
-        else if (l.getFatura().getProfissional() != null)
-            return "A Pagar";
-        return Lancamento.PENDENTE;
+        return l.getStatus().getDescricao();
     }
 
     public List<Lancamento> getaPagar() {

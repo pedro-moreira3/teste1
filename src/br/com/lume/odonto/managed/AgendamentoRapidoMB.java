@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -16,6 +17,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 
 import br.com.lume.afastamento.AfastamentoSingleton;
 import br.com.lume.agendamento.AgendamentoSingleton;
@@ -41,52 +43,127 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     private Logger log = Logger.getLogger(AgendamentoMB.class);
  
     private Profissional filtroPorProfissional;
+    
+    private Profissional filtroPorProfissionalAntigo;
 
     private Date data = new Date();
+    
+    private Date dataAnterior = null;
 
     private List<Agendamento> listaAgendamentos;
 
     private int tempoPadraoConsulta = 30;   
     
-    private LocalTime horariopadraoInico = LocalTime.of(8, 0);
+    private LocalTime horariopadraoInico;
     
-    private LocalTime horariopadraoFim = LocalTime.of(18, 0);
+    private LocalTime horariopadraoFim;
+    
+    private LocalTime horariopadraoInicoTarde;
+    
+    private LocalTime horariopadraoFimTarde;
     
     private String observacoes = "";
     
-    private String[] livre;
+    private String livre;
     
-    private String[] medio;
+    private String medio;
     
-    private String[] cheio;
+    private String cheio;
     
-    int quantidadeAgendamentosOcupados = 0;   
+    private String mes;
+    
+    private int ano;
+    
+    private int totalMinutosAgendamentosCriados;
+    
+    private int totalMinutosAgendamentosExistentes;
+    
+    List<Agendamento> agendamentosAnterioresHoraInicio = new ArrayList<Agendamento>();
+    List<Agendamento> agendamentosAnterioresHoraFim = new ArrayList<Agendamento>();     
     
     public AgendamentoRapidoMB() {
         super(AgendamentoSingleton.getInstance().getBo());   
-        this.setClazz(Agendamento.class);
-      
-        try {
-            filtroPorProfissional = ProfissionalSingleton.getInstance().getBo().find(994l);
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        populaAgenda();
+        this.setClazz(Agendamento.class); 
+        
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(data);        
+        mes = Utils.getMesTexto(data);
+        ano = cal.get(Calendar.YEAR);
+        
+     configuraHorarioPadraoClinica();
+       
     }
     
+    private void configuraHorarioPadraoClinica() {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(data);        
+        tempoPadraoConsulta = UtilsFrontEnd.getEmpresaLogada().getTempoPadraoConsulta();
+        if(UtilsFrontEnd.getEmpresaLogada().getHoraInicialManha() != null) {
+            cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraInicialManha());                            
+            horariopadraoInico = getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));          
+        }
+        if(UtilsFrontEnd.getEmpresaLogada().getHoraFinalManha() != null) {
+            cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraFinalManha());                            
+            horariopadraoFim = getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));   
+        }
+        if(UtilsFrontEnd.getEmpresaLogada().getHoraInicialTarde() != null) {
+            cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraInicialTarde());                            
+            horariopadraoInicoTarde = getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));           
+        }
+        if(UtilsFrontEnd.getEmpresaLogada().getHoraFinalTarde() != null) {
+            cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraFinalTarde());                            
+            horariopadraoFimTarde = getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+        }
+        
+    }
+
     public void populaAgenda() {
         if(filtroPorProfissional != null) {
-            observacoes = "";
-            if(filtroPorProfissional.getTempoConsulta() == null || filtroPorProfissional.getTempoConsulta().equals(0)) {
-                observacoes = "Tempo de consulta padrão do profissional não configurado, verifique o cadastro! Tempo padrão 30 minutos. ";
-                this.addWarn(observacoes, "");
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(data);  
+            //se nao for mes atual, selecionamos primeiro dia do próximo mês
+            if(Utils.getMesInt(mes) != Utils.getMesInt(Utils.getMesTexto(new Date()))) {
+                cal.set(Calendar.DATE, 1);
+                listaAgendamentos = new ArrayList<Agendamento>();
             }else {
-                tempoPadraoConsulta = filtroPorProfissional.getTempoConsulta();
-            }          
+                Calendar calDia = Calendar.getInstance();
+                calDia.setTime(new Date());  
+                cal.set(Calendar.DATE, calDia.get(Calendar.DAY_OF_MONTH));
+            }
+            cal.set(Calendar.MONTH, Utils.getMesInt(mes));
+            cal.set(Calendar.YEAR, ano);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);  
+            data = cal.getTime();
+         if((filtroPorProfissionalAntigo == null || !filtroPorProfissionalAntigo.equals(filtroPorProfissional)) || (dataAnterior == null || Utils.getMes(data) != Utils.getMes(dataAnterior))) {
+             calculaPorcentagemOcupada(data);
+         }
+         if(Utils.getMesInt(mes) == Utils.getMesInt(Utils.getMesTexto(new Date()))) {
+             popularLista();
+         }
+           
+        }else {
+            this.addError("Escolha um profissional", "");
         }
-        calculaPorcentagemOcupada(data);
-        popularLista();
+        
+    }
+    
+    public void selecionaDia() {
+        if(filtroPorProfissional != null) {         
+            popularLista();
+        }else {
+            this.addError("Escolha um profissional", "");
+        }
+    }
+    
+    public void depoisSalvaAgendamento() {
+        if(filtroPorProfissional != null) {         
+            calculaPorcentagemOcupada(data);
+            popularLista();
+        }else {
+            this.addError("Escolha um profissional", "");
+        }
     }
 
     private void calculaPorcentagemOcupada(Date data) {
@@ -97,99 +174,136 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 cal.set(Calendar.DAY_OF_MONTH, 1); 
                 int mes=cal.get(Calendar.MONTH);
                 
-               String[] livre = new String[100];                
-               String[] medio = new String[100];                
-               String[] cheio = new String[100];
-               int contaLivre = 0; 
-               int contaMedio = 0; 
-               int contaCheio = 0; 
+               String livre = "";                
+               String medio = "";              
+               String cheio = "";
+               setLivre(livre); 
+               setMedio(medio);
+               setCheio(cheio);
                 while (mes==cal.get(Calendar.MONTH)) {
                     cal.set(Calendar.HOUR_OF_DAY, 0);
                     cal.set(Calendar.MINUTE, 0);
                     cal.set(Calendar.SECOND, 0);                    
                     
-                    int quantidadeAgendamentosDia = 0;                  
+                   // int quantidadeAgendamentosDia = 0;                  
                     Calendar c = Calendar.getInstance();
                     c.setTime(cal.getTime());
                     int diaDaSemana = c.get(Calendar.DAY_OF_WEEK);                
                     String diaString = HorasUteisProfissionalSingleton.getInstance().getBo().getDiaDaSemana(diaDaSemana);
                     List<HorasUteisProfissional> horasUteis  = HorasUteisProfissionalSingleton.getInstance().getBo().listByProfissionalAndDiaDaSemana(filtroPorProfissional, diaString);
-                    
-                    if(horasUteis != null && !horasUteis.isEmpty()) {                                        
-                        c.setTime(horasUteis.get(0).getHoraIni());                            
-                       horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
-                       c.setTime(horasUteis.get(0).getHoraFim());                
-                       horariopadraoFim = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
-                    }else {
-                        horariopadraoInico = LocalTime.of(8, 0);                        
-                        horariopadraoFim = LocalTime.of(18, 0);
-                    } 
-                    
-                    LocalDateTime from = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoInico);
-                    LocalDateTime to = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoFim); 
-                    long minutes = from.until(to, ChronoUnit.MINUTES);
-                    long quantidadeHorarios = minutes / tempoPadraoConsulta; 
-                    if(quantidadeHorarios != 0l) {
+                    long totalMinutosDisponiveis = 0l;
+                    if(horasUteis != null && !horasUteis.isEmpty()) {                         
                         
-                        Date dataPadraoInicio = criaDataComHorario(cal.getTime(),horariopadraoInico);                        
-                        Date dataPadraoFim = criaDataComHorario(cal.getTime(),horariopadraoFim);
-                        List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo()
-                                .listAgendamentosValidosByDatePorProfissional(filtroPorProfissional,Utils.dateToStringSomenteData(cal.getTime()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());                       
-                        List<Afastamento> afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalValidos(filtroPorProfissional, dataPadraoInicio, dataPadraoFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                   
-                        quantidadeAgendamentosDia = agendamentos.size();
+                        //primeiro precisamos somar quantos minutos disponiveis o profissional tem no dia;
+                        if(horasUteis.get(0).getHoraIni() != null && horasUteis.get(0).getHoraFim() != null) {
+                            c.setTime(horasUteis.get(0).getHoraIni());                            
+                            horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                            c.setTime(horasUteis.get(0).getHoraFim());                
+                            horariopadraoFim = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
+                            LocalDateTime fromManha = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoInico);
+                            LocalDateTime toManha = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoFim); 
+                            totalMinutosDisponiveis = fromManha.until(toManha, ChronoUnit.MINUTES);
+                        }
+                        if(horasUteis.get(0).getHoraIniTarde() != null && horasUteis.get(0).getHoraFimTarde() != null) {
+                            c.setTime(horasUteis.get(0).getHoraIniTarde());                            
+                            horariopadraoInicoTarde = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                            c.setTime(horasUteis.get(0).getHoraFimTarde());                
+                            horariopadraoFimTarde = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
+                            LocalDateTime fromTarde = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoInicoTarde);
+                            LocalDateTime toTarde = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoFimTarde);                         
+                            totalMinutosDisponiveis += fromTarde.until(toTarde, ChronoUnit.MINUTES);                      
+                        } 
                         
-                        List<Agendamento> listaCriados = criaAgendamentosPorHora(cal.getTime(),quantidadeHorarios,horariopadraoInico);       
+                        if(horariopadraoInico == null) {
+                            horariopadraoInico = horariopadraoInicoTarde;                            
+                        }
+                        if(horariopadraoFimTarde == null) {
+                            horariopadraoFimTarde = horariopadraoFim;
+                        }
                        
-                        //TODO melhorar forma de contar quantos afastamentos temos
-                        for (Afastamento afastamento : afastamentos) {
-                            for (Agendamento agendamento : listaCriados) {   
-                                //milisegundo estava vindo com valor                          
-                                agendamento.setFim(zeraMiliLegundos(agendamento.getFim()));
-                                agendamento.setInicio(zeraMiliLegundos(agendamento.getInicio()));                                
-                                if(afastamento.getInicio().equals(agendamento.getInicio()) || 
-                                    (afastamento.getInicio().after(agendamento.getInicio()) && afastamento.getInicio().before(agendamento.getFim()))) {
-                                  //  agendamento.setDescricao("Horário bloqueado");
-                                    quantidadeAgendamentosDia++;
-                                }else if(
-                                      (afastamento.getInicio().before(agendamento.getInicio()) && (afastamento.getFim().equals(agendamento.getInicio()) ||
-                                                afastamento.getFim().after(agendamento.getInicio())
-                                                ))) {
-                                    quantidadeAgendamentosDia++;
-                                }
+                        if(totalMinutosDisponiveis != 0l) {                            
+
+                            List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo()
+                                    .listAgendamentosNaoCanceladosByDatePorProfissional(filtroPorProfissional,
+                                            Utils.dateToStringSomenteData(cal.getTime()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());    
+                            
+                            
+                            long minutosAgendados = 0l;
+                            //somando quantidade de minutos de agendamentos existentes no dia
+                            for (Agendamento agendamento : agendamentos) {
+                                c.setTime(agendamento.getInicio());                            
+                                LocalTime horarioInicioAgendamento = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));  
+                                c.setTime(agendamento.getFim());                            
+                                LocalTime horarioFimAgendamento = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
+                               //TODO somente somamos se o horario do agendamento esta entre horario inicio e fim dos disponiveis, 
+                               //pois se nao os horarios ainda estão livres 
+                                LocalDateTime fromTarde = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horarioInicioAgendamento);
+                                LocalDateTime toTarde = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horarioFimAgendamento);                         
+                                minutosAgendados += fromTarde.until(toTarde, ChronoUnit.MINUTES);       
                             }
-                        }
-                    }
-                    
-                    System.out.println(cal.getTime()); 
-                    System.out.println("quantidade horarios total: " + quantidadeHorarios); 
-                    System.out.println("quantidadeAgendamentosDia: " + quantidadeAgendamentosDia);        
+                            
+                            
+                            Date dataPadraoInicioManha = criaDataComHorario(cal.getTime(),horariopadraoInico);                        
+                            Date dataPadraoFimManha = criaDataComHorario(cal.getTime(),horariopadraoFim);
+                           
+                            List<Afastamento> afastamentos = new ArrayList<Afastamento>();
+                            if(dataPadraoInicioManha != null && dataPadraoFimManha != null) {
+                            afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalEntreDatas(
+                                    filtroPorProfissional, dataPadraoInicioManha, dataPadraoFimManha, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                            }
+                            Date dataPadraoInicioTarde = criaDataComHorario(cal.getTime(),horariopadraoInicoTarde);                        
+                            Date dataPadraoFimTarde = criaDataComHorario(cal.getTime(),horariopadraoFimTarde);
+                            if(dataPadraoInicioTarde != null && dataPadraoFimTarde != null) {
+                                afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioTarde, 
+                                     dataPadraoFimTarde, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));   
+                            }
+                            long minutosAfastamento = 0l;
+                            //somando quantidade de minutos de minutosAfastamento existentes no dia
+                            for (Afastamento afastamento : afastamentos) {
+                                c.setTime(afastamento.getInicio());                            
+                                LocalTime horarioInicioAfastamento = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));  
+                                c.setTime(afastamento.getFim());                            
+                                LocalTime horarioFimAfastamento = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
+                               //TODO somente somamos se o horario do agendamento esta entre horario inicio e fim dos disponiveis, 
+                               //pois se nao os horarios ainda estão livres 
+                                LocalDateTime from = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horarioInicioAfastamento);
+                                LocalDateTime to = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horarioFimAfastamento);                         
+                                minutosAfastamento += from.until(to, ChronoUnit.MINUTES);       
+                            }
                  
-                    if(quantidadeHorarios != 0) {
-                        double porcentagemOcupada = (quantidadeAgendamentosDia * 100) / quantidadeHorarios;
+                       
                         
-                        if(porcentagemOcupada <= 50) {
+                      
+                           // System.out.println("totalMinutosDisponiveis: " + totalMinutosDisponiveis); 
+                            //System.out.println("minutosAgendados: " + minutosAgendados);        
+                            //System.out.println("minutosAfastamento: " + minutosAfastamento); 
+                       
+                            long totalIndisponivel = minutosAgendados + minutosAfastamento;
                             
+                            double porcentagemOcupada = (totalIndisponivel * 100) / totalMinutosDisponiveis;
                             
-                            
-                            livre[contaLivre] = Utils.dateToStringAgendaComAspas(cal.getTime()).replace(" ", "T");
-                            contaLivre++;
-                        }else if (porcentagemOcupada > 50 && porcentagemOcupada <= 90) {
-                            medio[contaMedio] = Utils.dateToStringAgendaComAspas(cal.getTime()).replace(" ", "T");
-                            contaMedio++;
-                        }else if(porcentagemOcupada > 90) {
-                            cheio[contaCheio] = Utils.dateToStringAgendaComAspas(cal.getTime()).replace(" ", "T");
-                            contaCheio++;
-                        }
-                        System.out.println("porcentagemOcupada: " + porcentagemOcupada);  
-                    }                    
-                    
+                            if(porcentagemOcupada < 50) {                            
+                                livre += Utils.dateToStringAgenda(cal.getTime()).replace(" ", "T") + " ";                          
+                            }else if (porcentagemOcupada >= 50 && porcentagemOcupada <= 80) {
+                                medio += Utils.dateToStringAgenda(cal.getTime()).replace(" ", "T") + " ";                      
+                            }else if(porcentagemOcupada > 80) {
+                                cheio += Utils.dateToStringAgenda(cal.getTime()).replace(" ", "T") + " ";                        
+                            }
+                       //     System.out.println("porcentagemOcupada: " + porcentagemOcupada);  
+                        }                
+                    }
                     cal.add(Calendar.DAY_OF_MONTH, 1);
+                    
                 }
                 
                 setLivre(livre); 
                 setMedio(medio);
                 setCheio(cheio);
+                PrimeFaces.current().ajax().update(":lume:livre");
+                PrimeFaces.current().ajax().update(":lume:medio");
+                PrimeFaces.current().ajax().update(":lume:cheio");
+                PrimeFaces.current().ajax().update(":lume:data");
+                
             }
 
         } catch (Exception e) {
@@ -198,13 +312,26 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         }
         
     }
+    
+    public String somenteData () {
+        return Utils.dateToStringSomenteDataBrasil(this.getData());
+    }
 
     public void popularLista() {
+        
+        dataAnterior = data;
         try { 
             if(filtroPorProfissional == null) {
                 this.addError("Escolha um profissional", "");
-            }else {
-                this.quantidadeAgendamentosOcupados = 0;
+            }else {   
+                filtroPorProfissionalAntigo = filtroPorProfissional;
+                observacoes = "";
+                if(filtroPorProfissional.getTempoConsulta() == null || filtroPorProfissional.getTempoConsulta().equals(0)) {
+                    observacoes = "Tempo de consulta padrão do profissional não configurado, verifique o cadastro! Tempo padrão da clínica: "+tempoPadraoConsulta+" minutos. ";
+                    this.addWarn(observacoes, "");
+                }else {
+                    tempoPadraoConsulta = filtroPorProfissional.getTempoConsulta();
+                }
                 Calendar c = Calendar.getInstance();
                 c.setTime(data);
                 int diaDaSemana = c.get(Calendar.DAY_OF_WEEK);                
@@ -212,64 +339,78 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 List<HorasUteisProfissional> horasUteis  = HorasUteisProfissionalSingleton.getInstance().getBo().listByProfissionalAndDiaDaSemana(filtroPorProfissional, diaString);
                 
                 if(horasUteis == null || horasUteis.isEmpty()) {
-                    horariopadraoInico = LocalTime.of(8, 0);                        
-                    horariopadraoFim = LocalTime.of(18, 0);
-                    observacoes += "Horas Úteis do profissional não estão configuradas para o dia selecionado, verifique o cadastro! Horário padrão: 08:00 às 18:00. ";
-                }else {                    
-                    c.setTime(horasUteis.get(0).getHoraIni());                            
-                   horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
-                   c.setTime(horasUteis.get(0).getHoraFim());                
-                   horariopadraoFim = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
-                   observacoes += "Horário de trabalho cadastrado para o profissional no dia selecionado: De " + horariopadraoInico + " até " + horariopadraoFim + ";";
+                    configuraHorarioPadraoClinica();
+                    observacoes += "Horas Úteis do profissional não estão configuradas para o dia selecionado. ";
+                    observacoes += "Horário definido na clínica: manhã: De " + horariopadraoInico + " até " + horariopadraoFim + ". ";
+                    observacoes += "tarde: De " + horariopadraoInicoTarde + " até " + horariopadraoFimTarde + ". ";
+                }else {  
+                    horariopadraoInico = null;
+                    horariopadraoFim = null;
+                   if(horasUteis.get(0).getHoraIni() != null && horasUteis.get(0).getHoraFim() != null) {
+                       c.setTime(horasUteis.get(0).getHoraIni());                            
+                       horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                       c.setTime(horasUteis.get(0).getHoraFim());                
+                       horariopadraoFim = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
+                       observacoes += "Horário de trabalho manhã: De " + horariopadraoInico + " até " + horariopadraoFim + ". ";
+                   }
+                   horariopadraoInicoTarde = null;
+                   horariopadraoFimTarde = null;
+                   if(horasUteis.get(0).getHoraIniTarde() != null && horasUteis.get(0).getHoraFimTarde() != null) {
+                       c.setTime(horasUteis.get(0).getHoraIniTarde());                            
+                       horariopadraoInicoTarde = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                       c.setTime(horasUteis.get(0).getHoraFimTarde());                
+                       horariopadraoFimTarde = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                       observacoes += "Horário de trabalho tarde: De " + horariopadraoInicoTarde + " até " + horariopadraoFimTarde + ". ";
+                   }
+                   
+                   
+                  
                 }                
                 if(observacoes != null && !observacoes.isEmpty()) {
                     observacoes = "*** Observações: " + observacoes;
                 } 
-                
-                LocalDateTime from = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoInico);
-                LocalDateTime to = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoFim); 
-                long minutes = from.until(to, ChronoUnit.MINUTES);
-                long quantidadeHorarios = minutes / tempoPadraoConsulta; 
-                if(quantidadeHorarios != 0l) {
+                long quantidadeHorariosManha = 0l;
+                if(horariopadraoInico != null && horariopadraoFim != null) {
+                    LocalDateTime from = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoInico);
+                    LocalDateTime to = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoFim); 
+                    long minutes = from.until(to, ChronoUnit.MINUTES);
+                    quantidadeHorariosManha = minutes / tempoPadraoConsulta;    
+                }
+                long quantidadeHorariosTarde = 0l;
+                if(horariopadraoInicoTarde != null && horariopadraoFimTarde != null) {
+                    LocalDateTime fromTarde = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoInicoTarde);
+                    LocalDateTime toTarde = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoFimTarde); 
+                    long minutesTarde = fromTarde.until(toTarde, ChronoUnit.MINUTES);
+                    quantidadeHorariosTarde = minutesTarde / tempoPadraoConsulta; 
+                }
+                if(quantidadeHorariosManha != 0l || quantidadeHorariosTarde != 0l) {
                     
-                             
-                    
-                    Date dataPadraoInicio = criaDataComHorario(data,horariopadraoInico);
-                    
-                    Date dataPadraoFim = criaDataComHorario(data,horariopadraoFim);                   
+              
                     
                     List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo()
-                            .listAgendamentosValidosByDatePorProfissional(filtroPorProfissional,Utils.dateToStringSomenteData(data), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                    List<Agendamento> agendamentosAnterioresHoraInicio = new ArrayList<Agendamento>();
-                    List<Agendamento> agendamentosAnterioresHoraFim = new ArrayList<Agendamento>();                  
+                            .listAgendamentosNaoCanceladosByDatePorProfissional(filtroPorProfissional,Utils.dateToStringSomenteData(data), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());                              
                     List<Agendamento> paraSubstituir = new ArrayList<Agendamento>();
-                    List<Afastamento> afastamentos = AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalValidos(filtroPorProfissional, dataPadraoInicio, dataPadraoFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                   
-                    //populando agendamentos anteriores e posteriores a data padrãoo do profissional e adicionando agendamentos já existentes
-                    //nos horarios padrão, para substituir nos horarios criados
-                    for (Agendamento agendamentoExistente : agendamentos) {
-                        if(agendamentoExistente.getInicio().before(dataPadraoInicio) && !agendamentosAnterioresHoraInicio.contains(agendamentoExistente)) {
-                            agendamentosAnterioresHoraInicio.add(agendamentoExistente);
-                            this.quantidadeAgendamentosOcupados++;
-                            //se tiver agendamento criado antes da hora padrao do profissional,para criar os automaticos posteriormente,
-                            //precisa começar a partir da hora de término   
-                            LocalTime horariopadraoInicoAux = horariopadraoInico;
-                            while(agendamentoExistente.getFim().after(dataPadraoInicio)) {
-                                horariopadraoInicoAux = horariopadraoInicoAux.plusMinutes(tempoPadraoConsulta);
-                                dataPadraoInicio = criaDataComHorario(data,horariopadraoInicoAux);
-                                c.setTime(dataPadraoInicio);
-                                horariopadraoInicoAux = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
-                            }   
-                        }else if(agendamentoExistente.getInicio().after(dataPadraoFim) && !agendamentosAnterioresHoraFim.contains(agendamentoExistente)) {
-                            agendamentosAnterioresHoraFim.add(agendamentoExistente);  
-                            this.quantidadeAgendamentosOcupados++;
-                        }else {   
-                            paraSubstituir.add(agendamentoExistente);
-                        }                            
-                    }
                     
-                    List<Agendamento> listaCriados = criaAgendamentosPorHora(data,quantidadeHorarios,horariopadraoInico);       
+                    Date dataPadraoInicioManha = criaDataComHorario(data,horariopadraoInico);                    
+                    Date dataPadraoFimManha = criaDataComHorario(data,horariopadraoFim); 
+                    List<Afastamento> afastamentos = new ArrayList<Afastamento>();
+                    if(dataPadraoInicioManha != null && dataPadraoFimManha != null) {
+                        afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioManha, 
+                                dataPadraoFimManha, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                    }
+                    Date dataPadraoInicioTarde = criaDataComHorario(data,horariopadraoInicoTarde);                    
+                    Date dataPadraoFimTarde = criaDataComHorario(data,horariopadraoFimTarde);  
+                    if(dataPadraoInicioTarde != null && dataPadraoFimTarde != null) {
+                        afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioTarde, 
+                            dataPadraoFimTarde, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                    }
                    
+                    paraSubstituir.addAll(populaAgendamentos(agendamentos,dataPadraoInicioManha,dataPadraoFimManha,dataPadraoInicioTarde,dataPadraoFimTarde));
+                 
+                    
+                    List<Agendamento> listaCriados = criaAgendamentosPorHora(data,quantidadeHorariosManha,horariopadraoInico, quantidadeHorariosTarde, horariopadraoInicoTarde);       
+                  //  listaCriados.addAll(criaAgendamentosPorHora(data,quantidadeHorariosTarde,horariopadraoInico));        
+                    
                     //colocando aviso de bloqueio
                     for (Afastamento afastamento : afastamentos) {
                         for (Agendamento agendamento : listaCriados) {   
@@ -279,15 +420,13 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                             
                             if(afastamento.getInicio().equals(agendamento.getInicio()) || 
                                 (afastamento.getInicio().after(agendamento.getInicio()) && afastamento.getInicio().before(agendamento.getFim()))) {
-                                agendamento.setDescricao("Horário bloqueado");
-                                this.quantidadeAgendamentosOcupados++;
+                                agendamento.setDescricao("Horário bloqueado");                                
                             }else if(
-                                    (afastamento.getInicio().before(agendamento.getInicio()) && (afastamento.getFim().equals(agendamento.getInicio()) ||
+                                    (afastamento.getInicio().before(agendamento.getInicio()) && 
                                             afastamento.getFim().after(agendamento.getInicio())
                                             
-                                            ))) {
-                                    agendamento.setDescricao("Horário bloqueado");
-                                    this.quantidadeAgendamentosOcupados++;
+                                            )) {
+                                    agendamento.setDescricao("Horário bloqueado");                                   
                                 }
                           
                         }
@@ -298,36 +437,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                         listaAgendamentos.addAll(0,agendamentosAnterioresHoraInicio);
                     }                    
                   
-                        for (Agendamento agendamentoCriado : listaCriados) {
-                            boolean foiAdicionado = false;
-                            for (Agendamento agendamentoExistente : paraSubstituir) {
-                                
-                                if(agendamentoExistente.getInicio().equals(agendamentoCriado.getInicio()) 
-                                        ||(agendamentoExistente.getInicio().after(agendamentoCriado.getInicio()) && agendamentoExistente.getInicio().before(agendamentoCriado.getFim()))                                        
-                                        ) {
-                                    
-                                    //agendamento existente esta entre o inicio e fim, entao somente substitui a linha
-                                    if(agendamentoExistente.getFim().before(agendamentoCriado.getFim())) {
-                                        listaAgendamentos.add(agendamentoExistente) ;
-                                        this.quantidadeAgendamentosOcupados++;
-                                        foiAdicionado = true;
-                                   //agendamento existente esta entre o inicio mas o fim é maior que proximo, entao inicio do proximo deve receber hora de fim desse    
-                                    }else if(agendamentoExistente.getFim().after(agendamentoCriado.getFim())) {
-                                        listaAgendamentos.add(agendamentoExistente) ;
-                                        this.quantidadeAgendamentosOcupados++;
-                                        foiAdicionado = true;
-                                    }                                   
-                                }                                
-                              
-                            }
-                            if(!foiAdicionado) {
-                                if(listaAgendamentos == null || listaAgendamentos.isEmpty() ||
-                                        agendamentoCriado.getInicio().equals(listaAgendamentos.get(listaAgendamentos.size() -1).getFim()) ||
-                                        agendamentoCriado.getInicio().after(listaAgendamentos.get(listaAgendamentos.size() -1).getFim()) ) {
-                                    listaAgendamentos.add(agendamentoCriado);
-                                }                               
-                            }
-                        }
+                       listaAgendamentos.addAll(substituiAgendamentos(listaCriados, paraSubstituir));
                     
                     if(!agendamentosAnterioresHoraFim.isEmpty()) {
                         listaAgendamentos.addAll(agendamentosAnterioresHoraFim);
@@ -341,6 +451,83 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         }
     } 
     
+    private List<Agendamento> populaAgendamentos(List<Agendamento> agendamentos, Date dataInicioManha, Date dataFimManha, Date dataInicioTarde, Date dataFimTarde) {
+        List<Agendamento> paraSubstituir = new ArrayList<Agendamento>();
+        
+        if(dataInicioManha == null && dataFimManha == null && dataInicioTarde != null && dataFimTarde != null) {
+            dataInicioManha = dataInicioTarde;
+            dataFimManha = dataFimTarde;
+        }else if(dataInicioManha != null && dataFimManha != null && dataInicioTarde == null && dataFimTarde == null) {
+            dataInicioTarde = dataInicioManha;
+            dataFimTarde = dataFimManha;
+        }
+        
+        //populando agendamentos anteriores e posteriores a data padrãoo do profissional e adicionando agendamentos já existentes
+        //nos horarios padrão, para substituir nos horarios criados
+        Calendar c = Calendar.getInstance();
+        c.setTime(data);
+        agendamentosAnterioresHoraInicio = new ArrayList<Agendamento>();
+        agendamentosAnterioresHoraFim = new ArrayList<Agendamento>();
+        //TODO VERIFICAR PARA NAO DUPLICAR ESSES REGISTROS
+        for (Agendamento agendamentoExistente : agendamentos) {
+            if(agendamentoExistente.getInicio().before(dataInicioManha) && !agendamentosAnterioresHoraInicio.contains(agendamentoExistente)) {
+                agendamentosAnterioresHoraInicio.add(agendamentoExistente);                          
+                //se tiver agendamento criado antes da hora padrao do profissional,para criar os automaticos posteriormente,
+                //precisa começar a partir da hora de término   
+                LocalTime horariopadraoInicoAux = horariopadraoInico;
+                while(agendamentoExistente.getFim().after(dataInicioManha)) {
+                    horariopadraoInicoAux = horariopadraoInicoAux.plusMinutes(tempoPadraoConsulta);
+                    dataInicioManha = criaDataComHorario(data,horariopadraoInicoAux);
+                    c.setTime(dataInicioManha);
+                    horariopadraoInicoAux = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
+                }   
+            }else if(agendamentoExistente.getInicio().after(dataFimTarde) && !agendamentosAnterioresHoraFim.contains(agendamentoExistente)) {
+                agendamentosAnterioresHoraFim.add(agendamentoExistente);                             
+            }else {   
+                paraSubstituir.add(agendamentoExistente);
+            }                            
+        }
+        return paraSubstituir;
+    }
+
+    private List<Agendamento> substituiAgendamentos(List<Agendamento> listaCriados ,List<Agendamento> paraSubstituir) {
+        List<Agendamento> substituidos = new ArrayList<Agendamento>();
+        for (Agendamento agendamentoCriado : listaCriados) {
+            boolean foiAdicionado = false;
+            
+            for (Agendamento agendamentoExistente : paraSubstituir) {
+              //  System.out.println("a " + agendamentoExistente.getFim());    
+              //  System.out.println("b " + agendamentoCriado.getFim());    
+                if(agendamentoExistente.getInicio().equals(agendamentoCriado.getInicio()) 
+                        ||(agendamentoExistente.getInicio().after(agendamentoCriado.getInicio()) && agendamentoExistente.getInicio().before(agendamentoCriado.getFim()))                                        
+                        ) {
+                    
+                    //agendamento existente esta entre o inicio e fim, entao somente substitui a linha
+                    if(agendamentoExistente.getFim().equals(agendamentoCriado.getFim()) || agendamentoExistente.getFim().before(agendamentoCriado.getFim())) {
+                        substituidos.add(agendamentoExistente) ;   
+                        //System.out.println("a");
+                        foiAdicionado = true;
+                   //agendamento existente esta entre o inicio mas o fim é maior que proximo, entao inicio do proximo deve receber hora de fim desse    
+                    }else if(agendamentoExistente.getFim().after(agendamentoCriado.getFim()) || agendamentoExistente.getFim().equals(agendamentoCriado.getFim())) {
+                        substituidos.add(agendamentoExistente) ;
+                     //   System.out.println("b");
+                        foiAdicionado = true;
+                    }                                   
+                }                                
+              
+            }
+            if(!foiAdicionado) {
+                if(substituidos == null || substituidos.isEmpty() ||
+                        agendamentoCriado.getInicio().equals(substituidos.get(substituidos.size() -1).getFim()) ||
+                        agendamentoCriado.getInicio().after(substituidos.get(substituidos.size() -1).getFim()) ) {
+                    substituidos.add(agendamentoCriado);
+                    System.out.println("c");
+                }                               
+            }
+        }
+        return substituidos;
+    }
+
     private Date zeraMiliLegundos(Date data) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(data);                        
@@ -349,6 +536,9 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     }
 
     private Date criaDataComHorario(Date data,LocalTime horario) {
+        if(horario == null) {
+            return null;
+        }
         Calendar calendario =   Calendar.getInstance();      
         calendario.setTime(data);
         calendario.set(Calendar.HOUR_OF_DAY, horario.getHour());
@@ -359,21 +549,28 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         
     }
 
-    private List<Agendamento> criaAgendamentosPorHora(Date data,long quantidadeHorarios, LocalTime horaInicio) {
+    private List<Agendamento> criaAgendamentosPorHora(Date data,long quantidadeHorariosManha, LocalTime horaInicio,long quantidadeHorariosTarde, LocalTime horaInicioTarde) {
         List<Agendamento> listaCriados = new ArrayList<Agendamento>();
-        for (int i = 0; i < quantidadeHorarios; i++) {
-            Agendamento agendamento = new Agendamento();      
-            Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
+        for (int i = 0; i < quantidadeHorariosManha + quantidadeHorariosTarde; i++) {           
+            Agendamento agendamento = new Agendamento();
+            //ja inseriu todas da manha, agora vamos inserir os da tarde
+            if(i == quantidadeHorariosManha) {
+                horaInicio = horaInicioTarde;
+            }
             calendar.setTime(data);
             calendar.set(Calendar.HOUR_OF_DAY, horaInicio.getHour());
             calendar.set(Calendar.MINUTE, horaInicio.getMinute());
-            calendar.set(Calendar.SECOND, horaInicio.getSecond());
+            calendar.set(Calendar.SECOND, horaInicio.getSecond());           
             agendamento.setInicio(calendar.getTime());                       
+            
             horaInicio = horaInicio.plusMinutes(tempoPadraoConsulta);
+           
             calendar.set(Calendar.HOUR_OF_DAY, horaInicio.getHour());
             calendar.set(Calendar.MINUTE, horaInicio.getMinute());
             calendar.set(Calendar.SECOND, horaInicio.getSecond());
             agendamento.setFim(calendar.getTime());
+            
             agendamento.setProfissional(filtroPorProfissional);
             listaCriados.add(agendamento);
         } 
@@ -392,6 +589,20 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
  
     public List<Profissional> sugestoesProfissionais(String query) {
         return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), false);
+    }
+    
+    public List<String> sugestoesMes() {
+        return Utils.getMeses();
+    }
+
+    public List<Integer> sugestoesAno() {
+        List<Integer> anos = new ArrayList<Integer>();     
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date()); 
+        anos.add(cal.get(Calendar.YEAR) -1);
+        anos.add(cal.get(Calendar.YEAR));
+        anos.add(cal.get(Calendar.YEAR) + 1);
+        return anos;
     }
     
     public void abreNovoAgendamento() {     
@@ -416,16 +627,16 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
   
     
-    public String[] getLivre() {      
+    public String getLivre() {      
        //     return new String[] {"'2020-03-22T00:00:00'","'2020-03-24T00:00:00'","'2020-03-25T00:00:00'"};
         return livre;
     }
 
-    public String[] getMedio() {  
+    public String getMedio() {  
         return medio;
     } 
 
-    public String[] getCheio() {    
+    public String getCheio() {    
         return cheio;
     }     
     
@@ -502,17 +713,6 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     public void setHorariopadraoFim(LocalTime horariopadraoFim) {
         this.horariopadraoFim = horariopadraoFim;
     }
-
-    
-    public int getQuantidadeAgendamentosOcupados() {
-        return quantidadeAgendamentosOcupados;
-    }
-
-    
-    public void setQuantidadeAgendamentosOcupados(int quantidadeAgendamentosOcupados) {
-        this.quantidadeAgendamentosOcupados = quantidadeAgendamentosOcupados;
-    }
-
     
     public Logger getLog() {
         return log;
@@ -524,18 +724,98 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     }
 
     
-    public void setLivre(String[] livre) {
+    public void setLivre(String livre) {
         this.livre = livre;
     }
 
     
-    public void setMedio(String[] medio) {
+    public void setMedio(String medio) {
         this.medio = medio;
     }
 
     
-    public void setCheio(String[] cheio) {
+    public void setCheio(String cheio) {
         this.cheio = cheio;
+    }
+
+    
+    public Date getDataAnterior() {
+        return dataAnterior;
+    }
+
+    
+    public void setDataAnterior(Date dataAnterior) {
+        this.dataAnterior = dataAnterior;
+    }
+
+    
+    public Profissional getFiltroPorProfissionalAntigo() {
+        return filtroPorProfissionalAntigo;
+    }
+
+    
+    public void setFiltroPorProfissionalAntigo(Profissional filtroPorProfissionalAntigo) {
+        this.filtroPorProfissionalAntigo = filtroPorProfissionalAntigo;
+    }
+
+    
+    public String getMes() {
+        return mes;
+    }
+
+    
+    public void setMes(String mes) {
+        this.mes = mes;
+    }
+
+    
+    public int getAno() {
+        return ano;
+    }
+
+    
+    public void setAno(int ano) {
+        this.ano = ano;
+    }
+
+    
+    public LocalTime getHorariopadraoInicoTarde() {
+        return horariopadraoInicoTarde;
+    }
+
+    
+    public void setHorariopadraoInicoTarde(LocalTime horariopadraoInicoTarde) {
+        this.horariopadraoInicoTarde = horariopadraoInicoTarde;
+    }
+
+    
+    public LocalTime getHorariopadraoFimTarde() {
+        return horariopadraoFimTarde;
+    }
+
+    
+    public void setHorariopadraoFimTarde(LocalTime horariopadraoFimTarde) {
+        this.horariopadraoFimTarde = horariopadraoFimTarde;
+    }
+
+    
+    public int getTotalMinutosAgendamentosCriados() {
+        return totalMinutosAgendamentosCriados;
+    }
+
+    
+    public void setTotalMinutosAgendamentosCriados(int totalMinutosAgendamentosCriados) {
+        this.totalMinutosAgendamentosCriados = totalMinutosAgendamentosCriados;
+    }
+
+    
+    public int getTotalMinutosAgendamentosExistentes() {
+        return totalMinutosAgendamentosExistentes;
+    }
+
+    
+    public void setTotalMinutosAgendamentosExistentes(int totalMinutosAgendamentosExistentes) {
+        this.totalMinutosAgendamentosExistentes = totalMinutosAgendamentosExistentes;
     }
 
 }

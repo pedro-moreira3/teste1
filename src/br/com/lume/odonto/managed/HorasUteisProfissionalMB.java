@@ -18,7 +18,7 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
-//import br.com.lume.odonto.bo.HorasUteisProfissionalBO;
+// import br.com.lume.odonto.bo.HorasUteisProfissionalBO;
 import br.com.lume.odonto.entity.HorasUteisProfissional;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
@@ -43,18 +43,18 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
 
     private boolean visivel = false;
 
-    private Date horaIni, horaFim;
+    private Date horaIni, horaFim, horaIniTarde, horaFimTarde;
 
     public List<HorasUteisProfissional> horasUteisProfissional;
 
-   // private HorasUteisProfissionalBO horasUteisProfissionalBO;
-    
+    // private HorasUteisProfissionalBO horasUteisProfissionalBO;
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaHorasUteis;
 
     public HorasUteisProfissionalMB() {
         super(HorasUteisProfissionalSingleton.getInstance().getBo());
-      //  this.horasUteisProfissionalBO = new HorasUteisProfissionalBO();
+        //  this.horasUteisProfissionalBO = new HorasUteisProfissionalBO();
         this.setClazz(HorasUteisProfissional.class);
     }
 
@@ -64,6 +64,8 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
         this.setEntity(new HorasUteisProfissional());
         this.setHoraIni(null);
         this.setHoraFim(null);
+        this.setHoraIniTarde(null);
+        this.setHoraFimTarde(null);
     }
 
     @Override
@@ -76,37 +78,34 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            if (!this.getHoraIni().toString().equals(this.getHoraFim().toString())) {
-                if (!this.diasSelecionados.isEmpty()) {
-                    if (this.validaData()) {
-                        if (GenericValidator.validarRangeData(this.getHoraIni(), this.getHoraFim(), true)) {
-                            for (String selecionado : this.diasSelecionados) {
-                                HorasUteisProfissional horasUteis = new HorasUteisProfissional();
-                                horasUteis.setDiaDaSemana(selecionado);
-                                if (selecionado.equals(this.getEntity().getDiaDaSemana())) {
-                                    horasUteis.setId(this.getEntity().getId());
-                                }
-                                horasUteis.setProfissional(this.profissionalMB.getEntity());
-                                horasUteis.setHoraIni(this.setSegundos(this.getHoraIni()));
-                                horasUteis.setHoraFim(this.setSegundos(this.getHoraFim()));
-                                HorasUteisProfissionalSingleton.getInstance().getBo().persist(horasUteis);
-                                this.diasSelecionados = new ArrayList<>();
-                            }
-                            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                            this.profissionalAnterior = null;
-                            this.actionNew(event);
-                            this.setHoraIni(null);
-                            this.setHoraFim(null);
-                        } else {
-                            this.addWarn(Mensagens.getMensagem(Mensagens.RANGE_DATA_INVALIDO), "");
-                        }
+
+            if (verificarRangeData()) {
+                for (String selecionado : this.diasSelecionados) {
+                    HorasUteisProfissional horasUteis = new HorasUteisProfissional();
+                    horasUteis.setDiaDaSemana(selecionado);
+                    if ((this.getEntity().getId() != null) && 
+                            selecionado.equals(this.getEntity().getDiaDaSemana())) {
+                        horasUteis.setId(this.getEntity().getId());
                     }
-                } else {
-                    this.addError(OdontoMensagens.getMensagem("erro.horasuteis.dia"), "");
+                    horasUteis.setProfissional(this.profissionalMB.getEntity());
+                    if(this.getHoraIni() != null && this.getHoraFim() != null) {
+                        horasUteis.setHoraIni(this.setSegundos(this.getHoraIni()));
+                        horasUteis.setHoraFim(this.setSegundos(this.getHoraFim()));
+                    }
+                    if(this.getHoraIniTarde() != null && this.getHoraFimTarde() != null) {
+                        horasUteis.setHoraIniTarde(this.setSegundos(this.getHoraIniTarde()));
+                        horasUteis.setHoraFimTarde(this.setSegundos(this.getHoraFimTarde()));
+                    }
+                    HorasUteisProfissionalSingleton.getInstance().getBo().persist(horasUteis);
+                    this.diasSelecionados = new ArrayList<>();
                 }
-            } else {
-                this.addError(OdontoMensagens.getMensagem("erro.horasuteis.dataigual"), "");
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+                this.profissionalAnterior = null;
+                this.actionNew(event);
+                this.setHoraIni(null);
+                this.setHoraFim(null);
             }
+
         } catch (Exception e) {
             this.log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -118,6 +117,54 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
         cal.setTime(hora);
         cal.set(Calendar.SECOND, 0);
         return cal.getTime();
+    }
+
+    /**
+     * O intervalo de data deve respeitar a regra (dataFinal >= dataInicial). A obrigatoriedade é de preencher ao menos um turno, se um turno estiver preenchido
+     * corretamente e o outro turno, com um horário definido e o outro horário nulo, não será possível salvar o registro.
+     * @return
+     */
+    public boolean verificarRangeData() {
+
+        if (this.getHoraIni() != null && this.getHoraFim() != null) {
+            if (GenericValidator.validarRangeData(this.getHoraIni(), this.getHoraFim(), true)) {
+                if((this.getHoraIniTarde() != null && this.getHoraFimTarde() != null)) {
+                    if(!GenericValidator.validarRangeData(this.getHoraIniTarde(), this.getHoraFimTarde(), true)) {
+                        addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                        return false;
+                    }
+                }else if(!(this.getHoraIniTarde() == null && this.getHoraFimTarde() == null)){
+                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                    return false;
+                }
+            }else {
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                return false;
+            }
+        } else if (this.getHoraIniTarde() != null && this.getHoraFimTarde() != null) {
+            if (GenericValidator.validarRangeData(this.getHoraIniTarde(), this.getHoraFimTarde(), true)) {
+                if((this.getHoraIni() != null && this.getHoraFim() != null)) {
+                    if(!GenericValidator.validarRangeData(this.getHoraIni(), this.getHoraFim(), true)) {
+                        addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                        return false;
+                    }
+                }else if(!(this.getHoraIni() == null && this.getHoraFim() == null)){
+                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                    return false;
+                }
+            }else {
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                return false;
+            }
+        } else if (this.diasSelecionados.isEmpty()) {
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário que seja selecionado, no mínimo um dia da semana para os horários de profissional.");
+            return false;
+        } else {
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário o preenchimento de no mínimo um turno nos horários de profissional.");
+            return false;
+        }
+
+        return true;
     }
 
     public boolean validaData() {
@@ -171,12 +218,14 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
         }
         this.setHoraIni(this.getEntity().getHoraIni());
         this.setHoraFim(this.getEntity().getHoraFim());
+        this.setHoraIniTarde(this.getEntity().getHoraIniTarde());
+        this.setHoraFimTarde(this.getEntity().getHoraFimTarde());
     }
 
     public void exportarTabela(String type) {
         exportarTabela("Horas cadastradas para o profissional", tabelaHorasUteis, type);
     }
-    
+
     public ProfissionalMB getProfissionalMB() {
         return this.profissionalMB;
     }
@@ -231,5 +280,21 @@ public class HorasUteisProfissionalMB extends LumeManagedBean<HorasUteisProfissi
 
     public void setTabelaHorasUteis(DataTable tabelaHorasUteis) {
         this.tabelaHorasUteis = tabelaHorasUteis;
+    }
+
+    public Date getHoraIniTarde() {
+        return horaIniTarde;
+    }
+
+    public void setHoraIniTarde(Date horaIniTarde) {
+        this.horaIniTarde = horaIniTarde;
+    }
+
+    public Date getHoraFimTarde() {
+        return horaFimTarde;
+    }
+
+    public void setHoraFimTarde(Date horaFimTarde) {
+        this.horaFimTarde = horaFimTarde;
     }
 }

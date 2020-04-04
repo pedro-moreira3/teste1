@@ -3,7 +3,6 @@ package br.com.lume.odonto.managed;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -31,6 +30,7 @@ import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.Fatura.DirecaoFatura;
 import br.com.lume.odonto.entity.Fatura.StatusFatura;
 import br.com.lume.odonto.entity.Fatura.TipoFatura;
 import br.com.lume.odonto.entity.FaturaItem;
@@ -103,8 +103,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 //setFim(now.getTime());
 
                 setFormasPagamento(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma"));
-                setListaStatus(Arrays.asList(Fatura.StatusFatura.values()));
-                setStatus(Fatura.StatusFatura.PENDENTE);
+                setListaStatus(Fatura.getStatusFaturaLista(DirecaoFatura.CREDITO));
+                setStatus(Fatura.StatusFatura.A_RECEBER);
                 setShowLancamentosCancelados(false);
                 carregarProfissionais();
 

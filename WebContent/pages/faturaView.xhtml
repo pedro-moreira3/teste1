@@ -392,7 +392,7 @@ body .sideChkBox .ui-chkbox-label {
 										actionListener="#{faturaPagtoMB.validaLancamentoRepasse(l)}"
 										process="@this"
 										rendered="#{(repasseProfissional != null and repasseProfissional == 'S')}"
-										disabled="#{l.validado == 'S' or !l.ativo or (faturaPagtoMB.entity.tipoFatura.rotulo == 'PP' and !(faturaPagtoMB.isTodosRequisitosFeitos(l)))}">
+										disabled="#{l.validado == 'S' or !l.ativo or (faturaPagtoMB.entity.tipoFatura.rotulo == 'PP' and !(faturaPagtoMB.isTodosRequisitosFeitos(l))) or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											message="Você tem certeza que confirma o pagamento deste repasse?">
 										</p:confirm>

@@ -18,7 +18,9 @@
 }
 </style>
 
-		<ui:include src="faturaView.xhtml" />
+		<ui:include src="faturaView.xhtml">
+			<ui:param name="showNewLancamento" value="S" />
+		</ui:include>
 		<p:remoteCommand name="onCloseFaturaView" process="@this" />
 
 		<div class="ui-g ui-fluid">
@@ -170,9 +172,9 @@
 								process="@this" update="dtPrincipalAjustes"
 								disabled="#{!ajusteContasMB.permiteCriarFaturaAjuste(ajuste)}"
 								actionListener="#{ajusteContasMB.criarFaturaAjuste(ajuste)}" />
-							<p:commandButton icon="fa fa-check"
-								title="Resolver Ajuste" styleClass="GreenButton"
-								process="@this" update="dtPrincipalAjustes"
+							<p:commandButton icon="fa fa-check" title="Resolver Ajuste"
+								styleClass="GreenButton" process="@this"
+								update="dtPrincipalAjustes"
 								disabled="#{!ajusteContasMB.permiteResolverAjuste(ajuste)}"
 								actionListener="#{ajusteContasMB.resolverAjuste(ajuste)}" />
 						</p:column>
