@@ -392,15 +392,18 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                     List<Agendamento> paraSubstituir = new ArrayList<Agendamento>();
                     
                     Date dataPadraoInicioManha = criaDataComHorario(data,horariopadraoInico);                    
-                    Date dataPadraoFimManha = criaDataComHorario(data,horariopadraoFim); 
-                    List<Afastamento> afastamentos = new ArrayList<Afastamento>();
-                    if(dataPadraoInicioManha != null && dataPadraoFimManha != null) {
-                        afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioManha, 
-                                dataPadraoFimManha, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-                    }
+                    Date dataPadraoFimManha = criaDataComHorario(data,horariopadraoFim);                  
                     Date dataPadraoInicioTarde = criaDataComHorario(data,horariopadraoInicoTarde);                    
                     Date dataPadraoFimTarde = criaDataComHorario(data,horariopadraoFimTarde);  
-                    if(dataPadraoInicioTarde != null && dataPadraoFimTarde != null) {
+                    
+                    List<Afastamento> afastamentos = new ArrayList<Afastamento>();
+                    if(dataPadraoInicioManha != null && dataPadraoFimManha != null && dataPadraoInicioTarde != null && dataPadraoFimTarde != null) {
+                        afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioManha, 
+                                dataPadraoFimTarde, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                    }else if(dataPadraoInicioManha != null && dataPadraoFimManha != null) {
+                            afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioManha, 
+                                    dataPadraoFimManha, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                    }else if(dataPadraoInicioTarde != null && dataPadraoFimTarde != null) {
                         afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByDataAndProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioTarde, 
                             dataPadraoFimTarde, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                     }
