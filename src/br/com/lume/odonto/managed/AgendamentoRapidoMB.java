@@ -524,7 +524,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                         agendamentoCriado.getInicio().equals(substituidos.get(substituidos.size() -1).getFim()) ||
                         agendamentoCriado.getInicio().after(substituidos.get(substituidos.size() -1).getFim()) ) {
                     substituidos.add(agendamentoCriado);
-                    System.out.println("c");
+            //        System.out.println("c");
                 }                               
             }
         }
