@@ -44,11 +44,15 @@
 									</p:dataList>
 								</h:panelGroup>
 
-								<h:panelGroup style="display:inline-block;vertical-align:top;">
+								<h:panelGroup id="paiModelo" style="display:inline-block;vertical-align:top;">
 									<p:outputLabel value="Modelo: " />
 									<pe:ckEditor id="modelo" value="#{documentoMB.entity.modelo}"
 										toolbar="[[ 'Bold','Italic','Underline','Strike','RemoveFormat','NumberedList','BulletedList','Outdent','Indent','Blockquote','CreateDiv','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','BidiLtr','BidiRtl' ,'Image','Table','HorizontalRule','SpecialChar','PageBreak','Styles','Format','Font','FontSize','TextColor','BGColor','Maximize', 'ShowBlocks' ]]"
-										styleClass="BordNone" />
+										styleClass="BordNone" binding="#{documentoMB.ckEditor}">
+										
+										<p:ajax process="@this"/>
+										
+									</pe:ckEditor>
 								</h:panelGroup>
 							</h:panelGroup>
 
@@ -56,7 +60,11 @@
 								<p:outputLabel for="descricao" value="Nome do documento: " />
 								<p:inputTextarea id="descricao"
 									value="#{documentoMB.entity.descricao}" maxlength="100"
-									required="true" />
+									required="true">
+								
+									<p:ajax process="@this"/>
+								
+								</p:inputTextarea>
 							</h:panelGroup>
 
 						</p:panelGrid>
@@ -72,7 +80,7 @@
 							<p:commandButton id="persist" icon="White fa fa-save"
 								value="Salvar" actionListener="#{documentoMB.actionPersist}"
 								update=":lume:pnPrincipal, :lume:dtPrincipal"
-								process=":lume:pnPrincipal" styleClass="GreenButton" />
+								process="@this, :lume:modelo" styleClass="GreenButton" />
 							<p:commandButton id="delete" icon="White fa fa-trash-o"
 								value="Excluir" actionListener="#{documentoMB.actionRemove}"
 								update=":lume:pnPrincipal, :lume:dtPrincipal" process="@this"
@@ -113,9 +121,12 @@
 							id="dtPrincipal" value="#{documentoMB.documentos}" var="doc"
 							rows="7" paginator="true" selection="#{documentoMB.entity}"
 							selectionMode="single" rowKey="#{doc}" paginatorPosition="bottom">
+							
 							<p:ajax event="rowSelect" update=":lume:pnPrincipal"
 								listener="#{documentoMB.addLegendas}" />
+							
 							<f:facet name="header">Documentos</f:facet>
+							
 							<p:column sortBy="#{doc.descricao}" filterBy="#{doc.descricao}"
 								filterMatchMode="contains" headerText="Descrição"
 								filterFunction="#{documentoMB.filtroSemAcento}">
