@@ -461,6 +461,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							</p:column>
 
+							<p:column headerText="Status da Fatura"
+								sortBy="#{m.statusFatura.descricao}" filterMatchMode="contains"
+								filterBy="#{m.statusFatura.descricao}">
+
+								<h:outputText value="#{m.statusFatura.descricao}" />
+
+							</p:column>
+
 
 						</p:dataTable>
 					</p:outputPanel>

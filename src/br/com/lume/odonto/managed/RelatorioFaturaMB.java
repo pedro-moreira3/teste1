@@ -68,7 +68,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         super(FaturaSingleton.getInstance().getBo());
         this.setClazz(Fatura.class);
         geraListaOrigens();
-        
+
         this.statussFatura = Fatura.getStatusFaturaLista();
     }
 
@@ -91,6 +91,28 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
             if (inicio != null && fim != null && inicio.getTime() > fim.getTime()) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else {
+
+                Date dataInicio = null;
+                if (inicio != null) {
+                    Calendar calInicio = Calendar.getInstance();
+                    calInicio.setTime(inicio);
+                    calInicio.set(Calendar.HOUR, 0);
+                    calInicio.set(Calendar.MINUTE, 0);
+                    calInicio.set(Calendar.SECOND, 0);
+                    calInicio.set(Calendar.MILLISECOND, 0);
+                    dataInicio = calInicio.getTime();
+                }
+
+                Date dataFim = null;
+                if (fim != null) {
+                    Calendar calFim = Calendar.getInstance();
+                    calFim.setTime(fim);
+                    calFim.set(Calendar.HOUR, 23);
+                    calFim.set(Calendar.MINUTE, 59);
+                    calFim.set(Calendar.SECOND, 59);
+                    calFim.set(Calendar.MILLISECOND, 999);
+                    dataFim = calFim.getTime();
+                }
 
                 Paciente paciente = null;
                 Profissional profissional = null;
@@ -116,8 +138,8 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
                     }
                 }
 
-                setEntityList(
-                        FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, inicio, fim, paciente, profissional, fornecedor, origem, statusFatura));
+                setEntityList(FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, dataInicio, dataFim, paciente, profissional, fornecedor, origem,
+                        statusFatura));
 
                 getEntityList().forEach(fatura -> {
                     updateValues(fatura);
@@ -139,9 +161,9 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura));
         fatura.setDadosTabelaPT(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(fatura));
 
-        fatura.setDadosTabelaStatusFatura("A Receber");
-        if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
-            fatura.setDadosTabelaStatusFatura("Recebido");
+        //fatura.setDadosTabelaStatusFatura("A Receber");
+        //if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
+        //fatura.setDadosTabelaStatusFatura("Recebido");
     }
 
     public String descricaoOrigemFatura(Fatura fatura) {
