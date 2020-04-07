@@ -30,12 +30,12 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
     private Logger log = Logger.getLogger(TarifaMB.class);
 
     private List<Tarifa> tarifas = new ArrayList<>();
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaTarifa;
 
     public TarifaMB() {
-        super(TarifaSingleton.getInstance().getBo());   
+        super(TarifaSingleton.getInstance().getBo());
         this.geraLista();
         this.setClazz(Tarifa.class);
     }
@@ -47,7 +47,8 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
-        Collections.sort(this.tarifas);
+        if (this.tarifas != null)
+            Collections.sort(this.tarifas);
     }
 
     @Override
@@ -62,40 +63,40 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
                 e.printStackTrace();
             } catch (TechnicalException e) {
                 e.printStackTrace();
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         super.actionPersist(event);
         this.geraLista();
     }
-    
+
     public void actionInativar(ActionEvent event) {
-        if(this.getEntity() != null) {
+        if (this.getEntity() != null) {
             try {
                 TarifaSingleton.getInstance().inativarTarifa(this.getEntity(), UtilsFrontEnd.getProfissionalLogado());
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Sucesso ao inativar");
             } catch (Exception e) {
                 this.log.error("Erro no actionInativar");
                 e.printStackTrace();
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO),"Erro ao inativar tarifa");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "Erro ao inativar tarifa");
             }
         }
     }
-    
+
     public void actionAtivar(ActionEvent event) {
-        if(this.getEntity() != null) {
+        if (this.getEntity() != null) {
             try {
                 TarifaSingleton.getInstance().ativarTarifa(this.getEntity(), UtilsFrontEnd.getProfissionalLogado());
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Sucesso ao ativar tarifa");
             } catch (Exception e) {
                 this.log.error("Erro no actionAtivar");
                 e.printStackTrace();
-                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO),"Erro ao ativar tarifa");
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_REMOVER_REGISTRO), "Erro ao ativar tarifa");
             }
         }
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Tarifas", tabelaTarifa, type);
     }
