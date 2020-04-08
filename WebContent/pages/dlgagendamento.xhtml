@@ -39,6 +39,10 @@
 	<p:remoteCommand name="onHidePacienteFicha" process="@this"
 		actionListener="#{agendamentoMB.atualizaPacientePosFicha()}" />
 
+	<p:remoteCommand name="processaChegouAs" process="chegouAs" />
+			<p:remoteCommand name="processaIniciouAs" process="iniciouAs" />
+			<p:remoteCommand name="processaFinalizouAs" process="finalizouAs" />
+
 	<p:dialog widgetVar="dlgPacienteConflito" resizable="false"
 		onHide="PF('dlgPacienteConflito').toggleMaximize();"
 		onShow="PF('dlgPacienteConflito').toggleMaximize();" appendTo=":lume"
@@ -405,21 +409,23 @@
 				<p:message styleClass="msg" for="cadeira" />
 			</h:panelGroup>
 
+		
+
 			<h:panelGroup styleClass="md-inputfield">
-				<p:calendar id="chegouAs" value="#{agendamentoMB.entity.chegouAs}"
-					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
-					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.chegouAs)}"
-					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.chegouAs)}">
+				<p:calendar id="chegouAs" value="#{agendamentoMB.chegouAsDentroAgenda}"
+					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" onchange="processaChegouAs()"
+					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.chegouAsDentroAgenda)}"
+					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.chegouAsDentroAgenda)}">
 					<p:ajax event="close" process="@this" />
 				</p:calendar>
 				<p:outputLabel for="chegouAs" value="Chegou às" />
 				<p:message styleClass="msg" for="chegouAs" />
 			</h:panelGroup>
 			<h:panelGroup styleClass="md-inputfield">
-				<p:calendar id="iniciouAs" value="#{agendamentoMB.entity.iniciouAs}"
-					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
-					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.iniciouAs)}"
-					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.iniciouAs)}">
+				<p:calendar id="iniciouAs" value="#{agendamentoMB.iniciouAsDentroAgenda}"
+					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"  onchange="processaIniciouAs()"
+					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.iniciouAsDentroAgenda)}"
+					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.iniciouAsDentroAgenda)}">
 					<p:ajax event="close" process="@this" />
 				</p:calendar>
 				<p:outputLabel for="iniciouAs" value="Iniciou atend. às" />
@@ -427,10 +433,10 @@
 			</h:panelGroup>
 			<h:panelGroup styleClass="md-inputfield">
 				<p:calendar id="finalizouAs"
-					value="#{agendamentoMB.entity.finalizouAs}"
-					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true"
-					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.entity.finalizouAs)}"
-					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.entity.finalizouAs)}">
+					value="#{agendamentoMB.finalizouAsDentroAgenda}"
+					pattern="dd/MM/yyyy HH:mm" showButtonPanel="true" mask="true" onchange="processaFinalizouAs()"
+					defaultHour="#{agendamentoMB.getDefaultHour(agendamentoMB.finalizouAsDentroAgenda)}"
+					defaultMinute="#{agendamentoMB.getDefaultMinute(agendamentoMB.finalizouAsDentroAgenda)}">
 					<p:ajax event="close" process="@this" />
 				</p:calendar>
 				<p:outputLabel for="finalizouAs" value="Finalizou atend. às" />
