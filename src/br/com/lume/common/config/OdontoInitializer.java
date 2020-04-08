@@ -11,10 +11,15 @@ import br.com.lume.security.audit.threads.AuditRegisterThread;
 @Startup
 public class OdontoInitializer {
 
+    private static AuditRegisterThread thread = null;
+
     @PostConstruct
     public void init() {
         // Configurar.getInstance().getConfiguracao().setAmbiente(Configuracao.AMBIENTES.DEV);
-        new AuditRegisterThread().start();
+        if (OdontoInitializer.thread == null) {
+            OdontoInitializer.thread = new AuditRegisterThread();
+            OdontoInitializer.thread.start();
+        }
     }
 
     @PreDestroy

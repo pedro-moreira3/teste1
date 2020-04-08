@@ -37,6 +37,16 @@ public class AuditRegisterThread extends Thread {
             } catch (Exception e) {
                 LogIntelidenteSingleton.getInstance().makeLog(e);
             }
+
+            sleepThread(500);
+        }
+    }
+    
+    private void sleepThread(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (Exception e) {
+            // TODO: handle exception
         }
     }
 
