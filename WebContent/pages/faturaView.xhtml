@@ -241,7 +241,7 @@ body .sideChkBox .ui-chkbox-label {
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}" />
 								<p:inputText id="statusFatura"
 									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
-									value="#{faturaPagtoMB.entity.statusFatura.descricao}"
+									value="#{faturaPagtoMB.entity.statusFaturaCompleto}"
 									readonly="true"
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'RP'}" />
 
@@ -249,7 +249,7 @@ body .sideChkBox .ui-chkbox-label {
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}" />
 								<p:inputText id="statusFatura2"
 									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
-									value="#{faturaPagtoMB.entity.statusFatura.descricao}"
+									value="#{faturaPagtoMB.entity.statusFaturaCompleto}"
 									readonly="true"
 									rendered="#{faturaPagtoMB.entity.tipoFatura.rotulo == 'PP'}" />
 								<p:column
@@ -457,10 +457,10 @@ body .sideChkBox .ui-chkbox-label {
 									<h:outputText
 										value="#{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
-								<p:column headerText="Status" sortBy="#{l.status}" width="15%"
+								<p:column headerText="Status" sortBy="#{l.status.descricao}" width="15%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
-									filterMatchMode="contains" filterBy="#{l.status}">
-									<h:outputText value="#{l.status}" />
+									filterMatchMode="contains" filterBy="#{l.status.descricao}">
+									<h:outputText value="#{l.status.descricao}" />
 								</p:column>
 								<p:column headerText="Fatura Item" width="25%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"

@@ -3,6 +3,7 @@ package br.com.lume.odonto.managed;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +33,7 @@ import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Fatura.DirecaoFatura;
 import br.com.lume.odonto.entity.Fatura.StatusFatura;
+import br.com.lume.odonto.entity.Fatura.SubStatusFatura;
 import br.com.lume.odonto.entity.Fatura.TipoFatura;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
@@ -50,6 +52,9 @@ import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.tarifa.TarifaSingleton;
 
+/**
+ * @author ricardo.poncio
+ */
 @ManagedBean
 @ViewScoped
 public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
@@ -57,14 +62,17 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private static final long serialVersionUID = 1L;
     //private Logger log = Logger.getLogger(FaturaPagtoMB.class);
 
+    private String filtroPeriodo;
     private Date inicio, fim;
     private Paciente paciente;
     private List<Dominio> formasPagamento;
     private PlanoTratamento[] ptSelecionados = new PlanoTratamento[] {};
     private List<PlanoTratamento> listaPt;
+    private boolean showLancamentosCancelados = false;
+
     private StatusFatura status;
     private List<StatusFatura> listaStatus;
-    private boolean showLancamentosCancelados = false;
+    private SubStatusFatura[] subStatusFatura;
 
     private FaturaItem itemSelecionado;
     private List<Profissional> profissionais;
@@ -179,6 +187,69 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
+    public void actionTrocaDatasCriacao() {
+        try {
+            setInicio(getDataInicio(filtroPeriodo));
+            setFim(getDataFim(filtroPeriodo));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+
+    public Date getDataFim(String filtro) {
+        Date dataFim = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataFim = c.getTime();
+            } else if (filtro == null) {
+                dataFim = null;
+            } else {
+                dataFim = c.getTime();
+            }
+            return dataFim;
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }
+
+    public Date getDataInicio(String filtro) {
+        Date dataInicio = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataInicio = c.getTime();
+            } else if ("H".equals(filtro)) { //Hoje                
+                dataInicio = c.getTime();
+            } else if ("S".equals(filtro)) { //Últimos 7 dias              
+                c.add(Calendar.DAY_OF_MONTH, -7);
+                dataInicio = c.getTime();
+            } else if ("Q".equals(filtro)) { //Últimos 15 dias              
+                c.add(Calendar.DAY_OF_MONTH, -15);
+                dataInicio = c.getTime();
+            } else if ("T".equals(filtro)) { //Últimos 30 dias                
+                c.add(Calendar.DAY_OF_MONTH, -30);
+                dataInicio = c.getTime();
+            } else if ("M".equals(filtro)) { //Mês Atual              
+                c.set(Calendar.DAY_OF_MONTH, 1);
+                dataInicio = c.getTime();
+            } else if ("I".equals(filtro)) { //Mês Atual             
+                c.add(Calendar.MONTH, -6);
+                dataInicio = c.getTime();
+            }
+            return dataInicio;
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }
+
     public void visualizaFatura(Fatura fatura) {
         /*
          * List<FaturaItem> itens = new ArrayList<>(fatura.getItens()); if (fatura.getTipoFatura() == Fatura.TipoFatura.RECEBIMENTO_PACIENTE) { itens.forEach(item -> { try { String pt =
@@ -265,7 +336,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             }
 
             setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), (inicio == null ? null : inicio.getTime()),
-                    (fim == null ? null : fim.getTime()), this.status));
+                    (fim == null ? null : fim.getTime()), this.status, Arrays.asList(this.subStatusFatura)));
             getEntityList().forEach(fatura -> {
                 updateValues(fatura);
             });
@@ -720,6 +791,26 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setlAReceber(List<Lancamento> lAReceber) {
         this.lAReceber = lAReceber;
+    }
+
+    public SubStatusFatura[] getSubStatusFatura() {
+        return subStatusFatura;
+    }
+
+    public void setSubStatusFatura(SubStatusFatura[] subStatusFatura) {
+        this.subStatusFatura = subStatusFatura;
+    }
+
+    public List<SubStatusFatura> getListaSubStatusFatura() {
+        return Arrays.asList(SubStatusFatura.values());
+    }
+
+    public String getFiltroPeriodo() {
+        return filtroPeriodo;
+    }
+
+    public void setFiltroPeriodo(String filtroPeriodo) {
+        this.filtroPeriodo = filtroPeriodo;
     }
 
 }

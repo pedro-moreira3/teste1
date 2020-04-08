@@ -71,7 +71,7 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
             }
 
             setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), (inicio == null ? null : inicio.getTime()),
-                    (fim == null ? null : fim.getTime()), status));
+                    (fim == null ? null : fim.getTime()), status, null));
             if (getEntityList() != null)
                 getEntityList().forEach(fatura -> {
                     fatura.setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));

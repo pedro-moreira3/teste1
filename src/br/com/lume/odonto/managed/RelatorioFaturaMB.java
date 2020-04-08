@@ -3,6 +3,7 @@ package br.com.lume.odonto.managed;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +31,7 @@ import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Fatura.DirecaoFatura;
 import br.com.lume.odonto.entity.Fatura.StatusFatura;
+import br.com.lume.odonto.entity.Fatura.SubStatusFatura;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Origem;
 import br.com.lume.odonto.entity.Paciente;
@@ -60,6 +62,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
     private StatusFatura statusFatura;
     private List<StatusFatura> statussFatura;
+    private SubStatusFatura[] subStatusFatura;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
@@ -139,7 +142,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
                 }
 
                 setEntityList(FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, dataInicio, dataFim, paciente, profissional, fornecedor, origem,
-                        statusFatura));
+                        statusFatura, Arrays.asList(this.subStatusFatura)));
 
                 getEntityList().forEach(fatura -> {
                     updateValues(fatura);
@@ -454,6 +457,18 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
         if (this.statussFatura.indexOf(this.statusFatura) < 0)
             setTipoFatura(null);
+    }
+
+    public SubStatusFatura[] getSubStatusFatura() {
+        return subStatusFatura;
+    }
+
+    public void setSubStatusFatura(SubStatusFatura[] subStatusFatura) {
+        this.subStatusFatura = subStatusFatura;
+    }
+
+    public List<SubStatusFatura> getListaSubStatusFatura() {
+        return Arrays.asList(SubStatusFatura.values());
     }
 
 }
