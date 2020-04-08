@@ -701,11 +701,15 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                             this.getEntity().setStatusNovo("A");
                                             this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.atendido"), "");
                                         } else if (this.getEntity().getIniciouAs() != null && (this.iniciouAsEstadoInicial == null || !this.iniciouAsEstadoInicial.equals(this.getEntity().getIniciouAs()))) {
-                                            this.getEntity().setStatusNovo("O");
-                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.ematendimento"), "");
+                                            if(this.getEntity().getFinalizouAs() == null) {
+                                                this.getEntity().setStatusNovo("O");
+                                                this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.ematendimento"), "");
+                                            }
                                         } else if (this.getEntity().getChegouAs() != null && (this.chegouAsEstadoInicial == null || !this.chegouAsEstadoInicial.equals(this.getEntity().getChegouAs()))) {
-                                            this.getEntity().setStatusNovo("I");
-                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.clientenaclinica"), "");
+                                            if(this.getEntity().getIniciouAs() == null) {
+                                                this.getEntity().setStatusNovo("I");
+                                                this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.clientenaclinica"), "");
+                                            }
                                         //apagou todas as datas, voltar para confirmado.    
                                         }else if(this.getEntity().getChegouAs() == null && this.getEntity().getIniciouAs() == null && this.getEntity().getFinalizouAs() == null
                                             && this.chegouAsEstadoInicial != null
@@ -713,11 +717,21 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                             this.getEntity().setStatusNovo("S");   
                                             this.addInfo("Status alterado para confirmado", "");
                                         }else if (this.getEntity().getIniciouAs() == null && this.getEntity().getFinalizouAs() == null && this.iniciouAsEstadoInicial != null) {
-                                            this.getEntity().setStatusNovo("I");
-                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.clientenaclinica"), "");
+                                            if(this.chegouAsEstadoInicial == null) {
+                                                this.getEntity().setStatusNovo("S");   
+                                                this.addInfo("Status alterado para confirmado", "");
+                                            }else {
+                                                this.getEntity().setStatusNovo("I");
+                                                this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.clientenaclinica"), "");
+                                            }    
                                         }else if (this.getEntity().getFinalizouAs() == null && this.finalizaouAsEstadoInicial != null) {
-                                            this.getEntity().setStatusNovo("O");
-                                            this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.ematendimento"), "");
+                                            if(this.chegouAsEstadoInicial == null) {
+                                                this.getEntity().setStatusNovo("S");   
+                                                this.addInfo("Status alterado para confirmado", "");
+                                            }else {
+                                                this.getEntity().setStatusNovo("O");
+                                                this.addInfo(OdontoMensagens.getMensagem("agendamento.status.alterado.ematendimento"), "");
+                                            }
                                         }
                                   //  }
                                    
