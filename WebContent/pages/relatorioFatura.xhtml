@@ -282,8 +282,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 									</p:panelGrid>
 
-									<p:panelGrid id="filtro" columns="2"
-										columnClasses="ui-grid-col-6, ui-grid-col-6" layout="grid"
+									<p:panelGrid id="filtro" columns="3"
+										columnClasses="ui-grid-col-6, ui-grid-col-3, ui-grid-col-3" layout="grid"
 										styleClass="ui-panelgrid-blank"
 										style="border:0px none; background-color:transparent;">
 
@@ -311,11 +311,22 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:selectOneMenu id="statusFaturaFiltro"
 												converter="enumStatusFatura"
 												value="#{relatorioFaturaMB.statusFatura}" filter="true"
-												filterMatchMode="contains">
+												filterMatchMode="contains" style="top: 5px;">
 												<f:selectItems value="#{relatorioFaturaMB.statussFatura}"
 													var="status" itemLabel="#{status.descricao}"
 													itemValue="#{status}" />
 											</p:selectOneMenu>
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="lumeField">
+											<p:outputLabel for="subStatus" value="Sub Status da Fatura: " />
+											<p:selectCheckboxMenu id="subStatus" label="SubStatus"
+												multiple="true" value="#{relatorioFaturaMB.subStatusFatura}"
+												converter="enumSubStatusFatura">
+												<f:selectItems value="#{relatorioFaturaMB.listaSubStatusFatura}"
+													var="subStatus" itemLabel="#{subStatus.descricao}"
+													itemValue="#{subStatus}" />
+											</p:selectCheckboxMenu>
 										</h:panelGroup>
 
 									</p:panelGrid>
@@ -461,10 +472,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:column>
 
 							<p:column headerText="Status da Fatura"
-								sortBy="#{m.statusFatura.descricao}" filterMatchMode="contains"
-								filterBy="#{m.statusFatura.descricao}">
+								sortBy="#{m.statusFaturaCompleto}" filterMatchMode="contains"
+								filterBy="#{m.statusFaturaCompleto}">
 
-								<h:outputText value="#{m.statusFatura.descricao}" />
+								<h:outputText value="#{m.statusFaturaCompleto}" />
 
 							</p:column>
 

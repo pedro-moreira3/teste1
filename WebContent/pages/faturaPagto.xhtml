@@ -24,16 +24,33 @@
 					<h1>Faturas dos Pacientes</h1>
 					<p:separator styleClass="SeparatorFull" />
 
-					<p:panelGrid columns="2" layout="grid" id="filterFaturas"
+					<p:panelGrid columns="3" layout="grid" id="filterFaturas"
 						styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
-						<h:panelGroup>
+						<h:panelGroup styleClass="md-combo">
+							<h:outputText for="filtroPeriodo" value="Período de criação:" />
+							<p:selectOneMenu id="filtroPeriodo"
+								value="#{faturaPagtoMB.filtroPeriodo}">
+								<p:ajax process="@this" update="inicio, fim"
+									listener="#{faturaPagtoMB.actionTrocaDatasCriacao}" />
+								<f:selectItem itemValue="" itemLabel="Selecione" />
+								<f:selectItem itemValue="O" itemLabel="Ontem" />
+								<f:selectItem itemValue="H" itemLabel="Hoje" />
+								<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+								<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+								<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+								<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+								<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+							</p:selectOneMenu>
+						</h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield taller">
 							<h:outputText for="inicio" value="Data de criação de:" />
 							<p:calendar id="inicio" value="#{faturaPagtoMB.inicio}" />
 						</h:panelGroup>
-						<h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield taller">
 							<h:outputText for="fim" value="Data de criação até:" />
 							<p:calendar id="fim" value="#{faturaPagtoMB.fim}" />
 						</h:panelGroup>
+
 						<h:panelGroup styleClass="noupdate">
 							<h:outputText for="filtroPaciente" value="Paciente:" />
 							<p:autoComplete id="filtroPaciente"
@@ -60,12 +77,22 @@
 							</p:autoComplete>
 						</h:panelGroup>
 						<h:panelGroup>
-							<p:outputLabel for="status" value="Status: " />
+							<p:outputLabel for="status" value="Status da Fatura: " />
 							<p:selectOneMenu id="status" value="#{faturaPagtoMB.status}"
 								converter="enumStatusFatura">
 								<f:selectItems value="#{faturaPagtoMB.listaStatus}" var="status"
 									itemLabel="#{status.descricao}" itemValue="#{status}" />
 							</p:selectOneMenu>
+						</h:panelGroup>
+						<h:panelGroup>
+							<p:outputLabel for="subStatus" value="Sub Status da Fatura: " />
+							<p:selectCheckboxMenu id="subStatus" label="SubStatus"
+								multiple="true" value="#{faturaPagtoMB.subStatusFatura}"
+								converter="enumSubStatusFatura" style="margin-top: 5px;">
+								<f:selectItems value="#{faturaPagtoMB.listaSubStatusFatura}"
+									var="subStatus" itemLabel="#{subStatus.descricao}"
+									itemValue="#{subStatus}" />
+							</p:selectCheckboxMenu>
 						</h:panelGroup>
 					</p:panelGrid>
 					<p:panelGrid columns="4" layout="grid"
@@ -173,9 +200,9 @@
 						</p:column>
 
 						<p:column width="80" headerText="Status"
-							filterBy="#{f.statusFatura.descricao}"
-							sortBy="#{f.statusFatura.descricao}" filterMatchMode="contains">
-							<h:outputText value="#{f.statusFatura.descricao}" />
+							filterBy="#{f.statusFaturaCompleto}"
+							sortBy="#{f.statusFaturaCompleto}" filterMatchMode="contains">
+							<h:outputText value="#{f.statusFaturaCompleto}" />
 						</p:column>
 
 					</p:dataTable>
