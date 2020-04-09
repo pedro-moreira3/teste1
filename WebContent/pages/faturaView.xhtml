@@ -81,7 +81,7 @@ body .sideChkBox .ui-chkbox-label {
 						<p:message for="produtoLancamento" styleClass="msg" />
 					</h:panelGroup>
 					<h:panelGroup styleClass="lumeField"
-						rendered="#{faturaPagtoMB.formaPagamento == 'CC' and faturaPagtoMB.tarifa != null}">
+						rendered="#{faturaPagtoMB.existeCadastroTarifa() and faturaPagtoMB.tarifa != null}">
 						<p:outputLabel for="numParcelas" value="Parcelas: " />
 						<p:selectOneMenu id="numParcelas" value="#{faturaPagtoMB.parcela}"
 							filter="true" filterMatchMode="startsWith">
