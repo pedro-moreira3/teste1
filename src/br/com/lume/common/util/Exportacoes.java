@@ -317,7 +317,7 @@ public class Exportacoes implements Serializable{
 
         ArrayList<Integer> colunasValidas = new ArrayList<Integer>();
         
-        int quantidadeLinhas = tabela.getRows();
+        int quantidadeLinhas = tabela.getRowCount();
         
         if(quantidadeLinhas > 1) {
             for(int i = 0; i < 1; i++) {
