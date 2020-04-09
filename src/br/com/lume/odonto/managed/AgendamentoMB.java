@@ -1268,10 +1268,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             agendamento = (Agendamento) obj;
 
             this.profissionalDentroAgenda = agendamento.getProfissional();
+           
             this.cadeiraDentroAgenda = agendamento.getCadeira();
-            this.chegouAsEstadoInicial = agendamento.getChegouAs();
-            this.iniciouAsEstadoInicial = agendamento.getIniciouAs();
-            this.finalizaouAsEstadoInicial = agendamento.getFinalizouAs();
+            this.chegouAsDentroAgenda = agendamento.getChegouAs();
+            this.iniciouAsDentroAgenda = agendamento.getIniciouAs();
+            this.finalizouAsDentroAgenda = agendamento.getFinalizouAs();
 
             UtilsFrontEnd.setPacienteSelecionado(agendamento.getPaciente());
             this.setEntity(agendamento);

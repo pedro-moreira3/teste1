@@ -53,7 +53,7 @@ public class RelatorioGerencialEmail implements Job {
 
             for (Profissional profissional : profissionais) {
                 Empresa empresa = EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa());
-                if (empresa.getEmpChaSts().equals("false") && empresa.getEmpDtmExpiracao() != null && empresa.getEmpDtmExpiracao().after(hoje)) {
+                if (empresa.getEmpChaSts().equals("false") && empresa.getEmpDtmExpiracao() != null && empresa.getEmpDtmExpiracao().after(hoje) && false) {
 
                     String email = profissional.getDadosBasico().getEmail();
                     if (email != null) {

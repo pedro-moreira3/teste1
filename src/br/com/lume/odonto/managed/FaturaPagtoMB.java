@@ -366,7 +366,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public void atualizaProduto() {
-        if ("CC".equals(getFormaPagamento()) || "CD".equals(getFormaPagamento()) || "BO".equals(getFormaPagamento())) {
+        if (existeCadastroTarifa()) {
             setTarifas(TarifaSingleton.getInstance().getBo().listByForma(getFormaPagamento(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             setShowProduto(Boolean.TRUE);
         } else {
@@ -375,6 +375,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
 
         handleSelectPagamento();
+    }
+
+    public boolean existeCadastroTarifa() {
+        return existeCadastroTarifa(getFormaPagamento());
+    }
+
+    public boolean existeCadastroTarifa(String formaPagamento) {
+        if (Arrays.asList(new String[] { "CC", "CD", "BO" }).indexOf(formaPagamento) != -1)
+            return true;
+        return false;
     }
 
     public void atualizaDataCredito() {
@@ -431,16 +441,23 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             now.setTime(getDataPagamento());
             Calendar data = Calendar.getInstance();
             data.setTime(getDataCredito());
-            if ("CC".equals(getFormaPagamento())) {
+            if (existeCadastroTarifa()) {
                 BigDecimal valorOriginalDividio = getValor().divide(new BigDecimal(getParcela()), 2, RoundingMode.HALF_UP);
                 BigDecimal diferenca = valorOriginalDividio.multiply(new BigDecimal(getParcela())).subtract(getValor());
                 for (int i = 1; i <= getParcela(); i++) {
                     if (i == getParcela()) {
                         valorOriginalDividio = valorOriginalDividio.subtract(diferenca);
                     }
-                    LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
-                            UtilsFrontEnd.getProfissionalLogado(), null);
-                    //persistLancamento(getParcela(), getEntity(), valorOriginalDividio, getFormaPagamento(), Calendar.getInstance().getTime(), data.getTime(), getTarifa());
+
+                    if ("CC".equals(getFormaPagamento())) {
+                        LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
+                                UtilsFrontEnd.getProfissionalLogado(), null);
+                        //persistLancamento(getParcela(), getEntity(), valorOriginalDividio, getFormaPagamento(), Calendar.getInstance().getTime(), data.getTime(), getTarifa());
+                    } else {
+                        LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
+                                UtilsFrontEnd.getProfissionalLogado(), null);
+                        now.add(Calendar.MONTH, 1);
+                    }
                     data.add(Calendar.MONTH, 1);
                 }
             } else {
@@ -472,15 +489,22 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             Calendar now = Calendar.getInstance();
             Calendar data = Calendar.getInstance();
             data.setTime(getDataCredito());
-            if ("CC".equals(getFormaPagamento())) {
+            if (existeCadastroTarifa()) {
                 BigDecimal valorOriginalDividio = getValor().divide(new BigDecimal(getParcela()), 2, RoundingMode.HALF_UP);
                 BigDecimal diferenca = valorOriginalDividio.multiply(new BigDecimal(getParcela())).subtract(getValor());
                 for (int i = 1; i <= getParcela(); i++) {
                     if (i == getParcela()) {
                         valorOriginalDividio = valorOriginalDividio.subtract(diferenca);
                     }
-                    LancamentoSingleton.getInstance().novoLancamentoGenerico(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
-                            UtilsFrontEnd.getProfissionalLogado());
+
+                    if ("CC".equals(getFormaPagamento())) {
+                        LancamentoSingleton.getInstance().novoLancamentoGenerico(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
+                                UtilsFrontEnd.getProfissionalLogado());
+                    } else {
+                        LancamentoSingleton.getInstance().novoLancamentoGenerico(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
+                                UtilsFrontEnd.getProfissionalLogado());
+                        now.add(Calendar.MONTH, 1);
+                    }
 
                     data.add(Calendar.MONTH, 1);
                 }
