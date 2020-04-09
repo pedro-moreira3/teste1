@@ -978,10 +978,20 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
-    public boolean showProdutoNewPlanejamento() {
+    public boolean existeCadastroTarifa() {
+        return existeCadastroTarifa(getPlanejamentoAtual().getFormaPagamento().getValor());
+    }
+    
+    public boolean existeCadastroTarifa(String formaPagamento) {
         List<String> formasPagamentoComProduto = Arrays.asList(new String[] { "CC", "CD", "BO" });
+        if (formasPagamentoComProduto.indexOf(formaPagamento) != -1)
+            return true;
+        return false;
+    }
+    
+    public boolean showProdutoNewPlanejamento() {
         if (getPlanejamentoAtual() != null && getPlanejamentoAtual().getFormaPagamento() != null) {
-            if (formasPagamentoComProduto.indexOf(getPlanejamentoAtual().getFormaPagamento().getValor()) >= 0) {
+            if (existeCadastroTarifa()) {
                 setTarifasNewPlanejamento(
                         TarifaSingleton.getInstance().getBo().listByForma(getPlanejamentoAtual().getFormaPagamento().getValor(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 return true;
