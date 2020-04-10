@@ -152,3 +152,5 @@ WITH FATURA_A_PLANEJAR AS (
 	(SELECT COUNT(*) FROM INSERT_FATURA_A_PLANEJAR) AS "Registros Afetados (A Planejar)",
 	(SELECT COUNT(*) FROM INSERT_FATURA_A_CONFERIR) AS "Registros Afetados (A Conferir)",
 	(SELECT COUNT(*) FROM INSERT_FATURA_A_VALIDAR) AS "Registros Afetados (A Validar)";
+	
+--------------------------------------ACIMA JA RODADO
