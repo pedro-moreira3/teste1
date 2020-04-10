@@ -324,6 +324,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             arq.close();
 
         } catch (Exception e) {
+            this.addError("Erro", "Erro na exportação do documento.");
             e.printStackTrace();
         }
     }

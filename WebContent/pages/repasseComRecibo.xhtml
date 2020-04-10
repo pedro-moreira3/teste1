@@ -935,9 +935,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 															<p:menuitem value="Exportar tabela para PDF"
 																icon="fa fa fa-file-pdf-o"
 																actionListener="#{repasseProfissionalComReciboMB.exportarTabela('pdf')}"
-																ajax="false"
+																ajax="false" immediate="true"
 																process=":lume:tabViewRepasseProfissional:dtPrincipalRepasse, @this"
-																immediate="true"
 																onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 																<p:fileDownload
 																	value="#{repasseProfissionalComReciboMB.arquivoDownload}" />
@@ -964,8 +963,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												binding="#{repasseProfissionalComReciboMB.tabelaRepasse}"
 												selection="#{repasseProfissionalComReciboMB.ptpsSelecionados}">
 												<f:facet name="header">Procedimentos</f:facet>
-												<p:column selectionMode="multiple" style="width:16px;" />
-												<p:column width="12%" headerText="Ações">
+												<p:column exportable="false" selectionMode="multiple" style="width:16px;" />
+												<p:column exportable="false" width="12%" headerText="Ações">
 													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
 														title="Detalhes do repasse"
 														oncomplete="PF('dlgFaturaView').show();"
@@ -998,10 +997,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													filterBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
 													sortBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
 													filterMatchMode="contains"
-													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
-													<f:facet name="header">
-														<h:outputText value="Dentista Executor" />
-													</f:facet>
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}"
+													exportable="true" headerText="Dentista Executor">
 													<h:outputText
 														value="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}" />
 												</p:column>
@@ -1009,10 +1006,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
 													sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
 													filterMatchMode="contains"
-													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
-													<f:facet name="header">
-														<h:outputText value="Paciente" />
-													</f:facet>
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}"
+													exportable="true" headerText="Paciente">
 
 													<p:commandLink
 														value="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
@@ -1025,25 +1020,21 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												<p:column filterBy="#{ptp.planoTratamento.descricao}"
 													sortBy="#{ptp.planoTratamento.descricao}"
 													filterMatchMode="contains"
-													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
-													<f:facet name="header">
-														<h:outputText value="Plano de tratamento" />
-													</f:facet>
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}"
+													exportable="true" headerText="Plano de tratamento">
 													<h:outputText title="#{ptp.id}"
 														value="#{ptp.planoTratamento.descricao}" />
 												</p:column>
 												<p:column filterBy="#{ptp.descricaoCompletaComFace}"
 													sortBy="#{ptp.descricaoCompletaComFace}"
 													filterMatchMode="contains"
-													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
-													<f:facet name="header">
-														<h:outputText value="Procedimento" />
-													</f:facet>
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}"
+													exportable="true" headerText="Procedimento">
 													<h:outputText value="#{ptp.descricaoCompletaComFace}" />
 												</p:column>
 												<p:column filterBy="#{ptp.dataFinalizadoStr}"
 													headerText="Data de Execução" filterMatchMode="contains"
-													sortBy="#{ptp.dataFinalizado}">
+													sortBy="#{ptp.dataFinalizado}" exportable="true">
 													<h:outputText value="#{ptp.dataFinalizadoStr}" />
 												</p:column>
 
