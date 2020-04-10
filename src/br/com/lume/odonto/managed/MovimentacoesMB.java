@@ -132,6 +132,8 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         this.mesAPagar = this.mesAReceber = getMeses().get(Calendar.getInstance().get(Calendar.MONTH));
         this.consideraLancamentosValidadosAPagar = this.consideraLancamentosValidadosAReceber = false;
         this.carregaListaAReceber();
+        
+        this.atualizaGraficoContas.start();
     }
 
     public void onTabChange(TabChangeEvent event) {
@@ -229,8 +231,6 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
     }
 
     public BarChartModel getLineModel() {
-        if (lineModel == null && !this.atualizaGraficoContas.isAlive())
-            this.atualizaGraficoContas.start();
         return lineModel;
     }
 
