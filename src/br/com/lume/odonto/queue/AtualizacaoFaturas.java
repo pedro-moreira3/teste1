@@ -1,7 +1,6 @@
 package br.com.lume.odonto.queue;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TimerTask;
 
@@ -11,7 +10,6 @@ import br.com.lume.execucaoTimer.interfaces.Executor;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Fatura.StatusFatura;
-import br.com.lume.odonto.entity.Fatura.SubStatusFatura;
 
 public class AtualizacaoFaturas extends TimerTask implements Serializable, Executor {
 
@@ -31,8 +29,7 @@ public class AtualizacaoFaturas extends TimerTask implements Serializable, Execu
                 LogIntelidenteSingleton.getInstance().makeLog("Task '" + getCodigo() + "': Já rodou nesta data!");
             } else {
 
-                List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER,
-                        Arrays.asList(new SubStatusFatura[] { SubStatusFatura.A_CONFERIR, SubStatusFatura.A_VALIDAR }));
+                List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
                 for (Fatura fatura : faturas)
                     FaturaSingleton.getInstance().atualizarStatusFatura(fatura);
 
