@@ -55,6 +55,9 @@ import br.com.lume.tarifa.TarifaSingleton;
 /**
  * @author ricardo.poncio
  */
+/**
+ * @author ricardo.poncio
+ */
 @ManagedBean
 @ViewScoped
 public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
@@ -78,6 +81,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private List<Profissional> profissionais;
     private Profissional profissionalTroca;
     private String observacao;
+
+    private BigDecimal somaTotal = BigDecimal.ZERO, somaTotalPago = BigDecimal.ZERO, somaTotalNaoPago = BigDecimal.ZERO, somaTotalNaoPlanejado = BigDecimal.ZERO;
 
     //Campos para 'Novo Lançamento'
     private boolean showProduto;
@@ -335,6 +340,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 fim.set(Calendar.MILLISECOND, 999);
             }
 
+            this.somaTotal = BigDecimal.ZERO;
+            this.somaTotalPago = BigDecimal.ZERO;
+            this.somaTotalNaoPago = BigDecimal.ZERO;
+            this.somaTotalNaoPlanejado = BigDecimal.ZERO;
+
             setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), (inicio == null ? null : inicio.getTime()),
                     (fim == null ? null : fim.getTime()), this.status, Arrays.asList(this.subStatusFatura)));
             getEntityList().forEach(fatura -> {
@@ -359,6 +369,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         //fatura.setDadosTabelaStatusFatura("A Receber");
         //if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
         //fatura.setDadosTabelaStatusFatura("Recebido");
+
+        this.somaTotal = this.somaTotal.add(fatura.getDadosTabelaRepasseTotalFatura());
+        this.somaTotalPago = this.somaTotalPago.add(fatura.getDadosTabelaRepasseTotalPago());
+        this.somaTotalNaoPago = this.somaTotalNaoPago.add(fatura.getDadosTabelaRepasseTotalNaoPago());
+        this.somaTotalNaoPlanejado = this.somaTotalNaoPlanejado.add(fatura.getDadosTabelaRepasseTotalNaoPlanejado());
     }
 
     public void changePaciente() {
@@ -835,6 +850,38 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setFiltroPeriodo(String filtroPeriodo) {
         this.filtroPeriodo = filtroPeriodo;
+    }
+
+    public BigDecimal getSomaTotal() {
+        return somaTotal;
+    }
+
+    public void setSomaTotal(BigDecimal somaTotal) {
+        this.somaTotal = somaTotal;
+    }
+
+    public BigDecimal getSomaTotalPago() {
+        return somaTotalPago;
+    }
+
+    public void setSomaTotalPago(BigDecimal somaTotalPago) {
+        this.somaTotalPago = somaTotalPago;
+    }
+
+    public BigDecimal getSomaTotalNaoPago() {
+        return somaTotalNaoPago;
+    }
+
+    public void setSomaTotalNaoPago(BigDecimal somaTotalNaoPago) {
+        this.somaTotalNaoPago = somaTotalNaoPago;
+    }
+
+    public BigDecimal getSomaTotalNaoPlanejado() {
+        return somaTotalNaoPlanejado;
+    }
+
+    public void setSomaTotalNaoPlanejado(BigDecimal somaTotalNaoPlanejado) {
+        this.somaTotalNaoPlanejado = somaTotalNaoPlanejado;
     }
 
 }
