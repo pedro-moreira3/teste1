@@ -462,9 +462,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
         //TODO verificar como vamos mostrar quando tiver maid de um lançamento...
         //   for (Lancamento lancamento : lancamentos) {
-
+        lancamentosCalculados = new ArrayList<Lancamento>();
         if (lancamentos != null && lancamentos.size() > 0) {
-            lancamentosCalculados = new ArrayList<Lancamento>();
+          
             for (Lancamento lancamento : lancamentos) {
                 try {
                     Lancamento lancamentoCalculado = lancamento;
@@ -602,7 +602,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         if (lancamentosCalculados != null && lancamentosCalculados.size() > 0) {
             PrimeFaces.current().executeScript("PF('dlgCalculoRepasse').show();");
         } else {
-            this.addError("Erro", "Erro ao buscar cálculo, recalcule o repasse.", true);
+            this.addError("Erro", "Erro ao buscar cálculo - verifique as pendências e recalcule o repasse.", true);
         }
 
     }
@@ -654,8 +654,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         // }
 
         if (validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) {
-            if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0) {
+            if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) != 0) {
                 pendencias.add("Paciente ainda não pagou o procedimento - verifique os recebimentos;");
+            }else if(ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) == 0) {
+                pendencias.add("Procedimento com valor de repasse zerado;");
             }
         }
 

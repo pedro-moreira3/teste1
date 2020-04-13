@@ -128,7 +128,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									</span>
 									<br />
 									<span> <h:outputText
-											value="#{reciboRepasseProfissionalMB.entity.quantidadeRepasses}" />
+											value="#{reciboRepasseProfissionalMB.quantidadeRepasses}" />
 									</span>
 								</h:panelGroup>
 								<div style="width: 1%" />
@@ -185,7 +185,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								</thead>
 								<tbody>
 									<ui:repeat var="reciboLancamento"
-										value="#{reciboRepasseProfissionalMB.entity.reciboLancamentos}">
+										value="#{reciboRepasseProfissionalMB.recibosAgrupados}">
 										<tr>
 											<p:outputPanel rendered="#{reciboLancamento.dados == null}">
 												<td style="border: 1px solid #bdbdbd; padding: 5px;"><h:outputText
@@ -313,7 +313,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 						</p:panelGrid>
 
 						<p:dataTable
-							value="#{reciboRepasseProfissionalMB.entity.reciboLancamentos}"
+							value="#{reciboRepasseProfissionalMB.recibosAgrupados}"
 							var="reciboLancamento" filterDelay="1000" reflow="true"
 							emptyMessage="Nenhum repasse encontrado"
 							id="dtReciboRepasseLancamentos" rows="15" paginator="true"
@@ -416,8 +416,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 
 							<p:column rendered="#{reciboLancamento.dados == null}"
 								filterMatchMode="contains" headerText="Valor à pagar"
-								filterBy="#{reciboLancamento.lancamento.valorComDesconto}"
-								sortBy="#{reciboLancamento.lancamento.valorComDesconto}"
+								filterBy="#{reciboLancamento.lancamento.valor}"
+								sortBy="#{reciboLancamento.lancamento.valor}"
 								width="10%">
 								<h:outputText value="#{reciboLancamento.lancamento.valor}">
 									<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
@@ -1218,11 +1218,13 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									sortBy="#{recibo.aprovadoStr}">
 									<h:outputText value="#{recibo.aprovadoStr}" />
 								</p:column>
+								<ui:remove>
 								<p:column headerText="Qtde. Repasses" filterMatchMode="contains"
 									width="5%" filterBy="#{recibo.quantidadeRepasses}"
 									sortBy="#{recibo.quantidadeRepasses}">
 									<h:outputText value="#{recibo.quantidadeRepasses}" />
 								</p:column>
+								</ui:remove>
 								<p:column headerText="Valor Total de Repasse" width="10%"
 									filterMatchMode="contains"
 									filterBy="#{recibo.valorTotalRepasse}"
