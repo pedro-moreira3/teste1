@@ -7,9 +7,8 @@
 	<ui:define name="content">
 
 		<p:outputPanel id="viewFaturaRepasse">
-			<ui:include src="faturaView.xhtml">
+			<ui:include src="faturaViewProfissional.xhtml">
 				<ui:param name="showNewLancamento" value="N" />
-				<ui:param name="repasseProfissional" value="S" />
 			</ui:include>
 			<p:remoteCommand name="onCloseFaturaView"
 				process="@this, :lume:tabViewRepasseProfissional:filtros"

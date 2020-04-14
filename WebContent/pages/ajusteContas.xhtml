@@ -18,9 +18,11 @@
 }
 </style>
 
-		<ui:include src="faturaView.xhtml">
-			<ui:param name="showNewLancamento" value="S" />
-		</ui:include>
+		<p:outputPanel id="pnlAtualizacaoFaturaView">
+			<ui:include src="#{faturaPagtoMB.faturaViewImportName}">
+				<ui:param name="showNewLancamento" value="S" />
+			</ui:include>
+		</p:outputPanel>
 		<p:remoteCommand name="onCloseFaturaView" process="@this" />
 
 		<div class="ui-g ui-fluid">
@@ -236,7 +238,7 @@
 									value="#{ajusteContasMB.getOrigemFromAC(ajuste)}"
 									actionListener="#{faturaPagtoMB.visualizaFatura(ajuste.origensRepasse.repasseFaturas.faturaRepasse)}"
 									oncomplete="PF('dlgFaturaView').show();"
-									update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+									update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 							</p:outputPanel>
 						</p:column>
 
@@ -249,7 +251,7 @@
 									value="#{ajusteContasMB.getAjusteFromAC(ajuste)}"
 									actionListener="#{faturaPagtoMB.visualizaFatura(ajuste.origensPTP.faturaAjuste)}"
 									oncomplete="PF('dlgFaturaView').show();"
-									update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+									update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 							</p:outputPanel>
 							<p:outputPanel rendered="#{ajuste.origensRepasse != null}">
 								<p:commandLink process="@this"
@@ -257,7 +259,7 @@
 									value="#{ajusteContasMB.getAjusteFromAC(ajuste)}"
 									actionListener="#{faturaPagtoMB.visualizaFatura(ajuste.origensRepasse.faturaAjuste)}"
 									oncomplete="PF('dlgFaturaView').show();"
-									update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+									update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 							</p:outputPanel>
 						</p:column>
 
