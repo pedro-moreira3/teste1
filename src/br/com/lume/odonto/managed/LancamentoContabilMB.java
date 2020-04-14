@@ -46,6 +46,7 @@ import br.com.lume.odonto.entity.TipoCategoria;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.origem.OrigemSingleton;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.tipoCategoria.TipoCategoriaSingleton;
 
@@ -119,6 +120,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     private void carregarLancamentosValidar() {
         try {
             lancamentosValidar = LancamentoSingleton.getInstance().getBo().listByPagamentoPacienteNaoValidado(UtilsFrontEnd.getEmpresaLogada());
+            if (lancamentosValidar != null)
+                lancamentosValidar.forEach(lancamento -> {
+                    lancamento.setPt(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(lancamento.getFatura()));
+                });
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
