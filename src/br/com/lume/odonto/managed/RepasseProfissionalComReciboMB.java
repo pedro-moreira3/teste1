@@ -422,6 +422,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
             RepasseFaturasSingleton.getInstance().recalculaRepasse(ptp, ptp.getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(), ptp.getFatura());
             addInfo("Sucesso", "Repasse recalculado!");
+            this.pesquisar();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -576,7 +577,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                 lancamentoParaCalculo.getValor().subtract(lancamentoCalculado.getDadosCalculoTotalReducao()).setScale(2, BigDecimal.ROUND_HALF_UP));
 
                         lancamentoCalculado.setDadosCalculoPercItemSemCusto(
-                                lancamentoCalculado.getDadosCalculoValorItemSemCusto().divide(lancamentoCalculado.getDadosTabelaValorTotalFaturaOrigem(), 4, BigDecimal.ROUND_HALF_UP));
+                                lancamentoCalculado.getDadosCalculoValorItemSemCusto().divide(lancamentoCalculado.getDadosTabelaValorTotalFaturaOrigem(), 6, BigDecimal.ROUND_HALF_UP));
                         lancamentoCalculado.setDadosCalculoInvPercItemSemCusto(BigDecimal.valueOf(1).subtract(lancamentoCalculado.getDadosCalculoPercItemSemCusto()));
                         lancamentoCalculado.setDadosCalculoReducaoCustoDireto(
                                 lancamentoCalculado.getDadosCalculoRecebidoMenosReducao().multiply(lancamentoCalculado.getDadosCalculoInvPercItemSemCusto()).setScale(2, BigDecimal.ROUND_HALF_UP));
