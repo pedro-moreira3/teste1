@@ -84,6 +84,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     private BigDecimal somaTotal = BigDecimal.ZERO, somaTotalPago = BigDecimal.ZERO, somaTotalNaoPago = BigDecimal.ZERO, somaTotalNaoPlanejado = BigDecimal.ZERO;
 
+    private String faturaViewImportName;
+
     //Campos para 'Novo Lançamento'
     private boolean showProduto;
     private String formaPagamento;
@@ -133,7 +135,23 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 LogIntelidenteSingleton.getInstance().makeLog(e);
             }
         }
+
+        updateWichScreenOpenForFaturaView();
         // System.out.println("FaturaPagtoMB" + new Timestamp(System.currentTimeMillis()));
+    }
+
+    public void updateWichScreenOpenForFaturaView() {
+        try {
+            if (getEntity() != null && getEntity().getId() != null && getEntity().getId().longValue() != 0l) {
+                if ("PP".equals(getEntity().getTipoFatura().getRotulo())) {
+                    this.faturaViewImportName = "faturaViewProfissional.xhtml";
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+        this.faturaViewImportName = "faturaViewPaciente.xhtml";
     }
 
     public boolean hasRequisitosCumprir(Lancamento lancamentoRepasse) {
@@ -264,6 +282,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         setEntity(fatura);
         setShowLancamentosCancelados(false);
         updateValues(fatura);
+
+        updateWichScreenOpenForFaturaView();
     }
 
     public PlanoTratamentoProcedimento buscaPTPOrigemRepasse(Lancamento l) {
@@ -882,6 +902,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setSomaTotalNaoPlanejado(BigDecimal somaTotalNaoPlanejado) {
         this.somaTotalNaoPlanejado = somaTotalNaoPlanejado;
+    }
+
+    public String getFaturaViewImportName() {
+        return faturaViewImportName;
+    }
+
+    public void setFaturaViewImportName(String faturaViewImportName) {
+        this.faturaViewImportName = faturaViewImportName;
     }
 
 }
