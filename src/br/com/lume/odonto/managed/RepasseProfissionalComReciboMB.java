@@ -57,7 +57,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private static final long serialVersionUID = 1L;
     //private Logger log = Logger.getLogger(FaturaPagtoMB.class);
 
-    private boolean semPendencias = true, procedimentosNaoExecutados = false, mostrarRepasseAntigo = false;
+    private boolean semPendencias = false, procedimentosNaoExecutados = false, mostrarRepasseAntigo = false;
 
     //FILTROS
     private Date dataInicio;
