@@ -128,7 +128,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									</span>
 									<br />
 									<span> <h:outputText
-											value="#{reciboRepasseProfissionalMB.quantidadeRepasses}" />
+											value="#{reciboRepasseProfissionalMB.entity.quantidadeRepasses}" />
 									</span>
 								</h:panelGroup>
 								<div style="width: 1%" />
@@ -185,7 +185,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								</thead>
 								<tbody>
 									<ui:repeat var="reciboLancamento"
-										value="#{reciboRepasseProfissionalMB.recibosAgrupados}">
+										value="#{reciboRepasseProfissionalMB.entity.reciboLancamentos}">
 										<tr>
 											<p:outputPanel rendered="#{reciboLancamento.dados == null}">
 												<td style="border: 1px solid #bdbdbd; padding: 5px;"><h:outputText
@@ -313,7 +313,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 						</p:panelGrid>
 
 						<p:dataTable
-							value="#{reciboRepasseProfissionalMB.recibosAgrupados}"
+							value="#{reciboRepasseProfissionalMB.entity.reciboLancamentos}"
 							var="reciboLancamento" filterDelay="1000" reflow="true"
 							emptyMessage="Nenhum repasse encontrado"
 							id="dtReciboRepasseLancamentos" rows="15" paginator="true"
@@ -416,8 +416,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 
 							<p:column rendered="#{reciboLancamento.dados == null}"
 								filterMatchMode="contains" headerText="Valor à pagar"
-								filterBy="#{reciboLancamento.lancamento.valor}"
-								sortBy="#{reciboLancamento.lancamento.valor}"
+								filterBy="#{reciboLancamento.lancamento.valorComDesconto}"
+								sortBy="#{reciboLancamento.lancamento.valorComDesconto}"
 								width="10%">
 								<h:outputText value="#{reciboLancamento.lancamento.valor}">
 									<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
@@ -935,8 +935,9 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 															<p:menuitem value="Exportar tabela para PDF"
 																icon="fa fa fa-file-pdf-o"
 																actionListener="#{repasseProfissionalComReciboMB.exportarTabela('pdf')}"
-																ajax="false" immediate="true"
+																ajax="false"
 																process=":lume:tabViewRepasseProfissional:dtPrincipalRepasse, @this"
+																immediate="true"
 																onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 																<p:fileDownload
 																	value="#{repasseProfissionalComReciboMB.arquivoDownload}" />
@@ -963,8 +964,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												binding="#{repasseProfissionalComReciboMB.tabelaRepasse}"
 												selection="#{repasseProfissionalComReciboMB.ptpsSelecionados}">
 												<f:facet name="header">Procedimentos</f:facet>
-												<p:column exportable="false" selectionMode="multiple" style="width:16px;" />
-												<p:column exportable="false" width="12%" headerText="Ações">
+												<p:column selectionMode="multiple" style="width:16px;" />
+												<p:column width="12%" headerText="Ações">
 													<p:commandButton icon="fa fa-eye" styleClass="NavyButton"
 														title="Detalhes do repasse"
 														oncomplete="PF('dlgFaturaView').show();"
@@ -997,8 +998,10 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													filterBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
 													sortBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
 													filterMatchMode="contains"
-													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}"
-													exportable="true" headerText="Dentista Executor">
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Dentista Executor" />
+													</f:facet>
 													<h:outputText
 														value="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}" />
 												</p:column>
@@ -1006,8 +1009,10 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 													filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
 													sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
 													filterMatchMode="contains"
-													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}"
-													exportable="true" headerText="Paciente">
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Paciente" />
+													</f:facet>
 
 													<p:commandLink
 														value="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
@@ -1020,21 +1025,25 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												<p:column filterBy="#{ptp.planoTratamento.descricao}"
 													sortBy="#{ptp.planoTratamento.descricao}"
 													filterMatchMode="contains"
-													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}"
-													exportable="true" headerText="Plano de tratamento">
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Plano de tratamento" />
+													</f:facet>
 													<h:outputText title="#{ptp.id}"
 														value="#{ptp.planoTratamento.descricao}" />
 												</p:column>
 												<p:column filterBy="#{ptp.descricaoCompletaComFace}"
 													sortBy="#{ptp.descricaoCompletaComFace}"
 													filterMatchMode="contains"
-													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}"
-													exportable="true" headerText="Procedimento">
+													filterFunction="#{repasseProfissionalComReciboMB.filtroSemAcento}">
+													<f:facet name="header">
+														<h:outputText value="Procedimento" />
+													</f:facet>
 													<h:outputText value="#{ptp.descricaoCompletaComFace}" />
 												</p:column>
 												<p:column filterBy="#{ptp.dataFinalizadoStr}"
 													headerText="Data de Execução" filterMatchMode="contains"
-													sortBy="#{ptp.dataFinalizado}" exportable="true">
+													sortBy="#{ptp.dataFinalizado}">
 													<h:outputText value="#{ptp.dataFinalizadoStr}" />
 												</p:column>
 
@@ -1052,7 +1061,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												</p:column>
 
 												<p:column filterBy="#{ptp.valorPago}"
-													headerText="Valor repassado" filterMatchMode="contains"
+													headerText="Valor pago" filterMatchMode="contains"
 													sortBy="#{ptp.valorPago}">
 													<h:outputText value="#{ptp.valorPago}">
 														<f:convertNumber currencySymbol="R$ " type="currency" />
@@ -1218,13 +1227,11 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									sortBy="#{recibo.aprovadoStr}">
 									<h:outputText value="#{recibo.aprovadoStr}" />
 								</p:column>
-								<ui:remove>
 								<p:column headerText="Qtde. Repasses" filterMatchMode="contains"
 									width="5%" filterBy="#{recibo.quantidadeRepasses}"
 									sortBy="#{recibo.quantidadeRepasses}">
 									<h:outputText value="#{recibo.quantidadeRepasses}" />
 								</p:column>
-								</ui:remove>
 								<p:column headerText="Valor Total de Repasse" width="10%"
 									filterMatchMode="contains"
 									filterBy="#{recibo.valorTotalRepasse}"

@@ -6,7 +6,9 @@
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
 
-		<ui:include src="faturaView.xhtml" />
+		<p:outputPanel id="pnlAtualizacaoFaturaView">
+			<ui:include src="#{faturaPagtoMB.faturaViewImportName}" />
+		</p:outputPanel>
 		<p:remoteCommand name="onCloseFaturaView" process="@this" />
 
 		<div class="ui-g ui-fluid">
@@ -133,7 +135,7 @@
 										value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
 										actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
 										oncomplete="PF('dlgFaturaView').show();"
-										update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+										update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 								</p:column>
 							</p:dataTable>
 
@@ -248,7 +250,7 @@
 										value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
 										actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
 										oncomplete="PF('dlgFaturaView').show();"
-										update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+										update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 								</p:column>
 							</p:dataTable>
 

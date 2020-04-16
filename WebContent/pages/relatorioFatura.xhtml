@@ -167,14 +167,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 </style>
 
 		<p:outputPanel id="viewFaturaRepasse">
-			<ui:include src="faturaView.xhtml">
+			<ui:include src="#{faturaPagtoMB.faturaViewImportName}">
 				<ui:param name="showNewLancamento" value="N" />
 				<ui:param name="faturaGenerica" value="F" />
 			</ui:include>
-			<p:remoteCommand name="onCloseFaturaView" process="@this"
-				update=":lume:dtPrincipal, :lume:dtPrincipal"
-				actionListener="#{relatorioFaturaMB.actionFiltrar}" />
 		</p:outputPanel>
+		<p:remoteCommand name="onCloseFaturaView" process="@this"
+			update=":lume:dtPrincipal, :lume:dtPrincipal"
+			actionListener="#{relatorioFaturaMB.actionFiltrar}" />
 
 
 		<div class="ui-g ui-fluid">
@@ -283,8 +283,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									</p:panelGrid>
 
 									<p:panelGrid id="filtro" columns="3"
-										columnClasses="ui-grid-col-6, ui-grid-col-3, ui-grid-col-3" layout="grid"
-										styleClass="ui-panelgrid-blank"
+										columnClasses="ui-grid-col-6, ui-grid-col-3, ui-grid-col-3"
+										layout="grid" styleClass="ui-panelgrid-blank"
 										style="border:0px none; background-color:transparent;">
 
 										<h:panelGroup styleClass="lumeField">
@@ -323,7 +323,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:selectCheckboxMenu id="subStatus" label="SubStatus"
 												multiple="true" value="#{relatorioFaturaMB.subStatusFatura}"
 												converter="enumSubStatusFatura">
-												<f:selectItems value="#{relatorioFaturaMB.listaSubStatusFatura}"
+												<f:selectItems
+													value="#{relatorioFaturaMB.listaSubStatusFatura}"
 													var="subStatus" itemLabel="#{subStatus.descricao}"
 													itemValue="#{subStatus}" />
 											</p:selectCheckboxMenu>
@@ -387,7 +388,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:ajax process="@this"
 											listener="#{faturaPagtoMB.visualizaFatura(m)}"
 											oncomplete="PF('dlgFaturaView').show();"
-											update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+											update=":lume:viewFaturaRepasse, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 
 									</p:commandButton>
 									<p:tooltip for="btnView" value="Visualizar fatura" />
