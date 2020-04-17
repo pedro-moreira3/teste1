@@ -2,6 +2,7 @@ package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -14,9 +15,9 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.Utils.Mes;
-import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.common.util.UtilsPadraoRelatorio;
+import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
 import br.com.lume.conta.ContaSingleton;
 import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
 import br.com.lume.faturamento.FaturaSingleton;
@@ -25,6 +26,7 @@ import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Fatura.StatusFatura;
 import br.com.lume.odonto.entity.Fatura.TipoFatura;
 import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
@@ -131,11 +133,11 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
         try {
-            this.lAPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), Mes.getMesAtual(),
-                    ValidacaoLancamento.NAO_VALIDADO);
+            this.lAPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), null,
+                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, Arrays.asList(StatusLancamento.A_PAGAR));
             BigDecimal vAPagar = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAPagar));
-            this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), Mes.getMesAtual(),
-                    ValidacaoLancamento.NAO_VALIDADO);
+            this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), null,
+                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, Arrays.asList(StatusLancamento.A_PAGAR));
             BigDecimal vAReceber = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAReceber));
             ContaSingleton.getInstance().getContaFromOrigem(this.paciente).setSaldo(vAReceber.subtract(vAPagar));
 

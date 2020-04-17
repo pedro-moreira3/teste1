@@ -34,30 +34,70 @@
 										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 										<h:panelGroup styleClass="md-combo">
-											<p:outputLabel for="mesAReceber" value="Mês de Referência" />
-											<p:selectOneMenu id="mesAReceber"
-												value="#{movimentacoesMB.mesAReceber}" filter="true"
-												filterMatchMode="contains">
-												<f:selectItems value="#{movimentacoesMB.meses}" var="mes"
-													itemLabel="#{mes.rotulo}" itemValue="#{mes}" />
+											<h:outputText for="filtroPeriodoAReceber"
+												value="Período da Data de crédito:" />
+											<p:selectOneMenu id="filtroPeriodoAReceber"
+												value="#{movimentacoesMB.periodoBuscaAReceber}"
+												converter="enumPeriodoBusca">
+												<p:ajax process="@this" update="inicioAReceber, fimAReceber"
+													listener="#{movimentacoesMB.actionTrocaDatasAReceber}" />
+												<f:selectItems value="#{padroesTelaMB.periodosDataBusca}"
+													var="periodo" itemValue="#{periodo}"
+													itemLabel="#{periodo.descricao}" />
 											</p:selectOneMenu>
-											<p:message styleClass="msg" for="mesAReceber" />
 										</h:panelGroup>
 
 										<h:panelGroup styleClass="md-inputfield taller">
-											<p:inputNumber id="anoAReceber" maxValue="2050"
-												value="#{movimentacoesMB.anoAReceber}" autocomplete="false"
-												decimalPlaces="0" maxlength="4" thousandSeparator="" />
-											<p:outputLabel for="anoAReceber" value="Ano de Referência" />
-											<p:message for="anoAReceber" styleClass="msg" />
+											<h:outputText for="inicioAReceber"
+												value="Data de crédito de:" />
+											<p:calendar id="inicioAReceber"
+												value="#{movimentacoesMB.dataInicioAReceber}" />
 										</h:panelGroup>
 
-										<h:panelGroup>
-											<p:selectBooleanCheckbox id="lancValidadoAReceber"
-												value="#{movimentacoesMB.consideraLancamentosValidadosAReceber}" />
-											<p:outputLabel for="lancValidadoAReceber"
-												style="margin-left: 10px;"
-												value="Incluir lançamentos já recebidos" />
+										<h:panelGroup styleClass="md-inputfield taller">
+											<h:outputText for="fimAReceber" value="Data de crédito até:" />
+											<p:calendar id="fimAReceber"
+												value="#{movimentacoesMB.dataFimAReceber}" />
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="md-inputfield taller">
+											<h:outputText for="filtroPaciente" value="Paciente:" />
+											<p:autoComplete id="filtroPaciente"
+												value="#{movimentacoesMB.paciente}"
+												style="margin-top: 10px !important"
+												completeMethod="#{movimentacoesMB.sugestoesPacientes}"
+												var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+												converter="paciente" forceSelection="true"
+												scrollHeight="400" minQueryLength="3" queryDelay="1000">
+
+												<p:column headerText="Código" style="text-align: center;">
+													<h:outputText value="#{p.codigo}" />
+												</p:column>
+												<p:column headerText="Nome">
+													<h:outputText value="#{p.dadosBasico.nome}" />
+												</p:column>
+												<p:column headerText="Celular">
+													<h:outputText value="#{p.dadosBasico.celular}" />
+												</p:column>
+												<p:column headerText="Nome da Mãe">
+													<h:outputText value="#{p.nomeMae}" />
+												</p:column>
+
+											</p:autoComplete>
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="lumeField">
+											<p:outputLabel for="statusRecebimentoAReceber"
+												value="Status do recebimento: " />
+											<p:selectCheckboxMenu id="statusRecebimentoAReceber"
+												label="Status" multiple="true" style="top: -4px;"
+												value="#{movimentacoesMB.statusLancamentoAReceber}"
+												converter="enumStatusLancamento">
+												<f:selectItems
+													value="#{movimentacoesMB.listaStatusLancamentoAReceber}"
+													var="status" itemLabel="#{status.descricao}"
+													itemValue="#{status}" />
+											</p:selectCheckboxMenu>
 										</h:panelGroup>
 
 									</p:panelGrid>
@@ -99,6 +139,13 @@
 										<f:convertNumber type="currency" currencySymbol="R$"
 											maxFractionDigits="2" />
 									</h:outputText>
+									<f:facet name="footer">
+										<h:outputText value="Total " />
+										<h:outputText value="#{movimentacoesMB.somaTotalAReceber}">
+											<f:convertNumber currencySymbol="R$" type="currency"
+												minFractionDigits="2" />
+										</h:outputText>
+									</f:facet>
 								</p:column>
 								<p:column headerText="Data Pagamento" filterMatchMode="contains"
 									filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}">
@@ -149,30 +196,57 @@
 										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 										<h:panelGroup styleClass="md-combo">
-											<p:outputLabel for="mesAPagar" value="Mês de Referência" />
-											<p:selectOneMenu id="mesAPagar"
-												value="#{movimentacoesMB.mesAPagar}" filter="true"
-												filterMatchMode="contains">
-												<f:selectItems value="#{movimentacoesMB.meses}" var="mes"
-													itemLabel="#{mes.rotulo}" itemValue="#{mes}" />
+											<h:outputText for="filtroPeriodoAPagar"
+												value="Período da Data de Crédito:" />
+											<p:selectOneMenu id="filtroPeriodoAPagar"
+												value="#{movimentacoesMB.periodoBuscaAPagar}"
+												converter="enumPeriodoBusca">
+												<p:ajax process="@this" update="inicioAPagar, fimAPagar"
+													listener="#{movimentacoesMB.actionTrocaDatasAPagar}" />
+												<f:selectItems value="#{padroesTelaMB.periodosDataBusca}"
+													var="periodo" itemValue="#{periodo}"
+													itemLabel="#{periodo.descricao}" />
 											</p:selectOneMenu>
-											<p:message styleClass="msg" for="mesAPagar" />
 										</h:panelGroup>
 
 										<h:panelGroup styleClass="md-inputfield taller">
-											<p:inputNumber id="anoAPagar" maxValue="2050"
-												value="#{movimentacoesMB.anoAPagar}" autocomplete="false"
-												decimalPlaces="0" maxlength="4" thousandSeparator="" />
-											<p:outputLabel for="anoAPagar" value="Ano de Referência" />
-											<p:message for="anoAPagar" styleClass="msg" />
+											<h:outputText for="inicioAPagar" value="Data de crédito de:" />
+											<p:calendar id="inicioAPagar"
+												value="#{movimentacoesMB.dataInicioAPagar}" />
 										</h:panelGroup>
 
-										<h:panelGroup>
-											<p:selectBooleanCheckbox id="lancValidadoAPagar"
-												value="#{movimentacoesMB.consideraLancamentosValidadosAPagar}" />
-											<p:outputLabel for="lancValidadoAPagar"
-												style="margin-left: 10px;"
-												value="Incluir lançamentos já pagos" />
+										<h:panelGroup styleClass="md-inputfield taller">
+											<h:outputText for="fimAPagar" value="Data de crédito até:" />
+											<p:calendar id="fimAPagar"
+												value="#{movimentacoesMB.dataFimAPagar}" />
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="md-inputfield taller">
+											<h:outputText for="filtroProfissional" value="Profissional:" />
+											<p:autoComplete dropdown="true" queryDelay="1000" size="35"
+												value="#{movimentacoesMB.profissional}"
+												style="margin-top: 10px !important" id="filtroProfissional"
+												minQueryLength="3"
+												completeMethod="#{movimentacoesMB.geraSugestoesProfissional}"
+												var="profissional"
+												itemLabel="#{profissional.dadosBasico.prefixoNome}"
+												itemValue="#{profissional}" converter="profissional"
+												forceSelection="true">
+											</p:autoComplete>
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="lumeField">
+											<p:outputLabel for="statusRecebimentoAPagar"
+												value="Status do pagamento: " />
+											<p:selectCheckboxMenu id="statusRecebimentoAPagar"
+												label="Status" multiple="true" style="top: -4px;"
+												value="#{movimentacoesMB.statusLancamentoAPagar}"
+												converter="enumStatusLancamento">
+												<f:selectItems
+													value="#{movimentacoesMB.listaStatusLancamentoAPagar}"
+													var="status" itemLabel="#{status.descricao}"
+													itemValue="#{status}" />
+											</p:selectCheckboxMenu>
 										</h:panelGroup>
 
 									</p:panelGrid>
@@ -214,6 +288,13 @@
 										<f:convertNumber type="currency" currencySymbol="R$"
 											maxFractionDigits="2" />
 									</h:outputText>
+									<f:facet name="footer">
+										<h:outputText value="Total " />
+										<h:outputText value="#{movimentacoesMB.somaTotalAPagar}">
+											<f:convertNumber currencySymbol="R$" type="currency"
+												minFractionDigits="2" />
+										</h:outputText>
+									</f:facet>
 								</p:column>
 								<p:column headerText="Data Pagamento" filterMatchMode="contains"
 									filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}">
