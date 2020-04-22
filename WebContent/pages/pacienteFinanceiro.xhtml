@@ -122,9 +122,9 @@ hr.hrSaldo {
 				value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
 		</p:column>
 		<p:column headerText="Status" filterMatchMode="contains"
-			filterBy="#{l.status.descricao}" sortBy="#{l.status.descricao}"
+			filterBy="#{l.statusCompleto}" sortBy="#{l.statusCompleto}"
 			width="15%">
-			<h:outputText value="#{l.status.descricao}" />
+			<h:outputText value="#{l.statusCompleto}" />
 		</p:column>
 		<p:column headerText="Origem" filterMatchMode="contains"
 			filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
@@ -173,9 +173,9 @@ hr.hrSaldo {
 				value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
 		</p:column>
 		<p:column headerText="Status" filterMatchMode="contains"
-			filterBy="#{l.status.descricao}" sortBy="#{l.status.descricao}"
+			filterBy="#{l.statusCompleto}" sortBy="#{l.statusCompleto}"
 			width="15%">
-			<h:outputText value="#{l.status.descricao}" />
+			<h:outputText value="#{l.statusCompleto}" />
 		</p:column>
 		<p:column headerText="Origem" filterMatchMode="contains"
 			filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"

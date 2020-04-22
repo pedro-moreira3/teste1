@@ -330,11 +330,11 @@ body .sideChkBox .ui-chkbox-label {
 									<h:outputText
 										value="#{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
-								<p:column headerText="Status" sortBy="#{l.status.descricao}"
+								<p:column headerText="Status" sortBy="#{l.statusCompleto}"
 									width="15%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
-									filterMatchMode="contains" filterBy="#{l.status.descricao}">
-									<h:outputText value="#{l.status.descricao}" />
+									filterMatchMode="contains" filterBy="#{l.statusCompleto}">
+									<h:outputText value="#{l.statusCompleto}" />
 								</p:column>
 							</p:dataTable>
 
