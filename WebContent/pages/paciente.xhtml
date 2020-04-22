@@ -43,10 +43,10 @@
 					<p:panelGrid columns="4" layout="grid" id="botoesLong"
 						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
 						<p:commandButton id="new" icon="ui-icon-add"
+							process="@this"
 							styleClass="BotaoCrud" actionListener="#{pacienteMB.actionNew}"
 							update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
-							value="Novo Paciente" oncomplete="PF('dlgFichaPaciente').show()"
-							process="@this" />
+							value="Novo Paciente" onstart="PF('dlgFichaPaciente').show()"/>
 
 						<h:panelGroup>
 							<p:splitButton icon="White fa fa fa-file-excel-o"
