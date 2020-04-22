@@ -49,18 +49,19 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 </style>
 
 		<p:outputPanel id="viewFaturaRepasse">
-			<ui:include src="faturaView.xhtml">
+			<ui:include src="#{faturaPagtoMB.faturaViewImportName}">
 				<ui:param name="showNewLancamento" value="N" />
 				<ui:param name="faturaGenerica" value="F" />
 			</ui:include>
-			<p:remoteCommand name="onCloseFaturaView"
-				process="@this, :lume:tv:tabPagamento, :lume:tv:tabRecebimento" update=":lume:tv:dtPagamento, :lume:tv:dtRecebimento"
-				actionListener="#{pagamentoRecebimentoMB.pesquisarRecebimento}" />
 		</p:outputPanel>
-		
-		<p:dialog id="dlgNovoPagamento" widgetVar="dlgNovoPagamento" header="Cadastro de fatura"
-			resizable="false" responsive="true" width="calc(100% - 2px)"
-			height="100%" position="0,0" modal="true"
+		<p:remoteCommand name="onCloseFaturaView"
+			process="@this, :lume:tv:tabPagamento, :lume:tv:tabRecebimento"
+			update=":lume:tv:dtPagamento, :lume:tv:dtRecebimento"
+			actionListener="#{pagamentoRecebimentoMB.pesquisarRecebimento}" />
+
+		<p:dialog id="dlgNovoPagamento" widgetVar="dlgNovoPagamento"
+			header="Cadastro de fatura" resizable="false" responsive="true"
+			width="calc(100% - 2px)" height="100%" position="0,0" modal="true"
 			style="position:absolute !important;" appendToBody="true">
 
 			<p:fieldset>
@@ -80,27 +81,29 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filter="true" filterMatchMode="contains"
 								disabled="#{pagamentoRecebimentoMB.fornecedorSelecionado != null}">
 
-								<p:ajax event="itemSelect" process="@this" immediate="true"/>
+								<p:ajax event="itemSelect" process="@this" immediate="true" />
 
-								<f:selectItem itemLabel="Selecione um fornecedor ou profissional" itemValue="#{null}"/>
-								<f:selectItems value="#{pagamentoRecebimentoMB.dadosBasicos}" var="m"
-									itemLabel="#{m.nome}" itemValue="#{m}"/>
+								<f:selectItem
+									itemLabel="Selecione um fornecedor ou profissional"
+									itemValue="#{null}" />
+								<f:selectItems value="#{pagamentoRecebimentoMB.dadosBasicos}"
+									var="m" itemLabel="#{m.nome}" itemValue="#{m}" />
 
 							</p:selectOneMenu>
-							
+
 							<ui:remove>
-							<p:commandButton id="novoOrigem"
-								rendered="#{!lancamentoContabilMB.visivel}"
-								icon="fa fa-plus White"
-								update="pnNovoOrigem, :lume:tv:pnBtorigem" immediate="true"
-								actionListener="#{lancamentoContabilMB.novoOrigem}"
-								style="margin-left: 5px;" />
-							<p:commandButton id="cancelarNovoOrigem"
-								rendered="#{lancamentoContabilMB.visivel}"
-								icon="fa fa-minus White"
-								update="pnNovoOrigem, :lume:tv:pnBtorigem" immediate="true"
-								actionListener="#{lancamentoContabilMB.cancelarNovoOrigem}"
-								style="margin-left: 5px;" />
+								<p:commandButton id="novoOrigem"
+									rendered="#{!lancamentoContabilMB.visivel}"
+									icon="fa fa-plus White"
+									update="pnNovoOrigem, :lume:tv:pnBtorigem" immediate="true"
+									actionListener="#{lancamentoContabilMB.novoOrigem}"
+									style="margin-left: 5px;" />
+								<p:commandButton id="cancelarNovoOrigem"
+									rendered="#{lancamentoContabilMB.visivel}"
+									icon="fa fa-minus White"
+									update="pnNovoOrigem, :lume:tv:pnBtorigem" immediate="true"
+									actionListener="#{lancamentoContabilMB.cancelarNovoOrigem}"
+									style="margin-left: 5px;" />
 							</ui:remove>
 						</h:panelGroup>
 
@@ -108,9 +111,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:outputLabel for="tipoCategoria" value="Tipo Categoria: " />
 
 							<p:selectOneMenu id="tipoCategoria" converter="tipocategoria"
-								value="#{pagamentoRecebimentoMB.tipoCategoria}"
-								filter="true" filterMatchMode="contains">
-								
+								value="#{pagamentoRecebimentoMB.tipoCategoria}" filter="true"
+								filterMatchMode="contains">
+
 								<p:ajax process="@this" update="categoria"
 									listener="#{pagamentoRecebimentoMB.carregarCategorias}" />
 
@@ -126,8 +129,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:outputLabel for="categoria" value="Categoria:" />
 
 							<p:selectOneMenu id="categoria" converter="categoriamotivo"
-								value="#{pagamentoRecebimentoMB.categoria}"
-								filter="true" filterMatchMode="contains">
+								value="#{pagamentoRecebimentoMB.categoria}" filter="true"
+								filterMatchMode="contains">
 
 								<p:ajax process="@this" update="motivo"
 									listener="#{pagamentoRecebimentoMB.carregarMotivos}" />
@@ -146,8 +149,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:selectOneMenu id="motivo" converter="motivo"
 								value="#{pagamentoRecebimentoMB.motivo}" filter="true"
 								filterMatchMode="contains">
-								
-								<p:ajax event="itemSelect" process="@this"/>
+
+								<p:ajax event="itemSelect" process="@this" />
 
 								<f:selectItem itemValue="#{null}"
 									itemLabel="Selecione um Motivo" />
@@ -161,54 +164,57 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:outputLabel for="valor" value="Valor:" />
 
 							<p:inputNumber id="valor"
-								value="#{pagamentoRecebimentoMB.valorPagar}"
-								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
-								symbol="R$ " thousandSeparator=".">
-							
-								<p:ajax process="@this"/>
-								
+								value="#{pagamentoRecebimentoMB.valorPagar}" maxlength="13"
+								maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+								thousandSeparator=".">
+
+								<p:ajax process="@this" />
+
 							</p:inputNumber>
 						</h:panelGroup>
-						
+
 					</p:panelGrid>
-					
-					<p:dataTable id="dtItensPagamento" value="#{pagamentoRecebimentoMB.itensPagamento}"
-						var="item" rowKey="#{item}"
-						paginator="true" paginatorPosition="bottom"
+
+					<p:dataTable id="dtItensPagamento"
+						value="#{pagamentoRecebimentoMB.itensPagamento}" var="item"
+						rowKey="#{item}" paginator="true" paginatorPosition="bottom"
 						filterDelay="1000" rows="5">
-					
+
 						<f:facet name="header">Itens da fatura</f:facet>
-					
+
 						<p:column headerText="Descrição">
-							<h:outputText value="#{item.descricaoItem}"/>
+							<h:outputText value="#{item.descricaoItem}" />
 						</p:column>
-						
+
 						<p:column headerText="Valor do Item">
-							<h:outputText value="#{item.valorItem}"/>
+							<h:outputText value="#{item.valorItem}" />
 						</p:column>
-						
+
 						<p:column headerText="Tipo do saldo">
 							<h:outputText value="#{item.tipoSaldo}" />
 						</p:column>
-					
+
 					</p:dataTable>
 
 					<p:panelGrid columns="4" layout="grid"
 						styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 						<p:commandButton value="Salvar" styleClass="GreenButton">
-						
-							<p:ajax listener="#{pagamentoRecebimentoMB.actionPersistNovoPagamento}"
-							process="@this" update=":lume:dtItensPagamento, :lume:pnPrincipal"/>
-						
+
+							<p:ajax
+								listener="#{pagamentoRecebimentoMB.actionPersistNovoPagamento}"
+								process="@this"
+								update=":lume:dtItensPagamento, :lume:pnPrincipal" />
+
 						</p:commandButton>
-						
+
 						<p:commandButton value="Fechar" styleClass=""
 							oncomplete="PF('dlgNovoPagamento').hide();">
-							
-							<p:ajax process="@this" listener="#{pagamentoRecebimentoMB.limparTela}"
-								update=":lume:tv:dtPagamento, :lume:dlgNovoPagamento"/>
-								
+
+							<p:ajax process="@this"
+								listener="#{pagamentoRecebimentoMB.limparTela}"
+								update=":lume:tv:dtPagamento, :lume:dlgNovoPagamento" />
+
 						</p:commandButton>
 
 					</p:panelGrid>
@@ -217,10 +223,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 			</p:fieldset>
 
 		</p:dialog>
-		
-		<p:dialog id="dlgNovoRecebimento" widgetVar="dlgNovoRecebimento" header="Cadastro de fatura"
-			resizable="false" responsive="true" width="calc(100% - 2px)"
-			height="100%" position="0,0" modal="true"
+
+		<p:dialog id="dlgNovoRecebimento" widgetVar="dlgNovoRecebimento"
+			header="Cadastro de fatura" resizable="false" responsive="true"
+			width="calc(100% - 2px)" height="100%" position="0,0" modal="true"
 			style="position:absolute !important;" appendToBody="true">
 
 			<p:fieldset>
@@ -240,28 +246,32 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filter="true" filterMatchMode="contains"
 								disabled="#{pagamentoRecebimentoMB.pacienteSelecionado != null}">
 
-								<p:ajax event="itemSelect" process="@this" immediate="true"/>
+								<p:ajax event="itemSelect" process="@this" immediate="true" />
 
-								<f:selectItem itemLabel="Selecione um paciente" itemValue="#{null}"/>
-								<f:selectItems value="#{pagamentoRecebimentoMB.pacientes}" var="m"
-									itemLabel="#{m.dadosBasico.nome}" itemValue="#{m}"/>
+								<f:selectItem itemLabel="Selecione um paciente"
+									itemValue="#{null}" />
+								<f:selectItems value="#{pagamentoRecebimentoMB.pacientes}"
+									var="m" itemLabel="#{m.dadosBasico.nome}" itemValue="#{m}" />
 
 							</p:selectOneMenu>
 						</h:panelGroup>
 
 						<h:panelGroup styleClass="lumeField">
-							<p:outputLabel for="tipoCategoriaRecebimento" value="Tipo Categoria: " />
+							<p:outputLabel for="tipoCategoriaRecebimento"
+								value="Tipo Categoria: " />
 
-							<p:selectOneMenu id="tipoCategoriaRecebimento" converter="tipocategoria"
+							<p:selectOneMenu id="tipoCategoriaRecebimento"
+								converter="tipocategoria"
 								value="#{pagamentoRecebimentoMB.tipoCategoriaRecebimento}"
 								filter="true" filterMatchMode="contains">
-								
+
 								<p:ajax process="@this" update="categoria"
 									listener="#{pagamentoRecebimentoMB.carregarCategorias}" />
 
 								<f:selectItem itemValue="#{null}"
 									itemLabel="Selecione um Tipo Categoria" />
-								<f:selectItems value="#{pagamentoRecebimentoMB.tiposCategoriaRecebimento}"
+								<f:selectItems
+									value="#{pagamentoRecebimentoMB.tiposCategoriaRecebimento}"
 									var="m" itemLabel="#{m.descricao}" itemValue="#{m}" />
 
 							</p:selectOneMenu>
@@ -270,7 +280,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						<h:panelGroup styleClass="lumeField">
 							<p:outputLabel for="categoriaRecebimento" value="Categoria:" />
 
-							<p:selectOneMenu id="categoriaRecebimento" converter="categoriamotivo"
+							<p:selectOneMenu id="categoriaRecebimento"
+								converter="categoriamotivo"
 								value="#{pagamentoRecebimentoMB.categoriaRecebimento}"
 								filter="true" filterMatchMode="contains">
 
@@ -279,8 +290,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 								<f:selectItem itemValue="#{null}"
 									itemLabel="Selecione uma Categoria" />
-								<f:selectItems value="#{pagamentoRecebimentoMB.categoriasRecebimento}"
-									var="m" itemLabel="#{m.descricao}" itemValue="#{m}" />
+								<f:selectItems
+									value="#{pagamentoRecebimentoMB.categoriasRecebimento}" var="m"
+									itemLabel="#{m.descricao}" itemValue="#{m}" />
 
 							</p:selectOneMenu>
 						</h:panelGroup>
@@ -289,14 +301,15 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:outputLabel for="motivoRecebimento" value="Motivo:" />
 
 							<p:selectOneMenu id="motivoRecebimento" converter="motivo"
-								value="#{pagamentoRecebimentoMB.motivoRecebimento}" filter="true"
-								filterMatchMode="contains">
-								
-								<p:ajax event="itemSelect" process="@this"/>
+								value="#{pagamentoRecebimentoMB.motivoRecebimento}"
+								filter="true" filterMatchMode="contains">
+
+								<p:ajax event="itemSelect" process="@this" />
 
 								<f:selectItem itemValue="#{null}"
 									itemLabel="Selecione um Motivo" />
-								<f:selectItems value="#{pagamentoRecebimentoMB.motivosRecebimento}" var="m"
+								<f:selectItems
+									value="#{pagamentoRecebimentoMB.motivosRecebimento}" var="m"
 									itemLabel="#{m.descricao}" itemValue="#{m}" />
 
 							</p:selectOneMenu>
@@ -306,53 +319,56 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							<p:outputLabel for="valorRecebimento" value="Valor:" />
 
 							<p:inputNumber id="valorRecebimento"
-								value="#{pagamentoRecebimentoMB.valorReceber}"
-								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
-								symbol="R$ " thousandSeparator=".">
-							
-								<p:ajax process="@this"/>
-								
+								value="#{pagamentoRecebimentoMB.valorReceber}" maxlength="13"
+								maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+								thousandSeparator=".">
+
+								<p:ajax process="@this" />
+
 							</p:inputNumber>
 						</h:panelGroup>
-						
+
 					</p:panelGrid>
 
-					<p:dataTable id="dtItensRecebimento" value="#{pagamentoRecebimentoMB.itensRecebimento}"
-						var="item" rowKey="#{item}"
-						paginator="true" paginatorPosition="bottom"
+					<p:dataTable id="dtItensRecebimento"
+						value="#{pagamentoRecebimentoMB.itensRecebimento}" var="item"
+						rowKey="#{item}" paginator="true" paginatorPosition="bottom"
 						filterDelay="1000" rows="5">
-					
+
 						<f:facet name="header">Itens da fatura</f:facet>
-					
+
 						<p:column headerText="Descrição">
-							<h:outputText value="#{item.descricaoItem}"/>
+							<h:outputText value="#{item.descricaoItem}" />
 						</p:column>
-						
+
 						<p:column headerText="Valor do Item">
-							<h:outputText value="#{item.valorItem}"/>
+							<h:outputText value="#{item.valorItem}" />
 						</p:column>
-						
+
 						<p:column headerText="Tipo do saldo">
 							<h:outputText value="#{item.tipoSaldo}" />
 						</p:column>
-					
+
 					</p:dataTable>
 
 					<p:panelGrid columns="4" layout="grid"
 						styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 						<p:commandButton value="Salvar" styleClass="GreenButton">
-						
-							<p:ajax listener="#{pagamentoRecebimentoMB.actionPersistNovoRecebimento}"
-							process="@this" update=":lume:dtItensRecebimento, :lume:pnPrincipalRecebimento"/>
-						
+
+							<p:ajax
+								listener="#{pagamentoRecebimentoMB.actionPersistNovoRecebimento}"
+								process="@this"
+								update=":lume:dtItensRecebimento, :lume:pnPrincipalRecebimento" />
+
 						</p:commandButton>
 						<p:commandButton value="Fechar" styleClass=""
 							oncomplete="PF('dlgNovoRecebimento').hide();">
-							
-							<p:ajax process="@this" listener="#{pagamentoRecebimentoMB.limparTelaRecebimento}"
-								update=":lume:tv:dtRecebimento, :lume:dlgNovoRecebimento"/>
-								
+
+							<p:ajax process="@this"
+								listener="#{pagamentoRecebimentoMB.limparTelaRecebimento}"
+								update=":lume:tv:dtRecebimento, :lume:dlgNovoRecebimento" />
+
 						</p:commandButton>
 
 					</p:panelGrid>
@@ -400,26 +416,26 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											</h:panelGroup>
 
 											<h:panelGroup>
-												<h:outputText for="dataInicial"
-													value="Data de criação de:" />
+												<h:outputText for="dataInicial" value="Data de criação de:" />
 												<p:calendar id="dataInicial"
 													value="#{pagamentoRecebimentoMB.dataInicio}"
 													autocomplete="false" />
 											</h:panelGroup>
 
 											<h:panelGroup>
-												<h:outputText for="dataFinal"
-													value="Data de criação até:" />
+												<h:outputText for="dataFinal" value="Data de criação até:" />
 												<p:calendar id="dataFinal"
 													value="#{pagamentoRecebimentoMB.dataFim}"
 													autocomplete="false" />
 											</h:panelGroup>
 
 											<h:panelGroup>
-												<p:outputLabel for="destinoFiltroPagamento" value="Fornecedor:" />
+												<p:outputLabel for="destinoFiltroPagamento"
+													value="Fornecedor:" />
 
 												<p:selectOneMenu id="destinoFiltroPagamento"
-													converter="dadosBasico" filter="true" filterMatchMode="contains"
+													converter="dadosBasico" filter="true"
+													filterMatchMode="contains"
 													value="#{pagamentoRecebimentoMB.fornecedorFiltroSelecionado}"
 													style="min-width:0px;margin-top:10px;margin-bottom:10px;">
 
@@ -434,22 +450,26 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 												</p:selectOneMenu>
 											</h:panelGroup>
-											
+
 											<h:panelGroup styleClass="LumeField">
-												<p:outputLabel for="profissionalCriacao" value="Criado por:"/>
-												
-												<p:selectOneMenu id="profissionalCriacao" 
+												<p:outputLabel for="profissionalCriacao" value="Criado por:" />
+
+												<p:selectOneMenu id="profissionalCriacao"
 													value="#{pagamentoRecebimentoMB.profissionalCriacao}"
-													filter="true" filterMatchMode="contains" converter="profissional"
+													filter="true" filterMatchMode="contains"
+													converter="profissional"
 													style="min-width:0px;margin-top:10px;margin-bottom:10px;">
-													
-													<p:ajax event="itemSelect" process="@this"/>
-													
-													<f:selectItem itemLabel="Selecione um profissional" itemValue="#{null}"/>
-													<f:selectItems value="#{pagamentoRecebimentoMB.profissionais}"
-														var="profissional" itemLabel="#{profissional.dadosBasico.prefixoNome}"
-														itemValue="#{profissional}"/>
-													
+
+													<p:ajax event="itemSelect" process="@this" />
+
+													<f:selectItem itemLabel="Selecione um profissional"
+														itemValue="#{null}" />
+													<f:selectItems
+														value="#{pagamentoRecebimentoMB.profissionais}"
+														var="profissional"
+														itemLabel="#{profissional.dadosBasico.prefixoNome}"
+														itemValue="#{profissional}" />
+
 												</p:selectOneMenu>
 											</h:panelGroup>
 
@@ -463,11 +483,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:commandButton id="pesquisar" icon="White fa fa-search"
 											value="Pesquisar" styleClass="NavyButton"
 											actionListener="#{pagamentoRecebimentoMB.pesquisar}"
-											immediate="true" process="@this" update=":lume:tv:dtPagamento"/>
+											immediate="true" process="@this"
+											update=":lume:tv:dtPagamento" />
 
 										<p:commandButton id="new" icon="ui-icon-add"
-											value="Novo Pagamento"
-											styleClass="BotaoCrud">
+											value="Novo Pagamento" styleClass="BotaoCrud">
 
 											<p:ajax process="@this"
 												listener="#{pagamentoRecebimentoMB.limparTela}"
@@ -511,81 +531,86 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										</h:panelGroup>
 
 									</p:panelGrid>
-									
-									<p:dataTable filterDelay="1500" reflow="true" emptyMessage="Nenhum registro encontrado"
-										id="dtPagamento" value="#{pagamentoRecebimentoMB.faturas}"
-										var="f" rows="10" paginator="true"
-										rowKey="#{f}"
-										paginatorPosition="bottom"
+
+									<p:dataTable filterDelay="1500" reflow="true"
+										emptyMessage="Nenhum registro encontrado" id="dtPagamento"
+										value="#{pagamentoRecebimentoMB.faturas}" var="f" rows="10"
+										paginator="true" rowKey="#{f}" paginatorPosition="bottom"
 										binding="#{pagamentoRecebimentoMB.tabelaPagamento}">
 
 										<f:facet name="header">Faturas de pagamento</f:facet>
-										
+
 										<p:column headerText="Ações">
 											<h:panelGroup>
 												<p:commandButton id="btnView" icon="White fa fa-eye"
 													process="@this">
-														
-													<p:ajax process="@this" listener="#{faturaPagtoMB.visualizaFatura(f.fatura)}"
+
+													<p:ajax process="@this"
+														listener="#{faturaPagtoMB.visualizaFatura(f.fatura)}"
 														oncomplete="PF('dlgFaturaView').show();"
-														update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura"/>
+														update=":lume:viewFaturaRepasse, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 
 												</p:commandButton>
 												<p:tooltip for="btnView" value="Visualizar fatura" />
 											</h:panelGroup>
-											
+
 											<ui:remove>
-											<h:panelGroup>
-												<p:commandButton id="persistInativar"
-													icon="White fa fa-chain-broken" title="Inativar fatura"
-													actionListener="#{pagamentoRecebimentoMB.cancelarFatura(f)}"
-													update=":lume:tv:dtPagamento" process="@this"
-													styleClass="NavyButton" />
-											</h:panelGroup>
+												<h:panelGroup>
+													<p:commandButton id="persistInativar"
+														icon="White fa fa-chain-broken" title="Inativar fatura"
+														actionListener="#{pagamentoRecebimentoMB.cancelarFatura(f)}"
+														update=":lume:tv:dtPagamento" process="@this"
+														styleClass="NavyButton" />
+												</h:panelGroup>
 											</ui:remove>
 
 										</p:column>
-										
+
 										<p:column headerText="Descrição da fatura">
-											<h:outputText value="#{f.descricaoItem}"/>
+											<h:outputText value="#{f.descricaoItem}" />
 										</p:column>
-										
+
 										<p:column headerText="Fornecedor">
-											<h:outputText value="#{pagamentoRecebimentoMB.obterFornecedorFatura(f)}"/>
+											<h:outputText
+												value="#{pagamentoRecebimentoMB.obterFornecedorFatura(f)}" />
 										</p:column>
-										
+
 										<p:column headerText="Criado por">
-											<h:outputText value="#{f.fatura.criadoPor.dadosBasico.nome}"/>
+											<h:outputText value="#{f.fatura.criadoPor.dadosBasico.nome}" />
 										</p:column>
-										
+
 										<p:column headerText="Data criaçao">
-											<h:outputText value="#{pagamentoRecebimentoMB.converterData(f.dataCriacao)}"/>
+											<h:outputText
+												value="#{pagamentoRecebimentoMB.converterData(f.dataCriacao)}" />
 										</p:column>
-										
+
 										<p:column headerText="Valor da fatura">
-											<h:outputText value="#{pagamentoRecebimentoMB.valorFaturaItem(f)}"/>
+											<h:outputText
+												value="#{pagamentoRecebimentoMB.valorFaturaItem(f)}" />
 										</p:column>
-										
+
 										<p:column headerText="Valor pago">
-											<h:outputText value="#{pagamentoRecebimentoMB.valorPagoFaturaItem(f)}"/>
+											<h:outputText
+												value="#{pagamentoRecebimentoMB.valorPagoFaturaItem(f)}" />
 										</p:column>
-										
+
 										<p:column headerText="Valor a pagar">
-											<h:outputText value="#{pagamentoRecebimentoMB.valorPagarFaturaItem(f)}"/>
+											<h:outputText
+												value="#{pagamentoRecebimentoMB.valorPagarFaturaItem(f)}" />
 										</p:column>
 
 									</p:dataTable>
-									
+
 								</div>
 							</div>
 						</p:tab>
-						
-						
+
+
 						<p:tab id="tabRecebimento" title="Recebimentos">
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
-								
-								<p:panelGrid columns="1" layout="grid"
+
+									<p:panelGrid columns="1" layout="grid"
 										styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 										style="border:0px none; background-color:transparent;">
 
@@ -629,40 +654,45 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											</h:panelGroup>
 
 											<h:panelGroup>
-												<p:outputLabel for="pacienteFiltroRecebimento" value="Paciente:" />
+												<p:outputLabel for="pacienteFiltroRecebimento"
+													value="Paciente:" />
 
 												<p:selectOneMenu id="pacienteFiltroRecebimento"
-													converter="paciente" filter="true" filterMatchMode="contains"
+													converter="paciente" filter="true"
+													filterMatchMode="contains"
 													value="#{pagamentoRecebimentoMB.pacienteFiltro}"
 													style="min-width:0px;margin-top:10px;margin-bottom:10px;">
 
 													<p:ajax event="itemSelect" process="@this" immediate="true" />
 
-													<f:selectItem
-														itemLabel="Selecione um paciente"
+													<f:selectItem itemLabel="Selecione um paciente"
 														itemValue="#{null}" />
-													<f:selectItems
-														value="#{pagamentoRecebimentoMB.pacientes}" var="m"
-														itemLabel="#{m.dadosBasico.nome}" itemValue="#{m}" />
+													<f:selectItems value="#{pagamentoRecebimentoMB.pacientes}"
+														var="m" itemLabel="#{m.dadosBasico.nome}" itemValue="#{m}" />
 
 												</p:selectOneMenu>
 											</h:panelGroup>
-											
+
 											<h:panelGroup styleClass="LumeField">
-												<p:outputLabel for="profissionalCriacaoRecebimento" value="Criado por:"/>
-												
-												<p:selectOneMenu id="profissionalCriacaoRecebimento" 
+												<p:outputLabel for="profissionalCriacaoRecebimento"
+													value="Criado por:" />
+
+												<p:selectOneMenu id="profissionalCriacaoRecebimento"
 													value="#{pagamentoRecebimentoMB.profissionalCriacaoRecebimento}"
-													filter="true" filterMatchMode="contains" converter="profissional"
+													filter="true" filterMatchMode="contains"
+													converter="profissional"
 													style="min-width:0px;margin-top:10px;margin-bottom:10px;">
-													
-													<p:ajax process="@this"/>
-													
-													<f:selectItem itemLabel="Selecione um profissional" itemValue="#{null}"/>
-													<f:selectItems value="#{pagamentoRecebimentoMB.profissionais}"
-														var="profissional" itemLabel="#{profissional.dadosBasico.prefixoNome}"
-														itemValue="#{profissional}"/>
-													
+
+													<p:ajax process="@this" />
+
+													<f:selectItem itemLabel="Selecione um profissional"
+														itemValue="#{null}" />
+													<f:selectItems
+														value="#{pagamentoRecebimentoMB.profissionais}"
+														var="profissional"
+														itemLabel="#{profissional.dadosBasico.prefixoNome}"
+														itemValue="#{profissional}" />
+
 												</p:selectOneMenu>
 											</h:panelGroup>
 
@@ -673,10 +703,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									<p:panelGrid columns="4" layout="grid"
 										styleClass="ui-panelgrid-blank ui-fluid form-group">
 
-										<p:commandButton id="pesquisarRecebimento" icon="White fa fa-search"
-											value="Pesquisar" styleClass="NavyButton"
+										<p:commandButton id="pesquisarRecebimento"
+											icon="White fa fa-search" value="Pesquisar"
+											styleClass="NavyButton"
 											actionListener="#{pagamentoRecebimentoMB.pesquisarRecebimento}"
-											immediate="true" process="@this" update=":lume:tv:dtRecebimento"/>
+											immediate="true" process="@this"
+											update=":lume:tv:dtRecebimento" />
 
 										<p:commandButton id="novoRecebimento" icon="ui-icon-add"
 											value="Novo Recebimento" styleClass="BotaoCrud">
@@ -723,78 +755,84 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										</h:panelGroup>
 
 									</p:panelGrid>
-								
+
 									<p:dataTable id="dtRecebimento" widgetVar="dtRecebimento"
-										value="#{pagamentoRecebimentoMB.faturasRecebimento}"
-										var="f" rowKey="#{f}" rows="10"
-										paginator="true" paginatorPosition="bottom" reflow="true"
-										binding="#{pagamentoRecebimentoMB.tabelaRecebimento}" filterDelay="1000">
-									
+										value="#{pagamentoRecebimentoMB.faturasRecebimento}" var="f"
+										rowKey="#{f}" rows="10" paginator="true"
+										paginatorPosition="bottom" reflow="true"
+										binding="#{pagamentoRecebimentoMB.tabelaRecebimento}"
+										filterDelay="1000">
+
 										<f:facet name="header">Faturas de Recebimento</f:facet>
-										
+
 										<p:column headerText="Ações">
 											<h:panelGroup>
 												<p:commandButton id="btnView" icon="White fa fa-eye"
 													process="@this">
 
-													<p:ajax process="@this" listener="#{faturaPagtoMB.visualizaFatura(f.fatura)}"
+													<p:ajax process="@this"
+														listener="#{faturaPagtoMB.visualizaFatura(f.fatura)}"
 														oncomplete="PF('dlgFaturaView').show();"
-														update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura"/>
+														update=":lume:viewFaturaRepasse, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 
 												</p:commandButton>
 												<p:tooltip for="btnView" />
 											</h:panelGroup>
-											
+
 											<ui:remove>
-											<h:panelGroup>
-												<p:commandButton id="persistInativarRecebimento"
-													icon="White fa fa-chain-broken" title="Inativar fatura"
-													actionListener="#{pagamentoRecebimentoMB.cancelarFatura(f)}"
-													update=":lume:tv:dtRecebimento" process="@this"
-													styleClass="NavyButton" />
-											</h:panelGroup>
+												<h:panelGroup>
+													<p:commandButton id="persistInativarRecebimento"
+														icon="White fa fa-chain-broken" title="Inativar fatura"
+														actionListener="#{pagamentoRecebimentoMB.cancelarFatura(f)}"
+														update=":lume:tv:dtRecebimento" process="@this"
+														styleClass="NavyButton" />
+												</h:panelGroup>
 											</ui:remove>
 										</p:column>
-										
+
 										<p:column headerText="Descrição da fatura">
-											<h:outputText value="#{f.descricaoItem}"/>
+											<h:outputText value="#{f.descricaoItem}" />
 										</p:column>
-										
+
 										<p:column headerText="Paciente">
-											<h:outputText value="#{f.fatura.paciente.dadosBasico.nome}"/>
+											<h:outputText value="#{f.fatura.paciente.dadosBasico.nome}" />
 										</p:column>
-										
+
 										<p:column headerText="Criado por">
-											<h:outputText value="#{f.fatura.criadoPor.dadosBasico.nome}"/>
+											<h:outputText value="#{f.fatura.criadoPor.dadosBasico.nome}" />
 										</p:column>
-										
+
 										<p:column headerText="Data criaçao">
-											<h:outputText value="#{pagamentoRecebimentoMB.converterData(f.dataCriacao)}"/>
+											<h:outputText
+												value="#{pagamentoRecebimentoMB.converterData(f.dataCriacao)}" />
 										</p:column>
-										
+
 										<p:column headerText="Valor da fatura">
-											<h:outputText value="#{pagamentoRecebimentoMB.valorFaturaItem(f)}"/>
+											<h:outputText
+												value="#{pagamentoRecebimentoMB.valorFaturaItem(f)}" />
 										</p:column>
-										
+
 										<p:column headerText="Valor a pagar">
-											<h:outputText value="#{pagamentoRecebimentoMB.valorPagarFaturaItem(f)}"/>
+											<h:outputText
+												value="#{pagamentoRecebimentoMB.valorPagarFaturaItem(f)}" />
 										</p:column>
-										
+
 										<p:column headerText="Valor pago">
-											<h:outputText value="#{pagamentoRecebimentoMB.valorPagoFaturaItem(f)}"/>
+											<h:outputText
+												value="#{pagamentoRecebimentoMB.valorPagoFaturaItem(f)}" />
 										</p:column>
-										
+
 										<p:column headerText="Status">
 											<h:outputText />
 										</p:column>
-									
+
 									</p:dataTable>
-								
+
 								</div>
 							</div>
 						</p:tab>
-						
-						
+
+
 					</p:tabView>
 				</div>
 			</div>

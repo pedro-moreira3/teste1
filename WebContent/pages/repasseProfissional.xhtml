@@ -7,9 +7,8 @@
 	<ui:define name="content">
 
 		<p:outputPanel id="viewFaturaRepasse">
-			<ui:include src="faturaView.xhtml">
+			<ui:include src="faturaViewProfissional.xhtml">
 				<ui:param name="showNewLancamento" value="N" />
-				<ui:param name="repasseProfissional" value="S" />
 			</ui:include>
 			<p:remoteCommand name="onCloseFaturaView"
 				process="@this, :lume:tabViewRepasseProfissional:filtros"
@@ -17,7 +16,7 @@
 				actionListener="#{repasseProfissionalMB.pesquisar}" />
 		</p:outputPanel>
 
-		
+
 		<p:remoteCommand name="onHidePacienteFicha" process="@this"
 			update=":lume:viewFaturaRepasse" />
 
@@ -91,12 +90,13 @@
 														<h:panelGroup>
 															<p:outputLabel for="status" value="Status: " />
 															<p:selectOneMenu id="status"
+																converter="enumStatusRepasse"
 																value="#{repasseProfissionalMB.status}">
 																<f:selectItem itemValue="#{null}" itemLabel="Todos" />
-																<f:selectItem itemValue="1"
-																	itemLabel="Não disponível para repasse" />
-																<f:selectItem itemValue="2"
-																	itemLabel="Pendente de repasse" />
+																<f:selectItems
+																	value="#{repasseProfissionalMB.statusList}"
+																	var="status" itemLabel="#{status.descricao}"
+																	itemValue="#{status}" />
 															</p:selectOneMenu>
 														</h:panelGroup>
 

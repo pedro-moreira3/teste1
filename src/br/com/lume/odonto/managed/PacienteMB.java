@@ -165,6 +165,13 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String url = request.getRequestURL().toString();
 
+        try {
+            indicacoes = DominioSingleton.getInstance().getBo().listByObjeto("indicacao");
+        } catch (Exception e1) {
+            log.error("Erro no PacienteMB", e1);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+        
         if (url.contains("paciente.jsf")) {
             pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(super.getEntity());
             if ((profissionalLogado == null || profissionalLogado.getPerfil().equals(
@@ -182,7 +189,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                     convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 }
 
-                indicacoes = DominioSingleton.getInstance().getBo().listByObjeto("indicacao");
+             
 
                 List<String> perfis = new ArrayList<>();
                 perfis.add(OdontoPerfil.DENTISTA);

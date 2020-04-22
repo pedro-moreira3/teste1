@@ -1,60 +1,90 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-				<style>
-				.cke_1 {
-					border: 0px none !important;
-					padding: 0px !important;
-				}
-				
-				</style>
+					<style>
+.cke_1 {
+	border: 0px none !important;
+	padding: 0px !important;
+}
+</style>
 					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
 
 						<h1>Configuração de Documentos</h1>
 						<div class="SeparatorFull"></div>
 
-						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+						<p:panelGrid columns="1" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group"
 							style="border:0px none; background-color:transparent;">
 
-							<p:outputLabel for="tipo" value="Tipo de Documento : " />
-							<p:selectOneRadio id="tipo" required="true" value="#{documentoMB.entity.tipo}" converter="dominio" layout="grid" columns="3">
-								<p:ajax update="pnPrincipal, :lume:dtPrincipal" listener="#{documentoMB.addLegendas}" process="@this" />
-								<f:selectItems value="#{documentoMB.dominios}" var="tp" itemValue="#{tp}" itemLabel="#{tp.nome}" />
-							</p:selectOneRadio>
+							<h:panelGroup>
+								<p:outputLabel for="tipo" value="Tipo de Documento: " />
+								<p:selectOneRadio id="tipo" required="true"
+									value="#{documentoMB.entity.tipo}" converter="dominio"
+									layout="grid" columns="3">
+									<p:ajax update="pnPrincipal"
+										listener="#{documentoMB.addLegendas}" process="@this" />
+									<f:selectItems value="#{documentoMB.dominios}" var="tp"
+										itemValue="#{tp}" itemLabel="#{tp.nome}" />
+								</p:selectOneRadio>
+							</h:panelGroup>
 
+							<h:panelGroup style="vertical-align:top;">
+								<h:panelGroup style="display:inline-block;margin-right:50px;vertical-align:top;">
+									<p:outputLabel value="Legendas: " />
+									<p:dataList value="#{documentoMB.legendas}" var="lg"
+										itemType="disc">
+										<h:outputText value="#{lg}" />
+									</p:dataList>
+								</h:panelGroup>
 
-							<p:outputLabel value="Legendas : " />
-							<p:column>
-								<p:dataList value="#{documentoMB.legendas}" var="lg" itemType="disc" styleClass="Wid50"> 									
-									  	#{lg} 
-										</p:dataList>
-							</p:column>
+								<h:panelGroup id="paiModelo" style="display:inline-block;vertical-align:top;">
+									<p:outputLabel value="Modelo: " />
+									<pe:ckEditor id="modelo" value="#{documentoMB.entity.modelo}"
+										toolbar="[[ 'Bold','Italic','Underline','Strike','RemoveFormat','NumberedList','BulletedList','Outdent','Indent','Blockquote','CreateDiv','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','BidiLtr','BidiRtl' ,'Image','Table','HorizontalRule','SpecialChar','PageBreak','Styles','Format','Font','FontSize','TextColor','BGColor','Maximize', 'ShowBlocks' ]]"
+										styleClass="BordNone" binding="#{documentoMB.ckEditor}">
+										
+										<p:ajax process="@this"/>
+										
+									</pe:ckEditor>
+								</h:panelGroup>
+							</h:panelGroup>
 
-							<p:outputLabel value="Modelo : " />
-
-							<pe:ckEditor id="modelo" value="#{documentoMB.entity.modelo}"
-								toolbar="[[ 'Bold','Italic','Underline','Strike','RemoveFormat','NumberedList','BulletedList','Outdent','Indent','Blockquote','CreateDiv','JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock','BidiLtr','BidiRtl' ,'Image','Table','HorizontalRule','SpecialChar','PageBreak','Styles','Format','Font','FontSize','TextColor','BGColor','Maximize', 'ShowBlocks' ]]"
-								styleClass="BordNone" />
-
-
-
-							<p:outputLabel for="descricao" value="Nome do documento : " />
-							<p:inputTextarea id="descricao" value="#{documentoMB.entity.descricao}" maxlength="100" required="true" styleClass="Wid50" />
+							<h:panelGroup>
+								<p:outputLabel for="descricao" value="Nome do documento: " />
+								<p:inputTextarea id="descricao"
+									value="#{documentoMB.entity.descricao}" maxlength="100"
+									required="true">
+								
+									<p:ajax process="@this"/>
+								
+								</p:inputTextarea>
+							</h:panelGroup>
 
 						</p:panelGrid>
+
 						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Nova Configuração de Documentos" actionListener="#{documentoMB.actionNew}" update=":lume:pnPrincipal"
-								immediate="true" tabindex="1"  />						
-							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{documentoMB.actionPersist}"
-								update=":lume:pnPrincipal, :lume:dtPrincipal"  process=":lume:pnPrincipal"
-								styleClass="GreenButton" />
-							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{documentoMB.actionRemove}" update=":lume:pnPrincipal, :lume:dtPrincipal"
-								process="@this" disabled="#{documentoMB.entity.id == 0}"  styleClass="RedButton" />
+
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="new" icon="White fa fa-file-o"
+								value="Nova Configuração de Documentos"
+								actionListener="#{documentoMB.actionNew}"
+								update=":lume:pnPrincipal" immediate="true" tabindex="1" />
+							<p:commandButton id="persist" icon="White fa fa-save"
+								value="Salvar" actionListener="#{documentoMB.actionPersist}"
+								update=":lume:pnPrincipal, :lume:dtPrincipal"
+								process="@this, :lume:modelo" styleClass="GreenButton" />
+							<p:commandButton id="delete" icon="White fa fa-trash-o"
+								value="Excluir" actionListener="#{documentoMB.actionRemove}"
+								update=":lume:pnPrincipal, :lume:dtPrincipal" process="@this"
+								disabled="#{documentoMB.entity.id == 0}" styleClass="RedButton" />
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"
@@ -64,24 +94,21 @@
 									immediate="true"
 									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 
-									<p:fileDownload
-										value="#{documentoMB.arquivoDownload}" />
+									<p:fileDownload value="#{documentoMB.arquivoDownload}" />
 
 									<p:menuitem value="Exportar tabela para PDF"
 										icon="fa fa fa-file-pdf-o"
 										actionListener="#{documentoMB.exportarTabela('pdf')}"
 										ajax="false" process="dtPrincipal,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{documentoMB.arquivoDownload}" />
+										<p:fileDownload value="#{documentoMB.arquivoDownload}" />
 									</p:menuitem>
 									<p:menuitem value="Exportar tabela para CSV"
 										icon="fa fa fa-file-pdf-o"
 										actionListener="#{documentoMB.exportarTabela('csv')}"
 										ajax="false" process="dtPrincipal,@this" immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{documentoMB.arquivoDownload}" />
+										<p:fileDownload value="#{documentoMB.arquivoDownload}" />
 									</p:menuitem>
 								</p:splitButton>
 							</h:panelGroup>
@@ -90,19 +117,30 @@
 
 						<div class="EmptyBox20"></div>
 
-					</p:outputPanel>
-					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" value="#{documentoMB.documentos}" var="doc" rows="7" paginator="true"
-						selection="#{documentoMB.entity}" selectionMode="single" rowKey="#{doc}" paginatorPosition="bottom">
-						<p:ajax event="rowSelect" update=":lume:pnPrincipal" listener="#{documentoMB.addLegendas}" />
-						<f:facet name="header">Documentos</f:facet>
-						<p:column sortBy="#{doc.descricao}" filterBy="#{doc.descricao}" filterMatchMode="contains" headerText="Descrição" filterFunction="#{documentoMB.filtroSemAcento}">
-							<h:outputText value="#{doc.descricao}" title="#{doc.id}" />
-						</p:column>
-						<p:column sortBy="#{doc.tipo.nome}" filterBy="#{doc.tipo.nome}" filterMatchMode="contains" headerText="Tipo" filterFunction="#{documentoMB.filtroSemAcento}">
-							<h:outputText value="#{doc.tipo.nome}" />
-						</p:column>
+						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+							id="dtPrincipal" value="#{documentoMB.documentos}" var="doc"
+							rows="7" paginator="true" selection="#{documentoMB.entity}"
+							selectionMode="single" rowKey="#{doc}" paginatorPosition="bottom">
+							
+							<p:ajax event="rowSelect" update=":lume:pnPrincipal"
+								listener="#{documentoMB.addLegendas}" />
+							
+							<f:facet name="header">Documentos</f:facet>
+							
+							<p:column sortBy="#{doc.descricao}" filterBy="#{doc.descricao}"
+								filterMatchMode="contains" headerText="Descrição"
+								filterFunction="#{documentoMB.filtroSemAcento}">
+								<h:outputText value="#{doc.descricao}" title="#{doc.id}" />
+							</p:column>
+							<p:column sortBy="#{doc.tipo.nome}" filterBy="#{doc.tipo.nome}"
+								filterMatchMode="contains" headerText="Tipo"
+								filterFunction="#{documentoMB.filtroSemAcento}">
+								<h:outputText value="#{doc.tipo.nome}" />
+							</p:column>
 
-					</p:dataTable>
+						</p:dataTable>
+
+					</p:outputPanel>
 				</div>
 			</div>
 		</div>

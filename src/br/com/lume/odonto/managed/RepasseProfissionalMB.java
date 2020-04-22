@@ -3,6 +3,7 @@ package br.com.lume.odonto.managed;
 import java.math.BigDecimal;
 import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -19,6 +20,7 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.Fatura.StatusFatura;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
@@ -29,6 +31,7 @@ import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingle
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
+import br.com.lume.repasse.RepasseFaturasSingleton.StatusRepasse;
 
 /**
  * @author ricardo.poncio
@@ -49,7 +52,8 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
     private Profissional profissional;
     private Paciente paciente;
 
-    private Integer status;
+    private StatusRepasse status;
+    private List<StatusRepasse> statusList;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRepasse;
@@ -78,8 +82,9 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
             fim.set(Calendar.MILLISECOND, 999);
             this.dataFim = fim.getTime();
 
-            setStatus(2);
-          //  pesquisar();
+            setStatusList(Arrays.asList(StatusRepasse.values()));
+            setStatus(StatusRepasse.DISPONIVEL);
+            //  pesquisar();
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Não foi possivel carregar a tela.", true);
@@ -107,15 +112,8 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
                 fim.set(Calendar.MILLISECOND, 999);
             }
 
-            if (this.status == null)
-                setEntityList(FaturaSingleton.getInstance().getBo().findFaturasRepasseFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getPaciente(), null,
-                        (inicio != null ? inicio.getTime() : null), (fim != null ? fim.getTime() : null), isMesesAnteriores(), true, true));
-            else if (this.status == 1)
-                setEntityList(FaturaSingleton.getInstance().getBo().findFaturasRepasseFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getPaciente(), null,
-                        (inicio != null ? inicio.getTime() : null), (fim != null ? fim.getTime() : null), isMesesAnteriores(), false, true));
-            else if (this.status == 2)
-                setEntityList(FaturaSingleton.getInstance().getBo().findFaturasRepasseFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getPaciente(), null,
-                        (inicio != null ? inicio.getTime() : null), (fim != null ? fim.getTime() : null), isMesesAnteriores(), true, false));
+            setEntityList(FaturaSingleton.getInstance().getBo().findFaturasRepasseFilter(UtilsFrontEnd.getEmpresaLogada(), getProfissional(), getPaciente(), null,
+                    (inicio != null ? inicio.getTime() : null), (fim != null ? fim.getTime() : null), isMesesAnteriores(), this.status));
             if (isPagoTotalmente())
                 getEntityList().removeIf(fatura -> {
                     if (FaturaSingleton.getInstance().getTotalRestante(fatura).compareTo(BigDecimal.ZERO) <= 0)
@@ -140,7 +138,9 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
                         fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));
 
                         fatura.setDadosTabelaStatusFatura("A Pagar");
-                        if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
+                        if (fatura.getStatusFatura() == StatusFatura.INTERROMPIDO)
+                            fatura.setDadosTabelaStatusFatura(StatusFatura.INTERROMPIDO.getDescricao());
+                        else if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
                             fatura.setDadosTabelaStatusFatura("Pago");
                     } catch (Exception e) {
                         // TODO: handle exception
@@ -261,12 +261,20 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
         this.tabelaRepasse = tabelaRepasse;
     }
 
-    public Integer getStatus() {
+    public StatusRepasse getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(StatusRepasse status) {
         this.status = status;
+    }
+
+    public List<StatusRepasse> getStatusList() {
+        return statusList;
+    }
+
+    public void setStatusList(List<StatusRepasse> statusList) {
+        this.statusList = statusList;
     }
 
 }

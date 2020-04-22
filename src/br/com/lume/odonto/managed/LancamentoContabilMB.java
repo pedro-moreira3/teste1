@@ -27,6 +27,7 @@ import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
+import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
@@ -45,6 +46,7 @@ import br.com.lume.odonto.entity.TipoCategoria;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.origem.OrigemSingleton;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.tipoCategoria.TipoCategoriaSingleton;
 
@@ -93,8 +95,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         try {
             Calendar c = Calendar.getInstance();
             fim = new Date();
-           // c.add(Calendar.MONTH, 3);
-           // fim = c.getTime();
+            // c.add(Calendar.MONTH, 3);
+            // fim = c.getTime();
             c.set(Calendar.DAY_OF_MONTH, 1);
             inicio = c.getTime();
             this.geraLista();
@@ -118,6 +120,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     private void carregarLancamentosValidar() {
         try {
             lancamentosValidar = LancamentoSingleton.getInstance().getBo().listByPagamentoPacienteNaoValidado(UtilsFrontEnd.getEmpresaLogada());
+            if (lancamentosValidar != null)
+                lancamentosValidar.forEach(lancamento -> {
+                    lancamento.setPt(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(lancamento.getFatura()));
+                });
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -203,7 +209,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
                     dadosBasicos.add(f.getDadosBasico());
                 }
             } else if ("Receber".equals(tipo)) {
-                List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
+                List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByEmpresaEStatus(idEmpresaLogada, Status.ATIVO);
                 for (Paciente f : pacientes) {
                     f.getDadosBasico().setTipoInformacao("Paciente");
                     dadosBasicos.add(f.getDadosBasico());
@@ -223,10 +229,11 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void actionValidarLancamento(Lancamento l) {
         try {
-           LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l,UtilsFrontEnd.getProfissionalLogado());    
+            LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
+            FaturaSingleton.getInstance().atualizarStatusFatura(l.getFatura());
             this.carregarLancamentosValidar();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-        } catch (Exception e) {         
+        } catch (Exception e) {
 
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);

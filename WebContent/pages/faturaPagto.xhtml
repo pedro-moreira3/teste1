@@ -7,33 +7,50 @@
 	<ui:define name="content">
 
 		<p:outputPanel id="viewFatura">
-			<ui:include src="faturaView.xhtml">
+			<ui:include src="faturaViewPaciente.xhtml">
 				<ui:param name="showNewLancamento" value="S" />
 			</ui:include>
 			<p:remoteCommand name="onCloseFaturaView" process="@this"
 				update="dtPrincipalFaturaRP" />
 		</p:outputPanel>
 
-		
+
 		<p:remoteCommand name="onHidePacienteFicha" process="@this"
 			update=":lume:viewFatura" />
 
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-					<h1>Faturas dos Pacientes</h1>
+					<h1>Recebimento dos Pacientes</h1>
 					<p:separator styleClass="SeparatorFull" />
 
-					<p:panelGrid columns="2" layout="grid" id="filterFaturas"
+					<p:panelGrid columns="3" layout="grid" id="filterFaturas"
 						styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
-						<h:panelGroup>
+						<h:panelGroup styleClass="md-combo">
+							<h:outputText for="filtroPeriodo" value="Período de criação:" />
+							<p:selectOneMenu id="filtroPeriodo"
+								value="#{faturaPagtoMB.filtroPeriodo}">
+								<p:ajax process="@this" update="inicio, fim"
+									listener="#{faturaPagtoMB.actionTrocaDatasCriacao}" />
+								<f:selectItem itemValue="" itemLabel="Selecione" />
+								<f:selectItem itemValue="O" itemLabel="Ontem" />
+								<f:selectItem itemValue="H" itemLabel="Hoje" />
+								<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+								<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+								<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+								<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+								<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+							</p:selectOneMenu>
+						</h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield taller">
 							<h:outputText for="inicio" value="Data de criação de:" />
 							<p:calendar id="inicio" value="#{faturaPagtoMB.inicio}" />
 						</h:panelGroup>
-						<h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield taller">
 							<h:outputText for="fim" value="Data de criação até:" />
 							<p:calendar id="fim" value="#{faturaPagtoMB.fim}" />
 						</h:panelGroup>
+
 						<h:panelGroup styleClass="noupdate">
 							<h:outputText for="filtroPaciente" value="Paciente:" />
 							<p:autoComplete id="filtroPaciente"
@@ -60,13 +77,22 @@
 							</p:autoComplete>
 						</h:panelGroup>
 						<h:panelGroup>
-							<p:outputLabel for="status" value="Status: " />
-							<p:selectOneMenu id="status" value="#{faturaPagtoMB.status}">
-								<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+							<p:outputLabel for="status" value="Status da Fatura: " />
+							<p:selectOneMenu id="status" value="#{faturaPagtoMB.status}"
+								converter="enumStatusFatura">
 								<f:selectItems value="#{faturaPagtoMB.listaStatus}" var="status"
-									itemLabel="#{status}" itemValue="#{status}" />
-								<p:ajax process="@this" />
+									itemLabel="#{status.descricao}" itemValue="#{status}" />
 							</p:selectOneMenu>
+						</h:panelGroup>
+						<h:panelGroup>
+							<p:outputLabel for="subStatus" value="Sub Status da Fatura: " />
+							<p:selectCheckboxMenu id="subStatus" label="SubStatus"
+								multiple="true" value="#{faturaPagtoMB.subStatusFatura}"
+								converter="enumSubStatusFatura" style="margin-top: 5px;">
+								<f:selectItems value="#{faturaPagtoMB.listaSubStatusFatura}"
+									var="subStatus" itemLabel="#{subStatus.descricao}"
+									itemValue="#{subStatus}" />
+							</p:selectCheckboxMenu>
 						</h:panelGroup>
 					</p:panelGrid>
 					<p:panelGrid columns="4" layout="grid"
@@ -141,12 +167,20 @@
 							headerText="Plano de Tratamento">
 							<h:outputText value="#{f.dadosTabelaPT.descricao}" />
 						</p:column>
+
 						<p:column filterBy="#{f.dadosTabelaRepasseTotalFatura}"
 							headerText="Valor total da fatura" filterMatchMode="contains"
 							sortBy="#{f.dadosTabelaRepasseTotalFatura}">
 							<h:outputText value="#{f.dadosTabelaRepasseTotalFatura}">
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
+							<f:facet name="footer">
+								<h:outputText value="Total " />
+								<h:outputText value="#{faturaPagtoMB.somaTotal}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										minFractionDigits="2" />
+								</h:outputText>
+							</f:facet>
 						</p:column>
 
 						<p:column filterBy="#{f.dadosTabelaRepasseTotalPago}"
@@ -155,6 +189,13 @@
 							<h:outputText value="#{f.dadosTabelaRepasseTotalPago}">
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
+							<f:facet name="footer">
+								<h:outputText value="Total " />
+								<h:outputText value="#{faturaPagtoMB.somaTotalPago}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										minFractionDigits="2" />
+								</h:outputText>
+							</f:facet>
 						</p:column>
 
 						<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPago}"
@@ -163,6 +204,13 @@
 							<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPago}">
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
+							<f:facet name="footer">
+								<h:outputText value="Total " />
+								<h:outputText value="#{faturaPagtoMB.somaTotalNaoPago}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										minFractionDigits="2" />
+								</h:outputText>
+							</f:facet>
 						</p:column>
 
 						<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}"
@@ -171,12 +219,19 @@
 							<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
+							<f:facet name="footer">
+								<h:outputText value="Total " />
+								<h:outputText value="#{faturaPagtoMB.somaTotalNaoPlanejado}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										minFractionDigits="2" />
+								</h:outputText>
+							</f:facet>
 						</p:column>
 
 						<p:column width="80" headerText="Status"
-							filterBy="#{f.dadosTabelaStatusFatura}"
-							sortBy="#{f.dadosTabelaStatusFatura}" filterMatchMode="contains">
-							<h:outputText value="#{f.dadosTabelaStatusFatura}" />
+							filterBy="#{f.statusFaturaCompleto}"
+							sortBy="#{f.statusFaturaCompleto}" filterMatchMode="contains">
+							<h:outputText value="#{f.statusFaturaCompleto}" />
 						</p:column>
 
 					</p:dataTable>

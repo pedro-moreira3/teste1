@@ -3,6 +3,7 @@ package br.com.lume.odonto.managed;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -20,9 +21,9 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.Utils.Mes;
-import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.common.util.UtilsPadraoRelatorio;
+import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
 import br.com.lume.conta.ContaSingleton;
 import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
 import br.com.lume.dominio.DominioSingleton;
@@ -30,9 +31,13 @@ import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.Fatura.DirecaoFatura;
+import br.com.lume.odonto.entity.Fatura.StatusFatura;
+import br.com.lume.odonto.entity.Fatura.SubStatusFatura;
 import br.com.lume.odonto.entity.Fatura.TipoFatura;
 import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
@@ -48,6 +53,12 @@ import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.tarifa.TarifaSingleton;
 
+/**
+ * @author ricardo.poncio
+ */
+/**
+ * @author ricardo.poncio
+ */
 @ManagedBean
 @ViewScoped
 public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
@@ -55,19 +66,26 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private static final long serialVersionUID = 1L;
     //private Logger log = Logger.getLogger(FaturaPagtoMB.class);
 
+    private String filtroPeriodo;
     private Date inicio, fim;
     private Paciente paciente;
     private List<Dominio> formasPagamento;
     private PlanoTratamento[] ptSelecionados = new PlanoTratamento[] {};
     private List<PlanoTratamento> listaPt;
-    private String status;
-    private List<String> listaStatus;
     private boolean showLancamentosCancelados = false;
+
+    private StatusFatura status;
+    private List<StatusFatura> listaStatus;
+    private SubStatusFatura[] subStatusFatura;
 
     private FaturaItem itemSelecionado;
     private List<Profissional> profissionais;
     private Profissional profissionalTroca;
     private String observacao;
+
+    private BigDecimal somaTotal = BigDecimal.ZERO, somaTotalPago = BigDecimal.ZERO, somaTotalNaoPago = BigDecimal.ZERO, somaTotalNaoPlanejado = BigDecimal.ZERO;
+
+    private String faturaViewImportName;
 
     //Campos para 'Novo Lançamento'
     private boolean showProduto;
@@ -101,11 +119,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 //setFim(now.getTime());
 
                 setFormasPagamento(DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("pagamento", "forma"));
-                setListaStatus(new ArrayList<>());
-                getListaStatus().add(Fatura.StatusFatura.PAGO.getRotulo());
-                getListaStatus().add(Fatura.StatusFatura.PENDENTE.getRotulo());
-                getListaStatus().add(Fatura.StatusFatura.TODOS.getRotulo());
-                setStatus(Fatura.StatusFatura.PENDENTE.getRotulo());
+                setListaStatus(Fatura.getStatusFaturaLista(DirecaoFatura.CREDITO));
+                setStatus(Fatura.StatusFatura.A_RECEBER);
                 setShowLancamentosCancelados(false);
                 carregarProfissionais();
 
@@ -121,7 +136,23 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 LogIntelidenteSingleton.getInstance().makeLog(e);
             }
         }
+
+        updateWichScreenOpenForFaturaView();
         // System.out.println("FaturaPagtoMB" + new Timestamp(System.currentTimeMillis()));
+    }
+
+    public void updateWichScreenOpenForFaturaView() {
+        try {
+            if (getEntity() != null && getEntity().getId() != null && getEntity().getId().longValue() != 0l) {
+                if ("PP".equals(getEntity().getTipoFatura().getRotulo())) {
+                    this.faturaViewImportName = "faturaViewProfissional.xhtml";
+                    return;
+                }
+            }
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+        this.faturaViewImportName = "faturaViewPaciente.xhtml";
     }
 
     public boolean hasRequisitosCumprir(Lancamento lancamentoRepasse) {
@@ -180,6 +211,69 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
+    public void actionTrocaDatasCriacao() {
+        try {
+            setInicio(getDataInicio(filtroPeriodo));
+            setFim(getDataFim(filtroPeriodo));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+
+    public Date getDataFim(String filtro) {
+        Date dataFim = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataFim = c.getTime();
+            } else if (filtro == null) {
+                dataFim = null;
+            } else {
+                dataFim = c.getTime();
+            }
+            return dataFim;
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }
+
+    public Date getDataInicio(String filtro) {
+        Date dataInicio = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataInicio = c.getTime();
+            } else if ("H".equals(filtro)) { //Hoje                
+                dataInicio = c.getTime();
+            } else if ("S".equals(filtro)) { //Últimos 7 dias              
+                c.add(Calendar.DAY_OF_MONTH, -7);
+                dataInicio = c.getTime();
+            } else if ("Q".equals(filtro)) { //Últimos 15 dias              
+                c.add(Calendar.DAY_OF_MONTH, -15);
+                dataInicio = c.getTime();
+            } else if ("T".equals(filtro)) { //Últimos 30 dias                
+                c.add(Calendar.DAY_OF_MONTH, -30);
+                dataInicio = c.getTime();
+            } else if ("M".equals(filtro)) { //Mês Atual              
+                c.set(Calendar.DAY_OF_MONTH, 1);
+                dataInicio = c.getTime();
+            } else if ("I".equals(filtro)) { //Mês Atual             
+                c.add(Calendar.MONTH, -6);
+                dataInicio = c.getTime();
+            }
+            return dataInicio;
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }
+
     public void visualizaFatura(Fatura fatura) {
         /*
          * List<FaturaItem> itens = new ArrayList<>(fatura.getItens()); if (fatura.getTipoFatura() == Fatura.TipoFatura.RECEBIMENTO_PACIENTE) { itens.forEach(item -> { try { String pt =
@@ -189,6 +283,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         setEntity(fatura);
         setShowLancamentosCancelados(false);
         updateValues(fatura);
+
+        updateWichScreenOpenForFaturaView();
     }
 
     public PlanoTratamentoProcedimento buscaPTPOrigemRepasse(Lancamento l) {
@@ -265,8 +361,13 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 fim.set(Calendar.MILLISECOND, 999);
             }
 
+            this.somaTotal = BigDecimal.ZERO;
+            this.somaTotalPago = BigDecimal.ZERO;
+            this.somaTotalNaoPago = BigDecimal.ZERO;
+            this.somaTotalNaoPlanejado = BigDecimal.ZERO;
+
             setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), (inicio == null ? null : inicio.getTime()),
-                    (fim == null ? null : fim.getTime()), Fatura.StatusFatura.getTipoFromRotulo(getStatus())));
+                    (fim == null ? null : fim.getTime()), this.status, Arrays.asList(this.subStatusFatura)));
             getEntityList().forEach(fatura -> {
                 updateValues(fatura);
             });
@@ -284,11 +385,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura));
         fatura.setDadosTabelaPT(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(fatura));
         if (fatura.getTipoFatura() == Fatura.TipoFatura.PAGAMENTO_PROFISSIONAL)
-            fatura.setDadosTabelaRepassePlanoTratamento(fatura.getDadosTabelaPT());
+            fatura.setDadosTabelaRepassePlanoTratamento(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaRepasse(fatura));
 
-        fatura.setDadosTabelaStatusFatura("A Receber");
-        if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
-            fatura.setDadosTabelaStatusFatura("Recebido");
+        //fatura.setDadosTabelaStatusFatura("A Receber");
+        //if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
+        //fatura.setDadosTabelaStatusFatura("Recebido");
+
+        this.somaTotal = this.somaTotal.add(fatura.getDadosTabelaRepasseTotalFatura());
+        this.somaTotalPago = this.somaTotalPago.add(fatura.getDadosTabelaRepasseTotalPago());
+        this.somaTotalNaoPago = this.somaTotalNaoPago.add(fatura.getDadosTabelaRepasseTotalNaoPago());
+        this.somaTotalNaoPlanejado = this.somaTotalNaoPlanejado.add(fatura.getDadosTabelaRepasseTotalNaoPlanejado());
     }
 
     public void changePaciente() {
@@ -296,7 +402,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public void atualizaProduto() {
-        if ("CC".equals(getFormaPagamento()) || "CD".equals(getFormaPagamento()) || "BO".equals(getFormaPagamento())) {
+        if (existeCadastroTarifa()) {
             setTarifas(TarifaSingleton.getInstance().getBo().listByForma(getFormaPagamento(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             setShowProduto(Boolean.TRUE);
         } else {
@@ -305,6 +411,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
 
         handleSelectPagamento();
+    }
+
+    public boolean existeCadastroTarifa() {
+        return existeCadastroTarifa(getFormaPagamento());
+    }
+
+    public boolean existeCadastroTarifa(String formaPagamento) {
+        if (Arrays.asList(new String[] { "CC", "CD", "BO" }).indexOf(formaPagamento) != -1)
+            return true;
+        return false;
     }
 
     public void atualizaDataCredito() {
@@ -361,20 +477,27 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             now.setTime(getDataPagamento());
             Calendar data = Calendar.getInstance();
             data.setTime(getDataCredito());
-            if ("CC".equals(getFormaPagamento())) {
+            if (existeCadastroTarifa()) {
                 BigDecimal valorOriginalDividio = getValor().divide(new BigDecimal(getParcela()), 2, RoundingMode.HALF_UP);
                 BigDecimal diferenca = valorOriginalDividio.multiply(new BigDecimal(getParcela())).subtract(getValor());
                 for (int i = 1; i <= getParcela(); i++) {
                     if (i == getParcela()) {
                         valorOriginalDividio = valorOriginalDividio.subtract(diferenca);
                     }
-                    LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
-                            UtilsFrontEnd.getProfissionalLogado(), null);
-                    //persistLancamento(getParcela(), getEntity(), valorOriginalDividio, getFormaPagamento(), Calendar.getInstance().getTime(), data.getTime(), getTarifa());
+
+                    if ("CC".equals(getFormaPagamento())) {
+                        LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), i, getParcela(), now.getTime(), data.getTime(), getTarifa(),
+                                UtilsFrontEnd.getProfissionalLogado(), null);
+                        //persistLancamento(getParcela(), getEntity(), valorOriginalDividio, getFormaPagamento(), Calendar.getInstance().getTime(), data.getTime(), getTarifa());
+                    } else {
+                        LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), i, getParcela(), now.getTime(), data.getTime(), getTarifa(),
+                                UtilsFrontEnd.getProfissionalLogado(), null);
+                        now.add(Calendar.MONTH, 1);
+                    }
                     data.add(Calendar.MONTH, 1);
                 }
             } else {
-                LancamentoSingleton.getInstance().novoLancamento(getEntity(), getValor(), getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
+                LancamentoSingleton.getInstance().novoLancamento(getEntity(), getValor(), getFormaPagamento(), getParcela(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
                         UtilsFrontEnd.getProfissionalLogado(), null);
                 //persistLancamento(getParcela(), getEntity(), getValor(), getFormaPagamento(), Calendar.getInstance().getTime(), data.getTime(), getTarifa());
             }
@@ -402,20 +525,27 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             Calendar now = Calendar.getInstance();
             Calendar data = Calendar.getInstance();
             data.setTime(getDataCredito());
-            if ("CC".equals(getFormaPagamento())) {
+            if (existeCadastroTarifa()) {
                 BigDecimal valorOriginalDividio = getValor().divide(new BigDecimal(getParcela()), 2, RoundingMode.HALF_UP);
                 BigDecimal diferenca = valorOriginalDividio.multiply(new BigDecimal(getParcela())).subtract(getValor());
                 for (int i = 1; i <= getParcela(); i++) {
                     if (i == getParcela()) {
                         valorOriginalDividio = valorOriginalDividio.subtract(diferenca);
                     }
-                    LancamentoSingleton.getInstance().novoLancamentoGenerico(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
-                            UtilsFrontEnd.getProfissionalLogado());
+
+                    if ("CC".equals(getFormaPagamento())) {
+                        LancamentoSingleton.getInstance().novoLancamentoGenerico(getEntity(), valorOriginalDividio, getFormaPagamento(), i, getParcela(), null, now.getTime(), data.getTime(),
+                                getTarifa(), UtilsFrontEnd.getProfissionalLogado());
+                    } else {
+                        LancamentoSingleton.getInstance().novoLancamentoGenerico(getEntity(), valorOriginalDividio, getFormaPagamento(), i, getParcela(), null, now.getTime(), data.getTime(),
+                                getTarifa(), UtilsFrontEnd.getProfissionalLogado());
+                        now.add(Calendar.MONTH, 1);
+                    }
 
                     data.add(Calendar.MONTH, 1);
                 }
             } else {
-                LancamentoSingleton.getInstance().novoLancamentoGenerico(getEntity(), getValor(), getFormaPagamento(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
+                LancamentoSingleton.getInstance().novoLancamentoGenerico(getEntity(), getValor(), getFormaPagamento(), getParcela(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
                         UtilsFrontEnd.getProfissionalLogado());
 
             }
@@ -429,9 +559,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         PrimeFaces.current().executeScript("PF('dlgNewLancamento').hide()");
 
     }
-    
+
     public double tributoLancamento(Lancamento lancamento) {
-        
+
         return 0;
     }
 
@@ -505,11 +635,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
         try {
-            this.lAPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), Mes.getMesAtual(),
-                    ValidacaoLancamento.NAO_VALIDADO);
+            this.lAPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), null,
+                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, Arrays.asList(StatusLancamento.A_PAGAR));
             BigDecimal vAPagar = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAPagar));
-            this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), Mes.getMesAtual(),
-                    ValidacaoLancamento.NAO_VALIDADO);
+            this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), null,
+                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, Arrays.asList(StatusLancamento.A_PAGAR));
             BigDecimal vAReceber = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAReceber));
             if (this.paciente != null)
                 ContaSingleton.getInstance().getContaFromOrigem(this.paciente).setSaldo(vAReceber.subtract(vAPagar));
@@ -643,19 +773,19 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.listaPt = listaPt;
     }
 
-    public String getStatus() {
+    public StatusFatura getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatusFatura status) {
         this.status = status;
     }
 
-    public List<String> getListaStatus() {
+    public List<StatusFatura> getListaStatus() {
         return listaStatus;
     }
 
-    public void setListaStatus(List<String> listaStatus) {
+    public void setListaStatus(List<StatusFatura> listaStatus) {
         this.listaStatus = listaStatus;
     }
 
@@ -721,6 +851,66 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setlAReceber(List<Lancamento> lAReceber) {
         this.lAReceber = lAReceber;
+    }
+
+    public SubStatusFatura[] getSubStatusFatura() {
+        return subStatusFatura;
+    }
+
+    public void setSubStatusFatura(SubStatusFatura[] subStatusFatura) {
+        this.subStatusFatura = subStatusFatura;
+    }
+
+    public List<SubStatusFatura> getListaSubStatusFatura() {
+        return Arrays.asList(SubStatusFatura.values());
+    }
+
+    public String getFiltroPeriodo() {
+        return filtroPeriodo;
+    }
+
+    public void setFiltroPeriodo(String filtroPeriodo) {
+        this.filtroPeriodo = filtroPeriodo;
+    }
+
+    public BigDecimal getSomaTotal() {
+        return somaTotal;
+    }
+
+    public void setSomaTotal(BigDecimal somaTotal) {
+        this.somaTotal = somaTotal;
+    }
+
+    public BigDecimal getSomaTotalPago() {
+        return somaTotalPago;
+    }
+
+    public void setSomaTotalPago(BigDecimal somaTotalPago) {
+        this.somaTotalPago = somaTotalPago;
+    }
+
+    public BigDecimal getSomaTotalNaoPago() {
+        return somaTotalNaoPago;
+    }
+
+    public void setSomaTotalNaoPago(BigDecimal somaTotalNaoPago) {
+        this.somaTotalNaoPago = somaTotalNaoPago;
+    }
+
+    public BigDecimal getSomaTotalNaoPlanejado() {
+        return somaTotalNaoPlanejado;
+    }
+
+    public void setSomaTotalNaoPlanejado(BigDecimal somaTotalNaoPlanejado) {
+        this.somaTotalNaoPlanejado = somaTotalNaoPlanejado;
+    }
+
+    public String getFaturaViewImportName() {
+        return faturaViewImportName;
+    }
+
+    public void setFaturaViewImportName(String faturaViewImportName) {
+        this.faturaViewImportName = faturaViewImportName;
     }
 
 }

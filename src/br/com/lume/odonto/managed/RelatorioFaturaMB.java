@@ -3,6 +3,7 @@ package br.com.lume.odonto.managed;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,9 @@ import br.com.lume.motivo.MotivoSingleton;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.DadosBasico;
 import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.Fatura.DirecaoFatura;
+import br.com.lume.odonto.entity.Fatura.StatusFatura;
+import br.com.lume.odonto.entity.Fatura.SubStatusFatura;
 import br.com.lume.odonto.entity.Fornecedor;
 import br.com.lume.odonto.entity.Origem;
 import br.com.lume.odonto.entity.Paciente;
@@ -51,10 +55,14 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
     private String filtroPeriodo;
 
     private String tipoFatura;
-    
+
     private DadosBasico origem;
-    
+
     private List<SelectItem> origens;
+
+    private StatusFatura statusFatura;
+    private List<StatusFatura> statussFatura;
+    private SubStatusFatura[] subStatusFatura;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
@@ -63,6 +71,8 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         super(FaturaSingleton.getInstance().getBo());
         this.setClazz(Fatura.class);
         geraListaOrigens();
+
+        this.statussFatura = Fatura.getStatusFaturaLista();
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
@@ -78,49 +88,72 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
     }
 
     public void actionFiltrar(ActionEvent event) {
-        
+
         try {
-            
+
             if (inicio != null && fim != null && inicio.getTime() > fim.getTime()) {
                 this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
             } else {
-                
+
+                Date dataInicio = null;
+                if (inicio != null) {
+                    Calendar calInicio = Calendar.getInstance();
+                    calInicio.setTime(inicio);
+                    calInicio.set(Calendar.HOUR, 0);
+                    calInicio.set(Calendar.MINUTE, 0);
+                    calInicio.set(Calendar.SECOND, 0);
+                    calInicio.set(Calendar.MILLISECOND, 0);
+                    dataInicio = calInicio.getTime();
+                }
+
+                Date dataFim = null;
+                if (fim != null) {
+                    Calendar calFim = Calendar.getInstance();
+                    calFim.setTime(fim);
+                    calFim.set(Calendar.HOUR, 23);
+                    calFim.set(Calendar.MINUTE, 59);
+                    calFim.set(Calendar.SECOND, 59);
+                    calFim.set(Calendar.MILLISECOND, 999);
+                    dataFim = calFim.getTime();
+                }
+
                 Paciente paciente = null;
                 Profissional profissional = null;
                 Fornecedor fornecedor = null;
                 Origem origem = null;
-                
-                if(this.origem != null) {
-                    
-                    if(this.origem.getSexo() != null) {
-                        
+
+                if (this.origem != null) {
+
+                    if (this.origem.getSexo() != null) {
+
                         profissional = ProfissionalSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
-                        
-                        if(profissional == null)
+
+                        if (profissional == null)
                             paciente = PacienteSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
-                        
-                    }else if(this.origem.getDocumento() == null && this.origem.getSexo() == null) {
-                        
+
+                    } else if (this.origem.getDocumento() == null && this.origem.getSexo() == null) {
+
                         origem = OrigemSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
 
-                    }else if(this.origem.getSexo() == null || this.origem.getSexo().isEmpty()) {
-                        
+                    } else if (this.origem.getSexo() == null || this.origem.getSexo().isEmpty()) {
+
                         fornecedor = FornecedorSingleton.getInstance().getBo().findByDadosBasicos(this.origem);
                     }
                 }
-                
-                setEntityList(FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, inicio, fim, paciente, profissional, fornecedor, origem));
-                
+
+                setEntityList(FaturaSingleton.getInstance().getBo().listAllByFilter(UtilsFrontEnd.getEmpresaLogada(), tipoFatura, dataInicio, dataFim, paciente, profissional, fornecedor, origem,
+                        statusFatura, Arrays.asList(this.subStatusFatura)));
+
                 getEntityList().forEach(fatura -> {
                     updateValues(fatura);
                 });
             }
-            
-        }catch (Exception e) {
+
+        } catch (Exception e) {
             this.log.error("Erro no actionFiltrar", e);
             this.addError("Erro ao filtrar", "Não foi possivel carregar os registros.", true);
         }
-        
+
     }
 
     private void updateValues(Fatura fatura) {
@@ -131,73 +164,73 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura));
         fatura.setDadosTabelaPT(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(fatura));
 
-        fatura.setDadosTabelaStatusFatura("A Receber");
-        if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
-            fatura.setDadosTabelaStatusFatura("Recebido");
+        //fatura.setDadosTabelaStatusFatura("A Receber");
+        //if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
+        //fatura.setDadosTabelaStatusFatura("Recebido");
     }
-    
+
     public String descricaoOrigemFatura(Fatura fatura) {
-        
-        if(fatura.getProfissional() != null)
+
+        if (fatura.getProfissional() != null)
             return fatura.getProfissional().getDadosBasico().getNome();
-        if(fatura.getPaciente() != null)
+        if (fatura.getPaciente() != null)
             return fatura.getPaciente().getDadosBasico().getNome();
-        if(fatura.getFornecedor() != null)
+        if (fatura.getFornecedor() != null)
             return fatura.getFornecedor().getDadosBasico().getNome();
-        if(fatura.getOrigem() != null)
+        if (fatura.getOrigem() != null)
             return fatura.getOrigem().getDadosBasico().getNome();
-        
+
         return "";
     }
-    
+
     public String descricaoFatura(Fatura fatura) {
-        
+
         try {
-            
-            if( fatura.getTipoFatura().rotulo.equals("PP") )
+
+            if (fatura.getTipoFatura().getRotulo().equals("PP"))
                 return MotivoSingleton.getInstance().getBo().findBySigla("PP").getDescricao();
-            
-            if( fatura.getTipoFatura().rotulo.equals("FP"))
-                if(fatura.getFornecedor() != null || fatura.getOrigem() != null)
+
+            if (fatura.getTipoFatura().getRotulo().equals("FP"))
+                if (fatura.getFornecedor() != null || fatura.getOrigem() != null)
                     return MotivoSingleton.getInstance().getBo().findBySigla("PF").getDescricao();
-                else if(fatura.getProfissional() != null)
+                else if (fatura.getProfissional() != null)
                     return MotivoSingleton.getInstance().getBo().findBySigla("PP").getDescricao();
-            
-            if( fatura.getTipoFatura().rotulo.equals("FR") || fatura.getTipoFatura().rotulo.equals("RP") )
+
+            if (fatura.getTipoFatura().getRotulo().equals("FR") || fatura.getTipoFatura().getRotulo().equals("RP"))
                 return MotivoSingleton.getInstance().getBo().findBySigla("PX").getDescricao();
-            
-        }catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar a descrição da fatura",true);
+
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar a descrição da fatura", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
-        
-        return "";        
+
+        return "";
     }
-    
+
     public String tipoSaldoFatura(Fatura fatura) {
-        
-        if( fatura.getTipoFatura().rotulo.equals("RP") || fatura.getTipoFatura().rotulo.equals("FR") )
+
+        if (fatura.getTipoFatura().getRotulo().equals("RP") || fatura.getTipoFatura().getRotulo().equals("FR"))
             return "Entrada";
         else
             return "Saída";
     }
-    
+
     public String valorFatura(Fatura fatura) {
-        
+
         Locale Local = new Locale("pt", "BR");
 
         double value = fatura.getDadosTabelaRepasseTotalFatura().doubleValue();
         DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
-        
+
         return "R$ " + df.format(value);
     }
-    
+
     public String valorPagoFatura(Fatura fatura) {
         Locale Local = new Locale("pt", "BR");
 
         double value = fatura.getDadosTabelaRepasseTotalPago().doubleValue();
         DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
-        
+
         return "R$ " + df.format(value);
     }
 
@@ -206,76 +239,72 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
         double value = fatura.getDadosTabelaRepasseTotalNaoPago().doubleValue();
         DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
-        
+
         return "R$ " + df.format(value);
     }
-    
+
     public String converterData(Date data) {
         return Utils.dateToString(data);
     }
-    
+
     public void geraListaOrigens() {
         try {
-            
+
             long idEmpresaLogada = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
             int cont = 0, tam = 0;
-            
+
             SelectItemGroup listaProfissionais = new SelectItemGroup("PROFISSIONAIS");
             SelectItemGroup listaFornecedores = new SelectItemGroup("FORNECEDORES");
             SelectItemGroup listaPacientes = new SelectItemGroup("PACIENTES");
-            
+
             List<Fornecedor> fornecedores = FornecedorSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             List<Origem> origens = OrigemSingleton.getInstance().getBo().listByEmpresa(idEmpresaLogada);
             List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listAll(idEmpresaLogada);
-            
-            tam = fornecedores.size()+origens.size() -1;
-            
+
+            tam = fornecedores.size() + origens.size() - 1;
+
             SelectItem itensFornecedores[] = new SelectItem[tam];
             SelectItem itensProfissionais[] = new SelectItem[profissionais.size()];
             SelectItem itensPacientes[] = new SelectItem[pacientes.size()];
-            
+
             for (int i = 0; i < tam; i++) {
-                if(i < fornecedores.size()) {
-                    itensFornecedores[i] = new SelectItem(fornecedores.get(i).getDadosBasico(),
-                            fornecedores.get(i).getDadosBasico().getNome());
-                }else {
-                    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(),
-                            origens.get(cont).getDadosBasico().getNome());
+                if (i < fornecedores.size()) {
+                    itensFornecedores[i] = new SelectItem(fornecedores.get(i).getDadosBasico(), fornecedores.get(i).getDadosBasico().getNome());
+                } else {
+                    itensFornecedores[i] = new SelectItem(origens.get(cont).getDadosBasico(), origens.get(cont).getDadosBasico().getNome());
                 }
             }
-            
+
             for (int i = 0; i < profissionais.size(); i++) {
-                if(profissionais.get(i).getDadosBasico() != null) {
-                    itensProfissionais[i] = new SelectItem(profissionais.get(i).getDadosBasico(),
-                            profissionais.get(i).getDadosBasico().getNome());
+                if (profissionais.get(i).getDadosBasico() != null) {
+                    itensProfissionais[i] = new SelectItem(profissionais.get(i).getDadosBasico(), profissionais.get(i).getDadosBasico().getNome());
                 }
             }
-            
-            for(int i = 0; i < pacientes.size(); i++) {
-                if(pacientes.get(i).getDadosBasico() != null) {
-                    itensPacientes[i] = new SelectItem(pacientes.get(i).getDadosBasico(),
-                            pacientes.get(i).getDadosBasico().getNome());
+
+            for (int i = 0; i < pacientes.size(); i++) {
+                if (pacientes.get(i).getDadosBasico() != null) {
+                    itensPacientes[i] = new SelectItem(pacientes.get(i).getDadosBasico(), pacientes.get(i).getDadosBasico().getNome());
                 }
             }
-            
+
             listaProfissionais.setSelectItems(itensProfissionais);
             listaFornecedores.setSelectItems(itensFornecedores);
             listaPacientes.setSelectItems(itensPacientes);
-            
-            if(this.origens == null)
+
+            if (this.origens == null)
                 this.setOrigens(new ArrayList<SelectItem>());
-            
+
             this.origens.add(listaProfissionais);
             this.origens.add(listaPacientes);
             this.origens.add(listaFornecedores);
-            
+
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar os registros",true);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar os registros", true);
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
-    
+
     public void actionTrocaDatasCriacao() {
         try {
             setInicio(getDataInicio(filtroPeriodo));
@@ -404,6 +433,42 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
     public void setOrigens(List<SelectItem> origens) {
         this.origens = origens;
+    }
+
+    public StatusFatura getStatusFatura() {
+        return statusFatura;
+    }
+
+    public void setStatusFatura(StatusFatura statusFatura) {
+        this.statusFatura = statusFatura;
+    }
+
+    public List<StatusFatura> getStatussFatura() {
+        return this.statussFatura;
+    }
+
+    public void atualizaTipoFatura() {
+        if ("RP".equals(this.tipoFatura))
+            this.statussFatura = Fatura.getStatusFaturaLista(DirecaoFatura.CREDITO);
+        else if (this.tipoFatura != null)
+            this.statussFatura = Fatura.getStatusFaturaLista(DirecaoFatura.DEBITO);
+        else
+            this.statussFatura = Fatura.getStatusFaturaLista();
+
+        if (this.statussFatura.indexOf(this.statusFatura) < 0)
+            setTipoFatura(null);
+    }
+
+    public SubStatusFatura[] getSubStatusFatura() {
+        return subStatusFatura;
+    }
+
+    public void setSubStatusFatura(SubStatusFatura[] subStatusFatura) {
+        this.subStatusFatura = subStatusFatura;
+    }
+
+    public List<SubStatusFatura> getListaSubStatusFatura() {
+        return Arrays.asList(SubStatusFatura.values());
     }
 
 }

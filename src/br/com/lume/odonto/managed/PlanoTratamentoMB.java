@@ -350,11 +350,19 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 // cancelaAgendamentos();
                 PrimeFaces.current().executeScript("PF('devolver').hide()");
 
-                for (Orcamento orcamento : OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(getEntity()))
-                    OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
+                boolean faturaInterrompida = false;
+                List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(getEntity());
+                for (Orcamento orcamento : orcamentos) {
+                    boolean interrompida = OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
+                    if (!faturaInterrompida)
+                        faturaInterrompida = interrompida;
+                }
+                if (faturaInterrompida)
+                    this.addWarn("Atenção!", "Uma ou mais faturas foram interrompidas com pendências, verifique a tela de Ajuste de Contas.");
             }
             PlanoTratamentoSingleton.getInstance().encerrarPlanoTratamento(getEntity(), this.justificativa, UtilsFrontEnd.getProfissionalLogado());
             this.justificativa = null;
+
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
             atualizaTela();
         } catch (Exception e) {
@@ -970,10 +978,20 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
     }
 
-    public boolean showProdutoNewPlanejamento() {
+    public boolean existeCadastroTarifa() {
+        return existeCadastroTarifa(getPlanejamentoAtual().getFormaPagamento().getValor());
+    }
+    
+    public boolean existeCadastroTarifa(String formaPagamento) {
         List<String> formasPagamentoComProduto = Arrays.asList(new String[] { "CC", "CD", "BO" });
+        if (formasPagamentoComProduto.indexOf(formaPagamento) != -1)
+            return true;
+        return false;
+    }
+    
+    public boolean showProdutoNewPlanejamento() {
         if (getPlanejamentoAtual() != null && getPlanejamentoAtual().getFormaPagamento() != null) {
-            if (formasPagamentoComProduto.indexOf(getPlanejamentoAtual().getFormaPagamento().getValor()) >= 0) {
+            if (existeCadastroTarifa()) {
                 setTarifasNewPlanejamento(
                         TarifaSingleton.getInstance().getBo().listByForma(getPlanejamentoAtual().getFormaPagamento().getValor(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                 return true;
@@ -1721,16 +1739,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void carregarStatusDente() {
-        if(UtilsFrontEnd.getProfissionalLogado() != null) {
+        if (UtilsFrontEnd.getProfissionalLogado() != null) {
             HashSet<StatusDente> hashSet = new HashSet<>();
             statusDente = StatusDenteSingleton.getInstance().getBo().listAllTemplate(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             hashSet.addAll(statusDente);
             statusDenteEmpresa = StatusDenteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             hashSet.addAll(statusDenteEmpresa);
             statusDente = new ArrayList<>(hashSet);
-            statusDente.sort((o1, o2) -> o1.getDescricao().compareTo(o2.getDescricao())); 
+            statusDente.sort((o1, o2) -> o1.getDescricao().compareTo(o2.getDescricao()));
         }
-       
+
     }
     // ================================================= TELA ================================================ //
 

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -27,6 +29,7 @@ import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.managed.MenuMB;
+import br.com.lume.security.validator.GenericValidator;
 
 @ManagedBean
 @ViewScoped
@@ -39,6 +42,8 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     private Profissional profissional;
 
     private List<Afiliacao> afiliacoes;
+    
+    private List<String> diasSelecionados = new ArrayList<>();
 
     @ManagedProperty(value = "#{menuMB}")
     private MenuMB menuMB;
@@ -53,22 +58,88 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     public void actionPersist(ActionEvent event) {
         try {
             // TODO Auto-generated method stub
-            super.actionPersist(event);
-            UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(getEntity()));
-            menuMB.carregarMenu();
 
-            this.addInfo("Sucesso", "Dados salvos com sucesso!");
+            if(verificarRangeData()) {
+                String diasSemana = "";
+                for(String dia : getDiasSelecionados()) {
+                    diasSemana += dia + ";";
+                }
+                
+                this.getEntity().setDiasSemana(diasSemana);
+                
+                super.actionPersist(event);
+                
+                UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(getEntity()));
+                menuMB.carregarMenu();
+
+                this.addInfo("Sucesso", "Dados salvos com sucesso!");
+            }
+            
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error("Erro ao buscar registros", e);
         }
     }
 
+    /**
+     * O intervalo de data deve respeitar a regra (dataFinal >= dataInicial). A obrigatoriedade é de preencher ao menos um turno, se um turno estiver preenchido
+     * corretamente e o outro turno, com um horário definido e o outro horário nulo, não será possível salvar o registro.
+     * @return
+     */
+    private boolean verificarRangeData() {
+        
+        if (this.getEntity().getHoraInicialManha() != null && this.getEntity().getHoraFinalManha() != null) {
+            if (GenericValidator.validarRangeData(this.getEntity().getHoraInicialManha(), this.getEntity().getHoraFinalManha(), true)) {
+                if((this.getEntity().getHoraInicialTarde() != null && this.getEntity().getHoraFinalTarde() != null)) {
+                    if(!GenericValidator.validarRangeData(this.getEntity().getHoraInicialTarde(), this.getEntity().getHoraFinalTarde(), true)) {
+                        this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                        return false;
+                    }
+                }else if(!(this.getEntity().getHoraInicialTarde() == null && this.getEntity().getHoraFinalTarde() == null)){
+                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                    return false;
+                }
+            }else {
+                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                return false;
+            }
+        } else if (this.getEntity().getHoraInicialTarde() != null && this.getEntity().getHoraFinalTarde() != null) {
+            if (GenericValidator.validarRangeData(this.getEntity().getHoraInicialTarde(), this.getEntity().getHoraFinalTarde(), true)) {
+                if((this.getEntity().getHoraInicialManha() != null && this.getEntity().getHoraFinalManha() != null)) {
+                    if(!GenericValidator.validarRangeData(this.getEntity().getHoraInicialManha(), this.getEntity().getHoraFinalManha(), true)) {
+                        addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                        return false;
+                    }
+                }else if(!(this.getEntity().getHoraInicialManha() == null && this.getEntity().getHoraFinalManha() == null)){
+                    addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                    return false;
+                }
+            }else {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Intervalo de horários de profissional não permitido.");
+                return false;
+            }
+      //  } //else if (this.diasSelecionados.isEmpty()) {
+          //  addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário que seja selecionado, no mínimo um dia da semana para os horários de profissional.");
+        //    return false;
+        } else {
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "É necessário o preenchimento de no mínimo um turno nos horários da clínica.");
+            return false;
+        }
+                
+        return true;
+    }
+    
     private void carregarEmpresa() {
         try {
             setEntity(UtilsFrontEnd.getEmpresaLogada());
             profissional = ProfissionalSingleton.getInstance().getBo().findAdminInicial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.afiliacoes = AfiliacaoSingleton.getInstance().getBo().getAllAfiliacao();
+            
+            String dias[] = this.getEntity().getDiasSemana().split(";");
+            Arrays.stream(dias).forEach(dia -> {
+                getDiasSelecionados().add(dia);
+            });
+            
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error("Erro ao buscar registros", e);
@@ -133,6 +204,20 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
 
     public void setAfiliacoes(List<Afiliacao> afiliacoes) {
         this.afiliacoes = afiliacoes;
+    }
+
+    /**
+     * @return the diasSelecionados
+     */
+    public List<String> getDiasSelecionados() {
+        return diasSelecionados;
+    }
+
+    /**
+     * @param diasSelecionados the diasSelecionados to set
+     */
+    public void setDiasSelecionados(List<String> diasSelecionados) {
+        this.diasSelecionados = diasSelecionados;
     }
 
 }

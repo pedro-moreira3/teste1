@@ -23,6 +23,7 @@ import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimentoCusto;
+import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
@@ -106,7 +107,11 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
             }
 
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-            RepasseFaturasSingleton.getInstance().validaValoresItensRepasse(this.getEntity().getPlanoTratamentoProcedimento(), UtilsFrontEnd.getProfissionalLogado());
+            if(this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor().getTipoRemuneracao().equals(Profissional.PORCENTAGEM)) {
+                RepasseFaturasSingleton.getInstance().recalculaRepasse(this.getEntity().getPlanoTratamentoProcedimento(), 
+                        this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(),
+                        this.getEntity().getPlanoTratamentoProcedimento().getRepasseFaturas().get(0).getFaturaRepasse());
+            }
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");

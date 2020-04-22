@@ -63,11 +63,12 @@ body .ui-selectoneradio td label {
 								</p:selectCheckboxMenu>
 
 								<p:outputLabel for="status" value="Status : " />
-								<p:selectOneMenu id="status" value="#{lancamentoMB.status}">
+								<p:selectOneMenu id="status" value="#{lancamentoMB.status}"
+									converter="enumStatusLancamento">
 									<f:selectItem itemValue="#{null}"
 										itemLabel="Selecione um Status" />
 									<f:selectItems value="#{lancamentoMB.statuss}" var="status"
-										itemLabel="#{status}" itemValue="#{status}" />
+										itemLabel="#{status.descricao}" itemValue="#{status}" />
 									<p:ajax process="@this" />
 								</p:selectOneMenu>
 

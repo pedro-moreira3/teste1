@@ -372,11 +372,11 @@ body .ui-selectoneradio td label {
 							</div>
 						</p:tab>
 
-						<p:tab id="tab2" title="Validação Lançamento">
+						<p:tab id="tab2" title="Conferência de Recebimentos">
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
 									<p:outputPanel styleClass="BordNone">
-										<h1>Validação Lançamentos</h1>
+										<h1>Conferência de Recebimentos</h1>
 										<div class="SeparatorFull"></div>
 									</p:outputPanel>
 									<br />
@@ -391,6 +391,11 @@ body .ui-selectoneradio td label {
 											filterMatchMode="contains" headerText="Paciente">
 											<h:outputText value="#{lc.fatura.paciente.dadosBasico.nome}"
 												title="#{lc.id}" />
+										</p:column>
+										<p:column filterBy="#{lc.pt.descricao}"
+											sortBy="#{lc.pt.descricao}" filterMatchMode="contains"
+											headerText="PlanoTratamento">
+											<h:outputText value="#{lc.pt.descricao}" title="#{lc.pt.id}" />
 										</p:column>
 										<p:column filterBy="#{lc.formaPagamentoStr}"
 											sortBy="#{lc.formaPagamentoStr}" filterMatchMode="contains"

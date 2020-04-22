@@ -1,10 +1,12 @@
 package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -24,10 +26,18 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils.Mes;
 import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.common.util.UtilsPadraoRelatorio;
+import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.Lancamento.DirecaoLancamento;
+import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
+import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.profissional.ProfissionalSingleton;
 import br.com.lume.security.entity.Empresa;
 
 @ManagedBean
@@ -36,9 +46,12 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
 
     private static final long serialVersionUID = 1L;
     private List<Lancamento> aPagar, aReceber;
-    private Mes mesAPagar, mesAReceber;
-    private int anoAReceber, anoAPagar;
-    private boolean consideraLancamentosValidadosAPagar, consideraLancamentosValidadosAReceber;
+    private BigDecimal somaTotalAPagar = BigDecimal.ZERO, somaTotalAReceber = BigDecimal.ZERO;
+    private Date dataInicioAReceber, dataFimAReceber, dataInicioAPagar, dataFimAPagar;
+    private PeriodoBusca periodoBuscaAReceber, periodoBuscaAPagar;
+    private Paciente paciente;
+    private Profissional profissional;
+    private StatusLancamento[] statusLancamentoAReceber, statusLancamentoAPagar;
 
     private Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
     private BarChartModel lineModel;
@@ -67,7 +80,7 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
                 valor = LancamentoSingleton.getInstance().getBo().listContasAReceberValor(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.NAO_VALIDADO);
                 valuesAReceber.add((valor == null ? 0d : valor.doubleValue()));
 
-                valor = LancamentoSingleton.getInstance().getBo().listContasAReceberValor(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.NAO_VALIDADO);
+                valor = LancamentoSingleton.getInstance().getBo().listContasAReceberValor(empresaLogada.getConta(), mesAtual, anoAtual, ValidacaoLancamento.VALIDADO);
                 valuesRecebidos.add((valor == null ? 0d : valor.doubleValue()));
 
                 labels.add(mesAtual.getRotulo() + "/" + String.valueOf(anoAtual));
@@ -128,10 +141,13 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
     public MovimentacoesMB() {
         super(LancamentoSingleton.getInstance().getBo());
         this.setClazz(Lancamento.class);
-        this.anoAReceber = this.anoAPagar = Calendar.getInstance().get(Calendar.YEAR);
-        this.mesAPagar = this.mesAReceber = getMeses().get(Calendar.getInstance().get(Calendar.MONTH));
-        this.consideraLancamentosValidadosAPagar = this.consideraLancamentosValidadosAReceber = false;
+        this.periodoBuscaAPagar = PeriodoBusca.MES_ATUAL;
+        actionTrocaDatasAPagar();
+        this.periodoBuscaAReceber = PeriodoBusca.MES_ATUAL;
+        actionTrocaDatasAReceber();
         this.carregaListaAReceber();
+
+        this.atualizaGraficoContas.start();
     }
 
     public void onTabChange(TabChangeEvent event) {
@@ -142,14 +158,68 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         }
     }
 
+    public List<StatusLancamento> getListaStatusLancamentoAReceber() {
+        return Lancamento.getStatusLancamento(DirecaoLancamento.CREDITO);
+    }
+
+    public List<StatusLancamento> getListaStatusLancamentoAPagar() {
+        return Lancamento.getStatusLancamento(DirecaoLancamento.DEBITO);
+    }
+
     public String getFaturaInfo(Fatura f) {
         return FaturaSingleton.getInstance().getFaturaInfo(f);
     }
 
+    public List<Paciente> sugestoesPacientes(String query) {
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    }
+
+    public List<Profissional> geraSugestoesProfissional(String query) {
+        List<Profissional> sugestoes = new ArrayList<>();
+        List<Profissional> profissionais = new ArrayList<>();
+        try {
+            profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            for (Profissional p : profissionais) {
+                if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
+                        Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {
+                    sugestoes.add(p);
+                }
+            }
+            Collections.sort(sugestoes);
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro", Mensagens.ERRO_AO_BUSCAR_REGISTROS, true);
+        }
+        return sugestoes;
+    }
+
+    public void actionTrocaDatasAPagar() {
+        try {
+            setDataInicioAPagar(UtilsPadraoRelatorio.getDataInicio(getPeriodoBuscaAPagar()));
+            setDataFimAPagar(UtilsPadraoRelatorio.getDataFim(getPeriodoBuscaAPagar()));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+
     public void carregaListaAPagar() {
         try {
-            this.aPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(UtilsFrontEnd.getEmpresaLogada().getConta(), this.mesAPagar, this.anoAPagar,
-                    (this.consideraLancamentosValidadosAPagar ? ValidacaoLancamento.TODOS : ValidacaoLancamento.NAO_VALIDADO));
+            this.somaTotalAPagar = BigDecimal.ZERO;
+            this.aPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(UtilsFrontEnd.getEmpresaLogada().getConta(), getDataInicioAPagar(), getDataFimAPagar(), null, getProfissional(),
+                    (getStatusLancamentoAPagar() == null ? null : Arrays.asList(getStatusLancamentoAPagar())));
+            for (Lancamento lAPagar : this.aPagar)
+                this.somaTotalAPagar = this.somaTotalAPagar.add(lAPagar.getValor());
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+
+    public void actionTrocaDatasAReceber() {
+        try {
+            setDataInicioAReceber(UtilsPadraoRelatorio.getDataInicio(getPeriodoBuscaAReceber()));
+            setDataFimAReceber(UtilsPadraoRelatorio.getDataFim(getPeriodoBuscaAReceber()));
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -158,8 +228,11 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
 
     public void carregaListaAReceber() {
         try {
-            this.aReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(UtilsFrontEnd.getEmpresaLogada().getConta(), this.mesAReceber, this.anoAReceber,
-                    (this.consideraLancamentosValidadosAReceber ? ValidacaoLancamento.TODOS : ValidacaoLancamento.NAO_VALIDADO));
+            this.somaTotalAReceber = BigDecimal.ZERO;
+            this.aReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(UtilsFrontEnd.getEmpresaLogada().getConta(), getDataInicioAReceber(), getDataFimAReceber(), getPaciente(),
+                    null, (getStatusLancamentoAReceber() == null ? null : Arrays.asList(getStatusLancamentoAReceber())));
+            for (Lancamento lAReceber : this.aReceber)
+                this.somaTotalAReceber = this.somaTotalAReceber.add(lAReceber.getValor());
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -173,13 +246,7 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
     }
 
     public String getNewStatusLancamento(Lancamento l) {
-        if (Arrays.asList(new String[] { Lancamento.PAGO, Lancamento.CANCELADO, Lancamento.ATRASADO }).indexOf(l.getStatus()) >= 0)
-            return l.getStatus();
-        if (l.getFatura().getPaciente() != null)
-            return "A Receber";
-        else if (l.getFatura().getProfissional() != null)
-            return "A Pagar";
-        return Lancamento.PENDENTE;
+        return l.getStatus().getDescricao();
     }
 
     public List<Lancamento> getaPagar() {
@@ -198,66 +265,16 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         this.aReceber = aReceber;
     }
 
-    public Mes getMesAPagar() {
-        return mesAPagar;
-    }
-
-    public void setMesAPagar(Mes mesAPagar) {
-        this.mesAPagar = mesAPagar;
-    }
-
-    public Mes getMesAReceber() {
-        return mesAReceber;
-    }
-
-    public void setMesAReceber(Mes mesAReceber) {
-        this.mesAReceber = mesAReceber;
-    }
-
-    public boolean isConsideraLancamentosValidadosAPagar() {
-        return consideraLancamentosValidadosAPagar;
-    }
-
-    public void setConsideraLancamentosValidadosAPagar(boolean consideraLancamentosValidadosAPagar) {
-        this.consideraLancamentosValidadosAPagar = consideraLancamentosValidadosAPagar;
-    }
-
-    public boolean isConsideraLancamentosValidadosAReceber() {
-        return consideraLancamentosValidadosAReceber;
-    }
-
-    public void setConsideraLancamentosValidadosAReceber(boolean consideraLancamentosValidadosAReceber) {
-        this.consideraLancamentosValidadosAReceber = consideraLancamentosValidadosAReceber;
-    }
-
     public List<Mes> getMeses() {
         return Arrays.asList(Mes.values());
     }
 
     public BarChartModel getLineModel() {
-        if (lineModel == null && !this.atualizaGraficoContas.isAlive())
-            this.atualizaGraficoContas.start();
         return lineModel;
     }
 
     public void setLineModel(BarChartModel lineModel) {
         this.lineModel = lineModel;
-    }
-
-    public int getAnoAReceber() {
-        return anoAReceber;
-    }
-
-    public void setAnoAReceber(int anoAReceber) {
-        this.anoAReceber = anoAReceber;
-    }
-
-    public int getAnoAPagar() {
-        return anoAPagar;
-    }
-
-    public void setAnoAPagar(int anoAPagar) {
-        this.anoAPagar = anoAPagar;
     }
 
     public boolean isGraficoCompleto() {
@@ -266,6 +283,102 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
 
     public void setGraficoCompleto(boolean graficoCompleto) {
         this.graficoCompleto = graficoCompleto;
+    }
+
+    public BigDecimal getSomaTotalAPagar() {
+        return somaTotalAPagar;
+    }
+
+    public void setSomaTotalAPagar(BigDecimal somaTotalAPagar) {
+        this.somaTotalAPagar = somaTotalAPagar;
+    }
+
+    public BigDecimal getSomaTotalAReceber() {
+        return somaTotalAReceber;
+    }
+
+    public void setSomaTotalAReceber(BigDecimal somaTotalAReceber) {
+        this.somaTotalAReceber = somaTotalAReceber;
+    }
+
+    public Date getDataInicioAReceber() {
+        return dataInicioAReceber;
+    }
+
+    public void setDataInicioAReceber(Date dataInicioAReceber) {
+        this.dataInicioAReceber = dataInicioAReceber;
+    }
+
+    public Date getDataFimAReceber() {
+        return dataFimAReceber;
+    }
+
+    public void setDataFimAReceber(Date dataFimAReceber) {
+        this.dataFimAReceber = dataFimAReceber;
+    }
+
+    public Date getDataInicioAPagar() {
+        return dataInicioAPagar;
+    }
+
+    public void setDataInicioAPagar(Date dataInicioAPagar) {
+        this.dataInicioAPagar = dataInicioAPagar;
+    }
+
+    public Date getDataFimAPagar() {
+        return dataFimAPagar;
+    }
+
+    public void setDataFimAPagar(Date dataFimAPagar) {
+        this.dataFimAPagar = dataFimAPagar;
+    }
+
+    public PeriodoBusca getPeriodoBuscaAReceber() {
+        return periodoBuscaAReceber;
+    }
+
+    public void setPeriodoBuscaAReceber(PeriodoBusca periodoBuscaAReceber) {
+        this.periodoBuscaAReceber = periodoBuscaAReceber;
+    }
+
+    public PeriodoBusca getPeriodoBuscaAPagar() {
+        return periodoBuscaAPagar;
+    }
+
+    public void setPeriodoBuscaAPagar(PeriodoBusca periodoBuscaAPagar) {
+        this.periodoBuscaAPagar = periodoBuscaAPagar;
+    }
+
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
+    }
+
+    public StatusLancamento[] getStatusLancamentoAReceber() {
+        return statusLancamentoAReceber;
+    }
+
+    public void setStatusLancamentoAReceber(StatusLancamento[] statusLancamentoAReceber) {
+        this.statusLancamentoAReceber = statusLancamentoAReceber;
+    }
+
+    public StatusLancamento[] getStatusLancamentoAPagar() {
+        return statusLancamentoAPagar;
+    }
+
+    public void setStatusLancamentoAPagar(StatusLancamento[] statusLancamentoAPagar) {
+        this.statusLancamentoAPagar = statusLancamentoAPagar;
+    }
+
+    public Profissional getProfissional() {
+        return profissional;
+    }
+
+    public void setProfissional(Profissional profissional) {
+        this.profissional = profissional;
     }
 
 }

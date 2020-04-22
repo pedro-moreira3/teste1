@@ -167,14 +167,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 </style>
 
 		<p:outputPanel id="viewFaturaRepasse">
-			<ui:include src="faturaView.xhtml">
+			<ui:include src="#{faturaPagtoMB.faturaViewImportName}">
 				<ui:param name="showNewLancamento" value="N" />
 				<ui:param name="faturaGenerica" value="F" />
 			</ui:include>
-			<p:remoteCommand name="onCloseFaturaView" process="@this"
-				update=":lume:dtPrincipal, :lume:dtPrincipal"
-				actionListener="#{relatorioFaturaMB.actionFiltrar}" />
 		</p:outputPanel>
+		<p:remoteCommand name="onCloseFaturaView" process="@this"
+			update=":lume:dtPrincipal, :lume:dtPrincipal"
+			actionListener="#{relatorioFaturaMB.actionFiltrar}" />
 
 
 		<div class="ui-g ui-fluid">
@@ -282,12 +282,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 									</p:panelGrid>
 
-									<p:panelGrid id="filtro" columns="2"
-										columnClasses="ui-grid-col-12" layout="grid"
-										styleClass="ui-panelgrid-blank"
+									<p:panelGrid id="filtro" columns="3"
+										columnClasses="ui-grid-col-6, ui-grid-col-3, ui-grid-col-3"
+										layout="grid" styleClass="ui-panelgrid-blank"
 										style="border:0px none; background-color:transparent;">
 
-										<h:panelGroup>
+										<h:panelGroup styleClass="lumeField">
 											<p:outputLabel value="Tipo da Fatura:" />
 											<p:selectOneRadio value="#{relatorioFaturaMB.tipoFatura}">
 												<f:selectItem itemValue="" itemLabel="Todos" />
@@ -298,9 +298,36 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<f:selectItem itemValue="PF"
 													itemLabel="Pagamento de fornecedor" />
 
-												<p:ajax process="@this" />
+												<p:ajax process="@this" event="change"
+													listener="#{relatorioFaturaMB.atualizaTipoFatura}"
+													update="statusFaturaFiltro" />
 
 											</p:selectOneRadio>
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="lumeField">
+											<p:outputLabel for="statusFaturaFiltro"
+												value="Status da Fatura" />
+											<p:selectOneMenu id="statusFaturaFiltro"
+												converter="enumStatusFatura"
+												value="#{relatorioFaturaMB.statusFatura}" filter="true"
+												filterMatchMode="contains" style="top: 5px;">
+												<f:selectItems value="#{relatorioFaturaMB.statussFatura}"
+													var="status" itemLabel="#{status.descricao}"
+													itemValue="#{status}" />
+											</p:selectOneMenu>
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="lumeField">
+											<p:outputLabel for="subStatus" value="Sub Status da Fatura: " />
+											<p:selectCheckboxMenu id="subStatus" label="SubStatus"
+												multiple="true" value="#{relatorioFaturaMB.subStatusFatura}"
+												converter="enumSubStatusFatura">
+												<f:selectItems
+													value="#{relatorioFaturaMB.listaSubStatusFatura}"
+													var="subStatus" itemLabel="#{subStatus.descricao}"
+													itemValue="#{subStatus}" />
+											</p:selectCheckboxMenu>
 										</h:panelGroup>
 
 									</p:panelGrid>
@@ -361,7 +388,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:ajax process="@this"
 											listener="#{faturaPagtoMB.visualizaFatura(m)}"
 											oncomplete="PF('dlgFaturaView').show();"
-											update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+											update=":lume:viewFaturaRepasse, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 
 									</p:commandButton>
 									<p:tooltip for="btnView" value="Visualizar fatura" />
@@ -445,6 +472,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							</p:column>
 
+							<p:column headerText="Status da Fatura"
+								sortBy="#{m.statusFaturaCompleto}" filterMatchMode="contains"
+								filterBy="#{m.statusFaturaCompleto}">
+
+								<h:outputText value="#{m.statusFaturaCompleto}" />
+
+							</p:column>
+
 
 						</p:dataTable>
 					</p:outputPanel>
@@ -452,7 +487,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 			</div>
 		</div>
 
-		
+
 		<p:remoteCommand name="onHidePacienteFicha" process="@this" />
 
 		<script type="text/javascript">

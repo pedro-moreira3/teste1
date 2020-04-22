@@ -76,8 +76,19 @@
 								immediate="true" />						
 							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{tarifaMB.actionPersist}"
 								update=":lume:pnTarifa,:lume:dtTarifa" process=":lume:pnTarifa" styleClass="GreenButton" />
-							<p:commandButton id="delete" icon="White fa fa-trash-o" value="Excluir" actionListener="#{tarifaMB.actionRemove}"
-								update=":lume:pnTarifa,:lume:dtTarifa" process="@this" disabled="#{tarifaMB.entity.id == 0}" styleClass="RedButton" />
+							
+							<p:commandButton id="ativar" icon="White fa fa-chain White" 
+								value="Ativar" actionListener="#{tarifaMB.actionAtivar}"
+								update=":lume:pnTarifa,:lume:dtTarifa" process="@this" 
+								disabled="#{tarifaMB.entity.id == 0}" styleClass="NavyButton" 
+								rendered="#{tarifaMB.entity.status eq 'Inativo'}"/>
+							
+							<p:commandButton id="inativar" icon="White fa fa-chain-broken"
+								value="Inativar" actionListener="#{tarifaMB.actionInativar}"
+								update=":lume:pnTarifa,:lume:dtTarifa" process="@this" 
+								disabled="#{tarifaMB.entity.id == 0}" styleClass="NavyButton"
+								rendered="#{tarifaMB.entity.status eq 'Ativo'}"/>
+							
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"
@@ -148,6 +159,9 @@
 
 						<p:column filterBy="#{tarifa.agencia}" sortBy="#{tarifa.agencia}" filterMatchMode="contains" headerText="Agência">
 							<h:outputText value="#{tarifa.agencia}" />
+						</p:column>
+						<p:column filterBy="#{tarifa.status}" sortBy="#{tarifa.status}" filterMatchMode="contains" headerText="Status">
+							<h:outputText value="#{tarifa.status}" />
 						</p:column>
 					</p:dataTable>
 				</div>

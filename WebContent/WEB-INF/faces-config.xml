@@ -1,46 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<faces-config xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd" version="2.1">
-    <factory>
-    	<external-context-factory>br.com.lume.common.config.CustomExternalContext$Factory</external-context-factory>
+<faces-config xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_2_1.xsd"
+	version="2.1">
+	<factory>
+		<external-context-factory>br.com.lume.common.config.CustomExternalContext$Factory</external-context-factory>
 	</factory>
-    <application>
-        <locale-config>
-            <default-locale>pt_BR</default-locale>
-        </locale-config>
+	<application>
+		<locale-config>
+			<default-locale>pt_BR</default-locale>
+		</locale-config>
 
-        <resource-bundle>
-            <base-name>br.com.lume.resources.security</base-name>
-            <var>msg</var>
-        </resource-bundle>
-        <message-bundle>br.com.lume.resources.security</message-bundle>
-    </application>
+		<resource-bundle>
+			<base-name>br.com.lume.resources.security</base-name>
+			<var>msg</var>
+		</resource-bundle>
+		<message-bundle>br.com.lume.resources.security</message-bundle>
+	</application>
 
 	<managed-bean>
-    	<managed-bean-name>currentDate</managed-bean-name>
-    	<managed-bean-class>java.util.Date</managed-bean-class>
-    	<managed-bean-scope>request</managed-bean-scope>
+		<managed-bean-name>currentDate</managed-bean-name>
+		<managed-bean-class>java.util.Date</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 
-    <application>
-        <locale-config>
-            <default-locale>pt_BR</default-locale>
-        </locale-config>
+	<application>
+		<locale-config>
+			<default-locale>pt_BR</default-locale>
+		</locale-config>
 
-        <resource-bundle>
-            <base-name>br.com.lume.odonto.resources.odonto</base-name>
-            <var>odonto</var>
-        </resource-bundle>
-        <message-bundle>br.com.lume.odonto.resources.odonto</message-bundle>
-    </application>
+		<resource-bundle>
+			<base-name>br.com.lume.odonto.resources.odonto</base-name>
+			<var>odonto</var>
+		</resource-bundle>
+		<message-bundle>br.com.lume.odonto.resources.odonto</message-bundle>
+	</application>
 
 
-    <lifecycle>
-        <phase-listener>br.com.lume.common.phaselistener.AuthorizationListener</phase-listener>
-    </lifecycle>
+	<lifecycle>
+		<phase-listener>br.com.lume.common.phaselistener.AuthorizationListener</phase-listener>
+	</lifecycle>
 
-    <component>
+	<lifecycle>
+		<phase-listener>br.com.lume.security.audit.LifeCycleListener</phase-listener>
+	</lifecycle>
+
+	<component>
 		<component-type>org.primefaces.component.UltimaMenu</component-type>
 		<component-class>org.primefaces.ultima.component.menu.UltimaMenu</component-class>
 	</component>

@@ -258,12 +258,12 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
             
             if(this.filtroOrcamento != null && !this.filtroOrcamento.isEmpty()) {
                 if( (this.filtroOrcamento.contains("A")) ) {
-                    if( !orcamento.isAprovado() )
+                    if( !orcamento.isAprovado() || !orcamento.isAtivo())
                         this.relatorioOrcamentos.remove(orcamento);
                 }
                 
                 if( (this.filtroOrcamento.contains("I")) ) {
-                    if( orcamento.isAprovado() )
+                    if( orcamento.isAprovado() || !orcamento.isAtivo())
                         this.relatorioOrcamentos.remove(orcamento);
                 }
             }

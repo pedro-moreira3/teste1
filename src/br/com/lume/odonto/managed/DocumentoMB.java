@@ -8,6 +8,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.extensions.component.ckeditor.CKEditor;
 
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
@@ -33,6 +34,9 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     private List<Documento> documentos;
 
     private List<Dominio> dominios;
+    
+    private CKEditor ckEditor;
+    
 
   //  private DominioBO dominioBO;
 
@@ -71,6 +75,12 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     public void actionRemove(ActionEvent event) {
         super.actionRemove(event);
         this.listAll();
+    }
+    
+    @Override
+    public void actionNew(ActionEvent event) {
+        super.actionNew(event);
+        this.setEntity(new Documento());
     }
 
     public List<Documento> getDocumentos() {
@@ -139,5 +149,13 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     public void setDominios(List<Dominio> dominios) {
         this.dominios = dominios;
+    }
+
+    public CKEditor getCkEditor() {
+        return ckEditor;
+    }
+
+    public void setCkEditor(CKEditor ckEditor) {
+        this.ckEditor = ckEditor;
     }
 }

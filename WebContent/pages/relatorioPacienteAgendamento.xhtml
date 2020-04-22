@@ -490,7 +490,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									value="#{relatorioPacienteAgendamentoMB.getStatusDescricao(p.ultimoAgendamento)}" />
 							</p:column>
 							<p:column filterBy="#{p.proximoAgendamento.inicio}"
-								sortBy="#{p.proximoAgendamento.inicio}"
+								sortBy="#{p.proximoAgendamento.inicio}" exportable="true"
 								filterMatchMode="contains" headerText="Data Próximo Agendamento">
 								<p:commandButton icon="fa fa fa-calendar"
 									rendered="#{p.proximoAgendamento.inicio eq '' or p.proximoAgendamento.inicio eq null}"
