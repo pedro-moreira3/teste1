@@ -636,10 +636,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.paciente = paciente;
         try {
             this.lAPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), null,
-                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, Arrays.asList(StatusLancamento.A_PAGAR));
+                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, StatusLancamento.A_PAGAR, null);
             BigDecimal vAPagar = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAPagar));
             this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), null,
-                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, Arrays.asList(StatusLancamento.A_PAGAR));
+                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, StatusLancamento.A_RECEBER, null);
             BigDecimal vAReceber = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAReceber));
             if (this.paciente != null)
                 ContaSingleton.getInstance().getContaFromOrigem(this.paciente).setSaldo(vAReceber.subtract(vAPagar));

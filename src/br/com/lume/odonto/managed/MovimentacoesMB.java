@@ -34,6 +34,7 @@ import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Lancamento.DirecaoLancamento;
 import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
+import br.com.lume.odonto.entity.Lancamento.SubStatusLancamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.paciente.PacienteSingleton;
@@ -51,7 +52,9 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
     private PeriodoBusca periodoBuscaAReceber, periodoBuscaAPagar;
     private Paciente paciente;
     private Profissional profissional;
-    private StatusLancamento[] statusLancamentoAReceber, statusLancamentoAPagar;
+    private StatusLancamento statusLancamentoAReceber, statusLancamentoAPagar;
+    private SubStatusLancamento[] subStatusLancamentoAReceber, subStatusLancamentoAPagar;
+    private List<SubStatusLancamento> listaSubStatusLancamentoAReceber, listaSubStatusLancamentoAPagar;
 
     private Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
     private BarChartModel lineModel;
@@ -162,8 +165,24 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         return Lancamento.getStatusLancamento(DirecaoLancamento.CREDITO);
     }
 
+    public void alteraStatusLancamentoAReceber() {
+        this.listaSubStatusLancamentoAReceber = new ArrayList<>();
+        this.subStatusLancamentoAReceber = null;
+        for (SubStatusLancamento subStatus : SubStatusLancamento.values())
+            if (subStatus.isSonOfStatusLancamento(this.statusLancamentoAReceber))
+                this.listaSubStatusLancamentoAReceber.add(subStatus);
+    }
+
     public List<StatusLancamento> getListaStatusLancamentoAPagar() {
         return Lancamento.getStatusLancamento(DirecaoLancamento.DEBITO);
+    }
+
+    public void alteraStatusLancamentoAPagar() {
+        this.listaSubStatusLancamentoAPagar = new ArrayList<>();
+        this.subStatusLancamentoAPagar = null;
+        for (SubStatusLancamento subStatus : SubStatusLancamento.values())
+            if (subStatus.isSonOfStatusLancamento(this.statusLancamentoAPagar))
+                this.listaSubStatusLancamentoAPagar.add(subStatus);
     }
 
     public String getFaturaInfo(Fatura f) {
@@ -207,7 +226,7 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         try {
             this.somaTotalAPagar = BigDecimal.ZERO;
             this.aPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(UtilsFrontEnd.getEmpresaLogada().getConta(), getDataInicioAPagar(), getDataFimAPagar(), null, getProfissional(),
-                    (getStatusLancamentoAPagar() == null ? null : Arrays.asList(getStatusLancamentoAPagar())));
+                    getStatusLancamentoAPagar(), (getSubStatusLancamentoAPagar() == null ? null : Arrays.asList(getSubStatusLancamentoAPagar())));
             for (Lancamento lAPagar : this.aPagar)
                 this.somaTotalAPagar = this.somaTotalAPagar.add(lAPagar.getValor());
         } catch (Exception e) {
@@ -230,7 +249,7 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         try {
             this.somaTotalAReceber = BigDecimal.ZERO;
             this.aReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(UtilsFrontEnd.getEmpresaLogada().getConta(), getDataInicioAReceber(), getDataFimAReceber(), getPaciente(),
-                    null, (getStatusLancamentoAReceber() == null ? null : Arrays.asList(getStatusLancamentoAReceber())));
+                    null, getStatusLancamentoAReceber(), (getSubStatusLancamentoAReceber() == null ? null : Arrays.asList(getSubStatusLancamentoAReceber())));
             for (Lancamento lAReceber : this.aReceber)
                 this.somaTotalAReceber = this.somaTotalAReceber.add(lAReceber.getValor());
         } catch (Exception e) {
@@ -243,10 +262,6 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         if (l == null || l.getFatura() == null || l.getFatura().getId() == null)
             return "";
         return "Fatura " + l.getFatura().getId();
-    }
-
-    public String getNewStatusLancamento(Lancamento l) {
-        return l.getStatus().getDescricao();
     }
 
     public List<Lancamento> getaPagar() {
@@ -357,20 +372,36 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         this.paciente = paciente;
     }
 
-    public StatusLancamento[] getStatusLancamentoAReceber() {
+    public StatusLancamento getStatusLancamentoAReceber() {
         return statusLancamentoAReceber;
     }
 
-    public void setStatusLancamentoAReceber(StatusLancamento[] statusLancamentoAReceber) {
+    public void setStatusLancamentoAReceber(StatusLancamento statusLancamentoAReceber) {
         this.statusLancamentoAReceber = statusLancamentoAReceber;
     }
 
-    public StatusLancamento[] getStatusLancamentoAPagar() {
+    public StatusLancamento getStatusLancamentoAPagar() {
         return statusLancamentoAPagar;
     }
 
-    public void setStatusLancamentoAPagar(StatusLancamento[] statusLancamentoAPagar) {
+    public void setStatusLancamentoAPagar(StatusLancamento statusLancamentoAPagar) {
         this.statusLancamentoAPagar = statusLancamentoAPagar;
+    }
+
+    public SubStatusLancamento[] getSubStatusLancamentoAReceber() {
+        return subStatusLancamentoAReceber;
+    }
+
+    public void setSubStatusLancamentoAReceber(SubStatusLancamento[] subStatusLancamentoAReceber) {
+        this.subStatusLancamentoAReceber = subStatusLancamentoAReceber;
+    }
+
+    public SubStatusLancamento[] getSubStatusLancamentoAPagar() {
+        return subStatusLancamentoAPagar;
+    }
+
+    public void setSubStatusLancamentoAPagar(SubStatusLancamento[] subStatusLancamentoAPagar) {
+        this.subStatusLancamentoAPagar = subStatusLancamentoAPagar;
     }
 
     public Profissional getProfissional() {
@@ -379,6 +410,22 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
 
     public void setProfissional(Profissional profissional) {
         this.profissional = profissional;
+    }
+
+    public List<SubStatusLancamento> getListaSubStatusLancamentoAReceber() {
+        return listaSubStatusLancamentoAReceber;
+    }
+
+    public void setListaSubStatusLancamentoAReceber(List<SubStatusLancamento> listaSubStatusLancamentoAReceber) {
+        this.listaSubStatusLancamentoAReceber = listaSubStatusLancamentoAReceber;
+    }
+
+    public List<SubStatusLancamento> getListaSubStatusLancamentoAPagar() {
+        return listaSubStatusLancamentoAPagar;
+    }
+
+    public void setListaSubStatusLancamentoAPagar(List<SubStatusLancamento> listaSubStatusLancamentoAPagar) {
+        this.listaSubStatusLancamentoAPagar = listaSubStatusLancamentoAPagar;
     }
 
 }

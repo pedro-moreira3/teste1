@@ -10,32 +10,75 @@
 				<div class="card card-w-title">
 					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
 
-						<h1>Relatório de Recebimentos</h1>
+						<div style="display: inline-block">
+							<h1>Relatório de Recebimentos</h1>
+							<p:commandButton id="tooltipTitulo" icon="fa fa-question"
+								styleClass="title-help-button" />
+						</div>
+
 						<div class="SeparatorFull"></div>
 
-						<p:panelGrid columns="4"
-							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-							layout="grid" styleClass="ui-panelgrid-blank"
+						<p:panelGrid columns="3"
+							columnClasses="ui-grid-col-6,ui-grid-col-3,ui-grid-col-3"
+							layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding"
 							style="border:0px none; background-color:transparent;">
 
-							<p:outputLabel for="inicio" value="Data de crédito Inicio : " />
-							<p:calendar id="inicio" value="#{relatorioRecebimentoMB.inicio}"
-								autocomplete="off" pattern="dd/MM/yyyy" mask="true"
-								required="true" />
+							<h:panelGroup styleClass="md-combo">
+								<h:outputText for="filtroPeriodoAReceber"
+									value="Período da Data de crédito:" />
+								<p:selectOneMenu id="filtroPeriodoAReceber"
+									value="#{relatorioRecebimentoMB.periodoBusca}"
+									converter="enumPeriodoBusca">
+									<p:ajax process="@this" update="inicio fim"
+										listener="#{relatorioRecebimentoMB.actionTrocaDatas}" />
+									<f:selectItems value="#{padroesTelaMB.periodosDataBusca}"
+										var="periodo" itemValue="#{periodo}"
+										itemLabel="#{periodo.descricao}" />
+								</p:selectOneMenu>
+							</h:panelGroup>
 
-							<p:outputLabel for="fim" value="Data de crédito Fim : " />
-							<p:calendar id="fim" value="#{relatorioRecebimentoMB.fim}"
-								autocomplete="off" pattern="dd/MM/yyyy" mask="true"
-								required="true" />
+							<h:panelGroup styleClass="md-inputfield taller">
+								<h:outputText for="inicio" value="Data de crédito Inicio : " />
+								<p:calendar id="inicio" value="#{relatorioRecebimentoMB.inicio}"
+									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
+									required="true" />
+							</h:panelGroup>
 
-							<p:outputLabel for="status" value="Status: " />
-							<p:selectOneMenu id="status"
-								value="#{relatorioRecebimentoMB.status}" converter="enumStatusLancamento">
-								<f:selectItem itemValue="#{null}" itemLabel="Todos" />
-								<f:selectItems value="#{relatorioRecebimentoMB.statuss}"
-									var="status" itemLabel="#{status.descricao}"
-									itemValue="#{status}" />
-							</p:selectOneMenu>
+							<h:panelGroup styleClass="md-inputfield taller">
+								<h:outputText for="fim" value="Data de crédito Fim : " />
+								<p:calendar id="fim" value="#{relatorioRecebimentoMB.fim}"
+									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
+									required="true" />
+							</h:panelGroup>
+
+							<h:panelGroup>
+								<p:outputLabel for="status" value="Status do Recebimento: " />
+								<p:selectOneMenu id="status"
+									value="#{relatorioRecebimentoMB.status}"
+									converter="enumStatusLancamento">
+									<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+									<f:selectItems value="#{relatorioRecebimentoMB.statuss}"
+										var="status" itemLabel="#{status.descricao}"
+										itemValue="#{status}" />
+									<p:ajax
+										listener="#{relatorioRecebimentoMB.alteraStatusLancamento}"
+										update="subStatusRecebimento" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="lumeField">
+								<p:outputLabel for="subStatusRecebimento"
+									value="Sub Status do Recebimento: " />
+								<p:selectCheckboxMenu id="subStatusRecebimento"
+									label="Sub Status" multiple="true" style="top: -14px;"
+									value="#{relatorioRecebimentoMB.subStatus}"
+									converter="enumSubStatusLancamento">
+									<f:selectItems value="#{relatorioRecebimentoMB.listaSubStatus}"
+										var="substatus" itemLabel="#{substatus.descricao}"
+										itemValue="#{substatus}" />
+								</p:selectCheckboxMenu>
+							</h:panelGroup>
 
 						</p:panelGrid>
 
@@ -115,10 +158,10 @@
 								<h:outputText value="#{lancamento.dataCreditoStr}"
 									title="#{lancamento.id}" />
 							</p:column>
-							<p:column filterBy="#{lancamento.status.descricao}"
-								sortBy="#{lancamento.status.descricao}" filterMatchMode="contains"
+							<p:column filterBy="#{lancamento.statusCompleto}"
+								sortBy="#{lancamento.statusCompleto}" filterMatchMode="contains"
 								headerText="Status">
-								<h:outputText value="#{lancamento.status.descricao}" />
+								<h:outputText value="#{lancamento.statusCompleto}" />
 							</p:column>
 							<p:column filterBy="#{lancamento.formaPagamentoStr}"
 								sortBy="#{lancamento.formaPagamentoStr}"
