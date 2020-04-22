@@ -258,6 +258,7 @@
 												style="top: -10px;"
 												value="#{movimentacoesMB.statusLancamentoAPagar}"
 												converter="enumStatusLancamento">
+												<f:selectItem itemValue="#{null}" itemLabel="Todos" />
 												<f:selectItems
 													value="#{movimentacoesMB.listaStatusLancamentoAPagar}"
 													var="status" itemLabel="#{status.descricao}"
