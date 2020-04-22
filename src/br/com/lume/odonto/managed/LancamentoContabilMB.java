@@ -27,7 +27,6 @@ import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
-import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
@@ -230,7 +229,6 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void actionValidarLancamento(Lancamento l) {
         try {
             LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
-            FaturaSingleton.getInstance().atualizarStatusFatura(l.getFatura());
             this.carregarLancamentosValidar();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {

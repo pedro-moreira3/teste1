@@ -10,6 +10,7 @@ import br.com.lume.execucaoTimer.interfaces.Executor;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Fatura.StatusFatura;
+import br.com.lume.profissional.ProfissionalSistemaSingleton;
 
 public class AtualizacaoFaturas extends TimerTask implements Serializable, Executor {
 
@@ -31,7 +32,7 @@ public class AtualizacaoFaturas extends TimerTask implements Serializable, Execu
 
                 List<Fatura> faturas = FaturaSingleton.getInstance().getBo().listAllByStatusAndCredito(null, StatusFatura.A_RECEBER, null);
                 for (Fatura fatura : faturas)
-                    FaturaSingleton.getInstance().atualizarStatusFatura(fatura);
+                    FaturaSingleton.getInstance().atualizarStatusFatura(fatura, ProfissionalSistemaSingleton.getInstance().getSysProfissional());
 
                 ExecucaoTimerSingleton.getInstance().postResult(this, true, null);
                 LogIntelidenteSingleton.getInstance().makeLog("Task '" + getCodigo() + "': Execução concluida!");
