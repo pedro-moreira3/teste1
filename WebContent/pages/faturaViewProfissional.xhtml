@@ -88,10 +88,14 @@ body .sideChkBox .ui-chkbox-label {
 									value="#{faturaPagtoMB.entity.dadosTabelaRepassePlanoTratamento.paciente.dadosBasico.nome}" />
 
 								<h:outputText for="statusFatura2" value="Status da Fatura:" />
-								<p:inputText id="statusFatura2"
+								<p:outputLabel id="statusFatura2"
 									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
 									value="#{faturaPagtoMB.entity.statusFaturaCompleto}"
-									readonly="true" />
+									readonly="true" escape="false">
+									<p:tooltip escape="false" for="@parent" position="bottom"
+										value="#{faturaPagtoMB.entity.tooltipAlteracaoStatus}"
+										hideDelay="500" />
+								</p:outputLabel>
 
 							</p:panelGrid>
 
