@@ -1,6 +1,6 @@
 package br.com.lume.odonto.managed;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ManagedProperty;
@@ -117,6 +117,11 @@ public class ProfissionalDescontoMB extends LumeManagedBean<DescontoOrcamento> {
         }
     }
 
+    public String formatarDesconto(DescontoOrcamento desconto) {
+        int i = (int) desconto.getDesconto().doubleValue();
+        return String.valueOf(i)+"%";
+    }
+    
     public void exportarTabela(String type) {
         exportarTabela("Descontos do cadastrados", getTabelaDescontos(), type);
     }
