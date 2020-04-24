@@ -411,9 +411,8 @@
 								id="pnEmpresaDescontos">
 
 								<h:panelGroup>
-									<p:commandButton value="Novo desconto" 
-										styleClass="BotaoCrud" icon="ui-icon-add"
-										oncomplete="PF('dlgDesconto').show()"
+									<p:commandButton value="Novo desconto" styleClass="BotaoCrud"
+										icon="ui-icon-add" oncomplete="PF('dlgDesconto').show()"
 										process="@this">
 									</p:commandButton>
 								</h:panelGroup>
@@ -441,8 +440,7 @@
 										icon="White fa fa-chain-broken" styleClass="NavyButton"
 										actionListener="#{cadastroEmpresaMB.inativarDesconto(desconto)}"
 										rendered="#{desconto.status == 'A'}"
-										update="@this, dtDescontos"
-										process="@this">
+										update="@this, dtDescontos" process="@this">
 										<p:confirmDialog responsive="true"
 											message="Deseja realmente inativar o registro ?" />
 									</p:commandButton>
@@ -450,8 +448,7 @@
 										styleClass="NavyButton"
 										actionListener="#{cadastroEmpresaMB.ativarDesconto(desconto)}"
 										rendered="#{desconto.status == 'I'}"
-										update="@this, dtDescontos"
-										process="@this">
+										update="@this, dtDescontos" process="@this">
 										<p:confirmDialog responsive="true"
 											message="Deseja realmente ativar o registro ?" />
 									</p:commandButton>
@@ -515,7 +512,7 @@
 										styleClass="GreenButton" icon="White fa fa-save"
 										actionListener="#{cadastroEmpresaMB.cadastrarDesconto}"
 										update=":lume:pnEmpresaDescontos,:lume:dtDescontos"
-										oncomplete="PF('dlgDesconto').hide();" 
+										oncomplete="PF('dlgDesconto').hide();"
 										process="quantidadeParcelas, descontoEmpresa, @this">
 									</p:commandButton>
 									<p:commandButton id="btnFcharDesconto" value="Fechar"
