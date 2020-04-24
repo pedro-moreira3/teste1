@@ -58,6 +58,17 @@ body .ui-selectmanycheckbox td label {
 						id="pnProfissionalDescontos">
 
 						<h:panelGroup>
+							<p:outputLabel id="lblprofissionalFazOrcamento" for="profissionalFazOrcamento"
+								value="Profissional faz orçamento ? " />
+							<p:selectBooleanCheckbox id="profissionalFazOrcamento"
+								value="#{profissionalMB.entity.fazOrcamento}"/>
+						</h:panelGroup>
+						
+						<h:panelGroup></h:panelGroup>
+						<h:panelGroup></h:panelGroup>
+						<h:panelGroup></h:panelGroup>
+
+						<h:panelGroup>
 							<p:commandButton value="Novo desconto" styleClass="BotaoCrud"
 								icon="ui-icon-add" oncomplete="PF('dlgDesconto').show()"
 								process="@this">
