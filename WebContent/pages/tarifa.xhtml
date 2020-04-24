@@ -12,8 +12,16 @@
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
 				
-				<p:dialog id="dlg" widgetVar="dlg" header="Nova Forma de Pagamento" responsive="true" modal="true" width="40%">
-					<p:outputPanel id="pnDlg">			
+				
+				
+				
+				<p:dialog id="dlg" widgetVar="dlg"
+			header="Nova Forma de Pagamento" responsive="true" modal="true"
+			width="50%" styleClass="dlgCalculoRepasse">
+			<p:panel id="pnDlg"
+				style="max-height: 80vh; overflow-y: auto; overflow-x: none;">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: 100%; height: 100%; border: none;">
                         <p:panelGrid columns="1" columnClasses="" layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;" >														
 							<p:outputPanel style="margin-bottom:-15px">											
@@ -149,9 +157,15 @@
 											/>	
 								<p:commandButton id="fechar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlg').hide();" immediate="true" />											
 								</p:panelGrid>
-								<div class="EmptyBox20"></div>
-						</p:outputPanel>					
-					</p:dialog>					
+								<div class="EmptyBox20"></div>					
+
+				</p:scrollPanel>
+			</p:panel>
+		</p:dialog>
+				
+				
+				
+						
 					
 				
 					<h:inputHidden id="idTarifa" value="#{tarifaMB.entity.id}" />
@@ -215,23 +229,38 @@
 					</p:outputPanel>
 					<div class="EmptyBox20"></div>
 					<p:outputPanel styleClass="BordNone" id="pnPrincipal">		
-					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtTarifa" value="#{tarifaMB.tarifas}" var="tarifa" rows="15" paginator="true"
+					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" widgetVar="dtTarifa" id="dtTarifa" value="#{tarifaMB.tarifas}" var="tarifa" rows="15" paginator="true"
 						selection="#{tarifaMB.entity}" selectionMode="single" rowKey="#{tarifa}" paginatorPosition="bottom" binding="#{tarifaMB.tabelaTarifa}">
 						<p:ajax event="rowSelect"  />
 						<f:facet name="header">Tarifas</f:facet>
 						<p:column width="120" headerText="Ações">
-						<p:commandButton icon="fa fa-eye" process="@this"
+							<p:commandButton icon="fa fa-eye" process="@this"
 								actionListener="#{tarifaMB.actionEditar(tarifa)}"
 								update=":lume:pnDlg"
 								oncomplete="PF('dlg').show();" styleClass="NavyButton"
 								title="Editar forma de pagamento" />											
-							<p:commandButton icon="fa fa-trash" process="@this"
+							
+							<p:commandButton icon="fa fa-chain-broken" process="@this"
 								actionListener="#{tarifaMB.actionInativar(tarifa)}"
 								update=":lume:pnPrincipal"
-								styleClass="RedButton"
+								rendered="#{tarifa.status == 'Ativo'}"
+								styleClass="NavyButton"
+								oncomplete="PF('dtTarifa').filter();"								
 								title="Inativar forma de pagamento" >
 								 <p:confirm header="COnfirmação" message="Você tem certeza que deseja inativar essa forma de pagamento?" />
-								</p:commandButton>
+							</p:commandButton>
+							<p:commandButton id="btnAtivar" icon="White fa fa-chain White"
+								styleClass="NavyButton"
+								oncomplete="PF('dtTarifa').filter();"		
+								actionListener="#{tarifaMB.actionAtivar(tarifa)}"
+								rendered="#{tarifa.status == 'Inativo'}"
+								update=":lume:pnPrincipal"							
+								process="@this">
+								<p:confirmDialog responsive="true"
+									message="Deseja realmente ativar o registro ?" />
+							</p:commandButton>
+								
+								
 						</p:column>
 						<p:column filterBy="#{tarifa.tipoStr}" sortBy="#{tarifa.tipoStr}" filterMatchMode="contains" headerText="Tipo" filterFunction="#{tarifaMB.filtroSemAcento}">
 							<h:outputText value="#{tarifa.tipoStr}" title="#{tarifa.id}" />
