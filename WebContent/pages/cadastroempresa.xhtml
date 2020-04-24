@@ -411,6 +411,8 @@
 
 								<h:panelGroup>
 									<p:commandButton value="Novo desconto" styleClass="BotaoCrud"
+										actionListener="#{cadastroEmpresaMB.limparDesconto}"
+										update="pnDesconto"
 										icon="ui-icon-add" oncomplete="PF('dlgDesconto').show()"
 										process="@this">
 									</p:commandButton>
@@ -512,14 +514,14 @@
 										<p:commandButton id="btnSalvarDesconto" value="Salvar"
 											styleClass="GreenButton" icon="White fa fa-save"
 											actionListener="#{cadastroEmpresaMB.cadastrarDesconto}"
-											update=":lume:pnEmpresaDescontos,:lume:dtDescontos"
-											oncomplete="PF('dlgDesconto').hide();"
+											update=":lume:pnEmpresaDescontos,:lume:dtDescontos,pnDesconto"
+											oncomplete="PF('dlgDesconto').hide();PF('dtDescontos').filter();"
 											process="quantidadeParcelas, descontoEmpresa, @this">
 										</p:commandButton>
 										<p:commandButton id="btnFcharDesconto" value="Fechar"
 											styleClass="NavyButton" icon="White fa fa-close"
-											actionListener="#{cadastroEmpresaMB.limparDesconto}"
-											update="pnDesconto" oncomplete="PF('dlgDesconto').hide();"
+											actionListener="#{cadastroEmpresaMB.setDescontoSelecionado(null)}"
+											update="pnDesconto, dlgDesconto" oncomplete="PF('dlgDesconto').hide();"
 											process="@this">
 										</p:commandButton>
 									</p:panelGrid>
