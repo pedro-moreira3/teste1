@@ -17,36 +17,39 @@ body .ui-selectmanycheckbox td label {
 				<p:outputPanel id="pnProfissional" styleClass="BordNone">
 
 					<h1>
-						Cadastro de descontos por Profissional	
-						<h:outputLabel class="fa fa-question" id="tooltipTitulo" style="font-size:24px; margin-left:10px;"/>
-                        <p:tooltip for="tooltipTitulo" value="Nessa tela você configura como os descontos são utilizados pelo profissional.
+						Cadastro de descontos por Profissional
+						<h:outputLabel class="fa fa-question" id="tooltipTitulo"
+							style="font-size:24px; margin-left:10px;" />
+						<p:tooltip for="tooltipTitulo"
+							value="Nessa tela você configura como os descontos são utilizados pelo profissional.
 								Exemplo:
 								Se na sua clínica o máximo de desconto a vista permitido é de 20%, você cadastra
 								quantidade máxima de parcelas 1, desconto máximo 20%.
 								Se na sua clínica o máximo de desconto para pagamento em até 6x permitido é de até 10%,
 								você cadastra quantidade máxima de parcelas 6, desconto máximo 10%.
 								Dessa forma, na hora de fazer os orçamentos ou lançamentos financeiros, essa
-								configuração sera respeitada." position="bottom" style="width:30%;"/>
+								configuração sera respeitada."
+							position="bottom" style="width:30%;" />
 					</h1>
 
-					<p:fieldset legend="Filtros" collapsed="true" toggleable="true">
-						<p:panelGrid columns="2" layout="grid"
-							columnClasses="ui-g-6, ui-g-6"
-							styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
-							<h:panelGroup styleClass="md-combo">
-								<p:outputLabel for="status" value="Status dos Descontos: " />
-								<p:selectOneMenu id="status"
-									value="#{profissionalDescontoMB.filtroDesconto}">
-									<f:selectItem itemLabel="Ativos" itemValue="A" />
-									<f:selectItem itemLabel="Inativos" itemValue="I" />
-									<f:selectItem itemLabel="Todos" itemValue="T" />
-									<p:ajax listener="#{profissionalDescontoMB.carregarDescontos}"
-										process="@this" update="dtDescontos"
-										oncomplete="PF('dtDescontos').filter();" />
-								</p:selectOneMenu>
-							</h:panelGroup>
-						</p:panelGrid>
-					</p:fieldset>
+
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-g-6, ui-g-6"
+						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+						<h:panelGroup styleClass="md-combo">
+							<p:outputLabel for="status" value="Status dos Descontos: " />
+							<p:selectOneMenu id="status"
+								value="#{profissionalDescontoMB.filtroDesconto}">
+								<f:selectItem itemLabel="Ativos" itemValue="A" />
+								<f:selectItem itemLabel="Inativos" itemValue="I" />
+								<f:selectItem itemLabel="Todos" itemValue="T" />
+								<p:ajax listener="#{profissionalDescontoMB.carregarDescontos}"
+									process="@this" update="dtDescontos"
+									oncomplete="PF('dtDescontos').filter();" />
+							</p:selectOneMenu>
+						</h:panelGroup>
+					</p:panelGrid>
+
 
 					<p:panelGrid columns="4"
 						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding"
@@ -77,14 +80,13 @@ body .ui-selectmanycheckbox td label {
 							<p:commandButton id="btnEditar" icon="White fa fa-eye"
 								styleClass="NavyButton"
 								actionListener="#{profissionalDescontoMB.setEntity(desconto)}"
-								update=":lume:tabView:pnDesconto" oncomplete="PF('dlgDesconto').show();"
-								process="@this">
+								update=":lume:tabView:pnDesconto"
+								oncomplete="PF('dlgDesconto').show();" process="@this">
 							</p:commandButton>
 							<p:commandButton id="btnInativar" icon="White fa fa-chain-broken"
 								styleClass="NavyButton"
 								actionListener="#{profissionalDescontoMB.inativarDesconto(desconto)}"
-								rendered="#{desconto.status == 'A'}" 
-								update="@this, dtDescontos"
+								rendered="#{desconto.status == 'A'}" update="@this, dtDescontos"
 								process="@this">
 								<p:confirmDialog responsive="true"
 									message="Deseja realmente inativar o registro ?" />
