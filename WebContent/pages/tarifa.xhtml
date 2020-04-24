@@ -27,7 +27,7 @@
 							<p:outputPanel style="margin-bottom:-15px">											
 								<p:outputLabel for="tipo" value="Tipo : " />
 								<h:outputLabel class="fa fa-question" id="tooltipTipo" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipTipo" position="bottom" value="Tipo da forma de pagamento. Se nenhum se aplicar, escolha a opção 'Outros'." />
+								<p:tooltip for="tooltipTipo" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'tipo')}" />
 							</p:outputPanel>
 							<p:outputPanel>		
 								<p:selectOneRadio id="tipo" value="#{tarifaMB.entity.tipo}" required="true">									
@@ -44,7 +44,7 @@
 							<p:outputPanel>
 								<p:outputLabel for="nome" value="Descrição : " />
 								<h:outputLabel class="fa fa-question" id="tooltipProduto" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipProduto" position="bottom" value="Descrição da forma de pagamento, por exemplo 'VISA Crédito' e 'VISA Débito'." />
+								<p:tooltip for="tooltipProduto" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'descricao')}" />
 							</p:outputPanel>
 							<p:outputPanel>														
 								<p:inputText id="nome" value="#{tarifaMB.entity.produto}" required="true" maxlength="100" />
@@ -55,8 +55,7 @@
 							<p:outputPanel>
 								<p:outputLabel for="prazo" value="Prazo de crédito em dias:" />
 								<h:outputLabel class="fa fa-question" id="tooltipPrazo" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipPrazo" position="bottom" value="Esse prazo determina em quanto tempo um pagamento feito com
-								esse tipo de fato 'cai' na conta da empresa, ou seja, quando essa conferência deve ser feita." />								
+								<p:tooltip for="tooltipPrazo" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'prazo')}" />								
 							</p:outputPanel>	
 							<p:outputPanel>	
 								<p:inputMask id="prazo" value="#{tarifaMB.entity.prazo}" mask="9?999" required="true" />
@@ -67,7 +66,7 @@
 							<p:outputPanel>									
 								<p:outputLabel for="bandeira" value="Bandeira : "/>
 								<h:outputLabel class="fa fa-question" id="tooltipBandeira" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipBandeira" position="bottom" value="Bandeira é normalmente utilizada para cartão de crédito, por exemplo VISA ou MASTERCARD." />
+								<p:tooltip for="tooltipBandeira" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'bandeira')}" />
 							</p:outputPanel>
 							<p:outputPanel>	
 								<p:inputText id="bandeira" value="#{tarifaMB.entity.bandeira}"  maxlength="100" />
@@ -75,7 +74,7 @@
 							<p:outputPanel>	
 								<p:outputLabel for="taxa" value="Taxas (%): " />
 								<h:outputLabel class="fa fa-question" id="tooltipTaxa" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipTaxa" position="bottom" value="Taxa da forma de pagamento, se existente." />
+								<p:tooltip for="tooltipTaxa" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'taxa')}" />
 							</p:outputPanel>
 							<p:outputPanel>		
 								<p:inputNumber id="taxa" value="#{tarifaMB.entity.taxa}" maxlength="13" maxValue="99999999.99" decimalSeparator="," symbol=""
@@ -84,7 +83,7 @@
 							<p:outputPanel>		
 								<p:outputLabel for="tarifa" value="Tarifa : " />
 								<h:outputLabel class="fa fa-question" id="tooltipTarifa" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipTarifa" position="bottom" value="Tarifa da forma de pagamento, se existente." />
+								<p:tooltip for="tooltipTarifa" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'tarifa')}" />
 							</p:outputPanel>
 							<p:outputPanel>	
 								<p:inputNumber id="tarifa" value="#{tarifaMB.entity.tarifa}" maxlength="13" maxValue="99999999.99" decimalSeparator="," symbol=""
@@ -96,7 +95,7 @@
 							<p:outputPanel>	
 								<p:outputLabel for="parcelaMinima" value="Quantidade mínima de parcelas (dias):"/>
 								<h:outputLabel class="fa fa-question" id="tooltipParcelaMinima" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipParcelaMinima" position="bottom" value="Quantidade mínima de parcelas para parcelamento. Para pagamentos a vista, deve ser 1." />
+								<p:tooltip for="tooltipParcelaMinima" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'parcelaMinima')}" />
 							</p:outputPanel>
 							<p:outputPanel>	
 								<p:inputMask id="parcelaMinima" value="#{tarifaMB.entity.parcelaMinima}" mask="9?9" style="width:100% !important" required="true"/>
@@ -104,7 +103,7 @@
 							<p:outputPanel style="margin-bottom:-15px">	
 								<p:outputLabel for="parcelaMaxima" value="Quantidade máxima de parcelas (dias):"/>
 								<h:outputLabel class="fa fa-question" id="tooltipParcelaMaxima" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipParcelaMaxima" position="bottom" value="Quantidade máxima de parcelas para parcelamento. Para pagamentos a vista, deve ser 1." />
+								<p:tooltip for="tooltipParcelaMaxima" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'parcelaMaxima')}" />
 							</p:outputPanel>
 							<p:outputPanel>		
 								<p:inputMask id="parcelaMaxima" value="#{tarifaMB.entity.parcelaMaxima}" mask="9?9" style="width:100% !important" required="true"/>
@@ -117,8 +116,7 @@
 							<p:outputPanel>
 								<p:outputLabel for="periodicidade" value="Periodicidade de geração de parcelas (dias): " />
 								<h:outputLabel class="fa fa-question" id="tooltipPeriodicidade" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipPeriodicidade" position="bottom" value="Período de tempo para geração de parcelas, para pagamentos parcelados.
-								Se esse campo não for preenchido, as parcelas serão geradas de 30 em 30 dias (tempo padrão)" />
+								<p:tooltip for="tooltipPeriodicidade" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'periodicidade')}" />
 							</p:outputPanel>
 							<p:outputPanel>
 								<p:inputMask id="periodicidade" value="#{tarifaMB.entity.periodicidade}" mask="9?999" />
@@ -143,9 +141,7 @@
 								<h:outputLabel class="fa fa-question" id="tooltipReceber" style="font-size:16px; margin-left:10px;"/>
 								<p:tooltip for="tooltipReceber" position="bottom" >
 									<p>
-										Se essa opção não estiver marcada, será necessário confirmar manualmente o pagamento do cliente.<br/> 
-										Essa opção geralmente é utilizada para pagamentos que tem mais de uma quantidade de parcelas e que<br/>
-										o cliente deve ir na clinica mensalmente efetuar o pagamento, por exemplo crediário.
+										#{tarifaMB.getTooltipValue('tarifa', 'receberAutomaticamente')}
 									</p>
 								</p:tooltip>	
 							</p:outputPanel>							
@@ -173,7 +169,7 @@
     					<h1>
         					Cadastro de Formas de Pagamento        					
         					<h:outputLabel class="fa fa-question" id="tooltipTitulo" style="font-size:24px; margin-left:10px;"/> 
-							<p:tooltip for="tooltipTitulo" value="Nessa tela você configura todas as formas de pagamento que serão utilizadas em sua clínica." position="bottom" />
+							<p:tooltip for="tooltipTitulo" value="#{tarifaMB.getTooltipValue('tarifa', 'titulo')}" position="bottom" />
     					</h1>
     					<div class="SeparatorFull"></div>	
 						<br/><br/>

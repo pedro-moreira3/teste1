@@ -101,6 +101,10 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         return EmpresaBO.isEstoqueCompleto(UtilsFrontEnd.getEmpresaLogada());
     }
 
+    public String getTooltipValue(String tela, String campo) {
+        return Mensagens.getMensagem("tooltip." + tela + "." + campo);
+    }
+    
     public boolean validaAcao(String acao) {
         try {
             return !this.restricaoBO.isRestrito(acao, this.getLumeSecurity().getUsuario(), this.getLumeSecurity().getObjetoAtual());

@@ -28,8 +28,4 @@ public class PadroesTelaMB extends LumeManagedBean<Paciente> {
         return PeriodoBusca.listAllValues();
     }
 
-    public String getTooltipValue(String tela, String campo) {
-        return Mensagens.getMensagem("tooltip." + tela + "." + campo);
-    }
-
 }
