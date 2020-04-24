@@ -27,7 +27,7 @@ public class ProfissionalDescontoMB extends LumeManagedBean<DescontoOrcamento> {
     @ManagedProperty(value = "#{profissionalMB}")
     private ProfissionalMB profissionalMB;
 
-    private String filtroDesconto;
+    private String filtroDesconto = "A";
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaDescontos;
@@ -64,7 +64,7 @@ public class ProfissionalDescontoMB extends LumeManagedBean<DescontoOrcamento> {
             }
 
             this.carregarDescontos();
-            this.setEntity(new DescontoOrcamento());
+            this.setEntity(null);
             
         } catch (Exception e) {
             this.addError("Erro ao cadastrar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
@@ -95,6 +95,7 @@ public class ProfissionalDescontoMB extends LumeManagedBean<DescontoOrcamento> {
         try {
             DescontoOrcamentoSingleton.getInstance().inativarDesconto(descontoOrcamento, UtilsFrontEnd.getProfissionalLogado());
             this.carregarDescontos();
+            this.setEntity(null);
             this.addInfo("Sucesso ao inativar desconto", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         } catch (Exception e) {
             this.addError("Erro ao inativar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
@@ -107,6 +108,7 @@ public class ProfissionalDescontoMB extends LumeManagedBean<DescontoOrcamento> {
         try {
             DescontoOrcamentoSingleton.getInstance().ativarDesconto(descontoOrcamento, UtilsFrontEnd.getProfissionalLogado());
             this.carregarDescontos();
+            this.setEntity(null);
             this.addInfo("Sucesso ao ativar desconto", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         } catch (Exception e) {
             this.addError("Erro ao ativar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));

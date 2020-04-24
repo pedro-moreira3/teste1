@@ -73,6 +73,8 @@ body .ui-selectmanycheckbox td label {
 						<h:panelGroup>
 							<p:commandButton value="Novo desconto" styleClass="BotaoCrud"
 								icon="ui-icon-add" oncomplete="PF('dlgDesconto').show()"
+								actionListener="#{profissionalDescontoMB.actionNew}"
+								update="pnDesconto"
 								process="@this">
 							</p:commandButton>
 						</h:panelGroup>
@@ -155,13 +157,13 @@ body .ui-selectmanycheckbox td label {
 									<p:commandButton id="btnSalvarDesconto" value="Salvar"
 										styleClass="GreenButton" icon="White fa fa-save"
 										actionListener="#{profissionalDescontoMB.actionPersist}"
-										update="pnProfissionalDescontos,dtDescontos"
+										update="pnProfissionalDescontos,dtDescontos, pnDesconto"
 										oncomplete="PF('dlgDesconto').hide();"
 										process="quantidadeParcelas, descontoEmpresa, @this">
 									</p:commandButton>
 									<p:commandButton id="btnFcharDesconto" value="Fechar"
 										styleClass="NavyButton" icon="White fa fa-close"
-										actionListener="#{profissionalDescontoMB.actionNew}"
+										actionListener="#{profissionalDescontoMB.setEntity(null)}"
 										update="pnDesconto" oncomplete="PF('dlgDesconto').hide();"
 										process="@this">
 									</p:commandButton>
