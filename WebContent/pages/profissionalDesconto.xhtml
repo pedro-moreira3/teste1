@@ -74,8 +74,8 @@ body .ui-selectmanycheckbox td label {
 						<f:facet name="header">Descontos cadastrados</f:facet>
 
 						<p:column headerText="Ações">
-							<p:commandButton id="btnEditar" icon="White fa fa-edit"
-								styleClass="OrangeButton"
+							<p:commandButton id="btnEditar" icon="White fa fa-eye"
+								styleClass="NavyButton"
 								actionListener="#{profissionalDescontoMB.setEntity(desconto)}"
 								update=":lume:tabView:pnDesconto" oncomplete="PF('dlgDesconto').show();"
 								process="@this">
@@ -83,7 +83,8 @@ body .ui-selectmanycheckbox td label {
 							<p:commandButton id="btnInativar" icon="White fa fa-chain-broken"
 								styleClass="NavyButton"
 								actionListener="#{profissionalDescontoMB.inativarDesconto(desconto)}"
-								rendered="#{desconto.status == 'A'}" update="@this, dtDescontos"
+								rendered="#{desconto.status == 'A'}" 
+								update="@this, dtDescontos"
 								process="@this">
 								<p:confirmDialog responsive="true"
 									message="Deseja realmente inativar o registro ?" />
