@@ -15,6 +15,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 
 import br.com.lume.afiliacao.AfiliacaoSingleton;
@@ -205,12 +206,13 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
                 }else {
                     DescontoOrcamentoSingleton.getInstance().novoDescontoClinica(this.descontoSelecionado.getDesconto(),
                             this.descontoSelecionado.getQuantidadeParcelas(), UtilsFrontEnd.getProfissionalLogado());
-                    this.listaDescontos.add(this.descontoSelecionado);
-                    limparDesconto();
                     
                     this.addInfo("Sucesso ao cadastrar desconto", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
                 }
             }
+            
+            this.carregarDescontos();
+            limparDesconto();
             
         } catch (Exception e) {
             this.addError("Erro ao salvar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
@@ -240,6 +242,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     public void inativarDesconto(DescontoOrcamento descontoOrcamento) {
         try {
             DescontoOrcamentoSingleton.getInstance().inativarDesconto(descontoOrcamento, UtilsFrontEnd.getProfissionalLogado());
+            carregarDescontos();
             this.addInfo("Sucesso ao inativar desconto", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         } catch (Exception e) {
             this.addError("Erro ao inativar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
@@ -251,6 +254,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     public void ativarDesconto(DescontoOrcamento descontoOrcamento) {
         try {
             DescontoOrcamentoSingleton.getInstance().ativarDesconto(descontoOrcamento, UtilsFrontEnd.getProfissionalLogado());
+            carregarDescontos();
             this.addInfo("Sucesso ao ativar desconto", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         } catch (Exception e) {
             this.addError("Erro ao ativar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));

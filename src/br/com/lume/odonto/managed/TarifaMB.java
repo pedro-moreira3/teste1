@@ -73,6 +73,7 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
                 super.actionPersist(event);
                 this.geraLista();            
                 PrimeFaces.current().executeScript("PF('dlg').hide()");
+                PrimeFaces.current().executeScript("PF('dtTarifa').filter();");
             }
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
@@ -93,6 +94,18 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
         }        
     }
+    
+    public void actionAtivar(Tarifa tarifa) {
+        tarifa.setStatus("A");
+        try {
+            TarifaSingleton.getInstance().getBo().persist(tarifa);
+            this.geraLista();
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Forma de pagamento ativada com sucesso");            
+        } catch (Exception e) {
+            log.error("Erro no actionInativar", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
+        }        
+    }    
     
     public void actionEditar(Tarifa tarifa) {
       setEntity(tarifa);
