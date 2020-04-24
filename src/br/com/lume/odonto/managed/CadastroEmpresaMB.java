@@ -156,6 +156,11 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
         }
     }
     
+    public String formatarDesconto(DescontoOrcamento desconto) {
+        int i = (int) desconto.getDesconto().doubleValue();
+        return String.valueOf(i)+"%";
+    }
+    
     public void handleFotoUpload(FileUploadEvent event) {
         try {
             this.getEntity().setEmpStrLogo(handleFotoUpload(event, this.getEntity().getEmpStrLogo()));

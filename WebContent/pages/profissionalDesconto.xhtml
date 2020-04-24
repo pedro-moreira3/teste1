@@ -123,8 +123,7 @@ body .ui-selectmanycheckbox td label {
 						</p:column>
 
 						<p:column headerText="Desconto máximo permitido">
-							<h:outputText value="#{desconto.desconto}">
-								<f:convertNumber type="currency" currencySymbol="%" />
+							<h:outputText value="#{profissionalDescontoMB.formatarDesconto(desconto)}">
 							</h:outputText>
 						</p:column>
 					</p:dataTable>
@@ -149,8 +148,8 @@ body .ui-selectmanycheckbox td label {
 
 									<p:outputLabel value="Desconto máximo permitido" />
 									<h:panelGroup>
-										<p:inputNumber id="descontoEmpresa"
-											value="#{profissionalDescontoMB.entity.desconto}" symbol="%">
+										<p:inputNumber id="descontoEmpresa" symbol="%" symbolPosition="s"
+											value="#{profissionalDescontoMB.entity.desconto}" decimalPlaces="0">
 										</p:inputNumber>
 									</h:panelGroup>
 
