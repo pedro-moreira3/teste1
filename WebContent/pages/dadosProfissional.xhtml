@@ -439,6 +439,8 @@ body .ui-selectoneradio td label {
 			listener="#{profissionalMB.carregaTela}" />
 		<p:ajax event="rowSelect" update=":lume:tabView"
 			listener="#{profissionalPontoMB.carregarPontos}" />
+		<p:ajax event="rowSelect" update=":lume:tabView"
+			listener="#{profissionalDescontoMB.carregarDescontos}" />
 		<f:facet name="header">Profissional</f:facet>
 		<p:column filterBy="#{profissional.dadosBasico.nomeLimpo}"
 			filterMatchMode="contains" headerText="Nome"

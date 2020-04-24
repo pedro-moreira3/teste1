@@ -129,6 +129,19 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									style="border:0px none; background-color:transparent;">
 
 									<h:panelGroup>
+										<h:outputText for="filtroPaciente"
+											value="Paciente:"/>
+										<p:autoComplete id="filtroPaciente"
+											value="#{relatorioOrcamentoMB.pacienteSelecionado}"
+											completeMethod="#{relatorioOrcamentoMB.sugestoesPacientes}"
+											var="p" itemValue="#{p}" itemLabel="#{p.dadosBasico.getNome()}"
+											converter="paciente" forceSelection="true" scrollHeight="400"
+											queryDelay="1000" dropdown="true">
+										
+										</p:autoComplete>
+									</h:panelGroup>
+
+									<h:panelGroup>
 										<h:outputText for="filtroProfissional"
 											value="Registro de aprovação por:" />
 										<p:autoComplete id="filtroProfissional"
