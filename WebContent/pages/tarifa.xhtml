@@ -11,84 +11,175 @@
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-					<h:inputHidden id="idTarifa" value="#{tarifaMB.entity.id}" />
-					<p:outputPanel id="pnTarifa" styleClass="BordNone">
-
-						<h1>Cadastro de Tarifas</h1>
-						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-							style="border:0px none; background-color:transparent;">
-
-
-							<p:outputLabel for="nome" value="Produto : " />
-							<p:inputText id="nome" value="#{tarifaMB.entity.produto}" required="true" maxlength="100" />
-
-							<p:outputLabel for="tipo" value="Tipo : " />
-							<p:selectOneRadio id="tipo" value="#{tarifaMB.entity.tipo}" required="true">
-								<p:ajax process="@this" update=":lume:lbBandeira" />
-								<f:selectItem itemValue="CC" itemLabel="Cartão de Crédito" />
-								<f:selectItem itemValue="CD" itemLabel="Cartão de Débito" />
-								<f:selectItem itemValue="BO" itemLabel="Boleto" />
-							</p:selectOneRadio>
-
-							<h:panelGroup id="lbBandeira">
-								<p:outputLabel for="bandeira" value="Banco de emissão : " rendered="#{tarifaMB.entity.tipo == 'BL'}" />
-								<p:outputLabel for="bandeira" value="Bandeira : " rendered="#{tarifaMB.entity.tipo != 'BL' || tarifaMB.entity.tipo == null}" />
-							</h:panelGroup>
-							<p:inputText id="bandeira" value="#{tarifaMB.entity.bandeira}" required="true" maxlength="100" />
-
-
-							<p:outputLabel for="taxa" value="Taxas (%): " />
-							<p:inputNumber id="taxa" value="#{tarifaMB.entity.taxa}" maxlength="13" maxValue="99999999.99" decimalSeparator="," symbol=""
-								thousandSeparator="." required="true" />
-
-
-							<p:outputLabel for="prazo" value="Prazo (dias): " />
-							<p:inputMask id="prazo" value="#{tarifaMB.entity.prazo}" mask="9?999" required="true" />
-
-
-							<p:outputLabel for="tarifa" value="Tarifa : " />
-							<p:inputNumber id="tarifa" value="#{tarifaMB.entity.tarifa}" maxlength="13" maxValue="99999999.99" decimalSeparator="," symbol=""
-								thousandSeparator="." required="true" />
-
-
-							<p:outputLabel for="parcelaMinima" value="Parcela Mínima : " />
-							<p:inputMask id="parcelaMinima" value="#{tarifaMB.entity.parcelaMinima}" mask="9?9" required="true" />
-
-
-							<p:outputLabel for="parcelaMaxima" value="Parcela Máxima: " />
-							<p:inputMask id="parcelaMaxima" value="#{tarifaMB.entity.parcelaMaxima}" mask="9?9" required="true" />
-
-
-							<p:outputLabel for="banco" value="Banco : " />
-							<p:inputText id="banco" value="#{tarifaMB.entity.banco}" required="true" maxlength="4" mask="9?999" />
-
-
-							<p:outputLabel for="agencia" value="Agência : " />
-							<p:inputText id="agencia" value="#{tarifaMB.entity.agencia}" required="true" maxlength="10" mask="9?999" />
-
-
-
+				
+				<p:dialog id="dlg" widgetVar="dlg" header="Nova Forma de Pagamento" responsive="true" modal="true" width="40%">
+					<p:outputPanel id="pnDlg">			
+                        <p:panelGrid columns="1" columnClasses="" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;" >														
+							<p:outputPanel style="margin-bottom:-15px">											
+								<p:outputLabel for="tipo" value="Tipo : " />
+								<h:outputLabel class="fa fa-question" id="tooltipTipo" style="font-size:16px; margin-left:10px;"/>
+								<p:tooltip for="tooltipTipo" position="bottom" value="Tipo da forma de pagamento. Se nenhum se aplicar, escolha a opção 'Outros'." />
+							</p:outputPanel>
+							<p:outputPanel>		
+								<p:selectOneRadio id="tipo" value="#{tarifaMB.entity.tipo}" required="true">									
+									<f:selectItem itemValue="CC" itemLabel="Cartão de Crédito" />
+									<f:selectItem itemValue="CD" itemLabel="Cartão de Débito" />
+									<f:selectItem itemValue="BO" itemLabel="Boleto" />
+									<f:selectItem itemValue="FI" itemLabel="Financiamento" />
+									<f:selectItem itemValue="OU" itemLabel="Outros" />
+								</p:selectOneRadio>
+							</p:outputPanel>
+						</p:panelGrid>	
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-3,ui-grid-col-9" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent; " >
+							<p:outputPanel>
+								<p:outputLabel for="nome" value="Descrição : " />
+								<h:outputLabel class="fa fa-question" id="tooltipProduto" style="font-size:16px; margin-left:10px;"/>
+								<p:tooltip for="tooltipProduto" position="bottom" value="Descrição da forma de pagamento, por exemplo 'VISA Crédito' e 'VISA Débito'." />
+							</p:outputPanel>
+							<p:outputPanel>														
+								<p:inputText id="nome" value="#{tarifaMB.entity.produto}" required="true" maxlength="100" />
+							</p:outputPanel>
+						</p:panelGrid>	
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-9" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent; " >	
+							<p:outputPanel>
+								<p:outputLabel for="prazo" value="Prazo de crédito em dias:" />
+								<h:outputLabel class="fa fa-question" id="tooltipPrazo" style="font-size:16px; margin-left:10px;"/>
+								<p:tooltip for="tooltipPrazo" position="bottom" value="Esse prazo determina em quanto tempo um pagamento feito com
+								esse tipo de fato 'cai' na conta da empresa, ou seja, quando essa conferência deve ser feita." />								
+							</p:outputPanel>	
+							<p:outputPanel>	
+								<p:inputMask id="prazo" value="#{tarifaMB.entity.prazo}" mask="9?999" required="true" />
+							</p:outputPanel>
+						</p:panelGrid>	
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent; " >								
+							<p:outputPanel>									
+								<p:outputLabel for="bandeira" value="Bandeira : "/>
+								<h:outputLabel class="fa fa-question" id="tooltipBandeira" style="font-size:16px; margin-left:10px;"/>
+								<p:tooltip for="tooltipBandeira" position="bottom" value="Bandeira é normalmente utilizada para cartão de crédito, por exemplo VISA ou MASTERCARD." />
+							</p:outputPanel>
+							<p:outputPanel>	
+								<p:inputText id="bandeira" value="#{tarifaMB.entity.bandeira}"  maxlength="100" />
+							</p:outputPanel>
+							<p:outputPanel>	
+								<p:outputLabel for="taxa" value="Taxas (%): " />
+								<h:outputLabel class="fa fa-question" id="tooltipTaxa" style="font-size:16px; margin-left:10px;"/>
+								<p:tooltip for="tooltipTaxa" position="bottom" value="Taxa da forma de pagamento, se existente." />
+							</p:outputPanel>
+							<p:outputPanel>		
+								<p:inputNumber id="taxa" value="#{tarifaMB.entity.taxa}" maxlength="13" maxValue="99999999.99" decimalSeparator="," symbol=""
+								thousandSeparator="."  />								
+							</p:outputPanel>
+							<p:outputPanel>		
+								<p:outputLabel for="tarifa" value="Tarifa : " />
+								<h:outputLabel class="fa fa-question" id="tooltipTarifa" style="font-size:16px; margin-left:10px;"/>
+								<p:tooltip for="tooltipTarifa" position="bottom" value="Tarifa da forma de pagamento, se existente." />
+							</p:outputPanel>
+							<p:outputPanel>	
+								<p:inputNumber id="tarifa" value="#{tarifaMB.entity.tarifa}" maxlength="13" maxValue="99999999.99" decimalSeparator="," symbol=""
+								thousandSeparator="."  />
+							</p:outputPanel>								
+						</p:panelGrid>						
+						<p:panelGrid  columns="2" columnClasses="ui-grid-col-3,ui-grid-col-9" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent; padding: 4px 4px !important;" >
+							<p:outputPanel>	
+								<p:outputLabel for="parcelaMinima" value="Quantidade mínima de parcelas (dias):"/>
+								<h:outputLabel class="fa fa-question" id="tooltipParcelaMinima" style="font-size:16px; margin-left:10px;"/>
+								<p:tooltip for="tooltipParcelaMinima" position="bottom" value="Quantidade mínima de parcelas para parcelamento. Para pagamentos a vista, deve ser 1." />
+							</p:outputPanel>
+							<p:outputPanel>	
+								<p:inputMask id="parcelaMinima" value="#{tarifaMB.entity.parcelaMinima}" mask="9?9" style="width:100% !important" required="true"/>
+							</p:outputPanel>						
+							<p:outputPanel style="margin-bottom:-15px">	
+								<p:outputLabel for="parcelaMaxima" value="Quantidade máxima de parcelas (dias):"/>
+								<h:outputLabel class="fa fa-question" id="tooltipParcelaMaxima" style="font-size:16px; margin-left:10px;"/>
+								<p:tooltip for="tooltipParcelaMaxima" position="bottom" value="Quantidade máxima de parcelas para parcelamento. Para pagamentos a vista, deve ser 1." />
+							</p:outputPanel>
+							<p:outputPanel>		
+								<p:inputMask id="parcelaMaxima" value="#{tarifaMB.entity.parcelaMaxima}" mask="9?9" style="width:100% !important" required="true"/>
+							</p:outputPanel>	
+							<p:outputPanel></p:outputPanel>
+							<p:outputPanel></p:outputPanel>
 						</p:panelGrid>
-						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-4,ui-grid-col-8" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent; " >
+							<p:outputPanel>
+								<p:outputLabel for="periodicidade" value="Periodicidade de geração de parcelas (dias): " />
+								<h:outputLabel class="fa fa-question" id="tooltipPeriodicidade" style="font-size:16px; margin-left:10px;"/>
+								<p:tooltip for="tooltipPeriodicidade" position="bottom" value="Período de tempo para geração de parcelas, para pagamentos parcelados.
+								Se esse campo não for preenchido, as parcelas serão geradas de 30 em 30 dias (tempo padrão)" />
+							</p:outputPanel>
+							<p:outputPanel>
+								<p:inputMask id="periodicidade" value="#{tarifaMB.entity.periodicidade}" mask="9?999" />
+							</p:outputPanel>	
+						</p:panelGrid>
+						<p:panelGrid  columns="6" columnClasses="ui-grid-col-1,ui-grid-col-4,ui-grid-col-2,ui-grid-col-2,ui-grid-col-1,ui-grid-col-2" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent; padding: 4px 4px !important;" >
+							<p:outputLabel for="banco" value="Banco: " />
+							<p:inputText id="banco" value="#{tarifaMB.entity.banco}" maxlength="100" />
+							<p:outputLabel for="conta" value="Número da conta: " />
+							<p:inputText id="conta" value="#{tarifaMB.entity.conta}" maxlength="4" mask="9?999" />
+							<p:outputLabel for="agencia" value="Agência: " />
+							<p:inputText id="agencia" value="#{tarifaMB.entity.agencia}" maxlength="10" mask="9?999" />	
+						</p:panelGrid>
+						<p:panelGrid columns="2" columnClasses="ui-grid-col-1,ui-grid-col-11" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent; padding: 4px 4px !important;" >
+							<p:outputPanel>
+								<p:selectBooleanCheckbox id="receberAutomaticamente" value="#{tarifaMB.entity.receberAutomaticamenteBoolean}" />
+							</p:outputPanel>
+							<p:outputPanel>
+								<p:outputLabel value="Receber automaticamente ao efetuar lançamento" />
+								<h:outputLabel class="fa fa-question" id="tooltipReceber" style="font-size:16px; margin-left:10px;"/>
+								<p:tooltip for="tooltipReceber" position="bottom" >
+									<p>
+										Se essa opção não estiver marcada, será necessário confirmar manualmente o pagamento do cliente.<br/> 
+										Essa opção geralmente é utilizada para pagamentos que tem mais de uma quantidade de parcelas e que<br/>
+										o cliente deve ir na clinica mensalmente efetuar o pagamento, por exemplo crediário.
+									</p>
+								</p:tooltip>	
+							</p:outputPanel>							
+											
+						</p:panelGrid>
+							<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+								<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{tarifaMB.actionPersist}"
+											update=":lume:pnPrincipal,:lume:pnDlg,:lume:dtTarifa" process="@this,:lume:pnDlg"  styleClass="GreenButton" 										
+											/>	
+								<p:commandButton id="fechar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlg').hide();" immediate="true" />											
+								</p:panelGrid>
+								<div class="EmptyBox20"></div>
+						</p:outputPanel>					
+					</p:dialog>					
+					
+				
+					<h:inputHidden id="idTarifa" value="#{tarifaMB.entity.id}" />
+					<p:outputPanel styleClass="BordNone">					
+    					<h1>
+        					Cadastro de Formas de Pagamento        					
+        					<h:outputLabel class="fa fa-question" id="tooltipTitulo" style="font-size:24px; margin-left:10px;"/> 
+							<p:tooltip for="tooltipTitulo" value="Nessa tela você configura todas as formas de pagamento que serão utilizadas em sua clínica." position="bottom" />
+    					</h1>
+    					<div class="SeparatorFull"></div>	
+						<br/><br/>
+						<p:panelGrid  columns="2" columnClasses="ui-grid-col-12" layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent; padding: 4px 4px !important;" >
+							<h:panelGroup styleClass="md-combo"> 								
+								<p:outputLabel for="filtraStatus" value="Mostrar somente as formas de pagamento: " />
+								<p:selectOneMenu  id="filtraStatus" value="#{tarifaMB.filtroStatus}"  style="width:270px;">										
+									<f:selectItem itemValue="A" itemLabel="Ativas" />
+									<f:selectItem itemValue="I" itemLabel="Inativas" />										
+									<f:selectItem itemValue="T" itemLabel="Todas" />
+									<p:ajax process="@this" update="pnPrincipal" listener="#{tarifaMB.geraLista()}"/>
+								</p:selectOneMenu>				
+							</h:panelGroup>
+						</p:panelGrid>		
+						<br/>
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Novo Cadastro de Tarifa" actionListener="#{tarifaMB.actionNew}" update=":lume:pnTarifa,:lume:dtTarifa"
-								immediate="true" />						
-							<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{tarifaMB.actionPersist}"
-								update=":lume:pnTarifa,:lume:dtTarifa" process=":lume:pnTarifa" styleClass="GreenButton" />
-							
-							<p:commandButton id="ativar" icon="White fa fa-chain White" 
-								value="Ativar" actionListener="#{tarifaMB.actionAtivar}"
-								update=":lume:pnTarifa,:lume:dtTarifa" process="@this" 
-								disabled="#{tarifaMB.entity.id == 0}" styleClass="NavyButton" 
-								rendered="#{tarifaMB.entity.status eq 'Inativo'}"/>
-							
-							<p:commandButton id="inativar" icon="White fa fa-chain-broken"
-								value="Inativar" actionListener="#{tarifaMB.actionInativar}"
-								update=":lume:pnTarifa,:lume:dtTarifa" process="@this" 
-								disabled="#{tarifaMB.entity.id == 0}" styleClass="NavyButton"
-								rendered="#{tarifaMB.entity.status eq 'Ativo'}"/>
-							
+								
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Nova Forma de Pagamento" 
+								oncomplete="PF('dlg').show();" actionListener="#{tarifaMB.actionNew}" update=":lume:pnDlg" immediate="true" />	
 							<h:panelGroup>
 								<p:splitButton icon="White fa fa fa-file-excel-o"
 									value="Exportar tabela para Excel"
@@ -123,18 +214,35 @@
 						</p:panelGrid>
 					</p:outputPanel>
 					<div class="EmptyBox20"></div>
-
+					<p:outputPanel styleClass="BordNone" id="pnPrincipal">		
 					<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtTarifa" value="#{tarifaMB.tarifas}" var="tarifa" rows="15" paginator="true"
 						selection="#{tarifaMB.entity}" selectionMode="single" rowKey="#{tarifa}" paginatorPosition="bottom" binding="#{tarifaMB.tabelaTarifa}">
-						<p:ajax event="rowSelect" update=":lume:pnTarifa" />
+						<p:ajax event="rowSelect"  />
 						<f:facet name="header">Tarifas</f:facet>
-
+						<p:column width="120" headerText="Ações">
+						<p:commandButton icon="fa fa-eye" process="@this"
+								actionListener="#{tarifaMB.actionEditar(tarifa)}"
+								update=":lume:pnDlg"
+								oncomplete="PF('dlg').show();" styleClass="NavyButton"
+								title="Editar forma de pagamento" />											
+							<p:commandButton icon="fa fa-trash" process="@this"
+								actionListener="#{tarifaMB.actionInativar(tarifa)}"
+								update=":lume:pnPrincipal"
+								styleClass="RedButton"
+								title="Inativar forma de pagamento" >
+								 <p:confirm header="COnfirmação" message="Você tem certeza que deseja inativar essa forma de pagamento?" />
+								</p:commandButton>
+						</p:column>
 						<p:column filterBy="#{tarifa.tipoStr}" sortBy="#{tarifa.tipoStr}" filterMatchMode="contains" headerText="Tipo" filterFunction="#{tarifaMB.filtroSemAcento}">
 							<h:outputText value="#{tarifa.tipoStr}" title="#{tarifa.id}" />
 						</p:column>
 
-						<p:column filterBy="#{tarifa.produto}" sortBy="#{tarifa.produto}" filterMatchMode="contains" headerText="Produto" filterFunction="#{tarifaMB.filtroSemAcento}">
+						<p:column filterBy="#{tarifa.produto}" sortBy="#{tarifa.produto}" filterMatchMode="contains" headerText="Descrição" filterFunction="#{tarifaMB.filtroSemAcento}">
 							<h:outputText value="#{tarifa.produto}" />
+						</p:column>
+
+						<p:column filterBy="#{tarifa.prazo}" sortBy="#{tarifa.prazo}" filterMatchMode="contains" headerText="Prazo (dias)">
+							<h:outputText value="#{tarifa.prazo}" />
 						</p:column>
 
 						<p:column filterBy="#{tarifa.bandeira}" sortBy="#{tarifa.bandeira}" filterMatchMode="contains" headerText="Bandeira" filterFunction="#{tarifaMB.filtroSemAcento}">
@@ -145,9 +253,7 @@
 							<h:outputText value="#{tarifa.taxa}" />
 						</p:column>
 
-						<p:column filterBy="#{tarifa.prazo}" sortBy="#{tarifa.prazo}" filterMatchMode="contains" headerText="Prazo (dias)">
-							<h:outputText value="#{tarifa.prazo}" />
-						</p:column>
+						
 
 						<p:column filterBy="#{tarifa.tarifa}" sortBy="#{tarifa.tarifa}" filterMatchMode="contains" headerText="Tarifa">
 							<h:outputText value="#{tarifa.tarifa}" />
@@ -164,6 +270,7 @@
 							<h:outputText value="#{tarifa.status}" />
 						</p:column>
 					</p:dataTable>
+					</p:outputPanel>
 				</div>
 			</div>
 		</div>

@@ -89,14 +89,32 @@
 										<h:panelGroup styleClass="lumeField">
 											<p:outputLabel for="statusRecebimentoAReceber"
 												value="Status do recebimento: " />
-											<p:selectCheckboxMenu id="statusRecebimentoAReceber"
-												label="Status" multiple="true" style="top: -4px;"
+											<p:selectOneMenu id="statusRecebimentoAReceber"
+												style="top: -10px;"
 												value="#{movimentacoesMB.statusLancamentoAReceber}"
 												converter="enumStatusLancamento">
+												<f:selectItem itemValue="#{null}" itemLabel="Todos" />
 												<f:selectItems
 													value="#{movimentacoesMB.listaStatusLancamentoAReceber}"
 													var="status" itemLabel="#{status.descricao}"
 													itemValue="#{status}" />
+												<p:ajax
+													listener="#{movimentacoesMB.alteraStatusLancamentoAReceber}"
+													update="subStatusRecebimentoAReceber" />
+											</p:selectOneMenu>
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="lumeField">
+											<p:outputLabel for="subStatusRecebimentoAReceber"
+												value="Sub Status do recebimento: " />
+											<p:selectCheckboxMenu id="subStatusRecebimentoAReceber"
+												label="Sub Status" multiple="true" style="top: -4px;"
+												value="#{movimentacoesMB.subStatusLancamentoAReceber}"
+												converter="enumSubStatusLancamento">
+												<f:selectItems
+													value="#{movimentacoesMB.listaSubStatusLancamentoAReceber}"
+													var="substatus" itemLabel="#{substatus.descricao}"
+													itemValue="#{substatus}" />
 											</p:selectCheckboxMenu>
 										</h:panelGroup>
 
@@ -168,11 +186,9 @@
 										value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
 								<p:column headerText="Status" filterMatchMode="contains"
-									filterBy="#{movimentacoesMB.getNewStatusLancamento(l)}"
-									sortBy="#{movimentacoesMB.getNewStatusLancamento(l)}"
+									filterBy="#{l.statusCompleto}" sortBy="#{l.statusCompleto}"
 									width="10%">
-									<h:outputText
-										value="#{movimentacoesMB.getNewStatusLancamento(l)}" />
+									<h:outputText value="#{l.statusCompleto}" />
 								</p:column>
 								<p:column headerText="Origem" filterMatchMode="contains"
 									filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
@@ -238,14 +254,32 @@
 										<h:panelGroup styleClass="lumeField">
 											<p:outputLabel for="statusRecebimentoAPagar"
 												value="Status do pagamento: " />
-											<p:selectCheckboxMenu id="statusRecebimentoAPagar"
-												label="Status" multiple="true" style="top: -4px;"
+											<p:selectOneMenu id="statusRecebimentoAPagar"
+												style="top: -10px;"
 												value="#{movimentacoesMB.statusLancamentoAPagar}"
 												converter="enumStatusLancamento">
+												<f:selectItem itemValue="#{null}" itemLabel="Todos" />
 												<f:selectItems
 													value="#{movimentacoesMB.listaStatusLancamentoAPagar}"
 													var="status" itemLabel="#{status.descricao}"
 													itemValue="#{status}" />
+												<p:ajax
+													listener="#{movimentacoesMB.alteraStatusLancamentoAPagar}"
+													update="subStatusRecebimentoAPagar" />
+											</p:selectOneMenu>
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="lumeField">
+											<p:outputLabel for="subStatusRecebimentoAPagar"
+												value="Sub Status do pagamento: " />
+											<p:selectCheckboxMenu id="subStatusRecebimentoAPagar"
+												label="Sub Status" multiple="true" style="top: -4px;"
+												value="#{movimentacoesMB.subStatusLancamentoAPagar}"
+												converter="enumSubStatusLancamento">
+												<f:selectItems
+													value="#{movimentacoesMB.listaSubStatusLancamentoAPagar}"
+													var="substatus" itemLabel="#{substatus.descricao}"
+													itemValue="#{substatus}" />
 											</p:selectCheckboxMenu>
 										</h:panelGroup>
 
@@ -317,11 +351,9 @@
 										value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
 								<p:column headerText="Status" filterMatchMode="contains"
-									filterBy="#{movimentacoesMB.getNewStatusLancamento(l)}"
-									sortBy="#{movimentacoesMB.getNewStatusLancamento(l)}"
+									filterBy="#{l.statusCompleto}" sortBy="#{l.statusCompleto}"
 									width="10%">
-									<h:outputText
-										value="#{movimentacoesMB.getNewStatusLancamento(l)}" />
+									<h:outputText value="#{l.statusCompleto}" />
 								</p:column>
 								<p:column headerText="Origem" filterMatchMode="contains"
 									filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"

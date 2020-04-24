@@ -2,7 +2,6 @@ package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -134,10 +133,10 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
         this.paciente = paciente;
         try {
             this.lAPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), null,
-                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, Arrays.asList(StatusLancamento.A_PAGAR));
+                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, StatusLancamento.A_PAGAR, null);
             BigDecimal vAPagar = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAPagar));
             this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), null,
-                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, Arrays.asList(StatusLancamento.A_PAGAR));
+                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, StatusLancamento.A_RECEBER, null);
             BigDecimal vAReceber = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAReceber));
             ContaSingleton.getInstance().getContaFromOrigem(this.paciente).setSaldo(vAReceber.subtract(vAPagar));
 

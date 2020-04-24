@@ -88,10 +88,14 @@ body .sideChkBox .ui-chkbox-label {
 									value="#{faturaPagtoMB.entity.dadosTabelaRepassePlanoTratamento.paciente.dadosBasico.nome}" />
 
 								<h:outputText for="statusFatura2" value="Status da Fatura:" />
-								<p:inputText id="statusFatura2"
+								<p:outputLabel id="statusFatura2"
 									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
 									value="#{faturaPagtoMB.entity.statusFaturaCompleto}"
-									readonly="true" />
+									readonly="true" escape="false">
+									<p:tooltip escape="false" for="@parent" position="bottom"
+										value="#{faturaPagtoMB.entity.tooltipAlteracaoStatus}"
+										hideDelay="500" />
+								</p:outputLabel>
 
 							</p:panelGrid>
 
@@ -243,11 +247,11 @@ body .sideChkBox .ui-chkbox-label {
 									<h:outputText
 										value="#{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
-								<p:column headerText="Status" sortBy="#{l.status.descricao}"
+								<p:column headerText="Status" sortBy="#{l.statusCompleto}"
 									width="15%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
-									filterMatchMode="contains" filterBy="#{l.status.descricao}">
-									<h:outputText value="#{l.status.descricao}" />
+									filterMatchMode="contains" filterBy="#{l.statusCompleto}">
+									<h:outputText value="#{l.statusCompleto}" />
 								</p:column>
 								<p:column headerText="Fatura Item" width="25%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">

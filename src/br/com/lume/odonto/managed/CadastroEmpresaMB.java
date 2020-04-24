@@ -21,7 +21,9 @@ import br.com.lume.afiliacao.AfiliacaoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.descontoOrcamento.DescontoOrcamentoSingleton;
 import br.com.lume.odonto.entity.Afiliacao;
+import br.com.lume.odonto.entity.DescontoOrcamento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.util.UF;
@@ -44,6 +46,11 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
     private List<Afiliacao> afiliacoes;
     
     private List<String> diasSelecionados = new ArrayList<>();
+    
+    //CONFIGURAÇÃO DESCONTO
+    private List<DescontoOrcamento> listaDescontos = new ArrayList<>();
+    private DescontoOrcamento descontoSelecionado = new DescontoOrcamento();
+    private String filtroDesconto = "A";
 
     @ManagedProperty(value = "#{menuMB}")
     private MenuMB menuMB;
@@ -135,6 +142,8 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
             profissional = ProfissionalSingleton.getInstance().getBo().findAdminInicial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.afiliacoes = AfiliacaoSingleton.getInstance().getBo().getAllAfiliacao();
             
+            this.carregarDescontos();
+            
             String dias[] = this.getEntity().getDiasSemana().split(";");
             Arrays.stream(dias).forEach(dia -> {
                 getDiasSelecionados().add(dia);
@@ -145,7 +154,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
             log.error("Erro ao buscar registros", e);
         }
     }
-
+    
     public void handleFotoUpload(FileUploadEvent event) {
         try {
             this.getEntity().setEmpStrLogo(handleFotoUpload(event, this.getEntity().getEmpStrLogo()));
@@ -177,7 +186,79 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
         
         return nme;
     }
-
+    
+    public void carregarDescontos() {
+        this.listaDescontos = DescontoOrcamentoSingleton.getInstance().getBo().listByClinica(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod(),
+                this.filtroDesconto);
+    }
+    
+    public void limparDesconto() {
+        this.descontoSelecionado = new DescontoOrcamento();
+    }
+    
+    public void cadastrarDesconto() {
+        try {
+            if(validarDesconto()) {
+                if(this.descontoSelecionado.getId() != null && this.descontoSelecionado.getId() > 0) {
+                    DescontoOrcamentoSingleton.getInstance().getBo().persist(this.descontoSelecionado);
+                    this.addInfo("Sucesso ao editar desconto", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+                }else {
+                    DescontoOrcamentoSingleton.getInstance().novoDescontoClinica(this.descontoSelecionado.getDesconto(),
+                            this.descontoSelecionado.getQuantidadeParcelas(), UtilsFrontEnd.getProfissionalLogado());
+                    this.listaDescontos.add(this.descontoSelecionado);
+                    limparDesconto();
+                    
+                    this.addInfo("Sucesso ao cadastrar desconto", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+                }
+            }
+            
+        } catch (Exception e) {
+            this.addError("Erro ao salvar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+            log.error("Erro ao cadastrar desconto", e);
+            e.printStackTrace();
+        }
+    }
+    
+    public boolean validarDesconto() {
+        for(DescontoOrcamento desconto : this.listaDescontos) {
+            if(desconto.getId() != this.descontoSelecionado.getId()) {
+                if(desconto.getQuantidadeParcelas() == this.descontoSelecionado.getQuantidadeParcelas()) {
+                    this.addError("Não pode ser cadastrado um desconto, com a mesma quantidade de parcelas de outro já existente.",
+                            Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+                    return false;
+                } else if(desconto.getQuantidadeParcelas().compareTo(this.descontoSelecionado.getQuantidadeParcelas()) == -1 &&
+                        desconto.getDesconto().compareTo(this.descontoSelecionado.getDesconto()) == -1) {
+                    this.addError("Não pode ser cadastrado um desconto, com quantidade de parcelas menor que outro já existente e desconto maior.",
+                            Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    public void inativarDesconto(DescontoOrcamento descontoOrcamento) {
+        try {
+            DescontoOrcamentoSingleton.getInstance().inativarDesconto(descontoOrcamento, UtilsFrontEnd.getProfissionalLogado());
+            this.addInfo("Sucesso ao inativar desconto", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+        } catch (Exception e) {
+            this.addError("Erro ao inativar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+            log.error("Erro ao inativar desconto", e);
+            e.printStackTrace();
+        }
+    }
+    
+    public void ativarDesconto(DescontoOrcamento descontoOrcamento) {
+        try {
+            DescontoOrcamentoSingleton.getInstance().ativarDesconto(descontoOrcamento, UtilsFrontEnd.getProfissionalLogado());
+            this.addInfo("Sucesso ao ativar desconto", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+        } catch (Exception e) {
+            this.addError("Erro ao ativar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+            log.error("Erro ao ativar desconto", e);
+            e.printStackTrace();
+        }
+    }
+    
     public List<UF> getListUF() {
         return UF.getList();
     }
@@ -218,6 +299,48 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
      */
     public void setDiasSelecionados(List<String> diasSelecionados) {
         this.diasSelecionados = diasSelecionados;
+    }
+
+    /**
+     * @return the listaDescontos
+     */
+    public List<DescontoOrcamento> getListaDescontos() {
+        return listaDescontos;
+    }
+
+    /**
+     * @param listaDescontos the listaDescontos to set
+     */
+    public void setListaDescontos(List<DescontoOrcamento> listaDescontos) {
+        this.listaDescontos = listaDescontos;
+    }
+
+    /**
+     * @return the descontoSelecionado
+     */
+    public DescontoOrcamento getDescontoSelecionado() {
+        return descontoSelecionado;
+    }
+
+    /**
+     * @param descontoSelecionado the descontoSelecionado to set
+     */
+    public void setDescontoSelecionado(DescontoOrcamento descontoSelecionado) {
+        this.descontoSelecionado = descontoSelecionado;
+    }
+
+    /**
+     * @return the filtroDesconto
+     */
+    public String getFiltroDesconto() {
+        return filtroDesconto;
+    }
+
+    /**
+     * @param filtroDesconto the filtroDesconto to set
+     */
+    public void setFiltroDesconto(String filtroDesconto) {
+        this.filtroDesconto = filtroDesconto;
     }
 
 }
