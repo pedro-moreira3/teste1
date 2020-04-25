@@ -137,16 +137,22 @@ body .ui-selectmanycheckbox td label {
 								<p:panelGrid columns="2" layout="grid"
 									styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 									style="border:0px none; background-color:transparent;">
-
-									<p:outputLabel value="Quantidade máxima de parcelas: " />
+									<p:outputPanel>
+										<p:outputLabel value="Quantidade máxima de parcelas:" />
+										<h:outputLabel class="fa fa-question" id="tooltipQuantidadeParcelas" style="font-size:16px; margin-left:10px;"/>
+											<p:tooltip for="tooltipQuantidadeParcelas" position="bottom" value="#{tarifaMB.getTooltipValue('profissionalDesconto', 'quantidadeParcelas')}" />
+									</p:outputPanel>	
 									<h:panelGroup>
 										<p:inputNumber id="quantidadeParcelas"
 											value="#{profissionalDescontoMB.entity.quantidadeParcelas}"
 											decimalPlaces="0">
 										</p:inputNumber>
 									</h:panelGroup>
-
-									<p:outputLabel value="Desconto máximo permitido" />
+									<p:outputPanel>
+										<p:outputLabel value="Desconto máximo permitido:" />
+										<h:outputLabel class="fa fa-question" id="tooltipDescontoMaximo" style="font-size:16px; margin-left:10px;"/>
+											<p:tooltip for="tooltipDescontoMaximo" position="bottom" value="#{tarifaMB.getTooltipValue('profissionalDesconto', 'descontoMaximo')}" />
+									</p:outputPanel>
 									<h:panelGroup>
 										<p:inputNumber id="descontoEmpresa" symbol="%" symbolPosition="s"
 											value="#{profissionalDescontoMB.entity.desconto}" decimalPlaces="0">

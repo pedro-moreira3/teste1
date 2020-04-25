@@ -287,6 +287,9 @@
 						</p:fieldset>
 						<p:fieldset
 							legend="Parâmetros do Sistema - Configurações de Repasse para Profissional">
+							<h:outputLabel class="fa fa-question" id="tooltipRepasse" 
+							style="position:relative;font-size:20px;padding-left: 435px;top:-36px;" />
+							<p:tooltip for="tooltipRepasse" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'configuracaoRepasse')}" />
 							<p:panelGrid columns="4"
 								columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
 								layout="grid" styleClass="ui-panelgrid-blank"
@@ -324,6 +327,9 @@
 
 						<p:fieldset
 							legend="Parâmetros do Sistema - Configurações de horários da clínica">
+							<h:outputLabel class="fa fa-question" id="tooltipHorario" 
+							style="position:relative;font-size:20px;padding-left: 385px;top:-36px;" />
+							<p:tooltip for="tooltipHorario" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'configuracaoHorario')}" />
 							<ui:remove>
 								<p:panelGrid columns="2"
 									columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
@@ -383,8 +389,10 @@
 						</p:fieldset>
 
 						<p:fieldset
-							legend="Parâmetros do Sistema - Configurações de Descontos">
-
+							legend="Parâmetros do Sistema - Configurações de Descontos">							
+							<h:outputLabel class="fa fa-question" id="tooltipTituloDesconto" 
+							style="position:relative;font-size:20px;padding-left: 340px;top:-36px;" />
+							<p:tooltip for="tooltipTituloDesconto" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'descontoTipo')}" />
 
 							<p:panelGrid columns="2" layout="grid"
 								columnClasses="ui-g-6, ui-g-6"
@@ -493,16 +501,22 @@
 									<p:panelGrid columns="2" layout="grid"
 										styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 										style="border:0px none; background-color:transparent;">
-
-										<p:outputLabel value="Quantidade máxima de parcelas: " />
+										<p:outputPanel>		
+											<p:outputLabel value="Quantidade máxima de parcelas:" />
+											<h:outputLabel class="fa fa-question" id="tooltipQuantidadeParcelas" style="font-size:16px; margin-left:10px;"/>
+											<p:tooltip for="tooltipQuantidadeParcelas" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'quantidadeParcelas')}" />
+										</p:outputPanel>		
 										<h:panelGroup>
 											<p:inputNumber id="quantidadeParcelas"
 												value="#{cadastroEmpresaMB.descontoSelecionado.quantidadeParcelas}"
 												decimalPlaces="0">
 											</p:inputNumber>
 										</h:panelGroup>
-
-										<p:outputLabel value="Desconto máximo permitido" />
+										<p:outputPanel>		
+											<p:outputLabel value="Desconto máximo permitido:" />
+											<h:outputLabel class="fa fa-question" id="tooltipDescontoMaximo" style="font-size:16px; margin-left:10px;"/>
+											<p:tooltip for="tooltipDescontoMaximo" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'descontoMaximo')}" />
+										</p:outputPanel>	
 										<h:panelGroup>
 											<p:inputNumber id="descontoEmpresa" symbol="%" symbolPosition="s"
 												value="#{cadastroEmpresaMB.descontoSelecionado.desconto}" decimalPlaces="0">
