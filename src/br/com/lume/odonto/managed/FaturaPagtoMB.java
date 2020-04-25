@@ -67,6 +67,9 @@ import br.com.lume.tarifa.TarifaSingleton;
 /**
  * @author ricardo.poncio
  */
+/**
+ * @author ricardo.poncio
+ */
 @ManagedBean
 @ViewScoped
 public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
@@ -118,6 +121,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private BigDecimal negociacaoValorDaParcela;
     private BigDecimal negociacaoValorTotal;
     private String negociacaoObservacao;
+    //Campos para 'Confirma negociação'
+    private List<Tarifa> negociacaoTarifasDisponiveis;
+    private Tarifa negociacaoFormaPagamento;
+    private Date negociacaoDataPagamento, negociacaoDataCredito;
+    private NegociacaoFatura negociacaoConfirmacao;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
@@ -226,7 +234,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             updateValues(getEntity(), true);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError("Erro", "Falha ao cancelar o lançamento!", true);
+            this.addError("Erro", "Falha ao cancelar o lançamento!\\r\\n" + e.getMessage(), true);
         }
     }
 
@@ -595,6 +603,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     //-------------------------------- NEGOCIACAO --------------------------------
 
+    public void actionAlteraDataPagamentoNegociacao() {
+        if (negociacaoFormaPagamento != null && negociacaoDataPagamento != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(negociacaoDataPagamento);
+            cal.add(Calendar.DAY_OF_MONTH, negociacaoFormaPagamento.getPrazo());
+            negociacaoDataCredito = cal.getTime();
+        } else
+            negociacaoDataCredito = null;
+    }
+
     public void actionNovaNegociacao() {
         if (parcelasDisponiveis == null)
             atualizaPossibilidadesNegociacao();
@@ -612,7 +630,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             BigDecimal totalSemDesconto = negociacaoValorTotal.subtract(valorDeDesconto);
 
             NegociacaoFaturaSingleton.getInstance().criaNovaNegociacao(getEntity(), getDescontoObjFromParcela(negociacaoQuantidadeParcelas), negociacaoQuantidadeParcelas, negociacaoTipoDesconto,
-                    negociacaoValorDesconto, negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, negociacaoValorTotal, totalSemDesconto, null, UtilsFrontEnd.getProfissionalLogado());
+                    negociacaoValorDesconto, negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, negociacaoValorTotal, totalSemDesconto, negociacaoObservacao,
+                    UtilsFrontEnd.getProfissionalLogado());
 
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
             updateValues(getEntity(), true);
@@ -636,6 +655,35 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
+    public void actionConfirmaNegociacao() {
+        try {
+            NegociacaoFaturaSingleton.getInstance().aprovarNegociacao(negociacaoConfirmacao, negociacaoFormaPagamento, negociacaoDataPagamento, negociacaoDataCredito,
+                    UtilsFrontEnd.getProfissionalLogado());
+
+            setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
+            updateValues(getEntity(), true);
+
+            PrimeFaces.current().executeScript("PF('dlgAprovaNegociacao').hide()");
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro!", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+        }
+    }
+
+    public void actionStartConfirmacaNegociacao(NegociacaoFatura negociacaoFatura) {
+        negociacaoConfirmacao = negociacaoFatura;
+        if (parcelasDisponiveis == null)
+            atualizaPossibilidadesNegociacao();
+        this.negociacaoQuantidadeParcelas = negociacaoFatura.getQuantidadeParcelas();
+        this.negociacaoTipoDesconto = negociacaoFatura.getTipoDesconto();
+        this.negociacaoValorDesconto = negociacaoFatura.getValorDesconto();
+        this.negociacaoValorDaPrimeiraParcela = negociacaoFatura.getValorPrimeiraParcela();
+        this.negociacaoValorDaParcela = negociacaoFatura.getValorParcela();
+        this.negociacaoValorTotal = negociacaoFatura.getValorTotal();
+        this.negociacaoObservacao = negociacaoFatura.getObservacao();
+        atualizaPossibilidadesTarifaNegociacao();
+    }
+
     public void atualizaQuantidadeDeParcelas() {
         zeraValores();
         negociacaoTipoDesconto = "P";
@@ -645,6 +693,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             negociacaoValorDesconto = null;
         }
         refazCalculos();
+        atualizaPossibilidadesTarifaNegociacao();
     }
 
     public boolean isPagamentoAVista() {
@@ -710,6 +759,25 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             return "Pagamento à vista de " + ptFormat.format(negociacaoValorDaPrimeiraParcela);
         } else {
             return "Complete os dados para realizar o cálculo!";
+        }
+    }
+
+    public void atualizaPossibilidadesTarifaNegociacao() {
+        try {
+            negociacaoTarifasDisponiveis = new ArrayList<>();
+            if (negociacaoQuantidadeParcelas == null)
+                return;
+
+            List<Tarifa> listaFormasDePagamento = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+            if (listaFormasDePagamento != null)
+                for (Tarifa formaPagamento : listaFormasDePagamento)
+                    if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null)
+                        if (negociacaoQuantidadeParcelas >= formaPagamento.getParcelaMinima() && negociacaoQuantidadeParcelas <= formaPagamento.getParcelaMaxima() && negociacaoTarifasDisponiveis.indexOf(
+                                formaPagamento) == -1)
+                            negociacaoTarifasDisponiveis.add(formaPagamento);
+
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
         }
     }
 
@@ -1172,6 +1240,46 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setNegociacaoObservacao(String negociacaoObservacao) {
         this.negociacaoObservacao = negociacaoObservacao;
+    }
+
+    public List<Tarifa> getNegociacaoTarifasDisponiveis() {
+        return negociacaoTarifasDisponiveis;
+    }
+
+    public void setNegociacaoTarifasDisponiveis(List<Tarifa> negociacaoTarifasDisponiveis) {
+        this.negociacaoTarifasDisponiveis = negociacaoTarifasDisponiveis;
+    }
+
+    public Tarifa getNegociacaoFormaPagamento() {
+        return negociacaoFormaPagamento;
+    }
+
+    public void setNegociacaoFormaPagamento(Tarifa negociacaoFormaPagamento) {
+        this.negociacaoFormaPagamento = negociacaoFormaPagamento;
+    }
+
+    public Date getNegociacaoDataPagamento() {
+        return negociacaoDataPagamento;
+    }
+
+    public void setNegociacaoDataPagamento(Date negociacaoDataPagamento) {
+        this.negociacaoDataPagamento = negociacaoDataPagamento;
+    }
+
+    public Date getNegociacaoDataCredito() {
+        return negociacaoDataCredito;
+    }
+
+    public void setNegociacaoDataCredito(Date negociacaoDataCredito) {
+        this.negociacaoDataCredito = negociacaoDataCredito;
+    }
+
+    public NegociacaoFatura getNegociacaoConfirmacao() {
+        return negociacaoConfirmacao;
+    }
+
+    public void setNegociacaoConfirmacao(NegociacaoFatura negociacaoConfirmacao) {
+        this.negociacaoConfirmacao = negociacaoConfirmacao;
     }
 
     //-------------------------------- NEGOCIACAO --------------------------------
