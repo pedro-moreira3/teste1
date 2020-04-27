@@ -158,35 +158,46 @@ body .negociacaoEmAndamento {
 								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 								<h:panelGroup styleClass="md-combo">
+
 									<p:outputLabel for="filtroParcelas"
 										value="Quantidade de Parcelas:" />
-									<p:selectOneMenu id="filtroParcelas" var="parcelaInfo"
-										value="#{faturaPagtoMB.negociacaoQuantidadeParcelas}"
-										forceSelection="true" scrollHeight="400">
 
-										<f:selectItem
-											itemLabel="Selecione uma quantidade de parcelas..."
-											itemValue="#{null}" />
-										<f:selectItems value="#{faturaPagtoMB.parcelasDisponiveis}"
-											var="p" itemValue="#{p}"
-											itemLabel="#{p} parcelas &#8211; Desconto Máx: #{faturaPagtoMB.getDescontoFromParcela(p)}" />
+									<p:outputPanel style="display: flex !important">
+										<p:selectOneMenu id="filtroParcelas" var="parcelaInfo"
+											value="#{faturaPagtoMB.negociacaoQuantidadeParcelas}"
+											forceSelection="true" scrollHeight="400">
 
-										<p:column headerText="Quantidade de Parcelas"
-											style="text-align: center;">
-											<h:outputText value="#{parcelaInfo} parcelas" />
-										</p:column>
-										<p:column headerText="Desconto Máximo">
-											<h:outputText
-												value="#{faturaPagtoMB.getDescontoFromParcela(parcelaInfo)}" />
-										</p:column>
+											<f:selectItem
+												itemLabel="Selecione uma quantidade de parcelas..."
+												itemValue="#{null}" />
+											<f:selectItems value="#{faturaPagtoMB.parcelasDisponiveis}"
+												var="p" itemValue="#{p}"
+												itemLabel="#{p} parcelas &#8211; Desconto Máx: #{faturaPagtoMB.getDescontoFromParcela(p)}" />
 
-										<p:ajax process="@this"
-											listener="#{faturaPagtoMB.atualizaQuantidadeDeParcelas}"
-											update="negociacaoTipoDesconto, negociacaoValorDesconto, negociacaoValorPrimeiraParcela, infoParcelamento" />
-									</p:selectOneMenu>
+											<p:column headerText="Quantidade de Parcelas"
+												style="text-align: center;">
+												<h:outputText value="#{parcelaInfo} parcelas" />
+											</p:column>
+											<p:column headerText="Desconto Máximo">
+												<h:outputText
+													value="#{faturaPagtoMB.getDescontoFromParcela(parcelaInfo)}" />
+											</p:column>
+
+											<p:ajax process="@this"
+												listener="#{faturaPagtoMB.atualizaQuantidadeDeParcelas}"
+												update="tooltipNovaNegociacaoTarifasDisponiveisObj, negociacaoTipoDesconto, negociacaoValorDesconto, negociacaoValorPrimeiraParcela, infoParcelamento" />
+										</p:selectOneMenu>
+										<p:outputPanel id="tooltipNovaNegociacaoTarifasDisponiveisObj">
+											<h:outputLabel class="fa fa-question"
+												id="tooltipNovaNegociacaoTarifasDisponiveis"
+												style="font-size:16px; margin-left:10px; margin-top:10px;" />
+											<p:tooltip for="tooltipNovaNegociacaoTarifasDisponiveis"
+												position="bottom" escape="false"
+												value="#{faturaPagtoMB.tooltipNegociacaoTarifasDisponiveis}" />
+										</p:outputPanel>
+									</p:outputPanel>
 								</h:panelGroup>
-
-								<h:panelGroup styleClass="md-combo">
+								<h:panelGroup styleClass="md-combo" style="margin-top: 10px;">
 									<p:outputLabel for="negociacaoTipoDesconto"
 										value="Tipo de Desconto:" />
 									<p:selectOneMenu id="negociacaoTipoDesconto"
@@ -201,7 +212,8 @@ body .negociacaoEmAndamento {
 									</p:selectOneMenu>
 								</h:panelGroup>
 
-								<h:panelGroup styleClass="md-inputfield taller">
+								<h:panelGroup styleClass="md-inputfield taller"
+									style="margin-top: 10px;">
 									<p:outputPanel id="negociacaoValorDesconto">
 										<p:inputNumber id="negociacaoValorDescValor"
 											value="#{faturaPagtoMB.negociacaoValorDesconto}"
@@ -227,7 +239,8 @@ body .negociacaoEmAndamento {
 									</p:outputPanel>
 								</h:panelGroup>
 
-								<h:panelGroup styleClass="md-inputfield taller">
+								<h:panelGroup styleClass="md-inputfield taller"
+									style="margin-top: 10px;">
 									<p:inputNumber id="negociacaoValorPrimeiraParcela"
 										value="#{faturaPagtoMB.negociacaoValorDaPrimeiraParcela}"
 										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
@@ -250,7 +263,8 @@ body .negociacaoEmAndamento {
 
 						<p:outputPanel>
 							<h:panelGroup styleClass="md-inputfield">
-								<p:inputTextarea rows="12" cols="33" id="negociacaoObservacao"
+								<p:inputTextarea rows="14" cols="33" id="negociacaoObservacao"
+									style="height: 237px !important"
 									value="#{faturaPagtoMB.negociacaoObservacao}" />
 								<p:outputLabel for="negociacaoObservacao" value="Observação:" />
 							</h:panelGroup>
@@ -293,28 +307,41 @@ body .negociacaoEmAndamento {
 									<h:panelGroup styleClass="md-combo">
 										<p:outputLabel for="filtroParcelasAprovacao"
 											value="Quantidade de Parcelas:" />
-										<p:selectOneMenu id="filtroParcelasAprovacao"
-											var="parcelaInfo"
-											value="#{faturaPagtoMB.negociacaoQuantidadeParcelas}"
-											forceSelection="true" scrollHeight="400" disabled="true">
 
-											<f:selectItem
-												itemLabel="Selecione uma quantidade de parcelas..."
-												itemValue="#{null}" />
-											<f:selectItems value="#{faturaPagtoMB.parcelasDisponiveis}"
-												var="p" itemValue="#{p}"
-												itemLabel="#{p} parcelas &#8211; Desconto Máx: #{faturaPagtoMB.getDescontoFromParcela(p)}" />
+										<p:outputPanel style="display: flex !important">
+											<p:selectOneMenu id="filtroParcelasAprovacao"
+												var="parcelaInfo"
+												value="#{faturaPagtoMB.negociacaoQuantidadeParcelas}"
+												forceSelection="true" scrollHeight="400" disabled="true">
 
-											<p:column headerText="Quantidade de Parcelas"
-												style="text-align: center;">
-												<h:outputText value="#{parcelaInfo} parcelas" />
-											</p:column>
-											<p:column headerText="Desconto Máximo">
-												<h:outputText
-													value="#{faturaPagtoMB.getDescontoFromParcela(parcelaInfo)}" />
-											</p:column>
+												<f:selectItem
+													itemLabel="Selecione uma quantidade de parcelas..."
+													itemValue="#{null}" />
+												<f:selectItems value="#{faturaPagtoMB.parcelasDisponiveis}"
+													var="p" itemValue="#{p}"
+													itemLabel="#{p} parcelas &#8211; Desconto Máx: #{faturaPagtoMB.getDescontoFromParcela(p)}" />
 
-										</p:selectOneMenu>
+												<p:column headerText="Quantidade de Parcelas"
+													style="text-align: center;">
+													<h:outputText value="#{parcelaInfo} parcelas" />
+												</p:column>
+												<p:column headerText="Desconto Máximo">
+													<h:outputText
+														value="#{faturaPagtoMB.getDescontoFromParcela(parcelaInfo)}" />
+												</p:column>
+
+											</p:selectOneMenu>
+											<p:outputPanel
+												id="tooltipConfirmaNegociacaoTarifasDisponiveisObj">
+												<h:outputLabel class="fa fa-question"
+													id="tooltipConfirmaNegociacaoTarifasDisponiveis"
+													style="font-size:16px; margin-left:10px; margin-top:10px;" />
+												<p:tooltip for="tooltipConfirmaNegociacaoTarifasDisponiveis"
+													position="bottom" escape="false"
+													value="#{faturaPagtoMB.tooltipNegociacaoTarifasDisponiveis}" />
+											</p:outputPanel>
+										</p:outputPanel>
+
 									</h:panelGroup>
 
 									<h:panelGroup styleClass="md-combo">

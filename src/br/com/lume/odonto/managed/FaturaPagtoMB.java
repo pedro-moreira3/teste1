@@ -25,6 +25,7 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.TooltipHelper;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.UtilsPadraoRelatorio;
 import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
@@ -112,6 +113,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private List<Lancamento> lAPagar, lAReceber;
 
     //Campos para 'Nova negociação'
+    private List<Tarifa> tarifasDisponiveis;
     private List<Integer> parcelasDisponiveis;
     private HashMap<Integer, DescontoOrcamento> descontosDisponiveis;
     private Integer negociacaoQuantidadeParcelas;
@@ -122,6 +124,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private BigDecimal negociacaoValorTotal;
     private String negociacaoObservacao;
     //Campos para 'Confirma negociação'
+    private String tooltipNegociacaoTarifasDisponiveis;
     private List<Tarifa> negociacaoTarifasDisponiveis;
     private Tarifa negociacaoFormaPagamento;
     private Date negociacaoDataPagamento, negociacaoDataCredito;
@@ -620,6 +623,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         negociacaoTipoDesconto = "P";
         negociacaoObservacao = null;
         zeraValores();
+        atualizaTooltipTarifasDisponiveis();
     }
 
     public void actionPersistNegociacao() {
@@ -682,6 +686,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.negociacaoValorTotal = negociacaoFatura.getValorTotal();
         this.negociacaoObservacao = negociacaoFatura.getObservacao();
         atualizaPossibilidadesTarifaNegociacao();
+        atualizaTooltipTarifasDisponiveis();
     }
 
     public void atualizaQuantidadeDeParcelas() {
@@ -694,6 +699,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
         refazCalculos();
         atualizaPossibilidadesTarifaNegociacao();
+
+        try {
+            atualizaListaTarifasDisponiveis();
+        } catch (Exception e) {
+        }
     }
 
     public boolean isPagamentoAVista() {
@@ -819,6 +829,32 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             percent = percformat.format(this.descontosDisponiveis.get(parcela).getDesconto().divide(BigDecimal.valueOf(100), 4, BigDecimal.ROUND_HALF_UP));
         }
         return percent;
+    }
+
+    private void atualizaListaTarifasDisponiveis() throws Exception {
+        if (negociacaoQuantidadeParcelas == null)
+            return;
+        tarifasDisponiveis = new ArrayList<>();
+
+        List<Tarifa> listaFormasDePagamento = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+        if (listaFormasDePagamento != null)
+            for (Tarifa formaPagamento : listaFormasDePagamento)
+                if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null)
+                    if (formaPagamento.getParcelaMinima() <= negociacaoQuantidadeParcelas && formaPagamento.getParcelaMaxima() >= negociacaoQuantidadeParcelas)
+                        tarifasDisponiveis.add(formaPagamento);
+
+        atualizaTooltipTarifasDisponiveis();
+    }
+
+    private void atualizaTooltipTarifasDisponiveis() {
+        List<String[]> linhas = new ArrayList<>();
+        if (tarifasDisponiveis != null && !tarifasDisponiveis.isEmpty()) {
+            for (Tarifa tarifa : tarifasDisponiveis)
+                linhas.add(new String[] { tarifa.getProdutoStr(), String.valueOf(tarifa.getParcelaMinima()), String.valueOf(tarifa.getParcelaMaxima()) });
+        } else {
+            linhas.add(new String[] { "Nenhum registro disponível!", "Nenhum registro disponível!", "Nenhum registro disponível!" });
+        }
+        tooltipNegociacaoTarifasDisponiveis = TooltipHelper.getInstance().montaTabela(new String[] { "Produto", "Parcela Mínima", "Parcela Máxima" }, linhas);
     }
 
     //-------------------------------- NEGOCIACAO --------------------------------
@@ -1280,6 +1316,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setNegociacaoConfirmacao(NegociacaoFatura negociacaoConfirmacao) {
         this.negociacaoConfirmacao = negociacaoConfirmacao;
+    }
+
+    public String getTooltipNegociacaoTarifasDisponiveis() {
+        return tooltipNegociacaoTarifasDisponiveis;
+    }
+
+    public void setTooltipNegociacaoTarifasDisponiveis(String tooltipNegociacaoTarifasDisponiveis) {
+        this.tooltipNegociacaoTarifasDisponiveis = tooltipNegociacaoTarifasDisponiveis;
     }
 
     //-------------------------------- NEGOCIACAO --------------------------------
