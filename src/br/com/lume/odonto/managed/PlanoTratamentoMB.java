@@ -163,7 +163,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private boolean renderizarValoresProcedimentos = true;
     private List<Profissional> profissionaisFinalizarNovamente;
     private Profissional profissionalFinalizarNovamente;
-    
+
     private PlanoTratamentoProcedimento ptpMudarExecutor;
 
     public PlanoTratamentoMB() {
@@ -315,7 +315,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                         pt.setValor(BigDecimal.ZERO);
                     }
                     pt.setValor(getTotalPT(pt));
-                    pt.setValorTotalRestante(pt.getValor().subtract(PlanoTratamentoSingleton.getInstance().getTotalPago(pt)));
+                    pt.setValorTotalRestante(PlanoTratamentoSingleton.getInstance().getTotalRestanteAPagar(pt));
                 }
             }
         } catch (Exception e) {
@@ -341,8 +341,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
         actionFinalizar((ActionEvent) null);
     }
-    
-
 
     public void actionFinalizar(ActionEvent event) {
         try {
@@ -720,27 +718,24 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     public void actionFinalizarNovamente(PlanoTratamentoProcedimento ptp) {
-       
-            try {
-                if (ptp.getStatus() != null && ptp.getStatus().equals("F")) {
-                    List<String> perfis = new ArrayList<>();
-                    perfis.add(OdontoPerfil.DENTISTA);
-                    perfis.add(OdontoPerfil.ADMINISTRADOR);
-                    profissionaisFinalizarNovamente = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                    ptpMudarExecutor = ptp;
-                    profissionalFinalizarNovamente = null;
-                    PrimeFaces.current().executeScript("PF('dlgFinalizarNovamente').show()");
-                }                    
-            } catch (Exception e) {
-                LogIntelidenteSingleton.getInstance().makeLog("Erro no actionFinalizarNovamente", e);
-                addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+
+        try {
+            if (ptp.getStatus() != null && ptp.getStatus().equals("F")) {
+                List<String> perfis = new ArrayList<>();
+                perfis.add(OdontoPerfil.DENTISTA);
+                perfis.add(OdontoPerfil.ADMINISTRADOR);
+                profissionaisFinalizarNovamente = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                ptpMudarExecutor = ptp;
+                profissionalFinalizarNovamente = null;
+                PrimeFaces.current().executeScript("PF('dlgFinalizarNovamente').show()");
             }
-            
-            
-        
-        
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog("Erro no actionFinalizarNovamente", e);
+            addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+        }
+
     }
-    
+
     public void actionFinalizarSalvar(ActionEvent event) {
         try {
             ptpMudarExecutor.setFinalizadoPorProfissional(profissionalFinalizarNovamente);
@@ -752,9 +747,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionFinalizarSalvar", e);
             addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
-      
+
     }
-    
 
     private void calculaRepasse(PlanoTratamentoProcedimento ptp) {
         try {
@@ -1017,14 +1011,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public boolean existeCadastroTarifa() {
         return existeCadastroTarifa(getPlanejamentoAtual().getFormaPagamento().getValor());
     }
-    
+
     public boolean existeCadastroTarifa(String formaPagamento) {
         List<String> formasPagamentoComProduto = Arrays.asList(new String[] { "CC", "CD", "BO" });
         if (formasPagamentoComProduto.indexOf(formaPagamento) != -1)
             return true;
         return false;
     }
-    
+
     public boolean showProdutoNewPlanejamento() {
         if (getPlanejamentoAtual() != null && getPlanejamentoAtual().getFormaPagamento() != null) {
             if (existeCadastroTarifa()) {
@@ -2215,32 +2209,26 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.renderizarValoresProcedimentos = renderizarValoresProcedimentos;
     }
 
-    
     public List<Profissional> getProfissionaisFinalizarNovamente() {
         return profissionaisFinalizarNovamente;
     }
 
-    
     public void setProfissionaisFinalizarNovamente(List<Profissional> profissionaisFinalizarNovamente) {
         this.profissionaisFinalizarNovamente = profissionaisFinalizarNovamente;
     }
 
-    
     public Profissional getProfissionalFinalizarNovamente() {
         return profissionalFinalizarNovamente;
     }
 
-    
     public void setProfissionalFinalizarNovamente(Profissional profissionalFinalizarNovamente) {
         this.profissionalFinalizarNovamente = profissionalFinalizarNovamente;
     }
 
-    
     public PlanoTratamentoProcedimento getPtpMudarExecutor() {
         return ptpMudarExecutor;
     }
 
-    
     public void setPtpMudarExecutor(PlanoTratamentoProcedimento ptpMudarExecutor) {
         this.ptpMudarExecutor = ptpMudarExecutor;
     }
