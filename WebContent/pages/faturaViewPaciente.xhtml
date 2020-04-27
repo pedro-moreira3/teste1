@@ -777,7 +777,7 @@ body .negociacaoEmAndamento {
 										actionListener="#{faturaPagtoMB.confereLancamentoRepasse(l)}"
 										process="@this"
 										rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
-										disabled="#{l.pagamentoConferido == 'S' or !l.ativo or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}">
+										disabled="#{l.pagamentoConferido == 'S' or !l.ativo}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											message="Você confirma este recebimento?">
 										</p:confirm>
@@ -851,7 +851,7 @@ body .negociacaoEmAndamento {
 			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
 				process="@this" update="pnlNewLancamento" styleClass="OrangeButton"
 				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
-				disabled="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0 or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}"
+				disabled="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0 or faturaPagtoMB.verificaFaturaInterrompida()}"
 				actionListener="#{faturaPagtoMB.actionNewLancamento}"
 				oncomplete="PF('dlgNewLancamento').show()" />
 			<p:commandButton value="Nova Negociação" icon="fa fa-gear"

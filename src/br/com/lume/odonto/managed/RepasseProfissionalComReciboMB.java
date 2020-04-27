@@ -398,6 +398,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
         }
     }
+    
+    public boolean verificaRepasseNaoPago(Profissional profissionalRecibo){
+        return ReciboRepasseProfissionalSingleton.getInstance().getBo().existeReciboEmAberto(profissionalRecibo);
+    }
 
     public void faturaManual(PlanoTratamentoProcedimento ptp) {
         try {
