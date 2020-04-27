@@ -363,6 +363,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void confereLancamentoRepasse(Lancamento l) {
         try {
             LancamentoSingleton.getInstance().confereLancamento(l, UtilsFrontEnd.getProfissionalLogado());
+            updateValues(getEntity(), true);
             addInfo("Sucesso", "Sucesso ao salvar o registro", true);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);

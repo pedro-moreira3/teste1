@@ -772,7 +772,8 @@ body .negociacaoEmAndamento {
 										</p:confirm>
 									</p:commandButton>
 									<p:commandButton styleClass="GreenButton" icon="fa fa-check"
-										title="Recebido" update="@parent:@parent"
+										title="Recebido"
+										update="@parent:@parent, @parent:@parent:@parent:pnlfaturaView"
 										actionListener="#{faturaPagtoMB.confereLancamentoRepasse(l)}"
 										process="@this"
 										rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
@@ -847,17 +848,17 @@ body .negociacaoEmAndamento {
 		</p:outputPanel>
 		<p:panelGrid columns="4" layout="grid" id="buttonViewFatura"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-			<p:commandButton value="Nova Negociação" icon="fa fa-gear"
-				process="@this" update="pnlNovaNegociacao" styleClass="RedButton"
-				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
-				actionListener="#{faturaPagtoMB.actionNovaNegociacao}"
-				oncomplete="PF('dlgNovaNegociacao').show()" />
 			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
 				process="@this" update="pnlNewLancamento" styleClass="OrangeButton"
 				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
 				disabled="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0 or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}"
 				actionListener="#{faturaPagtoMB.actionNewLancamento}"
 				oncomplete="PF('dlgNewLancamento').show()" />
+			<p:commandButton value="Nova Negociação" icon="fa fa-gear"
+				process="@this" update="pnlNovaNegociacao" styleClass="RedButton"
+				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
+				actionListener="#{faturaPagtoMB.actionNovaNegociacao}"
+				oncomplete="PF('dlgNovaNegociacao').show()" />
 			<p:commandButton value="Visualizar Impressão" icon="fa fa-print"
 				styleClass="NavyButton" process="@this"
 				oncomplete="PF('dlgPrintFatura').show()"
