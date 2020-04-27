@@ -288,6 +288,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		</div>
 	</div>
 
+
+
+
 	<p:dialog id="devolver" widgetVar="devolver"
 		header="Encerrar Plano de Tratamento" responsive="true" modal="true"
 		appendTo=":lume" closable="false">
@@ -923,16 +926,13 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								</p:selectBooleanCheckbox>
 								<p:commandButton icon="White fa fa-gear"
 									title="Finalizar Novamente"
-									actionListener="#{planoTratamentoMB.actionFinalizarNovamente(plano)}"
-									update=":lume:tabViewPaciente:pnViewPlanoTratamento"
-									process=":lume:tabViewPaciente:pnViewPlanoTratamento, @this"
+									actionListener="#{planoTratamentoMB.actionFinalizarNovamente(plano)}"								
+									process="@this"
+									update=":lume:tabViewPaciente:pnFinalizarNovamente"
 									styleClass="RedButton"
 									disabled="#{planoTratamentoMB.entity.id == null or planoTratamentoMB.entity.existeProcedimentoFinalizado == false}"
-									style="float: right;"
-									rendered="#{planoTratamentoMB.admin and plano.finalizado}">
-									<p:confirm header="Confirmação"
-										message="Deseja realmente mudar o finalizador deste procedimento?"
-										icon="fa fa-warning" />
+									style="float: right;" 
+									rendered="#{planoTratamentoMB.admin and plano.finalizado}">								
 								</p:commandButton>
 							</p:column>
 							<p:column headerText="Dta. de Execução"
@@ -972,6 +972,40 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
 				oncomplete="PF('dlgViewPlanoTratamento').hide()" />
 		</p:panelGrid>
+	</p:dialog>
+
+
+	<p:dialog id="dlgFinalizarNovamente" widgetVar="dlgFinalizarNovamente"
+		responsive="true" modal="true" appendTo=":lume" resizable="false" header="Alteração de profissional executor"
+		width="600">
+	
+		<p:panel id="pnFinalizarNovamente" styleClass="BordNone">
+			<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			
+				<p:selectOneMenu id="profissionalFinalizaProcedimento_new"
+					value="#{planoTratamentoMB.profissionalFinalizarNovamente}"
+					converter="profissional" rendered="#{planoTratamentoMB.admin}"
+					filter="true" filterMatchMode="contains">
+					<f:selectItem itemValue="#{null}"
+						itemLabel="Selecione um profissional para mudar a execução" />
+					<f:selectItems value="#{planoTratamentoMB.profissionaisFinalizarNovamente}"
+						var="profissional"
+						itemLabel="#{profissional.dadosBasico.prefixoNome}"
+						itemValue="#{profissional}" />
+				</p:selectOneMenu>
+			</p:panelGrid>
+			<br />
+			<div class="SeparatorFull"></div>
+			<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+				<p:commandButton id="persistFinalizarNovamente" icon="White fa fa-save" value="Salvar" actionListener="#{planoTratamentoMB.actionFinalizarSalvar}"
+					update=":lume:tabViewPaciente:pnFinalizarNovamente,:lume:tabViewPaciente:dtProcedimentosSelecionadospt" process="@this,:lume:tabViewPaciente:pnFinalizarNovamente" oncomplete="handleDialogRequest(xhr, status, args)"
+					styleClass="GreenButton" />
+				<p:commandButton icon="White fa fa-close" value="Fechar"
+				oncomplete="PF('dlgFinalizarNovamente').hide()" 
+				process="@this" styleClass="NavyButton" />	
+			</p:panelGrid>
+			<div class="EmptyBox20"></div>
+		</p:panel>
 	</p:dialog>
 
 	<p:dialog id="justificativaRemove" widgetVar="dlgJustificativaRemove"
