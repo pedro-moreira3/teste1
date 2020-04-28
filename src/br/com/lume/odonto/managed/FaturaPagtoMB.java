@@ -180,7 +180,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
     
     public boolean verificaFaturaInterrompida() {
-        if(this.getEntity() != null && this.getEntity().getId() > 0) {
+        if(this.getEntity() != null && this.getEntity().getId() > 0 && this.getEntity().getStatusFatura().equals("I")) {
             BigDecimal valorLancamentos = new BigDecimal(0);
             BigDecimal valorItens = new BigDecimal(0);
             
