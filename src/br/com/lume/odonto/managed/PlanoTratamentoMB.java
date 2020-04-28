@@ -311,7 +311,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                         pt.setValor(BigDecimal.ZERO);
                     }
                     pt.setValor(getTotalPT(pt));
-                    pt.setValorTotalRestante(pt.getValor().subtract(PlanoTratamentoSingleton.getInstance().getTotalPago(pt)));
+                    //pt.setValorTotalRestante(pt.getValor().subtract(PlanoTratamentoSingleton.getInstance().getTotalPago(pt)));
+                    pt.setValorTotalRestante(PlanoTratamentoSingleton.getInstance().getTotalRestanteAPagar(pt));
                 }
             }
         } catch (Exception e) {
