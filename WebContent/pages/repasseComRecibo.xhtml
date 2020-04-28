@@ -758,6 +758,9 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 					id="dtProfissionaisRecibo" rows="15" paginator="true"
 					paginatorPosition="bottom" rowKey="#{profissional}">
 					<f:facet name="header">Profissionais e Repasses</f:facet>
+					<p:column style="width:16px">
+						<p:rowToggler />
+					</p:column>
 					<p:column filterMatchMode="contains" headerText="Profissional"
 						sortBy="#{profissional.dadosBasico.nome}"
 						filterBy="#{profissional.dadosBasico.nome}">
@@ -779,6 +782,15 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								maxFractionDigits="2" />
 						</h:outputText>
 					</p:column>
+					<p:rowExpansion>
+						<p:panelGrid columns="1" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding lancamentoExplain">
+							<h:outputText
+								value="O profissional possui recibo ainda nÃ£o aprovado !"
+								style="color:red;" escape="false"
+								rendered="#{repasseProfissionalComReciboMB.verificaRepasseNaoPago(profissional)}" />
+						</p:panelGrid>
+					</p:rowExpansion>
 				</p:dataTable>
 				<br />
 				<p:panelGrid columns="1" layout="grid" id="detalhesNovoRecibo"
