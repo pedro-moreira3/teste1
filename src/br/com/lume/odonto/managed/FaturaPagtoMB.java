@@ -516,18 +516,18 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                     }
 
                     if ("CC".equals(getFormaPagamento())) {
-                        LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
+                        LancamentoSingleton.getInstance().novoLancamentoOld(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
                                 UtilsFrontEnd.getProfissionalLogado(), null);
                         //persistLancamento(getParcela(), getEntity(), valorOriginalDividio, getFormaPagamento(), Calendar.getInstance().getTime(), data.getTime(), getTarifa());
                     } else {
-                        LancamentoSingleton.getInstance().novoLancamento(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
+                        LancamentoSingleton.getInstance().novoLancamentoOld(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
                                 UtilsFrontEnd.getProfissionalLogado(), null);
                         now.add(Calendar.MONTH, 1);
                     }
                     data.add(Calendar.MONTH, 1);
                 }
             } else {
-                LancamentoSingleton.getInstance().novoLancamento(getEntity(), getValor(), getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
+                LancamentoSingleton.getInstance().novoLancamentoOld(getEntity(), getValor(), getFormaPagamento(), getParcela(), now.getTime(), data.getTime(), getTarifa(),
                         UtilsFrontEnd.getProfissionalLogado(), null);
                 //persistLancamento(getParcela(), getEntity(), getValor(), getFormaPagamento(), Calendar.getInstance().getTime(), data.getTime(), getTarifa());
             }
@@ -564,10 +564,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                     }
 
                     if ("CC".equals(getFormaPagamento())) {
-                        LancamentoSingleton.getInstance().novoLancamentoGenerico(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
+                        LancamentoSingleton.getInstance().novoLancamentoGenericoOld(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
                                 UtilsFrontEnd.getProfissionalLogado());
                     } else {
-                        LancamentoSingleton.getInstance().novoLancamentoGenerico(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
+                        LancamentoSingleton.getInstance().novoLancamentoGenericoOld(getEntity(), valorOriginalDividio, getFormaPagamento(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
                                 UtilsFrontEnd.getProfissionalLogado());
                         now.add(Calendar.MONTH, 1);
                     }
@@ -575,7 +575,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                     data.add(Calendar.MONTH, 1);
                 }
             } else {
-                LancamentoSingleton.getInstance().novoLancamentoGenerico(getEntity(), getValor(), getFormaPagamento(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
+                LancamentoSingleton.getInstance().novoLancamentoGenericoOld(getEntity(), getValor(), getFormaPagamento(), getParcela(), null, now.getTime(), data.getTime(), getTarifa(),
                         UtilsFrontEnd.getProfissionalLogado());
 
             }
