@@ -178,6 +178,36 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         setItemSelecionado(item);
         PrimeFaces.current().executeScript("PF('dlgTrocaItemProfissional').show()");
     }
+    
+    public boolean verificaFaturaInterrompida() {
+        if(this.getEntity() != null && this.getEntity().getId() > 0) {
+            BigDecimal valorLancamentos = new BigDecimal(0);
+            BigDecimal valorItens = new BigDecimal(0);
+            
+            List<Lancamento> lancamentos = LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(this.getEntity(), true);
+            lancamentos.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(this.getEntity(), false));
+            
+            for(Lancamento lancamento : lancamentos) {
+                if(lancamento.isAtivo()) {
+                    valorLancamentos = valorLancamentos.add(lancamento.getValor());
+                }
+            }
+            
+            for(FaturaItem item : this.getEntity().getItens()) {
+                if(item.isAtivo()) {
+                    PlanoTratamentoProcedimento ptp = item.getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento();
+                    if(ptp.isFinalizado()) {
+                        valorItens = valorItens.add(item.getValorComDesconto());
+                    }
+                }
+            }
+            
+            if(valorLancamentos.compareTo(valorItens) >= 0) {
+                return true;
+            }        
+        }
+        return false;
+    }
 
     public void actionPersistTrocaItemProfissional() {
         try {
