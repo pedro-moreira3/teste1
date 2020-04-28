@@ -81,9 +81,10 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
                 this.somaValorTotalDesconto = new BigDecimal(0);
                 this.somaValorTotalPago = new BigDecimal(0);
                 
+              //  this.relatorioOrcamentos = OrcamentoSingleton.getInstance().getBo().listByData(this.inicio, this.fim, this.aprovacaoInicio, this.aprovacaoFim, this.filtroPorProfissional,
+                //        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 this.relatorioOrcamentos = OrcamentoSingleton.getInstance().getBo().listByData(this.inicio, this.fim, this.aprovacaoInicio, this.aprovacaoFim, this.filtroPorProfissional,
-                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                
+                       null, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 if(this.relatorioOrcamentos != null)
                     validarFiltro(relatorioOrcamentos);
                 
