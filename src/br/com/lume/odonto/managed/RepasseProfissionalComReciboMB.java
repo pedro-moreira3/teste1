@@ -170,6 +170,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         setPtpsSelecionados(null);
         PrimeFaces.current().executeScript("PF('dlgGerarRecibo').hide()");
     }
+    
+    public boolean verificaRepasseNaoPago(Profissional profissionalRecibo){
+        return ReciboRepasseProfissionalSingleton.getInstance().getBo().existeReciboEmAberto(profissionalRecibo);
+    }
 
     public void gerarRecibo() {
         try {
