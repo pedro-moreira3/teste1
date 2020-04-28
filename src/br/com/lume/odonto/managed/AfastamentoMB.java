@@ -116,6 +116,7 @@ public class AfastamentoMB extends LumeManagedBean<Afastamento> {
         } catch (Exception e) {
             e.printStackTrace();
         }
+         actionNew(null);
     }
 
     public void carregaTela() {
