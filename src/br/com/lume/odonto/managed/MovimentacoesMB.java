@@ -206,7 +206,7 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
     public void carregaListaAPagar() {
         try {
             this.somaTotalAPagar = BigDecimal.ZERO;
-            this.aPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(UtilsFrontEnd.getEmpresaLogada().getConta(), getDataInicioAPagar(), getDataFimAPagar(), null, getProfissional(),
+            this.aPagar = LancamentoSingleton.getInstance().getBo().listContasAPagarOld(UtilsFrontEnd.getEmpresaLogada().getConta(), getDataInicioAPagar(), getDataFimAPagar(), null, getProfissional(),
                     (getStatusLancamentoAPagar() == null ? null : Arrays.asList(getStatusLancamentoAPagar())));
             for (Lancamento lAPagar : this.aPagar)
                 this.somaTotalAPagar = this.somaTotalAPagar.add(lAPagar.getValor());
@@ -229,7 +229,7 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
     public void carregaListaAReceber() {
         try {
             this.somaTotalAReceber = BigDecimal.ZERO;
-            this.aReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(UtilsFrontEnd.getEmpresaLogada().getConta(), getDataInicioAReceber(), getDataFimAReceber(), getPaciente(),
+            this.aReceber = LancamentoSingleton.getInstance().getBo().listContasAReceberOld(UtilsFrontEnd.getEmpresaLogada().getConta(), getDataInicioAReceber(), getDataFimAReceber(), getPaciente(),
                     null, (getStatusLancamentoAReceber() == null ? null : Arrays.asList(getStatusLancamentoAReceber())));
             for (Lancamento lAReceber : this.aReceber)
                 this.somaTotalAReceber = this.somaTotalAReceber.add(lAReceber.getValor());
