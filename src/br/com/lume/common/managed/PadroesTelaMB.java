@@ -8,6 +8,7 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.RequestScoped;
 
+import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.paciente.PacienteSingleton;

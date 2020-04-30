@@ -156,6 +156,11 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
         }
     }
     
+    public String formatarDesconto(DescontoOrcamento desconto) {
+        int i = (int) desconto.getDesconto().doubleValue();
+        return String.valueOf(i)+"%";
+    }
+    
     public void handleFotoUpload(FileUploadEvent event) {
         try {
             this.getEntity().setEmpStrLogo(handleFotoUpload(event, this.getEntity().getEmpStrLogo()));
@@ -212,7 +217,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
             }
             
             this.carregarDescontos();
-            limparDesconto();
+            this.descontoSelecionado = null;
             
         } catch (Exception e) {
             this.addError("Erro ao salvar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
@@ -243,6 +248,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
         try {
             DescontoOrcamentoSingleton.getInstance().inativarDesconto(descontoOrcamento, UtilsFrontEnd.getProfissionalLogado());
             carregarDescontos();
+            this.setDescontoSelecionado(null);
             this.addInfo("Sucesso ao inativar desconto", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         } catch (Exception e) {
             this.addError("Erro ao inativar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
@@ -255,6 +261,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
         try {
             DescontoOrcamentoSingleton.getInstance().ativarDesconto(descontoOrcamento, UtilsFrontEnd.getProfissionalLogado());
             carregarDescontos();
+            this.setDescontoSelecionado(null);
             this.addInfo("Sucesso ao ativar desconto", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         } catch (Exception e) {
             this.addError("Erro ao ativar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));

@@ -454,7 +454,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionAprovaOrcamento(Orcamento orcamento) {
         try {
-            OrcamentoSingleton.getInstance().aprovaOrcamento(orcamento, null, UtilsFrontEnd.getProfissionalLogado());
+            OrcamentoSingleton.getInstance().aprovaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado());
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
 
             try {

@@ -43,6 +43,15 @@ body .sideChkBox .ui-chkbox-label {
 .ui-confirm-dialog-message {
 	white-space: pre-line;
 }
+
+body .negociacaoAprovada {
+	background-color: #149952;
+	color: white;
+}
+
+body .negociacaoEmAndamento {
+	
+}
 </style>
 
 	<!-- Telas que ainda usam FaturaView.xhtml antigo: movimentacoes.xhmtl, pagamentoRecebimentoFatura.xhtml, relatorioFatura.xhtml -->
@@ -133,6 +142,588 @@ body .sideChkBox .ui-chkbox-label {
 		</div>
 	</p:dialog>
 
+	<p:dialog widgetVar="dlgNovoLancamento" header="Novo Lançamento"
+		responsive="true" modal="true" appendTo=":lume" width="70%">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlNovoLancamento">
+					<p:remoteCommand name="novoLancamentoRefazCalculos" process="@this"
+						actionListener="#{faturaPagtoMB.novoLancamentoRefazCalculos()}"
+						update="novoLancamentoValorPrimeiraParcela, novoLancamentoInfoParcelamento" />
+					<p:panelGrid columns="1" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="md-combo">
+
+							<p:outputLabel for="novoLancamentoFiltroParcelas"
+								value="Quantidade de Parcelas:" />
+
+							<p:outputPanel style="display: flex !important">
+								<p:selectOneMenu id="novoLancamentoFiltroParcelas"
+									value="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas}"
+									forceSelection="true" scrollHeight="400">
+
+									<f:selectItem
+										itemLabel="Selecione uma quantidade de parcelas..."
+										itemValue="#{null}" />
+									<f:selectItems
+										value="#{faturaPagtoMB.novoLancamentoParcelasDisponiveis}"
+										var="p" itemValue="#{p}" itemLabel="#{p} parcelas" />
+
+									<p:ajax process="@this"
+										listener="#{faturaPagtoMB.actionNovoLancamentoAtualizaQuantidadeDeParcelas}"
+										update="tooltipNovoLancamentoTarifasDisponiveisObj, novoLancamentoFormaPagamento, novoLancamentoValorPrimeiraParcela, novoLancamentoInfoParcelamento" />
+								</p:selectOneMenu>
+								<p:outputPanel id="tooltipNovoLancamentoTarifasDisponiveisObj">
+									<h:outputLabel class="fa fa-question"
+										id="tooltipNovoLancamentoTarifasDisponiveis"
+										style="font-size:16px; margin-left:10px; margin-top:10px;" />
+									<p:tooltip for="tooltipNovoLancamentoTarifasDisponiveis"
+										position="bottom" escape="false"
+										value="#{faturaPagtoMB.novoLancamentoTooltipNegociacaoTarifasDisponiveis}" />
+								</p:outputPanel>
+							</p:outputPanel>
+
+							<p:message styleClass="msg" for="novoLancamentoFiltroParcelas" />
+
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-combo">
+							<p:outputLabel for="novoLancamentoFormaPagamento"
+								value="Forma de Pagamento:" />
+							<p:selectOneMenu id="novoLancamentoFormaPagamento"
+								converter="tarifa"
+								value="#{faturaPagtoMB.novoLancamentoFormaPagamento}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione uma Forma de Pagamento:" />
+								<f:selectItems
+									value="#{faturaPagtoMB.novoLancamentoTarifasDisponiveis}"
+									var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+								<p:ajax event="change"
+									listener="#{faturaPagtoMB.actionNovoLancamentoAlteraDataPagamento}"
+									update="novoLancamentoDataCredito" process="@this" />
+							</p:selectOneMenu>
+							<p:message for="novoLancamentoFormaPagamento" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputNumber id="novoLancamentoValorTotal"
+								value="#{faturaPagtoMB.novoLancamentoValorTotal}" maxlength="13"
+								maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+								thousandSeparator=".">
+								<p:ajax process="@this"
+									oncomplete="novoLancamentoRefazCalculos()" />
+							</p:inputNumber>
+							<p:outputLabel for="novoLancamentoValorTotal" value="Valor:" />
+							<p:message styleClass="msg" for="novoLancamentoValorTotal" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield" style="margin-top: 10px;">
+							<p:inputNumber id="novoLancamentoValorPrimeiraParcela"
+								value="#{faturaPagtoMB.novoLancamentoValorDaPrimeiraParcela}"
+								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+								symbol="R$ " thousandSeparator=".">
+								<p:ajax process="@this"
+									oncomplete="novoLancamentoRefazCalculos()" />
+							</p:inputNumber>
+							<p:outputLabel for="novoLancamentoValorPrimeiraParcela"
+								value="Valor da Primeira Parcela:" />
+							<p:message styleClass="msg"
+								for="novoLancamentoValorPrimeiraParcela" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="novoLancamentoDataPagamento"
+								value="#{faturaPagtoMB.novoLancamentoDataPagamento}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10">
+								<p:ajax event="dateSelect"
+									listener="#{faturaPagtoMB.actionNovoLancamentoAlteraDataPagamento}"
+									update="novoLancamentoDataCredito"
+									process="@this, novoLancamentoFormaPagamento" />
+							</p:calendar>
+							<p:outputLabel for="novoLancamentoDataPagamento"
+								value="Data de Pagamento: " />
+							<p:message for="novoLancamentoDataPagamento" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="novoLancamentoDataCredito"
+								value="#{faturaPagtoMB.novoLancamentoDataCredito}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}" />
+							<p:outputLabel for="novoLancamentoDataCredito"
+								value="Data de Crédito:" />
+							<p:message for="novoLancamentoDataCredito" styleClass="msg" />
+						</h:panelGroup>
+
+						<p:outputPanel id="novoLancamentoInfoParcelamento">
+							<p:outputPanel
+								rendered="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas != null}">
+								<h:outputText
+									value="#{faturaPagtoMB.getInfoParcelamentoNovoLancamento()}" />
+							</p:outputPanel>
+						</p:outputPanel>
+
+					</p:panelGrid>
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Salvar" icon="White fa fa-save"
+						actionListener="#{faturaPagtoMB.actionPersistNovoNovoLancamento}"
+						update="pnlfaturaView" process="@this, pnlNovoLancamento"
+						styleClass="GreenButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgNovoLancamento').hide()"
+						styleClass="NavyButton" />
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
+
+	<p:dialog widgetVar="dlgEditarLancamento" header="Editar Lançamento"
+		responsive="true" modal="true" appendTo=":lume" width="700px">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlEditarLancamento">
+					<p:panelGrid columns="1" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="md-combo">
+							<p:outputLabel for="editarLancamentoFormaPagamento"
+								value="Forma de Pagamento:" />
+							<p:selectOneMenu id="editarLancamentoFormaPagamento"
+								converter="tarifa"
+								value="#{faturaPagtoMB.editarLancamento.tarifa}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione uma Forma de Pagamento:" />
+								<f:selectItems
+									value="#{faturaPagtoMB.editarLancamentoFormasDisponiveis}"
+									var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+								<p:ajax event="change"
+									listener="#{faturaPagtoMB.actionEditarLancamentoAlteraFormaPagamento}"
+									update="editarLancamentoDataCredito" process="@this" />
+							</p:selectOneMenu>
+							<p:message for="editarLancamentoFormaPagamento" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="editarLancamentoDataPagamento"
+								value="#{faturaPagtoMB.editarLancamento.dataPagamento}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10">
+								<p:ajax event="dateSelect"
+									listener="#{faturaPagtoMB.actionEditarLancamentoAlteraDataPagamento}"
+									update="editarLancamentoDataCredito" process="@this" />
+							</p:calendar>
+							<p:outputLabel for="editarLancamentoDataPagamento"
+								value="Data de Pagamento: " />
+							<p:message for="editarLancamentoDataPagamento" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="editarLancamentoDataCredito"
+								value="#{faturaPagtoMB.editarLancamento.dataCredito}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}" />
+							<p:outputLabel for="editarLancamentoDataCredito"
+								value="Data de Crédito:" />
+							<p:message for="editarLancamentoDataCredito" styleClass="msg" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Salvar" icon="White fa fa-save"
+						actionListener="#{faturaPagtoMB.actionPersistEditarLancamento}"
+						update="pnlfaturaView" process="@this, pnlEditarLancamento"
+						styleClass="GreenButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgEditarLancamento').hide()"
+						styleClass="NavyButton" />
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
+
+	<p:dialog widgetVar="dlgNovaNegociacao" header="Nova Negociação"
+		responsive="true" modal="true" appendTo=":lume" width="70%">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlNovaNegociacao">
+					<p:remoteCommand name="refazCalculos" process="@this"
+						actionListener="#{faturaPagtoMB.refazCalculos()}"
+						update="negociacaoValorPrimeiraParcela, infoParcelamento" />
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<p:outputPanel>
+							<p:panelGrid columns="1" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+								<h:panelGroup styleClass="md-combo">
+
+									<p:outputLabel for="filtroParcelas"
+										value="Quantidade de Parcelas:" />
+
+									<p:outputPanel style="display: flex !important">
+										<p:selectOneMenu id="filtroParcelas" var="parcelaInfo"
+											value="#{faturaPagtoMB.negociacaoQuantidadeParcelas}"
+											forceSelection="true" scrollHeight="400">
+
+											<f:selectItem
+												itemLabel="Selecione uma quantidade de parcelas..."
+												itemValue="#{null}" />
+											<f:selectItems value="#{faturaPagtoMB.parcelasDisponiveis}"
+												var="p" itemValue="#{p}"
+												itemLabel="#{p} parcelas &#8211; Desconto Máx: #{faturaPagtoMB.getDescontoFromParcela(p)}" />
+
+											<p:column headerText="Quantidade de Parcelas"
+												style="text-align: center;">
+												<h:outputText value="#{parcelaInfo} parcelas" />
+											</p:column>
+											<p:column headerText="Desconto Máximo">
+												<h:outputText
+													value="#{faturaPagtoMB.getDescontoFromParcela(parcelaInfo)}" />
+											</p:column>
+
+											<p:ajax process="@this"
+												listener="#{faturaPagtoMB.atualizaQuantidadeDeParcelas}"
+												update="tooltipNovaNegociacaoTarifasDisponiveisObj, negociacaoTipoDesconto, negociacaoValorDesconto, negociacaoValorPrimeiraParcela, infoParcelamento" />
+										</p:selectOneMenu>
+										<p:outputPanel id="tooltipNovaNegociacaoTarifasDisponiveisObj">
+											<h:outputLabel class="fa fa-question"
+												id="tooltipNovaNegociacaoTarifasDisponiveis"
+												style="font-size:16px; margin-left:10px; margin-top:10px;" />
+											<p:tooltip for="tooltipNovaNegociacaoTarifasDisponiveis"
+												position="bottom" escape="false"
+												value="#{faturaPagtoMB.tooltipNegociacaoTarifasDisponiveis}" />
+										</p:outputPanel>
+									</p:outputPanel>
+								</h:panelGroup>
+								<h:panelGroup styleClass="md-combo" style="margin-top: 10px;">
+									<p:outputLabel for="negociacaoTipoDesconto"
+										value="Tipo de Desconto:" />
+									<p:selectOneMenu id="negociacaoTipoDesconto"
+										value="#{faturaPagtoMB.negociacaoTipoDesconto}">
+
+										<f:selectItem itemLabel="Porcentagem" itemValue="P" />
+										<f:selectItem itemLabel="Valor" itemValue="V" />
+
+										<p:ajax process="@this"
+											listener="#{faturaPagtoMB.atualizaTipoDesconto}"
+											update="negociacaoValorDesconto, negociacaoValorPrimeiraParcela, infoParcelamento" />
+									</p:selectOneMenu>
+								</h:panelGroup>
+
+								<h:panelGroup styleClass="md-inputfield taller"
+									style="margin-top: 10px;">
+									<p:outputPanel id="negociacaoValorDesconto">
+										<p:inputNumber id="negociacaoValorDescValor"
+											value="#{faturaPagtoMB.negociacaoValorDesconto}"
+											maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+											symbol="R$ " thousandSeparator="."
+											rendered="#{faturaPagtoMB.negociacaoTipoDesconto == 'V'}">
+											<p:ajax process="@this" oncomplete="refazCalculos()" />
+										</p:inputNumber>
+										<p:outputLabel for="negociacaoValorDescValor"
+											value="Valor do Desconto:"
+											rendered="#{faturaPagtoMB.negociacaoTipoDesconto == 'V'}" />
+										<p:inputNumber id="negociacaoValorDescPorcentagem"
+											value="#{faturaPagtoMB.negociacaoValorDesconto}"
+											styleClass="taller" maxlength="13" maxValue="9999999999.99"
+											decimalSeparator="," symbol="%" thousandSeparator="."
+											symbolPosition="s"
+											rendered="#{faturaPagtoMB.negociacaoTipoDesconto == 'P'}">
+											<p:ajax process="@this" oncomplete="refazCalculos()" />
+										</p:inputNumber>
+										<p:outputLabel for="negociacaoValorDescPorcentagem"
+											value="Percentual de Desconto:"
+											rendered="#{faturaPagtoMB.negociacaoTipoDesconto == 'P'}" />
+									</p:outputPanel>
+								</h:panelGroup>
+
+								<h:panelGroup styleClass="md-inputfield taller"
+									style="margin-top: 10px;">
+									<p:inputNumber id="negociacaoValorPrimeiraParcela"
+										value="#{faturaPagtoMB.negociacaoValorDaPrimeiraParcela}"
+										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+										symbol="R$ " thousandSeparator=".">
+										<p:ajax process="@this" oncomplete="refazCalculos()" />
+									</p:inputNumber>
+									<p:outputLabel for="negociacaoValorPrimeiraParcela"
+										value="Valor da Primeira Parcela:" />
+								</h:panelGroup>
+
+								<p:outputPanel id="infoParcelamento">
+									<p:outputPanel
+										rendered="#{faturaPagtoMB.negociacaoQuantidadeParcelas != null}">
+										<h:outputText value="#{faturaPagtoMB.getInfoParcelamento()}" />
+									</p:outputPanel>
+								</p:outputPanel>
+
+							</p:panelGrid>
+						</p:outputPanel>
+
+						<p:outputPanel>
+							<h:panelGroup styleClass="md-inputfield">
+								<p:inputTextarea rows="14" cols="33" id="negociacaoObservacao"
+									style="height: 237px !important"
+									value="#{faturaPagtoMB.negociacaoObservacao}" />
+								<p:outputLabel for="negociacaoObservacao" value="Observação:" />
+							</h:panelGroup>
+						</p:outputPanel>
+
+					</p:panelGrid>
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Salvar" icon="White fa fa-save"
+						actionListener="#{faturaPagtoMB.actionPersistNegociacao}"
+						update="pnlfaturaView" process="@this, pnlNovaNegociacao"
+						styleClass="GreenButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgNovaNegociacao').hide()"
+						styleClass="NavyButton" />
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
+
+	<p:dialog widgetVar="dlgAprovaNegociacao" header="Confirmar Negociação"
+		responsive="true" modal="true" appendTo=":lume" width="70%">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlAprovaNegociacao">
+					<p:fieldset legend="O que foi negociado: ">
+						<p:panelGrid columns="2" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+							<p:outputPanel>
+								<p:panelGrid columns="1" layout="grid"
+									styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+									<h:panelGroup styleClass="md-combo">
+										<p:outputLabel for="filtroParcelasAprovacao"
+											value="Quantidade de Parcelas:" />
+
+										<p:outputPanel style="display: flex !important">
+											<p:selectOneMenu id="filtroParcelasAprovacao"
+												var="parcelaInfo"
+												value="#{faturaPagtoMB.negociacaoQuantidadeParcelas}"
+												forceSelection="true" scrollHeight="400" disabled="true">
+
+												<f:selectItem
+													itemLabel="Selecione uma quantidade de parcelas..."
+													itemValue="#{null}" />
+												<f:selectItems value="#{faturaPagtoMB.parcelasDisponiveis}"
+													var="p" itemValue="#{p}"
+													itemLabel="#{p} parcelas &#8211; Desconto Máx: #{faturaPagtoMB.getDescontoFromParcela(p)}" />
+
+												<p:column headerText="Quantidade de Parcelas"
+													style="text-align: center;">
+													<h:outputText value="#{parcelaInfo} parcelas" />
+												</p:column>
+												<p:column headerText="Desconto Máximo">
+													<h:outputText
+														value="#{faturaPagtoMB.getDescontoFromParcela(parcelaInfo)}" />
+												</p:column>
+
+											</p:selectOneMenu>
+											<p:outputPanel
+												id="tooltipConfirmaNegociacaoTarifasDisponiveisObj">
+												<h:outputLabel class="fa fa-question"
+													id="tooltipConfirmaNegociacaoTarifasDisponiveis"
+													style="font-size:16px; margin-left:10px; margin-top:10px;" />
+												<p:tooltip for="tooltipConfirmaNegociacaoTarifasDisponiveis"
+													position="bottom" escape="false"
+													value="#{faturaPagtoMB.tooltipNegociacaoTarifasDisponiveis}" />
+											</p:outputPanel>
+										</p:outputPanel>
+
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-combo">
+										<p:outputLabel for="negociacaoTipoDescontoAprovacao"
+											value="Tipo de Desconto:" />
+										<p:selectOneMenu id="negociacaoTipoDescontoAprovacao"
+											value="#{faturaPagtoMB.negociacaoTipoDesconto}"
+											disabled="true">
+
+											<f:selectItem itemLabel="Porcentagem" itemValue="P" />
+											<f:selectItem itemLabel="Valor" itemValue="V" />
+
+										</p:selectOneMenu>
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-inputfield taller">
+										<p:outputPanel id="negociacaoValorDescontoAprovacao">
+											<p:inputNumber id="negociacaoValorDescValorAprovacao"
+												value="#{faturaPagtoMB.negociacaoValorDesconto}"
+												maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+												symbol="R$ " thousandSeparator="." readonly="true"
+												rendered="#{faturaPagtoMB.negociacaoTipoDesconto == 'V'}">
+											</p:inputNumber>
+											<p:outputLabel for="negociacaoValorDescValorAprovacao"
+												value="Valor do Desconto:"
+												rendered="#{faturaPagtoMB.negociacaoTipoDesconto == 'V'}" />
+											<p:inputNumber id="negociacaoValorDescPorcentagemAprovacao"
+												value="#{faturaPagtoMB.negociacaoValorDesconto}"
+												styleClass="taller" maxlength="13" maxValue="9999999999.99"
+												decimalSeparator="," symbol="%" thousandSeparator="."
+												symbolPosition="s" readonly="true"
+												rendered="#{faturaPagtoMB.negociacaoTipoDesconto == 'P'}">
+											</p:inputNumber>
+											<p:outputLabel for="negociacaoValorDescPorcentagemAprovacao"
+												value="Percentual de Desconto:"
+												rendered="#{faturaPagtoMB.negociacaoTipoDesconto == 'P'}" />
+										</p:outputPanel>
+									</h:panelGroup>
+
+									<h:panelGroup styleClass="md-inputfield taller">
+										<p:inputNumber id="negociacaoValorPrimeiraParcelaAprovacao"
+											value="#{faturaPagtoMB.negociacaoValorDaPrimeiraParcela}"
+											maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+											symbol="R$ " thousandSeparator="." readonly="true">
+										</p:inputNumber>
+										<p:outputLabel for="negociacaoValorPrimeiraParcelaAprovacao"
+											value="Valor da Primeira Parcela:" />
+									</h:panelGroup>
+
+									<p:outputPanel id="infoParcelamentoAprovacao">
+										<p:outputPanel
+											rendered="#{faturaPagtoMB.negociacaoQuantidadeParcelas != null}">
+											<h:outputText value="#{faturaPagtoMB.getInfoParcelamento()}" />
+										</p:outputPanel>
+									</p:outputPanel>
+
+								</p:panelGrid>
+							</p:outputPanel>
+
+							<p:outputPanel>
+								<h:panelGroup styleClass="md-inputfield">
+									<p:inputTextarea rows="12" cols="33"
+										id="negociacaoObservacaoAprovacao" readonly="true"
+										value="#{faturaPagtoMB.negociacaoObservacao}" />
+									<p:outputLabel for="negociacaoObservacaoAprovacao"
+										value="Observação:" />
+								</h:panelGroup>
+							</p:outputPanel>
+
+						</p:panelGrid>
+					</p:fieldset>
+
+					<p:panelGrid columns="1" layout="grid" style="margin-top: 20px;"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="md-combo">
+							<p:outputLabel for="negociacaoFormaPagamentoAprovacao"
+								value="Forma de Pagamento:" />
+							<p:selectOneMenu id="negociacaoFormaPagamentoAprovacao"
+								converter="tarifa"
+								value="#{faturaPagtoMB.negociacaoFormaPagamento}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione uma Forma de Pagamento:" />
+								<f:selectItems
+									value="#{faturaPagtoMB.negociacaoTarifasDisponiveis}" var="tf"
+									itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+
+							</p:selectOneMenu>
+							<p:message for="negociacaoFormaPagamentoAprovacao"
+								styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputNumber id="negociacaoValorTotalAprovacao"
+								value="#{faturaPagtoMB.negociacaoValorTotal}" maxlength="13"
+								maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+								thousandSeparator="." readonly="true">
+							</p:inputNumber>
+							<p:outputLabel for="negociacaoValorTotalAprovacao" value="Valor:" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="negociacaoDataPagamentoAprovacao"
+								value="#{faturaPagtoMB.negociacaoDataPagamento}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10">
+								<p:ajax event="dateSelect"
+									listener="#{faturaPagtoMB.actionAlteraDataPagamentoNegociacao}"
+									update="negociacaoDataCreditoAprovacao"
+									process="@this, negociacaoFormaPagamentoAprovacao" />
+							</p:calendar>
+							<p:outputLabel for="negociacaoDataPagamentoAprovacao"
+								value="Data de Pagamento: " />
+							<p:message for="negociacaoDataCreditoAprovacao" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="negociacaoDataCreditoAprovacao"
+								value="#{faturaPagtoMB.negociacaoDataCredito}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}" />
+							<p:outputLabel for="negociacaoDataCreditoAprovacao"
+								value="Data de Crédito:" />
+							<p:message for="negociacaoDataCreditoAprovacao" styleClass="msg" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Confirmar Negociação"
+						icon="White fa fa-save"
+						actionListener="#{faturaPagtoMB.actionConfirmaNegociacao}"
+						update="pnlfaturaView" process="@this, pnlNovaNegociacao"
+						styleClass="GreenButton">
+						<p:confirm header="Confirmação" icon="ui-icon-alert"
+							escape="false"
+							message="Você tem certeza que deseja aprovar esta negociação? &lt;br/&gt; Os lançamentos existentes serão substituidos pelos lançamentos novos de acordo com a negociação!">
+						</p:confirm>
+					</p:commandButton>
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgAprovaNegociacao').hide()"
+						styleClass="NavyButton" />
+
+				</p:panelGrid>
+
+			</div>
+		</div>
+	</p:dialog>
+
 	<p:dialog id="faturaView" appendTo=":lume" widgetVar="dlgFaturaView"
 		responsive="true" modal="true"
 		onHide="PF('dlgFaturaView').toggleMaximize();onCloseFaturaView();"
@@ -181,27 +772,81 @@ body .sideChkBox .ui-chkbox-label {
 
 							</p:panelGrid>
 
-							<p:panelGrid columns="4" layout="grid"
+							<p:panelGrid columns="5" layout="grid"
+								columnClasses="ui-g-2, ui-g-2, ui-g-2, ui-g-2, ui-g-4"
 								styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding centerPanels lessPaddingSides">
-								<p:panel id="valorTotal" header="Valor Total">
+								<p:panel id="valorPago">
+									<f:facet name="header">
+										<h:outputText value="Valor Recebido" />
+										<h:outputLabel class="fa fa-question"
+											id="tooltipValorRecebido"
+											style="font-size:16px; margin-left:10px;" />
+										<p:tooltip for="tooltipValorRecebido" style="max-width: 300px"
+											escape="false"
+											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorRecebido')}"
+											position="bottom" />
+									</f:facet>
+									<h:outputText
+										value="#{faturaPagtoMB.entity.dadosTabelaTotalPagoFromPaciente}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:panel>
+								<p:panel id="valorNaoPago">
+									<f:facet name="header">
+										<h:outputText value="Valor a Receber" />
+										<h:outputLabel class="fa fa-question"
+											id="tooltipValorAReceber"
+											style="font-size:16px; margin-left:10px;" />
+										<p:tooltip for="tooltipValorAReceber" style="max-width: 300px"
+											escape="false"
+											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorAReceber')}"
+											position="bottom" />
+									</f:facet>
+									<h:outputText
+										value="#{faturaPagtoMB.entity.dadosTabelaTotalNaoPagoFromPaciente}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:panel>
+								<p:panel id="valorDesconto">
+									<f:facet name="header">
+										<h:outputText value="Valor do Desconto" />
+										<h:outputLabel class="fa fa-question"
+											id="tooltipValorDesconto"
+											style="font-size:16px; margin-left:10px;" />
+										<p:tooltip for="tooltipValorDesconto" style="max-width: 300px"
+											escape="false"
+											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorDesconto')}"
+											position="bottom" />
+									</f:facet>
+									<h:outputText
+										value="#{faturaPagtoMB.entity.dadosTabelaTotalDesconto}" />
+								</p:panel>
+								<p:panel id="valorTotal">
+									<f:facet name="header">
+										<h:outputText value="Valor Total" />
+										<h:outputLabel class="fa fa-question" id="tooltipValorTotal"
+											style="font-size:16px; margin-left:10px;" />
+										<p:tooltip for="tooltipValorTotal" style="max-width: 300px"
+											escape="false"
+											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorTotal')}"
+											position="bottom" />
+									</f:facet>
 									<h:outputText
 										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalFatura}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:panel>
-								<p:panel id="valorPago" header="Valor Pago">
-									<h:outputText
-										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalPago}">
-										<f:convertNumber currencySymbol="R$ " type="currency" />
-									</h:outputText>
-								</p:panel>
-								<p:panel id="valorNaoPago" header="Valor Não Pago">
-									<h:outputText
-										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPago}">
-										<f:convertNumber currencySymbol="R$ " type="currency" />
-									</h:outputText>
-								</p:panel>
-								<p:panel id="valorNaoPlanejado" header="Valor Não Planejado">
+								<p:panel id="valorNaoPlanejado">
+									<f:facet name="header">
+										<h:outputText value="Sem Forma de Pagamento" />
+										<h:outputLabel class="fa fa-question"
+											id="tooltipValorNaoPlanejado"
+											style="font-size:16px; margin-left:10px;" />
+										<p:tooltip for="tooltipValorNaoPlanejado"
+											style="max-width: 300px" escape="false"
+											value="#{padroesTelaMB.getTooltipValue('faturaViewPaciente', 'valorNaoPlanejado')}"
+											position="bottom" />
+									</f:facet>
 									<h:outputText
 										value="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
@@ -245,6 +890,91 @@ body .sideChkBox .ui-chkbox-label {
 
 							<p:separator styleClass="SeparatorFull" />
 
+							<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+								value="#{faturaPagtoMB.entity.negociacoesFiltered}"
+								var="negociacao" rows="20" paginator="true"
+								rowKey="#{negociacao}" paginatorPosition="bottom">
+								<f:facet name="header">Negociações</f:facet>
+
+								<p:column headerText="Ações" style="width: 80px"
+									styleClass="#{(negociacao.status.rotulo == 'AP' ? 'negociacaoAprovada' : 'negociacaoEmAndamento')}">
+									<p:commandButton icon="fa fa-trash" styleClass="RedButton"
+										process="@this"
+										update="@parent:@parent:@parent:@parent:@parent:pnlfaturaView"
+										title="Cancelar Negociação"
+										actionListener="#{faturaPagtoMB.actionCancelaNegociacao(negociacao)}">
+										<p:confirm header="Confirmação" icon="ui-icon-alert"
+											escape="false"
+											message="Você tem certeza que deseja cancelar esta negociação? &lt;br/&gt; &lt;b&gt;Se já foi aprovada&lt;/b&gt;, o desconto negociado será removido!">
+										</p:confirm>
+									</p:commandButton>
+									<p:commandButton icon="fa fa-check" styleClass="GreenButton"
+										process="@this" disabled="#{negociacao.status.rotulo != 'AA'}"
+										update="@parent:@parent:@parent:@parent:@parent:@parent:@parent:@parent:pnlAprovaNegociacao"
+										title="Confirmar Negociação"
+										oncomplete="PF('dlgAprovaNegociacao').show()"
+										actionListener="#{faturaPagtoMB.actionStartConfirmacaNegociacao(negociacao)}">
+									</p:commandButton>
+								</p:column>
+
+								<p:column headerText="Negociado Por"
+									styleClass="#{(negociacao.status.rotulo == 'AP' ? 'negociacaoAprovada' : 'negociacaoEmAndamento')}"
+									sortBy="#{negociacao.negociadoPor.dadosBasico.nome}"
+									filterBy="#{negociacao.negociadoPor.dadosBasico.nome}"
+									filterMatchMode="contains">
+									<h:outputText
+										value="#{negociacao.negociadoPor.dadosBasico.nome}" />
+								</p:column>
+
+								<p:column headerText="Descrição"
+									styleClass="#{(negociacao.status.rotulo == 'AP' ? 'negociacaoAprovada' : 'negociacaoEmAndamento')}"
+									sortBy="#{negociacao.descricao}"
+									filterBy="#{negociacao.descricao}" filterMatchMode="contains">
+									<h:outputText value="#{negociacao.descricao}" />
+								</p:column>
+
+								<p:column headerText="Valor da Parcela"
+									styleClass="#{(negociacao.status.rotulo == 'AP' ? 'negociacaoAprovada' : 'negociacaoEmAndamento')}"
+									sortBy="#{negociacao.valorParcela}"
+									filterBy="#{negociacao.valorParcela}"
+									filterMatchMode="contains">
+									<h:outputText value="#{negociacao.valorParcela}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Valor Total"
+									styleClass="#{(negociacao.status.rotulo == 'AP' ? 'negociacaoAprovada' : 'negociacaoEmAndamento')}"
+									sortBy="#{negociacao.valorTotal}"
+									filterBy="#{negociacao.valorTotal}" filterMatchMode="contains">
+									<h:outputText value="#{negociacao.valorTotal}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Valor do Desconto"
+									styleClass="#{(negociacao.status.rotulo == 'AP' ? 'negociacaoAprovada' : 'negociacaoEmAndamento')}"
+									sortBy="#{negociacao.valorDescontoCompleto}"
+									filterBy="#{negociacao.valorDescontoCompleto}"
+									filterMatchMode="contains">
+									<h:outputText value="#{negociacao.valorDescontoCompleto}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Valor Final"
+									styleClass="#{(negociacao.status.rotulo == 'AP' ? 'negociacaoAprovada' : 'negociacaoEmAndamento')}"
+									sortBy="#{negociacao.valorFinal}"
+									filterBy="#{negociacao.valorFinal}" filterMatchMode="contains">
+									<h:outputText value="#{negociacao.valorFinal}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:column>
+
+							</p:dataTable>
+
+							<p:separator styleClass="SeparatorFull" />
+
 							<p:panel>
 								<p:selectBooleanCheckbox styleClass="sideChkBox"
 									itemLabel="Mostrar lançamentos cancelados."
@@ -274,11 +1004,12 @@ body .sideChkBox .ui-chkbox-label {
 										</p:confirm>
 									</p:commandButton>
 									<p:commandButton styleClass="GreenButton" icon="fa fa-check"
-										title="Recebido" update="@parent:@parent"
+										title="Recebido"
+										update="@parent:@parent, @parent:@parent:@parent:pnlfaturaView"
 										actionListener="#{faturaPagtoMB.confereLancamentoRepasse(l)}"
 										process="@this"
 										rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
-										disabled="#{l.pagamentoConferido == 'S' or !l.ativo or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}">
+										disabled="#{l.pagamentoConferido == 'S' or !l.ativo}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											message="Você confirma este recebimento?">
 										</p:confirm>
@@ -350,18 +1081,24 @@ body .sideChkBox .ui-chkbox-label {
 		<p:panelGrid columns="4" layout="grid" id="buttonViewFatura"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
-				process="@this" update="pnlNewLancamento" styleClass="OrangeButton"
+				process="@this" update="pnlNovoLancamento" styleClass="OrangeButton"
 				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
-				disabled="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0 or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}"
-				actionListener="#{faturaPagtoMB.actionNewLancamento}"
-				oncomplete="PF('dlgNewLancamento').show()" />
+				disabled="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0 or faturaPagtoMB.verificaFaturaInterrompida()}"
+				actionListener="#{faturaPagtoMB.actionNovoLancamentoNew}"
+				oncomplete="PF('dlgNovoLancamento').show()" />
+			<p:commandButton value="Nova Negociação" icon="fa fa-gear"
+				process="@this" update="pnlNovaNegociacao" styleClass="RedButton"
+				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
+				actionListener="#{faturaPagtoMB.actionNovaNegociacao}"
+				oncomplete="PF('dlgNovaNegociacao').show()" />
 			<p:commandButton value="Visualizar Impressão" icon="fa fa-print"
 				styleClass="NavyButton" process="@this"
 				oncomplete="PF('dlgPrintFatura').show()"
 				update="@parent:@parent:faturaInclude" />
 			<p:column
 				rendered="#{showNewLancamento == null or showNewLancamento != 'S'}" />
-			<p:column />
+			<p:column
+				rendered="#{showNewLancamento == null or showNewLancamento != 'S'}" />
 			<p:commandButton value="Fechar" icon="fa fa-close"
 				styleClass="NavyButton" oncomplete="PF('dlgFaturaView').hide()"
 				process="@this" />

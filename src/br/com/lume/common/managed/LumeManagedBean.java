@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -101,6 +102,15 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         return EmpresaBO.isEstoqueCompleto(UtilsFrontEnd.getEmpresaLogada());
     }
 
+    public String getTooltipValue(String tela, String campo) {
+        return getMensagemFrontEnd("tooltip." + tela + "." + campo);
+    }
+    
+    public static String getMensagemFrontEnd(String key) {     
+        ResourceBundle resource = ResourceBundle.getBundle("br.com.lume.resources.frontend");
+        return resource.getString(key);
+    }
+    
     public boolean validaAcao(String acao) {
         try {
             return !this.restricaoBO.isRestrito(acao, this.getLumeSecurity().getUsuario(), this.getLumeSecurity().getObjetoAtual());
