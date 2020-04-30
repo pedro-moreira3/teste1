@@ -14,6 +14,7 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.UtilsPadraoRelatorio;
 import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
@@ -106,11 +107,13 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
         if (getEntity() == null || getEntity().getId() == null || getEntity().getId() == 0)
             return null;
         List<Lancamento> lancamentosSearch = new ArrayList<>();
-        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), true));
-        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), false));
+        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.VALIDADO));
+        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.NAO_VALIDADO));
+        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.FALHA_OPERACAO));
         if (showLancamentosCancelados) {
-            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), true, false));
-            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), false, false));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.VALIDADO, false));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.NAO_VALIDADO, false));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.FALHA_OPERACAO, false));
         }
         return lancamentosSearch;
     }

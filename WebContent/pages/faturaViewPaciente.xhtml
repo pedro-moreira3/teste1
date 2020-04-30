@@ -52,6 +52,11 @@ body .negociacaoAprovada {
 body .negociacaoEmAndamento {
 	
 }
+
+body .lancamentoFalhaOperacao {
+	background-color: #c44949;
+	color: white;
+}
 </style>
 
 	<!-- Telas que ainda usam FaturaView.xhtml antigo: movimentacoes.xhmtl, pagamentoRecebimentoFatura.xhtml, relatorioFatura.xhtml -->
@@ -989,11 +994,12 @@ body .negociacaoEmAndamento {
 								id="lancamentosFatura">
 								<f:facet name="header">Lançamentos da Fatura</f:facet>
 
-								<p:column headerText="Ações" width="70" exportable="false"
+								<p:column headerText="Ações" width="50" exportable="false"
+									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
 									rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.permiteExcluirLancamento}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
 										title="Cancelar lançamento"
-										disabled="#{!l.ativo or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}"
+										disabled="#{!l.ativo or l.validado == 'C' or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}"
 										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
 										actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
 										process="@this"
@@ -1003,32 +1009,46 @@ body .negociacaoEmAndamento {
 											message="Você tem certeza que deseja cancelar este lançamento? &lt;br/&gt; &lt;b&gt;Se já foi confirmado&lt;/b&gt;, o saldo ficará disponível na &lt;b&gt;conta do paciente&lt;/b&gt;.">
 										</p:confirm>
 									</p:commandButton>
+									<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
+										title="Editar lançamento"
+										disabled="#{!l.ativo or l.validado != 'N' or l.pagamentoConferido == 'S'}"
+										update="@parent:@parent:@parent:@parent:@parent:pnlEditarLancamento"
+										actionListener="#{faturaPagtoMB.actionStartEditarLancamento(l)}"
+										onsuccess="PF('dlgEditarLancamento').show()" process="@this"
+										rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.permiteExcluirLancamento}">
+									</p:commandButton>
 									<p:commandButton styleClass="GreenButton" icon="fa fa-check"
 										title="Recebido"
 										update="@parent:@parent, @parent:@parent:@parent:pnlfaturaView"
 										actionListener="#{faturaPagtoMB.confereLancamentoRepasse(l)}"
 										process="@this"
 										rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
-										disabled="#{l.pagamentoConferido == 'S' or !l.ativo}">
+										disabled="#{l.pagamentoConferido == 'S' or l.validado != 'N' or !l.ativo}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											message="Você confirma este recebimento?">
 										</p:confirm>
 									</p:commandButton>
 								</p:column>
-								<p:column styleClass="cabecalho" width="10%"
+								<p:column
+									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')} cabecalho"
+									width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{l.formaPagamentoStr}"
 									headerText="Forma de Pagamento" sortBy="#{l.formaPagamentoStr}">
 									<h:outputText value="#{l.formaPagamentoStr}" />
 								</p:column>
-								<p:column sortBy="#{l.valor}" filterMatchMode="contains"
+								<p:column
+									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									sortBy="#{l.valor}" filterMatchMode="contains"
 									filterBy="#{l.valor}" headerText="Valor" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.valor}">
 										<f:convertNumber currencySymbol="R$ " type="currency" />
 									</h:outputText>
 								</p:column>
-								<p:column sortBy="#{l.tributo}" filterMatchMode="contains"
+								<p:column
+									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									sortBy="#{l.tributo}" filterMatchMode="contains"
 									filterBy="#{l.tributo}" headerText="Tributos" width="5%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.tributoPerc}">
@@ -1038,26 +1058,34 @@ body .negociacaoEmAndamento {
 										value="0%">
 									</h:outputText>
 								</p:column>
-								<p:column sortBy="#{l.dataPagamentoStr}"
+								<p:column
+									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									sortBy="#{l.dataPagamentoStr}"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterMatchMode="contains" filterBy="#{l.dataPagamentoStr}"
 									width="10%" headerText="Data de Pagamento">
 									<h:outputText value="#{l.dataPagamentoStr}" />
 								</p:column>
-								<p:column sortBy="#{l.dataCreditoStr}"
-									filterMatchMode="contains" width="10%"
-									filterBy="#{l.dataCreditoStr}" headerText="Data de Crédito"
+								<p:column
+									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									sortBy="#{l.dataCreditoStr}" filterMatchMode="contains"
+									width="10%" filterBy="#{l.dataCreditoStr}"
+									headerText="Data de Crédito"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
 									<h:outputText value="#{l.dataCreditoStr}" />
 								</p:column>
-								<p:column sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
-									width="5%" filterMatchMode="contains"
+								<p:column
+									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}" width="5%"
+									filterMatchMode="contains"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
 									headerText="Validado?">
 									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
 								</p:column>
-								<p:column sortBy="#{l.validadoPorProfissional.dadosBasico.nome}"
+								<p:column
+									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									sortBy="#{l.validadoPorProfissional.dadosBasico.nome}"
 									filterMatchMode="contains" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{l.validadoPorProfissional.dadosBasico.nome}"
@@ -1065,8 +1093,9 @@ body .negociacaoEmAndamento {
 									<h:outputText
 										value="#{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
-								<p:column headerText="Status" sortBy="#{l.statusCompleto}"
-									width="15%"
+								<p:column
+									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									headerText="Status" sortBy="#{l.statusCompleto}" width="15%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterMatchMode="contains" filterBy="#{l.statusCompleto}">
 									<h:outputText value="#{l.statusCompleto}" />
