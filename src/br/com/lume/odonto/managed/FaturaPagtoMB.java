@@ -109,6 +109,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private List<Integer> parcelas;
     private Integer parcela;
 
+    //Campos para 'Editar Lançamento'
+    private Lancamento editarLancamento;
+    private List<Tarifa> editarLancamentoFormasDisponiveis;
+
     //Campos novos para 'Novo Lançamento'
     private List<Integer> novoLancamentoParcelasDisponiveis;
     private List<Tarifa> novoLancamentoTarifasDisponiveis;
@@ -615,6 +619,59 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         PrimeFaces.current().executeScript("PF('dlgNewLancamento').hide()");
 
     }
+
+    //-------------------------------- EDITAR LANÇAMENTO --------------------------------
+
+    public void actionStartEditarLancamento(Lancamento l) {
+        this.editarLancamento = l;
+        if (this.editarLancamentoFormasDisponiveis == null)
+            editarLancamentoAtualizarFormasPagamentoDisponiveis();
+    }
+
+    public void actionPersistEditarLancamento(Lancamento l) {
+        try {
+            LancamentoSingleton.getInstance().getBo().persist(editarLancamento);
+
+            setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
+            updateValues(getEntity(), true);
+
+            PrimeFaces.current().executeScript("PF('dlgEditarLancamento').hide()");
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro!", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+        }
+    }
+
+    public void actionEditarLancamentoAlteraFormaPagamento() {
+        if (editarLancamento == null)
+            return;
+
+        editarLancamento.setFormaPagamento(editarLancamento.getTarifa().getTipo());
+        actionEditarLancamentoAlteraDataPagamento();
+    }
+
+    public void actionEditarLancamentoAlteraDataPagamento() {
+        if (editarLancamento == null)
+            return;
+
+        if (editarLancamento.getTarifa() != null && editarLancamento.getDataPagamento() != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(editarLancamento.getDataPagamento());
+            cal.add(Calendar.DAY_OF_MONTH, editarLancamento.getTarifa().getPrazo());
+            editarLancamento.setDataCredito(cal.getTime());
+        } else
+            editarLancamento.setDataCredito(null);
+    }
+
+    private void editarLancamentoAtualizarFormasPagamentoDisponiveis() {
+        try {
+            this.editarLancamentoFormasDisponiveis = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+    }
+
+    //-------------------------------- EDITAR LANÇAMENTO --------------------------------
 
     //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------    
 
@@ -1622,8 +1679,29 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setNovoLancamentoTooltipNegociacaoTarifasDisponiveis(String novoLancamentoTooltipNegociacaoTarifasDisponiveis) {
         this.novoLancamentoTooltipNegociacaoTarifasDisponiveis = novoLancamentoTooltipNegociacaoTarifasDisponiveis;
+
     }
 
     //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------
+
+    //-------------------------------- EDITAR LANÇAMENTO --------------------------------
+
+    public Lancamento getEditarLancamento() {
+        return editarLancamento;
+    }
+
+    public void setEditarLancamento(Lancamento editarLancamento) {
+        this.editarLancamento = editarLancamento;
+    }
+
+    public List<Tarifa> getEditarLancamentoFormasDisponiveis() {
+        return editarLancamentoFormasDisponiveis;
+    }
+
+    public void setEditarLancamentoFormasDisponiveis(List<Tarifa> editarLancamentoFormasDisponiveis) {
+        this.editarLancamentoFormasDisponiveis = editarLancamentoFormasDisponiveis;
+    }
+
+    //-------------------------------- EDITAR LANÇAMENTO --------------------------------    
 
 }

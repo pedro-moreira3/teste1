@@ -290,6 +290,81 @@ body .negociacaoEmAndamento {
 		</div>
 	</p:dialog>
 
+	<p:dialog widgetVar="dlgEditarLancamento" header="Editar Lançamento"
+		responsive="true" modal="true" appendTo=":lume" width="700px">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<p:outputPanel id="pnlEditarLancamento">
+					<p:panelGrid columns="1" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="md-combo">
+							<p:outputLabel for="editarLancamentoFormaPagamento"
+								value="Forma de Pagamento:" />
+							<p:selectOneMenu id="editarLancamentoFormaPagamento"
+								converter="tarifa"
+								value="#{faturaPagtoMB.editarLancamento.tarifa}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione uma Forma de Pagamento:" />
+								<f:selectItems
+									value="#{faturaPagtoMB.editarLancamentoFormasDisponiveis}"
+									var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+								<p:ajax event="change"
+									listener="#{faturaPagtoMB.actionEditarLancamentoAlteraFormaPagamento}"
+									update="editarLancamentoDataCredito" process="@this" />
+							</p:selectOneMenu>
+							<p:message for="editarLancamentoFormaPagamento" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="editarLancamentoDataPagamento"
+								value="#{faturaPagtoMB.editarLancamento.dataPagamento}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10">
+								<p:ajax event="dateSelect"
+									listener="#{faturaPagtoMB.actionEditarLancamentoAlteraDataPagamento}"
+									update="editarLancamentoDataCredito" process="@this" />
+							</p:calendar>
+							<p:outputLabel for="editarLancamentoDataPagamento"
+								value="Data de Pagamento: " />
+							<p:message for="editarLancamentoDataPagamento" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="editarLancamentoDataCredito"
+								value="#{faturaPagtoMB.editarLancamento.dataCredito}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}" />
+							<p:outputLabel for="editarLancamentoDataCredito"
+								value="Data de Crédito:" />
+							<p:message for="editarLancamentoDataCredito" styleClass="msg" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Salvar" icon="White fa fa-save"
+						actionListener="#{faturaPagtoMB.actionPersistEditarLancamento}"
+						update="pnlfaturaView" process="@this, pnlEditarLancamento"
+						styleClass="GreenButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgEditarLancamento').hide()"
+						styleClass="NavyButton" />
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
+
 	<p:dialog widgetVar="dlgNovaNegociacao" header="Nova Negociação"
 		responsive="true" modal="true" appendTo=":lume" width="70%">
 		<div class="ui-g ui-fluid">
