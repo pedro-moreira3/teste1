@@ -234,7 +234,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         try {
             LancamentoSingleton.getInstance().inativaLancamento(l, UtilsFrontEnd.getProfissionalLogado());
             this.addInfo("Sucesso", "Lançamento cancelado com sucesso!", true);
-            updateValues(getEntity());
+            updateValues(getEntity(), false);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Falha ao cancelar o lançamento!", true);
@@ -312,7 +312,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
          */
         setEntity(fatura);
         setShowLancamentosCancelados(false);
-        updateValues(fatura);
+        updateValues(fatura, false);
 
         updateWichScreenOpenForFaturaView();
     }
@@ -399,7 +399,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), (inicio == null ? null : inicio.getTime()),
                     (fim == null ? null : fim.getTime()), this.status, Arrays.asList(this.subStatusFatura)));
             getEntityList().forEach(fatura -> {
-                updateValues(fatura);
+                updateValues(fatura, true);
             });
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -407,7 +407,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
-    private void updateValues(Fatura fatura) {
+    private void updateValues(Fatura fatura, boolean updateTableValues) {
         fatura.setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
         fatura.setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(fatura));
         fatura.setDadosTabelaRepasseTotalNaoPago(FaturaSingleton.getInstance().getTotalNaoPago(fatura));
@@ -420,11 +420,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         //fatura.setDadosTabelaStatusFatura("A Receber");
         //if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
         //fatura.setDadosTabelaStatusFatura("Recebido");
-
-        this.somaTotal = this.somaTotal.add(fatura.getDadosTabelaRepasseTotalFatura());
-        this.somaTotalPago = this.somaTotalPago.add(fatura.getDadosTabelaRepasseTotalPago());
-        this.somaTotalNaoPago = this.somaTotalNaoPago.add(fatura.getDadosTabelaRepasseTotalNaoPago());
-        this.somaTotalNaoPlanejado = this.somaTotalNaoPlanejado.add(fatura.getDadosTabelaRepasseTotalNaoPlanejado());
+        if(updateTableValues){
+            this.somaTotal = this.somaTotal.add(fatura.getDadosTabelaRepasseTotalFatura());
+            this.somaTotalPago = this.somaTotalPago.add(fatura.getDadosTabelaRepasseTotalPago());
+            this.somaTotalNaoPago = this.somaTotalNaoPago.add(fatura.getDadosTabelaRepasseTotalNaoPago());
+            this.somaTotalNaoPlanejado = this.somaTotalNaoPlanejado.add(fatura.getDadosTabelaRepasseTotalNaoPlanejado());
+        }
     }
 
     public void changePaciente() {
@@ -533,7 +534,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             }
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             PrimeFaces.current().executeScript("PF('dlgNewLancamento').hide()");
-            updateValues(getEntity());
+            updateValues(getEntity(),false);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
