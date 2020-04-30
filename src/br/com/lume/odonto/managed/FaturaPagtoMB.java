@@ -109,10 +109,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private List<Integer> parcelas;
     private Integer parcela;
 
-    //Campos para 'Editar Lançamento'
-    private Lancamento editarLancamento;
-    private List<Tarifa> editarLancamentoFormasDisponiveis;
-
     //Campos novos para 'Novo Lançamento'
     private List<Integer> novoLancamentoParcelasDisponiveis;
     private List<Tarifa> novoLancamentoTarifasDisponiveis;
@@ -249,7 +245,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         try {
             LancamentoSingleton.getInstance().inativaLancamento(l, UtilsFrontEnd.getProfissionalLogado());
             this.addInfo("Sucesso", "Lançamento cancelado com sucesso!", true);
-            updateValues(getEntity(), true);
+            updateValues(getEntity(), true, false);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Falha ao cancelar o lançamento!\\r\\n" + e.getMessage(), true);
@@ -327,7 +323,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
          */
         setEntity(fatura);
         setShowLancamentosCancelados(false);
-        updateValues(fatura, true);
+        updateValues(fatura, true, false);
 
         updateWichScreenOpenForFaturaView();
     }
@@ -378,7 +374,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void confereLancamentoRepasse(Lancamento l) {
         try {
             LancamentoSingleton.getInstance().confereLancamento(l, UtilsFrontEnd.getProfissionalLogado());
-            updateValues(getEntity(), true);
+            updateValues(getEntity(), true, false);
             addInfo("Sucesso", "Sucesso ao salvar o registro", true);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -415,7 +411,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), (inicio == null ? null : inicio.getTime()),
                     (fim == null ? null : fim.getTime()), this.status, Arrays.asList(this.subStatusFatura)));
             getEntityList().forEach(fatura -> {
-                updateValues(fatura);
+                updateValues(fatura, true, true);
             });
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -424,10 +420,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     private void updateValues(Fatura fatura) {
-        updateValues(fatura, false);
+        updateValues(fatura, false, false);
     }
 
-    private void updateValues(Fatura fatura, boolean updateAllValues) {
+    private void updateValues(Fatura fatura, boolean updateAllValues, boolean updateTableValues) {
         fatura.setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(fatura));
         fatura.setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(fatura));
         fatura.setDadosTabelaRepasseTotalNaoPago(FaturaSingleton.getInstance().getTotalNaoPago(fatura));
@@ -450,11 +446,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         //fatura.setDadosTabelaStatusFatura("A Receber");
         //if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
         //fatura.setDadosTabelaStatusFatura("Recebido");
-
-        this.somaTotal = this.somaTotal.add(fatura.getDadosTabelaRepasseTotalFatura());
-        this.somaTotalPago = this.somaTotalPago.add(fatura.getDadosTabelaRepasseTotalPago());
-        this.somaTotalNaoPago = this.somaTotalNaoPago.add(fatura.getDadosTabelaRepasseTotalNaoPago());
-        this.somaTotalNaoPlanejado = this.somaTotalNaoPlanejado.add(fatura.getDadosTabelaRepasseTotalNaoPlanejado());
+        if(updateTableValues) {
+            this.somaTotal = this.somaTotal.add(fatura.getDadosTabelaRepasseTotalFatura());
+            this.somaTotalPago = this.somaTotalPago.add(fatura.getDadosTabelaRepasseTotalPago());
+            this.somaTotalNaoPago = this.somaTotalNaoPago.add(fatura.getDadosTabelaRepasseTotalNaoPago());
+            this.somaTotalNaoPlanejado = this.somaTotalNaoPlanejado.add(fatura.getDadosTabelaRepasseTotalNaoPlanejado());
+        }
     }
 
     public void changePaciente() {
@@ -563,7 +560,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             }
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             PrimeFaces.current().executeScript("PF('dlgNewLancamento').hide()");
-            updateValues(getEntity(), true);
+            updateValues(getEntity(), true, false);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -620,59 +617,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     }
 
-    //-------------------------------- EDITAR LANÇAMENTO --------------------------------
-
-    public void actionStartEditarLancamento(Lancamento l) {
-        this.editarLancamento = l;
-        if (this.editarLancamentoFormasDisponiveis == null)
-            editarLancamentoAtualizarFormasPagamentoDisponiveis();
-    }
-
-    public void actionPersistEditarLancamento(Lancamento l) {
-        try {
-            LancamentoSingleton.getInstance().getBo().persist(editarLancamento);
-
-            setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
-            updateValues(getEntity(), true);
-
-            PrimeFaces.current().executeScript("PF('dlgEditarLancamento').hide()");
-        } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog(e);
-            this.addError("Erro!", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
-        }
-    }
-
-    public void actionEditarLancamentoAlteraFormaPagamento() {
-        if (editarLancamento == null)
-            return;
-
-        editarLancamento.setFormaPagamento(editarLancamento.getTarifa().getTipo());
-        actionEditarLancamentoAlteraDataPagamento();
-    }
-
-    public void actionEditarLancamentoAlteraDataPagamento() {
-        if (editarLancamento == null)
-            return;
-
-        if (editarLancamento.getTarifa() != null && editarLancamento.getDataPagamento() != null) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(editarLancamento.getDataPagamento());
-            cal.add(Calendar.DAY_OF_MONTH, editarLancamento.getTarifa().getPrazo());
-            editarLancamento.setDataCredito(cal.getTime());
-        } else
-            editarLancamento.setDataCredito(null);
-    }
-
-    private void editarLancamentoAtualizarFormasPagamentoDisponiveis() {
-        try {
-            this.editarLancamentoFormasDisponiveis = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
-        } catch (Exception e) {
-            LogIntelidenteSingleton.getInstance().makeLog(e);
-        }
-    }
-
-    //-------------------------------- EDITAR LANÇAMENTO --------------------------------
-
     //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------    
 
     public void actionPersistNovoNovoLancamento() {
@@ -689,7 +633,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                     novoLancamentoDataPagamento, novoLancamentoDataCredito, UtilsFrontEnd.getProfissionalLogado());
 
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
-            updateValues(getEntity(), true);
+            updateValues(getEntity(), true, true);
 
             PrimeFaces.current().executeScript("PF('dlgNovoLancamento').hide()");
         } catch (Exception e) {
@@ -874,7 +818,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                     UtilsFrontEnd.getProfissionalLogado());
 
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
-            updateValues(getEntity(), true);
+            updateValues(getEntity(), true, false);
 
             PrimeFaces.current().executeScript("PF('dlgNovaNegociacao').hide()");
         } catch (Exception e) {
@@ -888,7 +832,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             NegociacaoFaturaSingleton.getInstance().cancelarNegociacao(negociacao, UtilsFrontEnd.getProfissionalLogado());
 
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
-            updateValues(getEntity(), true);
+            updateValues(getEntity(), true, false);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro!", e.getMessage());
@@ -901,7 +845,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                     UtilsFrontEnd.getProfissionalLogado());
 
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
-            updateValues(getEntity(), true);
+            updateValues(getEntity(), true, false);
 
             PrimeFaces.current().executeScript("PF('dlgAprovaNegociacao').hide()");
         } catch (Exception e) {
@@ -1679,29 +1623,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setNovoLancamentoTooltipNegociacaoTarifasDisponiveis(String novoLancamentoTooltipNegociacaoTarifasDisponiveis) {
         this.novoLancamentoTooltipNegociacaoTarifasDisponiveis = novoLancamentoTooltipNegociacaoTarifasDisponiveis;
-
     }
 
     //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------
-
-    //-------------------------------- EDITAR LANÇAMENTO --------------------------------
-
-    public Lancamento getEditarLancamento() {
-        return editarLancamento;
-    }
-
-    public void setEditarLancamento(Lancamento editarLancamento) {
-        this.editarLancamento = editarLancamento;
-    }
-
-    public List<Tarifa> getEditarLancamentoFormasDisponiveis() {
-        return editarLancamentoFormasDisponiveis;
-    }
-
-    public void setEditarLancamentoFormasDisponiveis(List<Tarifa> editarLancamentoFormasDisponiveis) {
-        this.editarLancamentoFormasDisponiveis = editarLancamentoFormasDisponiveis;
-    }
-
-    //-------------------------------- EDITAR LANÇAMENTO --------------------------------    
 
 }
