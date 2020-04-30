@@ -4,7 +4,8 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets">
+	xmlns:ui="http://java.sun.com/jsf/facelets"	
+	>
 
 	<style>
 .ConvenioInativo {
@@ -1380,6 +1381,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<h:panelGroup>
 						<p:outputLabel for="descricaoOrcamento" value="Descrição:" />
 						<p:inputTextarea
+							disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
 							value="#{planoTratamentoMB.orcamentoSelecionado.descricao}"
 							id="descricaoOrcamento" rows="5" cols="500" counter="display1"
 							maxlength="200" counterTemplate="{0} caracteres disponíveis."
@@ -1390,6 +1392,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					<h:panelGroup>
 						<p:outputLabel for="observacaoOrcamento" value="Observações:" />
 						<p:inputTextarea
+							disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
 							value="#{planoTratamentoMB.orcamentoSelecionado.observacoes}"
 							id="observacaoOrcamento" rows="5" cols="500" counter="display"
 							maxlength="400" counterTemplate="{0} caracteres disponíveis."
@@ -1403,8 +1406,10 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				<br />
 
 				<p:outputPanel id="pnViewOrcamento">
-					<p:remoteCommand name="attValores" process="@this"
-						update=":lume:tabViewPaciente:pnViewOrcamentoValores" />
+					<p:remoteCommand name="attValores" process="@this,painelNegociacao"
+						update=":lume:tabViewPaciente:pnViewOrcamentoValores,painelNegociacao" 
+						actionListener="#{planoTratamentoMB.validaDescontos}"
+						/>
 					<p:outputPanel id="pnViewOrcamentoValores">
 						<div class="CardTextParent">
 							<h:panelGroup styleClass="CardText">
@@ -1535,111 +1540,104 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</div>
 					</p:outputPanel>
 					<br />
-					<p:fieldset legend="Desconto" toggleable="true" collapsed="true"
+					<p:fieldset id="painelNegociacao" legend="Negociação do pagamento" toggleable="true" collapsed="false"
 						style="margin: 0;">
-						<p:panelGrid columns="4" layout="grid"
-							columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
+						<p:panelGrid columns="2" layout="grid" 
+							columnClasses="ui-g-6,ui-g-6"
 							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removePaddingUp descontoFieldset">
-							<h:outputText value="Tipo do Desconto" />
-							<p:selectOneMenu
-								rendered="#{planoTratamentoMB.orcamentoSelecionado != null}"
-								disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
-								value="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo}">
-								<f:selectItem itemValue="P" itemLabel="Porcentagem" />
-								<f:selectItem itemValue="V" itemLabel="Valor" />
-								<p:ajax process="@this"
-									update=":lume:tabViewPaciente:orcamentoDescontoValor, :lume:tabViewPaciente:pnViewOrcamentoValores" />
-							</p:selectOneMenu>
-
-							<h:outputText value="Valor do Desconto" />
-							<h:panelGroup id="orcamentoDescontoValor">
-								<p:inputNumber
-									disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
-									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
-									styleClass="taller" maxlength="13" maxValue="9999999999.99"
-									decimalSeparator="," symbol="R$ " thousandSeparator="."
-									rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'V'}">
-									<p:ajax process="@this" oncomplete="attValores()" />
-								</p:inputNumber>
-								<p:inputNumber
-									disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
-									value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
-									styleClass="taller" maxlength="13" maxValue="9999999999.99"
-									decimalSeparator="," symbol="%" thousandSeparator="."
-									symbolPosition="s"
-									rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'P'}">
-									<p:ajax process="@this" oncomplete="attValores()" />
-								</p:inputNumber>
-							</h:panelGroup>
+							<p:panelGrid columns="4" layout="grid"
+								columnClasses="ui-g-2,ui-g-4,ui-g-2,ui-g-4"
+								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removePaddingUp descontoFieldset">
+								<p:outputPanel>
+									<h:outputText value="Quantidade de parcelas" />
+								</p:outputPanel>
+								<p:outputPanel>	
+									<p:selectOneMenu
+										disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
+										value="#{planoTratamentoMB.quantidadeVezesNegociacaoOrcamento}">
+										<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
+										<f:selectItems value="#{planoTratamentoMB.quantidadeVezesDisponiveis}"
+									var="vezes"
+									itemLabel="#{vezes}"
+									itemValue="#{vezes}" />	
+									<p:ajax process="@this" oncomplete="attValores()" />									
+									</p:selectOneMenu>
+								</p:outputPanel>
+								<p:outputPanel>
+									<h:outputText value="Tipo do Desconto:" />
+								</p:outputPanel>
+								<p:outputPanel>	
+									<p:selectOneMenu
+										rendered="#{planoTratamentoMB.orcamentoSelecionado != null}"
+										disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
+										value="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo}">
+										<f:selectItem itemValue="P" itemLabel="Porcentagem" />
+										<f:selectItem itemValue="V" itemLabel="Valor" />
+										<p:ajax process="@this"
+											update=":lume:tabViewPaciente:orcamentoDescontoValor, :lume:tabViewPaciente:pnViewOrcamentoValores" />
+									</p:selectOneMenu>
+								</p:outputPanel>
+								<p:outputPanel>
+									<h:outputText value="Valor do Desconto:" />
+								</p:outputPanel>
+								<p:outputPanel>	
+									<h:panelGroup id="orcamentoDescontoValor">
+										<p:inputNumber
+											disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
+											value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
+											styleClass="taller" maxlength="13" maxValue="9999999999.99"
+											decimalSeparator="," symbol="R$ " thousandSeparator="."
+											rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'V'}">
+											<p:ajax process="@this" oncomplete="attValores()" />
+										</p:inputNumber>
+										<p:inputNumber
+											disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
+											value="#{planoTratamentoMB.orcamentoSelecionado.descontoValor}"
+											styleClass="taller" maxlength="13" maxValue="9999999999.99"
+											decimalSeparator="," symbol="%" thousandSeparator="."
+											symbolPosition="s"
+											rendered="#{planoTratamentoMB.orcamentoSelecionado.descontoTipo == 'P'}">
+											<p:ajax process="@this" oncomplete="attValores()" />
+										</p:inputNumber>
+									</h:panelGroup>
+								</p:outputPanel>	
+								<p:outputPanel>
+									<h:outputText value="Valor da primeira parcela:" />
+								</p:outputPanel>
+								<p:outputPanel>	
+									<h:panelGroup>
+										<p:inputNumber disabled="#{planoTratamentoMB.numeroParcelaOrcamento == 0 || planoTratamentoMB.numeroParcelaOrcamento == 1}"										
+											value="#{planoTratamentoMB.valorPrimeiraParcelaOrcamento}"
+											styleClass="taller" maxlength="13" maxValue="9999999999.99"
+											decimalSeparator="," symbol="R$ " thousandSeparator="."
+											>	
+											<p:ajax process="@this" oncomplete="attValores()" />									
+										</p:inputNumber>										
+									</h:panelGroup>
+								</p:outputPanel>	
+								
+							</p:panelGrid>
+							<p:panelGrid columns="1" layout="grid"
+								columnClasses="ui-g-12"
+								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removePaddingUp descontoFieldset">
+								<p:outputPanel>		
+									<p:outputLabel for="observacaoCobranca" value="Observações de cobrança:" />
+									<p:inputTextarea
+										disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
+										value="#{planoTratamentoMB.observacoesCobrancaOrcamento}"
+										id="observacaoCobranca" rows="5" cols="500" counter="displayObservacao"
+										maxlength="400" counterTemplate="{0} caracteres disponíveis."
+										autoResize="true" />
+									<br />
+									<h:outputText id="displayObservacao" />
+								</p:outputPanel>	
+							</p:panelGrid>
 						</p:panelGrid>
+						<p:outputLabel  style="font-weight:bold;font-size:18px" value="#{planoTratamentoMB.mensagemCalculoOrcamento}"></p:outputLabel>	
+						<br/>
+						<p:outputLabel  style="font-weight:bold;color:red" value="#{planoTratamentoMB.mensagemCalculoOrcamentoDiferenca}"></p:outputLabel>
 					</p:fieldset>
-					<br />
-					<p:fieldset legend="Planejamento do Pagamento" toggleable="true"
-						collapsed="true" style="margin: 0;">
-
-						<p:panelGrid columns="4" layout="grid"
-							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-							<p:commandButton icon="ui-icon-add" value="Novo Planejamento"
-								process="@this" styleClass="GreenButton"
-								actionListener="#{planoTratamentoMB.newPlanejamento}"
-								update=":lume:tabViewPaciente:pnlNewPlanejamento"
-								oncomplete="PF('dlgNewPlanejamento').show()"
-								disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}" />
-						</p:panelGrid>
-
-						<p:dataTable filterDelay="1500" reflow="true"
-							emptyMessage="Nenhum planejamento realizado" id="dtPlanejamento"
-							var="lancPlanejamento"
-							value="#{planoTratamentoMB.orcamentoSelecionado.planejamentoFiltered}"
-							rows="10" paginator="true" paginatorPosition="bottom">
-							<f:facet name="header">
-								<h:outputText value="Planejamento" />
-							</f:facet>
-							<p:column headerText="Ações" width="80">
-								<p:commandButton title="Excluir planejamento" icon="fa fa-trash"
-									styleClass="RedButton" process="@this" update="dtPlanejamento"
-									actionListener="#{planoTratamentoMB.removePlanejamento(lancPlanejamento)}"
-									disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}" />
-							</p:column>
-							<p:column headerText="Forma de pagamento"
-								filterMatchMode="contains"
-								filterBy="#{lancPlanejamento.formaPagamento.nome}"
-								sortBy="#{lancPlanejamento.formaPagamento.nome}">
-								<h:outputText value="#{lancPlanejamento.formaPagamento.nome}" />
-							</p:column>
-							<p:column headerText="Valor" filterMatchMode="contains"
-								filterBy="#{lancPlanejamento.valor}"
-								sortBy="#{lancPlanejamento.valor}">
-								<h:outputText value="#{lancPlanejamento.valor}">
-									<f:convertNumber type="currency" currencySymbol="R$"
-										maxFractionDigits="2" />
-								</h:outputText>
-							</p:column>
-							<p:column headerText="Parcelamento" filterMatchMode="contains"
-								filterBy="#{lancPlanejamento.nParcela}"
-								sortBy="#{lancPlanejamento.nParcela}">
-								<h:outputText value="Á vista"
-									rendered="#{lancPlanejamento.nParcela == 1}" />
-								<h:outputText value="#{lancPlanejamento.nParcela}x"
-									rendered="#{lancPlanejamento.nParcela > 1}" />
-							</p:column>
-							<p:column headerText="Data de Pagamento"
-								filterMatchMode="contains"
-								filterBy="#{lancPlanejamento.dataPagamento}"
-								sortBy="#{lancPlanejamento.dataPagamento}">
-								<h:outputText value="#{lancPlanejamento.dataPagamento}">
-									<f:convertDateTime pattern="dd/MM/yyyy" />
-								</h:outputText>
-							</p:column>
-							<p:column headerText="Data de Crédito" filterMatchMode="contains"
-								filterBy="#{lancPlanejamento.dataCredito}"
-								sortBy="#{lancPlanejamento.dataCredito}">
-								<h:outputText value="#{lancPlanejamento.dataCredito}">
-									<f:convertDateTime pattern="dd/MM/yyyy" />
-								</h:outputText>
-							</p:column>
-						</p:dataTable>
-					</p:fieldset>
+					<br />					
 				</p:outputPanel>
 			</p:scrollPanel>
 		</p:outputPanel>
@@ -1789,12 +1787,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 				<p:commandButton value="Salvar e Fechar" icon="White fa fa-save"
 					actionListener="#{planoTratamentoMB.addPlanejamento}"
-					update=":lume:tabViewPaciente:pnlNewPlanejamento, :lume:tabViewPaciente:dtPlanejamento"
+					update=":lume:tabViewPaciente:pnlNewPlanejamento"
 					process="@this, :lume:tabViewPaciente:pnlNewPlanejamento"
 					styleClass="GreenButton" />
 				<p:commandButton value="Salvar e Continuar" icon="White fa fa-save"
 					actionListener="#{planoTratamentoMB.addPlanejamentoContinuando}"
-					update=":lume:tabViewPaciente:pnlNewPlanejamento, :lume:tabViewPaciente:dtPlanejamento"
+					update=":lume:tabViewPaciente:pnlNewPlanejamento"
 					process="@this, :lume:tabViewPaciente:pnlNewPlanejamento"
 					styleClass="GreenButton" />
 				<p:column />
