@@ -1281,7 +1281,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 						<p:commandButton id="newOrcamento" icon="ui-icon-add"
 							actionListener="#{planoTratamentoMB.actionNewOrcamento}"
-							update=":lume:tabViewPaciente:panelDescObs,:lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:orcamentoViewHeader, :lume:tabViewPaciente:buttonsDlgOrcamentoView,:lume:tabViewPaciente:panelDescObs"
+							update=":lume:tabViewPaciente:painelNegociacao,:lume:tabViewPaciente:panelDescObs,:lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:orcamentoViewHeader, :lume:tabViewPaciente:buttonsDlgOrcamentoView,:lume:tabViewPaciente:panelDescObs"
 							value="Novo Orçamento" process="@this" styleClass="NavyButton"
 							disabled="#{planoTratamentoMB.entity.status == 'S'}" />
 					</p:panelGrid>
@@ -1551,17 +1551,29 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:outputPanel>
 									<h:outputText value="Quantidade de parcelas" />
 								</p:outputPanel>
-								<p:outputPanel>	
-									<p:selectOneMenu
-										disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
-										value="#{planoTratamentoMB.quantidadeVezesNegociacaoOrcamento}">
-										<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
-										<f:selectItems value="#{planoTratamentoMB.quantidadeVezesDisponiveis}"
-									var="vezes"
-									itemLabel="#{vezes}"
-									itemValue="#{vezes}" />	
-									<p:ajax process="@this" oncomplete="attValores()" />									
-									</p:selectOneMenu>
+								<p:outputPanel>										
+									<p:selectOneMenu id="filtroQuantidadeParcelas" var="parcelaInfo"
+									disabled="#{planoTratamentoMB.orcamentoSelecionado.aprovado}"
+											value="#{planoTratamentoMB.quantidadeVezesNegociacaoOrcamento}"
+											forceSelection="true" scrollHeight="400">
+
+											<f:selectItem
+												itemLabel="Selecione..."
+												itemValue="#{null}" />
+											<f:selectItems value="#{planoTratamentoMB.parcelasDisponiveis}"
+												var="p" itemValue="#{p}"
+												itemLabel="#{p} parcelas &#8211; Desconto Máx: #{planoTratamentoMB.getDescontoFromParcela(p)}" />
+
+											<p:column headerText="Quantidade de Parcelas"
+												style="text-align: center;">
+												<h:outputText value="#{parcelaInfo} parcelas" />
+											</p:column>
+											<p:column headerText="Desconto Máximo">
+												<h:outputText
+													value="#{planoTratamentoMB.getDescontoFromParcela(parcelaInfo)}" />
+											</p:column>
+											<p:ajax process="@this" oncomplete="attValores()" />		
+										</p:selectOneMenu>
 								</p:outputPanel>
 								<p:outputPanel>
 									<h:outputText value="Tipo do Desconto:" />
