@@ -189,6 +189,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
    
    private String mensagemCalculoOrcamentoDiferenca;
    private BigDecimal valorParcela;
+   private BigDecimal diferencaCalculoParcelas = new BigDecimal(0); 
    
     public PlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());
@@ -1082,8 +1083,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     valorComparar = valorParcela.multiply(numeroParcelaOrcamento.subtract(new BigDecimal(1))).add(valorPrimeiraParcelaOrcamento);
                 }                
                 if(valorComparar.compareTo(orcamentoSelecionado.getValorTotalComDesconto()) != 0) {
-                    BigDecimal diferenca = orcamentoSelecionado.getValorTotalComDesconto().subtract(valorParcela.multiply(numeroParcelaOrcamento));                    
-                    mensagemCalculoOrcamentoDiferenca = "Atenção! Diferença de " + Utils.formataValor(diferenca) + " na soma das parcelas. "
+                    diferencaCalculoParcelas = orcamentoSelecionado.getValorTotalComDesconto().subtract(valorParcela.multiply(numeroParcelaOrcamento));                    
+                    mensagemCalculoOrcamentoDiferenca = "Atenção! Diferença de " + Utils.formataValor(diferencaCalculoParcelas) + " na soma das parcelas. "
                             + "Essa diferença será somada na primeira parcela automaticamente.";              
                 }                               
             }
@@ -1314,25 +1315,27 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
             orcamentoPerc = orcamentoPerc.setScale(2, BigDecimal.ROUND_HALF_DOWN);
 
-            if (!isDentistaAdmin() && UtilsFrontEnd.getProfissionalLogado().getDesconto() == null || UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue() < orcamentoPerc.doubleValue()) {
-                if (UtilsFrontEnd.getProfissionalLogado().getDesconto() != null) {
-                    if ("P".equals(orcamentoSelecionado.getDescontoTipo())) {
-                        orcamentoSelecionado.setDescontoValor(UtilsFrontEnd.getProfissionalLogado().getDesconto());
-                    } else if ("V".equals(orcamentoSelecionado.getDescontoTipo())) {
-                        orcamentoSelecionado.setDescontoValor(orcamentoSelecionado.getValorTotal().multiply(UtilsFrontEnd.getProfissionalLogado().getDesconto()));
-                    }
-                }
-                //sem desconto na tela, nao precisa validar se profissional tem desconto...
-                if (!(orcamentoSelecionado.getDescontoValor().compareTo(new BigDecimal(0)) == 0)) {
-                    addError(OdontoMensagens.getMensagem("erro.orcamento.desconto.maior"), "");
-                    return;
-                }
-
-            }
+//            if (!isDentistaAdmin() && UtilsFrontEnd.getProfissionalLogado().getDesconto() == null || UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue() < orcamentoPerc.doubleValue()) {
+//                if (UtilsFrontEnd.getProfissionalLogado().getDesconto() != null) {
+//                    if ("P".equals(orcamentoSelecionado.getDescontoTipo())) {
+//                        orcamentoSelecionado.setDescontoValor(UtilsFrontEnd.getProfissionalLogado().getDesconto());
+//                    } else if ("V".equals(orcamentoSelecionado.getDescontoTipo())) {
+//                        orcamentoSelecionado.setDescontoValor(orcamentoSelecionado.getValorTotal().multiply(UtilsFrontEnd.getProfissionalLogado().getDesconto()));
+//                    }
+//                }
+//                //sem desconto na tela, nao precisa validar se profissional tem desconto...
+//                if (!(orcamentoSelecionado.getDescontoValor().compareTo(new BigDecimal(0)) == 0)) {
+//                    addError(OdontoMensagens.getMensagem("erro.orcamento.desconto.maior"), "");
+//                    return;
+//                }
+//
+//            }
+            
+            
 
             orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
             orcamentoSelecionado.setQuantidadeParcelas(1);
-            OrcamentoSingleton.getInstance().aprovaOrcamento(orcamentoSelecionado, null, UtilsFrontEnd.getProfissionalLogado());
+            OrcamentoSingleton.getInstance().aprovaOrcamento(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
             addInfo("Sucesso", "Aprovação com " + orcamentoPerc + "% de desconto aplicado!");
             carregaOrcamentos();
 
@@ -1406,10 +1409,22 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             atualizaValoresOrcamento();
             setOrcamentoSelecionado(OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado));         
           
-          //TODO calcular diferenca e colocar na primeira parcela caso exista
+      
+            if(diferencaCalculoParcelas != null && diferencaCalculoParcelas.compareTo(new BigDecimal(0)) != 0) {
+                if(valorPrimeiraParcelaOrcamento != null && valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) != 0) {
+                    valorPrimeiraParcelaOrcamento = valorPrimeiraParcelaOrcamento.add(diferencaCalculoParcelas);
+                }else {
+                    valorParcela = orcamentoSelecionado.getValorTotalComDesconto().divide(numeroParcelaOrcamento, 2, RoundingMode.HALF_UP);
+                    valorPrimeiraParcelaOrcamento = valorParcela.add(diferencaCalculoParcelas);
+                    valorParcela = (orcamentoSelecionado.getValorTotalComDesconto().subtract(valorPrimeiraParcelaOrcamento)).divide(numeroParcelaOrcamento.subtract(new BigDecimal(1)), 2, RoundingMode.HALF_UP);                    
+                }
+            }
+            validaDescontos();
           
-          NegociacaoOrcamentoSingleton.getInstance().criaNovaNegociacao(getOrcamentoSelecionado(), descontosDisponiveis.get(numeroParcelaOrcamento.intValue()) , numeroParcelaOrcamento.intValue(), getOrcamentoSelecionado().getDescontoTipo(), getOrcamentoSelecionado().getDescontoValor(),
-                  valorPrimeiraParcelaOrcamento, valorParcela,  getOrcamentoSelecionado().getValorTotal(), getOrcamentoSelecionado().getValorTotalComDesconto(), observacoesCobrancaOrcamento, UtilsFrontEnd.getProfissionalLogado());
+            NegociacaoOrcamentoSingleton.getInstance().criaNovaNegociacao(getOrcamentoSelecionado(), descontosDisponiveis.get(numeroParcelaOrcamento.intValue()) , 
+                    numeroParcelaOrcamento.intValue(), getOrcamentoSelecionado().getDescontoTipo(), getOrcamentoSelecionado().getDescontoValor(),
+                  valorPrimeiraParcelaOrcamento, valorParcela,  getOrcamentoSelecionado().getValorTotal(), getOrcamentoSelecionado().getValorTotalComDesconto(), 
+                  observacoesCobrancaOrcamento, UtilsFrontEnd.getProfissionalLogado());
        
             calculaRepasses();
             //actionNew(event);
@@ -2496,6 +2511,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     
     public void setDescontosDisponiveis(Map<Integer, DescontoOrcamento> descontosDisponiveis) {
         this.descontosDisponiveis = descontosDisponiveis;
+    }
+
+    
+    public BigDecimal getDiferencaCalculoParcelas() {
+        return diferencaCalculoParcelas;
+    }
+
+    
+    public void setDiferencaCalculoParcelas(BigDecimal diferencaCalculoParcelas) {
+        this.diferencaCalculoParcelas = diferencaCalculoParcelas;
     }
 
 }
