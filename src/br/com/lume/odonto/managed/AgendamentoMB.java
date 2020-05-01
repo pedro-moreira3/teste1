@@ -346,10 +346,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
          //   validaHabilitaSalvar();
           //  this.validaHoraUtilProfissional(profissionalDentroAgenda);
-            
+            observacoes = getEntity().getDescricao();
             
         }else {
             pacienteSelecionado = null;
+            observacoes = "";
         }          
         PrimeFaces.current().ajax().update(":lume:pnAgendamento");
         atualizaPickList();
@@ -363,11 +364,12 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         
         agendamento.setInicio(data);
         agendamento.setFim(data);
-        
+        observacoes = agendamento.getDescricao();
         setEntity(agendamento);
        
         if(p != null) {          
             profissionalDentroAgenda = p;
+            observacoes = "";
         }          
         PrimeFaces.current().ajax().update(":lume:pnAgendamento");    
         atualizaPickList();
