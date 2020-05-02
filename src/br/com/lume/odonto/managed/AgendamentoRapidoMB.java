@@ -299,8 +299,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 setCheio(cheio);
                 PrimeFaces.current().ajax().update(":lume:livre");
                 PrimeFaces.current().ajax().update(":lume:medio");
-                PrimeFaces.current().ajax().update(":lume:cheio");
-                PrimeFaces.current().ajax().update(":lume:data");
+                PrimeFaces.current().ajax().update(":lume:cheio");               
               //  System.out.println(livre);
                 
             }
