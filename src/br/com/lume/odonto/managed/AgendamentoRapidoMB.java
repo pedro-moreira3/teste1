@@ -536,8 +536,18 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                         }
                      //   System.out.println("b");
                         foiAdicionado = true;
-                    }                                   
-                }                                
+                     
+                    }
+                }else {
+                    //caso tenha escapado um agendamento posterior ao ultimo criado
+                    if(agendamentoExistente.getInicio().after(listaCriados.get(listaCriados.size()-1).getFim()) && agendamentoExistente.getFim().after(listaCriados.get(listaCriados.size()-1).getFim())) {
+                       if(!agendamentosAnterioresHoraFim.contains(agendamentoExistente)) {
+                           agendamentosAnterioresHoraFim.add(agendamentoExistente);
+                       } 
+                    }
+                }             
+                
+                
               
             }
             if(!foiAdicionado) {
@@ -729,30 +739,24 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
 
     
     public void setLivre(String livre) {
-        try {
+     
             this.livre = livre;    
-        } catch (Exception e) {
-            // TODO: handle exception
-        }        
+             
     }
 
     
     public void setMedio(String medio) {
-        try {
+     
             this.medio = medio;
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
+        
       
     }
 
     
     public void setCheio(String cheio) {
-        try {
+       
             this.cheio = cheio;
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
+        
      
     }
 
