@@ -570,8 +570,11 @@ div.ui-selectoneradio label {
 											</h:panelGroup>
 
 											<h:panelGroup></h:panelGroup>
-
-
+										</p:panelGrid>
+										<p:panelGrid id="formularioPrincipalProf" columns="2"
+											layout="grid"
+											styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+											style="border:0px none; background-color:transparent;">
 
 											<h:panelGroup styleClass="md-combo">
 
@@ -588,11 +591,24 @@ div.ui-selectoneradio label {
 														itemLabel="#{profissional.dadosBasico.prefixoNome}"
 														itemValue="#{profissional}" />
 
-													<p:ajax process="@this" update="btBloqueioAgenda" />
+													<p:ajax process="@this" update="btBloqueioAgenda,btnVisualizarDisponibilidadeAgenda" />
 
 												</p:selectOneMenu>
 
 												<p:outputLabel for="profissional" value="Profissional" />
+											</h:panelGroup>	
+											<h:panelGroup styleClass="md-combo">
+												<p:outputPanel id="btnVisualizarDisponibilidadeAgenda"
+												style="display:inline-flex;">
+													<p:commandButton id="visualizarDisponibilidadeAgendqa" process="@this,:lume:pnDisponibilidade"
+													disabled="#{agendamentoMB.profissional == null}"
+													actionListener="#{agendamentoRapidoMB.carregaDisponibilidadeFromAgendamento(agendamentoMB.profissional,agendamentoMB.initialDate)}"
+													update=":lume:pnDisponibilidade"
+													icon="fa fa-calendar-o White" 
+													oncomplete="PF('dlgDisponibilidade').show();PF('dtRelagendamento').filter();"
+													title="Disponibilidade do profissional" />
+												</p:outputPanel>
+												
 											</h:panelGroup>
 
 										</p:panelGrid>
@@ -794,7 +810,7 @@ div.ui-selectoneradio label {
 								resizable="false" initialDate="#{agendamentoMB.initialDate}">
 
 								<p:ajax event="viewChange" process="@this"
-									update=":lume:formularioPrincipal, :lume:initialDate" />
+									update=":lume:formularioPrincipal,:lume:formularioPrincipalProf, :lume:initialDate" />
 								<p:ajax event="dateSelect"
 									update=":lume:pnAgendamento,:lume:botoesAgenda"
 									listener="#{agendamentoMB.onDateSelect}"
