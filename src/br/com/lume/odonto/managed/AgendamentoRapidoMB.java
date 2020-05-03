@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -308,7 +309,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                                dataPadraoFimTarde  = dataPadraoFimManha;
                             
                            //verificando se para o dia que estamos testando temos afastamento
-                            afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByDataAndProfissional(
+                            afastamentos.addAll(listByDataAndProfissional(
                                     filtroPorProfissional, dataPadraoInicioManha,dataPadraoFimTarde,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));  
                            
                             long minutosAfastamento = 0l;
@@ -361,6 +362,39 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         }
         
     }
+    
+    public List<Afastamento> listByProfissionalEntreDatas(Profissional profissional, Date inicio, Date fim, long idEmpresa) throws Exception {
+        try {
+            if (inicio != null && fim != null) {
+                StringBuilder sb = new StringBuilder();
+                
+
+                sb.append("SELECT ");
+                sb.append("a ");
+                sb.append("FROM Afastamento AS a, Profissional AS p ");
+                sb.append(" WHERE a.profissional.id = ?1 ");
+                sb.append("AND a.excluido = 'N' ");
+                sb.append("AND a.valido = 'S' ");
+                sb.append("AND ( (a.inicio >= ?2 AND a.fim <= ?3) OR (?2 >= a.inicio AND ?2 <= a.fim) OR (a.inicio >= ?2 AND ?3 <= a.fim )) ");
+               // sb.append("AND ?2 >=  a.inicio AND ?3 <= a.fim ");
+                sb.append("AND p.id = a.profissional.id ");
+                sb.append("AND p.idEmpresa = ?4 ");
+                sb.append("ORDER BY a.inicio, a.fim ");
+                
+                Query query = this.getbO().getDao().createQuery(sb.toString());
+                
+                query.setParameter(1, profissional.getId());
+                query.setParameter(2, inicio);
+                query.setParameter(3, fim);
+                query.setParameter(4, idEmpresa);
+                return query.getResultList();
+                
+            }
+        } catch (Exception e) {
+            log.error("Erro no listByProfissionalAndValido", e);
+        }
+        return null;
+    } 
     
     
     public static String dateToStringAgenda(Date data) {
@@ -491,13 +525,13 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                     
                     List<Afastamento> afastamentos = new ArrayList<Afastamento>();
                     if(dataPadraoInicioManha != null && dataPadraoFimManha != null && dataPadraoInicioTarde != null && dataPadraoFimTarde != null) {
-                        afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioManha, 
+                        afastamentos.addAll(listByProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioManha, 
                                 dataPadraoFimTarde, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                     }else if(dataPadraoInicioManha != null && dataPadraoFimManha != null) {
-                            afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioManha, 
+                            afastamentos.addAll(listByProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioManha, 
                                     dataPadraoFimManha, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                     }else if(dataPadraoInicioTarde != null && dataPadraoFimTarde != null) {
-                        afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioTarde, 
+                        afastamentos.addAll(listByProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioTarde, 
                             dataPadraoFimTarde, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                     }
                    
@@ -793,6 +827,44 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         }
         return "";
     }
+    
+    public List<Afastamento> listByDataAndProfissional(Profissional profissional, Date dataIni, Date dataFim, long idEmpresa) throws Exception{
+        try {
+            if (dataIni != null && dataFim != null) {
+                StringBuilder sb = new StringBuilder();
+                
+
+                sb.append("SELECT ");
+                sb.append("a ");
+                sb.append("FROM Afastamento AS a, Profissional AS p ");
+                sb.append(" WHERE a.profissional.id = ?1 ");
+                sb.append("AND a.excluido = 'N' ");
+                sb.append("AND a.valido = 'S' ");
+              //  sb.append("AND ((?2 <= a.inicio AND ?3 >= a.fim) "
+                  //  + "OR (?2 <= a.inicio AND ?3 <= a.fim) "
+                      //+ "OR (?2 >= a.inicio AND ?3 >= a.fim )) "
+                      //+ "OR (?2 >= a.inicio AND ?3 <= a.fim )) ");
+                sb.append("AND (?2 >=  a.inicio AND ?3 <= a.fim "
+                + "OR (?2 <= a.inicio AND ?3 >= a.inicio AND ?3 <= a.fim ) "
+                + "OR (?2 >= a.inicio AND ?2 <= a.fim AND ?3 >= a.fim )) ");
+                sb.append("AND p.id = a.profissional.id ");
+                sb.append("AND p.idEmpresa = ?4 ");
+                sb.append("ORDER BY a.inicio, a.fim ");
+                
+                Query query = this.getbO().getDao().createQuery(sb.toString());
+                
+                query.setParameter(1, profissional.getId());
+                query.setParameter(2, dataIni); 
+                query.setParameter(3, dataFim); 
+                query.setParameter(4, idEmpresa);
+                return query.getResultList();
+                
+            }
+        } catch (Exception e) {
+            log.error("Erro no listByProfissionalAndValido", e);
+        }
+        return null;
+  }
     
   
     
