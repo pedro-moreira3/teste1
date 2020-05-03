@@ -411,7 +411,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
 									actionListener="#{agendamentoMB.actionPersist}"
 									update=":lume:pnAgendamento"
-									oncomplete="handleDialogRequest(xhr, status, args);atualizaLista();"
+									oncomplete="atualizaLista();PF('eventDialog').hide();"
 									styleClass="GreenButton" />	
 									
 									
@@ -441,15 +441,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 		</div>
 		<script type="text/javascript">
 			//<![CDATA[
-			function handleDialogRequest(xhr, status, args) {
-				console.debug('handleDialogRequest');
-				console.debug(args);
-				if (args.dlg == true) {
-					PF('eventDialog').hide();
-				} else {
-					window.scrollTo(0, 0);
-				}
-			}
+			
 
 			//]]>
 		</script>

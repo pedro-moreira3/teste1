@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
@@ -79,7 +80,9 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     private int totalMinutosAgendamentosExistentes;
     
     List<Agendamento> agendamentosAnterioresHoraInicio = new ArrayList<Agendamento>();
-    List<Agendamento> agendamentosAnterioresHoraFim = new ArrayList<Agendamento>();     
+    List<Agendamento> agendamentosAnterioresHoraFim = new ArrayList<Agendamento>();
+
+    private List<Agendamento> agendamentoEntreHoraAlmoco;     
     
     public AgendamentoRapidoMB() {
         super(AgendamentoSingleton.getInstance().getBo());   
@@ -456,7 +459,10 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                                              
                     if(!agendamentosAnterioresHoraFim.isEmpty()) {
                         listaAgendamentos.addAll(agendamentosAnterioresHoraFim);
-                    }                    
+                    }  
+                    //remover duplicados caso existam, por precaução.
+                    listaAgendamentos = listaAgendamentos.stream().distinct().collect(Collectors.toList());
+                    
                 }               
             }
 
@@ -507,6 +513,11 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
 
     private List<Agendamento> substituiAgendamentos(List<Agendamento> listaCriados ,List<Agendamento> paraSubstituir) {
         List<Agendamento> substituidos = new ArrayList<Agendamento>();
+        
+        Date dataPadraoFimManha = null;                      
+        Date dataPadraoFimTarde = null;
+        agendamentoEntreHoraAlmoco = new ArrayList<Agendamento>();         
+        
         for (Agendamento agendamentoCriado : listaCriados) {
             boolean foiAdicionado = false;
             
@@ -538,7 +549,10 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                         foiAdicionado = true;
                      
                     }
-                }else {
+ 
+                } else {
+                  
+                    
                     //caso tenha escapado um agendamento posterior ao ultimo criado
                     if(agendamentoExistente.getInicio().after(listaCriados.get(listaCriados.size()-1).getFim()) && agendamentoExistente.getFim().after(listaCriados.get(listaCriados.size()-1).getFim())) {
                        if(!agendamentosAnterioresHoraFim.contains(agendamentoExistente)) {
@@ -547,7 +561,24 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                     }
                 }             
                 
-                
+                //verificando se tem agendamento entre a hora do almoço
+                if(horariopadraoFim != null && horariopadraoInicoTarde != null && !agendamentoEntreHoraAlmoco.contains(agendamentoExistente)) { 
+                  dataPadraoFimManha = Utils.criaDataComHorario(agendamentoExistente.getInicio(),horariopadraoFim);                                
+                  dataPadraoFimTarde = Utils.criaDataComHorario(agendamentoExistente.getInicio(),horariopadraoFimTarde);
+                  if((agendamentoExistente.getInicio().after(dataPadraoFimManha) || agendamentoExistente.getInicio().equals(dataPadraoFimManha)) &&
+                          (agendamentoExistente.getFim().before(dataPadraoFimTarde) || agendamentoExistente.getFim().equals(dataPadraoFimTarde))    
+                          ) {
+                      if(!substituidos.contains(agendamentoExistente)) {
+                          agendamentoEntreHoraAlmoco.add(agendamentoExistente) ;                         
+                      }
+                  }else if(agendamentoExistente.getInicio().before(dataPadraoFimManha) &&
+                          (agendamentoExistente.getFim().before(dataPadraoFimTarde) || agendamentoExistente.getFim().equals(dataPadraoFimTarde)
+                          )) {
+                      if(!substituidos.contains(agendamentoExistente)) {
+                          agendamentoEntreHoraAlmoco.add(agendamentoExistente) ;                         
+                      }
+                  }
+                }
               
             }
             if(!foiAdicionado) {
@@ -559,7 +590,25 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 }                               
             }
         }
-        return substituidos;
+        List<Agendamento> substituidosretorno = new ArrayList<Agendamento>();
+        //substituidosretorno.addAll(substituidos);
+        if(agendamentoEntreHoraAlmoco != null && !agendamentoEntreHoraAlmoco.isEmpty()) {
+            boolean jaAdicionado = false;
+          
+            for (Agendamento agendamento : substituidos) {
+                if(agendamento.getFim().after(dataPadraoFimManha) && !jaAdicionado) {                    
+                    jaAdicionado = true;
+                    substituidosretorno.addAll(agendamentoEntreHoraAlmoco);
+                }
+                substituidosretorno.add(agendamento);    
+               
+                
+                
+            }
+        }else {
+            substituidosretorno.addAll(substituidos);
+        }
+        return substituidosretorno;
     }
     
     public void carregaDisponibilidadeFromAgendamento(Profissional profissionalDentroAgenda, Date dataAgendamento) {
@@ -838,6 +887,16 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     public void setTotalMinutosAgendamentosExistentes(int totalMinutosAgendamentosExistentes) {
         this.totalMinutosAgendamentosExistentes = totalMinutosAgendamentosExistentes;
+    }
+
+    
+    public List<Agendamento> getAgendamentoEntreHoraAlmoco() {
+        return agendamentoEntreHoraAlmoco;
+    }
+
+    
+    public void setAgendamentoEntreHoraAlmoco(List<Agendamento> agendamentoEntreHoraAlmoco) {
+        this.agendamentoEntreHoraAlmoco = agendamentoEntreHoraAlmoco;
     }
 
 }
