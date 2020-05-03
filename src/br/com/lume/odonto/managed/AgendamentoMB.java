@@ -232,7 +232,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     
     public List<Profissional> sugestoesProfissionais(String query) {
         return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),false);
-    }
+    }   
+   
 
     public void carregarAgenda() {
         //limpaPacienteSelecionado();
@@ -246,6 +247,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         try {
             pacienteSelecionado = PacienteSingleton.getInstance().getBo().find(pacienteSelecionado);
             PrimeFaces.current().ajax().update(":lume:paciente");
+            
+            planoTratamentos = new ArrayList<>();
+            planoTratamentos = PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(pacienteSelecionado);
+            PrimeFaces.current().ajax().update(":lume:planoTratamento");
         } catch (Exception e) {
             addError("Erro", "Falha ao atualizar paciente selecionado no agendamento!");
         }
@@ -346,10 +351,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
          //   validaHabilitaSalvar();
           //  this.validaHoraUtilProfissional(profissionalDentroAgenda);
-            
+            observacoes = getEntity().getDescricao();
             
         }else {
             pacienteSelecionado = null;
+            observacoes = "";
         }          
         PrimeFaces.current().ajax().update(":lume:pnAgendamento");
         atualizaPickList();
@@ -360,14 +366,15 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         Agendamento agendamento = new Agendamento();
         this.setInicio(data);
         this.setFim(data);
-        
+        agendamento.setStatusNovo("E");
         agendamento.setInicio(data);
         agendamento.setFim(data);
-        
+        observacoes = agendamento.getDescricao();
         setEntity(agendamento);
        
         if(p != null) {          
             profissionalDentroAgenda = p;
+            observacoes = "";
         }          
         PrimeFaces.current().ajax().update(":lume:pnAgendamento");    
         atualizaPickList();
