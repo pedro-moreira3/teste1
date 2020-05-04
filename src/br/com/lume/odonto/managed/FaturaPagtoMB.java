@@ -811,7 +811,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                     novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorDaPrimeiraParcela.add(diferentaParcelamento);
                 }
             } else {
-                novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorDaParcela;
+                novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorTotal;
                 novoLancamentoValorDaParcela = null;
             }
         }
