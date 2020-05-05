@@ -116,6 +116,12 @@
 				<p:outputPanel style="margin: 10px;">
 					<br/>
 					<p:outputLabel style="font-weight:bold;font-size:18px" value="Profissional: #{agendamentoMB.profissionalDentroAgenda.dadosBasico.getPrefixoNome()}"></p:outputLabel>	
+					<h:panelGroup>
+						<p:spacer width="40" />
+						<p:outputLabel id="observacoesDispoTitulo" style="color:red;font-size:18px;font:weight:bold">
+							#{agendamentoRapidoMB.observacaoNaoCadastrado}
+						</p:outputLabel>
+						</h:panelGroup>
 					<br/>					
 							<p:panelGrid columns="2" layout="grid"
 								styleClass="ui-panelgrid-blank ui-fluid form-group" >
@@ -130,7 +136,7 @@
 											var="mes" itemLabel="#{mes}"
 									itemValue="#{mes}" />
 									<p:ajax event="itemSelect" global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" 
-										update="painelCalendario,:lume:dtRelagendamento,observacoes,dataDisponibilidade" oncomplete="PF('dtRelagendamento').filter();"
+										update="observacoesDispoTitulo,painelCalendario,:lume:dtRelagendamento,observacoes,dataDisponibilidade" oncomplete="PF('dtRelagendamento').filter();"
 										/>
 									</p:selectOneMenu>											
 								</h:panelGroup>
@@ -149,7 +155,7 @@
 											var="ano" itemLabel="#{ano}"
 											itemValue="#{ano}" />
 											<p:ajax event="itemSelect" global="true" process="@this" listener="#{agendamentoRapidoMB.populaAgenda()}" 
-										update="painelCalendario,:lume:dtRelagendamento,observacoes,dataDisponibilidade" oncomplete="PF('dtRelagendamento').filter();"
+										update="observacoesDispoTitulo,painelCalendario,:lume:dtRelagendamento,observacoes,dataDisponibilidade" oncomplete="PF('dtRelagendamento').filter();"
 										/>
 									</p:selectOneMenu>	
 								</h:panelGroup>										
@@ -169,7 +175,7 @@
 										  id="dataDisponibilidade" widgetVar="dataDisponibilidade"
 										  showOtherMonths="false"
 										  >
-										   <p:ajax event="dateSelect" update="painelCalendario,:lume:dtRelagendamento,observacoes" 
+										   <p:ajax event="dateSelect" update="observacoesDispoTitulo,painelCalendario,:lume:dtRelagendamento,observacoes" 
 										   global="true" process="@this" listener="#{agendamentoRapidoMB.selecionaDia()}" oncomplete="PF('dtRelagendamento').filter()"/>	
 										 													 								    							 
 									</p:calendar>									
