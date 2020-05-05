@@ -300,10 +300,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									itemEscaped="false" />
 								<p:ajax
 									listener="#{relatorioPacienteAgendamentoMB.mostrarOsPacientes()}"
-									process="@this,pnFiltroStatus" update="pnFiltroStatus" />
+									process="@this,pnFiltroStatusRelatorio" update="pnFiltroStatusRelatorio" />
 							</p:selectManyCheckbox>
 						</p:outputPanel>
-						<p:outputPanel id="pnFiltroStatus" style="margin:20px;">
+						<p:outputPanel id="pnFiltroStatusRelatorio" style="margin:20px;">
 
 							<p:outputLabel value="Status do último agendamento: " />
 
@@ -315,7 +315,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									disabled="#{relatorioPacienteAgendamentoMB.desabilitaStatusAgendamento}"
 									value="#{relatorioPacienteAgendamentoMB.checkFiltro}">
 									<p:ajax event="change" process="@this"
-										update=":lume:pnFiltroStatus"
+										update=":lume:pnFiltroStatusRelatorio"
 										listener="#{relatorioPacienteAgendamentoMB.marcarFiltros}" />
 								</p:selectBooleanCheckbox>
 								<p:outputLabel for="checkFiltro" value="Marcar todos" />
@@ -773,7 +773,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												itemEscaped="false" />
 											<p:ajax
 												listener="#{relatorioPacienteAgendamentoMB.mostrarOsPacientes()}"
-												process="@this,pnFiltroStatus" update="pnFiltroStatus" />
+												process="@this,pnFiltroStatusRelatorio" update="pnFiltroStatusRelatorio" />
 										</p:selectManyCheckbox>
 									</h:panelGroup>
 
