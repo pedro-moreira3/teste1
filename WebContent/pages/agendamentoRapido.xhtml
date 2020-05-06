@@ -446,11 +446,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 		<ui:remove>
 		
 	<f:websocket channel="canalAgendamentoRapido" onmessage="function(m){console.log(m);atualizaLista();}" />
-		
+	</ui:remove>	
 					<p:remoteCommand name="atualizaLista" process="@this"
 										update=":lume:painelCalendarioAgRapido,:lume:dtAgendamentos,:lume:filtroRelatorio,:lume:observacoes,:lume:data"
 										actionListener="#{agendamentoRapidoMB.depoisSalvaAgendamento()}" oncomplete="PF('dtAgendamentos').filter();"/>			
-		</ui:remove>
+		
 
 				
 
