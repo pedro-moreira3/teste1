@@ -148,133 +148,205 @@ body .lancamentoFalhaOperacao {
 	</p:dialog>
 
 	<p:dialog widgetVar="dlgNovoLancamento" header="Novo Lançamento"
-		responsive="true" modal="true" appendTo=":lume" width="70%">
+		responsive="true" modal="true" appendTo=":lume" width="70%"
+		height="80%">
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
-				<p:outputPanel id="pnlNovoLancamento">
-					<p:remoteCommand name="novoLancamentoRefazCalculos" process="@this"
-						actionListener="#{faturaPagtoMB.novoLancamentoRefazCalculos()}"
-						update="novoLancamentoValorPrimeiraParcela, novoLancamentoInfoParcelamento" />
-					<p:panelGrid columns="1" layout="grid"
-						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
-						<h:panelGroup styleClass="md-combo">
+				<p:outputPanel
+					style="position: relative; max-height: calc(80vh - 69px); height: calc(80vh - 69px);">
+					<p:scrollPanel mode="native"
+						style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); max-height: calc(100% - 20px); padding: 10px;">
 
-							<p:outputLabel for="novoLancamentoFiltroParcelas"
-								value="Quantidade de Parcelas:" />
+						<p:outputPanel id="pnlNovoLancamento">
+							<p:remoteCommand name="novoLancamentoRefazCalculos"
+								process="@this"
+								actionListener="#{faturaPagtoMB.novoLancamentoRefazCalculos()}"
+								update="novoLancamentoValorPrimeiraParcela, novoLancamentoInfoParcelamento, novoLancamentoParcelasTable" />
+							<p:panelGrid columns="1" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
-							<p:outputPanel style="display: flex !important">
-								<p:selectOneMenu id="novoLancamentoFiltroParcelas"
-									value="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas}"
-									forceSelection="true" scrollHeight="400">
+								<h:panelGroup styleClass="md-combo">
 
-									<f:selectItem
-										itemLabel="Selecione uma quantidade de parcelas..."
-										itemValue="#{null}" />
-									<f:selectItems
-										value="#{faturaPagtoMB.novoLancamentoParcelasDisponiveis}"
-										var="p" itemValue="#{p}" itemLabel="#{p} parcelas" />
+									<p:outputLabel for="novoLancamentoFiltroParcelas"
+										value="Quantidade de Parcelas:" />
 
-									<p:ajax process="@this"
-										listener="#{faturaPagtoMB.actionNovoLancamentoAtualizaQuantidadeDeParcelas}"
-										update="tooltipNovoLancamentoTarifasDisponiveisObj, novoLancamentoFormaPagamento, novoLancamentoValorPrimeiraParcela, novoLancamentoInfoParcelamento" />
-								</p:selectOneMenu>
-								<p:outputPanel id="tooltipNovoLancamentoTarifasDisponiveisObj">
-									<h:outputLabel class="fa fa-question"
-										id="tooltipNovoLancamentoTarifasDisponiveis"
-										style="font-size:16px; margin-left:10px; margin-top:10px;" />
-									<p:tooltip for="tooltipNovoLancamentoTarifasDisponiveis"
-										position="bottom" escape="false"
-										value="#{faturaPagtoMB.novoLancamentoTooltipNegociacaoTarifasDisponiveis}" />
+									<p:outputPanel style="display: flex !important">
+										<p:selectOneMenu id="novoLancamentoFiltroParcelas"
+											value="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas}"
+											forceSelection="true" scrollHeight="400">
+
+											<f:selectItem
+												itemLabel="Selecione uma quantidade de parcelas..."
+												itemValue="#{null}" />
+											<f:selectItems
+												value="#{faturaPagtoMB.novoLancamentoParcelasDisponiveis}"
+												var="p" itemValue="#{p}" itemLabel="#{p} parcelas" />
+
+											<p:ajax process="@this"
+												listener="#{faturaPagtoMB.actionNovoLancamentoAtualizaQuantidadeDeParcelas}"
+												update="tooltipNovoLancamentoTarifasDisponiveisObj, novoLancamentoFormaPagamento, novoLancamentoValorPrimeiraParcela, novoLancamentoInfoParcelamento, novoLancamentoParcelasTable" />
+										</p:selectOneMenu>
+										<p:outputPanel id="tooltipNovoLancamentoTarifasDisponiveisObj">
+											<h:outputLabel class="fa fa-question"
+												id="tooltipNovoLancamentoTarifasDisponiveis"
+												style="font-size:16px; margin-left:10px; margin-top:10px;" />
+											<p:tooltip for="tooltipNovoLancamentoTarifasDisponiveis"
+												position="bottom" escape="false"
+												value="#{faturaPagtoMB.novoLancamentoTooltipNegociacaoTarifasDisponiveis}" />
+										</p:outputPanel>
+									</p:outputPanel>
+
+
+									<p:message styleClass="msg" for="novoLancamentoFiltroParcelas" />
+
+								</h:panelGroup>
+
+								<h:panelGroup styleClass="md-combo">
+									<p:outputLabel for="novoLancamentoFormaPagamento"
+										value="Forma de Pagamento:" />
+									<p:selectOneMenu id="novoLancamentoFormaPagamento"
+										converter="tarifa"
+										value="#{faturaPagtoMB.novoLancamentoFormaPagamento}">
+										<f:selectItem itemValue="#{null}"
+											itemLabel="Selecione uma Forma de Pagamento:" />
+										<f:selectItems
+											value="#{faturaPagtoMB.novoLancamentoTarifasDisponiveis}"
+											var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+										<p:ajax event="change"
+											listener="#{faturaPagtoMB.actionNovoLancamentoAlteraFormaPagamento}"
+											update="novoLancamentoDataCredito, novoLancamentoParcelasTable"
+											process="@this" />
+									</p:selectOneMenu>
+									<p:message for="novoLancamentoFormaPagamento" styleClass="msg" />
+								</h:panelGroup>
+
+								<h:panelGroup styleClass="md-inputfield">
+									<p:inputNumber id="novoLancamentoValorTotal"
+										value="#{faturaPagtoMB.novoLancamentoValorTotal}"
+										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+										symbol="R$ " thousandSeparator=".">
+										<p:ajax process="@this"
+											oncomplete="novoLancamentoRefazCalculos()" />
+									</p:inputNumber>
+									<p:outputLabel for="novoLancamentoValorTotal" value="Valor:" />
+									<p:message styleClass="msg" for="novoLancamentoValorTotal" />
+								</h:panelGroup>
+
+								<h:panelGroup styleClass="md-inputfield"
+									style="margin-top: 10px;">
+									<p:inputNumber id="novoLancamentoValorPrimeiraParcela"
+										value="#{faturaPagtoMB.novoLancamentoValorDaPrimeiraParcela}"
+										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+										symbol="R$ " thousandSeparator=".">
+										<p:ajax process="@this"
+											oncomplete="novoLancamentoRefazCalculos()" />
+									</p:inputNumber>
+									<p:outputLabel for="novoLancamentoValorPrimeiraParcela"
+										value="Valor da Primeira Parcela:" />
+									<p:message styleClass="msg"
+										for="novoLancamentoValorPrimeiraParcela" />
+								</h:panelGroup>
+
+								<h:panelGroup styleClass="md-inputfield">
+									<p:calendar id="novoLancamentoDataPagamento"
+										value="#{faturaPagtoMB.novoLancamentoDataPagamento}"
+										pattern="dd/MM/yyyy" showWeeksBar="false"
+										locale="#{lumeSecurity.locale}"
+										timeZone="#{lumeSecurity.timeZone}" navigator="true"
+										yearRange="-10:+10">
+										<p:ajax event="dateSelect"
+											listener="#{faturaPagtoMB.actionNovoLancamentoAlteraDataPagamento}"
+											update="novoLancamentoDataCredito"
+											process="@this, novoLancamentoFormaPagamento"
+											oncomplete="novoLancamentoRefazCalculos()" />
+									</p:calendar>
+									<p:outputLabel for="novoLancamentoDataPagamento"
+										value="Data de Pagamento: " />
+									<p:message for="novoLancamentoDataPagamento" styleClass="msg" />
+								</h:panelGroup>
+
+								<h:panelGroup styleClass="md-inputfield">
+									<p:calendar id="novoLancamentoDataCredito"
+										value="#{faturaPagtoMB.novoLancamentoDataCredito}"
+										pattern="dd/MM/yyyy" showWeeksBar="false"
+										locale="#{lumeSecurity.locale}"
+										timeZone="#{lumeSecurity.timeZone}" navigator="true"
+										yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}">
+										<p:ajax event="dateSelect" process="@this"
+											oncomplete="novoLancamentoRefazCalculos()" />
+									</p:calendar>
+									<p:outputLabel for="novoLancamentoDataCredito"
+										value="Data de Crédito:" />
+									<p:message for="novoLancamentoDataCredito" styleClass="msg" />
+								</h:panelGroup>
+
+								<p:outputPanel id="novoLancamentoInfoParcelamento">
+									<p:outputPanel
+										rendered="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas != null}">
+										<h:outputText
+											value="#{faturaPagtoMB.getInfoParcelamentoNovoLancamento()}" />
+									</p:outputPanel>
 								</p:outputPanel>
-							</p:outputPanel>
 
-							<p:message styleClass="msg" for="novoLancamentoFiltroParcelas" />
+								<p:dataTable emptyMessage="Nenhuma parcela criada ainda."
+									id="novoLancamentoParcelasTable" filterDelay="1500"
+									reflow="true" value="#{faturaPagtoMB.novoLancamentoParcelas}"
+									var="parcela" rows="10" paginator="true" rowKey="#{parcela}"
+									paginatorPosition="bottom"
+									widgetVar="dtNovoLancamentoParcelasTable">
+									<f:facet name="header">Lista de Parcelas a serem criadas</f:facet>
+									<p:column filterBy="#{parcela.seq}" sortBy="#{parcela.seq}"
+										filterMatchMode="contains" headerText="Nº" width="30">
+										<h:outputText value="#{parcela.seq}" />
+									</p:column>
+									<p:column filterBy="#{parcela.valor}" sortBy="#{parcela.valor}"
+										filterMatchMode="contains" headerText="Valor da Parcela">
+										<h:outputText value="#{parcela.valor}">
+											<f:convertNumber type="currency" currencySymbol="R$"
+												maxFractionDigits="2" />
+										</h:outputText>
+									</p:column>
+									<p:column filterBy="#{parcela.formaPagamento.produtoStr}"
+										sortBy="#{parcela.formaPagamento.produtoStr}"
+										filterMatchMode="contains" headerText="Forma de Pagamento">
 
-						</h:panelGroup>
+										<p:selectOneMenu converter="tarifa"
+											value="#{parcela.formaPagamento}">
+											<f:selectItem itemValue="#{null}"
+												itemLabel="Selecione uma Forma de Pagamento:" />
+											<f:selectItems
+												value="#{faturaPagtoMB.novoLancamentoTarifasDisponiveis}"
+												var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+											<p:ajax event="change" update="novoLancamentoParcelasTable"
+												process="@this" />
+										</p:selectOneMenu>
 
-						<h:panelGroup styleClass="md-combo">
-							<p:outputLabel for="novoLancamentoFormaPagamento"
-								value="Forma de Pagamento:" />
-							<p:selectOneMenu id="novoLancamentoFormaPagamento"
-								converter="tarifa"
-								value="#{faturaPagtoMB.novoLancamentoFormaPagamento}">
-								<f:selectItem itemValue="#{null}"
-									itemLabel="Selecione uma Forma de Pagamento:" />
-								<f:selectItems
-									value="#{faturaPagtoMB.novoLancamentoTarifasDisponiveis}"
-									var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
-								<p:ajax event="change"
-									listener="#{faturaPagtoMB.actionNovoLancamentoAlteraDataPagamento}"
-									update="novoLancamentoDataCredito" process="@this" />
-							</p:selectOneMenu>
-							<p:message for="novoLancamentoFormaPagamento" styleClass="msg" />
-						</h:panelGroup>
-
-						<h:panelGroup styleClass="md-inputfield">
-							<p:inputNumber id="novoLancamentoValorTotal"
-								value="#{faturaPagtoMB.novoLancamentoValorTotal}" maxlength="13"
-								maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
-								thousandSeparator=".">
-								<p:ajax process="@this"
-									oncomplete="novoLancamentoRefazCalculos()" />
-							</p:inputNumber>
-							<p:outputLabel for="novoLancamentoValorTotal" value="Valor:" />
-							<p:message styleClass="msg" for="novoLancamentoValorTotal" />
-						</h:panelGroup>
-
-						<h:panelGroup styleClass="md-inputfield" style="margin-top: 10px;">
-							<p:inputNumber id="novoLancamentoValorPrimeiraParcela"
-								value="#{faturaPagtoMB.novoLancamentoValorDaPrimeiraParcela}"
-								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
-								symbol="R$ " thousandSeparator=".">
-								<p:ajax process="@this"
-									oncomplete="novoLancamentoRefazCalculos()" />
-							</p:inputNumber>
-							<p:outputLabel for="novoLancamentoValorPrimeiraParcela"
-								value="Valor da Primeira Parcela:" />
-							<p:message styleClass="msg"
-								for="novoLancamentoValorPrimeiraParcela" />
-						</h:panelGroup>
-
-						<h:panelGroup styleClass="md-inputfield">
-							<p:calendar id="novoLancamentoDataPagamento"
-								value="#{faturaPagtoMB.novoLancamentoDataPagamento}"
-								pattern="dd/MM/yyyy" showWeeksBar="false"
-								locale="#{lumeSecurity.locale}"
-								timeZone="#{lumeSecurity.timeZone}" navigator="true"
-								yearRange="-10:+10">
-								<p:ajax event="dateSelect"
-									listener="#{faturaPagtoMB.actionNovoLancamentoAlteraDataPagamento}"
-									update="novoLancamentoDataCredito"
-									process="@this, novoLancamentoFormaPagamento" />
-							</p:calendar>
-							<p:outputLabel for="novoLancamentoDataPagamento"
-								value="Data de Pagamento: " />
-							<p:message for="novoLancamentoDataPagamento" styleClass="msg" />
-						</h:panelGroup>
-
-						<h:panelGroup styleClass="md-inputfield">
-							<p:calendar id="novoLancamentoDataCredito"
-								value="#{faturaPagtoMB.novoLancamentoDataCredito}"
-								pattern="dd/MM/yyyy" showWeeksBar="false"
-								locale="#{lumeSecurity.locale}"
-								timeZone="#{lumeSecurity.timeZone}" navigator="true"
-								yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}" />
-							<p:outputLabel for="novoLancamentoDataCredito"
-								value="Data de Crédito:" />
-							<p:message for="novoLancamentoDataCredito" styleClass="msg" />
-						</h:panelGroup>
-
-						<p:outputPanel id="novoLancamentoInfoParcelamento">
-							<p:outputPanel
-								rendered="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas != null}">
-								<h:outputText
-									value="#{faturaPagtoMB.getInfoParcelamentoNovoLancamento()}" />
-							</p:outputPanel>
+									</p:column>
+									<p:column filterBy="#{parcela.dataPagamento}"
+										sortBy="#{parcela.dataPagamento}" filterMatchMode="contains"
+										headerText="Data de Pagamento">
+										<p:calendar value="#{parcela.dataPagamento}"
+											pattern="dd/MM/yyyy" showWeeksBar="false"
+											locale="#{lumeSecurity.locale}"
+											timeZone="#{lumeSecurity.timeZone}" navigator="true"
+											yearRange="-10:+10" style="text-align: center">
+											<p:ajax event="dateSelect"
+												update="novoLancamentoParcelasTable" process="@this" />
+										</p:calendar>
+									</p:column>
+									<p:column filterBy="#{parcela.dataCredito}"
+										sortBy="#{parcela.dataCredito}" filterMatchMode="contains"
+										headerText="Data de Crédito">
+										<h:outputText value="#{parcela.dataCredito}">
+											<f:convertDateTime pattern="dd/MM/yyyy" />
+										</h:outputText>
+									</p:column>
+								</p:dataTable>
+							</p:panelGrid>
 						</p:outputPanel>
 
-					</p:panelGrid>
+					</p:scrollPanel>
 				</p:outputPanel>
 
 				<p:separator styleClass="SeparatorFull" />
@@ -1112,7 +1184,7 @@ body .lancamentoFalhaOperacao {
 			<p:commandButton value="Novo Lançamento" icon="fa fa-gear"
 				process="@this" update="pnlNovoLancamento" styleClass="OrangeButton"
 				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
-				disabled="#{faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0 or faturaPagtoMB.verificaFaturaInterrompida()}"
+				disabled="#{(faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0 or faturaPagtoMB.verificaFaturaInterrompida()) and false}"
 				actionListener="#{faturaPagtoMB.actionNovoLancamentoNew}"
 				oncomplete="PF('dlgNovoLancamento').show()" />
 			<p:commandButton value="Nova Negociação" icon="fa fa-gear"

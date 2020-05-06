@@ -37,6 +37,7 @@ import br.com.lume.descontoOrcamento.DescontoOrcamentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
+import br.com.lume.lancamento.objects.LancamentoParcelaInfo;
 import br.com.lume.negociacao.NegociacaoFaturaSingleton;
 import br.com.lume.odonto.entity.DescontoOrcamento;
 import br.com.lume.odonto.entity.Dominio;
@@ -125,6 +126,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private BigDecimal novoLancamentoValorDaPrimeiraParcela;
     private Date novoLancamentoDataPagamento, novoLancamentoDataCredito;
     private String novoLancamentoTooltipNegociacaoTarifasDisponiveis;
+    private List<LancamentoParcelaInfo> novoLancamentoParcelas;
 
     //Campos para lançamentos a pagar e a receber da aba financeiro do paciente
     private List<Lancamento> lAPagar, lAReceber;
@@ -685,11 +687,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 return;
             }
 
-            List<BigDecimal> demaisParcelas = new ArrayList<>();
-            for (int parcela = 1; parcela <= novoLancamentoQuantidadeParcelas - 1; parcela++)
-                demaisParcelas.add(novoLancamentoValorDaParcela);
-            LancamentoSingleton.getInstance().novoParcelamento(getEntity(), novoLancamentoQuantidadeParcelas, novoLancamentoValorDaPrimeiraParcela, demaisParcelas, novoLancamentoFormaPagamento,
-                    novoLancamentoDataPagamento, novoLancamentoDataCredito, UtilsFrontEnd.getProfissionalLogado());
+            //List<BigDecimal> demaisParcelas = new ArrayList<>();
+            //for (int parcela = 1; parcela <= novoLancamentoQuantidadeParcelas - 1; parcela++)
+            //    demaisParcelas.add(novoLancamentoValorDaParcela);
+            //LancamentoSingleton.getInstance().novoParcelamento(getEntity(), novoLancamentoQuantidadeParcelas, novoLancamentoValorDaPrimeiraParcela, demaisParcelas, novoLancamentoFormaPagamento,
+            //        novoLancamentoDataPagamento, novoLancamentoDataCredito, UtilsFrontEnd.getProfissionalLogado());
+            LancamentoSingleton.getInstance().novoParcelamento(getEntity(), novoLancamentoParcelas, UtilsFrontEnd.getProfissionalLogado());
 
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
             updateValues(getEntity(), true, true);
@@ -717,6 +720,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         if (parcelasDisponiveis == null)
             novoLancamentoAtualizaPossibilidadesParcelas();
         novoLancamentoValorTotal = getEntity().getDadosTabelaRepasseTotalNaoPlanejado();
+        this.novoLancamentoParcelas = new ArrayList<>();
         novoLancamentoLimpaCampos();
         novoLancamentoZeraValores();
         novoLancamentoAtualizaTooltipTarifasDisponiveis();
@@ -726,6 +730,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         novoLancamentoAtualizaPossibilidadesTarifa();
         novoLancamentoZeraValores();
         novoLancamentoRefazCalculos();
+    }
+
+    public void actionNovoLancamentoAlteraFormaPagamento() {
+        actionNovoLancamentoAlteraDataPagamento();
+        atualizaListaParcelas();
     }
 
     public void actionNovoLancamentoAlteraDataPagamento() {
@@ -813,6 +822,41 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             } else {
                 novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorTotal;
                 novoLancamentoValorDaParcela = null;
+            }
+        }
+
+        atualizaListaParcelas();
+    }
+
+    private void atualizaListaParcelas() {
+        this.novoLancamentoParcelas = new ArrayList<>();
+
+        Calendar now = null, data = null;
+        if (novoLancamentoDataPagamento != null) {
+            now = Calendar.getInstance();
+            now.setTime(novoLancamentoDataPagamento);
+        }
+        if (novoLancamentoDataCredito != null) {
+            data = Calendar.getInstance();
+            data.setTime(novoLancamentoDataCredito);
+        }
+
+        for (int parcela = 1; parcela <= novoLancamentoQuantidadeParcelas; parcela++) {
+            if (parcela == 1)
+                this.novoLancamentoParcelas.add(new LancamentoParcelaInfo(parcela, novoLancamentoValorDaPrimeiraParcela, novoLancamentoFormaPagamento, (now != null ? now.getTime() : null),
+                        (data != null ? data.getTime() : null)));
+            else
+                this.novoLancamentoParcelas.add(
+                        new LancamentoParcelaInfo(parcela, novoLancamentoValorDaParcela, novoLancamentoFormaPagamento, (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
+
+            if (novoLancamentoFormaPagamento != null && "CC".equals(novoLancamentoFormaPagamento.getTipo())) {
+                if (data != null)
+                    data.add(Calendar.DAY_OF_MONTH, novoLancamentoFormaPagamento.getPrazo());
+            } else if (novoLancamentoFormaPagamento != null && !"CC".equals(novoLancamentoFormaPagamento.getTipo())) {
+                if (now != null)
+                    now.add(Calendar.MONTH, 1);
+                if (data != null)
+                    data.add(Calendar.MONTH, 1);
             }
         }
     }
@@ -1700,6 +1744,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------
 
     //-------------------------------- EDITAR LANÇAMENTO --------------------------------
+
+    public List<LancamentoParcelaInfo> getNovoLancamentoParcelas() {
+        return novoLancamentoParcelas;
+    }
+
+    public void setNovoLancamentoParcelas(List<LancamentoParcelaInfo> novoLancamentoParcelas) {
+        this.novoLancamentoParcelas = novoLancamentoParcelas;
+    }
 
     public Lancamento getEditarLancamento() {
         return editarLancamento;
