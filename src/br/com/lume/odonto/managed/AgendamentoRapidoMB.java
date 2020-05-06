@@ -177,25 +177,26 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         }
     }
     
-    public void depoisSalvaAgendamentoSocket(ActionEvent event) {
-        Profissional profissionalSalvo = (Profissional) event.getComponent().getAttributes().get("profissional");
-        System.out.println(profissionalSalvo.getDadosBasico().getNome() );        
-        
-        if(filtroPorProfissional != null && profissionalSalvo != null && profissionalSalvo.equals(profissionalSalvo)) {     
-            if(data == null) {
-                data = new Date();
-            }
-            calculaPorcentagemOcupada(data);
-            popularLista();
-            PrimeFaces.current().ajax().update(":lume:pnAgendamento");
-            PrimeFaces.current().ajax().update(":lume:painelCalendarioAgRapido,:lume:dtAgendamentos,:lume:filtroRelatorio,:lume:observacoes,:lume:data");
-            PrimeFaces.current().executeScript("PF('dtAgendamentos').filter();");
-                    
-            
-        }else {
-            this.addError("Escolha um profissional", "");
-        }
-    }
+ //TODO usar depois do socket   
+//    public void depoisSalvaAgendamentoSocket(ActionEvent event) {
+//        String nomeProfissional = (String) event.getComponent().getAttributes().get("nomeProfissional");
+//        System.out.println(nomeProfissional );        
+//        
+//        if(filtroPorProfissional != null) {     
+//            if(data == null) {
+//                data = new Date();
+//            }
+//            calculaPorcentagemOcupada(data);
+//            popularLista();
+//            PrimeFaces.current().ajax().update(":lume:pnAgendamento");
+//            PrimeFaces.current().ajax().update(":lume:painelCalendarioAgRapido,:lume:dtAgendamentos,:lume:filtroRelatorio,:lume:observacoes,:lume:data");
+//            PrimeFaces.current().executeScript("PF('dtAgendamentos').filter();");
+//                    
+//            
+//        }else {
+//            this.addError("Escolha um profissional", "");
+//        }
+//    }
     
     
    

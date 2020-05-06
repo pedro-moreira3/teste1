@@ -584,7 +584,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                             someChannel.send("atualizar schedule");
-                            canalAgendamentoRapido.send(profissionalDentroAgenda);
+                            //TODO melhorar socket para atualizar somente quando necessario, ou seja, somente quando 
+                            //o profissional salvo aqui tiver na tela do agendamento rapido.
+                        //    canalAgendamentoRapido.send(profissionalDentroAgenda.getDadosBasico().getNome());
                             
                             profissionalDentroAgenda = null;
                             
@@ -613,7 +615,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                             someChannel.send("atualizar schedule");
-                            canalAgendamentoRapido.send("atualizar lista");
+                            //TODO melhorar socket para atualizar somente quando necessario, ou seja, somente quando 
+                            //o profissional salvo aqui tiver na tela do agendamento rapido.
+                            //canalAgendamentoRapido.send(profissionalDentroAgenda.getDadosBasico().getNome());
+                            
                            // PrimeFaces.current().ajax().addCallbackParam("dlg", true);
                             PrimeFaces.current().executeScript("PF('eventDialog').hide()");
                         } catch (Exception e) {
