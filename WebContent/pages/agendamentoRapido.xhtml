@@ -443,12 +443,15 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				appendToBody="true">
 				<ui:include src="afastamento.xhtml" />
 		</p:dialog>
-		<f:websocket channel="canalAgendamentoRapido" onmessage="function(m){console.log(m);atualizaLista();}" />
+		<f:websocket channel="canalAgendamentoRapido" onmessage="function(profissional){atualizaListaSocket({profissional:profissional});}" />
 		
 					<p:remoteCommand name="atualizaLista" process="@this"
 										update=":lume:painelCalendarioAgRapido,:lume:dtAgendamentos,:lume:filtroRelatorio,:lume:observacoes,:lume:data"
 										actionListener="#{agendamentoRapidoMB.depoisSalvaAgendamento()}" oncomplete="PF('dtAgendamentos').filter();"/>			
 
+					<p:remoteCommand name="atualizaListaSocket" process="@this"
+										update="@this"
+										actionListener="#{agendamentoRapidoMB.depoisSalvaAgendamentoSocket(profissional)}"/>
 				
 
 				</div>

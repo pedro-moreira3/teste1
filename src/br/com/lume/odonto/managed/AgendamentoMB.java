@@ -574,7 +574,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                 retorno.setRetornar("A");
                                 RetornoSingleton.getInstance().getBo().persist(retorno);
                             }
-                            profissionalDentroAgenda = null;
+                          
 
 //                            try {
 //                                RepasseFaturasSingleton.getInstance().verificaAgendamentoRepasse(getEntity(), UtilsFrontEnd.getProfissionalLogado());
@@ -584,7 +584,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                             someChannel.send("atualizar schedule");
-                            canalAgendamentoRapido.send("atualizar lista");
+                            canalAgendamentoRapido.send(profissionalDentroAgenda);
+                            
+                            profissionalDentroAgenda = null;
+                            
                             this.actionNew(event);
                             //PrimeFaces.current().ajax().addCallbackParam("dlg", true);
                             PrimeFaces.current().executeScript("PF('eventDialog').hide()");

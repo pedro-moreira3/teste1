@@ -175,6 +175,26 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
             this.addError("Escolha um profissional", "");
         }
     }
+    
+    public void depoisSalvaAgendamentoSocket(Profissional profissionalSalvo) {
+        if(filtroPorProfissional != null && profissionalSalvo != null && profissionalSalvo.equals(profissionalSalvo)) {     
+            if(data == null) {
+                data = new Date();
+            }
+            calculaPorcentagemOcupada(data);
+            popularLista();
+            PrimeFaces.current().ajax().update(":lume:pnAgendamento");
+            PrimeFaces.current().ajax().update(":lume:painelCalendarioAgRapido,:lume:dtAgendamentos,:lume:filtroRelatorio,:lume:observacoes,:lume:data");
+            PrimeFaces.current().executeScript("PF('dtAgendamentos').filter();");
+                    
+            
+        }else {
+            this.addError("Escolha um profissional", "");
+        }
+    }
+    
+    
+   
 
     private void calculaPorcentagemOcupada(Date data) {
         try { 
