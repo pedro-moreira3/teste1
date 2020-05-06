@@ -213,6 +213,21 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
             this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
         }
     }
+    
+    public void loadPacienteNoFinanceiro(Paciente paciente) {
+        try {
+            this.pacienteMB.setEntity(paciente);
+            pacienteFinanceiroMB.setPaciente(getPacienteMB().getEntity());
+            pacienteFinanceiroMB.setInicio(null);
+            pacienteFinanceiroMB.setFim(null);
+            pacienteFinanceiroMB.pesquisar();
+
+            this.tabview.setActiveIndex(7);
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
+        }
+    }
 
     public void loadPacienteRO(Paciente paciente, String namePanel) {
         try {

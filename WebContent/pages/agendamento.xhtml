@@ -224,7 +224,7 @@ div.ui-selectoneradio label {
 				</div>
 			</div>
 		</p:dialog>
-		<f:websocket channel="someChannel" onmessage="function(m){console.log(m);PF('myschedule').update();}" />
+		<f:websocket channel="someChannel" onmessage="function(m){PF('myschedule').update();}" />
 		
 		<p:dialog id="dlgNovoAgendamento" widgetVar="dlgNovoAgendamento"
 			width="900px" height="700px" responsive="true"
@@ -807,6 +807,7 @@ div.ui-selectoneradio label {
 								timeZone="#{lumeSecurity.timeZone}" firstHour="8"
 								view="agendaDay" timeFormat="HH:mm" minTime="07:00"
 								maxTime="21:00" allDaySlot="false" draggable="false"
+								tooltip="true"
 								resizable="false" initialDate="#{agendamentoMB.initialDate}">
 
 								<p:ajax event="viewChange" process="@this"

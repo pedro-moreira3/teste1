@@ -191,6 +191,9 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     
      @Inject @Push
     private PushContext someChannel;
+     
+     @Inject @Push
+     private PushContext canalAgendamentoRapido;
 
     public AgendamentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
@@ -580,7 +583,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                            someChannel.send("teste");
+                            someChannel.send("atualizar schedule");
+                            canalAgendamentoRapido.send("atualizar lista");
                             this.actionNew(event);
                             //PrimeFaces.current().ajax().addCallbackParam("dlg", true);
                             PrimeFaces.current().executeScript("PF('eventDialog').hide()");
@@ -605,7 +609,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                            someChannel.send("teste");
+                            someChannel.send("atualizar schedule");
+                            canalAgendamentoRapido.send("atualizar lista");
                            // PrimeFaces.current().ajax().addCallbackParam("dlg", true);
                             PrimeFaces.current().executeScript("PF('eventDialog').hide()");
                         } catch (Exception e) {
@@ -1084,7 +1089,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                 descricao += breakLine;
 
                                 DefaultScheduleEvent event = new DefaultScheduleEvent(descricao, afastamento.getInicio(), afastamento.getFim(), afastamento);
-                                event.setStyleClass(StatusAgendamentoUtil.findBySigla("F").getStyleCss());
+                                event.setStyleClass(StatusAgendamentoUtil.findBySigla("F").getStyleCss());                             
                                 this.addEvent(event);
                             }
                         }
@@ -1096,8 +1101,13 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                             if (agendamento != null && agendamento.getPaciente() != null && agendamento.getPaciente().getDadosBasico() != null && agendamento.getPaciente().getDadosBasico().getDataNascimento() != null)
                                 dataAtual.setTime(agendamento.getPaciente().getDadosBasico().getDataNascimento());
 
-                            descricao = agendamento.getProfissional().getDadosBasico().getNomeAbreviado() + " - " + "[" + agendamento.getPaciente().getSiglaConvenio() + "] " + agendamento.getPaciente().getDadosBasico().getNome();
+                            descricao = "" + agendamento.getProfissional().getDadosBasico().getNomeAbreviado() + " - " + "[" + agendamento.getPaciente().getSiglaConvenio() + "] "
+                            + agendamento.getPaciente().getDadosBasico().getNome();
 
+                            if(agendamento.getPaciente().getPendenciaFinanceiraBool()) {
+                                descricao += " - $ ";
+                            }
+                            
                             String breakLine = "\r\n";
                             if (agendamento.getDescricao() != null && !agendamento.getDescricao().isEmpty())
                                 descricao += " - Obs.: " + agendamento.getDescricao();
@@ -1114,6 +1124,11 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
                             DefaultScheduleEvent event = new DefaultScheduleEvent(descricao, agendamento.getInicio(), agendamento.getFim(), agendamento);
                             event.setStyleClass(StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getStyleCss());
+                        
+                            if(agendamento.getPaciente().getPendenciaFinanceiraBool()) {
+                                event.setDescription("Verificar cobrança do paciente");
+                            }
+                            
                             this.addEvent(event);
                         }
                     }
@@ -2141,6 +2156,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     
     public void setFinalizouAsDentroAgenda(Date finalizouAsDentroAgenda) {
         this.finalizouAsDentroAgenda = finalizouAsDentroAgenda;
+    }
+
+    
+    public PushContext getCanalAgendamentoRapido() {
+        return canalAgendamentoRapido;
+    }
+
+    
+    public void setCanalAgendamentoRapido(PushContext canalAgendamentoRapido) {
+        this.canalAgendamentoRapido = canalAgendamentoRapido;
     }
 
     

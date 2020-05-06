@@ -65,6 +65,8 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     private String observacoes = "";
     
+    private String observacaoNaoCadastrado = "";
+    
     private String livre;
     
     private String medio;
@@ -123,6 +125,9 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     public void populaAgenda() {
         if(filtroPorProfissional != null) {
             Calendar cal = Calendar.getInstance();
+            if(data == null) {
+                data = new Date();
+            }
             cal.setTime(data);  
             //se nao for mes atual, selecionamos primeiro dia do próximo mês
             if(Utils.getMesInt(mes) != Utils.getMesInt(Utils.getMesTexto(new Date()))) {
@@ -327,6 +332,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
             }else {   
                 filtroPorProfissionalAntigo = filtroPorProfissional;
                 observacoes = "";
+                observacaoNaoCadastrado = "";
                 if(filtroPorProfissional.getTempoConsulta() == null || filtroPorProfissional.getTempoConsulta().equals(0)) {
                     observacoes = "Tempo de consulta padrão do profissional não configurado, verifique o cadastro! Tempo padrão da clínica: "+tempoPadraoConsulta+" minutos. ";
                     this.addWarn(observacoes, "");
@@ -341,7 +347,9 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 
                 if(horasUteis == null || horasUteis.isEmpty()) {
                     configuraHorarioPadraoClinica();
-                    observacoes += "Horas Úteis do profissional não estão configuradas para o dia selecionado. ";
+                    
+                    observacaoNaoCadastrado = "Atencão: horas úteis do profissional não estão cadastradas para o dia selecionado.";  
+                    observacoes += "Horas Úteis do profissional não estão configuradas para o dia selecionado. ";                    
                     observacoes += "Horário definido na clínica: manhã: De " + horariopadraoInico + " até " + horariopadraoFim + ". ";
                     observacoes += "tarde: De " + horariopadraoInicoTarde + " até " + horariopadraoFimTarde + ". ";
                 }else {  
@@ -681,6 +689,13 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
             if(agendamento.getProfissional() == null) {
                 return "";
             }
+            //se nao tem paciente e tem status nao confirmado, é agendamento criado pela gente, 
+            //entao está disponível
+            if(agendamento.getPaciente() == null && "N".equals(agendamento.getStatusNovo()) &&  !"Horário bloqueado".equals( agendamento.getDescricao())) {
+                return "Horário Disponível";
+            }else if(agendamento.getPaciente() == null && "N".equals(agendamento.getStatusNovo()) &&  "Horário bloqueado".equals( agendamento.getDescricao())) {
+                return "Horário Bloqueado"; 
+            }
             return StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getDescricao();
         } catch (Exception e) {
 
@@ -897,6 +912,16 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     public void setAgendamentoEntreHoraAlmoco(List<Agendamento> agendamentoEntreHoraAlmoco) {
         this.agendamentoEntreHoraAlmoco = agendamentoEntreHoraAlmoco;
+    }
+
+    
+    public String getObservacaoNaoCadastrado() {
+        return observacaoNaoCadastrado;
+    }
+
+    
+    public void setObservacaoNaoCadastrado(String observacaoNaoCadastrado) {
+        this.observacaoNaoCadastrado = observacaoNaoCadastrado;
     }
 
 }
