@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -176,7 +177,10 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         }
     }
     
-    public void depoisSalvaAgendamentoSocket(Profissional profissionalSalvo) {
+    public void depoisSalvaAgendamentoSocket(ActionEvent event) {
+        Profissional profissionalSalvo = (Profissional) event.getComponent().getAttributes().get("profissional");
+        System.out.println(profissionalSalvo.getDadosBasico().getNome() );        
+        
         if(filtroPorProfissional != null && profissionalSalvo != null && profissionalSalvo.equals(profissionalSalvo)) {     
             if(data == null) {
                 data = new Date();
