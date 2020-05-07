@@ -288,9 +288,14 @@ body .lancamentoFalhaOperacao {
 
 								<p:outputPanel id="novoLancamentoInfoParcelamento">
 									<p:outputPanel
-										rendered="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas != null}">
-										<h:outputText
-											value="#{faturaPagtoMB.getInfoParcelamentoNovoLancamento()}" />
+										rendered="#{faturaPagtoMB.novoLancamentoMensagemCalculo != null}">
+
+										<p:outputLabel style="font-weight:bold;font-size:18px"
+											value="#{faturaPagtoMB.novoLancamentoMensagemCalculo}"></p:outputLabel>
+										<br />
+										<p:outputLabel style="font-weight:bold;color:red"
+											value="#{faturaPagtoMB.novoLancamentoMensagemErroCalculo}"></p:outputLabel>
+
 									</p:outputPanel>
 								</p:outputPanel>
 
@@ -559,8 +564,14 @@ body .lancamentoFalhaOperacao {
 
 								<p:outputPanel id="infoParcelamento">
 									<p:outputPanel
-										rendered="#{faturaPagtoMB.negociacaoQuantidadeParcelas != null}">
-										<h:outputText value="#{faturaPagtoMB.getInfoParcelamento()}" />
+										rendered="#{faturaPagtoMB.negociacaoMensagemCalculo != null}">
+
+										<p:outputLabel style="font-weight:bold;font-size:18px"
+											value="#{faturaPagtoMB.negociacaoMensagemCalculo}"></p:outputLabel>
+										<br />
+										<p:outputLabel style="font-weight:bold;color:red"
+											value="#{faturaPagtoMB.negociacaoMensagemErroCalculo}"></p:outputLabel>
+
 									</p:outputPanel>
 								</p:outputPanel>
 
@@ -710,9 +721,14 @@ body .lancamentoFalhaOperacao {
 
 											<p:outputPanel id="infoParcelamentoAprovacao">
 												<p:outputPanel
-													rendered="#{faturaPagtoMB.negociacaoQuantidadeParcelas != null}">
-													<h:outputText
-														value="#{faturaPagtoMB.getInfoParcelamento()}" />
+													rendered="#{faturaPagtoMB.negociacaoMensagemCalculo != null}">
+
+													<p:outputLabel style="font-weight:bold;font-size:18px"
+														value="#{faturaPagtoMB.negociacaoMensagemCalculo}"></p:outputLabel>
+													<br />
+													<p:outputLabel style="font-weight:bold;color:red"
+														value="#{faturaPagtoMB.negociacaoMensagemErroCalculo}"></p:outputLabel>
+
 												</p:outputPanel>
 											</p:outputPanel>
 
