@@ -148,6 +148,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private Tarifa negociacaoFormaPagamento;
     private Date negociacaoDataPagamento, negociacaoDataCredito;
     private NegociacaoFatura negociacaoConfirmacao;
+    private List<LancamentoParcelaInfo> negociacaoParcelas;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
@@ -734,7 +735,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void actionNovoLancamentoAlteraFormaPagamento() {
         actionNovoLancamentoAlteraDataPagamento();
-        atualizaListaParcelas();
+        novoLancamentoAtualizaListaParcelas();
     }
 
     public void actionNovoLancamentoAlteraDataPagamento() {
@@ -825,40 +826,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             }
         }
 
-        atualizaListaParcelas();
+        novoLancamentoAtualizaListaParcelas();
     }
 
-    private void atualizaListaParcelas() {
-        this.novoLancamentoParcelas = new ArrayList<>();
-
-        Calendar now = null, data = null;
-        if (novoLancamentoDataPagamento != null) {
-            now = Calendar.getInstance();
-            now.setTime(novoLancamentoDataPagamento);
-        }
-        if (novoLancamentoDataCredito != null) {
-            data = Calendar.getInstance();
-            data.setTime(novoLancamentoDataCredito);
-        }
-
-        for (int parcela = 1; parcela <= novoLancamentoQuantidadeParcelas; parcela++) {
-            if (parcela == 1)
-                this.novoLancamentoParcelas.add(new LancamentoParcelaInfo(parcela, novoLancamentoValorDaPrimeiraParcela, novoLancamentoFormaPagamento, (now != null ? now.getTime() : null),
-                        (data != null ? data.getTime() : null)));
-            else
-                this.novoLancamentoParcelas.add(
-                        new LancamentoParcelaInfo(parcela, novoLancamentoValorDaParcela, novoLancamentoFormaPagamento, (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
-
-            if (novoLancamentoFormaPagamento != null && "CC".equals(novoLancamentoFormaPagamento.getTipo())) {
-                if (data != null)
-                    data.add(Calendar.DAY_OF_MONTH, novoLancamentoFormaPagamento.getPrazo());
-            } else if (novoLancamentoFormaPagamento != null && !"CC".equals(novoLancamentoFormaPagamento.getTipo())) {
-                if (now != null)
-                    now.add(Calendar.MONTH, 1);
-                if (data != null)
-                    data.add(Calendar.MONTH, 1);
-            }
-        }
+    private void novoLancamentoAtualizaListaParcelas() {
+        this.novoLancamentoParcelas = atualizaListaParcelas(novoLancamentoDataPagamento, novoLancamentoDataCredito, novoLancamentoQuantidadeParcelas, novoLancamentoValorDaPrimeiraParcela,
+                novoLancamentoValorDaParcela, novoLancamentoFormaPagamento);
     }
 
     private void novoLancamentoAtualizaTooltipTarifasDisponiveis() {
@@ -879,7 +852,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             return "Entrada de " + ptFormat.format(novoLancamentoValorDaPrimeiraParcela) + " mais " + String.valueOf(novoLancamentoQuantidadeParcelas - 1) + "x de " + ptFormat.format(
                     novoLancamentoValorDaParcela) + ". Total de " + ptFormat.format(novoLancamentoValorTotal);
         } else if (novoLancamentoValorDaPrimeiraParcela != null && novoLancamentoQuantidadeParcelas != null && novoLancamentoQuantidadeParcelas == 1) {
-            return "Pagamento à vista de " + ptFormat.format(novoLancamentoValorDaPrimeiraParcela);
+            return "Pagamento à vista, valor de " + ptFormat.format(novoLancamentoValorDaPrimeiraParcela);
         } else {
             return "Complete os dados para realizar o cálculo!";
         }
@@ -897,6 +870,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             negociacaoDataCredito = cal.getTime();
         } else
             negociacaoDataCredito = null;
+
+        negociacaoAtualizaListaParcelas();
+    }
+
+    public void actionAlteraDataCreditoNegociacao() {
+        negociacaoAtualizaListaParcelas();
+    }
+
+    public void actionAlteraFormaPagamentoNegociacao() {
+        negociacaoAtualizaListaParcelas();
     }
 
     public void actionNovaNegociacao() {
@@ -970,6 +953,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.negociacaoObservacao = negociacaoFatura.getObservacao();
         atualizaPossibilidadesTarifaNegociacao();
         atualizaTooltipTarifasDisponiveis();
+        negociacaoAtualizaListaParcelas();
     }
 
     public void atualizaQuantidadeDeParcelas() {
@@ -1146,7 +1130,50 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         tooltipNegociacaoTarifasDisponiveis = TooltipHelper.getInstance().montaTabela(new String[] { "Produto", "Parcela Mínima", "Parcela Máxima" }, linhas);
     }
 
+    private void negociacaoAtualizaListaParcelas() {
+        this.negociacaoParcelas = atualizaListaParcelas(negociacaoDataPagamento, negociacaoDataCredito, negociacaoQuantidadeParcelas, negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela,
+                negociacaoFormaPagamento);
+    }
+
     //-------------------------------- NEGOCIACAO --------------------------------
+
+    //-------------------------------- NEGOCIACAO E NOVO LANCAMENTO --------------------------------
+
+    private List<LancamentoParcelaInfo> atualizaListaParcelas(Date dataPagamento, Date dataCredito, Integer quantidadeParcelas, BigDecimal valorPrimeiraParcela, BigDecimal valorParcela,
+            Tarifa formaPagamento) {
+        List<LancamentoParcelaInfo> lancamentos = new ArrayList<>();
+
+        Calendar now = null, data = null;
+        if (dataPagamento != null) {
+            now = Calendar.getInstance();
+            now.setTime(dataPagamento);
+        }
+        if (dataCredito != null) {
+            data = Calendar.getInstance();
+            data.setTime(dataCredito);
+        }
+
+        for (int parcela = 1; parcela <= quantidadeParcelas; parcela++) {
+            if (parcela == 1)
+                lancamentos.add(new LancamentoParcelaInfo(parcela, valorPrimeiraParcela, formaPagamento, (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
+            else
+                lancamentos.add(new LancamentoParcelaInfo(parcela, valorParcela, formaPagamento, (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
+
+            if (formaPagamento != null && "CC".equals(formaPagamento.getTipo())) {
+                if (data != null)
+                    data.add(Calendar.DAY_OF_MONTH, formaPagamento.getPrazo());
+            } else if (formaPagamento != null && !"CC".equals(formaPagamento.getTipo())) {
+                if (now != null)
+                    now.add(Calendar.MONTH, 1);
+                if (data != null)
+                    data.add(Calendar.MONTH, 1);
+            }
+        }
+
+        return lancamentos;
+    }
+
+    //-------------------------------- NEGOCIACAO E NOVO LANCAMENTO --------------------------------
 
     public double tributoLancamento(Lancamento lancamento) {
 
@@ -1658,6 +1685,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.tooltipNegociacaoTarifasDisponiveis = tooltipNegociacaoTarifasDisponiveis;
     }
 
+    public List<LancamentoParcelaInfo> getNegociacaoParcelas() {
+        return negociacaoParcelas;
+    }
+
+    public void setNegociacaoParcelas(List<LancamentoParcelaInfo> negociacaoParcelas) {
+        this.negociacaoParcelas = negociacaoParcelas;
+    }
+
     //-------------------------------- NEGOCIACAO --------------------------------
 
     //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------
@@ -1741,10 +1776,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.novoLancamentoTooltipNegociacaoTarifasDisponiveis = novoLancamentoTooltipNegociacaoTarifasDisponiveis;
     }
 
-    //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------
-
-    //-------------------------------- EDITAR LANÇAMENTO --------------------------------
-
     public List<LancamentoParcelaInfo> getNovoLancamentoParcelas() {
         return novoLancamentoParcelas;
     }
@@ -1752,6 +1783,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void setNovoLancamentoParcelas(List<LancamentoParcelaInfo> novoLancamentoParcelas) {
         this.novoLancamentoParcelas = novoLancamentoParcelas;
     }
+
+    //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------
+
+    //-------------------------------- EDITAR LANÇAMENTO --------------------------------
 
     public Lancamento getEditarLancamento() {
         return editarLancamento;
