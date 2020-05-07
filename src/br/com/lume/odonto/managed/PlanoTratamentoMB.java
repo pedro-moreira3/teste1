@@ -40,12 +40,15 @@ import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
+import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.dente.DenteSingleton;
 import br.com.lume.descontoOrcamento.DescontoOrcamentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.evolucao.EvolucaoSingleton;
+import br.com.lume.faturamento.FaturaItemSingleton;
+import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.negociacao.NegociacaoOrcamentoSingleton;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
@@ -53,6 +56,7 @@ import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Dente;
 import br.com.lume.odonto.entity.DescontoOrcamento;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.NegociacaoOrcamento;
 import br.com.lume.odonto.entity.Odontograma;
 import br.com.lume.odonto.entity.Orcamento;
@@ -217,7 +221,40 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
 
     }
+    
+    public BigDecimal valorAReceber(PlanoTratamento pt) {
+        BigDecimal total = new BigDecimal(0);
+       for (PlanoTratamentoProcedimento ptp : pt.getPlanoTratamentoProcedimentos()) {
+           FaturaItem faturaItem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
+           if(faturaItem != null) {
+               total = FaturaSingleton.getInstance().getTotalNaoPagoFromPaciente(faturaItem.getFatura());
+           }
+       }
+       return total;
+    }
+    
+    public BigDecimal valorAConferir(PlanoTratamento pt) {
+        BigDecimal total = new BigDecimal(0);
+        for (PlanoTratamentoProcedimento ptp : pt.getPlanoTratamentoProcedimentos()) {
+            FaturaItem faturaItem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
+            if(faturaItem != null) {
+                total = LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(faturaItem.getFatura(), true, ValidacaoLancamento.NAO_VALIDADO);
+            }
+        }
+        return total;
+    }
 
+    public BigDecimal valorTotal(PlanoTratamento pt) {
+        BigDecimal total = new BigDecimal(0);
+        for (PlanoTratamentoProcedimento ptp : pt.getPlanoTratamentoProcedimentos()) {
+            FaturaItem faturaItem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
+            if(faturaItem != null) {
+                total = FaturaSingleton.getInstance().getTotal(faturaItem.getFatura());
+            }
+        }
+        return total;
+    }
+    
     public String getDateNowFormat() {
         return Utils.dateToString(new Date());
     }
