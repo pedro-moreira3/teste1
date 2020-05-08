@@ -1053,10 +1053,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void validaDescontos() {
         mensagemCalculoOrcamento = "";
         mensagemCalculoOrcamentoDiferenca = "";
-        if(quantidadeVezesNegociacaoOrcamento == null) {
+        
+      
+        
+        if(quantidadeVezesNegociacaoOrcamento == null && orcamentoSelecionado.getDescontoValor().compareTo(new BigDecimal(0)) != 0) {
             this.addError("Erro", "Selecione a quantidade de parcelas para a negociação");
             orcamentoSelecionado.setDescontoValor(new BigDecimal(0));
-        }else {
+        }else if(quantidadeVezesNegociacaoOrcamento != null){
             numeroParcelaOrcamento = new BigDecimal(quantidadeVezesNegociacaoOrcamento);
             
             if(orcamentoSelecionado.getDescontoValor() == null) {
