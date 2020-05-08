@@ -822,11 +822,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         //if (this.finalizaAutomatico())
         actionPersistEvolucao();
     }
-
+   
     public void actionPersistEvolucao() {
         try {
             EvolucaoSingleton.getInstance().criaEvolucao(getPaciente(), getDescricaoEvolucao(), UtilsFrontEnd.getProfissionalLogado(), getPtps2Finalizar());
-
+            List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(this.getEntity());            
+            
             for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos) {
                 if (ptp.isFinalizado() && ptp.getFinalizadoPorProfissional() == null) {
                     ptp.setDataFinalizado(new Date());
@@ -835,8 +836,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     this.calculaRepasse(ptp);
                     salvaProcedimento(ptp);
 
+
                     try {
-                        RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado());
+                        for(Orcamento orc : orcamentos) {
+                            if(OrcamentoSingleton.getInstance().getBo().isProcedimentoOrcamentoAprovado(orc, ptp))
+                                RepasseFaturasSingleton.getInstance().verificaPlanoTratamentoProcedimentoRepasse(ptp, UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getProfissionalLogado());
+                        }
                     } catch (Exception e) {
                         addError("Erro ao salvar registro", e.getMessage());
                     }
@@ -853,6 +858,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
+
 
     public String getNomeProfissionalLogado() {
         return UtilsFrontEnd.getProfissionalLogado().getDadosBasico().getNome();
