@@ -289,8 +289,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										<h:panelGroup styleClass="lumeField">
 											<p:outputLabel value="Tipo da Fatura:" />
-											<p:selectOneRadio value="#{relatorioFaturaMB.tipoFatura}">
-												<f:selectItem itemValue="" itemLabel="Todos" />
+											<p:selectOneRadio value="#{relatorioFaturaMB.tipoFatura}">												
 												<f:selectItem itemValue="RP"
 													itemLabel="Recebimento de paciente" />
 												<f:selectItem itemValue="PP"
@@ -414,7 +413,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							</p:column>
 
-							<p:column headerText="Descrição da fatura"
+							<p:column headerText="Descrição da Fatura"
 								filterBy="#{relatorioFaturaMB.descricaoFatura(m)}"
 								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
 								filterMatchMode="contains"
@@ -424,7 +423,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							</p:column>
 
-							<p:column headerText="Data de criação"
+							<p:column headerText="Data de Criação"
 								filterBy="#{relatorioFaturaMB.converterData(m.dataCriacao)}"
 								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
 								filterMatchMode="contains"
@@ -435,7 +434,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							</p:column>
 
-							<p:column headerText="Tipo do saldo"
+							<p:column headerText="Tipo"
 								sortBy="#{relatorioFaturaMB.tipoSaldoFatura(m)}"
 								filterFunction="#{relatorioFaturaMB.filtroSemAcento}"
 								filterMatchMode="contains"
@@ -445,30 +444,41 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							</p:column>
 
-							<p:column headerText="Valor da fatura"
+							<p:column headerText="Valor à Receber"
+								sortBy="#{m.dadosTabelaRepasseTotalNaoPago}"
+								filterMatchMode="contains"
+								filterBy="#{m.dadosTabelaRepasseTotalNaoPago}">
+
+								<h:outputText value="#{m.dadosTabelaRepasseTotalNaoPago}" />
+
+							</p:column>
+
+							<p:column headerText="Valor Recebido"
+								sortBy="#{m.dadosTabelaRepasseTotalPago}"
+								filterMatchMode="contains"
+								filterBy="#{m.dadosTabelaRepasseTotalPago}">
+								<h:outputText value="#{m.dadosTabelaRepasseTotalPago}" />
+							</p:column>
+							
+							<p:column headerText="Valor à Conferir"
+								sortBy="#{relatorioFaturaMB.valorConferirFatura(m)}"
+								filterMatchMode="contains"
+								filterBy="#{relatorioFaturaMB.valorConferirFatura(m)}">
+								<h:outputText value="#{relatorioFaturaMB.valorConferirFatura(m)}" />
+							</p:column>
+							<p:column headerText="Valor Conferido"
+								sortBy="#{relatorioFaturaMB.valorConferidoFatura(m)}"
+								filterMatchMode="contains"
+								filterBy="#{relatorioFaturaMB.valorConferidoFatura(m)}">
+								<h:outputText value="#{relatorioFaturaMB.valorConferidoFatura(m)}" />
+							</p:column>
+
+							<p:column headerText="Valor Total"
 								sortBy="#{relatorioFaturaMB.valorFatura(m)}"
 								filterMatchMode="contains"
 								filterBy="#{relatorioFaturaMB.valorFatura(m)}">
 
 								<h:outputText value="#{relatorioFaturaMB.valorFatura(m)}" />
-
-							</p:column>
-
-							<p:column headerText="Valor pago"
-								sortBy="#{relatorioFaturaMB.valorPagoFatura(m)}"
-								filterMatchMode="contains"
-								filterBy="#{relatorioFaturaMB.valorPagoFatura(m)}">
-
-								<h:outputText value="#{relatorioFaturaMB.valorPagoFatura(m)}" />
-
-							</p:column>
-
-							<p:column headerText="Valor a pagar"
-								sortBy="#{relatorioFaturaMB.valorPagarFatura(m)}"
-								filterMatchMode="contains"
-								filterBy="#{relatorioFaturaMB.valorPagarFatura(m)}">
-
-								<h:outputText value="#{relatorioFaturaMB.valorPagarFatura(m)}" />
 
 							</p:column>
 
