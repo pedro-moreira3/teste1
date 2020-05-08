@@ -328,10 +328,14 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                 List<PlanoTratamentoProcedimento> novaLista = new ArrayList<PlanoTratamentoProcedimento>();
                 for (PlanoTratamentoProcedimento ptp : getEntityList()) {
                     if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
-                        RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
-                        if (repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
-                            ptp.setFatura(repasseFaturas.getFaturaRepasse());
-                        }
+                                          //RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
+                        List<RepasseFaturas> repassesFaturas = RepasseFaturasSingleton.getInstance().getBo().getRepasseFaturasFromPTP(ptp);
+                        if (repassesFaturas != null && !repassesFaturas.isEmpty()) {
+                            repassesFaturas.removeIf(rep -> !rep.getFaturaRepasse().isAtivo() || rep.getFaturaRepasse().getItensFiltered().isEmpty());
+                           
+                            if(!repassesFaturas.isEmpty()) {
+                                ptp.setFatura(repassesFaturas.get(0).getFaturaRepasse());
+                            }
                     } else {
                         //repasse antigo, quando ainda nao tinha ptp no repasse fatura
                         RepasseFaturasItem repasseFaturasItem = RepasseFaturasItemSingleton.getInstance().getBo().getItemOrigemFromRepasse(ptp);
@@ -661,9 +665,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         if (validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) {
             if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) != 0) {
                 pendencias.add("Paciente ainda não pagou o procedimento - verifique os recebimentos;");
-            }else if(ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) == 0) {
-                pendencias.add("Procedimento com valor de repasse zerado;");
-            }
+            }else if(ptp.getDentistaExecutor().getTipoRemuneracao().equals(Profissional.PROCEDIMENTO)) {
+                if(ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) == 0) {
+                    pendencias.add("Procedimento com valor de repasse zerado;");
+                }
+            }    
         }
 
         if (validaPagamentoPacienteOrtodontico && ptp.getPlanoTratamento().isOrtodontico()) {
