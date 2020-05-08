@@ -145,7 +145,7 @@
 							filterFunction="#{pacienteMB.filtroSemAcento}">
 							<h:outputText value="#{paciente.dadosBasico.responsavel}" />
 						</p:column>
-						<p:column sortBy="#{paciente.dadosBasico.dataNascimentoStrOrd}"
+						<p:column sortBy="#{paciente.dadosBasico.dataNascimentoStr}"
 							filterBy="#{paciente.dadosBasico.dataNascimentoStr}"
 							filterMatchMode="contains" headerText="Data de Nascimento">
 							<h:outputText value="#{paciente.dadosBasico.dataNascimentoStr}" />

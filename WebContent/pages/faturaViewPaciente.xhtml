@@ -1286,7 +1286,7 @@ body .lancamentoFalhaOperacao {
 				process="@this" update="@parent:pnlNovoLancamento"
 				styleClass="OrangeButton"
 				rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
-				disabled="#{(faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0 or faturaPagtoMB.verificaFaturaInterrompida()) and false}"
+				disabled="#{(faturaPagtoMB.entity.dadosTabelaRepasseTotalNaoPlanejado le 0)}"
 				actionListener="#{faturaPagtoMB.actionNovoLancamentoNew}"
 				oncomplete="PF('dlgNovoLancamento').show()" />
 			<p:commandButton value="Nova Negociação" icon="fa fa-gear"

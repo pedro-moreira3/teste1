@@ -25,7 +25,36 @@ body .ui-selectoneradio td label {
 .ui-autocomplete input {
 	height: 100%;
 }
+
+body .ui-selectonemenu {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+ui-selectonemenu-label {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
+	margin-top: 2.5px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
+	{
+	margin-top: -12px !important;
+}
 </style>
+
+		<p:outputPanel id="viewFatura">
+			<ui:include src="faturaViewPaciente.xhtml">
+				<ui:param name="showNewLancamento" value="S" />
+			</ui:include>
+			<p:remoteCommand name="onCloseFaturaView" process="@this"
+				update=":lume:tv:dtLancamentoValidar" />
+		</p:outputPanel>
+
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -375,17 +404,203 @@ body .ui-selectoneradio td label {
 						<p:tab id="tab2" title="Conferência de Recebimentos">
 							<div class="ui-g ui-fluid">
 								<div class="ui-g-12 ui-lg-12">
+
 									<p:outputPanel styleClass="BordNone">
-										<h1>Conferência de Recebimentos</h1>
+										<h1>
+											Conferência de Recebimentos
+											<h:outputLabel class="fa fa-question" id="tooltipTitulo"
+												style="font-size:24px; margin-left:10px;" />
+											<p:tooltip for="tooltipTitulo"
+												value="Nessa tela você pode validar os lançamentos de recebimento, conferindo os mesmos 
+												e também consultar os lançamentos conforme os filtros."
+												position="bottom" style="width:30%;" />
+										</h1>
 										<div class="SeparatorFull"></div>
 									</p:outputPanel>
 									<br />
+
+									<p:panelGrid columns="3" layout="grid"
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+										<h:panelGroup>
+											<p:outputLabel for="listaPeriodo" value="Período de crédito:" />
+											<p:selectOneMenu id="listaPeriodo"
+												value="#{conferenciaRecebimentoMB.periodoCredito}"
+												update="dataConferenciaInicial,dataConferenciaFinal">
+
+												<p:ajax process="@this" update="dataConferenciaInicial,dataConferenciaFinal"
+													listener="#{conferenciaRecebimentoMB.actionTrocaDatasConferencia}" />
+
+												<f:selectItem itemValue="1" itemLabel="Hoje" />
+												<f:selectItem itemValue="2" itemLabel="Últimos 7 dias" />
+												<f:selectItem itemValue="3" itemLabel="Últimos 15 dias" />
+												<f:selectItem itemValue="4" itemLabel="Últimos 20 dias" />
+												<f:selectItem itemValue="5" itemLabel="Últimos 30 dias" />
+												<f:selectItem itemValue="6" itemLabel="Últimos 45 dias" />
+												<f:selectItem itemValue="7" itemLabel="Mês anterior" />
+												<f:selectItem itemValue="8" itemLabel="Últimos 6 meses" />
+											</p:selectOneMenu>
+										</h:panelGroup>
+
+										<h:panelGroup id="dataConferenciaInicio">
+											<p:outputLabel for="dataConferenciaInicial"
+												value="Data de crédito de:" />
+											<p:calendar id="dataConferenciaInicial"
+												value="#{conferenciaRecebimentoMB.dataCreditoInicial}"
+												autocomplete="false"
+												locale="#{lumeSecurity.locale}" mask="true">
+											</p:calendar>
+										</h:panelGroup>
+
+										<h:panelGroup id="dataConferenciaFim">
+											<p:outputLabel for="dataConferenciaFinal"
+												value="Data de crédito até:" />
+											<p:calendar id="dataConferenciaFinal"
+												value="#{conferenciaRecebimentoMB.dataCreditoFinal}"
+												autocomplete="false"
+												locale="#{lumeSecurity.locale}" mask="true" />
+										</h:panelGroup>
+
+										<h:panelGroup>
+											<p:outputLabel for="status" value="Status:" />
+											<p:selectOneMenu id="status"
+												value="#{conferenciaRecebimentoMB.statusCredito}">
+
+												<p:ajax process="@this" />
+
+												<f:selectItem itemValue="T" itemLabel="Todos" />
+												<f:selectItem itemValue="N"
+													itemLabel="Somente não validados" />
+												<f:selectItem itemValue="S"
+													itemLabel="Somente validados com sucesso" />
+												<f:selectItem itemValue="E"
+													itemLabel="Somente validados com erro" />
+											</p:selectOneMenu>
+										</h:panelGroup>
+
+										<h:panelGroup>
+											<h:outputText for="filtroPaciente" value="Paciente:" />
+											<p:autoComplete id="filtroPaciente"
+												value="#{conferenciaRecebimentoMB.filtroPorPaciente}"
+												completeMethod="#{conferenciaRecebimentoMB.sugestoesPacientes}"
+												var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+												converter="paciente" forceSelection="true"
+												scrollHeight="400" minQueryLength="3" queryDelay="1000">
+
+												<p:column headerText="Código" style="text-align: center;">
+													<h:outputText value="#{p.codigo}" />
+												</p:column>
+												<p:column headerText="Nome">
+													<h:outputText value="#{p.dadosBasico.nome}" />
+												</p:column>
+												<p:column headerText="Celular">
+													<h:outputText value="#{p.dadosBasico.celular}" />
+												</p:column>
+												<p:column headerText="Nome da Mãe">
+													<h:outputText value="#{p.nomeMae}" />
+												</p:column>
+
+												<p:ajax event="itemSelect" process="@this" />
+											</p:autoComplete>
+										</h:panelGroup>
+
+										<h:panelGroup>
+											<p:outputLabel for="confereciaForma"
+												value="Forma de pagamento:" />
+											<p:selectOneMenu id="confereciaForma"
+												value="#{conferenciaRecebimentoMB.formaPagamento}">
+
+												<p:ajax process="@this" />
+
+												<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+												<f:selectItem itemValue="CC" itemLabel="Cartão de crédito" />
+												<f:selectItem itemValue="CD" itemLabel="Cartão de débito" />
+												<f:selectItem itemValue="BO" itemLabel="Boleto" />
+												<f:selectItem itemValue="DI" itemLabel="Dinheiro" />
+											</p:selectOneMenu>
+										</h:panelGroup>
+
+									</p:panelGrid>
+
+									<p:panelGrid columns="3" layout="grid"
+										styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+										<h:panelGroup>
+											<p:commandButton value="Pesquisar"
+												action="#{conferenciaRecebimentoMB.carregarLancamentosConferencia}"
+												icon="White fa fa-search" update="dtLancamentoValidar"
+												process="@this,filtroPaciente" styleClass="NavyButton" />
+										</h:panelGroup>
+
+										<h:panelGroup>
+											<p:splitButton icon="White fa fa fa-file-excel-o"
+												value="Exportar tabela para Excel"
+												styleClass="GreenSplitButton"
+												actionListener="#{conferenciaRecebimentoMB.exportarTabelaConferencia('xls')}"
+												ajax="false" process="dtLancamentoValidar,@this"
+												update="@this" immediate="true"
+												onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+												<p:fileDownload
+													value="#{conferenciaRecebimentoMB.arquivoDownload}" />
+
+												<p:menuitem value="Exportar tabela para PDF"
+													icon="fa fa fa-file-pdf-o"
+													actionListener="#{conferenciaRecebimentoMB.exportarTabelaConferencia('pdf')}"
+													ajax="false" process="dtLancamentoValidar,@this"
+													immediate="true"
+													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+													<p:fileDownload
+														value="#{conferenciaRecebimentoMB.arquivoDownload}" />
+												</p:menuitem>
+												<p:menuitem value="Exportar tabela para CSV"
+													icon="fa fa fa-file-pdf-o"
+													actionListener="#{conferenciaRecebimentoMB.exportarTabelaConferencia('csv')}"
+													ajax="false" process="dtLancamentoValidar,@this"
+													immediate="true"
+													onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+													<p:fileDownload
+														value="#{conferenciaRecebimentoMB.arquivoDownload}" />
+												</p:menuitem>
+											</p:splitButton>
+										</h:panelGroup>
+
+										<h:panelGroup>
+											<p:commandButton
+												value="Conferir todos os lançamentos selecionados"
+												actionListener="#{conferenciaRecebimentoMB.validarLancamentosSelecionados}"
+												update="dtLancamentoValidar" process="@this,dtLancamentoValidar" />
+										</h:panelGroup>
+									</p:panelGrid>
+
 									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 										id="dtLancamentoValidar"
-										value="#{lancamentoContabilMB.lancamentosValidar}" var="lc"
-										rows="50" paginator="true" paginatorPosition="bottom"
-										widgetVar="dtLancamentoValidar">
+										value="#{conferenciaRecebimentoMB.entityList}" var="lc"
+										rows="15" paginator="true" paginatorPosition="bottom"
+										widgetVar="dtLancamentoValidar" rowKey="#{lc}"
+										selection="#{conferenciaRecebimentoMB.lancamentosSelecionadosConferencia}"
+										binding="#{conferenciaRecebimentoMB.tabelaLancamentoConferencia}">
+
 										<f:facet name="header">Lançamentos</f:facet>
+
+										<p:column selectionMode="multiple"
+											style="width:16px;text-align:center">
+										</p:column>
+
+										<p:column headerText="Ações" exportable="false">
+											<p:commandButton icon="fa fa-eye" process="@this"
+												actionListener="#{faturaPagtoMB.visualizaFatura(lc.fatura)}"
+												update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura"
+												oncomplete="PF('dlgFaturaView').show();"
+												styleClass="NavyButton" title="Visualizar Fatura" />
+											<ui:remove>
+												<p:commandButton icon="White fa fa-money"
+													styleClass="RedButton" title="Ajustar valor"
+													actionListener="#{conferenciaRecebimentoMB.setEntity(lc)}"
+													process="@this" update=":lume:dlgAjustarValor"
+													oncomplete="PF('dlgAjustarValor').show();" />
+											</ui:remove>
+										</p:column>
 										<p:column filterBy="#{lc.fatura.paciente.dadosBasico.nomeStr}"
 											sortBy="#{lc.fatura.paciente.dadosBasico.nome}"
 											filterMatchMode="contains" headerText="Paciente">
@@ -399,21 +614,8 @@ body .ui-selectoneradio td label {
 										</p:column>
 										<p:column filterBy="#{lc.formaPagamentoStr}"
 											sortBy="#{lc.formaPagamentoStr}" filterMatchMode="contains"
-											headerText="Forma">
+											headerText="Produto">
 											<h:outputText value="#{lc.formaPagamentoStr}" />
-										</p:column>
-										<p:column filterBy="#{lc.valor}" sortBy="#{lc.valor}"
-											filterMatchMode="contains" headerText="Valor(R$)">
-											<h:outputText value="#{lc.valor}">
-												<f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
-											</h:outputText>
-										</p:column>
-										<p:column filterBy="#{lc.valorComDesconto}"
-											sortBy="#{lc.valorComDesconto}" filterMatchMode="contains"
-											headerText="Valor(R$) C/ Desconto">
-											<h:outputText value="#{lc.valorComDesconto}">
-												<f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
-											</h:outputText>
 										</p:column>
 										<p:column headerText="Data Pagamento"
 											filterBy="#{lc.dataPagamentoStr}"
@@ -423,20 +625,84 @@ body .ui-selectoneradio td label {
 										<p:column headerText="Data Crédito"
 											filterBy="#{lc.dataCreditoStr}" sortBy="#{lc.dataCredito}"
 											filterMatchMode="contains">
-											<p:calendar id="dtCreditoLancamento"
-												value="#{lc.dataCredito}" pattern="dd/MM/yyyy"
-												showWeeksBar="false" locale="#{lumeSecurity.locale}"
-												timeZone="#{lumeSecurity.timeZone}" navigator="true"
-												yearRange="-100:+10" class="Wid50" mask="true" />
+											<h:outputText value="#{lc.dataCreditoStr}" />
 										</p:column>
-										<p:column headerText="Conferência" width="100">
+										<p:column headerText="Valor à conferir"
+											filterBy="#{conferenciaRecebimentoMB.valorConferir(lc)}"
+											sortBy="#{conferenciaRecebimentoMB.valorConferir(lc)}"
+											filterMatchMode="contains">
+											<h:outputText
+												value="#{conferenciaRecebimentoMB.valorConferir(lc)}">
+												<f:convertNumber currencySymbol="R$" type="currency"
+													minFractionDigits="2" />
+											</h:outputText>
+											<f:facet name="footer">
+												<h:outputText value="Total " />
+												<h:outputText
+													value="#{conferenciaRecebimentoMB.somatorioValorConferirConferencia}">
+													<f:convertNumber currencySymbol="R$" type="currency"
+														minFractionDigits="2" />
+												</h:outputText>
+											</f:facet>
+										</p:column>
+										<p:column headerText="Valor conferido"
+											filterBy="#{conferenciaRecebimentoMB.valorConferido(lc)}"
+											sortBy="#{conferenciaRecebimentoMB.valorConferido(lc)}"
+											filterMatchMode="contains">
+											<h:outputText
+												value="#{conferenciaRecebimentoMB.valorConferido(lc)}">
+												<f:convertNumber currencySymbol="R$" type="currency"
+													minFractionDigits="2" />
+											</h:outputText>
+											<f:facet name="footer">
+												<h:outputText value="Total " />
+												<h:outputText
+													value="#{conferenciaRecebimentoMB.somatorioValorConferidoConferencia}">
+													<f:convertNumber currencySymbol="R$" type="currency"
+														minFractionDigits="2" />
+												</h:outputText>
+											</f:facet>
+										</p:column>
+										<p:column headerText="Valor total"
+											sortBy="#{lc.valorComDesconto}"
+											filterBy="#{lc.valorComDesconto}" filterMatchMode="contains">
+											<h:outputText value="#{lc.valorComDesconto}">
+												<f:convertNumber currencySymbol="R$" type="currency"
+													minFractionDigits="2" />
+											</h:outputText>
+											<f:facet name="footer">
+												<h:outputText value="Total " />
+												<h:outputText
+													value="#{conferenciaRecebimentoMB.somatorioValorTotalConferencia}">
+													<f:convertNumber currencySymbol="R$" type="currency"
+														minFractionDigits="2" />
+												</h:outputText>
+											</f:facet>
+										</p:column>
+										<p:column headerText="Status"
+											sortBy="#{conferenciaRecebimentoMB.statusLancamentoConferencia(lc)}"
+											filterBy="#{conferenciaRecebimentoMB.statusLancamentoConferencia(lc)}"
+											filterMatchMode="contains">
+											<h:outputText
+												value="#{conferenciaRecebimentoMB.statusLancamentoConferencia(lc)}" />
+										</p:column>
+										<p:column headerText="Conferência" width="100"
+											exportable="false">
 											<p:commandButton icon="White fa fa-thumbs-o-up"
-												actionListener="#{lancamentoContabilMB.actionValidarLancamento(lc)}"
-												update=":lume:tv:dtLancamentoValidar"
-												process="@this,dtCreditoLancamento" styleClass="GreenButton"
-												oncomplete="PF('dtLancamentoValidar').filter()" />
+												actionListener="#{conferenciaRecebimentoMB.actionValidarLancamento(lc)}"
+												update=":lume:tv:dtLancamentoValidar, :lume:tv:tab2" process="@this"
+												styleClass="GreenButton"
+												oncomplete="PF('dtLancamentoValidar').filter()"
+												title="Valor recebido" />
+											<p:commandButton icon="White fa fa-thumbs-o-down"
+												actionListener="#{conferenciaRecebimentoMB.actionNaoValidarLancamento(lc)}"
+												update=":lume:tv:dtLancamentoValidar, :lume:tv:tab2" process="@this"
+												styleClass="RedButton"
+												oncomplete="PF('dtLancamentoValidar').filter()"
+												title="Falha no recebimento" />
 										</p:column>
 									</p:dataTable>
+
 								</div>
 							</div>
 						</p:tab>
@@ -548,6 +814,31 @@ body .ui-selectoneradio td label {
 						</p:tab>
 					</p:tabView>
 
+					<p:dialog id="dlgAjustarValor" widgetVar="dlgAjustarValor"
+						appendTo=":lume" header="Ajustar valor" height="150" width="400">
+
+						<p:fieldset toggleable="false">
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+								<p:outputLabel for="valorAjuste" value="Valor lançamento:" />
+								<p:inputNumber id="valorAjuste" symbol="R$ "
+									value="#{conferenciaRecebimentoMB.entity.valor}"
+									decimalPlaces="2" />
+
+								<h:panelGroup>
+									<p:commandButton value="Salvar" styleClass="GreenButton"
+										actionListener="#{conferenciaRecebimentoMB.salvarAjusteValor}"
+										process="@this,valorAjuste" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:commandButton value="Fechar" styleClass="NavyButton"
+										process="@this" oncomplete="PF('dlgAjustarValor').hide();" />
+								</h:panelGroup>
+							</p:panelGrid>
+						</p:fieldset>
+
+					</p:dialog>
 
 				</div>
 			</div>
