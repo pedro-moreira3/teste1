@@ -336,6 +336,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             if(!repassesFaturas.isEmpty()) {
                                 ptp.setFatura(repassesFaturas.get(0).getFaturaRepasse());
                             }
+                        }    
                     } else {
                         //repasse antigo, quando ainda nao tinha ptp no repasse fatura
                         RepasseFaturasItem repasseFaturasItem = RepasseFaturasItemSingleton.getInstance().getBo().getItemOrigemFromRepasse(ptp);
