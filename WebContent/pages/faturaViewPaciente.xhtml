@@ -461,6 +461,9 @@ body .lancamentoFalhaOperacao {
 					<p:remoteCommand name="refazCalculos" process="@this"
 						actionListener="#{faturaPagtoMB.refazCalculos()}"
 						update="negociacaoValorPrimeiraParcela, infoParcelamento" />
+					<p:remoteCommand name="alteraDesconto" process="@this"
+						actionListener="#{faturaPagtoMB.actionAlteraDescontoValor()}"
+						oncomplete="refazCalculos()" />
 					<p:panelGrid columns="2" layout="grid"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
@@ -519,7 +522,8 @@ body .lancamentoFalhaOperacao {
 
 										<p:ajax process="@this"
 											listener="#{faturaPagtoMB.atualizaTipoDesconto}"
-											update="negociacaoValorDesconto, negociacaoValorPrimeiraParcela, infoParcelamento" />
+											update="negociacaoValorDesconto, negociacaoValorPrimeiraParcela, infoParcelamento"
+											oncomplete="refazCalculos()" />
 									</p:selectOneMenu>
 								</h:panelGroup>
 
@@ -531,7 +535,7 @@ body .lancamentoFalhaOperacao {
 											maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 											symbol="R$ " thousandSeparator="."
 											rendered="#{faturaPagtoMB.negociacaoTipoDesconto == 'V'}">
-											<p:ajax process="@this" oncomplete="refazCalculos()" />
+											<p:ajax process="@this" oncomplete="alteraDesconto()" />
 										</p:inputNumber>
 										<p:outputLabel for="negociacaoValorDescValor"
 											value="Valor do Desconto:"
@@ -542,7 +546,7 @@ body .lancamentoFalhaOperacao {
 											decimalSeparator="," symbol="%" thousandSeparator="."
 											symbolPosition="s"
 											rendered="#{faturaPagtoMB.negociacaoTipoDesconto == 'P'}">
-											<p:ajax process="@this" oncomplete="refazCalculos()" />
+											<p:ajax process="@this" oncomplete="alteraDesconto()" />
 										</p:inputNumber>
 										<p:outputLabel for="negociacaoValorDescPorcentagem"
 											value="Percentual de Desconto:"
@@ -763,7 +767,7 @@ body .lancamentoFalhaOperacao {
 											value="#{faturaPagtoMB.negociacaoTarifasDisponiveis}"
 											var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
 										<p:ajax event="change" process="@this"
-											update="negociacaoParcelasTable"
+											update="negociacaoDataCreditoAprovacao, negociacaoParcelasTable"
 											listener="#{faturaPagtoMB.actionAlteraFormaPagamentoNegociacao}" />
 									</p:selectOneMenu>
 									<p:message for="negociacaoFormaPagamentoAprovacao"
@@ -778,6 +782,7 @@ body .lancamentoFalhaOperacao {
 									</p:inputNumber>
 									<p:outputLabel for="negociacaoValorTotalAprovacao"
 										value="Valor:" />
+									<p:message for="negociacaoValorTotalAprovacao" styleClass="msg" />
 								</h:panelGroup>
 
 								<h:panelGroup styleClass="md-inputfield">
