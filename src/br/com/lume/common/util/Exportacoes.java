@@ -109,7 +109,7 @@ public class Exportacoes implements Serializable{
                     if(obj instanceof BigDecimal) {
                         
                         BigDecimal valor = (BigDecimal) obj;
-                        DecimalFormat decFormat = new DecimalFormat("#,###,##0.00");
+                        valor = valor.setScale(2, BigDecimal.ROUND_HALF_UP);
                         
                         celula.setCellValue(valor.doubleValue());
                         

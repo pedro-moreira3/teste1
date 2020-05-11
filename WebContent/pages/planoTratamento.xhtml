@@ -266,24 +266,33 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<p:outputLabel value="#{planoTratamento.statusDescritivo}" />
 					</p:column>
+					<p:column filterBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}"
+						sortBy="#{planoTratamento.valor}"
+						rendered="#{planoTratamentoMB.temPermissaoExtra}"
+						filterMatchMode="contains" headerText="Valor à Receber">
+						<h:outputText value="#{planoTratamentoMB.valorAReceber(planoTratamento)}">
+							<f:convertNumber currencySymbol="R$" type="currency"
+								locale="#{lumeSecurity.locale}" />
+						</h:outputText>
+					</p:column>
+					<p:column filterBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"
+						sortBy="#{planoTratamento.valorTotalRestante}"
+						rendered="#{planoTratamentoMB.temPermissaoExtra}"
+						filterMatchMode="contains" headerText="Valor à Conferir">
+						<h:outputText value="#{planoTratamentoMB.valorAConferir(planoTratamento)}">
+							<f:convertNumber currencySymbol="R$" type="currency"
+								locale="#{lumeSecurity.locale}" />
+						</h:outputText>
+					</p:column>	
 					<p:column filterBy="#{planoTratamento.valor}"
 						sortBy="#{planoTratamento.valor}"
 						rendered="#{planoTratamentoMB.temPermissaoExtra}"
-						filterMatchMode="contains" headerText="Valor Original">
+						filterMatchMode="contains" headerText="Valor Total dos Procedimentos">
 						<h:outputText value="#{planoTratamento.valor}">
 							<f:convertNumber currencySymbol="R$" type="currency"
 								locale="#{lumeSecurity.locale}" />
 						</h:outputText>
-					</p:column>
-					<p:column filterBy="#{planoTratamento.valorTotalRestante}"
-						sortBy="#{planoTratamento.valorTotalRestante}"
-						rendered="#{planoTratamentoMB.temPermissaoExtra}"
-						filterMatchMode="contains" headerText="Valor Restante à Pagar">
-						<h:outputText value="#{planoTratamento.valorTotalRestante}">
-							<f:convertNumber currencySymbol="R$" type="currency"
-								locale="#{lumeSecurity.locale}" />
-						</h:outputText>
-					</p:column>
+					</p:column>				
 				</p:dataTable>
 			</p:outputPanel>
 		</div>
@@ -1325,6 +1334,14 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							sortBy="#{orcamento.dataCriacao}">
 							<h:outputText value="#{orcamento.dataCriacao}">
 								<f:convertDateTime pattern="HH:mm dd/MM/yyyy" />
+							</h:outputText>
+						</p:column>
+						<p:column headerText="Valor do Desconto"
+							filterBy="#{orcamento.descontoValor}" filterMatchMode="contains"
+							sortBy="#{orcamento.descontoValor}">
+							<h:outputText value="#{orcamento.descontoValor}">
+								<f:convertNumber type="currency" currencySymbol="R$"
+									maxFractionDigits="2" />
 							</h:outputText>
 						</p:column>
 						<p:column headerText="Valor Total"

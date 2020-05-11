@@ -100,13 +100,18 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
     public void actionPersist(ActionEvent event) {
         try {
             if (this.getEntity().getProcedimento() != null && this.getEntity().getValor() != null && this.getEntity().getProcedimento().getCodigoCfo() != null) {
+              
                 
-                if ( (this.getEntity().isZeraId()) || (this.getEntity().getConvenio() != null) ) {
-                    ConvenioProcedimento cp = this.getbO().find(this.getEntity().getId());
-                    cp.setStatus(Status.INATIVO);
-                    this.getbO().persist(cp);
-                    
-                    this.getEntity().setId(0);
+                 
+               if ( this.getEntity().isZeraId() || this.getEntity().getConvenio() != null ) {     
+                   ConvenioProcedimento cp = this.getbO().find(this.getEntity().getId());            
+                   if(cp != null) {
+                       cp.setStatus(Status.INATIVO);
+                       this.getbO().persist(cp);
+                       
+                       this.getEntity().setId(0);
+                   }
+               
                 }
                 
                 this.getEntity().setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());

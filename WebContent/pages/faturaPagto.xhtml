@@ -167,24 +167,24 @@
 							headerText="Plano de Tratamento">
 							<h:outputText value="#{f.dadosTabelaPT.descricao}" />
 						</p:column>
-
-						<p:column filterBy="#{f.dadosTabelaRepasseTotalFatura}"
-							headerText="Valor total da fatura" filterMatchMode="contains"
-							sortBy="#{f.dadosTabelaRepasseTotalFatura}">
-							<h:outputText value="#{f.dadosTabelaRepasseTotalFatura}">
+				
+					<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPago}"
+							headerText="Valor à Receber" filterMatchMode="contains"
+							sortBy="#{f.dadosTabelaRepasseTotalNaoPago}">
+							<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPago}">
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
 							<f:facet name="footer">
 								<h:outputText value="Total " />
-								<h:outputText value="#{faturaPagtoMB.somaTotal}">
+								<h:outputText value="#{faturaPagtoMB.somaTotalNaoPago}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										minFractionDigits="2" />
 								</h:outputText>
 							</f:facet>
 						</p:column>
-
-						<p:column filterBy="#{f.dadosTabelaRepasseTotalPago}"
-							headerText="Valor total pago" filterMatchMode="contains"
+						
+							<p:column filterBy="#{f.dadosTabelaRepasseTotalPago}"
+							headerText="Valor Recebido" filterMatchMode="contains"
 							sortBy="#{f.dadosTabelaRepasseTotalPago}">
 							<h:outputText value="#{f.dadosTabelaRepasseTotalPago}">
 								<f:convertNumber currencySymbol="R$ " type="currency" />
@@ -198,36 +198,23 @@
 							</f:facet>
 						</p:column>
 
-						<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPago}"
-							headerText="Valor total não pago" filterMatchMode="contains"
-							sortBy="#{f.dadosTabelaRepasseTotalNaoPago}">
-							<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPago}">
+						
+						
+						<p:column filterBy="#{f.dadosTabelaRepasseTotalFatura}"
+							headerText="Valor Total" filterMatchMode="contains"
+							sortBy="#{f.dadosTabelaRepasseTotalFatura}">
+							<h:outputText value="#{f.dadosTabelaRepasseTotalFatura}">
 								<f:convertNumber currencySymbol="R$ " type="currency" />
 							</h:outputText>
 							<f:facet name="footer">
 								<h:outputText value="Total " />
-								<h:outputText value="#{faturaPagtoMB.somaTotalNaoPago}">
+								<h:outputText value="#{faturaPagtoMB.somaTotal}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										minFractionDigits="2" />
 								</h:outputText>
 							</f:facet>
 						</p:column>
-
-						<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}"
-							headerText="Valor total não planejado" filterMatchMode="contains"
-							sortBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
-							<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
-								<f:convertNumber currencySymbol="R$ " type="currency" />
-							</h:outputText>
-							<f:facet name="footer">
-								<h:outputText value="Total " />
-								<h:outputText value="#{faturaPagtoMB.somaTotalNaoPlanejado}">
-									<f:convertNumber currencySymbol="R$" type="currency"
-										minFractionDigits="2" />
-								</h:outputText>
-							</f:facet>
-						</p:column>
-
+						
 						<p:column width="80" headerText="Status"
 							filterBy="#{f.statusFaturaCompleto}"
 							sortBy="#{f.statusFaturaCompleto}" filterMatchMode="contains">

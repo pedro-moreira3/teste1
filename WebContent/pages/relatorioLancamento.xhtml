@@ -1,214 +1,43 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
-	xmlns:pe="http://primefaces.org/ui/extensions">
-	<ui:define name="content">
-		<div class="ui-g ui-fluid">
-			<div class="ui-g-12 ui-lg-12">
-				<div class="card card-w-title">
-					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
 
-						<div style="display: inline-block">
-							<h1>Relatório de Recebimentos</h1>
-							<p:commandButton id="tooltipTitulo" icon="fa fa-question"
-								styleClass="title-help-button" />
-						</div>
+		<style>
+body .ui-selectoneradio td label {
+	width: calc(100% - 44px) !important;
+	margin-top: 10% !important;
+}
 
-						<div class="SeparatorFull"></div>
+.ui-autocomplete input {
+	height: 100%;
+	padding-bottom: 10px !important;
+}
 
-						<p:panelGrid columns="3"
-							columnClasses="ui-grid-col-6,ui-grid-col-3,ui-grid-col-3"
-							layout="grid"
-							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding"
-							style="border:0px none; background-color:transparent;">
+body .ui-selectonemenu {
+	margin: 0px !important;
+	padding-bottom: 10px !important;
+}
 
-							<h:panelGroup styleClass="md-combo">
-								<h:outputText for="filtroPeriodoAReceber"
-									value="Período da Data de crédito:" />
-								<p:selectOneMenu id="filtroPeriodoAReceber"
-									value="#{relatorioRecebimentoMB.periodoBusca}"
-									converter="enumPeriodoBusca">
-									<p:ajax process="@this" update="inicio fim"
-										listener="#{relatorioRecebimentoMB.actionTrocaDatas}" />
-									<f:selectItems value="#{padroesTelaMB.periodosDataBusca}"
-										var="periodo" itemValue="#{periodo}"
-										itemLabel="#{periodo.descricao}" />
-								</p:selectOneMenu>
-							</h:panelGroup>
+body .ui-selectcheckboxmenu {
+	margin: 0px !important;
+	padding: 0px !important;
+}
 
-							<h:panelGroup styleClass="md-inputfield taller">
-								<h:outputText for="inicio" value="Data de crédito Inicio : " />
-								<p:calendar id="inicio" value="#{relatorioRecebimentoMB.inicio}"
-									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
-									required="true" />
-							</h:panelGroup>
+ui-selectcheckboxmenu-label {
+	margin: 0px !important;
+	padding: 0px !important;
+}
 
-							<h:panelGroup styleClass="md-inputfield taller">
-								<h:outputText for="fim" value="Data de crédito Fim : " />
-								<p:calendar id="fim" value="#{relatorioRecebimentoMB.fim}"
-									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
-									required="true" />
-							</h:panelGroup>
+ui-selectonemenu-label {
+	margin: 0px !important;
+	padding: 0px !important;
+}
 
-							<h:panelGroup>
-								<p:outputLabel for="status" value="Status do Recebimento: " />
-								<p:selectOneMenu id="status"
-									value="#{relatorioRecebimentoMB.status}"
-									converter="enumStatusLancamento">
-									<f:selectItem itemValue="#{null}" itemLabel="Todos" />
-									<f:selectItems value="#{relatorioRecebimentoMB.statuss}"
-										var="status" itemLabel="#{status.descricao}"
-										itemValue="#{status}" />
-									<p:ajax
-										listener="#{relatorioRecebimentoMB.alteraStatusLancamento}"
-										update="subStatusRecebimento" />
-								</p:selectOneMenu>
-							</h:panelGroup>
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
+	margin-top: 2.5px !important;
+	padding: 0px !important;
+}
 
-							<h:panelGroup styleClass="lumeField">
-								<p:outputLabel for="subStatusRecebimento"
-									value="Sub Status do Recebimento: " />
-								<p:selectCheckboxMenu id="subStatusRecebimento"
-									label="Sub Status" multiple="true" style="top: -14px;"
-									value="#{relatorioRecebimentoMB.subStatus}"
-									converter="enumSubStatusLancamento">
-									<f:selectItems value="#{relatorioRecebimentoMB.listaSubStatus}"
-										var="substatus" itemLabel="#{substatus.descricao}"
-										itemValue="#{substatus}" />
-								</p:selectCheckboxMenu>
-							</h:panelGroup>
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
+	{
+	margin-top: -12px !important;
+}
+</style>
 
-						</p:panelGrid>
-
-						<div class="SeparatorFull"></div>
-
-						<p:panelGrid columns="4" layout="grid"
-							styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="pesquisar" icon="fa fa-search White"
-								value="Pesquisar"
-								actionListener="#{relatorioRecebimentoMB.filtra}"
-								update="dtPrincipal,pnPrincipal"
-								process="@this,pnPrincipal,inicio,fim" styleClass="OrangeButton" />
-
-							<ui:remove>
-								<p:commandButton value="Excel" ajax="false"
-									icon="White fa fa-file-excel-o" styleClass="GreenButton">
-									<p:dataExporter encoding="iso-8859-1" type="xls"
-										target="dtPrincipal" fileName="RelatorioLancamento" />
-								</p:commandButton>
-							</ui:remove>
-
-							<p:commandButton id="new" icon="White fa fa-file-o"
-								value="Limpar"
-								actionListener="#{relatorioRecebimentoMB.actionNew}"
-								update="dtPrincipal,pnPrincipal" immediate="true" tabindex="1" />
-
-							<h:panelGroup>
-								<p:splitButton icon="White fa fa fa-file-excel-o"
-									value="Exportar tabela para Excel"
-									styleClass="GreenSplitButton"
-									actionListener="#{relatorioRecebimentoMB.exportarTabela('xls')}"
-									ajax="false" process="dtPrincipal,@this" update="@this"
-									immediate="true"
-									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-
-									<p:fileDownload
-										value="#{relatorioRecebimentoMB.arquivoDownload}" />
-
-									<p:menuitem value="Exportar tabela para PDF"
-										icon="fa fa fa-file-pdf-o"
-										actionListener="#{relatorioRecebimentoMB.exportarTabela('pdf')}"
-										ajax="false" process="dtPrincipal,@this" immediate="true"
-										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{relatorioRecebimentoMB.arquivoDownload}" />
-									</p:menuitem>
-									<p:menuitem value="Exportar tabela para CSV"
-										icon="fa fa fa-file-pdf-o"
-										actionListener="#{relatorioRecebimentoMB.exportarTabela('csv')}"
-										ajax="false" process="dtPrincipal,@this" immediate="true"
-										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{relatorioRecebimentoMB.arquivoDownload}" />
-									</p:menuitem>
-								</p:splitButton>
-							</h:panelGroup>
-
-						</p:panelGrid>
-
-
-						<div class="EmptyBox20"></div>
-
-						<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-							id="dtPrincipal" value="#{relatorioRecebimentoMB.lancamentos}"
-							var="lancamento" rows="10" paginator="true"
-							rowKey="#{lancamento}" paginatorPosition="bottom"
-							binding="#{relatorioRecebimentoMB.tabelaRelatorio}">
-							<f:facet name="header">Lançamentos</f:facet>
-							<p:column filterBy="#{lancamento.dataPagamentoStr}"
-								sortBy="#{lancamento.dataPagamentoStrOrd}"
-								filterMatchMode="contains" headerText="Data pagamento">
-								<h:outputText value="#{lancamento.dataPagamentoStr}" />
-							</p:column>
-							<p:column filterBy="#{lancamento.dataCreditoStr}"
-								sortBy="#{lancamento.dataCreditoStr}" filterMatchMode="contains"
-								headerText="Data crédito">
-								<h:outputText value="#{lancamento.dataCreditoStr}"
-									title="#{lancamento.id}" />
-							</p:column>
-							<p:column filterBy="#{lancamento.statusCompleto}"
-								sortBy="#{lancamento.statusCompleto}" filterMatchMode="contains"
-								headerText="Status">
-								<h:outputText value="#{lancamento.statusCompleto}" />
-							</p:column>
-							<p:column filterBy="#{lancamento.formaPagamentoStr}"
-								sortBy="#{lancamento.formaPagamentoStr}"
-								filterMatchMode="contains" headerText="Forma">
-								<h:outputText value="#{lancamento.formaPagamentoStr}" />
-							</p:column>
-							<p:column filterBy="#{lancamento.numeroParcela}"
-								sortBy="#{lancamento.numeroParcela}" filterMatchMode="contains"
-								headerText="Parcela">
-								<h:outputText value="#{lancamento.numeroParcela}">
-									<f:convertNumber />
-								</h:outputText>
-							</p:column>
-							<p:column
-								filterBy="#{lancamento.fatura.paciente.dadosBasico.nome}"
-								sortBy="#{lancamento.fatura.paciente.dadosBasico.nome}"
-								filterMatchMode="contains" headerText="Paciente">
-								<h:outputText
-									value="#{lancamento.fatura.paciente.dadosBasico.nome}" />
-							</p:column>
-							<p:column
-								filterBy="#{relatorioRecebimentoMB.planoTratamentoFromLancamento(lancamento)}"
-								sortBy="#{relatorioRecebimentoMB.planoTratamentoFromLancamento(lancamento)}"
-								filterMatchMode="contains" headerText="Plano de Tratamento">
-								<h:outputText
-									value="#{relatorioRecebimentoMB.planoTratamentoFromLancamento(lancamento)}" />
-							</p:column>
-							<p:column filterBy="#{lancamento.valor}"
-								sortBy="#{lancamento.valor}" filterMatchMode="contains"
-								headerText="Valor (R$)">
-								<h:outputText value="#{lancamento.valor}">
-									<f:convertNumber currencySymbol="R$" type="currency"
-										locale="#{lumeSecurity.locale}" />
-								</h:outputText>
-								<f:facet name="footer">
-									<h:outputText value="Total " />
-									<h:outputText value="#{relatorioRecebimentoMB.somaValor}">
-										<f:convertNumber currencySymbol="R$" type="currency"
-											minFractionDigits="2" />
-									</h:outputText>
-								</f:facet>
-							</p:column>
-						</p:dataTable>
-					</p:outputPanel>
-
-				</div>
-			</div>
-		</div>
-	</ui:define>
-</ui:composition>

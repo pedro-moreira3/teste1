@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.TooltipHelper;
+import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.UtilsPadraoRelatorio;
 import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
@@ -35,6 +37,7 @@ import br.com.lume.descontoOrcamento.DescontoOrcamentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
+import br.com.lume.lancamento.objects.LancamentoParcelaInfo;
 import br.com.lume.negociacao.NegociacaoFaturaSingleton;
 import br.com.lume.odonto.entity.DescontoOrcamento;
 import br.com.lume.odonto.entity.Dominio;
@@ -121,8 +124,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private BigDecimal novoLancamentoValorTotal;
     private BigDecimal novoLancamentoValorDaParcela;
     private BigDecimal novoLancamentoValorDaPrimeiraParcela;
+    private BigDecimal novoLancamentoValorDaPrimeiraParcelaDiferenca;
     private Date novoLancamentoDataPagamento, novoLancamentoDataCredito;
     private String novoLancamentoTooltipNegociacaoTarifasDisponiveis;
+    private List<LancamentoParcelaInfo> novoLancamentoParcelas;
+    private String novoLancamentoMensagemCalculo, novoLancamentoMensagemErroCalculo;
 
     //Campos para lançamentos a pagar e a receber da aba financeiro do paciente
     private List<Lancamento> lAPagar, lAReceber;
@@ -135,6 +141,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private String negociacaoTipoDesconto;
     private BigDecimal negociacaoValorDesconto;
     private BigDecimal negociacaoValorDaPrimeiraParcela;
+    private BigDecimal negociacaoValorDaPrimeiraParcelaDirefenca;
     private BigDecimal negociacaoValorDaParcela;
     private BigDecimal negociacaoValorTotal;
     private String negociacaoObservacao;
@@ -144,6 +151,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private Tarifa negociacaoFormaPagamento;
     private Date negociacaoDataPagamento, negociacaoDataCredito;
     private NegociacaoFatura negociacaoConfirmacao;
+    private List<LancamentoParcelaInfo> negociacaoParcelas;
+    private String negociacaoMensagemCalculo, negociacaoMensagemErroCalculo;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
@@ -629,7 +638,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             editarLancamentoAtualizarFormasPagamentoDisponiveis();
     }
 
-    public void actionPersistEditarLancamento(Lancamento l) {
+    public void actionPersistEditarLancamento() {
         try {
             LancamentoSingleton.getInstance().getBo().persist(editarLancamento);
 
@@ -683,11 +692,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 return;
             }
 
-            List<BigDecimal> demaisParcelas = new ArrayList<>();
-            for (int parcela = 1; parcela <= novoLancamentoQuantidadeParcelas - 1; parcela++)
-                demaisParcelas.add(novoLancamentoValorDaParcela);
-            LancamentoSingleton.getInstance().novoParcelamento(getEntity(), novoLancamentoQuantidadeParcelas, novoLancamentoValorDaPrimeiraParcela, demaisParcelas, novoLancamentoFormaPagamento,
-                    novoLancamentoDataPagamento, novoLancamentoDataCredito, UtilsFrontEnd.getProfissionalLogado());
+            //List<BigDecimal> demaisParcelas = new ArrayList<>();
+            //for (int parcela = 1; parcela <= novoLancamentoQuantidadeParcelas - 1; parcela++)
+            //    demaisParcelas.add(novoLancamentoValorDaParcela);
+            //LancamentoSingleton.getInstance().novoParcelamento(getEntity(), novoLancamentoQuantidadeParcelas, novoLancamentoValorDaPrimeiraParcela, demaisParcelas, novoLancamentoFormaPagamento,
+            //        novoLancamentoDataPagamento, novoLancamentoDataCredito, UtilsFrontEnd.getProfissionalLogado());
+            if (novoLancamentoParcelas != null && novoLancamentoParcelas.size() > 0 && novoLancamentoValorDaPrimeiraParcelaDiferenca != null)
+                novoLancamentoParcelas.get(0).setValor(novoLancamentoParcelas.get(0).getValor().add(novoLancamentoValorDaPrimeiraParcelaDiferenca));
+            LancamentoSingleton.getInstance().novoParcelamento(getEntity(), novoLancamentoParcelas, UtilsFrontEnd.getProfissionalLogado());
 
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
             updateValues(getEntity(), true, true);
@@ -715,6 +727,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         if (parcelasDisponiveis == null)
             novoLancamentoAtualizaPossibilidadesParcelas();
         novoLancamentoValorTotal = getEntity().getDadosTabelaRepasseTotalNaoPlanejado();
+        novoLancamentoMensagemCalculo = null;
+        novoLancamentoMensagemErroCalculo = null;
+        this.novoLancamentoParcelas = new ArrayList<>();
         novoLancamentoLimpaCampos();
         novoLancamentoZeraValores();
         novoLancamentoAtualizaTooltipTarifasDisponiveis();
@@ -724,6 +739,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         novoLancamentoAtualizaPossibilidadesTarifa();
         novoLancamentoZeraValores();
         novoLancamentoRefazCalculos();
+    }
+
+    public void actionNovoLancamentoAlteraFormaPagamento() {
+        actionNovoLancamentoAlteraDataPagamento();
+        novoLancamentoAtualizaListaParcelas();
     }
 
     public void actionNovoLancamentoAlteraDataPagamento() {
@@ -777,6 +797,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void novoLancamentoRefazCalculos() {
         if (novoLancamentoQuantidadeParcelas == null)
             return;
+        novoLancamentoValorDaPrimeiraParcelaDiferenca = BigDecimal.ZERO;
 
         if (novoLancamentoValorDaPrimeiraParcela != null) {
             if (novoLancamentoValorDaPrimeiraParcela.compareTo(novoLancamentoValorTotal) > 0) {
@@ -789,13 +810,15 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 novoLancamentoValorDaParcela = novoLancamentoValorTotal.subtract(novoLancamentoValorDaPrimeiraParcela).divide(quantidadeParcelasBD, 2, BigDecimal.ROUND_HALF_UP);
 
                 BigDecimal totalParcelado = quantidadeParcelasBD.multiply(novoLancamentoValorDaParcela).add(novoLancamentoValorDaPrimeiraParcela);
-                BigDecimal diferentaParcelamento = novoLancamentoValorTotal.subtract(totalParcelado);
-                if (diferentaParcelamento.compareTo(BigDecimal.ZERO) != 0) {
-                    novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorDaPrimeiraParcela.add(diferentaParcelamento);
-                }
+                novoLancamentoValorDaPrimeiraParcelaDiferenca = novoLancamentoValorTotal.subtract(totalParcelado);
+
+                atualizaInfoParcelamentoNovoLancamento(TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE);
             } else {
+                novoLancamentoValorDaPrimeiraParcelaDiferenca = BigDecimal.ZERO;
                 novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorTotal;
                 novoLancamentoValorDaParcela = null;
+
+                atualizaInfoParcelamentoNovoLancamento(TipoNegociacao.A_VISTA);
             }
         } else {
             if (novoLancamentoQuantidadeParcelas > 1) {
@@ -804,15 +827,24 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorDaParcela;
 
                 BigDecimal totalParcelado = quantidadeParcelasBD.multiply(novoLancamentoValorDaParcela);
-                BigDecimal diferentaParcelamento = novoLancamentoValorTotal.subtract(totalParcelado);
-                if (diferentaParcelamento.compareTo(BigDecimal.ZERO) != 0) {
-                    novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorDaPrimeiraParcela.add(diferentaParcelamento);
-                }
+                novoLancamentoValorDaPrimeiraParcelaDiferenca = novoLancamentoValorTotal.subtract(totalParcelado);
+
+                atualizaInfoParcelamentoNovoLancamento(TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS);
             } else {
-                novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorDaParcela;
+                novoLancamentoValorDaPrimeiraParcelaDiferenca = BigDecimal.ZERO;
+                novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorTotal;
                 novoLancamentoValorDaParcela = null;
+
+                atualizaInfoParcelamentoNovoLancamento(TipoNegociacao.A_VISTA);
             }
         }
+
+        novoLancamentoAtualizaListaParcelas();
+    }
+
+    private void novoLancamentoAtualizaListaParcelas() {
+        this.novoLancamentoParcelas = atualizaListaParcelas(novoLancamentoDataPagamento, novoLancamentoDataCredito, novoLancamentoQuantidadeParcelas, novoLancamentoValorDaPrimeiraParcela,
+                novoLancamentoValorDaParcela, novoLancamentoFormaPagamento);
     }
 
     private void novoLancamentoAtualizaTooltipTarifasDisponiveis() {
@@ -826,22 +858,38 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         novoLancamentoTooltipNegociacaoTarifasDisponiveis = TooltipHelper.getInstance().montaTabela(new String[] { "Produto", "Parcela Mínima", "Parcela Máxima" }, linhas);
     }
 
-    public String getInfoParcelamentoNovoLancamento() {
+    private void atualizaInfoParcelamentoNovoLancamento(TipoNegociacao tipoNegociacao) {
         NumberFormat ptFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 
-        if (novoLancamentoValorDaPrimeiraParcela != null && novoLancamentoQuantidadeParcelas != null && novoLancamentoValorDaParcela != null && novoLancamentoValorTotal != null) {
-            return "Entrada de " + ptFormat.format(novoLancamentoValorDaPrimeiraParcela) + " mais " + String.valueOf(novoLancamentoQuantidadeParcelas - 1) + "x de " + ptFormat.format(
+        if (tipoNegociacao == TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE) {
+            novoLancamentoMensagemCalculo = "Entrada de " + ptFormat.format(novoLancamentoValorDaPrimeiraParcela) + " mais " + String.valueOf(
+                    novoLancamentoQuantidadeParcelas - 1) + "x de " + ptFormat.format(novoLancamentoValorDaParcela) + ". Total de " + ptFormat.format(novoLancamentoValorTotal);
+        } else if (tipoNegociacao == TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS) {
+            novoLancamentoMensagemCalculo = "Pagamento em " + String.valueOf(novoLancamentoQuantidadeParcelas) + "x de " + ptFormat.format(
                     novoLancamentoValorDaParcela) + ". Total de " + ptFormat.format(novoLancamentoValorTotal);
-        } else if (novoLancamentoValorDaPrimeiraParcela != null && novoLancamentoQuantidadeParcelas != null && novoLancamentoQuantidadeParcelas == 1) {
-            return "Pagamento à vista de " + ptFormat.format(novoLancamentoValorDaPrimeiraParcela);
+        } else if (tipoNegociacao == TipoNegociacao.A_VISTA) {
+            novoLancamentoMensagemCalculo = "Pagamento a vista, valor de R$ " + ptFormat.format(novoLancamentoValorTotal);
+        }
+
+        if (novoLancamentoValorDaPrimeiraParcelaDiferenca != null && novoLancamentoValorDaPrimeiraParcelaDiferenca.compareTo(BigDecimal.ZERO) != 0) {
+            novoLancamentoMensagemErroCalculo = "Atenção! Diferença de " + ptFormat.format(
+                    novoLancamentoValorDaPrimeiraParcelaDiferenca) + " na soma das parcelas. " + "Essa diferença será somada na primeira parcela automaticamente.";
         } else {
-            return "Complete os dados para realizar o cálculo!";
+            novoLancamentoMensagemErroCalculo = null;
         }
     }
 
     //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------
 
     //-------------------------------- NEGOCIACAO --------------------------------
+
+    public void atualizaTipoDesconto() {
+
+    }
+
+    public void actionAlteraDescontoValor() {
+        this.negociacaoValorDaPrimeiraParcela = null;
+    }
 
     public void actionAlteraDataPagamentoNegociacao() {
         if (negociacaoFormaPagamento != null && negociacaoDataPagamento != null) {
@@ -851,6 +899,17 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             negociacaoDataCredito = cal.getTime();
         } else
             negociacaoDataCredito = null;
+
+        negociacaoAtualizaListaParcelas();
+    }
+
+    public void actionAlteraDataCreditoNegociacao() {
+        negociacaoAtualizaListaParcelas();
+    }
+
+    public void actionAlteraFormaPagamentoNegociacao() {
+        actionAlteraDataPagamentoNegociacao();
+        negociacaoAtualizaListaParcelas();
     }
 
     public void actionNovaNegociacao() {
@@ -870,6 +929,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 valorDeDesconto = negociacaoValorDesconto.divide(BigDecimal.valueOf(100)).multiply(negociacaoValorTotal);
             BigDecimal totalSemDesconto = negociacaoValorTotal.subtract(valorDeDesconto);
 
+            if (negociacaoValorDaPrimeiraParcela != null && negociacaoValorDaPrimeiraParcelaDirefenca != null)
+                negociacaoValorDaPrimeiraParcela = negociacaoValorDaPrimeiraParcela.add(negociacaoValorDaPrimeiraParcelaDirefenca);
             NegociacaoFaturaSingleton.getInstance().criaNovaNegociacao(getEntity(), getDescontoObjFromParcela(negociacaoQuantidadeParcelas), negociacaoQuantidadeParcelas, negociacaoTipoDesconto,
                     negociacaoValorDesconto, negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, negociacaoValorTotal, totalSemDesconto, negociacaoObservacao,
                     UtilsFrontEnd.getProfissionalLogado());
@@ -898,8 +959,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void actionConfirmaNegociacao() {
         try {
-            NegociacaoFaturaSingleton.getInstance().aprovarNegociacao(negociacaoConfirmacao, negociacaoFormaPagamento, negociacaoDataPagamento, negociacaoDataCredito,
-                    UtilsFrontEnd.getProfissionalLogado());
+            NegociacaoFaturaSingleton.getInstance().aprovarNegociacao(negociacaoConfirmacao, negociacaoParcelas, UtilsFrontEnd.getProfissionalLogado());
 
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
             updateValues(getEntity(), true, false);
@@ -920,10 +980,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.negociacaoValorDesconto = negociacaoFatura.getValorDesconto();
         this.negociacaoValorDaPrimeiraParcela = negociacaoFatura.getValorPrimeiraParcela();
         this.negociacaoValorDaParcela = negociacaoFatura.getValorParcela();
-        this.negociacaoValorTotal = negociacaoFatura.getValorTotal();
         this.negociacaoObservacao = negociacaoFatura.getObservacao();
+        this.negociacaoMensagemCalculo = null;
+        this.negociacaoMensagemErroCalculo = null;
+
         atualizaPossibilidadesTarifaNegociacao();
         atualizaTooltipTarifasDisponiveis();
+        negociacaoAtualizaListaParcelas();
+        refazCalculos();
+
+        this.negociacaoValorTotal = negociacaoFatura.getValorTotal().subtract(negociacaoFatura.getResultadoDesconto());
     }
 
     public void atualizaQuantidadeDeParcelas() {
@@ -962,7 +1028,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         BigDecimal totalSemDesconto = negociacaoValorTotal.subtract(valorDeDesconto);
 
         if (negociacaoValorDaPrimeiraParcela != null) {
-            if (negociacaoValorDaPrimeiraParcela.compareTo(negociacaoValorTotal) > 0) {
+            if (negociacaoValorDaPrimeiraParcela.compareTo(totalSemDesconto) > 0) {
                 this.addError("Erro", "Insira uma primeira parcela menor que o total!");
                 return;
             }
@@ -972,13 +1038,15 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 negociacaoValorDaParcela = totalSemDesconto.subtract(negociacaoValorDaPrimeiraParcela).divide(quantidadeParcelasBD, 2, BigDecimal.ROUND_HALF_UP);
 
                 BigDecimal totalParcelado = quantidadeParcelasBD.multiply(negociacaoValorDaParcela).add(negociacaoValorDaPrimeiraParcela);
-                BigDecimal diferentaParcelamento = totalSemDesconto.subtract(totalParcelado);
-                if (diferentaParcelamento.compareTo(BigDecimal.ZERO) != 0) {
-                    negociacaoValorDaPrimeiraParcela = negociacaoValorDaPrimeiraParcela.add(diferentaParcelamento);
-                }
+                negociacaoValorDaPrimeiraParcelaDirefenca = totalSemDesconto.subtract(totalParcelado);
+
+                atualizaInfoParcelamentoNegociacao(TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE);
             } else {
-                negociacaoValorDaPrimeiraParcela = negociacaoValorTotal;
+                negociacaoValorDaPrimeiraParcelaDirefenca = BigDecimal.ZERO;
+                negociacaoValorDaPrimeiraParcela = totalSemDesconto;
                 negociacaoValorDaParcela = null;
+
+                atualizaInfoParcelamentoNegociacao(TipoNegociacao.A_VISTA);
             }
         } else {
             if (negociacaoQuantidadeParcelas > 1) {
@@ -987,31 +1055,37 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 negociacaoValorDaPrimeiraParcela = negociacaoValorDaParcela;
 
                 BigDecimal totalParcelado = quantidadeParcelasBD.multiply(negociacaoValorDaParcela);
-                BigDecimal diferentaParcelamento = totalSemDesconto.subtract(totalParcelado);
-                if (diferentaParcelamento.compareTo(BigDecimal.ZERO) != 0) {
-                    negociacaoValorDaPrimeiraParcela = negociacaoValorDaPrimeiraParcela.add(diferentaParcelamento);
-                }
+                negociacaoValorDaPrimeiraParcelaDirefenca = totalSemDesconto.subtract(totalParcelado);
+
+                atualizaInfoParcelamentoNegociacao(TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS);
             } else {
-                negociacaoValorDaPrimeiraParcela = negociacaoValorTotal;
+                negociacaoValorDaPrimeiraParcelaDirefenca = BigDecimal.ZERO;
+                negociacaoValorDaPrimeiraParcela = totalSemDesconto;
                 negociacaoValorDaParcela = null;
+
+                atualizaInfoParcelamentoNegociacao(TipoNegociacao.A_VISTA);
             }
         }
     }
 
-    public String getInfoParcelamento() {
+    private void atualizaInfoParcelamentoNegociacao(TipoNegociacao tipoNegociacao) {
         NumberFormat ptFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-        BigDecimal valorDeDesconto = (negociacaoValorDesconto == null ? BigDecimal.ZERO : negociacaoValorDesconto);
-        if ("P".equals(negociacaoTipoDesconto) && negociacaoValorDesconto != null)
-            valorDeDesconto = negociacaoValorDesconto.divide(BigDecimal.valueOf(100)).multiply(negociacaoValorTotal);
-        BigDecimal totalSemDesconto = negociacaoValorTotal.subtract(valorDeDesconto);
 
-        if (negociacaoValorDaPrimeiraParcela != null && negociacaoQuantidadeParcelas != null && negociacaoValorDaParcela != null && negociacaoValorTotal != null) {
-            return "Entrada de " + ptFormat.format(negociacaoValorDaPrimeiraParcela) + " mais " + String.valueOf(negociacaoQuantidadeParcelas - 1) + "x de " + ptFormat.format(
-                    negociacaoValorDaParcela) + ". Total de " + ptFormat.format(totalSemDesconto);
-        } else if (negociacaoValorDaPrimeiraParcela != null && negociacaoQuantidadeParcelas != null && negociacaoQuantidadeParcelas == 1) {
-            return "Pagamento à vista de " + ptFormat.format(negociacaoValorDaPrimeiraParcela);
+        if (tipoNegociacao == TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE) {
+            negociacaoMensagemCalculo = "Entrada de " + ptFormat.format(negociacaoValorDaPrimeiraParcela) + " mais " + String.valueOf(negociacaoQuantidadeParcelas - 1) + "x de " + ptFormat.format(
+                    negociacaoValorDaParcela) + ". Total de " + ptFormat.format(negociacaoValorTotal);
+        } else if (tipoNegociacao == TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS) {
+            negociacaoMensagemCalculo = "Pagamento em " + String.valueOf(negociacaoQuantidadeParcelas) + "x de " + ptFormat.format(negociacaoValorDaParcela) + ". Total de " + ptFormat.format(
+                    negociacaoValorTotal);
+        } else if (tipoNegociacao == TipoNegociacao.A_VISTA) {
+            negociacaoMensagemCalculo = "Pagamento a vista, valor de R$ " + ptFormat.format(negociacaoValorDaPrimeiraParcela);
+        }
+
+        if (negociacaoValorDaPrimeiraParcelaDirefenca != null && negociacaoValorDaPrimeiraParcelaDirefenca.compareTo(BigDecimal.ZERO) != 0) {
+            negociacaoMensagemErroCalculo = "Atenção! Diferença de " + ptFormat.format(
+                    negociacaoValorDaPrimeiraParcelaDirefenca) + " na soma das parcelas. " + "Essa diferença será somada na primeira parcela automaticamente.";
         } else {
-            return "Complete os dados para realizar o cálculo!";
+            negociacaoMensagemErroCalculo = null;
         }
     }
 
@@ -1100,7 +1174,56 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         tooltipNegociacaoTarifasDisponiveis = TooltipHelper.getInstance().montaTabela(new String[] { "Produto", "Parcela Mínima", "Parcela Máxima" }, linhas);
     }
 
+    private void negociacaoAtualizaListaParcelas() {
+        this.negociacaoParcelas = atualizaListaParcelas(negociacaoDataPagamento, negociacaoDataCredito, negociacaoQuantidadeParcelas, negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela,
+                negociacaoFormaPagamento);
+    }
+
     //-------------------------------- NEGOCIACAO --------------------------------
+
+    //-------------------------------- NEGOCIACAO E NOVO LANCAMENTO --------------------------------
+
+    private enum TipoNegociacao {
+        A_VISTA,
+        PARCELADO_TODAS_PARCELAS_IGUAIS,
+        PARCELADO_PRIMEIRA_PARCELA_DIFERENTE
+    };
+
+    private List<LancamentoParcelaInfo> atualizaListaParcelas(Date dataPagamento, Date dataCredito, Integer quantidadeParcelas, BigDecimal valorPrimeiraParcela, BigDecimal valorParcela,
+            Tarifa formaPagamento) {
+        List<LancamentoParcelaInfo> lancamentos = new ArrayList<>();
+
+        Calendar now = null, data = null;
+        if (dataPagamento != null) {
+            now = Calendar.getInstance();
+            now.setTime(dataPagamento);
+        }
+        if (dataCredito != null) {
+            data = Calendar.getInstance();
+            data.setTime(dataCredito);
+        }
+
+        for (int parcela = 1; parcela <= quantidadeParcelas; parcela++) {
+            if (parcela == 1)
+                lancamentos.add(new LancamentoParcelaInfo(parcela, valorPrimeiraParcela, formaPagamento, (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
+            else
+                lancamentos.add(new LancamentoParcelaInfo(parcela, valorParcela, formaPagamento, (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
+
+            if (formaPagamento != null && "CC".equals(formaPagamento.getTipo())) {
+                if (data != null)
+                    data.add(Calendar.DAY_OF_MONTH, formaPagamento.getPrazo());
+            } else if (formaPagamento != null && !"CC".equals(formaPagamento.getTipo())) {
+                if (now != null)
+                    now.add(Calendar.MONTH, 1);
+                if (data != null)
+                    data.add(Calendar.MONTH, 1);
+            }
+        }
+
+        return lancamentos;
+    }
+
+    //-------------------------------- NEGOCIACAO E NOVO LANCAMENTO --------------------------------
 
     public double tributoLancamento(Lancamento lancamento) {
 
@@ -1121,12 +1244,25 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         if (getEntity() == null || getEntity().getId() == null || getEntity().getId() == 0)
             return null;
         List<Lancamento> lancamentosSearch = new ArrayList<>();
-        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), true));
-        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), false));
+        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.VALIDADO));
+        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.NAO_VALIDADO));
+        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.FALHA_OPERACAO));
         if (showLancamentosCancelados) {
-            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), true, false));
-            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), false, false));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.VALIDADO, false));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.NAO_VALIDADO, false));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.FALHA_OPERACAO, false));
         }
+
+        if (lancamentosSearch != null)
+            lancamentosSearch.sort(new Comparator<Lancamento>() {
+
+                @Override
+                public int compare(Lancamento o1, Lancamento o2) {
+                    return Long.compare(o1.getId(), o2.getId());
+                }
+
+            });
+
         return lancamentosSearch;
     }
 
@@ -1224,8 +1360,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             BigDecimal valorLancamentos = new BigDecimal(0);
             BigDecimal valorItens = new BigDecimal(0);
 
-            List<Lancamento> lancamentos = LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(this.getEntity(), true);
-            lancamentos.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(this.getEntity(), false));
+            List<Lancamento> lancamentos = LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(this.getEntity(), ValidacaoLancamento.VALIDADO);
+            lancamentos.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(this.getEntity(), ValidacaoLancamento.NAO_VALIDADO));
 
             for (Lancamento lancamento : lancamentos) {
                 if (lancamento.isAtivo()) {
@@ -1599,6 +1735,30 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.tooltipNegociacaoTarifasDisponiveis = tooltipNegociacaoTarifasDisponiveis;
     }
 
+    public List<LancamentoParcelaInfo> getNegociacaoParcelas() {
+        return negociacaoParcelas;
+    }
+
+    public void setNegociacaoParcelas(List<LancamentoParcelaInfo> negociacaoParcelas) {
+        this.negociacaoParcelas = negociacaoParcelas;
+    }
+
+    public String getNegociacaoMensagemCalculo() {
+        return negociacaoMensagemCalculo;
+    }
+
+    public void setNegociacaoMensagemCalculo(String negociacaoMensagemCalculo) {
+        this.negociacaoMensagemCalculo = negociacaoMensagemCalculo;
+    }
+
+    public String getNegociacaoMensagemErroCalculo() {
+        return negociacaoMensagemErroCalculo;
+    }
+
+    public void setNegociacaoMensagemErroCalculo(String negociacaoMensagemErroCalculo) {
+        this.negociacaoMensagemErroCalculo = negociacaoMensagemErroCalculo;
+    }
+
     //-------------------------------- NEGOCIACAO --------------------------------
 
     //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------
@@ -1680,6 +1840,30 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setNovoLancamentoTooltipNegociacaoTarifasDisponiveis(String novoLancamentoTooltipNegociacaoTarifasDisponiveis) {
         this.novoLancamentoTooltipNegociacaoTarifasDisponiveis = novoLancamentoTooltipNegociacaoTarifasDisponiveis;
+    }
+
+    public List<LancamentoParcelaInfo> getNovoLancamentoParcelas() {
+        return novoLancamentoParcelas;
+    }
+
+    public void setNovoLancamentoParcelas(List<LancamentoParcelaInfo> novoLancamentoParcelas) {
+        this.novoLancamentoParcelas = novoLancamentoParcelas;
+    }
+
+    public String getNovoLancamentoMensagemCalculo() {
+        return novoLancamentoMensagemCalculo;
+    }
+
+    public void setNovoLancamentoMensagemCalculo(String novoLancamentoMensagemCalculo) {
+        this.novoLancamentoMensagemCalculo = novoLancamentoMensagemCalculo;
+    }
+
+    public String getNovoLancamentoMensagemErroCalculo() {
+        return novoLancamentoMensagemErroCalculo;
+    }
+
+    public void setNovoLancamentoMensagemErroCalculo(String novoLancamentoMensagemErroCalculo) {
+        this.novoLancamentoMensagemErroCalculo = novoLancamentoMensagemErroCalculo;
     }
 
     //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------

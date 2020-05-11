@@ -21,10 +21,12 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
+import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
+import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.motivo.MotivoSingleton;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.DadosBasico;
@@ -73,6 +75,9 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         geraListaOrigens();
 
         this.statussFatura = Fatura.getStatusFaturaLista();
+        
+        tipoFatura = "RP";
+        atualizaTipoFatura();
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
@@ -225,7 +230,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         return "R$ " + df.format(value);
     }
 
-    public String valorPagoFatura(Fatura fatura) {
+    public String valorRecebidoFatura(Fatura fatura) {
         Locale Local = new Locale("pt", "BR");
 
         double value = fatura.getDadosTabelaRepasseTotalPago().doubleValue();
@@ -234,7 +239,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         return "R$ " + df.format(value);
     }
 
-    public String valorPagarFatura(Fatura fatura) {
+    public String valorReceberFatura(Fatura fatura) {
         Locale Local = new Locale("pt", "BR");
 
         double value = fatura.getDadosTabelaRepasseTotalNaoPago().doubleValue();
@@ -242,6 +247,26 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
         return "R$ " + df.format(value);
     }
+    
+    public String valorConferirFatura(Fatura fatura) {
+        Locale Local = new Locale("pt", "BR");
+       
+        
+        double value =  LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.NAO_VALIDADO).doubleValue();
+        DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
+
+        return "R$ " + df.format(value);
+    }
+    
+    public String valorConferidoFatura(Fatura fatura) {
+        Locale Local = new Locale("pt", "BR");
+
+        double value =  LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO).doubleValue();
+        DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
+
+        return "R$ " + df.format(value);
+    }
+    
 
     public String converterData(Date data) {
         return Utils.dateToString(data);

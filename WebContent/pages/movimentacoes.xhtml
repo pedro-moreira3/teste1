@@ -34,13 +34,14 @@
 										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 										<h:panelGroup styleClass="md-combo">
-											<h:outputText for="filtroPeriodoAReceber"
-												value="Período da Data de crédito:" />
-											<p:selectOneMenu id="filtroPeriodoAReceber"
-												value="#{movimentacoesMB.periodoBuscaAReceber}"
+											<h:outputText for="filtroPeriodoCreditoAReceber"
+												value="Período da Data de Crédito:" />
+											<p:selectOneMenu id="filtroPeriodoCreditoAReceber"
+												value="#{movimentacoesMB.periodoDataCreditoAReceber}"
 												converter="enumPeriodoBusca">
-												<p:ajax process="@this" update="inicioAReceber, fimAReceber"
-													listener="#{movimentacoesMB.actionTrocaDatasAReceber}" />
+												<p:ajax process="@this"
+													update="inicioCreditoAReceber, fimCreditoAReceber"
+													listener="#{movimentacoesMB.actionTrocaDatasCreditoAReceber}" />
 												<f:selectItems value="#{padroesTelaMB.periodosDataBusca}"
 													var="periodo" itemValue="#{periodo}"
 													itemLabel="#{periodo.descricao}" />
@@ -48,22 +49,52 @@
 										</h:panelGroup>
 
 										<h:panelGroup styleClass="md-inputfield taller">
-											<h:outputText for="inicioAReceber"
+											<h:outputText for="inicioCreditoAReceber"
 												value="Data de crédito de:" />
-											<p:calendar id="inicioAReceber"
-												value="#{movimentacoesMB.dataInicioAReceber}" />
+											<p:calendar id="inicioCreditoAReceber"
+												value="#{movimentacoesMB.inicioDataCreditoAReceber}" />
 										</h:panelGroup>
 
 										<h:panelGroup styleClass="md-inputfield taller">
-											<h:outputText for="fimAReceber" value="Data de crédito até:" />
-											<p:calendar id="fimAReceber"
-												value="#{movimentacoesMB.dataFimAReceber}" />
+											<h:outputText for="fimCreditoAReceber"
+												value="Data de crédito até:" />
+											<p:calendar id="fimCreditoAReceber"
+												value="#{movimentacoesMB.fimDataCreditoAReceber}" />
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="md-combo">
+											<h:outputText for="filtroPeriodoPagamentoAReceber"
+												value="Período da Data de Pagamento:" />
+											<p:selectOneMenu id="filtroPeriodoPagamentoAReceber"
+												value="#{movimentacoesMB.periodoDataPagamentoAReceber}"
+												converter="enumPeriodoBusca">
+												<p:ajax process="@this"
+													update="inicioPagamentoAReceber, fimPagamentoAReceber"
+													listener="#{movimentacoesMB.actionTrocaDatasPagamentoAReceber}" />
+												<f:selectItems value="#{padroesTelaMB.periodosDataBusca}"
+													var="periodo" itemValue="#{periodo}"
+													itemLabel="#{periodo.descricao}" />
+											</p:selectOneMenu>
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="md-inputfield taller">
+											<h:outputText for="inicioPagamentoAReceber"
+												value="Data de Pagamento de:" />
+											<p:calendar id="inicioPagamentoAReceber"
+												value="#{movimentacoesMB.inicioDataPagamentoAReceber}" />
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="md-inputfield taller">
+											<h:outputText for="fimPagamentoAReceber"
+												value="Data de Pagamento até:" />
+											<p:calendar id="fimPagamentoAReceber"
+												value="#{movimentacoesMB.fimDataPagamentoAReceber}" />
 										</h:panelGroup>
 
 										<h:panelGroup styleClass="md-inputfield taller">
 											<h:outputText for="filtroPaciente" value="Paciente:" />
 											<p:autoComplete id="filtroPaciente"
-												value="#{movimentacoesMB.paciente}"
+												value="#{movimentacoesMB.pacienteAReceber}"
 												style="margin-top: 10px !important"
 												completeMethod="#{movimentacoesMB.sugestoesPacientes}"
 												var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
@@ -84,38 +115,6 @@
 												</p:column>
 
 											</p:autoComplete>
-										</h:panelGroup>
-
-										<h:panelGroup styleClass="lumeField">
-											<p:outputLabel for="statusRecebimentoAReceber"
-												value="Status do recebimento: " />
-											<p:selectOneMenu id="statusRecebimentoAReceber"
-												style="top: -10px;"
-												value="#{movimentacoesMB.statusLancamentoAReceber}"
-												converter="enumStatusLancamento">
-												<f:selectItem itemValue="#{null}" itemLabel="Todos" />
-												<f:selectItems
-													value="#{movimentacoesMB.listaStatusLancamentoAReceber}"
-													var="status" itemLabel="#{status.descricao}"
-													itemValue="#{status}" />
-												<p:ajax
-													listener="#{movimentacoesMB.alteraStatusLancamentoAReceber}"
-													update="subStatusRecebimentoAReceber" />
-											</p:selectOneMenu>
-										</h:panelGroup>
-
-										<h:panelGroup styleClass="lumeField">
-											<p:outputLabel for="subStatusRecebimentoAReceber"
-												value="Sub Status do recebimento: " />
-											<p:selectCheckboxMenu id="subStatusRecebimentoAReceber"
-												label="Sub Status" multiple="true" style="top: -4px;"
-												value="#{movimentacoesMB.subStatusLancamentoAReceber}"
-												converter="enumSubStatusLancamento">
-												<f:selectItems
-													value="#{movimentacoesMB.listaSubStatusLancamentoAReceber}"
-													var="substatus" itemLabel="#{substatus.descricao}"
-													itemValue="#{substatus}" />
-											</p:selectCheckboxMenu>
 										</h:panelGroup>
 
 									</p:panelGrid>
@@ -142,17 +141,49 @@
 								<p:column headerText="Informação de origem"
 									filterBy="#{movimentacoesMB.getFaturaInfo(l.fatura)}"
 									sortBy="#{movimentacoesMB.getFaturaInfo(l.fatura)}"
-									filterMatchMode="contains" width="16%">
+									filterMatchMode="contains" width="15%">
 									<h:outputText
 										value="#{movimentacoesMB.getFaturaInfo(l.fatura)}" />
+								</p:column>
+								<p:column headerText="Origem" filterMatchMode="contains"
+									filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+									sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+									width="10%">
+									<p:commandLink process="@this" title="Visualizar Fatura"
+										value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+										actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
+										oncomplete="PF('dlgFaturaView').show();"
+										update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+								</p:column>
+								<p:column headerText="Data Pagamento" filterMatchMode="contains"
+									filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}"
+									width="15%">
+									<h:outputText value="#{l.dataPagamento}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Data Crédito" filterMatchMode="contains"
+									filterBy="#{l.dataCredito}" sortBy="#{l.dataCredito}"
+									width="15%">
+									<h:outputText value="#{l.dataCredito}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
 								</p:column>
 								<p:column headerText="Forma de pagamento"
 									filterMatchMode="contains" filterBy="#{l.formaPagamentoStr}"
 									sortBy="#{l.formaPagamentoStr}" width="15%">
 									<h:outputText value="#{l.formaPagamentoStr}" />
 								</p:column>
-								<p:column headerText="Valor" filterMatchMode="contains"
-									filterBy="#{l.valor}" sortBy="#{l.valor}" width="10%">
+								<p:column headerText="Validado?" filterMatchMode="contains"
+									filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}"
+									width="10%">
+									<h:outputText value="#{l.validadoStr}" />
+									<p:tooltip rendered="#{l.validado == 'S'}" for="@parent"
+										value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
+								</p:column>
+								<p:column headerText="Valor a receber"
+									filterMatchMode="contains" filterBy="#{l.valor}"
+									sortBy="#{l.valor}" width="10%">
 									<h:outputText value="#{l.valor}">
 										<f:convertNumber type="currency" currencySymbol="R$"
 											maxFractionDigits="2" />
@@ -165,40 +196,10 @@
 										</h:outputText>
 									</f:facet>
 								</p:column>
-								<p:column headerText="Data Pagamento" filterMatchMode="contains"
-									filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}">
-									<h:outputText value="#{l.dataPagamento}" width="12%">
-										<f:convertDateTime pattern="dd/MM/yyyy" />
-									</h:outputText>
-								</p:column>
-								<p:column headerText="Data Crédito" filterMatchMode="contains"
-									filterBy="#{l.dataCredito}" sortBy="#{l.dataCredito}"
-									width="12%">
-									<h:outputText value="#{l.dataCredito}">
-										<f:convertDateTime pattern="dd/MM/yyyy" />
-									</h:outputText>
-								</p:column>
-								<p:column headerText="Validado?" filterMatchMode="contains"
-									filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}"
-									width="10%">
-									<h:outputText value="#{l.validadoStr}" />
-									<p:tooltip rendered="#{l.validado == 'S'}" for="@parent"
-										value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
-								</p:column>
 								<p:column headerText="Status" filterMatchMode="contains"
 									filterBy="#{l.statusCompleto}" sortBy="#{l.statusCompleto}"
 									width="10%">
 									<h:outputText value="#{l.statusCompleto}" />
-								</p:column>
-								<p:column headerText="Origem" filterMatchMode="contains"
-									filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
-									sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
-									width="15%">
-									<p:commandLink process="@this" title="Visualizar Fatura"
-										value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
-										actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
-										oncomplete="PF('dlgFaturaView').show();"
-										update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 								</p:column>
 							</p:dataTable>
 
@@ -212,13 +213,14 @@
 										styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 										<h:panelGroup styleClass="md-combo">
-											<h:outputText for="filtroPeriodoAPagar"
+											<h:outputText for="filtroPeriodoCreditoAPagar"
 												value="Período da Data de Crédito:" />
-											<p:selectOneMenu id="filtroPeriodoAPagar"
-												value="#{movimentacoesMB.periodoBuscaAPagar}"
+											<p:selectOneMenu id="filtroPeriodoCreditoAPagar"
+												value="#{movimentacoesMB.periodoDataCreditoAPagar}"
 												converter="enumPeriodoBusca">
-												<p:ajax process="@this" update="inicioAPagar, fimAPagar"
-													listener="#{movimentacoesMB.actionTrocaDatasAPagar}" />
+												<p:ajax process="@this"
+													update="inicioCreditoAPagar, fimCreditoAPagar"
+													listener="#{movimentacoesMB.actionTrocaDatasCreditoAPagar}" />
 												<f:selectItems value="#{padroesTelaMB.periodosDataBusca}"
 													var="periodo" itemValue="#{periodo}"
 													itemLabel="#{periodo.descricao}" />
@@ -226,21 +228,52 @@
 										</h:panelGroup>
 
 										<h:panelGroup styleClass="md-inputfield taller">
-											<h:outputText for="inicioAPagar" value="Data de crédito de:" />
-											<p:calendar id="inicioAPagar"
-												value="#{movimentacoesMB.dataInicioAPagar}" />
+											<h:outputText for="inicioCreditoAPagar"
+												value="Data de crédito de:" />
+											<p:calendar id="inicioCreditoAPagar"
+												value="#{movimentacoesMB.inicioDataCreditoAPagar}" />
 										</h:panelGroup>
 
 										<h:panelGroup styleClass="md-inputfield taller">
-											<h:outputText for="fimAPagar" value="Data de crédito até:" />
-											<p:calendar id="fimAPagar"
-												value="#{movimentacoesMB.dataFimAPagar}" />
+											<h:outputText for="fimCreditoAPagar"
+												value="Data de crédito até:" />
+											<p:calendar id="fimCreditoAPagar"
+												value="#{movimentacoesMB.fimDataCreditoAPagar}" />
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="md-combo">
+											<h:outputText for="filtroPeriodoPagamentoAPagar"
+												value="Período da Data de Pagamento:" />
+											<p:selectOneMenu id="filtroPeriodoPagamentoAPagar"
+												value="#{movimentacoesMB.periodoDataPagamentoAPagar}"
+												converter="enumPeriodoBusca">
+												<p:ajax process="@this"
+													update="inicioPagamentoAPagar, fimPagamentoAPagar"
+													listener="#{movimentacoesMB.actionTrocaDatasPagmentoAPagar}" />
+												<f:selectItems value="#{padroesTelaMB.periodosDataBusca}"
+													var="periodo" itemValue="#{periodo}"
+													itemLabel="#{periodo.descricao}" />
+											</p:selectOneMenu>
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="md-inputfield taller">
+											<h:outputText for="inicioPagamentoAPagar"
+												value="Data de Pagamento de:" />
+											<p:calendar id="inicioPagamentoAPagar"
+												value="#{movimentacoesMB.inicioDataPagamentoAPagar}" />
+										</h:panelGroup>
+
+										<h:panelGroup styleClass="md-inputfield taller">
+											<h:outputText for="fimPagamentoAPagar"
+												value="Data de Pagamento até:" />
+											<p:calendar id="fimPagamentoAPagar"
+												value="#{movimentacoesMB.fimDataPagamentoAPagar}" />
 										</h:panelGroup>
 
 										<h:panelGroup styleClass="md-inputfield taller">
 											<h:outputText for="filtroProfissional" value="Profissional:" />
 											<p:autoComplete dropdown="true" queryDelay="1000" size="35"
-												value="#{movimentacoesMB.profissional}"
+												value="#{movimentacoesMB.profissionalAPagar}"
 												style="margin-top: 10px !important" id="filtroProfissional"
 												minQueryLength="3"
 												completeMethod="#{movimentacoesMB.geraSugestoesProfissional}"
@@ -249,38 +282,6 @@
 												itemValue="#{profissional}" converter="profissional"
 												forceSelection="true">
 											</p:autoComplete>
-										</h:panelGroup>
-
-										<h:panelGroup styleClass="lumeField">
-											<p:outputLabel for="statusRecebimentoAPagar"
-												value="Status do pagamento: " />
-											<p:selectOneMenu id="statusRecebimentoAPagar"
-												style="top: -10px;"
-												value="#{movimentacoesMB.statusLancamentoAPagar}"
-												converter="enumStatusLancamento">
-												<f:selectItem itemValue="#{null}" itemLabel="Todos" />
-												<f:selectItems
-													value="#{movimentacoesMB.listaStatusLancamentoAPagar}"
-													var="status" itemLabel="#{status.descricao}"
-													itemValue="#{status}" />
-												<p:ajax
-													listener="#{movimentacoesMB.alteraStatusLancamentoAPagar}"
-													update="subStatusRecebimentoAPagar" />
-											</p:selectOneMenu>
-										</h:panelGroup>
-
-										<h:panelGroup styleClass="lumeField">
-											<p:outputLabel for="subStatusRecebimentoAPagar"
-												value="Sub Status do pagamento: " />
-											<p:selectCheckboxMenu id="subStatusRecebimentoAPagar"
-												label="Sub Status" multiple="true" style="top: -4px;"
-												value="#{movimentacoesMB.subStatusLancamentoAPagar}"
-												converter="enumSubStatusLancamento">
-												<f:selectItems
-													value="#{movimentacoesMB.listaSubStatusLancamentoAPagar}"
-													var="substatus" itemLabel="#{substatus.descricao}"
-													itemValue="#{substatus}" />
-											</p:selectCheckboxMenu>
 										</h:panelGroup>
 
 									</p:panelGrid>
@@ -307,14 +308,45 @@
 								<p:column headerText="Informação de origem"
 									filterBy="#{movimentacoesMB.getFaturaInfo(l.fatura)}"
 									sortBy="#{movimentacoesMB.getFaturaInfo(l.fatura)}"
-									filterMatchMode="contains" width="16%">
+									filterMatchMode="contains" width="15%">
 									<h:outputText
 										value="#{movimentacoesMB.getFaturaInfo(l.fatura)}" />
+								</p:column>
+								<p:column headerText="Origem" filterMatchMode="contains"
+									filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+									sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+									width="10%">
+									<p:commandLink process="@this" title="Visualizar Fatura"
+										value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+										actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
+										oncomplete="PF('dlgFaturaView').show();"
+										update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
+								</p:column>
+								<p:column headerText="Data Pagamento" filterMatchMode="contains"
+									filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}"
+									width="15%">
+									<h:outputText value="#{l.dataPagamento}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
+								</p:column>
+								<p:column headerText="Data Crédito" filterMatchMode="contains"
+									filterBy="#{l.dataCredito}" sortBy="#{l.dataCredito}"
+									width="15%">
+									<h:outputText value="#{l.dataCredito}">
+										<f:convertDateTime pattern="dd/MM/yyyy" />
+									</h:outputText>
 								</p:column>
 								<p:column headerText="Forma de pagamento"
 									filterMatchMode="contains" filterBy="#{l.formaPagamentoStr}"
 									sortBy="#{l.formaPagamentoStr}" width="15%">
 									<h:outputText value="#{l.formaPagamentoStr}" />
+								</p:column>
+								<p:column headerText="Validado?" filterMatchMode="contains"
+									filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}"
+									width="10%">
+									<h:outputText value="#{l.validadoStr}" />
+									<p:tooltip rendered="#{l.validado == 'S'}"
+										value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
 								<p:column headerText="Valor" filterMatchMode="contains"
 									filterBy="#{l.valor}" sortBy="#{l.valor}" width="10%">
@@ -330,40 +362,10 @@
 										</h:outputText>
 									</f:facet>
 								</p:column>
-								<p:column headerText="Data Pagamento" filterMatchMode="contains"
-									filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}">
-									<h:outputText value="#{l.dataPagamento}" width="12%">
-										<f:convertDateTime pattern="dd/MM/yyyy" />
-									</h:outputText>
-								</p:column>
-								<p:column headerText="Data Crédito" filterMatchMode="contains"
-									filterBy="#{l.dataCredito}" sortBy="#{l.dataCredito}"
-									width="12%">
-									<h:outputText value="#{l.dataCredito}">
-										<f:convertDateTime pattern="dd/MM/yyyy" />
-									</h:outputText>
-								</p:column>
-								<p:column headerText="Validado?" filterMatchMode="contains"
-									filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}"
-									width="10%">
-									<h:outputText value="#{l.validadoStr}" />
-									<p:tooltip rendered="#{l.validado == 'S'}"
-										value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
-								</p:column>
 								<p:column headerText="Status" filterMatchMode="contains"
 									filterBy="#{l.statusCompleto}" sortBy="#{l.statusCompleto}"
 									width="10%">
 									<h:outputText value="#{l.statusCompleto}" />
-								</p:column>
-								<p:column headerText="Origem" filterMatchMode="contains"
-									filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
-									sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
-									width="15%">
-									<p:commandLink process="@this" title="Visualizar Fatura"
-										value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
-										actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
-										oncomplete="PF('dlgFaturaView').show();"
-										update=":lume:pnlAtualizacaoFaturaView, :lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura" />
 								</p:column>
 							</p:dataTable>
 
