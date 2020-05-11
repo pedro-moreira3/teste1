@@ -508,15 +508,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:outputLabel for="confereciaForma"
 												value="Forma de pagamento:" />
 											<p:selectOneMenu id="confereciaForma"
-												value="#{conferenciaRecebimentoMB.formaPagamento}">
+												value="#{conferenciaRecebimentoMB.formaPagamento}"
+												converter="tarifa">
 
 												<p:ajax process="@this" />
 
 												<f:selectItem itemValue="#{null}" itemLabel="Todos" />
-												<f:selectItem itemValue="CC" itemLabel="Cartão de crédito" />
-												<f:selectItem itemValue="CD" itemLabel="Cartão de débito" />
-												<f:selectItem itemValue="BO" itemLabel="Boleto" />
-												<f:selectItem itemValue="DI" itemLabel="Dinheiro" />
+												<f:selectItems value="#{conferenciaRecebimentoMB.tarifas}" var="tarifa" 
+													itemLabel="#{tarifa.produto}" itemValue="#{tarifa}"/>
 											</p:selectOneMenu>
 										</h:panelGroup>
 

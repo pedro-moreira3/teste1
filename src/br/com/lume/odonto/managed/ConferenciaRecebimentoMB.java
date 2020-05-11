@@ -3,15 +3,14 @@ package br.com.lume.odonto.managed;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
-import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.common.managed.LumeManagedBean;
@@ -20,10 +19,11 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.Lancamento;
-import br.com.lume.odonto.entity.LancamentoContabil;
 import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.Tarifa;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.tarifa.TarifaSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -38,12 +38,13 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     private Date dataCreditoFinal;
     private String statusCredito;
     private Paciente filtroPorPaciente;
-    private String formaPagamento;
+    private Tarifa formaPagamento;
     private List<Lancamento> lancamentosSelecionadosConferencia = new ArrayList<Lancamento>();
     private BigDecimal somatorioValorConferirConferencia = new BigDecimal(0);
     private BigDecimal somatorioValorConferidoConferencia = new BigDecimal(0);
     private BigDecimal somatorioValorTotalConferencia = new BigDecimal(0);
     private List<Lancamento> lancamentosValidar;
+    private List<Tarifa> tarifas = new ArrayList<>();
     
     //EXPORTAÇÃO TABELA
     private DataTable tabelaLancamentoConferencia;
@@ -55,6 +56,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
         this.periodoCredito = "1";
         this.actionTrocaDatasConferencia();
         this.carregarLancamentosConferencia();
+        this.geraListaTarifa();
     }
 
     public void carregarLancamentosConferencia() {
@@ -82,6 +84,18 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
+    }
+    
+    public void geraListaTarifa() {
+        try {
+            this.setTarifas(TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            if (this.getTarifas() != null)
+                Collections.sort(this.getTarifas());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+            e.printStackTrace();
         }
     }
     
@@ -240,11 +254,11 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
         this.periodoCredito = periodoCredito;
     }
 
-    public String getFormaPagamento() {
+    public Tarifa getFormaPagamento() {
         return formaPagamento;
     }
 
-    public void setFormaPagamento(String formaPagamento) {
+    public void setFormaPagamento(Tarifa formaPagamento) {
         this.formaPagamento = formaPagamento;
     }
 
@@ -326,6 +340,14 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
 
     public void setTabelaLancamentoConferencia(DataTable tabelaLancamentoConferencia) {
         this.tabelaLancamentoConferencia = tabelaLancamentoConferencia;
+    }
+
+    public List<Tarifa> getTarifas() {
+        return tarifas;
+    }
+
+    public void setTarifas(List<Tarifa> tarifas) {
+        this.tarifas = tarifas;
     }
     
 }
