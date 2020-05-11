@@ -56,7 +56,7 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
 
     private String filtroPeriodo;
 
-    private String tipoFatura = "RP";
+    private String tipoFatura;
 
     private DadosBasico origem;
 
@@ -75,6 +75,9 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         geraListaOrigens();
 
         this.statussFatura = Fatura.getStatusFaturaLista();
+        
+        tipoFatura = "RP";
+        atualizaTipoFatura();
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
