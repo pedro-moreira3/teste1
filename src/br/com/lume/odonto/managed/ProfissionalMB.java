@@ -268,30 +268,31 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             if (horas == null || horas.isEmpty()) {
                 
                 clinica = EmpresaSingleton.getInstance().getBo().find(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                String diasSemana[] = clinica.getDiasSemana().split(";");
-
-                if (GenericValidator.validarRangeData(clinica.getHoraInicialManha(), clinica.getHoraFinalManha(), true) && GenericValidator.validarRangeData(
-                        clinica.getHoraInicialTarde(), clinica.getHoraFinalTarde(),
-                        true) && clinica.getHoraFinalManha().before(clinica.getHoraInicialTarde())) {
-
-                    for (String diaSemana : diasSemana) {
-                        HorasUteisProfissional horasUteis = new HorasUteisProfissional();
-                        horasUteis.setId(0l);
-                        horasUteis.setExcluido(Status.NAO);
-                        horasUteis.setDiaDaSemana(diaSemana);
-                        horasUteis.setProfissional(profissional);
-                        horasUteis.setHoraIni(clinica.getHoraInicialManha());
-                        horasUteis.setHoraFim(clinica.getHoraFinalManha());
-                        horasUteis.setHoraIniTarde(clinica.getHoraInicialTarde());
-                        horasUteis.setHoraFimTarde(clinica.getHoraFinalTarde());
-                        HorasUteisProfissionalSingleton.getInstance().getBo().persist(horasUteis);
+                if(clinica.getDiasSemana() != null && !clinica.getDiasSemana().isEmpty()) {
+                    String diasSemana[] = clinica.getDiasSemana().split(";");
+    
+                    if (GenericValidator.validarRangeData(clinica.getHoraInicialManha(), clinica.getHoraFinalManha(), true) && GenericValidator.validarRangeData(
+                            clinica.getHoraInicialTarde(), clinica.getHoraFinalTarde(),
+                            true) && clinica.getHoraFinalManha().before(clinica.getHoraInicialTarde())) {
+    
+                        for (String diaSemana : diasSemana) {
+                            HorasUteisProfissional horasUteis = new HorasUteisProfissional();
+                            horasUteis.setId(0l);
+                            horasUteis.setExcluido(Status.NAO);
+                            horasUteis.setDiaDaSemana(diaSemana);
+                            horasUteis.setProfissional(profissional);
+                            horasUteis.setHoraIni(clinica.getHoraInicialManha());
+                            horasUteis.setHoraFim(clinica.getHoraFinalManha());
+                            horasUteis.setHoraIniTarde(clinica.getHoraInicialTarde());
+                            horasUteis.setHoraFimTarde(clinica.getHoraFinalTarde());
+                            HorasUteisProfissionalSingleton.getInstance().getBo().persist(horasUteis);
+                        }
+    
+                    } else {
+                        this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Inconsistência nos horários dos profissionais");
+                        return;
                     }
-
-                } else {
-                    this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Inconsistência nos horários dos profissionais");
-                    return;
                 }
-
                 if (profissional.getTempoConsulta() == null || profissional.getTempoConsulta() == 0)
                     profissional.setTempoConsulta(clinica.getTempoPadraoConsulta());
             }
