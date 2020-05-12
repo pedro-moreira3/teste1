@@ -55,12 +55,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 						<div style="display: inline-block">
 							<h1>
-								RelatÃ³rio de Recebimentos
+								Relatório de Recebimentos
 								<h:outputLabel class="fa fa-question" id="tooltipTitulo"
 									style="font-size:24px; margin-left:10px;" />
 								<p:tooltip for="tooltipTitulo"
-									value="Nessa tela vocÃª pode visualizar todos as faturas de recebimento, de acordo com os filtros, Ã© possÃ­vel consultar dados
-									especÃ­ficos. Para filtrar por sub status, Ã© necessÃ¡rio selecionar ao menos um status do recebimento."
+									value="Nessa tela você pode visualizar todos as faturas de recebimento, de acordo com os filtros, é possível consultar dados
+									específicos. Para filtrar por sub status, é necessário selecionar ao menos um status do recebimento."
 									position="bottom" style="width:40%;" />
 							</h1>
 						</div>
@@ -72,7 +72,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							<h:panelGroup styleClass="md-combo">
 								<h:outputText for="filtroPeriodoAReceber"
-									value="PerÃ­odo da Data de crÃ©dito:" />
+									value="Perioodo da Data de crédito:" />
 								<p:selectOneMenu id="filtroPeriodoAReceber"
 									value="#{relatorioRecebimentoMB.periodoBusca}"
 									converter="enumPeriodoBusca">
@@ -85,14 +85,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
-								<h:outputText for="inicio" value="Data de crÃ©dito Inicio : " />
+								<h:outputText for="inicio" value="Data de crédito inicio: " />
 								<p:calendar id="inicio" value="#{relatorioRecebimentoMB.inicio}"
 									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
 									required="true" />
 							</h:panelGroup>
 
 							<h:panelGroup styleClass="md-inputfield taller">
-								<h:outputText for="fim" value="Data de crÃ©dito Fim : " />
+								<h:outputText for="fim" value="Data de crédito fim: " />
 								<p:calendar id="fim" value="#{relatorioRecebimentoMB.fim}"
 									autocomplete="off" pattern="dd/MM/yyyy" mask="true"
 									required="true" />
@@ -136,7 +136,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										itemValue="#{status}" />
 									<p:ajax
 										listener="#{relatorioRecebimentoMB.alteraStatusLancamento}"
-										update="subStatusRecebimento" process="@this" />
+										update="subStatusRecebimento" process="@this,subStatusRecebimento" />
 								</p:selectOneMenu>
 								<h:outputLabel class="fa fa-question" id="tooltipStatus"
 									style="font-size:24px; margin-left:10px;" />
@@ -150,9 +150,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									value="Sub Status do Recebimento: " />
 								<p:selectCheckboxMenu id="subStatusRecebimento"
 									label="Sub Status" multiple="true"
-									style="top:7px;display:inline-block;width:80%;"
+									style="top:7px;display:inline-block;width:90%;"
 									value="#{relatorioRecebimentoMB.subStatus}"
 									converter="enumSubStatusLancamento">
+									<f:selectItem itemValue="#{null}" itemLabel="Todos" />
 									<f:selectItems value="#{relatorioRecebimentoMB.listaSubStatus}"
 										var="substatus" itemLabel="#{substatus.descricao}"
 										itemValue="#{substatus}" />
@@ -187,7 +188,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								value="Pesquisar"
 								actionListener="#{relatorioRecebimentoMB.filtra}"
 								update="dtPrincipal,pnPrincipal"
-								process="@this,inicio,fim,filtroPaciente"
+								process="@this,inicio,fim,filtroPaciente,subStatusRecebimento,status"
 								styleClass="OrangeButton" />
 
 							<ui:remove>
@@ -245,7 +246,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							rowKey="#{lancamento}" paginatorPosition="bottom"
 							binding="#{relatorioRecebimentoMB.tabelaRelatorio}">
 
-							<f:facet name="header">LanÃ§amentos</f:facet>
+							<f:facet name="header">Lançamentos</f:facet>
 
 							<p:column filterBy="#{lancamento.dataPagamentoStr}"
 								sortBy="#{lancamento.dataPagamentoStrOrd}"
@@ -254,7 +255,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:column>
 							<p:column filterBy="#{lancamento.dataCreditoStr}"
 								sortBy="#{lancamento.dataCreditoStr}" filterMatchMode="contains"
-								headerText="Data crÃ©dito">
+								headerText="Data crédito">
 								<h:outputText value="#{lancamento.dataCreditoStr}"
 									title="#{lancamento.id}" />
 							</p:column>
@@ -284,7 +285,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									<f:convertNumber />
 								</h:outputText>
 							</p:column>
-							<p:column headerText="Valor Ã  conferir"
+							<p:column headerText="Valor à conferir"
 								filterBy="#{relatorioRecebimentoMB.valorConferir(lancamento)}"
 								sortBy="#{relatorioRecebimentoMB.valorConferir(lancamento)}"
 								filterMatchMode="contains">

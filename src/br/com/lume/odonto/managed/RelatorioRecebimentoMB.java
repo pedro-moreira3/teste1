@@ -1,5 +1,6 @@
 package br.com.lume.odonto.managed;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,40 +83,37 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
                 this.setSomatorioValorConferirConferencia(new BigDecimal(0));
                 this.setSomatorioValorTotalConferencia(new BigDecimal(0));
                 
-                List<Lancamento> lancamentosFiltrados = LancamentoSingleton.getInstance().getBo().filterRelatorioRecebimentos(UtilsFrontEnd.getEmpresaLogada(), inicio, fim,
-                        !StatusLancamento.NAO_RECEBIDO.equals(status));
+                List<Lancamento> lancamentosFiltrados = LancamentoSingleton.getInstance().getBo().listByFiltros(this.inicio, this.fim, filtroPorPaciente, formaPagamento,
+                        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                
                 for (Lancamento l : lancamentosFiltrados) {
-                    boolean filtraSubStatus = false;
-                    if (this.subStatus != null && !Arrays.asList(this.subStatus).isEmpty()) {
-                        if (l.getSubStatus() != null && !l.getSubStatus().isEmpty()) {
-                            for (SubStatusLancamento subStatusLanc : l.getSubStatus()) {
-                                if (Arrays.asList(this.subStatus).indexOf(subStatusLanc) != -1) {
-                                    filtraSubStatus = true;
-                                    break;
-                                }
-                            }
-                        }
-                    } else {
-                        filtraSubStatus = true;
-                    }
-
-                    this.somatorioValorConferidoConferencia = somatorioValorConferidoConferencia.add(this.valorConferido(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
-                    this.somatorioValorConferirConferencia = somatorioValorConferirConferencia.add(this.valorConferido(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
-                    this.somatorioValorTotalConferencia = somatorioValorTotalConferencia.add(l.getValorComDesconto()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    boolean addLancamento = false;
                     
-                    if ((this.status == null || l.getStatus() == this.status) && filtraSubStatus && l.getFatura() != null && "RP".equals(l.getFatura().getTipoFatura().getRotulo())) {                        
-                        if(this.formaPagamento != null) {
-                            if(l.getTarifa().getId() == this.getFormaPagamento().getId()) {
-                                this.lancamentos.add(l);
-                            }
+                    if(this.status != null && this.subStatus != null && this.subStatus.length > 0) {
+                        if(this.status.equals(l.getStatus())) {
+                            
+                            for(int i = 0; i < this.subStatus.length ; i++)
+                                if(l.getSubStatus().contains(this.subStatus[i]))
+                                    addLancamento = true;
                         }
+                    }else if(this.status != null) {
+                        if(this.status.equals(l.getStatus())) {
+                            addLancamento = true;
+                        }
+                    }else {
+                        addLancamento = true;
                     }
-                }
+                    
+                    if(addLancamento) {
+                        this.lancamentos.add(l);
+                        
+                        this.somatorioValorConferidoConferencia = somatorioValorConferidoConferencia.add(this.valorConferido(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        this.somatorioValorConferirConferencia = somatorioValorConferirConferencia.add(this.valorConferir(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        this.somatorioValorTotalConferencia = somatorioValorTotalConferencia.add(l.getValorComDesconto()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                    }
 
-                if (this.lancamentos == null || this.lancamentos.isEmpty()) {
-                    this.addError(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"), "");
-                    this.log.error(OdontoMensagens.getMensagem("relatorio.procedimento.vazio"));
                 }
+                
             }
         } catch (Exception e) {
             this.log.error(e);
@@ -143,14 +141,16 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
     }
     
     public String planoTratamentoFromLancamento(Lancamento lancamento) {
+        try {
+            String planoTratamento = lancamento.getFatura().getItens().get(
+                    0).getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao();
 
-        String planoTratamento = lancamento.getFatura().getItens().get(
-                0).getOrigemOrcamento().getOrcamentoItem().getOrigemProcedimento().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao();
-
-        if (planoTratamento != null)
-            return planoTratamento;
-        return null;
-
+            if (planoTratamento != null)
+                return planoTratamento;
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
     }
     
     public List<Paciente> sugestoesPacientes(String query) {
