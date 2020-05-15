@@ -63,6 +63,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							listener="#{relatorioContabilMB.onTabChange}"
 							update=":lume:tv:pnExtrato,:lume:tv:pnExtratoDetalhado"
 							process="@this,:lume:tv:pnExtrato,:lume:tv:pnExtratoDetalhado" />
+						<p:ajax event="tabChange"
+							listener="#{relatorioContabilDetalhadoMB.onTabChange}"
+							update=":lume:tv:pnExtratoDetalhado"
+							process="@this,:lume:tv:pnExtratoDetalhado" />
+						<p:ajax event="tabChange"
+							listener="#{lancamentoContabilMB.onTabChange}"
+							update=":lume:tv:lancamentosAValidar" process="@this" />
 
 						<p:tab id="tab1" title="Pagamentos/Recebimentos">
 							<div class="ui-g ui-fluid">
@@ -419,7 +426,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									</p:outputPanel>
 									<br />
 
-									<p:panelGrid columns="3" layout="grid"
+									<p:panelGrid columns="3" layout="grid" id="lancamentosAValidar"
 										styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 										<h:panelGroup>
@@ -428,7 +435,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												value="#{conferenciaRecebimentoMB.periodoCredito}"
 												update="dataConferenciaInicial,dataConferenciaFinal">
 
-												<p:ajax process="@this" update="dataConferenciaInicial,dataConferenciaFinal"
+												<p:ajax process="@this"
+													update="dataConferenciaInicial,dataConferenciaFinal"
 													listener="#{conferenciaRecebimentoMB.actionTrocaDatasConferencia}" />
 
 												<f:selectItem itemValue="1" itemLabel="Hoje" />
@@ -447,8 +455,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												value="Data de crédito de:" />
 											<p:calendar id="dataConferenciaInicial"
 												value="#{conferenciaRecebimentoMB.dataCreditoInicial}"
-												autocomplete="false"
-												locale="#{lumeSecurity.locale}" mask="true">
+												autocomplete="false" locale="#{lumeSecurity.locale}"
+												mask="true">
 											</p:calendar>
 										</h:panelGroup>
 
@@ -457,8 +465,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												value="Data de crédito até:" />
 											<p:calendar id="dataConferenciaFinal"
 												value="#{conferenciaRecebimentoMB.dataCreditoFinal}"
-												autocomplete="false"
-												locale="#{lumeSecurity.locale}" mask="true" />
+												autocomplete="false" locale="#{lumeSecurity.locale}"
+												mask="true" />
 										</h:panelGroup>
 
 										<h:panelGroup>
@@ -514,8 +522,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												<p:ajax process="@this" />
 
 												<f:selectItem itemValue="#{null}" itemLabel="Todos" />
-												<f:selectItems value="#{conferenciaRecebimentoMB.tarifas}" var="tarifa" 
-													itemLabel="#{tarifa.produto}" itemValue="#{tarifa}"/>
+												<f:selectItems value="#{conferenciaRecebimentoMB.tarifas}"
+													var="tarifa" itemLabel="#{tarifa.produto}"
+													itemValue="#{tarifa}" />
 											</p:selectOneMenu>
 										</h:panelGroup>
 
@@ -568,7 +577,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:commandButton
 												value="Conferir todos os lançamentos selecionados"
 												actionListener="#{conferenciaRecebimentoMB.validarLancamentosSelecionados}"
-												update="dtLancamentoValidar" process="@this,dtLancamentoValidar" />
+												update="dtLancamentoValidar"
+												process="@this,dtLancamentoValidar" />
 										</h:panelGroup>
 									</p:panelGrid>
 
@@ -689,14 +699,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											exportable="false">
 											<p:commandButton icon="White fa fa-thumbs-o-up"
 												actionListener="#{conferenciaRecebimentoMB.actionValidarLancamento(lc)}"
-												update=":lume:tv:dtLancamentoValidar, :lume:tv:tab2" process="@this"
-												styleClass="GreenButton"
+												update=":lume:tv:dtLancamentoValidar, :lume:tv:tab2"
+												process="@this" styleClass="GreenButton"
 												oncomplete="PF('dtLancamentoValidar').filter()"
 												title="Valor recebido" />
 											<p:commandButton icon="White fa fa-thumbs-o-down"
 												actionListener="#{conferenciaRecebimentoMB.actionNaoValidarLancamento(lc)}"
-												update=":lume:tv:dtLancamentoValidar, :lume:tv:tab2" process="@this"
-												styleClass="RedButton"
+												update=":lume:tv:dtLancamentoValidar, :lume:tv:tab2"
+												process="@this" styleClass="RedButton"
 												oncomplete="PF('dtLancamentoValidar').filter()"
 												title="Falha no recebimento" />
 										</p:column>

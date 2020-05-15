@@ -50,7 +50,7 @@ public class RelatorioContabilMB extends LumeManagedBean<LancamentoContabil> {
         formatter = NumberFormat.getCurrencyInstance(this.getLumeSecurity().getLocale());
         this.setClazz(LancamentoContabil.class);
         this.carregarDatasIniciais();
-        this.filtra();
+        //this.filtra();
     }
 
     public void onTabChange(TabChangeEvent event) {
