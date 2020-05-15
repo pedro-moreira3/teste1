@@ -48,7 +48,7 @@
                         <div class="SeparatorFull"></div>
                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="new2" icon="White fa fa-file-o" value="Novo Procedimento" actionListener="#{procedimentoMB.actionNew}" update=":lume:pnProcedimento" immediate="true" />                        
-                            <p:commandButton id="persist2" process="@this" icon="White fa fa-save" value="Salvar" actionListener="#{procedimentoMB.actionPersist}" update=":lume:pnProcedimento, lume:tbProcedimento"
+                            <p:commandButton id="persist2" process="@this,:lume:pnProcedimento" icon="White fa fa-save" value="Salvar" actionListener="#{procedimentoMB.actionPersist}" update=":lume:pnProcedimento, lume:tbProcedimento"
                                 styleClass="GreenButton" />
                             <p:commandButton id="delete2" icon="White fa fa-trash-o" value="Excluir" actionListener="#{procedimentoMB.actionRemove}" update=":lume:pnProcedimento, lume:tbProcedimento"
                                 process=":lume:pnProcedimento" disabled="#{procedimentoMB.entity.id == null}" styleClass="RedButton" />                            
