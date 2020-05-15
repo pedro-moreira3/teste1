@@ -161,7 +161,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), true);
+        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
 
     public List<Profissional> sugestoesProfissionais(String query) {

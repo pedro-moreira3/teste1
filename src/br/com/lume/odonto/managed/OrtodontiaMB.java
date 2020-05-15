@@ -18,6 +18,7 @@ import br.com.lume.aparelhoOrtodontico.AparelhoOrtodonticoSingleton;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.diagnosticoOrtodontico.DiagnosticoOrtodonticoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -176,8 +177,9 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     @Override
-    public void actionNew(ActionEvent event) {
+    public void actionNew(ActionEvent event) {      
         setEntity(null);
+        getEntity().setDescricao("PT Orto - " + Utils.dateToString(new Date()));
         this.orcamentos = new ArrayList<Orcamento>();
         gerarOrcamentoPorProcedimento = false;
         try {

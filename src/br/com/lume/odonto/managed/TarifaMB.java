@@ -68,7 +68,9 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
         try {   
             if(getEntity().getParcelaMinima() > getEntity().getParcelaMaxima()) {
                 this.addError("Quantidade de parcela mínima não pode ser maior que parcela máxima.", "",true);
-            }else {
+            }else if(getEntity().getParcelaMinima() < 1 || getEntity().getParcelaMaxima() < 1 ) {
+                this.addError("Quantidade de parcela mínima e máxima não podem ser 0, deve ser no mínimo 1", "",true);
+            }else{
                 this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 super.actionPersist(event);
                 this.geraLista();            

@@ -145,10 +145,12 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
             
             this.carregarDescontos();
             
-            String dias[] = this.getEntity().getDiasSemana().split(";");
-            Arrays.stream(dias).forEach(dia -> {
-                getDiasSelecionados().add(dia);
-            });
+            if(this.getEntity().getDiasSemana() != null) {
+                String dias[] = this.getEntity().getDiasSemana().split(";");
+                Arrays.stream(dias).forEach(dia -> {
+                    getDiasSelecionados().add(dia);
+                });
+            }    
             
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");

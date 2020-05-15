@@ -1000,6 +1000,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         } else {
             negociacaoValorDesconto = null;
         }
+        
+        negociacaoValorDesconto = null;
+        
         refazCalculos();
         atualizaPossibilidadesTarifaNegociacao();
 
@@ -1023,6 +1026,13 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void refazCalculos() {
         negociacaoValorTotal = getEntity().getDadosTabelaRepasseTotalFatura();
         BigDecimal valorDeDesconto = (negociacaoValorDesconto == null ? BigDecimal.ZERO : negociacaoValorDesconto);
+        DescontoOrcamento descontoCadQtdeParcelas = descontosDisponiveis.get(negociacaoQuantidadeParcelas);
+        if ((descontoCadQtdeParcelas == null && valorDeDesconto.compareTo(BigDecimal.ZERO) > 0) || (valorDeDesconto.compareTo(descontoCadQtdeParcelas.getDesconto()) > 0)) {
+            negociacaoValorDesconto = null;
+            this.addError("Erro!", "Desconto dado maior que o máximo permitido.");
+            return;
+        }
+
         if ("P".equals(negociacaoTipoDesconto) && negociacaoValorDesconto != null)
             valorDeDesconto = negociacaoValorDesconto.divide(BigDecimal.valueOf(100)).multiply(negociacaoValorTotal);
         BigDecimal totalSemDesconto = negociacaoValorTotal.subtract(valorDeDesconto);
@@ -1071,12 +1081,18 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private void atualizaInfoParcelamentoNegociacao(TipoNegociacao tipoNegociacao) {
         NumberFormat ptFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 
+        negociacaoValorTotal = getEntity().getDadosTabelaRepasseTotalFatura();
+        BigDecimal valorDeDesconto = (negociacaoValorDesconto == null ? BigDecimal.ZERO : negociacaoValorDesconto);
+        if ("P".equals(negociacaoTipoDesconto) && negociacaoValorDesconto != null)
+            valorDeDesconto = negociacaoValorDesconto.divide(BigDecimal.valueOf(100)).multiply(negociacaoValorTotal);
+        BigDecimal totalSemDesconto = negociacaoValorTotal.subtract(valorDeDesconto);
+
         if (tipoNegociacao == TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE) {
             negociacaoMensagemCalculo = "Entrada de " + ptFormat.format(negociacaoValorDaPrimeiraParcela) + " mais " + String.valueOf(negociacaoQuantidadeParcelas - 1) + "x de " + ptFormat.format(
-                    negociacaoValorDaParcela) + ". Total de " + ptFormat.format(negociacaoValorTotal);
+                    negociacaoValorDaParcela) + ". Total de " + ptFormat.format(totalSemDesconto);
         } else if (tipoNegociacao == TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS) {
             negociacaoMensagemCalculo = "Pagamento em " + String.valueOf(negociacaoQuantidadeParcelas) + "x de " + ptFormat.format(negociacaoValorDaParcela) + ". Total de " + ptFormat.format(
-                    negociacaoValorTotal);
+                    totalSemDesconto);
         } else if (tipoNegociacao == TipoNegociacao.A_VISTA) {
             negociacaoMensagemCalculo = "Pagamento a vista, valor de R$ " + ptFormat.format(negociacaoValorDaPrimeiraParcela);
         }
