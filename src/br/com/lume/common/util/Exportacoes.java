@@ -42,6 +42,7 @@ import br.com.lume.security.entity.Empresa;
 import org.apache.poi.ss.util.CellRangeAddress;
 import br.com.lume.odonto.entity.Procedimento;
 import org.primefaces.component.treetable.TreeTable;
+import br.com.lume.odonto.entity.Especialidade;
 
 
 public class Exportacoes implements Serializable{
