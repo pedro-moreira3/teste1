@@ -44,7 +44,7 @@
  background-color: #3CB371 ;
 }
 
-.ui-datepicker-header{
+.painelCalendario  .ui-datepicker-header{
   display: none !important;
 }
 
@@ -162,7 +162,7 @@
 							</p:panelGrid>	
 																																		
 							<p:panelGrid columns="5" layout="grid" id="painelCalendario" 
-								styleClass="ui-panelgrid-blank ui-fluid form-group">
+								styleClass="ui-panelgrid-blank ui-fluid form-group painelCalendario">
 								<p:outputPanel >	
 									<h:outputText for="dataDisponibilidade" value="Selecione o dia:" />	
 									<p:calendar value="#{agendamentoRapidoMB.data}" mode="inline" 
