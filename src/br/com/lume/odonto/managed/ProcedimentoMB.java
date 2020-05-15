@@ -29,7 +29,7 @@ import br.com.lume.odonto.entity.Especialidade;
 import br.com.lume.odonto.entity.Procedimento;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.procedimento.ProcedimentoSingleton;
-
+import org.primefaces.component.treetable.TreeTable;
 @ManagedBean
 @ViewScoped
 public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
@@ -45,6 +45,8 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
     private TreeNode selectedNode;
 
     private String filtroTable;
+    
+    private TreeTable tabelaTree;
 
     public ProcedimentoMB() {
         super(ProcedimentoSingleton.getInstance().getBo());
@@ -52,6 +54,18 @@ public class ProcedimentoMB extends LumeManagedBean<Procedimento> {
         this.setClazz(Procedimento.class);
         this.geralist();
         this.carregaTreeProcedimentos(null);
+    }
+    
+    public void exportarTreeTable(String type) {
+        this.exportarTreeTable("Tabela de procedimentos", tabelaTree, type);
+    }
+    
+    public TreeTable getTabelaTree() {
+        return tabelaTree;
+    }
+
+    public void setTabelaTree(TreeTable tabelaTree) {
+        this.tabelaTree = tabelaTree;
     }
 
     private void geralist() {
