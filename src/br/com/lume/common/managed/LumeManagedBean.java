@@ -96,6 +96,36 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     public void setEntity(E entity) {
         this.entity = entity;
     }
+    
+      public void exportarTreeTable(String header, TreeTable tabela, String type) {
+
+ 
+
+        ByteArrayInputStream arq;
+        try {
+            this.exportacao = Exportacoes.getInstance();
+            arq = (this.exportacao.exportarTreeTabela(header, tabela, type));
+
+ 
+
+            if (type.equals("xls"))
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
+            else if (type.equals("pdf"))
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/pdf", header + "." + type));
+            else
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/csv", header + "." + type));
+
+ 
+
+            arq.close();
+
+ 
+
+        } catch (Exception e) {
+            this.addError("Erro", "Erro na exportação do documento.");
+            e.printStackTrace();
+        }
+    }
 
     public boolean isEstoqueCompleto() {
         return EmpresaBO.isEstoqueCompleto(UtilsFrontEnd.getEmpresaLogada());
