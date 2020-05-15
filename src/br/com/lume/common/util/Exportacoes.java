@@ -38,6 +38,12 @@ import com.lowagie.text.pdf.PdfWriter;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.security.entity.Empresa;
 
+
+import org.apache.poi.ss.util.CellRangeAddress;
+import br.com.lume.odonto.entity.Procedimento;
+import org.primefaces.component.treetable.TreeTable;
+
+
 public class Exportacoes implements Serializable{
     
     /**
