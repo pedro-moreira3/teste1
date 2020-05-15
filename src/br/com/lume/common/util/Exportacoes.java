@@ -176,6 +176,176 @@ public class Exportacoes implements Serializable{
         
     }
     
+    public ByteArrayInputStream exportarTreeTabela(String header, TreeTable table, String type) {
+        if (header != null && table != null && type != null) {
+            switch (type) {
+                case "xls":
+                    return this.exportarTabelaProcedimentosExcel(header, table);
+            }
+        }
+
+ 
+
+        return null;
+    }
+    
+    private ByteArrayInputStream exportarTabelaProcedimentosExcel(String header, TreeTable tabela) {
+
+ 
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+
+ 
+
+        List<TreeNode> colunas = tabela.getValue().getChildren();
+        for (int i = 0; i < colunas.size(); i++) {
+
+ 
+
+            Especialidade especialidade = (Especialidade) colunas.get(i).getData();
+            HSSFSheet sheetTabela = workbook.createSheet(especialidade.getDescricao());
+
+ 
+
+            Row cabecalho = sheetTabela.createRow(0);
+            Row cabecalho2 = sheetTabela.createRow(1);
+
+ 
+
+            if (colunas.get(i).getChildren().size() > 0)
+                for (int j = 0; j < colunas.get(i).getChildren().size(); j++) {
+                    Row linhaPlanilha = sheetTabela.createRow(j + 2);
+
+ 
+
+                    if (j == 0) {
+
+ 
+
+                        CellRangeAddress cellRangeAddress = new CellRangeAddress(0, 0, 0, 3);
+                        sheetTabela.addMergedRegion(cellRangeAddress);
+                        
+                        CellStyle styleTitulo = workbook.createCellStyle();
+
+ 
+
+                        styleTitulo.setAlignment(HorizontalAlignment.CENTER);
+                        styleTitulo.setBorderLeft(BorderStyle.THIN);
+                        styleTitulo.setBorderRight(BorderStyle.THIN);
+                        styleTitulo.setBorderBottom(BorderStyle.THIN);
+                        styleTitulo.setBorderTop(BorderStyle.THIN);
+
+ 
+
+                        Cell celula = cabecalho.createCell(0);
+                        celula.setCellValue(especialidade.getDescricao());
+                        celula.setCellStyle(styleTitulo);
+
+ 
+
+                        Cell celula5 = cabecalho2.createCell(0);
+                        celula5.setCellValue("Procedimento");
+                        celula5.setCellStyle(styleTitulo);
+                        
+                        Cell celula2 = cabecalho2.createCell(1);
+                        celula2.setCellValue("Código convênio");
+                        celula2.setCellStyle(styleTitulo);
+
+ 
+
+                        Cell celula3 = cabecalho2.createCell(2);
+                        celula3.setCellValue("Valor");
+                        celula3.setCellStyle(styleTitulo);
+
+ 
+
+                        Cell celula4 = cabecalho2.createCell(3);
+                        celula4.setCellValue("Valor repasse");
+                        celula4.setCellStyle(styleTitulo);
+
+ 
+
+                    }
+
+ 
+
+                    Cell celula = linhaPlanilha.createCell(0);
+                    Procedimento proc = (Procedimento) colunas.get(i).getChildren().get(j).getData();
+
+ 
+
+                    celula.setCellValue(proc.getDescricao());
+
+ 
+
+                    Cell celula2 = linhaPlanilha.createCell(1);
+                    celula2.setCellValue(proc.getCodigoConvenio());
+
+ 
+
+                    Cell celula3 = linhaPlanilha.createCell(2);
+                    celula3.setCellValue(proc.getValor().doubleValue());
+
+ 
+
+                    Cell celula4 = linhaPlanilha.createCell(3);
+                    celula4.setCellValue(proc.getValorRepasse().doubleValue());
+
+ 
+
+                }
+
+ 
+
+        }
+
+ 
+
+        try {
+
+ 
+
+            ByteArrayOutputStream outputData = new ByteArrayOutputStream();
+
+ 
+
+            workbook.write(outputData);
+
+ 
+
+            ByteArrayInputStream inputData = new ByteArrayInputStream(outputData.toByteArray());
+
+ 
+
+            outputData.flush();
+            outputData.close();
+
+ 
+
+            workbook.close();
+
+ 
+
+            return inputData;
+
+ 
+
+        } catch (Exception e) {
+            this.log.error("Erro ao exportar Tabela Excel", e);
+        } finally {
+            try {
+                workbook.close();
+            } catch (IOException e) {
+                this.log.error("Erro ao exportar Tabela Excel", e);
+                e.printStackTrace();
+            }
+        }
+
+ 
+
+        return null;
+    }
+    
     private ByteArrayInputStream exportarTabelaPDF(String header, DataTable table) {
 
         try {
