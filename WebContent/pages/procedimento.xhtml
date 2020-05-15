@@ -52,9 +52,26 @@
                                 process=":lume:pnProcedimento" styleClass="GreenButton" />
                             <p:commandButton id="delete2" icon="White fa fa-trash-o" value="Excluir" actionListener="#{procedimentoMB.actionRemove}" update=":lume:pnProcedimento, lume:tbProcedimento"
                                 process=":lume:pnProcedimento" disabled="#{procedimentoMB.entity.id == null}" styleClass="RedButton" />                            
+                            <ui:remove>
                             <p:commandButton value="Excel" ajax="false" icon="White fa fa-file-pdf-o" styleClass="GreenButton" immediate="true">
                                 <l:dataExporter fileName="procedimento" source="tbProcedimento" fileType="excel" />
                             </p:commandButton>
+                            </ui:remove>
+                            <h:panelGroup>
+                                <p:splitButton icon="White fa fa fa-file-excel-o"
+                                    value="Exportar tabela para Excel"
+                                    styleClass="GreenSplitButton"
+                                    actionListener="#{procedimentoMB.exportarTreeTable('xls')}"
+                                    ajax="false" process="tbProcedimento,@this" update="@this"
+                                    immediate="true"
+                                    onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+ 
+
+                                    <p:fileDownload
+                                        value="#{procedimentoMB.arquivoDownload}" />
+                                </p:splitButton>
+                            </h:panelGroup>
                         </p:panelGrid>
 
                         <div class="EmptyBox20"></div>
@@ -72,7 +89,7 @@
 
                     </p:outputPanel>
 
-                    <p:treeTable value="#{procedimentoMB.root}" var="espec" id="tbProcedimento" selection="#{procedimentoMB.selectedNode}" selectionMode="single">
+                    <p:treeTable binding="#{procedimentoMB.tabelaTree}" value="#{procedimentoMB.root}" var="espec" id="tbProcedimento" selection="#{procedimentoMB.selectedNode}" selectionMode="single">
                         <p:ajax event="select" update=":lume:pnProcedimento" />
                         <p:column style="width:150px">
                             <h:outputText value="#{espec.descricaoId}" title="#{espec.id}" />
