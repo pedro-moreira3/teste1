@@ -924,6 +924,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void actionPersistNegociacao() {
         try {
+            if(negociacaoValorDaPrimeiraParcela == null || negociacaoQuantidadeParcelas == null || negociacaoValorTotal == null) {
+                addError("Erro!", "Preencha todos os itens!");
+                return;
+            }
+            
             BigDecimal valorDeDesconto = (negociacaoValorDesconto == null ? BigDecimal.ZERO : negociacaoValorDesconto);
             if ("P".equals(negociacaoTipoDesconto) && negociacaoValorDesconto != null)
                 valorDeDesconto = negociacaoValorDesconto.divide(BigDecimal.valueOf(100)).multiply(negociacaoValorTotal);
@@ -959,6 +964,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void actionConfirmaNegociacao() {
         try {
+            if(negociacaoFormaPagamento == null || negociacaoDataPagamento == null || negociacaoDataCredito == null) {
+                addError("Erro!", "Preencha todos os itens!");
+                return;
+            }
             NegociacaoFaturaSingleton.getInstance().aprovarNegociacao(negociacaoConfirmacao, negociacaoParcelas, UtilsFrontEnd.getProfissionalLogado());
 
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
@@ -1001,7 +1010,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             negociacaoValorDesconto = null;
         }
         
-        negociacaoValorDesconto = null;
+        negociacaoValorDesconto = BigDecimal.ZERO;
         
         refazCalculos();
         atualizaPossibilidadesTarifaNegociacao();
