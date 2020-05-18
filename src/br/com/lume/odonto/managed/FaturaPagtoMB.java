@@ -1036,7 +1036,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         negociacaoValorTotal = getEntity().getDadosTabelaRepasseTotalFatura();
         BigDecimal valorDeDesconto = (negociacaoValorDesconto == null ? BigDecimal.ZERO : negociacaoValorDesconto);
         DescontoOrcamento descontoCadQtdeParcelas = descontosDisponiveis.get(negociacaoQuantidadeParcelas);
-        if ((descontoCadQtdeParcelas != null && valorDeDesconto.compareTo(BigDecimal.ZERO) > 0) || (valorDeDesconto.compareTo(descontoCadQtdeParcelas.getDesconto()) > 0)) {
+        if ((descontoCadQtdeParcelas == null && valorDeDesconto.compareTo(BigDecimal.ZERO) > 0) || (descontoCadQtdeParcelas != null && valorDeDesconto.compareTo(descontoCadQtdeParcelas.getDesconto()) > 0)) {
             negociacaoValorDesconto = null;
             this.addError("Erro!", "Desconto dado maior que o máximo permitido.");
             return;
