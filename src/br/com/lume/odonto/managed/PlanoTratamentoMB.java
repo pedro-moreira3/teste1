@@ -73,6 +73,8 @@ import br.com.lume.retorno.RetornoSingleton;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.statusDente.StatusDenteSingleton;
 import br.com.lume.tarifa.TarifaSingleton;
+import br.com.lume.odonto.entity.ConvenioProcedimento;
+
 
 @ManagedBean
 @ViewScoped
