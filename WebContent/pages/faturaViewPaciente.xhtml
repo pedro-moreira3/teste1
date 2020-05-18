@@ -1116,6 +1116,16 @@ body .lancamentoFalhaOperacao {
 									<h:outputText value="#{negociacao.descricao}" />
 								</p:column>
 
+								<p:column headerText="Valor da Primeira Parcela"
+									styleClass="#{(negociacao.status.rotulo == 'AP' ? 'negociacaoAprovada' : 'negociacaoEmAndamento')}"
+									sortBy="#{negociacao.valorPrimeiraParcela}"
+									filterBy="#{negociacao.valorPrimeiraParcela}"
+									filterMatchMode="contains">
+									<h:outputText value="#{negociacao.valorPrimeiraParcela}">
+										<f:convertNumber currencySymbol="R$ " type="currency" />
+									</h:outputText>
+								</p:column>
+
 								<p:column headerText="Valor da Parcela"
 									styleClass="#{(negociacao.status.rotulo == 'AP' ? 'negociacaoAprovada' : 'negociacaoEmAndamento')}"
 									sortBy="#{negociacao.valorParcela}"
