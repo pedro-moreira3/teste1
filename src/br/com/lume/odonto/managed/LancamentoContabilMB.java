@@ -17,6 +17,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.categoriaMotivo.CategoriaMotivoSingleton;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
@@ -99,10 +100,17 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             c.set(Calendar.DAY_OF_MONTH, 1);
             inicio = c.getTime();
             this.geraLista();
-            this.carregarLancamentosValidar();
+            //this.carregarLancamentosValidar();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
+    }
+    
+    public void onTabChange(TabChangeEvent event) {
+        System.out.println(event.getTab().getId());
+        if (event.getTab().getId().contains("tab2") && (lancamentosValidar == null || lancamentosValidar.isEmpty())) {
+            this.carregarLancamentosValidar();
         }
     }
 
