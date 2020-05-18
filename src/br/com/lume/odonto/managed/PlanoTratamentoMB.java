@@ -579,7 +579,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
 
             if (this.planoTratamentoProcedimentoSelecionado.getProcedimento() == null || this.planoTratamentoProcedimentoSelecionado.getProcedimento().getId() != this.procedimentoSelecionado.getId())
-                PlanoTratamentoProcedimentoSingleton.getInstance().atualizaPlanoTratamentoProcedimento(this.planoTratamentoProcedimentoSelecionado, getEntity(), this.procedimentoSelecionado,
+                atualizaPlanoTratamentoProcedimento(this.planoTratamentoProcedimentoSelecionado, getEntity(), this.procedimentoSelecionado,
                         getPaciente());
             if (isDente) {
                 String denteDescricao = this.denteRegiaoEscolhida.trim().split("Dente ")[1];
@@ -610,6 +610,84 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             log.error("actionAdicionarProcedimento", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
+    }
+    
+     public void atualizaPlanoTratamentoProcedimento(PlanoTratamentoProcedimento ptp, PlanoTratamento planoTratamento,
+            Procedimento procedimento, Paciente paciente) {
+        ptp.setPlanoTratamento(planoTratamento);
+        ptp.setProcedimento(procedimento);
+
+        ptp.setValorDescontoLabel(ptp.getValor());
+        ptp.setValorLabel(procedimento.getValor());
+        ptp.setQtdConsultas(0);
+        ptp.setDenteObj(null);
+        ptp.setStatusDente(null);
+        ptp.setPlanoTratamentoProcedimentoFaces(null);
+        ptp.setStatus(null);
+        ptp.setStatusNovo(null);
+        if (planoTratamento.isBconvenio() && paciente.getConvenio() != null
+                && paciente.getConvenio().getExcluido().equals(Status.NAO))
+            ptp.setConvenio(paciente.getConvenio());
+
+        BigDecimal valorConvenio = resolveDescontoConvenio(ptp);
+        if (valorConvenio != null) {
+            ptp.setValor(valorConvenio);
+            ptp.setCodigoConvenio(procedimento.getCodigoConvenio());
+            ptp.setValorConvenio(true);
+        } else {
+            ptp.setValor(procedimento.getValor());
+            ptp.setValorConvenio(false);
+        }
+        ptp.setValorDesconto(ptp.getValor());
+    }
+    
+    private BigDecimal resolveDescontoConvenio(PlanoTratamentoProcedimento ptProcedimento) {
+        try {
+            PlanoTratamento pt = ptProcedimento.getPlanoTratamento();
+            Procedimento procedimento = ptProcedimento.getProcedimento();
+            Convenio convenio = pt.getConvenio();
+            ConvenioProcedimento cp = 
+                    findByConvenioAndProcedimento(convenio, procedimento);
+            if (pt.isBconvenio() && convenio != null
+                    && convenio.getDataInicioVigencia().before(Calendar.getInstance().getTime())
+                    && convenio.getDataFimVigencia().after(Calendar.getInstance().getTime())
+                    && convenio.getExcluido().equals(Status.NAO)) {
+                if (convenio.getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE) || convenio.getTipo().equals(Convenio.CONVENIO_EMPRESA))
+                    return cp.getValor();
+            }
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+        }
+        // return ptProcedimento.getValor();
+        return null;
+    }
+    
+    public ConvenioProcedimento findByConvenioAndProcedimento(Convenio convenio, Procedimento procedimento) throws Exception {
+        try {
+          //  Map<String, Object> parametros = new HashMap<>();
+          //  parametros.put("convenio", convenio);
+           // parametros.put("procedimento", procedimento);
+          //  parametros.put("idEmpresa", convenio.getIdEmpresa());
+            //parametros.put("idEmpresa", 41);
+          //  parametros.put("excluido", Status.NAO);
+          //  parametros.put("status", Status.ATIVO);
+           // return this.findByFields(parametros);
+            
+            StringBuilder sb = new StringBuilder();
+            sb.append("SELECT * FROM CONVENIO_PROCEDIMENTO WHERE ID_CONVENIO = ?1 AND ID_PROCEDIMENTO = ?2 AND ID_EMPRESA = ?3 AND EXCLUIDO = 'N' AND STATUS='A' ");
+            Query query = ConvenioProcedimentoSingleton.getInstance().getBo().getDao().createNativeQuery(sb.toString(), ConvenioProcedimento.class);
+            query.setParameter(1, convenio.getId());
+            query.setParameter(2, procedimento.getId());
+            query.setParameter(3, convenio.getIdEmpresa());
+           
+           if(query.getResultList() != null && !query.getResultList().isEmpty()) {
+               ConvenioProcedimento cp = (ConvenioProcedimento) query.getResultList().get(0);
+               return cp;
+           }
+        } catch (Exception e) {
+            log.error("Erro no findByConvenioAndProcedimento", e);
+        }
+        return null;
     }
 
     private void calculaValorTotal() {
