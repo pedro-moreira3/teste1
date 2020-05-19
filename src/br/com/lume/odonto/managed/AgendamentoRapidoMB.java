@@ -103,6 +103,8 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
 
     private String observacoesVindasDlgAgendamento = null;
     
+    private Agendamento agendamentoExistenteNaAgenda;
+    
     public AgendamentoRapidoMB() {
         super(AgendamentoSingleton.getInstance().getBo());   
         this.setClazz(Agendamento.class); 
@@ -119,6 +121,11 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     }
     
     public void confirmaAgendamentoComPaciente(Agendamento agendamento) {
+        if(agendamentoExistenteNaAgenda != null && agendamentoExistenteNaAgenda.getId() != 0) {
+            agendamentoExistenteNaAgenda.setInicio(agendamento.getInicio());
+            agendamentoExistenteNaAgenda.setFim(agendamento.getFim());
+            agendamento = agendamentoExistenteNaAgenda;
+        }
         try {
             if(agendamento.getHash() == null) {
                 agendamento.setHash(GeradorSenha.gerarSenha());    
@@ -684,9 +691,16 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         this.paciente = paciente;
         populaAgenda();
     }
-    public void carregaDisponibilidadeFromDlgAgendamento(Paciente paciente,Profissional profissionalDentroAgenda, Date dataAgendamento,PlanoTratamento 
+    public void carregaDisponibilidadeFromDlgAgendamento(Agendamento agendamento,Paciente paciente,Profissional profissionalDentroAgenda, Date dataAgendamento,PlanoTratamento 
             pt,Integer cadeira,DualListModel<AgendamentoPlanoTratamentoProcedimento> aptp,String observacoes) {
         filtroPorProfissional = profissionalDentroAgenda;
+        if(agendamento != null && agendamento.getId() != 0) {
+            agendamentoExistenteNaAgenda = agendamento;
+            agendamentoExistenteNaAgenda.setPaciente(paciente);
+            agendamentoExistenteNaAgenda.setPlanoTratamento(pt);
+            agendamentoExistenteNaAgenda.setCadeira(cadeira);
+            agendamentoExistenteNaAgenda.setDescricao(observacoes);          
+        }
         data = dataAgendamento;
         this.paciente = paciente;
         this.planoTratamento = pt;
@@ -1039,6 +1053,15 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
+    }
+    
+    public Agendamento getAgendamentoExistenteNaAgenda() {
+        return agendamentoExistenteNaAgenda;
+    }
+
+    
+    public void setAgendamentoExistenteNaAgenda(Agendamento agendamentoExistenteNaAgenda) {
+        this.agendamentoExistenteNaAgenda = agendamentoExistenteNaAgenda;
     }
 
 }

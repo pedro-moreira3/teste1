@@ -404,7 +404,7 @@
 							style="display:inline-flex;">
 							<p:commandButton id="visualizarDisponibilidade" process="@this,:lume:pnDisponibilidade"
 								disabled="#{agendamentoMB.profissionalDentroAgenda == null}"
-								actionListener="#{agendamentoRapidoMB.carregaDisponibilidadeFromDlgAgendamento(agendamentoMB.pacienteSelecionado,agendamentoMB.profissionalDentroAgenda,agendamentoMB.inicio,
+								actionListener="#{agendamentoRapidoMB.carregaDisponibilidadeFromDlgAgendamento(agendamentoMB.entity,agendamentoMB.pacienteSelecionado,agendamentoMB.profissionalDentroAgenda,agendamentoMB.inicio,
 								agendamentoMB.planoTratamentoSelecionado,agendamentoMB.cadeiraDentroAgenda,agendamentoMB.procedimentosPickList,agendamentoMB.observacoes)}"
 								update=":lume:pnDisponibilidade"
 								icon="fa fa-calendar-o White" 
