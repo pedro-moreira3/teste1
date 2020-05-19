@@ -44,7 +44,7 @@
  background-color: #3CB371 ;
 }
 
-.painelCalendario  .ui-datepicker-header{
+.painelCalendario .ui-datepicker-header{
   display: none !important;
 }
 
@@ -100,7 +100,7 @@
 <p:dialog widgetVar="dlgDisponibilidade" resizable="false"
 		onHide="PF('dlgDisponibilidade').toggleMaximize();"
 		onShow="PF('dlgDisponibilidade').toggleMaximize();" appendTo=":lume"
-		header="Disponibilidade do profissiona" responsive="true"
+		header="Disponibilidade do profissional" responsive="true"
 		modal="true"
 		width="calc(100% - 2px)" height="100%" position="0,0"
 		>
@@ -203,7 +203,21 @@
 					paginator="false"  reflow="true"
 					emptyMessage="Nenhum registro encontrado"					
 					selection="#{agendamentoRapidoMB.entity}"
-					selectionMode="single" filterDelay="1000">						
+					selectionMode="single" filterDelay="1000">	
+					<p:column headerText="Ações">					
+						<p:commandButton styleClass="GreenButton" icon="fa fa-check"
+							title="Confirmar agendamento"
+							update="@this"
+							actionListener="#{agendamentoRapidoMB.confirmaAgendamentoComPaciente(agendamento)}"
+							process="@this"					
+							disabled="#{agendamentoRapidoMB.paciente == null or agendamentoRapidoMB.getStatusDescricao(agendamento) ne 'Horário Disponível'}"
+							onsuccess="PF('dlgDisponibilidade').hide();PF('eventDialog').hide();updateSchedule();"
+							>
+							<p:confirm header="Confirmação" icon="ui-icon-alert"
+							message="Você confirma o agendamento para o paciente #{agendamentoRapidoMB.paciente.dadosBasico.nome} nesse horário?">
+						</p:confirm>
+						</p:commandButton>
+					</p:column>
 					<p:column filterBy="#{agendamento.inicio}"
 						sortBy="#{agendamento.inicio}" filterMatchMode="contains"
 						headerText="Hora início">
@@ -390,7 +404,8 @@
 							style="display:inline-flex;">
 							<p:commandButton id="visualizarDisponibilidade" process="@this,:lume:pnDisponibilidade"
 								disabled="#{agendamentoMB.profissionalDentroAgenda == null}"
-								actionListener="#{agendamentoRapidoMB.carregaDisponibilidadeFromAgendamento(agendamentoMB.profissionalDentroAgenda,agendamentoMB.inicio)}"
+								actionListener="#{agendamentoRapidoMB.carregaDisponibilidadeFromDlgAgendamento(agendamentoMB.entity,agendamentoMB.pacienteSelecionado,agendamentoMB.profissionalDentroAgenda,agendamentoMB.inicio,
+								agendamentoMB.planoTratamentoSelecionado,agendamentoMB.cadeiraDentroAgenda,agendamentoMB.procedimentosPickList,agendamentoMB.observacoes)}"
 								update=":lume:pnDisponibilidade"
 								icon="fa fa-calendar-o White" 
 								oncomplete="PF('dlgDisponibilidade').show();PF('dtRelagendamento').filter();"
@@ -402,6 +417,7 @@
 			<p:panelGrid columns="1" layout="grid"
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
 				<h:panelGroup style="display: flex;" styleClass="md-combo">
+				
 					<p:outputLabel for="paciente" value="#{dominioMB.cliente}" />
 
 					<p:autoComplete dropdown="true" queryDelay="1000"
@@ -430,8 +446,7 @@
 						<p:ajax event="itemSelect"
 							listener="#{agendamentoMB.handleSelect}"
 							update="planoTratamento, pgProcedimentos, pnBtpaciente" />
-					</p:autoComplete>
-
+					</p:autoComplete>					
 					<p:outputPanel id="pnBtpaciente" style="display:inline-flex">
 						<p:commandButton id="cadastroPaciente"
 							rendered="#{!agendamentoMB.visivel and agendamentoMB.visivelDadosPaciente}"
