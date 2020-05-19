@@ -1269,7 +1269,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 					process="@this, :lume:tabViewPaciente:pgProcedimento"
 					value="#{(planoTratamentoMB.planoTratamentoProcedimentoSelecionado.id == 0 ? 'Adicionar Procedimento ao Plano de Tratamento' : 'Salvar Procedimento')}"
 					actionListener="#{planoTratamentoMB.actionAdicionarProcedimento}"
-					update=":lume:tabViewPaciente:pnViewPlanoTratamento" />
+					update=":lume:tabViewPaciente:pnViewPlanoTratamento" oncomplete="PF('procedimentosTableInPT').filter()"/>
 				<p:commandButton icon="White fa fa-close" value="Fechar"
 					process="@this" onclick="PF('dlgNovoProcedimento').hide();"
 					styleClass="NavyButton" />

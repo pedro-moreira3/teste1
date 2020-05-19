@@ -683,42 +683,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     }
 
     public boolean existemPendencias(PlanoTratamentoProcedimento ptp) {
-
-        try {
-            if (ptp.getPlanoTratamento().getRegistroAntigo() != null && ptp.getPlanoTratamento().getRegistroAntigo().equals("S")) {
-                return true;
-            }
-            if (ptp.getDentistaExecutor() != null && Profissional.FIXO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
-                return true;
-
-            }
-            if (this.validaConferenciaCustosDiretos && (ptp.getCustoDiretoValido() == null || ptp.getCustoDiretoValido().equals("N"))) {
-                return true;
-            }
-            if (this.validaExecucaoProcedimento && (ptp.getDataFinalizado() == null || ptp.getDentistaExecutor() == null)) {
-                return true;
-            }
-            //if (this.validaPagamentoPaciente && ptp.getFatura() != null && (ptp.getFatura().getLancamentos() == null || ptp.getFatura().getLancamentos().size() == 0 )) {    
-            //    return true;
-            //}
-            if (validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) {
-                if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0) {
-                    return true;
-                }
-            }
-            if (validaPagamentoPacienteOrtodontico && ptp.getPlanoTratamento().isOrtodontico()) {
-                if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0) {
-                    return true;
-                }
-            }
-
-        } catch (Exception e) {
-            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
-            LogIntelidenteSingleton.getInstance().makeLog(e);
-            e.printStackTrace();
+        verificaPendencias(ptp);
+        if(pendencias != null && !pendencias.isEmpty() && pendencias.get(0).equals("Sem pendência!")) {
+            return false;
         }
-
-        return false;
+        return true;
     }
 
 //    public Fatura getFaturaFromPtp(PlanoTratamentoProcedimento ptp) {

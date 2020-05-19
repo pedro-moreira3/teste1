@@ -20,10 +20,13 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.DualListModel;
 
 import br.com.lume.afastamento.AfastamentoSingleton;
 import br.com.lume.agendamento.AgendamentoSingleton;
+import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.GeradorSenha;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
@@ -32,7 +35,10 @@ import br.com.lume.common.util.UtilsPrimefaces;
 import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
 import br.com.lume.odonto.entity.Afastamento;
 import br.com.lume.odonto.entity.Agendamento;
+import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.HorasUteisProfissional;
+import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.profissional.ProfissionalSingleton;
 
@@ -87,6 +93,16 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
 
     private List<Agendamento> agendamentoEntreHoraAlmoco;     
     
+    private Paciente paciente = null;
+
+    private PlanoTratamento planoTratamento = null;
+
+    private DualListModel<AgendamentoPlanoTratamentoProcedimento> aptp = null;
+
+    private Integer cadeira = null;
+
+    private String observacoesVindasDlgAgendamento = null;
+    
     public AgendamentoRapidoMB() {
         super(AgendamentoSingleton.getInstance().getBo());   
         this.setClazz(Agendamento.class); 
@@ -96,9 +112,27 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         mes = Utils.getMesTexto(data);
         ano = cal.get(Calendar.YEAR);
         
-     configuraHorarioPadraoClinica();
+        configuraHorarioPadraoClinica();
        
+        paciente = null;
+        
     }
+    
+    public void confirmaAgendamentoComPaciente(Agendamento agendamento) {
+        try {
+            if(agendamento.getHash() == null) {
+                agendamento.setHash(GeradorSenha.gerarSenha());    
+            } 
+            if(agendamento.getPlanoTratamentoProcedimentosAgendamento() != null && !agendamento.getPlanoTratamentoProcedimentosAgendamento().isEmpty()) {
+                AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().persistBatch(agendamento.getPlanoTratamentoProcedimentosAgendamento());
+            }
+            AgendamentoSingleton.getInstance().getBo().persist(agendamento);
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
+    } 
     
     private void configuraHorarioPadraoClinica() {
         Calendar cal = Calendar.getInstance();
@@ -644,9 +678,21 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         return substituidosretorno;
     }
     
-    public void carregaDisponibilidadeFromAgendamento(Profissional profissionalDentroAgenda, Date dataAgendamento) {
+    public void carregaDisponibilidadeFromAgendamento(Paciente paciente,Profissional profissionalDentroAgenda, Date dataAgendamento) {
         filtroPorProfissional = profissionalDentroAgenda;
         data = dataAgendamento;
+        this.paciente = paciente;
+        populaAgenda();
+    }
+    public void carregaDisponibilidadeFromDlgAgendamento(Paciente paciente,Profissional profissionalDentroAgenda, Date dataAgendamento,PlanoTratamento 
+            pt,Integer cadeira,DualListModel<AgendamentoPlanoTratamentoProcedimento> aptp,String observacoes) {
+        filtroPorProfissional = profissionalDentroAgenda;
+        data = dataAgendamento;
+        this.paciente = paciente;
+        this.planoTratamento = pt;
+        this.aptp = aptp;
+        this.cadeira = cadeira;
+        this.observacoesVindasDlgAgendamento = observacoes;
         populaAgenda();
     }
 
@@ -658,6 +704,32 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         Calendar calendar = Calendar.getInstance();
         for (int i = 0; i < quantidadeHorariosManha + quantidadeHorariosTarde; i++) {           
             Agendamento agendamento = new Agendamento();
+           // if(this.paciente != null) {
+                agendamento.setPaciente(this.paciente); 
+           // }
+           // if(this.planoTratamento != null) {
+                agendamento.setPlanoTratamento(this.planoTratamento);        
+          //  }
+            if(this.aptp != null) {
+                //itens para adicionar
+                List<AgendamentoPlanoTratamentoProcedimento> paraInserir = new ArrayList<>();
+                for (AgendamentoPlanoTratamentoProcedimento aptpNovo : this.insereAgendamento(aptp.getTarget())) {
+                    aptpNovo.setAgendamento(getEntity());
+                    paraInserir.add(aptpNovo);
+                }  
+                agendamento.setPlanoTratamentoProcedimentosAgendamento(paraInserir);
+            }else{
+                agendamento.setPlanoTratamentoProcedimentosAgendamento(null);
+            }          
+          //  if( this.cadeira != null) {
+                agendamento.setCadeira(this.cadeira);  
+           // } 
+          //  if(this.observacoesVindasDlgAgendamento != null) {
+                agendamento.setDescricao(this.observacoesVindasDlgAgendamento);     
+          //  }            
+         
+            
+            
             //ja inseriu todas da manha, agora vamos inserir os da tarde
             if(i == quantidadeHorariosManha) {
                 horaInicio = horaInicioTarde;
@@ -681,6 +753,14 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         return listaCriados;
     }
     
+    private List<AgendamentoPlanoTratamentoProcedimento> insereAgendamento(List<AgendamentoPlanoTratamentoProcedimento> target) {
+        if (target != null && !target.isEmpty()) {
+            for (AgendamentoPlanoTratamentoProcedimento agendamentoPlanoTratamentoProcedimento : target) {
+                agendamentoPlanoTratamentoProcedimento.setAgendamento(this.getEntity());
+            }
+        }
+        return target;
+    }
 
  
     public List<Profissional> sugestoesProfissionais(String query) {
@@ -720,6 +800,8 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 return "Horário Disponível";
             }else if(agendamento.getPaciente() == null && "N".equals(agendamento.getStatusNovo()) &&  "Horário bloqueado".equals( agendamento.getDescricao())) {
                 return "Horário Bloqueado"; 
+            }else if(agendamento.getPaciente() != null && agendamento.getHash() == null) {
+                return "Horário Disponível";
             }
             return StatusAgendamentoUtil.findBySigla(agendamento.getStatusNovo()).getDescricao();
         } catch (Exception e) {
@@ -947,6 +1029,16 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     public void setObservacaoNaoCadastrado(String observacaoNaoCadastrado) {
         this.observacaoNaoCadastrado = observacaoNaoCadastrado;
+    }
+
+    
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
     }
 
 }

@@ -544,8 +544,9 @@ div.ui-selectoneradio label {
 													</p:column>
 													<p:column headerText="Nome da Mãe">
 														<h:outputText value="#{p.nomeMae}" />
-													</p:column>
-
+													</p:column>	
+													<p:ajax event="itemSelect" update="btnVisualizarDisponibilidadeAgenda" />
+													  <p:ajax event="change" update="btnVisualizarDisponibilidadeAgenda"/> 
 												</p:autoComplete>
 
 												<p:outputLabel for="pacienteSelecionado" value="Paciente" />
@@ -602,7 +603,7 @@ div.ui-selectoneradio label {
 												style="display:inline-flex;">
 													<p:commandButton id="visualizarDisponibilidadeAgendqa" process="@this,:lume:pnDisponibilidade"
 													disabled="#{agendamentoMB.profissional == null}"
-													actionListener="#{agendamentoRapidoMB.carregaDisponibilidadeFromAgendamento(agendamentoMB.profissional,agendamentoMB.initialDate)}"
+													actionListener="#{agendamentoRapidoMB.carregaDisponibilidadeFromAgendamento(agendamentoMB.pacientePesquisado,agendamentoMB.profissional,agendamentoMB.initialDate)}"
 													update=":lume:pnDisponibilidade"
 													icon="fa fa-calendar-o White" 
 													oncomplete="PF('dlgDisponibilidade').show();PF('dtRelagendamento').filter();"

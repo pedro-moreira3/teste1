@@ -431,15 +431,16 @@ body .ui-selectoneradio td label {
 	<div class="EmptyBox20"></div>
 	<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 		id="dtPrincipal" value="#{profissionalMB.profissionais}"
+		widgetVar="dtPrincipal"
 		var="profissional" rows="7" paginator="true"
 		selection="#{profissionalMB.entity}" selectionMode="single"
 		rowKey="#{profissional}" paginatorPosition="bottom"
 		binding="#{profissionalMB.tabelaProfissional}">
-		<p:ajax event="rowSelect" update=":lume:tabView"
+		<p:ajax event="rowSelect" update=":lume:tabView" oncomplete="PF('dtPrincipal').filter();" 
 			listener="#{profissionalMB.carregaTela}" />
-		<p:ajax event="rowSelect" update=":lume:tabView"
+		<p:ajax event="rowSelect" update=":lume:tabView" oncomplete="PF('dtPrincipal').filter();" 
 			listener="#{profissionalPontoMB.carregarPontos}" />
-		<p:ajax event="rowSelect" update=":lume:tabView"
+		<p:ajax event="rowSelect" update=":lume:tabView" oncomplete="PF('dtPrincipal').filter();" 
 			listener="#{profissionalDescontoMB.carregarDescontos}" />
 		<f:facet name="header">Profissional</f:facet>
 		<p:column filterBy="#{profissional.dadosBasico.nomeLimpo}"
