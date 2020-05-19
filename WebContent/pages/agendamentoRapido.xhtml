@@ -161,7 +161,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
  background-color: #3CB371 ;
 }
 
-.painelCalendarioAgRapido  .ui-datepicker-header{
+.painelCalendarioAgRapido .ui-datepicker-header{
   display: none !important;
 }
 
@@ -320,6 +320,17 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									
 									<p:tooltip for="btnView" value="Agendar" />
 								</p:commandButton>
+								<p:commandButton id="btnVerificarCobranca" icon="Red fa fa-money" styleClass="RedButton"
+								action="#{tabPacienteMB.loadPacienteNoFinanceiro(agendamento.paciente)}" 
+								rendered="#{agendamento.paciente.pendenciaFinanceiraBool}"
+								process="@this"
+								update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
+									oncomplete="PF('dlgFichaPaciente').show()"
+								>														
+									
+									<p:tooltip for="btnVerificarCobranca" value="Verificar a cobrança do paciente" />
+								</p:commandButton>
+								
 								<h:outputText rendered="#{agendamento.descricao eq 'Horário bloqueado'}"
 									value="Horário bloqueado" />
 							</p:column>
@@ -432,9 +443,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				appendToBody="true">
 				<ui:include src="afastamento.xhtml" />
 		</p:dialog>
+		<ui:remove>
+		
+	<f:websocket channel="canalAgendamentoRapido" onmessage="function(m){console.log(m);atualizaLista();}" />
+	</ui:remove>	
 					<p:remoteCommand name="atualizaLista" process="@this"
 										update=":lume:painelCalendarioAgRapido,:lume:dtAgendamentos,:lume:filtroRelatorio,:lume:observacoes,:lume:data"
 										actionListener="#{agendamentoRapidoMB.depoisSalvaAgendamento()}" oncomplete="PF('dtAgendamentos').filter();"/>			
+		
 
 				
 
