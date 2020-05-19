@@ -211,7 +211,7 @@
 							actionListener="#{agendamentoRapidoMB.confirmaAgendamentoComPaciente(agendamento)}"
 							process="@this"					
 							disabled="#{agendamentoRapidoMB.paciente == null or agendamentoRapidoMB.getStatusDescricao(agendamento) ne 'Horário Disponível'}"
-							onsuccess="PF('dlgDisponibilidade').hide();updateSchedule();PF('eventDialog').hide();"
+							onsuccess="PF('dlgDisponibilidade').hide();PF('eventDialog').hide();updateSchedule();"
 							>
 							<p:confirm header="Confirmação" icon="ui-icon-alert"
 							message="Você confirma o agendamento para o paciente #{agendamentoRapidoMB.paciente.dadosBasico.nome} nesse horário?">
