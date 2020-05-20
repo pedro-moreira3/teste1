@@ -468,18 +468,24 @@ public class Exportacoes implements Serializable {
                     }
 
                     Cell celula = linhaPlanilha.createCell(0);
+                    Cell celula2 = linhaPlanilha.createCell(1);
+                    Cell celula3 = linhaPlanilha.createCell(2);
+                    Cell celula4 = linhaPlanilha.createCell(3);
                     Procedimento proc = (Procedimento) colunas.get(i).getChildren().get(j).getData();
 
-                    celula.setCellValue(proc.getDescricao());
-
-                    Cell celula2 = linhaPlanilha.createCell(1);
-                    celula2.setCellValue(proc.getCodigoConvenio());
-
-                    Cell celula3 = linhaPlanilha.createCell(2);
-                    celula3.setCellValue(proc.getValor().doubleValue());
-
-                    Cell celula4 = linhaPlanilha.createCell(3);
-                    celula4.setCellValue(proc.getValorRepasse().doubleValue());
+                    if(proc != null) {
+                        if(proc.getDescricao() != null)
+                            celula.setCellValue(proc.getDescricao());
+                        
+                        if(proc.getCodigoConvenio() != null)
+                            celula2.setCellValue(proc.getCodigoConvenio());
+                        
+                        if(proc.getValor() != null)
+                            celula3.setCellValue(proc.getValor().doubleValue());
+                        
+                        if(proc.getValorRepasse() != null)
+                            celula4.setCellValue(proc.getValorRepasse().doubleValue());
+                    }
 
                 }
 
