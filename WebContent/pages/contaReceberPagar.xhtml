@@ -457,6 +457,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												value="#{conferenciaRecebimentoMB.dataCreditoInicial}"
 												autocomplete="false" locale="#{lumeSecurity.locale}"
 												mask="true">
+												<p:ajax event="dateSelect" process="@this"/>
 											</p:calendar>
 										</h:panelGroup>
 
@@ -466,7 +467,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:calendar id="dataConferenciaFinal"
 												value="#{conferenciaRecebimentoMB.dataCreditoFinal}"
 												autocomplete="false" locale="#{lumeSecurity.locale}"
-												mask="true" />
+												mask="true">
+												<p:ajax event="dateSelect" process="@this"/>
+											</p:calendar>
 										</h:panelGroup>
 
 										<h:panelGroup>

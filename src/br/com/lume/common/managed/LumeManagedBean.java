@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.treetable.TreeTable;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -323,6 +324,28 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         try {
             this.exportacao = Exportacoes.getInstance();
             arq = (this.exportacao.exportarTabela(header, tabela, type));
+
+            if (type.equals("xls"))
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
+            else if (type.equals("pdf"))
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/pdf", header + "." + type));
+            else
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/csv", header + "." + type));
+
+            arq.close();
+
+        } catch (Exception e) {
+            this.addError("Erro", "Erro na exportação do documento.");
+            e.printStackTrace();
+        }
+    }
+    
+    public void exportarTreeTable(String header, TreeTable tabela, String type) {
+
+        ByteArrayInputStream arq;
+        try {
+            this.exportacao = Exportacoes.getInstance();
+            arq = (this.exportacao.exportarTreeTabela(header, tabela, type));
 
             if (type.equals("xls"))
                 this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
