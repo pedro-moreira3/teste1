@@ -326,7 +326,7 @@ body .lancamentoFalhaOperacao {
 											<f:selectItem itemValue="#{null}"
 												itemLabel="Selecione uma Forma de Pagamento:" />
 											<f:selectItems
-												value="#{faturaPagtoMB.novoLancamentoTarifasDisponiveis}"
+												value="#{faturaPagtoMB.novoLancamentoTarifasDisponiveisEEntrada}"
 												var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
 											<p:ajax event="change" update="novoLancamentoParcelasTable"
 												process="@this" />
@@ -847,7 +847,7 @@ body .lancamentoFalhaOperacao {
 											<f:selectItem itemValue="#{null}"
 												itemLabel="Selecione uma Forma de Pagamento:" />
 											<f:selectItems
-												value="#{faturaPagtoMB.negociacaoTarifasDisponiveis}"
+												value="#{faturaPagtoMB.negociacaoTarifasDisponiveisEEntrada}"
 												var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
 											<p:ajax event="change" update="negociacaoParcelasTable"
 												process="@this" />

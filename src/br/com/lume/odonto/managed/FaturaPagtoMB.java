@@ -118,7 +118,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     //Campos novos para 'Novo Lançamento'
     private List<Integer> novoLancamentoParcelasDisponiveis;
-    private List<Tarifa> novoLancamentoTarifasDisponiveis;
+    private List<Tarifa> novoLancamentoTarifasDisponiveis, novoLancamentoTarifasDisponiveisEEntrada;
     private Integer novoLancamentoQuantidadeParcelas;
     private Tarifa novoLancamentoFormaPagamento;
     private BigDecimal novoLancamentoValorTotal;
@@ -147,7 +147,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private String negociacaoObservacao;
     //Campos para 'Confirma negociação'
     private String tooltipNegociacaoTarifasDisponiveis;
-    private List<Tarifa> negociacaoTarifasDisponiveis;
+    private List<Tarifa> negociacaoTarifasDisponiveis, negociacaoTarifasDisponiveisEEntrada;
     private Tarifa negociacaoFormaPagamento;
     private Date negociacaoDataPagamento, negociacaoDataCredito;
     private NegociacaoFatura negociacaoConfirmacao;
@@ -759,16 +759,22 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void novoLancamentoAtualizaPossibilidadesTarifa() {
         try {
             novoLancamentoTarifasDisponiveis = new ArrayList<>();
+            novoLancamentoTarifasDisponiveisEEntrada = new ArrayList<>();
             if (novoLancamentoQuantidadeParcelas == null)
                 return;
 
             List<Tarifa> listaFormasDePagamento = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
-            if (listaFormasDePagamento != null)
-                for (Tarifa formaPagamento : listaFormasDePagamento)
-                    if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null)
+            if (listaFormasDePagamento != null) {
+                for (Tarifa formaPagamento : listaFormasDePagamento) {
+                    if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null) {
                         if (novoLancamentoQuantidadeParcelas >= formaPagamento.getParcelaMinima() && novoLancamentoQuantidadeParcelas <= formaPagamento.getParcelaMaxima() && novoLancamentoTarifasDisponiveis.indexOf(
                                 formaPagamento) == -1)
                             novoLancamentoTarifasDisponiveis.add(formaPagamento);
+                    }
+                    if (formaPagamento.getParcelaMinima() == 1 && novoLancamentoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
+                        novoLancamentoTarifasDisponiveisEEntrada.add(formaPagamento);
+                }
+            }
 
             novoLancamentoAtualizaTooltipTarifasDisponiveis();
         } catch (Exception e) {
@@ -924,11 +930,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void actionPersistNegociacao() {
         try {
-            if(negociacaoValorDaPrimeiraParcela == null || negociacaoQuantidadeParcelas == null || negociacaoValorTotal == null) {
+            if (negociacaoValorDaPrimeiraParcela == null || negociacaoQuantidadeParcelas == null || negociacaoValorTotal == null) {
                 addError("Erro!", "Preencha todos os itens!");
                 return;
             }
-            
+
             BigDecimal valorDeDesconto = (negociacaoValorDesconto == null ? BigDecimal.ZERO : negociacaoValorDesconto);
             if ("P".equals(negociacaoTipoDesconto) && negociacaoValorDesconto != null)
                 valorDeDesconto = negociacaoValorDesconto.divide(BigDecimal.valueOf(100)).multiply(negociacaoValorTotal);
@@ -964,7 +970,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void actionConfirmaNegociacao() {
         try {
-            if(negociacaoFormaPagamento == null || negociacaoDataPagamento == null || negociacaoDataCredito == null) {
+            if (negociacaoFormaPagamento == null || negociacaoDataPagamento == null || negociacaoDataCredito == null) {
                 addError("Erro!", "Preencha todos os itens!");
                 return;
             }
@@ -1009,9 +1015,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         } else {
             negociacaoValorDesconto = null;
         }
-        
+
         negociacaoValorDesconto = BigDecimal.ZERO;
-        
+
         refazCalculos();
         atualizaPossibilidadesTarifaNegociacao();
 
@@ -1036,7 +1042,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         negociacaoValorTotal = getEntity().getDadosTabelaRepasseTotalFatura();
         BigDecimal valorDeDesconto = (negociacaoValorDesconto == null ? BigDecimal.ZERO : negociacaoValorDesconto);
         DescontoOrcamento descontoCadQtdeParcelas = descontosDisponiveis.get(negociacaoQuantidadeParcelas);
-        if ((descontoCadQtdeParcelas == null && valorDeDesconto.compareTo(BigDecimal.ZERO) > 0) || (descontoCadQtdeParcelas != null && valorDeDesconto.compareTo(descontoCadQtdeParcelas.getDesconto()) > 0)) {
+        if ((descontoCadQtdeParcelas == null && valorDeDesconto.compareTo(BigDecimal.ZERO) > 0) || (descontoCadQtdeParcelas != null && valorDeDesconto.compareTo(
+                descontoCadQtdeParcelas.getDesconto()) > 0)) {
             negociacaoValorDesconto = null;
             this.addError("Erro!", "Desconto dado maior que o máximo permitido.");
             return;
@@ -1117,16 +1124,22 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     public void atualizaPossibilidadesTarifaNegociacao() {
         try {
             negociacaoTarifasDisponiveis = new ArrayList<>();
+            negociacaoTarifasDisponiveisEEntrada = new ArrayList<>();
             if (negociacaoQuantidadeParcelas == null)
                 return;
 
             List<Tarifa> listaFormasDePagamento = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
-            if (listaFormasDePagamento != null)
-                for (Tarifa formaPagamento : listaFormasDePagamento)
-                    if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null)
+            if (listaFormasDePagamento != null) {
+                for (Tarifa formaPagamento : listaFormasDePagamento) {
+                    if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null) {
                         if (negociacaoQuantidadeParcelas >= formaPagamento.getParcelaMinima() && negociacaoQuantidadeParcelas <= formaPagamento.getParcelaMaxima() && negociacaoTarifasDisponiveis.indexOf(
                                 formaPagamento) == -1)
                             negociacaoTarifasDisponiveis.add(formaPagamento);
+                    }
+                    if (formaPagamento.getParcelaMinima() == 1 && negociacaoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
+                        negociacaoTarifasDisponiveisEEntrada.add(formaPagamento);
+                }
+            }
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -1784,6 +1797,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.negociacaoMensagemErroCalculo = negociacaoMensagemErroCalculo;
     }
 
+    public List<Tarifa> getNegociacaoTarifasDisponiveisEEntrada() {
+        return negociacaoTarifasDisponiveisEEntrada;
+    }
+
+    public void setNegociacaoTarifasDisponiveisEEntrada(List<Tarifa> negociacaoTarifasDisponiveisEEntrada) {
+        this.negociacaoTarifasDisponiveisEEntrada = negociacaoTarifasDisponiveisEEntrada;
+    }
+
     //-------------------------------- NEGOCIACAO --------------------------------
 
     //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------
@@ -1889,6 +1910,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setNovoLancamentoMensagemErroCalculo(String novoLancamentoMensagemErroCalculo) {
         this.novoLancamentoMensagemErroCalculo = novoLancamentoMensagemErroCalculo;
+    }
+
+    public List<Tarifa> getNovoLancamentoTarifasDisponiveisEEntrada() {
+        return novoLancamentoTarifasDisponiveisEEntrada;
+    }
+
+    public void setNovoLancamentoTarifasDisponiveisEEntrada(List<Tarifa> novoLancamentoTarifasDisponiveisEEntrada) {
+        this.novoLancamentoTarifasDisponiveisEEntrada = novoLancamentoTarifasDisponiveisEEntrada;
     }
 
     //-------------------------------- NOVO - NOVO LANÇAMENTO --------------------------------
