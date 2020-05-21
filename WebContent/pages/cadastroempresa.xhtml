@@ -443,7 +443,8 @@
 										icon="White fa fa-eye" styleClass="NavyButton"
 										actionListener="#{cadastroEmpresaMB.setDescontoSelecionado(desconto)}"
 										update=":lume:pnDesconto"
-										oncomplete="PF('dlgDesconto').show();" process="@this">
+										oncomplete="PF('dlgDesconto').show();"
+										process="@this" title="Visualizar desconto">
 									</p:commandButton>
 									<p:commandButton id="btnInativar" widgetVar="btnInativar"
 										icon="White fa fa-chain-broken" styleClass="NavyButton"
@@ -451,7 +452,7 @@
 										rendered="#{desconto.status == 'A'}"
 										update="@this, dtDescontos"
 										oncomplete="PF('dtDescontos').filter();"
-										process="@this,dtDescontos">
+										process="@this,dtDescontos" title="Inativar desconto">
 										<p:confirmDialog responsive="true"
 											message="Deseja realmente inativar o registro ?" />
 									</p:commandButton>

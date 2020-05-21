@@ -10,11 +10,14 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 
+import br.com.lume.common.exception.business.BusinessException;
+import br.com.lume.common.exception.techinical.TechnicalException;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.descontoOrcamento.DescontoOrcamentoSingleton;
 import br.com.lume.odonto.entity.DescontoOrcamento;
+import br.com.lume.profissional.ProfissionalSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -69,6 +72,23 @@ public class ProfissionalDescontoMB extends LumeManagedBean<DescontoOrcamento> {
         } catch (Exception e) {
             this.addError("Erro ao cadastrar desconto.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
             log.error("Erro ao cadastrar desconto", e);
+            e.printStackTrace();
+        }
+    }
+    
+    public void salvarFlagOrc() {
+        try {
+            ProfissionalSingleton.getInstance().getBo().persist(profissionalMB.getEntity());
+            this.addInfo("Sucesso ao salvar o registro.", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+        } catch (BusinessException e) {
+            this.addError("Erro ao salvar o registro.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+            e.printStackTrace();
+        } catch (TechnicalException e) {
+            this.addError("Erro ao salvar o registro.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+            e.printStackTrace();
+        } catch (Exception e) {
+            this.addError("Erro ao salvar o registro.", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+            log.error("Erro ao salvar flag orcamento", e);
             e.printStackTrace();
         }
     }
