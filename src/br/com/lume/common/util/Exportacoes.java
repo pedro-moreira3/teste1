@@ -297,26 +297,6 @@ public class Exportacoes implements Serializable{
                         if(proc.getValorRepasse() != null)
                             celula4.setCellValue(proc.getValorRepasse().doubleValue());
                     }
-
- 
-
-                    celula.setCellValue(proc.getDescricao());
-
- 
-
-                    Cell celula2 = linhaPlanilha.createCell(1);
-                    celula2.setCellValue(proc.getCodigoConvenio());
-
- 
-
-                    Cell celula3 = linhaPlanilha.createCell(2);
-                    celula3.setCellValue(proc.getValor().doubleValue());
-
- 
-
-                    Cell celula4 = linhaPlanilha.createCell(3);
-                    celula4.setCellValue(proc.getValorRepasse().doubleValue());
-
  
 
                 }
