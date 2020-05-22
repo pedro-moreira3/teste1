@@ -289,7 +289,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										<h:panelGroup styleClass="lumeField">
 											<p:outputLabel value="Tipo da Fatura:" />
-											<p:selectOneRadio value="#{relatorioFaturaMB.tipoFatura}">												
+											<p:selectOneRadio value="#{relatorioFaturaMB.tipoFatura}">
 												<f:selectItem itemValue="RP"
 													itemLabel="Recebimento de paciente" />
 												<f:selectItem itemValue="PP"
@@ -445,32 +445,35 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:column>
 
 							<p:column headerText="Valor à Receber"
-								sortBy="#{m.dadosTabelaRepasseTotalNaoPago}"
+								sortBy="#{relatorioFaturaMB.valorReceberFatura(m)}"
 								filterMatchMode="contains"
-								filterBy="#{m.dadosTabelaRepasseTotalNaoPago}">
+								filterBy="#{relatorioFaturaMB.valorReceberFatura(m)}">
 
-								<h:outputText value="#{m.dadosTabelaRepasseTotalNaoPago}" />
+								<h:outputText value="#{relatorioFaturaMB.valorReceberFatura(m)}" />
 
 							</p:column>
 
 							<p:column headerText="Valor Recebido"
-								sortBy="#{m.dadosTabelaRepasseTotalPago}"
+								sortBy="#{relatorioFaturaMB.valorRecebidoFatura(m)}"
 								filterMatchMode="contains"
-								filterBy="#{m.dadosTabelaRepasseTotalPago}">
-								<h:outputText value="#{m.dadosTabelaRepasseTotalPago}" />
+								filterBy="#{relatorioFaturaMB.valorRecebidoFatura(m)}">
+								<h:outputText
+									value="#{relatorioFaturaMB.valorRecebidoFatura(m)}" />
 							</p:column>
-							
+
 							<p:column headerText="Valor à Conferir"
 								sortBy="#{relatorioFaturaMB.valorConferirFatura(m)}"
 								filterMatchMode="contains"
 								filterBy="#{relatorioFaturaMB.valorConferirFatura(m)}">
-								<h:outputText value="#{relatorioFaturaMB.valorConferirFatura(m)}" />
+								<h:outputText
+									value="#{relatorioFaturaMB.valorConferirFatura(m)}" />
 							</p:column>
 							<p:column headerText="Valor Conferido"
 								sortBy="#{relatorioFaturaMB.valorConferidoFatura(m)}"
 								filterMatchMode="contains"
 								filterBy="#{relatorioFaturaMB.valorConferidoFatura(m)}">
-								<h:outputText value="#{relatorioFaturaMB.valorConferidoFatura(m)}" />
+								<h:outputText
+									value="#{relatorioFaturaMB.valorConferidoFatura(m)}" />
 							</p:column>
 
 							<p:column headerText="Valor Total"
