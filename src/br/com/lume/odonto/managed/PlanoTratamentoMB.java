@@ -225,25 +225,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
     
     public BigDecimal valorAReceber(PlanoTratamento pt) {
-        BigDecimal total = new BigDecimal(0);
-       for (PlanoTratamentoProcedimento ptp : pt.getPlanoTratamentoProcedimentos()) {
-           FaturaItem faturaItem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
-           if(faturaItem != null) {
-               total = FaturaSingleton.getInstance().getTotalNaoPagoFromPaciente(faturaItem.getFatura());
-           }
-       }
-       return total;
+        return FaturaItemSingleton.getInstance().valorAReceberDoPacienteFromPT(pt);
     }
-    
+
     public BigDecimal valorAConferir(PlanoTratamento pt) {
-        BigDecimal total = new BigDecimal(0);
-        for (PlanoTratamentoProcedimento ptp : pt.getPlanoTratamentoProcedimentos()) {
-            FaturaItem faturaItem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
-            if(faturaItem != null) {
-                total = LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(faturaItem.getFatura(), true, ValidacaoLancamento.NAO_VALIDADO);
-            }
-        }
-        return total;
+        return  FaturaItemSingleton.getInstance().valorAConferirDoPacienteFromPT(pt);
     }
 
     public BigDecimal valorTotal(PlanoTratamento pt) {

@@ -452,33 +452,6 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:outputText value="#{m.dataHoraFinalizadoStr}" />
 							</p:column>
 
-							<p:column filterBy="#{m.valor}" sortBy="#{m.valor}"
-								filterMatchMode="contains" style="text-align:right"
-								headerText="Valor Total">
-								<h:outputText value="#{m.valor}">
-									<f:convertNumber currencySymbol="R$" type="currency"
-										locale="#{lumeSecurity.locale}" />
-								</h:outputText>
-							</p:column>
-
-							<p:column filterBy="#{m.valorTotalOrcamento}"
-								sortBy="#{m.valorTotalOrcamento}" filterMatchMode="contains"
-								style="text-align:right" headerText="Valor Total c/ Desc)">
-								<h:outputText value="#{m.valorTotalOrcamento}">
-									<f:convertNumber currencySymbol="R$" type="currency"
-										locale="#{lumeSecurity.locale}" />
-								</h:outputText>
-							</p:column>
-
-							<p:column filterBy="#{m.valorPagar}" sortBy="#{m.valorPagar}"
-								filterMatchMode="contains" style="text-align:right"
-								headerText="Valor Restante à Pagar">
-								<h:outputText value="#{m.valorPagar}">
-									<f:convertNumber currencySymbol="R$" type="currency"
-										locale="#{lumeSecurity.locale}" />
-								</h:outputText>
-							</p:column>
-
 							<p:column filterBy="#{m.convenio.dadosBasico.nomeStr}"
 								sortBy="#{m.convenio.dadosBasico.nome}"
 								filterFunction="#{relatorioPlanoTratamentoMB.filtroSemAcento}"
@@ -493,7 +466,31 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterMatchMode="contains" headerText="Status">
 								<h:outputText value="#{m.statusDescritivo}" title="#{m.id}" />
 							</p:column>
-
+							<p:column filterBy="#{relatorioPlanoTratamentoMB.valorAReceber(m)}"
+								sortBy="#{relatorioPlanoTratamentoMB.valorAReceber(m)}"								
+								filterMatchMode="contains" headerText="Valor à Receber">
+								<h:outputText value="#{relatorioPlanoTratamentoMB.valorAReceber(m)}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
+								</h:outputText>
+							</p:column>
+							
+							<p:column filterBy="#{relatorioPlanoTratamentoMB.valorAConferir(m)}"
+								sortBy="#{relatorioPlanoTratamentoMB.valorAConferir(m)}"								
+								filterMatchMode="contains" headerText="Valor à Conferir">
+								<h:outputText value="#{relatorioPlanoTratamentoMB.valorAConferir(m)}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
+								</h:outputText>
+							</p:column>	
+							<p:column filterBy="#{m.valor}"
+								sortBy="#{m.valor}"								
+								filterMatchMode="contains" headerText="Valor Total dos Procedimentos">
+								<h:outputText value="#{m.valor}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										locale="#{lumeSecurity.locale}" />
+								</h:outputText>
+							</p:column>	
 
 
 							<p:column exportable="false">

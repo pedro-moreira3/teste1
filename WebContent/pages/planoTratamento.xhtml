@@ -267,7 +267,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						<p:outputLabel value="#{planoTratamento.statusDescritivo}" />
 					</p:column>
 					<p:column filterBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}"
-						sortBy="#{planoTratamento.valor}"
+						sortBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}"
 						rendered="#{planoTratamentoMB.temPermissaoExtra}"
 						filterMatchMode="contains" headerText="Valor à Receber">
 						<h:outputText value="#{planoTratamentoMB.valorAReceber(planoTratamento)}">
@@ -276,7 +276,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						</h:outputText>
 					</p:column>
 					<p:column filterBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"
-						sortBy="#{planoTratamento.valorTotalRestante}"
+						sortBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"
 						rendered="#{planoTratamentoMB.temPermissaoExtra}"
 						filterMatchMode="contains" headerText="Valor à Conferir">
 						<h:outputText value="#{planoTratamentoMB.valorAConferir(planoTratamento)}">
