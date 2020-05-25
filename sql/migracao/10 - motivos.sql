@@ -11,3 +11,19 @@ create table log_repasse(
 	profissional_id bigint references profissional(id),
 	repasse_faturas_id bigint references repasse_faturas(id)
 )
+
+insert into seg_perobjeto (per_int_cod,obj_int_cod)
+values(326,167);
+
+insert into seg_perobjeto (per_int_cod,obj_int_cod)
+values(146,167);
+
+insert into seg_perobjeto (per_int_cod,obj_int_cod)
+values(326,171);
+
+insert into seg_perobjeto (per_int_cod,obj_int_cod)
+values(146,171);
+
+delete from seg_perobjeto where obj_int_cod = 46;
+
+
