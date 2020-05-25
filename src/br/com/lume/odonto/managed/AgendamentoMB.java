@@ -231,6 +231,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             profissional = null;
         }
         carregarScheduleTarefas();
+        System.out.println("teste");
     }
     
     public List<Profissional> sugestoesProfissionais(String query) {
@@ -1011,15 +1012,15 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
     }
 
-    private void carregarScheduleProfissionalTarefas() {
-        scheduleProfissional = new LazyScheduleModel() {
-
-            @Override
-            public void loadEvents(Date start, Date end) {
-                initialDate = start;
-            }
-        };
-    }
+//    private void carregarScheduleProfissionalTarefas() {
+//        scheduleProfissional = new LazyScheduleModel() {
+//
+//            @Override
+//            public void loadEvents(Date start, Date end) {
+//                initialDate = start;
+//            }
+//        };
+//    }
 
     private void carregarScheduleTarefas() {
         schedule = new LazyScheduleModel() {

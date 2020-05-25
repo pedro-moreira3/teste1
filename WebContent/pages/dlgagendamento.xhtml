@@ -418,17 +418,19 @@
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">
 				<h:panelGroup style="display: flex;" styleClass="md-combo">
 				
-					<p:outputLabel for="paciente" value="#{dominioMB.cliente}" />
+					<p:outputLabel for="paciente" value="#{dominioMB.cliente} (digite o nome e selecione o paciente)" />
 
-					<p:autoComplete dropdown="true" queryDelay="1000"
+					<p:autoComplete dropdown="false" queryDelay="300"
 						value="#{agendamentoMB.pacienteSelecionado}" id="paciente"
-						minQueryLength="3" scrollHeight="400"
+						minQueryLength="3" scrollHeight="400"					
 						completeMethod="#{agendamentoMB.geraSugestoes}" var="p"
 						itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 						converter="paciente" forceSelection="true"
 						disabled="#{agendamentoMB.entity.id != 0}"
 						required="#{!agendamentoMB.visivel}"
-						styleClass="paciente tallerAutoComplete">
+						styleClass="paciente tallerAutoComplete"
+						cache="true" cacheTimeout="300000" 
+						>
 
 						<p:column headerText="Código" style="text-align: center;">
 							<h:outputText value="#{p.codigo}" />
