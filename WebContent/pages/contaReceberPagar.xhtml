@@ -676,9 +676,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											</f:facet>
 										</p:column>
 										<p:column headerText="Valor total"
-											sortBy="#{lc.valorComDesconto}"
-											filterBy="#{lc.valorComDesconto}" filterMatchMode="contains">
-											<h:outputText value="#{lc.valorComDesconto}">
+											sortBy="#{conferenciaRecebimentoMB.valorTotal(lc)}"
+											filterBy="#{conferenciaRecebimentoMB.valorTotal(lc)}" filterMatchMode="contains">
+											<h:outputText value="#{conferenciaRecebimentoMB.valorTotal(lc)}">
 												<f:convertNumber currencySymbol="R$" type="currency"
 													minFractionDigits="2" />
 											</h:outputText>
@@ -703,13 +703,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:commandButton icon="White fa fa-thumbs-o-up"
 												actionListener="#{conferenciaRecebimentoMB.actionValidarLancamento(lc)}"
 												update=":lume:tv:dtLancamentoValidar, :lume:tv:tab2"
-												process="@this" styleClass="GreenButton"
+												process="@this,:lume:tv:dtLancamentoValidar" styleClass="GreenButton"
 												oncomplete="PF('dtLancamentoValidar').filter()"
 												title="Valor recebido" />
 											<p:commandButton icon="White fa fa-thumbs-o-down"
 												actionListener="#{conferenciaRecebimentoMB.actionNaoValidarLancamento(lc)}"
 												update=":lume:tv:dtLancamentoValidar, :lume:tv:tab2"
-												process="@this" styleClass="RedButton"
+												process="@this,:lume:tv:dtLancamentoValidar" styleClass="RedButton"
 												oncomplete="PF('dtLancamentoValidar').filter()"
 												title="Falha no recebimento" />
 										</p:column>

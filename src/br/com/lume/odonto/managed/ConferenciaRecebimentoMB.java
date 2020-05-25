@@ -60,6 +60,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     }
 
     public void carregarLancamentosConferencia() {
+        this.setEntityList(null);
         try {
             setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltros(getDataCreditoInicial(), getDataCreditoFinal(), getFiltroPorPaciente(), 
                     getFormaPagamento(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
@@ -104,7 +105,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
             for(Lancamento l : this.getLancamentosSelecionadosConferencia()) {
                 LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
             }
-            carregarLancamentosConferencia();
+            updateSomatorioConferencia();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -116,7 +117,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     public void actionValidarLancamento(Lancamento l) {
         try {
             LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
-            carregarLancamentosConferencia();
+            updateSomatorioConferencia();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -128,7 +129,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     public void actionNaoValidarLancamento(Lancamento lc) {
         try {
             LancamentoSingleton.getInstance().naoValidaLancamento(lc, UtilsFrontEnd.getProfissionalLogado());
-            carregarLancamentosConferencia();
+            updateSomatorioConferencia();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -150,7 +151,12 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
         for(Lancamento l : this.getEntityList()) {
             this.setSomatorioValorConferidoConferencia(this.getSomatorioValorConferidoConferencia().add(this.valorConferido(l)));
             this.setSomatorioValorConferirConferencia(this.getSomatorioValorConferirConferencia().add(this.valorConferir(l)));
-            this.setSomatorioValorTotalConferencia(this.getSomatorioValorTotalConferencia().add(l.getValorComDesconto()));
+            
+            if(l.getValorComDesconto().compareTo(BigDecimal.ZERO) > 0) {
+                this.setSomatorioValorTotalConferencia(this.getSomatorioValorTotalConferencia().add(l.getValorComDesconto()));
+            }else {
+                this.setSomatorioValorTotalConferencia(this.getSomatorioValorTotalConferencia().add(l.getValor()));
+            }
         }
     }
     
@@ -220,17 +226,30 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     }
     
     public BigDecimal valorConferir(Lancamento lc) {
-        if(lc.getConferidoPorProfissional() != null) {
+        if(lc.getValidadoPorProfissional() != null) {
             return new BigDecimal(0);
+        }
+        if(lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return lc.getValor();
         }
         return lc.getValorComDesconto();
     }
 
     public BigDecimal valorConferido(Lancamento lc) {
-        if(lc.getConferidoPorProfissional() != null) {
+        if(lc.getValidadoPorProfissional() != null) {
+            if(lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+                return lc.getValor();
+            }
             return lc.getValorComDesconto();
         }
         return new BigDecimal(0);
+    }
+    
+    public BigDecimal valorTotal(Lancamento lc) {
+        if(lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return lc.getValor();
+        }
+        return lc.getValorComDesconto();
     }
     
     public String statusLancamentoConferencia(Lancamento lc) {

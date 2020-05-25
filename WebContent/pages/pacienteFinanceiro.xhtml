@@ -378,9 +378,9 @@ hr.hrSaldo {
 							minFractionDigits="2" />
 					</h:outputText>
 				</p:column>
-				<p:column headerText="Valor total" sortBy="#{lc.valorComDesconto}"
-					filterBy="#{lc.valorComDesconto}" filterMatchMode="contains">
-					<h:outputText value="#{lc.valorComDesconto}">
+				<p:column headerText="Valor total" sortBy="#{pacienteFinanceiroMB.valorTotal(lc)}"
+					filterBy="#{pacienteFinanceiroMB.valorTotal(lc)}" filterMatchMode="contains">
+					<h:outputText value="#{pacienteFinanceiroMB.valorTotal(lc)}">
 						<f:convertNumber currencySymbol="R$" type="currency"
 							minFractionDigits="2" />
 					</h:outputText>
@@ -453,9 +453,9 @@ hr.hrSaldo {
 							minFractionDigits="2" />
 					</h:outputText>
 				</p:column>
-				<p:column headerText="Valor total" sortBy="#{lc.valorComDesconto}"
-					filterBy="#{lc.valorComDesconto}" filterMatchMode="contains">
-					<h:outputText value="#{lc.valorComDesconto}">
+				<p:column headerText="Valor total" sortBy="#{pacienteFinanceiroMB.valorTotal(lc)}"
+					filterBy="#{pacienteFinanceiroMB.valorTotal(lc)}" filterMatchMode="contains">
+					<h:outputText value="#{pacienteFinanceiroMB.valorTotal(lc)}">
 						<f:convertNumber currencySymbol="R$" type="currency"
 							minFractionDigits="2" />
 					</h:outputText>

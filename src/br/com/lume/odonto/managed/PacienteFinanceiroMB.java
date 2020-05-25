@@ -236,18 +236,22 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
     public BigDecimal valorAReceberPaciente() {
         try {
             setEntityList(FaturaSingleton.getInstance().getBo().getFaturasFromPacienteByOrSubStatus(paciente, null));
-            this.getEntityList().removeIf(fatura -> !fatura.isAtivo());
+            this.getEntityList().removeIf(fatura -> !fatura.isAtivo() ||
+                    fatura.getStatusFatura().equals(Fatura.StatusFatura.INTERROMPIDO));
+            
             BigDecimal valorAReceber = new BigDecimal(0);
 
             if (this.getEntityList() != null && !this.getEntityList().isEmpty()) {
 
                 for (Fatura f : this.getEntityList()) {
-                    valorAReceber = valorAReceber.add(FaturaSingleton.getInstance().getTotalNaoPlanejado(f));
-
+                    valorAReceber = valorAReceber.add(FaturaSingleton.getInstance().getTotalNaoPlanejado(f));                    
+                    
                     for (Lancamento l : f.getLancamentos()) {
                         if (l.isAtivo()) {
-                            if (l.getStatus().equals(Lancamento.StatusLancamento.NAO_RECEBIDO)) {
+                            if (l.getStatus().equals(Lancamento.StatusLancamento.A_RECEBER) || l.getStatus().equals(Lancamento.StatusLancamento.NAO_RECEBIDO)) {
                                 this.lancamentosPendentes.add(l);
+                                valorAReceber = valorAReceber.add( (l.getValorComDesconto() != null ?
+                                        l.getValorComDesconto() : l.getValor()) );
                             } else if (l.getStatus().equals(StatusLancamento.RECEBIDO) && l.getSubStatus().contains(Lancamento.SubStatusLancamento.A_VALIDAR)) {
                                 this.lancamentosAConferir.add(l);
                             }
@@ -264,17 +268,30 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
     }
     
     public BigDecimal valorConferir(Lancamento lc) {
-        if(lc.getConferidoPorProfissional() != null) {
+        if(lc.getValidadoPorProfissional() != null) {
             return new BigDecimal(0);
+        }
+        if(lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return lc.getValor();
         }
         return lc.getValorComDesconto();
     }
 
     public BigDecimal valorConferido(Lancamento lc) {
-        if(lc.getConferidoPorProfissional() != null) {
+        if(lc.getValidadoPorProfissional() != null) {
+            if(lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+                return lc.getValor();
+            }
             return lc.getValorComDesconto();
         }
         return new BigDecimal(0);
+    }
+    
+    public BigDecimal valorTotal(Lancamento lc) {
+        if(lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return lc.getValor();
+        }
+        return lc.getValorComDesconto();
     }
     
     public String statusLancamentoConferencia(Lancamento lc) {
