@@ -422,7 +422,7 @@
 
 					<p:autoComplete dropdown="false" queryDelay="300"
 						value="#{agendamentoMB.pacienteSelecionado}" id="paciente"
-						minQueryLength="3" scrollHeight="400"					
+						minQueryLength="2" scrollHeight="400"					
 						completeMethod="#{agendamentoMB.geraSugestoes}" var="p"
 						itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
 						converter="paciente" forceSelection="true"

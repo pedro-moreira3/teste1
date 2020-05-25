@@ -68,7 +68,13 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     }
 
     public List<Paciente> geraSugestoesPaciente(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        try {
+            return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void persistRetorno(Retorno r) {
