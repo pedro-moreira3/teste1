@@ -107,7 +107,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
                    ConvenioProcedimento cp = this.getbO().find(this.getEntity().getId());            
                    if(cp != null) {
                        cp.setStatus(Status.INATIVO);
-                       this.getbO().persist(cp);
+                       ConvenioProcedimentoSingleton.getInstance().getBo().persist(cp);
                        
                        this.getEntity().setId(0);
                    }
@@ -134,7 +134,7 @@ public class ConvenioProcedimentoMB extends LumeManagedBean<ConvenioProcedimento
                         }
                     }
                 }
-                this.getbO().persist(this.getEntity());
+                ConvenioProcedimentoSingleton.getInstance().getBo().persist(this.getEntity());
                 this.limpar();
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
                 this.carregarListaConveioProcedimento();

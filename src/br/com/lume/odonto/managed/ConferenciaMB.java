@@ -106,7 +106,7 @@ public class ConferenciaMB extends LumeManagedBean<Conferencia> {
             this.getEntity().setProfissional(UtilsFrontEnd.getProfissionalLogado());
             this.getEntity().setAlteracao(Status.SIM);
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            this.getbO().persist(this.getEntity());
+            ConferenciaSingleton.getInstance().getBo().persist(this.getEntity());
             this.geraLista();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
             conferencia = conferencias.get(0).getDataStr();

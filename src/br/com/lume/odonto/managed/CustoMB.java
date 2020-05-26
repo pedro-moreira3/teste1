@@ -28,6 +28,7 @@ import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
+import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
 
 @ManagedBean
@@ -84,7 +85,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
             this.getEntity().setExcluido(Status.SIM);
             this.getEntity().setDataExclusao(Calendar.getInstance().getTime());
             this.getEntity().setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
-            this.getbO().persist(this.getEntity());
+            PlanoTratamentoProcedimentoCustoSingleton.getInstance().getBo().persist(this.getEntity());
             this.actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
 

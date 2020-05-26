@@ -138,7 +138,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                         getEntity().getPlanoTratamentoProcedimentos().add(ptp);
                     }
                     
-                    this.getbO().persist(this.getEntity());
+                    PlanoTratamentoSingleton.getInstance().getBo().persist(this.getEntity());
                 }else {
                     if(this.getEntity().getReajustes() == null)
                         this.getEntity().setReajustes(new ArrayList<IndiceReajuste>());
@@ -422,7 +422,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             if(orcamento.getIndiceReajuste() != null) {
                 this.getEntity().getReajustes().remove(orcamento.getIndiceReajuste());
                 try {
-                    this.getbO().persist(this.getEntity());
+                    PlanoTratamentoSingleton.getInstance().getBo().persist(this.getEntity());
                 } catch (Exception e1) {
                     this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
                     LogIntelidenteSingleton.getInstance().makeLog("Erro no rollback",e);

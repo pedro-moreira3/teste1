@@ -468,7 +468,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
                     paciente.setStatus(Status.INATIVO);
                     paciente.setJustificativa(this.getEntity().getJustificativa());
-                    this.getbO().persist(paciente);
+                    PacienteSingleton.getInstance().persist(paciente);
                 }
             }
             paciente2Inativar.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
@@ -496,8 +496,12 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
                     paciente.setJustificativa(null);
                     paciente.setStatus(Status.ATIVO);
-                    this.getbO().persist(paciente);
+                    PacienteSingleton.getInstance().persist(paciente);
+                    
+                  
                 }
+                
+                
             }
             paciente2Ativar.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
             paciente2Ativar.setDataUltimaAlteracao(new Date());
@@ -608,7 +612,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             }
 
             boolean novoPaciente = getEntity().getId() == null || getEntity().getId().longValue() == 0;
-            this.getbO().persist(this.getEntity());
+            PacienteSingleton.getInstance().persist(this.getEntity());
             this.geraLista();
             this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), true);
             if (novoPaciente) {

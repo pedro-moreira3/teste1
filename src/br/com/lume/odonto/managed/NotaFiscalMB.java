@@ -64,7 +64,7 @@ public class NotaFiscalMB extends LumeManagedBean<NotaFiscal> {
     public void actionPersist(ActionEvent event) {
         try {
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            this.getbO().persist(this.getEntity());
+           NotaFiscalSingleton.getInstance().getBo().persist(this.getEntity());
             for (Material material : this.getEntity().getMateriais()) {
                 MaterialSingleton.getInstance().getBo().persist(material);
             }

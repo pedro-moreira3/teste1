@@ -149,7 +149,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
                     this.getEntity().setQuantidade(quantidadeUtilizada);
                 }
                 this.getEntity().setStatus(EmprestimoKit.UTILIZADO_UNITARIO);
-                this.getbO().persist(this.getEntity());
+                EmprestimoUnitarioSingleton.getInstance().getBo().persist(this.getEntity());
 
                 super.actionNew(event);
                 this.geraLista();
@@ -196,7 +196,7 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
           
           MaterialSingleton.getInstance().getBo().persist(this.getEntity().getMaterial());
           
-          this.getbO().persist(this.getEntity());// Atualizando emprestimoUnitario
+          EmprestimoUnitarioSingleton.getInstance().getBo().persist(this.getEntity());// Atualizando emprestimoUnitario
           //super.actionNew(event);
           this.geraLista();
           this.setEnableDevolucao(false);
@@ -254,13 +254,13 @@ public class EmprestimoUnitarioMB extends LumeManagedBean<EmprestimoUnitario> {
                     
                    
                     this.getEntity().setQuantidade(this.getQuantidade());
-                    this.getbO().persist(this.getEntity());
+                    EmprestimoUnitarioSingleton.getInstance().getBo().persist(this.getEntity());
                    // MaterialLogSingleton.getInstance().getBo().persistBatch(logs);
                     this.geraLista();
                    // this.persistCusto();
                 } else {
                     this.getEntity().setPlanoTratamentoProcedimentosAgendamentos(planoTratamentoProcedimentoAgendamentos);
-                    this.getbO().persist(this.getEntity());
+                    EmprestimoUnitarioSingleton.getInstance().getBo().persist(this.getEntity());
                 }
                 this.actionNewCopiaAntigo();
                 this.setEstoqueSelecionado(null);
