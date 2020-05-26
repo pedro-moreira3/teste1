@@ -265,7 +265,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public List<Paciente> geraSugestoes(String query) {
         try {
-            return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             e.printStackTrace();
@@ -475,7 +475,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             paciente2Inativar.setDataUltimaAlteracao(new Date());
 
             paciente2Inativar.setStatus(Status.INATIVO);
-            PacienteSingleton.getInstance().getBo().persist(paciente2Inativar);
+            PacienteSingleton.getInstance().persist(paciente2Inativar);
             this.geraLista();
             this.addInfo("Sucesso", "Paciente inativado com sucesso!", true);
             //PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
@@ -504,7 +504,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
             paciente2Ativar.setJustificativa(null);
             paciente2Ativar.setStatus(Status.ATIVO);
-            PacienteSingleton.getInstance().getBo().persist(paciente2Ativar);
+            PacienteSingleton.getInstance().persist(paciente2Ativar);
             this.geraLista();
             this.addInfo("Sucesso", "Paciente ativado com sucesso!", true);
             //PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
@@ -921,7 +921,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public List<Paciente> geraSugestoesPaciente(String query) {
         try {
-            return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             e.printStackTrace();

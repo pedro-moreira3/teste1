@@ -123,7 +123,7 @@ public class RepasseItensProfissionalMB extends LumeManagedBean<PlanoTratamentoP
 
     public List<Paciente> geraSugestoesPaciente(String query) {
         try {
-            return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             e.printStackTrace();

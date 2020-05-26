@@ -109,7 +109,7 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     
     public List<Paciente> sugestoesPacientes(String query){
         try {
-            return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             e.printStackTrace();
