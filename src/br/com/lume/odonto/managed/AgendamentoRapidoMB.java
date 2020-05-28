@@ -122,6 +122,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     }
     
     public void confirmaAgendamentoComPaciente(Agendamento agendamento) {
+         try {
         if(agendamentoExistenteNaAgenda != null && agendamentoExistenteNaAgenda.getId() != 0) {
                 // agendamentoExistenteNaAgenda.setInicio(agendamento.getInicio());
                 // agendamentoExistenteNaAgenda.setFim(agendamento.getFim());
@@ -129,7 +130,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                  agendamentoExistenteNaAgenda.setStatusNovo("R");
                  AgendamentoSingleton.getInstance().getBo().persist(agendamentoExistenteNaAgenda);
         }
-        try {
+      
             if(agendamento.getHash() == null) {
                 agendamento.setHash(GeradorSenha.gerarSenha());    
             } 
