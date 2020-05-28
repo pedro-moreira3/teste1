@@ -121,12 +121,15 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     }
     
     public void confirmaAgendamentoComPaciente(Agendamento agendamento) {
-        if(agendamentoExistenteNaAgenda != null && agendamentoExistenteNaAgenda.getId() != 0) {
-            agendamentoExistenteNaAgenda.setInicio(agendamento.getInicio());
-            agendamentoExistenteNaAgenda.setFim(agendamento.getFim());
-            agendamento = agendamentoExistenteNaAgenda;
-        }
+        
         try {
+            if(agendamentoExistenteNaAgenda != null && agendamentoExistenteNaAgenda.getId() != 0) {
+                // agendamentoExistenteNaAgenda.setInicio(agendamento.getInicio());
+                // agendamentoExistenteNaAgenda.setFim(agendamento.getFim());
+                // agendamento = agendamentoExistenteNaAgenda;
+                 agendamentoExistenteNaAgenda.setStatusNovo("R");
+                 AgendamentoSingleton.getInstance().getBo().persist(agendamentoExistenteNaAgenda);
+             }
             if(agendamento.getHash() == null) {
                 agendamento.setHash(GeradorSenha.gerarSenha());    
             } 
