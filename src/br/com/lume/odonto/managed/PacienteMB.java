@@ -245,6 +245,33 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         return false;
     }
 
+    public int calcularIdade() {
+        if(this.getEntity().getDadosBasico().getDataNascimento() != null) {
+            Calendar c = Calendar.getInstance();
+            int mesAtual = c.get(Calendar.MONTH);
+            int diaAtual = c.get(Calendar.DAY_OF_MONTH);
+            int anoAtual = c.get(Calendar.YEAR);
+            
+            c.setTime(this.getEntity().getDadosBasico().getDataNascimento());
+            int mes = c.get(Calendar.MONTH);
+            int dia = c.get(Calendar.DAY_OF_MONTH);
+            int ano = c.get(Calendar.YEAR);
+            
+            int idade = anoAtual - ano;
+            
+            if(mesAtual == mes) {
+                if(diaAtual < dia) {
+                    idade--;
+                }
+            }else if(mesAtual < mes) {
+                idade--;
+            }
+                        
+            return idade;
+        }        
+        return 0;
+    }
+    
     public boolean showPaciente() {
         if (indicacao != null) {
             if (indicacao.getNome().equals("Indicado por Paciente")) {

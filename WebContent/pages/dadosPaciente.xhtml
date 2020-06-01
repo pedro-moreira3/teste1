@@ -233,12 +233,12 @@
 								locale="#{lumeSecurity.locale}"
 								timeZone="#{lumeSecurity.timeZone}" navigator="true"
 								yearRange="-100:+10" maxdate="#{odontoMB.sysdate}">
-								<p:ajax event="dateSelect" update="lblResponsavel,lblDocumento"
-									listener="#{pacienteMB.validaIdade}" />
+								<p:ajax event="dateSelect" update="lblResponsavel,lblDocumento,idade"
+									listener="#{pacienteMB.validaIdade}" process="@this,idade"/>
 							</p:calendar>
 							
 							<p:outputLabel for="idade" value="Idade: " />
-							<p:inputText id="idade" />
+							<p:inputText id="idade" value="#{pacienteMB.calcularIdade()}"/>
 
 							<p:outputLabel for="sexo" value="Sexo: " />
 							<p:selectOneRadio id="sexo"
