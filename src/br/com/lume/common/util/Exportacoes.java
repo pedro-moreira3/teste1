@@ -5,13 +5,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import javax.faces.component.UIComponent;
+import javax.faces.component.html.HtmlOutputText;
+
 import org.apache.log4j.Logger;
+import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -23,6 +29,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.primefaces.component.api.UIColumn;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.component.treetable.TreeTable;
+import org.primefaces.convert.NumberConverter;
 import org.primefaces.model.TreeNode;
 
 import com.lowagie.text.Document;
@@ -56,14 +63,12 @@ public class Exportacoes implements Serializable {
     }
 
     public static Exportacoes getInstance() {
-
         if (exportacao != null) {
             return exportacao;
         } else {
             exportacao = new Exportacoes();
             return exportacao;
         }
-
     }
 
     private ByteArrayInputStream exportarTabelaExcel(String header, DataTable tabela) {
@@ -75,7 +80,9 @@ public class Exportacoes implements Serializable {
 
         Row cabecalho = sheetTabela.createRow(0);
 
-        for (int i = 0; i < tabela.getRowCount(); i++) {
+        int tableCount = tabela.getRowCount();
+
+        for (int i = 0; i < tableCount; i++) {
 
             tabela.setRowIndex(i);
             tabela.getRowData();
@@ -83,6 +90,11 @@ public class Exportacoes implements Serializable {
             List<UIColumn> tabelaColunas = tabela.getColumns();
 
             Row linhaPlanilha = sheetTabela.createRow(i + 1);
+            Row linhaRodape = null;
+
+            if ((tableCount - i) == 1) {
+                linhaRodape = sheetTabela.createRow(i + 2);
+            }
 
             for (int j = 0; j < colunasValidas.size(); j++) {
 
@@ -105,13 +117,33 @@ public class Exportacoes implements Serializable {
 
                 Cell celula = linhaPlanilha.createCell(j);
 
+                HtmlOutputText dadoColuna = null;
                 Object obj = tabelaColunas.get(colunasValidas.get(j)).getSortBy();
+
+                List children = tabelaColunas.get(colunasValidas.get(j)).getChildren();
+                if (children != null && !children.isEmpty()) {
+                    if (children.get(0) instanceof HtmlOutputText)
+                        dadoColuna = (HtmlOutputText) children.get(0);
+                }
 
                 if (obj != null) {
                     if (obj instanceof BigDecimal) {
 
                         BigDecimal valor = (BigDecimal) obj;
                         valor = valor.setScale(2, BigDecimal.ROUND_HALF_UP);
+
+//                        if(dadoColuna.getConverter() != null) {
+//                            NumberConverter nc = (NumberConverter) dadoColuna.getConverter();
+//                            if(nc.getCurrencySymbol().equals("R$")) {
+//                                CellStyle currencyFormat = workbook.createCellStyle();
+//                                currencyFormat.setDataFormat(HSSFDataFormat.getBuiltinFormat("$#,##0.00"));
+//                                
+//                                celula.setCellValue(valor.doubleValue());
+//                                celula.setCellStyle(currencyFormat);
+//                            }                            
+//                        }else {
+//                            celula.setCellValue(valor.doubleValue());
+//                        }
 
                         celula.setCellValue(valor.doubleValue());
 
@@ -131,10 +163,11 @@ public class Exportacoes implements Serializable {
                             txt = getValueFromString(txt);
                             value = Double.valueOf(txt);
 
-                            CellStyle style = workbook.createCellStyle();
+                            CellStyle currencyFormat = workbook.createCellStyle();
+                            currencyFormat.setDataFormat(HSSFDataFormat.getBuiltinFormat("$#,##0.00"));
 
                             celula.setCellValue(value);
-                            celula.setCellStyle(style);
+                            celula.setCellStyle(currencyFormat);
                         } else {
                             celula.setCellValue(txt);
                         }
@@ -142,7 +175,40 @@ public class Exportacoes implements Serializable {
                     }
                 }
 
-                //celula.setCellValue(this.formatar(tabelaColunas.get(colunasValidas.get(j)).getSortBy()));
+                if ((tableCount - i) == 1) {
+                    UIComponent component = tabelaColunas.get(colunasValidas.get(j)).getFacet("footer");
+                    if (component != null) {
+                        Cell celulaRodape = linhaRodape.createCell(j);
+
+                        List components = component.getChildren();
+
+                        if (components != null && !components.isEmpty()) {
+                            String rodape = "";
+
+                            for (Object c : components) {
+                                if (c instanceof HtmlOutputText) {
+
+                                    HtmlOutputText valor = (HtmlOutputText) c;
+
+                                    if (valor.getValue() instanceof String) {
+                                        rodape += (String) valor.getValue();
+                                    } else if (valor.getValue() instanceof BigDecimal) {
+                                        BigDecimal v = (BigDecimal) valor.getValue();
+                                        v = v.setScale(2, BigDecimal.ROUND_HALF_UP);
+                                        rodape += String.valueOf(v.doubleValue());
+                                    }
+                                }
+                            }
+
+                            CellStyle style = workbook.createCellStyle();
+
+                            celulaRodape.setCellStyle(style);
+                            celulaRodape.setCellValue(rodape);
+
+                        }
+
+                    }
+                }
 
             }
 
@@ -194,7 +260,9 @@ public class Exportacoes implements Serializable {
             PdfPTable tabelaPDF = new PdfPTable(colunasValidas.size());
             tabelaPDF.setWidthPercentage(100f);
 
-            for (int i = 0; i < table.getRowCount(); i++) {
+            int tableCount = table.getRowCount();
+
+            for (int i = 0; i < tableCount; i++) {
 
                 table.setRowIndex(i);
                 table.getRowData();
@@ -235,15 +303,63 @@ public class Exportacoes implements Serializable {
                     }
                 }
 
-                for (int j = 0; j < colunasValidas.size(); j++) {
+                HashMap<Integer, UIComponent> footer = new HashMap<Integer, UIComponent>();
+                Font fonte = new Font(5, 10);
 
-                    Font fonte = new Font(5, 10);
+                for (int j = 0; j < colunasValidas.size(); j++) {
 
                     PdfPCell celula = new PdfPCell(new Phrase(this.formatar(tabelaColunas.get(colunasValidas.get(j)).getSortBy()), fonte));
                     celula.setHorizontalAlignment(Element.ALIGN_CENTER);
 
                     tabelaPDF.addCell(celula);
 
+                    if ((tableCount - i) == 1) {
+                        UIComponent component = tabelaColunas.get(colunasValidas.get(j)).getFacet("footer");
+                        if (component != null && !component.getChildren().isEmpty()) {
+                            footer.put(j, component);
+                        }
+                    }
+
+                }
+
+                //CONSTRÓI O RODAPÉ DA TABELA
+                if (!footer.isEmpty()) {
+                    for (int j = 0; j < colunasValidas.size(); j++) {
+
+                        if (footer.containsKey(j)) {
+                            String rodape = "";
+                            List components = footer.get(j).getChildren();
+                            for (Object c : components) {
+                                if (c instanceof HtmlOutputText) {
+                                    HtmlOutputText valor = (HtmlOutputText) c;
+
+                                    if (valor.getConverter() != null) {
+                                        NumberConverter nc = (NumberConverter) valor.getConverter();
+                                        if (nc.getCurrencySymbol().equals("R$")) {
+                                            Locale ptBr = new Locale("pt", "BR");
+                                            String valorString = NumberFormat.getCurrencyInstance(ptBr).format(
+                                                    ((BigDecimal) valor.getValue()).doubleValue());
+                                            
+                                            rodape += "R$ " + valorString;
+                                        }
+                                    } else {
+                                        rodape += (String) valor.getValue();
+                                    }
+                                }
+                            }
+
+                            PdfPCell celulaRodape = new PdfPCell(new Phrase(rodape, fonte));
+                            celulaRodape.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+                            tabelaPDF.addCell(celulaRodape);
+                        } else {
+                            PdfPCell celulaRodape = new PdfPCell(new Phrase("", fonte));
+                            celulaRodape.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+                            tabelaPDF.addCell(celulaRodape);
+                        }
+
+                    }
                 }
 
             }
@@ -436,7 +552,7 @@ public class Exportacoes implements Serializable {
 
                         CellRangeAddress cellRangeAddress = new CellRangeAddress(0, 0, 0, 3);
                         sheetTabela.addMergedRegion(cellRangeAddress);
-                        
+
                         CellStyle styleTitulo = workbook.createCellStyle();
 
                         styleTitulo.setAlignment(HorizontalAlignment.CENTER);
@@ -452,7 +568,7 @@ public class Exportacoes implements Serializable {
                         Cell celula5 = cabecalho2.createCell(0);
                         celula5.setCellValue("Procedimento");
                         celula5.setCellStyle(styleTitulo);
-                        
+
                         Cell celula2 = cabecalho2.createCell(1);
                         celula2.setCellValue("Código convênio");
                         celula2.setCellStyle(styleTitulo);
@@ -473,17 +589,17 @@ public class Exportacoes implements Serializable {
                     Cell celula4 = linhaPlanilha.createCell(3);
                     Procedimento proc = (Procedimento) colunas.get(i).getChildren().get(j).getData();
 
-                    if(proc != null) {
-                        if(proc.getDescricao() != null)
+                    if (proc != null) {
+                        if (proc.getDescricao() != null)
                             celula.setCellValue(proc.getDescricao());
-                        
-                        if(proc.getCodigoConvenio() != null)
+
+                        if (proc.getCodigoConvenio() != null)
                             celula2.setCellValue(proc.getCodigoConvenio());
-                        
-                        if(proc.getValor() != null)
+
+                        if (proc.getValor() != null)
                             celula3.setCellValue(proc.getValor().doubleValue());
-                        
-                        if(proc.getValorRepasse() != null)
+
+                        if (proc.getValorRepasse() != null)
                             celula4.setCellValue(proc.getValorRepasse().doubleValue());
                     }
 
@@ -558,8 +674,9 @@ public class Exportacoes implements Serializable {
             Date data = (Date) obj;
             return new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", new Locale("PT BR")).format(data);
         } else if (obj instanceof Number) {
+            NumberFormat f = (NumberFormat) NumberFormat.getInstance(new Locale("pt", "BR"));
             Number valor = (Number) obj;
-            return String.valueOf(valor);
+            return String.valueOf(f.format(valor));
         } else if (obj instanceof String) {
             return (String) obj;
         }

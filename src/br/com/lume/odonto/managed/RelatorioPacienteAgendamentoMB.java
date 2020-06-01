@@ -59,10 +59,15 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
+    private DataTable tabelaAniversariantes;
     
     private List<String> filtroAtendimento = new ArrayList<String>();
  
-    private List<String> filtroStatusAgendamento; 
+    private List<String> filtroStatusAgendamento;
+    
+    private List<Paciente> aniversariantes;
+    
+    private String filtroAniversariantes;
     
     public static final String SEM_ULTIMO_AGENDAMENTO = "SUA";
         
@@ -117,6 +122,79 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         return "";
     }
     
+    public void carregarAniversariantes() {
+        try {
+            Calendar c = Calendar.getInstance();
+            Date dataInicio = null, dataFim = null;
+            
+            switch(this.filtroAniversariantes) {
+                case "O":
+                    c.add(Calendar.MONTH, 1);
+                    c.set(Calendar.DAY_OF_MONTH, 1);
+                    dataInicio = c.getTime();
+                    
+                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    dataFim = c.getTime();
+                    break;
+                
+                case "M":
+                    c.set(Calendar.DAY_OF_MONTH, 1);
+                    dataInicio = c.getTime();
+                    
+                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    dataFim = c.getTime();
+                    break;
+                
+                case "S":
+                    dataFim = c.getTime();
+                    
+                    c.add(Calendar.DAY_OF_MONTH, -7);
+                    dataInicio = c.getTime();
+                    break;
+                    
+                case "Q":
+                    dataFim = c.getTime();
+                    
+                    c.add(Calendar.DAY_OF_MONTH, -15);
+                    dataInicio = c.getTime();
+                    break;
+                    
+                case "T":
+                    c.add(Calendar.MONTH, -1);
+                    c.set(Calendar.DAY_OF_MONTH, 1);
+                    dataInicio = c.getTime();
+                    
+                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    dataFim = c.getTime();
+                    break;
+                    
+                case "":
+                    c.set(Calendar.DAY_OF_MONTH, 1);
+                    dataInicio = c.getTime();
+                    
+                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    dataFim = c.getTime();
+                    break;
+            }
+            
+            this.aniversariantes = PacienteSingleton.getInstance().getBo().listAniversariantes(dataInicio, dataFim, 
+                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            
+        } catch (Exception e) {
+            this.log.error(e);
+            e.printStackTrace();
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar os aniversariantes");
+        }
+    }
+    
+    public void limparDlgAniversariantes() {
+        this.aniversariantes = null;
+        this.filtroAniversariantes = "";
+    }
+    
+    public void exportarTabelaAniversariantes(String type) {
+        this.exportarTabela("Aniversariantes", tabelaAniversariantes, type);
+    }
     
     public void mostrarOsPacientes() {
         if(getFiltroStatusAgendamento().contains(SEM_ULTIMO_AGENDAMENTO)) {
@@ -480,5 +558,29 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     
     public void setFiltroPorProfissional(Profissional filtroPorProfissional) {
         this.filtroPorProfissional = filtroPorProfissional;
+    }
+
+    public DataTable getTabelaAniversariantes() {
+        return tabelaAniversariantes;
+    }
+
+    public void setTabelaAniversariantes(DataTable tabelaAniversariantes) {
+        this.tabelaAniversariantes = tabelaAniversariantes;
+    }
+
+    public List<Paciente> getAniversariantes() {
+        return aniversariantes;
+    }
+
+    public void setAniversariantes(List<Paciente> aniversariantes) {
+        this.aniversariantes = aniversariantes;
+    }
+
+    public String getFiltroAniversariantes() {
+        return filtroAniversariantes;
+    }
+
+    public void setFiltroAniversariantes(String filtroAniversariantes) {
+        this.filtroAniversariantes = filtroAniversariantes;
     }
 }

@@ -138,7 +138,7 @@
 						var="f" rows="20" paginator="true" rowKey="#{f}"
 						paginatorPosition="bottom" binding="#{faturaPagtoMB.tabelaFatura}">
 						<f:facet name="header">Faturas</f:facet>
-						<p:column width="120" headerText="Detalhes">
+						<p:column width="120" headerText="Detalhes" exportable="false">
 							<p:commandButton icon="fa fa-eye" process="@this"
 								actionListener="#{faturaPagtoMB.visualizaFatura(f)}"
 								update=":lume:pnlfaturaView, :lume:pnlfaturaViewHeader, :lume:buttonViewFatura"
