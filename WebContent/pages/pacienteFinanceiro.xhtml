@@ -223,7 +223,7 @@ hr.hrSaldo {
 			var="f" rows="10" paginator="true" rowKey="#{f}"
 			paginatorPosition="bottom" binding="#{pacienteMB.tabelaFinanceiro}">
 			<f:facet name="header">Faturas</f:facet>
-			<p:column width="120" headerText="Detalhes">
+			<p:column width="120" headerText="Ações">
 				<p:commandButton icon="fa fa-eye" process="@this"
 					actionListener="#{faturaPagtoMB.visualizaFatura(f)}"
 					update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"

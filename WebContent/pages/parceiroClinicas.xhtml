@@ -1,0 +1,244 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml">
+	<ui:define name="content">
+		<style>
+.ui-autocomplete:not (.fixaAbaixo ) input {
+	height: 100%;
+}
+
+.remove12ColPaddingSide div.ui-g-12.ui-lg-12 {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.dialogDados .ui-dialog-content {
+	overflow: hidden;
+}
+</style>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+				<h1>Paciente</h1>
+
+					<p:fieldset legend="Filtros" collapsed="true" toggleable="true">
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-6, ui-g-6"
+							styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+							<h:panelGroup styleClass="md-combo">
+								<p:outputLabel for="status" value="Status dos Pacientes: " />
+								<p:selectOneMenu id="status" value="#{pacienteMB.filtroStatus}">
+									<f:selectItem itemLabel="Ativos" itemValue="A" />
+									<f:selectItem itemLabel="Inativos" itemValue="I" />
+									<f:selectItem itemLabel="Todos" itemValue="T" />
+									<p:ajax listener="#{pacienteMB.geraLista}" process="@this"
+										update="dtPrincipalPacientes" oncomplete="PF('dtPrincipalPacientes').filter();" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+						</p:panelGrid>
+					</p:fieldset>
+
+					<p:panelGrid columns="4" layout="grid" id="botoesLong"
+						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+						<p:commandButton id="new" icon="ui-icon-add"
+							process="@this"
+							styleClass="BotaoCrud" actionListener="#{pacienteMB.actionNew}"
+							update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente"
+							value="Novo Paciente" onstart="PF('dlgFichaPaciente').show()"/>
+
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+								value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+								actionListener="#{pacienteMB.exportarTabelaPaciente('xls')}"
+								ajax="false" process="dtPrincipalPacientes,@this" update="@this"
+								immediate="true"
+								onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+								<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+
+								<p:menuitem value="Exportar tabela para PDF"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{pacienteMB.exportarTabelaPaciente('pdf')}"
+									ajax="false" process="dtPrincipalPacientes,@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+								</p:menuitem>
+								<p:menuitem value="Exportar tabela para CSV"
+									icon="fa fa fa-file-pdf-o"
+									actionListener="#{pacienteMB.exportarTabelaPaciente('csv')}"
+									ajax="false" process="dtPrincipalPacientes,@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+								</p:menuitem>
+							</p:splitButton>
+						</h:panelGroup>
+
+					</p:panelGrid>
+					<h:panelGroup id="botoes" styleClass="tableButtons">
+						<p:commandButton icon="fa fa-file-excel-o"
+							process="dtPrincipalPacientes"
+							styleClass="BotaoCrud Exportar green-btn" ajax="false"
+							id="btExporExcel" immediate="true">
+							<p:dataExporter type="xls" target="dtPrincipalPacientes"
+								fileName="pacientes" pageOnly="false" encoding="ISO-8859-1" />
+							<p:tooltip value="Exportar tabela para Excel" for="btExporExcel" />
+						</p:commandButton>
+					</h:panelGroup>
+
+					<p:focus context=":lume:hiddenFocus" />
+					<p:outputLabel id="hiddenFocus" style="display:hidden" />
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						id="dtPrincipalPacientes" value="#{pacienteMB.entityList}"
+						var="paciente" rows="7" paginator="true" rowKey="#{paciente}"
+						paginatorPosition="bottom" widgetVar="dtPrincipalPacientes"
+						binding="#{pacienteMB.tabelaPaciente}">
+
+						<f:facet name="header">#{dominioMB.cliente}
+							<h:panelGroup styleClass="pesquisa">
+								<p:outputPanel>
+									<h:outputText value="Pesquisar Paciente" />
+									<p:inputText id="globalFilter"
+										onkeyup="PF('dtPrincipalPacientes').filter()"
+										style="width:150px" />
+								</p:outputPanel>
+							</h:panelGroup>
+						</f:facet>
+
+						<p:column headerText="Ações" width="100">
+							<h:panelGroup rendered="#{paciente.status == 'A'}">
+								<p:commandButton id="persistInativar"
+									icon="White fa fa-chain-broken" title="Inativar"
+									actionListener="#{pacienteMB.actionInativar(paciente)}"
+									update=":lume:dtPrincipalPacientes" process="@this"
+									styleClass="NavyButton" />
+							</h:panelGroup>
+							<h:panelGroup rendered="#{paciente.status == 'I'}">
+								<p:commandButton id="persistAtivar"
+									icon="White fa fa-chain White" title="Ativar"
+									actionListener="#{pacienteMB.actionAtivar(paciente)}"
+									update=":lume:dtPrincipalPacientes" process="@this"
+									styleClass="NavyButton" />
+							</h:panelGroup>
+						</p:column>
+						<p:column sortBy="#{paciente.codigo}"
+							filterBy="#{paciente.codigo}" width="100"
+							filterMatchMode="contains" headerText="Código"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
+							<h:outputText value="#{paciente.codigo}" />
+						</p:column>
+						<p:column sortBy="#{paciente.dadosBasico.nome}"
+							filterBy="#{paciente.dadosBasico.nomeStr}"
+							filterMatchMode="contains" headerText="Nome"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
+							<p:commandLink value="#{paciente.dadosBasico.nome}"
+								process="@this" title="#{paciente.id}"
+								actionListener="#{tabPacienteMB.loadPaciente(paciente)}"
+								oncomplete="attTabViewPaciente();" />
+						</p:column>
+						<p:column sortBy="#{paciente.dadosBasico.responsavel}"
+							filterBy="#{paciente.dadosBasico.responsavel}"
+							filterMatchMode="contains" headerText="Responsável"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
+							<h:outputText value="#{paciente.dadosBasico.responsavel}" />
+						</p:column>
+						<p:column sortBy="#{paciente.dadosBasico.dataNascimentoStr}"
+							filterBy="#{paciente.dadosBasico.dataNascimentoStr}"
+							filterMatchMode="contains" headerText="Data de Nascimento">
+							<h:outputText value="#{paciente.dadosBasico.dataNascimentoStr}" />
+						</p:column>
+						<p:column sortBy="#{paciente.convenio.dadosBasico.nome}"
+							filterBy="#{paciente.convenio.dadosBasico.nome}"
+							filterMatchMode="contains" headerText="Convênio"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
+							<h:outputText value="#{paciente.convenio.dadosBasico.nome}" />
+						</p:column>
+						<p:column sortBy="#{paciente.convenio.observacaoConvenio}"
+							filterBy="#{paciente.convenio.observacaoConvenio}"
+							rendered="#{false}" filterMatchMode="contains"
+							headerText="Observação convênio"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
+							<h:outputText value="#{paciente.convenio.observacaoConvenio}" />
+						</p:column>
+						<p:column sortBy="#{paciente.dadosBasico.celular}"
+							filterBy="#{paciente.dadosBasico.celular}"
+							filterMatchMode="contains" headerText="Telefone Celular"
+							rendered="#{pacienteMB.visivelDadosPaciente and false}">
+							<h:panelGroup style="display: flex !important;">
+								<div style="line-height: 32px; width: calc(100% - 32px);">
+									<h:outputText value="#{paciente.dadosBasico.celular}" />
+								</div>
+								<p:button icon="White fa fa-whatsapp" style="right: 0"
+									disabled="#{paciente.wppURL == null}"
+									onclick="window.open('#{paciente.wppURL}'); return false;"
+									styleClass="GreenButton" />
+							</h:panelGroup>
+						</p:column>
+					</p:dataTable>
+
+					<p:panelGrid columns="4" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+						<h:panelGroup rendered="#{pacienteMB.admin}">
+							<p:commandButton value="Carregar Pacientes" process="@this"
+								icon="White fa fa-upload" styleClass="OrangeButton"
+								oncomplete="PF('dlgCarregarPacientes').show();" />
+						</h:panelGroup>
+					</p:panelGrid>
+				</div>
+			</div>
+		</div>
+
+		
+		<p:remoteCommand name="onHidePacienteFicha" process="@this"
+			update=":lume:dtPrincipalPacientes" actionListener="#{pacienteMB.geraLista}" />
+
+		<p:dialog id="dlgCarregarPacientes" header="Carregar Pacientes"
+			widgetVar="dlgCarregarPacientes" responsive="true" modal="true"
+			width="800" appendTo=":lume">
+			<h:panelGroup id="pnCarregarPacientes">
+				<div class="Container100 Responsive100 NoIndent">
+					<div class="Container100 NoPadding">
+						<div class="Container100 Responsive100">
+							<div style="font-weight: bold;">Leiaute :</div>
+							<br />
+							nome;celular;dataNascimento[dd/MM/AAAA];email;cpf;rg;cep;endereco;numero[numérico];bairro;uf[ex:
+							PR];telefone;sexo[M/F];cria usuário?[S/N];
+						</div>
+						<div class="Container100 Responsive100">
+							<p:fileUpload fileUploadListener="#{pacienteMB.upload}"
+								multiple="false" cancelLabel="Cancelar" uploadLabel="Carregar"
+								mode="advanced" dragDropSupport="true" sizeLimit="500000000"
+								label="Anexar"
+								invalidFileMessage="Arquivo inválido para processamento."
+								update=":lume:pnLogCarregarPacientes,:lume:dtPrincipalPacientes"
+								onstart="PF('loading').show();"
+								oncomplete="PF('loading').hide();"
+								allowTypes="/(\.|\/)(csv|CSV|txt|TXT)$/" />
+						</div>
+						<div class="SeparatorFull"></div>
+						<div class="Container100 Responsive100">
+							<h:panelGroup id="pnLogCarregarPacientes">
+								<p:dataList value="#{pacienteMB.errosCarregarPaciente}" var="e">
+									<f:facet name="header">
+                                		Erros
+                            		</f:facet>
+                            		#{e}
+                        		</p:dataList>
+							</h:panelGroup>
+						</div>
+					</div>
+					<div class="SeparatorFull"></div>
+					<div class="Container50 Responsive100">
+						<p:commandButton icon="White fa fa-close" value="Fechar"
+							process="@this" onclick="PF('dlgCarregarPacientes').hide()"
+							styleClass="RedButton" />
+					</div>
+				</div>
+			</h:panelGroup>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>

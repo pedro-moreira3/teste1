@@ -36,6 +36,7 @@
 									<f:selectItem itemValue="BO" itemLabel="Boleto" />
 									<f:selectItem itemValue="FI" itemLabel="Financiamento" />
 									<f:selectItem itemValue="OU" itemLabel="Outros" />
+									<p:ajax update="prazo" process="@this" listener="#{tarifaMB.mudaPrazo}" />
 								</p:selectOneRadio>
 							</p:outputPanel>
 						</p:panelGrid>	
