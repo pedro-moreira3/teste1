@@ -1182,7 +1182,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<h:panelGroup style="display: flex">
 								<p:selectOneMenu id="problema2"
 									value="#{planoTratamentoMB.statusDenteDenteSelecionado}"
-									converter="statusDente" filter="true"
+									converter="statusDente" filter="true" filterFunction="#{planoTratamentoMB.filtroSemAcento}"
 									filterMatchMode="contains" autoWidth="false"
 									disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}">
 									<p:ajax process="@this" update="adicionarStatusDente2" />
