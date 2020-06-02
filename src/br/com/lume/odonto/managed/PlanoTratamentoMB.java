@@ -136,6 +136,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private List<Dominio> justificativas;
 
     private boolean imprimirSemValores = false;
+    
+    private boolean incluirObservacoesCobranca = false;
+    
+    private boolean omitirProcedimentosNaoInclusos = false;
 
     private String filtroStatus = "T";
 
@@ -179,6 +183,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     @ManagedProperty(value = "#{pacienteMB}")
     private PacienteMB pacienteMB;
     private boolean renderizarValoresProcedimentos = true;
+    //private boolean renderizarObservacoesCobranca = false;
     private List<Profissional> profissionaisFinalizarNovamente;
     private Profissional profissionalFinalizarNovamente;
 
@@ -221,8 +226,14 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (imprimirSemValores) {
             renderizarValoresProcedimentos = false;
         }
-
     }
+    
+  //  public void incluirObservacoesCobrancaListener() {
+     //   renderizarObservacoesCobranca = false;
+    //    if (incluirObservacoesCobranca) {
+    //        renderizarObservacoesCobranca = true;
+  //      }
+ //   }
     
     public BigDecimal valorAReceber(PlanoTratamento pt) {
         return FaturaItemSingleton.getInstance().valorAReceberDoPacienteFromPT(pt);
@@ -2628,5 +2639,35 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     public void setDiferencaCalculoParcelas(BigDecimal diferencaCalculoParcelas) {
         this.diferencaCalculoParcelas = diferencaCalculoParcelas;
     }
+
+    
+    public boolean isIncluirObservacoesCobranca() {
+        return incluirObservacoesCobranca;
+    }
+
+    
+    public void setIncluirObservacoesCobranca(boolean incluirObservacoesCobranca) {
+        this.incluirObservacoesCobranca = incluirObservacoesCobranca;
+    }
+
+    
+    public boolean isOmitirProcedimentosNaoInclusos() {
+        return omitirProcedimentosNaoInclusos;
+    }
+
+    
+    public void setOmitirProcedimentosNaoInclusos(boolean omitirProcedimentosNaoInclusos) {
+        this.omitirProcedimentosNaoInclusos = omitirProcedimentosNaoInclusos;
+    }
+
+    
+  //  public boolean isRenderizarObservacoesCobranca() {
+  //      return renderizarObservacoesCobranca;
+   // }
+
+    
+  //  public void setRenderizarObservacoesCobranca(boolean renderizarObservacoesCobranca) {
+ //       this.renderizarObservacoesCobranca = renderizarObservacoesCobranca;
+ //   }
 
 }

@@ -449,6 +449,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             fatura.setDadosTabelaTotalPagoFromPaciente(FaturaSingleton.getInstance().getTotalPagoFromPaciente(fatura));
             fatura.setDadosTabelaTotalNaoPagoFromPaciente(FaturaSingleton.getInstance().getTotalNaoPagoFromPaciente(fatura));
 
+            // Ajustando para corrigir valores na tabela de Recebimento da tela FaturaPagto
+            fatura.setDadosTabelaRepasseTotalNaoPago(fatura.getDadosTabelaTotalNaoPagoFromPaciente());
+            fatura.setDadosTabelaRepasseTotalPago(fatura.getDadosTabelaTotalPagoFromPaciente());
+
             NumberFormat ptFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
             NumberFormat percformat = NumberFormat.getPercentInstance(new Locale("pt", "BR"));
             String totalDesconto = ptFormat.format(FaturaSingleton.getInstance().getTotalDesconto(fatura).doubleValue());
@@ -914,6 +918,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public void actionAlteraFormaPagamentoNegociacao() {
+        if (this.negociacaoDataPagamento == null)
+            this.negociacaoDataPagamento = new Date();
         actionAlteraDataPagamentoNegociacao();
         negociacaoAtualizaListaParcelas();
     }
@@ -987,6 +993,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public void actionStartConfirmacaNegociacao(NegociacaoFatura negociacaoFatura) {
+        this.negociacaoFormaPagamento = null;
+        this.negociacaoDataPagamento = null;
+        this.negociacaoDataCredito = null;
+
         negociacaoConfirmacao = negociacaoFatura;
         if (parcelasDisponiveis == null)
             atualizaPossibilidadesNegociacao();
@@ -1002,7 +1012,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         atualizaPossibilidadesTarifaNegociacao();
         atualizaTooltipTarifasDisponiveis();
         negociacaoAtualizaListaParcelas();
-        refazCalculos();
+        //refazCalculos();
+
+        if (negociacaoQuantidadeParcelas == 1)
+            atualizaInfoParcelamentoNegociacao(TipoNegociacao.A_VISTA);
+        else if (negociacaoValorDaParcela.compareTo(negociacaoValorDaPrimeiraParcela) != 0)
+            atualizaInfoParcelamentoNegociacao(TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE);
+        else
+            atualizaInfoParcelamentoNegociacao(TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS);
 
         this.negociacaoValorTotal = negociacaoFatura.getValorTotal().subtract(negociacaoFatura.getResultadoDesconto());
     }
@@ -1133,8 +1150,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 for (Tarifa formaPagamento : listaFormasDePagamento) {
                     if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null) {
                         if (negociacaoQuantidadeParcelas >= formaPagamento.getParcelaMinima() && negociacaoQuantidadeParcelas <= formaPagamento.getParcelaMaxima() && negociacaoTarifasDisponiveis.indexOf(
-                                formaPagamento) == -1)
+                                formaPagamento) == -1) {
                             negociacaoTarifasDisponiveis.add(formaPagamento);
+
+                            if (negociacaoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
+                                negociacaoTarifasDisponiveisEEntrada.add(formaPagamento);
+                        }
                     }
                     if (formaPagamento.getParcelaMinima() == 1 && negociacaoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
                         negociacaoTarifasDisponiveisEEntrada.add(formaPagamento);

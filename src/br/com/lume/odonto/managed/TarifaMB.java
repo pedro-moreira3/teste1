@@ -61,6 +61,19 @@ public class TarifaMB extends LumeManagedBean<Tarifa> {
             Collections.sort(this.tarifas);
     }
     
+    public void mudaPrazo() {
+        if(getEntity().getTipo().equals("CC")) {
+            getEntity().setPrazo(30);
+        }else if(getEntity().getTipo().equals("CD")) {
+            getEntity().setPrazo(2);
+        }else{
+            getEntity().setPrazo(0);
+        }
+        
+        
+     
+    }
+    
    
 
     @Override

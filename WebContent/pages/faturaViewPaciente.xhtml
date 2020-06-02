@@ -767,7 +767,7 @@ body .lancamentoFalhaOperacao {
 											value="#{faturaPagtoMB.negociacaoTarifasDisponiveis}"
 											var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
 										<p:ajax event="change" process="@this"
-											update="negociacaoDataCreditoAprovacao, negociacaoParcelasTable"
+											update="negociacaoDataPagamentoAprovacao, negociacaoDataCreditoAprovacao, negociacaoParcelasTablePnl"
 											listener="#{faturaPagtoMB.actionAlteraFormaPagamentoNegociacao}" />
 									</p:selectOneMenu>
 									<p:message for="negociacaoFormaPagamentoAprovacao"
@@ -794,7 +794,7 @@ body .lancamentoFalhaOperacao {
 										yearRange="-10:+10">
 										<p:ajax event="dateSelect"
 											listener="#{faturaPagtoMB.actionAlteraDataPagamentoNegociacao}"
-											update="negociacaoDataCreditoAprovacao, negociacaoParcelasTable"
+											update="negociacaoDataCreditoAprovacao, negociacaoParcelasTablePnl"
 											process="@this, negociacaoFormaPagamentoAprovacao" />
 									</p:calendar>
 									<p:outputLabel for="negociacaoDataPagamentoAprovacao"
@@ -812,69 +812,72 @@ body .lancamentoFalhaOperacao {
 										yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}">
 										<p:ajax event="dateSelect"
 											listener="#{faturaPagtoMB.actionAlteraDataCreditoNegociacao}"
-											update="negociacaoParcelasTable" process="@this" />
+											update="negociacaoParcelasTablePnl" process="@this" />
 									</p:calendar>
 									<p:outputLabel for="negociacaoDataCreditoAprovacao"
 										value="Data de Crédito:" />
 									<p:message for="negociacaoDataCreditoAprovacao"
 										styleClass="msg" />
 								</h:panelGroup>
+								
+								<p:outputPanel id="negociacaoParcelasTablePnl">
+									<p:dataTable emptyMessage="Nenhuma parcela criada ainda."
+										id="negociacaoParcelasTable" filterDelay="1500" reflow="true"
+										value="#{faturaPagtoMB.negociacaoParcelas}" var="parcela"
+										rows="10" paginator="true" rowKey="#{parcela}"
+										paginatorPosition="bottom"
+										widgetVar="dtNegociacaoParcelasTable">
+										<f:facet name="header">Lista de Parcelas a serem criadas</f:facet>
+										<p:column filterBy="#{parcela.seq}" sortBy="#{parcela.seq}"
+											filterMatchMode="contains" headerText="Nº" width="30">
+											<h:outputText value="#{parcela.seq}" />
+										</p:column>
+										<p:column filterBy="#{parcela.valor}"
+											sortBy="#{parcela.valor}" filterMatchMode="contains"
+											headerText="Valor da Parcela">
+											<h:outputText value="#{parcela.valor}">
+												<f:convertNumber type="currency" currencySymbol="R$"
+													maxFractionDigits="2" />
+											</h:outputText>
+										</p:column>
+										<p:column filterBy="#{parcela.formaPagamento.produtoStr}"
+											sortBy="#{parcela.formaPagamento.produtoStr}"
+											filterMatchMode="contains" headerText="Forma de Pagamento">
 
-								<p:dataTable emptyMessage="Nenhuma parcela criada ainda."
-									id="negociacaoParcelasTable" filterDelay="1500" reflow="true"
-									value="#{faturaPagtoMB.negociacaoParcelas}" var="parcela"
-									rows="10" paginator="true" rowKey="#{parcela}"
-									paginatorPosition="bottom"
-									widgetVar="dtNegociacaoParcelasTable">
-									<f:facet name="header">Lista de Parcelas a serem criadas</f:facet>
-									<p:column filterBy="#{parcela.seq}" sortBy="#{parcela.seq}"
-										filterMatchMode="contains" headerText="Nº" width="30">
-										<h:outputText value="#{parcela.seq}" />
-									</p:column>
-									<p:column filterBy="#{parcela.valor}" sortBy="#{parcela.valor}"
-										filterMatchMode="contains" headerText="Valor da Parcela">
-										<h:outputText value="#{parcela.valor}">
-											<f:convertNumber type="currency" currencySymbol="R$"
-												maxFractionDigits="2" />
-										</h:outputText>
-									</p:column>
-									<p:column filterBy="#{parcela.formaPagamento.produtoStr}"
-										sortBy="#{parcela.formaPagamento.produtoStr}"
-										filterMatchMode="contains" headerText="Forma de Pagamento">
+											<p:selectOneMenu converter="tarifa"
+												value="#{parcela.formaPagamento}">
+												<f:selectItem itemValue="#{null}"
+													itemLabel="Selecione uma Forma de Pagamento:" />
+												<f:selectItems
+													value="#{faturaPagtoMB.negociacaoTarifasDisponiveisEEntrada}"
+													var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+												<p:ajax event="change" update=":lume:negociacaoParcelasTablePnl"
+													process="@this" />
+											</p:selectOneMenu>
 
-										<p:selectOneMenu converter="tarifa"
-											value="#{parcela.formaPagamento}">
-											<f:selectItem itemValue="#{null}"
-												itemLabel="Selecione uma Forma de Pagamento:" />
-											<f:selectItems
-												value="#{faturaPagtoMB.negociacaoTarifasDisponiveisEEntrada}"
-												var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
-											<p:ajax event="change" update="negociacaoParcelasTable"
-												process="@this" />
-										</p:selectOneMenu>
-
-									</p:column>
-									<p:column filterBy="#{parcela.dataPagamento}"
-										sortBy="#{parcela.dataPagamento}" filterMatchMode="contains"
-										headerText="Data de Pagamento">
-										<p:calendar value="#{parcela.dataPagamento}"
-											pattern="dd/MM/yyyy" showWeeksBar="false"
-											locale="#{lumeSecurity.locale}"
-											styleClass="listaLancamentoColunaDataPagamento"
-											timeZone="#{lumeSecurity.timeZone}" navigator="true"
-											yearRange="-10:+10">
-											<p:ajax event="dateSelect" update="negociacaoParcelasTable"
-												process="@this" />
-										</p:calendar>
-									</p:column>
-									<p:column filterBy="#{parcela.dataCredito}"
-										sortBy="#{parcela.dataCredito}" filterMatchMode="contains"
-										headerText="Data de Crédito">
-										<h:outputText value="#{parcela.dataCredito}">
-											<f:convertDateTime pattern="dd/MM/yyyy" />
-										</h:outputText>
-									</p:column>
-								</p:dataTable>
+										</p:column>
+										<p:column filterBy="#{parcela.dataPagamento}"
+											sortBy="#{parcela.dataPagamento}" filterMatchMode="contains"
+											headerText="Data de Pagamento">
+											<p:calendar value="#{parcela.dataPagamento}"
+												pattern="dd/MM/yyyy" showWeeksBar="false"
+												locale="#{lumeSecurity.locale}"
+												styleClass="listaLancamentoColunaDataPagamento"
+												timeZone="#{lumeSecurity.timeZone}" navigator="true"
+												yearRange="-10:+10">
+												<p:ajax event="dateSelect"
+													update=":lume:negociacaoParcelasTablePnl" process="@this" />
+											</p:calendar>
+										</p:column>
+										<p:column filterBy="#{parcela.dataCredito}"
+											sortBy="#{parcela.dataCredito}" filterMatchMode="contains"
+											headerText="Data de Crédito">
+											<h:outputText value="#{parcela.dataCredito}">
+												<f:convertDateTime pattern="dd/MM/yyyy" />
+											</h:outputText>
+										</p:column>
+									</p:dataTable>
+								</p:outputPanel>
 
 							</p:panelGrid>
 
