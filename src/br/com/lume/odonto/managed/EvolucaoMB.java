@@ -26,6 +26,8 @@ public class EvolucaoMB extends LumeManagedBean<Evolucao> {
 
     @ManagedProperty(value = "#{pacienteMB}")
     private PacienteMB pacienteMB;
+    
+    private String anotacoes;
 
     //EXPORTAÇÃO DA TABELA
     private DataTable tabelaEvolucao;
@@ -52,7 +54,7 @@ public class EvolucaoMB extends LumeManagedBean<Evolucao> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
-
+    
     public String getInfoPTPFromEvolucao(Evolucao evolucao) {
         String infoPTP = "";
         if (evolucao.getPlanoTratamentoProcedimentos() != null && !evolucao.getPlanoTratamentoProcedimentos().isEmpty()) {
@@ -105,5 +107,13 @@ public class EvolucaoMB extends LumeManagedBean<Evolucao> {
 
     public void setTabelaEvolucao(DataTable tabelaEvolucao) {
         this.tabelaEvolucao = tabelaEvolucao;
+    }
+
+    public String getAnotacoes() {
+        return anotacoes;
+    }
+
+    public void setAnotacoes(String anotacoes) {
+        this.anotacoes = anotacoes;
     }
 }

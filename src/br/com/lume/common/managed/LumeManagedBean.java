@@ -35,6 +35,7 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.MessageType;
 import br.com.lume.common.util.StringUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.bo.RestricaoBO;
@@ -399,6 +400,15 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             //addError("Erro ao abrir whatsapp!", e.getMessage());
         }
         return null;
+    }
+    
+    public String getUrlMessage(String mensagem, Paciente paciente) {
+        try {
+            return WhatsappSingleton.getInstance().getUrlMessage(mensagem, paciente);
+        }catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            return "";
+        }
     }
 
     public void fazNada() {

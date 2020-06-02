@@ -199,11 +199,13 @@ div.ui-selectoneradio label {
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
 									oncomplete="updateSchedule();handleDialogRequest(xhr, status, args);"
 									styleClass="GreenButton" />
-								<p:button id="whats" icon="White fa fa-whatsapp"
-									onclick="window.open('#{agendamentoMB.getUrlWpp(agendamentoMB.entity)}'); return false;"
-									value="Enviar Whatsapp" styleClass="GreenButton"
-									disabled="#{agendamentoMB.getUrlWpp(agendamentoMB.entity) == null}"
-									immediate="true"
+								<p:commandButton id="whats" icon="White fa fa-whatsapp"
+									actionListener="#{agendamentoMB.carregarMensagemPadrao()}"
+									oncomplete="PF('dlgMensagemWhats').show();"
+									value="Enviar Whatsapp" 
+									styleClass="GreenButton"
+									update=":lume:pnMensagem"
+									process="@this,:lume:pnMensagem"
 									rendered="#{agendamentoMB.entity != null and agendamentoMB.entity.id > 0}" />
 
 								<p:commandButton icon="White fa fa-close" value="Fechar"
@@ -224,8 +226,43 @@ div.ui-selectoneradio label {
 				</div>
 			</div>
 		</p:dialog>
-		<f:websocket channel="someChannel" onmessage="function(m){PF('myschedule').update();}" />
-		
+		<f:websocket channel="someChannel"
+			onmessage="function(m){PF('myschedule').update();}" />
+
+		<p:dialog id="dlgMensagemWhats" widgetVar="dlgMensagemWhats"
+			width="400px" height="200px" responsive="true"
+			header="Mensagem para contato" resizable="false"
+			modal="true">
+
+			<p:fieldset id="pnMensagem" toggleable="false">
+				<p:panelGrid columns="1" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+					style="border:0px none; background-color:transparent;">
+					<h:panelGroup>
+						<p:outputLabel for="txtMensagem" value="Mensagem:" />
+						<p:inputTextarea id="txtMensagem"
+							value="#{agendamentoMB.mensagemWhats}">
+						</p:inputTextarea>
+					</h:panelGroup>
+				</p:panelGrid>
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+					style="border:0px none; background-color:transparent;">
+					<p:commandButton icon="White fa fa-whatsapp"
+						actionListener="#{agendamentoMB.enviarMensagem()}"
+						value="Enviar mensagem" styleClass="GreenButton"
+						process="@this, txtMensagem"/>
+						
+					<p:commandButton icon="White fa fa-close" value="Fechar"
+						process="@this" update="pnMensagem"
+						actionListener="#{agendamentoMB.limparDlgMensagem}"
+						onclick="PF('dlgMensagemWhats').hide()" />
+				</p:panelGrid>
+
+			</p:fieldset>
+		</p:dialog>
+
 		<p:dialog id="dlgNovoAgendamento" widgetVar="dlgNovoAgendamento"
 			width="900px" height="700px" responsive="true"
 			header="Novo Agendamento" resizable="false" modal="true">
@@ -544,12 +581,15 @@ div.ui-selectoneradio label {
 													</p:column>
 													<p:column headerText="Nome da Mãe">
 														<h:outputText value="#{p.nomeMae}" />
-													</p:column>	
-													<p:ajax event="itemSelect" update="btnVisualizarDisponibilidadeAgenda" />
-													  <p:ajax event="change" update="btnVisualizarDisponibilidadeAgenda"/> 
+													</p:column>
+													<p:ajax event="itemSelect"
+														update="btnVisualizarDisponibilidadeAgenda" />
+													<p:ajax event="change"
+														update="btnVisualizarDisponibilidadeAgenda" />
 												</p:autoComplete>
 
-												<p:outputLabel for="pacienteSelecionado" value="Paciente (digite o nome e selecione o paciente)" />
+												<p:outputLabel for="pacienteSelecionado"
+													value="Paciente (digite o nome e selecione o paciente)" />
 
 											</h:panelGroup>
 
@@ -592,24 +632,26 @@ div.ui-selectoneradio label {
 														itemLabel="#{profissional.dadosBasico.prefixoNome}"
 														itemValue="#{profissional}" />
 
-													<p:ajax process="@this" update="btBloqueioAgenda,btnVisualizarDisponibilidadeAgenda" />
+													<p:ajax process="@this"
+														update="btBloqueioAgenda,btnVisualizarDisponibilidadeAgenda" />
 
 												</p:selectOneMenu>
 
 												<p:outputLabel for="profissional" value="Profissional" />
-											</h:panelGroup>	
+											</h:panelGroup>
 											<h:panelGroup styleClass="md-combo">
 												<p:outputPanel id="btnVisualizarDisponibilidadeAgenda"
-												style="display:inline-flex;">
-													<p:commandButton id="visualizarDisponibilidadeAgendqa" process="@this,:lume:pnDisponibilidade"
-													disabled="#{agendamentoMB.profissional == null}"
-													actionListener="#{agendamentoRapidoMB.carregaDisponibilidadeFromAgendamento(agendamentoMB.pacientePesquisado,agendamentoMB.profissional,agendamentoMB.initialDate)}"
-													update=":lume:pnDisponibilidade"
-													icon="fa fa-calendar-o White" 
-													oncomplete="PF('dlgDisponibilidade').show();PF('dtRelagendamento').filter();"
-													title="Disponibilidade do profissional" />
+													style="display:inline-flex;">
+													<p:commandButton id="visualizarDisponibilidadeAgendqa"
+														process="@this,:lume:pnDisponibilidade"
+														disabled="#{agendamentoMB.profissional == null}"
+														actionListener="#{agendamentoRapidoMB.carregaDisponibilidadeFromAgendamento(agendamentoMB.pacientePesquisado,agendamentoMB.profissional,agendamentoMB.initialDate)}"
+														update=":lume:pnDisponibilidade"
+														icon="fa fa-calendar-o White"
+														oncomplete="PF('dlgDisponibilidade').show();PF('dtRelagendamento').filter();"
+														title="Disponibilidade do profissional" />
 												</p:outputPanel>
-												
+
 											</h:panelGroup>
 
 										</p:panelGrid>
@@ -808,8 +850,8 @@ div.ui-selectoneradio label {
 								timeZone="#{lumeSecurity.timeZone}" firstHour="8"
 								view="agendaDay" timeFormat="HH:mm" minTime="07:00"
 								maxTime="21:00" allDaySlot="false" draggable="false"
-								tooltip="true"
-								resizable="false" initialDate="#{agendamentoMB.initialDate}">
+								tooltip="true" resizable="false"
+								initialDate="#{agendamentoMB.initialDate}">
 
 								<p:ajax event="viewChange" process="@this"
 									update=":lume:formularioPrincipal,:lume:formularioPrincipalProf, :lume:initialDate" />
@@ -1016,7 +1058,7 @@ div.ui-selectoneradio label {
 				//else if(value == 'S')
 				//	updateVisualizacao();
 				//if (PF('myschedule'))
-//					PF('myschedule').update();
+				//					PF('myschedule').update();
 				updateSchedule();
 			}
 
@@ -1195,21 +1237,21 @@ div.ui-selectoneradio label {
 				}
 			}
 
-		/*	$(document).ready(function() {
-				$('.fc-prev-button').click(function() {
-					updateSchedule();
-					console.log("a");
-					
-				});
-				$('.fc-next-button').click(function() {
-					updateSchedule();
-					console.log("b");
-				});
-				$('.fc-today-button').click(function() {
-					updateSchedule();
-					console.log("c");
-				});
-			});*/
+			/*	$(document).ready(function() {
+					$('.fc-prev-button').click(function() {
+						updateSchedule();
+						console.log("a");
+						
+					});
+					$('.fc-next-button').click(function() {
+						updateSchedule();
+						console.log("b");
+					});
+					$('.fc-today-button').click(function() {
+						updateSchedule();
+						console.log("c");
+					});
+				});*/
 
 			//]]>
 		</script>

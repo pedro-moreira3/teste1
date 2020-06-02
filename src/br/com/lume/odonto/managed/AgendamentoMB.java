@@ -95,6 +95,7 @@ import br.com.lume.security.UsuarioSingleton;
 import br.com.lume.security.entity.Perfil;
 import br.com.lume.security.entity.Usuario;
 import br.com.lume.security.validator.GenericValidator;
+import br.com.lume.whatsapp.WhatsappSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -136,6 +137,8 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     private PlanoTratamento planoTratamentoSelecionado;
 
     private List<PlanoTratamento> planoTratamentos;
+    
+    private String mensagemWhats;
     
    // @Inject @Push
     //private PushContext someChannel;
@@ -247,6 +250,19 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         //PrimeFaces.current().ajax().update(":lume:schedule");
     }
 
+    public void limparDlgMensagem() {
+        this.mensagemWhats = "";
+    }
+    
+    public void enviarMensagem() {
+        String url = this.getUrlMessage(this.mensagemWhats, this.getEntity().getPaciente());
+        PrimeFaces.current().executeScript("window.open('"+ url +"');");
+    }
+    
+    public void carregarMensagemPadrao() {
+        this.mensagemWhats = OdontoMensagens.getMensagem("whatsapp.defaultmessage.agendamento");
+    }
+    
     public void atualizaPacientePosFicha() {
         try {
             pacienteSelecionado = PacienteSingleton.getInstance().getBo().find(pacienteSelecionado);
@@ -2181,6 +2197,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     
     public void setCanalAgendamentoRapido(PushContext canalAgendamentoRapido) {
         this.canalAgendamentoRapido = canalAgendamentoRapido;
+    }
+
+    public String getMensagemWhats() {
+        return mensagemWhats;
+    }
+
+    public void setMensagemWhats(String mensagemWhats) {
+        this.mensagemWhats = mensagemWhats;
     }
 
     
