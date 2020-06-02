@@ -88,4 +88,6 @@ CREATE TABLE inteli.LOG_AGENDAMENTO
     id_motivo_status_agendamento bigint
 );
 
-
+ALTER TABLE paciente ADD COLUMN CARTEIRA_CONVENIO_TITULAR varchar(255);
+ALTER TABLE dados_basicos ADD COLUMN EMPRESA_ONDE_TRABALHA varchar(255);
+ALTER TABLE dados_basicos ADD COLUMN PROFISSAO varchar(255);
