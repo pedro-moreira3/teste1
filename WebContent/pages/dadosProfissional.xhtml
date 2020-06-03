@@ -98,7 +98,7 @@ body .ui-selectoneradio td label {
 					<p:selectOneMenu id="perfil" required="true"
 						value="#{profissionalMB.perfil}" converter="perfil">
 						<p:ajax
-							update="pgPerfil,:lume:tabView:objetosPerfil,pgFazOrcamento"
+							update="pgPerfil,:lume:tabView:objetosPerfil"
 							process="@this,pgPerfil"
 							listener="#{profissionalMB.carregarObjetosPerfisProfissional}" />
 						<f:selectItem itemValue="#{null}" itemLabel="Selecione um Perfil" />
