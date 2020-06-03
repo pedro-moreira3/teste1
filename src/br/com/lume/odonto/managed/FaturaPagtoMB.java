@@ -1014,14 +1014,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         negociacaoAtualizaListaParcelas();
         //refazCalculos();
 
-        if (negociacaoQuantidadeParcelas == 1)
-            atualizaInfoParcelamentoNegociacao(TipoNegociacao.A_VISTA);
-        else if (negociacaoValorDaParcela.compareTo(negociacaoValorDaPrimeiraParcela) != 0)
-            atualizaInfoParcelamentoNegociacao(TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE);
-        else
-            atualizaInfoParcelamentoNegociacao(TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS);
-
         this.negociacaoValorTotal = negociacaoFatura.getValorTotal().subtract(negociacaoFatura.getResultadoDesconto());
+
+        if (negociacaoQuantidadeParcelas == 1)
+            atualizaInfoParcelamentoNegociacao(Boolean.TRUE, TipoNegociacao.A_VISTA);
+        else if (negociacaoValorDaParcela.compareTo(negociacaoValorDaPrimeiraParcela) != 0)
+            atualizaInfoParcelamentoNegociacao(Boolean.TRUE, TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE);
+        else
+            atualizaInfoParcelamentoNegociacao(Boolean.TRUE, TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS);
     }
 
     public void atualizaQuantidadeDeParcelas() {
@@ -1112,13 +1112,18 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     private void atualizaInfoParcelamentoNegociacao(TipoNegociacao tipoNegociacao) {
+        atualizaInfoParcelamentoNegociacao(false, tipoNegociacao);
+    }
+
+    private void atualizaInfoParcelamentoNegociacao(boolean totalJaComDesconto, TipoNegociacao tipoNegociacao) {
         NumberFormat ptFormat = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
 
-        negociacaoValorTotal = getEntity().getDadosTabelaRepasseTotalFatura();
         BigDecimal valorDeDesconto = (negociacaoValorDesconto == null ? BigDecimal.ZERO : negociacaoValorDesconto);
         if ("P".equals(negociacaoTipoDesconto) && negociacaoValorDesconto != null)
             valorDeDesconto = negociacaoValorDesconto.divide(BigDecimal.valueOf(100)).multiply(negociacaoValorTotal);
-        BigDecimal totalSemDesconto = negociacaoValorTotal.subtract(valorDeDesconto);
+        BigDecimal totalSemDesconto = null;
+
+        totalSemDesconto = (totalJaComDesconto ? negociacaoValorTotal : negociacaoValorTotal.subtract(valorDeDesconto));
 
         if (tipoNegociacao == TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE) {
             negociacaoMensagemCalculo = "Entrada de " + ptFormat.format(negociacaoValorDaPrimeiraParcela) + " mais " + String.valueOf(negociacaoQuantidadeParcelas - 1) + "x de " + ptFormat.format(
