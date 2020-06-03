@@ -1180,6 +1180,18 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							<p:outputLabel for="problema2"
 								value="Diagnóstico do Dente/Região:" />
 							<h:panelGroup style="display: flex">
+								
+								<p:autoComplete id="problema2"
+									value="#{planoTratamentoMB.statusDenteDenteSelecionado}"
+									completeMethod="#{planoTratamentoMB.sugestoesStatusDente}"
+									var="status" itemValue="#{status}" itemLabel="#{status.descricao}"
+									converter="statusDente" forceSelection="true"
+									scrollHeight="200" minQueryLength="2" queryDelay="1000"
+									dropdown="true"
+									disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}">
+								</p:autoComplete>
+								
+								<ui:remove>
 								<p:selectOneMenu id="problema2"
 									value="#{planoTratamentoMB.statusDenteDenteSelecionado}"
 									converter="statusDente" filter="true"
@@ -1192,6 +1204,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 										var="statusDente" itemLabel="#{statusDente.descricao}"
 										itemValue="#{statusDente}" />
 								</p:selectOneMenu>
+								</ui:remove>
 								<p:commandButton id="adicionarStatusDente2"
 									icon="White fa fa-plus White"
 									actionListener="#{planoTratamentoMB.actionAdicionarStatusDente}"

@@ -2088,6 +2088,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
 
     }
+    
+    public List<StatusDente> sugestoesStatusDente(String query){
+        return StatusDenteSingleton.getInstance().getBo().listSugestoesStatusDente(query,
+                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+    }
     // ================================================= TELA ================================================ //
 
     public void exportarTabela(String type) {
