@@ -1015,6 +1015,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         //refazCalculos();
 
         this.negociacaoValorTotal = negociacaoFatura.getValorTotal().subtract(negociacaoFatura.getResultadoDesconto());
+        if (this.negociacaoValorDaParcela.compareTo(BigDecimal.ZERO) == 0 && this.negociacaoValorDaPrimeiraParcela.compareTo(BigDecimal.ZERO) == 0)
+            this.negociacaoValorDaPrimeiraParcela = this.negociacaoValorTotal;
 
         if (negociacaoQuantidadeParcelas == 1)
             atualizaInfoParcelamentoNegociacao(Boolean.TRUE, TipoNegociacao.A_VISTA);
