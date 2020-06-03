@@ -1189,6 +1189,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									scrollHeight="200" minQueryLength="2" queryDelay="1000"
 									dropdown="true"
 									disabled="#{planoTratamentoMB.entity.status == 'S' or planoTratamentoMB.entity.status == 'E'}">
+									<p:ajax event="itemSelect" process="@this"/>
 								</p:autoComplete>
 								
 								<ui:remove>
