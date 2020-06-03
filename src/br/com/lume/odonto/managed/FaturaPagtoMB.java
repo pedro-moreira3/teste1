@@ -1021,7 +1021,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
         if (negociacaoQuantidadeParcelas == 1)
             atualizaInfoParcelamentoNegociacao(Boolean.TRUE, TipoNegociacao.A_VISTA);
-        else if (negociacaoValorDaParcela.compareTo(negociacaoValorDaPrimeiraParcela) != 0)
+        else if (negociacaoValorDaPrimeiraParcela != null && negociacaoValorDaPrimeiraParcela.compareTo(BigDecimal.ZERO) != 0 && negociacaoValorDaParcela.compareTo(
+                negociacaoValorDaPrimeiraParcela) != 0)
             atualizaInfoParcelamentoNegociacao(Boolean.TRUE, TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE);
         else
             atualizaInfoParcelamentoNegociacao(Boolean.TRUE, TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS);
@@ -1059,7 +1060,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public void refazCalculos() {
-        negociacaoValorTotal = getEntity().getDadosTabelaRepasseTotalFatura();
+        negociacaoValorTotal = FaturaSingleton.getInstance().getValorTotal(getEntity());
         BigDecimal valorDeDesconto = (negociacaoValorDesconto == null ? BigDecimal.ZERO : negociacaoValorDesconto);
         DescontoOrcamento descontoCadQtdeParcelas = descontosDisponiveis.get(negociacaoQuantidadeParcelas);
         if ((descontoCadQtdeParcelas == null && valorDeDesconto.compareTo(BigDecimal.ZERO) > 0) || (descontoCadQtdeParcelas != null && valorDeDesconto.compareTo(
