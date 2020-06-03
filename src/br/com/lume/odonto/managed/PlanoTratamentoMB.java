@@ -1450,7 +1450,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             
             
 
-            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamentoDesconto(orcamentoSelecionado));
+            orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamento(orcamentoSelecionado));
             orcamentoSelecionado.setQuantidadeParcelas(1);
             OrcamentoSingleton.getInstance().aprovaOrcamento(orcamentoSelecionado, UtilsFrontEnd.getProfissionalLogado());
             addInfo("Sucesso", "Aprovação com " + orcamentoPerc + "% de desconto aplicado!");
