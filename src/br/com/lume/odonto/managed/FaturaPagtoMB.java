@@ -1011,7 +1011,6 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
         atualizaPossibilidadesTarifaNegociacao();
         atualizaTooltipTarifasDisponiveis();
-        negociacaoAtualizaListaParcelas();
         //refazCalculos();
 
         this.negociacaoValorTotal = negociacaoFatura.getValorTotal().subtract(negociacaoFatura.getResultadoDesconto());
@@ -1024,8 +1023,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         else if (negociacaoValorDaPrimeiraParcela != null && negociacaoValorDaPrimeiraParcela.compareTo(BigDecimal.ZERO) != 0 && negociacaoValorDaParcela.compareTo(
                 negociacaoValorDaPrimeiraParcela) != 0)
             atualizaInfoParcelamentoNegociacao(Boolean.TRUE, TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE);
-        else
+        else {
+            negociacaoValorDaPrimeiraParcela = negociacaoValorDaParcela;
             atualizaInfoParcelamentoNegociacao(Boolean.TRUE, TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS);
+        }
+        
+        negociacaoAtualizaListaParcelas();
     }
 
     public void atualizaQuantidadeDeParcelas() {
