@@ -254,7 +254,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												actionListener="#{lancamentoContabilMB.actionRemove}"
 												update=":lume:tv:pnLancamentoContabil,:lume:tv:dtLancamentoContabil"
 												process="@this"
-												disabled="#{lancamentoContabilMB.entity.id == 0}"
+												disabled="#{lancamentoContabilMB.entity.id == 0 or lancamentoContabilMB.entity.lancamento != null}"
 												styleClass="RedButton" />
 											<ui:remove>
 												<p:commandButton value="Excel" ajax="false" immediate="true"
@@ -457,7 +457,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												value="#{conferenciaRecebimentoMB.dataCreditoInicial}"
 												autocomplete="false" locale="#{lumeSecurity.locale}"
 												mask="true">
-												<p:ajax event="dateSelect" process="@this"/>
+												<p:ajax event="dateSelect" process="@this" />
 											</p:calendar>
 										</h:panelGroup>
 
@@ -468,7 +468,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												value="#{conferenciaRecebimentoMB.dataCreditoFinal}"
 												autocomplete="false" locale="#{lumeSecurity.locale}"
 												mask="true">
-												<p:ajax event="dateSelect" process="@this"/>
+												<p:ajax event="dateSelect" process="@this" />
 											</p:calendar>
 										</h:panelGroup>
 
@@ -677,8 +677,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										</p:column>
 										<p:column headerText="Valor total"
 											sortBy="#{conferenciaRecebimentoMB.valorTotal(lc)}"
-											filterBy="#{conferenciaRecebimentoMB.valorTotal(lc)}" filterMatchMode="contains">
-											<h:outputText value="#{conferenciaRecebimentoMB.valorTotal(lc)}">
+											filterBy="#{conferenciaRecebimentoMB.valorTotal(lc)}"
+											filterMatchMode="contains">
+											<h:outputText
+												value="#{conferenciaRecebimentoMB.valorTotal(lc)}">
 												<f:convertNumber currencySymbol="R$" type="currency"
 													minFractionDigits="2" />
 											</h:outputText>
@@ -703,13 +705,15 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											<p:commandButton icon="White fa fa-thumbs-o-up"
 												actionListener="#{conferenciaRecebimentoMB.actionValidarLancamento(lc)}"
 												update=":lume:tv:dtLancamentoValidar, :lume:tv:tab2"
-												process="@this,:lume:tv:dtLancamentoValidar" styleClass="GreenButton"
+												process="@this,:lume:tv:dtLancamentoValidar"
+												styleClass="GreenButton"
 												oncomplete="PF('dtLancamentoValidar').filter()"
 												title="Valor recebido" />
 											<p:commandButton icon="White fa fa-thumbs-o-down"
 												actionListener="#{conferenciaRecebimentoMB.actionNaoValidarLancamento(lc)}"
 												update=":lume:tv:dtLancamentoValidar, :lume:tv:tab2"
-												process="@this,:lume:tv:dtLancamentoValidar" styleClass="RedButton"
+												process="@this,:lume:tv:dtLancamentoValidar"
+												styleClass="RedButton"
 												oncomplete="PF('dtLancamentoValidar').filter()"
 												title="Falha no recebimento" />
 										</p:column>
