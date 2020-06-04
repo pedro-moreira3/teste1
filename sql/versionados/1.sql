@@ -29,3 +29,16 @@ INSERT INTO CONFIGURACOES (VERSAO,DATA_VERSAO) VALUES (1,NOW())
 ALTER TABLE paciente ADD COLUMN CARTEIRA_CONVENIO_TITULAR varchar(255);
 ALTER TABLE dados_basicos ADD COLUMN EMPRESA_ONDE_TRABALHA varchar(255);
 ALTER TABLE dados_basicos ADD COLUMN PROFISSAO varchar(255);
+
+insert into seg_objeto (obj_int_codpai, obj_str_des, obj_cha_sts, obj_str_caminho, sis_int_cod, 
+						obj_int_ordem, obj_cha_tipo, obj_str_icon)
+values (172,'Aniversariantes','A','aniversariantes.jsf',123,1,'T',null);
+
+update seg_objeto set obj_int_ordem = 2 where obj_int_cod = 158;
+
+insert into objeto_profissional (obj_int_cod,id_profissional) 
+select 173,id_profissional from objeto_profissional where obj_int_cod = 90;
+
+insert into seg_perobjeto (per_int_cod,obj_int_cod)  
+select per_int_cod,173 from seg_perobjeto where obj_int_cod = 90;
+  

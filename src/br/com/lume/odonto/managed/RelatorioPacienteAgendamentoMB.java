@@ -77,6 +77,8 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         
     public Retorno retorno;
     
+    private Date dataInicio, dataFim;
+    
     private boolean checkFiltro = false;
     private boolean desabilitaStatusAgendamento = false;
     private boolean imprimirCabecalho = true;
@@ -123,60 +125,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     }
     
     public void carregarAniversariantes() {
-        try {
-            Calendar c = Calendar.getInstance();
-            Date dataInicio = null, dataFim = null;
-            
-            switch(this.filtroAniversariantes) {
-                case "O":
-                    c.add(Calendar.MONTH, 1);
-                    c.set(Calendar.DAY_OF_MONTH, 1);
-                    dataInicio = c.getTime();
-                    
-                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
-                    dataFim = c.getTime();
-                    break;
-                
-                case "M":
-                    c.set(Calendar.DAY_OF_MONTH, 1);
-                    dataInicio = c.getTime();
-                    
-                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
-                    dataFim = c.getTime();
-                    break;
-                
-                case "S":
-                    dataFim = c.getTime();
-                    
-                    c.add(Calendar.DAY_OF_MONTH, -7);
-                    dataInicio = c.getTime();
-                    break;
-                    
-                case "Q":
-                    dataFim = c.getTime();
-                    
-                    c.add(Calendar.DAY_OF_MONTH, -15);
-                    dataInicio = c.getTime();
-                    break;
-                    
-                case "T":
-                    c.add(Calendar.MONTH, -1);
-                    c.set(Calendar.DAY_OF_MONTH, 1);
-                    dataInicio = c.getTime();
-                    
-                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
-                    dataFim = c.getTime();
-                    break;
-                    
-                case "":
-                    c.set(Calendar.DAY_OF_MONTH, 1);
-                    dataInicio = c.getTime();
-                    
-                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
-                    dataFim = c.getTime();
-                    break;
-            }
-            
+        try {            
             this.aniversariantes = PacienteSingleton.getInstance().getBo().listAniversariantes(dataInicio, dataFim, 
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             
@@ -410,6 +359,99 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         exportarTabela("Relatório de agendamentos dos Pacientes", tabelaRelatorio, type);
     }
     
+    public void actionTrocaDatasCriacaoAniversariantes(String filtro) {
+        try {
+            Calendar c = Calendar.getInstance();
+            switch(this.filtroAniversariantes) {
+                case "A":
+                    //c.set(Calendar.HOUR_OF_DAY, 1);
+                    this.dataInicio = c.getTime();
+                    
+                    //c.set(Calendar.HOUR_OF_DAY, 23);
+                    dataFim = c.getTime();
+                    break;
+                
+                case "B":
+                    c.add(Calendar.DAY_OF_MONTH, 1);
+                    //c.set(Calendar.HOUR_OF_DAY, 1);
+                    this.dataInicio = c.getTime();
+                    
+                    //c.set(Calendar.HOUR_OF_DAY, 23);
+                    dataFim = c.getTime();
+                    break;
+                    
+                case "C":
+                    //c.set(Calendar.HOUR_OF_DAY, 1);
+                    this.dataInicio = c.getTime();
+                    
+                    c.add(Calendar.DAY_OF_MONTH, 7);
+                    //c.set(Calendar.HOUR_OF_DAY, 23);
+                    dataFim = c.getTime();
+                    break;
+                    
+                case "D":
+                    //c.set(Calendar.HOUR_OF_DAY, 1);
+                    this.dataInicio = c.getTime();
+                    
+                    c.add(Calendar.DAY_OF_MONTH, 15);
+                    //c.set(Calendar.HOUR_OF_DAY, 23);
+                    dataFim = c.getTime();
+                    break;
+                    
+                case "O":
+                    c.add(Calendar.MONTH, 1);
+                    c.set(Calendar.DAY_OF_MONTH, 1);
+                    this.dataInicio = c.getTime();
+                    
+                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    dataFim = c.getTime();
+                    break;
+                
+                case "M":
+                    c.set(Calendar.DAY_OF_MONTH, 1);
+                    dataInicio = c.getTime();
+                    
+                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    dataFim = c.getTime();
+                    break;
+                
+                case "S":
+                    dataFim = c.getTime();
+                    
+                    c.add(Calendar.DAY_OF_MONTH, -7);
+                    dataInicio = c.getTime();
+                    break;
+                    
+                case "Q":
+                    dataFim = c.getTime();
+                    
+                    c.add(Calendar.DAY_OF_MONTH, -15);
+                    dataInicio = c.getTime();
+                    break;
+                    
+                case "T":
+                    c.add(Calendar.MONTH, -1);
+                    c.set(Calendar.DAY_OF_MONTH, 1);
+                    dataInicio = c.getTime();
+                    
+                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    dataFim = c.getTime();
+                    break;
+                    
+                case "":
+                    c.set(Calendar.DAY_OF_MONTH, 1);
+                    dataInicio = c.getTime();
+                    
+                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    dataFim = c.getTime();
+                    break;
+            }
+        } catch (Exception e) {
+            log.error("Erro no getDataInicio", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+    
     public Date getInicio() {
         return inicio;
     }
@@ -582,5 +624,21 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
 
     public void setFiltroAniversariantes(String filtroAniversariantes) {
         this.filtroAniversariantes = filtroAniversariantes;
+    }
+
+    public Date getDataInicio() {
+        return dataInicio;
+    }
+
+    public void setDataInicio(Date dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    public Date getDataFim() {
+        return dataFim;
+    }
+
+    public void setDataFim(Date dataFim) {
+        this.dataFim = dataFim;
     }
 }
