@@ -115,22 +115,22 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     }
     
     public String statusRetornoTabela(Retorno retorno) {
-        
-        switch(retorno.getRetornar()) {
-            case "P":
-                return "Pendente";
-            case "A":
-                return "Agendado";
-            case "R":
-                return "Aguardando Retorno";
-            case "N":
-                return "Não conseguimos Contato";
-            case "L":
-                return "Ligar Novamente";
-            case "C":
-                return "Cancelado";
+        if(retorno != null && retorno.getRetornar() != null) {
+            switch(retorno.getRetornar()) {
+                case "P":
+                    return "Pendente";
+                case "A":
+                    return "Agendado";
+                case "R":
+                    return "Aguardando Retorno";
+                case "N":
+                    return "Não conseguimos Contato";
+                case "L":
+                    return "Ligar Novamente";
+                case "C":
+                    return "Cancelado";
+            }
         }
-        
         return "";
     }
     

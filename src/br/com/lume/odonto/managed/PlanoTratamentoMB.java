@@ -709,13 +709,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         try {
             PlanoTratamento pt = ptProcedimento.getPlanoTratamento();
             Procedimento procedimento = ptProcedimento.getProcedimento();
-            Convenio convenio = pt.getConvenio();
-            ConvenioProcedimento cp = 
-                    findByConvenioAndProcedimento(convenio, procedimento);
+            Convenio convenio = pt.getConvenio();          
             if (pt.isBconvenio() && convenio != null
                     && convenio.getDataInicioVigencia().before(Calendar.getInstance().getTime())
                     && convenio.getDataFimVigencia().after(Calendar.getInstance().getTime())
                     && convenio.getExcluido().equals(Status.NAO)) {
+                ConvenioProcedimento cp = 
+                        ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(convenio, procedimento);
                 if (convenio.getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE) || convenio.getTipo().equals(Convenio.CONVENIO_EMPRESA))
                     return cp.getValor();
             }
@@ -726,8 +726,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         return null;
     }
     
-    public ConvenioProcedimento findByConvenioAndProcedimento(Convenio convenio, Procedimento procedimento) throws Exception {
-        try {
+   // public ConvenioProcedimento findByConvenioAndProcedimento(Convenio convenio, Procedimento procedimento) throws Exception {
+    //    try {
           //  Map<String, Object> parametros = new HashMap<>();
           //  parametros.put("convenio", convenio);
            // parametros.put("procedimento", procedimento);
@@ -737,22 +737,22 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
           //  parametros.put("status", Status.ATIVO);
            // return this.findByFields(parametros);
             
-            StringBuilder sb = new StringBuilder();
-            sb.append("SELECT * FROM CONVENIO_PROCEDIMENTO WHERE ID_CONVENIO = ?1 AND ID_PROCEDIMENTO = ?2 AND ID_EMPRESA = ?3 AND EXCLUIDO = 'N' AND STATUS='A' ");
-            Query query = ConvenioProcedimentoSingleton.getInstance().getBo().getDao().createNativeQuery(sb.toString(), ConvenioProcedimento.class);
-            query.setParameter(1, convenio.getId());
-            query.setParameter(2, procedimento.getId());
-            query.setParameter(3, convenio.getIdEmpresa());
-           
-           if(query.getResultList() != null && !query.getResultList().isEmpty()) {
-               ConvenioProcedimento cp = (ConvenioProcedimento) query.getResultList().get(0);
-               return cp;
-           }
-        } catch (Exception e) {
-            log.error("Erro no findByConvenioAndProcedimento", e);
-        }
-        return null;
-    }
+//            StringBuilder sb = new StringBuilder();
+//            sb.append("SELECT * FROM CONVENIO_PROCEDIMENTO WHERE ID_CONVENIO = ?1 AND ID_PROCEDIMENTO = ?2 AND ID_EMPRESA = ?3 AND EXCLUIDO = 'N' AND STATUS='A' ");
+//            Query query = ConvenioProcedimentoSingleton.getInstance().getBo().getDao().createNativeQuery(sb.toString(), ConvenioProcedimento.class);
+//            query.setParameter(1, convenio.getId());
+//            query.setParameter(2, procedimento.getId());
+//            query.setParameter(3, convenio.getIdEmpresa());
+//           
+//           if(query.getResultList() != null && !query.getResultList().isEmpty()) {
+//               ConvenioProcedimento cp = (ConvenioProcedimento) query.getResultList().get(0);
+//               return cp;
+//           }
+//        } catch (Exception e) {
+//            log.error("Erro no findByConvenioAndProcedimento", e);
+//        }
+//        return null;
+//    }
 
     private void calculaValorTotal() {
         if (getEntity().getPlanoTratamentoProcedimentos() != null) {
@@ -1968,7 +1968,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         List<String> perfis = new ArrayList<>();
         perfis.add(OdontoPerfil.DENTISTA);
         perfis.add(OdontoPerfil.ADMINISTRADOR);
-        profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        if(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
+            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        }
     }
 
     public void carregarPlanoTratamentoProcedimentos() throws Exception {

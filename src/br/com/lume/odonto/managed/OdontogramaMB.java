@@ -157,14 +157,21 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
         }).create();
     }
 
-    public void carregarStatusDente() {
-        HashSet<StatusDente> hashSet = new HashSet<>();
-        statusDente = StatusDenteSingleton.getInstance().getBo().listAllTemplate(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        hashSet.addAll(statusDente);
-        statusDenteEmpresa = StatusDenteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        hashSet.addAll(statusDenteEmpresa);
-        statusDente = new ArrayList<>(hashSet);
-        statusDente.sort((o1, o2) -> o1.getDescricao().compareTo(o2.getDescricao()));
+    public void carregarStatusDente() {       
+        if(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
+            HashSet<StatusDente> hashSet = new HashSet<>();
+            statusDente = StatusDenteSingleton.getInstance().getBo().listAllTemplate(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            if(statusDente != null) {
+                hashSet.addAll(statusDente);    
+            }
+            statusDenteEmpresa = StatusDenteSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            if(statusDenteEmpresa != null) {
+                hashSet.addAll(statusDenteEmpresa);  
+            } 
+            statusDente = new ArrayList<>(hashSet);
+            statusDente.sort((o1, o2) -> o1.getDescricao().compareTo(o2.getDescricao()));
+        }
+      
     }
 
     private List<Integer> populaList(int i, int j) {

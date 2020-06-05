@@ -146,8 +146,11 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     private void configuraHorarioPadraoClinica() {
         Calendar cal = Calendar.getInstance();
-        cal.setTime(data);        
-        tempoPadraoConsulta = UtilsFrontEnd.getEmpresaLogada().getTempoPadraoConsulta();
+        cal.setTime(data);  
+        if(UtilsFrontEnd.getEmpresaLogada().getTempoPadraoConsulta() != null) {
+            tempoPadraoConsulta = UtilsFrontEnd.getEmpresaLogada().getTempoPadraoConsulta();       
+        }
+     
         if(UtilsFrontEnd.getEmpresaLogada().getHoraInicialManha() != null) {
             cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraInicialManha());                            
             horariopadraoInico = Utils.getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));          

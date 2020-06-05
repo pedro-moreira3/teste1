@@ -195,8 +195,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 perfis.add(OdontoPerfil.DENTISTA);
                 perfis.add(OdontoPerfil.ADMINISTRADOR);
                 perfis.add(OdontoPerfil.RESPONSAVEL_TECNICO);
-                profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-
+                if( UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
+                    profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                }
                 this.sortAnamneses();
                 this.geraLista();
 
@@ -548,8 +549,11 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     @Override
     public void setEntity(Paciente entity) {
         pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(entity);
-        try {
-            convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        try {            
+            if(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
+                convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());    
+            }
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
