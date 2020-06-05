@@ -108,7 +108,10 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
             }
 
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-            if(this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor().getTipoRemuneracao().equals(Profissional.PORCENTAGEM)) {
+            if(this.getEntity().getPlanoTratamentoProcedimento() != null &&
+                    this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor() != null &&
+                            this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor().getTipoRemuneracao() != null &&
+                    this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor().getTipoRemuneracao().equals(Profissional.PORCENTAGEM)) {
                 RepasseFaturasSingleton.getInstance().recalculaRepasse(this.getEntity().getPlanoTratamentoProcedimento(), 
                         this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(),
                         this.getEntity().getPlanoTratamentoProcedimento().getRepasseFaturas().get(0).getFaturaRepasse());
