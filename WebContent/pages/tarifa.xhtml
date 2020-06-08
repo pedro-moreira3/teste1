@@ -248,6 +248,7 @@
 							</p:commandButton>
 							<p:commandButton id="btnAtivar" icon="White fa fa-chain White"
 								styleClass="NavyButton"
+								title="Ativar forma de pagamento"
 								oncomplete="PF('dtTarifa').filter();"		
 								actionListener="#{tarifaMB.actionAtivar(tarifa)}"
 								rendered="#{tarifa.status == 'Inativo'}"

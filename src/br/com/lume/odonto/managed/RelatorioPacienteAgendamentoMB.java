@@ -1,5 +1,6 @@
 package br.com.lume.odonto.managed;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -155,7 +156,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         }
     }
     public void actionFiltrar(ActionEvent event){
-      
+     
             
             try {
                 if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
@@ -165,32 +166,38 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                     this.pacientes = new ArrayList<Paciente>();
                     if(getFiltroStatusAgendamento().contains(SEM_ULTIMO_AGENDAMENTO)) {
                         this.pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteSemAgendamento
-                                (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente);
+                                (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente);                       
                     }else {
+                        System.out.println(new Timestamp(System.currentTimeMillis()));
                         this.pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamento
-                                (this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente,this.filtroPorProfissional);   
-                        if(pacientes != null) {
-                            List<Paciente> pacientesTemp = new ArrayList<Paciente>(pacientes);
-                            for (Paciente paciente : pacientesTemp) {
-                                if(paciente.getUltimoAgendamento() != null) {
-                                    if(!filtroAtendimento.contains(paciente.getUltimoAgendamento().getStatusNovo())) {
-                                        this.pacientes.remove(paciente);
-                                    }
-                                }  
-                                if(paciente.getUltimoAgendamento().getInicio().after(this.fim)) {
-                                    this.pacientes.remove(paciente);
-                                }
-                            }  
-                        }
-                    }                 
-                    
+                                (this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente
+                                        ,this.filtroPorProfissional);   
+                        System.out.println(new Timestamp(System.currentTimeMillis()));
+                        
+                        pacientes.removeIf(p -> !filtroAtendimento.contains(p.getUltimoAgendamento().getStatusNovo()) || p.getUltimoAgendamento().getInicio().after(this.fim));
+                        
+//                        if(pacientes != null) {
+//                            List<Paciente> pacientesTemp = new ArrayList<Paciente>(pacientes);
+//                            for (Paciente paciente : pacientesTemp) {
+//                                if(paciente.getUltimoAgendamento() != null) {
+//                                    if(!filtroAtendimento.contains(paciente.getUltimoAgendamento().getStatusNovo())) {
+//                                        this.pacientes.remove(paciente);
+//                                    }
+//                                }  
+//                                if(paciente.getUltimoAgendamento().getInicio().after(this.fim)) {
+//                                    this.pacientes.remove(paciente);
+//                                }
+//                            }  
+//                        }
+                        System.out.println(new Timestamp(System.currentTimeMillis()));
+                    }                
+                 
                     if(getFiltroStatusAgendamento().contains(SEM_AGENDAMENTO_FUTURO)) {
                         pacientes.removeIf(paciente -> paciente.getProximoAgendamento() != null);
                     }
                     if(getFiltroStatusAgendamento().contains(SEM_RETORNO_FUTURO)) {
                         pacientes.removeIf(paciente -> paciente.getProximoRetorno() != null);
-                    }
-                    
+                    }                   
                 }
                 this.sugestoesConvenios("todos");
             } catch (Exception e) {

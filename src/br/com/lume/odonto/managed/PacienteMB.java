@@ -795,6 +795,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 this.getEntity().getDadosBasico().setEndereco(endereco.getLogradouro());
                 this.getEntity().getDadosBasico().setUf(endereco.getUf().toUpperCase().trim());
             } else {
+                this.getEntity().getDadosBasico().setBairro("");
+                this.getEntity().getDadosBasico().setCidade("");
+                this.getEntity().getDadosBasico().setEndereco("");
+                this.getEntity().getDadosBasico().setUf("");                
                 addError("Endereço não encontrado!", "");
             }
         }

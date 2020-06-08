@@ -438,6 +438,21 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
                 }   
                 
             }else {
+             
+                    this.getEntity().setEmpStrEndereco("");  
+                    PrimeFaces.current().ajax().update(":lume:empStrEndereco");
+               
+                    this.getEntity().setEmpStrBairro("");
+                    PrimeFaces.current().ajax().update(":lume:empStrBairro");
+             
+                    this.getEntity().setEmpStrCidade("");
+                    PrimeFaces.current().ajax().update(":lume:empStrCidade");
+            
+                    this.getEntity().setEmpStrEstadoConselho(""); 
+                    getEstados().setValue("");
+                    getEstados().setSubmittedValue("");
+                    PrimeFaces.current().ajax().update(":lume:empChaUf");
+                                 
                 this.addError("CEP não encontado!", "");
 
             }

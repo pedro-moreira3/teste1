@@ -87,6 +87,7 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
                 this.getEntity().getDadosBasico().setCidade(null);
                 this.getEntity().getDadosBasico().setEndereco(null);
                 this.getEntity().getDadosBasico().setUf(null);
+                addError("Endereço não encontrado!", "");
             }
         }else {
             this.getEntity().getDadosBasico().setBairro(null);

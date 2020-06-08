@@ -460,6 +460,7 @@
 										icon="White fa fa-chain White" styleClass="NavyButton"
 										actionListener="#{cadastroEmpresaMB.ativarDesconto(desconto)}"
 										rendered="#{desconto.status == 'I'}"
+										title="Ativar desconto"
 										update="@this, dtDescontos"
 										oncomplete="PF('dtDescontos').filter();" process="@this">
 										<p:confirmDialog responsive="true"

@@ -529,13 +529,22 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     public void actionBuscaCep() {
         String cep = this.getEntity().getDadosBasico().getCep();
+        Endereco endereco = null;
         if (cep != null && !cep.equals("")) {
             cep = cep.replaceAll("-", "");
-            Endereco endereco = Endereco.getEndereco(cep);
+            endereco = Endereco.getEndereco(cep);
+        } 
+        if(endereco != null) {
             this.getEntity().getDadosBasico().setBairro(endereco.getBairro());
             this.getEntity().getDadosBasico().setCidade(endereco.getCidade());
             this.getEntity().getDadosBasico().setEndereco(endereco.getRua());
             this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());
+        }else {
+            this.getEntity().getDadosBasico().setBairro("");
+            this.getEntity().getDadosBasico().setCidade("");
+            this.getEntity().getDadosBasico().setEndereco("");
+            this.getEntity().getDadosBasico().setUf("");                
+            addError("Endereço não encontrado!", "");
         }
     }
 

@@ -36,7 +36,7 @@
 						</p:tab>
 
 						<p:tab id="tab5" title="Configuração de descontos"
-							disabled="#{profissionalMB.entity.id == null}">
+							disabled="#{profissionalMB.entity.id == null || !profissionalMB.admin}">
 							<ui:include src="profissionalDesconto.xhtml" />
 						</p:tab>
 

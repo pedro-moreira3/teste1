@@ -480,6 +480,11 @@ body .ui-selectoneradio td label {
 			sortBy="#{profissional.dadosBasico.celular}">
 			<h:outputText value="#{profissional.dadosBasico.celular}" />
 		</p:column>
+		<p:column filterBy="#{profissional.statusDescricao}"
+			filterMatchMode="contains" headerText="Status"
+			sortBy="#{profissional.statusDescricao}">
+			<h:outputText value="#{profissional.statusDescricao}" />
+		</p:column>		
 	</p:dataTable>
 
 	<p:dialog id="dlg" widgetVar="dlg" header="Inativar" responsive="true"
