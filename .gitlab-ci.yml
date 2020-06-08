@@ -39,6 +39,8 @@ build:
   stage: build
   script:  
    - 'if [ $branch != "master" ] && [ $branch != "desenv" ] && [ $branch != "backend" ] && [ $branch != "romulo" ]; then echo "Branch sem finalidade de deploy"; mvn compile; mvn package; exit 0; fi'
+   - echo 'Pass weave in classes'
+   - java org.eclipse.persistence.tools.weaving.jpa.StaticWeave -classpath ./WebContent/WEB-INF/lib ./WebContent/WEB-INF/lib/lumeerp.jar ./WebContent/WEB-INF/lib/lumeerp.jar
    - echo 'Clean no projeto e package do WAR'
    - mvn $MAVEN_OPTS clean package $paramsDeploy
    - echo 'Realizar deploy do arquivo gerado.'
