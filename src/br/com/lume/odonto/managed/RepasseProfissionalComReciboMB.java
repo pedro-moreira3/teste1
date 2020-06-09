@@ -144,7 +144,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                 //  if (fatura != null) {
                 //  List<Lancamento> lancamentos = fatura.getLancamentos();
                 Profissional dentistaExecutor = ptp.getDentistaExecutor();
-                if(ptpsValidosComLancamentos != null && ptp != null) {
+                if(ptpsValidosComLancamentos != null  && ptp != null && !ptpsValidosComLancamentos.isEmpty() && ptpsValidosComLancamentos.get(ptp) != null &&
+                        !ptpsValidosComLancamentos.get(ptp).isEmpty()
+                        ) {
                     for (Lancamento lancamento : ptpsValidosComLancamentos.get(ptp)) {
                         if (lancamento.getAtivoStr().equals("Sim") && lancamento.getConferidoPorProfissional() == null) {
                             Double valor = (lancamento.getValorComDesconto() == null || lancamento.getValorComDesconto().doubleValue() == 0d ? lancamento.getValor().doubleValue() : lancamento.getValorComDesconto().doubleValue());
