@@ -144,21 +144,23 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                 //  if (fatura != null) {
                 //  List<Lancamento> lancamentos = fatura.getLancamentos();
                 Profissional dentistaExecutor = ptp.getDentistaExecutor();
-                for (Lancamento lancamento : ptpsValidosComLancamentos.get(ptp)) {
-                    if (lancamento.getAtivoStr().equals("Sim") && lancamento.getConferidoPorProfissional() == null) {
-                        Double valor = (lancamento.getValorComDesconto() == null || lancamento.getValorComDesconto().doubleValue() == 0d ? lancamento.getValor().doubleValue() : lancamento.getValorComDesconto().doubleValue());
-                        if (getProfissionaisRecibo() == null || getProfissionaisRecibo().indexOf(dentistaExecutor) < 0) {
-                            this.profissionaisReciboLancamentos.put(dentistaExecutor, new Integer(1));
-                            this.profissionaisReciboValores.put(dentistaExecutor, valor);
-                            this.profissionaisRecibo.add(dentistaExecutor);
-                        } else {
-                            this.profissionaisReciboLancamentos.put(dentistaExecutor, this.profissionaisReciboLancamentos.get(dentistaExecutor) + 1);
-                            this.profissionaisReciboValores.put(dentistaExecutor, this.profissionaisReciboValores.get(dentistaExecutor) + valor);
+                if(ptpsValidosComLancamentos != null) {
+                    for (Lancamento lancamento : ptpsValidosComLancamentos.get(ptp)) {
+                        if (lancamento.getAtivoStr().equals("Sim") && lancamento.getConferidoPorProfissional() == null) {
+                            Double valor = (lancamento.getValorComDesconto() == null || lancamento.getValorComDesconto().doubleValue() == 0d ? lancamento.getValor().doubleValue() : lancamento.getValorComDesconto().doubleValue());
+                            if (getProfissionaisRecibo() == null || getProfissionaisRecibo().indexOf(dentistaExecutor) < 0) {
+                                this.profissionaisReciboLancamentos.put(dentistaExecutor, new Integer(1));
+                                this.profissionaisReciboValores.put(dentistaExecutor, valor);
+                                this.profissionaisRecibo.add(dentistaExecutor);
+                            } else {
+                                this.profissionaisReciboLancamentos.put(dentistaExecutor, this.profissionaisReciboLancamentos.get(dentistaExecutor) + 1);
+                                this.profissionaisReciboValores.put(dentistaExecutor, this.profissionaisReciboValores.get(dentistaExecutor) + valor);
+                            }
+    
+                            lancamentoParaRecibo.add(lancamento);
                         }
-
-                        lancamentoParaRecibo.add(lancamento);
                     }
-                }
+                }    
                 //   }
             }
         }
