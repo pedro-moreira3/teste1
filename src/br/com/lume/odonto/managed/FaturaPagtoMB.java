@@ -774,6 +774,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                         if (novoLancamentoQuantidadeParcelas >= formaPagamento.getParcelaMinima() && novoLancamentoQuantidadeParcelas <= formaPagamento.getParcelaMaxima() && novoLancamentoTarifasDisponiveis.indexOf(
                                 formaPagamento) == -1)
                             novoLancamentoTarifasDisponiveis.add(formaPagamento);
+                        
+                        if (novoLancamentoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
+                            novoLancamentoTarifasDisponiveisEEntrada.add(formaPagamento);
                     }
                     if (formaPagamento.getParcelaMinima() == 1 && novoLancamentoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
                         novoLancamentoTarifasDisponiveisEEntrada.add(formaPagamento);
@@ -1013,7 +1016,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         atualizaTooltipTarifasDisponiveis();
         //refazCalculos();
 
-        this.negociacaoValorTotal = negociacaoFatura.getValorTotal().subtract(negociacaoFatura.getResultadoDesconto());
+        this.negociacaoValorTotal = negociacaoFatura.getValorTotal();
+        if (negociacaoFatura.getResultadoDesconto() != null)
+            this.negociacaoValorTotal = negociacaoFatura.getValorTotal().subtract(negociacaoFatura.getResultadoDesconto());
+
         if ((this.negociacaoValorDaParcela == null || this.negociacaoValorDaParcela.compareTo(
                 BigDecimal.ZERO) == 0) && (this.negociacaoValorDaPrimeiraParcela == null || this.negociacaoValorDaPrimeiraParcela.compareTo(BigDecimal.ZERO) == 0))
             this.negociacaoValorDaPrimeiraParcela = this.negociacaoValorTotal;
@@ -1027,7 +1033,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             negociacaoValorDaPrimeiraParcela = negociacaoValorDaParcela;
             atualizaInfoParcelamentoNegociacao(Boolean.TRUE, TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS);
         }
-        
+
         negociacaoAtualizaListaParcelas();
     }
 
