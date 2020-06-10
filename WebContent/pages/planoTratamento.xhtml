@@ -186,10 +186,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 				</p:panelGrid>
 
 				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-					id="dtPlanoTratamento"
-					value="#{planoTratamentoMB.planosTratamento}" var="planoTratamento"
-					rows="10" paginator="true" paginatorPosition="bottom"
-					rowKey="#{planoTratamento}"
+					id="dtPlanoTratamento" value="#{planoTratamentoMB.ptLazyModel}"
+					var="planoTratamento" rows="10" paginator="true"	
+					paginatorPosition="bottom" rowKey="#{planoTratamento}" lazy="true"
 					binding="#{planoTratamentoMB.tabelaPlanoTratamento}">
 					<f:facet name="header">Planos de Tratamento</f:facet>
 
@@ -262,24 +261,20 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 						filterFunction="#{planoTratamentoMB.filtroSemAcento}">
 						<p:outputLabel value="#{planoTratamento.statusDescritivo}" />
 					</p:column>
-					<p:column
-						filterBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}"
-						sortBy="#{planoTratamentoMB.valorAReceber(planoTratamento)}"
+					<p:column filterBy="#{planoTratamento.valorAReceber}"
+						sortBy="#{planoTratamento.valorAReceber}"
 						rendered="#{planoTratamentoMB.temPermissaoExtra}"
 						filterMatchMode="contains" headerText="Valor à Receber">
-						<h:outputText
-							value="#{planoTratamentoMB.valorAReceber(planoTratamento)}">
+						<h:outputText value="#{planoTratamento.valorAReceber}">
 							<f:convertNumber currencySymbol="R$" type="currency"
 								locale="#{lumeSecurity.locale}" />
 						</h:outputText>
 					</p:column>
-					<p:column
-						filterBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"
-						sortBy="#{planoTratamentoMB.valorAConferir(planoTratamento)}"
+					<p:column filterBy="#{planoTratamento.valorAConferir}"
+						sortBy="#{planoTratamento.valorAConferir}"
 						rendered="#{planoTratamentoMB.temPermissaoExtra}"
 						filterMatchMode="contains" headerText="Valor à Conferir">
-						<h:outputText
-							value="#{planoTratamentoMB.valorAConferir(planoTratamento)}">
+						<h:outputText value="#{planoTratamento.valorAConferir}">
 							<f:convertNumber currencySymbol="R$" type="currency"
 								locale="#{lumeSecurity.locale}" />
 						</h:outputText>
@@ -719,7 +714,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 
 								<p:outputLabel for="totalPTView" value="Valor Total: " />
 								<p:inputText id="totalPTView"
-									value="#{planoTratamentoMB.totalPT}" readonly="true">
+									value="#{planoTratamentoMB.entity.valor}" readonly="true">
 									<f:convertNumber type="currency" currencySymbol="R$"
 										maxFractionDigits="2" />
 								</p:inputText>
@@ -753,7 +748,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								<p:outputLabel for="valorTotalPTView"
 									value="Valor Total dos Procedimentos: " />
 								<p:inputText id="valorTotalPTView"
-									value="#{planoTratamentoMB.totalPT}" readonly="true">
+									value="#{planoTratamentoMB.entity.valor}" readonly="true">
 									<f:convertNumber type="currency" currencySymbol="R$"
 										maxFractionDigits="2" />
 								</p:inputText>
@@ -918,7 +913,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 										locale="#{lumeSecurity.locale}" />
 								</h:outputText>
 								<f:facet name="footer">
-									<h:outputText value="#{planoTratamentoMB.totalPT}"
+									<h:outputText value="#{planoTratamentoMB.entity.valor}"
 										id="subTotalDesconto">
 										<f:convertNumber currencySymbol="R$" type="currency"
 											locale="#{lumeSecurity.locale}" />

@@ -774,7 +774,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                         if (novoLancamentoQuantidadeParcelas >= formaPagamento.getParcelaMinima() && novoLancamentoQuantidadeParcelas <= formaPagamento.getParcelaMaxima() && novoLancamentoTarifasDisponiveis.indexOf(
                                 formaPagamento) == -1)
                             novoLancamentoTarifasDisponiveis.add(formaPagamento);
-                        
+
                         if (novoLancamentoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
                             novoLancamentoTarifasDisponiveisEEntrada.add(formaPagamento);
                     }
@@ -1321,13 +1321,13 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         if (getEntity() == null || getEntity().getId() == null || getEntity().getId() == 0)
             return null;
         List<Lancamento> lancamentosSearch = new ArrayList<>();
-        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.VALIDADO));
-        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.NAO_VALIDADO));
-        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.FALHA_OPERACAO));
+        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.VALIDADO, true));
+        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.NAO_VALIDADO, true));
+        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.FALHA_OPERACAO, true));
         if (showLancamentosCancelados) {
-            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.VALIDADO, false));
-            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.NAO_VALIDADO, false));
-            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), ValidacaoLancamento.FALHA_OPERACAO, false));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.VALIDADO, false));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.NAO_VALIDADO, false));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.FALHA_OPERACAO, false));
         }
 
         if (lancamentosSearch != null)
@@ -1443,8 +1443,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             BigDecimal valorLancamentos = new BigDecimal(0);
             BigDecimal valorItens = new BigDecimal(0);
 
-            List<Lancamento> lancamentos = LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(this.getEntity(), ValidacaoLancamento.VALIDADO);
-            lancamentos.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(this.getEntity(), ValidacaoLancamento.NAO_VALIDADO));
+            List<Lancamento> lancamentos = LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(this.getEntity(), null, ValidacaoLancamento.VALIDADO, true);
+            lancamentos.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(this.getEntity(), null, ValidacaoLancamento.NAO_VALIDADO, true));
 
             for (Lancamento lancamento : lancamentos) {
                 if (lancamento.isAtivo()) {

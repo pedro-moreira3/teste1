@@ -2,7 +2,6 @@ package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,7 +25,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
-import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -35,13 +33,13 @@ import org.primefaces.model.DualListModel;
 
 import br.com.lume.agendamentoPlanoTratamentoProcedimento.AgendamentoPlanoTratamentoProcedimentoSingleton;
 import br.com.lume.common.OdontoPerfil;
+import br.com.lume.common.lazy.models.PlanoTratamentoLazyModel;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
-import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenioProcedimento.ConvenioProcedimentoSingleton;
 import br.com.lume.dente.DenteSingleton;
@@ -106,6 +104,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private List<Profissional> profissionais;
 
     private List<PlanoTratamento> planosTratamento;
+    private PlanoTratamentoLazyModel ptLazyModel;
     private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos;
     private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentosExcluidos;
 
@@ -125,8 +124,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     private String nomeClinica;
     private String endTelefoneClinica;
-    
-    
 
     private List<SelectItem> dentes = new ArrayList<SelectItem>();
 
@@ -136,9 +133,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private List<Dominio> justificativas;
 
     private boolean imprimirSemValores = false;
-    
+
     private boolean incluirObservacoesCobranca = false;
-    
+
     private boolean omitirProcedimentosNaoInclusos = false;
 
     private String filtroStatus = "T";
@@ -190,18 +187,18 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private PlanoTratamentoProcedimento ptpMudarExecutor;
 
     private String observacoesCobrancaOrcamento;
-    
-   private Integer quantidadeVezesNegociacaoOrcamento;
-   private List<Integer> parcelasDisponiveis;
-   private BigDecimal valorPrimeiraParcelaOrcamento= new BigDecimal(0); 
-   private   Map<Integer,DescontoOrcamento> descontosDisponiveis = new HashMap<Integer,DescontoOrcamento>();
-   private String mensagemCalculoOrcamento = "";
-   private BigDecimal numeroParcelaOrcamento = new BigDecimal(0); 
-   
-   private String mensagemCalculoOrcamentoDiferenca;
-   private BigDecimal valorParcela;
-   private BigDecimal diferencaCalculoParcelas = new BigDecimal(0); 
-   
+
+    private Integer quantidadeVezesNegociacaoOrcamento;
+    private List<Integer> parcelasDisponiveis;
+    private BigDecimal valorPrimeiraParcelaOrcamento = new BigDecimal(0);
+    private Map<Integer, DescontoOrcamento> descontosDisponiveis = new HashMap<Integer, DescontoOrcamento>();
+    private String mensagemCalculoOrcamento = "";
+    private BigDecimal numeroParcelaOrcamento = new BigDecimal(0);
+
+    private String mensagemCalculoOrcamentoDiferenca;
+    private BigDecimal valorParcela;
+    private BigDecimal diferencaCalculoParcelas = new BigDecimal(0);
+
     public PlanoTratamentoMB() {
         super(PlanoTratamentoSingleton.getInstance().getBo());
         setClazz(PlanoTratamento.class);
@@ -227,33 +224,25 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             renderizarValoresProcedimentos = false;
         }
     }
-    
-  //  public void incluirObservacoesCobrancaListener() {
-     //   renderizarObservacoesCobranca = false;
+
+    //  public void incluirObservacoesCobrancaListener() {
+    //   renderizarObservacoesCobranca = false;
     //    if (incluirObservacoesCobranca) {
     //        renderizarObservacoesCobranca = true;
-  //      }
- //   }
-    
-    public BigDecimal valorAReceber(PlanoTratamento pt) {
-        return FaturaItemSingleton.getInstance().valorAReceberDoPacienteFromPT(pt);
-    }
-
-    public BigDecimal valorAConferir(PlanoTratamento pt) {
-        return  FaturaItemSingleton.getInstance().valorAConferirDoPacienteFromPT(pt);
-    }
+    //      }
+    //   }
 
     public BigDecimal valorTotal(PlanoTratamento pt) {
         BigDecimal total = new BigDecimal(0);
         for (PlanoTratamentoProcedimento ptp : pt.getPlanoTratamentoProcedimentos()) {
             FaturaItem faturaItem = FaturaItemSingleton.getInstance().getBo().faturaItensOrigemFromPTP(ptp);
-            if(faturaItem != null) {
+            if (faturaItem != null) {
                 total = FaturaSingleton.getInstance().getTotal(faturaItem.getFatura());
             }
         }
         return total;
     }
-    
+
     public String getDateNowFormat() {
         return Utils.dateToString(new Date());
     }
@@ -369,15 +358,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         try {
             planosTratamento = new ArrayList<>();
             if (getPaciente() != null) {
-
                 planosTratamento = PlanoTratamentoSingleton.getInstance().getBo().listByPacienteAndStatusAndTipo(getPaciente(), filtroStatus, filtroTipo);
-                for (PlanoTratamento pt : planosTratamento) {
-                    if (pt.getStatus().equals(Status.SIM) && contemPlanoTratamentoProcedimentoAberto(pt.getPlanoTratamentoProcedimentos())) {
-                        pt.setValor(BigDecimal.ZERO);
-                    }
-                    pt.setValor(getTotalPT(pt));
-                    pt.setValorTotalRestante(PlanoTratamentoSingleton.getInstance().getTotalRestanteAPagar(pt));
-                }
+                ptLazyModel = new PlanoTratamentoLazyModel(planosTratamento);
             }
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -488,12 +470,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
         } catch (Exception e) {
             log.error(OdontoMensagens.getMensagem("erro.plano.cria.retorno"), e);
-        }
-    }
-
-    public void atualizaValorTotal() throws Exception {
-        if (!getEntity().isOrtodontico()) {
-            this.getEntity().setValorTotal(getTotalPT(false));
         }
     }
 
@@ -643,8 +619,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
 
             if (this.planoTratamentoProcedimentoSelecionado.getProcedimento() == null || this.planoTratamentoProcedimentoSelecionado.getProcedimento().getId() != this.procedimentoSelecionado.getId())
-                atualizaPlanoTratamentoProcedimento(this.planoTratamentoProcedimentoSelecionado, getEntity(), this.procedimentoSelecionado,
-                        getPaciente());
+                atualizaPlanoTratamentoProcedimento(this.planoTratamentoProcedimentoSelecionado, getEntity(), this.procedimentoSelecionado, getPaciente());
             if (isDente) {
                 String denteDescricao = this.denteRegiaoEscolhida.trim().split("Dente ")[1];
                 Dente d = DenteSingleton.getInstance().getBo().findByDescAndOdontograma(denteDescricao, getEntity().getOdontograma());
@@ -675,9 +650,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
-    
-    public void atualizaPlanoTratamentoProcedimento(PlanoTratamentoProcedimento ptp, PlanoTratamento planoTratamento,
-            Procedimento procedimento, Paciente paciente) {
+
+    public void atualizaPlanoTratamentoProcedimento(PlanoTratamentoProcedimento ptp, PlanoTratamento planoTratamento, Procedimento procedimento, Paciente paciente) {
         ptp.setPlanoTratamento(planoTratamento);
         ptp.setProcedimento(procedimento);
 
@@ -689,8 +663,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         ptp.setPlanoTratamentoProcedimentoFaces(null);
         ptp.setStatus(null);
         ptp.setStatusNovo(null);
-        if (planoTratamento.isBconvenio() && paciente.getConvenio() != null
-                && paciente.getConvenio().getExcluido().equals(Status.NAO))
+        if (planoTratamento.isBconvenio() && paciente.getConvenio() != null && paciente.getConvenio().getExcluido().equals(Status.NAO))
             ptp.setConvenio(paciente.getConvenio());
 
         BigDecimal valorConvenio = resolveDescontoConvenio(ptp);
@@ -704,18 +677,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
         ptp.setValorDesconto(ptp.getValor());
     }
-    
+
     private BigDecimal resolveDescontoConvenio(PlanoTratamentoProcedimento ptProcedimento) {
         try {
             PlanoTratamento pt = ptProcedimento.getPlanoTratamento();
             Procedimento procedimento = ptProcedimento.getProcedimento();
-            Convenio convenio = pt.getConvenio();          
-            if (pt.isBconvenio() && convenio != null
-                    && convenio.getDataInicioVigencia().before(Calendar.getInstance().getTime())
-                    && convenio.getDataFimVigencia().after(Calendar.getInstance().getTime())
-                    && convenio.getExcluido().equals(Status.NAO)) {
-                ConvenioProcedimento cp = 
-                        ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(convenio, procedimento);
+            Convenio convenio = pt.getConvenio();
+            if (pt.isBconvenio() && convenio != null && convenio.getDataInicioVigencia().before(Calendar.getInstance().getTime()) && convenio.getDataFimVigencia().after(
+                    Calendar.getInstance().getTime()) && convenio.getExcluido().equals(Status.NAO)) {
+                ConvenioProcedimento cp = ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(convenio, procedimento);
                 if (convenio.getTipo().equals(Convenio.CONVENIO_PLANO_SAUDE) || convenio.getTipo().equals(Convenio.CONVENIO_EMPRESA))
                     return cp.getValor();
             }
@@ -725,18 +695,18 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         // return ptProcedimento.getValor();
         return null;
     }
-    
-   // public ConvenioProcedimento findByConvenioAndProcedimento(Convenio convenio, Procedimento procedimento) throws Exception {
+
+    // public ConvenioProcedimento findByConvenioAndProcedimento(Convenio convenio, Procedimento procedimento) throws Exception {
     //    try {
-          //  Map<String, Object> parametros = new HashMap<>();
-          //  parametros.put("convenio", convenio);
-           // parametros.put("procedimento", procedimento);
-          //  parametros.put("idEmpresa", convenio.getIdEmpresa());
-            //parametros.put("idEmpresa", 41);
-          //  parametros.put("excluido", Status.NAO);
-          //  parametros.put("status", Status.ATIVO);
-           // return this.findByFields(parametros);
-            
+    //  Map<String, Object> parametros = new HashMap<>();
+    //  parametros.put("convenio", convenio);
+    // parametros.put("procedimento", procedimento);
+    //  parametros.put("idEmpresa", convenio.getIdEmpresa());
+    //parametros.put("idEmpresa", 41);
+    //  parametros.put("excluido", Status.NAO);
+    //  parametros.put("status", Status.ATIVO);
+    // return this.findByFields(parametros);
+
 //            StringBuilder sb = new StringBuilder();
 //            sb.append("SELECT * FROM CONVENIO_PROCEDIMENTO WHERE ID_CONVENIO = ?1 AND ID_PROCEDIMENTO = ?2 AND ID_EMPRESA = ?3 AND EXCLUIDO = 'N' AND STATUS='A' ");
 //            Query query = ConvenioProcedimentoSingleton.getInstance().getBo().getDao().createNativeQuery(sb.toString(), ConvenioProcedimento.class);
@@ -841,7 +811,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         carregarPlanoTratamentoProcedimentos();
         carregarOdontogramas();
         carregarPlanosTratamento();
-        atualizaValorTotal();
         carregarDadosCabecalho();
         if (validaOrcamento && false)
             validaValoresOrcamentoPlanoTratamento();
@@ -905,33 +874,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private void calculaRepasses() {
         for (PlanoTratamentoProcedimento ptp : planoTratamentoProcedimentos)
             calculaRepasse(ptp);
-    }
-
-    public BigDecimal getTotalPT() {
-        return getTotalPT(getEntity());
-    }
-
-    public BigDecimal getTotalPT(boolean desconto) {
-        return getTotalPT(getEntity(), desconto);
-    }
-
-    public BigDecimal getTotalPT(PlanoTratamento planoTratamento) {
-        return getTotalPT(planoTratamento, true);
-    }
-
-    public BigDecimal getTotalPT(PlanoTratamento planoTratamento, boolean desconto) {
-        BigDecimal valorTotal = new BigDecimal(0);
-        if (planoTratamento != null && planoTratamento.getPlanoTratamentoProcedimentos() != null) {
-            for (PlanoTratamentoProcedimento ptp : planoTratamento.getPlanoTratamentoProcedimentos()) {
-                if (Status.SIM.equals(ptp.getExcluido()))
-                    continue;
-                if (desconto)
-                    valorTotal = valorTotal.add(ptp.getValorDesconto());
-                else
-                    valorTotal = valorTotal.add(ptp.getValor());
-            }
-        }
-        return valorTotal;
     }
 
     public boolean isEncerrado() {
@@ -1094,28 +1036,28 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         try {
             this.orcamentoSelecionado = OrcamentoSingleton.getInstance().preparaOrcamentoFromPT(getEntity());
             this.orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
-            
-           observacoesCobrancaOrcamento = null;
-            
+
+            observacoesCobrancaOrcamento = null;
+
             quantidadeVezesNegociacaoOrcamento = null;
             parcelasDisponiveis = null;
-            valorPrimeiraParcelaOrcamento= new BigDecimal(0); 
-            descontosDisponiveis = new HashMap<Integer,DescontoOrcamento>();
+            valorPrimeiraParcelaOrcamento = new BigDecimal(0);
+            descontosDisponiveis = new HashMap<Integer, DescontoOrcamento>();
             mensagemCalculoOrcamento = "";
-            numeroParcelaOrcamento = new BigDecimal(0); 
+            numeroParcelaOrcamento = new BigDecimal(0);
             mensagemCalculoOrcamentoDiferenca = "";
-            valorParcela = new BigDecimal(0); 
-            
-           populaDescontos();
-            
-          
-            PrimeFaces.current().executeScript("PF('dlgViewOrcamento').show()");            
+            valorParcela = new BigDecimal(0);
+
+            populaDescontos();
+
+            PrimeFaces.current().executeScript("PF('dlgViewOrcamento').show()");
         } catch (Exception e) {
             log.error("Erro no actionNewOrcamento", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
         }
 
     }
+
     public String getDescontoFromParcela(Integer parcela) {
         String percent = null;
         NumberFormat percformat = NumberFormat.getPercentInstance(new Locale("pt", "BR"));
@@ -1126,118 +1068,118 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
         return percent;
     }
-    
+
     public void validaDescontos() {
         mensagemCalculoOrcamento = "";
         mensagemCalculoOrcamentoDiferenca = "";
-        
-      
-        
-        if(quantidadeVezesNegociacaoOrcamento == null && orcamentoSelecionado.getDescontoValor().compareTo(new BigDecimal(0)) != 0) {
+
+        if (quantidadeVezesNegociacaoOrcamento == null && orcamentoSelecionado.getDescontoValor().compareTo(new BigDecimal(0)) != 0) {
             this.addError("Erro", "Selecione a quantidade de parcelas para a negociação");
             orcamentoSelecionado.setDescontoValor(new BigDecimal(0));
-        }else if(quantidadeVezesNegociacaoOrcamento != null){
+        } else if (quantidadeVezesNegociacaoOrcamento != null) {
             numeroParcelaOrcamento = new BigDecimal(quantidadeVezesNegociacaoOrcamento);
-            
-            if(orcamentoSelecionado.getDescontoValor() == null) {
+
+            if (orcamentoSelecionado.getDescontoValor() == null) {
                 orcamentoSelecionado.setDescontoValor(new BigDecimal(0));
             }
-            
-            if(descontosDisponiveis.containsKey(numeroParcelaOrcamento.intValue())) {
-                if(orcamentoSelecionado.getDescontoTipo().equals("P") && orcamentoSelecionado.getDescontoValor().compareTo(descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto()) == 1) {
-                    this.addError("Erro", "Desconto maior que o permitido."); 
+
+            if (descontosDisponiveis.containsKey(numeroParcelaOrcamento.intValue())) {
+                if (orcamentoSelecionado.getDescontoTipo().equals(
+                        "P") && orcamentoSelecionado.getDescontoValor().compareTo(descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto()) == 1) {
+                    this.addError("Erro", "Desconto maior que o permitido.");
                     orcamentoSelecionado.setDescontoValor(new BigDecimal(0));
-                }else if(orcamentoSelecionado.getDescontoTipo().equals("V")) {
+                } else if (orcamentoSelecionado.getDescontoTipo().equals("V")) {
                     orcamentoSelecionado.getValorTotal();
                     double descontoEmPorcentagem = (orcamentoSelecionado.getDescontoValor().doubleValue() * 100) / orcamentoSelecionado.getValorTotal().doubleValue();
-                    if( descontoEmPorcentagem > descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto().doubleValue()) {
-                        this.addError("Erro", "Desconto maior que o permitido."); 
+                    if (descontoEmPorcentagem > descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto().doubleValue()) {
+                        this.addError("Erro", "Desconto maior que o permitido.");
                         orcamentoSelecionado.setDescontoValor(new BigDecimal(0));
                     }
                 }
-               
-            }else {
-                if(orcamentoSelecionado.getDescontoValor().compareTo(new BigDecimal(0)) != 0) {
+
+            } else {
+                if (orcamentoSelecionado.getDescontoValor().compareTo(new BigDecimal(0)) != 0) {
                     this.addError("Erro", "O número de parcelas escolhido não permite desconto.");
                     orcamentoSelecionado.setDescontoValor(new BigDecimal(0));
-                }               
+                }
             }
-            if(valorPrimeiraParcelaOrcamento == null) {
-                valorPrimeiraParcelaOrcamento = new BigDecimal(0); 
+            if (valorPrimeiraParcelaOrcamento == null) {
+                valorPrimeiraParcelaOrcamento = new BigDecimal(0);
             }
-            if(valorPrimeiraParcelaOrcamento.compareTo(orcamentoSelecionado.getValorTotalComDesconto()) > 0) {
+            if (valorPrimeiraParcelaOrcamento.compareTo(orcamentoSelecionado.getValorTotalComDesconto()) > 0) {
                 this.addError("Erro", "O valor da primeira parcela não pode ser maior que o valor do orçamento");
                 valorPrimeiraParcelaOrcamento = new BigDecimal(0);
-            }else if(valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) < 0) {
+            } else if (valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) < 0) {
                 this.addError("Erro", "O valor da primeira parcela não pode ser negativo");
                 valorPrimeiraParcelaOrcamento = new BigDecimal(0);
             }
-          
-            String valortotalFormatado =  Utils.formataValor(orcamentoSelecionado.getValorTotalComDesconto());
-            if(numeroParcelaOrcamento.compareTo(new BigDecimal(1)) == 0) {                
+
+            String valortotalFormatado = Utils.formataValor(orcamentoSelecionado.getValorTotalComDesconto());
+            if (numeroParcelaOrcamento.compareTo(new BigDecimal(1)) == 0) {
                 mensagemCalculoOrcamento = "Pagamento a vista, valor de R$ " + valortotalFormatado;
                 valorPrimeiraParcelaOrcamento = new BigDecimal(0);
-            }else {
-                
-                 valorParcela = new BigDecimal(0);
-                if(valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) != 0) {
-                    valorParcela = (orcamentoSelecionado.getValorTotalComDesconto().subtract(valorPrimeiraParcelaOrcamento)).divide(numeroParcelaOrcamento.subtract(new BigDecimal(1)), 2, RoundingMode.HALF_UP);
-                    
-                    String valorParcelaFormatado =  Utils.formataValor(valorParcela);
-                    
-                    mensagemCalculoOrcamento = "Entrada de " + Utils.formataValor(valorPrimeiraParcelaOrcamento) + 
-                            " mais " + (numeroParcelaOrcamento.subtract(new BigDecimal(1))) + "x de " + valorParcelaFormatado + ". Total de " + valortotalFormatado;       
-                }else {
+            } else {
+
+                valorParcela = new BigDecimal(0);
+                if (valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) != 0) {
+                    valorParcela = (orcamentoSelecionado.getValorTotalComDesconto().subtract(valorPrimeiraParcelaOrcamento)).divide(numeroParcelaOrcamento.subtract(new BigDecimal(1)), 2,
+                            RoundingMode.HALF_UP);
+
+                    String valorParcelaFormatado = Utils.formataValor(valorParcela);
+
+                    mensagemCalculoOrcamento = "Entrada de " + Utils.formataValor(
+                            valorPrimeiraParcelaOrcamento) + " mais " + (numeroParcelaOrcamento.subtract(new BigDecimal(1))) + "x de " + valorParcelaFormatado + ". Total de " + valortotalFormatado;
+                } else {
                     valorParcela = orcamentoSelecionado.getValorTotalComDesconto().divide(numeroParcelaOrcamento, 2, RoundingMode.HALF_UP);
-                    String valorParcelaFormatado =  Utils.formataValor(valorParcela);
-                    mensagemCalculoOrcamento = "Pagamento em " +numeroParcelaOrcamento + "x de "+ valorParcelaFormatado +". Total de " + valortotalFormatado;    
-                  
-                }   
+                    String valorParcelaFormatado = Utils.formataValor(valorParcela);
+                    mensagemCalculoOrcamento = "Pagamento em " + numeroParcelaOrcamento + "x de " + valorParcelaFormatado + ". Total de " + valortotalFormatado;
+
+                }
                 BigDecimal valorComparar;
-                if(valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) == 0) {
+                if (valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) == 0) {
                     valorComparar = valorParcela.multiply(numeroParcelaOrcamento);
-                }else {
+                } else {
                     valorComparar = valorParcela.multiply(numeroParcelaOrcamento.subtract(new BigDecimal(1))).add(valorPrimeiraParcelaOrcamento);
-                }    
+                }
                 diferencaCalculoParcelas = null;
-                if(valorComparar.compareTo(orcamentoSelecionado.getValorTotalComDesconto()) != 0) {
-                    diferencaCalculoParcelas = orcamentoSelecionado.getValorTotalComDesconto().subtract(valorParcela.multiply(numeroParcelaOrcamento));                    
-                    mensagemCalculoOrcamentoDiferenca = "Atenção! Diferença de " + Utils.formataValor(diferencaCalculoParcelas) + " na soma das parcelas. "
-                            + "Essa diferença será somada na primeira parcela automaticamente.";              
-                }                               
+                if (valorComparar.compareTo(orcamentoSelecionado.getValorTotalComDesconto()) != 0) {
+                    diferencaCalculoParcelas = orcamentoSelecionado.getValorTotalComDesconto().subtract(valorParcela.multiply(numeroParcelaOrcamento));
+                    mensagemCalculoOrcamentoDiferenca = "Atenção! Diferença de " + Utils.formataValor(
+                            diferencaCalculoParcelas) + " na soma das parcelas. " + "Essa diferença será somada na primeira parcela automaticamente.";
+                }
             }
         }
     }
 
     private void populaDescontos() {
-        parcelasDisponiveis = new ArrayList<Integer>();           
-        
+        parcelasDisponiveis = new ArrayList<Integer>();
+
         List<DescontoOrcamento> descontos = new ArrayList<DescontoOrcamento>();
         descontos = DescontoOrcamentoSingleton.getInstance().getBo().listByProfissional(UtilsFrontEnd.getProfissionalLogado(), "A");
-        if(descontos.isEmpty()) {
-            descontos = DescontoOrcamentoSingleton.getInstance().getBo().listByClinica( UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "A");
+        if (descontos.isEmpty()) {
+            descontos = DescontoOrcamentoSingleton.getInstance().getBo().listByClinica(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), "A");
         }
-      
+
         descontos.sort((d1, d2) -> d1.getQuantidadeParcelas().compareTo(d2.getQuantidadeParcelas()));
-        int quantidadeParcelasInseridas = 1;  
-        for (DescontoOrcamento descontoOrcamento : descontos) {          
-            for (int i = 1; i <= descontoOrcamento.getQuantidadeParcelas().intValue(); i++) {                
-                if(i <= descontoOrcamento.getQuantidadeParcelas().intValue()) {
-                    if(parcelasDisponiveis.size() < descontoOrcamento.getQuantidadeParcelas().intValue()) {
+        int quantidadeParcelasInseridas = 1;
+        for (DescontoOrcamento descontoOrcamento : descontos) {
+            for (int i = 1; i <= descontoOrcamento.getQuantidadeParcelas().intValue(); i++) {
+                if (i <= descontoOrcamento.getQuantidadeParcelas().intValue()) {
+                    if (parcelasDisponiveis.size() < descontoOrcamento.getQuantidadeParcelas().intValue()) {
                         descontosDisponiveis.put(quantidadeParcelasInseridas, descontoOrcamento);
                         parcelasDisponiveis.add(quantidadeParcelasInseridas);
-                        quantidadeParcelasInseridas++;     
+                        quantidadeParcelasInseridas++;
                     }
-                   
-                }               
+
+                }
             }
-        }          
-        while (quantidadeParcelasInseridas <= 60) {
-            parcelasDisponiveis.add(quantidadeParcelasInseridas);   
-            quantidadeParcelasInseridas++;
-            
         }
-        
+        while (quantidadeParcelasInseridas <= 60) {
+            parcelasDisponiveis.add(quantidadeParcelasInseridas);
+            quantidadeParcelasInseridas++;
+
+        }
+
     }
 
     public BigDecimal getValorRestanteOrcamento() {
@@ -1448,8 +1390,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 //                }
 //
 //            }
-            
-            
 
             orcamentoSelecionado.setValorTotal(OrcamentoSingleton.getInstance().getTotalOrcamento(orcamentoSelecionado));
             orcamentoSelecionado.setQuantidadeParcelas(1);
@@ -1475,27 +1415,27 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.imprimirSemValores = false;
             this.orcamentoSelecionado = orcamento;
             orcamentoSelecionado.setValorPago(getTotalPago());
-            
+
             NegociacaoOrcamento negociacaOrcamento = NegociacaoOrcamentoSingleton.getInstance().getBo().getNegociacaoFromOrcamento(orcamentoSelecionado);
             populaDescontos();
-            if(negociacaOrcamento != null) {
+            if (negociacaOrcamento != null) {
                 numeroParcelaOrcamento = new BigDecimal(negociacaOrcamento.getQuantidadeParcelas());
                 valorPrimeiraParcelaOrcamento = negociacaOrcamento.getValorPrimeiraParcela();
                 valorParcela = negociacaOrcamento.getValorParcela();
                 observacoesCobrancaOrcamento = negociacaOrcamento.getObservacao();
-                
-                for (Integer quantidadeVezes : parcelasDisponiveis) {                   
-                    if(new BigDecimal(quantidadeVezes).compareTo(numeroParcelaOrcamento) == 0) {
-                        quantidadeVezesNegociacaoOrcamento = quantidadeVezes.intValue(); 
+
+                for (Integer quantidadeVezes : parcelasDisponiveis) {
+                    if (new BigDecimal(quantidadeVezes).compareTo(numeroParcelaOrcamento) == 0) {
+                        quantidadeVezesNegociacaoOrcamento = quantidadeVezes.intValue();
                     }
-                }                
-              
+                }
+
                 validaDescontos();
             }
-      
+
         }
     }
-    
+
     public void actionRemoveOrcamento(ActionEvent event) {
         try {
             if (isDentistaAdmin()) {
@@ -1525,26 +1465,26 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 orcamentoSelecionado.setDataCriacao(new Date());
             }
             atualizaValoresOrcamento();
-            setOrcamentoSelecionado(OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado));         
-          
+            setOrcamentoSelecionado(OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado));
+
             valorPrimeiraParcelaOrcamento = null;
             valorParcela = null;
-            if(diferencaCalculoParcelas != null && diferencaCalculoParcelas.compareTo(new BigDecimal(0)) != 0) {
-                if(valorPrimeiraParcelaOrcamento != null && valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) != 0) {
+            if (diferencaCalculoParcelas != null && diferencaCalculoParcelas.compareTo(new BigDecimal(0)) != 0) {
+                if (valorPrimeiraParcelaOrcamento != null && valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) != 0) {
                     valorPrimeiraParcelaOrcamento = valorPrimeiraParcelaOrcamento.add(diferencaCalculoParcelas);
-                }else {
+                } else {
                     valorParcela = orcamentoSelecionado.getValorTotalComDesconto().divide(numeroParcelaOrcamento, 2, RoundingMode.HALF_UP);
                     valorPrimeiraParcelaOrcamento = valorParcela.add(diferencaCalculoParcelas);
-                    valorParcela = (orcamentoSelecionado.getValorTotalComDesconto().subtract(valorPrimeiraParcelaOrcamento)).divide(numeroParcelaOrcamento.subtract(new BigDecimal(1)), 2, RoundingMode.HALF_UP);                    
+                    valorParcela = (orcamentoSelecionado.getValorTotalComDesconto().subtract(valorPrimeiraParcelaOrcamento)).divide(numeroParcelaOrcamento.subtract(new BigDecimal(1)), 2,
+                            RoundingMode.HALF_UP);
                 }
             }
             validaDescontos();
-          
-            NegociacaoOrcamentoSingleton.getInstance().criaNovaNegociacao(getOrcamentoSelecionado(), descontosDisponiveis.get(numeroParcelaOrcamento.intValue()) , 
-                    numeroParcelaOrcamento.intValue(), getOrcamentoSelecionado().getDescontoTipo(), getOrcamentoSelecionado().getDescontoValor(),
-                  valorPrimeiraParcelaOrcamento, valorParcela,  getOrcamentoSelecionado().getValorTotal(), getOrcamentoSelecionado().getValorTotalComDesconto(), 
-                  observacoesCobrancaOrcamento, UtilsFrontEnd.getProfissionalLogado());
-       
+
+            NegociacaoOrcamentoSingleton.getInstance().criaNovaNegociacao(getOrcamentoSelecionado(), descontosDisponiveis.get(numeroParcelaOrcamento.intValue()), numeroParcelaOrcamento.intValue(),
+                    getOrcamentoSelecionado().getDescontoTipo(), getOrcamentoSelecionado().getDescontoValor(), valorPrimeiraParcelaOrcamento, valorParcela, getOrcamentoSelecionado().getValorTotal(),
+                    getOrcamentoSelecionado().getValorTotalComDesconto(), observacoesCobrancaOrcamento, UtilsFrontEnd.getProfissionalLogado());
+
             calculaRepasses();
             //actionNew(event);
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -1556,8 +1496,6 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
     }
-    
-    
 
     public String getHeaderProcedimentoEdit() {
         String result;
@@ -1968,7 +1906,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         List<String> perfis = new ArrayList<>();
         perfis.add(OdontoPerfil.DENTISTA);
         perfis.add(OdontoPerfil.ADMINISTRADOR);
-        if(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
+        if (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
             profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         }
     }
@@ -2092,10 +2030,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         }
 
     }
-    
-    public List<StatusDente> sugestoesStatusDente(String query){
-        return StatusDenteSingleton.getInstance().getBo().listSugestoesStatusDente(query,
-                UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+
+    public List<StatusDente> sugestoesStatusDente(String query) {
+        return StatusDenteSingleton.getInstance().getBo().listSugestoesStatusDente(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
     }
     // ================================================= TELA ================================================ //
 
@@ -2550,133 +2487,116 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         this.ptpMudarExecutor = ptpMudarExecutor;
     }
 
-    
     public String getObservacoesCobrancaOrcamento() {
         return observacoesCobrancaOrcamento;
     }
 
-    
     public void setObservacoesCobrancaOrcamento(String observacoesCobrancaOrcamento) {
         this.observacoesCobrancaOrcamento = observacoesCobrancaOrcamento;
     }
 
-    
     public Integer getQuantidadeVezesNegociacaoOrcamento() {
         return quantidadeVezesNegociacaoOrcamento;
     }
 
-    
     public void setQuantidadeVezesNegociacaoOrcamento(Integer quantidadeVezesNegociacaoOrcamento) {
         this.quantidadeVezesNegociacaoOrcamento = quantidadeVezesNegociacaoOrcamento;
     }
-    
+
     public BigDecimal getValorPrimeiraParcelaOrcamento() {
         return valorPrimeiraParcelaOrcamento;
     }
 
-    
     public void setValorPrimeiraParcelaOrcamento(BigDecimal valorPrimeiraParcelaOrcamento) {
         this.valorPrimeiraParcelaOrcamento = valorPrimeiraParcelaOrcamento;
-    }   
- 
-    
+    }
+
     public String getMensagemCalculoOrcamento() {
         return mensagemCalculoOrcamento;
     }
 
-    
     public void setMensagemCalculoOrcamento(String mensagemCalculoOrcamento) {
         this.mensagemCalculoOrcamento = mensagemCalculoOrcamento;
     }
 
-    
     public BigDecimal getNumeroParcelaOrcamento() {
         return numeroParcelaOrcamento;
     }
 
-    
     public void setNumeroParcelaOrcamento(BigDecimal numeroParcelaOrcamento) {
         this.numeroParcelaOrcamento = numeroParcelaOrcamento;
     }
 
-    
     public String getMensagemCalculoOrcamentoDiferenca() {
         return mensagemCalculoOrcamentoDiferenca;
     }
 
-    
     public void setMensagemCalculoOrcamentoDiferenca(String mensagemCalculoOrcamentoDiferenca) {
         this.mensagemCalculoOrcamentoDiferenca = mensagemCalculoOrcamentoDiferenca;
     }
 
-    
     public BigDecimal getValorParcela() {
         return valorParcela;
     }
 
-    
     public void setValorParcela(BigDecimal valorParcela) {
         this.valorParcela = valorParcela;
     }
 
-    
     public List<Integer> getParcelasDisponiveis() {
         return parcelasDisponiveis;
     }
 
-    
     public void setParcelasDisponiveis(List<Integer> parcelasDisponiveis) {
         this.parcelasDisponiveis = parcelasDisponiveis;
     }
 
-    
     public Map<Integer, DescontoOrcamento> getDescontosDisponiveis() {
         return descontosDisponiveis;
     }
 
-    
     public void setDescontosDisponiveis(Map<Integer, DescontoOrcamento> descontosDisponiveis) {
         this.descontosDisponiveis = descontosDisponiveis;
     }
 
-    
     public BigDecimal getDiferencaCalculoParcelas() {
         return diferencaCalculoParcelas;
     }
 
-    
     public void setDiferencaCalculoParcelas(BigDecimal diferencaCalculoParcelas) {
         this.diferencaCalculoParcelas = diferencaCalculoParcelas;
     }
 
-    
     public boolean isIncluirObservacoesCobranca() {
         return incluirObservacoesCobranca;
     }
 
-    
     public void setIncluirObservacoesCobranca(boolean incluirObservacoesCobranca) {
         this.incluirObservacoesCobranca = incluirObservacoesCobranca;
     }
 
-    
     public boolean isOmitirProcedimentosNaoInclusos() {
         return omitirProcedimentosNaoInclusos;
     }
 
-    
     public void setOmitirProcedimentosNaoInclusos(boolean omitirProcedimentosNaoInclusos) {
         this.omitirProcedimentosNaoInclusos = omitirProcedimentosNaoInclusos;
     }
 
-    
-  //  public boolean isRenderizarObservacoesCobranca() {
-  //      return renderizarObservacoesCobranca;
-   // }
+    public PlanoTratamentoLazyModel getPtLazyModel() {
+        return ptLazyModel;
+    }
 
-    
-  //  public void setRenderizarObservacoesCobranca(boolean renderizarObservacoesCobranca) {
- //       this.renderizarObservacoesCobranca = renderizarObservacoesCobranca;
- //   }
+    public void setPtLazyModel(PlanoTratamentoLazyModel ptLazyModel) {
+        this.ptLazyModel = ptLazyModel;
+    }
+
+    //  public boolean isRenderizarObservacoesCobranca() {
+    //      return renderizarObservacoesCobranca;
+    // }
+
+    //  public void setRenderizarObservacoesCobranca(boolean renderizarObservacoesCobranca) {
+    //       this.renderizarObservacoesCobranca = renderizarObservacoesCobranca;
+    //   }
 
 }
