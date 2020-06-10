@@ -64,10 +64,17 @@ public class PlanoTratamentoLazyModel extends LazyDataModel<PlanoTratamento> {
                     try {
                         String filterField = key;
                         Object filterValue = filters.get(key);
-                        String fieldValue = Utils.valueOf(filterField, pt, String.class);
+                        if(filterValue == null) {
+                            continue;
+                        }
 
-                        if (filterValue == null || fieldValue.startsWith(filterValue.toString())) {
-                            match = true;
+                        String fieldValue = Utils.valueOf(filterField, pt, String.class);
+                        fieldValue = Utils.unaccent(fieldValue).toUpperCase();
+                        String filterValueStr = String.valueOf(filterValue);
+                        filterValueStr = Utils.unaccent(filterValueStr).toUpperCase();
+
+                        if (fieldValue.contains(filterValueStr)) {
+                            continue;
                         } else {
                             match = false;
                             break;
