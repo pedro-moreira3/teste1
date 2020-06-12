@@ -1345,10 +1345,15 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             if (parcela == 1) {
                 Date dataPagamento1P = (dataPagamento1PD ? (dataPagamento != null ? dataPagamento : null) : (now != null ? now.getTime() : null));
                 Date dataCredito1P = (dataCredito1PD ? (dataCredito != null ? dataCredito : null) : (data != null ? data.getTime() : null));
-                lancamentos.add(new LancamentoParcelaInfo(parcela, valorPrimeiraParcela, formaPagamento, dataPagamento1P, dataCredito1P));
-            } else
-                lancamentos.add(new LancamentoParcelaInfo(parcela, valorParcela, (formaPagamentoDemaisParcelas != null ? formaPagamentoDemaisParcelas : formaPagamento),
+                int parcelaAtual = (formaPagamentoDemaisParcelas == null ? parcela : 1);
+                int totalParcela = (formaPagamentoDemaisParcelas == null ? quantidadeParcelas : 1);
+                lancamentos.add(new LancamentoParcelaInfo(parcelaAtual, totalParcela, valorPrimeiraParcela, formaPagamento, dataPagamento1P, dataCredito1P));
+            } else {
+                int parcelaAtual = (formaPagamentoDemaisParcelas == null ? parcela : parcela - 1);
+                int totalParcela = (formaPagamentoDemaisParcelas == null ? quantidadeParcelas : parcela - 1);
+                lancamentos.add(new LancamentoParcelaInfo(parcelaAtual, totalParcela, valorParcela, (formaPagamentoDemaisParcelas != null ? formaPagamentoDemaisParcelas : formaPagamento),
                         (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
+            }
 
             if ((parcela == 1 && formaPagamentoDemaisParcelas == null) || parcela != 1) {
                 if (formaPagamento != null && "CC".equals(formaPagamento.getTipo())) {
