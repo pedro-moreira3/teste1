@@ -1143,7 +1143,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
                 diferencaCalculoParcelas = null;
                 if (valorComparar.compareTo(orcamentoSelecionado.getValorTotalComDesconto()) != 0) {
-                    diferencaCalculoParcelas = orcamentoSelecionado.getValorTotalComDesconto().subtract(valorParcela.multiply(numeroParcelaOrcamento));
+                    if(valorPrimeiraParcelaOrcamento != null && valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) != 0 ) {
+                        diferencaCalculoParcelas = orcamentoSelecionado.getValorTotalComDesconto().subtract(valorPrimeiraParcelaOrcamento.add(valorParcela.multiply(numeroParcelaOrcamento.subtract(new BigDecimal(1)))));
+                    }else {
+                        diferencaCalculoParcelas = orcamentoSelecionado.getValorTotalComDesconto().subtract(valorParcela.multiply(numeroParcelaOrcamento));
+                    }
+                  
                     mensagemCalculoOrcamentoDiferenca = "Atenção! Diferença de " + Utils.formataValor(
                             diferencaCalculoParcelas) + " na soma das parcelas. " + "Essa diferença será somada na primeira parcela automaticamente.";
                 }
@@ -1467,7 +1472,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             atualizaValoresOrcamento();
             setOrcamentoSelecionado(OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado));
 
-            valorPrimeiraParcelaOrcamento = null;
+         //   valorPrimeiraParcelaOrcamento = null;
             valorParcela = null;
             if (diferencaCalculoParcelas != null && diferencaCalculoParcelas.compareTo(new BigDecimal(0)) != 0) {
                 if (valorPrimeiraParcelaOrcamento != null && valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) != 0) {
