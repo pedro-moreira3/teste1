@@ -1305,7 +1305,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         if (temPrimeiraParcelaDiferente() && seq == 1)
             return "Entrada";
         else if (temPrimeiraParcelaDiferente())
-            return seq + "/" + (this.negociacaoParcelas.size() - 1);
+            return (seq - 1) + "/" + (this.negociacaoParcelas.size() - 1);
         return seq + "/" + this.negociacaoParcelas.size();
     }
 
