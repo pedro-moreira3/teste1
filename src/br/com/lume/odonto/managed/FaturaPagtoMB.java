@@ -1318,6 +1318,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, (negociacaoFormaPagamento1Parcela != null ? negociacaoFormaPagamento1Parcela : negociacaoFormaPagamento),
                 negociacaoFormaPagamentoDemaisParcelas);
     }
+    
+    public String returnStrParcela(int seq) {
+        return seq + "/" + this.negociacaoParcelas.size();
+    }
 
     //-------------------------------- NEGOCIACAO --------------------------------
 

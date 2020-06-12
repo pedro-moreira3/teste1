@@ -832,12 +832,12 @@ body .height31 input {
 								<h:panelGroup styleClass="md-combo"
 									rendered="#{faturaPagtoMB.temPrimeiraParcelaDiferente()}">
 									<p:outputLabel for="negociacaoFormaPagamento1Aprovacao"
-										value="Forma de Pagamento da primeira parcela:" />
+										value="Forma de Pagamento da entrada:" />
 									<p:selectOneMenu id="negociacaoFormaPagamento1Aprovacao"
 										converter="tarifa"
 										value="#{faturaPagtoMB.negociacaoFormaPagamento1Parcela}">
 										<f:selectItem itemValue="#{null}"
-											itemLabel="Selecione uma Forma de Pagamento da primeira parcela:" />
+											itemLabel="Selecione uma Forma de Pagamento da entrada:" />
 										<f:selectItems
 											value="#{faturaPagtoMB.negociacaoTarifasDisponiveis}"
 											var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
@@ -858,7 +858,7 @@ body .height31 input {
 										symbol="R$ " thousandSeparator="." readonly="true">
 									</p:inputNumber>
 									<p:outputLabel for="negociacaoValorTotal1Aprovacao"
-										value="Valor da primeira parcela:" />
+										value="Valor da entrada:" />
 									<p:message for="negociacaoValorTotal1Aprovacao"
 										styleClass="msg" />
 								</h:panelGroup>
@@ -877,7 +877,7 @@ body .height31 input {
 											process="@this, negociacaoFormaPagamento1Aprovacao" />
 									</p:calendar>
 									<p:outputLabel for="negociacaoDataPagamento1Aprovacao"
-										value="Data de Pagamento da primeira parcela: " />
+										value="Data de Pagamento da entrada: " />
 									<p:message for="negociacaoDataPagamento1Aprovacao"
 										styleClass="msg" />
 								</h:panelGroup>
@@ -895,7 +895,7 @@ body .height31 input {
 											update="negociacaoParcelasTablePnl" process="@this" />
 									</p:calendar>
 									<p:outputLabel for="negociacaoDataCredito1Aprovacao"
-										value="Data de Crédito da primeira parcela:" />
+										value="Data de Crédito da entrada:" />
 									<p:message for="negociacaoDataCredito1Aprovacao"
 										styleClass="msg" />
 								</h:panelGroup>
@@ -981,9 +981,9 @@ body .height31 input {
 									paginatorPosition="bottom"
 									widgetVar="dtNegociacaoParcelasTable">
 									<f:facet name="header">Lista de Parcelas a serem criadas</f:facet>
-									<p:column filterBy="#{parcela.seq}" sortBy="#{parcela.seq}"
-										filterMatchMode="contains" headerText="Nº" width="30">
-										<h:outputText value="#{parcela.seq}" />
+									<p:column filterBy="#{faturaPagtoMB.returnStrParcela(parcela.seq)}" sortBy="#{faturaPagtoMB.returnStrParcela(parcela.seq)}"
+										filterMatchMode="contains" headerText="Parcela" width="50">
+										<h:outputText value="#{faturaPagtoMB.returnStrParcela(parcela.seq)}" />
 									</p:column>
 									<p:column filterBy="#{parcela.valor}" sortBy="#{parcela.valor}"
 										filterMatchMode="contains" headerText="Valor da Parcela">
