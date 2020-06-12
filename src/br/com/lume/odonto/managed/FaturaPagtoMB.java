@@ -769,25 +769,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 return;
 
             List<Tarifa> listaFormasDePagamento = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
-            
+
             novoLancamentoTarifasDisponiveis.addAll(listaFormasDePagamento);
             novoLancamentoTarifasDisponiveisEEntrada.addAll(listaFormasDePagamento);
             /*
-            if (listaFormasDePagamento != null) {
-                for (Tarifa formaPagamento : listaFormasDePagamento) {
-                    if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null) {
-                        if (novoLancamentoQuantidadeParcelas >= formaPagamento.getParcelaMinima() && novoLancamentoQuantidadeParcelas <= formaPagamento.getParcelaMaxima() && novoLancamentoTarifasDisponiveis.indexOf(
-                                formaPagamento) == -1)
-                            novoLancamentoTarifasDisponiveis.add(formaPagamento);
-
-                        if (novoLancamentoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
-                            novoLancamentoTarifasDisponiveisEEntrada.add(formaPagamento);
-                    }
-                    if (formaPagamento.getParcelaMinima() == 1 && novoLancamentoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
-                        novoLancamentoTarifasDisponiveisEEntrada.add(formaPagamento);
-                }
-            }
-            */
+             * if (listaFormasDePagamento != null) { for (Tarifa formaPagamento : listaFormasDePagamento) { if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null)
+             * { if (novoLancamentoQuantidadeParcelas >= formaPagamento.getParcelaMinima() && novoLancamentoQuantidadeParcelas <= formaPagamento.getParcelaMaxima() &&
+             * novoLancamentoTarifasDisponiveis.indexOf( formaPagamento) == -1) novoLancamentoTarifasDisponiveis.add(formaPagamento); if
+             * (novoLancamentoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1) novoLancamentoTarifasDisponiveisEEntrada.add(formaPagamento); } if (formaPagamento.getParcelaMinima() == 1 &&
+             * novoLancamentoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1) novoLancamentoTarifasDisponiveisEEntrada.add(formaPagamento); } }
+             */
 
             novoLancamentoAtualizaTooltipTarifasDisponiveis();
         } catch (Exception e) {
@@ -1221,25 +1212,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 return;
 
             List<Tarifa> listaFormasDePagamento = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
-            
+
             negociacaoTarifasDisponiveis.addAll(listaFormasDePagamento);
             negociacaoTarifasDisponiveisEEntrada.addAll(listaFormasDePagamento);
             /*
-            if (listaFormasDePagamento != null) {
-                for (Tarifa formaPagamento : listaFormasDePagamento) {
-                    if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null) {
-                        if (negociacaoQuantidadeParcelas >= formaPagamento.getParcelaMinima() && negociacaoQuantidadeParcelas <= formaPagamento.getParcelaMaxima() && negociacaoTarifasDisponiveis.indexOf(
-                                formaPagamento) == -1) {
-                            negociacaoTarifasDisponiveis.add(formaPagamento);
-
-                            if (negociacaoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
-                                negociacaoTarifasDisponiveisEEntrada.add(formaPagamento);
-                        }
-                    }
-                    if (formaPagamento.getParcelaMinima() == 1 && negociacaoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
-                        negociacaoTarifasDisponiveisEEntrada.add(formaPagamento);
-                }
-            }*/
+             * if (listaFormasDePagamento != null) { for (Tarifa formaPagamento : listaFormasDePagamento) { if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null)
+             * { if (negociacaoQuantidadeParcelas >= formaPagamento.getParcelaMinima() && negociacaoQuantidadeParcelas <= formaPagamento.getParcelaMaxima() && negociacaoTarifasDisponiveis.indexOf(
+             * formaPagamento) == -1) { negociacaoTarifasDisponiveis.add(formaPagamento); if (negociacaoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
+             * negociacaoTarifasDisponiveisEEntrada.add(formaPagamento); } } if (formaPagamento.getParcelaMinima() == 1 && negociacaoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
+             * negociacaoTarifasDisponiveisEEntrada.add(formaPagamento); } }
+             */
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -1318,8 +1300,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, (negociacaoFormaPagamento1Parcela != null ? negociacaoFormaPagamento1Parcela : negociacaoFormaPagamento),
                 negociacaoFormaPagamentoDemaisParcelas);
     }
-    
+
     public String returnStrParcela(int seq) {
+        if (temPrimeiraParcelaDiferente() && seq == 1)
+            return "Entrada";
+        else if (temPrimeiraParcelaDiferente())
+            return seq + "/" + (this.negociacaoParcelas.size() - 1);
         return seq + "/" + this.negociacaoParcelas.size();
     }
 
