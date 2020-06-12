@@ -1333,7 +1333,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         if (dataPagamento != null) {
             now = Calendar.getInstance();
             dataPagamento1PD = dataPagamentoDemaisParcelas != null;
-            now.setTime((dataPagamento1PD ? dataCreditoDemaisParcelas : dataPagamento));
+            now.setTime((dataPagamento1PD ? dataPagamentoDemaisParcelas : dataPagamento));
         }
         if (dataCredito != null) {
             data = Calendar.getInstance();
@@ -1350,14 +1350,16 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 lancamentos.add(new LancamentoParcelaInfo(parcela, valorParcela, (formaPagamentoDemaisParcelas != null ? formaPagamentoDemaisParcelas : formaPagamento),
                         (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
 
-            if (formaPagamento != null && "CC".equals(formaPagamento.getTipo())) {
-                if (data != null)
-                    data.add(Calendar.DAY_OF_MONTH, formaPagamento.getPrazo());
-            } else if (formaPagamento != null && !"CC".equals(formaPagamento.getTipo())) {
-                if (now != null)
-                    now.add(Calendar.MONTH, 1);
-                if (data != null)
-                    data.add(Calendar.MONTH, 1);
+            if ((parcela == 1 && formaPagamentoDemaisParcelas == null) || parcela != 1) {
+                if (formaPagamento != null && "CC".equals(formaPagamento.getTipo())) {
+                    if (data != null)
+                        data.add(Calendar.DAY_OF_MONTH, formaPagamento.getPrazo());
+                } else if (formaPagamento != null && !"CC".equals(formaPagamento.getTipo())) {
+                    if (now != null)
+                        now.add(Calendar.MONTH, 1);
+                    if (data != null)
+                        data.add(Calendar.MONTH, 1);
+                }
             }
         }
 
