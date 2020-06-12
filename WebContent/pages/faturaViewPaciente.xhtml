@@ -252,7 +252,7 @@ body .height31 input {
 											oncomplete="novoLancamentoRefazCalculos()" />
 									</p:inputNumber>
 									<p:outputLabel for="novoLancamentoValorPrimeiraParcela"
-										value="Valor da Primeira Parcela:" />
+										value="Valor da Entrada:" />
 									<p:message styleClass="msg"
 										for="novoLancamentoValorPrimeiraParcela" />
 								</h:panelGroup>
@@ -567,7 +567,7 @@ body .height31 input {
 										<p:ajax process="@this" oncomplete="refazCalculos()" />
 									</p:inputNumber>
 									<p:outputLabel for="negociacaoValorPrimeiraParcela"
-										value="Valor da Primeira Parcela:" />
+										value="Valor da Entrada:" />
 								</h:panelGroup>
 
 								<p:outputPanel id="infoParcelamento">
@@ -724,7 +724,7 @@ body .height31 input {
 													readonly="true">
 												</p:inputNumber>
 												<p:outputLabel for="negociacaoValorPrimeiraParcelaAprovacao"
-													value="Valor da Primeira Parcela:" />
+													value="Valor da Entrada:" />
 											</h:panelGroup>
 
 											<p:outputPanel id="infoParcelamentoAprovacao">
@@ -1269,7 +1269,7 @@ body .height31 input {
 									<h:outputText value="#{negociacao.descricao}" />
 								</p:column>
 
-								<p:column headerText="Valor da Primeira Parcela"
+								<p:column headerText="Valor da Entrada"
 									styleClass="#{(negociacao.status.rotulo == 'AP' ? 'negociacaoAprovada' : 'negociacaoEmAndamento')}"
 									sortBy="#{negociacao.valorPrimeiraParcela}"
 									filterBy="#{negociacao.valorPrimeiraParcela}"
