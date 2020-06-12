@@ -1350,7 +1350,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 lancamentos.add(new LancamentoParcelaInfo(parcelaAtual, totalParcela, valorPrimeiraParcela, formaPagamento, dataPagamento1P, dataCredito1P));
             } else {
                 int parcelaAtual = (formaPagamentoDemaisParcelas == null ? parcela : parcela - 1);
-                int totalParcela = (formaPagamentoDemaisParcelas == null ? quantidadeParcelas : parcela - 1);
+                int totalParcela = (formaPagamentoDemaisParcelas == null ? quantidadeParcelas : quantidadeParcelas - 1);
                 lancamentos.add(new LancamentoParcelaInfo(parcelaAtual, totalParcela, valorParcela, (formaPagamentoDemaisParcelas != null ? formaPagamentoDemaisParcelas : formaPagamento),
                         (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
             }
