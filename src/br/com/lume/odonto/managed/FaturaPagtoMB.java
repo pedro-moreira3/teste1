@@ -143,13 +143,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private BigDecimal negociacaoValorDaPrimeiraParcela;
     private BigDecimal negociacaoValorDaPrimeiraParcelaDirefenca;
     private BigDecimal negociacaoValorDaParcela;
-    private BigDecimal negociacaoValorTotal;
+    private BigDecimal negociacaoValorTotal, negociacaoValorTotal1Parcela, negociacaoValorTotalDemaisParcelas;
     private String negociacaoObservacao;
     //Campos para 'Confirma negociação'
     private String tooltipNegociacaoTarifasDisponiveis;
     private List<Tarifa> negociacaoTarifasDisponiveis, negociacaoTarifasDisponiveisEEntrada;
-    private Tarifa negociacaoFormaPagamento;
-    private Date negociacaoDataPagamento, negociacaoDataCredito;
+    private Tarifa negociacaoFormaPagamento, negociacaoFormaPagamento1Parcela, negociacaoFormaPagamentoDemaisParcelas;
+    private Date negociacaoDataPagamento, negociacaoDataPagamento1Parcela, negociacaoDataPagamentoDemaisParcelas;
+    private Date negociacaoDataCredito, negociacaoDataCredito1Parcela, negociacaoDataCreditoDemaisParcelas;
     private NegociacaoFatura negociacaoConfirmacao;
     private List<LancamentoParcelaInfo> negociacaoParcelas;
     private String negociacaoMensagemCalculo, negociacaoMensagemErroCalculo;
@@ -768,6 +769,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 return;
 
             List<Tarifa> listaFormasDePagamento = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+            
+            novoLancamentoTarifasDisponiveis.addAll(listaFormasDePagamento);
+            novoLancamentoTarifasDisponiveisEEntrada.addAll(listaFormasDePagamento);
+            /*
             if (listaFormasDePagamento != null) {
                 for (Tarifa formaPagamento : listaFormasDePagamento) {
                     if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null) {
@@ -782,6 +787,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                         novoLancamentoTarifasDisponiveisEEntrada.add(formaPagamento);
                 }
             }
+            */
 
             novoLancamentoAtualizaTooltipTarifasDisponiveis();
         } catch (Exception e) {
@@ -904,27 +910,59 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.negociacaoValorDaPrimeiraParcela = null;
     }
 
-    public void actionAlteraDataPagamentoNegociacao() {
-        if (negociacaoFormaPagamento != null && negociacaoDataPagamento != null) {
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(negociacaoDataPagamento);
-            cal.add(Calendar.DAY_OF_MONTH, negociacaoFormaPagamento.getPrazo());
-            negociacaoDataCredito = cal.getTime();
-        } else
-            negociacaoDataCredito = null;
+    public void actionAlteraDataPagamentoNegociacao(int campo) {
+        if (campo == 1) {
+            if (negociacaoFormaPagamento != null && negociacaoDataPagamento != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(negociacaoDataPagamento);
+                cal.add(Calendar.DAY_OF_MONTH, negociacaoFormaPagamento.getPrazo());
+                negociacaoDataCredito = cal.getTime();
+            } else
+                negociacaoDataCredito = null;
 
+            negociacaoAtualizaListaParcelas();
+        } else if (campo == 2) {
+            if (negociacaoFormaPagamento1Parcela != null && negociacaoFormaPagamento1Parcela != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(negociacaoDataPagamento1Parcela);
+                cal.add(Calendar.DAY_OF_MONTH, negociacaoFormaPagamento1Parcela.getPrazo());
+                negociacaoDataCredito1Parcela = cal.getTime();
+            } else
+                negociacaoDataCredito1Parcela = null;
+
+            negociacaoAtualizaListaParcelas();
+        } else if (campo == 3) {
+            if (negociacaoFormaPagamentoDemaisParcelas != null && negociacaoDataPagamentoDemaisParcelas != null) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(negociacaoDataPagamentoDemaisParcelas);
+                cal.add(Calendar.DAY_OF_MONTH, negociacaoFormaPagamentoDemaisParcelas.getPrazo());
+                negociacaoDataCreditoDemaisParcelas = cal.getTime();
+            } else
+                negociacaoDataCreditoDemaisParcelas = null;
+
+            negociacaoAtualizaListaParcelas();
+        }
+    }
+
+    public void actionAlteraDataCreditoNegociacao(int campo) {
         negociacaoAtualizaListaParcelas();
     }
 
-    public void actionAlteraDataCreditoNegociacao() {
-        negociacaoAtualizaListaParcelas();
-    }
+    public void actionAlteraFormaPagamentoNegociacao(int campo) {
+        if (campo == 1) {
+            if (this.negociacaoDataPagamento == null)
+                this.negociacaoDataPagamento = new Date();
+        } else if (campo == 2) {
+            if (this.negociacaoDataPagamento1Parcela == null)
+                this.negociacaoDataPagamento1Parcela = new Date();
+        } else if (campo == 3) {
+            if (this.negociacaoDataPagamentoDemaisParcelas == null)
+                this.negociacaoDataPagamentoDemaisParcelas = new Date();
+        }
+        actionAlteraDataPagamentoNegociacao(campo);
 
-    public void actionAlteraFormaPagamentoNegociacao() {
-        if (this.negociacaoDataPagamento == null)
-            this.negociacaoDataPagamento = new Date();
-        actionAlteraDataPagamentoNegociacao();
-        negociacaoAtualizaListaParcelas();
+        // Ja chama no metodo anterior
+        // negociacaoAtualizaListaParcelas();
     }
 
     public void actionNovaNegociacao() {
@@ -995,10 +1033,24 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
+    public boolean temPrimeiraParcelaDiferente() {
+        if (this.negociacaoValorDaParcela != null && this.negociacaoValorDaParcela.compareTo(
+                BigDecimal.ZERO) != 0 && this.negociacaoValorDaPrimeiraParcela != null && this.negociacaoValorDaPrimeiraParcela.compareTo(
+                        BigDecimal.ZERO) != 0 && this.negociacaoValorDaParcela.compareTo(this.negociacaoValorDaPrimeiraParcela) != 0)
+            return true;
+        return false;
+    }
+
     public void actionStartConfirmacaNegociacao(NegociacaoFatura negociacaoFatura) {
         this.negociacaoFormaPagamento = null;
+        this.negociacaoFormaPagamento1Parcela = null;
+        this.negociacaoFormaPagamentoDemaisParcelas = null;
         this.negociacaoDataPagamento = null;
+        this.negociacaoDataPagamento1Parcela = null;
+        this.negociacaoDataPagamentoDemaisParcelas = null;
         this.negociacaoDataCredito = null;
+        this.negociacaoDataCredito1Parcela = null;
+        this.negociacaoDataCreditoDemaisParcelas = null;
 
         negociacaoConfirmacao = negociacaoFatura;
         if (parcelasDisponiveis == null)
@@ -1032,6 +1084,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         else {
             negociacaoValorDaPrimeiraParcela = negociacaoValorDaParcela;
             atualizaInfoParcelamentoNegociacao(Boolean.TRUE, TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS);
+        }
+
+        if (temPrimeiraParcelaDiferente()) {
+            this.negociacaoValorTotal1Parcela = this.negociacaoValorDaPrimeiraParcela;
+            this.negociacaoValorTotalDemaisParcelas = this.negociacaoValorDaParcela;
         }
 
         negociacaoAtualizaListaParcelas();
@@ -1164,6 +1221,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 return;
 
             List<Tarifa> listaFormasDePagamento = TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+            
+            negociacaoTarifasDisponiveis.addAll(listaFormasDePagamento);
+            negociacaoTarifasDisponiveisEEntrada.addAll(listaFormasDePagamento);
+            /*
             if (listaFormasDePagamento != null) {
                 for (Tarifa formaPagamento : listaFormasDePagamento) {
                     if (formaPagamento.getParcelaMinima() != null && formaPagamento.getParcelaMaxima() != null) {
@@ -1178,7 +1239,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                     if (formaPagamento.getParcelaMinima() == 1 && negociacaoTarifasDisponiveisEEntrada.indexOf(formaPagamento) == -1)
                         negociacaoTarifasDisponiveisEEntrada.add(formaPagamento);
                 }
-            }
+            }*/
 
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -1252,8 +1313,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     private void negociacaoAtualizaListaParcelas() {
-        this.negociacaoParcelas = atualizaListaParcelas(negociacaoDataPagamento, negociacaoDataCredito, negociacaoQuantidadeParcelas, negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela,
-                negociacaoFormaPagamento);
+        this.negociacaoParcelas = atualizaListaParcelas((negociacaoDataPagamento1Parcela != null ? negociacaoDataPagamento1Parcela : negociacaoDataPagamento), negociacaoDataPagamentoDemaisParcelas,
+                (negociacaoDataCredito1Parcela != null ? negociacaoDataCredito1Parcela : negociacaoDataCredito), negociacaoDataCreditoDemaisParcelas, negociacaoQuantidadeParcelas,
+                negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, (negociacaoFormaPagamento1Parcela != null ? negociacaoFormaPagamento1Parcela : negociacaoFormaPagamento),
+                negociacaoFormaPagamentoDemaisParcelas);
     }
 
     //-------------------------------- NEGOCIACAO --------------------------------
@@ -1268,23 +1331,34 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     private List<LancamentoParcelaInfo> atualizaListaParcelas(Date dataPagamento, Date dataCredito, Integer quantidadeParcelas, BigDecimal valorPrimeiraParcela, BigDecimal valorParcela,
             Tarifa formaPagamento) {
+        return atualizaListaParcelas(dataPagamento, null, dataCredito, null, quantidadeParcelas, valorPrimeiraParcela, valorParcela, formaPagamento, null);
+    }
+
+    private List<LancamentoParcelaInfo> atualizaListaParcelas(Date dataPagamento, Date dataPagamentoDemaisParcelas, Date dataCredito, Date dataCreditoDemaisParcelas, Integer quantidadeParcelas,
+            BigDecimal valorPrimeiraParcela, BigDecimal valorParcela, Tarifa formaPagamento, Tarifa formaPagamentoDemaisParcelas) {
         List<LancamentoParcelaInfo> lancamentos = new ArrayList<>();
 
         Calendar now = null, data = null;
+        boolean dataCredito1PD = false, dataPagamento1PD = false;
         if (dataPagamento != null) {
             now = Calendar.getInstance();
-            now.setTime(dataPagamento);
+            dataPagamento1PD = dataPagamentoDemaisParcelas != null;
+            now.setTime((dataPagamento1PD ? dataCreditoDemaisParcelas : dataPagamento));
         }
         if (dataCredito != null) {
             data = Calendar.getInstance();
-            data.setTime(dataCredito);
+            dataCredito1PD = dataCreditoDemaisParcelas != null;
+            data.setTime((dataCredito1PD ? dataCreditoDemaisParcelas : dataCredito));
         }
 
         for (int parcela = 1; parcela <= quantidadeParcelas; parcela++) {
-            if (parcela == 1)
-                lancamentos.add(new LancamentoParcelaInfo(parcela, valorPrimeiraParcela, formaPagamento, (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
-            else
-                lancamentos.add(new LancamentoParcelaInfo(parcela, valorParcela, formaPagamento, (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
+            if (parcela == 1) {
+                Date dataPagamento1P = (dataPagamento1PD ? (dataPagamento != null ? dataPagamento : null) : (now != null ? now.getTime() : null));
+                Date dataCredito1P = (dataCredito1PD ? (dataCredito != null ? dataCredito : null) : (data != null ? data.getTime() : null));
+                lancamentos.add(new LancamentoParcelaInfo(parcela, valorPrimeiraParcela, formaPagamento, dataPagamento1P, dataCredito1P));
+            } else
+                lancamentos.add(new LancamentoParcelaInfo(parcela, valorParcela, (formaPagamentoDemaisParcelas != null ? formaPagamentoDemaisParcelas : formaPagamento),
+                        (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
 
             if (formaPagamento != null && "CC".equals(formaPagamento.getTipo())) {
                 if (data != null)
@@ -1848,6 +1922,70 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setNegociacaoTarifasDisponiveisEEntrada(List<Tarifa> negociacaoTarifasDisponiveisEEntrada) {
         this.negociacaoTarifasDisponiveisEEntrada = negociacaoTarifasDisponiveisEEntrada;
+    }
+
+    public BigDecimal getNegociacaoValorTotal1Parcela() {
+        return negociacaoValorTotal1Parcela;
+    }
+
+    public void setNegociacaoValorTotal1Parcela(BigDecimal negociacaoValorTotal1Parcela) {
+        this.negociacaoValorTotal1Parcela = negociacaoValorTotal1Parcela;
+    }
+
+    public BigDecimal getNegociacaoValorTotalDemaisParcelas() {
+        return negociacaoValorTotalDemaisParcelas;
+    }
+
+    public void setNegociacaoValorTotalDemaisParcelas(BigDecimal negociacaoValorTotalDemaisParcelas) {
+        this.negociacaoValorTotalDemaisParcelas = negociacaoValorTotalDemaisParcelas;
+    }
+
+    public Tarifa getNegociacaoFormaPagamento1Parcela() {
+        return negociacaoFormaPagamento1Parcela;
+    }
+
+    public void setNegociacaoFormaPagamento1Parcela(Tarifa negociacaoFormaPagamento1Parcela) {
+        this.negociacaoFormaPagamento1Parcela = negociacaoFormaPagamento1Parcela;
+    }
+
+    public Tarifa getNegociacaoFormaPagamentoDemaisParcelas() {
+        return negociacaoFormaPagamentoDemaisParcelas;
+    }
+
+    public void setNegociacaoFormaPagamentoDemaisParcelas(Tarifa negociacaoFormaPagamentoDemaisParcelas) {
+        this.negociacaoFormaPagamentoDemaisParcelas = negociacaoFormaPagamentoDemaisParcelas;
+    }
+
+    public Date getNegociacaoDataPagamento1Parcela() {
+        return negociacaoDataPagamento1Parcela;
+    }
+
+    public void setNegociacaoDataPagamento1Parcela(Date negociacaoDataPagamento1Parcela) {
+        this.negociacaoDataPagamento1Parcela = negociacaoDataPagamento1Parcela;
+    }
+
+    public Date getNegociacaoDataPagamentoDemaisParcelas() {
+        return negociacaoDataPagamentoDemaisParcelas;
+    }
+
+    public void setNegociacaoDataPagamentoDemaisParcelas(Date negociacaoDataPagamentoDemaisParcelas) {
+        this.negociacaoDataPagamentoDemaisParcelas = negociacaoDataPagamentoDemaisParcelas;
+    }
+
+    public Date getNegociacaoDataCredito1Parcela() {
+        return negociacaoDataCredito1Parcela;
+    }
+
+    public void setNegociacaoDataCredito1Parcela(Date negociacaoDataCredito1Parcela) {
+        this.negociacaoDataCredito1Parcela = negociacaoDataCredito1Parcela;
+    }
+
+    public Date getNegociacaoDataCreditoDemaisParcelas() {
+        return negociacaoDataCreditoDemaisParcelas;
+    }
+
+    public void setNegociacaoDataCreditoDemaisParcelas(Date negociacaoDataCreditoDemaisParcelas) {
+        this.negociacaoDataCreditoDemaisParcelas = negociacaoDataCreditoDemaisParcelas;
     }
 
     //-------------------------------- NEGOCIACAO --------------------------------
