@@ -756,7 +756,7 @@ body .height31 input {
 								</p:panelGrid>
 							</p:fieldset>
 
-							<p:panelGrid columns="4" layout="grid" style="margin-top: 20px;"
+							<p:panelGrid columns="4" layout="grid" style="margin-top: 20px;" id="pnlConfirmaNegociacaoDados"
 								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 								<h:panelGroup styleClass="md-combo"
@@ -1044,7 +1044,7 @@ body .height31 input {
 					<p:commandButton value="Confirmar Negociação"
 						icon="White fa fa-save"
 						actionListener="#{faturaPagtoMB.actionConfirmaNegociacao}"
-						update="pnlfaturaView" process="@this, pnlNovaNegociacao"
+						update="pnlfaturaView" process="@this, pnlConfirmaNegociacaoDados"
 						styleClass="GreenButton">
 						<p:confirm header="Confirmação" icon="ui-icon-alert"
 							escape="false"
