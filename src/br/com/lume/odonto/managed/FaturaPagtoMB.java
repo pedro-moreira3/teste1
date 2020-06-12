@@ -1008,7 +1008,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void actionConfirmaNegociacao() {
         try {
-            if (negociacaoFormaPagamento == null || negociacaoDataPagamento == null || negociacaoDataCredito == null) {
+            if ((!temPrimeiraParcelaDiferente() && (negociacaoFormaPagamento == null || negociacaoDataPagamento == null || negociacaoDataCredito == null)) || (temPrimeiraParcelaDiferente() && (negociacaoFormaPagamento1Parcela == null || negociacaoFormaPagamentoDemaisParcelas == null || negociacaoDataPagamento1Parcela == null || negociacaoDataPagamentoDemaisParcelas == null || negociacaoDataCredito1Parcela == null || negociacaoDataCreditoDemaisParcelas == null))) {
                 addError("Erro!", "Preencha todos os itens!");
                 return;
             }
