@@ -237,8 +237,7 @@
 									listener="#{pacienteMB.validaIdade}" process="@this,idade"/>
 							</p:calendar>
 							
-							<p:outputLabel for="idade" value="Idade: " />
-							<p:inputText id="idade" value="#{pacienteMB.calcularIdade()}"/>
+									
 
 							<p:outputLabel for="sexo" value="Sexo: " />
 							<p:selectOneRadio id="sexo"
@@ -246,7 +245,7 @@
 								<f:selectItem itemLabel="Masculino" itemValue="M" />
 								<f:selectItem itemLabel="Feminino" itemValue="F" />
 							</p:selectOneRadio>
-
+	
 							<p:outputLabel for="particularidades" value="Particularidades: " />
 							<p:inputTextarea id="particularidades" rows="3" cols="33"
 								value="#{pacienteMB.entity.dadosBasico.particularidades}"
@@ -259,6 +258,8 @@
 							<p:inputTextarea id="empresaOndeTrabalha" rows="2" cols="33"
 								value="#{pacienteMB.entity.dadosBasico.empresaOndeTrabalha}"
 								maxlength="500" />
+
+							<p:outputLabel id="idade"  value="#{pacienteMB.idadeDoPaciente()}" />				
 
 						</p:panelGrid>
 					</p:fieldset>

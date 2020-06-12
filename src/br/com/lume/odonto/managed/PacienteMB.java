@@ -246,7 +246,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         return false;
     }
 
-    public int calcularIdade() {
+    public String idadeDoPaciente() {
         if(this.getEntity().getDadosBasico().getDataNascimento() != null) {
             Calendar c = Calendar.getInstance();
             int mesAtual = c.get(Calendar.MONTH);
@@ -268,9 +268,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
                 idade--;
             }
                         
-            return idade;
+            return "Idade: " + idade + " anos";
         }        
-        return 0;
+        return "";
     }
     
     public boolean showPaciente() {
