@@ -1174,7 +1174,7 @@ body .height31 input {
 								</p:panel>
 								<p:panel id="valorNaoPlanejado">
 									<f:facet name="header">
-										<h:outputText value="Sem Forma de Pagamento" />
+										<h:outputText value="Sem Planejamento" />
 										<h:outputLabel class="fa fa-question"
 											id="tooltipValorNaoPlanejado"
 											style="font-size:16px; margin-left:10px;" />
@@ -1421,7 +1421,7 @@ body .height31 input {
 									filterMatchMode="contains"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
-									headerText="Validado?">
+									headerText="Conferido?">
 									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
 								</p:column>
 								<p:column
