@@ -114,11 +114,11 @@ hr.hrSaldo {
 					<f:convertDateTime pattern="dd/MM/yyyy" />
 				</h:outputText>
 			</p:column>
-			<p:column headerText="Validado?" filterMatchMode="contains"
+			<p:column headerText="Conferido?" filterMatchMode="contains"
 				filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}" width="10%">
 				<h:outputText value="#{l.validadoStr}" />
 				<p:tooltip rendered="#{l.validado == 'S'}" for="@parent"
-					value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
+					value="Conferido às #{l.dataConferidoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
 			</p:column>
 			<p:column headerText="Status" filterMatchMode="contains"
 				filterBy="#{l.statusCompleto}" sortBy="#{l.statusCompleto}"
@@ -165,11 +165,11 @@ hr.hrSaldo {
 					<f:convertDateTime pattern="dd/MM/yyyy" />
 				</h:outputText>
 			</p:column>
-			<p:column headerText="Validado?" filterMatchMode="contains"
+			<p:column headerText="Conferido?" filterMatchMode="contains"
 				filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}" width="10%">
 				<h:outputText value="#{l.validadoStr}" />
 				<p:tooltip rendered="#{l.validado == 'S'}"
-					value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
+					value="Conferido às #{l.dataConferidoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
 			</p:column>
 			<p:column headerText="Status" filterMatchMode="contains"
 				filterBy="#{l.statusCompleto}" sortBy="#{l.statusCompleto}"

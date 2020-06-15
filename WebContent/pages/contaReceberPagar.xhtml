@@ -348,7 +348,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<f:facet name="header">Contas a Pagar/Receber</f:facet>
 
 										<p:tooltip for="@parent" rendered="#{lc.validado == 'S'}"
-											value="Validado às #{lc.dataValidacaoStr} pelo profissional #{lc.validadoPorProfissional.dadosBasico.prefixoNome}" />
+											value="Conferido às #{lc.dataValidacaoStr} pelo profissional #{lc.validadoPorProfissional.dadosBasico.prefixoNome}" />
 										<p:column width="80" headerText="Ações">
 											<p:commandButton icon="fa fa-check" styleClass="GreenButton"
 												title="Validar Lançamento" process="@this"
