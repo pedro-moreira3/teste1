@@ -179,7 +179,7 @@
 									width="10%">
 									<h:outputText value="#{l.validadoStr}" />
 									<p:tooltip rendered="#{l.validado == 'S'}" for="@parent"
-										value="Conferido às #{l.dataConferidoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
+										value="Conferido às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
 								<p:column headerText="Valor a receber"
 									filterMatchMode="contains" filterBy="#{l.valor}"
@@ -346,7 +346,7 @@
 									width="10%">
 									<h:outputText value="#{l.validadoStr}" />
 									<p:tooltip rendered="#{l.validado == 'S'}"
-										value="Conferido às #{l.dataConferidoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
+										value="Conferido às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
 								<p:column headerText="Valor" filterMatchMode="contains"
 									filterBy="#{l.valor}" sortBy="#{l.valor}" width="10%">

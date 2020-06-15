@@ -296,11 +296,11 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
     
     public String statusLancamentoConferencia(Lancamento lc) {
         if(lc.getValidado().equals("S"))
-            return "Validado com sucesso";
+            return "Conferido com sucesso";
         else if(lc.getValidado().equals("N"))
-            return "Não validado";
+            return "Não Conferido";
         else
-            return "Validado com erro";
+            return "Conferido com erro";
     }
     
     public boolean validarPerfilProfissional() {
