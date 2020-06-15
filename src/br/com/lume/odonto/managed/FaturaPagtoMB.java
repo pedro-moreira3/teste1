@@ -1356,10 +1356,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             }
 
             if ((parcela == 1 && formaPagamentoDemaisParcelas == null) || parcela != 1) {
-                if (formaPagamento != null && "CC".equals(formaPagamento.getTipo())) {
+                Tarifa tarifa = (formaPagamentoDemaisParcelas == null ? formaPagamento : formaPagamentoDemaisParcelas);
+                if (tarifa != null && "CC".equals(tarifa.getTipo())) {
                     if (data != null)
-                        data.add(Calendar.DAY_OF_MONTH, formaPagamento.getPrazo());
-                } else if (formaPagamento != null && !"CC".equals(formaPagamento.getTipo())) {
+                        data.add(Calendar.DAY_OF_MONTH, tarifa.getPrazo());
+                } else if (tarifa != null && !"CC".equals(tarifa.getTipo())) {
                     if (now != null)
                         now.add(Calendar.MONTH, 1);
                     if (data != null)
