@@ -449,6 +449,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         if (fatura.getTipoFatura() == Fatura.TipoFatura.RECEBIMENTO_PACIENTE && updateAllValues) {
             fatura.setDadosTabelaTotalPagoFromPaciente(FaturaSingleton.getInstance().getTotalPagoFromPaciente(fatura));
             fatura.setDadosTabelaTotalNaoPagoFromPaciente(FaturaSingleton.getInstance().getTotalNaoPagoFromPaciente(fatura));
+            fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestanteFromPaciente(fatura));
 
             // Ajustando para corrigir valores na tabela de Recebimento da tela FaturaPagto
             fatura.setDadosTabelaRepasseTotalNaoPago(fatura.getDadosTabelaTotalNaoPagoFromPaciente());
