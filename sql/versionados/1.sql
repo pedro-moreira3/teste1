@@ -100,3 +100,5 @@ update seg_objeto set obj_int_codpai = 172 and obj_int_ordem = 2 where obj_str_d
 
 alter table desconto_orcamento add column ID_PROFISSIONAL bigint REFERENCES PROFISSIONAL(ID);
 alter table desconto_orcamento add column TIPO_DESCONTO character;
+
+alter table paciente add column anotacoes text;
