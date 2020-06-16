@@ -158,7 +158,7 @@ ui-selectonemenu-label {
 }
 
 body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
-	margin-top: 2.5px !important;
+	margin-top: 2.6px !important;
 	padding: 0px !important;
 }
 
@@ -277,14 +277,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									value="#{relatorioPacienteAgendamentoMB.filtroPorProfissional}"
 									completeMethod="#{relatorioPacienteAgendamentoMB.sugestoesProfissionais}"
 									var="p" itemLabel="#{p.dadosBasico.getPrefixoNome()}"
-									itemValue="#{p}" converter="profissional"
-									forceSelection="true" scrollHeight="400" queryDelay="1000"
-									dropdown="true">
+									itemValue="#{p}" converter="profissional" forceSelection="true"
+									scrollHeight="400" queryDelay="1000" dropdown="true">
 
 									<p:ajax event="itemSelect" process="@this" />
 
 								</p:autoComplete>
 							</h:panelGroup>
+
 						</p:panelGrid>
 						<p:outputPanel style="margin:20px;">
 							<h:outputLabel value="Mostrar os pacientes: " />
@@ -300,7 +300,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									itemEscaped="false" />
 								<p:ajax
 									listener="#{relatorioPacienteAgendamentoMB.mostrarOsPacientes()}"
-									process="@this,pnFiltroStatusRelatorio" update="pnFiltroStatusRelatorio" />
+									process="@this,pnFiltroStatusRelatorio"
+									update="pnFiltroStatusRelatorio" />
 							</p:selectManyCheckbox>
 						</p:outputPanel>
 						<p:outputPanel id="pnFiltroStatusRelatorio" style="margin:20px;">
@@ -468,9 +469,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									styleClass="GreenButton" style="margin-left:10px;" />
 								<p:tooltip for="whats" value="Enviar mensagem" />
 							</p:column>
-							<p:column filterBy="#{p.ultimoAgendamento.profissional.dadosBasico.nome}"
+							<p:column
+								filterBy="#{p.ultimoAgendamento.profissional.dadosBasico.nome}"
 								sortBy="#{p.ultimoAgendamento.profissional.dadosBasico.nome}"
-								filterMatchMode="contains" headerText="Dentista Último Agendamento">
+								filterMatchMode="contains"
+								headerText="Dentista Último Agendamento">
 								<h:outputText
 									value="#{p.ultimoAgendamento.profissional.dadosBasico.nome}" />
 							</p:column>
@@ -773,7 +776,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												itemEscaped="false" />
 											<p:ajax
 												listener="#{relatorioPacienteAgendamentoMB.mostrarOsPacientes()}"
-												process="@this,pnFiltroStatusRelatorio" update="pnFiltroStatusRelatorio" />
+												process="@this,pnFiltroStatusRelatorio"
+												update="pnFiltroStatusRelatorio" />
 										</p:selectManyCheckbox>
 									</h:panelGroup>
 

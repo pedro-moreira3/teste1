@@ -1,0 +1,368 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:c="http://java.sun.com/jstl/core"
+	template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<style>
+.ui-picklist .ui-picklist-list {
+	height: 100px;
+}
+
+.fc-time-grid-container {
+	height: auto !important;
+}
+
+.ui-growl {
+	z-index: 999999 !important;
+}
+
+.ui-dialog {
+	overflow: auto !important;
+}
+
+div.ui-selectoneradio label {
+	width: auto !important;
+}
+
+.labelInlineParent {
+	padding-top: 0px !important;
+	padding-bottom: 20px !important;
+}
+
+.labelInline label {
+	display: inline !important;
+}
+
+.ui-dialog {
+	overflow: auto !important;
+}
+
+.ui-picklist .ui-picklist-list {
+	height: 100px;
+}
+
+.fc-time-grid-container {
+	height: auto !important;
+}
+
+.ui-growl {
+	z-index: 999999 !important;
+}
+
+div.ui-selectoneradio label {
+	width: auto !important;
+}
+
+.fc-time-grid-event>.fc-content {
+	text-align: left !important;
+}
+
+.fc-toolbar {
+	padding: 0 !important;
+}
+
+.fc .fc-left, .fc .fc-left .fc-button-group, .fc .fc-right .fc-button-group
+	{
+	display: inline-flex !important;
+}
+
+.fc .fc-right .fc-button-group button {
+	width: 100px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell {
+	padding: 0px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:first-child {
+	padding-right: 7px !important;
+}
+
+.filtroFirst .ui-panelgrid-cell:last-child {
+	padding-left: 7px !important;
+}
+
+.removeSecondPadding>.ui-panelgrid-content .ui-grid-row .ui-panelgrid-cell:nth-child(1)
+	{
+	padding-top: 0px !important;
+}
+
+.ui-selectmanycheckbox tr td {
+	position: relative;
+	display: inline-flex !important;
+	width: 238px !important
+}
+
+.ui-selectmanycheckbox tr td>div>div:last-child {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.ui-selectmanycheckbox tr td label {
+	position: relative;
+	display: inline-flex !important;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child {
+	position: relative;
+}
+
+.ui-selectmanycheckbox tr td label div:first-child div {
+	display: inline-block;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.NoChildPadding>div {
+	padding: 0px !important;
+}
+
+.ui-fluid .ui-buttonset.ui-buttonset-3 .ui-button {
+	width: 33.3% !important;
+}
+
+.ggl-tooltip {
+	background-color: #ffffff;
+	border: 1px solid #e0e0e0;
+	font-family: Arial, Helvetica;
+	font-size: 14px;
+	padding: 8px;
+}
+
+.ggl-tooltip span {
+	font-weight: bold;
+}
+
+.chartCadeiras>div, .chartProfissionais>div {
+	max-width: 100%;
+	overflow: auto;
+	overflow-y: hidden;
+}
+
+/*AJUSTE DO CAMPO FILTRO POR CONVENIO*/
+body .ui-selectonemenu {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+ui-selectonemenu-label {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
+	margin-top: 2.6px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
+	{
+	margin-top: -12px !important;
+}
+</style>
+		<script>
+			function resize(dialog) {
+				//'#lume\\:pnAgendamento'
+				$(window).resize(function() {
+					$(dialog).css({
+						'width' : $(window).width(),
+						'height' : $(window).height(),
+						'left' : '0px',
+						'top' : '0px'
+					});
+				}).resize();
+			}
+		</script>
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<h1>Aniversariantes</h1>
+
+					<p:separator styleClass="SeparatorFull" />
+
+					<p:fieldset id="aniversariantes" header="Filtro" toggleable="false"
+						toggleSpeed="500">
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<h:panelGroup>
+								<p:outputLabel for="filtroAniversariantes"
+									value="Período aniversariantes:" />
+								<p:selectOneMenu id="filtroAniversariantes"
+									value="#{relatorioPacienteAgendamentoMB.filtroAniversariantes}">
+
+									<p:ajax
+										process="@this, dataFinalAniversariantes, dataInicialAniversariantes,"
+										listener="#{relatorioPacienteAgendamentoMB.actionTrocaDatasCriacaoAniversariantes}"
+										update="dataInicialAniversariantes, dataFinalAniversariantes" />
+
+									<f:selectItem itemValue="" itemLabel="Selecione" />
+									<f:selectItem itemValue="A" itemLabel="Hoje" />
+									<f:selectItem itemValue="B" itemLabel="Amanhã" />
+									<f:selectItem itemValue="C" itemLabel="Próximos 7 dias" />
+									<f:selectItem itemValue="D" itemLabel="Próximos 15 dias" />
+									<f:selectItem itemValue="O" itemLabel="Próximo mês" />
+									<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+									<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+									<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+									<f:selectItem itemValue="T" itemLabel="Mês anterior" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+
+							<h:panelGroup>
+								<h:outputText for="dataInicialAniversariantes"
+									value="Aniversariantes de:" />
+								<p:calendar id="dataInicialAniversariantes"
+									value="#{relatorioPacienteAgendamentoMB.dataInicio}"
+									autocomplete="false" />
+							</h:panelGroup>
+
+							<h:panelGroup>
+								<h:outputText for="dataFinalAniversariantes"
+									value="Aniversariantes até:" />
+								<p:calendar id="dataFinalAniversariantes"
+									value="#{relatorioPacienteAgendamentoMB.dataFim}"
+									autocomplete="false" />
+							</h:panelGroup>
+
+						</p:panelGrid>
+
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+							<h:panelGroup>
+								<p:commandButton id="pesquisarAniversariantes" value="Pesquisar"
+									styleClass="NavyButton" icon="fa fa-search"
+									actionListener="#{relatorioPacienteAgendamentoMB.carregarAniversariantes}"
+									update="dtAniversariantes" process="@this, dtAniversariantes" />
+							</h:panelGroup>
+
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{relatorioPacienteAgendamentoMB.exportarTabelaAniversariantes('xls')}"
+									ajax="false" process="dtAniversariantes,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{relatorioPacienteAgendamentoMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioPacienteAgendamentoMB.exportarTabelaAniversariantes('pdf')}"
+										ajax="false" process="dtAniversariantes,@this"
+										immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioPacienteAgendamentoMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{relatorioPacienteAgendamentoMB.exportarTabelaAniversariantes('csv')}"
+										ajax="false" process="dtAniversariantes,@this"
+										immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{relatorioPacienteAgendamentoMB.arquivoDownload}" />
+									</p:menuitem>
+
+								</p:splitButton>
+							</h:panelGroup>
+
+						</p:panelGrid>
+
+						<p:dataTable id="dtAniversariantes" widgetVar="dtAniversariantes"
+							value="#{relatorioPacienteAgendamentoMB.aniversariantes}" var="p"
+							rowKey="#{p}" rows="10" paginator="true"
+							paginatorPosition="bottom" reflow="true"
+							emptyMessage="Nenhum registro encontrado" selectionMode="single"
+							filterDelay="1000"
+							binding="#{relatorioPacienteAgendamentoMB.tabelaAniversariantes}">
+
+							<f:facet name="header">Pacientes</f:facet>
+
+							<p:column sortBy="#{p.dadosBasico.nome}"
+								filterBy="#{p.dadosBasico.nome}"
+								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Paciente">
+
+								<p:commandLink value="#{p.dadosBasico.nome}"
+									process="@this" title="#{p.id}"
+									actionListener="#{tabPacienteMB.loadPaciente(p)}"
+									oncomplete="PF('dlgFichaPaciente').show()"
+									update=":lume:tabViewPaciente:pnDadosPaciente, :lume:pnPrincipalFicha, :lume:pnPrincipalFichaHeader, :lume:tabViewOutPanel, :lume:buttonsFichaPaciente" />
+
+							</p:column>
+
+							<p:column sortBy="#{p.dadosBasico.dataNascimentoStr}"
+								filterBy="#{p.dadosBasico.dataNascimentoStr}"
+								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Data nascimento">
+								<h:outputText value="#{p.dadosBasico.dataNascimentoStr}" />
+							</p:column>
+
+							<p:column sortBy="#{p.dadosBasico.telefoneStr}"
+								filterBy="#{p.dadosBasico.telefoneStr}"
+								filterFunction="#{relatorioPacienteAgendamentoMB.filtroSemAcento}"
+								filterMatchMode="contains" headerText="Celular">
+								<h:outputText value="#{p.dadosBasico.telefoneStr}" />
+								<p:button id="whats" icon="White fa fa-whatsapp"
+									rendered="#{p.dadosBasico.telefoneStr != null}"
+									onclick="window.open('#{relatorioPacienteAgendamentoMB.getUrlWpp(p)}'); return false;"
+									styleClass="GreenButton" style="margin-left:10px;" />
+								<p:tooltip for="whats" value="Enviar mensagem" />
+							</p:column>
+						</p:dataTable>
+					</p:fieldset>
+
+					<p:remoteCommand name="onHidePacienteFicha" process="@this" />
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			//<![CDATA[
+			function handleDialogRequest(xhr, status, args) {
+				console.debug('handleDialogRequest');
+				console.debug(args);
+				if (args.dlg == true) {
+					PF('eventDialog').hide();
+				} else {
+					window.scrollTo(0, 0);
+				}
+			}
+
+			function imprimirTabela() {
+				var toPrint = document.getElementById("lume:relatorio");
+				var newWin = window.open("");
+				newWin.visible = false;
+				newWin.document
+						.write("<style type=\"text/css\" media=\"print\"> @page { size: landscape; }"
+								+ ".ui-selectmanycheckbox tr td {position: relative;	display: inline-flex !important;width: 238px !important;}"
+								+ ".ui-selectmanycheckbox tr td>div>div:last-child {display: inline-block;position: relative;top: 50%;transform: translateY(-50%);}"
+								+ ".ui-selectmanycheckbox tr td label {position: relative;display: inline-flex !important;}"
+								+ ".ui-selectmanycheckbox tr td label div:first-child {position: relative;}"
+								+ ".ui-selectmanycheckbox tr td label div:first-child div {display: inline-block;position: relative;top: 50%;transform: translateY(-50%);}</style>")
+
+				newWin.document.write(toPrint.outerHTML);
+				newWin.document.close();
+
+				newWin.print();
+				newWin.close();
+
+			}
+
+			//]]>
+		</script>
+
+	</ui:define>
+</ui:composition>

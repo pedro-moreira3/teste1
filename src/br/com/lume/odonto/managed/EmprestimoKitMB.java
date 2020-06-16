@@ -201,7 +201,13 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
     }
     
     public List<Paciente> sugestoesPacientes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        try {
+            return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            e.printStackTrace();
+        }
+        return null;
     }
     
     public List<Profissional> sugestoesProfissionais(String query) {
@@ -223,7 +229,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
-            this.getbO().persist(this.getEntity());
+            EmprestimoKitSingleton.getInstance().getBo().persist(this.getEntity());
             this.limpaMateriais();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "",true);
         } catch (Exception e) {
@@ -234,7 +240,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
 
     public void actionPersistLowProfile(ActionEvent event) {
         try {
-            this.getbO().persist(this.getEntity());
+            EmprestimoKitSingleton.getInstance().getBo().persist(this.getEntity());
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
@@ -400,7 +406,7 @@ public class EmprestimoKitMB extends LumeManagedBean<EmprestimoKit> {
                     cm.setStatus(EmprestimoKit.NAOUTILIZADO);
                     this.setEntity(cm);
                     try {
-                        this.getbO().persist(this.getEntity());
+                        EmprestimoKitSingleton.getInstance().getBo().persist(this.getEntity());
                         this.limpaMateriais();
                     } catch (Exception e) {
                         e.printStackTrace();

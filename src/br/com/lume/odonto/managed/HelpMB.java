@@ -124,7 +124,7 @@ public class HelpMB extends LumeManagedBean<Help> {
             new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + imgRemover.getNomeArquivo()).delete();
             this.getEntity().getImagens().remove(imgRemover);
             if (this.getEntity().getId() > 0) {
-                this.getbO().persist(this.getEntity());
+                HelpSingleton.getInstance().getBo().persist(this.getEntity());
             }
         } catch (Exception e) {
             this.log.error("Erro ao remover", e);

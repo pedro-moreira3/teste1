@@ -1,5 +1,7 @@
 package br.com.lume.odonto.managed;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -15,10 +17,16 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.convenio.ConvenioSingleton;
+import br.com.lume.faturamento.FaturaItemSingleton;
+import br.com.lume.faturamento.FaturaSingleton;
+import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Convenio;
+import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
+import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
@@ -68,11 +76,25 @@ public class RelatorioPlanoTratamentoMB extends LumeManagedBean<PlanoTratamento>
     }
     
     public List<Paciente> sugestoesPacientes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        try {
+            return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            e.printStackTrace();
+        }
+        return null;
     }
     
     public List<Profissional> sugestoesProfissionais(String query) {
         return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteDentista(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),true);
+    }
+    
+    public BigDecimal valorAReceber(PlanoTratamento pt) {
+            return FaturaItemSingleton.getInstance().valorAReceberDoPacienteFromPT(pt);
+    }
+    
+    public BigDecimal valorAConferir(PlanoTratamento pt) {
+      return  FaturaItemSingleton.getInstance().valorAConferirDoPacienteFromPT(pt);
     }
     
 //    public List<Convenio> sugestoesConvenios(String query) {

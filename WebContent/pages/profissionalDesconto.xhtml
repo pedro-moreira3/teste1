@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<style>
+body .ui-selectmanycheckbox td label {
+	
+}
+</style>
+
+	<div class="Container100 Responsive100 NoIndent">
+		<div class="Container100 ui-fluid NoPadding">
+			<div class="Card">
+				<p:outputPanel id="pnProfissional" styleClass="BordNone">
+
+					<h1>
+						Cadastro de descontos por Profissional
+						<h:outputLabel class="fa fa-question" id="tooltipTitulo"
+							style="font-size:24px; margin-left:10px;" />
+						<p:tooltip for="tooltipTitulo"
+							value="Nesta tela você vai definir se o profissional faz ou não orçamento e se este terá a opção de realizar descontos diferentes do que foi 
+							cadastrado como padrão da Clínica. Importante os cadastros de descontos configurados nesta tela sobrepõe o realizado na clínica."
+							position="bottom" style="width:30%;" />
+					</h1>
+
+
+					<p:panelGrid columns="2" layout="grid"
+						columnClasses="ui-g-6, ui-g-6"
+						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+						<h:panelGroup styleClass="md-combo">
+							<p:outputLabel for="status" value="Status dos Descontos: " />
+							<p:selectOneMenu id="status"
+								value="#{profissionalDescontoMB.filtroDesconto}">
+								<f:selectItem itemLabel="Ativos" itemValue="A" />
+								<f:selectItem itemLabel="Inativos" itemValue="I" />
+								<f:selectItem itemLabel="Todos" itemValue="T" />
+								<p:ajax listener="#{profissionalDescontoMB.carregarDescontos}"
+									process="@this" update="dtDescontos"
+									oncomplete="PF('dtDescontos').filter();" />
+							</p:selectOneMenu>
+						</h:panelGroup>
+					</p:panelGrid>
+
+
+					<p:panelGrid columns="4"
+						styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding"
+						layout="grid"
+						style="border:0px none; background-color:transparent;"
+						id="pnProfissionalDescontos">
+
+						<h:panelGroup>
+							<p:outputLabel id="lblprofissionalFazOrcamento" for="profissionalFazOrcamento"
+								value="Profissional faz orçamento ? " />
+							<p:selectBooleanCheckbox id="profissionalFazOrcamento"
+								value="#{profissionalMB.entity.fazOrcamento}">
+								<p:ajax listener="#{profissionalDescontoMB.actionPersist}" process="@this"/>
+							</p:selectBooleanCheckbox>
+						</h:panelGroup>
+						
+						<h:panelGroup></h:panelGroup>
+						<h:panelGroup></h:panelGroup>
+						<h:panelGroup></h:panelGroup>
+
+						<h:panelGroup>
+							<p:commandButton value="Novo desconto" styleClass="BotaoCrud"
+								icon="ui-icon-add" oncomplete="PF('dlgDesconto').show()"
+								actionListener="#{profissionalDescontoMB.actionNew}"
+								update="pnDesconto"
+								process="@this">
+							</p:commandButton>
+						</h:panelGroup>
+
+					</p:panelGrid>
+
+					<p:dataTable id="dtDescontos" widgetVar="dtDescontos"
+						value="#{profissionalDescontoMB.entityList}" var="desconto"
+						rowKey="#{desconto}" rows="5" paginator="true"
+						paginatorPosition="bottom" reflow="true"
+						emptyMessage="Nenhum registro encontrado" selectionMode="single"
+						selection="#{profissionalDescontoMB.entity}" filterDelay="1000"
+						binding="#{profissionalDescontoMB.tabelaDescontos}">
+
+						<f:facet name="header">Descontos cadastrados</f:facet>
+
+						<p:column headerText="Ações">
+							<p:commandButton id="btnEditar" icon="White fa fa-eye"
+								styleClass="NavyButton" title="Visualizar desconto"
+								actionListener="#{profissionalDescontoMB.setEntity(desconto)}"
+								update=":lume:tabView:pnDesconto"
+								oncomplete="PF('dlgDesconto').show();" process="@this">
+							</p:commandButton>
+							<p:commandButton id="btnInativar" icon="White fa fa-chain-broken"
+								styleClass="NavyButton" title="Inativar desconto"
+								actionListener="#{profissionalDescontoMB.inativarDesconto(desconto)}"
+								rendered="#{desconto.status == 'A'}" update="@this, dtDescontos"
+								process="@this">
+								<p:confirmDialog responsive="true"
+									message="Deseja realmente inativar o registro ?" />
+							</p:commandButton>
+							<p:commandButton id="btnAtivar" icon="White fa fa-chain White"
+								styleClass="NavyButton" title="Ativar desconto"
+								actionListener="#{profissionalDescontoMB.ativarDesconto(desconto)}"
+								rendered="#{desconto.status == 'I'}" update="@this, dtDescontos"
+								process="@this">
+								<p:confirmDialog responsive="true"
+									message="Deseja realmente ativar o registro ?" />
+							</p:commandButton>
+						</p:column>
+
+						<p:column headerText="Quantidade máxima de parcelas">
+							<h:outputText value="#{desconto.quantidadeParcelas}">
+								<f:convertNumber />
+							</h:outputText>
+						</p:column>
+
+						<p:column headerText="Desconto máximo permitido">
+							<h:outputText value="#{profissionalDescontoMB.formatarDesconto(desconto)}">
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+
+					<p:dialog id="dlgDesconto" widgetVar="dlgDesconto"
+						resizable="false" modal="true" responsive="true" appendTo=":lume"
+						width="600" header="Configuração de desconto">
+
+						<p:outputPanel id="pnDesconto">
+							<p:fieldset collapsed="false" toggleable="false">
+								<p:panelGrid columns="2" layout="grid"
+									styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+									style="border:0px none; background-color:transparent;">
+									<p:outputPanel>
+										<p:outputLabel value="Quantidade máxima de parcelas:" />
+										<h:outputLabel class="fa fa-question" id="tooltipQuantidadeParcelas" style="font-size:16px; margin-left:10px;"/>
+											<p:tooltip for="tooltipQuantidadeParcelas" position="bottom" value="#{tarifaMB.getTooltipValue('profissionalDesconto', 'quantidadeParcelas')}" />
+									</p:outputPanel>	
+									<h:panelGroup>
+										<p:inputNumber id="quantidadeParcelas"
+											value="#{profissionalDescontoMB.entity.quantidadeParcelas}"
+											decimalPlaces="0">
+										</p:inputNumber>
+									</h:panelGroup>
+									<p:outputPanel>
+										<p:outputLabel value="Desconto máximo permitido:" />
+										<h:outputLabel class="fa fa-question" id="tooltipDescontoMaximo" style="font-size:16px; margin-left:10px;"/>
+											<p:tooltip for="tooltipDescontoMaximo" position="bottom" value="#{tarifaMB.getTooltipValue('profissionalDesconto', 'descontoMaximo')}" />
+									</p:outputPanel>
+									<h:panelGroup>
+										<p:inputNumber id="descontoEmpresa" symbol="%" symbolPosition="s"
+											value="#{profissionalDescontoMB.entity.desconto}" decimalPlaces="0">
+										</p:inputNumber>
+									</h:panelGroup>
+
+									<p:commandButton id="btnSalvarDesconto" value="Salvar"
+										styleClass="GreenButton" icon="White fa fa-save"
+										actionListener="#{profissionalDescontoMB.actionPersist}"
+										update="pnProfissionalDescontos,dtDescontos, pnDesconto"
+										oncomplete="PF('dlgDesconto').hide();"
+										process="quantidadeParcelas, descontoEmpresa, @this">
+									</p:commandButton>
+									<p:commandButton id="btnFcharDesconto" value="Fechar"
+										styleClass="NavyButton" icon="White fa fa-close"
+										actionListener="#{profissionalDescontoMB.setEntity(null)}"
+										update="pnDesconto" oncomplete="PF('dlgDesconto').hide();"
+										process="@this">
+									</p:commandButton>
+								</p:panelGrid>
+							</p:fieldset>
+						</p:outputPanel>
+
+					</p:dialog>
+
+				</p:outputPanel>
+
+				<div class="EmptyBox20"></div>
+
+			</div>
+		</div>
+	</div>
+</ui:composition>

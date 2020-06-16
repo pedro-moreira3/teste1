@@ -98,7 +98,7 @@ body .ui-selectoneradio td label {
 					<p:selectOneMenu id="perfil" required="true"
 						value="#{profissionalMB.perfil}" converter="perfil">
 						<p:ajax
-							update="pgPerfil,:lume:tabView:objetosPerfil,pgFazOrcamento"
+							update="pgPerfil,:lume:tabView:objetosPerfil"
 							process="@this,pgPerfil"
 							listener="#{profissionalMB.carregarObjetosPerfisProfissional}" />
 						<f:selectItem itemValue="#{null}" itemLabel="Selecione um Perfil" />
@@ -232,6 +232,7 @@ body .ui-selectoneradio td label {
 			</p:fieldset>
 		</p:panelGrid>
 
+		<ui:remove>
 		<p:panelGrid id="pgFazOrcamento" columns="2"
 			columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
 			styleClass="ui-panelgrid-blank"
@@ -258,6 +259,7 @@ body .ui-selectoneradio td label {
 				</p:panelGrid>
 			</p:fieldset>
 		</p:panelGrid>
+		</ui:remove>
 
 		<p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10"
 			layout="grid" styleClass="ui-panelgrid-blank"
@@ -431,14 +433,17 @@ body .ui-selectoneradio td label {
 	<div class="EmptyBox20"></div>
 	<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 		id="dtPrincipal" value="#{profissionalMB.profissionais}"
+		widgetVar="dtPrincipal"
 		var="profissional" rows="7" paginator="true"
 		selection="#{profissionalMB.entity}" selectionMode="single"
 		rowKey="#{profissional}" paginatorPosition="bottom"
 		binding="#{profissionalMB.tabelaProfissional}">
-		<p:ajax event="rowSelect" update=":lume:tabView"
+		<p:ajax event="rowSelect" update=":lume:tabView" oncomplete="PF('dtPrincipal').filter();" 
 			listener="#{profissionalMB.carregaTela}" />
-		<p:ajax event="rowSelect" update=":lume:tabView"
+		<p:ajax event="rowSelect" update=":lume:tabView" oncomplete="PF('dtPrincipal').filter();" 
 			listener="#{profissionalPontoMB.carregarPontos}" />
+		<p:ajax event="rowSelect" update=":lume:tabView" oncomplete="PF('dtPrincipal').filter();" 
+			listener="#{profissionalDescontoMB.carregarDescontos}" />
 		<f:facet name="header">Profissional</f:facet>
 		<p:column filterBy="#{profissional.dadosBasico.nomeLimpo}"
 			filterMatchMode="contains" headerText="Nome"
@@ -475,6 +480,11 @@ body .ui-selectoneradio td label {
 			sortBy="#{profissional.dadosBasico.celular}">
 			<h:outputText value="#{profissional.dadosBasico.celular}" />
 		</p:column>
+		<p:column filterBy="#{profissional.statusDescricao}"
+			filterMatchMode="contains" headerText="Status"
+			sortBy="#{profissional.statusDescricao}">
+			<h:outputText value="#{profissional.statusDescricao}" />
+		</p:column>		
 	</p:dataTable>
 
 	<p:dialog id="dlg" widgetVar="dlg" header="Inativar" responsive="true"

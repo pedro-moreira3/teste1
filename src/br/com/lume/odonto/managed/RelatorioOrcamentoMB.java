@@ -19,9 +19,11 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Orcamento;
+import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.orcamento.OrcamentoSingleton;
+import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
 
 @ManagedBean
@@ -47,6 +49,8 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     
     private Profissional filtroPorProfissional;
     
+    private Paciente pacienteSelecionado;
+    
     private boolean filtrandoAprovacao = false;
     
     //EXPORTAÇÃO TABELA
@@ -69,7 +73,6 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
             this.addError(OdontoMensagens.getMensagem("afastamento.dtFim.menor.dtInicio"), "");
         } else {
             //this.fim = Utils.getLastHourOfDate(this.fim);
-            
             if(validarIntervaloDatas()) {
                 
                 if(inicio != null && fim != null) {
@@ -81,10 +84,9 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
                 this.somaValorTotalDesconto = new BigDecimal(0);
                 this.somaValorTotalPago = new BigDecimal(0);
                 
-              //  this.relatorioOrcamentos = OrcamentoSingleton.getInstance().getBo().listByData(this.inicio, this.fim, this.aprovacaoInicio, this.aprovacaoFim, this.filtroPorProfissional,
-                //        UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 this.relatorioOrcamentos = OrcamentoSingleton.getInstance().getBo().listByData(this.inicio, this.fim, this.aprovacaoInicio, this.aprovacaoFim, this.filtroPorProfissional,
-                       null, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                        this.getPacienteSelecionado(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+                
                 if(this.relatorioOrcamentos != null)
                     validarFiltro(relatorioOrcamentos);
                 
@@ -103,6 +105,16 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     
     public List<Profissional> sugestoesProfissionais(String query) {
         return ProfissionalSingleton.getInstance().getBo().listSugestoesCompleteProfissional(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), true);
+    }
+    
+    public List<Paciente> sugestoesPacientes(String query){
+        try {
+            return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            e.printStackTrace();
+        }
+        return null;
     }
     
     public String origemOrcamento(Orcamento orcamento) {
@@ -401,5 +413,19 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     
     public void setFiltrandoAprovacao(boolean filtrandoAprovacao) {
         this.filtrandoAprovacao = filtrandoAprovacao;
+    }
+
+    /**
+     * @return the pacienteSelecionado
+     */
+    public Paciente getPacienteSelecionado() {
+        return pacienteSelecionado;
+    }
+
+    /**
+     * @param pacienteSelecionado the pacienteSelecionado to set
+     */
+    public void setPacienteSelecionado(Paciente pacienteSelecionado) {
+        this.pacienteSelecionado = pacienteSelecionado;
     }
 }

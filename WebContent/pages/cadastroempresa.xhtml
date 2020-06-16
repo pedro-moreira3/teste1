@@ -14,7 +14,7 @@
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-					<h:inputHidden id="id" value="#{CadastroEmpresaMB.entity.id}" />
+
 					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
 						<h1>Cadastro da Clínica</h1>
 						<div class="SeparatorFull"></div>
@@ -287,6 +287,9 @@
 						</p:fieldset>
 						<p:fieldset
 							legend="Parâmetros do Sistema - Configurações de Repasse para Profissional">
+							<h:outputLabel class="fa fa-question" id="tooltipRepasse" 
+							style="position:relative;font-size:20px;padding-left: 435px;top:-36px;" />
+							<p:tooltip for="tooltipRepasse" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'configuracaoRepasse')}" />
 							<p:panelGrid columns="4"
 								columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
 								layout="grid" styleClass="ui-panelgrid-blank"
@@ -324,24 +327,27 @@
 
 						<p:fieldset
 							legend="Parâmetros do Sistema - Configurações de horários da clínica">
-<ui:remove>
-							<p:panelGrid columns="2"
-								columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
-								styleClass="ui-panelgrid-blank">
-								<p:outputLabel for="dias" value="Dias: " />
-								<p:selectManyCheckbox id="dias"
-									value="#{cadastroEmpresaMB.diasSelecionados}" layout="grid"
-									columns="4">
-									<f:selectItem itemLabel="Domingo" itemValue="DOM" />
-									<f:selectItem itemLabel="Segunda" itemValue="SEG" />
-									<f:selectItem itemLabel="Terça" itemValue="TER" />
-									<f:selectItem itemLabel="Quarta" itemValue="QUA" />
-									<f:selectItem itemLabel="Quinta" itemValue="QUI" />
-									<f:selectItem itemLabel="Sexta" itemValue="SEX" />
-									<f:selectItem itemLabel="Sábado" itemValue="SAB" />
-								</p:selectManyCheckbox>
-							</p:panelGrid>
-</ui:remove>
+							<h:outputLabel class="fa fa-question" id="tooltipHorario" 
+							style="position:relative;font-size:20px;padding-left: 385px;top:-36px;" />
+							<p:tooltip for="tooltipHorario" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'configuracaoHorario')}" />
+							<ui:remove>
+								<p:panelGrid columns="2"
+									columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+									styleClass="ui-panelgrid-blank">
+									<p:outputLabel for="dias" value="Dias: " />
+									<p:selectManyCheckbox id="dias"
+										value="#{cadastroEmpresaMB.diasSelecionados}" layout="grid"
+										columns="4">
+										<f:selectItem itemLabel="Domingo" itemValue="DOM" />
+										<f:selectItem itemLabel="Segunda" itemValue="SEG" />
+										<f:selectItem itemLabel="Terça" itemValue="TER" />
+										<f:selectItem itemLabel="Quarta" itemValue="QUA" />
+										<f:selectItem itemLabel="Quinta" itemValue="QUI" />
+										<f:selectItem itemLabel="Sexta" itemValue="SEX" />
+										<f:selectItem itemLabel="Sábado" itemValue="SAB" />
+									</p:selectManyCheckbox>
+								</p:panelGrid>
+							</ui:remove>
 							<p:panelGrid columns="4"
 								columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
 								layout="grid" styleClass="ui-panelgrid-blank"
@@ -382,6 +388,100 @@
 							</p:panelGrid>
 						</p:fieldset>
 
+						<p:fieldset
+							legend="Parâmetros do Sistema - Configurações de Descontos">							
+							<h:outputLabel class="fa fa-question" id="tooltipTituloDesconto" 
+							style="position:relative;font-size:20px;padding-left: 340px;top:-36px;" />
+							<p:tooltip for="tooltipTituloDesconto" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'descontoTipo')}" />
+
+							<p:panelGrid columns="2" layout="grid"
+								columnClasses="ui-g-6, ui-g-6"
+								styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+								<h:panelGroup styleClass="md-combo">
+									<p:outputLabel for="status" value="Status dos Descontos: " />
+									<p:selectOneMenu id="status"
+										value="#{cadastroEmpresaMB.filtroDesconto}">
+										<f:selectItem itemLabel="Ativos" itemValue="A" />
+										<f:selectItem itemLabel="Inativos" itemValue="I" />
+										<f:selectItem itemLabel="Todos" itemValue="T" />
+										<p:ajax listener="#{cadastroEmpresaMB.carregarDescontos}"
+											process="@this" update="dtDescontos"
+											oncomplete="PF('dtDescontos').filter();" />
+									</p:selectOneMenu>
+								</h:panelGroup>
+							</p:panelGrid>
+
+							<p:panelGrid columns="4"
+								styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding"
+								layout="grid"
+								style="border:0px none; background-color:transparent;"
+								id="pnEmpresaDescontos">
+
+								<h:panelGroup>
+									<p:commandButton value="Novo desconto" styleClass="BotaoCrud"
+										actionListener="#{cadastroEmpresaMB.limparDesconto}"
+										update="pnDesconto"
+										icon="ui-icon-add" oncomplete="PF('dlgDesconto').show()"
+										process="@this">
+									</p:commandButton>
+								</h:panelGroup>
+
+							</p:panelGrid>
+
+							<p:dataTable id="dtDescontos" widgetVar="dtDescontos"
+								value="#{cadastroEmpresaMB.listaDescontos}" var="desconto"
+								rowKey="#{desconto}" rows="5" paginator="true"
+								paginatorPosition="bottom" reflow="true"
+								emptyMessage="Nenhum registro encontrado" selectionMode="single"
+								selection="#{cadastroEmpresaMB.descontoSelecionado}"
+								filterDelay="1000">
+
+								<f:facet name="header">Descontos cadastrados</f:facet>
+
+								<p:column headerText="Ações" id="colunasAcoes">
+									<p:commandButton id="btnEditar" widgetVar="btnEditar"
+										icon="White fa fa-eye" styleClass="NavyButton"
+										actionListener="#{cadastroEmpresaMB.setDescontoSelecionado(desconto)}"
+										update=":lume:pnDesconto"
+										oncomplete="PF('dlgDesconto').show();"
+										process="@this" title="Visualizar desconto">
+									</p:commandButton>
+									<p:commandButton id="btnInativar" widgetVar="btnInativar"
+										icon="White fa fa-chain-broken" styleClass="NavyButton"
+										actionListener="#{cadastroEmpresaMB.inativarDesconto(desconto)}"
+										rendered="#{desconto.status == 'A'}"
+										update="@this, dtDescontos"
+										oncomplete="PF('dtDescontos').filter();"
+										process="@this,dtDescontos" title="Inativar desconto">
+										<p:confirmDialog responsive="true"
+											message="Deseja realmente inativar o registro ?" />
+									</p:commandButton>
+									<p:commandButton id="btnAtivar" widgetVar="btnAtivar"
+										icon="White fa fa-chain White" styleClass="NavyButton"
+										actionListener="#{cadastroEmpresaMB.ativarDesconto(desconto)}"
+										rendered="#{desconto.status == 'I'}"
+										title="Ativar desconto"
+										update="@this, dtDescontos"
+										oncomplete="PF('dtDescontos').filter();" process="@this">
+										<p:confirmDialog responsive="true"
+											message="Deseja realmente ativar o registro ?" />
+									</p:commandButton>
+								</p:column>
+
+								<p:column headerText="Quantidade máxima de parcelas">
+									<h:outputText value="#{desconto.quantidadeParcelas}">
+										<f:convertNumber />
+									</h:outputText>
+								</p:column>
+
+								<p:column headerText="Desconto máximo permitido">
+									<h:outputText value="#{cadastroEmpresaMB.formatarDesconto(desconto)}">
+									</h:outputText>
+								</p:column>
+							</p:dataTable>
+
+						</p:fieldset>
+
 						<br />
 						<div class="SeparatorFull"></div>
 
@@ -390,11 +490,65 @@
 							<p:commandButton id="persist" icon="White fa fa-save"
 								value="Salvar"
 								actionListener="#{cadastroEmpresaMB.actionPersist}"
-								update="pnPrincipal" process="pnPrincipal" styleClass="GreenButton" />
+								update="pnPrincipal" process="pnPrincipal"
+								styleClass="GreenButton" />
 						</p:panelGrid>
+
+						<p:dialog id="dlgDesconto" widgetVar="dlgDesconto"
+							resizable="false" modal="true" responsive="true" appendTo=":lume"
+							width="600" header="Configuração de desconto">
+
+							<p:outputPanel id="pnDesconto">
+								<p:fieldset collapsed="false" toggleable="false">
+									<p:panelGrid columns="2" layout="grid"
+										styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+										style="border:0px none; background-color:transparent;">
+										<p:outputPanel>		
+											<p:outputLabel value="Quantidade máxima de parcelas:" />
+											<h:outputLabel class="fa fa-question" id="tooltipQuantidadeParcelas" style="font-size:16px; margin-left:10px;"/>
+											<p:tooltip for="tooltipQuantidadeParcelas" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'quantidadeParcelas')}" />
+										</p:outputPanel>		
+										<h:panelGroup>
+											<p:inputNumber id="quantidadeParcelas"
+												value="#{cadastroEmpresaMB.descontoSelecionado.quantidadeParcelas}"
+												decimalPlaces="0">
+											</p:inputNumber>
+										</h:panelGroup>
+										<p:outputPanel>		
+											<p:outputLabel value="Desconto máximo permitido:" />
+											<h:outputLabel class="fa fa-question" id="tooltipDescontoMaximo" style="font-size:16px; margin-left:10px;"/>
+											<p:tooltip for="tooltipDescontoMaximo" position="bottom" value="#{tarifaMB.getTooltipValue('cadastroempresa', 'descontoMaximo')}" />
+										</p:outputPanel>	
+										<h:panelGroup>
+											<p:inputNumber id="descontoEmpresa" symbol="%" symbolPosition="s"
+												value="#{cadastroEmpresaMB.descontoSelecionado.desconto}" decimalPlaces="0">
+											</p:inputNumber>
+										</h:panelGroup>
+
+										<p:commandButton id="btnSalvarDesconto" value="Salvar"
+											styleClass="GreenButton" icon="White fa fa-save"
+											actionListener="#{cadastroEmpresaMB.cadastrarDesconto}"
+											update=":lume:pnEmpresaDescontos,:lume:dtDescontos,pnDesconto"
+											oncomplete="PF('dlgDesconto').hide();PF('dtDescontos').filter();"
+											process="quantidadeParcelas, descontoEmpresa, @this">
+										</p:commandButton>
+										<p:commandButton id="btnFcharDesconto" value="Fechar"
+											styleClass="NavyButton" icon="White fa fa-close"
+											actionListener="#{cadastroEmpresaMB.setDescontoSelecionado(null)}"
+											update="pnDesconto, dlgDesconto" oncomplete="PF('dlgDesconto').hide();"
+											process="@this">
+										</p:commandButton>
+									</p:panelGrid>
+								</p:fieldset>
+							</p:outputPanel>
+
+						</p:dialog>
+
 					</p:outputPanel>
+
 				</div>
 			</div>
 		</div>
+
 	</ui:define>
 </ui:composition>

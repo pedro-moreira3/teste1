@@ -218,7 +218,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
             if (l.getTarifa() != null && l.getTarifa().getTarifa() != null && l.getTarifa().getTarifa().doubleValue() > 0) {
                 this.persistLancamentoContabil(l, l.getTarifa().getTarifa());
             }
-            this.getbO().persist(l);
+            LancamentoSingleton.getInstance().getBo().persist(l);
         }
     }
 
@@ -429,7 +429,7 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     }
 
     public void persist(Lancamento l) throws Exception {
-        this.getbO().persist(l);
+        LancamentoSingleton.getInstance().getBo().persist(l);
         this.abatimentoCartao(l);
         this.geraLancamentoContabil(l);
     }
@@ -516,7 +516,13 @@ public class LancamentoMB extends LumeManagedBean<Lancamento> {
     }
 
     public List<Paciente> geraSugestoes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        try {
+            return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void handleSelect(SelectEvent event) {

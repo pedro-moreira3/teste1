@@ -32,8 +32,6 @@ import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Lancamento;
-import br.com.lume.odonto.entity.Lancamento.DirecaoLancamento;
-import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.paciente.PacienteSingleton;
@@ -47,11 +45,20 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
     private static final long serialVersionUID = 1L;
     private List<Lancamento> aPagar, aReceber;
     private BigDecimal somaTotalAPagar = BigDecimal.ZERO, somaTotalAReceber = BigDecimal.ZERO;
-    private Date dataInicioAReceber, dataFimAReceber, dataInicioAPagar, dataFimAPagar;
-    private PeriodoBusca periodoBuscaAReceber, periodoBuscaAPagar;
-    private Paciente paciente;
-    private Profissional profissional;
-    private StatusLancamento[] statusLancamentoAReceber, statusLancamentoAPagar;
+
+    //Filtros novos A Receber
+    private PeriodoBusca periodoDataCreditoAReceber;
+    private Date inicioDataCreditoAReceber, fimDataCreditoAReceber;
+    private PeriodoBusca periodoDataPagamentoAReceber;
+    private Date inicioDataPagamentoAReceber, fimDataPagamentoAReceber;
+    private Paciente pacienteAReceber;
+
+    //Filtros novos A Pagar
+    private PeriodoBusca periodoDataCreditoAPagar;
+    private Date inicioDataCreditoAPagar, fimDataCreditoAPagar;
+    private PeriodoBusca periodoDataPagamentoAPagar;
+    private Date inicioDataPagamentoAPagar, fimDataPagamentoAPagar;
+    private Profissional profissionalAPagar;
 
     private Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
     private BarChartModel lineModel;
@@ -141,10 +148,14 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
     public MovimentacoesMB() {
         super(LancamentoSingleton.getInstance().getBo());
         this.setClazz(Lancamento.class);
-        this.periodoBuscaAPagar = PeriodoBusca.MES_ATUAL;
-        actionTrocaDatasAPagar();
-        this.periodoBuscaAReceber = PeriodoBusca.MES_ATUAL;
-        actionTrocaDatasAReceber();
+        this.periodoDataCreditoAReceber = PeriodoBusca.ULTIMOS_30_DIAS;
+        this.periodoDataCreditoAPagar = PeriodoBusca.ULTIMOS_30_DIAS;
+        this.periodoDataPagamentoAReceber = PeriodoBusca.ULTIMOS_30_DIAS;
+        this.periodoDataPagamentoAPagar = PeriodoBusca.ULTIMOS_30_DIAS;
+        actionTrocaDatasCreditoAPagar();
+        actionTrocaDatasPagamentoAPagar();
+        actionTrocaDatasCreditoAReceber();
+        actionTrocaDatasPagamentoAReceber();
         this.carregaListaAReceber();
 
         this.atualizaGraficoContas.start();
@@ -158,20 +169,18 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         }
     }
 
-    public List<StatusLancamento> getListaStatusLancamentoAReceber() {
-        return Lancamento.getStatusLancamento(DirecaoLancamento.CREDITO);
-    }
-
-    public List<StatusLancamento> getListaStatusLancamentoAPagar() {
-        return Lancamento.getStatusLancamento(DirecaoLancamento.DEBITO);
-    }
-
     public String getFaturaInfo(Fatura f) {
         return FaturaSingleton.getInstance().getFaturaInfo(f);
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        try {
+            return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public List<Profissional> geraSugestoesProfissional(String query) {
@@ -193,10 +202,20 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         return sugestoes;
     }
 
-    public void actionTrocaDatasAPagar() {
+    public void actionTrocaDatasCreditoAPagar() {
         try {
-            setDataInicioAPagar(UtilsPadraoRelatorio.getDataInicio(getPeriodoBuscaAPagar()));
-            setDataFimAPagar(UtilsPadraoRelatorio.getDataFim(getPeriodoBuscaAPagar()));
+            setInicioDataCreditoAPagar(UtilsPadraoRelatorio.getDataInicio(getPeriodoDataCreditoAPagar()));
+            setFimDataCreditoAPagar(UtilsPadraoRelatorio.getDataFim(getPeriodoDataCreditoAPagar()));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+
+    public void actionTrocaDatasPagamentoAPagar() {
+        try {
+            setInicioDataPagamentoAPagar(UtilsPadraoRelatorio.getDataInicio(getPeriodoDataPagamentoAPagar()));
+            setFimDataPagamentoAPagar(UtilsPadraoRelatorio.getDataFim(getPeriodoDataPagamentoAPagar()));
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -206,8 +225,8 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
     public void carregaListaAPagar() {
         try {
             this.somaTotalAPagar = BigDecimal.ZERO;
-            this.aPagar = LancamentoSingleton.getInstance().getBo().listContasAPagarOld(UtilsFrontEnd.getEmpresaLogada().getConta(), getDataInicioAPagar(), getDataFimAPagar(), null, getProfissional(),
-                    (getStatusLancamentoAPagar() == null ? null : Arrays.asList(getStatusLancamentoAPagar())));
+            this.aPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(UtilsFrontEnd.getEmpresaLogada().getConta(), inicioDataCreditoAPagar, fimDataCreditoAPagar,
+                    inicioDataPagamentoAPagar, fimDataPagamentoAPagar, profissionalAPagar);
             for (Lancamento lAPagar : this.aPagar)
                 this.somaTotalAPagar = this.somaTotalAPagar.add(lAPagar.getValor());
         } catch (Exception e) {
@@ -216,10 +235,20 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         }
     }
 
-    public void actionTrocaDatasAReceber() {
+    public void actionTrocaDatasCreditoAReceber() {
         try {
-            setDataInicioAReceber(UtilsPadraoRelatorio.getDataInicio(getPeriodoBuscaAReceber()));
-            setDataFimAReceber(UtilsPadraoRelatorio.getDataFim(getPeriodoBuscaAReceber()));
+            setInicioDataCreditoAReceber(UtilsPadraoRelatorio.getDataInicio(getPeriodoDataCreditoAReceber()));
+            setFimDataCreditoAReceber(UtilsPadraoRelatorio.getDataFim(getPeriodoDataCreditoAReceber()));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+
+    public void actionTrocaDatasPagamentoAReceber() {
+        try {
+            setInicioDataPagamentoAReceber(UtilsPadraoRelatorio.getDataInicio(getPeriodoDataPagamentoAReceber()));
+            setFimDataPagamentoAReceber(UtilsPadraoRelatorio.getDataFim(getPeriodoDataPagamentoAReceber()));
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -229,8 +258,8 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
     public void carregaListaAReceber() {
         try {
             this.somaTotalAReceber = BigDecimal.ZERO;
-            this.aReceber = LancamentoSingleton.getInstance().getBo().listContasAReceberOld(UtilsFrontEnd.getEmpresaLogada().getConta(), getDataInicioAReceber(), getDataFimAReceber(), getPaciente(),
-                    null, (getStatusLancamentoAReceber() == null ? null : Arrays.asList(getStatusLancamentoAReceber())));
+            this.aReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(UtilsFrontEnd.getEmpresaLogada().getConta(), inicioDataCreditoAReceber, fimDataCreditoAReceber,
+                    inicioDataPagamentoAReceber, fimDataPagamentoAReceber, pacienteAReceber);
             for (Lancamento lAReceber : this.aReceber)
                 this.somaTotalAReceber = this.somaTotalAReceber.add(lAReceber.getValor());
         } catch (Exception e) {
@@ -243,10 +272,6 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         if (l == null || l.getFatura() == null || l.getFatura().getId() == null)
             return "";
         return "Fatura " + l.getFatura().getId();
-    }
-
-    public String getNewStatusLancamento(Lancamento l) {
-        return l.getStatus().getDescricao();
     }
 
     public List<Lancamento> getaPagar() {
@@ -301,84 +326,116 @@ public class MovimentacoesMB extends LumeManagedBean<Lancamento> {
         this.somaTotalAReceber = somaTotalAReceber;
     }
 
-    public Date getDataInicioAReceber() {
-        return dataInicioAReceber;
+    public PeriodoBusca getPeriodoDataCreditoAReceber() {
+        return periodoDataCreditoAReceber;
     }
 
-    public void setDataInicioAReceber(Date dataInicioAReceber) {
-        this.dataInicioAReceber = dataInicioAReceber;
+    public void setPeriodoDataCreditoAReceber(PeriodoBusca periodoDataCreditoAReceber) {
+        this.periodoDataCreditoAReceber = periodoDataCreditoAReceber;
     }
 
-    public Date getDataFimAReceber() {
-        return dataFimAReceber;
+    public Date getInicioDataCreditoAReceber() {
+        return inicioDataCreditoAReceber;
     }
 
-    public void setDataFimAReceber(Date dataFimAReceber) {
-        this.dataFimAReceber = dataFimAReceber;
+    public void setInicioDataCreditoAReceber(Date inicioDataCreditoAReceber) {
+        this.inicioDataCreditoAReceber = inicioDataCreditoAReceber;
     }
 
-    public Date getDataInicioAPagar() {
-        return dataInicioAPagar;
+    public Date getFimDataCreditoAReceber() {
+        return fimDataCreditoAReceber;
     }
 
-    public void setDataInicioAPagar(Date dataInicioAPagar) {
-        this.dataInicioAPagar = dataInicioAPagar;
+    public void setFimDataCreditoAReceber(Date fimDataCreditoAReceber) {
+        this.fimDataCreditoAReceber = fimDataCreditoAReceber;
     }
 
-    public Date getDataFimAPagar() {
-        return dataFimAPagar;
+    public PeriodoBusca getPeriodoDataPagamentoAReceber() {
+        return periodoDataPagamentoAReceber;
     }
 
-    public void setDataFimAPagar(Date dataFimAPagar) {
-        this.dataFimAPagar = dataFimAPagar;
+    public void setPeriodoDataPagamentoAReceber(PeriodoBusca periodoDataPagamentoAReceber) {
+        this.periodoDataPagamentoAReceber = periodoDataPagamentoAReceber;
     }
 
-    public PeriodoBusca getPeriodoBuscaAReceber() {
-        return periodoBuscaAReceber;
+    public Date getInicioDataPagamentoAReceber() {
+        return inicioDataPagamentoAReceber;
     }
 
-    public void setPeriodoBuscaAReceber(PeriodoBusca periodoBuscaAReceber) {
-        this.periodoBuscaAReceber = periodoBuscaAReceber;
+    public void setInicioDataPagamentoAReceber(Date inicioDataPagamentoAReceber) {
+        this.inicioDataPagamentoAReceber = inicioDataPagamentoAReceber;
     }
 
-    public PeriodoBusca getPeriodoBuscaAPagar() {
-        return periodoBuscaAPagar;
+    public Date getFimDataPagamentoAReceber() {
+        return fimDataPagamentoAReceber;
     }
 
-    public void setPeriodoBuscaAPagar(PeriodoBusca periodoBuscaAPagar) {
-        this.periodoBuscaAPagar = periodoBuscaAPagar;
+    public void setFimDataPagamentoAReceber(Date fimDataPagamentoAReceber) {
+        this.fimDataPagamentoAReceber = fimDataPagamentoAReceber;
     }
 
-    public Paciente getPaciente() {
-        return paciente;
+    public Paciente getPacienteAReceber() {
+        return pacienteAReceber;
     }
 
-    public void setPaciente(Paciente paciente) {
-        this.paciente = paciente;
+    public void setPacienteAReceber(Paciente pacienteAReceber) {
+        this.pacienteAReceber = pacienteAReceber;
     }
 
-    public StatusLancamento[] getStatusLancamentoAReceber() {
-        return statusLancamentoAReceber;
+    public PeriodoBusca getPeriodoDataCreditoAPagar() {
+        return periodoDataCreditoAPagar;
     }
 
-    public void setStatusLancamentoAReceber(StatusLancamento[] statusLancamentoAReceber) {
-        this.statusLancamentoAReceber = statusLancamentoAReceber;
+    public void setPeriodoDataCreditoAPagar(PeriodoBusca periodoDataCreditoAPagar) {
+        this.periodoDataCreditoAPagar = periodoDataCreditoAPagar;
     }
 
-    public StatusLancamento[] getStatusLancamentoAPagar() {
-        return statusLancamentoAPagar;
+    public Date getInicioDataCreditoAPagar() {
+        return inicioDataCreditoAPagar;
     }
 
-    public void setStatusLancamentoAPagar(StatusLancamento[] statusLancamentoAPagar) {
-        this.statusLancamentoAPagar = statusLancamentoAPagar;
+    public void setInicioDataCreditoAPagar(Date inicioDataCreditoAPagar) {
+        this.inicioDataCreditoAPagar = inicioDataCreditoAPagar;
     }
 
-    public Profissional getProfissional() {
-        return profissional;
+    public Date getFimDataCreditoAPagar() {
+        return fimDataCreditoAPagar;
     }
 
-    public void setProfissional(Profissional profissional) {
-        this.profissional = profissional;
+    public void setFimDataCreditoAPagar(Date fimDataCreditoAPagar) {
+        this.fimDataCreditoAPagar = fimDataCreditoAPagar;
+    }
+
+    public PeriodoBusca getPeriodoDataPagamentoAPagar() {
+        return periodoDataPagamentoAPagar;
+    }
+
+    public void setPeriodoDataPagamentoAPagar(PeriodoBusca periodoDataPagamentoAPagar) {
+        this.periodoDataPagamentoAPagar = periodoDataPagamentoAPagar;
+    }
+
+    public Date getInicioDataPagamentoAPagar() {
+        return inicioDataPagamentoAPagar;
+    }
+
+    public void setInicioDataPagamentoAPagar(Date inicioDataPagamentoAPagar) {
+        this.inicioDataPagamentoAPagar = inicioDataPagamentoAPagar;
+    }
+
+    public Date getFimDataPagamentoAPagar() {
+        return fimDataPagamentoAPagar;
+    }
+
+    public void setFimDataPagamentoAPagar(Date fimDataPagamentoAPagar) {
+        this.fimDataPagamentoAPagar = fimDataPagamentoAPagar;
+    }
+
+    public Profissional getProfissionalAPagar() {
+        return profissionalAPagar;
+    }
+
+    public void setProfissionalAPagar(Profissional profissionalAPagar) {
+        this.profissionalAPagar = profissionalAPagar;
     }
 
 }

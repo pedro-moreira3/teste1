@@ -1,104 +1,144 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets"
-    xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml" xmlns:pe="http://primefaces.org/ui/extensions" xmlns:l="http://www.lapis.com/jsf/exporter">
-    <ui:define name="content">
-        <div class="ui-g ui-fluid">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:l="http://www.lapis.com/jsf/exporter">
+	<ui:define name="content">
+		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
-                    <style>
+					<style>
 [role="gridcell"] {
-    text-align: left !important;
+	text-align: left !important;
 }
 </style>
 
-                    <h:inputHidden id="idProcedimento" value="#{procedimentoMB.entity.id}" />
-                    <p:outputPanel id="pnProcedimento" styleClass="BordNone">
+					<h:inputHidden id="idProcedimento"
+						value="#{procedimentoMB.entity.id}" />
+					<p:outputPanel id="pnProcedimento" styleClass="BordNone">
 
-                        <h1>Cadastro de Procedimentos</h1>
-                        <div class="SeparatorFull"></div>
-                        <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
-                            style="border:0px none; background-color:transparent;">
-                            <p:outputLabel for="especialidade" value="Especialidade : " />
-                            <p:selectOneMenu id="especialidade" value="#{procedimentoMB.entity.especialidade}" required="true" converter="especialidade">
-                                <f:selectItem itemValue="#{null}" itemLabel="Selecione uma Especialidade" />
-                                <f:selectItems value="#{procedimentoMB.especialidades}" var="especialidade" itemLabel="#{especialidade.descricao}" itemValue="#{especialidade}" />
-                            </p:selectOneMenu>
-                            
-                            <p:column></p:column>
-                            <p:column></p:column>
+						<h1>Cadastro de Procedimentos</h1>
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="4"
+							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
+							layout="grid" styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="especialidade" value="Especialidade : " />
+							<p:selectOneMenu id="especialidade"
+								value="#{procedimentoMB.entity.especialidade}" required="true"
+								converter="especialidade">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione uma Especialidade" />
+								<f:selectItems value="#{procedimentoMB.especialidades}"
+									var="especialidade" itemLabel="#{especialidade.descricao}"
+									itemValue="#{especialidade}" />
+							</p:selectOneMenu>
 
-                            <p:outputLabel for="codigoCfo" value="Código: " />
-                            <p:inputText id="codigoCfo" value="#{procedimentoMB.entity.codigoCfo}" maxlength="50" />
+							<p:column></p:column>
+							<p:column></p:column>
 
-                            <p:outputLabel for="descricaoProcedimento" value="Descrição : " />
-                            <p:inputTextarea id="descricaoProcedimento" value="#{procedimentoMB.entity.descricao}" required="true" maxlength="255" />
+							<p:outputLabel for="codigoCfo" value="Código: " />
+							<p:inputText id="codigoCfo"
+								value="#{procedimentoMB.entity.codigoCfo}" maxlength="50" />
 
-                            <p:outputLabel for="valor" value="Valor : " />
-                            <p:inputNumber id="valor" value="#{procedimentoMB.entity.valor}" required="true" maxlength="13" maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
-                                thousandSeparator="." />
+							<p:outputLabel for="descricaoProcedimento" value="Descrição : " />
+							<p:inputTextarea id="descricaoProcedimento"
+								value="#{procedimentoMB.entity.descricao}" required="true"
+								maxlength="255" />
 
-                            <p:outputLabel for="valorRepasse" value="Valor Repasse : " />
-                            <p:inputNumber id="valorRepasse" value="#{procedimentoMB.entity.valorRepasse}" required="false" maxlength="13" maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
-                                thousandSeparator="." />
+							<p:outputLabel for="valor" value="Valor : " />
+							<p:inputNumber id="valor" value="#{procedimentoMB.entity.valor}"
+								required="true" maxlength="13" maxValue="9999999999.99"
+								decimalSeparator="," symbol="R$ " thousandSeparator="." />
 
-                            <p:outputLabel for="quantidadeFaces" value="Quantidade de faces : " />
-                            <p:inputMask id="quantidadeFaces" value="#{procedimentoMB.entity.quantidadeFaces}" mask="9" />
+							<p:outputLabel for="valorRepasse" value="Valor Repasse : " />
+							<p:inputNumber id="valorRepasse"
+								value="#{procedimentoMB.entity.valorRepasse}" required="false"
+								maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+								symbol="R$ " thousandSeparator="." />
 
-                        </p:panelGrid>
+							<p:outputLabel for="quantidadeFaces"
+								value="Quantidade de faces : " />
+							<p:inputMask id="quantidadeFaces"
+								value="#{procedimentoMB.entity.quantidadeFaces}" mask="9" />
 
-                        <div class="SeparatorFull"></div>
-                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="new2" icon="White fa fa-file-o" value="Novo Procedimento" actionListener="#{procedimentoMB.actionNew}" update=":lume:pnProcedimento" immediate="true" />                        
-                            <p:commandButton id="persist2" process="@this,:lume:pnProcedimento" icon="White fa fa-save" value="Salvar" actionListener="#{procedimentoMB.actionPersist}" update=":lume:pnProcedimento, lume:tbProcedimento"
-                                styleClass="GreenButton" />
-                            <p:commandButton id="delete2" icon="White fa fa-trash-o" value="Excluir" actionListener="#{procedimentoMB.actionRemove}" update=":lume:pnProcedimento, lume:tbProcedimento"
-                                process=":lume:pnProcedimento" disabled="#{procedimentoMB.entity.id == null}" styleClass="RedButton" />                            
-                            <ui:remove>
-                            <p:commandButton value="Excel" ajax="false" icon="White fa fa-file-pdf-o" styleClass="GreenButton" immediate="true">
-                                <l:dataExporter fileName="procedimento" source="tbProcedimento" fileType="excel" />
-                            </p:commandButton>
-                            </ui:remove>
-                            <h:panelGroup>
-                                <p:splitButton icon="White fa fa fa-file-excel-o"
-                                    value="Exportar tabela para Excel"
-                                    styleClass="GreenSplitButton"
-                                    actionListener="#{procedimentoMB.exportarTreeTable('xls')}"
-                                    ajax="false" process="tbProcedimento,@this" update="@this"
-                                    immediate="true"
-                                    onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+						</p:panelGrid>
 
- 
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="4" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<p:commandButton id="new2" icon="White fa fa-file-o"
+								value="Novo Procedimento"
+								actionListener="#{procedimentoMB.actionNew}"
+								update=":lume:pnProcedimento" immediate="true" />
+							<p:commandButton id="persist2" icon="White fa fa-save"
+								value="Salvar" actionListener="#{procedimentoMB.actionPersist}"
+								update=":lume:pnProcedimento, lume:tbProcedimento"
+								process="@this,:lume:pnProcedimento" styleClass="GreenButton" />
+							<p:commandButton id="delete2" icon="White fa fa-trash-o"
+								value="Excluir" actionListener="#{procedimentoMB.actionRemove}"
+								update=":lume:pnProcedimento, lume:tbProcedimento"
+								process=":lume:pnProcedimento"
+								disabled="#{procedimentoMB.entity.id == null}"
+								styleClass="RedButton" />
 
-                                    <p:fileDownload
-                                        value="#{procedimentoMB.arquivoDownload}" />
-                                </p:splitButton>
-                            </h:panelGroup>
-                        </p:panelGrid>
+							<ui:remove>
+								<p:commandButton value="Excel" ajax="false"
+									icon="White fa fa-file-pdf-o" styleClass="GreenButton"
+									immediate="true">
+									<l:dataExporter fileName="procedimento" source="tbProcedimento"
+										fileType="excel" />
+								</p:commandButton>
+								<p:commandButton value="teste"
+									actionListener="#{procedimentoMB.testeTreeTable}"
+									process="@this" />
+							</ui:remove>
 
-                        <div class="EmptyBox20"></div>
+							<h:panelGroup>
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{procedimentoMB.exportarTreeTable('xls')}"
+									ajax="false" process="tbProcedimento,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{procedimentoMB.arquivoDownload}" />
+								</p:splitButton>
+							</h:panelGroup>
+
+						</p:panelGrid>
+
+						<div class="EmptyBox20"></div>
+
+						<p:panelGrid columns="2"
+							columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid"
+							styleClass="ui-panelgrid-blank"
+							style="border:0px none; background-color:transparent;">
+							<p:outputLabel for="filtro" value="Filtro de Procedimento : " />
+							<p:inputText id="filtro" value="#{procedimentoMB.filtroTable}">
+								<p:ajax event="keyup" process="@this"
+									update=":lume:tbProcedimento" delay="1000" />
+							</p:inputText>
+						</p:panelGrid>
+
+					</p:outputPanel>
+
+					<p:treeTable value="#{procedimentoMB.root}" var="espec"
+						id="tbProcedimento" selection="#{procedimentoMB.selectedNode}"
+						selectionMode="single" binding="#{procedimentoMB.tabelaTree}">
+						<p:ajax event="select" update=":lume:pnProcedimento" />
+						<p:column style="width:150px">
+							<h:outputText value="#{espec.descricaoId}" title="#{espec.id}" />
+						</p:column>
+					</p:treeTable>
 
 
-
-                        <p:panelGrid columns="2" columnClasses="ui-grid-col-2,ui-grid-col-10" layout="grid" styleClass="ui-panelgrid-blank" style="border:0px none; background-color:transparent;">
-                            <p:outputLabel for="filtro" value="Filtro de Procedimento : " />
-                            <p:inputText id="filtro" value="#{procedimentoMB.filtroTable}">
-                                <p:ajax event="keyup" process="@this" update=":lume:tbProcedimento" delay="1000" />
-                            </p:inputText>
-                        </p:panelGrid>
-
-
-
-                    </p:outputPanel>
-
-                    <p:treeTable binding="#{procedimentoMB.tabelaTree}" value="#{procedimentoMB.root}" var="espec" id="tbProcedimento" selection="#{procedimentoMB.selectedNode}" selectionMode="single">
-                        <p:ajax event="select" update=":lume:pnProcedimento" />
-                        <p:column style="width:150px">
-                            <h:outputText value="#{espec.descricaoId}" title="#{espec.id}" />
-                        </p:column>
-                    </p:treeTable>
-
-
-                </div>
-            </div>
-        </div>
-    </ui:define>
+				</div>
+			</div>
+		</div>
+	</ui:define>
 </ui:composition>

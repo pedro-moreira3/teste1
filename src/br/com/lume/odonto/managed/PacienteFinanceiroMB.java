@@ -2,7 +2,6 @@ package br.com.lume.odonto.managed;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +14,7 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.common.util.UtilsPadraoRelatorio;
 import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
@@ -22,6 +22,7 @@ import br.com.lume.conta.ContaSingleton;
 import br.com.lume.conta.ContaSingleton.TIPO_CONTA;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
+import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Fatura.StatusFatura;
 import br.com.lume.odonto.entity.Fatura.TipoFatura;
@@ -30,6 +31,7 @@ import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
+import br.com.lume.security.PerfilSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -42,6 +44,9 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
     private List<Lancamento> lAPagar, lAReceber;
     private StatusFatura status;
     private PlanoTratamento[] ptSelecionados = new PlanoTratamento[] {};
+
+    private List<Lancamento> lancamentosPendentes = new ArrayList<Lancamento>();
+    private List<Lancamento> lancamentosAConferir = new ArrayList<Lancamento>();
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaFatura;
@@ -107,11 +112,13 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
         if (getEntity() == null || getEntity().getId() == null || getEntity().getId() == 0)
             return null;
         List<Lancamento> lancamentosSearch = new ArrayList<>();
-        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), true));
-        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), false));
+        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.VALIDADO, true));
+        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.NAO_VALIDADO, true));
+        lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.FALHA_OPERACAO, true));
         if (showLancamentosCancelados) {
-            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), true, false));
-            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), false, false));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.VALIDADO, false));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.NAO_VALIDADO, false));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.FALHA_OPERACAO, false));
         }
         return lancamentosSearch;
     }
@@ -133,11 +140,11 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
         try {
-            this.lAPagar = LancamentoSingleton.getInstance().getBo().listContasAPagarOld(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), null,
-                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, Arrays.asList(StatusLancamento.A_PAGAR));
+            this.lAPagar = LancamentoSingleton.getInstance().getBo().listContasAPagar(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), null,
+                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, StatusLancamento.A_PAGAR, null);
             BigDecimal vAPagar = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAPagar));
-            this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceberOld(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), null,
-                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, Arrays.asList(StatusLancamento.A_PAGAR));
+            this.lAReceber = LancamentoSingleton.getInstance().getBo().listContasAReceber(ContaSingleton.getInstance().getContaFromOrigem(this.paciente), null,
+                    UtilsPadraoRelatorio.getDataFim(PeriodoBusca.MES_ATUAL), null, null, StatusLancamento.A_RECEBER, null);
             BigDecimal vAReceber = BigDecimal.valueOf(LancamentoSingleton.getInstance().sumLancamentos(this.lAReceber));
             ContaSingleton.getInstance().getContaFromOrigem(this.paciente).setSaldo(vAReceber.subtract(vAPagar));
 
@@ -198,6 +205,122 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
         }
 
         return "black";
+    }
+
+    public void actionValidarLancamento(Lancamento l) {
+        try {
+            if (PerfilSingleton.getInstance().isProfissionalAdministrador(UtilsFrontEnd.getProfissionalLogado())) {
+                LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
+                valorAReceberPaciente();
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            }
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            e.printStackTrace();
+        }
+    }
+
+    public void actionNaoValidarLancamento(Lancamento lc) {
+        try {
+            if (PerfilSingleton.getInstance().isProfissionalAdministrador(UtilsFrontEnd.getProfissionalLogado())) {
+                LancamentoSingleton.getInstance().naoValidaLancamento(lc, UtilsFrontEnd.getProfissionalLogado());
+                valorAReceberPaciente();
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            }
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+            e.printStackTrace();
+        }
+    }
+
+    public BigDecimal valorAReceberPaciente() {
+        try {
+            setEntityList(FaturaSingleton.getInstance().getBo().getFaturasFromPacienteByOrSubStatus(paciente, null));
+            this.getEntityList().removeIf(fatura -> !fatura.isAtivo() ||
+                    fatura.getStatusFatura().equals(Fatura.StatusFatura.INTERROMPIDO));
+            
+            BigDecimal valorAReceber = new BigDecimal(0);
+
+            if (this.getEntityList() != null && !this.getEntityList().isEmpty()) {
+
+                for (Fatura f : this.getEntityList()) {
+                    valorAReceber = valorAReceber.add(FaturaSingleton.getInstance().getTotalNaoPlanejado(f));                    
+                    
+                    for (Lancamento l : f.getLancamentos()) {
+                        if (l.isAtivo()) {
+                            if (l.getStatus().equals(Lancamento.StatusLancamento.A_RECEBER) || l.getStatus().equals(Lancamento.StatusLancamento.NAO_RECEBIDO)) {
+                                this.lancamentosPendentes.add(l);
+                                valorAReceber = valorAReceber.add( (l.getValorComDesconto() != null ?
+                                        l.getValorComDesconto() : l.getValor()) );
+                            } else if (l.getStatus().equals(StatusLancamento.RECEBIDO) && l.getSubStatus().contains(Lancamento.SubStatusLancamento.A_VALIDAR)) {
+                                this.lancamentosAConferir.add(l);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return valorAReceber;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public BigDecimal valorConferir(Lancamento lc) {
+        if(lc.getValidadoPorProfissional() != null) {
+            return new BigDecimal(0);
+        }
+        if(lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return lc.getValor();
+        }
+        return lc.getValorComDesconto();
+    }
+
+    public BigDecimal valorConferido(Lancamento lc) {
+        if(lc.getValidadoPorProfissional() != null) {
+            if(lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+                return lc.getValor();
+            }
+            return lc.getValorComDesconto();
+        }
+        return new BigDecimal(0);
+    }
+    
+    public BigDecimal valorTotal(Lancamento lc) {
+        if(lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return lc.getValor();
+        }
+        return lc.getValorComDesconto();
+    }
+    
+    public String statusLancamentoConferencia(Lancamento lc) {
+        if(lc.getValidado().equals("S"))
+            return "Conferido com sucesso";
+        else if(lc.getValidado().equals("N"))
+            return "Não Conferido";
+        else
+            return "Conferido com erro";
+    }
+    
+    public boolean validarPerfilProfissional() {
+        return PerfilSingleton.getInstance().isProfissionalAdministrador(UtilsFrontEnd.getProfissionalLogado());
+    }
+    
+    public String descricaoPT(Fatura fatura) {
+        return PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(fatura).getDescricao();
+    }
+    
+    public BigDecimal valorConferirFatura(Fatura fatura) {
+        return LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, ValidacaoLancamento.NAO_VALIDADO);
+    }
+    
+    public BigDecimal valorConferidoFatura(Fatura fatura) {
+        return LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, ValidacaoLancamento.VALIDADO);
+    }
+    
+    public BigDecimal valorTotalFatura(Fatura fatura) {
+        return FaturaSingleton.getInstance().getTotal(fatura);
     }
 
     public Date getInicio() {
@@ -262,6 +385,22 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
 
     public void setPtSelecionados(PlanoTratamento[] ptSelecionados) {
         this.ptSelecionados = ptSelecionados;
+    }
+
+    public List<Lancamento> getLancamentosPendentes() {
+        return lancamentosPendentes;
+    }
+
+    public void setLancamentosPendentes(List<Lancamento> lancamentosPendentes) {
+        this.lancamentosPendentes = lancamentosPendentes;
+    }
+
+    public List<Lancamento> getLancamentosAConferir() {
+        return lancamentosAConferir;
+    }
+
+    public void setLancamentosAConferir(List<Lancamento> lancamentosAConferir) {
+        this.lancamentosAConferir = lancamentosAConferir;
     }
 
 }

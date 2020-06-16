@@ -18,6 +18,7 @@ import br.com.lume.aparelhoOrtodontico.AparelhoOrtodonticoSingleton;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.diagnosticoOrtodontico.DiagnosticoOrtodonticoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -137,7 +138,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
                         getEntity().getPlanoTratamentoProcedimentos().add(ptp);
                     }
                     
-                    this.getbO().persist(this.getEntity());
+                    PlanoTratamentoSingleton.getInstance().getBo().persist(this.getEntity());
                 }else {
                     if(this.getEntity().getReajustes() == null)
                         this.getEntity().setReajustes(new ArrayList<IndiceReajuste>());
@@ -176,8 +177,9 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     @Override
-    public void actionNew(ActionEvent event) {
+    public void actionNew(ActionEvent event) {      
         setEntity(null);
+        getEntity().setDescricao("PT Orto - " + Utils.dateToString(new Date()));
         this.orcamentos = new ArrayList<Orcamento>();
         gerarOrcamentoPorProcedimento = false;
         try {
@@ -420,7 +422,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             if(orcamento.getIndiceReajuste() != null) {
                 this.getEntity().getReajustes().remove(orcamento.getIndiceReajuste());
                 try {
-                    this.getbO().persist(this.getEntity());
+                    PlanoTratamentoSingleton.getInstance().getBo().persist(this.getEntity());
                 } catch (Exception e1) {
                     this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
                     LogIntelidenteSingleton.getInstance().makeLog("Erro no rollback",e);
@@ -454,7 +456,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionAprovaOrcamento(Orcamento orcamento) {
         try {
-            OrcamentoSingleton.getInstance().aprovaOrcamento(orcamento, null, UtilsFrontEnd.getProfissionalLogado());
+            OrcamentoSingleton.getInstance().aprovaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado());
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
 
             try {

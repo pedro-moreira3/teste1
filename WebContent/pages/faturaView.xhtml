@@ -446,21 +446,21 @@ body .sideChkBox .ui-chkbox-label {
 									width="5%" filterMatchMode="contains"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
-									headerText="Validado?">
+									headerText="Conferido?">
 									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
 								</p:column>
 								<p:column sortBy="#{l.validadoPorProfissional.dadosBasico.nome}"
 									filterMatchMode="contains" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{l.validadoPorProfissional.dadosBasico.nome}"
-									headerText="Validado Por">
+									headerText="Conferido Por">
 									<h:outputText
 										value="#{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
-								<p:column headerText="Status" sortBy="#{l.status.descricao}" width="15%"
+								<p:column headerText="Status" sortBy="#{l.statusCompleto}" width="15%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
-									filterMatchMode="contains" filterBy="#{l.status.descricao}">
-									<h:outputText value="#{l.status.descricao}" />
+									filterMatchMode="contains" filterBy="#{l.statusCompleto}">
+									<h:outputText value="#{l.statusCompleto}" />
 								</p:column>
 								<p:column headerText="Fatura Item" width="25%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"

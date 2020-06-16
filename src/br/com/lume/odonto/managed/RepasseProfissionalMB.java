@@ -177,7 +177,7 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
         List<Paciente> pacientes = new ArrayList<Paciente>();
 
         try {
-            pacientes = PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            pacientes = PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Paciente p : pacientes) {
                 if (!Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
                         Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {

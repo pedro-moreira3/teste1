@@ -77,10 +77,23 @@ public class ConvenioMB extends LumeManagedBean<Convenio> {
         if (cep != null && !cep.equals("")) {
             cep = cep.replaceAll("-", "");
             Endereco endereco = Endereco.getEndereco(cep);
-            this.getEntity().getDadosBasico().setBairro(endereco.getBairro());
-            this.getEntity().getDadosBasico().setCidade(endereco.getCidade());
-            this.getEntity().getDadosBasico().setEndereco(endereco.getRua());
-            this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());
+            if(endereco != null) {
+                this.getEntity().getDadosBasico().setBairro(endereco.getBairro());
+                this.getEntity().getDadosBasico().setCidade(endereco.getCidade());
+                this.getEntity().getDadosBasico().setEndereco(endereco.getRua());
+                this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());
+            }else {
+                this.getEntity().getDadosBasico().setBairro(null);
+                this.getEntity().getDadosBasico().setCidade(null);
+                this.getEntity().getDadosBasico().setEndereco(null);
+                this.getEntity().getDadosBasico().setUf(null);
+                addError("Endereço não encontrado!", "");
+            }
+        }else {
+            this.getEntity().getDadosBasico().setBairro(null);
+            this.getEntity().getDadosBasico().setCidade(null);
+            this.getEntity().getDadosBasico().setEndereco(null);
+            this.getEntity().getDadosBasico().setUf(null);
         }
     }
     

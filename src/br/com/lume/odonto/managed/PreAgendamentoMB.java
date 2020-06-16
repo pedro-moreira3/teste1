@@ -76,7 +76,7 @@ public class PreAgendamentoMB extends LumeManagedBean<Agendamento> {
             this.getEntity().setPaciente(paciente);
             //this.getEntity().setFilial(this.profissional.getProfissionalFilials().get(0).getFilial());
             try {
-                this.getbO().persist(this.getEntity());
+                AgendamentoSingleton.getInstance().getBo().persist(this.getEntity());
                 this.addInfo(OdontoMensagens.getMensagem("info.preagendamento.confirmacao"), "");
                 this.enviarEmailPreAgendamento();
                 this.actionNew(event);

@@ -87,5 +87,3 @@ CREATE TABLE inteli.LOG_AGENDAMENTO
     id_situacao_agendamento bigint,
     id_motivo_status_agendamento bigint
 );
-
-

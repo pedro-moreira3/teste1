@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
-import javax.persistence.Query;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -122,15 +121,15 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     }
     
     public void confirmaAgendamentoComPaciente(Agendamento agendamento) {
-         try {
-        if(agendamentoExistenteNaAgenda != null && agendamentoExistenteNaAgenda.getId() != 0) {
+        
+        try {
+            if(agendamentoExistenteNaAgenda != null && agendamentoExistenteNaAgenda.getId() != 0) {
                 // agendamentoExistenteNaAgenda.setInicio(agendamento.getInicio());
                 // agendamentoExistenteNaAgenda.setFim(agendamento.getFim());
                 // agendamento = agendamentoExistenteNaAgenda;
                  agendamentoExistenteNaAgenda.setStatusNovo("R");
                  AgendamentoSingleton.getInstance().getBo().persist(agendamentoExistenteNaAgenda);
-        }
-      
+             }
             if(agendamento.getHash() == null) {
                 agendamento.setHash(GeradorSenha.gerarSenha());    
             } 
@@ -147,23 +146,26 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
     
     private void configuraHorarioPadraoClinica() {
         Calendar cal = Calendar.getInstance();
-        cal.setTime(data);        
-        tempoPadraoConsulta = UtilsFrontEnd.getEmpresaLogada().getTempoPadraoConsulta();
+        cal.setTime(data);  
+        if(UtilsFrontEnd.getEmpresaLogada().getTempoPadraoConsulta() != null) {
+            tempoPadraoConsulta = UtilsFrontEnd.getEmpresaLogada().getTempoPadraoConsulta();       
+        }
+     
         if(UtilsFrontEnd.getEmpresaLogada().getHoraInicialManha() != null) {
             cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraInicialManha());                            
-            horariopadraoInico = getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));          
+            horariopadraoInico = Utils.getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));          
         }
         if(UtilsFrontEnd.getEmpresaLogada().getHoraFinalManha() != null) {
             cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraFinalManha());                            
-            horariopadraoFim = getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));   
+            horariopadraoFim = Utils.getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));   
         }
         if(UtilsFrontEnd.getEmpresaLogada().getHoraInicialTarde() != null) {
             cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraInicialTarde());                            
-            horariopadraoInicoTarde = getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));           
+            horariopadraoInicoTarde = Utils.getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));           
         }
         if(UtilsFrontEnd.getEmpresaLogada().getHoraFinalTarde() != null) {
             cal.setTime(UtilsFrontEnd.getEmpresaLogada().getHoraFinalTarde());                            
-            horariopadraoFimTarde = getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+            horariopadraoFimTarde = Utils.getLocalTime(cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
         }
         
     }
@@ -277,20 +279,20 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                         //primeiro precisamos somar quantos minutos disponiveis o profissional tem no dia;
                         if(horasUteis.get(0).getHoraIni() != null && horasUteis.get(0).getHoraFim() != null) {
                             c.setTime(horasUteis.get(0).getHoraIni());                            
-                            horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                            horariopadraoInico = Utils.getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
                             c.setTime(horasUteis.get(0).getHoraFim());                
-                            horariopadraoFim = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
-                            LocalDateTime fromManha = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoInico);
-                            LocalDateTime toManha = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoFim); 
+                            horariopadraoFim = Utils.getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
+                            LocalDateTime fromManha = LocalDateTime.of(Utils.convertToLocalDateViaInstant(cal.getTime()), horariopadraoInico);
+                            LocalDateTime toManha = LocalDateTime.of(Utils.convertToLocalDateViaInstant(cal.getTime()), horariopadraoFim); 
                             totalMinutosDisponiveis = fromManha.until(toManha, ChronoUnit.MINUTES);
                         }
                         if(horasUteis.get(0).getHoraIniTarde() != null && horasUteis.get(0).getHoraFimTarde() != null) {
                             c.setTime(horasUteis.get(0).getHoraIniTarde());                            
-                            horariopadraoInicoTarde = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                            horariopadraoInicoTarde = Utils.getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
                             c.setTime(horasUteis.get(0).getHoraFimTarde());                
-                            horariopadraoFimTarde = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
-                            LocalDateTime fromTarde = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoInicoTarde);
-                            LocalDateTime toTarde = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horariopadraoFimTarde);                         
+                            horariopadraoFimTarde = Utils.getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
+                            LocalDateTime fromTarde = LocalDateTime.of(Utils.convertToLocalDateViaInstant(cal.getTime()), horariopadraoInicoTarde);
+                            LocalDateTime toTarde = LocalDateTime.of(Utils.convertToLocalDateViaInstant(cal.getTime()), horariopadraoFimTarde);                         
                             totalMinutosDisponiveis += fromTarde.until(toTarde, ChronoUnit.MINUTES);                      
                         } 
                         
@@ -305,28 +307,28 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
 
                             List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo()
                                     .listAgendamentosNaoCanceladosByDatePorProfissional(filtroPorProfissional,
-                                            dateToStringSomenteData(cal.getTime()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());    
+                                            Utils.dateToStringSomenteData(cal.getTime()), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());    
                             
                             
                             long minutosAgendados = 0l;
                             //somando quantidade de minutos de agendamentos existentes no dia
                             for (Agendamento agendamento : agendamentos) {
                                 c.setTime(agendamento.getInicio());                            
-                                LocalTime horarioInicioAgendamento = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));  
+                                LocalTime horarioInicioAgendamento = Utils.getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));  
                                 c.setTime(agendamento.getFim());                            
-                                LocalTime horarioFimAgendamento = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
+                                LocalTime horarioFimAgendamento = Utils.getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
                                //TODO somente somamos se o horario do agendamento esta entre horario inicio e fim dos disponiveis, 
                                //pois se nao os horarios ainda estão livres 
-                                LocalDateTime fromTarde = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horarioInicioAgendamento);
-                                LocalDateTime toTarde = LocalDateTime.of(convertToLocalDateViaInstant(cal.getTime()), horarioFimAgendamento);                         
+                                LocalDateTime fromTarde = LocalDateTime.of(Utils.convertToLocalDateViaInstant(cal.getTime()), horarioInicioAgendamento);
+                                LocalDateTime toTarde = LocalDateTime.of(Utils.convertToLocalDateViaInstant(cal.getTime()), horarioFimAgendamento);                         
                                 minutosAgendados += fromTarde.until(toTarde, ChronoUnit.MINUTES);       
                             }
                             
                             
-                            Date dataPadraoInicioManha = criaDataComHorario(cal.getTime(),horariopadraoInico);                        
-                            Date dataPadraoFimManha = criaDataComHorario(cal.getTime(),horariopadraoFim);
-                            Date dataPadraoInicioTarde = criaDataComHorario(cal.getTime(),horariopadraoInicoTarde);                        
-                            Date dataPadraoFimTarde = criaDataComHorario(cal.getTime(),horariopadraoFimTarde);
+                            Date dataPadraoInicioManha = Utils.criaDataComHorario(cal.getTime(),horariopadraoInico);                        
+                            Date dataPadraoFimManha = Utils.criaDataComHorario(cal.getTime(),horariopadraoFim);
+                            Date dataPadraoInicioTarde = Utils.criaDataComHorario(cal.getTime(),horariopadraoInicoTarde);                        
+                            Date dataPadraoFimTarde = Utils.criaDataComHorario(cal.getTime(),horariopadraoFimTarde);
                             
                             List<Afastamento> afastamentos = new ArrayList<Afastamento>();
                             if (dataPadraoInicioManha == null && dataPadraoInicioTarde!= null)
@@ -335,7 +337,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                                dataPadraoFimTarde  = dataPadraoFimManha;
                             
                            //verificando se para o dia que estamos testando temos afastamento
-                            afastamentos.addAll(listByDataAndProfissional(
+                            afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByDataAndProfissional(
                                     filtroPorProfissional, dataPadraoInicioManha,dataPadraoFimTarde,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));  
                            
                             long minutosAfastamento = 0l;
@@ -389,69 +391,8 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         
     }
     
-    public List<Afastamento> listByDataAndProfissional(Profissional profissional, Date dataIni, Date dataFim, long idEmpresa) throws Exception{
-        try {
-            if (dataIni != null && dataFim != null) {
-                StringBuilder sb = new StringBuilder();
-                
-
-                sb.append("SELECT ");
-                sb.append("a ");
-                sb.append("FROM Afastamento AS a, Profissional AS p ");
-                sb.append(" WHERE a.profissional.id = ?1 ");
-                sb.append("AND a.excluido = 'N' ");
-                sb.append("AND a.valido = 'S' ");
-              //  sb.append("AND ((?2 <= a.inicio AND ?3 >= a.fim) "
-                  //  + "OR (?2 <= a.inicio AND ?3 <= a.fim) "
-                      //+ "OR (?2 >= a.inicio AND ?3 >= a.fim )) "
-                      //+ "OR (?2 >= a.inicio AND ?3 <= a.fim )) ");
-                sb.append("AND (?2 >=  a.inicio AND ?3 <= a.fim "
-                + "OR (?2 <= a.inicio AND ?3 >= a.inicio AND ?3 <= a.fim ) "
-                + "OR (?2 >= a.inicio AND ?2 <= a.fim AND ?3 >= a.fim )) ");
-                sb.append("AND p.id = a.profissional.id ");
-                sb.append("AND p.idEmpresa = ?4 ");
-                sb.append("ORDER BY a.inicio, a.fim ");
-                
-                Query query = this.getbO().getDao().createQuery(sb.toString());
-                
-                query.setParameter(1, profissional.getId());
-                query.setParameter(2, dataIni); 
-                query.setParameter(3, dataFim); 
-                query.setParameter(4, idEmpresa);
-                return query.getResultList();
-                
-            }
-        } catch (Exception e) {
-            log.error("Erro no listByProfissionalAndValido", e);
-        }
-        return null;
-  }
-    
-    public static LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
-        return dateToConvert.toInstant()
-          .atZone(ZoneId.systemDefault())
-          .toLocalDate();
-    }
-    
     public String somenteData () {
-        return dateToStringSomenteDataBrasil(this.getData());
-    }
-    
-    public static String dateToStringSomenteDataBrasil(Date data) {
-        return dateToString(data, "dd/MM/yyyy");
-    }
-    
-    public static String dateToString(Date data) {
-        return dateToString(data, "dd/MM/yyyy HH:mm:ss");
-    }
-    
-    public static String dateToString(Date data, String pattern) {
-        String dataStr = null;
-        if (data != null) {
-            SimpleDateFormat sdf = new SimpleDateFormat(pattern);
-            dataStr = sdf.format(data);
-        }
-        return dataStr;
+        return Utils.dateToStringSomenteDataBrasil(this.getData());
     }
 
     public void popularLista() {
@@ -488,18 +429,18 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                     horariopadraoFim = null;
                    if(horasUteis.get(0).getHoraIni() != null && horasUteis.get(0).getHoraFim() != null) {
                        c.setTime(horasUteis.get(0).getHoraIni());                            
-                       horariopadraoInico = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                       horariopadraoInico = Utils.getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
                        c.setTime(horasUteis.get(0).getHoraFim());                
-                       horariopadraoFim = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
+                       horariopadraoFim = Utils.getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE)); 
                        observacoes += "Horário de trabalho manhã: De " + horariopadraoInico + " até " + horariopadraoFim + ". ";
                    }
                    horariopadraoInicoTarde = null;
                    horariopadraoFimTarde = null;
                    if(horasUteis.get(0).getHoraIniTarde() != null && horasUteis.get(0).getHoraFimTarde() != null) {
                        c.setTime(horasUteis.get(0).getHoraIniTarde());                            
-                       horariopadraoInicoTarde = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                       horariopadraoInicoTarde = Utils.getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
                        c.setTime(horasUteis.get(0).getHoraFimTarde());                
-                       horariopadraoFimTarde = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
+                       horariopadraoFimTarde = Utils.getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));   
                        observacoes += "Horário de trabalho tarde: De " + horariopadraoInicoTarde + " até " + horariopadraoFimTarde + ". ";
                    }
                    
@@ -511,15 +452,15 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 } 
                 long quantidadeHorariosManha = 0l;
                 if(horariopadraoInico != null && horariopadraoFim != null) {
-                    LocalDateTime from = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoInico);
-                    LocalDateTime to = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoFim); 
+                    LocalDateTime from = LocalDateTime.of(Utils.convertToLocalDateViaInstant(data), horariopadraoInico);
+                    LocalDateTime to = LocalDateTime.of(Utils.convertToLocalDateViaInstant(data), horariopadraoFim); 
                     long minutes = from.until(to, ChronoUnit.MINUTES);
                     quantidadeHorariosManha = minutes / tempoPadraoConsulta;    
                 }
                 long quantidadeHorariosTarde = 0l;
                 if(horariopadraoInicoTarde != null && horariopadraoFimTarde != null) {
-                    LocalDateTime fromTarde = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoInicoTarde);
-                    LocalDateTime toTarde = LocalDateTime.of(convertToLocalDateViaInstant(data), horariopadraoFimTarde); 
+                    LocalDateTime fromTarde = LocalDateTime.of(Utils.convertToLocalDateViaInstant(data), horariopadraoInicoTarde);
+                    LocalDateTime toTarde = LocalDateTime.of(Utils.convertToLocalDateViaInstant(data), horariopadraoFimTarde); 
                     long minutesTarde = fromTarde.until(toTarde, ChronoUnit.MINUTES);
                     quantidadeHorariosTarde = minutesTarde / tempoPadraoConsulta; 
                 }
@@ -528,23 +469,23 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
               
                     
                     List<Agendamento> agendamentos = AgendamentoSingleton.getInstance().getBo()
-                            .listAgendamentosNaoCanceladosByDatePorProfissional(filtroPorProfissional,dateToStringSomenteData(data), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());                              
+                            .listAgendamentosNaoCanceladosByDatePorProfissional(filtroPorProfissional,Utils.dateToStringSomenteData(data), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());                              
                     List<Agendamento> paraSubstituir = new ArrayList<Agendamento>();
                     
-                    Date dataPadraoInicioManha = criaDataComHorario(data,horariopadraoInico);                    
-                    Date dataPadraoFimManha = criaDataComHorario(data,horariopadraoFim);                  
-                    Date dataPadraoInicioTarde = criaDataComHorario(data,horariopadraoInicoTarde);                    
-                    Date dataPadraoFimTarde = criaDataComHorario(data,horariopadraoFimTarde);  
+                    Date dataPadraoInicioManha = Utils.criaDataComHorario(data,horariopadraoInico);                    
+                    Date dataPadraoFimManha = Utils.criaDataComHorario(data,horariopadraoFim);                  
+                    Date dataPadraoInicioTarde = Utils.criaDataComHorario(data,horariopadraoInicoTarde);                    
+                    Date dataPadraoFimTarde = Utils.criaDataComHorario(data,horariopadraoFimTarde);  
                     
                     List<Afastamento> afastamentos = new ArrayList<Afastamento>();
                     if(dataPadraoInicioManha != null && dataPadraoFimManha != null && dataPadraoInicioTarde != null && dataPadraoFimTarde != null) {
-                        afastamentos.addAll(listByProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioManha, 
+                        afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioManha, 
                                 dataPadraoFimTarde, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                     }else if(dataPadraoInicioManha != null && dataPadraoFimManha != null) {
-                            afastamentos.addAll(listByProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioManha, 
+                            afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioManha, 
                                     dataPadraoFimManha, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                     }else if(dataPadraoInicioTarde != null && dataPadraoFimTarde != null) {
-                        afastamentos.addAll(listByProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioTarde, 
+                        afastamentos.addAll(AfastamentoSingleton.getInstance().getBo().listByProfissionalEntreDatas(filtroPorProfissional, dataPadraoInicioTarde, 
                             dataPadraoFimTarde, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
                     }
                    
@@ -558,8 +499,8 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                     for (Afastamento afastamento : afastamentos) {
                         for (Agendamento agendamento : listaCriados) {   
                             //milisegundo estava vindo com valor                          
-                            agendamento.setFim(zeraMiliLegundos(agendamento.getFim()));
-                            agendamento.setInicio(zeraMiliLegundos(agendamento.getInicio()));
+                            agendamento.setFim(Utils.zeraMiliLegundos(agendamento.getFim()));
+                            agendamento.setInicio(Utils.zeraMiliLegundos(agendamento.getInicio()));
                             
                             if(afastamento.getInicio().equals(agendamento.getInicio()) || 
                                 (afastamento.getInicio().after(agendamento.getInicio()) && afastamento.getInicio().before(agendamento.getFim()))) {
@@ -609,49 +550,6 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
-    }
-    
-    public static LocalTime getLocalTime(int horaInicio,int minutoInicio) {             
-        return LocalTime.of(horaInicio, minutoInicio);   
-     }
-
-    public static int getMes(Date data) {
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(data);
-        return cal.get(Calendar.MONTH);
-    }
-    
-    public List<Afastamento> listByProfissionalEntreDatas(Profissional profissional, Date inicio, Date fim, long idEmpresa) throws Exception {
-        try {
-            if (inicio != null && fim != null) {
-                StringBuilder sb = new StringBuilder();
-                
-
-                sb.append("SELECT ");
-                sb.append("a ");
-                sb.append("FROM Afastamento AS a, Profissional AS p ");
-                sb.append(" WHERE a.profissional.id = ?1 ");
-                sb.append("AND a.excluido = 'N' ");
-                sb.append("AND a.valido = 'S' ");
-                sb.append("AND ( (a.inicio >= ?2 AND a.fim <= ?3) OR (?2 >= a.inicio AND ?2 <= a.fim) OR (a.inicio >= ?2 AND ?3 <= a.fim )) ");
-               // sb.append("AND ?2 >=  a.inicio AND ?3 <= a.fim ");
-                sb.append("AND p.id = a.profissional.id ");
-                sb.append("AND p.idEmpresa = ?4 ");
-                sb.append("ORDER BY a.inicio, a.fim ");
-                
-                Query query = this.getbO().getDao().createQuery(sb.toString());
-                
-                query.setParameter(1, profissional.getId());
-                query.setParameter(2, inicio);
-                query.setParameter(3, fim);
-                query.setParameter(4, idEmpresa);
-                return query.getResultList();
-                
-            }
-        } catch (Exception e) {
-            log.error("Erro no listByProfissionalAndValido", e);
-        }
-        return null;
     } 
     
     private List<Agendamento> populaAgendamentos(List<Agendamento> agendamentos, Date dataInicioManha, Date dataFimManha, Date dataInicioTarde, Date dataFimTarde) {
@@ -680,9 +578,9 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 LocalTime horariopadraoInicoAux = horariopadraoInico;
                 while(agendamentoExistente.getFim().after(dataInicioManha)) {
                     horariopadraoInicoAux = horariopadraoInicoAux.plusMinutes(tempoPadraoConsulta);
-                    dataInicioManha = criaDataComHorario(data,horariopadraoInicoAux);
+                    dataInicioManha = Utils.criaDataComHorario(data,horariopadraoInicoAux);
                     c.setTime(dataInicioManha);
-                    horariopadraoInicoAux = getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
+                    horariopadraoInicoAux = Utils.getLocalTime(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE));
                 }   
             }else if(agendamentoExistente.getInicio().after(dataFimTarde) && !agendamentosAnterioresHoraFim.contains(agendamentoExistente)) {
                 agendamentosAnterioresHoraFim.add(agendamentoExistente);                             
@@ -707,8 +605,8 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
               //  System.out.println("a " + agendamentoExistente.getFim());    
               //  System.out.println("b " + agendamentoCriado.getFim());    
                 
-                agendamentoExistente.setInicio(zeraMiliLegundos(agendamentoExistente.getInicio()));
-                agendamentoCriado.setInicio(zeraMiliLegundos(agendamentoCriado.getInicio()));
+                agendamentoExistente.setInicio(Utils.zeraMiliLegundos(agendamentoExistente.getInicio()));
+                agendamentoCriado.setInicio(Utils.zeraMiliLegundos(agendamentoCriado.getInicio()));
                 
                 if(agendamentoExistente.getInicio().equals(agendamentoCriado.getInicio()) 
                         ||(agendamentoExistente.getInicio().after(agendamentoCriado.getInicio()) && agendamentoExistente.getInicio().before(agendamentoCriado.getFim()))                                        
@@ -745,8 +643,8 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 
                 //verificando se tem agendamento entre a hora do almoço
                 if(horariopadraoFim != null && horariopadraoInicoTarde != null && !agendamentoEntreHoraAlmoco.contains(agendamentoExistente)) { 
-                  dataPadraoFimManha = criaDataComHorario(agendamentoExistente.getInicio(),horariopadraoFim);                                
-                  dataPadraoFimTarde = criaDataComHorario(agendamentoExistente.getInicio(),horariopadraoFimTarde);
+                  dataPadraoFimManha = Utils.criaDataComHorario(agendamentoExistente.getInicio(),horariopadraoFim);                                
+                  dataPadraoFimTarde = Utils.criaDataComHorario(agendamentoExistente.getInicio(),horariopadraoFimTarde);
                   if((agendamentoExistente.getInicio().after(dataPadraoFimManha) || agendamentoExistente.getInicio().equals(dataPadraoFimManha)) &&
                           (agendamentoExistente.getFim().before(dataPadraoFimTarde) || agendamentoExistente.getFim().equals(dataPadraoFimTarde))    
                           ) {
@@ -799,34 +697,6 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         this.paciente = paciente;
         populaAgenda();
     }
-    
-    public static Date criaDataComHorario(Date data,LocalTime horario) {
-        if(horario == null) {
-            return null;
-        }
-        Calendar calendario =   Calendar.getInstance();      
-        calendario.setTime(data);
-        calendario.set(Calendar.HOUR_OF_DAY, horario.getHour());
-        calendario.set(Calendar.MINUTE, horario.getMinute());
-        calendario.set(Calendar.SECOND, horario.getSecond());
-        calendario.set(Calendar.MILLISECOND, 0);
-        return calendario.getTime();
-        
-    }
-    
-    public static String dateToStringSomenteData(Date data) {
-        SimpleDateFormat dateFilterFormat = new SimpleDateFormat("yyyy-MM-dd");
-        return "'" + dateFilterFormat.format((data == null ? new Date() : data)) + "'";
-    }
-    
-    public static Date zeraMiliLegundos(Date data) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(data);                        
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
-    }
-    
-    
     public void carregaDisponibilidadeFromDlgAgendamento(Agendamento agendamento,Paciente paciente,Profissional profissionalDentroAgenda, Date dataAgendamento,PlanoTratamento 
             pt,Integer cadeira,DualListModel<AgendamentoPlanoTratamentoProcedimento> aptp,String observacoes) {
         filtroPorProfissional = profissionalDentroAgenda;

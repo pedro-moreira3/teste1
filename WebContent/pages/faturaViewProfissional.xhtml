@@ -88,10 +88,14 @@ body .sideChkBox .ui-chkbox-label {
 									value="#{faturaPagtoMB.entity.dadosTabelaRepassePlanoTratamento.paciente.dadosBasico.nome}" />
 
 								<h:outputText for="statusFatura2" value="Status da Fatura:" />
-								<p:inputText id="statusFatura2"
+								<p:outputLabel id="statusFatura2"
 									style="color: #{(faturaPagtoMB.entity.statusFatura.rotulo eq 'I' ? 'red' : 'black')}"
 									value="#{faturaPagtoMB.entity.statusFaturaCompleto}"
-									readonly="true" />
+									readonly="true" escape="false">
+									<p:tooltip escape="false" for="@parent" position="bottom"
+										value="#{faturaPagtoMB.entity.tooltipAlteracaoStatus}"
+										hideDelay="500" />
+								</p:outputLabel>
 
 							</p:panelGrid>
 
@@ -182,27 +186,7 @@ body .sideChkBox .ui-chkbox-label {
 								paginator="true" rowKey="#{l}" paginatorPosition="bottom"
 								id="lancamentosFatura">
 								<f:facet name="header">Lançamentos da Fatura</f:facet>
-								<p:column style="width: 16px;">
-									<p:rowToggler />
-								</p:column>
-								<p:column headerText="Ações" width="70" exportable="false">
-									<p:commandButton styleClass="GreenButton" icon="fa fa-check"
-										title="Validar Lançamento" update="@parent:@parent"
-										actionListener="#{faturaPagtoMB.validaLancamentoRepasse(l)}"
-										process="@this"
-										disabled="#{l.validado == 'S' or !l.ativo or !faturaPagtoMB.isTodosRequisitosFeitos(l) or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}">
-										<p:confirm header="Confirmação" icon="ui-icon-alert"
-											message="Você tem certeza que confirma o pagamento deste repasse?">
-										</p:confirm>
-									</p:commandButton>
-									<p:commandButton styleClass="NavyButton" icon="fa fa-dollar"
-										title="Visualizar Custos Diretos"
-										update=":lume:pnPTPCustoDireto, :lume:pnPTPCustoDiretoHeader"
-										actionListener="#{pTPCustoDiretoMB.abreDialog(faturaPagtoMB.buscaPTPOrigemRepasse(l))}"
-										process="@this"
-										disabled="#{faturaPagtoMB.buscaPTPOrigemRepasse(l) == null or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}">
-									</p:commandButton>
-								</p:column>
+														
 								<p:column styleClass="cabecalho" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{l.formaPagamentoStr}"
@@ -232,22 +216,22 @@ body .sideChkBox .ui-chkbox-label {
 									width="5%" filterMatchMode="contains"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}"
-									headerText="Validado?">
+									headerText="Conferido?">
 									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
 								</p:column>
 								<p:column sortBy="#{l.validadoPorProfissional.dadosBasico.nome}"
 									filterMatchMode="contains" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{l.validadoPorProfissional.dadosBasico.nome}"
-									headerText="Validado Por">
+									headerText="Conferido Por">
 									<h:outputText
 										value="#{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
-								<p:column headerText="Status" sortBy="#{l.status.descricao}"
+								<p:column headerText="Status" sortBy="#{l.statusCompleto}"
 									width="15%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
-									filterMatchMode="contains" filterBy="#{l.status.descricao}">
-									<h:outputText value="#{l.status.descricao}" />
+									filterMatchMode="contains" filterBy="#{l.statusCompleto}">
+									<h:outputText value="#{l.statusCompleto}" />
 								</p:column>
 								<p:column headerText="Fatura Item" width="25%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
@@ -255,63 +239,7 @@ body .sideChkBox .ui-chkbox-label {
 										rendered="#{faturaPagtoMB.mostraProcedimentoOrigemRepasse(l)}"
 										value="Referente à '#{faturaPagtoMB.buscaProcedimentoOrigemRepasse(l)}'" />
 								</p:column>
-								<p:rowExpansion>
-
-									<p:outputPanel
-										rendered="#{faturaPagtoMB.hasRequisitosCumprir(l)}">
-										<p:panelGrid columns="1" layout="grid"
-											styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding lancamentoExplain">
-
-											<h:panelGroup>
-												<p:outputPanel
-													rendered="#{faturaPagtoMB.isTodosRequisitosFeitos(l)}"
-													style="color: green; font-weight: bold;">
-													<h:outputText
-														value="Este lançamento está elegível para validação pois," />
-												</p:outputPanel>
-												<p:outputPanel
-													rendered="#{!faturaPagtoMB.isTodosRequisitosFeitos(l)}"
-													style="color: red; font-weight: bold;">
-													<h:outputText
-														value="Este lançamento não está elegível para validação pois," />
-												</p:outputPanel>
-											</h:panelGroup>
-
-											<ui:repeat var="requisito"
-												value="#{faturaPagtoMB.getRequisitosValidaLancamentoFromRepasseFatura(l)}">
-												<div style="display: flex;">
-													<img
-														src="../images/#{requisito.requisitoFeito ? 'ok' : 'no'}.png"
-														style="width: 24px;" />
-													<div
-														style="width: calc(100% - 24px); height: 24px; line-height: 24px; margin-left: 10px;">
-														<h:outputText rendered="#{requisito.requisitoFeito}"
-															style="color: green" value="#{requisito.descricao}" />
-														<h:outputText rendered="#{!requisito.requisitoFeito}"
-															style="color: red" value="#{requisito.descricao}" />
-													</div>
-												</div>
-											</ui:repeat>
-
-										</p:panelGrid>
-									</p:outputPanel>
-
-									<p:outputPanel
-										rendered="#{!faturaPagtoMB.hasRequisitosCumprir(l)}">
-										<p:panelGrid columns="1" layout="grid"
-											styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding lancamentoExplain">
-											<div style="display: flex;">
-												<img src="../images/ok.png" style="width: 24px;" />
-												<div
-													style="width: calc(100% - 24px); height: 24px; line-height: 24px; margin-left: 10px;">
-													<h:outputText style="color: green"
-														value="Não existem requisitos a serem cumpridos!" />
-												</div>
-											</div>
-										</p:panelGrid>
-									</p:outputPanel>
-
-								</p:rowExpansion>
+					
 							</p:dataTable>
 
 						</div>

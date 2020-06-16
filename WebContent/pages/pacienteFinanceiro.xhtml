@@ -45,243 +45,509 @@ hr.hrSaldo {
 }
 </style>
 
-	<ui:include src="faturaViewPaciente.xhtml" />
-	<p:remoteCommand name="onCloseFaturaView" process="@this" />
-
 	<br />
-	<div
-		style="position: relative; width: 80%; height: 100px; display: flex; padding-left: 10%; padding-right: 10%;">
-		<div style="position: relative; width: 50%; height: 100%;">
-			<hr class="centerH hrSaldo" />
-			<p:outputPanel style="color: #{pacienteFinanceiroMB.saldoCor}">
-				<div class="centerH divSaldo">
-					<div class="centerH divSaldoHeader">Saldo Atual</div>
-					<h:outputText value="#{pacienteFinanceiroMB.paciente.conta.saldo}"
-						rendered="#{pacienteFinanceiroMB.paciente.conta.saldo != null}">
-						<f:convertNumber currencySymbol="R$ " type="currency" />
-					</h:outputText>
-					<h:outputText value="#{0.00}"
-						rendered="#{pacienteFinanceiroMB.paciente.conta.saldo == null}">
-						<f:convertNumber currencySymbol="R$ " type="currency" />
-					</h:outputText>
-				</div>
-			</p:outputPanel>
+	<ui:remove>
+		<div
+			style="position: relative; width: 80%; height: 100px; display: flex; padding-left: 10%; padding-right: 10%;">
+			<div style="position: relative; width: 50%; height: 100%;">
+				<hr class="centerH hrSaldo" />
+				<p:outputPanel style="color: #{pacienteFinanceiroMB.saldoCor}">
+					<div class="centerH divSaldo">
+						<div class="centerH divSaldoHeader">Saldo Atual</div>
+						<h:outputText value="#{pacienteFinanceiroMB.paciente.conta.saldo}"
+							rendered="#{pacienteFinanceiroMB.paciente.conta.saldo != null}">
+							<f:convertNumber currencySymbol="R$ " type="currency" />
+						</h:outputText>
+						<h:outputText value="#{0.00}"
+							rendered="#{pacienteFinanceiroMB.paciente.conta.saldo == null}">
+							<f:convertNumber currencySymbol="R$ " type="currency" />
+						</h:outputText>
+					</div>
+				</p:outputPanel>
+			</div>
+			<div style="position: relative; width: 50%; height: 100%;">
+				<hr class="centerH hrSaldo" />
+				<p:outputPanel
+					style="color: #{pacienteFinanceiroMB.naoPlanejadoCor}">
+					<div class="centerH divSaldo">
+						<div class="centerH divSaldoHeader">Total não planejado</div>
+						<h:outputText
+							value="#{pacienteFinanceiroMB.paciente.dadosTabelaTotalNaoPlanejado}"
+							rendered="#{pacienteFinanceiroMB.paciente.dadosTabelaTotalNaoPlanejado != null}">
+							<f:convertNumber currencySymbol="R$ " type="currency" />
+						</h:outputText>
+						<h:outputText value="#{0.00}"
+							rendered="#{pacienteFinanceiroMB.paciente.dadosTabelaTotalNaoPlanejado == null}">
+							<f:convertNumber currencySymbol="R$ " type="currency" />
+						</h:outputText>
+					</div>
+				</p:outputPanel>
+			</div>
 		</div>
-		<div style="position: relative; width: 50%; height: 100%;">
-			<hr class="centerH hrSaldo" />
-			<p:outputPanel style="color: #{pacienteFinanceiroMB.naoPlanejadoCor}">
-				<div class="centerH divSaldo">
-					<div class="centerH divSaldoHeader">Total não planejado</div>
-					<h:outputText
-						value="#{pacienteFinanceiroMB.paciente.dadosTabelaTotalNaoPlanejado}"
-						rendered="#{pacienteFinanceiroMB.paciente.dadosTabelaTotalNaoPlanejado != null}">
-						<f:convertNumber currencySymbol="R$ " type="currency" />
-					</h:outputText>
-					<h:outputText value="#{0.00}"
-						rendered="#{pacienteFinanceiroMB.paciente.dadosTabelaTotalNaoPlanejado == null}">
-						<f:convertNumber currencySymbol="R$ " type="currency" />
-					</h:outputText>
-				</div>
-			</p:outputPanel>
-		</div>
-	</div>
 
-	<p:dataTable id="dtContasAReceber" paginator="true"
-		paginatorPosition="bottom" rows="10"
-		emptyMessage="Nenhum lançamento a receber para o mês corrente."
-		value="#{pacienteFinanceiroMB.lAReceber}" var="l" rowKey="#{l}">
-		<f:facet name="header">Lançamentos a Receber</f:facet>
-		<p:column headerText="Forma de pagamento" filterMatchMode="contains"
-			filterBy="#{l.formaPagamentoStr}" sortBy="#{l.formaPagamentoStr}"
-			width="20%">
-			<h:outputText value="#{l.formaPagamentoStr}" />
-		</p:column>
-		<p:column headerText="Valor" filterMatchMode="contains"
-			filterBy="#{l.valor}" sortBy="#{l.valor}" width="10%">
-			<h:outputText value="#{l.valor}">
-				<f:convertNumber type="currency" currencySymbol="R$"
-					maxFractionDigits="2" />
-			</h:outputText>
-		</p:column>
-		<p:column headerText="Data Pagamento" filterMatchMode="contains"
-			filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}">
-			<h:outputText value="#{l.dataPagamento}" width="15%">
-				<f:convertDateTime pattern="dd/MM/yyyy" />
-			</h:outputText>
-		</p:column>
-		<p:column headerText="Data Crédito" filterMatchMode="contains"
-			filterBy="#{l.dataCredito}" sortBy="#{l.dataCredito}" width="15%">
-			<h:outputText value="#{l.dataCredito}">
-				<f:convertDateTime pattern="dd/MM/yyyy" />
-			</h:outputText>
-		</p:column>
-		<p:column headerText="Validado?" filterMatchMode="contains"
-			filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}" width="10%">
-			<h:outputText value="#{l.validadoStr}" />
-			<p:tooltip rendered="#{l.validado == 'S'}" for="@parent"
-				value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
-		</p:column>
-		<p:column headerText="Status" filterMatchMode="contains"
-			filterBy="#{l.status.descricao}" sortBy="#{l.status.descricao}"
-			width="15%">
-			<h:outputText value="#{l.status.descricao}" />
-		</p:column>
-		<p:column headerText="Origem" filterMatchMode="contains"
-			filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
-			sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}" width="15%">
-			<p:commandLink process="@this" title="Visualizar Fatura"
-				value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
-				actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
-				oncomplete="PF('dlgFaturaView').show();"
-				update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura" />
-		</p:column>
-	</p:dataTable>
-	<br />
-	<p:dataTable id="dtContasAPagar" paginator="true"
-		paginatorPosition="bottom" rows="10"
-		value="#{pacienteFinanceiroMB.lAPagar}" var="l" rowKey="#{l}"
-		emptyMessage="Nenhum lançamento a pagar para o mês corrente.">
-		<f:facet name="header">Lançamentos a Pagar</f:facet>
-		<p:column headerText="Forma de pagamento" filterMatchMode="contains"
-			filterBy="#{l.formaPagamentoStr}" sortBy="#{l.formaPagamentoStr}"
-			width="20%">
-			<h:outputText value="#{l.formaPagamentoStr}" />
-		</p:column>
-		<p:column headerText="Valor" filterMatchMode="contains"
-			filterBy="#{l.valor}" sortBy="#{l.valor}" width="10%">
-			<h:outputText value="#{l.valor}">
-				<f:convertNumber type="currency" currencySymbol="R$"
-					maxFractionDigits="2" />
-			</h:outputText>
-		</p:column>
-		<p:column headerText="Data Pagamento" filterMatchMode="contains"
-			filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}">
-			<h:outputText value="#{l.dataPagamento}" width="15%">
-				<f:convertDateTime pattern="dd/MM/yyyy" />
-			</h:outputText>
-		</p:column>
-		<p:column headerText="Data Crédito" filterMatchMode="contains"
-			filterBy="#{l.dataCredito}" sortBy="#{l.dataCredito}" width="15%">
-			<h:outputText value="#{l.dataCredito}">
-				<f:convertDateTime pattern="dd/MM/yyyy" />
-			</h:outputText>
-		</p:column>
-		<p:column headerText="Validado?" filterMatchMode="contains"
-			filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}" width="10%">
-			<h:outputText value="#{l.validadoStr}" />
-			<p:tooltip rendered="#{l.validado == 'S'}"
-				value="Validado às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
-		</p:column>
-		<p:column headerText="Status" filterMatchMode="contains"
-			filterBy="#{l.status.descricao}" sortBy="#{l.status.descricao}"
-			width="15%">
-			<h:outputText value="#{l.status.descricao}" />
-		</p:column>
-		<p:column headerText="Origem" filterMatchMode="contains"
-			filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
-			sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}" width="15%">
-			<p:commandLink process="@this" title="Visualizar Fatura"
-				value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
-				actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
-				oncomplete="PF('dlgFaturaView').show();"
-				update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura" />
-		</p:column>
-	</p:dataTable>
+		<p:dataTable id="dtContasAReceber" paginator="true"
+			paginatorPosition="bottom" rows="10"
+			emptyMessage="Nenhum lançamento a receber para o mês corrente."
+			value="#{pacienteFinanceiroMB.lAReceber}" var="l" rowKey="#{l}">
+			<f:facet name="header">Lançamentos a Receber</f:facet>
+			<p:column headerText="Forma de pagamento" filterMatchMode="contains"
+				filterBy="#{l.formaPagamentoStr}" sortBy="#{l.formaPagamentoStr}"
+				width="20%">
+				<h:outputText value="#{l.formaPagamentoStr}" />
+			</p:column>
+			<p:column headerText="Valor" filterMatchMode="contains"
+				filterBy="#{l.valor}" sortBy="#{l.valor}" width="10%">
+				<h:outputText value="#{l.valor}">
+					<f:convertNumber type="currency" currencySymbol="R$"
+						maxFractionDigits="2" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="Data Pagamento" filterMatchMode="contains"
+				filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}">
+				<h:outputText value="#{l.dataPagamento}" width="15%">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="Data Crédito" filterMatchMode="contains"
+				filterBy="#{l.dataCredito}" sortBy="#{l.dataCredito}" width="15%">
+				<h:outputText value="#{l.dataCredito}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="Conferido?" filterMatchMode="contains"
+				filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}" width="10%">
+				<h:outputText value="#{l.validadoStr}" />
+				<p:tooltip rendered="#{l.validado == 'S'}" for="@parent"
+					value="Conferido às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
+			</p:column>
+			<p:column headerText="Status" filterMatchMode="contains"
+				filterBy="#{l.statusCompleto}" sortBy="#{l.statusCompleto}"
+				width="15%">
+				<h:outputText value="#{l.statusCompleto}" />
+			</p:column>
+			<p:column headerText="Origem" filterMatchMode="contains"
+				filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+				sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}" width="15%">
+				<p:commandLink process="@this" title="Visualizar Fatura"
+					value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+					actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
+					oncomplete="PF('dlgFaturaView').show();"
+					update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura" />
+			</p:column>
+		</p:dataTable>
+		<br />
+		<p:dataTable id="dtContasAPagar" paginator="true"
+			paginatorPosition="bottom" rows="10"
+			value="#{pacienteFinanceiroMB.lAPagar}" var="l" rowKey="#{l}"
+			emptyMessage="Nenhum lançamento a pagar para o mês corrente.">
+			<f:facet name="header">Lançamentos a Pagar</f:facet>
+			<p:column headerText="Forma de pagamento" filterMatchMode="contains"
+				filterBy="#{l.formaPagamentoStr}" sortBy="#{l.formaPagamentoStr}"
+				width="20%">
+				<h:outputText value="#{l.formaPagamentoStr}" />
+			</p:column>
+			<p:column headerText="Valor" filterMatchMode="contains"
+				filterBy="#{l.valor}" sortBy="#{l.valor}" width="10%">
+				<h:outputText value="#{l.valor}">
+					<f:convertNumber type="currency" currencySymbol="R$"
+						maxFractionDigits="2" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="Data Pagamento" filterMatchMode="contains"
+				filterBy="#{l.dataPagamento}" sortBy="#{l.dataPagamento}">
+				<h:outputText value="#{l.dataPagamento}" width="15%">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="Data Crédito" filterMatchMode="contains"
+				filterBy="#{l.dataCredito}" sortBy="#{l.dataCredito}" width="15%">
+				<h:outputText value="#{l.dataCredito}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+				</h:outputText>
+			</p:column>
+			<p:column headerText="Conferido?" filterMatchMode="contains"
+				filterBy="#{l.validadoStr}" sortBy="#{l.validadoStr}" width="10%">
+				<h:outputText value="#{l.validadoStr}" />
+				<p:tooltip rendered="#{l.validado == 'S'}"
+					value="Conferido às #{l.dataValidadoStr} por #{l.validadoPorProfissional.dadosBasico.nome}" />
+			</p:column>
+			<p:column headerText="Status" filterMatchMode="contains"
+				filterBy="#{l.statusCompleto}" sortBy="#{l.statusCompleto}"
+				width="15%">
+				<h:outputText value="#{l.statusCompleto}" />
+			</p:column>
+			<p:column headerText="Origem" filterMatchMode="contains"
+				filterBy="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+				sortBy="#{movimentacoesMB.getOrigemFromLancamento(l)}" width="15%">
+				<p:commandLink process="@this" title="Visualizar Fatura"
+					value="#{movimentacoesMB.getOrigemFromLancamento(l)}"
+					actionListener="#{faturaPagtoMB.visualizaFatura(l.fatura)}"
+					oncomplete="PF('dlgFaturaView').show();"
+					update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura" />
+			</p:column>
+		</p:dataTable>
 
-	<p:separator styleClass="SeparatorFull" />
+		<p:separator styleClass="SeparatorFull" />
 
-	<p:panelGrid columns="2" layout="grid"
-		styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
-		style="border:0px none; background-color:transparent;">
+		<p:panelGrid columns="2" layout="grid"
+			styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+			style="border:0px none; background-color:transparent;">
 
-		<h:panelGroup>
-			<p:splitButton icon="White fa fa fa-file-excel-o"
-				value="Exportar tabela para Excel" styleClass="GreenSplitButton"
-				actionListener="#{pacienteMB.exportarTabelaFinanceiro('xls')}"
-				ajax="false"
-				process=":lume:tabViewPacientePaciente:dtPrincipalFinanceiro, @this"
-				update="@this" immediate="true"
-				onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-
-				<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
-
-				<p:menuitem value="Exportar tabela para PDF"
-					icon="fa fa fa-file-pdf-o"
-					actionListener="#{pacienteMB.exportarTabelaFinanceiro('pdf')}"
+			<h:panelGroup>
+				<p:splitButton icon="White fa fa fa-file-excel-o"
+					value="Exportar tabela para Excel" styleClass="GreenSplitButton"
+					actionListener="#{pacienteMB.exportarTabelaFinanceiro('xls')}"
 					ajax="false"
 					process=":lume:tabViewPacientePaciente:dtPrincipalFinanceiro, @this"
-					immediate="true"
+					update="@this" immediate="true"
 					onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
 					<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
-				</p:menuitem>
-			</p:splitButton>
-		</h:panelGroup>
 
-	</p:panelGrid>
+					<p:menuitem value="Exportar tabela para PDF"
+						icon="fa fa fa-file-pdf-o"
+						actionListener="#{pacienteMB.exportarTabelaFinanceiro('pdf')}"
+						ajax="false"
+						process=":lume:tabViewPacientePaciente:dtPrincipalFinanceiro, @this"
+						immediate="true"
+						onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+						<p:fileDownload value="#{pacienteMB.arquivoDownload}" />
+					</p:menuitem>
+				</p:splitButton>
+			</h:panelGroup>
 
-	<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-		id="dtPrincipalFinanceiro" value="#{pacienteFinanceiroMB.entityList}"
-		var="f" rows="10" paginator="true" rowKey="#{f}"
-		paginatorPosition="bottom" binding="#{pacienteMB.tabelaFinanceiro}">
-		<f:facet name="header">Faturas</f:facet>
-		<p:column width="120" headerText="Detalhes">
-			<p:commandButton icon="fa fa-eye" process="@this"
-				actionListener="#{faturaPagtoMB.visualizaFatura(f)}"
-				update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
-				onclick="PF('dlgFaturaView').show();" styleClass="NavyButton"
-				title="Visualizar Fatura" />
-		</p:column>
-		<p:column filterBy="#{f.paciente.dadosBasico.nomeStr}"
-			sortBy="#{f.paciente.dadosBasico.nome}" filterMatchMode="contains"
-			filterFunction="#{pacienteMB.filtroSemAcento}">
-			<f:facet name="header">
-				<h:outputText value="Paciente" />
-			</f:facet>
-			<h:outputText value="#{f.paciente.dadosBasico.nome}" />
-		</p:column>
-		<p:column filterBy="#{f.dataCriacaoStr}" headerText="Data de Criação"
-			filterMatchMode="contains" sortBy="#{f.dataCriacaoStr}">
-			<h:outputText value="#{f.dataCriacaoStr}" />
-		</p:column>
+		</p:panelGrid>
 
-		<p:column filterBy="#{f.dadosTabelaRepasseTotalFatura}"
-			headerText="Valor total da fatura" filterMatchMode="contains"
-			sortBy="#{f.dadosTabelaRepasseTotalFatura}">
-			<h:outputText value="#{f.dadosTabelaRepasseTotalFatura}">
-				<f:convertNumber currencySymbol="R$ " type="currency" />
-			</h:outputText>
-		</p:column>
+		<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+			id="dtPrincipalFinanceiro" value="#{pacienteFinanceiroMB.entityList}"
+			var="f" rows="10" paginator="true" rowKey="#{f}"
+			paginatorPosition="bottom" binding="#{pacienteMB.tabelaFinanceiro}">
+			<f:facet name="header">Faturas</f:facet>
+			<p:column width="120" headerText="Ações">
+				<p:commandButton icon="fa fa-eye" process="@this"
+					actionListener="#{faturaPagtoMB.visualizaFatura(f)}"
+					update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
+					onclick="PF('dlgFaturaView').show();" styleClass="NavyButton"
+					title="Visualizar Fatura" />
+			</p:column>
+			<p:column filterBy="#{f.paciente.dadosBasico.nomeStr}"
+				sortBy="#{f.paciente.dadosBasico.nome}" filterMatchMode="contains"
+				filterFunction="#{pacienteMB.filtroSemAcento}">
+				<f:facet name="header">
+					<h:outputText value="Paciente" />
+				</f:facet>
+				<h:outputText value="#{f.paciente.dadosBasico.nome}" />
+			</p:column>
+			<p:column filterBy="#{f.dataCriacaoStr}" headerText="Data de Criação"
+				filterMatchMode="contains" sortBy="#{f.dataCriacaoStr}">
+				<h:outputText value="#{f.dataCriacaoStr}" />
+			</p:column>
 
-		<p:column filterBy="#{f.dadosTabelaRepasseTotalPago}"
-			headerText="Valor total pago" filterMatchMode="contains"
-			sortBy="#{f.dadosTabelaRepasseTotalPago}">
-			<h:outputText value="#{f.dadosTabelaRepasseTotalPago}">
-				<f:convertNumber currencySymbol="R$ " type="currency" />
-			</h:outputText>
-		</p:column>
+			<p:column filterBy="#{f.dadosTabelaRepasseTotalFatura}"
+				headerText="Valor total da fatura" filterMatchMode="contains"
+				sortBy="#{f.dadosTabelaRepasseTotalFatura}">
+				<h:outputText value="#{f.dadosTabelaRepasseTotalFatura}">
+					<f:convertNumber currencySymbol="R$ " type="currency" />
+				</h:outputText>
+			</p:column>
 
-		<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPago}"
-			headerText="Valor total não pago" filterMatchMode="contains"
-			sortBy="#{f.dadosTabelaRepasseTotalNaoPago}">
-			<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPago}">
-				<f:convertNumber currencySymbol="R$ " type="currency" />
-			</h:outputText>
-		</p:column>
+			<p:column filterBy="#{f.dadosTabelaRepasseTotalPago}"
+				headerText="Valor total pago" filterMatchMode="contains"
+				sortBy="#{f.dadosTabelaRepasseTotalPago}">
+				<h:outputText value="#{f.dadosTabelaRepasseTotalPago}">
+					<f:convertNumber currencySymbol="R$ " type="currency" />
+				</h:outputText>
+			</p:column>
 
-		<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}"
-			headerText="Valor total não planejado" filterMatchMode="contains"
-			sortBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
-			<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
-				<f:convertNumber currencySymbol="R$ " type="currency" />
-			</h:outputText>
-		</p:column>
+			<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPago}"
+				headerText="Valor total não pago" filterMatchMode="contains"
+				sortBy="#{f.dadosTabelaRepasseTotalNaoPago}">
+				<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPago}">
+					<f:convertNumber currencySymbol="R$ " type="currency" />
+				</h:outputText>
+			</p:column>
 
-		<p:column filterBy="#{f.statusFaturaCompleto}"
-			headerText="Status da Fatura" filterMatchMode="contains"
-			sortBy="#{f.statusFaturaCompleto}">
-			<h:outputText value="#{f.statusFaturaCompleto}" />
-		</p:column>
+			<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}"
+				headerText="Valor total não planejado" filterMatchMode="contains"
+				sortBy="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
+				<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPlanejado}">
+					<f:convertNumber currencySymbol="R$ " type="currency" />
+				</h:outputText>
+			</p:column>
 
-	</p:dataTable>
+			<p:column filterBy="#{f.statusFaturaCompleto}"
+				headerText="Status da Fatura" filterMatchMode="contains"
+				sortBy="#{f.statusFaturaCompleto}">
+				<h:outputText value="#{f.statusFaturaCompleto}" />
+			</p:column>
+
+		</p:dataTable>
+	</ui:remove>
+
+	<p:outputPanel id="viewFatura">
+		<ui:include src="faturaViewPaciente.xhtml">
+			<ui:param name="showNewLancamento" value="S" />
+		</ui:include>
+		<p:remoteCommand name="onCloseFaturaView" process="@this"
+			update="dtLancamentosConferir,dtFaturas,dtLancamentosPendentes" />
+	</p:outputPanel>
+
+	<p:outputPanel id="resumoFinanceiro">
+		<p:outputPanel styleClass="BordNone">
+			<h1>
+				Resumo Financeiro - Paciente
+				<h:outputText value="#{pacienteMB.entity.dadosBasico.nome}" />
+			</h1>
+		</p:outputPanel>
+		<br />
+
+		<p:panel style="display:block;text-align:center;border:none;">
+			<p:panel
+				style="border:1px solid;width:30%;height:100px;text-align:center;display:inline-block;">
+				<h3>
+					Valor total a receber
+					<h:outputLabel class="fa fa-question" id="tooltipTituloResumo"
+						style="font-size:24px; margin-left:10px;" />
+					<p:tooltip for="tooltipTituloResumo"
+						value="O total a receber do paciente ainda não pago, não planejado ou vencido."
+						position="top" style="width:30%;margin-lef:20px;" />
+					<br /> <br />
+					<h:outputText style="color:red;"
+						value="#{pacienteFinanceiroMB.valorAReceberPaciente()}">
+						<f:convertNumber currencySymbol="R$" type="currency"
+							minFractionDigits="2" />
+					</h:outputText>
+				</h3>
+			</p:panel>
+
+			<br />
+			<br />
+
+			<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+				id="dtLancamentosPendentes"
+				value="#{pacienteFinanceiroMB.lancamentosPendentes}" var="lc"
+				rows="5" paginator="true" paginatorPosition="bottom"
+				widgetVar="dtLancamentosPendentes" rowKey="#{lc}">
+
+				<f:facet name="header">Pendentes de pagamento
+					<h:outputLabel class="fa fa-question" id="tooltipTituloTab1"
+						style="font-size:24px; margin-left:10px;" />
+					<p:tooltip for="tooltipTituloTab1"
+						value="Nessa tabela, estão todos os lançamentos que ainda não tiveram seus pagamentos confirmados.
+						Para verificar o que está pendente e resolver essa pendência, clique em ações."
+						position="top" style="width:30%;margin-lef:20px;" />
+				</f:facet>
+
+				<p:column headerText="Ações" exportable="false">
+					<p:commandButton icon="fa fa-eye" process="@this"
+						actionListener="#{faturaPagtoMB.visualizaFatura(lc.fatura)}"
+						update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
+						oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
+						title="Visualizar Fatura" />
+				</p:column>
+				<p:column filterBy="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}"
+					sortBy="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}"
+					filterMatchMode="contains" headerText="PlanoTratamento">
+					<h:outputText
+						value="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}" />
+				</p:column>
+				<p:column headerText="Data Pagamento"
+					filterBy="#{lc.dataPagamentoStr}" sortBy="#{lc.dataPagamento}"
+					filterMatchMode="contains">
+					<h:outputText value="#{lc.dataPagamentoStr}" />
+				</p:column>
+				<p:column headerText="Data Crédito" filterBy="#{lc.dataCreditoStr}"
+					sortBy="#{lc.dataCredito}" filterMatchMode="contains">
+					<h:outputText value="#{lc.dataCreditoStr}" />
+				</p:column>
+				<p:column headerText="Valor à conferir"
+					filterBy="#{pacienteFinanceiroMB.valorConferir(lc)}"
+					sortBy="#{pacienteFinanceiroMB.valorConferir(lc)}"
+					filterMatchMode="contains">
+					<h:outputText value="#{pacienteFinanceiroMB.valorConferir(lc)}">
+						<f:convertNumber currencySymbol="R$" type="currency"
+							minFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Valor conferido"
+					filterBy="#{pacienteFinanceiroMB.valorConferido(lc)}"
+					sortBy="#{pacienteFinanceiroMB.valorConferido(lc)}"
+					filterMatchMode="contains">
+					<h:outputText value="#{pacienteFinanceiroMB.valorConferido(lc)}">
+						<f:convertNumber currencySymbol="R$" type="currency"
+							minFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Valor total" sortBy="#{pacienteFinanceiroMB.valorTotal(lc)}"
+					filterBy="#{pacienteFinanceiroMB.valorTotal(lc)}" filterMatchMode="contains">
+					<h:outputText value="#{pacienteFinanceiroMB.valorTotal(lc)}">
+						<f:convertNumber currencySymbol="R$" type="currency"
+							minFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Status"
+					sortBy="#{lc.statusCompleto}"
+					filterBy="#{lc.statusCompleto}"
+					filterMatchMode="contains">
+					<h:outputText
+						value="#{lc.statusCompleto}" />
+				</p:column>
+
+			</p:dataTable>
+
+			<br />
+			<br />
+
+			<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+				id="dtLancamentosConferir"
+				value="#{pacienteFinanceiroMB.lancamentosAConferir}" var="lc"
+				rows="5" paginator="true" paginatorPosition="bottom"
+				widgetVar="dtLancamentosConferir" rowKey="#{lc}"
+				rendered="#{pacienteFinanceiroMB.validarPerfilProfissional()}">
+
+				<f:facet name="header">Pendentes de conferência
+					<h:outputLabel class="fa fa-question" id="tooltipTituloTab2"
+						style="font-size:24px; margin-left:10px;" />
+					<p:tooltip for="tooltipTituloTab2"
+						value="Nessa tabela, estão todos os lançamentos que ainda não foram conferidos."
+						position="top" style="width:30%;margin-lef:20px;" />
+				</f:facet>
+
+				<p:column headerText="Ações" exportable="false">
+					<p:commandButton icon="fa fa-eye" process="@this"
+						actionListener="#{faturaPagtoMB.visualizaFatura(lc.fatura)}"
+						update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
+						oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
+						title="Visualizar Fatura" />
+				</p:column>
+				<p:column filterBy="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}"
+					sortBy="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}"
+					filterMatchMode="contains" headerText="PlanoTratamento">
+					<h:outputText
+						value="#{pacienteFinanceiroMB.descricaoPT(lc.fatura)}" />
+				</p:column>
+				<p:column headerText="Data Pagamento"
+					filterBy="#{lc.dataPagamentoStr}" sortBy="#{lc.dataPagamento}"
+					filterMatchMode="contains">
+					<h:outputText value="#{lc.dataPagamentoStr}" />
+				</p:column>
+				<p:column headerText="Data Crédito" filterBy="#{lc.dataCreditoStr}"
+					sortBy="#{lc.dataCredito}" filterMatchMode="contains">
+					<h:outputText value="#{lc.dataCreditoStr}" />
+				</p:column>
+				<p:column headerText="Valor à conferir"
+					filterBy="#{pacienteFinanceiroMB.valorConferir(lc)}"
+					sortBy="#{pacienteFinanceiroMB.valorConferir(lc)}"
+					filterMatchMode="contains">
+					<h:outputText value="#{pacienteFinanceiroMB.valorConferir(lc)}">
+						<f:convertNumber currencySymbol="R$" type="currency"
+							minFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Valor conferido"
+					filterBy="#{pacienteFinanceiroMB.valorConferido(lc)}"
+					sortBy="#{pacienteFinanceiroMB.valorConferido(lc)}"
+					filterMatchMode="contains">
+					<h:outputText value="#{pacienteFinanceiroMB.valorConferido(lc)}">
+						<f:convertNumber currencySymbol="R$" type="currency"
+							minFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Valor total" sortBy="#{pacienteFinanceiroMB.valorTotal(lc)}"
+					filterBy="#{pacienteFinanceiroMB.valorTotal(lc)}" filterMatchMode="contains">
+					<h:outputText value="#{pacienteFinanceiroMB.valorTotal(lc)}">
+						<f:convertNumber currencySymbol="R$" type="currency"
+							minFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Status"
+					sortBy="#{pacienteFinanceiroMB.statusLancamentoConferencia(lc)}"
+					filterBy="#{pacienteFinanceiroMB.statusLancamentoConferencia(lc)}"
+					filterMatchMode="contains">
+					<h:outputText
+						value="#{pacienteFinanceiroMB.statusLancamentoConferencia(lc)}" />
+				</p:column>
+				<p:column headerText="Conferência" width="100" exportable="false">
+					<p:commandButton icon="White fa fa-thumbs-o-up"
+						actionListener="#{pacienteFinanceiroMB.actionValidarLancamento(lc)}"
+						update=":lume:tabViewPaciente:dtLancamentosConferir" process="@this"
+						styleClass="GreenButton"
+						oncomplete="PF('dtLancamentosConferir').filter()"
+						title="Valor recebido" />
+					<p:commandButton icon="White fa fa-thumbs-o-down"
+						actionListener="#{pacienteFinanceiroMB.actionNaoValidarLancamento(lc)}"
+						update=":lume:tabViewPaciente:dtLancamentosConferir" process="@this"
+						styleClass="RedButton"
+						oncomplete="PF('dtLancamentosConferir').filter()"
+						title="Falha no recebimento" />
+				</p:column>
+
+			</p:dataTable>
+
+			<br />
+			<br />
+
+			<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+				id="dtFaturas" value="#{pacienteFinanceiroMB.entityList}"
+				var="fatura" rows="5" paginator="true" paginatorPosition="bottom"
+				widgetVar="dtFaturas" rowKey="#{fatura}"
+				rendered="#{pacienteFinanceiroMB.validarPerfilProfissional()}">
+
+				<f:facet name="header">Todas as faturas do paciente</f:facet>
+
+				<p:column headerText="Ações" exportable="false">
+					<p:commandButton icon="fa fa-eye" process="@this"
+						actionListener="#{faturaPagtoMB.visualizaFatura(fatura)}"
+						update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:pnlfaturaViewHeader, @parent:@parent:@parent:buttonViewFatura"
+						oncomplete="PF('dlgFaturaView').show();" styleClass="NavyButton"
+						title="Visualizar Fatura" />
+				</p:column>
+				<p:column filterBy="#{pacienteFinanceiroMB.descricaoPT(fatura)}"
+					sortBy="#{pacienteFinanceiroMB.descricaoPT(fatura)}"
+					filterMatchMode="contains" headerText="PlanoTratamento">
+					<h:outputText value="#{pacienteFinanceiroMB.descricaoPT(fatura)}" />
+				</p:column>
+				<p:column headerText="Valor à conferir"
+					filterBy="#{pacienteFinanceiroMB.valorConferirFatura(fatura)}"
+					sortBy="#{pacienteFinanceiroMB.valorConferirFatura(fatura)}"
+					filterMatchMode="contains">
+					<h:outputText
+						value="#{pacienteFinanceiroMB.valorConferirFatura(fatura)}">
+						<f:convertNumber currencySymbol="R$" type="currency"
+							minFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Valor conferido"
+					filterBy="#{pacienteFinanceiroMB.valorConferidoFatura(fatura)}"
+					sortBy="#{pacienteFinanceiroMB.valorConferidoFatura(fatura)}"
+					filterMatchMode="contains">
+					<h:outputText
+						value="#{pacienteFinanceiroMB.valorConferidoFatura(fatura)}">
+						<f:convertNumber currencySymbol="R$" type="currency"
+							minFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Valor total"
+					sortBy="#{pacienteFinanceiroMB.valorTotalFatura(fatura)}"
+					filterBy="#{pacienteFinanceiroMB.valorTotalFatura(fatura)}"
+					filterMatchMode="contains">
+					<h:outputText
+						value="#{pacienteFinanceiroMB.valorTotalFatura(fatura)}">
+						<f:convertNumber currencySymbol="R$" type="currency"
+							minFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Status"
+					sortBy="#{fatura.statusFaturaCompleto}"
+					filterBy="#{fatura.statusFaturaCompleto}"
+					filterMatchMode="contains">
+					<h:outputText value="#{fatura.statusFaturaCompleto}" />
+				</p:column>
+
+			</p:dataTable>
+
+		</p:panel>
+
+	</p:outputPanel>
 
 </ui:composition>

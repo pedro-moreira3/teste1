@@ -345,7 +345,7 @@ public class OrcamentoMB2 extends LumeManagedBean<Orcamento> {
                         l.setValorOriginal(l.getValor());
                     }
                 }
-                this.getbO().persist(this.getEntity());
+                OrcamentoSingleton.getInstance().getBo().persist(this.getEntity());
                 List<Lancamento> ls = LancamentoSingleton.getInstance().getBo().listLancamentosNaoPagos(this.getEntity());
                 if (ls != null) {
                     for (Lancamento l : ls) {

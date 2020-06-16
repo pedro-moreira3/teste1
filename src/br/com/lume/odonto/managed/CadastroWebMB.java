@@ -86,6 +86,7 @@ import br.com.lume.security.UsuarioSingleton;
 // import br.com.lume.security.bo.UsuarioBO;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.entity.Usuario;
+import br.com.lume.tarifa.TarifaSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -187,7 +188,7 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
             this.getEntity().setValidarGeraReciboValorZerado("N");
             EmpresaSingleton.getInstance().getBo().persist(this.getEntity());
             LocalSingleton.getInstance().createLocaisDefault(EmpresaSingleton.getInstance().getBo().find(this.getEntity()).getEmpIntCod());
-            
+            TarifaSingleton.getInstance().createTarifasDefault(EmpresaSingleton.getInstance().getBo().find(this.getEntity()).getEmpIntCod());
             
             cadastrarDadosTemplate(getEntity());
             this.actionPersistFilial(null);
@@ -437,6 +438,21 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
                 }   
                 
             }else {
+             
+                    this.getEntity().setEmpStrEndereco("");  
+                    PrimeFaces.current().ajax().update(":lume:empStrEndereco");
+               
+                    this.getEntity().setEmpStrBairro("");
+                    PrimeFaces.current().ajax().update(":lume:empStrBairro");
+             
+                    this.getEntity().setEmpStrCidade("");
+                    PrimeFaces.current().ajax().update(":lume:empStrCidade");
+            
+                    this.getEntity().setEmpStrEstadoConselho(""); 
+                    getEstados().setValue("");
+                    getEstados().setSubmittedValue("");
+                    PrimeFaces.current().ajax().update(":lume:empChaUf");
+                                 
                 this.addError("CEP não encontado!", "");
 
             }

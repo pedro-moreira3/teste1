@@ -51,7 +51,7 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
     public void actionPersist(ActionEvent event) {
         try {
             this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-            this.getbO().persist(this.getEntity());
+            NoticiaRssSingleton.getInstance().getBo().persist(this.getEntity());
             if (this.arquivo != null) {
                 this.salvaArquivo();
             }
@@ -92,7 +92,7 @@ public class NoticiaRssMB extends LumeManagedBean<NoticiaRss> {
             while (inputstream.available() != 0) {
                 fileout.write(inputstream.read());
             }
-            this.getbO().persist(this.getEntity());
+            NoticiaRssSingleton.getInstance().getBo().persist(this.getEntity());
             fileout.close();
             this.arquivo = null;
             

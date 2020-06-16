@@ -167,7 +167,10 @@
 						<caption
 							style="border: 1px solid #bdbdbd; border-bottom: none; padding: 5px; font-weight: bold">
 							Procedimentos</caption>
-						<tr style="border: 1px solid #bdbdbd; border-bottom: none;">
+						<tr style="border: 1px solid #bdbdbd; border-bottom: none; ">
+						
+						
+						
 							<th
 								style="text-align: center; border: 1px solid #bdbdbd; border-bottom: none; padding: 5px;">Descrição</th>
 							<th  
@@ -178,7 +181,7 @@
 						</tr>
 						<p:outputPanel rendered="#{not empty o.itens}">
 							<c:forEach var="procedimento" items="#{o.itens}">
-								<tr>
+								<tr style="display:#{(planoTratamentoMB.omitirProcedimentosNaoInclusos and !procedimento.incluso)?'none':''};">
 									<td
 										style="border: 1px solid #bdbdbd; border-bottom: none; text-align: left; padding: 5px;">#{procedimento.descricao}</td>
 									<td
@@ -199,16 +202,18 @@
 					<div style="width: 100%; text-align: center;">
 						<span style="font-size: 14px;"><b>Observações: </b><br/>						
 						
-						<div style="white-space: pre-wrap"><h:outputText value="#{o.observacoes}" styleClass="preformatted" /></div>
+						<div style="white-space: pre-wrap">
+							<h:outputText value="#{o.observacoes}" styleClass="preformatted" />
+							<br/>
+							<h:outputText id="ïmpressaoObsCobranca" rendered="#{planoTratamentoMB.incluirObservacoesCobranca}" value="#{planoTratamentoMB.observacoesCobrancaOrcamento}" styleClass="preformatted" />
+						</div>
 						</span>
 					</div>
 					<p:separator styleClass="SeparatorFull" />
 					<div class="Container100 Responsive100" align="right">
-						<h:outputText value="* Orçamento versão #{o.nVersao}"
-							styleClass="observacao-orcamento" />
-						<br />
+						
 						<h:outputText
-							value="** Orçamento válido por 15 dias. Anualmente os valores são reajustados."
+							value="* Orçamento válido por 15 dias."
 							styleClass="observacao-orcamento" />
 						<br />
 					</div>
@@ -232,6 +237,22 @@
 							listener="#{planoTratamentoMB.imprimirSemValoresListener}" />
 					</p:selectBooleanCheckbox>
 					<p:outputLabel for="checkFiltro" value="Não mostrar valores dos procedimentos na impressão" />
+					<p:spacer width="20" height="0" />
+					<p:selectBooleanCheckbox id="checkObservacoesCobranca"
+						value="#{planoTratamentoMB.incluirObservacoesCobranca}">
+						<p:ajax event="change" process="@this,lume:tabViewPaciente:orcamento2PrintInterno"
+							update=":lume:tabViewPaciente:orcamento2PrintInterno,ïmpressaoObsCobranca"
+							/>
+					</p:selectBooleanCheckbox>
+					<p:outputLabel for="checkObservacoesCobranca" value="Incluir observações de cobrança na impressão" />
+					<p:spacer width="20" height="0" />
+					<p:selectBooleanCheckbox id="checkOmitirProcedimentosNaoInclusos"
+						value="#{planoTratamentoMB.omitirProcedimentosNaoInclusos}">
+						<p:ajax event="change" process="@this,lume:tabViewPaciente:orcamento2PrintInterno"
+							update=":lume:tabViewPaciente:orcamento2PrintInterno"
+							/>
+					</p:selectBooleanCheckbox>
+					<p:outputLabel for="checkOmitirProcedimentosNaoInclusos" value="Omitir procedimentos não inclusos na impressão" />
 				</h:panelGroup>
 		<p:panelGrid columns="2" layout="grid"
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">

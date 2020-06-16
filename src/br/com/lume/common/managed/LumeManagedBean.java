@@ -7,6 +7,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -21,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.treetable.TreeTable;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -33,6 +35,7 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.MessageType;
 import br.com.lume.common.util.StringUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.bo.RestricaoBO;
@@ -99,40 +102,21 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         this.entity = entity;
     }
     
-      public void exportarTreeTable(String header, TreeTable tabela, String type) {
-
- 
-
-        ByteArrayInputStream arq;
-        try {
-            this.exportacao = Exportacoes.getInstance();
-            arq = (this.exportacao.exportarTreeTabela(header, tabela, type));
-
- 
-
-            if (type.equals("xls"))
-                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
-            else if (type.equals("pdf"))
-                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/pdf", header + "." + type));
-            else
-                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/csv", header + "." + type));
-
- 
-
-            arq.close();
-
- 
-
-        } catch (Exception e) {
-            this.addError("Erro", "Erro na exportação do documento.");
-            e.printStackTrace();
-        }
-    }
+    
 
     public boolean isEstoqueCompleto() {
         return EmpresaBO.isEstoqueCompleto(UtilsFrontEnd.getEmpresaLogada());
     }
 
+    public String getTooltipValue(String tela, String campo) {
+        return getMensagemFrontEnd("tooltip." + tela + "." + campo);
+    }
+    
+    public static String getMensagemFrontEnd(String key) {     
+        ResourceBundle resource = ResourceBundle.getBundle("br.com.lume.resources.frontend");
+        return resource.getString(key);
+    }
+    
     public boolean validaAcao(String acao) {
         try {
             return !this.restricaoBO.isRestrito(acao, this.getLumeSecurity().getUsuario(), this.getLumeSecurity().getObjetoAtual());
@@ -360,6 +344,28 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             e.printStackTrace();
         }
     }
+    
+    public void exportarTreeTable(String header, TreeTable tabela, String type) {
+
+        ByteArrayInputStream arq;
+        try {
+            this.exportacao = Exportacoes.getInstance();
+            arq = (this.exportacao.exportarTreeTabela(header, tabela, type));
+
+            if (type.equals("xls"))
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/vnd.ms-excel", header + ".xls"));
+            else if (type.equals("pdf"))
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/pdf", header + "." + type));
+            else
+                this.setArquivoDownload(new DefaultStreamedContent(arq, "application/csv", header + "." + type));
+
+            arq.close();
+
+        } catch (Exception e) {
+            this.addError("Erro", "Erro na exportação do documento.");
+            e.printStackTrace();
+        }
+    }
 
     public boolean filtroSemAcento(Object value, Object filter, Locale locale) {
 
@@ -398,6 +404,15 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             //addError("Erro ao abrir whatsapp!", e.getMessage());
         }
         return null;
+    }
+    
+    public String getUrlMessage(String mensagem, Paciente paciente) {
+        try {
+            return WhatsappSingleton.getInstance().getUrlMessage(mensagem, paciente);
+        }catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            return "";
+        }
     }
 
     public void fazNada() {

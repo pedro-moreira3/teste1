@@ -100,6 +100,10 @@ public class FornecedorMB extends LumeManagedBean<Fornecedor> {
                 this.getEntity().getDadosBasico().setEndereco(endereco.getRua());
                 this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());    
             } else {
+                this.getEntity().getDadosBasico().setBairro("");
+                this.getEntity().getDadosBasico().setCidade("");
+                this.getEntity().getDadosBasico().setEndereco("");
+                this.getEntity().getDadosBasico().setUf("");                 
                 addError("Endereço não encontrado!", "");
             }
             

@@ -51,8 +51,9 @@ public class EvolucaoMB extends LumeManagedBean<Evolucao> {
             this.log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
-    }
+    }    
 
+    
     public String getInfoPTPFromEvolucao(Evolucao evolucao) {
         String infoPTP = "";
         if (evolucao.getPlanoTratamentoProcedimentos() != null && !evolucao.getPlanoTratamentoProcedimentos().isEmpty()) {

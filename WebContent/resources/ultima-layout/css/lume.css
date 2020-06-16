@@ -1514,7 +1514,7 @@ body .ui-button.ui-state-focus {
 }
 */
 body .ui-button.yellow-btn {
-	background-color: #FFC107 !important;
+	background-color: #DED135 !important;
 }
 
 body .ui-button.lime-btn {
@@ -1529,6 +1529,18 @@ body .ui-button.lime-btn.ui-state-hover {
 	background-color: #5D8102;
 }
 
+body .title-help-button {
+	background-color: #C0C0C0 !important;
+}
+	
+body .field-help-button {
+	background-color: #ffffff !important;
+}
+	
+body .div-title {	
+	height: 32px;
+	line-height: 32px;
+}
 body .ui-button.dark-blue-btn {
 	background-color: #3F51B5 !important;
 }
@@ -1641,6 +1653,11 @@ body .md-combo .ui-outputlabel {
 
 .layout-wrapper .layout-main {
 	padding: 80px 5px 5px 5px;
+}
+
+
+table.nopadding td {
+    padding: 0 !important;
 }
 
 .SeparatorFull {

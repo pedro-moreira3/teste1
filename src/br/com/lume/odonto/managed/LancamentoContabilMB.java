@@ -17,6 +17,7 @@ import javax.faces.event.ActionEvent;
 import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.SelectEvent;
+import org.primefaces.event.TabChangeEvent;
 
 import br.com.lume.categoriaMotivo.CategoriaMotivoSingleton;
 import br.com.lume.common.exception.business.UsuarioDuplicadoException;
@@ -27,7 +28,6 @@ import br.com.lume.common.util.Status;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
-import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
@@ -100,10 +100,17 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             c.set(Calendar.DAY_OF_MONTH, 1);
             inicio = c.getTime();
             this.geraLista();
-            this.carregarLancamentosValidar();
+            //this.carregarLancamentosValidar();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
+        }
+    }
+    
+    public void onTabChange(TabChangeEvent event) {
+        System.out.println(event.getTab().getId());
+        if (event.getTab().getId().contains("tab2") && (lancamentosValidar == null || lancamentosValidar.isEmpty())) {
+            this.carregarLancamentosValidar();
         }
     }
 
@@ -230,7 +237,6 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     public void actionValidarLancamento(Lancamento l) {
         try {
             LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
-            FaturaSingleton.getInstance().atualizarStatusFatura(l.getFatura(),null);
             this.carregarLancamentosValidar();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {

@@ -489,7 +489,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                         BigDecimal quantidade = this.getEntity().getEstoque().get(0).getQuantidade();
                         this.getEntity().setEstoque(null);
 
-                        if (this.getbO().persist(this.getEntity())) {
+                        if (MaterialSingleton.getInstance().getBo().persist(this.getEntity())) {
                             if (this.getEntity().getStatus().equals(DEVOLVIDO)) {
                                 this.addInfo(OdontoMensagens.getMensagem("material.salvo.devolvido"), "", true);
                             } else {
@@ -553,7 +553,7 @@ public class MaterialMB extends LumeManagedBean<Material> {
                 }
 
                 this.getEntity().setDataMovimentacao(Calendar.getInstance().getTime());
-                this.getbO().persist(this.getEntity());
+                MaterialSingleton.getInstance().getBo().persist(this.getEntity());
 
                 this.addInfo(OdontoMensagens.getMensagem("material.salvo.movimentado"), "", true);
                 this.actionNew(event);

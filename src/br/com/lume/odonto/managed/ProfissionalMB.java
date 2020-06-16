@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
@@ -269,6 +270,8 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
                 
                 clinica = EmpresaSingleton.getInstance().getBo().find(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                 if(clinica.getDiasSemana() != null && !clinica.getDiasSemana().isEmpty()) {
+                    
+               
                     String diasSemana[] = clinica.getDiasSemana().split(";");
     
                     if (GenericValidator.validarRangeData(clinica.getHoraInicialManha(), clinica.getHoraFinalManha(), true) && GenericValidator.validarRangeData(
@@ -293,6 +296,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
                         return;
                     }
                 }
+
                 if (profissional.getTempoConsulta() == null || profissional.getTempoConsulta() == 0)
                     profissional.setTempoConsulta(clinica.getTempoPadraoConsulta());
             }
@@ -525,13 +529,22 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
 
     public void actionBuscaCep() {
         String cep = this.getEntity().getDadosBasico().getCep();
+        Endereco endereco = null;
         if (cep != null && !cep.equals("")) {
             cep = cep.replaceAll("-", "");
-            Endereco endereco = Endereco.getEndereco(cep);
+            endereco = Endereco.getEndereco(cep);
+        } 
+        if(endereco != null) {
             this.getEntity().getDadosBasico().setBairro(endereco.getBairro());
             this.getEntity().getDadosBasico().setCidade(endereco.getCidade());
             this.getEntity().getDadosBasico().setEndereco(endereco.getRua());
             this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());
+        }else {
+            this.getEntity().getDadosBasico().setBairro("");
+            this.getEntity().getDadosBasico().setCidade("");
+            this.getEntity().getDadosBasico().setEndereco("");
+            this.getEntity().getDadosBasico().setUf("");                
+            addError("Endereço não encontrado!", "");
         }
     }
 

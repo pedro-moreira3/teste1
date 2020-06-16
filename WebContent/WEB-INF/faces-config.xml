@@ -13,10 +13,10 @@
 		</locale-config>
 
 		<resource-bundle>
-			<base-name>br.com.lume.resources.security</base-name>
+			<base-name>br.com.lume.resources.frontend</base-name>
 			<var>msg</var>
 		</resource-bundle>
-		<message-bundle>br.com.lume.resources.security</message-bundle>
+		<message-bundle>br.com.lume.resources.frontend</message-bundle>
 	</application>
 
 	<managed-bean>

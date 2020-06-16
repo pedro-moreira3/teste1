@@ -1,5 +1,6 @@
 package br.com.lume.odonto.managed;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,10 +60,15 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
+    private DataTable tabelaAniversariantes;
     
     private List<String> filtroAtendimento = new ArrayList<String>();
  
-    private List<String> filtroStatusAgendamento; 
+    private List<String> filtroStatusAgendamento;
+    
+    private List<Paciente> aniversariantes;
+    
+    private String filtroAniversariantes;
     
     public static final String SEM_ULTIMO_AGENDAMENTO = "SUA";
         
@@ -71,6 +77,8 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     public static final String SEM_RETORNO_FUTURO = "SRR";
         
     public Retorno retorno;
+    
+    private Date dataInicio, dataFim;
     
     private boolean checkFiltro = false;
     private boolean desabilitaStatusAgendamento = false;
@@ -87,7 +95,13 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     }
     
     public List<Paciente> sugestoesPacientes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query,UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        try {
+            return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            e.printStackTrace();
+        }
+        return null;
     }
     
     public List<Profissional> sugestoesProfissionais(String query) {
@@ -111,6 +125,26 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         return "";
     }
     
+    public void carregarAniversariantes() {
+        try {            
+            this.aniversariantes = PacienteSingleton.getInstance().getBo().listAniversariantes(dataInicio, dataFim, 
+                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            
+        } catch (Exception e) {
+            this.log.error(e);
+            e.printStackTrace();
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Não foi possível carregar os aniversariantes");
+        }
+    }
+    
+    public void limparDlgAniversariantes() {
+        this.aniversariantes = null;
+        this.filtroAniversariantes = "";
+    }
+    
+    public void exportarTabelaAniversariantes(String type) {
+        this.exportarTabela("Aniversariantes", tabelaAniversariantes, type);
+    }
     
     public void mostrarOsPacientes() {
         if(getFiltroStatusAgendamento().contains(SEM_ULTIMO_AGENDAMENTO)) {
@@ -122,7 +156,7 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         }
     }
     public void actionFiltrar(ActionEvent event){
-      
+     
             
             try {
                 if (this.inicio != null && this.fim != null && this.inicio.getTime() > this.fim.getTime()) {
@@ -132,32 +166,38 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
                     this.pacientes = new ArrayList<Paciente>();
                     if(getFiltroStatusAgendamento().contains(SEM_ULTIMO_AGENDAMENTO)) {
                         this.pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteSemAgendamento
-                                (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente);
+                                (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), this.paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente);                       
                     }else {
+                        System.out.println(new Timestamp(System.currentTimeMillis()));
                         this.pacientes = PacienteSingleton.getInstance().getBo().filtraRelatorioPacienteAgendamento
-                                (this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente,this.filtroPorProfissional);   
-                        if(pacientes != null) {
-                            List<Paciente> pacientesTemp = new ArrayList<Paciente>(pacientes);
-                            for (Paciente paciente : pacientesTemp) {
-                                if(paciente.getUltimoAgendamento() != null) {
-                                    if(!filtroAtendimento.contains(paciente.getUltimoAgendamento().getStatusNovo())) {
-                                        this.pacientes.remove(paciente);
-                                    }
-                                }  
-                                if(paciente.getUltimoAgendamento().getInicio().after(this.fim)) {
-                                    this.pacientes.remove(paciente);
-                                }
-                            }  
-                        }
-                    }                 
-                    
+                                (this.inicio, this.fim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), paciente,getConvenio(getFiltroPorConvenio()),this.filtroStatusPaciente
+                                        ,this.filtroPorProfissional);   
+                        System.out.println(new Timestamp(System.currentTimeMillis()));
+                        
+                        pacientes.removeIf(p -> !filtroAtendimento.contains(p.getUltimoAgendamento().getStatusNovo()) || p.getUltimoAgendamento().getInicio().after(this.fim));
+                        
+//                        if(pacientes != null) {
+//                            List<Paciente> pacientesTemp = new ArrayList<Paciente>(pacientes);
+//                            for (Paciente paciente : pacientesTemp) {
+//                                if(paciente.getUltimoAgendamento() != null) {
+//                                    if(!filtroAtendimento.contains(paciente.getUltimoAgendamento().getStatusNovo())) {
+//                                        this.pacientes.remove(paciente);
+//                                    }
+//                                }  
+//                                if(paciente.getUltimoAgendamento().getInicio().after(this.fim)) {
+//                                    this.pacientes.remove(paciente);
+//                                }
+//                            }  
+//                        }
+                        System.out.println(new Timestamp(System.currentTimeMillis()));
+                    }                
+                 
                     if(getFiltroStatusAgendamento().contains(SEM_AGENDAMENTO_FUTURO)) {
                         pacientes.removeIf(paciente -> paciente.getProximoAgendamento() != null);
                     }
                     if(getFiltroStatusAgendamento().contains(SEM_RETORNO_FUTURO)) {
                         pacientes.removeIf(paciente -> paciente.getProximoRetorno() != null);
-                    }
-                    
+                    }                   
                 }
                 this.sugestoesConvenios("todos");
             } catch (Exception e) {
@@ -326,6 +366,99 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
         exportarTabela("Relatório de agendamentos dos Pacientes", tabelaRelatorio, type);
     }
     
+    public void actionTrocaDatasCriacaoAniversariantes(String filtro) {
+        try {
+            Calendar c = Calendar.getInstance();
+            switch(this.filtroAniversariantes) {
+                case "A":
+                    //c.set(Calendar.HOUR_OF_DAY, 1);
+                    this.dataInicio = c.getTime();
+                    
+                    //c.set(Calendar.HOUR_OF_DAY, 23);
+                    dataFim = c.getTime();
+                    break;
+                
+                case "B":
+                    c.add(Calendar.DAY_OF_MONTH, 1);
+                    //c.set(Calendar.HOUR_OF_DAY, 1);
+                    this.dataInicio = c.getTime();
+                    
+                    //c.set(Calendar.HOUR_OF_DAY, 23);
+                    dataFim = c.getTime();
+                    break;
+                    
+                case "C":
+                    //c.set(Calendar.HOUR_OF_DAY, 1);
+                    this.dataInicio = c.getTime();
+                    
+                    c.add(Calendar.DAY_OF_MONTH, 7);
+                    //c.set(Calendar.HOUR_OF_DAY, 23);
+                    dataFim = c.getTime();
+                    break;
+                    
+                case "D":
+                    //c.set(Calendar.HOUR_OF_DAY, 1);
+                    this.dataInicio = c.getTime();
+                    
+                    c.add(Calendar.DAY_OF_MONTH, 15);
+                    //c.set(Calendar.HOUR_OF_DAY, 23);
+                    dataFim = c.getTime();
+                    break;
+                    
+                case "O":
+                    c.add(Calendar.MONTH, 1);
+                    c.set(Calendar.DAY_OF_MONTH, 1);
+                    this.dataInicio = c.getTime();
+                    
+                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    dataFim = c.getTime();
+                    break;
+                
+                case "M":
+                    c.set(Calendar.DAY_OF_MONTH, 1);
+                    dataInicio = c.getTime();
+                    
+                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    dataFim = c.getTime();
+                    break;
+                
+                case "S":
+                    dataFim = c.getTime();
+                    
+                    c.add(Calendar.DAY_OF_MONTH, -7);
+                    dataInicio = c.getTime();
+                    break;
+                    
+                case "Q":
+                    dataFim = c.getTime();
+                    
+                    c.add(Calendar.DAY_OF_MONTH, -15);
+                    dataInicio = c.getTime();
+                    break;
+                    
+                case "T":
+                    c.add(Calendar.MONTH, -1);
+                    c.set(Calendar.DAY_OF_MONTH, 1);
+                    dataInicio = c.getTime();
+                    
+                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    dataFim = c.getTime();
+                    break;
+                    
+                case "":
+                    c.set(Calendar.DAY_OF_MONTH, 1);
+                    dataInicio = c.getTime();
+                    
+                    c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    dataFim = c.getTime();
+                    break;
+            }
+        } catch (Exception e) {
+            log.error("Erro no getDataInicio", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+    
     public Date getInicio() {
         return inicio;
     }
@@ -474,5 +607,45 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
     
     public void setFiltroPorProfissional(Profissional filtroPorProfissional) {
         this.filtroPorProfissional = filtroPorProfissional;
+    }
+
+    public DataTable getTabelaAniversariantes() {
+        return tabelaAniversariantes;
+    }
+
+    public void setTabelaAniversariantes(DataTable tabelaAniversariantes) {
+        this.tabelaAniversariantes = tabelaAniversariantes;
+    }
+
+    public List<Paciente> getAniversariantes() {
+        return aniversariantes;
+    }
+
+    public void setAniversariantes(List<Paciente> aniversariantes) {
+        this.aniversariantes = aniversariantes;
+    }
+
+    public String getFiltroAniversariantes() {
+        return filtroAniversariantes;
+    }
+
+    public void setFiltroAniversariantes(String filtroAniversariantes) {
+        this.filtroAniversariantes = filtroAniversariantes;
+    }
+
+    public Date getDataInicio() {
+        return dataInicio;
+    }
+
+    public void setDataInicio(Date dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    public Date getDataFim() {
+        return dataFim;
+    }
+
+    public void setDataFim(Date dataFim) {
+        this.dataFim = dataFim;
     }
 }

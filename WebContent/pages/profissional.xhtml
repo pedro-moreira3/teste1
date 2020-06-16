@@ -35,8 +35,13 @@
 							<ui:include src="horasUteisProfissional.xhtml" />
 						</p:tab>
 
+						<p:tab id="tab5" title="Configuração de descontos"
+							disabled="#{profissionalMB.entity.id == null || !profissionalMB.admin}">
+							<ui:include src="profissionalDesconto.xhtml" />
+						</p:tab>
+
 						<ui:remove>
-						<p:tab id="tab5" title="Ponto"
+						<p:tab id="tab6" title="Ponto"
 							disabled="#{profissionalMB.entity.id == null}">
 							<ui:include src="profissionalPonto.xhtml" />
 						</p:tab>

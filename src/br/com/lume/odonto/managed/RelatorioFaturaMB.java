@@ -21,10 +21,12 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
+import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.fornecedor.FornecedorSingleton;
+import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.motivo.MotivoSingleton;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.DadosBasico;
@@ -73,10 +75,19 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
         geraListaOrigens();
 
         this.statussFatura = Fatura.getStatusFaturaLista();
+
+        tipoFatura = "RP";
+        atualizaTipoFatura();
     }
 
     public List<Paciente> sugestoesPacientes(String query) {
-        return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        try {
+            return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public List<Profissional> sugestoesProfissionais(String query) {
@@ -216,30 +227,28 @@ public class RelatorioFaturaMB extends LumeManagedBean<Fatura> {
     }
 
     public String valorFatura(Fatura fatura) {
-
-        Locale Local = new Locale("pt", "BR");
-
-        double value = fatura.getDadosTabelaRepasseTotalFatura().doubleValue();
-        DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
-
-        return "R$ " + df.format(value);
+        return formatValue(fatura.getDadosTabelaRepasseTotalFatura().doubleValue());
     }
 
-    public String valorPagoFatura(Fatura fatura) {
-        Locale Local = new Locale("pt", "BR");
-
-        double value = fatura.getDadosTabelaRepasseTotalPago().doubleValue();
-        DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
-
-        return "R$ " + df.format(value);
+    public String valorRecebidoFatura(Fatura fatura) {
+        return formatValue(fatura.getDadosTabelaRepasseTotalPago().doubleValue());
     }
 
-    public String valorPagarFatura(Fatura fatura) {
+    public String valorReceberFatura(Fatura fatura) {
+        return formatValue(fatura.getDadosTabelaRepasseTotalNaoPago().doubleValue());
+    }
+
+    public String valorConferirFatura(Fatura fatura) {
+        return formatValue(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.NAO_VALIDADO).doubleValue());
+    }
+
+    public String valorConferidoFatura(Fatura fatura) {
+        return formatValue(LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(fatura, null, ValidacaoLancamento.VALIDADO).doubleValue());
+    }
+
+    public String formatValue(double value) {
         Locale Local = new Locale("pt", "BR");
-
-        double value = fatura.getDadosTabelaRepasseTotalNaoPago().doubleValue();
         DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
-
         return "R$ " + df.format(value);
     }
 
