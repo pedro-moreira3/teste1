@@ -1026,11 +1026,15 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public boolean temPrimeiraParcelaDiferente() {
-        if (this.negociacaoValorDaParcela != null && this.negociacaoValorDaParcela.compareTo(
-                BigDecimal.ZERO) != 0 && this.negociacaoValorDaPrimeiraParcela != null && this.negociacaoValorDaPrimeiraParcela.compareTo(
-                        BigDecimal.ZERO) != 0 && this.negociacaoValorDaParcela.compareTo(this.negociacaoValorDaPrimeiraParcela) != 0)
-            return true;
-        return false;
+        if(this.negociacaoValorDaParcela == null || new BigDecimal(0).compareTo(this.negociacaoValorDaPrimeiraParcela) == 0) {
+            return false;
+        }
+        return true;
+//        if (this.negociacaoValorDaParcela != null && this.negociacaoValorDaParcela.compareTo(
+//                BigDecimal.ZERO) != 0 && this.negociacaoValorDaPrimeiraParcela != null && this.negociacaoValorDaPrimeiraParcela.compareTo(
+//                        BigDecimal.ZERO) != 0 && this.negociacaoValorDaParcela.compareTo(this.negociacaoValorDaPrimeiraParcela) != 0)
+//            return true;
+//        return false;
     }
 
     public void actionStartConfirmacaNegociacao(NegociacaoFatura negociacaoFatura) {
