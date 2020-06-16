@@ -433,6 +433,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
     }
 
+    @SuppressWarnings("unused")
     private void updateValues(Fatura fatura) {
         updateValues(fatura, false, false);
     }
@@ -855,7 +856,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     private void novoLancamentoAtualizaListaParcelas() {
         this.novoLancamentoParcelas = atualizaListaParcelas(novoLancamentoDataPagamento, novoLancamentoDataCredito, novoLancamentoQuantidadeParcelas, novoLancamentoValorDaPrimeiraParcela,
-                novoLancamentoValorDaParcela, novoLancamentoFormaPagamento);
+                novoLancamentoValorDaParcela, novoLancamentoValorDaPrimeiraParcelaDiferenca, novoLancamentoFormaPagamento);
     }
 
     private void novoLancamentoAtualizaTooltipTarifasDisponiveis() {
@@ -883,8 +884,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
 
         if (novoLancamentoValorDaPrimeiraParcelaDiferenca != null && novoLancamentoValorDaPrimeiraParcelaDiferenca.compareTo(BigDecimal.ZERO) != 0) {
-            novoLancamentoMensagemErroCalculo = "Atenção! Diferença de " + ptFormat.format(
-                    novoLancamentoValorDaPrimeiraParcelaDiferenca) + " na soma das parcelas. " + "Essa diferença será somada na primeira parcela automaticamente.";
+            //novoLancamentoMensagemErroCalculo = "Atenção! Diferença de " + ptFormat.format(
+            //        novoLancamentoValorDaPrimeiraParcelaDiferenca) + " na soma das parcelas. " + "Essa diferença será somada na primeira parcela automaticamente.";
         } else {
             novoLancamentoMensagemErroCalculo = null;
         }
@@ -982,8 +983,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             if (negociacaoValorDaPrimeiraParcela != null && negociacaoValorDaPrimeiraParcelaDirefenca != null)
                 negociacaoValorDaPrimeiraParcela = negociacaoValorDaPrimeiraParcela.add(negociacaoValorDaPrimeiraParcelaDirefenca);
             NegociacaoFaturaSingleton.getInstance().criaNovaNegociacao(getEntity(), getDescontoObjFromParcela(negociacaoQuantidadeParcelas), negociacaoQuantidadeParcelas, negociacaoTipoDesconto,
-                    negociacaoValorDesconto, negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, negociacaoValorTotal, totalSemDesconto, negociacaoObservacao,
-                    UtilsFrontEnd.getProfissionalLogado());
+                    negociacaoValorDesconto, negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, negociacaoValorDaPrimeiraParcelaDirefenca, negociacaoValorTotal, totalSemDesconto,
+                    negociacaoObservacao, UtilsFrontEnd.getProfissionalLogado());
 
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
             updateValues(getEntity(), true, false);
@@ -1026,7 +1027,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public boolean temPrimeiraParcelaDiferente() {
-        if(this.negociacaoValorDaParcela == null || new BigDecimal(0).compareTo(this.negociacaoValorDaPrimeiraParcela) == 0) {
+        if (this.negociacaoValorDaParcela == null || new BigDecimal(0).compareTo(this.negociacaoValorDaPrimeiraParcela) == 0) {
             return false;
         }
         return true;
@@ -1056,6 +1057,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         this.negociacaoValorDesconto = negociacaoFatura.getValorDesconto();
         this.negociacaoValorDaPrimeiraParcela = negociacaoFatura.getValorPrimeiraParcela();
         this.negociacaoValorDaParcela = negociacaoFatura.getValorParcela();
+        this.negociacaoValorDaPrimeiraParcelaDirefenca = negociacaoFatura.getCorrecaoValor();
         this.negociacaoObservacao = negociacaoFatura.getObservacao();
         this.negociacaoMensagemCalculo = null;
         this.negociacaoMensagemErroCalculo = null;
@@ -1202,8 +1204,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         }
 
         if (negociacaoValorDaPrimeiraParcelaDirefenca != null && negociacaoValorDaPrimeiraParcelaDirefenca.compareTo(BigDecimal.ZERO) != 0) {
-            negociacaoMensagemErroCalculo = "Atenção! Diferença de " + ptFormat.format(
-                    negociacaoValorDaPrimeiraParcelaDirefenca) + " na soma das parcelas. " + "Essa diferença será somada na primeira parcela automaticamente.";
+            //negociacaoMensagemErroCalculo = "Atenção! Diferença de " + ptFormat.format(
+            //        negociacaoValorDaPrimeiraParcelaDirefenca) + " na soma das parcelas. " + "Essa diferença será somada na primeira parcela automaticamente.";
         } else {
             negociacaoMensagemErroCalculo = null;
         }
@@ -1302,8 +1304,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private void negociacaoAtualizaListaParcelas() {
         this.negociacaoParcelas = atualizaListaParcelas((negociacaoDataPagamento1Parcela != null ? negociacaoDataPagamento1Parcela : negociacaoDataPagamento), negociacaoDataPagamentoDemaisParcelas,
                 (negociacaoDataCredito1Parcela != null ? negociacaoDataCredito1Parcela : negociacaoDataCredito), negociacaoDataCreditoDemaisParcelas, negociacaoQuantidadeParcelas,
-                negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, (negociacaoFormaPagamento1Parcela != null ? negociacaoFormaPagamento1Parcela : negociacaoFormaPagamento),
-                negociacaoFormaPagamentoDemaisParcelas);
+                negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, negociacaoValorDaPrimeiraParcelaDirefenca,
+                (negociacaoFormaPagamento1Parcela != null ? negociacaoFormaPagamento1Parcela : negociacaoFormaPagamento), negociacaoFormaPagamentoDemaisParcelas);
     }
 
     public String returnStrParcela(int seq) {
@@ -1325,12 +1327,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     };
 
     private List<LancamentoParcelaInfo> atualizaListaParcelas(Date dataPagamento, Date dataCredito, Integer quantidadeParcelas, BigDecimal valorPrimeiraParcela, BigDecimal valorParcela,
-            Tarifa formaPagamento) {
-        return atualizaListaParcelas(dataPagamento, null, dataCredito, null, quantidadeParcelas, valorPrimeiraParcela, valorParcela, formaPagamento, null);
+            BigDecimal correcaoValor, Tarifa formaPagamento) {
+        return atualizaListaParcelas(dataPagamento, null, dataCredito, null, quantidadeParcelas, valorPrimeiraParcela, valorParcela, correcaoValor, formaPagamento, null);
     }
 
     private List<LancamentoParcelaInfo> atualizaListaParcelas(Date dataPagamento, Date dataPagamentoDemaisParcelas, Date dataCredito, Date dataCreditoDemaisParcelas, Integer quantidadeParcelas,
-            BigDecimal valorPrimeiraParcela, BigDecimal valorParcela, Tarifa formaPagamento, Tarifa formaPagamentoDemaisParcelas) {
+            BigDecimal valorPrimeiraParcela, BigDecimal valorParcela, BigDecimal correcaoValor, Tarifa formaPagamento, Tarifa formaPagamentoDemaisParcelas) {
         List<LancamentoParcelaInfo> lancamentos = new ArrayList<>();
 
         Calendar now = null, data = null;
@@ -1354,10 +1356,13 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 int totalParcela = (formaPagamentoDemaisParcelas == null ? quantidadeParcelas : 1);
                 lancamentos.add(new LancamentoParcelaInfo(parcela, parcelaAtual, totalParcela, valorPrimeiraParcela, formaPagamento, dataPagamento1P, dataCredito1P));
             } else {
+                BigDecimal valorParcelaAtual = valorParcela;
+                if (correcaoValor != null && parcela == quantidadeParcelas)
+                    valorParcelaAtual = valorParcelaAtual.add(correcaoValor);
                 int parcelaAtual = (formaPagamentoDemaisParcelas == null ? parcela : parcela - 1);
                 int totalParcela = (formaPagamentoDemaisParcelas == null ? quantidadeParcelas : quantidadeParcelas - 1);
-                lancamentos.add(new LancamentoParcelaInfo(parcela, parcelaAtual, totalParcela, valorParcela, (formaPagamentoDemaisParcelas != null ? formaPagamentoDemaisParcelas : formaPagamento),
-                        (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
+                lancamentos.add(new LancamentoParcelaInfo(parcela, parcelaAtual, totalParcela, valorParcelaAtual,
+                        (formaPagamentoDemaisParcelas != null ? formaPagamentoDemaisParcelas : formaPagamento), (now != null ? now.getTime() : null), (data != null ? data.getTime() : null)));
             }
 
             if ((parcela == 1 && formaPagamentoDemaisParcelas == null) || parcela != 1) {
