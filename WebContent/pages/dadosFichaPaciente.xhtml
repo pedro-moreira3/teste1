@@ -24,7 +24,8 @@ body div.ui-widget-content.ui-tabs {
 			binding="#{tabPacienteMB.tabview}" dynamic="true" cache="false" activeIndex="0">
 
 			<p:ajax event="tabChange" listener="#{tabPacienteMB.onTabChange}"
-				update=":lume:tabViewPaciente, :lume:buttonsFichaPaciente, lume:tabViewPaciente:tab1" />
+				update=":lume:tabViewPaciente, :lume:buttonsFichaPaciente, lume:tabViewPaciente:tab1,
+				:lume:tabViewPaciente:viewAnotacoes" />
 
 			<p:tab id="tab1" title="Dados Cadastrais">
 				<p:outputPanel id="tab1Panel">
