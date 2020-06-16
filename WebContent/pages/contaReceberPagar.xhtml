@@ -694,11 +694,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											</f:facet>
 										</p:column>
 										<p:column headerText="Status"
-											sortBy="#{conferenciaRecebimentoMB.statusLancamentoConferencia(lc)}"
-											filterBy="#{conferenciaRecebimentoMB.statusLancamentoConferencia(lc)}"
+											sortBy="#{lc.statusCompleto}"
+											filterBy="#{lc.statusCompleto}"
 											filterMatchMode="contains">
 											<h:outputText
-												value="#{conferenciaRecebimentoMB.statusLancamentoConferencia(lc)}" />
+												value="#{lc.statusCompleto}" />
 										</p:column>
 										<p:column headerText="Conferência" width="100"
 											exportable="false">

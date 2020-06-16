@@ -386,11 +386,11 @@ hr.hrSaldo {
 					</h:outputText>
 				</p:column>
 				<p:column headerText="Status"
-					sortBy="#{pacienteFinanceiroMB.statusLancamentoConferencia(lc)}"
-					filterBy="#{pacienteFinanceiroMB.statusLancamentoConferencia(lc)}"
+					sortBy="#{lc.statusCompleto}"
+					filterBy="#{lc.statusCompleto}"
 					filterMatchMode="contains">
 					<h:outputText
-						value="#{pacienteFinanceiroMB.statusLancamentoConferencia(lc)}" />
+						value="#{lc.statusCompleto}" />
 				</p:column>
 
 			</p:dataTable>
