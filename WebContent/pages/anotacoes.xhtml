@@ -12,8 +12,8 @@
 			<p:outputPanel id="viewAnotacoes"
 				style="width:720px;vertical-align:center;">
 				<p:editor id="editorAnotacoes" widgetVar="editorAnotacoes"
-					value="#{pacienteMB.anotacoes}" width="600" height="400"
-					/>
+					value="#{pacienteMB.entity.anotacoes}" width="600" height="400"
+					immediate="true" binding="#{pacienteMB.editorAnotacoes}" maxlength="1024"/>
 			</p:outputPanel>
 
 			<p:panelGrid columns="4" layout="grid"

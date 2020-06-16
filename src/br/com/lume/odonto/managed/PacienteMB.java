@@ -113,8 +113,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private String senha, text;
 
     private String filtroStatus = "A";
-    
-    private String anotacoes = "";
+
     private Editor editorAnotacoes;
 
     private List<Especialidade> especialidades;
@@ -166,8 +165,6 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
         this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
-        
-        PrimeFaces.current().executeScript("PF(':lume:viewAnotacoes').update();");
         
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String url = request.getRequestURL().toString();
@@ -226,6 +223,10 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
     }
 
+    public void carregarAnotacoes() {
+        this.editorAnotacoes.setSubmittedValue(this.getEntity().getAnotacoes());
+    }
+    
     public StreamedContent getImagemUsuario() {
         try {
             if (getEntity() != null && getEntity().getNomeImagem() != null) {
@@ -944,7 +945,6 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     
     public void actionPersistAnotacoes(ActionEvent event) {
         try {
-            this.getEntity().setAnotacoes(this.anotacoes);
             PacienteSingleton.getInstance().persist(this.getEntity());
             
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -1238,14 +1238,6 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void setMostrarPerguntasAnamnese(boolean mostrarPerguntasAnamnese) {
         this.mostrarPerguntasAnamnese = mostrarPerguntasAnamnese;
-    }
-
-    public String getAnotacoes() {
-        return anotacoes;
-    }
-
-    public void setAnotacoes(String anotacoes) {
-        this.anotacoes = anotacoes;
     }
 
     public Editor getEditorAnotacoes() {

@@ -98,6 +98,8 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
             pacienteFinanceiroMB.setInicio(null);
             pacienteFinanceiroMB.setFim(null);
             pacienteFinanceiroMB.pesquisar();
+        }else if("Anotações".equals(event.getTab().getTitle())) {
+            pacienteMB.carregarAnotacoes();
         }
     }
 
