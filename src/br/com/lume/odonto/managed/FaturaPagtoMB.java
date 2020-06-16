@@ -704,8 +704,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             //    demaisParcelas.add(novoLancamentoValorDaParcela);
             //LancamentoSingleton.getInstance().novoParcelamento(getEntity(), novoLancamentoQuantidadeParcelas, novoLancamentoValorDaPrimeiraParcela, demaisParcelas, novoLancamentoFormaPagamento,
             //        novoLancamentoDataPagamento, novoLancamentoDataCredito, UtilsFrontEnd.getProfissionalLogado());
-            if (novoLancamentoParcelas != null && novoLancamentoParcelas.size() > 0 && novoLancamentoValorDaPrimeiraParcelaDiferenca != null)
-                novoLancamentoParcelas.get(0).setValor(novoLancamentoParcelas.get(0).getValor().add(novoLancamentoValorDaPrimeiraParcelaDiferenca));
+
+            //if (novoLancamentoParcelas != null && novoLancamentoParcelas.size() > 0 && novoLancamentoValorDaPrimeiraParcelaDiferenca != null)
+            //    novoLancamentoParcelas.get(0).setValor(novoLancamentoParcelas.get(0).getValor().add(novoLancamentoValorDaPrimeiraParcelaDiferenca));
             LancamentoSingleton.getInstance().novoParcelamento(getEntity(), novoLancamentoParcelas, UtilsFrontEnd.getProfissionalLogado());
 
             setEntity(FaturaSingleton.getInstance().getBo().find(getEntity()));
@@ -731,7 +732,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public void actionNovoLancamentoNew() {
-        if (parcelasDisponiveis == null)
+        if (novoLancamentoParcelasDisponiveis == null)
             novoLancamentoAtualizaPossibilidadesParcelas();
         novoLancamentoValorTotal = getEntity().getDadosTabelaRepasseTotalNaoPlanejado();
         novoLancamentoMensagemCalculo = null;
@@ -980,8 +981,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 valorDeDesconto = negociacaoValorDesconto.divide(BigDecimal.valueOf(100)).multiply(negociacaoValorTotal);
             BigDecimal totalSemDesconto = negociacaoValorTotal.subtract(valorDeDesconto);
 
-            if (negociacaoValorDaPrimeiraParcela != null && negociacaoValorDaPrimeiraParcelaDirefenca != null)
-                negociacaoValorDaPrimeiraParcela = negociacaoValorDaPrimeiraParcela.add(negociacaoValorDaPrimeiraParcelaDirefenca);
+            //if (negociacaoValorDaPrimeiraParcela != null && negociacaoValorDaPrimeiraParcelaDirefenca != null)
+            //    negociacaoValorDaPrimeiraParcela = negociacaoValorDaPrimeiraParcela.add(negociacaoValorDaPrimeiraParcelaDirefenca);
             NegociacaoFaturaSingleton.getInstance().criaNovaNegociacao(getEntity(), getDescontoObjFromParcela(negociacaoQuantidadeParcelas), negociacaoQuantidadeParcelas, negociacaoTipoDesconto,
                     negociacaoValorDesconto, negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, negociacaoValorDaPrimeiraParcelaDirefenca, negociacaoValorTotal, totalSemDesconto,
                     negociacaoObservacao, UtilsFrontEnd.getProfissionalLogado());
