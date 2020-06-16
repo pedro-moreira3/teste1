@@ -30,12 +30,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.FileImageOutputStream;
+import javax.persistence.Column;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.component.editor.Editor;
 import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.SelectEvent;
@@ -111,6 +113,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private String senha, text;
 
     private String filtroStatus = "A";
+    
+    private String anotacoes = "";
+    private Editor editorAnotacoes;
 
     private List<Especialidade> especialidades;
 
@@ -161,7 +166,9 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         super(PacienteSingleton.getInstance().getBo());
         this.setClazz(Paciente.class);
         this.setEntity(UtilsFrontEnd.getPacienteSelecionado());
-
+        
+        PrimeFaces.current().executeScript("PF(':lume:viewAnotacoes').update();");
+        
         HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         String url = request.getRequestURL().toString();
 
@@ -934,6 +941,18 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         }
         return null;
     }
+    
+    public void actionPersistAnotacoes(ActionEvent event) {
+        try {
+            this.getEntity().setAnotacoes(this.anotacoes);
+            PacienteSingleton.getInstance().persist(this.getEntity());
+            
+            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+        } catch (Exception e) {
+            this.log.error("Erro no actionPersistAnotacoes", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
+        }
+    }
 
 //------EXPORTAÇÃO TABELAS------
 
@@ -1172,7 +1191,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         // TODO Auto-generated method stub
         return super.getEntity();
     }
-
+    
     public boolean isVisualizar() {
         return visualizar;
     }
@@ -1219,6 +1238,22 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void setMostrarPerguntasAnamnese(boolean mostrarPerguntasAnamnese) {
         this.mostrarPerguntasAnamnese = mostrarPerguntasAnamnese;
+    }
+
+    public String getAnotacoes() {
+        return anotacoes;
+    }
+
+    public void setAnotacoes(String anotacoes) {
+        this.anotacoes = anotacoes;
+    }
+
+    public Editor getEditorAnotacoes() {
+        return editorAnotacoes;
+    }
+
+    public void setEditorAnotacoes(Editor editorAnotacoes) {
+        this.editorAnotacoes = editorAnotacoes;
     }
 
 }

@@ -62,6 +62,15 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     public void carregarLancamentosConferencia() {
         this.setEntityList(null);
         try {
+            Calendar c = Calendar.getInstance();
+            c.setTime(this.dataCreditoFinal);
+            c.add(Calendar.DAY_OF_MONTH, 1);
+            this.dataCreditoFinal = c.getTime();
+            
+            c.setTime(this.dataCreditoInicial);
+            c.add(Calendar.DAY_OF_MONTH, -1);
+            this.dataCreditoInicial = c.getTime();
+            
             setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltros(getDataCreditoInicial(), getDataCreditoFinal(), getFiltroPorPaciente(), 
                     getFormaPagamento(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             if (getEntityList() != null) {
