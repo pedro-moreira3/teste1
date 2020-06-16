@@ -121,7 +121,7 @@ body .height31 input {
 						</p:inputNumber>
 					</h:panelGroup>
 					<h:panelGroup styleClass="lumeField" id="pnJustificativa">
-						<p:outputLabel for="dataPagamento" value="Data de Pagamento: " />
+						<p:outputLabel for="dataPagamento" value="Data de Recebimento: " />
 						<p:calendar id="dataPagamento"
 							value="#{faturaPagtoMB.dataPagamento}" required="true"
 							pattern="dd/MM/yyyy" showWeeksBar="false"
@@ -271,7 +271,7 @@ body .height31 input {
 											oncomplete="novoLancamentoRefazCalculos()" />
 									</p:calendar>
 									<p:outputLabel for="novoLancamentoDataPagamento"
-										value="Data de Pagamento: " />
+										value="Data de Recebimento: " />
 									<p:message for="novoLancamentoDataPagamento" styleClass="msg" />
 								</h:panelGroup>
 
@@ -339,7 +339,7 @@ body .height31 input {
 									</p:column>
 									<p:column filterBy="#{parcela.dataPagamento}"
 										sortBy="#{parcela.dataPagamento}" filterMatchMode="contains"
-										headerText="Data de Pagamento">
+										headerText="Data de Recebimento">
 										<p:calendar value="#{parcela.dataPagamento}"
 											pattern="dd/MM/yyyy" showWeeksBar="false"
 											locale="#{lumeSecurity.locale}"
@@ -420,7 +420,7 @@ body .height31 input {
 									update="editarLancamentoDataCredito" process="@this" />
 							</p:calendar>
 							<p:outputLabel for="editarLancamentoDataPagamento"
-								value="Data de Pagamento: " />
+								value="Data de Recebimento: " />
 							<p:message for="editarLancamentoDataPagamento" styleClass="msg" />
 						</h:panelGroup>
 
@@ -806,7 +806,7 @@ body .height31 input {
 											process="@this, negociacaoFormaPagamentoAprovacao" />
 									</p:calendar>
 									<p:outputLabel for="negociacaoDataPagamentoAprovacao"
-										value="Data de Pagamento: " />
+										value="Data de Recebimento: " />
 									<p:message for="negociacaoDataPagamentoAprovacao"
 										styleClass="msg" />
 								</h:panelGroup>
@@ -877,7 +877,7 @@ body .height31 input {
 											process="@this, negociacaoFormaPagamento1Aprovacao" />
 									</p:calendar>
 									<p:outputLabel for="negociacaoDataPagamento1Aprovacao"
-										value="Data de Pagamento da entrada: " />
+										value="Data de Recebimento da entrada: " />
 									<p:message for="negociacaoDataPagamento1Aprovacao"
 										styleClass="msg" />
 								</h:panelGroup>
@@ -948,7 +948,7 @@ body .height31 input {
 											process="@this, negociacaoFormaPagamento1Aprovacao" />
 									</p:calendar>
 									<p:outputLabel for="negociacaoDataPagamento1Aprovacao"
-										value="Data de Pagamento: " />
+										value="Data de Recebimento: " />
 									<p:message for="negociacaoDataPagamentoDAprovacao"
 										styleClass="msg" />
 								</h:panelGroup>
@@ -1010,7 +1010,7 @@ body .height31 input {
 									</p:column>
 									<p:column filterBy="#{parcela.dataPagamento}"
 										sortBy="#{parcela.dataPagamento}" filterMatchMode="contains"
-										headerText="Data de Pagamento">
+										headerText="Data de Recebimento">
 										<p:calendar value="#{parcela.dataPagamento}"
 											pattern="dd/MM/yyyy" showWeeksBar="false"
 											locale="#{lumeSecurity.locale}"
@@ -1404,7 +1404,7 @@ body .height31 input {
 									sortBy="#{l.dataPagamentoStr}"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterMatchMode="contains" filterBy="#{l.dataPagamentoStr}"
-									width="10%" headerText="Data de Pagamento">
+									width="10%" headerText="Data de Recebimento">
 									<h:outputText value="#{l.dataPagamentoStr}" />
 								</p:column>
 								<p:column
