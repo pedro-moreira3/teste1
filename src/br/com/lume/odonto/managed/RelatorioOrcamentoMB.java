@@ -34,7 +34,7 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
 
     private Logger log = Logger.getLogger(RelatorioOrcamentoMB.class);
 
-    private Date inicio = new Date(), fim = new Date(), aprovacaoInicio, aprovacaoFim;
+    private Date inicio, fim, aprovacaoInicio, aprovacaoFim;
 
    // private List<RelatorioOrcamento> relatorioOrcamentos = new ArrayList<>();
     private List<Orcamento> relatorioOrcamentos = new ArrayList<>();
@@ -59,13 +59,13 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
     public RelatorioOrcamentoMB() {
         super(OrcamentoSingleton.getInstance().getBo());
         this.setClazz(Orcamento.class);
-        Calendar c = Calendar.getInstance();
+      //  Calendar c = Calendar.getInstance();
        // this.fim = c.getTime();
-        c.add(Calendar.MONTH, -1);
-        this.inicio = c.getTime();
-        c = Calendar.getInstance();
-        this.fim = c.getTime(); 
-        this.filtra();
+      //  c.add(Calendar.MONTH, -1);
+      //  this.inicio = c.getTime();
+       // c = Calendar.getInstance();
+       // this.fim = c.getTime(); 
+      //  this.filtra();
     }
 
     public void filtra() {
@@ -270,12 +270,12 @@ public class RelatorioOrcamentoMB extends LumeManagedBean<Orcamento> {
             }
             
             if(this.filtroOrcamento != null && !this.filtroOrcamento.isEmpty()) {
-                if( (this.filtroOrcamento.contains("A")) ) {
+                if( this.filtroOrcamento.contains("A") && !this.filtroOrcamento.contains("I")) {
                     if( !orcamento.isAprovado() || !orcamento.isAtivo())
                         this.relatorioOrcamentos.remove(orcamento);
                 }
                 
-                if( (this.filtroOrcamento.contains("I")) ) {
+                if( this.filtroOrcamento.contains("I") & !this.filtroOrcamento.contains("A") ) {
                     if( orcamento.isAprovado() || !orcamento.isAtivo())
                         this.relatorioOrcamentos.remove(orcamento);
                 }
