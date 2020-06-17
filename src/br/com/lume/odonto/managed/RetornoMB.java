@@ -1,6 +1,7 @@
 package br.com.lume.odonto.managed;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.List;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
-import javax.persistence.Transient;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -17,13 +17,12 @@ import org.primefaces.component.datatable.DataTable;
 import br.com.lume.agendamento.AgendamentoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
-import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Retorno;
-import br.com.lume.odonto.util.OdontoMensagens;
+import br.com.lume.odonto.entity.Retorno.StatusRetorno;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.retorno.RetornoSingleton;
 
@@ -38,15 +37,15 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     private List<Retorno> retornos = new ArrayList<>();
 
     private Date dataIni, dataFim;
-    
-    private String retornar;
-    
+
+    private StatusRetorno retornar;
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRetorno;
 
     public RetornoMB() {
         super(RetornoSingleton.getInstance().getBo());
-        Calendar cal = Calendar.getInstance();        
+        Calendar cal = Calendar.getInstance();
         dataIni = cal.getTime();
         cal.add(Calendar.DAY_OF_MONTH, 7);
         dataFim = cal.getTime();
@@ -56,10 +55,10 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     public void geraLista() {
         try {
-            if( (dataIni != null && dataFim != null) && dataFim.before(dataIni)) {
+            if ((dataIni != null && dataFim != null) && dataFim.before(dataIni)) {
                 this.addError("Erro no intervalo de datas", "Data inicial deve preceder a data final!", true);
-            }else {
-                retornos = RetornoSingleton.getInstance().getBo().listByFiltros(dataIni, dataFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),retornar);
+            } else {
+                retornos = RetornoSingleton.getInstance().getBo().listByFiltros(dataIni, dataFim, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), retornar);
             }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -79,12 +78,12 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
 
     public void persistRetorno(Retorno r) {
         try {
-            
-            if(r.getRetornar().equals("R") || r.getRetornar().equals("N")) {
+
+            if (r.getRetornar() == StatusRetorno.AGUARDANDO_RETORNO || r.getRetornar() == StatusRetorno.NAO_CONSEGUIMOS_CONTATO) {
                 PrimeFaces.current().executeScript("PF('dlgViewRetorno').show();");
                 PrimeFaces.current().ajax().update(":lume:viewRetorno");
             }
-            
+
             RetornoSingleton.getInstance().getBo().persist(r);
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
@@ -113,27 +112,11 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
         PrimeFaces.current().executeScript("PF('dtRetorno').filter()");
         this.geraLista();
     }
-    
-    public String statusRetornoTabela(Retorno retorno) {
-        if(retorno != null && retorno.getRetornar() != null) {
-            switch(retorno.getRetornar()) {
-                case "P":
-                    return "Pendente";
-                case "A":
-                    return "Agendado";
-                case "R":
-                    return "Aguardando Retorno";
-                case "N":
-                    return "Não conseguimos Contato";
-                case "L":
-                    return "Ligar Novamente";
-                case "C":
-                    return "Cancelado";
-            }
-        }
-        return "";
+
+    public List<StatusRetorno> getStatusPossiveis() {
+        return Arrays.asList(StatusRetorno.values());
     }
-    
+
     public void exportarTabela(String type) {
         exportarTabela("Retorno", tabelaRetorno, type);
     }
@@ -147,7 +130,7 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     }
 
     public boolean isObrigatorio() {
-        return this.getEntity().getRetornar().equals(Status.SIM);
+        return this.getEntity().getRetornar() == StatusRetorno.PENDENTE;
     }
 
     public Date getDataIni() {
@@ -165,7 +148,7 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     public void setDataFim(Date dataFim) {
         this.dataFim = dataFim;
     }
-    
+
     public Agendamento getProximoAgendamentoPaciente(Retorno retorno) {
         return AgendamentoSingleton.getInstance().getBo().findDataProximoAgendamentoPaciente(retorno.getPaciente(), Calendar.getInstance().getTime());
     }
@@ -179,13 +162,11 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
         return "";
     }
 
-    
-    public String getRetornar() {
+    public StatusRetorno getRetornar() {
         return retornar;
     }
 
-    
-    public void setRetornar(String retornar) {
+    public void setRetornar(StatusRetorno retornar) {
         this.retornar = retornar;
     }
 
