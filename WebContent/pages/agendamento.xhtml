@@ -312,7 +312,9 @@ div.ui-selectoneradio label {
 								converter="paciente" forceSelection="true"
 								disabled="#{agendamentoMB.entity.id != 0}"
 								required="#{!agendamentoMB.visivel}"
-								styleClass="paciente tallerAutoComplete">
+								styleClass="paciente tallerAutoComplete" 
+								autocomplete="false"
+								>
 
 								<p:column headerText="Código" style="text-align: center;">
 									<h:outputText value="#{p.codigo}" />
