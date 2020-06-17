@@ -76,6 +76,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
             if (getEntityList() != null) {
                 getEntityList().forEach(lancamento -> {
                     lancamento.setPt(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(lancamento.getFatura()));
+                    lancamento.calculaStatusESubStatus();
                 });
                 
                 if(getStatusCredito() != null && !getStatusCredito().equals("T")) {
@@ -112,8 +113,10 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     public void validarLancamentosSelecionados() {
         try {
             for(Lancamento l : this.getLancamentosSelecionadosConferencia()) {
-                LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
-                l.calculaStatusESubStatus();
+                if(l.getDataValidado() == null) {
+                    LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
+                    l.calculaStatusESubStatus();
+                }
             }
             updateSomatorioConferencia();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -126,10 +129,12 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     
     public void actionValidarLancamento(Lancamento l) {
         try {
-            LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
-            l.calculaStatusESubStatus();
-            updateSomatorioConferencia();
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            if(l.getDataValidado() == null) {
+                LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
+                l.calculaStatusESubStatus();
+                updateSomatorioConferencia();
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
@@ -139,10 +144,12 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     
     public void actionNaoValidarLancamento(Lancamento lc) {
         try {
-            LancamentoSingleton.getInstance().naoValidaLancamento(lc, UtilsFrontEnd.getProfissionalLogado());
-            lc.calculaStatusESubStatus();
-            updateSomatorioConferencia();
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            if(lc.getDataValidado() == null) {
+                LancamentoSingleton.getInstance().naoValidaLancamento(lc, UtilsFrontEnd.getProfissionalLogado());
+                lc.calculaStatusESubStatus();
+                updateSomatorioConferencia();
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            }
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);

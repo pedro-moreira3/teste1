@@ -706,14 +706,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 												process="@this,:lume:tv:dtLancamentoValidar"
 												styleClass="GreenButton"
 												oncomplete="PF('dtLancamentoValidar').filter()"
-												title="Valor recebido" />
+												title="Valor recebido"
+												disabled="#{lc.validado == 'S' or lc.validado == 'C'}"/>
 											<p:commandButton icon="White fa fa-thumbs-o-down"
 												actionListener="#{conferenciaRecebimentoMB.actionNaoValidarLancamento(lc)}"
 												update=":lume:tv:dtLancamentoValidar, :lume:tv:tab2"
 												process="@this,:lume:tv:dtLancamentoValidar"
 												styleClass="RedButton"
 												oncomplete="PF('dtLancamentoValidar').filter()"
-												title="Falha no recebimento" />
+												title="Falha no recebimento"
+												disabled="#{lc.validado == 'S' or lc.validado == 'C'}"/>
 										</p:column>
 									</p:dataTable>
 
