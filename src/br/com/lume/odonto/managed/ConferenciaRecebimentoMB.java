@@ -64,11 +64,11 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
         try {
             Calendar c = Calendar.getInstance();
             c.setTime(this.dataCreditoFinal);
-            c.add(Calendar.DAY_OF_MONTH, 1);
+            c.set(Calendar.HOUR_OF_DAY, 23);
             this.dataCreditoFinal = c.getTime();
             
             c.setTime(this.dataCreditoInicial);
-            c.add(Calendar.DAY_OF_MONTH, -1);
+            c.set(Calendar.HOUR_OF_DAY, 0);
             this.dataCreditoInicial = c.getTime();
             
             setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltros(getDataCreditoInicial(), getDataCreditoFinal(), getFiltroPorPaciente(), 
@@ -113,6 +113,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
         try {
             for(Lancamento l : this.getLancamentosSelecionadosConferencia()) {
                 LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
+                l.calculaStatusESubStatus();
             }
             updateSomatorioConferencia();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
@@ -126,6 +127,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     public void actionValidarLancamento(Lancamento l) {
         try {
             LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
+            l.calculaStatusESubStatus();
             updateSomatorioConferencia();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
@@ -138,6 +140,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     public void actionNaoValidarLancamento(Lancamento lc) {
         try {
             LancamentoSingleton.getInstance().naoValidaLancamento(lc, UtilsFrontEnd.getProfissionalLogado());
+            lc.calculaStatusESubStatus();
             updateSomatorioConferencia();
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
