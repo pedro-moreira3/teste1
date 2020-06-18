@@ -195,7 +195,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     private String mensagemCalculoOrcamento = "";
     private BigDecimal numeroParcelaOrcamento = new BigDecimal(0);
 
-   // private String mensagemCalculoOrcamentoDiferenca;
+    // private String mensagemCalculoOrcamentoDiferenca;
     private BigDecimal valorParcela;
     private BigDecimal diferencaCalculoParcelas = new BigDecimal(0);
 
@@ -251,6 +251,11 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     @Override
     public void actionPersist(ActionEvent event) {
         try {
+            if (getEntity().getPlanoTratamentoProcedimentos() != null)
+                for (PlanoTratamentoProcedimento ptp : getEntity().getPlanoTratamentoProcedimentos())
+                    if (!validarAlteracao(ptp))
+                        return;
+
             if (getEntity().getId() != null && getEntity().getId().longValue() != 0) {
 
                 if (getPaciente() == null) {
@@ -1045,7 +1050,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             descontosDisponiveis = new HashMap<Integer, DescontoOrcamento>();
             mensagemCalculoOrcamento = "";
             numeroParcelaOrcamento = new BigDecimal(0);
-        //    mensagemCalculoOrcamentoDiferenca = "";
+            //    mensagemCalculoOrcamentoDiferenca = "";
             valorParcela = new BigDecimal(0);
 
             populaDescontos();
@@ -1071,7 +1076,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void validaDescontos() {
         mensagemCalculoOrcamento = "";
-     //   mensagemCalculoOrcamentoDiferenca = "";
+        //   mensagemCalculoOrcamentoDiferenca = "";
 
         if (quantidadeVezesNegociacaoOrcamento == null && orcamentoSelecionado.getDescontoValor().compareTo(new BigDecimal(0)) != 0) {
             this.addError("Erro", "Selecione a quantidade de parcelas para a negociação");
@@ -1143,14 +1148,15 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
                 diferencaCalculoParcelas = null;
                 if (valorComparar.compareTo(orcamentoSelecionado.getValorTotalComDesconto()) != 0) {
-                    if(valorPrimeiraParcelaOrcamento != null && valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) != 0 ) {
-                        diferencaCalculoParcelas = valorPrimeiraParcelaOrcamento.add(valorParcela.multiply(numeroParcelaOrcamento.subtract(new BigDecimal(1)))).subtract(orcamentoSelecionado.getValorTotalComDesconto());
-                    }else {
+                    if (valorPrimeiraParcelaOrcamento != null && valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) != 0) {
+                        diferencaCalculoParcelas = valorPrimeiraParcelaOrcamento.add(valorParcela.multiply(numeroParcelaOrcamento.subtract(new BigDecimal(1)))).subtract(
+                                orcamentoSelecionado.getValorTotalComDesconto());
+                    } else {
                         diferencaCalculoParcelas = (valorParcela.multiply(numeroParcelaOrcamento)).subtract(orcamentoSelecionado.getValorTotalComDesconto());
                     }
-                  
-                  //  mensagemCalculoOrcamentoDiferenca = "Atenção! Diferença de " + Utils.formataValor(
-                      //      diferencaCalculoParcelas) + " na soma das parcelas. " + "Essa diferença será somada na primeira parcela automaticamente.";
+
+                    //  mensagemCalculoOrcamentoDiferenca = "Atenção! Diferença de " + Utils.formataValor(
+                    //      diferencaCalculoParcelas) + " na soma das parcelas. " + "Essa diferença será somada na primeira parcela automaticamente.";
                 }
             }
         }
@@ -1472,30 +1478,29 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             atualizaValoresOrcamento();
             setOrcamentoSelecionado(OrcamentoSingleton.getInstance().salvaOrcamento(orcamentoSelecionado));
 
-         //   valorPrimeiraParcelaOrcamento = null;
+            //   valorPrimeiraParcelaOrcamento = null;
             valorParcela = null;
-          //  if (diferencaCalculoParcelas != null && diferencaCalculoParcelas.compareTo(new BigDecimal(0)) != 0) {
-               // if (valorPrimeiraParcelaOrcamento == null || valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) == 0) {
-                   // valorPrimeiraParcelaOrcamento = valorPrimeiraParcelaOrcamento.add(diferencaCalculoParcelas);
-              //  } else {
-                //    valorParcela = orcamentoSelecionado.getValorTotalComDesconto().divide(numeroParcelaOrcamento, 2, RoundingMode.HALF_UP);
-                   // valorPrimeiraParcelaOrcamento = valorParcela.add(diferencaCalculoParcelas);
-               //     valorParcela = (orcamentoSelecionado.getValorTotalComDesconto()).divide(numeroParcelaOrcamento.subtract(new BigDecimal(1)), 2,
-                //            RoundingMode.HALF_UP);
-              //  }
-         //   }
-            
-            if(valorPrimeiraParcelaOrcamento != null) {
+            //  if (diferencaCalculoParcelas != null && diferencaCalculoParcelas.compareTo(new BigDecimal(0)) != 0) {
+            // if (valorPrimeiraParcelaOrcamento == null || valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0)) == 0) {
+            // valorPrimeiraParcelaOrcamento = valorPrimeiraParcelaOrcamento.add(diferencaCalculoParcelas);
+            //  } else {
+            //    valorParcela = orcamentoSelecionado.getValorTotalComDesconto().divide(numeroParcelaOrcamento, 2, RoundingMode.HALF_UP);
+            // valorPrimeiraParcelaOrcamento = valorParcela.add(diferencaCalculoParcelas);
+            //     valorParcela = (orcamentoSelecionado.getValorTotalComDesconto()).divide(numeroParcelaOrcamento.subtract(new BigDecimal(1)), 2,
+            //            RoundingMode.HALF_UP);
+            //  }
+            //   }
+
+            if (valorPrimeiraParcelaOrcamento != null) {
                 valorParcela = orcamentoSelecionado.getValorTotalComDesconto().divide(numeroParcelaOrcamento.add(new BigDecimal(1)), 2, RoundingMode.HALF_UP);
-            }else {
+            } else {
                 valorParcela = orcamentoSelecionado.getValorTotalComDesconto().divide(numeroParcelaOrcamento, 2, RoundingMode.HALF_UP);
             }
-            
+
             validaDescontos();
-            NegociacaoOrcamentoSingleton.getInstance().criaNovaNegociacao(getOrcamentoSelecionado(), descontosDisponiveis.get(numeroParcelaOrcamento.intValue()),
-                    numeroParcelaOrcamento.intValue(), getOrcamentoSelecionado().getDescontoTipo(), getOrcamentoSelecionado().getDescontoValor(), valorPrimeiraParcelaOrcamento,
-                    valorParcela, diferencaCalculoParcelas, getOrcamentoSelecionado().getValorTotal(), getOrcamentoSelecionado().getValorTotalComDesconto(),
-                    observacoesCobrancaOrcamento, UtilsFrontEnd.getProfissionalLogado());
+            NegociacaoOrcamentoSingleton.getInstance().criaNovaNegociacao(getOrcamentoSelecionado(), descontosDisponiveis.get(numeroParcelaOrcamento.intValue()), numeroParcelaOrcamento.intValue(),
+                    getOrcamentoSelecionado().getDescontoTipo(), getOrcamentoSelecionado().getDescontoValor(), valorPrimeiraParcelaOrcamento, valorParcela, diferencaCalculoParcelas,
+                    getOrcamentoSelecionado().getValorTotal(), getOrcamentoSelecionado().getValorTotalComDesconto(), observacoesCobrancaOrcamento, UtilsFrontEnd.getProfissionalLogado());
 
             calculaRepasses();
             //actionNew(event);
@@ -1825,7 +1830,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         return String.valueOf(v.doubleValue());
     }
 
-    public void validarAlteracao(PlanoTratamentoProcedimento ptp) {
+    public boolean validarAlteracao(PlanoTratamentoProcedimento ptp) {
         try {
 
             if (this.getEntity().isBconvenio()) {
@@ -1838,6 +1843,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
                 if (ConvenioProcedimentoSingleton.getInstance().isConvenioAtivoEVigente(this.getEntity(), ptp.getProcedimento()))
                     valor = ConvenioProcedimentoSingleton.getInstance().getBo().findByConvenioAndProcedimento(ptp.getConvenio(), ptp.getProcedimento()).getValor();
+                else
+                    valor = ptp.getProcedimento().getValor();
 
                 diferenca = valor.subtract(ptp.getValorDesconto());
 
@@ -1845,10 +1852,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     valorDesconto = (diferenca.divide(valor, BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100));
 
                     if (valorDesconto.doubleValue() > UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue()) {
-                        this.addError("Erro ao salvar registro", "Não é possível dar desconto maior que " + UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue() + "%");
+                        this.addError("Erro ao salvar registro", "Não é possível dar desconto maior que " + UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue() + "% no item " + ptp.getProcedimento().getDescricao());
                         ptp.setValorDesconto(valor);
 
-                        return;
+                        return false;
                     }
                 }
 
@@ -1863,6 +1870,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         } catch (Exception e) {
             this.addError(Mensagens.ERRO_AO_SALVAR_REGISTRO, "");
         }
+
+        return true;
     }
 
     public void validarAlteracao(OrcamentoItem oi) {
