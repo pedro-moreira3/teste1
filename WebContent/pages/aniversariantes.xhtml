@@ -241,7 +241,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<p:commandButton id="pesquisarAniversariantes" value="Pesquisar"
 									styleClass="NavyButton" icon="fa fa-search"
 									actionListener="#{relatorioPacienteAgendamentoMB.carregarAniversariantes}"
-									update="dtAniversariantes" process="@this, dtAniversariantes" />
+									update="dtAniversariantes"
+									process="@this, dtAniversariantes, 
+										dataFinalAniversariantes, dataInicialAniversariantes" />
 							</h:panelGroup>
 
 							<h:panelGroup>
