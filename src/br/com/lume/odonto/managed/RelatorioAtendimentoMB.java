@@ -83,7 +83,7 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
         super(AgendamentoSingleton.getInstance().getBo());
         pieModel = new PieChartModel();
         this.setClazz(Agendamento.class);
-
+        
         if (filtroAtendimento == null) {
             this.filtroAtendimento = new ArrayList<String>();
         }
