@@ -298,6 +298,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         // }
         categoria = getEntity().getMotivo().getCategoria();
         tipoCategoria = getEntity().getMotivo().getCategoria().getTipoCategoria();
+        tipo = getEntity().getMotivo().getTipo();
     }
 
     public List<DadosBasico> geraSugestoes(String query) {
