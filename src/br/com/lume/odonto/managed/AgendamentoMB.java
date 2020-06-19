@@ -234,8 +234,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         } else {
             profissional = null;
         }
-        carregarScheduleTarefas();
-        System.out.println("teste");
+        carregarScheduleTarefas();      
     }
     
     public List<Profissional> sugestoesProfissionais(String query) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,6 +187,26 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
             this.getEntity().setAdicionarLogoOrcamento("S");
             this.getEntity().setRepasseAdicionaTributos("S");
             this.getEntity().setValidarGeraReciboValorZerado("N");
+            
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(new Date());  
+            cal.set(Calendar.HOUR_OF_DAY, 8);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0); 
+            this.getEntity().setHoraInicialManha(cal.getTime());
+            cal.set(Calendar.HOUR_OF_DAY, 12);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0); 
+            this.getEntity().setHoraFinalManha(cal.getTime());
+            cal.set(Calendar.HOUR_OF_DAY, 13);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0); 
+            this.getEntity().setHoraInicialTarde(cal.getTime());
+            cal.set(Calendar.HOUR_OF_DAY, 18);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0); 
+            this.getEntity().setHoraFinalTarde(cal.getTime());  
+            
             EmpresaSingleton.getInstance().getBo().persist(this.getEntity());
             LocalSingleton.getInstance().createLocaisDefault(EmpresaSingleton.getInstance().getBo().find(this.getEntity()).getEmpIntCod());
             TarifaSingleton.getInstance().createTarifasDefault(EmpresaSingleton.getInstance().getBo().find(this.getEntity()).getEmpIntCod());
