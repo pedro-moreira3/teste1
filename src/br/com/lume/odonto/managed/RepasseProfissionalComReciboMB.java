@@ -321,6 +321,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             //novaLista.addAll(getEntityList());
             if (getEntityList() != null && getEntityList().size() > 0) {
 
+                List<PlanoTratamentoProcedimento> removerPtp = new ArrayList<PlanoTratamentoProcedimento>();
                 List<PlanoTratamentoProcedimento> novaLista = new ArrayList<PlanoTratamentoProcedimento>();
                 for (PlanoTratamentoProcedimento ptp : getEntityList()) {
                     if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
@@ -334,6 +335,23 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         if (repasseFaturasItem != null && repasseFaturasItem.getFaturaItemRepasse() != null && repasseFaturasItem.getFaturaItemRepasse().getFatura() != null) {
                             ptp.setFatura(repasseFaturasItem.getFaturaItemRepasse().getFatura());
                         }
+                    }
+                    if (ptp.getRepasseFaturas() != null) {
+                        BigDecimal valorTotal = new BigDecimal(0);
+                        BigDecimal valorPago = new BigDecimal(0);
+                        for (RepasseFaturas repasse : ptp.getRepasseFaturas()) {
+                            if (repasse.getFaturaRepasse().isAtivo()) {
+                                valorTotal = FaturaSingleton.getInstance().getTotal(repasse.getFaturaRepasse());
+                                valorPago = FaturaSingleton.getInstance().getTotalPago(repasse.getFaturaRepasse());
+                            }
+                        }
+
+                        if ((valorTotal.compareTo(valorPago) == 0) || 
+                                (ptp.getDentistaExecutor().getTipoRemuneracao().equals(Profissional.FIXO))) {
+                            removerPtp.add(ptp);
+                            continue;
+                        }
+
                     }
                     if (ptp.getFatura() != null) {
                         ptp.setValorTotal(FaturaSingleton.getInstance().getTotal(ptp.getFatura()));
@@ -379,6 +397,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     novaLista.add(ptp);
                 }
 
+                this.getEntityList().removeIf(p -> removerPtp.contains(p));
+                
+                
                 //precisa deixar apenas ptp sem pendencias
                 //pensar uma maneira melhor de tratar isso
                 for (PlanoTratamentoProcedimento ptp : novaLista) {
@@ -398,8 +419,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), true);
         }
     }
-    
-    public boolean verificaRepasseNaoPago(Profissional profissionalRecibo){
+
+    public boolean verificaRepasseNaoPago(Profissional profissionalRecibo) {
         return ReciboRepasseProfissionalSingleton.getInstance().getBo().existeReciboEmAberto(profissionalRecibo);
     }
 
@@ -469,7 +490,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         //   for (Lancamento lancamento : lancamentos) {
         lancamentosCalculados = new ArrayList<Lancamento>();
         if (lancamentos != null && lancamentos.size() > 0) {
-          
+
             for (Lancamento lancamento : lancamentos) {
                 try {
                     Lancamento lancamentoCalculado = lancamento;
@@ -591,7 +612,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
                         lancamentoCalculado.setDadosCalculoValorARepassarSemCusto(
                                 lancamentoCalculado.getDadosCalculoValorARepassarSemCusto().subtract(lancamentoCalculado.getDadosCalculoValorTaxa()).setScale(2, BigDecimal.ROUND_HALF_UP));
-                        
+
                         lancamentoCalculado.setDadosCalculoPercItemFaturaStr(String.format("R$ %.2f", repasse.getFaturaItem().getValorComDesconto()) + " (" + String.format("%.2f%%",
                                 lancamentoCalculado.getDadosCalculoPercItemSemCusto().multiply(BigDecimal.valueOf(100))) + ")");
                         lancamentoCalculado.setDadosCalculoPercPagtoFaturaStr(String.format("R$ %.2f", repasse.getLancamentoOrigem().getValor()) + " (" + String.format("%.2f%%",
@@ -664,7 +685,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         if (validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) {
             if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) != 0) {
                 pendencias.add("Paciente ainda não pagou o procedimento - verifique os recebimentos;");
-            }else if(ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) == 0) {
+            } else if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) == 0) {
                 pendencias.add("Procedimento com valor de repasse zerado;");
             }
         }
@@ -687,7 +708,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
     public boolean existemPendencias(PlanoTratamentoProcedimento ptp) {
         verificaPendencias(ptp);
-        if(pendencias != null && !pendencias.isEmpty() && pendencias.get(0).equals("Sem pendência!")) {
+        if (pendencias != null && !pendencias.isEmpty() && pendencias.get(0).equals("Sem pendência!")) {
             return false;
         }
         return true;
@@ -716,9 +737,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         try {
             profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
-                if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
-                        Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {
-                    sugestoes.add(p);
+                if(!p.getTipoRemuneracao().equals(Profissional.FIXO)) {
+                    if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
+                            Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {
+                        sugestoes.add(p);
+                    }
                 }
             }
             Collections.sort(sugestoes);

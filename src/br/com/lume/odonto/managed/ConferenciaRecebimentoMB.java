@@ -27,12 +27,12 @@ import br.com.lume.tarifa.TarifaSingleton;
 
 @ManagedBean
 @ViewScoped
-public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
+public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
 
     private Logger log = Logger.getLogger(ConferenciaRecebimentoMB.class);
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     private String periodoCredito;
     private Date dataCreditoInicial;
     private Date dataCreditoFinal;
@@ -45,14 +45,14 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     private BigDecimal somatorioValorTotalConferencia = new BigDecimal(0);
     private List<Lancamento> lancamentosValidar;
     private List<Tarifa> tarifas = new ArrayList<>();
-    
+
     //EXPORTAÇÃO TABELA
     private DataTable tabelaLancamentoConferencia;
-    
+
     public ConferenciaRecebimentoMB() {
         super(LancamentoSingleton.getInstance().getBo());
         this.setClazz(Lancamento.class);
-        
+
         this.periodoCredito = "1";
         this.actionTrocaDatasConferencia();
         this.carregarLancamentosConferencia();
@@ -66,38 +66,38 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
             c.setTime(this.dataCreditoFinal);
             c.set(Calendar.HOUR_OF_DAY, 23);
             this.dataCreditoFinal = c.getTime();
-            
+
             c.setTime(this.dataCreditoInicial);
             c.set(Calendar.HOUR_OF_DAY, 0);
             this.dataCreditoInicial = c.getTime();
-            
-            setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltros(getDataCreditoInicial(), getDataCreditoFinal(), getFiltroPorPaciente(), 
-                    getFormaPagamento(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+
+            setEntityList(LancamentoSingleton.getInstance().getBo().listByFiltros(getDataCreditoInicial(), getDataCreditoFinal(), getFiltroPorPaciente(), getFormaPagamento(),
+                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             if (getEntityList() != null) {
                 getEntityList().forEach(lancamento -> {
                     lancamento.setPt(PlanoTratamentoSingleton.getInstance().getPlanoTratamentoFromFaturaOrigem(lancamento.getFatura()));
                     lancamento.calculaStatusESubStatus();
                 });
-                
-                if(getStatusCredito() != null && !getStatusCredito().equals("T")) {
-                    
-                    if(getStatusCredito().equals("N"))
+
+                if (getStatusCredito() != null && !getStatusCredito().equals("T")) {
+
+                    if (getStatusCredito().equals("N"))
                         getEntityList().removeIf(lc -> !lc.getValidado().equals("N"));
-                    else if(getStatusCredito().equals("S"))
+                    else if (getStatusCredito().equals("S"))
                         getEntityList().removeIf(lc -> !lc.getValidado().equals("S"));
-                    else if(getStatusCredito().equals("E"))
+                    else if (getStatusCredito().equals("E"))
                         getEntityList().removeIf(lc -> lc.getValidado().equals("S") && lc.getValidado().equals("S"));
                 }
-                
+
             }
-            
+
             updateSomatorioConferencia();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
     }
-    
+
     public void geraListaTarifa() {
         try {
             this.setTarifas(TarifaSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
@@ -109,27 +109,39 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
             e.printStackTrace();
         }
     }
-    
+
     public void validarLancamentosSelecionados() {
         try {
-            for(Lancamento l : this.getLancamentosSelecionadosConferencia()) {
-                if(l.getDataValidado() == null) {
-                    LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
-                    l.calculaStatusESubStatus();
+            boolean possuiAlgumLancamentoJaValidado = false;
+
+            for (Lancamento lancamento : this.getLancamentosSelecionadosConferencia()) {
+                if (lancamento.getDataValidado() != null) {
+                    possuiAlgumLancamentoJaValidado = true;
+                    this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), 
+                            "Não é possível validar lançamentos já validados.");
+                    break;
                 }
             }
+
+            if (!possuiAlgumLancamentoJaValidado) {
+                for (Lancamento l : this.getLancamentosSelecionadosConferencia()) {
+                    LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
+                    l.calculaStatusESubStatus();
+                    this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Lançamentos validados.");
+                }
+
+            }
             updateSomatorioConferencia();
-            this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
             log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
             e.printStackTrace();
         }
     }
-    
+
     public void actionValidarLancamento(Lancamento l) {
         try {
-            if(l.getDataValidado() == null) {
+            if (l.getDataValidado() == null) {
                 LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(l, UtilsFrontEnd.getProfissionalLogado());
                 l.calculaStatusESubStatus();
                 updateSomatorioConferencia();
@@ -141,10 +153,10 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
             e.printStackTrace();
         }
     }
-    
+
     public void actionNaoValidarLancamento(Lancamento lc) {
         try {
-            if(lc.getDataValidado() == null) {
+            if (lc.getDataValidado() == null) {
                 LancamentoSingleton.getInstance().naoValidaLancamento(lc, UtilsFrontEnd.getProfissionalLogado());
                 lc.calculaStatusESubStatus();
                 updateSomatorioConferencia();
@@ -160,31 +172,31 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     public List<Paciente> sugestoesPacientes(String query) {
         return PacienteSingleton.getInstance().getBo().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), true);
     }
-    
+
     public void updateSomatorioConferencia() {
-        
+
         this.setSomatorioValorConferidoConferencia(new BigDecimal(0));
         this.setSomatorioValorConferirConferencia(new BigDecimal(0));
         this.setSomatorioValorTotalConferencia(new BigDecimal(0));
-        
-        for(Lancamento l : this.getEntityList()) {
+
+        for (Lancamento l : this.getEntityList()) {
             this.setSomatorioValorConferidoConferencia(this.getSomatorioValorConferidoConferencia().add(this.valorConferido(l)));
             this.setSomatorioValorConferirConferencia(this.getSomatorioValorConferirConferencia().add(this.valorConferir(l)));
-            
-            if(l.getValorComDesconto().compareTo(BigDecimal.ZERO) > 0) {
+
+            if (l.getValorComDesconto().compareTo(BigDecimal.ZERO) > 0) {
                 this.setSomatorioValorTotalConferencia(this.getSomatorioValorTotalConferencia().add(l.getValorComDesconto()));
-            }else {
+            } else {
                 this.setSomatorioValorTotalConferencia(this.getSomatorioValorTotalConferencia().add(l.getValor()));
             }
         }
     }
-    
+
     public void actionTrocaDatasConferencia() {
         try {
 
             this.setDataCreditoInicial(getDataInicio(this.getPeriodoCredito()));
             this.setDataCreditoFinal(getDataFim(this.getPeriodoCredito()));
-            
+
         } catch (Exception e) {
             log.error("Erro no actionTrocaDatasConferencia", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -200,16 +212,16 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
             } else if ("2".equals(filtro)) {
                 c.add(Calendar.DAY_OF_MONTH, -7);
                 dataInicio = c.getTime();
-            } else if ("3".equals(filtro)) {              
+            } else if ("3".equals(filtro)) {
                 c.add(Calendar.DAY_OF_MONTH, -15);
                 dataInicio = c.getTime();
-            } else if ("4".equals(filtro)) {              
+            } else if ("4".equals(filtro)) {
                 c.add(Calendar.DAY_OF_MONTH, -20);
                 dataInicio = c.getTime();
-            } else if ("5".equals(filtro)) {                
+            } else if ("5".equals(filtro)) {
                 c.add(Calendar.DAY_OF_MONTH, -30);
                 dataInicio = c.getTime();
-            } else if ("6".equals(filtro)) {              
+            } else if ("6".equals(filtro)) {
                 c.set(Calendar.DAY_OF_MONTH, -45);
                 dataInicio = c.getTime();
             } else if ("7".equals(filtro)) {
@@ -226,7 +238,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
             return null;
         }
     }
-    
+
     public Date getDataFim(String filtro) {
         Date dataFim = null;
         try {
@@ -243,43 +255,43 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
             return null;
         }
     }
-    
+
     public BigDecimal valorConferir(Lancamento lc) {
-        if(lc.getValidadoPorProfissional() != null) {
+        if (lc.getValidadoPorProfissional() != null) {
             return new BigDecimal(0);
         }
-        if(lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+        if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
             return lc.getValor();
         }
         return lc.getValorComDesconto();
     }
 
     public BigDecimal valorConferido(Lancamento lc) {
-        if(lc.getValidadoPorProfissional() != null) {
-            if(lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+        if (lc.getValidadoPorProfissional() != null) {
+            if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
                 return lc.getValor();
             }
             return lc.getValorComDesconto();
         }
         return new BigDecimal(0);
     }
-    
+
     public BigDecimal valorTotal(Lancamento lc) {
-        if(lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+        if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
             return lc.getValor();
         }
         return lc.getValorComDesconto();
     }
-    
+
     public String statusLancamentoConferencia(Lancamento lc) {
-        if(lc.getValidado().equals("S"))
+        if (lc.getValidado().equals("S"))
             return "Validado com sucesso";
-        else if(lc.getValidado().equals("N"))
+        else if (lc.getValidado().equals("N"))
             return "Não validado";
         else
             return "Validado com erro";
     }
-    
+
     public void exportarTabelaConferencia(String type) {
         exportarTabela("Conferência de recebimentos", getTabelaLancamentoConferencia(), type);
     }
@@ -387,5 +399,5 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento>{
     public void setTarifas(List<Tarifa> tarifas) {
         this.tarifas = tarifas;
     }
-    
+
 }
