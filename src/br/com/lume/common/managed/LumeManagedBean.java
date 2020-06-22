@@ -107,12 +107,12 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     public String getTooltipValue(String tela, String campo) {
         return getMensagemFrontEnd("tooltip." + tela + "." + campo);
     }
-    
-    public static String getMensagemFrontEnd(String key) {     
+
+    public static String getMensagemFrontEnd(String key) {
         ResourceBundle resource = ResourceBundle.getBundle("br.com.lume.resources.frontend");
         return resource.getString(key);
     }
-    
+
     public boolean validaAcao(String acao) {
         try {
             return !this.restricaoBO.isRestrito(acao, this.getLumeSecurity().getUsuario(), this.getLumeSecurity().getObjetoAtual());
@@ -144,6 +144,10 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
 
     public void initUIViewRoot(ActionEvent event) {
         JSFHelper.initUIViewRoot();
+    }
+
+    public boolean fazOrcamento() {
+        return UtilsFrontEnd.getProfissionalLogado().isFazOrcamento();
     }
 
     public void actionPersist(ActionEvent event) {
@@ -340,7 +344,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
             e.printStackTrace();
         }
     }
-    
+
     public void exportarTreeTable(String header, TreeTable tabela, String type) {
 
         ByteArrayInputStream arq;
@@ -401,11 +405,11 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
         }
         return null;
     }
-    
+
     public String getUrlMessage(String mensagem, Paciente paciente) {
         try {
             return WhatsappSingleton.getInstance().getUrlMessage(mensagem, paciente);
-        }catch (Exception e) {
+        } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             return "";
         }
