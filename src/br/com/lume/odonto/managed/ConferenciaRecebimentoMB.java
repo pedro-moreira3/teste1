@@ -85,8 +85,8 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
                         getEntityList().removeIf(lc -> !lc.getValidado().equals("N"));
                     else if (getStatusCredito().equals("S"))
                         getEntityList().removeIf(lc -> !lc.getValidado().equals("S"));
-                    else if (getStatusCredito().equals("E"))
-                        getEntityList().removeIf(lc -> lc.getValidado().equals("S") && lc.getValidado().equals("S"));
+                    else if (getStatusCredito().equals("C"))
+                        getEntityList().removeIf(lc -> !lc.getValidado().equals("C"));
                 }
 
             }
