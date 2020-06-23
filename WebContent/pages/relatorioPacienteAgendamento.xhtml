@@ -614,17 +614,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<h:outputLabel
 											value="#{relatorioPacienteAgendamentoMB.retorno.paciente}" />
 										<h:outputLabel value="Status : " />
+
 										<p:selectOneMenu
-											value="#{relatorioPacienteAgendamentoMB.retorno.retornar}">
+											value="#{relatorioPacienteAgendamentoMB.retorno.retornar}"
+											converter="enumStatusRetorno">
 											<f:selectItem itemValue="#{null}"
 												itemLabel="Selecione uma opção" />
-											<f:selectItem itemLabel="Pendente" itemValue="P" />
-											<f:selectItem itemLabel="Agendado" itemValue="A" />
-											<f:selectItem itemLabel="Aguardando Retorno" itemValue="R" />
-											<f:selectItem itemLabel="Não conseguimos Contato"
-												itemValue="N" />
-											<f:selectItem itemLabel="Ligar Novamente" itemValue="L" />
-											<f:selectItem itemLabel="Cancelado" itemValue="C" />
+											<f:selectItems
+												value="#{relatorioPacienteAgendamentoMB.statusPossiveis}"
+												var="status" itemValue="#{status}"
+												itemLabel="#{status.descricao}" />
 										</p:selectOneMenu>
 										<p:outputLabel value="Data Contato : " for="dtContato" />
 										<p:calendar id="dtContato" required="true"

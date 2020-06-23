@@ -27,6 +27,7 @@ import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.Retorno;
+import br.com.lume.odonto.entity.Retorno.StatusRetorno;
 import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
@@ -155,6 +156,11 @@ public class RelatorioPacienteAgendamentoMB extends LumeManagedBean<Paciente> {
             this.desabilitaStatusAgendamento = false;
         }
     }
+    
+    public List<StatusRetorno> getStatusPossiveis() {
+        return Arrays.asList(StatusRetorno.values());
+    }
+    
     public void actionFiltrar(ActionEvent event){
      
             

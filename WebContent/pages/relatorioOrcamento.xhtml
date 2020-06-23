@@ -19,7 +19,7 @@ ui-selectonemenu-label {
 }
 
 body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
-	margin-top: 2.5px !important;
+	margin-top: 2.4px !important;
 	padding: 0px !important;
 }
 
@@ -287,34 +287,39 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						<p:column filterBy="#{relatorioOrcamentoMB.origemOrcamento(m)}"
 							filterMatchMode="contains"
 							sortBy="#{relatorioOrcamentoMB.origemOrcamento(m)}"
-							filterFunction="#{relatorioOrcamentoMB.filtroSemAcento()}"
+							filterFunction="#{relatorioOrcamentoMB.filtroSemAcento}"
 							headerText="Origem">
 							<h:outputText value="#{relatorioOrcamentoMB.origemOrcamento(m)}" />
 						</p:column>
 
 						<p:column filterBy="#{m.profissionalCriacao}"
 							sortBy="#{m.profissionalCriacao}" filterMatchMode="contains"
+							filterFunction="#{relatorioOrcamentoMB.filtroSemAcento}"
 							headerText="Criado por">
 							<h:outputText value="#{m.profissionalCriacao}" title="#{m.id}" />
 						</p:column>
 
-						<p:column filterBy="#{m.dataStr}" sortBy="#{m.dataCriacaoStr}"
+						<p:column filterBy="#{m.dataCriacaoStr}" sortBy="#{m.dataCriacaoStr}"
+						filterFunction="#{relatorioOrcamentoMB.filtroSemAcento}"
 							filterMatchMode="contains" headerText="Data de criação">
 							<h:outputText value="#{m.dataCriacaoStr}" />
 						</p:column>
 
 						<p:column filterBy="#{m.status}" sortBy="#{m.status}"
+						filterFunction="#{relatorioOrcamentoMB.filtroSemAcento}"
 							filterMatchMode="contains" headerText="Status">
 							<h:outputText value="#{m.status}" />
 						</p:column>
 
 						<p:column filterBy="#{m.dataAprovacaoStr}"
+						filterFunction="#{relatorioOrcamentoMB.filtroSemAcento}"
 							sortBy="#{m.dataAprovacaoStr}" filterMatchMode="contains"
 							headerText="Data de aprovação">
 							<h:outputText value="#{m.dataAprovacaoStr}" />
 						</p:column>
 
 						<p:column
+						filterFunction="#{relatorioOrcamentoMB.filtroSemAcento}"
 							filterBy="#{m.profissionalAprovacao.dadosBasico.getPrefixoNome()}"
 							sortBy="#{m.profissionalAprovacao.dadosBasico.getPrefixoNome()}"
 							filterMatchMode="contains" headerText="Registro de aprovação por">
@@ -322,7 +327,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								value="#{m.profissionalAprovacao.dadosBasico.getPrefixoNome()}" />
 						</p:column>
 
-						<p:column filterBy="#{m.valorTotal}"
+						<p:column filterBy="#{m.valorTotalSemDesconto}"						
 							sortBy="#{m.valorTotalSemDesconto}" filterMatchMode="contains"
 							headerText="Valor Total(R$)">
 							<h:outputText value="#{m.valorTotalSemDesconto}">
@@ -337,7 +342,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</f:facet>
 						</p:column>
 
-						<p:column filterBy="#{m.valorTotalDesconto}"
+						<p:column filterBy="#{m.valorTotalComDesconto}"						
 							sortBy="#{m.valorTotalComDesconto}" filterMatchMode="contains"
 							headerText="Valor com Desconto(R$)">
 							<h:outputText value="#{m.valorTotalComDesconto}">
@@ -354,6 +359,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:column>
 
 						<p:column filterBy="#{m.valorPago}" sortBy="#{m.valorPago}"
+					
 							filterMatchMode="contains" headerText="Valor pago(R$)">
 							<h:outputText value="#{m.valorPago}">
 								<f:convertNumber currencySymbol="R$" type="currency"
@@ -368,6 +374,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						</p:column>
 
 						<p:column filterBy="#{relatorioOrcamentoMB.statusPagamento(m)}"
+						filterFunction="#{relatorioOrcamentoMB.filtroSemAcento}"
 							sortBy="#{relatorioOrcamentoMB.statusPagamento(m)}"
 							filterMatchMode="contains" headerText="Status pagamento">
 							<h:outputText value="#{relatorioOrcamentoMB.statusPagamento(m)}" />

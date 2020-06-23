@@ -214,7 +214,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
             }
         }
     }
-
+    
     public void mostrarPerguntasAnamnese() {
         this.mostrarPerguntasAnamnese = true;
         anamneses = new ArrayList<>();

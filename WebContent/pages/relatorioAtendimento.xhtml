@@ -146,7 +146,7 @@ ui-selectonemenu-label {
 }
 
 body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
-	margin-top: 2.5px !important;
+	margin-top: 2.4px !important;
 	padding: 0px !important;
 }
 
@@ -487,7 +487,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Convênio">
 								<h:outputText
-									value="#{atendimento.paciente.convenio.dadosBasico.nome}" />
+									value="#{atendimento.planoTratamento.convenio.dadosBasico.nome}" />
 							</p:column>
 
 							<p:column filterBy="#{atendimento.profissional.dadosBasico.nome}"

@@ -158,7 +158,7 @@ ui-selectonemenu-label {
 }
 
 body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
-	margin-top: 2.5px !important;
+	margin-top: 2.4px !important;
 	padding: 0px !important;
 }
 
@@ -389,10 +389,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									<p:ajax process="@this" />
 
 									<f:selectItem
-										itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Finalizados&lt;/div&gt;"
+										itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Executados&lt;/div&gt;"
 										itemValue="F" itemEscaped="false" />
 									<f:selectItem
-										itemLabel="&lt;div&gt;&lt;div class='agendamentoConsultaInicial legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Não finalizados&lt;/div&gt;"
+										itemLabel="&lt;div&gt;&lt;div class='agendamentoConsultaInicial legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Não executados&lt;/div&gt;"
 										itemValue="N" itemEscaped="false" />
 									<f:selectItem
 										itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
@@ -411,7 +411,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 											icon="White fa fa fa-search"
 											action="#{relatorioProcedimentoMB.popularLista}"
 											update=":lume:dtRelProcedimento"
-											process="@this,:lume:filtroRelatorio"
+											process="@this,:lume:filtroRelatorio, dtRelProcedimento"
 											styleClass="OrangeButton" />
 									</h:panelGroup>
 
@@ -502,8 +502,18 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:column>
 
 							<p:column
-								filterBy="#{procedimento.planoTratamento.finalizadoPorProfissional.dadosBasico.nome}"
-								sortBy="#{procedimento.planoTratamento.finalizadoPorProfissional.dadosBasico.nome}"
+								filterBy="#{procedimento.dentistaExecutor.dadosBasico.nome}"
+								sortBy="#{procedimento.dentistaExecutor.dadosBasico.nome}"
+								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
+								filterMatchMode="contains"
+								headerText="Dentista executor">
+								<h:outputText
+									value="#{procedimento.dentistaExecutor.dadosBasico.prefixoNome}" />
+							</p:column>
+
+							<p:column
+								filterBy="#{procedimento.finalizadoPorProfissional.dadosBasico.nome}"
+								sortBy="#{procedimento.finalizadoPorProfissional.dadosBasico.nome}"
 								filterFunction="#{relatorioProcedimentoMB.filtroSemAcento}"
 								filterMatchMode="contains"
 								headerText="Procedimento finalizado por">

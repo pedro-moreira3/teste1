@@ -285,7 +285,10 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
         double value = lancamento.getValor().doubleValue();
         DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
-
+        
+        if(lancamento.getTipo().equals("Pagar") && lancamento.getMotivo().getSigla().equals(Motivo.PAGAMENTO_PROFISSIONAL))
+            value = value*(-1);
+            
         return "R$ " + df.format(value);
     }
 
@@ -295,6 +298,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         // }
         categoria = getEntity().getMotivo().getCategoria();
         tipoCategoria = getEntity().getMotivo().getCategoria().getTipoCategoria();
+        tipo = getEntity().getMotivo().getTipo();
     }
 
     public List<DadosBasico> geraSugestoes(String query) {

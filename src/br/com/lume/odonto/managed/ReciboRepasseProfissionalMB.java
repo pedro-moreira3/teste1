@@ -32,8 +32,8 @@ import br.com.lume.lancamentoContabil.LancamentoContabilSingleton;
 import br.com.lume.odonto.entity.Lancamento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional;
-import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamento;
 import br.com.lume.odonto.entity.ReciboRepasseProfissional.StatusRecibo;
+import br.com.lume.odonto.entity.ReciboRepasseProfissionalLancamento;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.planoTratamentoProcedimentoCusto.PlanoTratamentoProcedimentoCustoSingleton;
@@ -59,12 +59,12 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     private List<Profissional> profissionaisRecibo;
     private HashMap<Profissional, Integer> profissionaisReciboLancamentos;
     private HashMap<Profissional, Double> profissionaisReciboValores;
-    
+
     List<ReciboRepasseProfissionalLancamento> recibosAgrupados;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaLancamentos, tabelaRecibos;
-    
+
     private int quantidadeRepasses = 0;
 
     public ReciboRepasseProfissionalMB() {
@@ -208,7 +208,7 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     public void preparaVisualizacao(ReciboRepasseProfissional recibo) {
         setEntity(recibo);
         if (getEntity().getReciboLancamentos() != null && !getEntity().getReciboLancamentos().isEmpty()) {
-            List<Long> idsPtps = new ArrayList<Long>();
+            //List<Long> idsPtps = new ArrayList<Long>();
             Map<Long, ReciboRepasseProfissionalLancamento> recibosMap = new HashMap<Long, ReciboRepasseProfissionalLancamento>();
             getEntity().getReciboLancamentos().forEach(repasseRecibo -> {
                 try {
@@ -225,28 +225,27 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                         }
                     }
                     repasseRecibo.setValorTotalRepassar(FaturaSingleton.getInstance().getTotal(repasseRecibo.getLancamento().getFatura()));
-                    if(recibosMap.containsKey(repasseRecibo.getLancamento().getPtp().getId())) {
-                       // BigDecimal soma = repasseRecibo.getLancamento().getValor().add(recibosMap.get(repasseRecibo.getLancamento().getPtp().getId()).getLancamento().getValor());
-                        BigDecimal somaApagar = repasseRecibo.getDados().getValorAPagar().add(recibosMap.get(repasseRecibo.getLancamento().getPtp().getId()).getDados().getValorAPagar());
-                     //   {reciboLancamento.dados.valorAPagar                        
-                      //  repasseRecibo.getLancamento().setValor(soma);
-                        repasseRecibo.getDados().setValorAPagar(somaApagar);                       
-                        recibosMap.put(repasseRecibo.getLancamento().getPtp().getId(),repasseRecibo);
-                    }else {
-                        recibosMap.put(repasseRecibo.getLancamento().getPtp().getId(), repasseRecibo);                      
+                    if (recibosMap.containsKey(repasseRecibo.getLancamento().getPtp().getId())) {
+                        // BigDecimal soma = repasseRecibo.getLancamento().getValor().add(recibosMap.get(repasseRecibo.getLancamento().getPtp().getId()).getLancamento().getValor());
+                        //BigDecimal somaApagar = repasseRecibo.getDados().getValorAPagar().add(recibosMap.get(repasseRecibo.getLancamento().getPtp().getId()).getDados().getValorAPagar());
+                        //   {reciboLancamento.dados.valorAPagar                        
+                        //  repasseRecibo.getLancamento().setValor(soma);
+                        //repasseRecibo.getDados().setValorAPagar(somaApagar);
+                        recibosMap.put(repasseRecibo.getLancamento().getPtp().getId(), repasseRecibo);
+                    } else {
+                        recibosMap.put(repasseRecibo.getLancamento().getPtp().getId(), repasseRecibo);
                     }
-                
-                    
+
                 } catch (Exception e) {
                     repasseRecibo.getLancamento().setPtp(null);
                 }
             });
             recibosAgrupados = new ArrayList<ReciboRepasseProfissionalLancamento>();
-            for (Map.Entry<Long,ReciboRepasseProfissionalLancamento> entry : recibosMap.entrySet())  
-                recibosAgrupados.add(entry.getValue());     
-            
+            for (Map.Entry<Long, ReciboRepasseProfissionalLancamento> entry : recibosMap.entrySet())
+                recibosAgrupados.add(entry.getValue());
+
             quantidadeRepasses = recibosAgrupados.size();
-            
+
         }
         PrimeFaces.current().executeScript("PF('dlgVisualizarRecibo').show()");
     }
@@ -598,22 +597,18 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         this.lancMesesAnterioresRepasse = lancMesesAnterioresRepasse;
     }
 
-    
     public List<ReciboRepasseProfissionalLancamento> getRecibosAgrupados() {
         return recibosAgrupados;
     }
 
-    
     public void setRecibosAgrupados(List<ReciboRepasseProfissionalLancamento> recibosAgrupados) {
         this.recibosAgrupados = recibosAgrupados;
     }
 
-    
     public int getQuantidadeRepasses() {
         return quantidadeRepasses;
     }
 
-    
     public void setQuantidadeRepasses(int quantidadeRepasses) {
         this.quantidadeRepasses = quantidadeRepasses;
     }
