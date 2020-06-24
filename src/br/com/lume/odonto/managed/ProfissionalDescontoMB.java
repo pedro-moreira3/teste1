@@ -79,6 +79,10 @@ public class ProfissionalDescontoMB extends LumeManagedBean<DescontoOrcamento> {
     public void profissionalFazOrcamento() {
         try {
             ProfissionalSingleton.getInstance().getBo().persist(this.profissionalMB.getEntity());
+            profissionalMB.setEntity(ProfissionalSingleton.getInstance().getBo().find(this.profissionalMB.getEntity()));
+            if(UtilsFrontEnd.getProfissionalLogado() != null && profissionalMB.getEntity().getId().longValue() ==
+                    UtilsFrontEnd.getProfissionalLogado().getId().longValue())
+                UtilsFrontEnd.setProfissionalLogado(profissionalMB.getEntity());
             this.addInfo("Sucesso ao registrar a alteração", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
         } catch (Exception e) {
             this.addError("Erro ao registrar a alteração", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
