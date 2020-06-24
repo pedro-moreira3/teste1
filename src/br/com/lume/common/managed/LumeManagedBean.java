@@ -42,6 +42,8 @@ import br.com.lume.security.bo.RestricaoBO;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.managed.LumeSecurity;
 import br.com.lume.whatsapp.WhatsappSingleton;
+import org.primefaces.component.treetable.TreeTable;
+
 
 public abstract class LumeManagedBean<E extends Serializable> implements Serializable {
 
@@ -99,6 +101,8 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     public void setEntity(E entity) {
         this.entity = entity;
     }
+    
+    
 
     public boolean isEstoqueCompleto() {
         return EmpresaBO.isEstoqueCompleto(UtilsFrontEnd.getEmpresaLogada());
