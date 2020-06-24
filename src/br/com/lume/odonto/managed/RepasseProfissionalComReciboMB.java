@@ -346,7 +346,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             }
                         }
 
-                        if ((valorTotal.compareTo(valorPago) == 0) || 
+                        if ((valorTotal.compareTo(valorPago) == 0 && valorTotal.compareTo(new BigDecimal(0)) != 0) ||
                                 (ptp.getDentistaExecutor().getTipoRemuneracao().equals(Profissional.FIXO))) {
                             removerPtp.add(ptp);
                             continue;

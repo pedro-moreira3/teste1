@@ -302,64 +302,64 @@ body .height31 input {
 
 									</p:outputPanel>
 								</p:outputPanel>
-
-								<p:dataTable emptyMessage="Nenhuma parcela criada ainda."
-									id="novoLancamentoParcelasTable" filterDelay="1500"
-									reflow="true" value="#{faturaPagtoMB.novoLancamentoParcelas}"
-									var="parcela" rows="10" paginator="true" rowKey="#{parcela}"
-									paginatorPosition="bottom"
-									widgetVar="dtNovoLancamentoParcelasTable">
-									<f:facet name="header">Lista de Parcelas a serem criadas</f:facet>
-									<p:column filterBy="#{parcela.seq}" sortBy="#{parcela.seq}"
-										filterMatchMode="contains" headerText="Nº" width="30">
-										<h:outputText value="#{parcela.seq}" />
-									</p:column>
-									<p:column filterBy="#{parcela.valor}" sortBy="#{parcela.valor}"
-										filterMatchMode="contains" headerText="Valor da Parcela">
-										<h:outputText value="#{parcela.valor}">
-											<f:convertNumber type="currency" currencySymbol="R$"
-												maxFractionDigits="2" />
-										</h:outputText>
-									</p:column>
-									<p:column filterBy="#{parcela.formaPagamento.produtoStr}"
-										sortBy="#{parcela.formaPagamento.produtoStr}"
-										filterMatchMode="contains" headerText="Forma de Pagamento">
-
-										<p:selectOneMenu converter="tarifa"
-											value="#{parcela.formaPagamento}">
-											<f:selectItem itemValue="#{null}"
-												itemLabel="Selecione uma Forma de Pagamento:" />
-											<f:selectItems
-												value="#{faturaPagtoMB.novoLancamentoTarifasDisponiveisEEntrada}"
-												var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
-											<p:ajax event="change" update="novoLancamentoParcelasTable"
-												process="@this" />
-										</p:selectOneMenu>
-
-									</p:column>
-									<p:column filterBy="#{parcela.dataPagamento}"
-										sortBy="#{parcela.dataPagamento}" filterMatchMode="contains"
-										headerText="Data de Recebimento">
-										<p:calendar value="#{parcela.dataPagamento}"
-											pattern="dd/MM/yyyy" showWeeksBar="false"
-											locale="#{lumeSecurity.locale}"
-											timeZone="#{lumeSecurity.timeZone}" navigator="true"
-											yearRange="-10:+10"
-											styleClass="listaLancamentoColunaDataPagamento">
-											<p:ajax event="dateSelect"
-												update="novoLancamentoParcelasTable" process="@this" />
-										</p:calendar>
-									</p:column>
-									<p:column filterBy="#{parcela.dataCredito}"
-										sortBy="#{parcela.dataCredito}" filterMatchMode="contains"
-										headerText="Data de Crédito">
-										<h:outputText value="#{parcela.dataCredito}">
-											<f:convertDateTime pattern="dd/MM/yyyy" />
-										</h:outputText>
-									</p:column>
-								</p:dataTable>
 							</p:panelGrid>
 						</p:outputPanel>
+
+						<p:dataTable emptyMessage="Nenhuma parcela criada ainda."
+							id="novoLancamentoParcelasTable" filterDelay="1500" reflow="true"
+							value="#{faturaPagtoMB.novoLancamentoParcelas}" var="parcela"
+							rows="10" paginator="true" rowKey="#{parcela}"
+							paginatorPosition="bottom"
+							widgetVar="dtNovoLancamentoParcelasTable">
+							<f:facet name="header">Lista de Parcelas a serem criadas</f:facet>
+							<p:column filterBy="#{parcela.seq}" sortBy="#{parcela.seq}"
+								filterMatchMode="contains" headerText="Nº" width="30">
+								<h:outputText value="#{parcela.seq}" />
+							</p:column>
+							<p:column filterBy="#{parcela.valor}" sortBy="#{parcela.valor}"
+								filterMatchMode="contains" headerText="Valor da Parcela">
+								<h:outputText value="#{parcela.valor}">
+									<f:convertNumber type="currency" currencySymbol="R$"
+										maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+							<p:column filterBy="#{parcela.formaPagamento.produtoStr}"
+								sortBy="#{parcela.formaPagamento.produtoStr}"
+								filterMatchMode="contains" headerText="Forma de Pagamento">
+
+								<p:selectOneMenu converter="tarifa"
+									value="#{parcela.formaPagamento}">
+									<f:selectItem itemValue="#{null}"
+										itemLabel="Selecione uma Forma de Pagamento:" />
+									<f:selectItems
+										value="#{faturaPagtoMB.novoLancamentoTarifasDisponiveisEEntrada}"
+										var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+									<p:ajax event="change" update="novoLancamentoParcelasTable"
+										process="@this" />
+								</p:selectOneMenu>
+
+							</p:column>
+							<p:column filterBy="#{parcela.dataPagamento}"
+								sortBy="#{parcela.dataPagamento}" filterMatchMode="contains"
+								headerText="Data de Recebimento">
+								<p:calendar value="#{parcela.dataPagamento}"
+									pattern="dd/MM/yyyy" showWeeksBar="false"
+									locale="#{lumeSecurity.locale}"
+									timeZone="#{lumeSecurity.timeZone}" navigator="true"
+									yearRange="-10:+10"
+									styleClass="listaLancamentoColunaDataPagamento">
+									<p:ajax event="dateSelect" update="novoLancamentoParcelasTable"
+										process="@this" />
+								</p:calendar>
+							</p:column>
+							<p:column filterBy="#{parcela.dataCredito}"
+								sortBy="#{parcela.dataCredito}" filterMatchMode="contains"
+								headerText="Data de Crédito">
+								<h:outputText value="#{parcela.dataCredito}">
+									<f:convertDateTime pattern="dd/MM/yyyy" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
 
 					</p:scrollPanel>
 				</p:outputPanel>
@@ -756,7 +756,8 @@ body .height31 input {
 								</p:panelGrid>
 							</p:fieldset>
 
-							<p:panelGrid columns="4" layout="grid" style="margin-top: 20px;" id="pnlConfirmaNegociacaoDados"
+							<p:panelGrid columns="4" layout="grid" style="margin-top: 20px;"
+								id="pnlConfirmaNegociacaoDados"
 								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 								<h:panelGroup styleClass="md-combo"
@@ -981,9 +982,12 @@ body .height31 input {
 									paginatorPosition="bottom"
 									widgetVar="dtNegociacaoParcelasTable">
 									<f:facet name="header">Lista de Parcelas a serem criadas</f:facet>
-									<p:column filterBy="#{faturaPagtoMB.returnStrParcela(parcela.seq)}" sortBy="#{faturaPagtoMB.returnStrParcela(parcela.seq)}"
+									<p:column
+										filterBy="#{faturaPagtoMB.returnStrParcela(parcela.seq)}"
+										sortBy="#{faturaPagtoMB.returnStrParcela(parcela.seq)}"
 										filterMatchMode="contains" headerText="Parcela" width="50">
-										<h:outputText value="#{faturaPagtoMB.returnStrParcela(parcela.seq)}" />
+										<h:outputText
+											value="#{faturaPagtoMB.returnStrParcela(parcela.seq)}" />
 									</p:column>
 									<p:column filterBy="#{parcela.valor}" sortBy="#{parcela.valor}"
 										filterMatchMode="contains" headerText="Valor da Parcela">

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
@@ -267,17 +266,15 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             List<HorasUteisProfissional> horas = HorasUteisProfissionalSingleton.getInstance().getBo().listByProfissional(profissional);
 
             if (horas == null || horas.isEmpty()) {
-                
+
                 clinica = EmpresaSingleton.getInstance().getBo().find(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-                if(clinica.getDiasSemana() != null && !clinica.getDiasSemana().isEmpty()) {
-                    
-               
+                if (clinica.getDiasSemana() != null && !clinica.getDiasSemana().isEmpty()) {
+
                     String diasSemana[] = clinica.getDiasSemana().split(";");
-    
-                    if (GenericValidator.validarRangeData(clinica.getHoraInicialManha(), clinica.getHoraFinalManha(), true) && GenericValidator.validarRangeData(
-                            clinica.getHoraInicialTarde(), clinica.getHoraFinalTarde(),
-                            true) && clinica.getHoraFinalManha().before(clinica.getHoraInicialTarde())) {
-    
+
+                    if (GenericValidator.validarRangeData(clinica.getHoraInicialManha(), clinica.getHoraFinalManha(), true) && GenericValidator.validarRangeData(clinica.getHoraInicialTarde(),
+                            clinica.getHoraFinalTarde(), true) && clinica.getHoraFinalManha().before(clinica.getHoraInicialTarde())) {
+
                         for (String diaSemana : diasSemana) {
                             HorasUteisProfissional horasUteis = new HorasUteisProfissional();
                             horasUteis.setId(0l);
@@ -290,7 +287,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
                             horasUteis.setHoraFimTarde(clinica.getHoraFinalTarde());
                             HorasUteisProfissionalSingleton.getInstance().getBo().persist(horasUteis);
                         }
-    
+
                     } else {
                         this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Inconsistência nos horários dos profissionais");
                         return;
@@ -363,6 +360,10 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
             }
 
             ProfissionalSingleton.getInstance().getBo().persist(this.getEntity());
+            setEntity(ProfissionalSingleton.getInstance().getBo().find(this.getEntity()));
+            if (UtilsFrontEnd.getProfissionalLogado() != null && getEntity().getId().longValue() == UtilsFrontEnd.getProfissionalLogado().getId().longValue())
+                UtilsFrontEnd.setProfissionalLogado(getEntity());
+
             this.gerarHorasPadraoProfissional(getEntity());
             if (this.getEntity().equals(UtilsFrontEnd.getEmpresaLogada())) {
                 UtilsFrontEnd.setProfissionalLogado(this.getEntity());
@@ -533,17 +534,17 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         if (cep != null && !cep.equals("")) {
             cep = cep.replaceAll("-", "");
             endereco = Endereco.getEndereco(cep);
-        } 
-        if(endereco != null) {
+        }
+        if (endereco != null) {
             this.getEntity().getDadosBasico().setBairro(endereco.getBairro());
             this.getEntity().getDadosBasico().setCidade(endereco.getCidade());
             this.getEntity().getDadosBasico().setEndereco(endereco.getRua());
             this.getEntity().getDadosBasico().setUf(endereco.getEstado().toUpperCase().trim());
-        }else {
+        } else {
             this.getEntity().getDadosBasico().setBairro("");
             this.getEntity().getDadosBasico().setCidade("");
             this.getEntity().getDadosBasico().setEndereco("");
-            this.getEntity().getDadosBasico().setUf("");                
+            this.getEntity().getDadosBasico().setUf("");
             addError("Endereço não encontrado!", "");
         }
     }

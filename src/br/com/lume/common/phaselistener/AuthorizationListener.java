@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import br.com.lume.common.util.JSFHelper;
-
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.security.LogAcessoSingleton;
 import br.com.lume.security.ObjetoSingleton;
 import br.com.lume.security.SistemaSingleton;
@@ -48,9 +48,13 @@ public class AuthorizationListener implements PhaseListener {
         if (currentPage.contains("xhtml")) {
             currentPage = currentPage.replaceAll("xhtml", "jsf");
         }
+        
         // Tentou entrar em uma pagina deslogado || entrou em uma pagina logado
         // mas que nao esta autorizado
         if (!this.isPaginaSemRestricao(currentPage)) {
+            if(UtilsFrontEnd.getProfissionalLogado() == null && UtilsFrontEnd.getPacienteLogado() == null)
+                JSFHelper.redirect("login.jsf");
+            
             Objeto objetoAtual = this.isPageDenied(currentPage, usuarioLogado);
             if ((!currentPage.contains("sobre") && !currentPage.contains(
                     "login") && usuarioLogado == null) || (!currentPage.contains("sobre") && !currentPage.contains("login") && usuarioLogado != null && objetoAtual == null)) {
@@ -65,6 +69,7 @@ public class AuthorizationListener implements PhaseListener {
                 lumeSecurity.setObjetoAtual(objetoAtual);
             }
         }
+        
         if (lumeSecurity != null) {
             lumeSecurity.setPaginaAtual(currentPage);
             this.logarAcesso(currentPage, usuarioLogado, JSFHelper.getRequest().getRemoteAddr());
