@@ -76,6 +76,16 @@ public class ProfissionalDescontoMB extends LumeManagedBean<DescontoOrcamento> {
         }
     }
     
+    public void profissionalFazOrcamento() {
+        try {
+            ProfissionalSingleton.getInstance().getBo().persist(this.profissionalMB.getEntity());
+            this.addInfo("Sucesso ao registrar a alteração", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+        } catch (Exception e) {
+            this.addError("Erro ao registrar a alteração", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO));
+            e.printStackTrace();
+        }
+    }
+    
     public void salvarFlagOrc() {
         try {
             ProfissionalSingleton.getInstance().getBo().persist(profissionalMB.getEntity());

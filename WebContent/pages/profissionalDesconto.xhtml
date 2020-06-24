@@ -56,7 +56,8 @@ body .ui-selectmanycheckbox td label {
 								value="Profissional faz orçamento ? " />
 							<p:selectBooleanCheckbox id="profissionalFazOrcamento"
 								value="#{profissionalMB.entity.fazOrcamento}">
-								<p:ajax listener="#{profissionalDescontoMB.actionPersist}" process="@this"/>
+								<p:ajax event="change"
+									listener="#{profissionalDescontoMB.profissionalFazOrcamento}" process="@this"/>
 							</p:selectBooleanCheckbox>
 						</h:panelGroup>
 						
