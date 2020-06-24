@@ -224,7 +224,7 @@ public class TabPacienteMB extends LumeManagedBean<Paciente> {
             pacienteFinanceiroMB.setFim(null);
             pacienteFinanceiroMB.pesquisar();
 
-            this.tabview.setActiveIndex(7);
+            this.tabview.setActiveIndex(8);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro ao visualizar paciente.", "Houve uma falha na busca pelos dados!");
