@@ -971,7 +971,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void actionPersistNegociacao() {
         try {
-            if (negociacaoValorDaPrimeiraParcela == null || negociacaoQuantidadeParcelas == null || negociacaoValorTotal == null) {
+            if (negociacaoQuantidadeParcelas == null || negociacaoValorTotal == null) {
                 addError("Erro!", "Preencha todos os itens!");
                 return;
             }
@@ -1028,7 +1028,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     }
 
     public boolean temPrimeiraParcelaDiferente() {
-        if (this.negociacaoValorDaParcela == null || new BigDecimal(0).compareTo(this.negociacaoValorDaPrimeiraParcela) == 0) {
+        if (this.negociacaoValorDaParcela == null || this.negociacaoValorDaPrimeiraParcela == null || new BigDecimal(0).compareTo(this.negociacaoValorDaPrimeiraParcela) == 0) {
             return false;
         }
         return true;
@@ -1081,7 +1081,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 negociacaoValorDaPrimeiraParcela) != 0)
             atualizaInfoParcelamentoNegociacao(Boolean.TRUE, TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE);
         else {
-            negociacaoValorDaPrimeiraParcela = negociacaoValorDaParcela;
+            //negociacaoValorDaPrimeiraParcela = negociacaoValorDaParcela;
             atualizaInfoParcelamentoNegociacao(Boolean.TRUE, TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS);
         }
 
@@ -1139,7 +1139,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             valorDeDesconto = negociacaoValorDesconto.divide(BigDecimal.valueOf(100)).multiply(negociacaoValorTotal);
         BigDecimal totalSemDesconto = negociacaoValorTotal.subtract(valorDeDesconto);
 
-        if (negociacaoValorDaPrimeiraParcela != null) {
+        if (negociacaoValorDaPrimeiraParcela != null && negociacaoValorDaPrimeiraParcela.compareTo(BigDecimal.ZERO) != 0) {
             if (negociacaoValorDaPrimeiraParcela.compareTo(totalSemDesconto) > 0) {
                 this.addError("Erro", "Insira uma primeira parcela menor que o total!");
                 return;
@@ -1164,7 +1164,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             if (negociacaoQuantidadeParcelas > 1) {
                 BigDecimal quantidadeParcelasBD = BigDecimal.valueOf(negociacaoQuantidadeParcelas);
                 negociacaoValorDaParcela = totalSemDesconto.divide(quantidadeParcelasBD, 2, BigDecimal.ROUND_HALF_UP);
-                negociacaoValorDaPrimeiraParcela = negociacaoValorDaParcela;
+                //negociacaoValorDaPrimeiraParcela = negociacaoValorDaParcela;
 
                 BigDecimal totalParcelado = quantidadeParcelasBD.multiply(negociacaoValorDaParcela);
                 negociacaoValorDaPrimeiraParcelaDirefenca = totalSemDesconto.subtract(totalParcelado);
@@ -1355,7 +1355,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 Date dataCredito1P = (dataCredito1PD ? (dataCredito != null ? dataCredito : null) : (data != null ? data.getTime() : null));
                 int parcelaAtual = (formaPagamentoDemaisParcelas == null ? parcela : 1);
                 int totalParcela = (formaPagamentoDemaisParcelas == null ? quantidadeParcelas : 1);
-                lancamentos.add(new LancamentoParcelaInfo(parcela, parcelaAtual, totalParcela, valorPrimeiraParcela, formaPagamento, dataPagamento1P, dataCredito1P));
+                BigDecimal valorParcelaAtual = (valorPrimeiraParcela == null || valorPrimeiraParcela.compareTo(BigDecimal.ZERO) == 0 ? valorParcela : valorPrimeiraParcela);
+                lancamentos.add(new LancamentoParcelaInfo(parcela, parcelaAtual, totalParcela, valorParcelaAtual, formaPagamento, dataPagamento1P, dataCredito1P));
             } else {
                 BigDecimal valorParcelaAtual = valorParcela;
                 if (correcaoValor != null && parcela == quantidadeParcelas)
