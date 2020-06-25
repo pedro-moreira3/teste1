@@ -36,7 +36,7 @@ public class ConferenciaRecebimentoMB extends LumeManagedBean<Lancamento> {
     private String periodoCredito;
     private Date dataCreditoInicial;
     private Date dataCreditoFinal;
-    private String statusCredito;
+    private String statusCredito = "N";
     private Paciente filtroPorPaciente;
     private Tarifa formaPagamento;
     private List<Lancamento> lancamentosSelecionadosConferencia = new ArrayList<Lancamento>();
