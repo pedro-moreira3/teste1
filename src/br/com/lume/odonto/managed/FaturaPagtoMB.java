@@ -423,7 +423,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             this.somaTotalNaoPlanejado = BigDecimal.ZERO;
 
             setEntityList(FaturaSingleton.getInstance().getBo().findFaturasOrigemFilter(UtilsFrontEnd.getEmpresaLogada(), getPaciente(), (inicio == null ? null : inicio.getTime()),
-                    (fim == null ? null : fim.getTime()), this.status, Arrays.asList(this.subStatusFatura)));
+                    (fim == null ? null : fim.getTime()), this.status, (this.subStatusFatura != null ? Arrays.asList(this.subStatusFatura) : null)));
             getEntityList().forEach(fatura -> {
                 updateValues(fatura, true, true);
             });
