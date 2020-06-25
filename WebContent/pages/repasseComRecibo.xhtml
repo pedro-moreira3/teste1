@@ -84,6 +84,228 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 			</p:panel>
 		</p:dialog>
 
+
+<p:dialog id="dlgAjusteManual" widgetVar="dlgAjusteManual" header="Ajuste Manual" responsive="true" modal="true" width="50%">
+                        <p:panel id="pnAjuste" styleClass="BordNone">                            
+							<br />
+							 <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid" style="font-size:16px;font-weight:bold">
+                              <h:panelGroup styleClass="md-inputfield">
+                              	Paciente: #{repasseProfissionalComReciboMB.entity.planoTratamento.paciente.dadosBasico.nome}
+                              </h:panelGroup>
+                              <h:panelGroup styleClass="md-inputfield">
+                              	Profissional Executor: #{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.dadosBasico.nome}
+                              </h:panelGroup>
+                              <h:panelGroup styleClass="md-inputfield">
+                              	Plano de Tratamento: #{repasseProfissionalComReciboMB.entity.planoTratamento.descricao}
+                              </h:panelGroup>	
+                              <h:panelGroup styleClass="md-inputfield">
+                              	Valor total á receber do Plano de Tratamento: 
+                              	<h:outputText  value="#{repasseProfissionalComReciboMB.valorTotalFatura}">
+									<f:convertNumber currencySymbol="R$" maxFractionDigits="2" type="currency" />
+								</h:outputText>                              	
+                              </h:panelGroup>
+                              
+                            </p:panelGrid>
+						<br/>	
+						 	<div style="width: 100%; text-align: center;">
+								 <b><h:outputText value="Detalhes do Procedimento" /></b>
+							</div>
+							<br/>	
+							<table style="width: 100%; border-collapse: collapse;">
+								<thead>
+									<tr>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 40%">
+											Descrição
+										</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+											Valor de Repasse
+										</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+											Valor já Repassado
+										</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+											Valor á Repassar
+										</th>							
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+											#{repasseProfissionalComReciboMB.entity.descricaoCompletaComFace}											
+										</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">
+											<h:outputText  value="#{repasseProfissionalComReciboMB.valorBaseRepasse}">
+												<f:convertNumber currencySymbol="R$" maxFractionDigits="2" type="currency" />
+											</h:outputText> 
+										</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+											<h:outputText  value="#{repasseProfissionalComReciboMB.entity.valorPago}">
+												<f:convertNumber currencySymbol="R$" maxFractionDigits="2" type="currency" />
+											</h:outputText>
+										</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+											<h:outputText  value="#{repasseProfissionalComReciboMB.entity.valorDisponivel}">
+												<f:convertNumber currencySymbol="R$" maxFractionDigits="2" type="currency" />
+											</h:outputText>
+										</th>				
+									</tr>
+								</tbody>
+							</table>
+							<br/>
+                            <div style="width: 100%; text-align: center;">
+								 <b><h:outputText value="Detalhes do Recebimento do Paciente" /></b>
+							</div>
+							<br/>	
+							<table style="width: 100%; border-collapse: collapse;">
+								<thead>
+									<tr>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 40%">
+											Forma de pagamento
+										</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+											Valor Recebido
+										</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+											Status
+										</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+											Valor Calculado de Repasse
+										</th>							
+									</tr>
+								</thead>
+								<tbody>
+								<ui:repeat var="lancamento"
+										value="#{repasseProfissionalComReciboMB.lancamentosDeOrigem}">
+									<tr>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+											#{lancamento.formaPagamentoStr}											
+										</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">
+											<h:outputText  value="#{lancamento.valor}">
+												<f:convertNumber currencySymbol="R$" maxFractionDigits="2" type="currency" />
+											</h:outputText> 
+										</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+											#{lancamento.statusCompleto}
+										</th>
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+											<h:outputText  value="#{lancamento.dadosCalculoValorARepassarSemCusto}">
+												<f:convertNumber currencySymbol="R$" maxFractionDigits="2" type="currency" />
+											</h:outputText>
+										</th>				
+									</tr>
+									</ui:repeat>
+								</tbody>
+							</table>
+							<br/>
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+								style="border:0px none; background-color:transparent;">								
+								<h:panelGroup>
+									<p:outputLabel for="valorRepassar"
+										value="Valor á repassar:" />		
+									<p:inputNumber id="valorRepassar"										
+										value="#{repasseProfissionalComReciboMB.valorRepassar}"
+										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
+										symbol="R$ " thousandSeparator=".">
+									</p:inputNumber>														
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:outputLabel for="dataRepassar"
+										value="Data do Repasse:" />
+									<p:calendar id="dataRepassar"
+										value="#{repasseProfissionalComReciboMB.dataRepassar}"
+										autocomplete="false" />
+								</h:panelGroup>
+							</p:panelGrid>
+							<p:panelGrid columns="2" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+								style="border:0px none; background-color:transparent;">
+								<h:panelGroup>
+									<p:selectBooleanCheckbox id="agendarParaData"
+										value="#{repasseProfissionalComReciboMB.agendarParaData}">			
+										<p:ajax process="@this,agendarParaData"										
+										update="painelDataValorRestante,ignorarRestante" 
+										listener="#{repasseProfissionalComReciboMB.mudaCheckboxAjuste('agendarParaData')}"
+										/>						
+									</p:selectBooleanCheckbox>
+									<p:outputLabel for="agendarParaData"
+										value="Agendar total do valor restante para uma única data" />
+									<h:outputLabel class="fa fa-question" id="tooltipUnicaData" style="font-size:18px; margin-left:10px;"/>
+									<p:tooltip for="tooltipUnicaData" position="bottom" value="#{tarifaMB.getTooltipValue('repasseComRecibo', 'unicaData')}" />											
+								</h:panelGroup>	
+								<h:panelGroup id="painelDataValorRestante">
+									<p:outputLabel for="dataValorRestante"
+										value="Data do valor restante:" />
+									<p:calendar id="dataValorRestante" required="#{repasseProfissionalComReciboMB.agendarParaData == true}"
+									 disabled="#{repasseProfissionalComReciboMB.agendarParaData == false}"
+										value="#{repasseProfissionalComReciboMB.dataValorRestante}"
+										autocomplete="false" />
+								</h:panelGroup>	
+							</p:panelGrid>	
+							<p:panelGrid columns="1" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
+								style="border:0px none; background-color:transparent;">
+								<h:panelGroup>
+									<p:selectBooleanCheckbox id="ignorarRestante"
+										value="#{repasseProfissionalComReciboMB.ignorarRestante}">	
+										<p:ajax process="@this"										
+										update="agendarParaData,painelDataValorRestante" 
+										listener="#{repasseProfissionalComReciboMB.mudaCheckboxAjuste('ignorarRestante')}"
+										/>								
+									</p:selectBooleanCheckbox>
+									<p:outputLabel for="ignorarRestante"
+										value="Ignorar Valor Restante" />
+									<h:outputLabel class="fa fa-question" id="tooltipIgnorarRestante" style="font-size:18px; margin-left:10px;"/>
+									<p:tooltip for="tooltipIgnorarRestante" position="bottom" value="#{tarifaMB.getTooltipValue('repasseComRecibo', 'ignorarRestante')}" />		
+								</h:panelGroup>	
+							</p:panelGrid>
+                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+                                <p:commandButton icon="White fa fa-save" value="Salvar" 
+                                    update="pnAjuste" process="@this ,:lume:pnAjuste"
+                                    styleClass="GreenButton" 
+                                    onsuccess="PF('dlgJustificativa').show();"
+                                    />
+                                <p:commandButton icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlgAjusteManual').hide();" immediate="true" />    
+                            </p:panelGrid>
+                            <div class="EmptyBox20"></div>
+                        </p:panel>
+                    </p:dialog>
+                    
+                    
+                    <p:dialog id="dlgJustificativa" widgetVar="dlgJustificativa"
+						header="Justificativa - Ajuste Manual" responsive="true"
+						modal="true" appendTo=":lume">
+						<p:ajax event="close" update=""  process="@this" />
+						<p:outputPanel id="painelJustificativa">
+							<p:panelGrid columns="1" layout="grid"
+								style="max-height: 500px; overflow-y: auto;"
+								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding removeAltGridPadding">				
+							</p:panelGrid>
+							<p:panelGrid columns="1" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+								<h:panelGroup styleClass="lumeField">
+									<p:outputLabel for="justificativa"
+										value="Justificativa: " />
+									<p:inputTextarea id="justificativa" cols="60" rows="6"
+										autoResize="false" value="#{repasseProfissionalComReciboMB.justificativa}"
+										maxlength="2000" required="true" />
+									<p:message for="justificativa" styleClass="msg" />
+								</h:panelGroup>				
+							</p:panelGrid>
+						</p:outputPanel>
+						<p:separator styleClass="SeparatorFull" />
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+							<p:commandButton id="persistJustificativa" icon="White fa fa-save"
+								value="Salvar" actionListener="#{repasseProfissionalComReciboMB.actionAjusteManual}"
+								update="painelJustificativa"
+								process="@this,painelJustificativa"
+								/>
+						</p:panelGrid>
+					</p:dialog>
+                    
+
 		<p:dialog widgetVar="dlgImprimirRecibo" resizable="false"
 			header="Imprimir recibo de pagamento"
 			onHide="PF('dlgImprimirRecibo').toggleMaximize();"
@@ -978,6 +1200,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														disabled="#{ptp.fatura eq null  or 
 													ptp.fatura.ativo eq 'N' }"
 														update=":lume:pnCalculoRepasse" />
+														<ui:remove>
 													<p:commandButton icon="fa fa-dollar"
 														styleClass="NavyButton" title="Recalcular Repasse"
 														rendered="#{repasseProfissionalComReciboMB.admin}"
@@ -990,6 +1213,15 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 															message="Cofirma o recálculo de repasse de profissional?">
 														</p:confirm>
 													</p:commandButton>
+													</ui:remove>
+													<p:commandButton icon="fa fa-dollar"
+														styleClass="NavyButton" title="Ajuste Manual"
+														rendered="#{repasseProfissionalComReciboMB.admin}"
+														actionListener="#{repasseProfissionalComReciboMB.mostraAjusteManual(ptp)}"
+														process="@this"
+														oncomplete="PF('dtPrincipalRepasse').filter();"
+														update=":lume:pnAjuste">														
+													</p:commandButton>		
 												</p:column>
 												<p:column
 													filterBy="#{ptp.dentistaExecutor.dadosBasico.prefixoNome}"
