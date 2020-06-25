@@ -482,12 +482,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:column>
 
 							<p:column
-								filterBy="#{atendimento.paciente.convenio.dadosBasico.nome}"
-								sortBy="#{atendimento.paciente.convenio.dadosBasico.nome}"
+								filterBy="#{atendimento.planoTratamento.convenioStr}"
+								sortBy="#{atendimento.planoTratamento.convenioStr}"
 								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Convênio">
 								<h:outputText
-									value="#{atendimento.planoTratamento.convenio.dadosBasico.nome}" />
+									value="#{atendimento.planoTratamento.convenioStr}" />
 							</p:column>
 
 							<p:column filterBy="#{atendimento.profissional.dadosBasico.nome}"

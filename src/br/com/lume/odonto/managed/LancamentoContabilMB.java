@@ -286,7 +286,9 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         double value = lancamento.getValor().doubleValue();
         DecimalFormat df = new DecimalFormat("#,##0.00", new DecimalFormatSymbols(Local));
         
-        if(lancamento.getTipo().equals("Pagar") && lancamento.getMotivo().getSigla().equals(Motivo.PAGAMENTO_PROFISSIONAL))
+        String silgaMotivo = lancamento.getMotivo().getSigla();
+        
+        if(lancamento.getTipo().equals("Pagar") && (silgaMotivo != null && silgaMotivo.equals(Motivo.PAGAMENTO_PROFISSIONAL)))
             value = value*(-1);
             
         return "R$ " + df.format(value);
