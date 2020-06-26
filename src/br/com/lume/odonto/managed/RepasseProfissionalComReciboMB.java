@@ -548,6 +548,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     public void actionAjusteManual() {
      if(this.justificativa == null || this.justificativa.trim().equals("")) {
          this.addError("Erro","Informe a justificativa", true);
+     }else if(agendarParaData && dataValorRestante == null) {
+         this.addError("Erro","Informe a data do valor restante", true);
      }else {
          addInfo("Sucesso", "Ajuste manual executado!");
          PrimeFaces.current().executeScript("PF('dlgJustificativa').hide();");
