@@ -106,6 +106,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private boolean ignorarRestante = false;
     
     private String justificativa;
+    private RepasseFaturas repasseFatura;
     
     public Integer getQtdeLancamentosFromProfissional(Profissional profissional) {
         return this.profissionaisReciboLancamentos.get(profissional);
@@ -496,9 +497,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             }
             RepasseFaturasLancamento repasse = null;
             lancamentosDeOrigem = null;
+            repasseFatura = null;
             for (Lancamento lancamento : fatura.getLancamentos()) {
                 repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(lancamento);
-                                
+                repasseFatura = repasse.getRepasseFaturas();            
                 if (Profissional.PORCENTAGEM.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {   
                     valorBaseRepasse = repasse.getRepasseFaturas().getValorCalculo();
                 } else if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {                  
@@ -553,7 +555,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
          this.addError("Erro","Informe a data do valor restante", true);
      }else {
          try {
-            FaturaSingleton.getInstance().novoLancamentoManualRepasse(getEntity().getFatura(), valorRepassar,
+            FaturaSingleton.getInstance().novoLancamentoManualRepasse(repasseFatura,getEntity().getFatura(), valorRepassar,
                      dataRepassar, agendarParaData, dataValorRestante, ignorarRestante, justificativa, UtilsFrontEnd.getProfissionalLogado());
             addInfo("Sucesso", "Ajuste manual executado!");
             PrimeFaces.current().executeScript("PF('dlgJustificativa').hide();");
@@ -1149,6 +1151,16 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     
     public void setJustificativa(String justificativa) {
         this.justificativa = justificativa;
+    }
+
+    
+    public RepasseFaturas getRepasseFatura() {
+        return repasseFatura;
+    }
+
+    
+    public void setRepasseFatura(RepasseFaturas repasseFatura) {
+        this.repasseFatura = repasseFatura;
     }
 
 }
