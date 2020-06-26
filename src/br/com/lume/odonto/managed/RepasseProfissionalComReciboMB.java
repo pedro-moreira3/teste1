@@ -45,6 +45,7 @@ import br.com.lume.repasse.ReciboRepasseProfissionalSingleton;
 import br.com.lume.repasse.RepasseFaturasItemSingleton;
 import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
+import br.com.lume.repasse.RepasseSingleton;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
 
@@ -551,8 +552,17 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
      }else if(agendarParaData && dataValorRestante == null) {
          this.addError("Erro","Informe a data do valor restante", true);
      }else {
-         addInfo("Sucesso", "Ajuste manual executado!");
-         PrimeFaces.current().executeScript("PF('dlgJustificativa').hide();");
+         try {
+            FaturaSingleton.getInstance().novoLancamentoManualRepasse(getEntity().getFatura(), valorRepassar,
+                     dataRepassar, agendarParaData, dataValorRestante, ignorarRestante, justificativa, UtilsFrontEnd.getProfissionalLogado());
+            addInfo("Sucesso", "Ajuste manual executado!");
+            PrimeFaces.current().executeScript("PF('dlgJustificativa').hide();");
+            PrimeFaces.current().executeScript("PF('dlgAjusteManual').hide();");
+        } catch (Exception e) {           
+            e.printStackTrace();
+            this.addError("Erro","Erro ao efetuar ajuste manual", true);
+        }
+     
      }
                 
                   
