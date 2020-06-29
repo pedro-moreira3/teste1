@@ -274,10 +274,12 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 							value="#{tarifaMB.getTooltipValue('repasseComRecibo', 'ignorarRestante')}" />
 					</h:panelGroup>
 
-					<div class="card card-w-title"
-						style="background-color: #d9534f; color: white; padding: 5px; margin-bottom: 0px; text-align: center">
-						Ao clicar em "Salvar", a fatura não receberá mais atualizações
-						automáticas nos valores, e o repasse será inteiramente manual.</div>
+					<p:outputPanel>
+						<div class="card card-w-title"
+							style="background-color: #d9534f; color: white; padding: 5px; margin-bottom: 0px; text-align: center">
+							Ao clicar em "Salvar", a fatura não receberá mais atualizações
+							automáticas nos valores, e o repasse será inteiramente manual.</div>
+					</p:outputPanel>
 				</p:panelGrid>
 				<p:panelGrid columns="2" layout="grid"
 					styleClass="ui-panelgrid-blank form-group ui-fluid">
