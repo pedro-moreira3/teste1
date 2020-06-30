@@ -548,6 +548,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             setValorRepassar(ptp.getValorDisponivel());
 
             PrimeFaces.current().executeScript("PF('dlgAjusteManual').show();");
+            this.justificativa = null;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -568,6 +569,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                 addInfo("Sucesso", "Ajuste manual executado!");
                 PrimeFaces.current().executeScript("PF('dlgJustificativa').hide();");
                 PrimeFaces.current().executeScript("PF('dlgAjusteManual').hide();");
+                pesquisar();
             } catch (Exception e) {
                 e.printStackTrace();
                 this.addError("Erro", "Erro ao efetuar ajuste manual", true);
