@@ -546,10 +546,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             }
 
             setValorRepassar(ptp.getValorDisponivel());
-
             PrimeFaces.current().executeScript("PF('dlgAjusteManual').show();");
-            this.justificativa = null;
-
         } catch (Exception e) {
             e.printStackTrace();
             LogIntelidenteSingleton.getInstance().makeLog(e);
