@@ -927,7 +927,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 										listener="#{planoTratamentoMB.fazNada()}" />
 								</p:selectBooleanCheckbox>
 								<p:commandButton icon="White fa fa-gear"
-									title="Finalizar Novamente"
+									title="Executar Novamente"
 									actionListener="#{planoTratamentoMB.actionFinalizarNovamente(plano)}"
 									process="@this"
 									update=":lume:tabViewPaciente:pnFinalizarNovamente"
@@ -942,7 +942,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								sortBy="#{plano.dataFinalizadoStrOrd}" width="70px;">
 								<h:outputText value="#{plano.dataFinalizadoStr}" />
 							</p:column>
-							<p:column headerText="Finalizado Por" styleClass="hideOnEdit"
+							<p:column headerText="Executado Por" styleClass="hideOnEdit"
 								sortBy="#{plano.finalizadoPorProfissional.dadosBasico.nome}"
 								width="70px;">
 								<h:outputText

@@ -172,6 +172,15 @@ body .sideChkBox .ui-chkbox-label {
 							</p:dataTable>
 
 							<p:separator styleClass="SeparatorFull" />
+							
+							<p:outputPanel
+								rendered="#{faturaPagtoMB.entity.tipoLancamentos.rotulo == 'M'}">
+								<div class="card card-w-title"
+									style="background-color: #d9534f; color: white; padding: 5px; margin-bottom: 0px;text-align: center">
+									Os lançamentos desta fatura foram gerados manualmente. Nenhuma regra automática para geração de lançamentos irá interferir nestes repasses.
+								</div>
+								<br />
+							</p:outputPanel>
 
 							<p:panel>
 								<p:selectBooleanCheckbox styleClass="sideChkBox"
@@ -186,7 +195,7 @@ body .sideChkBox .ui-chkbox-label {
 								paginator="true" rowKey="#{l}" paginatorPosition="bottom"
 								id="lancamentosFatura">
 								<f:facet name="header">Lançamentos da Fatura</f:facet>
-														
+
 								<p:column styleClass="cabecalho" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{l.formaPagamentoStr}"
@@ -239,7 +248,7 @@ body .sideChkBox .ui-chkbox-label {
 										rendered="#{faturaPagtoMB.mostraProcedimentoOrigemRepasse(l)}"
 										value="Referente à '#{faturaPagtoMB.buscaProcedimentoOrigemRepasse(l)}'" />
 								</p:column>
-					
+
 							</p:dataTable>
 
 						</div>
