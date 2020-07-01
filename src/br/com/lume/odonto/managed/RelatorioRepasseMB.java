@@ -1,5 +1,7 @@
 package br.com.lume.odonto.managed;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -7,26 +9,33 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.component.datatable.DataTable;
 
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.faturamento.FaturaSingleton;
+import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.odonto.entity.RelatorioRepasse;
+import br.com.lume.odonto.entity.RepasseFaturas;
+import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
-import br.com.lume.relatorioRepasse.RelatorioRepasseSingleton;
+import br.com.lume.repasse.RepasseFaturasSingleton;
 
-@ManagedBean
+@Named
 @ViewScoped
-public class RelatorioRepasseMB extends LumeManagedBean<RelatorioRepasse> {
+public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,15 +46,23 @@ public class RelatorioRepasseMB extends LumeManagedBean<RelatorioRepasse> {
     private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos;
 
     private Profissional profissional;
+    
+    private Paciente paciente;
 
-    private String statusPagamento;
+    private String statusPagamento = "L";
+    
+    private String filtroPeriodo;
+    
+    private BigDecimal somatorioValorTotalRestante;
+    private BigDecimal somatorioValorTotalFatura;
+    private BigDecimal somatorioValorTotalPago;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
 
     public RelatorioRepasseMB() {
-        super(RelatorioRepasseSingleton.getInstance().getBo());
-        this.setClazz(RelatorioRepasse.class);
+        super(RepasseFaturasSingleton.getInstance().getBo());
+        this.setClazz(RepasseFaturas.class);
         this.inicio = Utils.getPrimeiroDiaMesCorrente();
         this.fim = Calendar.getInstance().getTime();
     }
@@ -58,24 +75,146 @@ public class RelatorioRepasseMB extends LumeManagedBean<RelatorioRepasse> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
     }
+    
+    public void pesquisar() {
+        try {
+            this.setEntityList(null);
+            
+            Calendar c = Calendar.getInstance();
+            c.setTime(this.fim);
+            c.set(Calendar.HOUR_OF_DAY, 23);
+            this.fim = c.getTime();
 
+            c.setTime(this.inicio);
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            this.inicio = c.getTime();
+            
+            this.setEntityList(RepasseFaturasSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(
+                    inicio, fim, profissional, getPaciente(), statusPagamento, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            
+            if(this.getEntityList() != null && !this.getEntityList().isEmpty()) {
+                this.getEntityList().forEach(rf -> {
+                    rf.getFaturaRepasse().setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(rf.getFaturaRepasse()));
+                    rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
+                    rf.getFaturaRepasse().setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse()));
+                });
+            }
+            
+            updateSomatorio();
+        }catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Erro ao pesquisar.");
+            e.printStackTrace();
+            this.log.error(e);
+        }
+    }
+
+    public void updateSomatorio() {
+
+        this.setSomatorioValorTotalFatura(new BigDecimal(0));
+        this.setSomatorioValorTotalRestante(new BigDecimal(0));
+        this.setSomatorioValorTotalPago(new BigDecimal(0));
+
+        for (RepasseFaturas rf : this.getEntityList()) {
+            this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalFatura());
+            this.somatorioValorTotalRestante = this.somatorioValorTotalRestante.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalRestante());
+            this.somatorioValorTotalPago = this.somatorioValorTotalPago.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalPago());
+        }
+    }
+    
     public List<Profissional> geraSugestoesProfissional(String query) {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
-            profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+            profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
-                if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
-                        Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {
-                    sugestoes.add(p);
+                if(!p.getTipoRemuneracao().equals(Profissional.FIXO)) {
+                    if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
+                            Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {
+                        sugestoes.add(p);
+                    }
                 }
             }
             Collections.sort(sugestoes);
         } catch (Exception e) {
-            this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
-            this.addError(Mensagens.ERRO_AO_BUSCAR_REGISTROS, "");
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            this.addError("Erro", Mensagens.ERRO_AO_BUSCAR_REGISTROS, true);
         }
         return sugestoes;
+    }
+    
+    public List<Paciente> geraSugestoesPaciente(String query) {
+        try {
+            return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Erro ao carregar os pacientes");
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    public void actionTrocaDatas() {
+        try {
+
+            this.inicio = getDataInicio(filtroPeriodo);
+            this.fim = getDataFim(filtroPeriodo);
+
+        } catch (Exception e) {
+            log.error("Erro no actionTrocaDatasCriacao", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+
+    public Date getDataFim(String filtro) {
+        Date dataFim = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataFim = c.getTime();
+            } else if (filtro == null) {
+                dataFim = null;
+            } else {
+                dataFim = c.getTime();
+            }
+            return dataFim;
+        } catch (Exception e) {
+            log.error("Erro no getDataFim", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
+    }
+
+    public Date getDataInicio(String filtro) {
+        Date dataInicio = null;
+        try {
+            Calendar c = Calendar.getInstance();
+            if ("O".equals(filtro)) {
+                c.add(Calendar.DAY_OF_MONTH, -1);
+                dataInicio = c.getTime();
+            } else if ("H".equals(filtro)) { //Hoje                
+                dataInicio = c.getTime();
+            } else if ("S".equals(filtro)) { //Últimos 7 dias              
+                c.add(Calendar.DAY_OF_MONTH, -7);
+                dataInicio = c.getTime();
+            } else if ("Q".equals(filtro)) { //Últimos 15 dias              
+                c.add(Calendar.DAY_OF_MONTH, -15);
+                dataInicio = c.getTime();
+            } else if ("T".equals(filtro)) { //Últimos 30 dias                
+                c.add(Calendar.DAY_OF_MONTH, -30);
+                dataInicio = c.getTime();
+            } else if ("M".equals(filtro)) { //Mês Atual              
+                c.set(Calendar.DAY_OF_MONTH, 1);
+                dataInicio = c.getTime();
+            } else if ("I".equals(filtro)) { //Mês Atual             
+                c.add(Calendar.MONTH, -6);
+                dataInicio = c.getTime();
+            }
+            return dataInicio;
+        } catch (Exception e) {
+            log.error("Erro no getDataInicio", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+            return null;
+        }
     }
 
     public void actionLimpar() {
@@ -136,5 +275,45 @@ public class RelatorioRepasseMB extends LumeManagedBean<RelatorioRepasse> {
 
     public void setTabelaRelatorio(DataTable tabelaRelatorio) {
         this.tabelaRelatorio = tabelaRelatorio;
+    }
+
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
+    }
+
+    public String getFiltroPeriodo() {
+        return filtroPeriodo;
+    }
+
+    public void setFiltroPeriodo(String filtroPeriodo) {
+        this.filtroPeriodo = filtroPeriodo;
+    }
+
+    public BigDecimal getSomatorioValorTotalRestante() {
+        return somatorioValorTotalRestante;
+    }
+
+    public void setSomatorioValorTotalRestante(BigDecimal somatorioValorTotalRestante) {
+        this.somatorioValorTotalRestante = somatorioValorTotalRestante;
+    }
+
+    public BigDecimal getSomatorioValorTotalFatura() {
+        return somatorioValorTotalFatura;
+    }
+
+    public void setSomatorioValorTotalFatura(BigDecimal somatorioValorTotalFatura) {
+        this.somatorioValorTotalFatura = somatorioValorTotalFatura;
+    }
+
+    public BigDecimal getSomatorioValorTotalPago() {
+        return somatorioValorTotalPago;
+    }
+
+    public void setSomatorioValorTotalPago(BigDecimal somatorioValorTotalPago) {
+        this.somatorioValorTotalPago = somatorioValorTotalPago;
     }
 }

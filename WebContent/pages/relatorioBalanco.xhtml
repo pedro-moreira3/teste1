@@ -5,6 +5,30 @@
 	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
+		<style>
+/*AJUSTE DO CAMPO FILTRO POR CONVENIO*/
+body .ui-selectonemenu {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+ui-selectonemenu-label {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
+	margin-top: 2.4px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
+	{
+	margin-top: -12px !important;
+}
+</style>
+
+
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -13,198 +37,267 @@
 
 						<h1>Relatório de Repasses</h1>
 						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="4"
-							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
-							layout="grid" styleClass="ui-panelgrid-blank"
-							style="border:0px none; background-color:transparent;">
-							<p:outputLabel for="profissional" value="Profissional : " />
-							<p:autoComplete dropdown="true" queryDelay="1000" size="35"
-								value="#{relatorioRepasseMB.profissional}" id="profissional"
-								minQueryLength="3"
-								completeMethod="#{relatorioRepasseMB.geraSugestoesProfissional}"
-								var="profissional"
-								itemLabel="#{profissional.dadosBasico.prefixoNome}"
-								itemValue="#{profissional}" converter="profissional"
-								forceSelection="true" required="true">
-							</p:autoComplete>
 
-							<p:column></p:column>
-							<p:column></p:column>
+						<p:fieldset toggleable="false">
 
-							<p:outputLabel for="inicio" value="Inicio : " />
-							<p:calendar id="inicio" value="#{relatorioRepasseMB.inicio}"
-								pattern="dd/MM/yyyy" mask="true" required="true" />
+							<p:panelGrid columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
 
-							<p:outputLabel for="fim" value="Fim : " />
-							<p:calendar id="fim" value="#{relatorioRepasseMB.fim}"
-								pattern="dd/MM/yyyy" mask="true" required="true" />
+								<h:panelGroup>
+									<p:outputLabel for="filtroPeriodoRepasses"
+										value="Período de criação da fatura:" />
+									<p:selectOneMenu id="filtroPeriodoRepasses"
+										value="#{relatorioRepasseMB.filtroPeriodo}">
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="O" itemLabel="Ontem" />
+										<f:selectItem itemValue="H" itemLabel="Hoje" />
+										<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+										<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+										<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+										<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+										<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
 
-							<p:outputLabel for="statusPagamento" value="Status : " />
-							<p:selectOneMenu id="statusPagamento"
-								value="#{relatorioRepasseMB.statusPagamento}">
-								<f:selectItem itemValue="P" itemLabel="Pago Completo" />
-								<f:selectItem itemValue="L" itemLabel="Pago Parcial" />
-							</p:selectOneMenu>
+										<p:ajax event="change" process="@this" update="inicio,fim"
+											listener="#{relatorioRepasseMB.actionTrocaDatas}" />
 
-						</p:panelGrid>
-						<div class="SeparatorFull"></div>
-						<p:panelGrid columns="4" layout="grid"
-							styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton id="pesquisar" icon="fa fa-search White"
-								value="Pesquisar"
-								actionListener="#{relatorioRepasseMB.actionCarregarProcedimentos}"
-								update="dtRelatorio" tabindex="1" process="@this,pnPrincipal"
-								styleClass="OrangeButton" />
-							<p:commandButton id="new" icon="White fa fa-file-o"
-								value="Limpar"
-								actionListener="#{relatorioRepasseMB.actionLimpar}"
-								update="dtRelatorio, profissional, inicio, fim" process="@this"
-								immediate="true" tabindex="1" />
+									</p:selectOneMenu>
+								</h:panelGroup>
 
-							<h:panelGroup>
-								<p:splitButton icon="White fa fa fa-file-excel-o"
-									value="Exportar tabela para Excel"
-									styleClass="GreenSplitButton"
-									actionListener="#{relatorioRepasseMB.exportarTabela('xls')}"
-									ajax="false" process="dtRelatorio,@this" update="@this"
-									immediate="true"
-									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+								<h:panelGroup>
+									<p:outputLabel for="inicio" value="Inicio: " />
+									<p:calendar id="inicio" value="#{relatorioRepasseMB.inicio}"
+										pattern="dd/MM/yyyy" mask="true">
+										<p:ajax event="dateSelect" process="@this" />
+									</p:calendar>
+								</h:panelGroup>
 
-									<p:fileDownload value="#{relatorioRepasseMB.arquivoDownload}" />
+								<h:panelGroup>
+									<p:outputLabel for="fim" value="Fim: " />
+									<p:calendar id="fim" value="#{relatorioRepasseMB.fim}"
+										pattern="dd/MM/yyyy" mask="true">
+										<p:ajax event="dateSelect" process="@this" />
+									</p:calendar>
+								</h:panelGroup>
 
-									<p:menuitem value="Exportar tabela para PDF"
-										icon="fa fa fa-file-pdf-o"
-										actionListener="#{relatorioRepasseMB.exportarTabela('pdf')}"
-										ajax="false" process="dtRelatorio,@this" immediate="true"
+								<h:panelGroup>
+									<h:outputText for="filtroProfissional" value="Profissional:" />
+									<p:autoComplete id="filtroProfissional"
+										value="#{relatorioRepasseMB.profissional}"
+										completeMethod="#{relatorioRepasseMB.geraSugestoesProfissional}"
+										var="p" itemLabel="#{p.dadosBasico.prefixoNome}"
+										itemValue="#{p}" converter="profissional"
+										forceSelection="true" scrollHeight="400" queryDelay="1000">
+
+										<p:ajax event="itemSelect" process="@this" />
+
+									</p:autoComplete>
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<h:outputText for="filtroPaciente" value="Paciente:" />
+									<p:autoComplete id="filtroPaciente"
+										value="#{relatorioRepasseMB.paciente}"
+										completeMethod="#{relatorioRepasseMB.geraSugestoesPaciente}"
+										var="p" itemLabel="#{p.dadosBasico.nome}" itemValue="#{p}"
+										converter="paciente" forceSelection="true" scrollHeight="400"
+										minQueryLength="3" queryDelay="1000">
+
+										<p:column headerText="Código" style="text-align: center;">
+											<h:outputText value="#{p.codigo}" />
+										</p:column>
+										<p:column headerText="Nome">
+											<h:outputText value="#{p.dadosBasico.nome}" />
+										</p:column>
+										<p:column headerText="Celular">
+											<h:outputText value="#{p.dadosBasico.celular}" />
+										</p:column>
+										<p:column headerText="Nome da Mãe">
+											<h:outputText value="#{p.nomeMae}" />
+										</p:column>
+
+										<p:ajax event="itemSelect" process="@this" />
+									</p:autoComplete>
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<p:outputLabel for="statusPagamento" value="Status: " />
+									<p:selectOneMenu id="statusPagamento"
+										value="#{relatorioRepasseMB.statusPagamento}">
+
+										<p:ajax event="change" process="@this" />
+
+										<f:selectItem itemValue="L" itemLabel="A pagar" />
+										<f:selectItem itemValue="P" itemLabel="Pagos" />
+										<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+									</p:selectOneMenu>
+								</h:panelGroup>
+
+							</p:panelGrid>
+							<div class="SeparatorFull"></div>
+
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid">
+
+								<p:commandButton id="pesquisar" icon="fa fa-search White"
+									value="Pesquisar"
+									actionListener="#{relatorioRepasseMB.pesquisar}"
+									update="dtRelatorio"
+									process="@this,filtroPaciente,filtroProfissional"
+									styleClass="OrangeButton" />
+
+								<h:panelGroup>
+									<p:splitButton icon="White fa fa fa-file-excel-o"
+										value="Exportar tabela para Excel"
+										styleClass="GreenSplitButton"
+										actionListener="#{relatorioRepasseMB.exportarTabela('xls')}"
+										ajax="false" process="dtRelatorio,@this" update="@this"
+										immediate="true"
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload value="#{relatorioRepasseMB.arquivoDownload}" />
-									</p:menuitem>
-									<p:menuitem value="Exportar tabela para CSV"
-										icon="fa fa fa-file-pdf-o"
-										actionListener="#{relatorioRepasseMB.exportarTabela('csv')}"
-										ajax="false" process="dtRelatorio,@this" immediate="true"
-										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload value="#{relatorioRepasseMB.arquivoDownload}" />
-									</p:menuitem>
-								</p:splitButton>
-							</h:panelGroup>
 
-						</p:panelGrid>
+										<p:fileDownload value="#{relatorioRepasseMB.arquivoDownload}" />
+
+										<p:menuitem value="Exportar tabela para PDF"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{relatorioRepasseMB.exportarTabela('pdf')}"
+											ajax="false" process="dtRelatorio,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload value="#{relatorioRepasseMB.arquivoDownload}" />
+										</p:menuitem>
+										<p:menuitem value="Exportar tabela para CSV"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{relatorioRepasseMB.exportarTabela('csv')}"
+											ajax="false" process="dtRelatorio,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload value="#{relatorioRepasseMB.arquivoDownload}" />
+										</p:menuitem>
+									</p:splitButton>
+								</h:panelGroup>
+
+							</p:panelGrid>
+
+						</p:fieldset>
 					</p:outputPanel>
-
 					<div class="EmptyBox20"></div>
 
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-						id="dtRelatorio"
-						value="#{relatorioRepasseMB.planoTratamentoProcedimentos}"
-						var="ptp" rows="50" paginator="true" paginatorPosition="bottom"
+						widgetVar="dtRelatorio" id="dtRelatorio"
+						value="#{relatorioRepasseMB.entityList}" var="rf" rows="10"
+						paginator="true" paginatorPosition="bottom"
 						binding="#{relatorioRepasseMB.tabelaRelatorio}">
-						<f:facet name="header">Procedimentos</f:facet>
+						<f:facet name="header">Lançamentos</f:facet>
 
-						<p:column sortBy="#{ptp.planoTratamento.descricao}"
-							filterBy="#{ptp.planoTratamento.descricao}"
+						<p:column
+							sortBy="#{rf.faturaRepasse.profissional.dadosBasico.nome}"
+							filterBy="#{rf.faturaRepasse.profissional.dadosBasico.nome}"
 							filterMatchMode="contains"
-							filterFunction="#{relatorioRepasseMB.filtroSemAcento}">
-							<f:facet name="header">
-								<h:outputText value="Plano de Tratamento" />
-							</f:facet>
-							<h:outputText value="#{ptp.planoTratamento.descricao}"
-								title="#{ptp.id}" />
+							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
+							headerText="Profissional">
+							<h:outputText
+								value="#{rf.faturaRepasse.profissional.dadosBasico.nome}"
+								title="#{rf.id}" />
 						</p:column>
 
-						<p:column sortBy="#{ptp.descricaoCompleta}"
-							filterBy="#{ptp.descricaoCompleta}" filterMatchMode="contains"
-							filterFunction="#{relatorioRepasseMB.filtroSemAcento}">
-							<f:facet name="header">
-								<h:outputText value="Procedimento" />
-							</f:facet>
-							<h:outputText value="#{ptp.descricaoCompleta}" title="#{ptp.id}" />
+						<p:column sortBy="#{rf.tipoCalculoStr}"
+							filterBy="#{rf.tipoCalculoStr}" filterMatchMode="contains"
+							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
+							headerText="Tipo remuneração">
+							<h:outputText value="#{rf.tipoCalculoStr}" title="#{rf.id}" />
 						</p:column>
 
 						<p:column
-							sortBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
-							filterBy="#{ptp.planoTratamento.paciente.dadosBasico.nome}"
+							sortBy="#{rf.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
+							filterBy="#{rf.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
 							filterMatchMode="contains"
-							filterFunction="#{relatorioRepasseMB.filtroSemAcento}">
-							<f:facet name="header">
-								<h:outputText value="Paciente" />
-							</f:facet>
+							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
+							headerText="Paciente">
+
+							<h:outputText value="#{rf.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}" 
+								title="#{rf.planoTratamentoProcedimento.planoTratamento.paciente.id}"/>
+
+						</p:column>
+
+						<p:column
+							sortBy="#{rf.planoTratamentoProcedimento.planoTratamento.descricao}"
+							filterBy="#{rf.planoTratamentoProcedimento.planoTratamento.descricao}"
+							filterMatchMode="contains"
+							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
+							headerText="Plano de tratamento">
 							<h:outputText
-								value="#{ptp.planoTratamento.paciente.dadosBasico.nome}" />
+								value="#{rf.planoTratamentoProcedimento.planoTratamento.descricao}"
+								title="#{rf.id}" />
 						</p:column>
 
-						<p:column sortBy="#{ptp.valorCalc}">
-							<f:facet name="header">
-								<h:outputText value="Valor " />
-							</f:facet>
-							<h:outputText value="#{ptp.valorCalc}">
-								<f:convertNumber currencySymbol="R$" type="currency"
-									locale="#{lumeSecurity.locale}" />
-							</h:outputText>
+						<p:column
+							sortBy="#{rf.planoTratamentoProcedimento.procedimento.descricao}"
+							filterBy="#{rf.planoTratamentoProcedimento.procedimento.descricao}"
+							filterMatchMode="contains"
+							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
+							headerText="Procedimento">
+							<h:outputText
+								value="#{rf.planoTratamentoProcedimento.procedimento.descricao}"
+								title="#{rf.id}" />
+						</p:column>
 
+						<p:column
+							sortBy="#{rf.planoTratamentoProcedimento.dataFinalizadoStr}"
+							filterBy="#{rf.planoTratamentoProcedimento.dataFinalizadoStr}"
+							filterMatchMode="contains"
+							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
+							headerText="Data de execução">
+							<h:outputText
+								value="#{rf.planoTratamentoProcedimento.dataFinalizadoStr}"
+								title="#{rf.id}" />
 						</p:column>
-						<p:column sortBy="#{ptp.custoCalc}">
-							<f:facet name="header">
-								<h:outputText value="Custo" />
-							</f:facet>
-							<h:outputText value="#{ptp.custoCalc}">
-								<f:convertNumber currencySymbol="R$" type="currency"
-									locale="#{lumeSecurity.locale}" />
-							</h:outputText>
-						</p:column>
-						<p:column sortBy="#{ptp.percentualCalc}">
-							<f:facet name="header">
-								<h:outputText value="Remuneração" />
-							</f:facet>
-							<h:outputText value="#{ptp.percentualCalc}%" />
-						</p:column>
-						<p:column sortBy="#{ptp.tributoCalc}">
-							<f:facet name="header">
-								<h:outputText value="Tributo" />
-							</f:facet>
-							<h:outputText value="#{ptp.tributoCalc}">
-								<f:convertNumber currencySymbol="" type="currency"
-									locale="#{lumeSecurity.locale}" />
-							</h:outputText>
-							<h:outputText value="%" />
-						</p:column>
-						<p:column sortBy="#{ptp.valorRepasse}">
-							<f:facet name="header">
-								<h:outputText value="Valor Profissional" />
-							</f:facet>
-							<h:outputText value="#{ptp.valorRepasse}">
-								<f:convertNumber currencySymbol="R$" type="currency"
-									locale="#{lumeSecurity.locale}" />
-							</h:outputText>
 
-						</p:column>
-						<p:column sortBy="#{ptp.valorRepassado}">
-							<f:facet name="header">
-								<h:outputText value="Valor Repassado" />
-							</f:facet>
-							<h:outputText value="#{ptp.valorRepassado}">
+						<p:column
+							sortBy="#{rf.faturaRepasse.dadosTabelaRepasseTotalFatura}"
+							headerText="Valor do repasse">
+							<h:outputText
+								value="#{rf.faturaRepasse.dadosTabelaRepasseTotalFatura}">
 								<f:convertNumber currencySymbol="R$" type="currency"
 									locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 							<f:facet name="footer">
+								<h:outputText value="Total " />
 								<h:outputText
-									value="#{relatorioRepasseMB.planoTratamentoProcedimentos.stream().map(ptp-> ptp.valorRepassado).sum()}">
-									<f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+									value="#{relatorioRepasseMB.somatorioValorTotalFatura}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										minFractionDigits="2" />
 								</h:outputText>
 							</f:facet>
 						</p:column>
-						<p:column sortBy="#{ptp.valorRestante}">
-							<f:facet name="header">
-								<h:outputText value="Débito" />
-							</f:facet>
-							<h:outputText value="#{ptp.valorRestante}">
+
+						<p:column sortBy="#{rf.faturaRepasse.dadosTabelaRepasseTotalPago}"
+							headerText="Valor repassado">
+							<h:outputText
+								value="#{rf.faturaRepasse.dadosTabelaRepasseTotalPago}">
 								<f:convertNumber currencySymbol="R$" type="currency"
 									locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 							<f:facet name="footer">
+								<h:outputText value="Total " />
 								<h:outputText
-									value="#{relatorioRepasseMB.planoTratamentoProcedimentos.stream().map(ptp-> ptp.valorRestante).sum()}">
-									<f:convertNumber pattern="R$ #,##0.00" minFractionDigits="2" />
+									value="#{relatorioRepasseMB.somatorioValorTotalPago}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										minFractionDigits="2" />
+								</h:outputText>
+							</f:facet>
+						</p:column>
+
+						<p:column
+							sortBy="#{rf.faturaRepasse.dadosTabelaRepasseTotalRestante}"
+							headerText="Valor a repassar">
+							<h:outputText
+								value="#{rf.faturaRepasse.dadosTabelaRepasseTotalRestante}">
+								<f:convertNumber currencySymbol="R$" type="currency"
+									locale="#{lumeSecurity.locale}" />
+							</h:outputText>
+							<f:facet name="footer">
+								<h:outputText value="Total " />
+								<h:outputText
+									value="#{relatorioRepasseMB.somatorioValorTotalRestante}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										minFractionDigits="2" />
 								</h:outputText>
 							</f:facet>
 						</p:column>
