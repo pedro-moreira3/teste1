@@ -801,7 +801,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         // }
 
         if (validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) {
-            if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) != 0) {
+            if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && (ptp.getProcedimento().getValorRepasse() == null || ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) != 0)) {
                 pendencias.add("Paciente ainda não pagou o procedimento - verifique os recebimentos;");
             } else if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) == 0) {
                 pendencias.add("Procedimento com valor de repasse zerado;");
