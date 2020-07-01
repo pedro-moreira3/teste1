@@ -10,20 +10,18 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.log4j.Logger;
 
+import br.com.lume.common.iugu.Iugu;
+import br.com.lume.common.iugu.model.CustomVariable;
+import br.com.lume.common.iugu.model.Customer;
+import br.com.lume.common.iugu.model.Subscription;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
-//import br.com.lume.odonto.bo.PlanoBO;
+// import br.com.lume.odonto.bo.PlanoBO;
 import br.com.lume.odonto.entity.Plano;
-import br.com.lume.odonto.iugu.model.CustomVariable;
-import br.com.lume.odonto.iugu.model.Customer;
-import br.com.lume.odonto.iugu.model.Subscription;
-import br.com.lume.odonto.iugu.responses.CustomerResponse;
-import br.com.lume.odonto.iugu.responses.SubscriptionResponse;
-import br.com.lume.odonto.iugu.services.Iugu;
 import br.com.lume.plano.PlanoSingleton;
 import br.com.lume.security.EmpresaSingleton;
-//import br.com.lume.security.bo.EmpresaBO;
+// import br.com.lume.security.bo.EmpresaBO;
 import br.com.lume.security.entity.Empresa;
 
 @ManagedBean
@@ -36,7 +34,7 @@ public class CadastroPagamentoMB extends LumeManagedBean<Empresa> {
 
     private Logger log = Logger.getLogger(CadastroPagamentoMB.class);
 
-  //  private PlanoBO planoBO = new PlanoBO();
+    //  private PlanoBO planoBO = new PlanoBO();
 
     private boolean pnInicialVisivel = true;
 
@@ -50,7 +48,7 @@ public class CadastroPagamentoMB extends LumeManagedBean<Empresa> {
     public void actionPersist(ActionEvent event) {
         try {
             Empresa empresa = UtilsFrontEnd.getEmpresaLogada();
-            Customer customerIugu = new Customer(empresa.getEmpStrEmail(), empresa.getEmpStrNme(), null, empresa.getEmpChaCep(), Integer.parseInt(empresa.getEmpChaNumEndereco()),
+            Customer customerIugu = new Customer(empresa.getEmpStrEmail(), empresa.getEmpStrNme(), null, empresa.getEmpChaCep(), empresa.getEmpChaNumEndereco(),
                     empresa.getEmpStrEndereco(), empresa.getEmpStrBairro(), empresa.getEmpStrCidade(), empresa.getEmpChaUf());
             CustomVariable cv = new CustomVariable("intelidente", "true");
             ArrayList<CustomVariable> cvlist = new ArrayList<>();
@@ -61,11 +59,11 @@ public class CadastroPagamentoMB extends LumeManagedBean<Empresa> {
             } else {
                 customerIugu.setCpfCnpj(empresa.getEmpChaCpf());
             }
-            CustomerResponse usuarioIugu = Iugu.criarUsuario(customerIugu);
-            empresa.setEmpStrClienteIuguID(usuarioIugu.getId());
+            String usuarioIuguId = Iugu.getInstance().criarUsuario(customerIugu);
+            empresa.setEmpStrClienteIuguID(usuarioIuguId);
 
-            SubscriptionResponse subscriptionResponse = Iugu.criarPlano(new Subscription(usuarioIugu.getId(), planoSelecionado.getNomePaypal(), cvlist));
-            empresa.setEmpStrAssinaturaIuguID(subscriptionResponse.getId());
+            String subscriptionResponseId = Iugu.getInstance().criarPlano(new Subscription(usuarioIuguId, planoSelecionado.getNomePaypal(), cvlist));
+            empresa.setEmpStrAssinaturaIuguID(subscriptionResponseId);
 
             Calendar c = Calendar.getInstance();
             c.add(Calendar.DAY_OF_MONTH, 5);
