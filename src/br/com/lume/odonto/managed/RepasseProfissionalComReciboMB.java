@@ -158,7 +158,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         }
         lancamentoParaRecibo = new ArrayList<Lancamento>();
         for (PlanoTratamentoProcedimento ptp : ptpsSelecionados) {
-            if (!existemPendencias(ptp)) {
+            if (!existemPendencias(ptp) || ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL) {
                 //   Fatura fatura = ptp.getFatura();
                 //  if (fatura != null) {
                 //  List<Lancamento> lancamentos = fatura.getLancamentos();
