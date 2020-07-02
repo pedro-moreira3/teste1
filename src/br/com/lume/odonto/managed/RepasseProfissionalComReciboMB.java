@@ -158,7 +158,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         }
         lancamentoParaRecibo = new ArrayList<Lancamento>();
         for (PlanoTratamentoProcedimento ptp : ptpsSelecionados) {
-            if (!existemPendencias(ptp)) {
+            if (!existemPendencias(ptp) || ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL) {
                 //   Fatura fatura = ptp.getFatura();
                 //  if (fatura != null) {
                 //  List<Lancamento> lancamentos = fatura.getLancamentos();
@@ -409,7 +409,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             }
                             ptp.setValorDisponivel(valorDisponivel);
                         } else {
-                            ptp.setValorDisponivel(FaturaSingleton.getInstance().getTotalNaoPago(ptp.getFatura()));
+                            ptpsValidosComLancamentos.put(ptp, new ArrayList<Lancamento>());
+                            for (Lancamento lancamento : ptp.getFatura().getLancamentos()) {
+                                ptpsValidosComLancamentos.get(ptp).add(lancamento);                               
+                            }
+                            ptp.setValorDisponivel(FaturaSingleton.getInstance().getTotalNaoPago(ptp.getFatura()));                            
                         }
                     }
                     if (ptp.getValorTotal() == null) {
@@ -494,7 +498,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                 valorTotalFatura = ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getOrcamento().getValorTotalComDesconto();
             }
             //se a fatura ainda nao tem lancamentos, mas o profissional recebe por procedimento, ja sabemos o valor de repasse base.
-            if (fatura.getLancamentos().size() == 0) {
+            if (fatura == null || fatura.getLancamentos() == null || fatura.getLancamentos().size() == 0) {
                 if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
                     valorBaseRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp);
                 }
@@ -502,37 +506,38 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             RepasseFaturasLancamento repasse = null;
             lancamentosDeOrigem = null;
             repasseFatura = null;
-            for (Lancamento lancamento : fatura.getLancamentos()) {
-                repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(lancamento);
-                if (repasse == null) {
-                    RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
-                    if (repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
-                        lancamentosDeOrigem = repasseFaturas.getFaturaOrigem().getLancamentos();
+            if(fatura != null) {
+                for (Lancamento lancamento : fatura.getLancamentos()) {
+                    repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(lancamento);
+                    if (repasse == null) {
+                        RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
+                        if (repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
+                            lancamentosDeOrigem = repasseFaturas.getFaturaOrigem().getLancamentos();
+                        }
+                        continue;
                     }
-                    continue;
-                }
-
-                repasseFatura = repasse.getRepasseFaturas();
-                if (Profissional.PORCENTAGEM.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
-                    valorBaseRepasse = repasse.getRepasseFaturas().getValorCalculo();
-                } else if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
-                    valorBaseRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp);
-                }
-
-                if (repasse != null && repasse.getLancamentoOrigem() != null) {
-                    if (lancamentosDeOrigem == null) {
-                        lancamentosDeOrigem = repasse.getLancamentoOrigem().getFatura().getLancamentos();
+    
+                    repasseFatura = repasse.getRepasseFaturas();
+                    if (Profissional.PORCENTAGEM.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
+                        valorBaseRepasse = repasse.getRepasseFaturas().getValorCalculo();
+                    } else if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
+                        valorBaseRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp);
                     }
-                    for (Lancamento lancamentoOrigem : lancamentosDeOrigem) {
-
-                        if (repasse.getLancamentoOrigem().equals(lancamentoOrigem)) {
-                            lancamentoOrigem.setDadosCalculoValorARepassarSemCusto(lancamento.getValor());
-                            System.out.println(lancamentoOrigem.getValor());
+    
+                    if (repasse != null && repasse.getLancamentoOrigem() != null) {
+                        if (lancamentosDeOrigem == null) {
+                            lancamentosDeOrigem = repasse.getLancamentoOrigem().getFatura().getLancamentos();
+                        }
+                        for (Lancamento lancamentoOrigem : lancamentosDeOrigem) {
+    
+                            if (repasse.getLancamentoOrigem().equals(lancamentoOrigem)) {
+                                lancamentoOrigem.setDadosCalculoValorARepassarSemCusto(lancamento.getValor());
+                                System.out.println(lancamentoOrigem.getValor());
+                            }
                         }
                     }
                 }
             }
-
             if (repasse != null) {
                 // lancamentosDeOrigem = repasse.getLancamentoOrigem().getFatura().getLancamentos();  
                 if (lancamentosDeOrigem != null)
@@ -801,7 +806,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         // }
 
         if (validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) {
-            if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) != 0) {
+            if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && (ptp.getProcedimento().getValorRepasse() == null || ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) != 0)) {
                 pendencias.add("Paciente ainda não pagou o procedimento - verifique os recebimentos;");
             } else if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) == 0) {
                 pendencias.add("Procedimento com valor de repasse zerado;");

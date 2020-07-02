@@ -222,6 +222,20 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
                         if (repasse != null) {
                             // repasse.getRepasseFaturas().getFaturaRepasse().getItensFiltered().get(0);
                             repasseRecibo.getLancamento().setPtp(repasse.getRepasseFaturas().getPlanoTratamentoProcedimento());
+                            repasseRecibo.getDados().setPaciente(repasse.getRepasseFaturas().getPlanoTratamentoProcedimento().getPlanoTratamento().getPaciente().getDadosBasico().getNome());
+                            repasseRecibo.getDados().setPlanoTratamento(repasse.getRepasseFaturas().getPlanoTratamentoProcedimento().getPlanoTratamento().getDescricao());
+                            repasseRecibo.getDados().setPlanoTratamentoProcedimento(repasse.getRepasseFaturas().getPlanoTratamentoProcedimento().getDescricaoCompletaComFace());
+                            repasseRecibo.getDados().setDataExecucao(repasse.getRepasseFaturas().getPlanoTratamentoProcedimento().getDataFinalizado());
+                           
+                            repasseRecibo.getDados().setLancamentoPago(repasseRecibo.getLancamento().getValidadoStr());
+                            repasseRecibo.getDados().setValorTotal(FaturaSingleton.getInstance().getTotal(repasseRecibo.getLancamento().getFatura()));
+                            repasseRecibo.getDados().setValorJaPago(FaturaSingleton.getInstance().getTotalPago(repasseRecibo.getLancamento().getFatura()));
+                            repasseRecibo.getDados().setValorAPagar(repasseRecibo.getLancamento().getValorComDesconto());
+                            if (repasseRecibo.getLancamento().getValorComDesconto() == null
+                                    || repasseRecibo.getLancamento().getValorComDesconto().compareTo(BigDecimal.ZERO) == 0)
+                                repasseRecibo.getDados().setValorAPagar(repasseRecibo.getLancamento().getValor());
+                         
+                          
                         }
                     }
                     repasseRecibo.setValorTotalRepassar(FaturaSingleton.getInstance().getTotal(repasseRecibo.getLancamento().getFatura()));
