@@ -159,9 +159,10 @@ public class MenuBO extends BO<Usuario> {
                             //mi.setIcon(filho.getIcone());
                             mi.setId("mib" + idMenu++ + idMenu++);
                             mi.setValue(filho.getObjStrDes());
-                            if (mostraURL) {
-                                mi.setUrl(filho.getCaminho());
-                            }
+                            mi.setCommand("#{menuMB.redireciona(\""+filho.getCaminho()+"\")}");
+//                            if (mostraURL) {
+//                                mi.setUrl(filho.getCaminho());
+//                            }
                             raizesMenu.get(objetoPai.getObjIntCod()).getElements().add(mi);
                         }
                     } else {

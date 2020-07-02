@@ -7,6 +7,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
 import org.apache.log4j.Logger;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.menu.MenuModel;
 
 import br.com.lume.common.managed.LumeManagedBean;
@@ -51,8 +52,12 @@ public class MenuMB extends LumeManagedBean<Objeto> {
         menuModel = menuBO.getMenuTreeByUsuarioAndSistema(usuario, sistema, true);
         if (usuario != null) {
             modulos = objetoBO.getObjetosRaizByUsuarioAndSistema(usuario, sistema,UtilsFrontEnd.getEmpresaLogada().getEmpStrEstoque());
-            
         }
+        
+        PrimeFaces.current().executeScript("document.getElementById(\"menuform:menu_0\").setAttribute(\"class\",\"active-menuitem\");");
+        PrimeFaces.current().executeScript("document.getElementById(\"menuform:menu_0\").children[2].setAttribute(\"style\",\"display:block\");");
+        PrimeFaces.current().executeScript("document.getElementById(\"menuform:menu_0\").children[2].children[0].setAttribute(\"class\",\"active-menuitem\");");
+        
     }
 
     public MenuModel menuModelUnit(Objeto raiz) {
@@ -60,6 +65,10 @@ public class MenuMB extends LumeManagedBean<Objeto> {
         List<Objeto> objs = new ArrayList<>();
         objs.add(raiz);
         return menuBO.getMenuTreeByUsuarioAndSistema(usuario, sistema, true, objs);
+    }
+    
+    public String redireciona(String pagina) {
+        return pagina+"?faces-redirect=true";
     }
 
     public MenuModel getMenuModel() {
