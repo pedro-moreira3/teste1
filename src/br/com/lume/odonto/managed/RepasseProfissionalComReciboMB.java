@@ -511,7 +511,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(lancamento);
                     if (repasse == null) {
                         RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
-                        if (repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
+                        if (repasseFaturas != null && repasseFaturas.getFaturaOrigem() != null) {
                             lancamentosDeOrigem = repasseFaturas.getFaturaOrigem().getLancamentos();
                         }
                         continue;
