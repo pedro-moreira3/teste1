@@ -346,7 +346,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     if (ptp.getRepasseFaturas() != null && ptp.getRepasseFaturas().size() > 0) {
                         RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
                         if (repasseFaturas != null && repasseFaturas.getFaturaRepasse() != null) {
-                            ptp.setFatura(repasseFaturas.getFaturaRepasse());
+                            ptp.setFatura(repasseFaturas.getFaturaRepasse());                           
                         }
                     } else {
                         //repasse antigo, quando ainda nao tinha ptp no repasse fatura
@@ -488,7 +488,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             agendarParaData = false;
             dataRepassar = new Date();
             dataValorRestante = null;
-
+            justificativa = null;
             Fatura fatura = ptp.getFatura();
             // FaturaItem faturaItem = null;
 
@@ -503,19 +503,35 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     valorBaseRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp);
                 }
             }
+            
+         
+            
             RepasseFaturasLancamento repasse = null;
             lancamentosDeOrigem = null;
             repasseFatura = null;
-            if(fatura != null) {
+            if(fatura != null) {                
+               
+                RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
+                
+                if (fatura.getLancamentos() != null)
+                    fatura.getLancamentos().sort(new Comparator<Lancamento>() {
+
+                        @Override
+                        public int compare(Lancamento o1, Lancamento o2) {
+                            return Long.compare(o1.getId(), o2.getId());
+                        }
+                    });
+                int cont = 0;
                 for (Lancamento lancamento : fatura.getLancamentos()) {
                     repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseLancamentoFromLancamentoRepasseDestino(lancamento);
-                    if (repasse == null) {
-                        RepasseFaturas repasseFaturas = RepasseFaturasSingleton.getInstance().getRepasseFaturasComFaturaAtiva(ptp);
-                        if (repasseFaturas != null && repasseFaturas.getFaturaOrigem() != null) {
-                            lancamentosDeOrigem = repasseFaturas.getFaturaOrigem().getLancamentos();
-                        }
-                        continue;
+                    if (repasse == null) {                       
+                        repasse = RepasseFaturasLancamentoSingleton.getInstance().getBo().getFaturaRepasseFromRepasseFaturas(repasseFaturas);
+                    }    
+                    if (repasseFaturas != null && repasseFaturas.getFaturaOrigem() != null) {
+                        lancamentosDeOrigem = repasseFaturas.getFaturaOrigem().getLancamentos();
                     }
+                        //continue;
+                 
     
                     repasseFatura = repasse.getRepasseFaturas();
                     if (Profissional.PORCENTAGEM.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
@@ -524,31 +540,71 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         valorBaseRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp);
                     }
     
-                    if (repasse != null && repasse.getLancamentoOrigem() != null) {
-                        if (lancamentosDeOrigem == null) {
-                            lancamentosDeOrigem = repasse.getLancamentoOrigem().getFatura().getLancamentos();
-                        }
-                        for (Lancamento lancamentoOrigem : lancamentosDeOrigem) {
-    
-                            if (repasse.getLancamentoOrigem().equals(lancamentoOrigem)) {
-                                lancamentoOrigem.setDadosCalculoValorARepassarSemCusto(lancamento.getValor());
-                                System.out.println(lancamentoOrigem.getValor());
+                
+                    
+                    //se for fatura manual estou pegando os 3 primeiros lancamentos pra monstrar no valor calculado
+                    //pois foi a conta original.
+                  //  if(fatura.getTipoLancamentos().getRotulo().equals("M")) {
+                        // if( repasse.getLancamentoOrigem() ==  null) {
+                        //     if(cont < lancamentosDeOrigem.size())
+                        //    repasse.setLancamentoOrigem(lancamentosDeOrigem.get(cont));
+                       // }   
+                   //  }
+                    
+                    
+                    if (lancamentosDeOrigem != null)
+                        lancamentosDeOrigem.sort(new Comparator<Lancamento>() {
+
+                            @Override
+                            public int compare(Lancamento o1, Lancamento o2) {
+                                return Long.compare(o1.getId(), o2.getId());
                             }
+                        });
+                   
+                  //  if(!fatura.getTipoLancamentos().getRotulo().equals("M")) {
+                  //      if (repasse != null && repasse.getLancamentoOrigem() != null) {                       
+                    //        for (Lancamento lancamentoOrigem : lancamentosDeOrigem) {    
+                           //     if (repasse.getLancamentoOrigem().equals(lancamentoOrigem)) {
+                             //       lancamentoOrigem.setDadosCalculoValorARepassarSemCusto(lancamento.getValor());                             
+                            //    }
+                          //  }
+                   //     }
+                 //   }else {
+                       
+                        if(cont < lancamentosDeOrigem.size()) {                        
+                            lancamentosDeOrigem.get(cont).setDadosCalculoValorARepassarSemCusto(lancamento.getValor());
                         }
-                    }
+                        cont++;
+                     //   for (Lancamento lancamentoOrigem : lancamentosDeOrigem) {    
+                        //   System.out.println(lancamentoOrigem.getStatus());
+                        //   System.out.println(lancamentoOrigem.getValorOriginal());
+                         //  System.out.println("-----------");
+                           // System.out.println(repasse.getLancamentoOrigem().getId());                           
+                          //  List<RepasseFaturasLancamento> repasses = RepasseFaturasLancamentoSingleton.getInstance().getBo().getRepassesCanceladosFromLancamentoOrigem(lancamentoOrigem);
+                          //  for (RepasseFaturasLancamento rfl : repasses) {
+                              //  if (rfl.getLancamentoOrigem().equals(lancamentoOrigem) && lancamentoOrigem.getDadosCalculoValorARepassarSemCusto() == null) {
+                             //       lancamentoOrigem.setDadosCalculoValorARepassarSemCusto(lancamento.getValor());   
+                             //   }
+                            //    System.out.println(lancamento.getValor() + " id: " + lancamento.getId());
+                           // }
+                       // }
+                      
+                  //  }
+                    
+                    
                 }
             }
-            if (repasse != null) {
-                // lancamentosDeOrigem = repasse.getLancamentoOrigem().getFatura().getLancamentos();  
-                if (lancamentosDeOrigem != null)
-                    lancamentosDeOrigem.sort(new Comparator<Lancamento>() {
-
-                        @Override
-                        public int compare(Lancamento o1, Lancamento o2) {
-                            return Long.compare(o1.getId(), o2.getId());
-                        }
-                    });
-            }
+//            if (repasse != null) {
+//                // lancamentosDeOrigem = repasse.getLancamentoOrigem().getFatura().getLancamentos();  
+//                if (lancamentosDeOrigem != null)
+//                    lancamentosDeOrigem.sort(new Comparator<Lancamento>() {
+//
+//                        @Override
+//                        public int compare(Lancamento o1, Lancamento o2) {
+//                            return Long.compare(o1.getId(), o2.getId());
+//                        }
+//                    });
+//            }
 
             setValorRepassar(ptp.getValorDisponivel());
             PrimeFaces.current().executeScript("PF('dlgAjusteManual').show();");
@@ -566,9 +622,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             this.addError("Erro", "Informe a data do valor restante", true);
         } else {
             try {
-                FaturaSingleton.getInstance().novoLancamentoManualRepasse(repasseFatura, getEntity().getFatura(), valorRepassar, dataRepassar, agendarParaData, dataValorRestante, ignorarRestante,
+                FaturaSingleton.getInstance().novoLancamentoManualRepasse(getEntity(), getEntity().getFatura(), valorRepassar, dataRepassar, agendarParaData, dataValorRestante, ignorarRestante,
                         justificativa, UtilsFrontEnd.getProfissionalLogado());
                 addInfo("Sucesso", "Ajuste manual executado!");
+                pesquisar();
                 PrimeFaces.current().executeScript("PF('dlgJustificativa').hide();");
                 PrimeFaces.current().executeScript("PF('dlgAjusteManual').hide();");
                 pesquisar();
