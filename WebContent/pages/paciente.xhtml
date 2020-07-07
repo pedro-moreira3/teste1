@@ -145,6 +145,16 @@
 							filterFunction="#{pacienteMB.filtroSemAcento}">
 							<h:outputText value="#{paciente.dadosBasico.responsavel}" />
 						</p:column>
+						<p:column sortBy="#{paciente.dadosBasico.telefoneStr}"
+							filterBy="#{paciente.dadosBasico.telefoneStr}"
+							filterMatchMode="contains" headerText="Celular"
+							filterFunction="#{pacienteMB.filtroSemAcento}">
+							<h:outputText value="#{paciente.dadosBasico.telefoneStr}" />
+							<p:button id="celular" icon="White fa fa-whatsapp"
+								disabled="#{agendamentoMB.getUrlWpp(paciente) == null}"
+								onclick="window.open('#{pacienteMB.getUrlWpp(paciente)}'); return false;"
+								styleClass="GreenButton" style="width: 33px !important" />
+						</p:column>
 						<p:column sortBy="#{paciente.dadosBasico.dataNascimentoStr}"
 							filterBy="#{paciente.dadosBasico.dataNascimentoStr}"
 							filterMatchMode="contains" headerText="Data de Nascimento">
