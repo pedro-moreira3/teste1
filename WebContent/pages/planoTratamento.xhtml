@@ -1852,7 +1852,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 		header="Evolução - Finalizar procedimento" responsive="true"
 		modal="true" appendTo=":lume">
 		<p:ajax event="close"
-			update=":lume:tabViewPaciente:pnEditaPlanoTratamento, :lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:dtProcedimentosSelecionadospt"
+			update=":lume:tabViewPaciente:pnEditaPlanoTratamento, :lume:tabViewPaciente:mainViewPT, :lume:tabViewPaciente:dtProcedimentosSelecionadospt "
 			listener="#{planoTratamentoMB.closeEvolucao}" process="@this" />
 		<p:outputPanel id="evolucaoView">
 			<p:panelGrid columns="1" layout="grid"

@@ -1326,8 +1326,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void carregaTelaOrcamento(PlanoTratamento planoTratamento) {
         try {
-            setEntity(planoTratamento);
-            carregarPlanoTratamentoProcedimentos();
+            setEntity(planoTratamento);           
             carregaOrcamentos();
         } catch (Exception e) {
             log.error("Erro no carregaTela", e);
@@ -1337,6 +1336,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void carregaOrcamentos() {
         orcamentos = OrcamentoSingleton.getInstance().getBo().listOrcamentosFromPT(getEntity());
+        try {
+            carregarPlanoTratamentoProcedimentos();
+        } catch (Exception e) {
+            log.error("Erro no carregaTela", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
     }
 
     public BigDecimal getValorOrcamentoAPagar() {
@@ -1491,7 +1496,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             //  }
             //   }
 
-            if (valorPrimeiraParcelaOrcamento != null) {
+            if (valorPrimeiraParcelaOrcamento != null && valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0) ) != 0) {
                 valorParcela = orcamentoSelecionado.getValorTotalComDesconto().divide(numeroParcelaOrcamento.add(new BigDecimal(1)), 2, RoundingMode.HALF_UP);
             } else {
                 valorParcela = orcamentoSelecionado.getValorTotalComDesconto().divide(numeroParcelaOrcamento, 2, RoundingMode.HALF_UP);
@@ -1937,6 +1942,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             this.planoTratamentoProcedimentosExcluidos = new ArrayList<>();
             this.planoTratamentoProcedimentos = PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoStatus(getEntity().getId(), filtroStatusProcedimento);
             getEntity().setPlanoTratamentoProcedimentos(this.planoTratamentoProcedimentos);
+            
+            PrimeFaces.current().executeScript("PF('procedimentosTableInPT').filter()");
         }
     }
 
