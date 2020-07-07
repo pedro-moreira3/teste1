@@ -421,11 +421,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     if (ptp.getValorDisponivel() == null) {
                         ptp.setValorDisponivel(new BigDecimal(0));
                     }
-                  //  if (ptp.getFatura() != null && ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL && (ptp.getValorDisponivel() == null
-                     //       || ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0)) {
-                     //   removerPtp.add(ptp);
-                     //   continue;
-                   // }
+                    if (ptp.getFatura() != null && ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL && (ptp.getValorDisponivel() == null
+                            || ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0) && ptp.getFatura().isValorRestanteIgnoradoAjusteManual()) {
+                        removerPtp.add(ptp);
+                        continue;
+                    }
                     
                     novaLista.add(ptp);
                 }
