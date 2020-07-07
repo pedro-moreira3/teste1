@@ -116,6 +116,8 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
                         this.getEntity().getPlanoTratamentoProcedimento().getDentistaExecutor(), UtilsFrontEnd.getProfissionalLogado(),
                         this.getEntity().getPlanoTratamentoProcedimento().getRepasseFaturas().get(0).getFaturaRepasse());
             }
+            
+            carregaListaCusto();
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
@@ -142,7 +144,7 @@ public class CustoMB extends LumeManagedBean<PlanoTratamentoProcedimentoCusto> {
         if (paciente == null) {
             this.addError(OdontoMensagens.getMensagem("plano.paciente.vazio"), "");
         }
-        UtilsFrontEnd.setPacienteLogado(paciente);
+        //UtilsFrontEnd.setPacienteLogado(paciente);
         this.setPlanoTratamento(null);
         try {
             this.setPlanoTratamentos(PlanoTratamentoSingleton.getInstance().getBo().listByPaciente(paciente));

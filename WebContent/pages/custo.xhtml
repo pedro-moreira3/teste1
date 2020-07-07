@@ -22,7 +22,7 @@
 							styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
 
-							<p:outputLabel for="paciente" value="#{dominioMB.cliente} :" />
+							<p:outputLabel for="paciente" value="Paciente:" />
 							<p:autoComplete dropdown="true" queryDelay="1000" size="42"
 								minQueryLength="3" value="#{custoMB.paciente}" id="paciente"
 								completeMethod="#{custoMB.geraSugestoes}" var="p"
@@ -44,11 +44,11 @@
 								</p:column>
 
 								<p:ajax event="itemSelect" listener="#{custoMB.handleSelect}"
-									process="paciente" update=":lume:dtCusto,:lume:pnCusto" />
+									process="@this,paciente" update=":lume:dtCusto,:lume:pnCusto" />
 							</p:autoComplete>
 
 							<p:outputLabel for="planoTratamento"
-								value="#{dominioMB.planoTratamento} : " />
+								value="Plano de tratamento: " />
 							<p:selectOneMenu id="planoTratamento" required="true"
 								disabled="#{custoMB.paciente == null or custoMB.entity.id != null and custoMB.entity.id != 0}"
 								value="#{custoMB.planoTratamento}" converter="planoTratamento">
@@ -56,15 +56,18 @@
 								<f:selectItems value="#{custoMB.planoTratamentos}" var="pt"
 									itemValue="#{pt}" itemLabel="#{pt.descricao}" />
 								<p:ajax update=":lume:botoes,:lume:pnCusto"
-									listener="#{custoMB.handleSelectPT}" />
+									listener="#{custoMB.handleSelectPT}" process="@this"/>
 							</p:selectOneMenu>
 
 							<p:outputLabel for="planoTratamentoProcedimento"
-								value="Procedimento : " />
+								value="Procedimento: " />
 							<p:selectOneMenu id="planoTratamentoProcedimento" required="true"
 								disabled="#{custoMB.planoTratamento == null or custoMB.entity.id != null and custoMB.entity.id != 0}"
 								value="#{custoMB.entity.planoTratamentoProcedimento}"
 								converter="planoTratamentoProcedimento">
+								
+								<p:ajax process="@this"/>
+								
 								<f:selectItem itemLabel="Selecione um procedimento"
 									itemValue="#{null}" />
 								<f:selectItems value="#{custoMB.planoTratamentoProcedimentos}"
@@ -72,30 +75,34 @@
 									itemLabel="#{ptp.descricaoCompleta}" />
 							</p:selectOneMenu>
 
-							<p:outputLabel for="dtRegistro" value="Data : " />
+							<p:outputLabel for="dtRegistro" value="Data: " />
 							<p:calendar id="dtRegistro" required="true"
 								value="#{custoMB.entity.dataRegistro}" pattern="dd/MM/yyyy"
 								mask="true" showWeeksBar="false" locale="#{lumeSecurity.locale}"
 								timeZone="#{lumeSecurity.timeZone}" navigator="true"
 								yearRange="-100:+10" maxdate="#{odontoMB.sysdate}"
 								disabled="#{custoMB.planoTratamento == null}">
+									<p:ajax event="dateSelect" process="@this"/>
 							</p:calendar>
 
-							<p:outputLabel for="valorCusto" value="Custo : " />
+							<p:outputLabel for="valorCusto" value="Custo: " />
 							<p:inputNumber id="valorCusto"
 								disabled="#{custoMB.planoTratamento == null}"
 								value="#{custoMB.entity.valor}" required="true" maxlength="10"
 								maxValue="99999999.99" decimalSeparator="," symbol=""
-								thousandSeparator="." />
+								thousandSeparator="." >
+								<p:ajax process="@this"/>
+							</p:inputNumber>
 
-							<p:outputLabel for="descricaoCusto" value="Descrição do custo : " />
+							<p:outputLabel for="descricaoCusto" value="Descrição do custo: " />
 							<p:inputTextarea id="descricaoCusto"
 								value="#{custoMB.entity.descricao}" required="true"
-								maxlength="100" disabled="#{custoMB.planoTratamento == null}" />
+								maxlength="100" disabled="#{custoMB.planoTratamento == null}" >
+								<p:ajax process="@this"/>
+							</p:inputTextarea>
 
 						</p:panelGrid>
 					</p:outputPanel>
-
 
 					<div class="SeparatorFull"></div>
 					<p:outputPanel id="botoes" styleClass="BordNone">
@@ -103,13 +110,13 @@
 							styleClass="ui-panelgrid-blank form-group ui-fluid">
 							<p:commandButton id="new" value="Novo Registro de Custo"
 								icon="White fa fa-file-o" actionListener="#{custoMB.actionNew}"
-								update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
+								update=":lume:pnCusto,dtCusto,:lume:botoes"
 								process="@this" disabled="#{custoMB.planoTratamento == null}" />
 							<p:commandButton id="persist" value="Salvar"
 								icon="White fa fa-save"
 								actionListener="#{custoMB.actionPersist}"
 								update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
-								process=":lume:pnCusto,@this"
+								process="@this,paciente"
 								disabled="#{custoMB.planoTratamento == null}"
 								styleClass="GreenButton" />
 							<p:commandButton id="delete" icon="White fa fa-trash-o"
@@ -153,8 +160,10 @@
 						paginatorPosition="bottom" id="dtCusto" emptyMessage=""
 						selection="#{custoMB.entity}" selectionMode="single"
 						rowKey="#{custo}" binding="#{custoMB.tabelaCusto}">
+						
 						<p:ajax event="rowSelect" update=":lume:pnCusto,:lume:botoes"
 							listener="#{custoMB.carrega}" />
+						
 						<f:facet name="header">Lançamentos</f:facet>
 
 						<p:column headerText="Data de Faturamento"
