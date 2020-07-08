@@ -101,13 +101,14 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             Calendar cal2 = Calendar.getInstance();
             cal1.setTime(getEntity().getInicio());
             cal2.setTime(getEntity().getFim());
+        
             boolean sameDay = cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) && cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR);
             
             if (getEntity().getInicio().before(getEntity().getFim()) || sameDay) {
                 boolean novoPlano = getEntity().getId() == null || getEntity().getId() == 0;
                 if (novoPlano) {
                     
-                    if(!(getEntity().getInicio().before(getEntity().getFim())) || sameDay){
+                    if(!(getEntity().getInicio().before(getEntity().getFim())) && !sameDay){
                         this.addError("Data de fim de previsão de fim de tratamento não pode ser antes da data de início do tratamento", "");
                         return;
                     }

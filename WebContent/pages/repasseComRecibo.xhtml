@@ -200,9 +200,9 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 											#{lancamento.formaPagamentoStr}</th>
 										<th
 											style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">
-											<h:outputText value="#{lancamento.valor}">
-												<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
-													type="currency" />
+											<h:outputText 
+													value="#{lancamento.dadosCalculoPercPagtoFaturaStr}">
+													<f:convertNumber maxFractionDigits="2" type="percent" />
 											</h:outputText>
 										</th>	
 										<th
