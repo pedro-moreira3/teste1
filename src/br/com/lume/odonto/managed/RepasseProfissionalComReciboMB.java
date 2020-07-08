@@ -427,7 +427,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             && ptp.getFatura().isValorRestanteIgnoradoAjusteManual() ) {
                         removerPtp.add(ptp);
                         continue;
-                    }else if (ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL && ptp.getValorPago().compareTo(ptp.getValorTotal()) >= 0) {
+                    }else if (ptp.getFatura() != null && ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL && ptp.getValorPago().compareTo(ptp.getValorTotal()) >= 0) {
                         removerPtp.add(ptp);
                         continue;
                     }
@@ -884,7 +884,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         // }
 
         if (validaPagamentoPaciente && !ptp.getPlanoTratamento().isOrtodontico()) {
-            if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && (ptp.getProcedimento().getValorRepasse() == null || ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) != 0)) {
+            if ((ptp.getValorDisponivel() == null || ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0) && (ptp.getProcedimento().getValorRepasse() == null || ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) != 0)) {
                 pendencias.add("Paciente ainda não pagou o procedimento - verifique os recebimentos;");
             } else if (ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0 && ptp.getProcedimento().getValorRepasse().compareTo(new BigDecimal(0)) == 0) {
                 pendencias.add("Procedimento com valor de repasse zerado;");
