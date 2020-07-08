@@ -28,6 +28,7 @@ import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RepasseFaturas;
+import br.com.lume.odonto.entity.RepasseFaturasLancamento;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
@@ -93,11 +94,15 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
                     inicio, fim, profissional, getPaciente(), statusPagamento, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
             
             if(this.getEntityList() != null && !this.getEntityList().isEmpty()) {
-                this.getEntityList().forEach(rf -> {
+                for(RepasseFaturas rf : this.getEntityList()) {
+                    if(rf.getFaturaRepasse().getTipoLancamentos().equals("M")) {
+                        rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(rf.getFaturaRepasse().getItensFiltered().get(0).getValorAjusteManual());
+                    }else {
+                        rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
+                    }
                     rf.getFaturaRepasse().setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(rf.getFaturaRepasse()));
-                    rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
                     rf.getFaturaRepasse().setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse()));
-                });
+                }
             }
             
             updateSomatorio();
@@ -119,6 +124,16 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
             this.somatorioValorTotalRestante = this.somatorioValorTotalRestante.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalRestante());
             this.somatorioValorTotalPago = this.somatorioValorTotalPago.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalPago());
         }
+    }
+    
+    public String justificativasRepasse(RepasseFaturas rf) {
+        StringBuilder retorno = new StringBuilder();
+        String v = "";
+        for(RepasseFaturasLancamento rfl : rf.getLancamentos()) {
+            v = rfl.getLancamentoRepasse().getJustificativaAjuste();
+            retorno.append(((v == null || v.equals("")) ? "" : v+"; "));
+        }
+        return retorno.toString();
     }
     
     public List<Profissional> geraSugestoesProfissional(String query) {

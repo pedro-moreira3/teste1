@@ -366,7 +366,6 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         }
 
                         if ((valorTotal.compareTo(valorPago) == 0 && valorTotal.compareTo(new BigDecimal(0)) != 0) ||
-
                                 (ptp.getDentistaExecutor().getTipoRemuneracao().equals(Profissional.FIXO))) {
                             removerPtp.add(ptp);
                             continue;
@@ -422,6 +421,17 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     if (ptp.getValorDisponivel() == null) {
                         ptp.setValorDisponivel(new BigDecimal(0));
                     }
+                    if (ptp.getFatura() != null
+                            && ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL 
+                            && (ptp.getValorDisponivel() == null || ptp.getValorDisponivel().compareTo(new BigDecimal(0)) == 0)
+                            && ptp.getFatura().isValorRestanteIgnoradoAjusteManual() ) {
+                        removerPtp.add(ptp);
+                        continue;
+                    }else if (ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL && ptp.getValorPago().compareTo(ptp.getValorTotal()) >= 0) {
+                        removerPtp.add(ptp);
+                        continue;
+                    }
+                    
                     novaLista.add(ptp);
                 }
 
@@ -485,6 +495,11 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             setEntity(ptp);
 
             ignorarRestante = false;
+            if(ptp.getFatura().isValorRestanteIgnoradoAjusteManual()) {
+                ignorarRestante = true;
+            }
+            
+          
             agendarParaData = false;
             dataRepassar = new Date();
             dataValorRestante = null;
@@ -622,6 +637,12 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             this.addError("Erro", "Informe a data do valor restante", true);
         } else {
             try {
+                if(ignorarRestante) {
+                    getEntity().getFatura().setValorRestanteIgnoradoAjusteManual(true);
+                }else {
+                    getEntity().getFatura().setValorRestanteIgnoradoAjusteManual(false);
+                }
+                
                 FaturaSingleton.getInstance().novoLancamentoManualRepasse(getEntity(), getEntity().getFatura(), valorRepassar, dataRepassar, agendarParaData, dataValorRestante, ignorarRestante,
                         justificativa, UtilsFrontEnd.getProfissionalLogado());
                 addInfo("Sucesso", "Ajuste manual executado!");

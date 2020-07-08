@@ -301,6 +301,14 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</h:outputText>
 							</f:facet>
 						</p:column>
+						
+						<p:column sortBy="#{relatorioRepasseMB.justificativasRepasse(rf)}"
+							filterBy="#{relatorioRepasseMB.justificativasRepasse(rf)}"
+							filterMatchMode="contains"
+							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
+							headerText="Justificativas">
+							<h:outputText value="#{relatorioRepasseMB.justificativasRepasse(rf)}"/>
+						</p:column>
 
 					</p:dataTable>
 

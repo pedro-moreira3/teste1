@@ -1071,6 +1071,10 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         if (negociacaoFatura.getResultadoDesconto() != null)
             this.negociacaoValorTotal = negociacaoFatura.getValorTotal().subtract(negociacaoFatura.getResultadoDesconto());
 
+        if(this.negociacaoQuantidadeParcelas == 1) {
+            this.negociacaoValorDaParcela = this.negociacaoValorTotal;    
+        }
+        
         if ((this.negociacaoValorDaParcela == null || this.negociacaoValorDaParcela.compareTo(
                 BigDecimal.ZERO) == 0) && (this.negociacaoValorDaPrimeiraParcela == null || this.negociacaoValorDaPrimeiraParcela.compareTo(BigDecimal.ZERO) == 0))
             this.negociacaoValorDaPrimeiraParcela = this.negociacaoValorTotal;
@@ -1201,7 +1205,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             negociacaoMensagemCalculo = "Pagamento em " + String.valueOf(negociacaoQuantidadeParcelas) + "x de " + ptFormat.format(negociacaoValorDaParcela) + ". Total de " + ptFormat.format(
                     totalSemDesconto);
         } else if (tipoNegociacao == TipoNegociacao.A_VISTA) {
-            negociacaoMensagemCalculo = "Pagamento a vista, valor de R$ " + ptFormat.format(negociacaoValorDaPrimeiraParcela);
+            negociacaoMensagemCalculo = "Pagamento a vista, valor de R$ " + ptFormat.format(totalSemDesconto);
         }
 
         if (negociacaoValorDaPrimeiraParcelaDirefenca != null && negociacaoValorDaPrimeiraParcelaDirefenca.compareTo(BigDecimal.ZERO) != 0) {
