@@ -57,6 +57,8 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
     private BigDecimal somatorioValorTotalRestante;
     private BigDecimal somatorioValorTotalFatura;
     private BigDecimal somatorioValorTotalPago;
+    
+    private List<String> justificativas = new ArrayList<String>();
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
@@ -96,7 +98,9 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
             if(this.getEntityList() != null && !this.getEntityList().isEmpty()) {
                 for(RepasseFaturas rf : this.getEntityList()) {
                     if(rf.getFaturaRepasse().getTipoLancamentos().equals("M")) {
-                        rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(rf.getFaturaRepasse().getItensFiltered().get(0).getValorAjusteManual());
+                        BigDecimal valorRestante = rf.getFaturaRepasse().getItensFiltered().get(0).getValorAjusteManual();
+                        BigDecimal valorRepassado = FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse());
+                        rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(valorRestante.subtract(valorRepassado));
                     }else {
                         rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
                     }
@@ -134,6 +138,20 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
             retorno.append(((v == null || v.equals("")) ? "" : v+"; "));
         }
         return retorno.toString();
+    }
+    
+    public void carregarJustificativasRepasse(RepasseFaturas rf) {
+        this.justificativas = new ArrayList<String>();
+        String v = "";
+        if(rf != null && rf.getLancamentos() != null && !rf.getLancamentos().isEmpty()) {
+            for(RepasseFaturasLancamento rfl : rf.getLancamentos()) {
+                v = rfl.getLancamentoRepasse().getJustificativaAjuste();
+                if(v != null && !v.equals("")) {
+                    justificativas.add(v);
+                    System.out.println(v);
+                }
+            }
+        }
     }
     
     public List<Profissional> geraSugestoesProfissional(String query) {
@@ -330,5 +348,13 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
 
     public void setSomatorioValorTotalPago(BigDecimal somatorioValorTotalPago) {
         this.somatorioValorTotalPago = somatorioValorTotalPago;
+    }
+
+    public List<String> getJustificativas() {
+        return justificativas;
+    }
+
+    public void setJustificativas(List<String> justificativas) {
+        this.justificativas = justificativas;
     }
 }

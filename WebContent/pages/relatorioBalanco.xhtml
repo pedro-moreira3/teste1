@@ -211,8 +211,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
 							headerText="Paciente">
 
-							<h:outputText value="#{rf.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}" 
-								title="#{rf.planoTratamentoProcedimento.planoTratamento.paciente.id}"/>
+							<h:outputText
+								value="#{rf.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
+								title="#{rf.planoTratamentoProcedimento.planoTratamento.paciente.id}" />
 
 						</p:column>
 
@@ -301,16 +302,32 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</h:outputText>
 							</f:facet>
 						</p:column>
-						
+
 						<p:column sortBy="#{relatorioRepasseMB.justificativasRepasse(rf)}"
-							filterBy="#{relatorioRepasseMB.justificativasRepasse(rf)}"
-							filterMatchMode="contains"
-							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
 							headerText="Justificativas">
-							<h:outputText value="#{relatorioRepasseMB.justificativasRepasse(rf)}"/>
+							<p:commandButton icon="fa fa-eye"
+								styleClass="NavyButton"
+								actionListener="#{relatorioRepasseMB.carregarJustificativasRepasse(rf)}"
+								process="@this"
+								update=":lume:dlgJustificativas"
+								title="Visualizar justificativas"
+								oncomplete="PF('dlgJustificativas').show();"/>
 						</p:column>
 
 					</p:dataTable>
+
+					<p:dialog id="dlgJustificativas" widgetVar="dlgJustificativas"
+						header="Justificativas" responsive="true" modal="true" width="50%">
+						<p:panel id="pnJustificativas" styleClass="BordNone">
+							<p:panelGrid columns="1" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+								<p:repeat value="#{relatorioRepasseMB.justificativas}"
+									var="justificativa">
+									<li style="margin-left: 10px;"><span>#{justificativa}</span></li>
+								</p:repeat>
+							</p:panelGrid>
+						</p:panel>
+					</p:dialog>
 
 				</div>
 			</div>
