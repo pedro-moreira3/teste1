@@ -29,6 +29,7 @@ import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.odonto.entity.RepasseFaturas;
 import br.com.lume.odonto.entity.RepasseFaturasLancamento;
+import br.com.lume.odonto.entity.Fatura.TipoLancamentos;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
@@ -97,7 +98,7 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
             
             if(this.getEntityList() != null && !this.getEntityList().isEmpty()) {
                 for(RepasseFaturas rf : this.getEntityList()) {
-                    if(rf.getFaturaRepasse().getTipoLancamentos().equals("M")) {
+                    if(rf.getFaturaRepasse().getTipoLancamentos() == TipoLancamentos.MANUAL) {
                         BigDecimal valorRestante = rf.getFaturaRepasse().getItensFiltered().get(0).getValorAjusteManual();
                         BigDecimal valorRepassado = FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse());
                         rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(valorRestante.subtract(valorRepassado));
