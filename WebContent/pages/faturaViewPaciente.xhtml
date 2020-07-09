@@ -1341,10 +1341,10 @@ body .height31 input {
 
 								<p:column headerText="Ações" width="50" exportable="false"
 									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
-									rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.permiteExcluirLancamento}">
+									rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
 										title="Cancelar lançamento"
-										disabled="#{!l.ativo or l.validado == 'C' or faturaPagtoMB.entity.statusFatura.rotulo eq 'I'}"
+										disabled="#{!l.ativo or l.validado == 'C' or faturaPagtoMB.entity.statusFatura.rotulo eq 'I' or faturaPagtoMB.permiteExcluirLancamento}"
 										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
 										actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
 										process="@this"
