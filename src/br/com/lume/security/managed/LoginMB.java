@@ -36,8 +36,6 @@ public class LoginMB extends LumeManagedBean<Usuario> {
     private Logger log = Logger.getLogger(LoginMB.class);
 
     private String confirmacaoEmail;
-    
-    private String confirmacaoEmailteste;
 
     public LoginMB() {
         super(new LoginBO());
@@ -128,7 +126,7 @@ public class LoginMB extends LumeManagedBean<Usuario> {
             if (getConfirmacaoEmail() == null || getConfirmacaoEmail().equals("")) {
                 addError("Erro!", Mensagens.getMensagem("login.email.nao.cadastrado"));
             } else {
-                Usuario usuarioTrocaSenha = UsuarioSingleton.getInstance().getBo().findByEmail(getConfirmacaoEmailteste());
+                Usuario usuarioTrocaSenha = UsuarioSingleton.getInstance().getBo().findByEmail(getConfirmacaoEmail());
                 if (usuarioTrocaSenha != null) {
                     EnviaEmail.envioBoasVindas(usuarioTrocaSenha);
                     addInfo("Sucesso!", "E-mail enviado com sucesso!");
@@ -178,11 +176,4 @@ public class LoginMB extends LumeManagedBean<Usuario> {
         this.confirmacaoEmail = confirmacaoEmail;
     }
 
-    public String getConfirmacaoEmailteste() {
-        return confirmacaoEmailteste;
-    }
-
-    public void setConfirmacaoEmailteste(String confirmacaoEmailteste) {
-        this.confirmacaoEmailteste = confirmacaoEmailteste;
-    }
 }
