@@ -214,6 +214,11 @@ body .login-panel .ui-g .ui-g-12 .ui-button:nth-child(1) {
 						<p:commandLink value="Esqueci minha senha"
 							onclick="PF('confirmation').show()" />
 					</p:outputPanel>
+					<p:outputPanel class="ui-g-12 ui-lg-12"
+						style="padding: 0px 40px 5px 40px !important;">
+						<p:commandLink value="TESTE"
+							onclick="PF('testeconfirmation').show()" />
+					</p:outputPanel>
 					<div class="ui-g-12 ui-lg-12" style="padding: 5px 40px; !important">
 						<p:separator
 							style="border-bottom: dashed 1px #d1d3d4;border: solid .5px #607D8B;width:100%" />
@@ -258,6 +263,27 @@ body .login-panel .ui-g .ui-g-12 .ui-button:nth-child(1) {
 				action="#{loginMB.actionResetSenha}" />
 			<p:commandButton id="decline" value="Cancelar"
 				onclick="PF('confirmation').hide()" type="button" />
+		</p:confirmDialog>
+		
+		<p:confirmDialog id="confirmDialog"
+			message="Digite seu e-mail para recuperar sua senha. Você recebera um e-mail com as instruções."
+			header="Esqueci minha Senha" severity="alert"
+			widgetVar="testeconfirmation" appendToBody="true">
+			<div class="Card ui-fluid ShadowEffect InteliBack">
+				<div class="Container100">
+					<p:inputText id="confirmacaoEmail" placeholder="Email"
+						style="padding:15px !important;"
+						value="#{loginMB.confirmacaoEmailteste}" />
+				</div>
+			</div>
+			<br />
+			<p:commandButton id="confirm" value="Enviar e-mail"
+				styleClass="NavyButton"
+				style="background-color: #607D8B;color: #ffffff"
+				oncomplete="PF('testeconfirmation').hide()"
+				action="#{loginMB.actionResetSenhateste}" />
+			<p:commandButton id="decline" value="Cancelar"
+				onclick="PF('testeconfirmation').hide()" type="button" />
 		</p:confirmDialog>
 
 		<ui:remove>
