@@ -273,7 +273,9 @@ body .login-panel .ui-g .ui-g-12 .ui-button:nth-child(1) {
 				<div class="Container100">
 					<p:inputText id="confirmacaoEmailteste" placeholder="Email"
 						style="padding:15px !important;"
-						value="#{loginMB.confirmacaoEmailteste}" />
+						value="#{loginMB.confirmacaoEmailteste}">
+						<p:ajax process="@this"/>
+					</p:inputText>
 				</div>
 			</div>
 			<br />
