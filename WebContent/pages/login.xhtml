@@ -271,18 +271,18 @@ body .login-panel .ui-g .ui-g-12 .ui-button:nth-child(1) {
 			widgetVar="testeconfirmation" appendToBody="true">
 			<div class="Card ui-fluid ShadowEffect InteliBack">
 				<div class="Container100">
-					<p:inputText id="confirmacaoEmail" placeholder="Email"
+					<p:inputText id="confirmacaoEmailteste" placeholder="Email"
 						style="padding:15px !important;"
 						value="#{loginMB.confirmacaoEmailteste}" />
 				</div>
 			</div>
 			<br />
-			<p:commandButton id="confirm" value="Enviar e-mail"
+			<p:commandButton id="confirmteste" value="Enviar e-mail"
 				styleClass="NavyButton"
 				style="background-color: #607D8B;color: #ffffff"
 				oncomplete="PF('testeconfirmation').hide()"
 				action="#{loginMB.actionResetSenhateste}" />
-			<p:commandButton id="decline" value="Cancelar"
+			<p:commandButton id="declineteste" value="Cancelar"
 				onclick="PF('testeconfirmation').hide()" type="button" />
 		</p:confirmDialog>
 

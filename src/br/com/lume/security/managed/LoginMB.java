@@ -178,11 +178,11 @@ public class LoginMB extends LumeManagedBean<Usuario> {
         this.confirmacaoEmail = confirmacaoEmail;
     }
 
-    private String getConfirmacaoEmailteste() {
+    public String getConfirmacaoEmailteste() {
         return confirmacaoEmailteste;
     }
 
-    private void setConfirmacaoEmailteste(String confirmacaoEmailteste) {
+    public void setConfirmacaoEmailteste(String confirmacaoEmailteste) {
         this.confirmacaoEmailteste = confirmacaoEmailteste;
     }
 }
