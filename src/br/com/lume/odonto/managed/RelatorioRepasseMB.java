@@ -48,17 +48,17 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
     private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos;
 
     private Profissional profissional;
-    
+
     private Paciente paciente;
 
     private String statusPagamento = "L";
-    
+
     private String filtroPeriodo;
-    
+
     private BigDecimal somatorioValorTotalRestante;
     private BigDecimal somatorioValorTotalFatura;
     private BigDecimal somatorioValorTotalPago;
-    
+
     private List<String> justificativas = new ArrayList<String>();
 
     //EXPORTAÇÃO TABELA
@@ -79,11 +79,11 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
     }
-    
+
     public void pesquisar() {
         try {
             this.setEntityList(null);
-            
+
             Calendar c = Calendar.getInstance();
             c.setTime(this.fim);
             c.set(Calendar.HOUR_OF_DAY, 23);
@@ -92,30 +92,42 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
             c.setTime(this.inicio);
             c.set(Calendar.HOUR_OF_DAY, 0);
             this.inicio = c.getTime();
-            
-            this.setEntityList(RepasseFaturasSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(
-                    inicio, fim, profissional, getPaciente(), statusPagamento, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
-            
-            if(this.getEntityList() != null && !this.getEntityList().isEmpty()) {
-                for(RepasseFaturas rf : this.getEntityList()) {
-                    if(rf.getFaturaRepasse().getTipoLancamentos() == TipoLancamentos.MANUAL) {
+
+            this.setEntityList(RepasseFaturasSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(inicio, fim, profissional, getPaciente(), statusPagamento,
+                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+
+            if (this.getEntityList() != null && !this.getEntityList().isEmpty()) {
+                for (RepasseFaturas rf : this.getEntityList()) {
+                    if (rf.getFaturaRepasse().getTipoLancamentos() == TipoLancamentos.MANUAL) {
                         BigDecimal valorRestante = rf.getFaturaRepasse().getItensFiltered().get(0).getValorAjusteManual();
                         BigDecimal valorRepassado = FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse());
-                        
-                        if((valorRepassado != null && valorRestante != null) && valorRepassado.compareTo(valorRestante) == -1)
-                            rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(valorRestante.subtract(valorRepassado));
-                        else
+
+                        if (valorRepassado == null)
+                            valorRepassado = new BigDecimal(0);
+
+                        if (rf.getFaturaRepasse().isValorRestanteIgnoradoAjusteManual()) {
+                            if (valorRestante != null && valorRestante.compareTo(valorRepassado) > 0)
+                                rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(valorRestante.subtract(valorRepassado));
+                            else
+                                rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(new BigDecimal(0));
+                        } else if (valorRestante == null || valorRestante.compareTo(new BigDecimal(0)) == 0) {
+                            rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
+                        } else {
                             rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(new BigDecimal(0));
-                    }else {
+                        }
+
+                    } else {
                         rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
                     }
                     rf.getFaturaRepasse().setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(rf.getFaturaRepasse()));
                     rf.getFaturaRepasse().setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse()));
                 }
             }
-            
+
             updateSomatorio();
-        }catch (Exception e) {
+        } catch (
+
+        Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Erro ao pesquisar.");
             e.printStackTrace();
             this.log.error(e);
@@ -134,38 +146,38 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
             this.somatorioValorTotalPago = this.somatorioValorTotalPago.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalPago());
         }
     }
-    
+
     public String justificativasRepasse(RepasseFaturas rf) {
         StringBuilder retorno = new StringBuilder();
         String v = "";
-        for(RepasseFaturasLancamento rfl : rf.getLancamentos()) {
+        for (RepasseFaturasLancamento rfl : rf.getLancamentos()) {
             v = rfl.getLancamentoRepasse().getJustificativaAjuste();
-            retorno.append(((v == null || v.equals("")) ? "" : v+"; "));
+            retorno.append(((v == null || v.equals("")) ? "" : v + "; "));
         }
         return retorno.toString();
     }
-    
+
     public void carregarJustificativasRepasse(RepasseFaturas rf) {
         this.justificativas = new ArrayList<String>();
         String v = "";
-        if(rf != null && rf.getLancamentos() != null && !rf.getLancamentos().isEmpty()) {
-            for(RepasseFaturasLancamento rfl : rf.getLancamentos()) {
+        if (rf != null && rf.getLancamentos() != null && !rf.getLancamentos().isEmpty()) {
+            for (RepasseFaturasLancamento rfl : rf.getLancamentos()) {
                 v = rfl.getLancamentoRepasse().getJustificativaAjuste();
-                if(v != null && !v.equals("")) {
+                if (v != null && !v.equals("")) {
                     justificativas.add(v);
                     System.out.println(v);
                 }
             }
         }
     }
-    
+
     public List<Profissional> geraSugestoesProfissional(String query) {
         List<Profissional> sugestoes = new ArrayList<>();
         List<Profissional> profissionais = new ArrayList<>();
         try {
             profissionais = ProfissionalSingleton.getInstance().getBo().listDentistasByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             for (Profissional p : profissionais) {
-                if(!p.getTipoRemuneracao().equals(Profissional.FIXO)) {
+                if (!p.getTipoRemuneracao().equals(Profissional.FIXO)) {
                     if (Normalizer.normalize(p.getDadosBasico().getNome().toLowerCase(), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "").toLowerCase().contains(
                             Normalizer.normalize(query, Normalizer.Form.NFD).toLowerCase())) {
                         sugestoes.add(p);
@@ -179,7 +191,7 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
         }
         return sugestoes;
     }
-    
+
     public List<Paciente> geraSugestoesPaciente(String query) {
         try {
             return PacienteSingleton.getInstance().listSugestoesComplete(query, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
@@ -189,7 +201,7 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
         }
         return null;
     }
-    
+
     public void actionTrocaDatas() {
         try {
 
