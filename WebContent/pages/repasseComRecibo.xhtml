@@ -678,14 +678,14 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 
 							<p:column rendered="#{reciboLancamento.dados == null}"
 								filterMatchMode="contains" headerText="Valor à pagar"
-								filterBy="#{reciboLancamento.lancamento.valorComDesconto}"
-								sortBy="#{reciboLancamento.lancamento.valorComDesconto}"
+								filterBy="#{reciboLancamento.lancamento.valor}"
+								sortBy="#{reciboLancamento.lancamento.valor}"
 								width="10%">
 								<h:outputText value="#{reciboLancamento.lancamento.valor}">
 									<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 										type="currency" />
 								</h:outputText>
-								<h:outputText rendered="#{reciboLancamento.lancamento.fatura.valorRestanteIgnoradoAjusteManual}" value=" *">								
+								<h:outputText rendered="#{reciboLancamento.lancamento.fatura.valorRestanteIgnoradoAjusteManual or reciboLancamento.lancamento.valor > reciboLancamento.dados.valorTotal}" value=" *">								
 								</h:outputText>
 							</p:column>
 							<p:column rendered="#{reciboLancamento.dados != null}"
