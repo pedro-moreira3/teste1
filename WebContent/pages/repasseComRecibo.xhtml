@@ -471,7 +471,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														<f:convertNumber type="currency" currencySymbol="R$"
 															maxFractionDigits="2" />
 													</h:outputText>
-													<h:outputText rendered="#{reciboLancamento.lancamento.fatura.valorRestanteIgnoradoAjusteManual}" value=" *">								
+													<h:outputText rendered="#{reciboLancamento.lancamento.fatura.valorRestanteIgnoradoAjusteManual or reciboLancamento.lancamento.valor > reciboLancamento.dados.valorTotal}" value=" *">								
 													</h:outputText>
 													</td>
 											</p:outputPanel>
@@ -697,7 +697,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 										type="currency" />
 								</h:outputText>
 								
-								<h:outputText rendered="#{reciboLancamento.lancamento.fatura.valorRestanteIgnoradoAjusteManual}" value=" *">								
+								<h:outputText rendered="#{reciboLancamento.lancamento.fatura.valorRestanteIgnoradoAjusteManual or reciboLancamento.lancamento.valor > reciboLancamento.dados.valorTotal}" value=" *">								
 								</h:outputText>
 								
 							</p:column>
