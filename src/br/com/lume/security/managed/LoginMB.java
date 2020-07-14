@@ -120,6 +120,29 @@ public class LoginMB extends LumeManagedBean<Usuario> {
             addError("Erro!", Mensagens.getMensagem("login.reset.erro"));
         }
     }
+    
+    public void actionResetSenhateste() {
+        try {
+            if (getConfirmacaoEmail() == null || getConfirmacaoEmail().equals("")) {
+                addError("Erro!", Mensagens.getMensagem("login.email.nao.cadastrado"));
+            } else {
+                Usuario usuarioTrocaSenha = UsuarioSingleton.getInstance().getBo().findByEmail(getConfirmacaoEmail());
+                if (usuarioTrocaSenha != null) {
+                    EnviaEmail.envioBoasVindas(usuarioTrocaSenha);
+                    addInfo("Sucesso!", "E-mail enviado com sucesso!");
+                } else {
+                    addError("Erro!", Mensagens.getMensagem("login.email.nao.cadastrado"));
+                }
+
+            }
+        } catch (NonUniqueResultException e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            addError("Erro!", Mensagens.getMensagem("login.reset.erro"));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            addError("Erro!", Mensagens.getMensagem("login.reset.erro"));
+        }
+    }
 
     private void carregaObjetosPermitidos(Usuario userLogin, Sistema sistema) {
         this.getLumeSecurity().setUsuario(userLogin);
@@ -152,4 +175,5 @@ public class LoginMB extends LumeManagedBean<Usuario> {
     public void setConfirmacaoEmail(String confirmacaoEmail) {
         this.confirmacaoEmail = confirmacaoEmail;
     }
+
 }

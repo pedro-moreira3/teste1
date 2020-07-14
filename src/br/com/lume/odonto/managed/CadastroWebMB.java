@@ -292,6 +292,8 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
             usuario.setUsuIntDiastrocasenha(999);
             usuario.setUsuChaTutorial("S");
             UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario, UtilsFrontEnd.getEmpresaLogada());
+            
+            EnviaEmail.envioBoasVindas(usuario);
         } else {
             Map<String, String> valores = new HashMap<>();
             valores.put("#nome", usuario.getUsuStrNme());

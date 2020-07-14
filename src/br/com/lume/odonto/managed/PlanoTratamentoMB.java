@@ -1499,6 +1499,8 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             if (valorPrimeiraParcelaOrcamento != null && valorPrimeiraParcelaOrcamento.compareTo(new BigDecimal(0) ) != 0) {
                 valorParcela = orcamentoSelecionado.getValorTotalComDesconto().divide(numeroParcelaOrcamento.add(new BigDecimal(1)), 2, RoundingMode.HALF_UP);
             } else {
+                if(numeroParcelaOrcamento.compareTo(new BigDecimal(0)) == 0)
+                    numeroParcelaOrcamento = new BigDecimal(1);
                 valorParcela = orcamentoSelecionado.getValorTotalComDesconto().divide(numeroParcelaOrcamento, 2, RoundingMode.HALF_UP);
             }
 

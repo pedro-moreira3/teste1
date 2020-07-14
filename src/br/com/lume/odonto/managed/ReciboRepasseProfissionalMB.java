@@ -66,7 +66,11 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
     private DataTable tabelaLancamentos, tabelaRecibos;
 
     private int quantidadeRepasses = 0;
+    
+    private ReciboRepasseProfissional repasseParaAprovar;
 
+    private Date dataRepassar = new Date();
+    
     public ReciboRepasseProfissionalMB() {
         super(ReciboRepasseProfissionalSingleton.getInstance().getBo());
         this.setClazz(ReciboRepasseProfissional.class);
@@ -96,16 +100,23 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
         pesquisarRecibos();
     }
 
-    public void aprovarRecibo(ReciboRepasseProfissional r) {
-        try {
-            ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(r, UtilsFrontEnd.getProfissionalLogado());
+    public void aprovarRecibo() {
+        try {          
+            ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(dataRepassar,repasseParaAprovar, UtilsFrontEnd.getProfissionalLogado());
             addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
             pesquisarRecibos();
-            PrimeFaces.current().executeScript("PF('dtPrincipal').filter()");
+           // PrimeFaces.current().executeScript("PF('dtPrincipal').filter()");
+           // PrimeFaces.current().executeScript("PF('dtRecibos').filter()");
         } catch (Exception e) {
             addInfo("Erro", Mensagens.getMensagemOffLine(Mensagens.ERRO_AO_SALVAR_REGISTRO));
             e.printStackTrace();
         }
+    }
+    
+    
+    public void preparaAprovarRecibo(ReciboRepasseProfissional r) {
+        dataRepassar = new Date();
+        repasseParaAprovar = r;
     }
 
     public void onTabChange(TabChangeEvent event) {
@@ -625,6 +636,24 @@ public class ReciboRepasseProfissionalMB extends LumeManagedBean<ReciboRepassePr
 
     public void setQuantidadeRepasses(int quantidadeRepasses) {
         this.quantidadeRepasses = quantidadeRepasses;
+    }
+
+    
+    public ReciboRepasseProfissional getRepasseParaAprovar() {
+        return repasseParaAprovar;
+    }
+
+    
+    public void setRepasseParaAprovar(ReciboRepasseProfissional repasseParaAprovar) {
+        this.repasseParaAprovar = repasseParaAprovar;
+    }
+    
+    public Date getDataRepassar() {
+        return dataRepassar;
+    }
+
+    public void setDataRepassar(Date dataRepassar) {
+        this.dataRepassar = dataRepassar;
     }
 
 }

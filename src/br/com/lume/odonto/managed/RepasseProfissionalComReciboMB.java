@@ -99,8 +99,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
     private List<Lancamento> lancamentosDeOrigem;
 
     private BigDecimal valorRepassar = new BigDecimal(0);
-    private Date dataRepassar = new Date();
-
+    
     private boolean agendarParaData = false;
 
     private Date dataValorRestante;
@@ -223,15 +222,15 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         }
     }
 
-    public void aprovarRecibo(ReciboRepasseProfissional r) {
-        try {
-            ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(r, UtilsFrontEnd.getProfissionalLogado());
-            addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
-        } catch (Exception e) {
-            addError("Erro!", e.getMessage());
-        }
-        // pesquisar();
-    }
+//    public void aprovarRecibo(ReciboRepasseProfissional r) {
+//        try {
+//            ReciboRepasseProfissionalSingleton.getInstance().aprovarRecibo(r, UtilsFrontEnd.getProfissionalLogado());
+//            addInfo("Sucesso", Mensagens.getMensagemOffLine(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+//        } catch (Exception e) {
+//            addError("Erro!", e.getMessage());
+//        }
+//        // pesquisar();
+//    }
 
     public void preparaVisualizacao(ReciboRepasseProfissional recibo) {
         reciboRepasseProfissional = recibo;
@@ -500,8 +499,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             }
             
           
-            agendarParaData = false;
-            dataRepassar = new Date();
+            agendarParaData = false;         
             dataValorRestante = null;
             justificativa = null;
             Fatura fatura = ptp.getFatura();
@@ -599,7 +597,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     getEntity().getFatura().setValorRestanteIgnoradoAjusteManual(false);
                 }
                 
-                FaturaSingleton.getInstance().novoLancamentoManualRepasse(getEntity(), getEntity().getFatura(), valorRepassar, dataRepassar, agendarParaData, dataValorRestante, ignorarRestante,
+                FaturaSingleton.getInstance().novoLancamentoManualRepasse(getEntity(), getEntity().getFatura(), valorRepassar, new Date(), agendarParaData, dataValorRestante, ignorarRestante,
                         justificativa, UtilsFrontEnd.getProfissionalLogado());
                 addInfo("Sucesso", "Ajuste manual executado!");
                 pesquisar();
@@ -1139,15 +1137,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
     public void setValorRepassar(BigDecimal valorRepassar) {
         this.valorRepassar = valorRepassar;
-    }
-
-    public Date getDataRepassar() {
-        return dataRepassar;
-    }
-
-    public void setDataRepassar(Date dataRepassar) {
-        this.dataRepassar = dataRepassar;
-    }
+    }  
 
     public boolean isAgendarParaData() {
         return agendarParaData;
