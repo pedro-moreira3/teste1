@@ -45,7 +45,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 								<h:panelGroup>
 									<p:outputLabel for="filtroPeriodoRepasses"
-										value="Período de criação da fatura:" />
+										value="Período de criação do lançamento:" />
 									<p:selectOneMenu id="filtroPeriodoRepasses"
 										value="#{relatorioRepasseMB.filtroPeriodo}">
 										<f:selectItem itemValue="" itemLabel="Selecione" />
@@ -74,6 +74,42 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								<h:panelGroup>
 									<p:outputLabel for="fim" value="Fim: " />
 									<p:calendar id="fim" value="#{relatorioRepasseMB.fim}"
+										pattern="dd/MM/yyyy" mask="true">
+										<p:ajax event="dateSelect" process="@this" />
+									</p:calendar>
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<p:outputLabel for="filtroPeriodoPagamento"
+										value="Período de pagamento dos lançamentos:" />
+									<p:selectOneMenu id="filtroPeriodoPagamento"
+										value="#{relatorioRepasseMB.filtroPeriodoPagamento}">
+										<f:selectItem itemValue="" itemLabel="Selecione" />
+										<f:selectItem itemValue="O" itemLabel="Ontem" />
+										<f:selectItem itemValue="H" itemLabel="Hoje" />
+										<f:selectItem itemValue="M" itemLabel="Mês Atual" />
+										<f:selectItem itemValue="S" itemLabel="Últimos 7 dias" />
+										<f:selectItem itemValue="Q" itemLabel="Últimos 15 dias" />
+										<f:selectItem itemValue="T" itemLabel="Últimos 30 dias" />
+										<f:selectItem itemValue="I" itemLabel="Últimos 6 meses" />
+
+										<p:ajax event="change" process="@this" update="inicioPagamento,fimPagamento"
+											listener="#{relatorioRepasseMB.actionTrocaDatasPagamento}" />
+
+									</p:selectOneMenu>
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<p:outputLabel for="inicioPagamento" value="Inicio: " />
+									<p:calendar id="inicioPagamento" value="#{relatorioRepasseMB.inicioPagamento}"
+										pattern="dd/MM/yyyy" mask="true">
+										<p:ajax event="dateSelect" process="@this" />
+									</p:calendar>
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<p:outputLabel for="fimPagamento" value="Fim: " />
+									<p:calendar id="fimPagamento" value="#{relatorioRepasseMB.fimPagamento}"
 										pattern="dd/MM/yyyy" mask="true">
 										<p:ajax event="dateSelect" process="@this" />
 									</p:calendar>
@@ -126,9 +162,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										<p:ajax event="change" process="@this" />
 
-										<f:selectItem itemValue="L" itemLabel="A pagar" />
-										<f:selectItem itemValue="P" itemLabel="Pagos" />
 										<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+										<f:selectItems value="#{relatorioRepasseMB.statusLancamentos}"
+											var="lancamento" itemValue="#{lancamento}" itemLabel="#{lancamento}" />
 									</p:selectOneMenu>
 								</h:panelGroup>
 
@@ -268,9 +304,44 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</f:facet>
 						</p:column>
 						
+						<p:column sortBy="#{rfl.repasseFaturas.faturaRepasse.dadosTabelaRepasseTotalPago}"
+							headerText="Valor repassado">
+							<h:outputText
+								value="#{rfl.repasseFaturas.faturaRepasse.dadosTabelaRepasseTotalPago}">
+								<f:convertNumber currencySymbol="R$" type="currency"
+									locale="#{lumeSecurity.locale}" />
+							</h:outputText>
+							<f:facet name="footer">
+								<h:outputText value="Total " />
+								<h:outputText
+									value="#{relatorioRepasseMB.somatorioValorTotalPago}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										minFractionDigits="2" />
+								</h:outputText>
+							</f:facet>
+						</p:column>
+						
+						<p:column
+							sortBy="#{rfl.repasseFaturas.faturaRepasse.dadosTabelaRepasseTotalRestante}"
+							headerText="Valor a repassar">
+							<h:outputText
+								value="#{rfl.repasseFaturas.faturaRepasse.dadosTabelaRepasseTotalRestante}">
+								<f:convertNumber currencySymbol="R$" type="currency"
+									locale="#{lumeSecurity.locale}" />
+							</h:outputText>
+							<f:facet name="footer">
+								<h:outputText value="Total " />
+								<h:outputText
+									value="#{relatorioRepasseMB.somatorioValorTotalRestante}">
+									<f:convertNumber currencySymbol="R$" type="currency"
+										minFractionDigits="2" />
+								</h:outputText>
+							</f:facet>
+						</p:column>
+						
 						<p:column
 							sortBy="#{relatorioRepasseMB.valorTotal(rfl.lancamentoRepasse)}"
-							headerText="Valor do lançamento">
+							headerText="Valor do pagamento">
 							<h:outputText
 								value="#{relatorioRepasseMB.valorTotal(rfl.lancamentoRepasse)}">
 								<f:convertNumber currencySymbol="R$" type="currency"
@@ -286,12 +357,26 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</f:facet>
 						</p:column>
 						
+						<p:column sortBy="#{rfl.lancamentoRepasse.statusCompleto}"
+							filterBy="#{rfl.lancamentoRepasse.statusCompleto}" filterMatchMode="contains"
+							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
+							headerText="Status pagamento">
+							<h:outputText value="#{rfl.lancamentoRepasse.statusCompleto}" title="#{rfl.id}" />
+						</p:column>
+						
+						<p:column sortBy="#{rfl.lancamentoRepasse.dataPagamentoStr}"
+							filterBy="#{rfl.lancamentoRepasse.dataPagamentoStr}" filterMatchMode="contains"
+							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
+							headerText="Data de pagamento">
+							<h:outputText value="#{rfl.lancamentoRepasse.dataPagamentoStr}" title="#{rfl.id}" />
+						</p:column>
+						
 						<p:column
 							sortBy="#{rfl.lancamentoRepasse.justificativaAjuste}"
 							filterBy="#{rfl.lancamentoRepasse.justificativaAjuste}"
 							filterMatchMode="contains"
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
-							headerText="Data de execução">
+							headerText="Justificativa">
 							<h:outputText
 								value="#{rfl.lancamentoRepasse.justificativaAjuste}"
 								title="#{rfl.id}" />
