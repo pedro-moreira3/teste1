@@ -1133,7 +1133,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                 for (AgendamentoPlanoTratamentoProcedimento aptp : agendamento.getPlanoTratamentoProcedimentosAgendamento()) {
                                     if(aptp.getPlanoTratamentoProcedimento() != null && aptp.getPlanoTratamentoProcedimento().getProcedimento() != null && 
                                             aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao() != null &&
-                                            aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao().contains("Consulta Inicial")
+                                            aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao().contains("Inicial")
                                             ) {
                                         descricao = "[ Consulta Inicial ] ";
                                     }
