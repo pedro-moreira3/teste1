@@ -420,7 +420,7 @@
 				
 					<p:outputLabel for="paciente" value="#{dominioMB.cliente} (digite o nome e selecione o paciente)" />
 
-					<p:autoComplete dropdown="false" queryDelay="300"
+					<p:autoComplete dropdown="false" queryDelay="1000"
 						value="#{agendamentoMB.pacienteSelecionado}" id="paciente"
 						minQueryLength="3" scrollHeight="400"					
 						completeMethod="#{agendamentoMB.geraSugestoes}" var="p"

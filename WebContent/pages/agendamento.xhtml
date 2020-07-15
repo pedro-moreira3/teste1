@@ -562,7 +562,7 @@ div.ui-selectoneradio label {
 											style="border:0px none; background-color:transparent;">
 
 											<h:panelGroup styleClass="md-inputfield">
-												<p:autoComplete dropdown="false" queryDelay="300"
+												<p:autoComplete dropdown="false" queryDelay="1000"
 													value="#{agendamentoMB.pacientePesquisado}"
 													id="pacienteSelecionado" minQueryLength="3"
 													scrollHeight="400"
@@ -584,10 +584,10 @@ div.ui-selectoneradio label {
 													<p:column headerText="Nome da Mãe">
 														<h:outputText value="#{p.nomeMae}" />
 													</p:column>
+													
 													<p:ajax event="itemSelect"
 														update="btnVisualizarDisponibilidadeAgenda" />
-													<p:ajax event="change"
-														update="btnVisualizarDisponibilidadeAgenda" />
+
 												</p:autoComplete>
 
 												<p:outputLabel for="pacienteSelecionado"
