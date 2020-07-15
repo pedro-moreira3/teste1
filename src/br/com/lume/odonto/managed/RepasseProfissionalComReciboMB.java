@@ -381,6 +381,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
 
                         ptp.setValorPago(FaturaSingleton.getInstance().getTotalPago(ptp.getFatura()));
 
+                        //TODO ESSA CONTA DO VALOR DISPONIVEL DEVE ESTAR EM UM SINGLETON, NAO AQUI
                         if (ptp.getFatura().getTipoLancamentos() == TipoLancamentos.AUTOMATICO) {
                             //ptp.setValorDisponivel(ptp.getValorTotal().subtract(ptp.getValorPago()));  
                             // ptp.setValorDisponivel(new BigDecimal(FaturaSingleton.getInstance().getValorNaoPagoDisponivel(ptp.getFatura())));
@@ -552,8 +553,12 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         valorTotalFatura = ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getOrcamento().getValorTotalComDesconto();
                     }
                     
-                   
-                    valorProcedimento = repasse.getFaturaItem().getValorComDesconto();
+                   if(repasse != null && repasse.getFaturaItem() != null && repasse.getFaturaItem().getValorComDesconto() != null ) {
+                       valorProcedimento = repasse.getFaturaItem().getValorComDesconto();   
+                   }else {
+                       valorProcedimento = ptp.getProcedimento().getValor();
+                   }
+                    
                     
                     repasseFatura = repasse.getRepasseFaturas();
                     if (Profissional.PORCENTAGEM.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
@@ -571,9 +576,15 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             }
                         });
                        
-                        if(cont < lancamentosDeOrigem.size()) {                        
+                        if(cont < lancamentosDeOrigem.size()) {   
+                            //TODO como saber que o lancamento é referente
+                            System.out.println(lancamento.getId());
+                            System.out.println(lancamentosDeOrigem.get(cont).getId());
                             lancamentosDeOrigem.get(cont).setDadosCalculoValorARepassarSemCusto(lancamento.getValor()); 
                          
+                            
+                            
+                            
                             lancamentosDeOrigem.get(cont).setDadosCalculoValorTaxa(new BigDecimal(0));
                             lancamentosDeOrigem.get(cont).setDadosCalculoValorTarifa(new BigDecimal(0));
                             lancamentosDeOrigem.get(cont).setDadosCalculoValorTributo(new BigDecimal(0));
@@ -583,9 +594,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                             lancamentosDeOrigem.get(cont).getTarifa().getTaxa().divide(
                                             BigDecimal.valueOf(100)) : BigDecimal.ZERO)
                              );
-                            
-                            lancamentosDeOrigem.get(cont).setDadosCalculoValorTaxa(
-                                    lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamentosDeOrigem.get(cont).getValor())
+                            BigDecimal valorTarifa = lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamento.getValor());
+                            lancamentosDeOrigem.get(cont).setDadosCalculoValorTaxa(                                    
+                                    lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamento.getValor().add(valorTarifa))
                             );
                             if(lancamentosDeOrigem.get(cont).getTarifa() != null && lancamentosDeOrigem.get(cont).getTarifa().getTarifa() != null) {
                                 lancamentosDeOrigem.get(cont).setDadosCalculoValorTarifa(lancamentosDeOrigem.get(cont).getTarifa().getTarifa());
@@ -599,10 +610,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                          
                             if (lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos() != null && lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().compareTo(new BigDecimal(0)) != 0) {
                                 lancamentosDeOrigem.get(cont).setDadosCalculoPercCustoDireto(
-                                        lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(valorProcedimento, 4, BigDecimal.ROUND_HALF_UP)        
+                                        lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(valorTotalFatura, 4, BigDecimal.ROUND_HALF_UP)        
                                 );
                                 lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(
-                                        lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(valorProcedimento, 4, BigDecimal.ROUND_HALF_UP).multiply(
+                                        lancamentosDeOrigem.get(cont).getDadosTabelaValorTotalCustosDiretos().divide(valorTotalFatura, 4, BigDecimal.ROUND_HALF_UP).multiply(
                                                 lancamentosDeOrigem.get(cont).getValor())
                                 );                   
                             }else {
@@ -614,6 +625,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                     lancamentosDeOrigem.get(cont).getDadosCalculoValorTaxa()
                                     .add(lancamentosDeOrigem.get(cont).getDadosCalculoValorTarifa())
                                     .add(lancamentosDeOrigem.get(cont).getDadosCalculoValorTributo())
+                                    .add(lancamentosDeOrigem.get(cont).getDadosCalculoValorCustoDiretoRateado())
                             );
                             
                         }

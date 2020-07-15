@@ -200,8 +200,10 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 										Data de Crédito</th>
 									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 										Status</th>
-									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 24%"  rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}">
-										Valor das Deduções</th>	
+									<p:outputPanel rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}">
+										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 24%"  >
+											Valor das Deduções</th>
+									</p:outputPanel>			
 									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 24%">
 										Valor Calculado de Repasse</th>
 								</tr>
@@ -230,22 +232,22 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 											#{lancamento.statusCompleto}</th>
 											
-											
-										<th rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}"
-											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
-											<p:commandLink
-														process="@this" title="Deduções"
-														actionListener="#{repasseProfissionalComReciboMB.loadDeducoes(lancamento)}"
-														oncomplete="PF('dlgDeducoes').show()"
-														update="lume:painelDeducoes">
-												<h:outputText
-												value="#{lancamento.dadosCalculoTotalReducao}">
-												<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
-													type="currency" />
-											</h:outputText>		
-											</p:commandLink>
-										</th>
-											
+										<p:outputPanel rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}">	
+											<th 
+												style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+												<p:commandLink
+															process="@this" title="Deduções"
+															actionListener="#{repasseProfissionalComReciboMB.loadDeducoes(lancamento)}"
+															oncomplete="PF('dlgDeducoes').show()"
+															update="lume:painelDeducoes">
+													<h:outputText
+													value="#{lancamento.dadosCalculoTotalReducao}">
+													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+														type="currency" />
+												</h:outputText>		
+												</p:commandLink>
+											</th>
+										</p:outputPanel>	
 										<th
 											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 											<h:outputText
@@ -525,22 +527,17 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 										<th
 											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">Procedimento</th>
 										<th
-											style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Data
-											de execução</th>
+											style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Data de execução</th>
 										<th
-											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">Plano
-											de Tratamento</th>
+											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">Plano de Tratamento</th>
 										<th
 											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">Paciente</th>
 										<th
-											style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Valor
-											Total</th>
+											style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Valor Total</th>
 										<th
-											style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Valor
-											já pago</th>
+											style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Valor já pago</th>
 										<th
-											style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Valor
-											à pagar</th>
+											style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">Valor à pagar</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -609,7 +606,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 														<f:convertNumber type="currency" currencySymbol="R$"
 															maxFractionDigits="2" />
 													</h:outputText>
-												<h:outputText rendered="#{reciboLancamento.lancamento.fatura.valorRestanteIgnoradoAjusteManual}" value=" *">								
+												<h:outputText rendered="#{reciboLancamento.lancamento.fatura.valorRestanteIgnoradoAjusteManual or reciboLancamento.lancamento.valor > reciboLancamento.dados.valorTotal}" value=" *">								
 													</h:outputText>	
 												</td>
 											</p:outputPanel>
