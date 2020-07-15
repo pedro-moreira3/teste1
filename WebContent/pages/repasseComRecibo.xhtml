@@ -119,8 +119,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 										type="currency" />
 								</h:outputText>
-							</h:panelGroup>
-
+							</h:panelGroup>						
 						</p:panelGrid>
 						<br />
 						<div style="width: 100%; text-align: center;">
@@ -132,6 +131,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								<tr>
 									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 40%">
 										Descrição</th>
+									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 15%">
+										Valor do procedimento</th>	
 									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 15%">
 										Valor de repasse</th>
 									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 15%">
@@ -145,11 +146,23 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 										#{repasseProfissionalComReciboMB.entity.descricaoCompletaComFace}
 									</th>
-									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">
+									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 										<h:outputText
+											value="#{repasseProfissionalComReciboMB.valorProcedimento}">
+											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+												type="currency" />
+										</h:outputText>
+									</th>	
+									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">
+										<h:outputText rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'PRO'}"
 											value="#{repasseProfissionalComReciboMB.valorBaseRepasse}">
 											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 												type="currency" />
+										</h:outputText>
+										<h:outputText rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}"
+											value="#{repasseProfissionalComReciboMB.valorBaseRepasse} %">
+												<f:convertNumber currencySymbol="" maxFractionDigits="0"
+												type="currency" />											
 										</h:outputText>
 									</th>
 									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
@@ -187,6 +200,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 										Data de Crédito</th>
 									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 										Status</th>
+									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 24%"  rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}">
+										Valor das Deduções</th>	
 									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 24%">
 										Valor Calculado de Repasse</th>
 								</tr>
@@ -214,6 +229,23 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 										<th
 											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 											#{lancamento.statusCompleto}</th>
+											
+											
+										<th rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}"
+											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
+											<p:commandLink
+														process="@this" title="Deduções"
+														actionListener="#{repasseProfissionalComReciboMB.loadDeducoes(lancamento)}"
+														oncomplete="PF('dlgDeducoes').show()"
+														update="lume:painelDeducoes">
+												<h:outputText
+												value="#{lancamento.dadosCalculoTotalReducao}">
+												<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+													type="currency" />
+											</h:outputText>		
+											</p:commandLink>
+										</th>
+											
 										<th
 											style="border: 1px solid #bdbdbd; padding: 5px; width: 20%">
 											<h:outputText
@@ -226,7 +258,6 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 								</ui:repeat>
 							</tbody>
 						</table>
-						<br />
 						<p:panelGrid columns="2" layout="grid"
 							styleClass="ui-panelgrid-blank ui-fluid form-group removeSecondPadding"
 							style="border:0px none; background-color:transparent;">
@@ -306,6 +337,77 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 					oncomplete="PF('dlgAjusteManual').hide();" immediate="true" />
 			</p:panelGrid>
 
+		</p:dialog>
+		
+			<p:dialog id="dlgDeducoes" widgetVar="dlgDeducoes" width="30%"
+			header="Deduções do lancamento" responsive="true" modal="true"
+			appendTo=":lume">
+			<p:ajax event="close" update="" process="@this" />
+			<p:outputPanel id="painelDeducoes">
+				<table style="width: 100%; border-collapse: collapse;" rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}">
+							<thead>
+								<tr>
+									<th style="border: 1px solid #bdbdbd;">Tipo</th>
+									<th style="border: 1px solid #bdbdbd;">Base de cálculo</th>
+									<th style="border: 1px solid #bdbdbd;">Valor da dedução</th>
+								</tr>
+							</thead>
+							<tbody>	
+								<tr>
+									<th style="border: 1px solid #bdbdbd;">Taxa</th>
+									<th style="border: 1px solid #bdbdbd;"><h:outputText
+											value="#{repasseProfissionalComReciboMB.lancamentoDeducoes.dadosCalculoPercTaxa}">
+											<f:convertNumber maxFractionDigits="2" type="percent" />
+										</h:outputText>
+									</th>
+									<th style="border: 1px solid #bdbdbd;"><h:outputText
+											value="#{repasseProfissionalComReciboMB.lancamentoDeducoes.dadosCalculoValorTaxa}">
+											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+												type="currency" />
+										</h:outputText>
+									</th>
+								</tr>
+								<tr>
+									<th style="border: 1px solid #bdbdbd;">Tarifa</th>
+									<th style="border: 1px solid #bdbdbd;"></th>
+									<th style="border: 1px solid #bdbdbd;"><h:outputText
+											value="#{repasseProfissionalComReciboMB.lancamentoDeducoes.dadosCalculoValorTarifa}">
+											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+												type="currency" />
+										</h:outputText>
+									</th>
+								</tr>
+								<tr>
+									<th style="border: 1px solid #bdbdbd;">Tributo</th>
+									<th style="border: 1px solid #bdbdbd;"><h:outputText
+											value="#{repasseProfissionalComReciboMB.lancamentoDeducoes.dadosCalculoPercTributo}">
+											<f:convertNumber maxFractionDigits="2" type="percent" />
+										</h:outputText>
+									</th>
+									<th style="border: 1px solid #bdbdbd;"><h:outputText
+											value="#{repasseProfissionalComReciboMB.lancamentoDeducoes.dadosCalculoValorTributo}">
+											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+												type="currency" />
+										</h:outputText>
+									</th>
+								</tr>
+								<tr>
+									<th style="border: 1px solid #bdbdbd;">Custo Direto</th>
+									<th style="border: 1px solid #bdbdbd;"><h:outputText
+											value="#{repasseProfissionalComReciboMB.lancamentoDeducoes.dadosCalculoPercCustoDireto}">
+											<f:convertNumber maxFractionDigits="2" type="percent" />
+										</h:outputText>
+									</th>
+									<th style="border: 1px solid #bdbdbd;"><h:outputText
+											value="#{repasseProfissionalComReciboMB.lancamentoDeducoes.dadosCalculoValorCustoDiretoRateado}">
+											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+												type="currency" />
+										</h:outputText>
+									</th>
+								</tr>								
+							</tbody>
+						</table>
+			</p:outputPanel>			
 		</p:dialog>
 
 
@@ -849,8 +951,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 												<ui:remove>
 													Antigo usado abaixo: dadosCalculoRecebidoMenosReducao
 												</ui:remove>
-												<td colspan="8">Valor recebido descontando as deduções
-													acima:</td>
+												<td colspan="8">Valor recebido descontando as deduções acima:</td>
 												<td colspan="4"><h:outputText
 														value="#{lancamentoCalculado.dadosCalculoValorARepassarSemCusto}">
 														<f:convertNumber currencySymbol="R$" maxFractionDigits="2"

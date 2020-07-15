@@ -1056,7 +1056,9 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 			<p:commandButton icon="fa fa-persist" value="Salvar"
 				process="@this, :lume:tabViewPaciente:pnlJustificativaRemove"
-				actionListener="#{planoTratamentoMB.salvaJustificativaRemove}" />
+				actionListener="#{planoTratamentoMB.salvaJustificativaRemove}" 				
+					oncomplete="PF('procedimentosTableInPT').filter()"
+				/>
 			<p:commandButton icon="White fa fa-close" value="Fechar"
 				process="@this" onclick="PF('dlgJustificativaRemove').hide();"
 				styleClass="NavyButton" />
