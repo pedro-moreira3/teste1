@@ -181,80 +181,80 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
 						widgetVar="dtRelatorio" id="dtRelatorio"
-						value="#{relatorioRepasseMB.entityList}" var="rf" rows="10"
+						value="#{relatorioRepasseMB.entityList}" var="rfl" rows="10"
 						paginator="true" paginatorPosition="bottom"
 						binding="#{relatorioRepasseMB.tabelaRelatorio}">
 						<f:facet name="header">Lançamentos</f:facet>
 
 						<p:column
-							sortBy="#{rf.faturaRepasse.profissional.dadosBasico.nome}"
-							filterBy="#{rf.faturaRepasse.profissional.dadosBasico.nome}"
+							sortBy="#{rfl.repasseFaturas.faturaRepasse.profissional.dadosBasico.nome}"
+							filterBy="#{rfl.repasseFaturas.faturaRepasse.profissional.dadosBasico.nome}"
 							filterMatchMode="contains"
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
 							headerText="Profissional">
 							<h:outputText
-								value="#{rf.faturaRepasse.profissional.dadosBasico.nome}"
-								title="#{rf.id}" />
+								value="#{rfl.repasseFaturas.faturaRepasse.profissional.dadosBasico.nome}"
+								title="#{rfl.id}" />
 						</p:column>
 
-						<p:column sortBy="#{rf.tipoCalculoStr}"
-							filterBy="#{rf.tipoCalculoStr}" filterMatchMode="contains"
+						<p:column sortBy="#{rfl.repasseFaturas.tipoCalculoStr}"
+							filterBy="#{rfl.repasseFaturas.tipoCalculoStr}" filterMatchMode="contains"
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
 							headerText="Tipo remuneração">
-							<h:outputText value="#{rf.tipoCalculoStr}" title="#{rf.id}" />
+							<h:outputText value="#{rfl.repasseFaturas.tipoCalculoStr}" title="#{rf.id}" />
 						</p:column>
 
 						<p:column
-							sortBy="#{rf.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
-							filterBy="#{rf.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
+							sortBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
+							filterBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
 							filterMatchMode="contains"
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
 							headerText="Paciente">
 
 							<h:outputText
-								value="#{rf.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
-								title="#{rf.planoTratamentoProcedimento.planoTratamento.paciente.id}" />
+								value="#{rfl.repasseFaturas.planoTratamentoProcedimento.planoTratamento.paciente.dadosBasico.nome}"
+								title="#{rfl.repasseFaturas.planoTratamentoProcedimento.planoTratamento.paciente.id}" />
 
 						</p:column>
 
 						<p:column
-							sortBy="#{rf.planoTratamentoProcedimento.planoTratamento.descricao}"
-							filterBy="#{rf.planoTratamentoProcedimento.planoTratamento.descricao}"
+							sortBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.planoTratamento.descricao}"
+							filterBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.planoTratamento.descricao}"
 							filterMatchMode="contains"
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
 							headerText="Plano de tratamento">
 							<h:outputText
-								value="#{rf.planoTratamentoProcedimento.planoTratamento.descricao}"
-								title="#{rf.id}" />
+								value="#{rfl.repasseFaturas.planoTratamentoProcedimento.planoTratamento.descricao}"
+								title="#{rfl.id}" />
 						</p:column>
 
 						<p:column
-							sortBy="#{rf.planoTratamentoProcedimento.procedimento.descricao}"
-							filterBy="#{rf.planoTratamentoProcedimento.procedimento.descricao}"
+							sortBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.procedimento.descricao}"
+							filterBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.procedimento.descricao}"
 							filterMatchMode="contains"
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
 							headerText="Procedimento">
 							<h:outputText
-								value="#{rf.planoTratamentoProcedimento.procedimento.descricao}"
-								title="#{rf.id}" />
+								value="#{rfl.repasseFaturas.planoTratamentoProcedimento.procedimento.descricao}"
+								title="#{rfl.id}" />
 						</p:column>
 
 						<p:column
-							sortBy="#{rf.planoTratamentoProcedimento.dataFinalizadoStr}"
-							filterBy="#{rf.planoTratamentoProcedimento.dataFinalizadoStr}"
+							sortBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.dataFinalizadoStr}"
+							filterBy="#{rfl.repasseFaturas.planoTratamentoProcedimento.dataFinalizadoStr}"
 							filterMatchMode="contains"
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
 							headerText="Data de execução">
 							<h:outputText
-								value="#{rf.planoTratamentoProcedimento.dataFinalizadoStr}"
-								title="#{rf.id}" />
+								value="#{rfl.repasseFaturas.planoTratamentoProcedimento.dataFinalizadoStr}"
+								title="#{rfl.id}" />
 						</p:column>
-
+						
 						<p:column
-							sortBy="#{rf.faturaRepasse.dadosTabelaRepasseTotalFatura}"
-							headerText="Valor do repasse">
+							sortBy="#{rfl.lancamentoRepasse.dadosTabelaValorTotalFatura}"
+							headerText="Valor total da fatura de repasse">
 							<h:outputText
-								value="#{rf.faturaRepasse.dadosTabelaRepasseTotalFatura}">
+								value="#{rfl.lancamentoRepasse.dadosTabelaValorTotalFatura}">
 								<f:convertNumber currencySymbol="R$" type="currency"
 									locale="#{lumeSecurity.locale}" />
 							</h:outputText>
@@ -267,51 +267,34 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</h:outputText>
 							</f:facet>
 						</p:column>
-
-						<p:column sortBy="#{rf.faturaRepasse.dadosTabelaRepasseTotalPago}"
-							headerText="Valor repassado">
-							<h:outputText
-								value="#{rf.faturaRepasse.dadosTabelaRepasseTotalPago}">
-								<f:convertNumber currencySymbol="R$" type="currency"
-									locale="#{lumeSecurity.locale}" />
-							</h:outputText>
-							<f:facet name="footer">
-								<h:outputText value="Total " />
-								<h:outputText
-									value="#{relatorioRepasseMB.somatorioValorTotalPago}">
-									<f:convertNumber currencySymbol="R$" type="currency"
-										minFractionDigits="2" />
-								</h:outputText>
-							</f:facet>
-						</p:column>
-
+						
 						<p:column
-							sortBy="#{rf.faturaRepasse.dadosTabelaRepasseTotalRestante}"
-							headerText="Valor a repassar">
+							sortBy="#{relatorioRepasseMB.valorTotal(rfl.lancamentoRepasse)}"
+							headerText="Valor do lançamento">
 							<h:outputText
-								value="#{rf.faturaRepasse.dadosTabelaRepasseTotalRestante}">
+								value="#{relatorioRepasseMB.valorTotal(rfl.lancamentoRepasse)}">
 								<f:convertNumber currencySymbol="R$" type="currency"
 									locale="#{lumeSecurity.locale}" />
 							</h:outputText>
 							<f:facet name="footer">
 								<h:outputText value="Total " />
 								<h:outputText
-									value="#{relatorioRepasseMB.somatorioValorTotalRestante}">
+									value="#{relatorioRepasseMB.somatorioValorTotalLancamentos}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										minFractionDigits="2" />
 								</h:outputText>
 							</f:facet>
 						</p:column>
-
-						<p:column sortBy="#{relatorioRepasseMB.justificativasRepasse(rf)}"
-							headerText="Justificativas">
-							<p:commandButton icon="fa fa-eye"
-								styleClass="NavyButton"
-								actionListener="#{relatorioRepasseMB.carregarJustificativasRepasse(rf)}"
-								process="@this"
-								update=":lume:dlgJustificativas"
-								title="Visualizar justificativas"
-								oncomplete="PF('dlgJustificativas').show();"/>
+						
+						<p:column
+							sortBy="#{rfl.lancamentoRepasse.justificativaAjuste}"
+							filterBy="#{rfl.lancamentoRepasse.justificativaAjuste}"
+							filterMatchMode="contains"
+							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
+							headerText="Data de execução">
+							<h:outputText
+								value="#{rfl.lancamentoRepasse.justificativaAjuste}"
+								title="#{rfl.id}" />
 						</p:column>
 
 					</p:dataTable>

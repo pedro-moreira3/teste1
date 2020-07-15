@@ -33,11 +33,12 @@ import br.com.lume.odonto.entity.Fatura.TipoLancamentos;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
 
 @Named
 @ViewScoped
-public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
+public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento> {
 
     private static final long serialVersionUID = 1L;
 
@@ -65,8 +66,8 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
     private DataTable tabelaRelatorio;
 
     public RelatorioRepasseMB() {
-        super(RepasseFaturasSingleton.getInstance().getBo());
-        this.setClazz(RepasseFaturas.class);
+        super(RepasseFaturasLancamentoSingleton.getInstance().getBo());
+        this.setClazz(RepasseFaturasLancamento.class);
         this.inicio = Utils.getPrimeiroDiaMesCorrente();
         this.fim = Calendar.getInstance().getTime();
     }
@@ -93,36 +94,42 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
             c.set(Calendar.HOUR_OF_DAY, 0);
             this.inicio = c.getTime();
 
-            this.setEntityList(RepasseFaturasSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(inicio, fim, profissional, getPaciente(), statusPagamento,
+            this.setEntityList(RepasseFaturasLancamentoSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(inicio, fim, profissional, getPaciente(), statusPagamento,
                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
 
             if (this.getEntityList() != null && !this.getEntityList().isEmpty()) {
-                for (RepasseFaturas rf : this.getEntityList()) {
-                    if (rf.getFaturaRepasse().getTipoLancamentos() == TipoLancamentos.MANUAL) {
-                        BigDecimal valorRestante = rf.getFaturaRepasse().getItensFiltered().get(0).getValorAjusteManual();
-                        BigDecimal valorRepassado = FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse());
-
-                        if (valorRepassado == null)
-                            valorRepassado = new BigDecimal(0);
-
-                        if (rf.getFaturaRepasse().isValorRestanteIgnoradoAjusteManual()) {
-                            if (valorRestante != null && valorRestante.compareTo(valorRepassado) > 0)
-                                rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(valorRestante.subtract(valorRepassado));
-                            else
-                                rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(new BigDecimal(0));
-                        } else if (valorRestante == null || valorRestante.compareTo(new BigDecimal(0)) == 0) {
-                            rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
-                        } else {
-                            rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(new BigDecimal(0));
-                        }
-
-                    } else {
-                        rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
-                    }
-                    rf.getFaturaRepasse().setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(rf.getFaturaRepasse()));
-                    rf.getFaturaRepasse().setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse()));
+                for(RepasseFaturasLancamento rfl : this.getEntityList()) {
+                    rfl.getLancamentoRepasse().setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(rfl.getRepasseFaturas().getFaturaRepasse()));
                 }
             }
+            
+//            if (this.getEntityList() != null && !this.getEntityList().isEmpty()) {
+//                for (RepasseFaturas rf : this.getEntityList()) {
+//                    if (rf.getFaturaRepasse().getTipoLancamentos() == TipoLancamentos.MANUAL) {
+//                        BigDecimal valorRestante = rf.getFaturaRepasse().getItensFiltered().get(0).getValorAjusteManual();
+//                        BigDecimal valorRepassado = FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse());
+//
+//                        if (valorRepassado == null)
+//                            valorRepassado = new BigDecimal(0);
+//
+//                        if (rf.getFaturaRepasse().isValorRestanteIgnoradoAjusteManual()) {
+//                            if (valorRestante != null && valorRestante.compareTo(valorRepassado) > 0)
+//                                rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(valorRestante.subtract(valorRepassado));
+//                            else
+//                                rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(new BigDecimal(0));
+//                        } else if (valorRestante == null || valorRestante.compareTo(new BigDecimal(0)) == 0) {
+//                            rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
+//                        } else {
+//                            rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(new BigDecimal(0));
+//                        }
+//
+//                    } else {
+//                        rf.getFaturaRepasse().setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(rf.getFaturaRepasse()));
+//                    }
+//                    rf.getFaturaRepasse().setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(rf.getFaturaRepasse()));
+//                    rf.getFaturaRepasse().setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse()));
+//                }
+//            }
 
             updateSomatorio();
         } catch (
@@ -140,13 +147,21 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
         this.setSomatorioValorTotalRestante(new BigDecimal(0));
         this.setSomatorioValorTotalPago(new BigDecimal(0));
 
-        for (RepasseFaturas rf : this.getEntityList()) {
-            this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalFatura());
-            this.somatorioValorTotalRestante = this.somatorioValorTotalRestante.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalRestante());
-            this.somatorioValorTotalPago = this.somatorioValorTotalPago.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalPago());
+        for (RepasseFaturasLancamento rfl : this.getEntityList()) {
+            this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(rfl.getLancamentoRepasse().getDadosTabelaValorTotalFatura());
+//            this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(rf.getFaturaRepasse().getDadosTabelaValorTotal());
+//            this.somatorioValorTotalRestante = this.somatorioValorTotalRestante.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalRestante());
+//            this.somatorioValorTotalPago = this.somatorioValorTotalPago.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalPago());
         }
     }
 
+    public BigDecimal valorTotal(Lancamento lc) {
+        if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return lc.getValor();
+        }
+        return lc.getValorComDesconto();
+    }
+    
     public String justificativasRepasse(RepasseFaturas rf) {
         StringBuilder retorno = new StringBuilder();
         String v = "";

@@ -79,6 +79,10 @@ public class Exportacoes implements Serializable {
         HSSFSheet sheetTabela = workbook.createSheet(header);
 
         Row cabecalho = sheetTabela.createRow(0);
+        
+        CellStyle styleTitulo = workbook.createCellStyle();
+        CellStyle currencyFormat = workbook.createCellStyle();
+        CellStyle styleRodape = workbook.createCellStyle();
 
         int tableCount = tabela.getRowCount();
 
@@ -99,8 +103,6 @@ public class Exportacoes implements Serializable {
             for (int j = 0; j < colunasValidas.size(); j++) {
 
                 if (i == 0) {
-
-                    CellStyle styleTitulo = workbook.createCellStyle();
 
                     styleTitulo.setAlignment(HorizontalAlignment.CENTER);
                     styleTitulo.setBorderLeft(BorderStyle.THIN);
@@ -163,7 +165,6 @@ public class Exportacoes implements Serializable {
                             txt = getValueFromString(txt);
                             value = Double.valueOf(txt);
 
-                            CellStyle currencyFormat = workbook.createCellStyle();
                             currencyFormat.setDataFormat(HSSFDataFormat.getBuiltinFormat("$#,##0.00"));
 
                             celula.setCellValue(value);
@@ -200,9 +201,7 @@ public class Exportacoes implements Serializable {
                                 }
                             }
 
-                            CellStyle style = workbook.createCellStyle();
-
-                            celulaRodape.setCellStyle(style);
+                            celulaRodape.setCellStyle(styleRodape);
                             celulaRodape.setCellValue(rodape);
 
                         }

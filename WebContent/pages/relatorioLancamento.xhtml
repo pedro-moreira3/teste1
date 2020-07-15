@@ -72,7 +72,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 							<h:panelGroup styleClass="md-combo">
 								<h:outputText for="filtroPeriodoAReceber"
-									value="Perioodo da Data de crédito:" />
+									value="Período da data de crédito:" />
 								<p:selectOneMenu id="filtroPeriodoAReceber"
 									value="#{relatorioRecebimentoMB.periodoBusca}"
 									converter="enumPeriodoBusca">
@@ -321,10 +321,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 								</f:facet>
 							</p:column>
 							<p:column headerText="Valor total"
-								sortBy="#{lancamento.valorComDesconto}"
-								filterBy="#{lancamento.valorComDesconto}"
+								sortBy="#{relatorioRecebimentoMB.valorTotal(lancamento)}"
+								filterBy="#{relatorioRecebimentoMB.valorTotal(lancamento)}"
 								filterMatchMode="contains">
-								<h:outputText value="#{lancamento.valorComDesconto}">
+								<h:outputText value="#{relatorioRecebimentoMB.valorTotal(lancamento)}">
 									<f:convertNumber currencySymbol="R$" type="currency"
 										minFractionDigits="2" />
 								</h:outputText>
