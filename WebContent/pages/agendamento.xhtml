@@ -562,7 +562,7 @@ div.ui-selectoneradio label {
 											style="border:0px none; background-color:transparent;">
 
 											<h:panelGroup styleClass="md-inputfield">
-												<p:autoComplete dropdown="false" queryDelay="300"
+												<p:autoComplete dropdown="false" queryDelay="1000"
 													value="#{agendamentoMB.pacientePesquisado}"
 													id="pacienteSelecionado" minQueryLength="3"
 													scrollHeight="400"
@@ -584,10 +584,10 @@ div.ui-selectoneradio label {
 													<p:column headerText="Nome da Mãe">
 														<h:outputText value="#{p.nomeMae}" />
 													</p:column>
+													
 													<p:ajax event="itemSelect"
 														update="btnVisualizarDisponibilidadeAgenda" />
-													<p:ajax event="change"
-														update="btnVisualizarDisponibilidadeAgenda" />
+
 												</p:autoComplete>
 
 												<p:outputLabel for="pacienteSelecionado"
@@ -727,10 +727,7 @@ div.ui-selectoneradio label {
 												itemValue="F" itemEscaped="false" />
 											<f:selectItem
 												itemLabel="&lt;div&gt;&lt;div class='agendamentoAtendido legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Atendidos&lt;/div&gt;"
-												itemValue="A" itemEscaped="false" />
-											<f:selectItem
-												itemLabel="&lt;div&gt;&lt;div class='agendamentoConsultaInicial legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Consulta Inicial&lt;/div&gt;"
-												itemValue="G" itemEscaped="false" />
+												itemValue="A" itemEscaped="false" />											
 											<f:selectItem
 												itemLabel="&lt;div&gt;&lt;div class='agendamentoCancelado legendaFiltroAgendamento'&gt;&amp;nbsp;&lt;/div&gt;&lt;/div&gt;&lt;div&gt;Cancelados&lt;/div&gt;"
 												itemValue="C" itemEscaped="false" />

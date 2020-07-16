@@ -24,6 +24,7 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.odonto.entity.Fatura;
 import br.com.lume.odonto.entity.Lancamento;
+import br.com.lume.odonto.entity.Lancamento.StatusLancamento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
@@ -33,17 +34,18 @@ import br.com.lume.odonto.entity.Fatura.TipoLancamentos;
 import br.com.lume.paciente.PacienteSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.repasse.RepasseFaturasLancamentoSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
 
 @Named
 @ViewScoped
-public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
+public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento> {
 
     private static final long serialVersionUID = 1L;
 
     private Logger log = Logger.getLogger(RelatorioRepasseMB.class);
 
-    private Date inicio, fim;
+    private Date inicio, fim, inicioPagamento, fimPagamento;
 
     private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos;
 
@@ -51,24 +53,27 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
 
     private Paciente paciente;
 
-    private String statusPagamento = "L";
+    private String statusPagamento = null;
 
-    private String filtroPeriodo;
+    private String filtroPeriodo, filtroPeriodoPagamento;
 
+    private BigDecimal somatorioValorTotalLancamentos;
     private BigDecimal somatorioValorTotalRestante;
     private BigDecimal somatorioValorTotalFatura;
     private BigDecimal somatorioValorTotalPago;
-
+    
+    private List<String> statusLancamentos = new ArrayList<String>();
     private List<String> justificativas = new ArrayList<String>();
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio;
 
     public RelatorioRepasseMB() {
-        super(RepasseFaturasSingleton.getInstance().getBo());
-        this.setClazz(RepasseFaturas.class);
+        super(RepasseFaturasLancamentoSingleton.getInstance().getBo());
+        this.setClazz(RepasseFaturasLancamento.class);
         this.inicio = Utils.getPrimeiroDiaMesCorrente();
         this.fim = Calendar.getInstance().getTime();
+        carregarStatusLancamentos();
     }
 
     public void actionCarregarProcedimentos() {
@@ -83,21 +88,32 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
     public void pesquisar() {
         try {
             this.setEntityList(null);
+            List<RepasseFaturas> repasses;
 
-            Calendar c = Calendar.getInstance();
-            c.setTime(this.fim);
-            c.set(Calendar.HOUR_OF_DAY, 23);
-            this.fim = c.getTime();
+            ajustarHorariosDatas();
 
-            c.setTime(this.inicio);
-            c.set(Calendar.HOUR_OF_DAY, 0);
-            this.inicio = c.getTime();
-
-            this.setEntityList(RepasseFaturasSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(inicio, fim, profissional, getPaciente(), statusPagamento,
-                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+            this.setEntityList(RepasseFaturasLancamentoSingleton.getInstance().getBo().listByDataAndProfissionalAndPaciente(inicio, fim, inicioPagamento, fimPagamento, 
+                    profissional, getPaciente(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
 
             if (this.getEntityList() != null && !this.getEntityList().isEmpty()) {
-                for (RepasseFaturas rf : this.getEntityList()) {
+                for(RepasseFaturasLancamento rfl : this.getEntityList()) {
+                    rfl.getLancamentoRepasse().setDadosTabelaValorTotalFatura(FaturaSingleton.getInstance().getTotal(rfl.getRepasseFaturas().getFaturaRepasse()));
+                }
+            }
+            
+            if (this.getEntityList() != null && !this.getEntityList().isEmpty()) {
+                repasses = new ArrayList<RepasseFaturas>();
+                
+                if(statusPagamento != null) {
+                    this.getEntityList().removeIf((rfl) -> !rfl.getLancamentoRepasse().getStatusCompleto().contains(statusPagamento));
+                }
+                
+                this.getEntityList().forEach((rfl) -> {
+                    if(!repasses.contains(rfl.getRepasseFaturas()))
+                        repasses.add(rfl.getRepasseFaturas());
+                });
+                
+                for (RepasseFaturas rf : repasses) {
                     if (rf.getFaturaRepasse().getTipoLancamentos() == TipoLancamentos.MANUAL) {
                         BigDecimal valorRestante = rf.getFaturaRepasse().getItensFiltered().get(0).getValorAjusteManual();
                         BigDecimal valorRepassado = FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse());
@@ -122,6 +138,7 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
                     rf.getFaturaRepasse().setDadosTabelaRepasseTotalFatura(FaturaSingleton.getInstance().getTotal(rf.getFaturaRepasse()));
                     rf.getFaturaRepasse().setDadosTabelaRepasseTotalPago(FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse()));
                 }
+                
             }
 
             updateSomatorio();
@@ -133,20 +150,55 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
             this.log.error(e);
         }
     }
+    
+    private void ajustarHorariosDatas() {
+        Calendar c = Calendar.getInstance();
+        c.setTime(this.fim);
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        this.fim = c.getTime();
+
+        c.setTime(this.inicio);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        this.inicio = c.getTime();
+
+        c.setTime(this.fimPagamento);
+        c.set(Calendar.HOUR_OF_DAY, 23);
+        this.fimPagamento = c.getTime();
+
+        c.setTime(this.inicioPagamento);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        this.inicioPagamento = c.getTime();
+        
+    }
 
     public void updateSomatorio() {
 
+        this.setSomatorioValorTotalLancamentos(new BigDecimal(0));
         this.setSomatorioValorTotalFatura(new BigDecimal(0));
         this.setSomatorioValorTotalRestante(new BigDecimal(0));
         this.setSomatorioValorTotalPago(new BigDecimal(0));
 
-        for (RepasseFaturas rf : this.getEntityList()) {
-            this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalFatura());
-            this.somatorioValorTotalRestante = this.somatorioValorTotalRestante.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalRestante());
-            this.somatorioValorTotalPago = this.somatorioValorTotalPago.add(rf.getFaturaRepasse().getDadosTabelaRepasseTotalPago());
+        for (RepasseFaturasLancamento rfl : this.getEntityList()) {
+            this.somatorioValorTotalLancamentos = this.somatorioValorTotalLancamentos.add(this.valorTotal(rfl.getLancamentoRepasse()));
+            this.somatorioValorTotalFatura = this.somatorioValorTotalFatura.add(rfl.getLancamentoRepasse().getDadosTabelaValorTotalFatura());
+            this.somatorioValorTotalRestante = this.somatorioValorTotalRestante.add(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalRestante());
+            this.somatorioValorTotalPago = this.somatorioValorTotalPago.add(rfl.getRepasseFaturas().getFaturaRepasse().getDadosTabelaRepasseTotalPago());
+        }
+    }
+    
+    public void carregarStatusLancamentos() {
+        for(StatusLancamento status : StatusLancamento.values()) {
+            this.statusLancamentos.add(status.getDescricao());
         }
     }
 
+    public BigDecimal valorTotal(Lancamento lc) {
+        if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return lc.getValor();
+        }
+        return lc.getValorComDesconto();
+    }
+    
     public String justificativasRepasse(RepasseFaturas rf) {
         StringBuilder retorno = new StringBuilder();
         String v = "";
@@ -214,6 +266,18 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
         }
     }
 
+    public void actionTrocaDatasPagamento() {
+        try {
+
+            this.inicioPagamento = getDataInicio(getFiltroPeriodoPagamento());
+            this.fimPagamento = getDataFim(getFiltroPeriodoPagamento());
+
+        } catch (Exception e) {
+            log.error("Erro no actionTrocaDatasCriacao", e);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+    }
+    
     public Date getDataFim(String filtro) {
         Date dataFim = null;
         try {
@@ -373,5 +437,45 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturas> {
 
     public void setJustificativas(List<String> justificativas) {
         this.justificativas = justificativas;
+    }
+
+    public Date getInicioPagamento() {
+        return inicioPagamento;
+    }
+
+    public void setInicioPagamento(Date inicioPagamento) {
+        this.inicioPagamento = inicioPagamento;
+    }
+
+    public Date getFimPagamento() {
+        return fimPagamento;
+    }
+
+    public void setFimPagamento(Date fimPagamento) {
+        this.fimPagamento = fimPagamento;
+    }
+
+    public String getFiltroPeriodoPagamento() {
+        return filtroPeriodoPagamento;
+    }
+
+    public void setFiltroPeriodoPagamento(String filtroPeriodoPagamento) {
+        this.filtroPeriodoPagamento = filtroPeriodoPagamento;
+    }
+
+    public List<String> getStatusLancamentos() {
+        return statusLancamentos;
+    }
+
+    public void setStatusLancamentos(List<String> statusLancamentos) {
+        this.statusLancamentos = statusLancamentos;
+    }
+
+    public BigDecimal getSomatorioValorTotalLancamentos() {
+        return somatorioValorTotalLancamentos;
+    }
+
+    public void setSomatorioValorTotalLancamentos(BigDecimal somatorioValorTotalLancamentos) {
+        this.somatorioValorTotalLancamentos = somatorioValorTotalLancamentos;
     }
 }

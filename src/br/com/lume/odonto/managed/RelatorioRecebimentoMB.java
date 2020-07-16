@@ -109,7 +109,7 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
                         
                         this.somatorioValorConferidoConferencia = somatorioValorConferidoConferencia.add(this.valorConferido(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
                         this.somatorioValorConferirConferencia = somatorioValorConferirConferencia.add(this.valorConferir(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
-                        this.somatorioValorTotalConferencia = somatorioValorTotalConferencia.add(l.getValorComDesconto()).setScale(2, BigDecimal.ROUND_HALF_UP);
+                        this.somatorioValorTotalConferencia = somatorioValorTotalConferencia.add(this.valorTotal(l)).setScale(2, BigDecimal.ROUND_HALF_UP);
                     }
 
                 }
@@ -176,17 +176,30 @@ public class RelatorioRecebimentoMB extends LumeManagedBean<RelatorioRecebimento
     }
 
     public BigDecimal valorConferir(Lancamento lc) {
-        if(lc.getConferidoPorProfissional() != null) {
+        if (lc.getValidadoPorProfissional() != null) {
             return new BigDecimal(0);
+        }
+        if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return lc.getValor();
         }
         return lc.getValorComDesconto();
     }
 
     public BigDecimal valorConferido(Lancamento lc) {
-        if(lc.getConferidoPorProfissional() != null) {
+        if (lc.getValidadoPorProfissional() != null) {
+            if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+                return lc.getValor();
+            }
             return lc.getValorComDesconto();
         }
         return new BigDecimal(0);
+    }
+    
+    public BigDecimal valorTotal(Lancamento lc) {
+        if (lc.getValorComDesconto().compareTo(BigDecimal.ZERO) == 0) {
+            return lc.getValor();
+        }
+        return lc.getValorComDesconto();
     }
     
     public void exportarTabela(String type) {

@@ -515,9 +515,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (planoTratamentoProcedimentoSelecionado.getJustificativaExclusaoDominio() == null) {
             addInfo("É preciso selecionar uma justificativa!", "");
             return;
-        }
-
+        }        
         onProcedimentoRemove(planoTratamentoProcedimentoSelecionado);
+        carregarPlanoTratamentoProcedimentos();
         PrimeFaces.current().executeScript("PF('dlgJustificativaRemove').hide()");
     }
 

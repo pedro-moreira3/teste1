@@ -230,7 +230,7 @@
 
 							<p:column headerText="Ações" width="100">
 								<p:commandButton icon="White fa fa-calendar White"
-									oncomplete="PF('eventDialog').show();" process="@this"
+									oncomplete="PF('eventDialog').show();" process="@this,:lume:pnAgendamento"
 									action="#{agendamentoMB.retorno(retorno)}"
 									update="lume:pnAgendamento" title="Agendar" />
 								<p:button id="whats" icon="White fa fa-whatsapp" title="Whats"
@@ -352,7 +352,7 @@
 						process=":lume:pnAgendamento, @this" value="Salvar"
 						rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
 						actionListener="#{agendamentoMB.actionPersist}"
-						update=":lume:pnAgendamento, btBloqueioAgenda"
+						update="dtRetorno, btBloqueioAgenda"
 						styleClass="GreenButton" />
 				</h:panelGroup>
 				<p:commandButton icon="White fa fa-close" value="Fechar"

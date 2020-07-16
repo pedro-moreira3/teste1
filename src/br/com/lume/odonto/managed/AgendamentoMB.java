@@ -1128,11 +1128,23 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                         for (Agendamento agendamento : agendamentos) {
 
                             descricao = "";
-
+                            //TODO melhor jeito para mostrar consulta Inicial
+                            if(agendamento.getPlanoTratamentoProcedimentosAgendamento() != null) {
+                                for (AgendamentoPlanoTratamentoProcedimento aptp : agendamento.getPlanoTratamentoProcedimentosAgendamento()) {
+                                    if(aptp.getPlanoTratamentoProcedimento() != null && aptp.getPlanoTratamentoProcedimento().getProcedimento() != null && 
+                                            aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao() != null &&
+                                            aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao().contains("Inicial")
+                                            ) {
+                                        descricao = "[ Consulta Inicial ] ";
+                                    }
+                                }
+                            }
+                           
+                            
                             if (agendamento != null && agendamento.getPaciente() != null && agendamento.getPaciente().getDadosBasico() != null && agendamento.getPaciente().getDadosBasico().getDataNascimento() != null)
                                 dataAtual.setTime(agendamento.getPaciente().getDadosBasico().getDataNascimento());
 
-                            descricao = "" + agendamento.getProfissional().getDadosBasico().getNomeAbreviado() + " - " + "[" + agendamento.getPaciente().getSiglaConvenio() + "] "
+                            descricao += "" + agendamento.getProfissional().getDadosBasico().getNomeAbreviado() + " - " + "[" + agendamento.getPaciente().getSiglaConvenio() + "] "
                             + agendamento.getPaciente().getDadosBasico().getNome();
 
                             if(agendamento.getPaciente().getPendenciaFinanceiraBool()) {

@@ -420,7 +420,7 @@
 				
 					<p:outputLabel for="paciente" value="#{dominioMB.cliente} (digite o nome e selecione o paciente)" />
 
-					<p:autoComplete dropdown="false" queryDelay="300"
+					<p:autoComplete dropdown="false" queryDelay="1000"
 						value="#{agendamentoMB.pacienteSelecionado}" id="paciente"
 						minQueryLength="3" scrollHeight="400"					
 						completeMethod="#{agendamentoMB.geraSugestoes}" var="p"
@@ -652,8 +652,7 @@
 					<f:selectItem itemLabel="Não confirmado" itemValue="N" />
 					<f:selectItem itemLabel="Encaixe" itemValue="E" />
 					<f:selectItem itemLabel="Encaixe Atendido" itemValue="H" />
-					<f:selectItem itemLabel="Atendido" itemValue="A" />
-					<f:selectItem itemLabel="Consulta Inicial" itemValue="G" />
+					<f:selectItem itemLabel="Atendido" itemValue="A" />					
 					<f:selectItem itemLabel="Falta" itemValue="B" />
 					<f:selectItem itemLabel="Cancelado" itemValue="C" />
 					<f:selectItem itemLabel="Erro de Agendamento" itemValue="D" />
