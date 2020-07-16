@@ -226,6 +226,9 @@ div.ui-selectoneradio label {
 				</div>
 			</div>
 		</p:dialog>
+		
+			<h:input value="#{agendamentoMB.idEmpresaParaSocket}" id="idEmpresaParaSocket" />
+		
 		<f:websocket channel="someChannel"
 			onmessage="function(idEmpresa){
 						 console.log('parametro: ' + idEmpresa);
@@ -238,7 +241,7 @@ div.ui-selectoneradio label {
 			" />			
 	
 
-	<h:inputHidden value="#{agendamentoMB.idEmpresaParaSocket}" id="idEmpresaParaSocket" /> 
+ 
 
 		<p:dialog id="dlgMensagemWhats" widgetVar="dlgMensagemWhats"
 			width="400px" height="200px" responsive="true"
