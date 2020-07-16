@@ -153,21 +153,26 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
     
     private void ajustarHorariosDatas() {
         Calendar c = Calendar.getInstance();
-        c.setTime(this.fim);
-        c.set(Calendar.HOUR_OF_DAY, 23);
-        this.fim = c.getTime();
-
-        c.setTime(this.inicio);
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        this.inicio = c.getTime();
-
-        c.setTime(this.fimPagamento);
-        c.set(Calendar.HOUR_OF_DAY, 23);
-        this.fimPagamento = c.getTime();
-
-        c.setTime(this.inicioPagamento);
-        c.set(Calendar.HOUR_OF_DAY, 0);
-        this.inicioPagamento = c.getTime();
+        if(fim != null) {
+            c.setTime(this.fim);
+            c.set(Calendar.HOUR_OF_DAY, 23);
+            this.fim = c.getTime();
+        }
+        if(inicio != null) {
+            c.setTime(this.inicio);
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            this.inicio = c.getTime();
+        }
+        if(inicioPagamento != null) {
+            c.setTime(this.inicioPagamento);
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            this.inicioPagamento = c.getTime();
+        }
+        if(fimPagamento != null) {
+            c.setTime(this.fimPagamento);
+            c.set(Calendar.HOUR_OF_DAY, 23);
+            this.fimPagamento = c.getTime();
+        }
         
     }
 
