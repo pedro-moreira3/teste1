@@ -229,8 +229,8 @@ div.ui-selectoneradio label {
 		<f:websocket channel="someChannel"
 			onmessage="function(idEmpresa){
 						 console.log('parametro: ' + idEmpresa);
-						 console.log('hidden: ' + document.getElementById('idEmpresaParaSocket'));
-						 if(idEmpresa == document.getElementById('idEmpresaParaSocket')){
+						 console.log('hidden: ' + document.getElementById('idEmpresaParaSocket').value);
+						 if(idEmpresa == document.getElementById('idEmpresaParaSocket').value){
 						    console.log('update');
 							PF('myschedule').update();
 						 }
@@ -238,7 +238,7 @@ div.ui-selectoneradio label {
 			" />			
 	
 
-	<h:inputHidden value="#{agendamentoMB.idEmpresaParaSocket}" id ="idEmpresaParaSocket" /> 
+	<h:inputHidden value="#{agendamentoMB.idEmpresaParaSocket}" id="idEmpresaParaSocket" /> 
 
 		<p:dialog id="dlgMensagemWhats" widgetVar="dlgMensagemWhats"
 			width="400px" height="200px" responsive="true"
