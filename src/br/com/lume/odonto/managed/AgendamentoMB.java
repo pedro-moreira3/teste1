@@ -198,10 +198,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
      
      @Inject @Push
      private PushContext canalAgendamentoRapido;
+     
+     private String idEmpresaParaSocket;
 
     public AgendamentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
 
+        idEmpresaParaSocket = "" + UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+        
         //  usuarioBO = new UsuarioBO();
         //   perfilBO = new PerfilBO();
 
@@ -660,14 +664,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
     }
     
-    public void recarregarPagina(String idEmpresa) {
-        System.out.println("########################"+idEmpresa);
-        System.out.println("-----------------------"+UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
-        if(idEmpresa.equals(""+UtilsFrontEnd.getProfissionalLogado().getIdEmpresa())) {
-            System.out.println("dentro do if");
-            PrimeFaces.current().executeScript("PF('myschedule').update();");                
-        }
-    }
+//    public void recarregarPagina(String idEmpresa) {
+//        System.out.println("########################"+idEmpresa);
+//        System.out.println("-----------------------"+UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//        if(idEmpresa.equals(""+UtilsFrontEnd.getProfissionalLogado().getIdEmpresa())) {
+//            System.out.println("dentro do if");
+//            PrimeFaces.current().executeScript("PF('myschedule').update();");                
+//        }
+//    }
 
     private boolean validaRangeDatasRemarcado() {
         return this.getInicio().after(this.getEntity().getInicio()) && this.getInicio().before(this.getEntity().getFim()) || this.getFim().after(this.getEntity().getInicio()) && this.getFim().before(

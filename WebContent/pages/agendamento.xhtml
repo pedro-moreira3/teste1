@@ -227,11 +227,18 @@ div.ui-selectoneradio label {
 			</div>
 		</p:dialog>
 		<f:websocket channel="someChannel"
-			onmessage="function(m){console.log(m);
-				recarregarPagina({idEmpresa:m})				
-			}" />
-			
-	<p:remoteCommand name="recarregarPagina" actionListener="#{agendamentoMB.recarregarPagina(idEmpresa)}" process="@this" />
+			onmessage="function(idEmpresa){
+						 console.log('parametro: ' + idEmpresa);
+						 console.log('hidden: ' + document.getElementById('idEmpresaParaSocket'));
+						 if(idEmpresa == document.getElementById('idEmpresaParaSocket')){
+						    console.log('update');
+							PF('myschedule').update();
+						 }
+			          }
+			" />			
+	
+
+	<h:inputHidden value="#{agendamentoMB.idEmpresaParaSocket}" id ="idEmpresaParaSocket" /> 
 
 		<p:dialog id="dlgMensagemWhats" widgetVar="dlgMensagemWhats"
 			width="400px" height="200px" responsive="true"
