@@ -431,7 +431,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         removerPtp.add(ptp);
                         continue;
                     }else if (ptp.getFatura() != null && ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL && ptp.getValorPago().compareTo(ptp.getValorTotal()) >= 0) {
-                        removerPtp.add(ptp);
+                        //nesse caso provavelmente de problema no valor do calculo, entao estou mostrando pra nao perder informacao
+                        if(ptp.getValorTotal().compareTo(new BigDecimal(0)) != 0) {
+                            removerPtp.add(ptp);
+                        }
                         continue;
                     }
                     
