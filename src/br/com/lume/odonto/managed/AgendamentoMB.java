@@ -2233,6 +2233,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     
+    public String getIdEmpresaParaSocket() {
+        return idEmpresaParaSocket;
+    }
+
+    
+    public void setIdEmpresaParaSocket(String idEmpresaParaSocket) {
+        this.idEmpresaParaSocket = idEmpresaParaSocket;
+    }
+
+    
 //    public PushContext getSomeChannel() {
 //        return someChannel;
 //    }
