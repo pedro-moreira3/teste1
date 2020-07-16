@@ -202,7 +202,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 										Status</th>
 									<p:outputPanel rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}">
 										<th style="border: 1px solid #bdbdbd; padding: 5px; width: 24%"  >
-											Valor das Deduções</th>
+											Valor com as Deduções</th>
 									</p:outputPanel>			
 									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 24%">
 										Valor Calculado de Repasse</th>
@@ -241,7 +241,7 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 															oncomplete="PF('dlgDeducoes').show()"
 															update="lume:painelDeducoes">
 													<h:outputText
-													value="#{lancamento.dadosCalculoTotalReducao}">
+													value="#{lancamento.dadosCalculoRecebidoMenosReducao}">
 													<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 														type="currency" />
 												</h:outputText>		
