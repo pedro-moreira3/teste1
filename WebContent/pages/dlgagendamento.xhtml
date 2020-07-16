@@ -741,6 +741,9 @@
 				<p:outputLabel for="auxiliar" value="Necessita de auxiliar?" />
 				<p:selectOneRadio id="auxiliar"
 					value="#{agendamentoMB.entity.auxiliar}">
+					
+					<p:ajax process="@this" />
+					
 					<f:selectItem itemLabel="Sim" itemValue="true" />
 					<f:selectItem itemLabel="Não" itemValue="false" />
 				</p:selectOneRadio>
@@ -805,7 +808,6 @@
 				<p:outputLabel for="descricao" value="Observações : " />
 				<p:inputTextarea id="descricao" value="#{agendamentoMB.observacoes}"
 					maxlength="200" cols="20">
-					<p:ajax process="@this" />
 				</p:inputTextarea>
 				<p:message for="descricao" styleClass="msg" />
 			</h:panelGroup>

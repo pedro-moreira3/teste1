@@ -193,7 +193,7 @@ div.ui-selectoneradio label {
 								styleClass="ui-panelgrid-blank form-group ui-fluid"
 								id="botoesAgenda">
 								<p:commandButton id="persist" icon="White fa fa-save"
-									process="@this" value="Salvar"
+									process="@this,descricao" value="Salvar"
 									rendered="#{agendamentoMB.habilitaSalvar}"
 									actionListener="#{agendamentoMB.actionPersist}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
