@@ -595,9 +595,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                             lancamentosDeOrigem.get(cont).getTarifa().getTaxa().divide(
                                             BigDecimal.valueOf(100)) : BigDecimal.ZERO)
                              );
-                            BigDecimal valorTarifa = lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamento.getValor());
+                          //  BigDecimal valorTarifa = lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamento.getValor());
                             lancamentosDeOrigem.get(cont).setDadosCalculoValorTaxa(                                    
-                                    lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamento.getValor().add(valorTarifa))
+                                    lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamentosDeOrigem.get(cont).getValor())
                             );
                             if(lancamentosDeOrigem.get(cont).getTarifa() != null && lancamentosDeOrigem.get(cont).getTarifa().getTarifa() != null) {
                                 lancamentosDeOrigem.get(cont).setDadosCalculoValorTarifa(lancamentosDeOrigem.get(cont).getTarifa().getTarifa());

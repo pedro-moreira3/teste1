@@ -408,7 +408,21 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 									</th>
 								</tr>								
 							</tbody>
-						</table>
+						</table>						
+						<br/>
+						<div class="card card-w-title"
+									style="font-size:16px;font-weight:bold;text-align: center">
+									Total das deduções: 		
+									<h:outputText 
+											value="#{repasseProfissionalComReciboMB.lancamentoDeducoes.dadosCalculoTotalReducao}">
+											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
+												type="currency" />
+										</h:outputText>
+															
+						
+						</div>
+						<br/>
+						
 			</p:outputPanel>			
 		</p:dialog>
 
