@@ -661,7 +661,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
     
     public void recarregarPagina(String idEmpresa) {
+        System.out.println("########################"+idEmpresa);
+        System.out.println("-----------------------"+UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         if(idEmpresa.equals(""+UtilsFrontEnd.getProfissionalLogado().getIdEmpresa())) {
+            System.out.println("dentro do if");
             PrimeFaces.current().executeScript("PF('myschedule').update();");                
         }
     }
