@@ -227,7 +227,10 @@ div.ui-selectoneradio label {
 			</div>
 		</p:dialog>
 		<f:websocket channel="someChannel"
-			onmessage="function(m){PF('myschedule').update();}" />
+			onmessage="function(m){
+				console.log(m);
+				PF('myschedule').update();
+			}" />
 
 		<p:dialog id="dlgMensagemWhats" widgetVar="dlgMensagemWhats"
 			width="400px" height="200px" responsive="true"

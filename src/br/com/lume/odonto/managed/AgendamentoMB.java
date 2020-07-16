@@ -637,7 +637,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                            someChannel.send("atualizar schedule");
+                            someChannel.send(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                             //TODO melhorar socket para atualizar somente quando necessario, ou seja, somente quando 
                             //o profissional salvo aqui tiver na tela do agendamento rapido.
                             //canalAgendamentoRapido.send(profissionalDentroAgenda.getDadosBasico().getNome());
