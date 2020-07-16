@@ -357,11 +357,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</f:facet>
 						</p:column>
 						
-						<p:column sortBy="#{rfl.lancamentoRepasse.statusCompleto}"
-							filterBy="#{rfl.lancamentoRepasse.statusCompleto}" filterMatchMode="contains"
+						<p:column sortBy="#{rfl.lancamentoRepasse.statusSemSubStatus}"
+							filterBy="#{rfl.lancamentoRepasse.statusSemSubStatus}" filterMatchMode="contains"
 							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
 							headerText="Status pagamento">
-							<h:outputText value="#{rfl.lancamentoRepasse.statusCompleto}" title="#{rfl.id}" />
+							<h:outputText value="#{rfl.lancamentoRepasse.statusSemSubStatus}" title="#{rfl.id}" />
 						</p:column>
 						
 						<p:column sortBy="#{rfl.lancamentoRepasse.dataPagamentoStr}"
