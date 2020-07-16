@@ -349,7 +349,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 										<p:tooltip for="@parent" rendered="#{lc.validado == 'S'}"
 											value="Conferido às #{lc.dataValidacaoStr} pelo profissional #{lc.validadoPorProfissional.dadosBasico.prefixoNome}" />
-										<p:column width="80" headerText="Ações">
+										<p:column width="80" headerText="Ações"
+											exportable="false">
 											<p:commandButton icon="fa fa-check" styleClass="GreenButton"
 												title="Validar Lançamento" process="@this"
 												update="dtLancamentoContabil"
@@ -387,11 +388,19 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:column
 											filterBy="#{lancamentoContabilMB.valorLancamento(lc)}"
 											sortBy="#{lancamentoContabilMB.valorLancamento(lc)}"
-											style="text-align:right" filterMatchMode="contains"
+											filterMatchMode="contains"
 											headerText="Valor(R$)">
 											<h:outputText
 												value="#{lancamentoContabilMB.valorLancamento(lc)}">
 											</h:outputText>
+											<f:facet name="footer" style="text-align:center;">
+												<h:outputText value="Total " />
+												<h:outputText
+													value="#{lancamentoContabilMB.somatorioValorLancamento}">
+													<f:convertNumber currencySymbol="R$" type="currency"
+														minFractionDigits="2" />
+												</h:outputText>
+											</f:facet>
 										</p:column>
 										<p:column headerText="Data" filterBy="#{lc.dataStr}"
 											sortBy="#{lc.data}" filterMatchMode="contains"
