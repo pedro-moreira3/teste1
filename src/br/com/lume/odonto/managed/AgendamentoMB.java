@@ -659,6 +659,12 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             this.addError(OdontoMensagens.getMensagem("erro.agendamento.planotratamento.vazio"), "");
         }
     }
+    
+    public void recarregarPagina(String idEmpresa) {
+        if(idEmpresa.equals(""+UtilsFrontEnd.getProfissionalLogado().getIdEmpresa())) {
+            PrimeFaces.current().executeScript("PF('myschedule').update();");                
+        }
+    }
 
     private boolean validaRangeDatasRemarcado() {
         return this.getInicio().after(this.getEntity().getInicio()) && this.getInicio().before(this.getEntity().getFim()) || this.getFim().after(this.getEntity().getInicio()) && this.getFim().before(

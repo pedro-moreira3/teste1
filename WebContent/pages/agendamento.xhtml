@@ -228,9 +228,10 @@ div.ui-selectoneradio label {
 		</p:dialog>
 		<f:websocket channel="someChannel"
 			onmessage="function(m){
-				console.log(m);
-				PF('myschedule').update();
+				recarregarPagina({idEmpresa:m})				
 			}" />
+			
+	<p:remoteCommand name="recarregarPagina" actionListener="#{agendamentoMB.recarregarPagina(idEmpresa)}"
 
 		<p:dialog id="dlgMensagemWhats" widgetVar="dlgMensagemWhats"
 			width="400px" height="200px" responsive="true"
