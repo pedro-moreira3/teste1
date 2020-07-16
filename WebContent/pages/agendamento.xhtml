@@ -227,13 +227,13 @@ div.ui-selectoneradio label {
 			</div>
 		</p:dialog>
 		
-			<h:inputText value="#{agendamentoMB.idEmpresaParaSocket}" id="idEmpresaParaSocket" />
+			<h:inputHidden value="#{agendamentoMB.idEmpresaParaSocket}" id="idEmpresaParaSocket" />
 		
 		<f:websocket channel="someChannel"
 			onmessage="function(idEmpresa){
 						 console.log('parametro: ' + idEmpresa);
-						 console.log('hidden: ' + document.getElementById('idEmpresaParaSocket').value);
-						 if(idEmpresa == document.getElementById('idEmpresaParaSocket').value){
+						 console.log('hidden: ' + document.getElementById('lume:idEmpresaParaSocket').value);
+						 if(idEmpresa == document.getElementById('lume:idEmpresaParaSocket').value){
 						    console.log('update');
 							PF('myschedule').update();
 						 }
