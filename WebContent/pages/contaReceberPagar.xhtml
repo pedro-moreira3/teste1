@@ -646,7 +646,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										<p:column headerText="Data Crédito"
 											filterBy="#{lc.dataCreditoStr}" sortBy="#{lc.dataCredito}"
 											filterMatchMode="contains">
-											<h:outputText value="#{lc.dataCreditoStr}" />
+											<p:calendar value="#{lc.dataCredito}"
+												autocomplete="false" locale="#{lumeSecurity.locale}" mask="true"
+												disabled="#{lc.validado == 'S' or lc.validado == 'C'}">
+												<p:ajax event="dateSelect" process="@this" />
+											</p:calendar>
 										</p:column>
 										<p:column headerText="Valor à conferir"
 											filterBy="#{conferenciaRecebimentoMB.valorConferir(lc)}"
