@@ -431,7 +431,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         removerPtp.add(ptp);
                         continue;
                     }else if (ptp.getFatura() != null && ptp.getFatura().getTipoLancamentos() == TipoLancamentos.MANUAL && ptp.getValorPago().compareTo(ptp.getValorTotal()) >= 0) {
-                        removerPtp.add(ptp);
+                        //nesse caso provavelmente de problema no valor do calculo, entao estou mostrando pra nao perder informacao
+                        if(ptp.getValorTotal().compareTo(new BigDecimal(0)) != 0) {
+                            removerPtp.add(ptp);
+                        }
                         continue;
                     }
                     
@@ -577,9 +580,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         });
                        
                         if(cont < lancamentosDeOrigem.size()) {   
-                            //TODO como saber que o lancamento é referente
-                            System.out.println(lancamento.getId());
-                            System.out.println(lancamentosDeOrigem.get(cont).getId());
+                            //TODO como saber que o lancamento é referente                          
                             lancamentosDeOrigem.get(cont).setDadosCalculoValorARepassarSemCusto(lancamento.getValor()); 
                          
                             
@@ -594,9 +595,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                             lancamentosDeOrigem.get(cont).getTarifa().getTaxa().divide(
                                             BigDecimal.valueOf(100)) : BigDecimal.ZERO)
                              );
-                            BigDecimal valorTarifa = lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamento.getValor());
+                          //  BigDecimal valorTarifa = lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamento.getValor());
                             lancamentosDeOrigem.get(cont).setDadosCalculoValorTaxa(                                    
-                                    lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamento.getValor().add(valorTarifa))
+                                    lancamentosDeOrigem.get(cont).getDadosCalculoPercTaxa().multiply(lancamentosDeOrigem.get(cont).getValor())
                             );
                             if(lancamentosDeOrigem.get(cont).getTarifa() != null && lancamentosDeOrigem.get(cont).getTarifa().getTarifa() != null) {
                                 lancamentosDeOrigem.get(cont).setDadosCalculoValorTarifa(lancamentosDeOrigem.get(cont).getTarifa().getTarifa());
@@ -621,6 +622,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                 lancamentosDeOrigem.get(cont).setDadosCalculoValorCustoDiretoRateado(new BigDecimal(0));
                             }                            
                             
+                          
+                            
                             lancamentosDeOrigem.get(cont).setDadosCalculoTotalReducao(
                                     lancamentosDeOrigem.get(cont).getDadosCalculoValorTaxa()
                                     .add(lancamentosDeOrigem.get(cont).getDadosCalculoValorTarifa())
@@ -628,6 +631,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                                     .add(lancamentosDeOrigem.get(cont).getDadosCalculoValorCustoDiretoRateado())
                             );
                             
+                            lancamentosDeOrigem.get(cont).setDadosCalculoRecebidoMenosReducao(lancamentosDeOrigem.get(cont).getValor().subtract(lancamentosDeOrigem.get(cont).getDadosCalculoTotalReducao()));
+                          
+
                         }
                         cont++;
                   

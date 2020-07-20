@@ -193,7 +193,7 @@ div.ui-selectoneradio label {
 								styleClass="ui-panelgrid-blank form-group ui-fluid"
 								id="botoesAgenda">
 								<p:commandButton id="persist" icon="White fa fa-save"
-									process="@this" value="Salvar"
+									process="@this,descricao" value="Salvar"
 									rendered="#{agendamentoMB.habilitaSalvar}"
 									actionListener="#{agendamentoMB.actionPersist}"
 									update=":lume:pnAgendamento, :lume:profissional, btBloqueioAgenda"
@@ -226,8 +226,19 @@ div.ui-selectoneradio label {
 				</div>
 			</div>
 		</p:dialog>
+		
+			<h:inputHidden value="#{agendamentoMB.idEmpresaParaSocket}" id="idEmpresaParaSocket" />
+		
 		<f:websocket channel="someChannel"
-			onmessage="function(m){PF('myschedule').update();}" />
+			onmessage="function(idEmpresa){						
+						 if(idEmpresa == document.getElementById('lume:idEmpresaParaSocket').value){						   
+							PF('myschedule').update();
+						 }
+			          }
+			" />			
+	
+
+ 
 
 		<p:dialog id="dlgMensagemWhats" widgetVar="dlgMensagemWhats"
 			width="400px" height="200px" responsive="true"

@@ -400,7 +400,7 @@ body .height31 input {
 									itemLabel="Selecione uma Forma de Pagamento:" />
 								<f:selectItems
 									value="#{faturaPagtoMB.editarLancamentoFormasDisponiveis}"
-									var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+									var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}"/>
 								<p:ajax event="change"
 									listener="#{faturaPagtoMB.actionEditarLancamentoAlteraFormaPagamento}"
 									update="editarLancamentoDataCredito" process="@this" />

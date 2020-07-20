@@ -77,6 +77,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     private TipoCategoria tipoCategoria;
 
     private List<TipoCategoria> tiposCategoria;
+    
+    private BigDecimal somatorioValorLancamento;
 
     //  private TipoCategoriaBO tipoCategoriaBO;
 
@@ -176,6 +178,7 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
             categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
             lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listByEmpresaAndData(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), inicio, fim);
             carrearListasPorTipoPagamento();
+            updateSomatorio();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
@@ -278,6 +281,19 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         getEntity().setValor(null);
         getEntity().setData(null);
         geraLista();
+        updateSomatorio();
+    }
+    
+    public void updateSomatorio() {
+        this.setSomatorioValorLancamento(new BigDecimal(0));
+        if(this.lancamentoContabeis != null && !this.lancamentoContabeis.isEmpty()) {
+            this.lancamentoContabeis.forEach((lc) -> {
+                BigDecimal valor = lc.getValor();
+                if(lc.getTipo().equals("Pagar") && (lc.getMotivo().getSigla() != null && lc.getMotivo().getSigla().equals(Motivo.PAGAMENTO_PROFISSIONAL)))
+                    valor = valor.multiply(new BigDecimal(-1));
+                this.somatorioValorLancamento = this.somatorioValorLancamento.add(valor);
+            });
+        }
     }
 
     public String valorLancamento(LancamentoContabil lancamento) {
@@ -480,6 +496,14 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void setInicio(Date inicio) {
         this.inicio = inicio;
+    }
+
+    public BigDecimal getSomatorioValorLancamento() {
+        return somatorioValorLancamento;
+    }
+
+    public void setSomatorioValorLancamento(BigDecimal somatorioValorLancamento) {
+        this.somatorioValorLancamento = somatorioValorLancamento;
     }
 
 }

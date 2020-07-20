@@ -198,10 +198,14 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
      
      @Inject @Push
      private PushContext canalAgendamentoRapido;
+     
+     private String idEmpresaParaSocket;
 
     public AgendamentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
 
+        idEmpresaParaSocket = "" + UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
+        
         //  usuarioBO = new UsuarioBO();
         //   perfilBO = new PerfilBO();
 
@@ -574,6 +578,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                                     ReservaSingleton.getInstance().getBo().mergeBatch(reservas);
                                 }
                             }
+                            
                             AgendamentoSingleton.getInstance().getBo().persist(this.getEntity(), UtilsFrontEnd.getProfissionalLogado(), UtilsFrontEnd.getEmpresaLogada().getEmpStrEstoque(),
                                     UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
@@ -606,7 +611,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                            someChannel.send("atualizar schedule");
+                            someChannel.send(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                             //TODO melhorar socket para atualizar somente quando necessario, ou seja, somente quando 
                             //o profissional salvo aqui tiver na tela do agendamento rapido.
                         //    canalAgendamentoRapido.send(profissionalDentroAgenda.getDadosBasico().getNome());
@@ -637,7 +642,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 //                            }
 
                             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-                            someChannel.send("atualizar schedule");
+                            someChannel.send(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
                             //TODO melhorar socket para atualizar somente quando necessario, ou seja, somente quando 
                             //o profissional salvo aqui tiver na tela do agendamento rapido.
                             //canalAgendamentoRapido.send(profissionalDentroAgenda.getDadosBasico().getNome());
@@ -659,6 +664,15 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             this.addError(OdontoMensagens.getMensagem("erro.agendamento.planotratamento.vazio"), "");
         }
     }
+    
+//    public void recarregarPagina(String idEmpresa) {
+//        System.out.println("########################"+idEmpresa);
+//        System.out.println("-----------------------"+UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
+//        if(idEmpresa.equals(""+UtilsFrontEnd.getProfissionalLogado().getIdEmpresa())) {
+//            System.out.println("dentro do if");
+//            PrimeFaces.current().executeScript("PF('myschedule').update();");                
+//        }
+//    }
 
     private boolean validaRangeDatasRemarcado() {
         return this.getInicio().after(this.getEntity().getInicio()) && this.getInicio().before(this.getEntity().getFim()) || this.getFim().after(this.getEntity().getInicio()) && this.getFim().before(
@@ -2217,6 +2231,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
     public void setMensagemWhats(String mensagemWhats) {
         this.mensagemWhats = mensagemWhats;
+    }
+
+    
+    public String getIdEmpresaParaSocket() {
+        return idEmpresaParaSocket;
+    }
+
+    
+    public void setIdEmpresaParaSocket(String idEmpresaParaSocket) {
+        this.idEmpresaParaSocket = idEmpresaParaSocket;
     }
 
     

@@ -349,7 +349,7 @@
 				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 				<h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
 					<p:commandButton id="persist" icon="White fa fa-save"
-						process=":lume:pnAgendamento, @this" value="Salvar"
+						process=":lume:pnAgendamento, @this, dtRetorno" value="Salvar"
 						rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
 						actionListener="#{agendamentoMB.actionPersist}"
 						update="dtRetorno, btBloqueioAgenda"

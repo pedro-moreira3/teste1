@@ -62,6 +62,7 @@ import br.com.lume.odonto.entity.Odontograma;
 import br.com.lume.odonto.entity.Orcamento;
 import br.com.lume.odonto.entity.OrcamentoItem;
 import br.com.lume.odonto.entity.OrcamentoPlanejamento;
+import br.com.lume.odonto.entity.OrcamentoProcedimento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
@@ -358,7 +359,22 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
         getEntity().setDescricao("PT " + Utils.dateToString(new Date()));
     }
+    
+    public boolean validaPermissaoExclusaoPTP(PlanoTratamentoProcedimento ptp) {
+        if(OrcamentoSingleton.getInstance().isProcedimentoTemOrcamentoAprovado(ptp))
+            return true;
+        return false;
+    }
 
+    public boolean validaPermissao(PlanoTratamento pt) {
+        List<Orcamento> orcs = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(pt);
+        for(Orcamento o : orcs) {
+            if(o.isAprovado())
+                return true;
+        }
+        return false;
+    }
+    
     public void carregarPlanosTratamento() {
         try {
             planosTratamento = new ArrayList<>();
