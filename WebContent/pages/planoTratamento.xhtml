@@ -222,7 +222,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								title="Encerrar Plano de Tratamento" process="@this"
 								styleClass="RedButton"
 								actionListener="#{planoTratamentoMB.actionFinalizar(planoTratamento)}"
-								disabled="#{planoTratamento.status == 'S' or planoTratamento.status == 'E'}">
+								disabled="#{planoTratamento.status == 'S' or planoTratamento.status == 'E' or 
+									planoTratamentoMB.validaPermissao(planoTratamento)}">
 								<p:confirm header="Confirmação"
 									message="Deseja realmente encerrar este Plano de Tratamento?"
 									icon="fa fa-warning" />
@@ -851,7 +852,8 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 									update=":lume:tabViewPaciente:pnlListaAgendamento, :lume:tabViewPaciente:pnlListaAgendamentoHeader">
 								</p:commandButton>
 								<p:commandButton icon="fa fa-times-circle White"
-									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S'}"
+									disabled="#{plano.finalizado || planoTratamentoMB.encerrado || plano.excluido eq 'S' 
+										|| planoTratamentoMB.validaPermissaoExclusaoPTP(plano)}"
 									actionListener="#{planoTratamentoMB.abreJustificativaRemove(plano)}"
 									process="@this" title="Cancelar" styleClass="RedButton"
 									update=":lume:tabViewPaciente:pnlJustificativaRemoveHeader, :lume:tabViewPaciente:pnlJustificativaRemove" />
