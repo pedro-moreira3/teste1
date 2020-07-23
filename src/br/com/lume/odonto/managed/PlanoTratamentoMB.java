@@ -1090,6 +1090,21 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         return percent;
     }
 
+    
+    private boolean validaOrcamentoMaiorPermitido() {
+        if (orcamentoSelecionado.getDescontoTipo().equals(
+                "P") && orcamentoSelecionado.getDescontoValor().compareTo(descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto()) == 1) {
+           return true;         
+        } else if (orcamentoSelecionado.getDescontoTipo().equals("V")) {
+            orcamentoSelecionado.getValorTotal();
+            double descontoEmPorcentagem = (orcamentoSelecionado.getDescontoValor().doubleValue() * 100) / orcamentoSelecionado.getValorTotal().doubleValue();
+            if (descontoEmPorcentagem > descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto().doubleValue()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public void validaDescontos() {
         mensagemCalculoOrcamento = "";
         //   mensagemCalculoOrcamentoDiferenca = "";
@@ -1105,17 +1120,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             }
 
             if (descontosDisponiveis.containsKey(numeroParcelaOrcamento.intValue())) {
-                if (orcamentoSelecionado.getDescontoTipo().equals(
-                        "P") && orcamentoSelecionado.getDescontoValor().compareTo(descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto()) == 1) {
+                
+                if(validaOrcamentoMaiorPermitido()) {
                     this.addError("Erro", "Desconto maior que o permitido.");
                     orcamentoSelecionado.setDescontoValor(new BigDecimal(0));
-                } else if (orcamentoSelecionado.getDescontoTipo().equals("V")) {
-                    orcamentoSelecionado.getValorTotal();
-                    double descontoEmPorcentagem = (orcamentoSelecionado.getDescontoValor().doubleValue() * 100) / orcamentoSelecionado.getValorTotal().doubleValue();
-                    if (descontoEmPorcentagem > descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto().doubleValue()) {
-                        this.addError("Erro", "Desconto maior que o permitido.");
-                        orcamentoSelecionado.setDescontoValor(new BigDecimal(0));
-                    }
                 }
 
             } else {
@@ -1387,6 +1395,13 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
             List<OrcamentoItem> itemsJaAprovados = OrcamentoSingleton.getInstance().itensAprovadosNoOrcamento(orcamentoSelecionado);
 
+          
+            if(validaOrcamentoMaiorPermitido()) {
+                this.addError("Erro", "Desconto maior que o permitido.");
+                return;
+            }
+            
+            
             //verificando se os procedimentos ja estao aprovados em outro orcamento       
             if (itemsJaAprovados != null && itemsJaAprovados.size() > 0) {
                 List<String> procedimentos = new ArrayList<String>();
@@ -1462,7 +1477,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                     }
                 }
 
-                validaDescontos();
+             //   validaDescontos();
             }
 
         }
