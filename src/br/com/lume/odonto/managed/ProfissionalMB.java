@@ -471,6 +471,7 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         usuario.setUsuStrLogin(this.getEntity().getDadosBasico().getEmail());
         usuario.setPerfisUsuarios(Arrays.asList(perfil));
         usuario.setUsuIntDiastrocasenha(999);
+        
         UsuarioSingleton.getInstance().getBo().persistUsuarioExterno(usuario, UtilsFrontEnd.getEmpresaLogada());
     }
 
