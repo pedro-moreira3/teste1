@@ -1886,16 +1886,16 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
                 diferenca = valor.subtract(ptp.getValorDesconto());
 
-                if (diferenca.doubleValue() > 0) {
-                    valorDesconto = (diferenca.divide(valor, BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100));
+               // if (diferenca.doubleValue() > 0) {
+                //    valorDesconto = (diferenca.divide(valor, BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100));
 
-                    if (valorDesconto.doubleValue() > UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue()) {
-                        this.addError("Erro ao salvar registro", "Não é possível dar desconto maior que " + UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue() + "% no item " + ptp.getProcedimento().getDescricao());
-                        ptp.setValorDesconto(valor);
+                  //  if (valorDesconto.doubleValue() > UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue()) {
+                    //    this.addError("Erro ao salvar registro", "Não é possível dar desconto maior que " + UtilsFrontEnd.getProfissionalLogado().getDesconto().doubleValue() + "% no item " + ptp.getProcedimento().getDescricao());
+                   //     ptp.setValorDesconto(valor);
 
-                        return false;
-                    }
-                }
+                   //     return false;
+                  //  }
+               // }
 
                 //   }else {
                 //       this.addWarn("Erro ao salvar registro", "Não é possível alterar o valor.");
