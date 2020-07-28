@@ -70,7 +70,8 @@ li.orcamento-li {
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 					<p:commandButton id="newOrtodontia" icon="White fa fa-file-o"
 						value="Nova Manutenção Orto"
-						actionListener="#{ortodontiaMB.actionNew}" process="@this" update="gerarOrcamentoPorProcedimento"
+						actionListener="#{ortodontiaMB.actionNew}" process="@this"
+						update="gerarOrcamentoPorProcedimento"
 						oncomplete="PF('dlgPlanoOrtodontico').show()" immediate="true" />
 				</p:panelGrid>
 
@@ -88,6 +89,19 @@ li.orcamento-li {
 							process="@this" title="Gerenciar Plano de Tratamento"
 							actionListener="#{ortodontiaMB.actionCarregarPlano(planoTratamento)}">
 						</p:commandButton>
+						<h:panelGroup rendered="#{planoTratamentoMB.admin}">
+							<p:commandButton id="encerrar" icon="White fa fa-times-circle"
+								update="dtPlanoTratamentoOrtodontia"
+								title="Encerrar Plano de Tratamento" process="@this"
+								styleClass="RedButton"
+								actionListener="#{ortodontiaMB.actionFinalizar(planoTratamento)}"
+								disabled="#{planoTratamento.status == 'S' or planoTratamento.status == 'E' or 
+									planoTratamentoMB.validaPermissao(planoTratamento)}">
+								<p:confirm header="Confirmação"
+									message="Deseja realmente encerrar este Plano de Tratamento?"
+									icon="fa fa-warning" />
+							</p:commandButton>
+						</h:panelGroup>
 					</p:column>
 					<p:column filterBy="#{planoTratamento.descricaoComConvenio}"
 						sortBy="#{planoTratamento.descricaoComConvenio}"
@@ -112,11 +126,70 @@ li.orcamento-li {
 						sortBy="#{planoTratamento.fim}">
 						<h:outputText value="#{planoTratamento.fimStr}" />
 					</p:column>
+					<p:column headerText="Status"
+						sortBy="#{planoTratamento.statusDescritivo}"
+						filterBy="#{planoTratamento.statusDescritivo}"
+						filterFunction="#{ortodontiaMB.filtroSemAcento}">
+						<p:outputLabel value="#{planoTratamento.statusDescritivo}" />
+					</p:column>
 				</p:dataTable>
 			</p:outputPanel>
 
 		</div>
 	</div>
+
+	<p:dialog id="devolverOrto" widgetVar="devolverOrto"
+		header="Encerrar Plano de Tratamento" responsive="true" modal="true"
+		appendTo=":lume" closable="false">
+		<p:outputPanel id="pgFinalizarOrto">
+			<div class="ui-g ui-fluid">
+				<div class="ui-g-12 ui-lg-12">
+					<p:panelGrid columns="1" columnClasses="ui-grid-col-12"
+						layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding"
+						style="border:0px none; background-color:transparent;">
+
+						<p:outputLabel for="justificativaOrto" value="Justificativa : " />
+						<p:selectOneMenu id="justificativaOrto"
+							value="#{ortodontiaMB.justificativa}" converter="dominio"
+							required="true">
+							<f:selectItem itemValue="#{null}"
+								itemLabel="Selecione uma justificativa" />
+							<f:selectItems value="#{ortodontiaMB.justificativas}"
+								var="justificativa" itemLabel="#{justificativa.nome}"
+								itemValue="#{justificativa}" />
+						</p:selectOneMenu>
+
+						<p:outputLabel for="retornoOrto" value="Data retorno : " />
+						<p:calendar id="retornoOrto" value="#{ortodontiaMB.retorno}"
+							pattern="dd/MM/yyyy" showWeeksBar="false"
+							locale="#{lumeSecurity.locale}" navigator="true"
+							yearRange="-0:+1" mindate="#{odontoMB.sysdate}" mask="true">
+						</p:calendar>
+
+						<p:outputLabel for="observacoesretornoptOrto"
+							value="Observações do Retorno : " />
+						<p:inputTextarea id="observacoesretornoptOrto" rows="3" cols="33"
+							value="#{ortodontiaMB.observacoesRetorno}" maxlength="200" />
+					</p:panelGrid>
+				</div>
+			</div>
+		</p:outputPanel>
+
+		<div class="SeparatorFull"></div>
+		<p:panelGrid columns="2" layout="grid" id="botoesFinalizaPTOrto"
+			styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+			<p:commandButton id="persistDevolverOrto" icon="White fa fa-save"
+				value="Salvar" actionListener="#{ortodontiaMB.actionFinalizar}"
+				update="@this, dtPlanoTratamentoOrtodontia"
+				oncomplete="PF('devolverOrto').hide();"
+				process="@this, :lume:tabViewPaciente:pgFinalizarOrto, :lume:tabViewPaciente:botoesFinalizaPTOrto"
+				styleClass="GreenButton" />
+			<p:commandButton icon="White fa fa-close" value="Fechar"
+				actionListener="#{planoTratamentoMB.actionCancelFinalizar}"
+				process="@this" styleClass="NavyButton" />
+		</p:panelGrid>
+	</p:dialog>
 
 	<ui:remove>
 		<p:dialog id="dlgPreviewOrcamentoOrto"
@@ -165,8 +238,8 @@ li.orcamento-li {
 								styleClass="NavyButton" />
 							<p:commandButton icon="fa fa-trash" process="@this"
 								actionListener="#{ortodontiaMB.actionRemoveOrcamento(orcamento)}"
-								update=":lume:tabViewPaciente:tbViewOrcamento" styleClass="NavyButton"
-								title="Cancelar Orçamento">
+								update=":lume:tabViewPaciente:tbViewOrcamento"
+								styleClass="NavyButton" title="Cancelar Orçamento">
 								<p:confirm header="Confirmação"
 									message="Deseja cancelar o orçamento?" icon="ui-icon-alert" />
 							</p:commandButton>
@@ -239,11 +312,8 @@ li.orcamento-li {
 
 			<h:panelGroup>
 				<p:outputLabel value="Informe o percentual de reajuste" />
-				<p:inputNumber value="#{ortodontiaMB.indiceReajuste}" symbol="%"
-					maxlength="100" decimalPlaces="2" symbolPosition="s">
-
-					<p:ajax process="@this" />
-
+				<p:inputNumber id="valorIGPM" value="#{ortodontiaMB.indiceReajuste}"
+					symbol="%" maxlength="100" decimalPlaces="2" symbolPosition="s">
 				</p:inputNumber>
 			</h:panelGroup>
 
@@ -253,7 +323,7 @@ li.orcamento-li {
 			styleClass="ui-panelgrid-blank ui-fluid form-group">
 
 			<p:commandButton value="Aplicar reajuste" icon="fa fa-save"
-				styleClass="GreenButton" process="@this"
+				styleClass="GreenButton" process="@this,valorIGPM"
 				actionListener="#{ortodontiaMB.actionPersistReajuste}"
 				oncomplete="PF('dlgNovoReajusteOrcamento').hide();"
 				update=":lume:tabViewPaciente:dtOrcamentosOrtodontia">
@@ -394,10 +464,11 @@ li.orcamento-li {
 
 						<p:column headerText="Reajuste" filterMatchMode="contains"
 							style="width: 80px;"
-							filterBy="#{ortodontiaMB.orcamentoSelecionado.indiceReajuste.reajuste}"
-							sortBy="#{ortodontiaMB.orcamentoSelecionado.indiceReajuste.reajuste}">
-							<h:outputText value="#{o.indiceReajuste.reajuste}">
-
+							filterBy="#{ortodontiaMB.orcamentoSelecionado.indiceReajuste.reajusteInDecimal}"
+							sortBy="#{ortodontiaMB.orcamentoSelecionado.indiceReajuste.reajusteInDecimal}">
+							<h:outputText
+								value="#{ortodontiaMB.orcamentoSelecionado.indiceReajuste.reajusteInDecimal}">
+								<f:convertNumber type="percent" />
 							</h:outputText>
 						</p:column>
 
@@ -574,7 +645,7 @@ li.orcamento-li {
 										inputStyle="width:500px;">
 										<p:ajax event="itemSelect" process="@this"
 											update="valorProcedimentoPadrao"
-											listener="#{ortodontiaMB.atualizaValorProcedimento()}"/>
+											listener="#{ortodontiaMB.atualizaValorProcedimento()}" />
 									</p:autoComplete>
 								</p:panelGrid>
 
@@ -636,7 +707,8 @@ li.orcamento-li {
 										<p:column width="33px">
 											<p:commandButton icon="White fa fa-minus White"
 												actionListener="#{ortodontiaMB.actionRemoverDiagnostico(d)}"
-												update=":lume:tabViewPaciente:dtDiagnosticos" process="@this" />
+												update=":lume:tabViewPaciente:dtDiagnosticos"
+												process="@this" />
 										</p:column>
 									</p:dataTable>
 									<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
@@ -709,10 +781,12 @@ li.orcamento-li {
 
 											<p:panelGrid columns="1" layout="grid"
 												styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
-												<p:selectBooleanCheckbox style="width:100% !important" id="gerarOrcamentoPorProcedimento" itemLabel="Gerar um orçamento para cada procedimento"														
-														value="#{ortodontiaMB.gerarOrcamentoPorProcedimento}">	
-														<p:ajax process="@this"/>													
-												</p:selectBooleanCheckbox>												
+												<p:selectBooleanCheckbox style="width:100% !important"
+													id="gerarOrcamentoPorProcedimento"
+													itemLabel="Gerar um orçamento para cada procedimento"
+													value="#{ortodontiaMB.gerarOrcamentoPorProcedimento}">
+													<p:ajax process="@this" />
+												</p:selectBooleanCheckbox>
 											</p:panelGrid>
 											<p:panelGrid columns="2" layout="grid"
 												styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
@@ -749,7 +823,8 @@ li.orcamento-li {
 													<p:commandButton process="@this"
 														disable="#{orcamento.isAprovado}"
 														oncomplete="PF('dlgNovoReajusteOrcamento').show();"
-														icon="fa fa-dollar" styleClass="NavyButton" title="Aplicar reajuste IGPM">
+														icon="fa fa-dollar" styleClass="NavyButton"
+														title="Aplicar reajuste IGPM">
 
 														<p:ajax listener="#{ortodontiaMB.actionEditOrcamento(o)}"
 															process="@this" />
@@ -794,10 +869,10 @@ li.orcamento-li {
 
 												<p:column headerText="Reajuste" filterMatchMode="contains"
 													style="width: 80px;"
-													filterBy="#{o.indiceReajuste.reajuste}"
-													sortBy="#{o.indiceReajuste.reajuste}">
-													<h:outputText value="#{o.indiceReajuste.reajuste}">
-
+													filterBy="#{o.indiceReajuste.reajusteInDecimal}"
+													sortBy="#{o.indiceReajuste.reajusteInDecimal}">
+													<h:outputText value="#{o.indiceReajuste.reajusteInDecimal}">
+														<f:convertNumber type="percent" />
 													</h:outputText>
 												</p:column>
 

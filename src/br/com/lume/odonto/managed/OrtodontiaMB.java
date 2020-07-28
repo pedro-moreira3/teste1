@@ -34,10 +34,12 @@ import br.com.lume.odonto.entity.OrcamentoProcedimento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamento.PlanoTratamentoTipo;
+import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.entity.PlanoTratamentoAparelho;
 import br.com.lume.odonto.entity.PlanoTratamentoDiagnostico;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Procedimento;
+import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.orcamento.OrcamentoItemSingleton;
 import br.com.lume.orcamento.OrcamentoProcedimentoSingleton;
 import br.com.lume.orcamento.OrcamentoSingleton;
@@ -45,6 +47,7 @@ import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.procedimento.ProcedimentoSingleton;
 import br.com.lume.repasse.RepasseFaturasSingleton;
+import br.com.lume.retorno.RetornoSingleton;
 import br.com.lume.security.entity.Empresa;
 
 /**
@@ -66,6 +69,15 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     private BigDecimal valorProcedimento;
     private BigDecimal indiceReajuste;
     private boolean gerarOrcamentoPorProcedimento = false;
+    
+    private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos;
+    private List<PlanoTratamentoProcedimento> planoTratamentoProcedimentosExcluidos;
+    private Dominio justificativa;
+    private List<Dominio> justificativasCancelamento;
+    private Date retorno;
+    private String observacoesRetorno;
+    private String filtroStatusProcedimento = "N";
+    private List<Dominio> justificativas;
 
     //EXPORTAÇÃO TABELA
     private DataTable tabelaPlanoOrtodontico;
@@ -78,6 +90,7 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
         try {
             this.setClazz(PlanoTratamento.class);
             setEntity(new PlanoTratamento());
+            justificativas = DominioSingleton.getInstance().getBo().listByEmpresaAndObjetoAndTipo("planotratamento", "justificativa");
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             LogIntelidenteSingleton.getInstance().makeLog(e);
@@ -86,6 +99,18 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
 
     public BigDecimal getDescontoFrom(OrcamentoItem oi) {
         try {
+            if(oi.getOrcamento().getIndiceReajuste() != null) {
+                BigDecimal valorReajusteSemDesconto = oi.getOrcamento().getIndiceReajuste().getReajuste().multiply(
+                        oi.getValorOriginal()).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP);
+                BigDecimal valorReajusteComDesconto = oi.getOrcamento().getIndiceReajuste().getReajuste().multiply(
+                        oi.getValor()).divide(new BigDecimal(100), BigDecimal.ROUND_HALF_UP);
+                
+                if(oi.getValorOriginal().compareTo(oi.getValor().subtract(valorReajusteSemDesconto)) == 0)
+                    return new BigDecimal(0);
+                else
+                    return (oi.getValorOriginal().subtract(oi.getValor().subtract(valorReajusteComDesconto))).divide(
+                            oi.getValorOriginal(), BigDecimal.ROUND_HALF_UP);
+            }
             return oi.getValorOriginal().subtract(oi.getValor()).divide(oi.getValorOriginal(), BigDecimal.ROUND_HALF_UP);
         } catch (Exception e) {
             return BigDecimal.ZERO;
@@ -176,7 +201,82 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             LogIntelidenteSingleton.getInstance().makeLog(e);
         }
     }
+    
+    public void carregarPlanoTratamentoProcedimentos() throws Exception {
+        if (getEntity() != null && getEntity().getId() != null) {
+            this.setPlanoTratamentoProcedimentosExcluidos(new ArrayList<>());
+            this.setPlanoTratamentoProcedimentos(PlanoTratamentoProcedimentoSingleton.getInstance().getBo().listByPlanoTratamentoStatus(getEntity().getId(), getFiltroStatusProcedimento()));
+            getEntity().setPlanoTratamentoProcedimentos(this.getPlanoTratamentoProcedimentos());
+        }
+    }
+    
+    public void actionFinalizar(PlanoTratamento planoTratamento) throws Exception {
+        if (planoTratamento != null) {
+            setEntity(planoTratamento);
+            carregarPlanoTratamentoProcedimentos();
+        }
 
+        actionFinalizar((ActionEvent) null);
+    }
+
+    public void actionFinalizar(ActionEvent event) {
+        try {
+            if (this.getPlanoTratamentoProcedimentos() == null || this.getPlanoTratamentoProcedimentos().isEmpty() || temProcedimentosAbertos()) {
+                if (this.getJustificativa() == null) {
+                    if(this.getEntity().isOrtodontico())
+                        PrimeFaces.current().executeScript("PF('devolverOrto').show()");
+                    else
+                        PrimeFaces.current().executeScript("PF('devolver').show()");
+                    return;
+                }
+
+                this.criaRetorno();
+                // cancelaAgendamentos();
+                PrimeFaces.current().executeScript("PF('devolver').hide()");
+
+                boolean faturaInterrompida = false;
+                List<Orcamento> orcamentos = OrcamentoSingleton.getInstance().getBo().findOrcamentosAtivosByPT(getEntity());
+                for (Orcamento orcamento : orcamentos) {
+                    boolean interrompida = OrcamentoSingleton.getInstance().inativaOrcamento(orcamento, UtilsFrontEnd.getProfissionalLogado(), this.getEntity());
+                    if (!faturaInterrompida)
+                        faturaInterrompida = interrompida;
+                }
+                if (faturaInterrompida)
+                    this.addWarn("Atenção!", "Uma ou mais faturas foram interrompidas com pendências, verifique a tela de Ajuste de Contas.");
+            }
+            PlanoTratamentoSingleton.getInstance().encerrarPlanoTratamento(getEntity(), this.getJustificativa(), UtilsFrontEnd.getProfissionalLogado());
+            this.setJustificativa(null);
+
+            this.addInfo("Sucesso", Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO));
+        } catch (Exception e) {
+            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
+        }
+    }
+    
+    public boolean temProcedimentosAbertos() throws Exception {
+        if (this.planoTratamentoProcedimentos == null)
+            return false;
+        for (PlanoTratamentoProcedimento ptp : this.planoTratamentoProcedimentos)
+            if ("N".equals(ptp.getExcluido()) && !"F".equals(ptp.getStatus()))
+                return true;
+        return false;
+    }
+    
+    private void criaRetorno() {
+        Retorno r = new Retorno();
+        try {
+            if (getRetorno() != null) {
+                r.setDataRetorno(getRetorno());
+                r.setPlanoTratamento(this.getEntity());
+                r.setPaciente(getPaciente());
+                r.setObservacoes(getObservacoesRetorno());
+                RetornoSingleton.getInstance().getBo().persist(r);
+            }
+        } catch (Exception e) {
+            this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
+        }
+    }
+    
     @Override
     public void actionNew(ActionEvent event) {      
         setEntity(null);
@@ -684,6 +784,70 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
     
     public void setGerarOrcamentoPorProcedimento(boolean gerarOrcamentoPorProcedimento) {
         this.gerarOrcamentoPorProcedimento = gerarOrcamentoPorProcedimento;
+    }
+
+    public List<PlanoTratamentoProcedimento> getPlanoTratamentoProcedimentos() {
+        return planoTratamentoProcedimentos;
+    }
+
+    public void setPlanoTratamentoProcedimentos(List<PlanoTratamentoProcedimento> planoTratamentoProcedimentos) {
+        this.planoTratamentoProcedimentos = planoTratamentoProcedimentos;
+    }
+
+    public List<PlanoTratamentoProcedimento> getPlanoTratamentoProcedimentosExcluidos() {
+        return planoTratamentoProcedimentosExcluidos;
+    }
+
+    public void setPlanoTratamentoProcedimentosExcluidos(List<PlanoTratamentoProcedimento> planoTratamentoProcedimentosExcluidos) {
+        this.planoTratamentoProcedimentosExcluidos = planoTratamentoProcedimentosExcluidos;
+    }
+
+    public Dominio getJustificativa() {
+        return justificativa;
+    }
+
+    public void setJustificativa(Dominio justificativa) {
+        this.justificativa = justificativa;
+    }
+
+    public List<Dominio> getJustificativasCancelamento() {
+        return justificativasCancelamento;
+    }
+
+    public void setJustificativasCancelamento(List<Dominio> justificativasCancelamento) {
+        this.justificativasCancelamento = justificativasCancelamento;
+    }
+
+    public Date getRetorno() {
+        return retorno;
+    }
+
+    public void setRetorno(Date retorno) {
+        this.retorno = retorno;
+    }
+
+    public String getObservacoesRetorno() {
+        return observacoesRetorno;
+    }
+
+    public void setObservacoesRetorno(String observacoesRetorno) {
+        this.observacoesRetorno = observacoesRetorno;
+    }
+
+    public String getFiltroStatusProcedimento() {
+        return filtroStatusProcedimento;
+    }
+
+    public void setFiltroStatusProcedimento(String filtroStatusProcedimento) {
+        this.filtroStatusProcedimento = filtroStatusProcedimento;
+    }
+
+    public List<Dominio> getJustificativas() {
+        return justificativas;
+    }
+
+    public void setJustificativas(List<Dominio> justificativas) {
+        this.justificativas = justificativas;
     }
 
 }

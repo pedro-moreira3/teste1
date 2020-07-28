@@ -257,9 +257,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void cancelaLancamento(Lancamento l) {
         try {
-            LancamentoSingleton.getInstance().inativaLancamento(l, UtilsFrontEnd.getProfissionalLogado());
-            this.addInfo("Sucesso", "Lançamento cancelado com sucesso!", true);
-            updateValues(getEntity(), true, false);
+            if(l.getConferidoPorProfissional() == null) {
+                LancamentoSingleton.getInstance().inativaLancamento(l, UtilsFrontEnd.getProfissionalLogado());
+                this.addInfo("Sucesso", "Lançamento cancelado com sucesso!", true);
+                updateValues(getEntity(), true, false);
+            }
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);
             this.addError("Erro", "Falha ao cancelar o lançamento!\\r\\n" + e.getMessage(), true);

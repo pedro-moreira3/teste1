@@ -1092,8 +1092,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     
     private boolean validaOrcamentoMaiorPermitido() {
+        BigDecimal valorDesconto = new BigDecimal(0);
+        if(!descontosDisponiveis.isEmpty()) {
+            valorDesconto = descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto();
+        }
         if (orcamentoSelecionado.getDescontoTipo().equals(
-                "P") && orcamentoSelecionado.getDescontoValor().compareTo(descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto()) == 1) {
+                "P") && orcamentoSelecionado.getDescontoValor().compareTo(valorDesconto) == 1) {
            return true;         
         } else if (orcamentoSelecionado.getDescontoTipo().equals("V")) {
             orcamentoSelecionado.getValorTotal();
@@ -1340,8 +1344,10 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     private void carregarDadosCabecalho() {
         Empresa empresalogada = UtilsFrontEnd.getEmpresaLogada();
-        nomeClinica = empresalogada.getEmpStrNme() != null ? empresalogada.getEmpStrNme() : "";
-        endTelefoneClinica = (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() + " - " : "") + (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() + "/" : "") + (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() + " - " : "") + (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
+        if(empresalogada != null) {
+            nomeClinica = empresalogada.getEmpStrNme() != null ? empresalogada.getEmpStrNme() : "";
+            endTelefoneClinica = (empresalogada.getEmpStrEndereco() != null ? empresalogada.getEmpStrEndereco() + " - " : "") + (empresalogada.getEmpStrCidade() != null ? empresalogada.getEmpStrCidade() + "/" : "") + (empresalogada.getEmpChaUf() != null ? empresalogada.getEmpChaUf() + " - " : "") + (empresalogada.getEmpChaFone() != null ? empresalogada.getEmpChaFone() : "");
+        }
     }
 
     public BigDecimal getTotalPago() {
@@ -1965,7 +1971,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         List<String> perfis = new ArrayList<>();
         perfis.add(OdontoPerfil.DENTISTA);
         perfis.add(OdontoPerfil.ADMINISTRADOR);
-        if (UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
+        if (UtilsFrontEnd.getProfissionalLogado() != null && UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
             profissionais = ProfissionalSingleton.getInstance().getBo().listByEmpresa(perfis, UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
         }
     }
