@@ -1,0 +1,148 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<style>
+body .ui-selectonemenu {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+ui-selectonemenu-label {
+	margin: 0px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-label {
+	margin-top: 2.4px !important;
+	padding: 0px !important;
+}
+
+body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
+	{
+	margin-top: -12px !important;
+}
+</style>
+
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+
+					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
+
+						<h1>Importação</h1>
+						<div class="SeparatorFull"></div>
+
+						<br />
+						<p:fieldset toggleable="false">
+
+							<p:outputPanel>
+								<p>Observações importantes:</p>
+								<p>O arquivo a ser importado, deve ser no formato (.xlsx),
+									(.csv) ou (.txt);</p>
+								<p>O campo nome, é obrigatório, ou seja, seu arquivo precisa
+									ter ao menos uma coluna "nome;";</p>
+							</p:outputPanel>
+
+							<p:panelGrid columns="4" layout="grid"
+								styleClass="ui-panelgrid-blank form-group ui-fluid">
+
+								<p:commandButton id="novaImp" icon="fa fa-file White"
+									value="Nova importação" update="dtImportacao,dlgImportacao"
+									oncomplete="PF('dlgImportacao').show();" process="@this"
+									styleClass="NavyButton" />
+
+								<h:panelGroup>
+									<p:splitButton icon="White fa fa fa-file-excel-o"
+										value="Exportar tabela para Excel"
+										styleClass="GreenSplitButton"
+										actionListener="#{relatorioRepasseMB.exportarTabela('xls')}"
+										ajax="false" process="dtImportacao,@this" update="@this"
+										immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+										<p:fileDownload value="#{importacaoMB.arquivoDownload}" />
+
+										<p:menuitem value="Exportar tabela para PDF"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{importacaoMB.exportarTabela('pdf')}"
+											ajax="false" process="dtImportacao,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload value="#{importacaoMB.arquivoDownload}" />
+										</p:menuitem>
+										<p:menuitem value="Exportar tabela para CSV"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{importacaoMB.exportarTabela('csv')}"
+											ajax="false" process="dtImportacao,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload value="#{importacaoMB.arquivoDownload}" />
+										</p:menuitem>
+									</p:splitButton>
+								</h:panelGroup>
+
+							</p:panelGrid>
+
+						</p:fieldset>
+					</p:outputPanel>
+					<div class="EmptyBox20"></div>
+
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						widgetVar="dtImportacao" id="dtImportacao"
+						value="#{importacaoMB.entityList}" var="imp" rows="10"
+						paginator="true" paginatorPosition="bottom"
+						binding="#{importacaoMB.tabelaImportacao}">
+						<f:facet name="header">Importações</f:facet>
+
+						<p:column headerText="Ações" exportable="false">
+							<p:commandButton id="btnView" icon="White fa fa-eye"
+								oncomplete="PF('dlgImportacao').show();"
+								update=":lume:dlgImportacao"
+								actionListener="#{importacaoMB.carregarTemplate}"
+								action="#{importacaoMB.setEntity(imp)}" process="@this,:lume:dlgImportacao">
+								<p:tooltip for="btnView" value="Visualizar" />
+							</p:commandButton>
+						</p:column>
+
+						<p:column sortBy="#{imp.profissionalResponsavel.dadosBasico.nome}"
+							filterBy="#{imp.profissionalResponsavel.dadosBasico.nome}"
+							filterMatchMode="contains"
+							filterFunction="#{importacaoMB.filtroSemAcento}"
+							headerText="Profissional responsável">
+							<h:outputText
+								value="#{imp.profissionalResponsavel.dadosBasico.nome}"
+								title="#{imp.id}" />
+						</p:column>
+
+						<p:column sortBy="#{imp.dataImportacaoStr}"
+							filterBy="#{imp.dataImportacaoStr}" filterMatchMode="contains"
+							filterFunction="#{importacaoMB.filtroSemAcento}"
+							headerText="Data de importação">
+							<h:outputText value="#{imp.dataImportacaoStr}" title="#{imp.id}" />
+						</p:column>
+
+						<p:column sortBy="#{imp.registrosImportados}"
+							filterBy="#{imp.registrosImportados}" filterMatchMode="contains"
+							filterFunction="#{relatorioRepasseMB.filtroSemAcento}"
+							headerText="Registros importados">
+							<h:outputText value="#{imp.registrosImportados}"
+								title="#{imp.id}" />
+						</p:column>
+					</p:dataTable>
+
+					<p:dialog id="dlgImportacao" widgetVar="dlgImportacao"
+						header="Nova importação" responsive="true" modal="true"
+						width="70%">
+						<p:panelGrid id="pnImportacao" styleClass="BordNone">
+							<ui:include src="dlgimportacao.xhtml" />
+						</p:panelGrid>
+					</p:dialog>
+
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

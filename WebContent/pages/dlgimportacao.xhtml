@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+	<style>
+label.ui-helper-hidden {
+	display: none !important;
+}
+
+.ui-panelgrid thead tr td, .ui-panelgrid tfoot tr td {
+	color: #525252 !important;
+	background-color: rgba(40, 40, 40, 0.1) !important;
+	font-family: 'latobold' !important;
+}
+
+li.orcamento-li {
+	list-style-type: disc !important;
+}
+
+.fixaAbaixo {
+	position: relative;
+}
+
+.fixaAbaixo input {
+	position: absolute;
+	bottom: 0 !important;
+}
+
+.fixaAbaixo button span {
+	margin-top: -3px !important;
+}
+
+.CardTextParent {
+	width: 100%;
+	display: flex;
+}
+
+.CardTextParent .CardText {
+	text-align: center;
+	border: 1px solid #bdbdbd;
+	border-radius: 3px;
+	width: 24.25%;
+	padding: 12px 16px;
+}
+
+.CardText span:first-child {
+	font-size: 18px;
+}
+
+.CardText span:last-child {
+	font-size: 14px;
+}
+
+.descontoFieldset .ui-panelgrid-cell:nth-child(1), .descontoFieldset .ui-panelgrid-cell:nth-child(3)
+	{
+	padding-top: 10px !important;
+}
+</style>
+
+	<script type="text/javascript">
+	/**
+	function callback(mutations) {
+	    PF('dtErroImportacao').update();
+	    console.log("chamou aqui");
+	}
+
+	var list = #{importacaoMB.errosImportacao};
+	
+	let observer = new MutationObserver(callback);
+	function initObserver(){
+		observer.observe(list, {
+			childList: true
+	});}
+	observer.disconnect();
+	*/
+	
+	</script>
+
+	<div class="Container100 Responsive100 NoIndent">
+		<div class="Container100 ui-fluid NoPadding">
+
+			<p:panel id="pnWizardImportacao">
+
+				<p:wizard flowListener="#{importacaoMB.onFlowProcess}">
+					<p:tab id="template" title="Template">
+						<p:panel style="margin-bottom:5px;">
+							<h:panelGroup id="pgImportacao">
+								<p:outputLabel for="campos"
+									value="Selecione os campos a serem importados:" />
+								<p:pickList id="campos" style="height:100px;margin-top:5px;"
+									value="#{importacaoMB.templatePickList}" var="templatePickList"
+									styleClass="buttonSmaller" itemLabel="#{templatePickList}"
+									itemValue="#{templatePickList}" effect="fade" iconOnly="true"
+									disabled="#{importacaoMB.entity.id > 0}"
+									responsive="true" required="false">
+
+									<f:facet name="sourceCaption">Disponíveis</f:facet>
+									<f:facet name="targetCaption">Selecionados</f:facet>
+
+									<p:ajax event="transfer" process="@this"
+										listener="#{importacaoMB.atualizarTemplate()}"
+										update="templateModelo" />
+									<p:ajax event="reorder" process="@this"
+										listener="#{importacaoMB.atualizarTemplate()}"
+										update="templateModelo" />
+
+								</p:pickList>
+							</h:panelGroup>
+
+							<p:panelGrid layout="grid" columns="2"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+								<h:panelGroup>
+									<h:outputText for="templateModelo" value="Template: "
+										style="font-weight:bold;" />
+									<h:outputText id="templateModelo"
+										value="#{importacaoMB.templateModelo}" />
+								</h:panelGroup>
+							</p:panelGrid>
+
+						</p:panel>
+					</p:tab>
+					<p:tab id="upload" title="Upload">
+						<p:panel style="margin-bottom:5px;">
+							<p:panelGrid layout="grid" columns="3"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+								<h:panelGroup>
+									<p:fileUpload id="arquivoUpload"
+										fileUploadListener="#{importacaoMB.carregarArquivo}"
+										multiple="false" mode="advanced" auto="true"
+										allowTypes="/(\.|\/)(txt|xls|csv|xlsx)$/"
+										label="Selecione o arquivo" style="display:block;"
+										disabled="#{importacaoMB.entity.id > 0}"/>
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:commandButton value="Importar dados"
+										actionListener="#{importacaoMB.importarDados}"
+										process="arquivoUpload,@this" icon="White fa fa-cloud-upload"
+										styleClass="RedButton" disabled="#{importacaoMB.entity.id > 0}"/>
+								</h:panelGroup>
+							</p:panelGrid>
+						</p:panel>
+						
+						<p:poll interval="2" listener="#{importacaoMB.listenerPool()}" update="dtErroImportacao" 
+							widgetVar="pool" autoStart="false" immediate="true"/>
+						
+						<p:panel style="margin-bottom:5px;">
+							<p:dataTable id="dtErroImportacao" widgetVar="dtErroImportacao"
+								value="#{importacaoMB.entity.errosImportacao}" var="erro"
+								rowKey="#{erro}" rows="5" paginator="true"
+								paginatorPosition="bottom" reflow="true"
+								emptyMessage="Nenhum erro encontrado">
+
+								<f:facet name="header">Erros de importação</f:facet>
+
+								<p:column headerText="Linha do arquivo">
+									<h:outputText value="#{erro.numeroLinha}" />
+								</p:column>
+
+								<p:column headerText="Linha com erro">
+									<h:outputText value="#{erro.linha}" />
+								</p:column>
+
+								<p:column headerText="Descrição do erro">
+									<h:outputText value="#{erro.erro}" />
+								</p:column>
+
+							</p:dataTable>
+						</p:panel>
+					</p:tab>
+				</p:wizard>
+			</p:panel>
+
+		</div>
+	</div>
+</ui:composition>
