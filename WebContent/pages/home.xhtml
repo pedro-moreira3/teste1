@@ -4,7 +4,45 @@
 	<ui:define name="content">
 		<div class="Container100 Responsive100 NoIndent">
 			<div class="Container100 ui-fluid NoPadding">
-				<div class="Card"></div>
+				<div class="Card">
+					
+					<p:dataTable emptyMessage="Nenhum Aviso no momento"
+						widgetVar="dtAvisos" id="dtAvisos"
+						value="#{avisosMB.entityList}" var="objeto" rows="5"
+						paginatorPosition="bottom" paginatorAlwaysVisible="true"
+						paginator="true" rowKey="#{objeto}">
+						<f:facet name="header">Avisos</f:facet>
+						<p:column style="width:30%;font-weight:bold;" headerText="Título"
+							sortable="false">
+							<h:outputText style="color:red !important"
+								value="#{objeto.titulo}" />
+						</p:column>
+						<p:column filterMatchMode="none" headerText="Aviso"
+							sortable="false">
+							<p:outputPanel rendered="#{objeto.param != null}">
+								<p:remoteCommand name="param"
+									actionListener="#{avisosMB.gotoParams(param)}" />
+								<p:outputLabel style="color:blue !important; cursor: pointer"
+									value="#{objeto.aviso}" escape="false"
+									onclick="param([{name:'index', value:'#{avisosMB.entityList.indexOf(objeto)}'}])">
+									<p:tooltip escape="false" for="@parent" position="bottom"
+										value="#{objeto.toolTip}" hideDelay="500" />
+								</p:outputLabel>
+							</p:outputPanel>
+							<p:outputPanel rendered="#{objeto.param == null}">
+								<a href="#{objeto.link}"> <p:outputLabel
+										value="#{objeto.aviso}"
+										style="color:blue !important; cursor: #{objeto.link != null and objeto.link != '' ? 'pointer' : 'default'}"
+										escape="false">
+										<p:tooltip escape="false" for="@parent" position="bottom"
+											value="#{objeto.toolTip}" hideDelay="500" />
+									</p:outputLabel>
+								</a>
+							</p:outputPanel>
+						</p:column>
+					</p:dataTable>
+					
+				</div>
 			</div>
 		</div>
 	</ui:define>
