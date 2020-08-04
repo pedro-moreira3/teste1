@@ -2,7 +2,18 @@ ALTER TABLE fatura_item ADD COLUMN VALOR_AJUSTE_MANUAL NUMERIC;
 
 ALTER TABLE fatura ADD COLUMN VALOR_RESTANTE_IGNORADO_AJUSTE_MANUAL boolean;
 
-<<<<<<< Upstream, based on origin/backend
+
+alter table recibo_repasse_profissional add column data_pagamento timestamp;
+
+CREATE TABLE USUARIO_AFILIACAO (
+	ID SERIAL PRIMARY KEY,
+	USUARIO_ID bigint references SEG_USUARIO(USU_INT_COD),	
+	AFILIACAO_ID bigint references AFILIACAO(ID),
+	DATA_AFILIACAO timestamp NOT NULL,	
+	CRIADO_POR bigint REFERENCES SEG_USUARIO(USU_INT_COD),
+	STATUS character DEFAULT 'A'
+);
+
 CREATE TABLE log_importacao(
 	id serial primary key,
 	data_importacao timestamp without time zone DEFAULT now(),
@@ -39,19 +50,7 @@ LEFT JOIN SEG_OBJETO O
 WHERE O.OBJ_STR_DES = 'Paciente';
 
 ALTER TABLE paciente ADD COLUMN log_importacao_id bigint REFERENCES LOG_IMPORTACAO(id);
-=======
 
-alter table recibo_repasse_profissional add column data_pagamento timestamp;
-
-CREATE TABLE USUARIO_AFILIACAO (
-	ID SERIAL PRIMARY KEY,
-	USUARIO_ID bigint references SEG_USUARIO(USU_INT_COD),	
-	AFILIACAO_ID bigint references AFILIACAO(ID),
-	DATA_AFILIACAO timestamp NOT NULL,	
-	CRIADO_POR bigint REFERENCES SEG_USUARIO(USU_INT_COD),
-	STATUS character DEFAULT 'A'
-);
->>>>>>> 39f9175 Inclusao de diversas classes para portal de parceiros, recebimento de cliente lume, ativacao de assinaturas do inteli lume, relatorio de parceiros, entre outros.
 
 --acima ja rodado----
 
