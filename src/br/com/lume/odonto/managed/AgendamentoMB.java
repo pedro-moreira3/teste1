@@ -565,7 +565,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
                         if (this.getEntity().getStatusNovo().equals(StatusAgendamentoUtil.ENCAIXE.getSigla())) {
                             this.getEntity().setEncaixe(Status.SIM);
                         }
-                        if (getObservacoes() != null && !getObservacoes().isEmpty())
+                        if (getObservacoes() != null)
                             getEntity().setDescricao(getObservacoes());
                         try {
                             if (profissionalDentroAgenda.getId() != getEntity().getProfissional().getIdUsuario()) {
