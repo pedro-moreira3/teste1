@@ -118,9 +118,7 @@
 
 								<p:outputLabel for="afiliacao" value="Afiliação: " />
 								<p:selectOneMenu id="afiliacao" converter="afiliacao"
-									value="#{cadastroEmpresaMB.entity.afiliacao}">
-									<f:selectItem itemValue="#{null}"
-										itemLabel="Selecione uma afiliação (se houver)" />
+									value="#{cadastroEmpresaMB.entity.afiliacao}">									
 									<f:selectItems value="#{cadastroEmpresaMB.afiliacoes}" var="af"
 										itemValue="#{af}" itemLabel="#{af.nome}" />
 								</p:selectOneMenu>

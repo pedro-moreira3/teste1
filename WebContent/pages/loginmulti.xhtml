@@ -81,7 +81,7 @@
 	    					<h:panelGroup styleClass="md-inputfield">
 	    						<p:selectOneMenu id="login" value="#{odontoLoginMB.login}" required="true" styleClass="SelecaoMenu" autoWidth="false">
 									<f:selectItem itemValue="#{null}" itemLabel="Escolha a Clínica"/>
-									<f:selectItems value="#{odontoLoginMB.logins}" var="l" itemValue="#{l.id}_#{l.perfil}" itemLabel="#{l.descricao}" />
+									<f:selectItems value="#{odontoLoginMB.logins}" var="l" itemValue="#{l.id}_#{l.perfil}_#{l.empresa}" itemLabel="#{l.descricao}" />
 								</p:selectOneMenu>
 								<p:message styleClass="msg" for="login" />
 	    					</h:panelGroup>

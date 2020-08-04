@@ -142,7 +142,7 @@ public class CadastroEmpresaMB extends LumeManagedBean<Empresa> {
             setEntity(UtilsFrontEnd.getEmpresaLogada());
             profissional = ProfissionalSingleton.getInstance().getBo().findAdminInicial(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             this.afiliacoes = AfiliacaoSingleton.getInstance().getBo().getAllAfiliacao();
-            
+            getEntity().setAfiliacao(AfiliacaoSingleton.getInstance().getBo().getAfiliacaoPadrao());
             this.carregarDescontos();
             
             if(this.getEntity().getDiasSemana() != null) {

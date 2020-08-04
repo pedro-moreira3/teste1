@@ -51,7 +51,14 @@ public class MenuMB extends LumeManagedBean<Objeto> {
         sistema = new SistemaBO().getSistemaBySigla(JSFHelper.getSistemaAtual());
         menuModel = menuBO.getMenuTreeByUsuarioAndSistema(usuario, sistema, true);
         if (usuario != null) {
-            modulos = objetoBO.getObjetosRaizByUsuarioAndSistema(usuario, sistema,UtilsFrontEnd.getEmpresaLogada().getEmpStrEstoque());
+            String estoque;
+            if(UtilsFrontEnd.getEmpresaLogada() != null) {
+                 estoque = UtilsFrontEnd.getEmpresaLogada().getEmpStrEstoque();
+            }else{
+                //aqui tanto faz
+                estoque = "N";
+            }
+            modulos = objetoBO.getObjetosRaizByUsuarioAndSistema(usuario, sistema,estoque);
         }
         
         PrimeFaces.current().executeScript("document.getElementById(\"menuform:menu_0\").setAttribute(\"class\",\"active-menuitem\");");

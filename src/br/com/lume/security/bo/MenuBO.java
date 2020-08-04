@@ -13,10 +13,12 @@ import org.primefaces.model.menu.DefaultSubMenu;
 import org.primefaces.model.menu.MenuModel;
 import org.primefaces.model.menu.Submenu;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.bo.BO;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.dao.PersistenceUnitName;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.security.LoginSingleton;
 import br.com.lume.security.entity.Objeto;
 import br.com.lume.security.entity.Sistema;
 import br.com.lume.security.entity.Usuario;
@@ -47,6 +49,7 @@ public class MenuBO extends BO<Usuario> {
                 Set<Objeto> labelsPermitidas = this.getLabelsPermitidas(objetosPermitidos);
                 return this.getMenuTree(sistema, labelsPermitidas, objetosPermitidos, mostraURL, objetosRaizBySistema);
             } catch (Exception e) {
+                e.printStackTrace();
                 log.error(e);
             }
         }
@@ -120,11 +123,13 @@ public class MenuBO extends BO<Usuario> {
             }
             this.getMenuTree(objeto, model, raizesMenu, labelsPermitidas, objetosPermitidos, mostraURL);
         }
-        DefaultMenuItem miLogoff = new DefaultMenuItem();
-        miLogoff.setId("mi" + Calendar.getInstance().getTimeInMillis() + idMenu++);
-        miLogoff.setUrl("sobre.jsf");
-        miLogoff.setValue("Atualizações");
-        model.addElement(miLogoff);
+        if(!OdontoPerfil.PARCEIRO.equals(UtilsFrontEnd.getPerfilLogado())) {
+            DefaultMenuItem miLogoff = new DefaultMenuItem();
+            miLogoff.setId("mi" + Calendar.getInstance().getTimeInMillis() + idMenu++);
+            miLogoff.setUrl("sobre.jsf");
+            miLogoff.setValue("Atualizações");
+            model.addElement(miLogoff);
+        }    
         return model;
     }
 

@@ -31,8 +31,10 @@ public class AuthorizationListener implements PhaseListener {
 
     private Logger log = Logger.getLogger(AuthorizationListener.class);
 
+    
+    //TODO por enquanto coloquei as clincias dos parceiros aqui
     public static final String[] PAGINAS_SEM_RESTRICAO = new String[] { "chat.", "meuplano.", "confirmacao.", "cadastroWeb.", "login.", "retornos.", 
-            "cadastroPagamento.", "preCadastro.", "motivo.", "cadastroPagamentoDesenv.", "loginmulti.", "tutorial.","validaremail." };
+            "cadastroPagamento.", "preCadastro.", "motivo.", "cadastroPagamentoDesenv.", "loginmulti.", "tutorial.","validaremail.","clinicas." };
 
     @Override
     public void beforePhase(PhaseEvent event) {
@@ -52,7 +54,7 @@ public class AuthorizationListener implements PhaseListener {
         // Tentou entrar em uma pagina deslogado || entrou em uma pagina logado
         // mas que nao esta autorizado
         if (!this.isPaginaSemRestricao(currentPage)) {
-            if(UtilsFrontEnd.getProfissionalLogado() == null && UtilsFrontEnd.getPacienteLogado() == null)
+            if(UtilsFrontEnd.getProfissionalLogado() == null && UtilsFrontEnd.getPacienteLogado() == null && UtilsFrontEnd.getAfiliacaoLogada() == null)
                 JSFHelper.redirect("login.jsf");
             
             Objeto objetoAtual = this.isPageDenied(currentPage, usuarioLogado);

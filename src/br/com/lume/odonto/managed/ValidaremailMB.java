@@ -12,6 +12,7 @@ import javax.inject.Named;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
 
+import br.com.lume.afiliacao.AfiliacaoSingleton;
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
@@ -24,6 +25,7 @@ import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.LoginSingleton;
 import br.com.lume.security.ObjetoSingleton;
 import br.com.lume.security.SistemaSingleton;
+import br.com.lume.security.UsuarioAfiliacaoSingleton;
 import br.com.lume.security.UsuarioSingleton;
 import br.com.lume.security.entity.Login;
 import br.com.lume.security.entity.Objeto;
@@ -125,7 +127,13 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
         } else {
             String perfilLogado = "";
             Profissional profissional = ProfissionalSingleton.getInstance().getBo().findByUsuario(userLogin);
-            if (profissional == null) {
+            if(perfilLogado.equals(OdontoPerfil.PARCEIRO)) {               
+                perfilLogado = OdontoPerfil.PARCEIRO;  
+                UtilsFrontEnd.setPerfilLogado(OdontoPerfil.PARCEIRO);    
+                //nesse caso so tem uma afiliacao
+               UtilsFrontEnd.setAfiliacaoLogada(UsuarioAfiliacaoSingleton.getInstance().getBo().listByUsuario(usuario).get(0).getAfiliacao());
+               UtilsFrontEnd.setUsuarioLogado(userLogin);
+            }else if (profissional == null) {
                 perfilLogado = OdontoPerfil.PACIENTE;
                 Paciente paciente = PacienteSingleton.getInstance().getBo().findByUsuario(userLogin);
                 UtilsFrontEnd.setPacienteLogado(paciente);
@@ -142,8 +150,10 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
                     this.addError("Profissional Inativo.", "");
                     return "";
                 }
+            }            
+            if(!OdontoPerfil.PARCEIRO.equals(perfilLogado)) {
+                LoginSingleton.getInstance().getBo().validaSituacaoEmpresa(this.getEntity(), UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getPacienteLogado());    
             }
-            LoginSingleton.getInstance().getBo().validaSituacaoEmpresa(this.getEntity(), UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getPacienteLogado());
             //((LoginBO) this.getbO()).carregaObjetosPermitidos(userLogin, perfilLogado, this.getLumeSecurity(), profissional);
            // ObjetoBO objetoBO = new ObjetoBO();
             this.getLumeSecurity().setUsuario(userLogin);

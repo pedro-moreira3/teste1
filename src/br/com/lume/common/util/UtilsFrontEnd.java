@@ -5,10 +5,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import br.com.lume.odonto.entity.Afiliacao;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
 import br.com.lume.security.entity.Empresa;
 import br.com.lume.security.entity.Login;
+import br.com.lume.security.entity.Usuario;
 
 public class UtilsFrontEnd  implements Serializable {
   
@@ -37,6 +39,14 @@ public class UtilsFrontEnd  implements Serializable {
         JSFHelper.getSession().setAttribute("EMPRESA_LOGADA", empresaLogada);
     }
     
+    public static Usuario getUsuarioLogado() {
+        return (Usuario) JSFHelper.getSession().getAttribute("USUARIO_LOGADO");
+    }
+    
+    public static void setUsuarioLogado(Usuario usuario) {
+        JSFHelper.getSession().setAttribute("USUARIO_LOGADO", usuario);
+    }    
+    
     public static Profissional getProfissionalLogado() {
         return (Profissional) JSFHelper.getSession().getAttribute("PROFISSIONAL_LOGADO");
     }
@@ -52,6 +62,10 @@ public class UtilsFrontEnd  implements Serializable {
     public static Paciente getPacienteSelecionado() {
         return (Paciente) JSFHelper.getSession().getAttribute("PACIENTE_SELECIONADO");
     }
+    
+    public static Afiliacao getAfiliacaoLogada() {
+        return (Afiliacao) JSFHelper.getSession().getAttribute("AFILIACAO_LOGADA");
+    }
 
     public static Paciente getPacienteLogado() {
         return (Paciente) JSFHelper.getSession().getAttribute("PACIENTE_LOGADO");
@@ -59,6 +73,10 @@ public class UtilsFrontEnd  implements Serializable {
 
     public static void setPacienteLogado(Paciente paciente) {
         JSFHelper.getSession().setAttribute("PACIENTE_LOGADO", paciente);
+    }
+    
+    public static void setAfiliacaoLogada(Afiliacao afiliacao) {
+        JSFHelper.getSession().setAttribute("AFILIACAO_LOGADA", afiliacao);
     }
     
     @SuppressWarnings("unchecked")

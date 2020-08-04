@@ -62,7 +62,7 @@ public class CadastroPagamentoMB extends LumeManagedBean<Empresa> {
             String usuarioIuguId = Iugu.getInstance().criarUsuario(customerIugu);
             empresa.setEmpStrClienteIuguID(usuarioIuguId);
 
-            String subscriptionResponseId = Iugu.getInstance().criarPlano(new Subscription(usuarioIuguId, planoSelecionado.getNomePaypal(), cvlist));
+            String subscriptionResponseId = Iugu.getInstance().criarPlano(new Subscription(usuarioIuguId, planoSelecionado.getNomeIugu(), cvlist));
             empresa.setEmpStrAssinaturaIuguID(subscriptionResponseId);
 
             Calendar c = Calendar.getInstance();

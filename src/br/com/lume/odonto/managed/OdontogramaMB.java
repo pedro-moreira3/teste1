@@ -158,7 +158,7 @@ public class OdontogramaMB extends LumeManagedBean<Odontograma> {
     }
 
     public void carregarStatusDente() {       
-        if(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
+        if(UtilsFrontEnd.getProfissionalLogado() != null && UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
             HashSet<StatusDente> hashSet = new HashSet<>();
             statusDente = StatusDenteSingleton.getInstance().getBo().listAllTemplate(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             if(statusDente != null) {

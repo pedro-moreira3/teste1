@@ -14,6 +14,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
+import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
@@ -28,6 +29,8 @@ import org.primefaces.model.StreamedContent;
 
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.bo.BO;
+import br.com.lume.common.iugu.Iugu;
+import br.com.lume.common.iugu.responses.SubscriptionResponse;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.util.Exportacoes;
 import br.com.lume.common.util.JSFHelper;
@@ -71,7 +74,29 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     public void init() {
         this.getEntity();
     }
+    
+   // public SubscriptionResponse getSubscriptionResponse() {
+   //     return (SubscriptionResponse) JSFHelper.getSession().getAttribute("SubscriptionResponse");
+   // }
 
+  //  public void carregarSubscriptionResponse() { 
+    //    Iugu.getInstance().atualizaFaturas(UtilsFrontEnd.getEmpresaLogada().getAssinaturaIuguBanco());
+    //    reloadViewSub();
+ //   }
+    
+    public void reloadViewSub() {
+        try {
+            String subViewId = ":lume:faturasHome";
+            UIViewRoot view = FacesContext.getCurrentInstance().getViewRoot();
+            UIComponent component = view.findComponent(subViewId);
+            if (component != null)
+                PrimeFaces.current().ajax().update(subViewId);
+        } catch (Exception e) {
+            this.log.error(Mensagens.ERRO_AO_SALVAR_REGISTRO, e);
+           e.printStackTrace();
+        }
+    }
+    
     public LumeManagedBean(BO<E> bO) {
         this.restricaoBO = new RestricaoBO();
         this.bO = bO;
