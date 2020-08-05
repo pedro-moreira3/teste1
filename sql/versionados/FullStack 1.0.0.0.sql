@@ -70,7 +70,11 @@ CREATE TABLE LOG_EMPRESA (
 );
 
 
-alter table afiliacao add column valor_mensal NUMERIC(16, 4) DEFAULT 90;
+alter table afiliacao add column valor_mensal NUMERIC(16, 4) DEFAULT 129;
+
+alter table afiliacao add column modalidade_contrato VARCHAR(50)
+
+alter table seg_empresa add column BLOQUEADO character DEFAULT 'N';
 
 
 --acima ja rodado----

@@ -17,8 +17,6 @@ import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.bo.BO;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.dao.PersistenceUnitName;
-import br.com.lume.odonto.entity.Profissional;
-import br.com.lume.security.LoginSingleton;
 import br.com.lume.security.entity.Objeto;
 import br.com.lume.security.entity.Sistema;
 import br.com.lume.security.entity.Usuario;

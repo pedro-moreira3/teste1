@@ -30,11 +30,13 @@ public class AuthorizationListener implements PhaseListener {
     private static final long serialVersionUID = -8237087853801435858L;
 
     private Logger log = Logger.getLogger(AuthorizationListener.class);
-
     
     //TODO por enquanto coloquei as clincias dos parceiros aqui
     public static final String[] PAGINAS_SEM_RESTRICAO = new String[] { "chat.", "meuplano.", "confirmacao.", "cadastroWeb.", "login.", "retornos.", 
             "cadastroPagamento.", "preCadastro.", "motivo.", "cadastroPagamentoDesenv.", "loginmulti.", "tutorial.","validaremail.","clinicas." };
+    
+    //TODO por enquanto coloquei as clincias dos parceiros aqui
+    public static final String[] PAGINAS_DISPONIVEIS_USUARIO_BLOQUEADO = new String[] { "cadastroempresa." };
 
     @Override
     public void beforePhase(PhaseEvent event) {

@@ -7,12 +7,16 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 
 import org.apache.log4j.Logger;
+import org.jboss.security.annotation.Authorization;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.menu.MenuModel;
 
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.phaselistener.AuthorizationListener;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.security.EmpresaSingleton;
+import br.com.lume.security.UsuarioSingleton;
 import br.com.lume.security.bo.MenuBO;
 import br.com.lume.security.bo.ObjetoBO;
 import br.com.lume.security.bo.SistemaBO;
@@ -74,8 +78,19 @@ public class MenuMB extends LumeManagedBean<Objeto> {
         return menuBO.getMenuTreeByUsuarioAndSistema(usuario, sistema, true, objs);
     }
     
-    public String redireciona(String pagina) {
-        return pagina+"?faces-redirect=true";
+    public String redireciona(String pagina) {       
+        //VERIFICANDO SE CLIENTE ESTA BLOQUEADO
+       if(UtilsFrontEnd.getEmpresaLogada().isBloqueado()) {
+           for (String paginaLiberada : AuthorizationListener.PAGINAS_DISPONIVEIS_USUARIO_BLOQUEADO) {
+               if (pagina.contains(paginaLiberada)) {
+                   return pagina+"?faces-redirect=true";   
+               }
+           }
+           return "home.jsf?faces-redirect=true";   
+       }else {
+           return pagina+"?faces-redirect=true";   
+       }       
+        
     }
 
     public MenuModel getMenuModel() {
