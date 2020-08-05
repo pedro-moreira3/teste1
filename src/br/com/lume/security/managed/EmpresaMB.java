@@ -71,8 +71,7 @@ public class EmpresaMB extends LumeManagedBean<Empresa> {
                 }
             }else{
                 this.addError("Erro!", "Clínica já tem usuário no Iugu");
-            }
-            
+            }            
            
         } catch (IuguCallbackException e) {
             this.addError("Erro!", "Erro no cadastro do Iugu:" + e.getMensagem());
