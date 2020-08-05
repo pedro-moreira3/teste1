@@ -293,28 +293,28 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                     goToTutorial = true;
 
                 if (profissional.getPerfil().equals(OdontoPerfil.DENTISTA)) {
-                    actionLoginRetorno = "paciente.jsf";
+                    actionLoginRetorno = "home.jsf";
                 } else if (profissional.getPerfil().equals(OdontoPerfil.ORCAMENTADOR)) {
-                    actionLoginRetorno = "paciente.jsf";
+                    actionLoginRetorno = "home.jsf";
                 } else if (profissional.getPerfil().equals(OdontoPerfil.SECRETARIA)) {
-                    actionLoginRetorno = "paciente.jsf";
+                    actionLoginRetorno = "home.jsf";
                 } else if (profissional.getPerfil().equals(OdontoPerfil.TOTEM)) {
                     actionLoginRetorno = "pacienteTotem.jsf";
                 } else if (profissional.getPerfil().equals(OdontoPerfil.AUXILIAR_ADMINISTRATIVO)) {
-                    actionLoginRetorno = "paciente.jsf";
+                    actionLoginRetorno = "home.jsf";
                 } else if (profissional.getPerfil().equals(OdontoPerfil.ADMINISTRADOR)) {
-                    actionLoginRetorno = "paciente.jsf";
+                    actionLoginRetorno = "home.jsf";
                 } else if (profissional.getPerfil().equals(OdontoPerfil.ADMINISTRADORES)) {
                     actionLoginRetorno = "plano.jsf";
                 } else if (profissional.getPerfil().equals(OdontoPerfil.ALMOXARIFA)) {
-                    actionLoginRetorno = "paciente.jsf";
+                    actionLoginRetorno = "home.jsf";
                 } else if (profissional.getPerfil().equals(OdontoPerfil.AUXILIAR_DENTISTA)) {
                     actionLoginRetorno = "paciente.jsf";
                 } else if (profissional.getPerfil().equals(OdontoPerfil.PARCEIRO)) {
                     actionLoginRetorno = "clinicas.jsf";
                 }
                 else {
-                    actionLoginRetorno = "paciente.jsf";
+                    actionLoginRetorno = "home.jsf";
                 }
             }
         }
