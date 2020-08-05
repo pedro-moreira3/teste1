@@ -51,8 +51,30 @@ WHERE O.OBJ_STR_DES = 'Paciente';
 
 ALTER TABLE paciente ADD COLUMN log_importacao_id bigint REFERENCES LOG_IMPORTACAO(id);
 
+alter table seg_empresa add column id_iugu VARCHAR(100);
+alter table seg_empresa add column assinatura_iugu VARCHAR(100);
+alter table seg_empresa add column suspenso_iugu character DEFAULT 'N';
+
+alter table seg_empresa add column BLOQUEADO character DEFAULT 'N';
+
+
+
+ALTER TABLE plano add COLUMN nome_iugu  VARCHAR(500);
+
+CREATE TABLE LOG_EMPRESA (
+	ID SERIAL PRIMARY KEY,
+	USUARIO_ID bigint references SEG_USUARIO(USU_INT_COD),	
+	EMPRESA_ID bigint references SEG_EMPRESA(EMP_INT_COD),
+	DATA timestamp NOT NULL,
+	LOG VARCHAR(500) NOT NULL
+);
+
+
+alter table afiliacao add column valor_mensal NUMERIC(16, 4) DEFAULT 90;
+
 
 --acima ja rodado----
+
 
 --INSERINDO A GENTE E ALVARO POR ENQUANTO
 INSERT INTO USUARIO_AFILIACAO (USUARIO_ID,AFILIACAO_ID,DATA_AFILIACAO,CRIADO_POR) VALUES 
@@ -76,15 +98,6 @@ select * from SEG_OBJETO order by obj_int_cod desc
 insert into seg_perobjeto (per_int_cod,obj_int_cod)
 values(328,164);
 
-CREATE TABLE LOG_EMPRESA (
-	ID SERIAL PRIMARY KEY,
-	USUARIO_ID bigint references SEG_USUARIO(USU_INT_COD),	
-	EMPRESA_ID bigint references SEG_EMPRESA(EMP_INT_COD),
-	DATA timestamp NOT NULL,
-	LOG VARCHAR(500) NOT NULL
-);
-
-alter table afiliacao add column valor_mensal NUMERIC(16, 4) DEFAULT 90;
 
 INSERT INTO SEG_OBJETO(OBJ_INT_CODPAI, OBJ_STR_DES, OBJ_CHA_STS, OBJ_STR_CAMINHO,
                        SIS_INT_COD, OBJ_INT_ORDEM, OBJ_CHA_TIPO, OBJ_STR_ICON)
@@ -150,13 +163,9 @@ emp_int_cod in (283,89,190,99,188,121,304,217,160,
 
 update seg_empresa set afiliacao_id = 3 where afiliacao_id is null
 
-alter table seg_empresa add column id_iugu VARCHAR(100);
-alter table seg_empresa add column assinatura_iugu VARCHAR(100);
-alter table seg_empresa add column suspenso_iugu character DEFAULT 'N';
 	
 delete from plano where id <> 1;
 
-ALTER TABLE plano RENAME COLUMN nome_paypal TO nome_iugu;
 
 update plano set nome_iugu = 'intelidente_plano_basico';
 
