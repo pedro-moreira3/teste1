@@ -102,6 +102,9 @@ public class MenuBO extends BO<Usuario> {
                         DefaultMenuItem mi = new DefaultMenuItem();
                         //mi.setIcon(objeto.getIcone());
                         mi.setId("mi" + idMenu++ + idMenu++);
+                        if(objeto.getCaminho().equals("home.jsf")) {
+                            mi.setIcon(objeto.getIcone());
+                        }
                         mi.setValue(objeto.getObjStrDes());
                         if (mostraURL) {
                             mi.setUrl(objeto.getCaminho());

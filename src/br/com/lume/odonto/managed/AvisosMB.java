@@ -42,6 +42,7 @@ public class AvisosMB extends LumeManagedBean<Avisos>{
         try {
             if(isAdmin()) {
                 boolean status = EmpresaSingleton.getInstance().criarUsuarioAssinaturaIugu(UtilsFrontEnd.getEmpresaLogada());
+                carregarAvisos();
                 if(status)
                     this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Serviço contratado ! Para visualizar as faturas, acesse o menu Financeiro-Mensalidades.");
                 else
