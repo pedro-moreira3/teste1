@@ -9,6 +9,7 @@ import org.primefaces.PrimeFaces;
 import br.com.lume.avisos.AvisosSingleton;
 import br.com.lume.common.iugu.exceptions.IuguDadosObrigatoriosException;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Avisos;
@@ -43,10 +44,12 @@ public class AvisosMB extends LumeManagedBean<Avisos>{
             if(isAdmin()) {
                 boolean status = EmpresaSingleton.getInstance().criarUsuarioAssinaturaIugu(UtilsFrontEnd.getEmpresaLogada());
                 carregarAvisos();
-                if(status)
+                if(status) {
                     this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Serviço contratado ! Para visualizar as faturas, acesse o menu Financeiro-Mensalidades.");
-                else
+                    JSFHelper.redirect("mensal.jsf");
+                }else {
                     this.addWarn(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Não foi possível contratar o serviço.");
+                }
             }else {
                 this.addError(Mensagens.getMensagem(Mensagens.USUARIO_SEM_PERFIL), "Permissão negada.");
             }
