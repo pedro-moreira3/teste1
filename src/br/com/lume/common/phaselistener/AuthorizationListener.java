@@ -36,7 +36,7 @@ public class AuthorizationListener implements PhaseListener {
             "cadastroPagamento.", "preCadastro.", "motivo.", "cadastroPagamentoDesenv.", "loginmulti.", "tutorial.","validaremail.","clinicas." };
     
     //TODO por enquanto coloquei as clincias dos parceiros aqui
-    public static final String[] PAGINAS_DISPONIVEIS_USUARIO_BLOQUEADO = new String[] { "cadastroempresa." };
+    public static final String[] PAGINAS_DISPONIVEIS_USUARIO_BLOQUEADO = new String[] { "cadastroempresa." ,"mensal."};
 
     @Override
     public void beforePhase(PhaseEvent event) {
