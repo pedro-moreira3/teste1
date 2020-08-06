@@ -436,7 +436,7 @@ body .ui-selectoneradio td label {
 		widgetVar="dtPrincipal"
 		var="profissional" rows="7" paginator="true"
 		selection="#{profissionalMB.entity}" selectionMode="single"
-		rowKey="#{profissional}" paginatorPosition="bottom"
+		rowKey="#{profissional.id}" paginatorPosition="bottom"
 		binding="#{profissionalMB.tabelaProfissional}">
 		<p:ajax event="rowSelect" update=":lume:tabView" oncomplete="PF('dtPrincipal').filter();" 
 			listener="#{profissionalMB.carregaTela}" />
@@ -447,7 +447,7 @@ body .ui-selectoneradio td label {
 		<f:facet name="header">Profissional</f:facet>
 		<p:column filterBy="#{profissional.dadosBasico.nomeLimpo}"
 			filterMatchMode="contains" headerText="Nome"
-			sortBy="#{profissional.dadosBasico.nomeLimpo}"
+			sortBy="#{profissional.dadosBasico.nomeLimpo}" 
 			filterFunction="#{profissionalMB.filtroSemAcento}">
 			<h:outputText value="#{profissional.dadosBasico.prefixoNome}"
 				title="#{profissional.id}" />
