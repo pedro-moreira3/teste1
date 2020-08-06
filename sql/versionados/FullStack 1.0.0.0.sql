@@ -78,6 +78,43 @@ alter table seg_empresa add column BLOQUEADO character DEFAULT 'N';
 
 update plano set nome_iugu = 'intelidente_plano_basico';
 
+INSERT INTO SEG_OBJETO(OBJ_INT_CODPAI, OBJ_STR_DES, OBJ_CHA_STS, OBJ_STR_CAMINHO,
+                       SIS_INT_COD, OBJ_INT_ORDEM, OBJ_CHA_TIPO, OBJ_STR_ICON)
+SELECT
+	OBJ_INT_COD, 'Mensalidades do Sistema',
+	'A', 'mensal.jsf',
+	123, MAX(OBJ_INT_ORDEM) + 1,
+	'T', NULL
+FROM SEG_OBJETO
+WHERE OBJ_STR_DES = 'Movimentações'
+GROUP BY OBJ_INT_COD, OBJ_INT_ORDEM
+LIMIT 1;
+
+
+
+INSERT INTO OBJETO_PROFISSIONAL(OBJ_INT_COD, ID_PROFISSIONAL)
+SELECT
+	(
+		SELECT OBJ_INT_COD FROM SEG_OBJETO
+		WHERE OBJ_STR_DES = 'Mensalidades do Sistema'
+		LIMIT 1
+	),
+	OP.ID_PROFISSIONAL
+FROM OBJETO_PROFISSIONAL OP
+LEFT JOIN SEG_OBJETO O
+	ON O.OBJ_INT_COD = OP.OBJ_INT_COD
+WHERE O.OBJ_STR_DES = 'Movimentações';
+
+update SEG_OBJETO set obj_int_codpai = 11 where OBJ_STR_DES = 'Mensalidades do Sistema'
+
+delete from plano where id <> 1;
+
+
+--ATENCAO, TOKEN DO PRODUCAO
+
+--insert into iugu_config (token) values ('15dfd95f7455dbf568807ed46239a8f3')
+
+
 --acima ja rodado----
 
 
@@ -129,32 +166,7 @@ update SEG_OBJETO set obj_int_codpai = 1
 		WHERE OBJ_STR_DES = 'Relatório de Patrocinadores'		
 		
 		
-INSERT INTO SEG_OBJETO(OBJ_INT_CODPAI, OBJ_STR_DES, OBJ_CHA_STS, OBJ_STR_CAMINHO,
-                       SIS_INT_COD, OBJ_INT_ORDEM, OBJ_CHA_TIPO, OBJ_STR_ICON)
-SELECT
-	OBJ_INT_COD, 'Mensalidades do Sistema',
-	'A', 'mensal.jsf',
-	123, MAX(OBJ_INT_ORDEM) + 1,
-	'T', NULL
-FROM SEG_OBJETO
-WHERE OBJ_STR_DES = 'Movimentações'
-GROUP BY OBJ_INT_COD, OBJ_INT_ORDEM
-LIMIT 1;
 
-INSERT INTO OBJETO_PROFISSIONAL(OBJ_INT_COD, ID_PROFISSIONAL)
-SELECT
-	(
-		SELECT OBJ_INT_COD FROM SEG_OBJETO
-		WHERE OBJ_STR_DES = 'Mensalidades do Sistema'
-		LIMIT 1
-	),
-	OP.ID_PROFISSIONAL
-FROM OBJETO_PROFISSIONAL OP
-LEFT JOIN SEG_OBJETO O
-	ON O.OBJ_INT_COD = OP.OBJ_INT_COD
-WHERE O.OBJ_STR_DES = 'Movimentações';
-
-update SEG_OBJETO set obj_int_codpai = 11 where OBJ_STR_DES = 'Mensalidades do Sistema'
 
 --TODO verificarquem do QS para inserir em USUARIO_AFILIACAO
 
@@ -163,14 +175,8 @@ INSERT INTO AFILIACAO(NOME, ATIVO) VALUES('Lume Tecnologia', 'S');
 update seg_empresa set afiliacao_id = 3 where afiliacao_id is null
 
 	
-delete from plano where id <> 1;
 
 
 
-
-
---ATENCAO, TOKEN DO PRODUCAO
-
---insert into iugu_config (token) values ('15dfd95f7455dbf568807ed46239a8f3')
 
 
