@@ -76,6 +76,7 @@ alter table afiliacao add column modalidade_contrato VARCHAR(50)
 
 alter table seg_empresa add column BLOQUEADO character DEFAULT 'N';
 
+update plano set nome_iugu = 'intelidente_plano_basico';
 
 --acima ja rodado----
 
@@ -159,19 +160,12 @@ update SEG_OBJETO set obj_int_codpai = 11 where OBJ_STR_DES = 'Mensalidades do S
 
 INSERT INTO AFILIACAO(NOME, ATIVO) VALUES('Lume Tecnologia', 'S');
 
---empresas do alvaro
-update seg_empresa set afiliacao_id = 2 where
-emp_int_cod in (283,89,190,99,188,121,304,217,160,
-				530,215,194,473,212,191,269,139,
-				366,105,515,443,540)
-
 update seg_empresa set afiliacao_id = 3 where afiliacao_id is null
 
 	
 delete from plano where id <> 1;
 
 
-update plano set nome_iugu = 'intelidente_plano_basico';
 
 
 
