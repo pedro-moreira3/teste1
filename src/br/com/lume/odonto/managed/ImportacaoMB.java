@@ -61,7 +61,8 @@ public class ImportacaoMB extends LumeManagedBean<LogImportacao> {
 
     public void pesquisar() {
         try {
-            this.setEntityList(LogImportacaoSingleton.getInstance().getBo().listAll());
+            this.setEntityList(LogImportacaoSingleton.getInstance().getBo().listaByEmpresa(
+                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Erro ao pesquisar.");
             e.printStackTrace();
