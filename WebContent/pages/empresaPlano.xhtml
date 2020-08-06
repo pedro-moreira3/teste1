@@ -9,24 +9,51 @@
 						emptyMessage="">
 						<f:facet name="header">Empresas</f:facet>
 
+							<p:column headerText="Ações" width="10%">								
+								<h:panelGroup>
+									<p:commandButton id="criarUsuario"
+										icon="White fa fa-user-plus White" title="Criar usuário Iugu"
+										actionListener="#{empresaMB.criarUsuarioIugu(empresa)}"										
+										update="dtEmpresa" process="@this"
+										styleClass="NavyButton">
+										 <p:confirm header="Confirmação" message="Deseja criar usuário Iugu para Essa empresa?" icon="ui-icon-alert" />
+										</p:commandButton>
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:commandButton id="criarAssinatura"
+										icon="White fa fa-dollar" title="Criar assinatura Iugu"
+										actionListener="#{empresaMB.criarAssinaturaIugu(empresa)}"
+										update="dtEmpresa" process="@this"
+										styleClass="NavyButton" >
+										<p:confirm header="Confirmação" message="Deseja criar assinatura Iugu para essa clínica?" icon="ui-icon-alert" />
+									</p:commandButton>
+								</h:panelGroup>								
+							</p:column>	
+
+
 						<p:column headerText="Nome" sortBy="#{empresa.empStrNme}" filterBy="#{empresa.empStrNme}" filterMatchMode="contains">
 							<h:outputText value="#{empresa.empStrNme}" />
 						</p:column>
-
-						<p:column headerText="Plano">
-							<p:selectOneMenu id="plano" value="#{empresa.idPlano}" autoWidth="false">
-								<p:ajax process="@this" listener="#{empresaMB.trocarPlano(empresa)}" />
-								<f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
-								<f:selectItems value="#{empresaMB.planos}" var="p" itemValue="#{p.id}" itemLabel="#{p.nome}" />
-							</p:selectOneMenu>
+						<p:column headerText="Email de cobrança" sortBy="#{empresa.empStrEmail}" filterBy="#{empresa.empStrEmail}" filterMatchMode="contains">
+							<h:outputText value="#{empresa.empStrEmail}" />
 						</p:column>
-
-						<p:column sortBy="#{empresa.empStrClienteIuguID}" filterBy="#{empresa.empStrClienteIuguID}" filterMatchMode="contains" headerText="ID Iugu Cliente">
-							<h:outputText value="#{empresa.empStrClienteIuguID}" />
+						
+						<ui:remove>
+							TODO quando tivermos mais de um plano, usar isso quem sabe?
+							<p:column headerText="Plano">
+								<p:selectOneMenu id="plano" value="#{empresa.idPlano}" autoWidth="false">
+									<p:ajax process="@this" listener="#{empresaMB.trocarPlano(empresa)}" />
+									<f:selectItem itemValue="#{null}" itemLabel="Selecione um Estado" />
+									<f:selectItems value="#{empresaMB.planos}" var="p" itemValue="#{p.id}" itemLabel="#{p.nome}" />
+								</p:selectOneMenu>
+							</p:column>
+						</ui:remove>
+						<p:column sortBy="#{empresa.idIugu}" filterBy="#{empresa.idIugu}" filterMatchMode="contains" headerText="ID Iugu Cliente">
+							<h:outputText value="#{empresa.idIugu}" />
 						</p:column>
                         
-                        <p:column sortBy="#{empresa.empStrAssinaturaIuguID}" filterBy="#{empresa.empStrAssinaturaIuguID}" filterMatchMode="contains" headerText="ID Iugu Assinatura">
-                            <h:outputText value="#{empresa.empStrAssinaturaIuguID}" />
+                        <p:column sortBy="#{empresa.assinaturaIuguBanco}" filterBy="#{empresa.assinaturaIuguBanco}" filterMatchMode="contains" headerText="ID Iugu Assinatura">
+                            <h:outputText value="#{empresa.assinaturaIuguBanco}" />
                         </p:column>
 
 						<p:column headerText="Data de expiração">

@@ -183,9 +183,7 @@ body .ui-wizard .ui-wizard-content {
 
 										<p:outputLabel for="afiliacao" value="Afiliação: " />
 										<p:selectOneMenu id="afiliacao" converter="afiliacao"
-											value="#{cadastroWebMB.entity.afiliacao}">
-											<f:selectItem itemValue="#{null}"
-												itemLabel="Selecione uma afiliação (se houver)" />
+											value="#{cadastroWebMB.entity.afiliacao}">											
 											<f:selectItems value="#{cadastroWebMB.afiliacoes}" var="af"
 												itemValue="#{af}" itemLabel="#{af.nome}" />
 										</p:selectOneMenu>

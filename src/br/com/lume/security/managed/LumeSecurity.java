@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
+import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.util.OdontoMensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Paciente;
@@ -88,7 +89,10 @@ public class LumeSecurity implements Serializable {
 
         if (profissionalLogado != null) {
             return profissionalLogado.getDadosBasico().getNome();
-        } else {
+        } else if(UtilsFrontEnd.getPerfilLogado().equals(OdontoPerfil.PARCEIRO)) {
+            return UtilsFrontEnd.getUsuarioNome();
+        } 
+        else {
             Paciente pacienteLogado = UtilsFrontEnd.getPacienteLogado();
             return pacienteLogado.getDadosBasico().getNome();
         }

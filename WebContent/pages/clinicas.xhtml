@@ -1,0 +1,286 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
+						<h1>Clínicas</h1>						
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank ui-fluid form-group">
+							<p:commandButton id="cadastro" icon="hite fa fa-file-o" update="" process="@this" value="Cadastrar nova Clínica" action="#{cadastroWebMB.actionCadastroWebParceiro}" />										  
+										  
+							<p:commandButton actionListener="#{clinicasMB.actionNovoConsultor()}"
+										  icon="White fa fa-file-o" value="Cadastrar novo consultor" oncomplete="PF('dlgNovoUsuario').show();" 
+										  update="pnNovoUsuario" process="@this" />	
+						</p:panelGrid>
+						
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+							<h:panelGroup>
+							
+								<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{clinicasMB.exportarTabela('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+
+									<p:fileDownload
+										value="#{clinicasMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{clinicasMB.exportarTabela('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{clinicasMB.arquivoDownload}" />
+									</p:menuitem>
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{clinicasMB.exportarTabela('csv')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{clinicasMB.arquivoDownload}" />
+									</p:menuitem>
+								</p:splitButton>
+							</h:panelGroup>
+						</p:panelGrid>
+						<div class="EmptyBox20"></div>
+
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" selection="#{clinicasMB.entity}"
+						widgetVar="dtPrincipal"
+							value="#{clinicasMB.empresas}" var="empresa" rows="15" paginator="true" rowKey="#{empresa}"
+							paginatorPosition="bottom" binding="#{clinicasMB.tabelaRelatorio}">
+							<f:facet name="header">Clínicas</f:facet>	
+						
+							<p:column headerText="Ações" width="10%">
+								<ui:remove>								
+								<h:panelGroup>								
+									<p:commandButton id="editar"
+										icon="White fa fa-eye White" title="Editar"
+										actionListener="#{clinicasMB.actionEditar(empresa)}"
+										oncomplete=""
+										update=":lume:dtPrincipal" process="@this"
+										styleClass="NavyButton" />
+								</h:panelGroup>
+								</ui:remove>
+								<h:panelGroup>
+									<p:commandButton id="usuarios"
+										icon="White fa fa-users White" title="Usuários da Clínica"
+										actionListener="#{clinicasMB.actionUsuarios(empresa)}"
+										oncomplete="PF('dlgUsuarios').show();"
+										update=":lume:pnUsuarios,:lume:dtUsuarios" process="@this,lume:pnUsuarios,lume:dtUsuarios"
+										styleClass="NavyButton" />
+								</h:panelGroup>
+								<h:panelGroup rendered="#{empresa.empChaStsString == 'Ativo'}">
+									<p:commandButton id="persistInativar"
+										icon="White fa fa-chain-broken" title="Inativar"
+										actionListener="#{clinicasMB.actionInativar(empresa)}"
+										update=":lume:dtPrincipal" process="@this"
+										styleClass="NavyButton" >
+										<p:confirm header="Confirmação" message="Deseja inativar essa empresa?" icon="ui-icon-alert" />
+										</p:commandButton>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{empresa.empChaStsString == 'Inativo'}">
+									<p:commandButton id="persistAtivar"
+										icon="White fa fa-chain White" title="Ativar"
+										actionListener="#{clinicasMB.actionAtivar(empresa)}"
+										update=":lume:dtPrincipal" process="@this"
+										styleClass="NavyButton" >
+										<p:confirm header="Confirmação" message="Deseja ativar essa empresa?" icon="ui-icon-alert" />
+										</p:commandButton>
+								</h:panelGroup>
+							</p:column>							
+							<p:column sortBy="#{empresa.empStrNme}"
+								filterBy="#{empresa.empStrNme}"
+								filterMatchMode="contains" headerText="Nome"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{empresa.empStrNme}" />
+							</p:column>
+							<p:column sortBy="#{clinicasMB.consultoresAssociados(empresa)}"
+								filterBy="#{clinicasMB.consultoresAssociados(empresa)}"
+								filterMatchMode="contains" headerText="Consultores Associados"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{clinicasMB.consultoresAssociados(empresa)}" />
+							</p:column>
+							<p:column sortBy="#{empresa.empChaCnpj}"
+								filterBy="#{empresa.empChaCnpj}"
+								filterMatchMode="contains" headerText="CNPJ"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{empresa.empChaCnpj}" />
+							</p:column>
+							<p:column sortBy="#{empresa.empChaCpf}"
+								filterBy="#{empresa.empChaCpf}"
+								filterMatchMode="contains" headerText="CPF"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{empresa.empChaCpf}" />
+							</p:column>
+							<p:column sortBy="#{empresa.empChaFone}"
+								filterBy="#{empresa.empChaFone}"
+								filterMatchMode="contains" headerText="Telefone"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{empresa.empChaFone}" />
+							</p:column>
+							<p:column sortBy="#{empresa.empChaStsString}"
+								filterBy="#{empresa.empChaStsString}"
+								filterMatchMode="contains" headerText="Status"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{empresa.empChaStsString}" />
+							</p:column>
+						</p:dataTable>
+
+					</p:outputPanel>
+
+      				<p:dialog id="dlgUsuarios" widgetVar="dlgUsuarios" header="Usuários da clínica" responsive="true" modal="true" width="50%">
+                        <p:panel id="pnUsuarios" styleClass="BordNone"> 
+                        		<br />
+                        		
+                        		 <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid"> 
+										 <p:commandButton actionListener="#{clinicasMB.actionNovoUsuario()}"
+										  icon="White fa fa-file-o" value="Associar consultor como administrador dessa clínica" oncomplete="PF('dlgAssociarConsultor').show();" 
+										  update="usuarioParceiro" process="@this" />    
+									 
+								</p:panelGrid>	
+								
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtUsuarios" widgetVar="dtUsuarios"
+							value="#{clinicasMB.usuarios}" var="usuario" rows="15" paginator="true" rowKey="#{usuario}"
+							paginatorPosition="bottom">	
+							<f:facet name="header">Usuários da clínica #{clinicasMB.entity.empStrNme}</f:facet>
+						<p:column headerText="Ações" width="20%">								
+								<h:panelGroup>
+									<p:commandButton id="editarUsuario"
+										icon="White fa fa-eye White" title="Editar"
+										actionListener="#{clinicasMB.actionEditarUsuario(usuario)}"
+										update=":lume:pnEditarUsuario" process="@this"
+										oncomplete="PF('dlgEditarUsuario').show();"
+										styleClass="NavyButton" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<p:commandButton id="reenviarEmail"
+										icon="White fa fa-envelope-o White" title="Reenviar email de acesso"
+										actionListener="#{clinicasMB.actionReenviarEmail(usuario)}"
+										oncomplete="PF('dlgUsuarios').show();"
+										update=":lume:dtUsuarios" process="@this"
+										styleClass="NavyButton" >
+										<p:confirm header="Confirmação" message="Deseja reenviar email de acesso para esse usuário?" icon="ui-icon-alert" />
+										</p:commandButton>
+								</h:panelGroup>
+								<h:panelGroup rendered="#{usuario.usuChaStsString == 'Ativo'}">
+									<p:commandButton id="persistInativar"
+										icon="White fa fa-chain-broken" title="Remover usuário consultor dessa clinica"
+										actionListener="#{clinicasMB.actionRemoverConsultor(usuario)}"
+										update=":lume:dtPrincipal,:lume:dtUsuarios,:lume:pnUsuarios" process="@this" oncomplete="PF('dtUsuarios').filter();"
+										styleClass="NavyButton" >
+										<p:confirm header="Confirmação" message="Deseja remover usuário consultor dessa clinica?" icon="ui-icon-alert" />
+										</p:commandButton>
+								</h:panelGroup>								
+							</p:column>							
+							<p:column sortBy="#{usuario.usuStrNme}"
+								filterBy="#{usuario.usuStrNme}"
+								filterMatchMode="contains" headerText="Nome"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{usuario.usuStrNme}" />
+							</p:column>
+							<p:column sortBy="#{usuario.usuStrEml}"
+								filterBy="#{usuario.usuStrEml}"
+								filterMatchMode="contains" headerText="Email"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{usuario.usuStrEml}" />
+							</p:column>
+							<p:column sortBy="#{usuario.usuChaStsString}"
+								filterBy="#{usuario.usuChaStsString}"
+								filterMatchMode="contains" headerText="Status"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{usuario.usuChaStsString}" />
+							</p:column>
+							
+						</p:dataTable>
+                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">                              
+                                <p:commandButton id="fecharEditarUsuario" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlgUsuarios').hide();" immediate="true" />    
+                            </p:panelGrid>
+                            <div class="EmptyBox20"></div>
+                        </p:panel>
+                    </p:dialog>
+                    
+                    <p:dialog id="dlgEditarUsuario" widgetVar="dlgEditarUsuario" header="Editar Usuário" responsive="true" modal="true" width="50%">
+                        <p:panel id="pnEditarUsuario" styleClass="BordNone">                            
+							<br />
+							
+							<p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;">
+
+								<p:outputLabel for="nome" value="Nome : " />
+								<p:inputText id="nome" value="#{clinicasMB.usuario.usuStrNme}" required="true" maxlength="200" />
+	
+								<p:outputLabel for="email" value="E-Mail : " />
+								<p:inputText id="email" value="#{clinicasMB.usuario.usuStrEml}" required="true" maxlength="200" />
+
+							</p:panelGrid>				
+							
+                            <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">    
+                            <p:commandButton id="persistEditarUsuario" icon="White fa fa-save" value="Salvar" actionListener="#{clinicasMB.actionSalvarEditarUsuario}"
+                                    update=":lume:pnUsuarios" process="@this ,:lume:pnEditarUsuario" onsuccess="PF('dlgEditarUsuario').hide();"
+                                    styleClass="GreenButton" />                          
+                                <p:commandButton id="fecharusuarios" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlgEditarUsuario').hide();" immediate="true" />    
+                            </p:panelGrid>
+                            <div class="EmptyBox20"></div>
+                        </p:panel>
+                    </p:dialog>
+
+					   <p:dialog id="dlgNovoUsuario" widgetVar="dlgNovoUsuario" header="Novo Consultor" responsive="true" modal="true" width="50%">
+                        <p:panel id="pnNovoUsuario" styleClass="BordNone">  
+                        <p:panelGrid columns="4" columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4" layout="grid" styleClass="ui-panelgrid-blank"
+								style="border:0px none; background-color:transparent;">
+
+								<p:outputLabel for="nomeNovo" value="Nome : " />
+								<p:inputText id="nomeNovo" value="#{clinicasMB.usuario.usuStrNme}" required="true" maxlength="200" />
+	
+								<p:outputLabel for="emailNovo" value="E-Mail : " />
+								<p:inputText id="emailNovo" value="#{clinicasMB.usuario.usuStrEml}" required="true" maxlength="200" />
+
+							</p:panelGrid>		
+                        
+                        <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">    
+                            <p:commandButton id="persistNovoConsultor" icon="White fa fa-save" value="Salvar" actionListener="#{clinicasMB.actionPersistNovoConsultor()}"
+                                    update=":lume:pnNovoUsuario" process="@this,pnNovoUsuario"
+                                    styleClass="GreenButton" />                          
+                                <p:commandButton icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlgNovoUsuario').hide();" immediate="true" />    
+                            </p:panelGrid>
+						 </p:panel>						
+                    </p:dialog>
+                    
+					   <p:dialog id="dlgAssociarConsultor" widgetVar="dlgAssociarConsultor" header="Associar Consultor" responsive="true" modal="true" width="50%">
+                        <p:panel id="pnAssociarConsultor" styleClass="BordNone">   
+							Selecione o consultor que você quer associar a essa clínica:							
+							<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-6, ui-g-6"
+							styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+							<h:panelGroup styleClass="md-combo">								
+								<p:selectOneMenu id="usuarioParceiro" value="#{clinicasMB.idUsuario}" autoWidth="false">									
+									<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
+									<f:selectItems value="#{clinicasMB.usuariosParceiros}" var="p" itemValue="#{p.usuIntCod}" itemLabel="#{p.usuStrNme}" />
+								</p:selectOneMenu>
+								
+							</h:panelGroup>							
+						</p:panelGrid>
+						 <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">    
+                               <p:commandButton id="persistAssociarUsuario" icon="White fa fa-save" value="Salvar" actionListener="#{clinicasMB.actionAssociarUsuario}"
+                                    update=":lume:dtPrincipal,:lume:pnUsuarios" process="@this ,:lume:pnAssociarConsultor" onsuccess="PF('dlgAssociarConsultor').hide();"
+                                    styleClass="GreenButton" />        
+                                    
+                                                            
+                                <p:commandButton id="fecharusuariosnovo" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlgAssociarConsultor').hide();" immediate="true" />    
+                            </p:panelGrid>
+						 </p:panel>
+                    </p:dialog> 
+
+				</div>
+			</div>
+		</div>		
+	</ui:define>
+</ui:composition>

@@ -11,6 +11,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.model.menu.MenuModel;
 
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.phaselistener.AuthorizationListener;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.security.bo.MenuBO;
@@ -51,7 +52,14 @@ public class MenuMB extends LumeManagedBean<Objeto> {
         sistema = new SistemaBO().getSistemaBySigla(JSFHelper.getSistemaAtual());
         menuModel = menuBO.getMenuTreeByUsuarioAndSistema(usuario, sistema, true);
         if (usuario != null) {
-            modulos = objetoBO.getObjetosRaizByUsuarioAndSistema(usuario, sistema,UtilsFrontEnd.getEmpresaLogada().getEmpStrEstoque());
+            String estoque;
+            if(UtilsFrontEnd.getEmpresaLogada() != null) {
+                 estoque = UtilsFrontEnd.getEmpresaLogada().getEmpStrEstoque();
+            }else{
+                //aqui tanto faz
+                estoque = "N";
+            }
+            modulos = objetoBO.getObjetosRaizByUsuarioAndSistema(usuario, sistema,estoque);
         }
         
         PrimeFaces.current().executeScript("document.getElementById(\"menuform:menu_0\").setAttribute(\"class\",\"active-menuitem\");");
@@ -67,8 +75,19 @@ public class MenuMB extends LumeManagedBean<Objeto> {
         return menuBO.getMenuTreeByUsuarioAndSistema(usuario, sistema, true, objs);
     }
     
-    public String redireciona(String pagina) {
-        return pagina+"?faces-redirect=true";
+    public String redireciona(String pagina) {       
+        //VERIFICANDO SE CLIENTE ESTA BLOQUEADO
+       if(UtilsFrontEnd.getEmpresaLogada().isBloqueado()) {
+           for (String paginaLiberada : AuthorizationListener.PAGINAS_DISPONIVEIS_USUARIO_BLOQUEADO) {
+               if (pagina.contains(paginaLiberada)) {
+                   return pagina+"?faces-redirect=true";   
+               }
+           }
+           return "home.jsf?faces-redirect=true";   
+       }else {
+           return pagina+"?faces-redirect=true";   
+       }       
+        
     }
 
     public MenuModel getMenuModel() {

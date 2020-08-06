@@ -150,6 +150,16 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
         //    empresaBO = new EmpresaBO();
         pnInicialVisivel = true;
         this.afiliacoes = AfiliacaoSingleton.getInstance().getBo().getAllAfiliacao();
+        if(UtilsFrontEnd.getAfiliacaoLogada() != null) {
+            getEntity().setAfiliacao(UtilsFrontEnd.getAfiliacaoLogada());      
+        }else{
+            getEntity().setAfiliacao(AfiliacaoSingleton.getInstance().getBo().getAfiliacaoPadrao());    
+        }
+        
+    }
+    
+    public void actionCadastroWebParceiro() {   
+        JSFHelper.redirect("cadastroWeb.jsf");        
     }
 
     public String actionPersist() {

@@ -1,0 +1,105 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">				
+					<p:outputPanel id="pnPrincipal" styleClass="BordNone">
+
+						<h1>Relatório de Patrocinadores</h1>
+						<div class="SeparatorFull"></div>
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-6, ui-g-6"
+							styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+							<h:panelGroup styleClass="md-combo">
+								<p:selectOneMenu id="afiliacao" value="#{relatorioPatrocinadorMB.afiliacao}">
+									<f:selectItem itemValue="#{null}" itemLabel="Selecione o patrocinador" />
+                            		<f:selectItems value="#{relatorioPatrocinadorMB.afiliacoes}" var="a" itemValue="#{a}" itemLabel="#{a.nome}" />														
+								</p:selectOneMenu>
+							</h:panelGroup>
+						</p:panelGrid>
+						<br/>
+							<p:panelGrid columns="4"
+								styleClass="form-group ui-panelgrid-blank" layout="grid"
+								id="painelMesAno">
+								<h:panelGroup styleClass="md-combo">
+									<p:outputLabel for="mes" value="Mês de referência: " />
+									<p:selectOneMenu id="mes"
+										value="#{relatorioPatrocinadorMB.mes}">
+										<f:selectItem itemValue="01" itemLabel="Janeiro" />
+										<f:selectItem itemValue="02" itemLabel="Fevereiro" />
+										<f:selectItem itemValue="03" itemLabel="Março" />
+										<f:selectItem itemValue="04" itemLabel="Abril" />
+										<f:selectItem itemValue="05" itemLabel="Maio" />
+										<f:selectItem itemValue="06" itemLabel="Junho" />
+										<f:selectItem itemValue="07" itemLabel="Julho" />
+										<f:selectItem itemValue="08" itemLabel="Agosto" />
+										<f:selectItem itemValue="09" itemLabel="Setembro" />
+										<f:selectItem itemValue="10" itemLabel="Outubro" />
+										<f:selectItem itemValue="11" itemLabel="Novembro" />
+										<f:selectItem itemValue="12" itemLabel="Dezembro" />
+									</p:selectOneMenu>
+									<p:message styleClass="msg" for="ano" />
+								</h:panelGroup>
+								<h:panelGroup styleClass="md-combo">
+									<p:outputLabel for="ano" value="Ano de referência: " />
+									<p:selectOneMenu id="ano"
+										value="#{relatorioPatrocinadorMB.ano}">										
+										<f:selectItem itemValue="2020" itemLabel="2020" />
+										<f:selectItem itemValue="2021" itemLabel="2021" />
+										<f:selectItem itemValue="2021" itemLabel="2022" />
+									</p:selectOneMenu>
+									<p:message styleClass="msg" for="mes" />
+								</h:panelGroup>
+							</p:panelGrid>
+									<p:panelGrid columns="4" layout="grid"
+									styleClass="ui-panelgrid-blank form-group ui-fluid">
+									
+										<h:panelGroup>
+										<p:commandButton id="pesquisar" icon="fa fa-search White"
+											value="Pesquisar"
+											actionListener="#{relatorioPatrocinadorMB.filtra}"
+											update="dtClinicas,pnPrincipal" tabindex="1"
+											process="@this,pnPrincipal" styleClass="OrangeButton" />
+									</h:panelGroup>
+									
+									
+									
+								</p:panelGrid>
+								
+								
+					<p:dataTable emptyMessage="Nenhuma Clínica encontrada."
+						widgetVar="dtClinicas" id="dtClinicas"
+						value="#{relatorioPatrocinadorMB.clinicas}" var="objeto"
+						rows="10" paginatorPosition="bottom" paginatorAlwaysVisible="true"
+						paginator="true" selectionMode="single" rowKey="#{objeto}"
+						selection="#{relatorioPatrocinadorMB.entity}">
+						<f:facet name="header">
+							Clinicas
+						</f:facet>
+
+						<p:column filterBy="#{objeto.emp_cha_cnpj}" filterMatchMode="contains"
+							headerText="CNPJ" sortBy="#{objeto.emp_cha_cnpj}" width="20%">
+							<h:outputText value="#{objeto.emp_cha_cnpj}" />
+							<f:facet name="footer">
+								<h:outputText value="#{relatoriopatrocinadorMB.rodape}" />
+							</f:facet>
+						</p:column>
+
+						<p:column filterBy="#{objeto.emp_str_nme}" filterMatchMode="contains"
+							headerText="Nome" sortBy="#{objeto.emp_str_nme}" width="60%">
+							<h:outputText value="#{objeto.emp_str_nme}" />
+							<f:facet name="footer">
+								<h:outputText value="#{relatoriopatrocinadorMB.rodape2} - #{relatoriopatrocinadorMB.rodape3}" />
+							</f:facet>
+						</p:column>
+						
+					</p:dataTable>
+													
+					</p:outputPanel>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

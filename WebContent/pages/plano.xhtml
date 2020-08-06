@@ -16,8 +16,8 @@
 							<p:outputLabel for="nomePlano" value="Nome do Plano : " />
 							<p:inputText id="nomePlano" value="#{planoMB.entity.nome}" maxlength="200" required="true" />
 
-							<p:outputLabel for="nomePaypal" value="Nome do PayPal : " />
-							<p:inputText id="nomePaypal" value="#{planoMB.entity.nomePaypal}" maxlength="200" required="true" />
+							<p:outputLabel for="nomeIugu" value="Nome do Iugu : " />
+							<p:inputText id="nomeIugu" value="#{planoMB.entity.nomeIugu}" maxlength="200" required="true" />
 
 							<p:outputLabel for="consultas" value="Consultas : " />
 							<p:inputText id="consultas" value="#{planoMB.entity.consultas}" required="true" maxlength="10" />
@@ -53,8 +53,8 @@
 						<p:column headerText="Nome" sortBy="#{plano.nome}" filterBy="#{plano.nome}" filterMatchMode="contains">
 							<h:outputText value="#{plano.nome}" />
 						</p:column>
-						<p:column headerText="Nome PayPal" sortBy="#{plano.nomePaypal}" filterBy="#{plano.nomePaypal}" filterMatchMode="contains">
-							<h:outputText value="#{plano.nomePaypal}" />
+						<p:column headerText="Nome Iugu" sortBy="#{plano.nomeIugu}" filterBy="#{plano.nomeIugu}" filterMatchMode="contains">
+							<h:outputText value="#{plano.nomeIugu}" />
 						</p:column>
 						<p:column headerText="Consultas" sortBy="#{plano.consultas}" filterBy="#{plano.consultas}" filterMatchMode="contains">
 							<h:outputText value="#{plano.consultas}" />
