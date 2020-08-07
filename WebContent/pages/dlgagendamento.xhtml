@@ -208,7 +208,7 @@
 						<p:commandButton styleClass="GreenButton" icon="fa fa-check"
 							title="Confirmar agendamento"
 							update="@this"
-							actionListener="#{agendamentoRapidoMB.confirmaAgendamentoComPaciente(agendamento)}"
+							actionListener="#{agendamentoRapidoMB.confirmaAgendamentoComPaciente(agendamento,agendamentoMB.retorno)}"
 							process="@this"					
 							disabled="#{agendamentoRapidoMB.paciente == null or agendamentoRapidoMB.getStatusDescricao(agendamento) ne 'Horário Disponível'}"
 							onsuccess="PF('dlgDisponibilidade').hide();PF('eventDialog').hide();updateSchedule();"

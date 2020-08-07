@@ -232,9 +232,9 @@
 
 							<p:column headerText="Ações" width="100">
 								<p:commandButton icon="White fa fa-calendar White"
-									oncomplete="PF('eventDialog').show();" process="@this,:lume:pnAgendamento"
+									 process="@this"
 									action="#{agendamentoMB.retorno(retorno)}"
-									update="lume:pnAgendamento" title="Agendar" />
+									 title="Agendar" />
 								<p:button id="whats" icon="White fa fa-whatsapp" title="Whats"
 									disabled="#{retornoMB.getUrlWpp(retorno) == null}"
 									onclick="window.open('#{retornoMB.getUrlWpp(retorno)}'); return false;"
@@ -315,16 +315,10 @@
 								filterFunction="#{retornoMB.filtroSemAcento}">
 								<h:outputText value="#{retorno.detalhesContato}" />
 							</p:column>
-
-
-
-							<p:column filterBy="#{retorno.agendamento.dataAgendamentoStr}"
-								sortBy="#{retorno.agendamento.dataAgendamento}"
-								filterMatchMode="contains" headerText="Agendamento">
-								<h:outputText
-									value="#{retorno.agendamento.profissional.dadosBasico.nome}"
-									style="width:100%;display: block;" />
-								<h:outputText value="#{retorno.agendamento.dataAgendamentoStr}" />
+							<p:column filterBy="#{retorno.agendamento.inicioStr}"
+								sortBy="#{retorno.agendamento.inicioStr}"
+								filterMatchMode="contains" headerText="Data do Agendamento">								
+								<h:outputText value="#{retorno.agendamento.inicioStr}" />
 							</p:column>
 
 						</p:dataTable>
