@@ -14,6 +14,7 @@ import org.primefaces.PrimeFaces;
 
 import br.com.lume.afiliacao.AfiliacaoSingleton;
 import br.com.lume.common.OdontoPerfil;
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.UtilsFrontEnd;
@@ -115,10 +116,13 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
         Usuario usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(userLogin.getUsuStrLogin());
         List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByUsuario(usuario);
         List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByUsuario(usuario);
+        LogIntelidenteSingleton.getInstance().makeLog("profissionais = "+profissionais.size());
         // Se tiver o mesmo login em profissionais e pacientes, ou repetidos na mesma lista
         if ((profissionais != null && profissionais.size() > 1) || (pacientes != null && pacientes.size() > 1) || (profissionais != null && profissionais.size() == 1 && pacientes != null && pacientes.size() == 1)) {
             List<Login> logins = this.carregarLogins(pacientes, profissionais);    
-                            
+            
+            LogIntelidenteSingleton.getInstance().makeLog("entrou aqui");
+            
             UtilsFrontEnd.setLogins(logins);
             UtilsFrontEnd.setUsuarioNome(usuario.getUsuStrNme());
                             
@@ -141,6 +145,7 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
                 UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa()));                   
             } else {
                 if (!Profissional.INATIVO.equals(profissional.getStatus())) {
+                    LogIntelidenteSingleton.getInstance().makeLog("entrou aqui 2");
                     perfilLogado = profissional.getPerfil();
                     UtilsFrontEnd.setProfissionalLogado(profissional);
                     UtilsFrontEnd.setPerfilLogado(perfilLogado);
