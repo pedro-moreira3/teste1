@@ -154,12 +154,12 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 										</h:outputText>
 									</th>	
 									<th style="border: 1px solid #bdbdbd; padding: 5px; width: 10%">
-										<h:outputText rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'PRO'}"
+										<h:outputText rendered="#{repasseProfissionalComReciboMB.entity.dentistaExecutor.tipoRemuneracao eq 'PRO'}"
 											value="#{repasseProfissionalComReciboMB.valorBaseRepasse}">
 											<f:convertNumber currencySymbol="R$" maxFractionDigits="2"
 												type="currency" />
 										</h:outputText>
-										<h:outputText rendered="#{repasseProfissionalComReciboMB.entity.planoTratamento.profissional.tipoRemuneracao eq 'POR'}"
+										<h:outputText rendered="#{repasseProfissionalComReciboMB.entity.dentistaExecutor.tipoRemuneracao eq 'POR'}"
 											value="#{repasseProfissionalComReciboMB.valorBaseRepasse} %">
 												<f:convertNumber currencySymbol="" maxFractionDigits="0"
 												type="currency" />											

@@ -89,7 +89,9 @@
 				<p:commandButton icon="White fa fa-save" value="Salvar"
 					actionListener="#{retornoMB.actionPersist}"
 					update=":lume:pnRetorno" process="@this, :lume:viewRetorno"
-					styleClass="GreenButton" />
+					styleClass="GreenButton" 
+					onsuccess="PF('dlgViewRetorno').hide()"
+					/>
 				<p:commandButton icon="White fa fa-close" value="Fechar"
 					styleClass="NavyButton" oncomplete="PF('dlgViewRetorno').hide()" />
 			</p:panelGrid>
