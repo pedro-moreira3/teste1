@@ -108,8 +108,6 @@ public class RetornoMB extends LumeManagedBean<Retorno> {
     @Override
     public void actionPersist(ActionEvent event) {
         super.actionPersist(event);
-        PrimeFaces.current().executeScript("PF('dlgViewRetorno').hide()");
-        PrimeFaces.current().executeScript("PF('dtRetorno').filter()");
         this.geraLista();
     }
 

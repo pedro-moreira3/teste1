@@ -1055,23 +1055,29 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
     public void actionNewOrcamento() {
         try {
-            this.orcamentoSelecionado = OrcamentoSingleton.getInstance().preparaOrcamentoFromPT(getEntity());
-            this.orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
+            if(this.fazOrcamento()) {
+                this.orcamentoSelecionado = OrcamentoSingleton.getInstance().preparaOrcamentoFromPT(getEntity());
+                this.orcamentoSelecionado.setProfissionalCriacao(UtilsFrontEnd.getProfissionalLogado());
 
-            observacoesCobrancaOrcamento = null;
+                observacoesCobrancaOrcamento = null;
 
-            quantidadeVezesNegociacaoOrcamento = null;
-            parcelasDisponiveis = null;
-            valorPrimeiraParcelaOrcamento = new BigDecimal(0);
-            descontosDisponiveis = new HashMap<Integer, DescontoOrcamento>();
-            mensagemCalculoOrcamento = "";
-            numeroParcelaOrcamento = new BigDecimal(0);
-            //    mensagemCalculoOrcamentoDiferenca = "";
-            valorParcela = new BigDecimal(0);
+                quantidadeVezesNegociacaoOrcamento = null;
+                parcelasDisponiveis = null;
+                valorPrimeiraParcelaOrcamento = new BigDecimal(0);
+                descontosDisponiveis = new HashMap<Integer, DescontoOrcamento>();
+                mensagemCalculoOrcamento = "";
+                numeroParcelaOrcamento = new BigDecimal(0);
+                //    mensagemCalculoOrcamentoDiferenca = "";
+                valorParcela = new BigDecimal(0);
 
-            populaDescontos();
+                populaDescontos();
 
-            PrimeFaces.current().executeScript("PF('dlgViewOrcamento').show()");
+                PrimeFaces.current().executeScript("PF('dlgViewOrcamento').show()");
+            }else {
+                this.addError("PERMISSÃO NEGADA", "Para fazer o orçamento, "
+                        + "você precisa ativar a caixa de seleção na tela de \"Configuração de Descontos\", "
+                        + "menu \"Cadastro de profissionais\".");
+            }
         } catch (Exception e) {
             log.error("Erro no actionNewOrcamento", e);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());

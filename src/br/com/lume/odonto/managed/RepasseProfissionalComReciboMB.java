@@ -518,7 +518,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             //se a fatura ainda nao tem lancamentos, mas o profissional recebe por procedimento, ja sabemos o valor de repasse base.
             if (fatura == null || fatura.getLancamentos() == null || fatura.getLancamentos().size() == 0) {
                 if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
-                    valorBaseRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp);
+                    setValorBaseRepasse(ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp));
                 }
             }
             
@@ -564,10 +564,10 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     
                     
                     repasseFatura = repasse.getRepasseFaturas();
-                    if (Profissional.PORCENTAGEM.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
-                        valorBaseRepasse = repasse.getRepasseFaturas().getValorCalculo();
-                    } else if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {
-                        valorBaseRepasse = ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp);
+                    if (Profissional.PORCENTAGEM.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {                      
+                        setValorBaseRepasse(repasse.getRepasseFaturas().getValorCalculo());
+                    } else if (Profissional.PROCEDIMENTO.equals(ptp.getDentistaExecutor().getTipoRemuneracao())) {                      
+                        setValorBaseRepasse(ConvenioProcedimentoSingleton.getInstance().getCheckValorConvenio(ptp));
                     }                    
                     
                     if (lancamentosDeOrigem != null)

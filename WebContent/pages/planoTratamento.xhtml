@@ -1310,7 +1310,7 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 							actionListener="#{planoTratamentoMB.actionNewOrcamento}"
 							update=":lume:tabViewPaciente:painelNegociacao,:lume:tabViewPaciente:panelDescObs,:lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:orcamentoViewHeader, :lume:tabViewPaciente:buttonsDlgOrcamentoView,:lume:tabViewPaciente:panelDescObs"
 							value="Novo Orçamento" process="@this" styleClass="NavyButton"
-							disabled="#{planoTratamentoMB.entity.status == 'S' || !planoTratamentoMB.fazOrcamento()}" />
+							disabled="#{planoTratamentoMB.entity.status == 'S'}" />
 					</p:panelGrid>
 
 					<p:dataTable filterDelay="1500" reflow="true" style="height: 100%"
