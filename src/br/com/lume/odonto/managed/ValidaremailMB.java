@@ -116,12 +116,9 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
         Usuario usuario = UsuarioSingleton.getInstance().getBo().findUsuarioByLogin(userLogin.getUsuStrLogin());
         List<Profissional> profissionais = ProfissionalSingleton.getInstance().getBo().listByUsuario(usuario);
         List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByUsuario(usuario);
-        this.addInfo("", "profissionais"+profissionais.size());
         // Se tiver o mesmo login em profissionais e pacientes, ou repetidos na mesma lista
         if ((profissionais != null && profissionais.size() > 1) || (pacientes != null && pacientes.size() > 1) || (profissionais != null && profissionais.size() == 1 && pacientes != null && pacientes.size() == 1)) {
             List<Login> logins = this.carregarLogins(pacientes, profissionais);    
-            
-            this.addInfo("", "entrou aqui");
             
             UtilsFrontEnd.setLogins(logins);
             UtilsFrontEnd.setUsuarioNome(usuario.getUsuStrNme());
@@ -145,7 +142,6 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
                 UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa()));                   
             } else {
                 if (!Profissional.INATIVO.equals(profissional.getStatus())) {
-                    this.addInfo("", "entrou aqui2");
                     perfilLogado = profissional.getPerfil();
                     UtilsFrontEnd.setProfissionalLogado(profissional);
                     UtilsFrontEnd.setPerfilLogado(perfilLogado);
