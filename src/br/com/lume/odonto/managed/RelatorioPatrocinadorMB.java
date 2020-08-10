@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -14,6 +15,7 @@ import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.afiliacao.AfiliacaoSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.Utils;
 import br.com.lume.odonto.entity.Afiliacao;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
@@ -30,7 +32,7 @@ public class RelatorioPatrocinadorMB extends LumeManagedBean<Empresa> {
 
     private List<Afiliacao> afiliacoes = new ArrayList<>();     
     
-    private Afiliacao afiliacao;
+    private Long afiliacaoId;
     
     private String mes;
     
@@ -54,10 +56,10 @@ public class RelatorioPatrocinadorMB extends LumeManagedBean<Empresa> {
         try {
             afiliacoes = AfiliacaoSingleton.getInstance().getBo().listAll();
             
-            mes = "" + Calendar.getInstance().get(Calendar.MONTH);
-            if (mes.length() == 1) {
-                mes = "0" + mes;
-            }
+            mes = "" + (Calendar.getInstance().get(Calendar.MONTH) - 1);
+           // if (mes.length() == 1) {
+           //     mes = "0" + mes;
+          //  }
         } catch (Exception e) {          
             e.printStackTrace();
         }
@@ -65,10 +67,30 @@ public class RelatorioPatrocinadorMB extends LumeManagedBean<Empresa> {
    
     public void filtra() {
         try {
+            
+            if(afiliacaoId == null) {
+                this.addError("Erro", "Seleciona um patrocinador!", true);
+                return;
+            }
+            Afiliacao afiliacao = AfiliacaoSingleton.getInstance().getBo().find(afiliacaoId);
+            
             //todas as clinicas ativas do patrociador selecionado
             clinicas = EmpresaSingleton.getInstance().getBo().listaEmpresasAfiliadasPorStatus(afiliacao, "A","N");
             
-            //TODO pegar clinicas que estavam ativas no mes de referencia
+            Calendar c = Calendar.getInstance();
+            c.set(Integer.parseInt(ano), Integer.parseInt(mes), 1);
+            
+            Date ultimoDiaMesCobranca = Utils.getUltimoDiaHoraMes(c.getTime());
+            Date primeiroDiaMesCobranca = Utils.getPrimeiroDiaHoraMes(c.getTime());
+           
+            //removendo se entrou em ativacao depois do ultimo dia do mes que estamos cobrando
+            clinicas.removeIf(clinica -> clinica.getEmpDtmAceite().after(ultimoDiaMesCobranca));
+           
+            //adicionando as clinicas inativas, mas que foram inativadas no mes de referencia
+            List<Empresa> inativas = EmpresaSingleton.getInstance().getBo().listaEmpresasAfiliadasPorStatus(afiliacao, "I","N");
+         
+            inativas.removeIf(clinica -> clinica.getDataInativacao() == null || (clinica.getDataInativacao().before(primeiroDiaMesCobranca) || clinica.getDataInativacao().after(ultimoDiaMesCobranca)));
+            clinicas.addAll(inativas);
             
              setRodape("Total: " + clinicas.size());
 
@@ -78,6 +100,7 @@ public class RelatorioPatrocinadorMB extends LumeManagedBean<Empresa> {
             
             
         } catch (Exception e) {
+            e.printStackTrace();
             this.log.error(e);
         }
     }    
@@ -133,17 +156,6 @@ public class RelatorioPatrocinadorMB extends LumeManagedBean<Empresa> {
     public void setMes(String mes) {
         this.mes = mes;
     }
-
-    
-    public Afiliacao getAfiliacao() {
-        return afiliacao;
-    }
-
-    
-    public void setAfiliacao(Afiliacao afiliacao) {
-        this.afiliacao = afiliacao;
-    }
-
     
     public List<Empresa> getClinicas() {
         return clinicas;
@@ -182,6 +194,16 @@ public class RelatorioPatrocinadorMB extends LumeManagedBean<Empresa> {
     
     public void setRodape3(String rodape3) {
         this.rodape3 = rodape3;
+    }
+
+    
+    public Long getAfiliacaoId() {
+        return afiliacaoId;
+    }
+
+    
+    public void setAfiliacaoId(Long afiliacaoId) {
+        this.afiliacaoId = afiliacaoId;
     }
 
 }

@@ -170,7 +170,7 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
         try {
            
             empresa.setEmpChaSts(Status.INATIVO);
-            
+            empresa.setDataInativacao(new Date());
             LogEmpresa log = new LogEmpresa();
             log.setData(new Date());
             log.setUsuario(UtilsFrontEnd.getUsuarioLogado());
@@ -194,7 +194,7 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
         try {
             
             empresa.setEmpChaSts(Status.ATIVO);
-            
+            empresa.setDataAtivacao(new Date());
             LogEmpresa log = new LogEmpresa();
             log.setData(new Date());
             log.setUsuario(UtilsFrontEnd.getUsuarioLogado());
@@ -216,12 +216,13 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
         try {
             
             empresa.setEmpChaTrial("N");
-            
+            empresa.setEmpDtmAceite(new Date());
+            empresa.setDataAtivacao(new Date());
             LogEmpresa log = new LogEmpresa();
             log.setData(new Date());
             log.setUsuario(UtilsFrontEnd.getUsuarioLogado());
             log.setEmpresa(empresa);
-            log.setLog("Clínica colocada em produção");
+            log.setLog("Clínica colocada em produção. Data de aceite: " + empresa.getEmpDtmAceite());
          
            EmpresaSingleton.getInstance().getBo().persist(empresa);
            LogEmpresaSingleton.getInstance().getBo().persist(log);

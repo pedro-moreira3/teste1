@@ -31,7 +31,7 @@ public class AuthorizationListener implements PhaseListener {
 
     private Logger log = Logger.getLogger(AuthorizationListener.class);
     
-    //TODO por enquanto coloquei as clincias dos parceiros aqui
+    //TODO por enquanto coloquei as clincias dos parceiros aqui, tem que colocar nos objetos e tratar direito
     public static final String[] PAGINAS_SEM_RESTRICAO = new String[] { "chat.", "meuplano.", "confirmacao.", "cadastroWeb.", "login.", "retornos.", 
             "cadastroPagamento.", "preCadastro.", "motivo.", "cadastroPagamentoDesenv.", "loginmulti.", "tutorial.","validaremail.","clinicas." };
     

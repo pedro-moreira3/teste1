@@ -13,9 +13,9 @@
 							columnClasses="ui-g-6, ui-g-6"
 							styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
 							<h:panelGroup styleClass="md-combo">
-								<p:selectOneMenu id="afiliacao" value="#{relatorioPatrocinadorMB.afiliacao}">
+								<p:selectOneMenu id="afiliacao" value="#{relatorioPatrocinadorMB.afiliacaoId}">
 									<f:selectItem itemValue="#{null}" itemLabel="Selecione o patrocinador" />
-                            		<f:selectItems value="#{relatorioPatrocinadorMB.afiliacoes}" var="a" itemValue="#{a}" itemLabel="#{a.nome}" />														
+                            		<f:selectItems value="#{relatorioPatrocinadorMB.afiliacoes}" var="a" itemValue="#{a.id}" itemLabel="#{a.nome}" />														
 								</p:selectOneMenu>
 							</h:panelGroup>
 						</p:panelGrid>
@@ -27,18 +27,18 @@
 									<p:outputLabel for="mes" value="Mês de referência: " />
 									<p:selectOneMenu id="mes"
 										value="#{relatorioPatrocinadorMB.mes}">
-										<f:selectItem itemValue="01" itemLabel="Janeiro" />
-										<f:selectItem itemValue="02" itemLabel="Fevereiro" />
-										<f:selectItem itemValue="03" itemLabel="Março" />
-										<f:selectItem itemValue="04" itemLabel="Abril" />
-										<f:selectItem itemValue="05" itemLabel="Maio" />
-										<f:selectItem itemValue="06" itemLabel="Junho" />
-										<f:selectItem itemValue="07" itemLabel="Julho" />
-										<f:selectItem itemValue="08" itemLabel="Agosto" />
-										<f:selectItem itemValue="09" itemLabel="Setembro" />
-										<f:selectItem itemValue="10" itemLabel="Outubro" />
-										<f:selectItem itemValue="11" itemLabel="Novembro" />
-										<f:selectItem itemValue="12" itemLabel="Dezembro" />
+										<f:selectItem itemValue="0" itemLabel="Janeiro" />
+										<f:selectItem itemValue="1" itemLabel="Fevereiro" />
+										<f:selectItem itemValue="2" itemLabel="Março" />
+										<f:selectItem itemValue="3" itemLabel="Abril" />
+										<f:selectItem itemValue="4" itemLabel="Maio" />
+										<f:selectItem itemValue="5" itemLabel="Junho" />
+										<f:selectItem itemValue="6" itemLabel="Julho" />
+										<f:selectItem itemValue="7" itemLabel="Agosto" />
+										<f:selectItem itemValue="8" itemLabel="Setembro" />
+										<f:selectItem itemValue="9" itemLabel="Outubro" />
+										<f:selectItem itemValue="10" itemLabel="Novembro" />
+										<f:selectItem itemValue="11" itemLabel="Dezembro" />
 									</p:selectOneMenu>
 									<p:message styleClass="msg" for="ano" />
 								</h:panelGroup>
@@ -61,7 +61,8 @@
 											value="Pesquisar"
 											actionListener="#{relatorioPatrocinadorMB.filtra}"
 											update="dtClinicas,pnPrincipal" tabindex="1"
-											process="@this,pnPrincipal" styleClass="OrangeButton" />
+											oncomplete="PF('dtClinicas').filter()"
+											process="@this,pnPrincipal,dtClinicas" styleClass="OrangeButton" />
 									</h:panelGroup>
 									
 									
@@ -79,19 +80,19 @@
 							Clinicas
 						</f:facet>
 
-						<p:column filterBy="#{objeto.emp_cha_cnpj}" filterMatchMode="contains"
-							headerText="CNPJ" sortBy="#{objeto.emp_cha_cnpj}" width="20%">
-							<h:outputText value="#{objeto.emp_cha_cnpj}" />
+						<p:column filterBy="#{objeto.documento}" filterMatchMode="contains"
+							headerText="CNPJ/CPF" sortBy="#{objeto.documento}" width="20%">
+							<h:outputText value="#{objeto.documento}" />
 							<f:facet name="footer">
-								<h:outputText value="#{relatoriopatrocinadorMB.rodape}" />
+								<h:outputText value="#{relatorioPatrocinadorMB.rodape}" />
 							</f:facet>
 						</p:column>
 
-						<p:column filterBy="#{objeto.emp_str_nme}" filterMatchMode="contains"
-							headerText="Nome" sortBy="#{objeto.emp_str_nme}" width="60%">
-							<h:outputText value="#{objeto.emp_str_nme}" />
+						<p:column filterBy="#{objeto.empStrNme}" filterMatchMode="contains"
+							headerText="Nome" sortBy="#{objeto.empStrNme}" width="60%">
+							<h:outputText value="#{objeto.empStrNme}" />
 							<f:facet name="footer">
-								<h:outputText value="#{relatoriopatrocinadorMB.rodape2} - #{relatoriopatrocinadorMB.rodape3}" />
+								<h:outputText value="#{relatorioPatrocinadorMB.rodape2} - #{relatorioPatrocinadorMB.rodape3}" />
 							</f:facet>
 						</p:column>
 						
