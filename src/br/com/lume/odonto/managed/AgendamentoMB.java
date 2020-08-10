@@ -314,10 +314,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     }
 
     public void retorno(Retorno r) {
+        if(r.getAgendamento() != null) {
+            addError("Erro", "Retorno já possui agendamento. pesquise novamente para verificar");
+            return;
+        }
         if (r != null) {
             pacienteSelecionado = r.getPaciente();
             retorno = r;
             profissional = null;
+            PrimeFaces.current().executeScript("PF('eventDialog').show()");           
+            PrimeFaces.current().ajax().update(":lume:pnAgendamento");    
         }
     }
 
@@ -2241,6 +2247,16 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
     
     public void setIdEmpresaParaSocket(String idEmpresaParaSocket) {
         this.idEmpresaParaSocket = idEmpresaParaSocket;
+    }
+
+    
+    public Retorno getRetorno() {
+        return retorno;
+    }
+
+    
+    public void setRetorno(Retorno retorno) {
+        this.retorno = retorno;
     }
 
     

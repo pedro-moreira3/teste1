@@ -115,21 +115,16 @@ delete from plano where id <> 1;
 --insert into iugu_config (token) values ('15dfd95f7455dbf568807ed46239a8f3')
 
 
---acima ja rodado----
+INSERT INTO AFILIACAO(NOME, ATIVO) VALUES('Lume Tecnologia', 'S');
 
+update seg_empresa set afiliacao_id = 3 where afiliacao_id is null
 
---INSERINDO A GENTE E ALVARO POR ENQUANTO
 INSERT INTO USUARIO_AFILIACAO (USUARIO_ID,AFILIACAO_ID,DATA_AFILIACAO,CRIADO_POR) VALUES 
 (1036,1,current_timestamp,1036);
 
-INSERT INTO USUARIO_AFILIACAO (USUARIO_ID,AFILIACAO_ID,DATA_AFILIACAO,CRIADO_POR) VALUES 
-(1036,2,current_timestamp,1036);
-
-INSERT INTO USUARIO_AFILIACAO (USUARIO_ID,AFILIACAO_ID,DATA_AFILIACAO,CRIADO_POR) VALUES 
-(3701,2,current_timestamp,1036);
-
 insert into SEG_OBJETO (obj_str_des,obj_cha_sts,obj_str_caminho,sis_int_cod,obj_int_ordem,obj_cha_tipo,obj_str_icon) values
 ('Clínicas','A','clinicas.jsf',123,1,'T','fa fa-user-md')	
+
 
 --rodar pra pegar o id de cima
 select * from SEG_OBJETO order by obj_int_cod desc
@@ -139,6 +134,9 @@ select * from SEG_OBJETO order by obj_int_cod desc
 
 insert into seg_perobjeto (per_int_cod,obj_int_cod)
 values(328,164);
+
+--acima ja rodado----
+
 
 
 INSERT INTO SEG_OBJETO(OBJ_INT_CODPAI, OBJ_STR_DES, OBJ_CHA_STS, OBJ_STR_CAMINHO,
@@ -164,19 +162,3 @@ SELECT
 	
 update SEG_OBJETO set obj_int_codpai = 1
 		WHERE OBJ_STR_DES = 'Relatório de Patrocinadores'		
-		
-		
-
-
---TODO verificarquem do QS para inserir em USUARIO_AFILIACAO
-
-INSERT INTO AFILIACAO(NOME, ATIVO) VALUES('Lume Tecnologia', 'S');
-
-update seg_empresa set afiliacao_id = 3 where afiliacao_id is null
-
-	
-
-
-
-
-

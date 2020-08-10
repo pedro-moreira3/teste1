@@ -39,6 +39,8 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
 
     private List<Empresa> empresas = new ArrayList<>();   
     
+    private List<Empresa> empresasTrial = new ArrayList<>(); 
+    
     private List<Usuario> usuarios = new ArrayList<>();
     
     private List<Usuario> usuariosParceiros = new ArrayList<>();
@@ -59,7 +61,8 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
     public void filtra() {
         try {
             if(UtilsFrontEnd.getAfiliacaoLogada() != null) {
-                empresas = EmpresaSingleton.getInstance().getBo().listaEmpresasAfiliadasPorStatus(UtilsFrontEnd.getAfiliacaoLogada(),filtroStatus);    
+                empresas = EmpresaSingleton.getInstance().getBo().listaEmpresasAfiliadasPorStatus(UtilsFrontEnd.getAfiliacaoLogada(),filtroStatus,"N");    
+                empresasTrial = EmpresaSingleton.getInstance().getBo().listaEmpresasAfiliadasPorStatus(UtilsFrontEnd.getAfiliacaoLogada(),"T","S");                 
             }
         } catch (Exception e) {
             this.log.error(e);
@@ -73,16 +76,15 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
     
     public void actionPersistNovoConsultor() { 
         
-        try { 
-            //TODO LOG - nesse caso sem empresa
-//            LogEmpresa log = new LogEmpresa();
-//            log.setData(new Date());
-//            log.setUsuario(UtilsFrontEnd.getUsuarioLogado());
-//            if(getEntity() != null) {
-//                log.setEmpresa(getEntity());
-//            }
-//            log.setLog("Usuário criado no painel do parceiro. Email do usuario: " + this.usuario.getUsuStrEml());            
-//            LogEmpresaSingleton.getInstance().getBo().persist(log);
+        try {         
+            LogEmpresa log = new LogEmpresa();
+            log.setData(new Date());
+            log.setUsuario(UtilsFrontEnd.getUsuarioLogado());
+            if(getEntity() != null) {
+                log.setEmpresa(getEntity());
+            }
+            log.setLog("Usuário criado no painel do parceiro. Email do usuario: " + this.usuario.getUsuStrEml());            
+            LogEmpresaSingleton.getInstance().getBo().persist(log);
             
             Usuario usuarioExistente = UsuarioSingleton.getInstance().getBo().findByEmail(this.usuario.getUsuStrEml());
             
@@ -207,6 +209,28 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
         } catch (Exception e) {
             e.printStackTrace();
             this.addError("Erro", "Falha ao ativar clínica!", true);
+        }     
+    }
+    
+    public void actionColocarProducao(Empresa empresa) {
+        try {
+            
+            empresa.setEmpChaTrial("N");
+            
+            LogEmpresa log = new LogEmpresa();
+            log.setData(new Date());
+            log.setUsuario(UtilsFrontEnd.getUsuarioLogado());
+            log.setEmpresa(empresa);
+            log.setLog("Clínica colocada em produção");
+         
+           EmpresaSingleton.getInstance().getBo().persist(empresa);
+           LogEmpresaSingleton.getInstance().getBo().persist(log);
+            
+            this.filtra();
+            this.addInfo("Sucesso", "Clínica coloca em produção com sucesso!", true);            
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.addError("Erro", "Falha ao colocar clínica em produção!", true);
         }     
     }
     
@@ -382,8 +406,8 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
     }
 
     public void exportarTabela(String type) {
-        this.exportarTabela("", tabelaRelatorio, type);
-    } 
+        exportarTabela("Clientes em Produção", tabelaRelatorio, type);
+    }
     
     public DataTable getTabelaRelatorio() {
         return tabelaRelatorio;
@@ -451,5 +475,15 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
     
     public void setIdUsuario(Long idUsuario) {
         this.idUsuario = idUsuario;
+    }
+
+    
+    public List<Empresa> getEmpresasTrial() {
+        return empresasTrial;
+    }
+
+    
+    public void setEmpresasTrial(List<Empresa> empresasTrial) {
+        this.empresasTrial = empresasTrial;
     }
 }

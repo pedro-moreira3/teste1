@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ManagedProperty;
 import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
@@ -40,7 +41,10 @@ import br.com.lume.odonto.entity.HorasUteisProfissional;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.Profissional;
+import br.com.lume.odonto.entity.Retorno;
+import br.com.lume.odonto.entity.Retorno.StatusRetorno;
 import br.com.lume.profissional.ProfissionalSingleton;
+import br.com.lume.retorno.RetornoSingleton;
 
 @ManagedBean
 @ViewScoped
@@ -120,7 +124,7 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
         
     }
     
-    public void confirmaAgendamentoComPaciente(Agendamento agendamento) {
+    public void confirmaAgendamentoComPaciente(Agendamento agendamento,Retorno retorno) {
         
         try {
             if(agendamentoExistenteNaAgenda != null && agendamentoExistenteNaAgenda.getId() != 0) {
@@ -137,7 +141,19 @@ public class AgendamentoRapidoMB extends LumeManagedBean<Agendamento> {
                 AgendamentoPlanoTratamentoProcedimentoSingleton.getInstance().getBo().persistBatch(agendamento.getPlanoTratamentoProcedimentosAgendamento());
             }
             AgendamentoSingleton.getInstance().getBo().persist(agendamento);
+            
+            if (retorno != null) {               
+                retorno.setAgendamento(agendamento);
+                retorno.setRetornar(StatusRetorno.AGENDADO);
+                RetornoSingleton.getInstance().getBo().persist(retorno);
+                
+               
+
+                PrimeFaces.current().executeScript("PF('dtRetorno').filter();");                
+            }            
             this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
+            //tentando atualizar o retorno
+           
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
