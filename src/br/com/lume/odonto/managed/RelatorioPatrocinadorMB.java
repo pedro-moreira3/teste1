@@ -66,7 +66,7 @@ public class RelatorioPatrocinadorMB extends LumeManagedBean<Empresa> {
     public void filtra() {
         try {
             //todas as clinicas ativas do patrociador selecionado
-            clinicas = EmpresaSingleton.getInstance().getBo().listaEmpresasAfiliadasPorStatus(afiliacao, "A");
+            clinicas = EmpresaSingleton.getInstance().getBo().listaEmpresasAfiliadasPorStatus(afiliacao, "A","N");
             
             //TODO pegar clinicas que estavam ativas no mes de referencia
             

@@ -38,15 +38,15 @@
 										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
 										<p:fileDownload
 											value="#{clinicasMB.arquivoDownload}" />
-									</p:menuitem>
-									<p:menuitem value="Exportar tabela para CSV"
-										icon="fa fa fa-file-pdf-o"
-										actionListener="#{clinicasMB.exportarTabela('csv')}"
-										ajax="false" process="dtPrincipal,@this" immediate="true"
-										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
-										<p:fileDownload
-											value="#{clinicasMB.arquivoDownload}" />
-									</p:menuitem>
+									</p:menuitem>									
+										<p:menuitem value="Exportar tabela para CSV"
+											icon="fa fa fa-file-pdf-o"
+											actionListener="#{clinicasMB.exportarTabela('csv')}"
+											ajax="false" process="dtPrincipal,@this" immediate="true"
+											onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+											<p:fileDownload
+												value="#{clinicasMB.arquivoDownload}" />
+										</p:menuitem>									
 								</p:splitButton>
 							</h:panelGroup>
 						</p:panelGrid>
@@ -54,9 +54,9 @@
 
 						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" selection="#{clinicasMB.entity}"
 						widgetVar="dtPrincipal"
-							value="#{clinicasMB.empresas}" var="empresa" rows="15" paginator="true" rowKey="#{empresa}"
+							value="#{clinicasMB.empresas}" var="empresa" rows="10" paginator="true" rowKey="#{empresa}"
 							paginatorPosition="bottom" binding="#{clinicasMB.tabelaRelatorio}">
-							<f:facet name="header">Clínicas</f:facet>	
+							<f:facet name="header">Clínicas em Produção</f:facet>	
 						
 							<p:column headerText="Ações" width="10%">
 								<ui:remove>								
@@ -132,6 +132,64 @@
 								filterFunction="#{clinicasMB.filtroSemAcento}">
 								<h:outputText value="#{empresa.empChaStsString}" />
 							</p:column>
+						</p:dataTable>
+						<br/>
+						<br/>
+						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtTrial" selection="#{clinicasMB.entity}"
+						widgetVar="dtTrial"
+							value="#{clinicasMB.empresasTrial}" var="empresa" rows="10" paginator="true" rowKey="#{empresa}"
+							paginatorPosition="bottom">
+							<f:facet name="header">Clínicas em Período de Teste</f:facet>	
+						
+							<p:column headerText="Ações" width="10%">								
+								<h:panelGroup>
+									<p:commandButton id="usuariosTrial"
+										icon="White fa fa-users White" title="Usuários da Clínica"
+										actionListener="#{clinicasMB.actionUsuarios(empresa)}"
+										oncomplete="PF('dlgUsuarios').show();"
+										update=":lume:pnUsuarios,:lume:dtUsuarios" process="@this,lume:pnUsuarios,lume:dtUsuarios"
+										styleClass="NavyButton" />
+								</h:panelGroup>
+								<h:panelGroup >
+									<p:commandButton id="ColocarProducao"
+										icon="White fa fa-check-circle" title="Colocar em Produção"
+										actionListener="#{clinicasMB.actionColocarProducao(empresa)}"
+										update=":lume:dtPrincipal,:lume:dtTrial" process="@this"
+										styleClass="NavyButton" >
+										<p:confirm header="Confirmação" message="Cliente será colocado em produção, Confirma?" icon="ui-icon-alert" />
+										</p:commandButton>
+								</h:panelGroup>							
+							</p:column>							
+							<p:column sortBy="#{empresa.empStrNme}"
+								filterBy="#{empresa.empStrNme}"
+								filterMatchMode="contains" headerText="Nome"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{empresa.empStrNme}" />
+							</p:column>
+							<p:column sortBy="#{clinicasMB.consultoresAssociados(empresa)}"
+								filterBy="#{clinicasMB.consultoresAssociados(empresa)}"
+								filterMatchMode="contains" headerText="Consultores Associados"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{clinicasMB.consultoresAssociados(empresa)}" />
+							</p:column>
+							<p:column sortBy="#{empresa.empChaCnpj}"
+								filterBy="#{empresa.empChaCnpj}"
+								filterMatchMode="contains" headerText="CNPJ"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{empresa.empChaCnpj}" />
+							</p:column>
+							<p:column sortBy="#{empresa.empChaCpf}"
+								filterBy="#{empresa.empChaCpf}"
+								filterMatchMode="contains" headerText="CPF"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{empresa.empChaCpf}" />
+							</p:column>
+							<p:column sortBy="#{empresa.empChaFone}"
+								filterBy="#{empresa.empChaFone}"
+								filterMatchMode="contains" headerText="Telefone"
+								filterFunction="#{clinicasMB.filtroSemAcento}">
+								<h:outputText value="#{empresa.empChaFone}" />
+							</p:column>							
 						</p:dataTable>
 
 					</p:outputPanel>
