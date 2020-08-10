@@ -135,7 +135,6 @@ select * from SEG_OBJETO order by obj_int_cod desc
 insert into seg_perobjeto (per_int_cod,obj_int_cod)
 values(328,164);
 
---acima ja rodado----
 
 
 INSERT INTO SEG_OBJETO(OBJ_INT_CODPAI, OBJ_STR_DES, OBJ_CHA_STS, OBJ_STR_CAMINHO,
@@ -161,3 +160,7 @@ SELECT
 	
 update SEG_OBJETO set obj_int_codpai = 1
 		WHERE OBJ_STR_DES = 'Relatório de Patrocinadores'		
+
+		
+--acima ja rodado----
+		
