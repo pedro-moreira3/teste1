@@ -76,18 +76,11 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
     
     public void actionPersistNovoConsultor() { 
         
-        try {         
-            LogEmpresa log = new LogEmpresa();
-            log.setData(new Date());
-            log.setUsuario(UtilsFrontEnd.getUsuarioLogado());
-            if(getEntity() != null) {
-                log.setEmpresa(getEntity());
-            }
-            log.setLog("Usuário criado no painel do parceiro. Email do usuario: " + this.usuario.getUsuStrEml());            
-            LogEmpresaSingleton.getInstance().getBo().persist(log);
+        try {  
+               
+            LogEmpresaSingleton.getInstance().criaLog(new Date(), UtilsFrontEnd.getUsuarioLogado(),getEntity(), "Usuário criado no painel do parceiro. Email do usuario: " + this.usuario.getUsuStrEml());            
             
-            Usuario usuarioExistente = UsuarioSingleton.getInstance().getBo().findByEmail(this.usuario.getUsuStrEml());
-            
+            Usuario usuarioExistente = UsuarioSingleton.getInstance().getBo().findByEmail(this.usuario.getUsuStrEml());            
             if(usuarioExistente == null) {
                 //USUARIO              
                 this.usuario.setUsuStrLogin(this.usuario.getUsuStrEml());       
@@ -170,16 +163,12 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
         try {
            
             empresa.setEmpChaSts(Status.INATIVO);
+            empresa.setDataInativacao(new Date());
             
-            LogEmpresa log = new LogEmpresa();
-            log.setData(new Date());
-            log.setUsuario(UtilsFrontEnd.getUsuarioLogado());
-            log.setEmpresa(empresa);
-            log.setLog("Clínica inativada: Status: " + Status.INATIVO);
-         
-           EmpresaSingleton.getInstance().getBo().persist(empresa);
-           LogEmpresaSingleton.getInstance().getBo().persist(log);
+           EmpresaSingleton.getInstance().getBo().persist(empresa);         
             
+           LogEmpresaSingleton.getInstance().criaLog(new Date(), UtilsFrontEnd.getUsuarioLogado(),empresa, "Clínica inativada: Status: " + Status.INATIVO);
+           
             this.filtra();
             this.addInfo("Sucesso", "Clínica inativado com sucesso!", true);
             //PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
@@ -194,15 +183,10 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
         try {
             
             empresa.setEmpChaSts(Status.ATIVO);
-            
-            LogEmpresa log = new LogEmpresa();
-            log.setData(new Date());
-            log.setUsuario(UtilsFrontEnd.getUsuarioLogado());
-            log.setEmpresa(empresa);
-            log.setLog("Clínica ativada: Status: " + Status.ATIVO);
+            empresa.setDataAtivacao(new Date());
          
            EmpresaSingleton.getInstance().getBo().persist(empresa);
-           LogEmpresaSingleton.getInstance().getBo().persist(log);
+           LogEmpresaSingleton.getInstance().criaLog(new Date(), UtilsFrontEnd.getUsuarioLogado(),empresa, "Clínica ativada: Status: " + Status.ATIVO);
             
             this.filtra();
             this.addInfo("Sucesso", "Clínica ativada com sucesso!", true);            
@@ -216,15 +200,12 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
         try {
             
             empresa.setEmpChaTrial("N");
-            
-            LogEmpresa log = new LogEmpresa();
-            log.setData(new Date());
-            log.setUsuario(UtilsFrontEnd.getUsuarioLogado());
-            log.setEmpresa(empresa);
-            log.setLog("Clínica colocada em produção");
-         
+            empresa.setEmpDtmAceite(new Date());
+            empresa.setDataAtivacao(new Date());
+                  
            EmpresaSingleton.getInstance().getBo().persist(empresa);
-           LogEmpresaSingleton.getInstance().getBo().persist(log);
+           
+           LogEmpresaSingleton.getInstance().criaLog(new Date(), UtilsFrontEnd.getUsuarioLogado(),empresa, "Clínica colocada em produção. Data de aceite: " + empresa.getEmpDtmAceite());
             
             this.filtra();
             this.addInfo("Sucesso", "Clínica coloca em produção com sucesso!", true);            
@@ -274,17 +255,14 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
     
     public void actionSalvarEditarUsuario() {
         try {
-            LogEmpresa log = new LogEmpresa();
-            log.setData(new Date());
-            log.setUsuario(UtilsFrontEnd.getUsuarioLogado());
-            log.setEmpresa(getEntity());
-            log.setLog("Usuário alterado no painel do parceiro. Id do usuario alterado: " + this.usuario.getUsuIntCod());
-            
+                       
             //colocando email como usuario, pois é sempre o mesmo
             this.usuario.setUsuStrLogin(this.usuario.getUsuStrEml());
             
             UsuarioSingleton.getInstance().getBo().persist(this.usuario);
-            LogEmpresaSingleton.getInstance().getBo().persist(log);
+            
+            LogEmpresaSingleton.getInstance().criaLog(new Date(), UtilsFrontEnd.getUsuarioLogado(),getEntity(), "Usuário alterado no painel do parceiro. Id do usuario alterado: " + this.usuario.getUsuIntCod());
+           
             this.addInfo("Sucesso", "Usuário alterado com sucesso!", true);     
             actionUsuarios(getEntity());  
             this.filtra();
