@@ -26,8 +26,8 @@
 							style="border:0px none; background-color:transparent;" >														
 							<p:outputPanel style="margin-bottom:-15px">											
 								<p:outputLabel for="tipo" value="Tipo : " />
-								<h:outputLabel class="fa fa-question" id="tooltipTipo" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipTipo" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'tipo')}" />
+								<h:outputLabel class="fa fa-question" id="tooltipTipo" style="font-size:16px; margin-left:10px;" onclick="PF('tTipo').show()"/>
+								<p:tooltip for="tooltipTipo" id="tTipo" widgetVar="tTipo" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'tipo')}" />
 							</p:outputPanel>
 							<p:outputPanel>		
 								<p:selectOneRadio id="tipo" value="#{tarifaMB.entity.tipo}" required="true">									
@@ -45,8 +45,8 @@
 							style="border:0px none; background-color:transparent; " >
 							<p:outputPanel>
 								<p:outputLabel for="nome" value="Descrição : " />
-								<h:outputLabel class="fa fa-question" id="tooltipProduto" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipProduto" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'descricao')}" />
+								<h:outputLabel class="fa fa-question" id="tooltipProduto" style="font-size:16px; margin-left:10px;" onclick="PF('tTipProduto').show()"/>
+								<p:tooltip for="tooltipProduto" id="tTipProduto" widgetVar="tTipProduto" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'descricao')}" />
 							</p:outputPanel>
 							<p:outputPanel>														
 								<p:inputText id="nome" value="#{tarifaMB.entity.produto}" required="true" maxlength="100" />
@@ -56,8 +56,8 @@
 							style="border:0px none; background-color:transparent; " >	
 							<p:outputPanel>
 								<p:outputLabel for="prazo" value="Prazo de crédito em dias:" />
-								<h:outputLabel class="fa fa-question" id="tooltipPrazo" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipPrazo" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'prazo')}" />								
+								<h:outputLabel class="fa fa-question" id="tooltipPrazo" style="font-size:16px; margin-left:10px;" onclick="PF('tTipPrazo').show()"/>
+								<p:tooltip for="tooltipPrazo" id="tTipPrazo" widgetVar="tTipPrazo" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'prazo')}" />								
 							</p:outputPanel>	
 							<p:outputPanel>	
 								<p:inputMask id="prazo" value="#{tarifaMB.entity.prazo}" mask="9?999" required="true" />
@@ -67,16 +67,16 @@
 							style="border:0px none; background-color:transparent; " >								
 							<p:outputPanel>									
 								<p:outputLabel for="bandeira" value="Bandeira : "/>
-								<h:outputLabel class="fa fa-question" id="tooltipBandeira" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipBandeira" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'bandeira')}" />
+								<h:outputLabel class="fa fa-question" id="tooltipBandeira" style="font-size:16px; margin-left:10px;" onclick="PF('tTipBandeira').show()"/>
+								<p:tooltip for="tooltipBandeira" id="tTipBandeira" widgetVar="tTipBandeira" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'bandeira')}" />
 							</p:outputPanel>
 							<p:outputPanel>	
 								<p:inputText id="bandeira" value="#{tarifaMB.entity.bandeira}"  maxlength="100" />
 							</p:outputPanel>
 							<p:outputPanel>	
 								<p:outputLabel for="taxa" value="Taxas (%): " />
-								<h:outputLabel class="fa fa-question" id="tooltipTaxa" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipTaxa" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'taxa')}" />
+								<h:outputLabel class="fa fa-question" id="tooltipTaxa" style="font-size:16px; margin-left:10px;"  onclick="PF('tTipTaxa').show()"/>
+								<p:tooltip for="tooltipTaxa" id="tTipTaxa" widgetVar="tTipTaxa"  position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'taxa')}" />
 							</p:outputPanel>
 							<p:outputPanel>		
 								<p:inputNumber id="taxa" value="#{tarifaMB.entity.taxa}" maxlength="13" maxValue="99999999.99" decimalSeparator="," symbol=""
@@ -84,8 +84,8 @@
 							</p:outputPanel>
 							<p:outputPanel>		
 								<p:outputLabel for="tarifa" value="Tarifa : " />
-								<h:outputLabel class="fa fa-question" id="tooltipTarifa" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipTarifa" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'tarifa')}" />
+								<h:outputLabel class="fa fa-question" id="tooltipTarifa" style="font-size:16px; margin-left:10px;" onclick="PF('tTipTarifa').show()"/>
+								<p:tooltip for="tooltipTarifa" id="tTipTarifa" widgetVar="tTipTarifa" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'tarifa')}" />
 							</p:outputPanel>
 							<p:outputPanel>	
 								<p:inputNumber id="tarifa" value="#{tarifaMB.entity.tarifa}" maxlength="13" maxValue="99999999.99" decimalSeparator="," symbol=""
@@ -96,16 +96,16 @@
 							style="border:0px none; background-color:transparent; padding: 4px 4px !important;" >
 							<p:outputPanel>	
 								<p:outputLabel for="parcelaMinima" value="Quantidade mínima de parcelas (dias):"/>
-								<h:outputLabel class="fa fa-question" id="tooltipParcelaMinima" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipParcelaMinima" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'parcelaMinima')}" />
+								<h:outputLabel class="fa fa-question" id="tooltipParcelaMinima" style="font-size:16px; margin-left:10px;" onclick="PF('tTipParcelaMin').show()"/>
+								<p:tooltip for="tooltipParcelaMinima" id="tTipParcelaMin" widgetVar="tTipParcelaMin" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'parcelaMinima')}" />
 							</p:outputPanel>
 							<p:outputPanel>	
 								<p:inputMask id="parcelaMinima" value="#{tarifaMB.entity.parcelaMinima}" mask="9?9" style="width:100% !important" required="true"/>
 							</p:outputPanel>						
 							<p:outputPanel style="margin-bottom:-15px">	
 								<p:outputLabel for="parcelaMaxima" value="Quantidade máxima de parcelas (dias):"/>
-								<h:outputLabel class="fa fa-question" id="tooltipParcelaMaxima" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipParcelaMaxima" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'parcelaMaxima')}" />
+								<h:outputLabel class="fa fa-question" id="tooltipParcelaMaxima" style="font-size:16px; margin-left:10px;" onclick="PF('tTipParcelaMax').show()"/>
+								<p:tooltip for="tooltipParcelaMaxima" id="tTipParcelaMax" widgetVar="tTipParcelaMax" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'parcelaMaxima')}" />
 							</p:outputPanel>
 							<p:outputPanel>		
 								<p:inputMask id="parcelaMaxima" value="#{tarifaMB.entity.parcelaMaxima}" mask="9?9" style="width:100% !important" required="true"/>
@@ -117,8 +117,8 @@
 							style="border:0px none; background-color:transparent; " >
 							<p:outputPanel>
 								<p:outputLabel for="periodicidade" value="Periodicidade de geração de parcelas (dias): " />
-								<h:outputLabel class="fa fa-question" id="tooltipPeriodicidade" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipPeriodicidade" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'periodicidade')}" />
+								<h:outputLabel class="fa fa-question" id="tooltipPeriodicidade" style="font-size:16px; margin-left:10px;" onclick="PF('tTipPerio').show()"/>
+								<p:tooltip for="tooltipPeriodicidade" id="tTipPerio" widgetVar="tTipPerio" position="bottom" value="#{tarifaMB.getTooltipValue('tarifa', 'periodicidade')}" />
 							</p:outputPanel>
 							<p:outputPanel>
 								<p:inputMask id="periodicidade" value="#{tarifaMB.entity.periodicidade}" mask="9?999" />
@@ -140,8 +140,8 @@
 							</p:outputPanel>
 							<p:outputPanel>
 								<p:outputLabel value="Receber automaticamente ao efetuar lançamento" />
-								<h:outputLabel class="fa fa-question" id="tooltipReceber" style="font-size:16px; margin-left:10px;"/>
-								<p:tooltip for="tooltipReceber" position="bottom" >
+								<h:outputLabel class="fa fa-question" id="tooltipReceber" style="font-size:16px; margin-left:10px;" onclick="PF('tTipReceber').show()" />
+								<p:tooltip for="tooltipReceber" position="bottom" id="tTipReceber" widgetVar="tTipReceber">
 									<p>
 										#{tarifaMB.getTooltipValue('tarifa', 'receberAutomaticamente')}
 									</p>
