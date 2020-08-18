@@ -226,7 +226,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
             for (UsuarioAfiliacao usuarioAfiliacao : usuariosAfiliados) {
                 try {
                     String nomeAfiliacao = AfiliacaoSingleton.getInstance().getBo().find(usuarioAfiliacao.getAfiliacao().getId()).getNome();
-                    logins.add(new Login(OdontoPerfil.PARCEIRO, usuarioAfiliacao.getUsuario().getUsuIntCod(), usuarioAfiliacao.getAfiliacao().getId(), "Parceiro do grupo " + nomeAfiliacao));
+                    logins.add(new Login(OdontoPerfil.PARCEIRO, usuarioAfiliacao.getUsuario().getUsuIntCod(), usuarioAfiliacao.getAfiliacao().getId(), nomeAfiliacao));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

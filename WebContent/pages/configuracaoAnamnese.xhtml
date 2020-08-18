@@ -1,0 +1,85 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+	<ui:define name="content">
+	
+	
+		<p:dialog id="dlgNovaAnamnese" widgetVar="dlgNovaAnamnese"
+			header="Nova Configuração de Anamnese" responsive="true" modal="true"
+			width="80%">
+			<p:panel id="pnDlgNovaAnamnese" style="max-height: 80vh; overflow-y: auto; overflow-x: none;">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: 100%; height: 100%; border: none;">  					
+					
+					<p:panelGrid columns="2" columnClasses="ui-grid-col-3,ui-grid-col-7" layout="grid" styleClass="ui-panelgrid-blank">						
+							<p:selectOneMenu value="#{configuracaoAnamneseMB.entity.especialidade}">
+								<f:selectItem itemValue="#{null}" itemLabel="Selecione a especialidade da nova Anamnese" />
+								<f:selectItems value="#{configuracaoAnamneseMB.especialidadesSemAnamnese}" var="especialidade"
+									itemValue="#{especialidade}" itemLabel="#{especialidade.descricao}" />
+							</p:selectOneMenu>	
+							<p:commandButton id="novaEspecialidade" icon="fa fa-plus White" update="" immediate="true" actionListener="#{configuracaoAnamneseMB.actionNewEspecialidade}" />							
+					</p:panelGrid>
+					
+					<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+						<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{configuracaoAnamneseMB.actionPersist}"
+							onsuccess="PF('dlgNovaAnamnese').hide();"
+							update=":lume:pnDlgNovaAnamnese,:lume:dtEspecialidades" process="@this,:lume:pnDlgNovaAnamnese"  styleClass="GreenButton"/>
+						<p:commandButton id="fechar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlgNovaAnamnese').hide();" immediate="true" />											
+					</p:panelGrid>
+					<div class="EmptyBox20"></div>		
+										
+				</p:scrollPanel>
+			</p:panel>
+		</p:dialog>
+	
+	
+	
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<h1>Configuração de Anamnese
+					<h:outputLabel class="fa fa-question" id="tooltipTitulo" style="font-size:24px; margin-left:10px;"/> 
+							<p:tooltip for="tooltipTitulo" value="#{tarifaMB.getTooltipValue('configuracaoAnamnese', 'titulo')}" position="bottom" />
+					</h1>
+					<p:separator styleClass="SeparatorFull" />
+									
+					<p:panelGrid columns="4" layout="grid"
+						styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
+						<p:commandButton icon="White fa fa-file-o" actionListener="#{configuracaoAnamneseMB.actionNewAnamnese}"
+							process="@this" value="Cadastrar Nova Anamnese" update=""  oncomplete="PF('dlgNovaAnamnese').show();" />
+					</p:panelGrid>
+					
+					<div class="SeparatorFull"></div>
+					
+					<br />
+					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+						id="dtEspecialidades" value="#{configuracaoAnamneseMB.entityList}"
+						var="e" rows="20" paginator="true" rowKey="#{e}"
+						paginatorPosition="bottom">
+						
+						<f:facet name="header">Especialidades Com Anamnese Cadastrada</f:facet>
+
+						<p:column width="120" headerText="Ações" exportable="false">
+							<p:commandButton icon="fa fa-eye" process="@this" update=""
+								actionListener="#{configuracaoAnamneseMB.visualizarAnamnese(e)}"
+								 oncomplete="PF('dlgAnamnese').show();" styleClass="NavyButton"
+								title="Visualizar Fatura" />
+						</p:column>	
+											
+						<p:column filterBy="#{e.especialidade.descricao}"
+							filterFunction="#{configuracaoAnamneseMB.filtroSemAcento}"
+							headerText="Descrição" filterMatchMode="contains"
+							sortBy="#{e.especialidade.descricao}">
+							<h:outputText value="#{e.especialidade.descricao}" />
+						</p:column>						
+
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+		
+	</ui:define>
+</ui:composition>
