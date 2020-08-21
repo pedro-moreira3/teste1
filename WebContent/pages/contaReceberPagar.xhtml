@@ -624,6 +624,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										</p:column>
 										<p:column filterBy="#{lc.fatura.paciente.dadosBasico.nomeStr}"
 											sortBy="#{lc.fatura.paciente.dadosBasico.nome}"
+											filterFunction="#{conferenciaRecebimentoMB.filtroSemAcento}"
 											filterMatchMode="contains" headerText="Paciente">
 											<h:outputText value="#{lc.fatura.paciente.dadosBasico.nome}"
 												title="#{lc.id}" />

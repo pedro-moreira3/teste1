@@ -60,4 +60,6 @@ ALTER TABLE AFILIACAO ADD COLUMN PERCENTUAL  NUMERIC(16, 4) ;
 
 --TODO DEPOIS EXCLUIR ID_ESPECIALIDADE DA PERGUNTA
 
-
+alter table lancamento add column lancamento_extornado char(1) default 'N'
+alter table seg_empresa add column FATURA_IUGU varchar(250);
+update motivo set id_categoria = 40 where id = 247;

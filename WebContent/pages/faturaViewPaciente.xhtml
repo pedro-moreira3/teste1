@@ -156,6 +156,95 @@ body .height31 input {
 		</div>
 	</p:dialog>
 
+	<p:dialog widgetVar="dlgAjusteLancamento" header="Ajustar lançamento"
+		responsive="true" modal="true" appendTo=":lume" width="700px">
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+
+				<p:outputPanel id="pnlAjusteLancamento">
+					<p:panelGrid columns="1" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="md-combo">
+							<p:outputLabel for="ajustarLancamentoFormaPagamento"
+								value="Forma de Pagamento:" />
+							<p:selectOneMenu id="ajustarLancamentoFormaPagamento"
+								converter="tarifa"
+								value="#{faturaPagtoMB.ajustarLancamento.tarifa}">
+								<f:selectItem itemValue="#{null}"
+									itemLabel="Selecione uma Forma de Pagamento:" />
+								<f:selectItems
+									value="#{faturaPagtoMB.editarLancamentoFormasDisponiveis}"
+									var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
+								<p:ajax event="change"
+									listener="#{faturaPagtoMB.actionAjustarLancamentoAlteraFormaPagamento}"
+									update="ajustarLancamentoDataCredito" process="@this" />
+							</p:selectOneMenu>
+							<p:message for="ajustarLancamentoFormaPagamento" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputNumber id="ajusteLancamentoValorTotal"
+								value="#{faturaPagtoMB.ajustarLancamento.valor}" maxlength="13"
+								maxValue="9999999999.99" decimalSeparator="," symbol="R$ "
+								thousandSeparator=".">
+								<p:ajax process="@this" />
+							</p:inputNumber>
+							<p:outputLabel for="ajusteLancamentoValorTotal" value="Valor:" />
+							<p:message styleClass="msg" for="ajusteLancamentoValorTotal" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="ajustarLancamentoDataPagamento"
+								value="#{faturaPagtoMB.ajustarLancamento.dataPagamento}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10">
+								<p:ajax event="dateSelect"
+									listener="#{faturaPagtoMB.actionEditarLancamentoAlteraDataPagamento}"
+									update="ajustarLancamentoDataCredito" process="@this" />
+							</p:calendar>
+							<p:outputLabel for="ajustarLancamentoDataPagamento"
+								value="Data de Recebimento: " />
+							<p:message for="ajustarLancamentoDataPagamento" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="ajustarLancamentoDataCredito"
+								value="#{faturaPagtoMB.ajustarLancamento.dataCredito}"
+								pattern="dd/MM/yyyy" showWeeksBar="false"
+								locale="#{lumeSecurity.locale}"
+								timeZone="#{lumeSecurity.timeZone}" navigator="true"
+								yearRange="-10:+10" disabled="#{!faturaPagtoMB.administrador}">
+								<p:ajax event="dateSelect" process="@this"/>
+							</p:calendar>
+							<p:outputLabel for="ajustarLancamentoDataCredito"
+								value="Data de Crédito:" />
+							<p:message for="ajustarLancamentoDataCredito" styleClass="msg" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+				</p:outputPanel>
+
+				<p:separator styleClass="SeparatorFull" />
+
+				<p:panelGrid columns="2" layout="grid"
+					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+					<p:commandButton value="Salvar" icon="White fa fa-save"
+						actionListener="#{faturaPagtoMB.ajustarLancamento}"
+						update="pnlfaturaView" process="@this"
+						styleClass="GreenButton" />
+					<p:commandButton value="Fechar" icon="White fa fa-close"
+						process="@this" oncomplete="PF('dlgAjusteLancamento').hide()"
+						styleClass="NavyButton" />
+
+				</p:panelGrid>
+			</div>
+		</div>
+	</p:dialog>
+
 	<p:dialog widgetVar="dlgNovoLancamento" header="Novo Lançamento"
 		responsive="true" modal="true" appendTo=":lume" width="70%"
 		height="80%">
@@ -400,7 +489,7 @@ body .height31 input {
 									itemLabel="Selecione uma Forma de Pagamento:" />
 								<f:selectItems
 									value="#{faturaPagtoMB.editarLancamentoFormasDisponiveis}"
-									var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}"/>
+									var="tf" itemValue="#{tf}" itemLabel="#{tf.produtoStr}" />
 								<p:ajax event="change"
 									listener="#{faturaPagtoMB.actionEditarLancamentoAlteraFormaPagamento}"
 									update="editarLancamentoDataCredito" process="@this" />
@@ -1354,6 +1443,14 @@ body .height31 input {
 											message="Você tem certeza que deseja cancelar este lançamento? &lt;br/&gt; &lt;b&gt;Se já foi confirmado&lt;/b&gt;, o saldo ficará disponível na &lt;b&gt;conta do paciente&lt;/b&gt;.">
 										</p:confirm>
 									</p:commandButton>
+									<p:commandButton styleClass="NavyButton"
+										title="Ajuste de valor" icon="fa fa-dollar"
+										actionListener="#{faturaPagtoMB.carregarAjuste(l)}"
+										process="@this" update=":lume:pnlAjusteLancamento"
+										oncomplete="PF('dlgAjusteLancamento').show();"
+										disabled="#{!l.ativo or l.validado == 'N' or !faturaPagtoMB.permiteExcluirLancamento}"
+										rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
+									</p:commandButton>
 									<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
 										title="Editar lançamento"
 										disabled="#{!l.ativo or l.validado != 'N' or l.pagamentoConferido == 'S'}"
@@ -1380,7 +1477,7 @@ body .height31 input {
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{l.formaPagamentoStr}"
 									headerText="Forma de Pagamento" sortBy="#{l.formaPagamentoStr}">
-									<h:outputText value="#{l.formaPagamentoStr}" title="#{l.id}"/>
+									<h:outputText value="#{l.formaPagamentoStr}" title="#{l.id}" />
 								</p:column>
 								<p:column
 									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
