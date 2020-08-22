@@ -1,7 +1,7 @@
 package br.com.lume.odonto.managed;
 
-import javax.faces.view.ViewScoped;
-import javax.inject.Named;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -16,7 +16,7 @@ import br.com.lume.odonto.entity.Avisos;
 import br.com.lume.odonto.entity.Avisos.TIPO_AVISO;
 import br.com.lume.security.EmpresaSingleton;
 
-@Named
+@ManagedBean
 @ViewScoped
 public class AvisosMB extends LumeManagedBean<Avisos>{
 
@@ -32,11 +32,18 @@ public class AvisosMB extends LumeManagedBean<Avisos>{
     public void redireciona(Avisos aviso) {
         if(aviso.getTipoAviso().equals(TIPO_AVISO.CONTRATACAO)) {
             PrimeFaces.current().executeScript("PF('dlgContratacao').show();");
+        }else {
+            JSFHelper.redirect(aviso.getLink());
         }
     }
 
     public void carregarAvisos() {
-        this.setEntityList(AvisosSingleton.getInstance().carregarAvisos(UtilsFrontEnd.getEmpresaLogada()));
+        try {
+            this.setEntityList(AvisosSingleton.getInstance().carregarAvisos(UtilsFrontEnd.getEmpresaLogada()));
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Falha ao carregar avisos.");
+            e.printStackTrace();
+        }
     }
     
     public void contratarServico() {

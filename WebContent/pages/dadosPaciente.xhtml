@@ -28,8 +28,13 @@
 								<div
 									style="border: 1px solid #cccccc; padding: 10px; font-style: normal;">
 									<table style="width: 100%;">
+										<tr >
+											<td style="width: 220px;"><h:outputText rendered="#{pacienteMB.entity.id != null}" value="Código Automático: #{pacienteMB.entity.id}" /></td>											
+										</tr>
+									</table>	
+									<table style="width: 100%;">
 										<tr>
-											<td style="width: 115px;"><h:outputText value="Código: " /></td>
+											<td style="width: 60px;"><h:outputText value="Código: " /></td>
 											<td style="text-align: right"><p:inputText
 													value="#{pacienteMB.entity.codigo}" /></td>
 										</tr>

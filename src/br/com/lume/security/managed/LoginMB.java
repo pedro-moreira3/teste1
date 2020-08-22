@@ -61,8 +61,9 @@ public class LoginMB extends LumeManagedBean<Usuario> {
             this.addError(e.getMessage(), "");
             this.log.error("Usuário sem perfil vinculado.", e);
         } catch (UsuarioSemPagamentoException e) {
-            this.addError(e.getMessage(), "");
-            this.log.error("Sem Pagamento.", e);
+           // this.addError(e.getMessage(), "");
+          //  this.log.error("Sem Pagamento.", e);
+        	 return "home.xhtml";
         } catch (PlanoExpiradoException e) {
             this.addError(e.getMessage(), "");
             this.log.error("Plano acabo.", e);
