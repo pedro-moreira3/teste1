@@ -661,24 +661,29 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
         } catch (DataNascimentoException dne) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.datanascimento"), "");
             log.error(OdontoMensagens.getMensagem("erro.valida.datanascimento"));
+            dne.printStackTrace();
         } catch (TelefoneException te) {
             this.addError(OdontoMensagens.getMensagem("erro.valida.telefone"), "");
             log.error(OdontoMensagens.getMensagem("erro.valida.telefone"));
+            te.printStackTrace();
         } catch (UsuarioDuplicadoException ud) {
             this.addError("Já existe um paciente cadastrado com este e-mail.", "");
             log.error(Mensagens.getMensagem(Mensagens.USUARIO_DUPLICADO));
+            ud.printStackTrace();
         } catch (CpfCnpjDuplicadoException cd) {
             this.addError(OdontoMensagens.getMensagem("erro.cpf.duplicado"), "");
             log.error(OdontoMensagens.getMensagem("erro.cpf.duplicado"));
+            cd.printStackTrace();
         } catch (Exception e) {
             log.error("Erro no actionPersist", e);
+            e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "");
         }
 
         try {
             setEntity(getbO().find(getEntity()));
         } catch (Exception e) {
-            // TODO: handle exception
+            e.printStackTrace();
         }
     }
 
