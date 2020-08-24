@@ -6,35 +6,50 @@
 	xmlns:pe="http://primefaces.org/ui/extensions">
 	<ui:define name="content">
 	
+<style>
+	.column{
+		width:100%;
+		margin-right:.5%;
+		min-height:150px;
+		background:#fff;
+		float:left;
+	}
+	.column .dragbox{
+		margin:5px 2px  20px;
+		background:#fff;
+		position:relative;
+		border:1px solid #ddd;
+		-moz-border-radius:5px;
+		-webkit-border-radius:5px;
+	}
+	.column .dragbox h2{
+		margin:0;
+		font-size:12px;
+		padding:5px;
+		background:#f0f0f0;
+		color:#000;
+		border-bottom:1px solid #eee;
+		font-family:Verdana;
+		cursor:move;
+	}
+	.dragbox-content{
+		background:#fff;
+		min-height:100px; margin:5px;
+		font-family:'Lucida Grande', Verdana; font-size:0.8em; line-height:1.5em;
+	}
+	.column  .placeholder{
+		background: #f0f0f0;
+		border:1px dashed #ddd;
+	}
+	.dragbox h2.collapse{
+		/*background:#f0f0f0 url('collapse.png') no-repeat top right;*/
+	}
+	.dragbox h2 .configure{
+		font-size:11px; font-weight:normal;
+		margin-right:30px; float:right;
+	}
 	
-		<p:dialog id="dlgNovaAnamnese" widgetVar="dlgNovaAnamnese"
-			header="Nova Configuração de Anamnese" responsive="true" modal="true"
-			width="80%">
-			<p:panel id="pnDlgNovaAnamnese" style="max-height: 80vh; overflow-y: auto; overflow-x: none;">
-				<p:scrollPanel mode="native"
-					style="position: relative; width: 100%; height: 100%; border: none;">  					
-					
-					<p:panelGrid columns="2" columnClasses="ui-grid-col-3,ui-grid-col-7" layout="grid" styleClass="ui-panelgrid-blank">						
-							<p:selectOneMenu value="#{configuracaoAnamneseMB.entity.especialidade}">
-								<f:selectItem itemValue="#{null}" itemLabel="Selecione a especialidade da nova Anamnese" />
-								<f:selectItems value="#{configuracaoAnamneseMB.especialidadesSemAnamnese}" var="especialidade"
-									itemValue="#{especialidade}" itemLabel="#{especialidade.descricao}" />
-							</p:selectOneMenu>	
-							<p:commandButton id="novaEspecialidade" icon="fa fa-plus White" update="" immediate="true" actionListener="#{configuracaoAnamneseMB.actionNewEspecialidade}" />							
-					</p:panelGrid>
-					
-					<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-						<p:commandButton id="persist" icon="White fa fa-save" value="Salvar" actionListener="#{configuracaoAnamneseMB.actionPersist}"
-							onsuccess="PF('dlgNovaAnamnese').hide();"
-							update=":lume:pnDlgNovaAnamnese,:lume:dtEspecialidades" process="@this,:lume:pnDlgNovaAnamnese"  styleClass="GreenButton"/>
-						<p:commandButton id="fechar" icon="White fa fa-file-o" value="Fechar" oncomplete="PF('dlgNovaAnamnese').hide();" immediate="true" />											
-					</p:panelGrid>
-					<div class="EmptyBox20"></div>		
-										
-				</p:scrollPanel>
-			</p:panel>
-		</p:dialog>
-	
+</style>
 	
 	
 		<div class="ui-g ui-fluid">
@@ -46,40 +61,296 @@
 					</h1>
 					<p:separator styleClass="SeparatorFull" />
 									
-					<p:panelGrid columns="4" layout="grid"
-						styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
-						<p:commandButton icon="White fa fa-file-o" actionListener="#{configuracaoAnamneseMB.actionNewAnamnese}"
-							process="@this" value="Cadastrar Nova Anamnese" update=""  oncomplete="PF('dlgNovaAnamnese').show();" />
+					<p:panelGrid columns="2" columnClasses="ui-grid-col-3,ui-grid-col-7" layout="grid" styleClass="ui-panelgrid-blank">					
+							
+							<p:selectOneMenu id="selectEspecialidades"  converter="especialidade"
+									value="#{configuracaoAnamneseMB.especialidade}">
+									<p:ajax
+										process="@this"
+										listener="#{configuracaoAnamneseMB.verificaEspecialidade}"
+										update="" />
+									<f:selectItem itemValue="#{null}" itemLabel="Selecione a especialidade da Anamnese" />
+									<f:selectItems value="#{configuracaoAnamneseMB.especialidades}" var="especialidade"
+									itemValue="#{especialidade}" itemLabel="#{especialidade.descricao}" />
+								</p:selectOneMenu>
+							
 					</p:panelGrid>
-					
-					<div class="SeparatorFull"></div>
-					
-					<br />
-					<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-						id="dtEspecialidades" value="#{configuracaoAnamneseMB.entityList}"
-						var="e" rows="20" paginator="true" rowKey="#{e}"
-						paginatorPosition="bottom">
-						
-						<f:facet name="header">Especialidades Com Anamnese Cadastrada</f:facet>
-
-						<p:column width="120" headerText="Ações" exportable="false">
-							<p:commandButton icon="fa fa-eye" process="@this" update=""
-								actionListener="#{configuracaoAnamneseMB.visualizarAnamnese(e)}"
-								 oncomplete="PF('dlgAnamnese').show();" styleClass="NavyButton"
-								title="Visualizar Fatura" />
-						</p:column>	
-											
-						<p:column filterBy="#{e.especialidade.descricao}"
-							filterFunction="#{configuracaoAnamneseMB.filtroSemAcento}"
-							headerText="Descrição" filterMatchMode="contains"
-							sortBy="#{e.especialidade.descricao}">
-							<h:outputText value="#{e.especialidade.descricao}" />
-						</p:column>						
-
-					</p:dataTable>
 				</div>
+					<!-- From  http://webdeveloperplus.com/jquery/collpasible-drag-drop-panels/
+					nesse componente vou adicionar dinamicamente as pergutas
+					 -->	
+					<div class="column" id="column1">
+					</div>	
 			</div>
 		</div>
+		
+		
+		<script>
+    //<![CDATA[
+    
+	    	
+		$(function(){
+			
+		
+			
+			$('.dragbox')
+			.each(function(){
+				$(this).hover(function(){
+					$(this).find('h2').addClass('collapse');
+				}, function(){
+					$(this).find('h2').removeClass('collapse');
+				})
+				.find('h2').hover(function(){
+					$(this).find('.configure').css('visibility', 'visible');
+				}, function(){
+					$(this).find('.configure').css('visibility', 'hidden');
+				})
+				.click(function(){
+					$(this).siblings('.dragbox-content').toggle();
+				})
+				.end()
+				.find('.configure').css('visibility', 'hidden');
+			});
+			$('.column').sortable({
+				connectWith: '.column',
+				handle: 'h2',
+				cursor: 'move',
+				placeholder: 'placeholder',
+				forcePlaceholderSize: true,
+				opacity: 0.4,
+				stop: function(event, ui){
+					$(ui.item).find('h2').click();
+					var sortorder='';
+					$('.column').each(function(){
+						var itemorder=$(this).sortable('toArray');
+						var columnId=$(this).attr('id');
+						sortorder+=columnId+'='+itemorder.toString()+'&';
+					});				
+				}
+			})
+			.disableSelection();
+		});
+		
+		function saveQuestion(element) {   	
+    		  //console.log(saveQuestion); 		
+    		return false;
+    	}
+    	
+		
+		function populaQuestoes(perguntasJson){			
+			limpaFormulario();
+			//console.log(perguntasJson);
+			for (var pergunta of perguntasJson){
+				 adicionaPergunta(pergunta.descricao,pergunta.tipoResposta,pergunta.respostas);
+			}			
+			 adicionaPergunta();			
+		}
+		
+		
+		function adicionaEspecialidadeEmBranco(){
+			limpaFormulario();
+			var numberOfElements = document.getElementById("column1").childElementCount;
+			//console.log(numberOfElements);
+			if(numberOfElements != 1){
+				adicionaPergunta();
+			}
+		}
+		
+		
+		
+    	function adicionaPergunta(pergunta, tipoPergunta, respostas){
+    		
+    		var newH2 = document.createElement('h2');
+    		newH2.innerHTML = "Nova Pergunta";
+    		
+    		var newDivInterna = document.createElement('div');
+    		newDivInterna.setAttribute("class","dragbox-content");
+    	
+    		
+    		var select = document.createElement( 'select' );
+    		option = document.createElement( 'option' );
+   		   	option.textContent = 'Selecione o tipo da pergunta';
+   		   	option.value = '';    
+    		 
+   		   option1 = document.createElement( 'option' );
+   		   option1.textContent = 'Sim ou não';
+   		   option1.value = 'simNao';    	  
+   		   
+   		   option2 = document.createElement( 'option' );
+   		   option2.textContent = 'Texto Aberto';
+   		   option2.value = 'textoAberto'; 
+   		   
+   		   option3 = document.createElement( 'option' );
+   		   option3.textContent = 'Várias Opções com opção de marcar somente uma resposta';
+   		   option3.value = 'variasUma'; 
+   		   
+   		   option4 = document.createElement( 'option' );
+   		   option4.textContent = 'Várias Opções com opção de marcar várias resposta';
+   		   option4.value = 'variasVarias';
+   		   
+   		   select.appendChild( option );
+   		   select.appendChild( option1 );
+   		   select.appendChild( option2 );
+   		   select.appendChild( option3 );
+   		   select.appendChild( option4 );
+   		   
+   		
+   	
+   		  var divRespostas = document.createElement('div');
+   		   
+   		   select.onchange = function(){
+			  addNewAnswer(this.value,divRespostas,false);
+			  return false;
+		   }; 	 
+   		   
+   			var paragraph = document.createElement( 'p' );
+   			var text = document.createTextNode("Digite o texto da pergunta:");
+   			paragraph.appendChild(text);
+   		   
+   		 	var textoPergunta = document.createElement('textarea');
+   		 	textoPergunta.setAttribute("style", "margin: 0px; width: 702px; height: 53px");
+   		 	if(typeof(pergunta) != "undefined" && pergunta !== null && pergunta !== ''){
+   		 		textoPergunta.value = pergunta;
+   		 	}
+   	   	
+   		 	
+    		 var buttonSalvar = document.createElement('button');
+    		 buttonSalvar.innerHTML = 'Salvar Pergunta';
+    		 buttonSalvar.onclick = function(){
+    			 adicionaPergunta();
+    				return false;
+    		  }; 
+    		  var buttonExcluir = document.createElement('button');
+    		  buttonExcluir.innerHTML = 'Excluir Pergunta';
+    		  buttonExcluir.onclick = function(){
+    			  removeQuestion(this);
+    				return false;
+    		  };  
+    		  
+    		  var divRespostas = document.createElement('div');
+    		  divRespostas.setAttribute("id", "divRespostas");
+    		  
+    			if(typeof(tipoPergunta) != "undefined" && tipoPergunta !== null && tipoPergunta !== ''){
+    		 		if(tipoPergunta == 'SIM_OU_NAO'){
+    		 			select.value = 'simNao';
+    		 		}else if(tipoPergunta == 'TEXTO'){
+    		 			select.value = 'textoAberto';
+    		 		}else if(tipoPergunta == 'UMA_EM_VARIAS'){
+    		 			select.value = 'variasUma';
+    		 		}else if(tipoPergunta == 'VARIAS_EM_VARIAS'){
+    		 			select.value = 'variasVarias';
+    		 		}
+    		 		
+    		 		if(typeof(respostas) != "undefined" && respostas !== null && respostas !== ''){
+    		 			for (var resposta of respostas){
+    		 				addNewAnswer(select.value,divRespostas,true);
+    					}
+    		 		}
+    		 	}
+    		  
+    		 newDivInterna.appendChild(select);
+    		 newDivInterna.appendChild(paragraph);
+    		 newDivInterna.appendChild(textoPergunta);    		 
+    		 newDivInterna.appendChild(document.createElement('br'));
+    		 newDivInterna.appendChild(document.createElement('br'));
+    		 newDivInterna.appendChild(divRespostas);
+    		 newDivInterna.appendChild(buttonSalvar);
+    		 newDivInterna.appendChild(buttonExcluir);
+    		  
+    		var newQuestionDiv = document.createElement('div');
+    		//newQuestionDiv.setAttribute("id", "item2");
+    		newQuestionDiv.setAttribute("class","dragbox");
+    		newQuestionDiv.appendChild(newH2);
+    		newQuestionDiv.appendChild(newDivInterna);
+    		
+    		document.getElementById("column1").appendChild(newQuestionDiv);
+    		
+    	}
+    	
+    	function addNewAnswer(valorDoSelect, elementoParaInserir, novaResposta){
+    		//console.log(valorDoSelect);
+    		if(valorDoSelect === 'variasUma' || valorDoSelect === 'variasVarias'){    			
+    			if(novaResposta || elementoParaInserir.firstChild == null){  
+    			
+    				var numberOfElements = elementoParaInserir.childElementCount;;
+    				
+    				if(numberOfElements == 0){
+    					criaNovaPergunta(valorDoSelect, elementoParaInserir, novaResposta);    
+        				criaNovaPergunta(valorDoSelect, elementoParaInserir, novaResposta);	
+    				}else{
+    					criaNovaPergunta(valorDoSelect, elementoParaInserir, novaResposta);
+    				}
+    				    
+    			}
+    			
+    		}else{
+    			//console.log(elementoParaInserir.firstChild);
+    			if(elementoParaInserir.firstChild != null){
+    				elementoParaInserir.removeChild(elementoParaInserir.firstChild);	
+    			}
+    				
+    		}
+    		
+    		
+    	}
+		
+    	function criaNovaPergunta(valorDoSelect, elementoParaInserir, novaResposta){
+    		var divPai = document.createElement('div');
+			
+			var paragraph = document.createElement( 'p' );
+   			var text = document.createTextNode("Digite o texto da resposta:");
+   			paragraph.appendChild(text);
+    		
+    		var textoResposta = document.createElement('textarea');
+    		textoResposta.setAttribute("style", "margin: 0px; width: 502px; height: 33px");
+    		
+    		var buttonNovaResposta = document.createElement('button');
+    		buttonNovaResposta.innerHTML = 'Adicionar mais uma resposta';
+    		buttonNovaResposta.onclick = function(){
+    			addNewAnswer('variasUma',elementoParaInserir,true);
+  				return false;
+  		  };  
+      		var buttonRemoverResposta = document.createElement('button');
+      		buttonRemoverResposta.innerHTML = 'Remover essa resposta';
+      		buttonRemoverResposta.onclick = function(){
+      			var numberOfElements = this.parentNode.parentNode.childElementCount;
+        		//console.log(numberOfElements);
+        		if(numberOfElements <= 2){
+        			alert("Para esse tipo de pergunta, é necessário pelo menos duas respostas");
+        		}else{
+        			this.parentNode.parentNode.removeChild(this.parentNode);	
+        		}          			
+					return false;
+		  		};       		
+		
+				divPai.appendChild(paragraph);	
+				divPai.appendChild(textoResposta);	
+				divPai.appendChild(buttonNovaResposta);
+				divPai.appendChild(buttonRemoverResposta);
+    		elementoParaInserir.appendChild(divPai);
+    	}
+    	
+    	function removeQuestion(element){
+    		
+    		var numberOfElements = document.getElementById("column1").childElementCount;
+    	//	console.log(numberOfElements);
+    		if(numberOfElements == 1){
+    			alert("A primeira pergunta não pode ser removida");
+    		}else{
+    			element.parentNode.parentNode.parentNode.removeChild(element.parentNode.parentNode);	
+    		}
+    		
+    	} 
+    	
+	function limpaFormulario(){
+		document.getElementById("column1").innerHTML = '';
+	}
+    		
+    
+		
+			// ]]>
+</script>
+
 		
 	</ui:define>
 </ui:composition>
