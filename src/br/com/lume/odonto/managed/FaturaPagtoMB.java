@@ -798,6 +798,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 this.addError("Erro!", "Preencha todos os campos!");
                 return;
             }
+            
+            if (novoLancamentoValorTotal.compareTo(getEntity().getDadosTabelaRepasseTotalFatura()) <= 0) {
+                this.addError("Erro!", "O valor do lançamento não pode exceder o total da fatura !");
+                return;
+            }
 
             //List<BigDecimal> demaisParcelas = new ArrayList<>();
             //for (int parcela = 1; parcela <= novoLancamentoQuantidadeParcelas - 1; parcela++)
