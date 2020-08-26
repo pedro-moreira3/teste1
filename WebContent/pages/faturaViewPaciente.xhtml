@@ -161,8 +161,8 @@ body .height31 input {
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 
-				<p:outputPanel id="pnlAjusteLancamento" rendered="#{faturaPagtoMB.ajustarLancamento != null}">
-					<p:panelGrid columns="1" layout="grid"
+				<p:outputPanel id="pnlAjusteLancamento">
+					<p:panelGrid columns="1" layout="grid" rendered="#{faturaPagtoMB.ajustarLancamento != null}"
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 						<h:panelGroup styleClass="md-combo">
@@ -1446,10 +1446,10 @@ body .height31 input {
 									<p:commandButton styleClass="NavyButton"
 										title="Ajuste de valor" icon="fa fa-dollar"
 										actionListener="#{faturaPagtoMB.carregarAjuste(l)}"
-										process="@this" update=":lume:pnlAjusteLancamento"
 										oncomplete="PF('dlgAjusteLancamento').show();"
 										disabled="#{!l.ativo or l.validado == 'N' or !faturaPagtoMB.permiteExcluirLancamento}"
-										rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
+										rendered="#{!l.validado == 'N' and (showNewLancamento != null and showNewLancamento == 'S')}"
+										process="@this" update=":lume:pnlAjusteLancamento">
 									</p:commandButton>
 									<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
 										title="Editar lançamento"
