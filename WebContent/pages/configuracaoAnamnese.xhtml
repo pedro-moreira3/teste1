@@ -82,8 +82,7 @@
 					<div class="column" id="column1">
 					</div>	
 			</div>
-		</div>
-		
+		</div>		
 		
 		<script>
     //<![CDATA[
@@ -125,7 +124,8 @@
 						var itemorder=$(this).sortable('toArray');
 						var columnId=$(this).attr('id');
 						sortorder+=columnId+'='+itemorder.toString()+'&';
-					});				
+					});	
+					salvarPerguntasBackEnd();
 				}
 			})
 			.disableSelection();
@@ -141,9 +141,10 @@
 			limpaFormulario();
 			//console.log(perguntasJson);
 			for (var pergunta of perguntasJson){
+				//console.log(pergunta);
 				 adicionaPergunta(pergunta.descricao,pergunta.tipoResposta,pergunta.respostas);
 			}			
-			 adicionaPergunta();			
+			 adicionaPergunta(null,null,null);			
 		}
 		
 		
@@ -152,15 +153,64 @@
 			var numberOfElements = document.getElementById("column1").childElementCount;
 			//console.log(numberOfElements);
 			if(numberOfElements != 1){
-				adicionaPergunta();
+				adicionaPergunta(null,null,null);
 			}
 		}
 		
 		
 		
-    	function adicionaPergunta(pergunta, tipoPergunta, respostas){
+		
+    	function adicionaPergunta(pergunta, tipoPergunta, respostas,elementoTextoPergunta){    		
+    		
+    		//salvarPerguntasBackEnd();
+    		
+    		//se nao tem texto na pergunta, nao precisa criar outra vazia abaixo.
+    		if(typeof(elementoTextoPergunta) != "undefined"){
+	    		if( typeof(elementoTextoPergunta.value) == "undefined" || elementoTextoPergunta.value === null || elementoTextoPergunta.value === ''){	   		 		
+	    			return;
+	   		 	}
+    		}
+	    		
+    		//tudo isso aqui é pra ver se o ultimo elemento esta em branco para 
+    		//nao precisar criar um novo elemento                                                                                                                                                                                                                            
+    		//. precisa ahcar um jeito melhor pra isso
+    		var naoAdicionar = false;
+    		elementoPai = document.getElementById("column1").lastChild;
+    		if(typeof(elementoPai) != "undefined" && elementoPai != null){
+    			NodeList.prototype.forEach = Array.prototype.forEach
+    			var children = elementoPai.childNodes;
+    			children.forEach(function(item){    			   
+    			    if(item.classList.contains("dragbox-content")){
+    			    	NodeList.prototype.forEach = Array.prototype.forEach
+    			    	var children = item.childNodes;
+    			    	children.forEach(function(item2){
+    			    	   // console.log(item2);
+    			    	    var tagName = item2.tagName.toLowerCase();
+    			    	  //  console.log(tagName);
+    			    	    if (tagName === 'textarea'){
+    			    	    	//console.log(item2.value);
+    			    	    	if( typeof(item2.value) == "undefined" || item2.value === null || item2.value === ''){	 
+    			    	    		//console.log("bla");
+    			    	    		naoAdicionar = true;
+    				   		 	}
+    			    	    }else if (tagName === 'select'){
+    			    	    	if(item2.value === ''){    			    	    		
+    			    	    		naoAdicionar = true;
+    			    	    	}
+    			    	    }
+    			    	    
+    			    	});
+    			    }
+    			});
+    		}
+    		if(naoAdicionar){
+    		//	alert('Selecione um tipo para a pergunta e digite o texto da pergunta');
+    			return;
+    		}
+    		
     		
     		var newH2 = document.createElement('h2');
+    		newH2.setAttribute("style", "font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;font-size: 14px;");
     		newH2.innerHTML = "Nova Pergunta";
     		
     		var newDivInterna = document.createElement('div');
@@ -174,27 +224,35 @@
     		 
    		   option1 = document.createElement( 'option' );
    		   option1.textContent = 'Sim ou não';
-   		   option1.value = 'simNao';    	  
+   		   option1.value = 'SIM_OU_NAO';    	  
    		   
    		   option2 = document.createElement( 'option' );
    		   option2.textContent = 'Texto Aberto';
-   		   option2.value = 'textoAberto'; 
+   		   option2.value = 'TEXTO'; 
    		   
    		   option3 = document.createElement( 'option' );
    		   option3.textContent = 'Várias Opções com opção de marcar somente uma resposta';
-   		   option3.value = 'variasUma'; 
+   		   option3.value = 'UMA_EM_VARIAS'; 
    		   
    		   option4 = document.createElement( 'option' );
    		   option4.textContent = 'Várias Opções com opção de marcar várias resposta';
-   		   option4.value = 'variasVarias';
+   		   option4.value = 'VARIAS_EM_VARIAS';
    		   
    		   select.appendChild( option );
    		   select.appendChild( option1 );
    		   select.appendChild( option2 );
    		   select.appendChild( option3 );
    		   select.appendChild( option4 );
+   	
+   		   select.classList.add('ui-selectonemenu-label');
+		   select.classList.add('ui-inputfield');
+   		   select.classList.add('ui-corner-all');
+   		   
+   		   select.setAttribute("style", "font-family: 'Roboto'','Helvetica Neue'',sans-serif; text-decoration: none;");
    		   
    		
+   	   
+   		 
    	
    		  var divRespostas = document.createElement('div');
    		   
@@ -206,9 +264,10 @@
    			var paragraph = document.createElement( 'p' );
    			var text = document.createTextNode("Digite o texto da pergunta:");
    			paragraph.appendChild(text);
-   		   
+   			paragraph.setAttribute("style", "font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;");
+   			
    		 	var textoPergunta = document.createElement('textarea');
-   		 	textoPergunta.setAttribute("style", "margin: 0px; width: 702px; height: 53px");
+   		 	textoPergunta.setAttribute("style", "margin: 0px; width: 702px; height: 53px;font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;");
    		 	if(typeof(pergunta) != "undefined" && pergunta !== null && pergunta !== ''){
    		 		textoPergunta.value = pergunta;
    		 	}
@@ -216,14 +275,25 @@
    		 	
     		 var buttonSalvar = document.createElement('button');
     		 buttonSalvar.innerHTML = 'Salvar Pergunta';
+    		// buttonSalvar.setAttribute("style", "font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;");
+    		// buttonSalvar.classList.add('ui-button');
+    		// buttonSalvar.classList.add('ui-widget');
+    		// buttonSalvar.classList.add('ui-state-default');
+    		// buttonSalvar.classList.add('ui-corner-all');
+    		// buttonSalvar.classList.add('ui-button-text-icon-left');
+    		// buttonSalvar.classList.add('NavyButton');
+    		 
     		 buttonSalvar.onclick = function(){
-    			 adicionaPergunta();
+    			 adicionaPergunta(null,null,null,textoPergunta);
+    			 salvarPerguntasBackEnd();
     				return false;
     		  }; 
     		  var buttonExcluir = document.createElement('button');
     		  buttonExcluir.innerHTML = 'Excluir Pergunta';
+    		  buttonExcluir.setAttribute("style", "font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;");
     		  buttonExcluir.onclick = function(){
     			  removeQuestion(this);
+    			  salvarPerguntasBackEnd();
     				return false;
     		  };  
     		  
@@ -232,18 +302,21 @@
     		  
     			if(typeof(tipoPergunta) != "undefined" && tipoPergunta !== null && tipoPergunta !== ''){
     		 		if(tipoPergunta == 'SIM_OU_NAO'){
-    		 			select.value = 'simNao';
+    		 			select.value = 'SIM_OU_NAO';
     		 		}else if(tipoPergunta == 'TEXTO'){
-    		 			select.value = 'textoAberto';
+    		 			select.value = 'TEXTO';
     		 		}else if(tipoPergunta == 'UMA_EM_VARIAS'){
-    		 			select.value = 'variasUma';
+    		 			select.value = 'UMA_EM_VARIAS';
     		 		}else if(tipoPergunta == 'VARIAS_EM_VARIAS'){
-    		 			select.value = 'variasVarias';
+    		 			select.value = 'VARIAS_EM_VARIAS';
     		 		}
     		 		
     		 		if(typeof(respostas) != "undefined" && respostas !== null && respostas !== ''){
+    		 		//	console.log(respostas);
     		 			for (var resposta of respostas){
-    		 				addNewAnswer(select.value,divRespostas,true);
+    		 				//console.log(resposta);
+    		 				//console.log(resposta.descricao);
+    		 				addNewAnswer(select.value,divRespostas,true,resposta.descricao);
     					}
     		 		}
     		 	}
@@ -263,22 +336,24 @@
     		newQuestionDiv.appendChild(newH2);
     		newQuestionDiv.appendChild(newDivInterna);
     		
+    	
+    		
     		document.getElementById("column1").appendChild(newQuestionDiv);
     		
     	}
     	
-    	function addNewAnswer(valorDoSelect, elementoParaInserir, novaResposta){
+    	function addNewAnswer(valorDoSelect, elementoParaInserir, novaResposta, resposta){
     		//console.log(valorDoSelect);
-    		if(valorDoSelect === 'variasUma' || valorDoSelect === 'variasVarias'){    			
+    		if(valorDoSelect === 'UMA_EM_VARIAS' || valorDoSelect === 'VARIAS_EM_VARIAS'){    			
     			if(novaResposta || elementoParaInserir.firstChild == null){  
     			
     				var numberOfElements = elementoParaInserir.childElementCount;;
     				
     				if(numberOfElements == 0){
-    					criaNovaPergunta(valorDoSelect, elementoParaInserir, novaResposta);    
-        				criaNovaPergunta(valorDoSelect, elementoParaInserir, novaResposta);	
+    					criaNovaPergunta(valorDoSelect, elementoParaInserir, novaResposta, resposta);    
+        				//criaNovaPergunta(valorDoSelect, elementoParaInserir, novaResposta, resposta);	
     				}else{
-    					criaNovaPergunta(valorDoSelect, elementoParaInserir, novaResposta);
+    					criaNovaPergunta(valorDoSelect, elementoParaInserir, novaResposta, resposta);
     				}
     				    
     			}
@@ -294,20 +369,27 @@
     		
     	}
 		
-    	function criaNovaPergunta(valorDoSelect, elementoParaInserir, novaResposta){
+    	function criaNovaPergunta(valorDoSelect, elementoParaInserir, novaResposta, resposta){
     		var divPai = document.createElement('div');
 			
 			var paragraph = document.createElement( 'p' );
+			paragraph.setAttribute("style", "font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;");
    			var text = document.createTextNode("Digite o texto da resposta:");
    			paragraph.appendChild(text);
     		
     		var textoResposta = document.createElement('textarea');
-    		textoResposta.setAttribute("style", "margin: 0px; width: 502px; height: 33px");
+    		textoResposta.setAttribute("style", "margin: 0px; width: 502px; height: 33px;font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;");
+    		
+    		//console.log(resposta);
+    		if(typeof(resposta) != "undefined" && resposta !== null && resposta !== ''){
+    			//console.log(resposta);
+    			textoResposta.value = resposta;
+	 		}
     		
     		var buttonNovaResposta = document.createElement('button');
     		buttonNovaResposta.innerHTML = 'Adicionar mais uma resposta';
     		buttonNovaResposta.onclick = function(){
-    			addNewAnswer('variasUma',elementoParaInserir,true);
+    			addNewAnswer('UMA_EM_VARIAS',elementoParaInserir,true);
   				return false;
   		  };  
       		var buttonRemoverResposta = document.createElement('button');
@@ -344,6 +426,81 @@
     	
 	function limpaFormulario(){
 		document.getElementById("column1").innerHTML = '';
+	}
+	
+	function salvarPerguntasBackEnd(){
+		
+		var listaPerguntasRespostas = [];
+		elementoPai = document.getElementById("column1");
+		
+		if(typeof(elementoPai) != "undefined" && elementoPai != null){
+		
+			NodeList.prototype.forEach = Array.prototype.forEach
+			var childrenPai = elementoPai.childNodes;
+			i = 1;
+			//console.log(childrenPai);
+			childrenPai.forEach(function(itemPai){    	
+				//console.log(itemPai);
+				
+				NodeList.prototype.forEach = Array.prototype.forEach
+		    	var childrenDragBox = itemPai.childNodes;
+				childrenDragBox.forEach(function(item){	
+				
+				    if(item.classList.contains("dragbox-content")){
+				    	//console.log("a");
+				    	NodeList.prototype.forEach = Array.prototype.forEach
+				    	var childrenDragBoxContent = item.childNodes;			    	
+				    	childrenDragBoxContent.forEach(function(item2){			    		
+				    		//console.log(item2);
+				    	    var tagName = item2.tagName.toLowerCase();
+				    	 
+				    	    if (tagName === 'select'){
+				    	    
+				    	    	if(item2.value === ''){    			    	    		
+				    	    		
+				    	    	}else{
+					   				listaPerguntasRespostas.push(item2.value);
+				    	    	}
+				    	  //  console.log(item2);
+				    	    }else if (tagName === 'textarea'){			    	    	
+				    	    	if( typeof(item2.value) == "undefined" || item2.value === null || item2.value === ''){	 
+				    	    		
+					   		 	}else{
+						   		 	//if( typeof(jsonData[i]) == "undefined" || jsonData[i] === null || jsonData[i] === ''){					   		 		
+						   		 	//	jsonData.i = [];
+						   		 	//}				   		 		
+					   				listaPerguntasRespostas.push(item2.value);				   		 				   		 		
+					   		 	}
+				    	    }else{
+				    	    	if(item2.id == 'divRespostas'){				    	    		
+				    	    		NodeList.prototype.forEach = Array.prototype.forEach
+							    	var children2 = item2.childNodes;
+							    	children2.forEach(function(item3){	
+							    		NodeList.prototype.forEach = Array.prototype.forEach
+								    	var children3 = item3.childNodes;						    		
+								    	children3.forEach(function(item4){								    		
+								    		var tagName2 = item4.tagName.toLowerCase();
+								    		if (tagName2 === 'textarea'){							    			 
+								    			//if( typeof(jsonData[i]) == "undefined" || jsonData[i] === null || jsonData[i] === ''){	 
+										   		//	jsonData[i] = [];
+										   	 	//}							    			
+									   			listaPerguntasRespostas.push(item4.value);
+								    		 }							    		
+								    	});							    	
+							    	});
+				    	    	}			    	    	
+				    	    }
+				    	});
+				    }
+				    i++;
+				});
+			});
+		}
+		//  PF('perguntasParaSalvar').jq.val( listaPerguntasRespostas );
+		//    document.getElementById('perguntasParaSalvar').value = listaPerguntasRespostas; 
+		//  salvaPerguntas(listaPerguntasRespostas);
+	//	console.log(listaPerguntasRespostas);
+	//TODO mandar para bean e persistir
 	}
     		
     

@@ -8,6 +8,22 @@ update afiliacao set modalidade_contrato = 'Mensal' where id = 1;
 update afiliacao set modalidade_contrato = 'Comissao' where id = 2;
 
 
+alter table afiliacao add column plano_iugu VARCHAR(50);
+update afiliacao set plano_iugu = 'intelidente_plano_basico' where id = 3;
+
+update afiliacao set plano_iugu = 'intelidente_plano_promocional' where id = 2;
+
+
+alter table lancamento add column lancamento_extornado char(1) default 'N'
+alter table seg_empresa add column FATURA_IUGU varchar(250);
+update motivo set id_categoria = 40 where id = 247;
+
+
+
+ALTER TABLE AFILIACAO ADD COLUMN PERCENTUAL  NUMERIC(16, 4) ;
+
+
+
 --------ACIMA JA RODADO ------------
 
 insert into seg_objeto (obj_int_codpai, obj_str_des, obj_cha_sts, obj_str_caminho, sis_int_cod, 
@@ -44,22 +60,14 @@ SELECT DISTINCT ID_ESPECIALIDADE FROM PERGUNTA WHERE ID_ESPECIALIDADE IN (
 SELECT ID FROM ESPECIALIDADE
 );
 
-
-ALTER TABLE AFILIACAO ADD COLUMN PERCENTUAL  NUMERIC(16, 4) ;
-
-
-
-
-
-    SELECT 'UPDATE inteli.PERGUNTA SET ID_CONFIGURACAO_ANAMNESE = ' || CAST(C.ID AS VARCHAR) || ' WHERE ID_ESPECIALIDADE = ' || CAST(C.ID_ESPECIALIDADE AS VARCHAR) FROM inteli.PERGUNTA P INNER JOIN inteli.CONFIGURACAO_ANAMNESE C ON P.ID_ESPECIALIDADE = C.ID_ESPECIALIDADE GROUP BY 'UPDATE inteli.PERGUNTA SET ID_CONFIGURACAO_ANAMNESE = ' || CAST(C.ID AS VARCHAR) || ' WHERE ID_ESPECIALIDADE = ' || CAST(C.ID_ESPECIALIDADE AS VARCHAR);
+ --   SELECT 'UPDATE inteli.PERGUNTA SET ID_CONFIGURACAO_ANAMNESE = ' || CAST(C.ID AS VARCHAR) || ' WHERE ID_ESPECIALIDADE = ' || CAST(C.ID_ESPECIALIDADE AS VARCHAR) FROM inteli.PERGUNTA P INNER JOIN inteli.CONFIGURACAO_ANAMNESE C ON P.ID_ESPECIALIDADE = C.ID_ESPECIALIDADE GROUP BY 'UPDATE inteli.PERGUNTA SET ID_CONFIGURACAO_ANAMNESE = ' || CAST(C.ID AS VARCHAR) || ' WHERE ID_ESPECIALIDADE = ' || CAST(C.ID_ESPECIALIDADE AS VARCHAR);
 ​
    -- Essa query vai gerar uma porrada de update que ajusta o que vc precisa. Em dev tem alguns códigos sem referencia, para verificar segue query
 
-    SELECT P.ID_ESPECIALIDADE, C.ID_ESPECIALIDADE, COUNT(*) FROM inteli.PERGUNTA P LEFT JOIN inteli.CONFIGURACAO_ANAMNESE C ON P.ID_ESPECIALIDADE = C.ID_ESPECIALIDADE WHERE C.ID_ESPECIALIDADE IS NULL GROUP BY P.ID_ESPECIALIDADE, C.ID_ESPECIALIDADE;
+  --  SELECT P.ID_ESPECIALIDADE, C.ID_ESPECIALIDADE, COUNT(*) FROM inteli.PERGUNTA P LEFT JOIN inteli.CONFIGURACAO_ANAMNESE C ON P.ID_ESPECIALIDADE = C.ID_ESPECIALIDADE WHERE C.ID_ESPECIALIDADE IS NULL GROUP BY P.ID_ESPECIALIDADE, C.ID_ESPECIALIDADE;
 
 
 --TODO DEPOIS EXCLUIR ID_ESPECIALIDADE DA PERGUNTA
 
-alter table lancamento add column lancamento_extornado char(1) default 'N'
-alter table seg_empresa add column FATURA_IUGU varchar(250);
-update motivo set id_categoria = 40 where id = 247;
+
+

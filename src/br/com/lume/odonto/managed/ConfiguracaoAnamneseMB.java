@@ -1,12 +1,14 @@
 package br.com.lume.odonto.managed;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIInput;
 import javax.faces.component.html.HtmlForm;
 import javax.faces.component.html.HtmlInputText;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ComponentSystemEvent;
 
@@ -37,8 +39,10 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
     
     private List<Especialidade> especialidades;
     
-    private Especialidade especialidade;
-
+    private Especialidade especialidade;    
+    
+    String perguntasParaSalvar [] = new String[200];
+    
     public ConfiguracaoAnamneseMB() {
         super(ConfiguracaoAnamneseSingleton.getInstance().getBo());
         this.setClazz(ConfiguracaoAnamnese.class);  
@@ -74,28 +78,9 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
     }
  
     
-    public void actionNewAnamnese() {
-        
-    } 
-    
-    public void actionNewEspecialidade() {
-        
-    }
-    
-    @Override
-    public void actionPersist(ActionEvent event) {
-        try {   
-        
-        } catch (Exception e) {
-            e.printStackTrace();
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "",true);
-        }
-    }
-    
-    
-    public void visualizarAnamnese(Especialidade e) {
-        
-    }
+    public void salvaPerguntas() {      
+        System.out.println(perguntasParaSalvar);
+    }  
     
     public List<Especialidade> getEspecialidades() {
         return especialidades;
@@ -114,6 +99,16 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
     
     public void setEspecialidade(Especialidade especialidade) {
         this.especialidade = especialidade;
+    }
+
+    
+    public String[] getPerguntasParaSalvar() {
+        return perguntasParaSalvar;
+    }
+
+    
+    public void setPerguntasParaSalvar(String[] perguntasParaSalvar) {
+        this.perguntasParaSalvar = perguntasParaSalvar;
     }
     
     

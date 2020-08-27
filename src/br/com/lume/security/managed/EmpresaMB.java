@@ -85,9 +85,8 @@ public class EmpresaMB extends LumeManagedBean<Empresa> {
     
     public void criarAssinaturaIugu(Empresa empresa) {
         
-        try {
-            //TODO quando tivermos mais planos, arrumar isso pois vai ser necessario escolher na tela
-            Plano plano = PlanoSingleton.getInstance().getBo().listAll().get(0);
+        try {           
+            Plano plano = PlanoSingleton.getInstance().getBo().findByNomeIugu(empresa.getAfiliacao().getPlanoIugu());
             if(empresa.getIdIugu() != null) {
                 if(empresa.getAssinaturaIuguBanco() != null) {
                     this.addError("Erro!", "Cliente já tem assinatura criada");
