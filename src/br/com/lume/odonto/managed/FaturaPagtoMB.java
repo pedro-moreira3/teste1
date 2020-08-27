@@ -799,7 +799,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 return;
             }
             
-            if (novoLancamentoValorTotal.compareTo(getEntity().getDadosTabelaRepasseTotalFatura()) <= 0) {
+            if (novoLancamentoValorTotal.compareTo(FaturaSingleton.getInstance().getTotal(getEntity())) > 0) {
                 this.addError("Erro!", "O valor do lançamento não pode exceder o total da fatura !");
                 return;
             }
@@ -1533,7 +1533,8 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
             });
 
-            List<Lancamento> lancamentosFatura = lancamentosSearch;
+            List<Lancamento> lancamentosFatura = new ArrayList<Lancamento>();
+            lancamentosFatura.addAll(lancamentosSearch);
 
             for (Lancamento lan : lancamentosFatura) {
                 for (LancamentoContabil lc : lan.getLancamentosContabeis()) {
