@@ -1433,7 +1433,7 @@ body .height31 input {
 									rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
 										title="Cancelar lançamento"
-										disabled="#{!l.ativo or l.validado == 'C' or l.validado == 'S' or l.conferidoPorProfissional != null or faturaPagtoMB.entity.statusFatura.rotulo eq 'I' or !faturaPagtoMB.permiteExcluirLancamento}"
+										disabled="#{!l.ativo or l.validado == 'S' or l.conferidoPorProfissional != null or faturaPagtoMB.entity.statusFatura.rotulo eq 'I' or !faturaPagtoMB.permiteExcluirLancamento}"
 										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
 										actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
 										process="@this"
