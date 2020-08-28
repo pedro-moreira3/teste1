@@ -126,6 +126,11 @@
 								filterFunction="#{clinicasMB.filtroSemAcento}">
 								<h:outputText value="#{empresa.empChaFone}" />
 							</p:column>
+							<p:column sortBy="#{empresa.dataUltimoAcessoStr}"
+							filterBy="#{empresa.dataUltimoAcessoStr}"
+							filterMatchMode="contains" headerText="Data do Último Acesso">
+							<h:outputText value="#{empresa.dataUltimoAcessoStr}" />
+							</p:column>
 							<p:column sortBy="#{empresa.empChaStsString}"
 								filterBy="#{empresa.empChaStsString}"
 								filterMatchMode="contains" headerText="Status"
@@ -190,6 +195,11 @@
 								filterFunction="#{clinicasMB.filtroSemAcento}">
 								<h:outputText value="#{empresa.empChaFone}" />
 							</p:column>							
+							<p:column sortBy="#{empresa.dataUltimoAcessoStr}"
+							filterBy="#{empresa.dataUltimoAcessoStr}"
+							filterMatchMode="contains" headerText="Data do Último Acesso">
+							<h:outputText value="#{empresa.dataUltimoAcessoStr}" />
+							</p:column>	
 						</p:dataTable>
 
 					</p:outputPanel>

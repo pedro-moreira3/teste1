@@ -1,6 +1,7 @@
 package br.com.lume.odonto.managed;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -206,8 +207,14 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                 UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa()));
             }
             if(!OdontoPerfil.PARCEIRO.equals(perfil)) {
-                LoginSingleton.getInstance().getBo().validaSituacaoEmpresa(this.getEntity(), UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getPacienteLogado());    
+                LoginSingleton.getInstance().getBo().validaSituacaoEmpresa(this.getEntity(), UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getPacienteLogado());  
+                //salvando data de ultimo acesso 
+                UtilsFrontEnd.getEmpresaLogada().setDataUltimoAcesso(new Date());
+                EmpresaSingleton.getInstance().getBo().persist(UtilsFrontEnd.getEmpresaLogada());
+                
             }
+            
+           
             
             List<Objeto> objetosPermitidos = LoginSingleton.getInstance().getBo().carregaObjetosPermitidos(userLogin, perfilLogado, profissional);
             this.getLumeSecurity().setUsuario(userLogin);
