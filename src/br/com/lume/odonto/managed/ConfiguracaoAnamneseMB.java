@@ -1,5 +1,6 @@
 package br.com.lume.odonto.managed;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,37 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
         this.setClazz(ConfiguracaoAnamnese.class);  
         especialidade = new Especialidade();
         listar();
+        
+        //TEMPORARIO, RODAR UMA SÓ VEZ PARA INSERIR A LISTA DE ANAMNESE INICIAL
+//        try {
+//            List<Pergunta> perguntas = PerguntaSingleton.getInstance().getBo().listAll();
+//            int cont = 0;
+//            for (Pergunta pergunta : perguntas) {                
+//                //verificando se conf ja tem aquela cadastrada
+//                ConfiguracaoAnamnese existente = ConfiguracaoAnamneseSingleton.getInstance().getBo().findByDescricaoAndEmpresa(pergunta.getEspecialidade().getDescricao(),pergunta.getIdEmpresa());
+//                if(existente != null) {
+//                    ConfiguracaoAnamnese configuracaoAnamnese = new ConfiguracaoAnamnese();
+//                    configuracaoAnamnese.setDescricao(pergunta.getEspecialidade().getDescricao());
+//                    configuracaoAnamnese.setAtivo("S");
+//                    configuracaoAnamnese.setDataAlteracaoStatus(new Date());
+//                    configuracaoAnamnese.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
+//                    ConfiguracaoAnamneseSingleton.getInstance().getBo().persist(configuracaoAnamnese);
+//                    //procurando de novo para atualizar a pergunta
+//                     existente = ConfiguracaoAnamneseSingleton.getInstance().getBo().findByDescricaoAndEmpresa(pergunta.getEspecialidade().getDescricao(),pergunta.getIdEmpresa());
+//                    pergunta.setConfiguracaoAnamnese(existente);
+//                    PerguntaSingleton.getInstance().getBo().persist(pergunta);
+//                }
+//                cont++;
+//                System.out.println(cont);
+//                              
+//            }
+//            
+//            
+//        } catch (Exception e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+        
     }
     
     public void listar() {
