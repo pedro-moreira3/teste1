@@ -63,7 +63,7 @@ SELECT ID FROM ESPECIALIDADE
 
 alter table CONFIGURACAO_ANAMNESE drop column ID_ESPECIALIDADE;
 
-alter table CONFIGURACAO_ANAMNESE add column DESCRICAO varchar(50);
+alter table CONFIGURACAO_ANAMNESE add column DESCRICAO varchar(200);
 
 alter table CONFIGURACAO_ANAMNESE add column id_empresa bigint references seg_empresa(EMP_INT_COD);
 

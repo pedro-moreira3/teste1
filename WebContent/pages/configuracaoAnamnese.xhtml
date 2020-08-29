@@ -63,15 +63,15 @@
 									
 					<p:panelGrid columns="2" columnClasses="ui-grid-col-3,ui-grid-col-7" layout="grid" styleClass="ui-panelgrid-blank">					
 							
-							<p:selectOneMenu id="selectEspecialidades"  converter="especialidade"
-									value="#{configuracaoAnamneseMB.especialidade}">
+							<p:selectOneMenu id="selectEspecialidades"  converter="configuracaoAnamnese"
+									value="#{configuracaoAnamneseMB.entity}">
 									<p:ajax
 										process="@this"
-										listener="#{configuracaoAnamneseMB.verificaEspecialidade}"
+										listener="#{configuracaoAnamneseMB.verificaConfiguracaoAnamnese}"
 										update="" />
-									<f:selectItem itemValue="#{null}" itemLabel="Selecione a especialidade da Anamnese" />
-									<f:selectItems value="#{configuracaoAnamneseMB.especialidades}" var="especialidade"
-									itemValue="#{especialidade}" itemLabel="#{especialidade.descricao}" />
+									<f:selectItem itemValue="#{null}" itemLabel="Selecione a Anamnese" />
+									<f:selectItems value="#{configuracaoAnamneseMB.entityList}" var="configuracaoAnamnese"
+									itemValue="configuracaoAnamnese" itemLabel="#{configuracaoAnamnese.descricao}" />
 								</p:selectOneMenu>
 							
 					</p:panelGrid>

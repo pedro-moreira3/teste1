@@ -38,16 +38,16 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
     private static final long serialVersionUID = 1L;
     //private Logger log = Logger.getLogger(FaturaPagtoMB.class);
     
-    private List<Especialidade> especialidades;
+   // private List<Especialidade> especialidades;
     
-    private Especialidade especialidade;    
+   // private Especialidade especialidade;    
     
     String perguntasParaSalvar [] = new String[200];
     
     public ConfiguracaoAnamneseMB() {
         super(ConfiguracaoAnamneseSingleton.getInstance().getBo());
         this.setClazz(ConfiguracaoAnamnese.class);  
-        especialidade = new Especialidade();
+      //  especialidade = new Especialidade();
         listar();
         
         //TEMPORARIO, RODAR UMA SÓ VEZ PARA INSERIR A LISTA DE ANAMNESE INICIAL
@@ -56,21 +56,29 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
 //            int cont = 0;
 //            for (Pergunta pergunta : perguntas) {                
 //                //verificando se conf ja tem aquela cadastrada
-//                ConfiguracaoAnamnese existente = ConfiguracaoAnamneseSingleton.getInstance().getBo().findByDescricaoAndEmpresa(pergunta.getEspecialidade().getDescricao(),pergunta.getIdEmpresa());
-//                if(existente != null) {
-//                    ConfiguracaoAnamnese configuracaoAnamnese = new ConfiguracaoAnamnese();
-//                    configuracaoAnamnese.setDescricao(pergunta.getEspecialidade().getDescricao());
-//                    configuracaoAnamnese.setAtivo("S");
-//                    configuracaoAnamnese.setDataAlteracaoStatus(new Date());
-//                    configuracaoAnamnese.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
-//                    ConfiguracaoAnamneseSingleton.getInstance().getBo().persist(configuracaoAnamnese);
-//                    //procurando de novo para atualizar a pergunta
-//                     existente = ConfiguracaoAnamneseSingleton.getInstance().getBo().findByDescricaoAndEmpresa(pergunta.getEspecialidade().getDescricao(),pergunta.getIdEmpresa());
+//                if(pergunta.getEspecialidade() != null && pergunta.getEspecialidade().getDescricao() != null && pergunta.getIdEmpresa() != null) {
+//                    ConfiguracaoAnamnese existente = ConfiguracaoAnamneseSingleton.getInstance().getBo().findByDescricaoAndEmpresa(pergunta.getEspecialidade().getDescricao(),pergunta.getIdEmpresa());
+//                    if(existente == null) {
+//                        ConfiguracaoAnamnese configuracaoAnamnese = new ConfiguracaoAnamnese();
+//                        configuracaoAnamnese.setDescricao(pergunta.getEspecialidade().getDescricao());
+//                        configuracaoAnamnese.setAtivo("S");
+//                        configuracaoAnamnese.setDataAlteracaoStatus(new Date());
+//                        configuracaoAnamnese.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
+//                        configuracaoAnamnese.setIdEmpresa(pergunta.getIdEmpresa());
+//                        ConfiguracaoAnamneseSingleton.getInstance().getBo().persist(configuracaoAnamnese);
+//                        //procurando de novo para atualizar a pergunta
+//                         existente = ConfiguracaoAnamneseSingleton.getInstance().getBo().findByDescricaoAndEmpresa(pergunta.getEspecialidade().getDescricao(),pergunta.getIdEmpresa());
+//                       // pergunta.setConfiguracaoAnamnese(existente);
+//                       // PerguntaSingleton.getInstance().getBo().persist(pergunta);
+//                        cont++;
+//                        System.out.println(cont);  
+//                    }
 //                    pergunta.setConfiguracaoAnamnese(existente);
 //                    PerguntaSingleton.getInstance().getBo().persist(pergunta);
+//                  
+//                    
 //                }
-//                cont++;
-//                System.out.println(cont);
+//             
 //                              
 //            }
 //            
@@ -85,7 +93,7 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
     public void listar() {
         try {
             setEntityList(ConfiguracaoAnamneseSingleton.getInstance().getBo().listAll(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod()));
-            especialidades = EspecialidadeSingleton.getInstance().getBo().listAllByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+           // setEntityList(entityList); = EspecialidadeSingleton.getInstance().getBo().listAllByEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -93,8 +101,8 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
     }  
     
     //Quando seleciona especialidade no select, verificamos se ela ja tem perguntas cadastradas.
-    public void verificaEspecialidade() {
-        List<Pergunta> perguntas = PerguntaSingleton.getInstance().getBo().listByEspecialidade(getEspecialidade(), UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
+    public void verificaConfiguracaoAnamnese() {
+        List<Pergunta> perguntas = PerguntaSingleton.getInstance().getBo().listByConfiguracaoAnamnese(getEntity(), UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
         //sem pergunta, ja cria uma nova
         if(perguntas  == null || perguntas.isEmpty()) {
             PrimeFaces.current().executeScript("adicionaEspecialidadeEmBranco()");
@@ -114,24 +122,24 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
         System.out.println(perguntasParaSalvar);
     }  
     
-    public List<Especialidade> getEspecialidades() {
-        return especialidades;
-    }
+//    public List<Especialidade> getEspecialidades() {
+//        return especialidades;
+//    }
+//
+//    
+//    public void setEspecialidades(List<Especialidade> especialidades) {
+//        this.especialidades = especialidades;
+//    }
 
     
-    public void setEspecialidades(List<Especialidade> especialidades) {
-        this.especialidades = especialidades;
-    }
-
-    
-    public Especialidade getEspecialidade() {
-        return especialidade;
-    }
-
-    
-    public void setEspecialidade(Especialidade especialidade) {
-        this.especialidade = especialidade;
-    }
+//    public Especialidade getEspecialidade() {
+//        return especialidade;
+//    }
+//
+//    
+//    public void setEspecialidade(Especialidade especialidade) {
+//        this.especialidade = especialidade;
+//    }
 
     
     public String[] getPerguntasParaSalvar() {
