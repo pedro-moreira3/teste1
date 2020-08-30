@@ -262,10 +262,22 @@
 							<p:outputLabel for="empresaOndeTrabalha" value="Empresa onde trabalha:"/>
 							<p:inputTextarea id="empresaOndeTrabalha" rows="2" cols="33"
 								value="#{pacienteMB.entity.dadosBasico.empresaOndeTrabalha}"
-								maxlength="500" />
-
-							<p:outputLabel id="idade"  value="#{pacienteMB.idadeDoPaciente()}" />				
-
+								maxlength="500" />							
+							<p:outputLabel for="estadoCivil" value="Estado Civil: "
+									rendered="#{pacienteMB.visivelDadosPaciente}" />
+							<p:selectOneMenu id="estadoCivil" value="#{pacienteMB.estadoCivil}"
+									converter="dominio" autoWidth="false"
+									rendered="#{pacienteMB.visivelDadosPaciente}">
+									<f:selectItem itemValue="#{null}" itemLabel="Selecione" />
+									<f:selectItems value="#{pacienteMB.listaEstadoCivil}" var="estadoCivil"
+										itemValue="#{estadoCivil}" itemLabel="#{estadoCivil.nome}" />	
+									<p:ajax event="itemSelect" process="@this"
+									update="legado,pnlPacAntigo"
+									listener="#{pacienteMB.mudaEstadoCivil}" />								
+							</p:selectOneMenu>
+								
+							<p:outputLabel id="idade"  value="#{pacienteMB.idadeDoPaciente()}" />	
+								
 						</p:panelGrid>
 					</p:fieldset>
 				</p:panelGrid>
@@ -331,7 +343,11 @@
 							columnClasses="ui-grid-col-2,ui-grid-col-4,ui-grid-col-2,ui-grid-col-4"
 							layout="grid" styleClass="ui-panelgrid-blank"
 							style="border:0px none; background-color:transparent;">
-
+							<p:outputLabel id="lblResponsavel" for="responsavel"
+								value="Nome do Responsável: " />
+							<p:inputText id="responsavel"							
+								value="#{pacienteMB.entity.dadosBasico.responsavel}"
+								maxlength="100" />
 							<p:outputLabel id="lblCPFResponsavel" for="cpfresponsavel"
 								value="CPF do Responsável:" />
 							<p:inputMask id="cpfresponsavel" required="false"
@@ -341,12 +357,12 @@
 								<f:validator validatorId="documentoValidator"
 									disabled="#{!pacienteMB.responsavel}" />
 							</p:inputMask>
-
-							<p:outputLabel id="lblResponsavel" for="responsavel"
-								value="Nome do Responsável: " />
-							<p:inputText id="responsavel"							
-								value="#{pacienteMB.entity.dadosBasico.responsavel}"
+							<p:outputLabel id="lblRgResponsavel" for="rgResponsavel"
+								value="RG do Responsável: " />
+							<p:inputText id="rgResponsavel"							
+								value="#{pacienteMB.entity.dadosBasico.rgResponsavel}"
 								maxlength="100" />
+						
 
 							<p:outputLabel for="telefoneResponsavel"
 								value="Telefone do Responsável: " />

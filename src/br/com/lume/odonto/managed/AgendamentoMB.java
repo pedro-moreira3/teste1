@@ -230,6 +230,7 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
 
         } catch (Exception e) {
             log.error(e);
+            e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
         }
         paciente = new Paciente();

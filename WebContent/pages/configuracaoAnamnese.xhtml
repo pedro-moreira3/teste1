@@ -60,19 +60,30 @@
 							<p:tooltip for="tooltipTitulo" value="#{tarifaMB.getTooltipValue('configuracaoAnamnese', 'titulo')}" position="bottom" />
 					</h1>
 					<p:separator styleClass="SeparatorFull" />
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">	
+							<p:commandButton id="botaoListaAnamneses" icon="White fa fa-file-o" value="Lista de Anamneses"
+                      	 	oncomplete="PF('dlgConfiguracoes').show();"
+                      	 	update="" immediate="true" process="@this"/>
+                      	 </p:panelGrid>	
 									
-					<p:panelGrid columns="2" columnClasses="ui-grid-col-3,ui-grid-col-7" layout="grid" styleClass="ui-panelgrid-blank">					
+					<p:panelGrid columns="4" columnClasses="ui-grid-col-6,ui-grid-col-3,ui-grid-col-3" layout="grid" styleClass="ui-panelgrid-blank">					
 							
 							<p:selectOneMenu id="selectEspecialidades"  converter="configuracaoAnamnese"
 									value="#{configuracaoAnamneseMB.entity}">
 									<p:ajax
-										process="@this"
+										process="@this,duplicar"
 										listener="#{configuracaoAnamneseMB.verificaConfiguracaoAnamnese}"
-										update="" />
-									<f:selectItem itemValue="#{null}" itemLabel="Selecione a Anamnese" />
+										update="duplicar"/>
+									<f:selectItem itemValue="#{null}" itemLabel="Selecione a Anamnese para configurar as pergutas" />
 									<f:selectItems value="#{configuracaoAnamneseMB.entityList}" var="configuracaoAnamnese"
-									itemValue="configuracaoAnamnese" itemLabel="#{configuracaoAnamnese.descricao}" />
+									itemValue="#{configuracaoAnamnese}" itemLabel="#{configuracaoAnamnese.descricao}" />
 								</p:selectOneMenu>
+								
+								<p:commandButton id="previewImpressao" icon="White fa fa-file-o" value="Preview" oncomplete="PF('dlgPreview').show();" immediate="true" process="@this"/>
+                      	 		
+                      	 		<p:commandButton id="duplicar" icon="White fa fa-file-o" value="Duplicar para uma nova Anamnese" disabled="#{configuracaoAnamneseMB.entity == null}"
+                      	 		oncomplete="PF('dlgDuplicar').show();" immediate="true" process="@this"/>
+                      	 		
 							
 					</p:panelGrid>
 				</div>
@@ -82,7 +93,104 @@
 					<div class="column" id="column1">
 					</div>	
 			</div>
-		</div>		
+		</div>
+		
+		<p:dialog id="dlgConfiguracoes" widgetVar="dlgConfiguracoes" header="Anamneses" responsive="true" modal="true" width="50%">
+			<p:panel id="pnConfiguracoes" styleClass="BordNone">   
+			<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">	
+							<p:commandButton id="new" icon="White fa fa-file-o" value="Cadastrar nova Anamnese"
+                      	 	oncomplete="PF('dlgNovaAnamnese').show();" actionListener="#{configuracaoAnamneseMB.novaAnamnese}" 
+                      	 	update=":lume:pnovaAnamnese"  process="@this"/>
+                      	 </p:panelGrid>	                         
+				<br />
+				
+				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+					id="dtConfiguracoes" widgetVar="dtConfiguracoes" value="#{configuracaoAnamneseMB.entityList}" var="configuracao"
+					rows="6" paginator="true"
+					selectionMode="single" rowKey="#{configuracao}"
+					paginatorPosition="bottom" >						
+					<f:facet name="header">Anamneses</f:facet>
+					<p:column headerText="Ações" width="100" exportable="false" >
+						<p:commandButton styleClass="RedButton" icon="fa fa-trash"
+							title="remover Anamnese"										
+							update=":lume:pnConfiguracoes,,lume:selectEspecialidades"
+							actionListener="#{configuracaoAnamneseMB.removerAnamnese(configuracao)}"
+							process="@this"
+							>
+							<p:confirm header="Confirmação" icon="ui-icon-alert"
+								escape="false"
+								message="Você tem certeza que remover essa Anamnese?">
+							</p:confirm>
+						</p:commandButton>
+						
+						<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
+							title="Editar"										
+							update=":lume:pnovaAnamnese"
+							actionListener="#{configuracaoAnamneseMB.editarAnamnese(configuracao)}"
+							onsuccess="PF('dlgNovaAnamnese').show()" process="@this"
+							>
+						</p:commandButton>									
+					</p:column>							
+					<p:column filterBy="#{configuracao.descricao}"
+						sortBy="#{configuracao.descricao}" filterMatchMode="contains"
+						headerText="Local" filterFunction="#{configuracaoAnamneseMB.filtroSemAcento}">
+						<h:outputText value="#{configuracao.descricao}" />
+					</p:column>
+				</p:dataTable>                           
+                  <div class="EmptyBox20"></div>
+                   <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">					
+					<p:commandButton  icon="White" value="Fechar" oncomplete="PF('dlgConfiguracoes').hide();" immediate="true" />    
+	             </p:panelGrid>
+			</p:panel>
+		</p:dialog>		
+		
+		<p:dialog id="dlgNovaAnamnese" widgetVar="dlgNovaAnamnese" header="Nova Anamnese" responsive="true" modal="true" width="50%">
+			<p:panel id="pnovaAnamnese" styleClass="BordNone"> 
+				
+				<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+					<p:outputLabel for="descricao" value="Descrição: " />
+					<p:inputText id="descricao" value="#{configuracaoAnamneseMB.entity.descricao}" maxlength="250" required="true"/>								
+				</p:panelGrid>	                           
+	            <div class="EmptyBox20"></div>
+	             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+					<p:commandButton icon="White fa fa-save" value="Salvar" actionListener="#{configuracaoAnamneseMB.salvarAnamnese}"
+	                	update=":lume:pnovaAnamnese,:lume:pnConfiguracoes,lume:selectEspecialidades" process="@this ,:lume:pnovaAnamnese" oncomplete="PF('dlgNovaAnamnese').hide();"
+	                    styleClass="GreenButton" />
+					<p:commandButton  icon="White" value="Fechar" oncomplete="PF('dlgNovaAnamnese').hide();" immediate="true" />    
+	             </p:panelGrid>
+			</p:panel>
+		</p:dialog>	
+		
+		<p:dialog id="dlgPreview" widgetVar="dlgPreview" header="Preview" responsive="true" modal="true" width="50%">
+			<p:panel id="pnpreview" styleClass="BordNone"> 				
+				<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+													
+				</p:panelGrid>	                           
+	            <div class="EmptyBox20"></div>
+	             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+					<p:commandButton icon="White" value="Imprimir" actionListener="#{configuracaoAnamneseMB.imprimir}" styleClass="GreenButton" />
+					<p:commandButton  icon="White" value="Fechar" oncomplete="PF('dlgPreview').hide();" immediate="true" />    
+	             </p:panelGrid>
+			</p:panel>
+		</p:dialog>	
+		
+		<p:dialog id="dlgDuplicar" widgetVar="dlgDuplicar" header="Duplicar Anamnese" responsive="true" modal="true" width="50%">
+			<p:panel id="pnduplicar" styleClass="BordNone"> 				
+				<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+					<p:outputLabel for="descricaoNova" value="Descrição da nova Anamnese: " />
+					<p:inputText id="descricaoNova" value="#{configuracaoAnamneseMB.entity.descricao}" maxlength="250" required="true"/>								
+				</p:panelGrid>	                          
+	            <div class="EmptyBox20"></div>
+	             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+					<p:commandButton icon="White fa fa-save" value="Salvar" actionListener="#{configuracaoAnamneseMB.duplicarAnamnese}"
+	                	update=":lume:pnovaAnamnese,:lume:pnConfiguracoes,lume:selectEspecialidades" process="@this ,:lume:pnovaAnamnese" oncomplete="PF('dlgDuplicar').hide();"
+	                    styleClass="GreenButton" />
+					<p:commandButton  icon="White" value="Fechar" oncomplete="PF('dlgDuplicar').hide();" immediate="true" />    
+	             </p:panelGrid>
+			</p:panel>
+		</p:dialog>	
+		
+					
 		
 		<script>
     //<![CDATA[
@@ -499,7 +607,7 @@
 		//  PF('perguntasParaSalvar').jq.val( listaPerguntasRespostas );
 		//    document.getElementById('perguntasParaSalvar').value = listaPerguntasRespostas; 
 		//  salvaPerguntas(listaPerguntasRespostas);
-	//	console.log(listaPerguntasRespostas);
+		console.log(listaPerguntasRespostas);
 	//TODO mandar para bean e persistir
 	}
     		

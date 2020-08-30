@@ -109,6 +109,8 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     private List<Dominio> indicacoes;
 
     private Dominio indicacao;
+    
+    private Dominio estadoCivil;
 
     private String senha, text;
 
@@ -160,6 +162,7 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     private String metodoImagem = "U";
     private UploadedFile uploadedFile;
+    private List<Dominio> listaEstadoCivil;
 
     public PacienteMB() {
         super(PacienteSingleton.getInstance().getBo());
@@ -171,6 +174,13 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
         try {
             indicacoes = DominioSingleton.getInstance().getBo().listByObjeto("indicacao");
+        } catch (Exception e1) {
+            log.error("Erro no PacienteMB", e1);
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
+        }
+        
+        try {
+            listaEstadoCivil = DominioSingleton.getInstance().getBo().listByObjeto("estado_civil");
         } catch (Exception e1) {
             log.error("Erro no PacienteMB", e1);
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
@@ -243,6 +253,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void mudaIndicacao() {
         getEntity().setIndicacaoDominio(indicacao);
+    }
+    
+    public void mudaEstadoCivil() {
+        if(estadoCivil == null) {
+            getEntity().getDadosBasico().setEstadoCivil("");
+        }else {
+            getEntity().getDadosBasico().setEstadoCivil(estadoCivil.getNome());
+        }
     }
 
     public boolean showOutros() {
@@ -557,10 +575,14 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
     @Override
     public void setEntity(Paciente entity) {
         pacienteAnamneses = AnamneseSingleton.getInstance().getBo().listByPaciente(entity);
+              
         try {            
             if(UtilsFrontEnd.getProfissionalLogado() != null && UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() != null) {
                 convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());    
             }
+            if(entity != null && entity.getDadosBasico() != null && entity.getDadosBasico().getEstadoCivil() != null) {
+                estadoCivil = DominioSingleton.getInstance().getBo().findByEmpresaAndObjetoAndTipoAndNome("estado_civil","item", entity.getDadosBasico().getEstadoCivil());    
+            } 
             
         } catch (Exception e) {
             e.printStackTrace();
@@ -1251,6 +1273,26 @@ public class PacienteMB extends LumeManagedBean<Paciente> {
 
     public void setEditorAnotacoes(Editor editorAnotacoes) {
         this.editorAnotacoes = editorAnotacoes;
+    }
+
+    
+    public List<Dominio> getListaEstadoCivil() {
+        return listaEstadoCivil;
+    }
+
+    
+    public void setListaEstadoCivil(List<Dominio> listaEstadoCivil) {
+        this.listaEstadoCivil = listaEstadoCivil;
+    }
+
+    
+    public Dominio getEstadoCivil() {
+        return estadoCivil;
+    }
+
+    
+    public void setEstadoCivil(Dominio estadoCivil) {
+        this.estadoCivil = estadoCivil;
     }
 
 }

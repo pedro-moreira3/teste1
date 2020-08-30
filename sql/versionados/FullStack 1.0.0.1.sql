@@ -25,6 +25,18 @@ ALTER TABLE AFILIACAO ADD COLUMN PERCENTUAL  NUMERIC(16, 4) ;
 alter table SEG_EMPRESA add column DATA_ULTIMO_ACESSO timestamp;
 
 
+
+alter table dados_basicos add column RG_RESPONSAVEL VARCHAR(30);
+alter table dados_basicos add column ESTADO_CIVIL VARCHAR(200);
+
+insert into dominio (tipo,objeto,excluido,nome,valor) values ('item','estado_civil','N','Solteiro','1');
+insert into dominio (tipo,objeto,excluido,nome,valor) values ('item','estado_civil','N','Casado','2');
+insert into dominio (tipo,objeto,excluido,nome,valor) values ('item','estado_civil','N','Separado','3');
+insert into dominio (tipo,objeto,excluido,nome,valor) values ('item','estado_civil','N','Divorciado','4');
+insert into dominio (tipo,objeto,excluido,nome,valor) values ('item','estado_civil','N','Viúvo','5');
+
+
+
 --------ACIMA JA RODADO ------------
 
 insert into seg_objeto (obj_int_codpai, obj_str_des, obj_cha_sts, obj_str_caminho, sis_int_cod, 
@@ -74,6 +86,7 @@ UPDATE pergunta SET ID_CONFIGURACAO_ANAMNESE = NULL;
 alter table CONFIGURACAO_ANAMNESE add column ATIVO VARCHAR(1) NOT NULL DEFAULT 'S';
 alter table CONFIGURACAO_ANAMNESE add column DATA_ALTERACAO_STATUS TIMESTAMP(10);
 alter table CONFIGURACAO_ANAMNESE add column ALTERACAO_STATUS_ID BIGINT REFERENCES PROFISSIONAL(ID);
+
 
 -- PARA FAZEDR DEPOIS: REMOVER ID ESPECIALIDADE DA PERGUNTA E DA CLASSE, POIS AGORA ELAS ESTAO LINCADAS DIRETAMENTE NA CONF DE ANAMNESE
 
