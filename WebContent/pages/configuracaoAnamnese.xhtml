@@ -63,7 +63,7 @@
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">	
 							<p:commandButton id="botaoListaAnamneses" icon="White fa fa-file-o" value="Lista de Anamneses"
                       	 	oncomplete="PF('dlgConfiguracoes').show();"
-                      	 	update="" immediate="true" process="@this"/>
+                      	 	update="pnConfiguracoes" immediate="true" process="@this"/>
                       	 </p:panelGrid>	
 									
 					<p:panelGrid columns="4" columnClasses="ui-grid-col-6,ui-grid-col-3,ui-grid-col-3" layout="grid" styleClass="ui-panelgrid-blank">					
@@ -79,10 +79,10 @@
 									itemValue="#{configuracaoAnamnese}" itemLabel="#{configuracaoAnamnese.descricao}" />
 								</p:selectOneMenu>
 								
-								<p:commandButton id="previewImpressao" icon="White fa fa-file-o" value="Preview" oncomplete="PF('dlgPreview').show();" immediate="true" process="@this"/>
+								<p:commandButton id="previewImpressao" icon="White" value="Preview" oncomplete="PF('dlgPreview').show();abrirPreview();" process="" />
                       	 		
-                      	 		<p:commandButton id="duplicar" icon="White fa fa-file-o" value="Duplicar para uma nova Anamnese" disabled="#{configuracaoAnamneseMB.entity == null}"
-                      	 		oncomplete="PF('dlgDuplicar').show();" immediate="true" process="@this"/>
+                      	 		<p:commandButton id="duplicar" icon="White" value="Duplicar para uma nova Anamnese"                       	 		
+                      	 		 process="@this" actionListener="#{configuracaoAnamneseMB.abreDuplicarAnamnese}"/>
                       	 		
 							
 					</p:panelGrid>
@@ -161,36 +161,70 @@
 			</p:panel>
 		</p:dialog>	
 		
-		<p:dialog id="dlgPreview" widgetVar="dlgPreview" header="Preview" responsive="true" modal="true" width="50%">
-			<p:panel id="pnpreview" styleClass="BordNone"> 				
-				<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-													
-				</p:panelGrid>	                           
-	            <div class="EmptyBox20"></div>
-	             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-					<p:commandButton icon="White" value="Imprimir" actionListener="#{configuracaoAnamneseMB.imprimir}" styleClass="GreenButton" />
+		
+		<p:dialog widgetVar="dlgPreview" resizable="false" onHide="PF('dlgPreview').toggleMaximize();" onShow="PF('dlgPreview').toggleMaximize();" modal="true">
+		
+		
+			<p:panel id="pnpreview" styleClass="BordNone"> 	
+				<p:scrollPanel mode="native"
+					style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px;">			
+					<div class="column" id="divPreview"></div>                          
+		            <div class="EmptyBox20"></div>		             
+		        </p:scrollPanel>   
+	        	<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">					
 					<p:commandButton  icon="White" value="Fechar" oncomplete="PF('dlgPreview').hide();" immediate="true" />    
-	             </p:panelGrid>
+	             </p:panelGrid>		            
 			</p:panel>
 		</p:dialog>	
+		
+		
+		 <ui:remove>
+			      	 <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">	
+								
+								<h:outputLabel value="Opções de impressão: " />
+								<p:selectManyCheckbox
+									value="#{configuracaoAnamneseMB.opcoesImpressao}" layout="grid"
+									columns="6">
+									<f:selectItem itemLabel="Incluir Logo da Empresa na impressão" itemValue="incluirLogo"
+										itemEscaped="false" />
+									<f:selectItem itemLabel="Incluir cabeçalho" itemValue="S"
+										itemEscaped="false" />
+									<f:selectItem itemLabel="Incluir rodapé" itemValue="E"
+										itemEscaped="false" />
+								</p:selectManyCheckbox>
+							
+					
+					
+		           	  </p:panelGrid>	
+	            	    
+		        	<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">	        	
+						<p:commandButton icon="White fa fa-print White" value="Imprimir" actionListener="#{configuracaoAnamneseMB.imprimir}" styleClass="NavyButton" />				
+						<p:commandButton  icon="White" value="Fechar" oncomplete="PF('dlgPreview').hide();" immediate="true" />    
+		             </p:panelGrid>
+	             </ui:remove>		    
+		
+		
 		
 		<p:dialog id="dlgDuplicar" widgetVar="dlgDuplicar" header="Duplicar Anamnese" responsive="true" modal="true" width="50%">
 			<p:panel id="pnduplicar" styleClass="BordNone"> 				
 				<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 					<p:outputLabel for="descricaoNova" value="Descrição da nova Anamnese: " />
-					<p:inputText id="descricaoNova" value="#{configuracaoAnamneseMB.entity.descricao}" maxlength="250" required="true"/>								
+					<p:inputText id="descricaoNova" value="#{configuracaoAnamneseMB.descricaoDuplicacao}" maxlength="250" required="true"/>								
 				</p:panelGrid>	                          
 	            <div class="EmptyBox20"></div>
 	             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 					<p:commandButton icon="White fa fa-save" value="Salvar" actionListener="#{configuracaoAnamneseMB.duplicarAnamnese}"
-	                	update=":lume:pnovaAnamnese,:lume:pnConfiguracoes,lume:selectEspecialidades" process="@this ,:lume:pnovaAnamnese" oncomplete="PF('dlgDuplicar').hide();"
+	                	update=":lume:pnduplicar,:lume:selectEspecialidades" process="@this ,:lume:pnduplicar" oncomplete="PF('dlgDuplicar').hide();"
 	                    styleClass="GreenButton" />
 					<p:commandButton  icon="White" value="Fechar" oncomplete="PF('dlgDuplicar').hide();" immediate="true" />    
 	             </p:panelGrid>
 			</p:panel>
 		</p:dialog>	
 		
-					
+		
+		<h:inputHidden value="" id="valoresBackEnd" />
+		
+		<p:remoteCommand name="persistePerguntas" actionListener="#{configuracaoAnamneseMB.salvaPerguntas()}" immediate="true"/>
 		
 		<script>
     //<![CDATA[
@@ -238,6 +272,143 @@
 			})
 			.disableSelection();
 		});
+		
+		
+		function abrirPreview(){
+								
+			elementoPai = document.getElementById("column1");
+			
+			document.getElementById("divPreview").innerHTML = "";
+			
+			if(typeof(elementoPai) != "undefined" && elementoPai != null){
+			
+				NodeList.prototype.forEach = Array.prototype.forEach
+				var childrenPai = elementoPai.childNodes;
+				var tipoPergunta;
+				i = 1;
+				//console.log(childrenPai);
+				childrenPai.forEach(function(itemPai){    	
+					//console.log(itemPai);
+					
+					NodeList.prototype.forEach = Array.prototype.forEach
+			    	var childrenDragBox = itemPai.childNodes;
+					childrenDragBox.forEach(function(item){	
+					
+					    if(item.classList.contains("dragbox-content")){					    	
+					    	NodeList.prototype.forEach = Array.prototype.forEach
+					    	var childrenDragBoxContent = item.childNodes;			    	
+					    	childrenDragBoxContent.forEach(function(item2){			    		
+					    		//console.log(item2);
+					    	    var tagName = item2.tagName.toLowerCase();
+					    	 
+					    	    if (tagName === 'select'){
+					    	    
+					    	    	if(item2.value !== ''){    			    	    		
+					    	    		tipoPergunta = item2.value;					    	    	
+					    	    	//	console.log(item2.value);
+						   				//listaPerguntasRespostas = listaPerguntasRespostas + "@@@" + item2.value;
+					    	    	}
+					    	
+					    	    }else if (tagName === 'textarea'){			    	    	
+					    	    	if( typeof(item2.value) == "undefined" || item2.value === null || item2.value === ''){	 
+					    	    		
+						   		 	}else{						   		 						   		 		
+						   				var paragraph = document.createElement( 'p' );
+   										var text = document.createTextNode(item2.value);
+   										paragraph.appendChild(text);
+   										paragraph.setAttribute("style", "font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;");   
+						   		 		
+   										document.getElementById("divPreview").appendChild(paragraph);
+   										
+   										if(tipoPergunta == 'SIM_OU_NAO'){
+						    				 var yes_button = makeRadioButton("botaoSimNao" + i, "sim", "Sim");
+						    				 var no_button = makeRadioButton("botaoSimNao"+ i, "nao", "Não");
+						    				 i++
+						    				 document.getElementById("divPreview").appendChild(yes_button);
+						    				 document.getElementById("divPreview").appendChild(no_button);						    				
+						    	    	}else if(tipoPergunta == 'TEXTO'){
+						    	    		var textoPergunta = document.createElement('textarea');
+						    	   		 	textoPergunta.setAttribute("style", "margin: 0px; width: 702px; height: 53px;font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;");
+						    	   		 	document.getElementById("divPreview").appendChild(textoPergunta);
+						    	    	}
+   										
+						   		 	}
+					    	    }else{
+					    	    	if(item2.id == 'divRespostas'){				    	    		
+					    	    		NodeList.prototype.forEach = Array.prototype.forEach
+								    	var children2 = item2.childNodes;
+								    	children2.forEach(function(item3){	
+								    		NodeList.prototype.forEach = Array.prototype.forEach
+									    	var children3 = item3.childNodes;						    		
+									    	children3.forEach(function(item4){								    		
+									    		var tagName2 = item4.tagName.toLowerCase();
+									    		if (tagName2 === 'textarea'){							    			 
+									    			//console.log(item4.value);
+									    			//console.log(tipoPergunta);
+									    			if(tipoPergunta == 'UMA_EM_VARIAS'){
+									    				 var button = makeRadioButton(i, item4.value, item4.value);
+									    				console.log(i);
+									    				 document.getElementById("divPreview").appendChild(button);
+									    				
+									    	    	}else if(tipoPergunta == 'VARIAS_EM_VARIAS'){
+									    	    		
+									    	    		 var button = makeCheckboxButton(item4.value+ "" + i, item4.value, item4.value);	
+									    	    		 
+									    				 document.getElementById("divPreview").appendChild(button);
+									    	    	}
+									    			
+									    		 }							    		
+									    	});							    	
+								    	});
+					    	    	}			    	    	
+					    	    }
+					    	});
+					    }
+					    i++;
+					});
+				});
+			}			
+		
+		}
+		
+		function makeRadioButton(name, value, text) {
+
+		    var label = document.createElement("label");
+		    var radio = document.createElement("input");
+		    radio.type = "radio";
+		    radio.name = name;
+		    radio.value = value;
+		    label.setAttribute("style", "font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;");
+		    label.appendChild(radio);
+
+		    label.appendChild(document.createTextNode(text));
+		    return label;
+		  }
+		
+		function makeCheckboxButton(name, value, text) {
+
+		    var label = document.createElement("label");
+		    var check = document.createElement("input");
+		    check.type = "checkbox";
+		    check.name = name;
+		    check.value = value;
+		    label.setAttribute("style", "font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;");
+		    label.appendChild(check);
+		    label.appendChild(document.createTextNode(text));
+		    return label;
+		  }
+		
+		
+	/*	
+		if(item2.value == 'SIM_OU_NAO'){
+    		
+    	}else if(item2.value == 'TEXTO'){
+    		
+    	}else if(item2.value == 'UMA_EM_VARIAS'){
+    		
+    	}else if(item2.value == 'VARIAS_EM_VARIAS'){
+    		
+    	}*/
 		
 		function saveQuestion(element) {   	
     		  //console.log(saveQuestion); 		
@@ -343,7 +514,7 @@
    		   option3.value = 'UMA_EM_VARIAS'; 
    		   
    		   option4 = document.createElement( 'option' );
-   		   option4.textContent = 'Várias Opções com opção de marcar várias resposta';
+   		   option4.textContent = 'Várias Opções com opção de marcar várias respostas';
    		   option4.value = 'VARIAS_EM_VARIAS';
    		   
    		   select.appendChild( option );
@@ -393,8 +564,12 @@
     		 
     		 buttonSalvar.onclick = function(){
     			 adicionaPergunta(null,null,null,textoPergunta);
-    			 salvarPerguntasBackEnd();
-    				return false;
+    			 
+    			 if(typeof(textoPergunta.value) != "undefined" && textoPergunta.value !== null && textoPergunta.value !== ''){    				
+    				 salvarPerguntasBackEnd();
+    		 	 }
+    		
+    			 return false;
     		  }; 
     		  var buttonExcluir = document.createElement('button');
     		  buttonExcluir.innerHTML = 'Excluir Pergunta';
@@ -498,6 +673,7 @@
     		buttonNovaResposta.innerHTML = 'Adicionar mais uma resposta';
     		buttonNovaResposta.onclick = function(){
     			addNewAnswer('UMA_EM_VARIAS',elementoParaInserir,true);
+    			salvarPerguntasBackEnd();
   				return false;
   		  };  
       		var buttonRemoverResposta = document.createElement('button');
@@ -508,7 +684,8 @@
         		if(numberOfElements <= 2){
         			alert("Para esse tipo de pergunta, é necessário pelo menos duas respostas");
         		}else{
-        			this.parentNode.parentNode.removeChild(this.parentNode);	
+        			this.parentNode.parentNode.removeChild(this.parentNode);
+        			salvarPerguntasBackEnd();
         		}          			
 					return false;
 		  		};       		
@@ -538,7 +715,7 @@
 	
 	function salvarPerguntasBackEnd(){
 		
-		var listaPerguntasRespostas = [];
+		var listaPerguntasRespostas = "";
 		elementoPai = document.getElementById("column1");
 		
 		if(typeof(elementoPai) != "undefined" && elementoPai != null){
@@ -567,7 +744,7 @@
 				    	    	if(item2.value === ''){    			    	    		
 				    	    		
 				    	    	}else{
-					   				listaPerguntasRespostas.push(item2.value);
+					   				listaPerguntasRespostas = listaPerguntasRespostas + "@@@" + item2.value;
 				    	    	}
 				    	  //  console.log(item2);
 				    	    }else if (tagName === 'textarea'){			    	    	
@@ -577,7 +754,8 @@
 						   		 	//if( typeof(jsonData[i]) == "undefined" || jsonData[i] === null || jsonData[i] === ''){					   		 		
 						   		 	//	jsonData.i = [];
 						   		 	//}				   		 		
-					   				listaPerguntasRespostas.push(item2.value);				   		 				   		 		
+					   				
+					   				listaPerguntasRespostas = listaPerguntasRespostas + "@@@" + item2.value;
 					   		 	}
 				    	    }else{
 				    	    	if(item2.id == 'divRespostas'){				    	    		
@@ -591,8 +769,8 @@
 								    		if (tagName2 === 'textarea'){							    			 
 								    			//if( typeof(jsonData[i]) == "undefined" || jsonData[i] === null || jsonData[i] === ''){	 
 										   		//	jsonData[i] = [];
-										   	 	//}							    			
-									   			listaPerguntasRespostas.push(item4.value);
+										   	 	//}
+									   			listaPerguntasRespostas = listaPerguntasRespostas + "@@@" + item4.value;
 								    		 }							    		
 								    	});							    	
 							    	});
@@ -604,11 +782,13 @@
 				});
 			});
 		}
-		//  PF('perguntasParaSalvar').jq.val( listaPerguntasRespostas );
-		//    document.getElementById('perguntasParaSalvar').value = listaPerguntasRespostas; 
-		//  salvaPerguntas(listaPerguntasRespostas);
-		console.log(listaPerguntasRespostas);
-	//TODO mandar para bean e persistir
+		
+		//enviando para o BE para salvar!
+		//if(typeof(listaPerguntasRespostas) != "undefined" && listaPerguntasRespostas !== null && listaPerguntasRespostas !== ''){
+		//	console.log(listaPerguntasRespostas);
+			document.getElementById('lume:valoresBackEnd').value = listaPerguntasRespostas; 
+			persistePerguntas();
+ 	//	}
 	}
     		
     
