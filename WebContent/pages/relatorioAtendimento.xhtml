@@ -287,6 +287,18 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									</p:panelGrid>
 
 								</p:outputPanel>
+								
+								<p:outputPanel>								
+									<br />
+									<h:panelGroup style="display:block;margin-left:3px;">
+										<p:selectBooleanCheckbox id="checkConsultaInicial"
+											value="#{relatorioAtendimentoMB.mostrarSomenteConsultaInicial}">											
+										</p:selectBooleanCheckbox>		
+										<p:outputLabel for="checkConsultaInicial" value="Mostrar somente agendamentos com Consulta Inicial: " />								
+									</h:panelGroup>
+
+									<br />
+								</p:outputPanel>
 
 								<p:outputPanel id="pnFiltroStatusRelAgenda">
 
@@ -513,12 +525,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:column>
 
 							<p:column
-								filterBy="#{atendimento.finalidadeAgendamento.descricao}"
-								sortBy="#{atendimento.finalidadeAgendamento.descricao}"
+								filterBy="#{relatorioAtendimentoMB.verificaSeTemAgendamentoInicial(atendimento)}"
+								sortBy="#{relatorioAtendimentoMB.verificaSeTemAgendamentoInicial(atendimento)}"
 								filterFunction="#{relatorioAtendimentoMB.filtroSemAcento}"
 								filterMatchMode="contains" headerText="Consulta inicial">
 								<h:outputText
-									value="#{atendimento.finalidadeAgendamento.descricao}" />
+									value="#{relatorioAtendimentoMB.verificaSeTemAgendamentoInicial(atendimento)}" />
 							</p:column>
 
 							<p:column filterBy="#{atendimento.inicio}"

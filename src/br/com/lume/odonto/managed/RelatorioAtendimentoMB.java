@@ -30,6 +30,7 @@ import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.odonto.entity.Afastamento;
 import br.com.lume.odonto.entity.Agendamento;
+import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.Paciente;
@@ -79,6 +80,8 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
     private boolean imprimirCabecalho = true;
     private boolean novoAgendamento = true;
 
+    private boolean mostrarSomenteConsultaInicial = false;
+    
     public RelatorioAtendimentoMB() {
         super(AgendamentoSingleton.getInstance().getBo());
         pieModel = new PieChartModel();
@@ -144,6 +147,25 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
                 }
                 
             }
+            
+            //
+            if(mostrarSomenteConsultaInicial) {
+                List<Agendamento> agendamentosComConsultaInicial = new ArrayList<Agendamento>();
+                for (Agendamento agendamento : this.getListaAtendimentos()) {
+                    //TODO melhor jeito para mostrar consulta Inicial
+                    if(agendamento.getPlanoTratamentoProcedimentosAgendamento() != null) {
+                        for (AgendamentoPlanoTratamentoProcedimento aptp : agendamento.getPlanoTratamentoProcedimentosAgendamento()) {
+                            if(aptp.getPlanoTratamentoProcedimento() != null && aptp.getPlanoTratamentoProcedimento().getProcedimento() != null && 
+                                    aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao() != null &&
+                                    aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao().contains("Inicial")
+                                    ) {
+                                agendamentosComConsultaInicial.add(agendamento);
+                            }
+                        }
+                    }
+                }
+                this.setListaAtendimentos(agendamentosComConsultaInicial);
+            }
 
             
 
@@ -151,6 +173,21 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
         }
+    }
+    
+    public String verificaSeTemAgendamentoInicial(Agendamento agendamento) {
+        //TODO melhor jeito para mostrar consulta Inicial
+        if(agendamento.getPlanoTratamentoProcedimentosAgendamento() != null) {
+            for (AgendamentoPlanoTratamentoProcedimento aptp : agendamento.getPlanoTratamentoProcedimentosAgendamento()) {
+                if(aptp.getPlanoTratamentoProcedimento() != null && aptp.getPlanoTratamentoProcedimento().getProcedimento() != null && 
+                        aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao() != null &&
+                        aptp.getPlanoTratamentoProcedimento().getProcedimento().getDescricao().contains("Inicial")
+                        ) {
+                    return "Sim";
+                }
+            }
+        }
+        return "Não";
     }
 
     public String formatarData(Date data) {
@@ -567,5 +604,15 @@ public class RelatorioAtendimentoMB extends LumeManagedBean<Agendamento> {
 
     public void setFiltroPeriodo(String filtroPeriodo) {
         this.filtroPeriodo = filtroPeriodo;
+    }
+
+    
+    public boolean isMostrarSomenteConsultaInicial() {
+        return mostrarSomenteConsultaInicial;
+    }
+
+    
+    public void setMostrarSomenteConsultaInicial(boolean mostrarSomenteConsultaInicial) {
+        this.mostrarSomenteConsultaInicial = mostrarSomenteConsultaInicial;
     }
 }

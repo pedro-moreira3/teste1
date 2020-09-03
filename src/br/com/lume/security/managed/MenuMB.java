@@ -75,7 +75,7 @@ public class MenuMB extends LumeManagedBean<Objeto> {
         return menuBO.getMenuTreeByUsuarioAndSistema(usuario, sistema, true, objs);
     }
     
-    public String redireciona(String pagina) {       
+    public String redireciona(String pagina) {
         //VERIFICANDO SE CLIENTE ESTA BLOQUEADO
        if(UtilsFrontEnd.getEmpresaLogada().isBloqueado()) {
            for (String paginaLiberada : AuthorizationListener.PAGINAS_DISPONIVEIS_USUARIO_BLOQUEADO) {

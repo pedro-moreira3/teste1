@@ -1,6 +1,7 @@
 package br.com.lume.odonto.managed;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.bean.ManagedBean;
@@ -14,6 +15,7 @@ import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.exception.business.SenhaInvalidaException;
 import br.com.lume.common.exception.business.ServidorEmailDesligadoException;
 import br.com.lume.common.exception.business.UsuarioBloqueadoException;
+import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.JSFHelper;
@@ -191,6 +193,7 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                     UtilsFrontEnd.setPerfilLogado(perfilLogado);
                     UtilsFrontEnd.setProfissionalLogado(profissional);
                     UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(profissional.getIdEmpresa()));
+                    this.validarSituacaoIuguEmpresa(UtilsFrontEnd.getEmpresaLogada());
                 } else {
                     this.addError("Profissional Inativo.", "");
                     return "";
@@ -204,8 +207,14 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                 UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa()));
             }
             if(!OdontoPerfil.PARCEIRO.equals(perfil)) {
-                LoginSingleton.getInstance().getBo().validaSituacaoEmpresa(this.getEntity(), UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getPacienteLogado());    
+                LoginSingleton.getInstance().getBo().validaSituacaoEmpresa(this.getEntity(), UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getPacienteLogado());  
+                //salvando data de ultimo acesso 
+                UtilsFrontEnd.getEmpresaLogada().setDataUltimoAcesso(new Date());
+                EmpresaSingleton.getInstance().getBo().persist(UtilsFrontEnd.getEmpresaLogada());
+                
             }
+            
+           
             
             List<Objeto> objetosPermitidos = LoginSingleton.getInstance().getBo().carregaObjetosPermitidos(userLogin, perfilLogado, profissional);
             this.getLumeSecurity().setUsuario(userLogin);
@@ -327,6 +336,23 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
         return "";
     }
 
+    private void validarSituacaoIuguEmpresa(Empresa empresa) throws InterruptedException {
+        Thread th = new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                try {
+                    EmpresaSingleton.getInstance().carregarStatusFaturas(empresa);
+                } catch (Exception e) {
+                    LogIntelidenteSingleton.getInstance().makeLog(e);
+                    e.printStackTrace();
+                }
+            }
+        });
+        
+        th.start();
+    }
+    
     private List<Empresa> carregarEmpresasLogin(Usuario entity) {
         List<Usuario> usuarios = UsuarioSingleton.getInstance().getBo().listUsuarioByLogin(this.getEntity());
         if (usuarios != null && !usuarios.isEmpty()) {
