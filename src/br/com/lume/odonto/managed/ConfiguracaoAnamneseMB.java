@@ -44,11 +44,13 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
         
         //TEMPORARIO, RODAR UMA SÓ VEZ PARA INSERIR A LISTA DE ANAMNESE INICIAL
 //      try {
-//          List<Pergunta> perguntas = PerguntaSingleton.getInstance().getBo().listAll();
+//          List<Pergunta> perguntas = PerguntaSingleton.getInstance().getBo().listSemConfiguracaoAnamnese();
 //          int cont = 0;
-//          for (Pergunta pergunta : perguntas) {                
+//          int cont2 = 2;
+//          for (Pergunta pergunta : perguntas) {     
+//              System.out.println("pergunta: " + cont2);  
 //              //verificando se conf ja tem aquela cadastrada
-//              if(pergunta.getEspecialidade() != null && pergunta.getEspecialidade().getDescricao() != null && pergunta.getIdEmpresa() != null) {
+//              if(pergunta.getEspecialidade() != null && pergunta.getEspecialidade().getDescricao() != null && pergunta.getIdEmpresa() != null && pergunta.getConfiguracaoAnamnese() == null) {
 //                  ConfiguracaoAnamnese existente = ConfiguracaoAnamneseSingleton.getInstance().getBo().findByDescricaoAndEmpresa(pergunta.getEspecialidade().getDescricao(),pergunta.getIdEmpresa());
 //                  if(existente == null) {
 //                      ConfiguracaoAnamnese configuracaoAnamnese = new ConfiguracaoAnamnese();
@@ -63,7 +65,7 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
 //                     // pergunta.setConfiguracaoAnamnese(existente);
 //                     // PerguntaSingleton.getInstance().getBo().persist(pergunta);
 //                      cont++;
-//                      System.out.println(cont);  
+//                      System.out.println("criando conf: " + cont);  
 //                  }
 //                  pergunta.setConfiguracaoAnamnese(existente);
 //                  PerguntaSingleton.getInstance().getBo().persist(pergunta);
@@ -71,7 +73,7 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
 //                  
 //              }
 //           
-//                            
+//              cont2++;              
 //          }
 //          
 //          
@@ -129,15 +131,21 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
 
     }
 
-    public void abreDuplicarAnamnese() {
-        if (getEntity() != null && getEntity().getId() != null) {
+    public void abreDuplicarAnamnese(ConfiguracaoAnamnese configuracao ) {
+      //  if (getEntity() != null && getEntity().getId() != null) {
             descricaoDuplicacao = "";
-            PrimeFaces.current().executeScript("PF('dlgDuplicar').show()");
-        } else {
-            this.addError("Selecione uma anamnese para duplicar", "");
-        }
+            setEntity(configuracao);
+          //  PrimeFaces.current().executeScript("PF('dlgDuplicar').show()");
+       // } else {
+        //    this.addError("Selecione uma anamnese para duplicar", "");
+       // }
 
     }
+    
+    public void abreConfiguracoes(ConfiguracaoAnamnese configuracao ) { 
+              setEntity(configuracao);
+              verificaConfiguracaoAnamnese();
+      }
 
     public void duplicarAnamnese() {
         try {
@@ -201,7 +209,14 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
         try {
             String perguntasTela = JSFHelper.getRequestParameterMap("lume:valoresBackEnd");
             if (perguntasTela == null || perguntasTela.equals("")) {
-                getEntity().setPerguntas(null);
+                List<Pergunta> perguntas = new ArrayList<Pergunta>();
+                for (Pergunta pergunta :  getEntity().getPerguntas()) {
+                    pergunta.setExcluido("S");
+                    pergunta.setDataExclusao(new Date());
+                    pergunta.setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
+                    perguntas.add(pergunta);
+                }
+                getEntity().setPerguntas(perguntas);
                 ConfiguracaoAnamneseSingleton.getInstance().getBo().persist(getEntity());
                 return;
             }
@@ -223,6 +238,10 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
                     perguntasParaSalvar.add(criaPergunta(Pergunta.TIPO_RESPOSTA_TEXTO, items[i + 1], i));
                     i++;
                     continue;
+                } else if (items[i].equals(Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE)) {
+                    perguntasParaSalvar.add(criaPergunta(Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE, items[i + 1], i));
+                    i++;
+                    continue;
                 } else if (items[i].equals(Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS)) {
                     Pergunta novaPergunta = criaPergunta(Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS, items[i + 1], i);
                     //preciso duas vezes i++, pois uma é o tipo da pergunta, depois pergunta em si, ai sim as respostas.
@@ -231,7 +250,7 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
                     //enquanto nao for outra pergunta é uma resposta, entao vamos adicionando.
                     List<Resposta> respostas = new ArrayList<Resposta>();
                     while (i < items.length && !Arrays.asList(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO, Pergunta.TIPO_RESPOSTA_TEXTO, Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS,
-                            Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS).contains(items[i])) {
+                            Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS, Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE).contains(items[i])) {
                         respostas.add(criaResposta(novaPergunta, items[i]));
                         i++;
                     }
@@ -258,7 +277,14 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
 
                 }
             }
-
+            for (Pergunta pergunta : getEntity().getPerguntas()) {
+                if(!perguntasParaSalvar.contains(pergunta)) {
+                    pergunta.setExcluido("S");
+                    pergunta.setDataExclusao(new Date());
+                    pergunta.setExcluidoPorProfissional(UtilsFrontEnd.getProfissionalLogado().getId());
+                    perguntasParaSalvar.add(pergunta);
+                }
+            }
             getEntity().setPerguntas(perguntasParaSalvar);
             ConfiguracaoAnamneseSingleton.getInstance().getBo().persist(getEntity());
         } catch (Exception e) {

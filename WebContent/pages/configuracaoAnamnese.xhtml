@@ -52,22 +52,84 @@
 </style>
 	
 	
-		<div class="ui-g ui-fluid">
-			<div class="ui-g-12 ui-lg-12">
-				<div class="card card-w-title">
-					<h1>Configuração de Anamnese
-					<h:outputLabel class="fa fa-question" id="tooltipTitulo" style="font-size:24px; margin-left:10px;"/> 
-							<p:tooltip for="tooltipTitulo" value="#{tarifaMB.getTooltipValue('configuracaoAnamnese', 'titulo')}" position="bottom" />
-					</h1>
-					<p:separator styleClass="SeparatorFull" />
-						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">	
-							<p:commandButton id="botaoListaAnamneses" icon="White fa fa-file-o" value="Lista de Anamneses"
-                      	 	oncomplete="PF('dlgConfiguracoes').show();"
-                      	 	update="pnConfiguracoes" immediate="true" process="@this"/>
-                      	 </p:panelGrid>	
-									
-					<p:panelGrid columns="4" columnClasses="ui-grid-col-6,ui-grid-col-3,ui-grid-col-3" layout="grid" styleClass="ui-panelgrid-blank">					
-							
+<div class="ui-g ui-fluid">
+	<div class="ui-g-12 ui-lg-12">
+		<div class="card card-w-title">
+			<h1>Configuração de Anamnese
+				<h:outputLabel class="fa fa-question" id="tooltipTitulo" style="font-size:24px; margin-left:10px;"/> 
+				<p:tooltip for="tooltipTitulo" value="#{tarifaMB.getTooltipValue('configuracaoAnamnese', 'titulo')}" position="bottom" />
+			</h1>
+			
+			<p:separator styleClass="SeparatorFull" />					
+			
+			<p:panel id="pnPrincipal" styleClass="BordNone">		
+				
+				<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">	
+					<p:commandButton id="new" icon="White fa fa-file-o" value="Cadastrar nova Anamnese"
+					oncomplete="PF('dlgNovaAnamnese').show();" actionListener="#{configuracaoAnamneseMB.novaAnamnese}" 
+	                update=":lume:pnovaAnamnese"  process="@this"/>
+				</p:panelGrid>	                         
+				
+				<br />				 
+				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
+					id="dtConfiguracoes" widgetVar="dtConfiguracoes" value="#{configuracaoAnamneseMB.entityList}" var="configuracao"
+					rows="10" paginator="true"
+					selectionMode="single" rowKey="#{configuracao}"
+					paginatorPosition="bottom" >						
+					<f:facet name="header">Anamneses</f:facet>
+					<p:column headerText="Ações" width="200" exportable="false" >
+					
+						<p:commandButton icon="fa fa-plus" process="@this"
+								actionListener="#{configuracaoAnamneseMB.abreConfiguracoes(configuracao)}"
+								update=""
+								oncomplete="PF('dlgConfiguracoes').show();" styleClass="GreenButton"
+								title="Configurar perguntas/respostas" />					
+						&#160;	
+						<p:commandButton icon="fa fa-copy" process="@this"
+								actionListener="#{configuracaoAnamneseMB.abreDuplicarAnamnese(configuracao)}"
+								update=":lume:pnduplicar"
+								oncomplete="PF('dlgDuplicar').show();" styleClass="NavyButton"
+								title="Copiar para uma nova anamnese" />										
+						&#160;
+						<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
+							title="Editar Nome da Anamnese"										
+							update=":lume:pnovaAnamnese"
+							actionListener="#{configuracaoAnamneseMB.editarAnamnese(configuracao)}"
+							onsuccess="PF('dlgNovaAnamnese').show()" process="@this"
+							>
+						</p:commandButton>		
+						&#160;
+						<p:commandButton styleClass="RedButton" icon="fa fa-trash"
+							title="Remover Anamnese"										
+							update=":lume:pnPrincipal"
+							actionListener="#{configuracaoAnamneseMB.removerAnamnese(configuracao)}"
+							process="@this"
+							>
+							<p:confirm header="Confirmação" icon="ui-icon-alert"
+								escape="false"
+								message="Você tem certeza que remover essa Anamnese?">
+							</p:confirm>
+						</p:commandButton>
+						
+												
+					</p:column>							
+					<p:column filterBy="#{configuracao.descricao}"
+						sortBy="#{configuracao.descricao}" filterMatchMode="contains"
+						headerText="Nome da Anamnese" filterFunction="#{configuracaoAnamneseMB.filtroSemAcento}">
+						<h:outputText value="#{configuracao.descricao}" />
+					</p:column>
+				</p:dataTable>                           
+			</p:panel> 
+					
+			<ui:remove>
+				<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">	
+					<p:commandButton id="botaoListaAnamneses" icon="White fa fa-file-o" value="Lista de Anamneses"
+						oncomplete="PF('dlgConfiguracoes').show();"
+						update="" immediate="true" process="@this"/>
+				</p:panelGrid>	
+			</ui:remove>
+	
+		<ui:remove>	
 							<p:selectOneMenu id="selectEspecialidades"  converter="configuracaoAnamnese"
 									value="#{configuracaoAnamneseMB.entity}">
 									<p:ajax
@@ -78,70 +140,32 @@
 									<f:selectItems value="#{configuracaoAnamneseMB.entityList}" var="configuracaoAnamnese"
 									itemValue="#{configuracaoAnamnese}" itemLabel="#{configuracaoAnamnese.descricao}" />
 								</p:selectOneMenu>
-								
-								<p:commandButton id="previewImpressao" icon="White" value="Preview" oncomplete="PF('dlgPreview').show();abrirPreview();" process="" />
-                      	 		
-                      	 		<p:commandButton id="duplicar" icon="White" value="Duplicar para uma nova Anamnese"                       	 		
-                      	 		 process="@this" actionListener="#{configuracaoAnamneseMB.abreDuplicarAnamnese}"/>
-                      	 		
+						</ui:remove>
+				
+	<p:dialog widgetVar="dlgConfiguracoes" resizable="false" header="Configuracao da Anamnese" onHide="PF('dlgConfiguracoes').toggleMaximize();" 
+	onShow="PF('dlgConfiguracoes').toggleMaximize();" modal="true">
+	
+			
+			
 							
-					</p:panelGrid>
-				</div>
-					<!-- From  http://webdeveloperplus.com/jquery/collpasible-drag-drop-panels/
+							
+					
+							
+				
+			
+			<!-- From  http://webdeveloperplus.com/jquery/collpasible-drag-drop-panels/
 					nesse componente vou adicionar dinamicamente as pergutas
 					 -->	
 					<div class="column" id="column1">
 					</div>	
-			</div>
-		</div>
 		
-		<p:dialog id="dlgConfiguracoes" widgetVar="dlgConfiguracoes" header="Anamneses" responsive="true" modal="true" width="50%">
-			<p:panel id="pnConfiguracoes" styleClass="BordNone">   
-			<p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank ui-fluid form-group">	
-							<p:commandButton id="new" icon="White fa fa-file-o" value="Cadastrar nova Anamnese"
-                      	 	oncomplete="PF('dlgNovaAnamnese').show();" actionListener="#{configuracaoAnamneseMB.novaAnamnese}" 
-                      	 	update=":lume:pnovaAnamnese"  process="@this"/>
-                      	 </p:panelGrid>	                         
-				<br />
-				
-				<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
-					id="dtConfiguracoes" widgetVar="dtConfiguracoes" value="#{configuracaoAnamneseMB.entityList}" var="configuracao"
-					rows="6" paginator="true"
-					selectionMode="single" rowKey="#{configuracao}"
-					paginatorPosition="bottom" >						
-					<f:facet name="header">Anamneses</f:facet>
-					<p:column headerText="Ações" width="100" exportable="false" >
-						<p:commandButton styleClass="RedButton" icon="fa fa-trash"
-							title="remover Anamnese"										
-							update=":lume:pnConfiguracoes,,lume:selectEspecialidades"
-							actionListener="#{configuracaoAnamneseMB.removerAnamnese(configuracao)}"
-							process="@this"
-							>
-							<p:confirm header="Confirmação" icon="ui-icon-alert"
-								escape="false"
-								message="Você tem certeza que remover essa Anamnese?">
-							</p:confirm>
-						</p:commandButton>
-						
-						<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
-							title="Editar"										
-							update=":lume:pnovaAnamnese"
-							actionListener="#{configuracaoAnamneseMB.editarAnamnese(configuracao)}"
-							onsuccess="PF('dlgNovaAnamnese').show()" process="@this"
-							>
-						</p:commandButton>									
-					</p:column>							
-					<p:column filterBy="#{configuracao.descricao}"
-						sortBy="#{configuracao.descricao}" filterMatchMode="contains"
-						headerText="Local" filterFunction="#{configuracaoAnamneseMB.filtroSemAcento}">
-						<h:outputText value="#{configuracao.descricao}" />
-					</p:column>
-				</p:dataTable>                           
-                  <div class="EmptyBox20"></div>
-                   <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">					
+			
+			<div class="EmptyBox20"></div>
+                   <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">		
+                    <p:commandButton id="previewImpressao" icon="White" value="Preview / Impressão" oncomplete="PF('dlgPreview').show();abrirPreview();" process="" />			
 					<p:commandButton  icon="White" value="Fechar" oncomplete="PF('dlgConfiguracoes').hide();" immediate="true" />    
 	             </p:panelGrid>
-			</p:panel>
+			
 		</p:dialog>		
 		
 		<p:dialog id="dlgNovaAnamnese" widgetVar="dlgNovaAnamnese" header="Nova Anamnese" responsive="true" modal="true" width="50%">
@@ -154,7 +178,7 @@
 	            <div class="EmptyBox20"></div>
 	             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 					<p:commandButton icon="White fa fa-save" value="Salvar" actionListener="#{configuracaoAnamneseMB.salvarAnamnese}"
-	                	update=":lume:pnovaAnamnese,:lume:pnConfiguracoes,lume:selectEspecialidades" process="@this ,:lume:pnovaAnamnese" oncomplete="PF('dlgNovaAnamnese').hide();"
+	                	update=":lume:pnovaAnamnese,lume:pnPrincipal" process="@this ,:lume:pnovaAnamnese" oncomplete="PF('dlgNovaAnamnese').hide();"
 	                    styleClass="GreenButton" />
 					<p:commandButton  icon="White" value="Fechar" oncomplete="PF('dlgNovaAnamnese').hide();" immediate="true" />    
 	             </p:panelGrid>
@@ -205,7 +229,7 @@
 		
 		
 		
-		<p:dialog id="dlgDuplicar" widgetVar="dlgDuplicar" header="Duplicar Anamnese" responsive="true" modal="true" width="50%">
+		<p:dialog id="dlgDuplicar" widgetVar="dlgDuplicar" header="Copiar Anamnese para uma nova anamnese" responsive="true" modal="true" width="50%">
 			<p:panel id="pnduplicar" styleClass="BordNone"> 				
 				<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 					<p:outputLabel for="descricaoNova" value="Descrição da nova Anamnese: " />
@@ -214,7 +238,7 @@
 	            <div class="EmptyBox20"></div>
 	             <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
 					<p:commandButton icon="White fa fa-save" value="Salvar" actionListener="#{configuracaoAnamneseMB.duplicarAnamnese}"
-	                	update=":lume:pnduplicar,:lume:selectEspecialidades" process="@this ,:lume:pnduplicar" oncomplete="PF('dlgDuplicar').hide();"
+	                	update=":lume:pnduplicar,lume:pnPrincipal" process="@this ,:lume:pnduplicar" oncomplete="PF('dlgDuplicar').hide();"
 	                    styleClass="GreenButton" />
 					<p:commandButton  icon="White" value="Fechar" oncomplete="PF('dlgDuplicar').hide();" immediate="true" />    
 	             </p:panelGrid>
@@ -224,7 +248,14 @@
 		
 		<h:inputHidden value="" id="valoresBackEnd" />
 		
-		<p:remoteCommand name="persistePerguntas" actionListener="#{configuracaoAnamneseMB.salvaPerguntas()}" immediate="true"/>
+		<p:remoteCommand name="persistePerguntas" actionListener="#{configuracaoAnamneseMB.salvaPerguntas()}" immediate="true"/>			
+			
+						
+		</div>	
+	</div>
+</div>
+		
+	
 		
 		<script>
     //<![CDATA[
@@ -286,6 +317,7 @@
 				var childrenPai = elementoPai.childNodes;
 				var tipoPergunta;
 				i = 1;
+				contadorVariasEmVarias = 0;
 				//console.log(childrenPai);
 				childrenPai.forEach(function(itemPai){    	
 					//console.log(itemPai);
@@ -330,7 +362,11 @@
 						    	    		var textoPergunta = document.createElement('textarea');
 						    	   		 	textoPergunta.setAttribute("style", "margin: 0px; width: 702px; height: 53px;font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;");
 						    	   		 	document.getElementById("divPreview").appendChild(textoPergunta);
-						    	    	}
+						    	    	}//else if(tipoPergunta == 'TEXTO_LIVRE'){
+						    	    	//	var textoPergunta = document.createElement('textarea');
+						    	   		 //	textoPergunta.setAttribute("style", "margin: 0px; width: 702px; height: 103px;font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;");
+						    	   		 //	document.getElementById("divPreview").appendChild(textoPergunta);
+						    	    	//}
    										
 						   		 	}
 					    	    }else{
@@ -355,6 +391,16 @@
 									    	    		 var button = makeCheckboxButton(item4.value+ "" + i, item4.value, item4.value);	
 									    	    		 
 									    				 document.getElementById("divPreview").appendChild(button);
+									    			
+									    				 span = document.createElement ("span");
+									    				 span.innerHTML += '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';									    				 
+									    				 document.getElementById("divPreview").appendChild(span);
+									    				 
+									    				 contadorVariasEmVarias++;
+										    	    		if(contadorVariasEmVarias % 6 == 0){
+										    	    			 document.getElementById("divPreview").appendChild(document.createElement('br'));
+										    	    		}
+									    				 
 									    	    	}
 									    			
 									    		 }							    		
@@ -490,7 +536,7 @@
     		
     		var newH2 = document.createElement('h2');
     		newH2.setAttribute("style", "font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;font-size: 14px;");
-    		newH2.innerHTML = "Nova Pergunta";
+    		newH2.innerHTML = "Pergunta";
     		
     		var newDivInterna = document.createElement('div');
     		newDivInterna.setAttribute("class","dragbox-content");
@@ -517,11 +563,16 @@
    		   option4.textContent = 'Várias Opções com opção de marcar várias respostas';
    		   option4.value = 'VARIAS_EM_VARIAS';
    		   
+   		   option5 = document.createElement( 'option' );
+   		   option5.textContent = 'Texto Livre';
+   		   option5.value = 'TEXTO_LIVRE';
+   		   
    		   select.appendChild( option );
    		   select.appendChild( option1 );
    		   select.appendChild( option2 );
    		   select.appendChild( option3 );
    		   select.appendChild( option4 );
+   		   select.appendChild( option5 );
    	
    		   select.classList.add('ui-selectonemenu-label');
 		   select.classList.add('ui-inputfield');
@@ -592,6 +643,8 @@
     		 			select.value = 'UMA_EM_VARIAS';
     		 		}else if(tipoPergunta == 'VARIAS_EM_VARIAS'){
     		 			select.value = 'VARIAS_EM_VARIAS';
+    		 		}else if(tipoPergunta == 'TEXTO_LIVRE'){
+    		 			select.value = 'TEXTO_LIVRE';
     		 		}
     		 		
     		 		if(typeof(respostas) != "undefined" && respostas !== null && respostas !== ''){

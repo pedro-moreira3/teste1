@@ -81,10 +81,10 @@
 					filterFunction="#{pacienteMB.filtroSemAcento}">
 					<h:outputText value="#{pacienteAnamnese.dataHoraStr}" />
 				</p:column>
-				<p:column filterBy="#{pacienteAnamnese.especialidades}"
-					sortBy="#{pacienteAnamnese.especialidades}"
-					filterMatchMode="contains" headerText="Especialidades">
-					<h:outputText value="#{pacienteAnamnese.especialidades}" />
+				<p:column filterBy="#{pacienteAnamnese.configuracoesAnamnese}"
+					sortBy="#{pacienteAnamnese.configuracoesAnamnese}"
+					filterMatchMode="contains" headerText="Anamneses">
+					<h:outputText value="#{pacienteAnamnese.configuracoesAnamnese}" />
 				</p:column>
 			</p:dataTable>
 		</h:panelGroup>
@@ -104,12 +104,12 @@
 					<div class="ui-g-12 ui-lg-12">											
 					
 						<p:outputPanel id="painelEspecialidades" >
-							<p:outputLabel rendered="#{!pacienteMB.mostrarPerguntasAnamnese}">Selecione as Especialidades da Anamnese:</p:outputLabel> 
+							<p:outputLabel rendered="#{!pacienteMB.mostrarPerguntasAnamnese}">Selecione os tipos de Anamneses:</p:outputLabel> 
 							<p:outputLabel rendered="#{pacienteMB.mostrarPerguntasAnamnese}">Perguntas da Anamnese:</p:outputLabel>
 							<p:selectManyCheckbox id="especialidade" rendered="#{!pacienteMB.mostrarPerguntasAnamnese}"
-								value="#{pacienteMB.especialidadeSelecionada}"
-								converter="especialidade" layout="grid" columns="5">
-								<f:selectItems value="#{pacienteMB.especialidades}" var="e"
+								value="#{pacienteMB.configuracaoSelecionada}"
+								converter="configuracaoAnamnese" layout="grid" columns="5">
+								<f:selectItems value="#{pacienteMB.configuracoesAnamneses}" var="e"
 									itemValue="#{e}" itemLabel="#{e.descricao}" />								
 							</p:selectManyCheckbox>
 						<p:panelGrid columns="6" layout="grid" 
@@ -130,9 +130,18 @@
 							<ui:repeat var="anamnesesAgrupadas"
 								value="#{pacienteMB.anamneses}">
 								<p:outputPanel>
-								<p:fieldset legend="#{anamnesesAgrupadas[0].especialidade}" 
+								<p:fieldset legend="#{anamnesesAgrupadas[0].configuracaoAnamnese}" 
 								>
 									<ui:repeat var="anamnese" value="#{anamnesesAgrupadas}">
+									
+									<p:panelGrid columns="12" layout="grid" 
+											styleClass="ui-panelgrid-blank"
+											columnClasses="ui-grid-col-4,ui-grid-col-8"
+											style="border:0px none; background-color:transparent;"
+											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTextoLivre}">
+											<p:outputLabel value="#{anamnese.pergunta.descricao}" />											
+										</p:panelGrid>
+									
 										<p:panelGrid columns="2" layout="grid" 
 											styleClass="ui-panelgrid-blank"
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
