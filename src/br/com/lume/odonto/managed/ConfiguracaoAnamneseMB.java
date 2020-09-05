@@ -42,7 +42,7 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
         setEntity(null); 
         listar();
         
-        //TEMPORARIO, RODAR UMA SÓ VEZ PARA INSERIR A LISTA DE ANAMNESE INICIAL
+//        //TEMPORARIO, RODAR UMA SÓ VEZ PARA INSERIR A LISTA DE ANAMNESE INICIAL
 //      try {
 //          List<Pergunta> perguntas = PerguntaSingleton.getInstance().getBo().listSemConfiguracaoAnamnese();
 //          int cont = 0;

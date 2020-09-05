@@ -49,6 +49,7 @@ import br.com.lume.common.util.Status;
 import br.com.lume.common.util.StatusAgendamentoUtil;
 import br.com.lume.common.util.Utils;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.configuracaoAnamnese.ConfiguracaoAnamneseSingleton;
 import br.com.lume.conta.ContaSingleton;
 import br.com.lume.convenio.ConvenioSingleton;
 import br.com.lume.dadosBasico.DadosBasicoSingleton;
@@ -69,10 +70,12 @@ import br.com.lume.horasUteisProfissional.HorasUteisProfissionalSingleton;
 import br.com.lume.odonto.entity.Afastamento;
 import br.com.lume.odonto.entity.Agendamento;
 import br.com.lume.odonto.entity.AgendamentoPlanoTratamentoProcedimento;
+import br.com.lume.odonto.entity.ConfiguracaoAnamnese;
 import br.com.lume.odonto.entity.Convenio;
 import br.com.lume.odonto.entity.Dominio;
 import br.com.lume.odonto.entity.HorasUteisProfissional;
 import br.com.lume.odonto.entity.Paciente;
+import br.com.lume.odonto.entity.Pergunta;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Profissional;
@@ -84,6 +87,7 @@ import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.orcamento.OrcamentoSingleton;
 import br.com.lume.origemAgendamento.OrigemAgendamentoSingleton;
 import br.com.lume.paciente.PacienteSingleton;
+import br.com.lume.pergunta.PerguntaSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
 import br.com.lume.profissional.ProfissionalSingleton;
@@ -227,6 +231,52 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
             convenios = ConvenioSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
             this.profissionaisDisponiveis = new ArrayList<Profissional>();
+            
+            
+            
+//            try {
+//                List<Pergunta> perguntas = PerguntaSingleton.getInstance().getBo().listSemConfiguracaoAnamnese();
+//                int cont = 0;
+//                int cont2 = 2;
+//                for (Pergunta pergunta : perguntas) {     
+//                    System.out.println("pergunta: " + cont2);  
+//                    //verificando se conf ja tem aquela cadastrada
+//                    if(pergunta.getEspecialidade() != null && pergunta.getEspecialidade().getDescricao() != null && pergunta.getIdEmpresa() != null && pergunta.getConfiguracaoAnamnese() == null) {
+//                        ConfiguracaoAnamnese existente = ConfiguracaoAnamneseSingleton.getInstance().getBo().findByDescricaoAndEmpresa(pergunta.getEspecialidade().getDescricao(),pergunta.getIdEmpresa());
+//                        if(existente == null) {
+//                            ConfiguracaoAnamnese configuracaoAnamnese = new ConfiguracaoAnamnese();
+//                            configuracaoAnamnese.setDescricao(pergunta.getEspecialidade().getDescricao());
+//                            configuracaoAnamnese.setAtivo("S");
+//                            configuracaoAnamnese.setDataAlteracaoStatus(new Date());
+//                            configuracaoAnamnese.setAlteradoPor(UtilsFrontEnd.getProfissionalLogado());
+//                            configuracaoAnamnese.setIdEmpresa(pergunta.getIdEmpresa());
+//                            ConfiguracaoAnamneseSingleton.getInstance().getBo().persist(configuracaoAnamnese);
+//                            //procurando de novo para atualizar a pergunta
+//                             existente = ConfiguracaoAnamneseSingleton.getInstance().getBo().findByDescricaoAndEmpresa(pergunta.getEspecialidade().getDescricao(),pergunta.getIdEmpresa());
+//                           // pergunta.setConfiguracaoAnamnese(existente);
+//                           // PerguntaSingleton.getInstance().getBo().persist(pergunta);
+//                            cont++;
+//                            System.out.println("criando conf: " + cont);  
+//                        }
+//                        pergunta.setConfiguracaoAnamnese(existente);
+//                        PerguntaSingleton.getInstance().getBo().persist(pergunta);
+//                      
+//                        
+//                    }
+//                 
+//                    cont2++;              
+//                }
+//                
+//                
+//            } catch (Exception e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+            
+            
+            
+            
+            
 
         } catch (Exception e) {
             log.error(e);
