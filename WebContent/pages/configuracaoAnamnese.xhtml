@@ -77,7 +77,7 @@
 					selectionMode="single" rowKey="#{configuracao}"
 					paginatorPosition="bottom" >						
 					<f:facet name="header">Anamneses</f:facet>
-					<p:column headerText="AÃ§Ãµes" width="250" exportable="false" >
+					<p:column headerText="Ações" width="250" exportable="false" >
 					
 						<p:commandButton icon="fa fa-plus" process="@this"
 								actionListener="#{configuracaoAnamneseMB.abreConfiguracoes(configuracao)}"
@@ -177,7 +177,7 @@
 			<p:panel id="pnovaAnamnese" styleClass="BordNone"> 
 				
 				<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-					<p:outputLabel for="descricao" value="DescriÃ§ão: " />
+					<p:outputLabel for="descricao" value="Descrição: " />
 					<p:inputText id="descricao" value="#{configuracaoAnamneseMB.entity.descricao}" maxlength="250" required="true"/>								
 				</p:panelGrid>	                           
 	            <div class="EmptyBox20"></div>
@@ -215,13 +215,13 @@
 		 <ui:remove>
 			      	 <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">	
 								
-								<h:outputLabel value="OpÃ§Ãµes de impressão: " />
+								<h:outputLabel value="Opções de impressão: " />
 								<p:selectManyCheckbox
 									value="#{configuracaoAnamneseMB.opcoesImpressao}" layout="grid"
 									columns="6">
 									<f:selectItem itemLabel="Incluir Logo da Empresa na impressão" itemValue="incluirLogo"
 										itemEscaped="false" />
-									<f:selectItem itemLabel="Incluir cabeÃ§alho" itemValue="S"
+									<f:selectItem itemLabel="Incluir cabeçalho" itemValue="S"
 										itemEscaped="false" />
 									<f:selectItem itemLabel="Incluir rodapé" itemValue="E"
 										itemEscaped="false" />
@@ -242,7 +242,7 @@
 		<p:dialog id="dlgDuplicar" widgetVar="dlgDuplicar" header="Copiar Anamnese para uma nova anamnese" responsive="true" modal="true" width="50%">
 			<p:panel id="pnduplicar" styleClass="BordNone"> 				
 				<p:panelGrid columns="1" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-					<p:outputLabel for="descricaoNova" value="DescriÃ§ão da nova Anamnese: " />
+					<p:outputLabel for="descricaoNova" value="Descrição da nova Anamnese: " />
 					<p:inputText id="descricaoNova" value="#{configuracaoAnamneseMB.descricaoDuplicacao}" maxlength="250" required="true"/>								
 				</p:panelGrid>	                          
 	            <div class="EmptyBox20"></div>
@@ -571,15 +571,15 @@
    		   option2.value = 'TEXTO'; 
    		   
    		   option3 = document.createElement( 'option' );
-   		   option3.textContent = 'Pergunta com vÃ¡rias respostas, mas com opÃ§ão de marcar somente uma resposta';
+   		   option3.textContent = 'Pergunta com várias respostas, mas com opção de marcar somente uma resposta';
    		   option3.value = 'UMA_EM_VARIAS'; 
    		   
    		   option4 = document.createElement( 'option' );
-   		   option4.textContent = 'Pergunta com vÃ¡rias respostas, com opÃ§ão de marcar vÃ¡rias respostas';
+   		   option4.textContent = 'Pergunta com várias respostas, com opção de marcar várias respostas';
    		   option4.value = 'VARIAS_EM_VARIAS';
    		   
    		   option5 = document.createElement( 'option' );
-   		   option5.textContent = 'Texto Livre (Qualquer texto de anotaÃ§ão, comentÃ¡rio, cabeÃ§alho, etc. Esse tipo não tem resposta)';
+   		   option5.textContent = 'Texto Livre (Qualquer texto de anotação, comentário, cabeçalho, etc. Esse tipo não tem resposta)';
    		   option5.value = 'TEXTO_LIVRE';
    		   
    		   select.appendChild( option );
@@ -752,7 +752,7 @@
       			var numberOfElements = this.parentNode.parentNode.childElementCount;
         		//console.log(numberOfElements);
         		if(numberOfElements <= 2){
-        			alert("Para esse tipo de pergunta, é necessÃ¡rio pelo menos duas respostas");
+        			alert("Para esse tipo de pergunta, é necessário pelo menos duas respostas");
         		}else{
         			this.parentNode.parentNode.removeChild(this.parentNode);
         			salvarPerguntasBackEnd();
