@@ -139,7 +139,7 @@
 											columnClasses="ui-grid-col-4,ui-grid-col-8"
 											style="border:0px none; background-color:transparent;"
 											rendered="#{anamnese.pergunta.tipoResposta == anamnese.pergunta.tipoRespostaTextoLivre}">
-											<p:outputLabel value="#{anamnese.pergunta.descricao}" />											
+											<p:outputLabel escape="false" value="#{anamnese.pergunta.descricaoComQuebraLinha}" />											
 										</p:panelGrid>
 									
 										<p:panelGrid columns="2" layout="grid" 
