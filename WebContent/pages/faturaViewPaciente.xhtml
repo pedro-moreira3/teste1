@@ -1433,7 +1433,7 @@ body .height31 input {
 									rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
 										title="Cancelar lançamento"
-										disabled="#{!l.ativo or l.validado == 'S' or l.conferidoPorProfissional != null or faturaPagtoMB.entity.statusFatura.rotulo eq 'I' or !faturaPagtoMB.permiteExcluirLancamento}"
+										disabled="#{!l.ativo or faturaPagtoMB.entity.statusFatura.rotulo eq 'I' or !faturaPagtoMB.permiteExcluirLancamento}"
 										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
 										actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
 										process="@this"
@@ -1448,7 +1448,7 @@ body .height31 input {
 										actionListener="#{faturaPagtoMB.carregarAjuste(l)}"
 										oncomplete="PF('dlgAjusteLancamento').show();"
 										disabled="#{!l.ativo or l.validado == 'N' or !faturaPagtoMB.permiteExcluirLancamento}"
-										rendered="#{!l.validado == 'N' and (showNewLancamento != null and showNewLancamento == 'S')}"
+										rendered="#{l.validado == 'S' and (showNewLancamento != null and showNewLancamento == 'S')}"
 										process="@this" update=":lume:pnlAjusteLancamento">
 									</p:commandButton>
 									<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
