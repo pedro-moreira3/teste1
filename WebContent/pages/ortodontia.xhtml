@@ -70,8 +70,7 @@ li.orcamento-li {
 					styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 					<p:commandButton id="newOrtodontia" icon="White fa fa-file-o"
 						value="Nova Manutenção Orto"
-						actionListener="#{ortodontiaMB.actionNew}" process="@this"
-						update="gerarOrcamentoPorProcedimento"
+						actionListener="#{ortodontiaMB.actionNew}" process="@this"						
 						oncomplete="PF('dlgPlanoOrtodontico').show()" immediate="true" />
 				</p:panelGrid>
 
@@ -781,12 +780,14 @@ li.orcamento-li {
 
 											<p:panelGrid columns="1" layout="grid"
 												styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+												<ui:remove>
 												<p:selectBooleanCheckbox style="width:100% !important"
 													id="gerarOrcamentoPorProcedimento"
 													itemLabel="Gerar um orçamento para cada procedimento"
 													value="#{ortodontiaMB.gerarOrcamentoPorProcedimento}">
 													<p:ajax process="@this" />
 												</p:selectBooleanCheckbox>
+												</ui:remove>
 											</p:panelGrid>
 											<p:panelGrid columns="2" layout="grid"
 												styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
