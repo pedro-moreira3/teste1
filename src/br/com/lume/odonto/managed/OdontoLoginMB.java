@@ -102,12 +102,21 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
             List<Paciente> pacientes = PacienteSingleton.getInstance().getBo().listByUsuario(usuario);
             List<UsuarioAfiliacao> usuariosAfiliados = UsuarioAfiliacaoSingleton.getInstance().getBo().listByUsuario(usuario);
             
+           
+            int somaPerfis = 0;
+            if (profissionais.size() > 0) {
+                somaPerfis++;
+            }
+            if (pacientes.size() > 0) {
+                somaPerfis++;
+            }
+            if (usuariosAfiliados.size() > 0) {
+                somaPerfis++;
+            }
+            
             
             // Se tiver o mesmo login em profissionais e pacientes, ou repetidos na mesma lista
-            if ((profissionais != null && profissionais.size() > 1) || 
-                    (pacientes != null && pacientes.size() > 1) || 
-                    (usuariosAfiliados != null && usuariosAfiliados.size() > 1) || 
-                    (profissionais != null && profissionais.size() == 1 && pacientes != null && pacientes.size() == 1 && usuariosAfiliados != null && usuariosAfiliados.size() == 1)) {
+            if (somaPerfis > 1) {
                 List<Login> logins = this.carregarLogins(pacientes, profissionais,usuariosAfiliados);
 
                 UtilsFrontEnd.setLogins(logins);
@@ -118,13 +127,15 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
             } else {
                 String perfilLogado = "";
                 Profissional profissional = ProfissionalSingleton.getInstance().getBo().findByUsuario(userLogin);
-                if (profissional == null) {
-                    perfilLogado = OdontoPerfil.PACIENTE;
-                    Paciente paciente = PacienteSingleton.getInstance().getBo().findByUsuario(userLogin);
+                
+                Paciente paciente = PacienteSingleton.getInstance().getBo().findByUsuario(userLogin);
+                
+                if (profissional == null && paciente != null) {
+                    perfilLogado = OdontoPerfil.PACIENTE;                    
                     UtilsFrontEnd.setPacienteLogado(paciente);
                     UtilsFrontEnd.setPerfilLogado(OdontoPerfil.PACIENTE);
                     UtilsFrontEnd.setEmpresaLogada(EmpresaSingleton.getInstance().getBo().find(paciente.getIdEmpresa()));
-                } else {
+                } else if (profissional != null){
                     if (!Profissional.INATIVO.equals(profissional.getStatus())) {
                         perfilLogado = profissional.getPerfil();
                         UtilsFrontEnd.setProfissionalLogado(profissional);
@@ -137,13 +148,25 @@ public class OdontoLoginMB extends LumeManagedBean<Usuario> {
                     }
                 }
                 
+                if(perfilLogado.equals("")) {
+                    perfilLogado = OdontoPerfil.PARCEIRO;
+                }
+                
                 if(!OdontoPerfil.PARCEIRO.equals(perfilLogado)) {
                     LoginSingleton.getInstance().getBo().validaSituacaoEmpresa(this.getEntity(), UtilsFrontEnd.getEmpresaLogada(), UtilsFrontEnd.getPacienteLogado());    
+                }else {
+                    List<Login> logins = this.carregarLogins(pacientes, profissionais,usuariosAfiliados);
+
+                    UtilsFrontEnd.setLogins(logins);
+                    UtilsFrontEnd.setUsuarioNome(usuario.getUsuStrNme());
+
+                    JSFHelper.redirect("loginmulti.jsf");
+                    return "";
+
                 }
                 
                 
-                //((LoginBO) this.getbO()).carregaObjetosPermitidos(userLogin, perfilLogado, this.getLumeSecurity(), profissional);
-                // ObjetoBO objetoBO = new ObjetoBO();
+               
                 this.getLumeSecurity().setUsuario(userLogin);
                 List<Objeto> objetosPermitidos = ObjetoSingleton.getInstance().getBo().carregaObjetosPermitidos(perfilLogado, profissional);
                 Objeto objeto = new Objeto();
