@@ -113,7 +113,7 @@ public class EmpresaMB extends LumeManagedBean<Empresa> {
 
     private void carregarEmpresasPlano() {
         try {
-            this.empresasPlano = EmpresaSingleton.getInstance().getBo().listEmpresasLume();
+            this.empresasPlano = EmpresaSingleton.getInstance().getBo().listAll();
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "");
             this.log.error(Mensagens.ERRO_AO_BUSCAR_REGISTROS, e);
