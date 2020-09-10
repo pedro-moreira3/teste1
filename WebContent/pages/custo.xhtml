@@ -115,8 +115,8 @@
 							<p:commandButton id="persist" value="Salvar"
 								icon="White fa fa-save"
 								actionListener="#{custoMB.actionPersist}"
-								update=":lume:pnCusto,:lume:dtCusto,:lume:botoes"
-								process="@this,paciente"
+								update=":lume:dtCusto,:lume:botoes"
+								process="paciente, @this"
 								disabled="#{custoMB.planoTratamento == null}"
 								styleClass="GreenButton" />
 							<p:commandButton id="delete" icon="White fa fa-trash-o"
