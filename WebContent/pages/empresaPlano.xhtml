@@ -34,6 +34,9 @@
 						<p:column headerText="Nome" sortBy="#{empresa.empStrNme}" filterBy="#{empresa.empStrNme}" filterMatchMode="contains">
 							<h:outputText value="#{empresa.empStrNme}" />
 						</p:column>
+						<p:column headerText="Afiliação" sortBy="#{empresa.afiliacao.nome}" filterBy="#{empresa.afiliacao.nome}" filterMatchMode="contains">
+							<h:outputText value="#{empresa.afiliacao.nome}" />
+						</p:column>
 						<p:column headerText="Email de cobrança" sortBy="#{empresa.empStrEmail}" filterBy="#{empresa.empStrEmail}" filterMatchMode="contains">
 							<h:outputText value="#{empresa.empStrEmail}" />
 						</p:column>

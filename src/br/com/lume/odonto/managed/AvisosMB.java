@@ -31,6 +31,12 @@ public class AvisosMB extends LumeManagedBean<Avisos>{
 
     public void redireciona(Avisos aviso) {
         if(aviso.getTipoAviso().equals(TIPO_AVISO.CONTRATACAO)) {
+            
+            if(UtilsFrontEnd.getEmpresaLogada().getEmpChaCep() == null || UtilsFrontEnd.getEmpresaLogada().getEmpChaCep().equals("")) {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Antes de contratar o serviço, favor preencher o CEP da empresa em Administrativo, Cadastro da clínica");
+                return;
+            }
+            
             PrimeFaces.current().executeScript("PF('dlgContratacao').show();");
         }else {
             JSFHelper.redirect(aviso.getLink());

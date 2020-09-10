@@ -134,7 +134,7 @@
 								<p:column />
 
 								<p:outputLabel for="empChaCep" value="CEP : " />
-								<p:inputMask id="empChaCep"
+								<p:inputMask id="empChaCep" required="true"
 									value="#{cadastroEmpresaMB.entity.empChaCep}" maxlength="8"
 									mask="99999-999">
 									<f:validator validatorId="cepValidator" />

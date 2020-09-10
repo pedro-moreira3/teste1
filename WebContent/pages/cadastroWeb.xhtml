@@ -96,7 +96,7 @@ body .ui-wizard .ui-wizard-content {
 											required="true" validator="cnpjValidator" />
 
 										<p:outputLabel for="empChaCep" value="CEP : " />
-										<p:inputMask id="empChaCep"
+										<p:inputMask id="empChaCep" required="true"
 											value="#{cadastroWebMB.entity.empChaCep}" maxlength="8"
 											mask="99999-999">
 											<f:validator validatorId="cepValidator" />
