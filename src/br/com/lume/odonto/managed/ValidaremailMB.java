@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import javax.persistence.NonUniqueResultException;
 
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -16,7 +17,9 @@ import br.com.lume.afiliacao.AfiliacaoSingleton;
 import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.JSFHelper;
+import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.Profissional;
@@ -49,6 +52,12 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
     private String usuRepetirSenha;
 
     private boolean mostrarSomenteErro = true;
+    
+    private String erro;
+    
+    private String mensagemTrocaSenha;
+    
+    private String confirmacaoEmail;
 
     public ValidaremailMB() {
         super(UsuarioSingleton.getInstance().getBo());
@@ -64,24 +73,51 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
 
         Map<String, String> paramMap = context.getExternalContext().getRequestParameterMap();
         String token = paramMap.get("token");
+        erro = "";
         try {
             //UsuarioBO usuarioBo = new UsuarioBO();
             usuarioLogando = UsuarioSingleton.getInstance().getBo().buscarPorTokenEdata(token);
             if (usuarioLogando == null) {
-                addError("O seu token está expirado ou é inválido, efetue novamente a troca de senha para receber um novo e-mail.",
-                        "O seu token está expirado ou é inválido, efetue novamente a troca de senha para receber um novo e-mail.");
+                erro = "Ops! Não foi posssível cadastrar ou realizar a troca de sua senha para acessar o sistema! Provavemente o link que "
+                        + "você clicou não estava mais válido. Clique no link abaixo para reenviar o e-mail de troca de senha."; 
                 mostrarSomenteErro = false;
             }
         } catch (Exception e) {
-            addError("O seu token está expirado ou é inválido, efetue novamente a troca de senha para receber um novo e-mail.",
-                    "O seu token está expirado ou é inválido, efetue novamente a troca de senha para receber um novo e-mail.");
+            erro = "Ops! Não foi posssível cadastrar ou realizar a troca de sua senha para acessar o sistema! Provavemente o link que "
+                    + "você clicou não estava mais válido. Clique no link abaixo para reenviar o e-mail de troca de senha"; 
             mostrarSomenteErro = false;         
         }
-
+       
     }
  
     public String getLogo() {
         return "/images/logo_idente.png";
+    }
+    
+    
+    //TODO isso esta dplicado aqui e no login mb, verificar para deixar em um lugar so
+    public void actionResetSenha() {
+        mensagemTrocaSenha = "";
+        try {
+            if (getConfirmacaoEmail() == null || getConfirmacaoEmail().equals("")) {
+                mensagemTrocaSenha = Mensagens.getMensagem("login.email.nao.cadastrado");              
+            } else {
+                Usuario usuarioTrocaSenha = UsuarioSingleton.getInstance().getBo().findByEmail(getConfirmacaoEmail());
+                if (usuarioTrocaSenha != null) {
+                    EnviaEmail.envioResetSenha(usuarioTrocaSenha);
+                    mensagemTrocaSenha = "E-mail enviado com sucesso!";
+                } else {
+                    mensagemTrocaSenha = Mensagens.getMensagem("login.email.nao.cadastrado");                  
+                }
+
+            }
+        } catch (NonUniqueResultException e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            addError("Erro!", Mensagens.getMensagem("login.reset.erro"));
+        } catch (Exception e) {
+            LogIntelidenteSingleton.getInstance().makeLog(e);
+            addError("Erro!", Mensagens.getMensagem("login.reset.erro"));
+        }
     }
 
    // public String actionLogin() {
@@ -312,6 +348,36 @@ public class ValidaremailMB extends LumeManagedBean<Usuario> implements Serializ
 
     public void setMostrarSomenteErro(boolean mostrarSomenteErro) {
         this.mostrarSomenteErro = mostrarSomenteErro;
+    }
+
+    
+    public String getErro() {
+        return erro;
+    }
+
+    
+    public void setErro(String erro) {
+        this.erro = erro;
+    }
+
+    
+    public String getConfirmacaoEmail() {
+        return confirmacaoEmail;
+    }
+
+    
+    public void setConfirmacaoEmail(String confirmacaoEmail) {
+        this.confirmacaoEmail = confirmacaoEmail;
+    }
+
+    
+    public String getMensagemTrocaSenha() {
+        return mensagemTrocaSenha;
+    }
+
+    
+    public void setMensagemTrocaSenha(String mensagemTrocaSenha) {
+        this.mensagemTrocaSenha = mensagemTrocaSenha;
     }
 
 }
