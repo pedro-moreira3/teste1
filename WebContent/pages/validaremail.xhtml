@@ -56,6 +56,27 @@ body .ui-messages ul {
 
 	<h:form id="lume">
 
+		<p:confirmDialog id="confirmDialog"
+			message="Digite seu e-mail para recuperar sua senha. Você recebera um e-mail com as instruções."
+			header="Esqueci minha Senha" severity="alert"
+			widgetVar="confirmation" appendToBody="true">
+			<div class="Card ui-fluid ">
+				<div class="Container100">
+					<p:inputText id="confirmacaoEmail" placeholder="Email"
+						style="padding:15px !important;"
+						value="#{validaremailMB.confirmacaoEmail}" />
+				</div>
+			</div>
+			<br />
+			<p:commandButton id="confirm" value="Enviar e-mail"
+				styleClass="NavyButton" update="painelTrocaSenha"
+				style="background-color: #607D8B;color: #ffffff"
+				oncomplete="PF('confirmation').hide()"
+				action="#{validaremailMB.actionResetSenha}" />
+			<p:commandButton id="decline" value="Cancelar"
+				onclick="PF('confirmation').hide()" type="button" />
+		</p:confirmDialog>
+
 		<div class="email-panel card ui-fluid" style="width:50%;display: block; margin: 0px auto;">
 			<div class="ui-g">
 				
@@ -63,12 +84,33 @@ body .ui-messages ul {
     					<h:graphicImage name="logo_idente.png" styleClass="MarAuto Wid100" library="images" style="width:50%;display: block; margin: 0px auto;"/>
     				</div>
 				
+				
 				<div class="ui-g-12 ui-lg-12">
+				
+					<h:panelGroup styleClass="md-inputfield"
+						rendered="#{!validaremailMB.mostrarSomenteErro}">
+						<p:outputLabel id="msgErro" style="font-weight:bold"
+							value="#{validaremailMB.erro}" />
+						 <br/><br/><br/>
+						 <p:outputPanel class="ui-g-12 ui-lg-12"
+                			>
+                			<p:commandLink value="Trocar minha senha"
+                    		onclick="PF('confirmation').show()" />
+            			</p:outputPanel>
+            			<br/><br/><br/>
+            			<h:panelGroup styleClass="md-inputfield" id="painelTrocaSenha">
+						<p:outputLabel id="msgTrocaSenha" style="font-weight:bold;color:red"
+							value="#{validaremailMB.mensagemTrocaSenha}" />
+					</h:panelGroup>	
+            			
+					</h:panelGroup>
 					<h:panelGroup styleClass="md-inputfield"
 						rendered="#{validaremailMB.mostrarSomenteErro}">
 						<p:outputLabel id="email" style="font-weight:bold"
 							value="Seu email para acesso é: #{validaremailMB.usuarioLogando.usuStrLogin.toLowerCase()}" />
 					</h:panelGroup>
+					
+					
 				</div>
 				<div class="ui-g-12 ui-lg-12">
 					<h:panelGroup styleClass="md-inputfield"
