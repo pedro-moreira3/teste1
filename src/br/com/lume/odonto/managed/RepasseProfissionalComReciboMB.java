@@ -501,7 +501,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
             setEntity(ptp);
 
             ignorarRestante = false;
-            if(ptp.getFatura().isValorRestanteIgnoradoAjusteManual()) {
+            if(ptp.getFatura() != null && ptp.getFatura().isValorRestanteIgnoradoAjusteManual()) {
                 ignorarRestante = true;
             }
             
