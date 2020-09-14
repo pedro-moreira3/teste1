@@ -199,7 +199,12 @@
 								filterMatchMode="contains" headerText="Telefone"
 								filterFunction="#{clinicasMB.filtroSemAcento}">
 								<h:outputText value="#{empresa.empChaFone}" />
-							</p:column>							
+							</p:column>	
+							<p:column sortBy="#{empresa.empDtmCriacaoStr}"
+							filterBy="#{empresa.empDtmCriacaoStr}"
+							filterMatchMode="contains" headerText="Data de Cadastro">
+							<h:outputText value="#{empresa.empDtmCriacaoStr}" />
+							</p:column>						
 							<p:column sortBy="#{empresa.dataUltimoAcessoStr}"
 							filterBy="#{empresa.dataUltimoAcessoStr}"
 							filterMatchMode="contains" headerText="Data do Último Acesso">
