@@ -580,7 +580,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                         });
                        
                         if(cont < lancamentosDeOrigem.size()) {   
-                            //TODO como saber que o lancamento é referente                          
+                                                 
                             lancamentosDeOrigem.get(cont).setDadosCalculoValorARepassarSemCusto(lancamento.getValor()); 
                          
                             
@@ -668,7 +668,19 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         } else {
             
             //TODO aqui criar a fatura manual quando essa nao existir
+          //  criaRepasseManual
             
+            if(getEntity().getFatura() == null) {
+                Fatura novaFatura = RepasseFaturasSingleton.getInstance().criaRepasseManual(getEntity(), valorRepassar, new Date(), ignorarRestante, justificativa, getEntity().getDentistaExecutor(), profissional);
+                getEntity().setFatura(novaFatura);
+                try {
+                    PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(getEntity());
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }                
+            }            
+           
             try {
                 if(ignorarRestante) {
                     getEntity().getFatura().setValorRestanteIgnoradoAjusteManual(true);

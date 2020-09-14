@@ -50,7 +50,9 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
     private Long idUsuario; 
     
     //EXPORTAÇÃO TABELA
-    private DataTable tabelaRelatorio; 
+    private DataTable tabelaRelatorio;
+    
+    private DataTable tabelaRelatorioTrial; 
 
     public ClinicasMB() {
         super(EmpresaSingleton.getInstance().getBo());
@@ -387,6 +389,10 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
         exportarTabela("Clientes em Produção", tabelaRelatorio, type);
     }
     
+    public void exportarTabelaTrial(String type) {
+        exportarTabela("Clientes em Teste", tabelaRelatorioTrial, type);
+    }
+    
     public DataTable getTabelaRelatorio() {
         return tabelaRelatorio;
     }
@@ -464,4 +470,15 @@ public class ClinicasMB extends LumeManagedBean<Empresa> {
     public void setEmpresasTrial(List<Empresa> empresasTrial) {
         this.empresasTrial = empresasTrial;
     }
+
+    
+    public DataTable getTabelaRelatorioTrial() {
+        return tabelaRelatorioTrial;
+    }
+
+    
+    public void setTabelaRelatorioTrial(DataTable tabelaRelatorioTrial) {
+        this.tabelaRelatorioTrial = tabelaRelatorioTrial;
+    }
+
 }
