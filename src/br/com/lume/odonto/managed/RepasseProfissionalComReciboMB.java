@@ -666,6 +666,9 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
         } else if (agendarParaData && dataValorRestante == null) {
             this.addError("Erro", "Informe a data do valor restante", true);
         } else {
+            
+            //TODO aqui criar a fatura manual quando essa nao existir
+            
             try {
                 if(ignorarRestante) {
                     getEntity().getFatura().setValorRestanteIgnoradoAjusteManual(true);

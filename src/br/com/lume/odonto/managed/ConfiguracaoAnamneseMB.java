@@ -230,27 +230,31 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
             }
 
             for (int i = 0; i < items.length; i++) {
-                if (items[i].equals(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO)) {
-                    perguntasParaSalvar.add(criaPergunta(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO, items[i + 1], i));
+              //  System.out.println(items[i]);
+                if (items[i].equals(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO)) {   
+                    System.out.println();
+                    perguntasParaSalvar.add(criaPergunta(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO, items[i + 2], i, Boolean.parseBoolean(items[i + 1])));
                     i++;
                     continue;
                 } else if (items[i].equals(Pergunta.TIPO_RESPOSTA_TEXTO)) {
-                    perguntasParaSalvar.add(criaPergunta(Pergunta.TIPO_RESPOSTA_TEXTO, items[i + 1], i));
+                    perguntasParaSalvar.add(criaPergunta(Pergunta.TIPO_RESPOSTA_TEXTO, items[i + 2], i,Boolean.parseBoolean(items[i + 1])));
                     i++;
                     continue;
                 } else if (items[i].equals(Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE)) {
-                    perguntasParaSalvar.add(criaPergunta(Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE, items[i + 1], i));
+                    perguntasParaSalvar.add(criaPergunta(Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE, items[i + 2], i,Boolean.parseBoolean(items[i + 1])));
                     i++;
                     continue;
                 } else if (items[i].equals(Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS)) {
-                    Pergunta novaPergunta = criaPergunta(Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS, items[i + 1], i);
+                    Pergunta novaPergunta = criaPergunta(Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS, items[i + 2], i,Boolean.parseBoolean(items[i + 1]));
                     //preciso duas vezes i++, pois uma é o tipo da pergunta, depois pergunta em si, ai sim as respostas.
                     i++;
                     i++;
                     //enquanto nao for outra pergunta é uma resposta, entao vamos adicionando.
                     List<Resposta> respostas = new ArrayList<Resposta>();
                     while (i < items.length && !Arrays.asList(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO, Pergunta.TIPO_RESPOSTA_TEXTO, Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS,
-                            Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS, Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE).contains(items[i])) {
+                            Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS, Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE).contains(items[i])
+                            && !items[i].equals("true") && !items[i].equals("false")
+                            ) {
                         respostas.add(criaResposta(novaPergunta, items[i]));
                         i++;
                     }
@@ -259,14 +263,16 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
                     // i-- para voltar para a pergunta, pois pegou a condicao no whipe
                     i--;
                 } else if (items[i].equals(Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS)) {
-                    Pergunta novaPergunta = criaPergunta(Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS, items[i + 1], i);
+                    Pergunta novaPergunta = criaPergunta(Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS, items[i + 2], i,Boolean.parseBoolean(items[i + 1]));
                     //preciso duas vezes i++, pois uma é o tipo da pergunta, depois pergunta em si, ai sim as respostas.
                     i++;
                     i++;
                     //enquanto nao for outra pergunta é uma resposta, entao vamos adicionando.
                     List<Resposta> respostas = new ArrayList<Resposta>();
                     while (i < items.length && !Arrays.asList(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO, Pergunta.TIPO_RESPOSTA_TEXTO, Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS,
-                            Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS).contains(items[i])) {
+                            Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS, Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE).contains(items[i])
+                            && !items[i].equals("true") && !items[i].equals("false")
+                            ) {
                         respostas.add(criaResposta(novaPergunta, items[i]));
                         i++;
                     }
@@ -309,7 +315,7 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
         return null;
     }
 
-    private Pergunta criaPergunta(String tipo, String descricao, int ordem) {
+    private Pergunta criaPergunta(String tipo, String descricao, int ordem,boolean requerida) {
 
         try {
             Pergunta novaPergunta = new Pergunta();
@@ -319,7 +325,7 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
             novaPergunta.setIdEmpresa(UtilsFrontEnd.getEmpresaLogada().getEmpIntCod());
             novaPergunta.setOrdem(ordem);
             //TODO colocar na tela
-            novaPergunta.setRequerida(true);
+            novaPergunta.setRequerida(requerida);
             //novaPergunta.setRespostas(pergunta.getRespostas());
             novaPergunta.setTipoResposta(tipo);
             novaPergunta.setPreCadastro("S");

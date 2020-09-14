@@ -166,7 +166,8 @@
 		
 			
 			<div class="EmptyBox20"></div>
-                   <p:panelGrid columns="2" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">		
+                   <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">                   
+                   	<p:commandButton id="salvarGeral" icon="White" value="Salvar" oncomplete="salvarPerguntasBackEnd()" process="" />	
                     <p:commandButton id="previewImpressao" icon="White" value="Preview / Impressão" oncomplete="PF('dlgPreview').show();abrirPreview();" process="" />			
 					<p:commandButton  icon="White" value="Fechar" oncomplete="PF('dlgConfiguracoes').hide();" immediate="true" />    
 	             </p:panelGrid>
@@ -482,9 +483,9 @@
 			//console.log(perguntasJson);
 			for (var pergunta of perguntasJson){
 				//console.log(pergunta);
-				 adicionaPergunta(pergunta.descricao,pergunta.tipoResposta,pergunta.respostas);
+				 adicionaPergunta(pergunta.descricao,pergunta.tipoResposta,pergunta.respostas,null,pergunta.requerida);
 			}			
-			 adicionaPergunta(null,null,null);			
+			 adicionaPergunta(null,null,null,null,null);			
 		}
 		
 		
@@ -493,19 +494,19 @@
 			var numberOfElements = document.getElementById("column1").childElementCount;
 			//console.log(numberOfElements);
 			if(numberOfElements != 1){
-				adicionaPergunta(null,null,null);
+				adicionaPergunta(null,null,null,null,null);
 			}
 		}
 		
 		
 		
 		
-    	function adicionaPergunta(pergunta, tipoPergunta, respostas,elementoTextoPergunta){    		
+    	function adicionaPergunta(pergunta, tipoPergunta, respostas,elementoTextoPergunta, requerida){    		
     		
     		//salvarPerguntasBackEnd();
     		
     		//se nao tem texto na pergunta, nao precisa criar outra vazia abaixo.
-    		if(typeof(elementoTextoPergunta) != "undefined"){
+    		if(typeof(elementoTextoPergunta) != "undefined" && elementoTextoPergunta != null){
 	    		if( typeof(elementoTextoPergunta.value) == "undefined" || elementoTextoPergunta.value === null || elementoTextoPergunta.value === ''){	   		 		
 	    			return;
 	   		 	}
@@ -629,7 +630,7 @@
     		// buttonSalvar.classList.add('NavyButton');
     		 
     		 buttonSalvar.onclick = function(){
-    			 adicionaPergunta(null,null,null,textoPergunta);
+    			 adicionaPergunta(null,null,null,textoPergunta,null);
     			 
     			 if(typeof(textoPergunta.value) != "undefined" && textoPergunta.value !== null && textoPergunta.value !== ''){    				
     				 salvarPerguntasBackEnd();
@@ -649,7 +650,7 @@
     		  var divRespostas = document.createElement('div');
     		  divRespostas.setAttribute("id", "divRespostas");
     		  
-    			if(typeof(tipoPergunta) != "undefined" && tipoPergunta !== null && tipoPergunta !== ''){
+				if(typeof(tipoPergunta) != "undefined" && tipoPergunta !== null && tipoPergunta !== ''){
     		 		if(tipoPergunta == 'SIM_OU_NAO'){
     		 			select.value = 'SIM_OU_NAO';
     		 		}else if(tipoPergunta == 'TEXTO'){
@@ -671,15 +672,39 @@
     					}
     		 		}
     		 	}
-    		  
+    			
+    	       // var buttonObrigatorio = document.createElement('div');        
+    	       // buttonObrigatorio.innerHTML = '<input type="checkbox" id="check" name="check"><label for="check">pergunta Obrigatória?</label>';     
+    			
+    	        var buttonObrigatorio = document.createElement('input');
+    	        buttonObrigatorio.type = 'checkbox';
+    	        buttonObrigatorio.id = 'obrigatorio';
+    	        buttonObrigatorio.name = 'obrigatorio';
+    	        buttonObrigatorio.value = 'obrigatorio';
+    	        console.log(requerida);
+    	        if(typeof(requerida) != "undefined" && requerida !== null && requerida !== '' && requerida == true){
+    	        	buttonObrigatorio.checked = requerida;
+    	        }
+    	        
+    	        var textBotaoObrigatorio = document.createTextNode("Obrigatória");
+    	        
+    	        var paragraphTextoObrigatorio = document.createElement('p');
+    	        paragraphTextoObrigatorio.setAttribute("id", "paragrafoObrigatorio");
+    	        paragraphTextoObrigatorio.appendChild(buttonObrigatorio);
+    	        paragraphTextoObrigatorio.appendChild(textBotaoObrigatorio);
+    	        paragraphTextoObrigatorio.setAttribute("style", "font-family: 'Roboto','Helvetica Neue',sans-serif; text-decoration: none;");
+    	        
     		 newDivInterna.appendChild(select);
+    		 newDivInterna.appendChild(document.createElement('br'));
+    		 newDivInterna.appendChild(paragraphTextoObrigatorio);    		
     		 newDivInterna.appendChild(paragraph);
     		 newDivInterna.appendChild(textoPergunta);    		 
+    		 newDivInterna.appendChild(document.createElement('br'));    		 
+    		 newDivInterna.appendChild(divRespostas);    		
     		 newDivInterna.appendChild(document.createElement('br'));
-    		 newDivInterna.appendChild(document.createElement('br'));
-    		 newDivInterna.appendChild(divRespostas);
     		 newDivInterna.appendChild(buttonSalvar);
     		 newDivInterna.appendChild(buttonExcluir);
+    		 
     		  
     		var newQuestionDiv = document.createElement('div');
     		//newQuestionDiv.setAttribute("id", "item2");
@@ -808,12 +833,13 @@
 				    	childrenDragBoxContent.forEach(function(item2){			    		
 				    		//console.log(item2);
 				    	    var tagName = item2.tagName.toLowerCase();
-				    	 
+				    	// console.log(tagName);
 				    	    if (tagName === 'select'){
 				    	    
 				    	    	if(item2.value === ''){    			    	    		
 				    	    		
 				    	    	}else{
+				    	    		//console.log("d: " + item2.value);
 					   				listaPerguntasRespostas = listaPerguntasRespostas + "@@@" + item2.value;
 				    	    	}
 				    	  //  console.log(item2);
@@ -824,9 +850,19 @@
 						   		 	//if( typeof(jsonData[i]) == "undefined" || jsonData[i] === null || jsonData[i] === ''){					   		 		
 						   		 	//	jsonData.i = [];
 						   		 	//}				   		 		
-					   				
+					   				//console.log("a: " + item2.value);
 					   				listaPerguntasRespostas = listaPerguntasRespostas + "@@@" + item2.value;
 					   		 	}
+				    	    }else if(tagName === 'p'){
+				    	    
+				    	    	var chekboxObrigatorio = item2.childNodes[0];
+
+								if(typeof(chekboxObrigatorio) != "undefined" && chekboxObrigatorio !== null && chekboxObrigatorio !== ''
+								&& 	typeof(chekboxObrigatorio.checked) != "undefined"){
+									//console.log("b: " + chekboxObrigatorio.checked);
+									listaPerguntasRespostas = listaPerguntasRespostas + "@@@" + chekboxObrigatorio.checked;
+								}
+				    	    	
 				    	    }else{
 				    	    	if(item2.id == 'divRespostas'){				    	    		
 				    	    		NodeList.prototype.forEach = Array.prototype.forEach
@@ -840,6 +876,7 @@
 								    			//if( typeof(jsonData[i]) == "undefined" || jsonData[i] === null || jsonData[i] === ''){	 
 										   		//	jsonData[i] = [];
 										   	 	//}
+								    			//console.log("c: " + item4.value);
 									   			listaPerguntasRespostas = listaPerguntasRespostas + "@@@" + item4.value;
 								    		 }							    		
 								    	});							    	
