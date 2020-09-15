@@ -51,7 +51,21 @@
 							</h:panelGroup>
 						</p:panelGrid>
 						<div class="EmptyBox20"></div>
-
+						<br/>
+						<p:panelGrid columns="2" layout="grid"
+							columnClasses="ui-g-6, ui-g-6"
+							styleClass="ui-panelgrid-blank form-group ui-fluid optionsPaciente removeSideGridPadding">
+							<h:panelGroup styleClass="md-combo">
+								<p:outputLabel for="status" value="Status das Clinicas: " />
+								<p:selectOneMenu id="status" value="#{clinicasMB.filtroStatus}">
+									<f:selectItem itemLabel="Ativas" itemValue="A" />
+									<f:selectItem itemLabel="Inativas" itemValue="I" />
+									<f:selectItem itemLabel="Todos" itemValue="T" />
+									<p:ajax listener="#{clinicasMB.filtra}" process="@this"
+										update="dtPrincipal" oncomplete="PF('dtPrincipal').filter();" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+						</p:panelGrid>
 						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtPrincipal" selection="#{clinicasMB.entity}"
 						widgetVar="dtPrincipal"
 							value="#{clinicasMB.empresas}" var="empresa" rows="10" paginator="true" rowKey="#{empresa}"
@@ -144,9 +158,40 @@
 							</p:column>
 						</p:dataTable>
 						<br/>
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
+						<h:panelGroup>
+							<p:splitButton icon="White fa fa fa-file-excel-o"
+									value="Exportar tabela para Excel"
+									styleClass="GreenSplitButton"
+									actionListener="#{clinicasMB.exportarTabelaTrial('xls')}"
+									ajax="false" process="dtPrincipal,@this" update="@this"
+									immediate="true"
+									onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+									<p:fileDownload
+										value="#{clinicasMB.arquivoDownload}" />
+
+									<p:menuitem value="Exportar tabela para PDF"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{clinicasMB.exportarTabelaTrial('pdf')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{clinicasMB.arquivoDownload}" />
+									</p:menuitem>									
+									<p:menuitem value="Exportar tabela para CSV"
+										icon="fa fa fa-file-pdf-o"
+										actionListener="#{clinicasMB.exportarTabelaTrial('csv')}"
+										ajax="false" process="dtPrincipal,@this" immediate="true"
+										onclick="PrimeFaces.monitorDownload(function(){PF('loading').show();},function(){PF('loading').hide();});">
+										<p:fileDownload
+											value="#{clinicasMB.arquivoDownload}" />
+									</p:menuitem>									
+							</p:splitButton>
+						</h:panelGroup>	
+						</p:panelGrid>						
 						<br/>
 						<p:dataTable filterDelay="1500"  reflow="true" emptyMessage="" id="dtTrial" selection="#{clinicasMB.entity}"
-						widgetVar="dtTrial"
+						widgetVar="dtTrial" binding="#{clinicasMB.tabelaRelatorioTrial}"
 							value="#{clinicasMB.empresasTrial}" var="empresa" rows="10" paginator="true" rowKey="#{empresa}"
 							paginatorPosition="bottom">
 							<f:facet name="header">Clínicas em Período de Teste</f:facet>	

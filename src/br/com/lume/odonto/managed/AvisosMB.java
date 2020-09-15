@@ -69,7 +69,7 @@ public class AvisosMB extends LumeManagedBean<Avisos>{
         }catch (IuguDadosObrigatoriosException e) {
             this.addWarn(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Dados da empresa insuficientes para contratação.");
         }catch (Exception e) {
-            this.addWarn(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Não foi possível contratar o serviço.");
+            this.addWarn(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Não foi possível contratar o serviço. Verifique o CEP da sua empresa em administrativo, cadastro da clínica");
             e.printStackTrace();
         }
     }
