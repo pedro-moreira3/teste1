@@ -552,6 +552,8 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                     valorTotalFatura = new BigDecimal(0);
                     if (repasse != null && repasseFaturas != null && repasseFaturas.getFaturaOrigem() != null) {
                        valorTotalFatura = FaturaSingleton.getInstance().getTotal(repasseFaturas.getFaturaOrigem());                  
+                    }else if (repasseFaturas.getFaturaOrigem() == null) {
+                        valorTotalFatura = ptp.getPlanoTratamento().getValor();
                     }else {
                         valorTotalFatura = ptp.getOrcamentoProcedimentos().get(0).getOrcamentoItem().getOrcamento().getValorTotalComDesconto();
                     }
@@ -579,7 +581,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
                             }
                         });
                        
-                        if(cont < lancamentosDeOrigem.size()) {   
+                        if(lancamentosDeOrigem != null && cont < lancamentosDeOrigem.size()) {   
                                                  
                             lancamentosDeOrigem.get(cont).setDadosCalculoValorARepassarSemCusto(lancamento.getValor()); 
                          
@@ -671,7 +673,7 @@ public class RepasseProfissionalComReciboMB extends LumeManagedBean<PlanoTratame
           //  criaRepasseManual
             
             if(getEntity().getFatura() == null) {
-                Fatura novaFatura = RepasseFaturasSingleton.getInstance().criaRepasseManual(getEntity(), valorRepassar, new Date(), ignorarRestante, justificativa, getEntity().getDentistaExecutor(), profissional);
+                Fatura novaFatura = RepasseFaturasSingleton.getInstance().criaRepasseManual(getEntity(), getEntity().getDentistaExecutor(), profissional);
                 getEntity().setFatura(novaFatura);
                 try {
                     PlanoTratamentoProcedimentoSingleton.getInstance().getBo().persist(getEntity());
