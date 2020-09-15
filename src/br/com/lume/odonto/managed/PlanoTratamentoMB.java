@@ -1106,8 +1106,9 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 "P") && orcamentoSelecionado.getDescontoValor().compareTo(valorDesconto) == 1) {
            return true;         
         } else if (orcamentoSelecionado.getDescontoTipo().equals("V")) {
-            orcamentoSelecionado.getValorTotal();
-            double descontoEmPorcentagem = (orcamentoSelecionado.getDescontoValor().doubleValue() * 100) / orcamentoSelecionado.getValorTotal().doubleValue();
+            //orcamentoSelecionado.getValorTotal();
+            //orcamentoSelecionado.getValorTotalSemDesconto();
+            double descontoEmPorcentagem = (orcamentoSelecionado.getDescontoValor().doubleValue() * 100) / orcamentoSelecionado.getValorTotalSemDesconto().doubleValue();
             if (descontoEmPorcentagem > descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto().doubleValue()) {
                 return true;
             }
@@ -1430,7 +1431,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
             if ("P".equals(orcamentoSelecionado.getDescontoTipo()))
                 orcamentoPerc = orcamentoSelecionado.getDescontoValor();
             else if ("V".equals(orcamentoSelecionado.getDescontoTipo())) {
-                orcamentoPerc = orcamentoSelecionado.getDescontoValor().divide(orcamentoSelecionado.getValorTotal(), 10, BigDecimal.ROUND_HALF_DOWN).multiply(new BigDecimal(100));
+                orcamentoPerc = orcamentoSelecionado.getDescontoValor().divide(orcamentoSelecionado.getValorTotalSemDesconto(), 10, BigDecimal.ROUND_HALF_DOWN).multiply(new BigDecimal(100));
             }
             orcamentoPerc = orcamentoPerc.setScale(2, BigDecimal.ROUND_HALF_DOWN);
 
