@@ -1490,6 +1490,12 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
                 }
 
              //   validaDescontos();
+            }else {
+                numeroParcelaOrcamento = null;
+                valorPrimeiraParcelaOrcamento = null;
+                valorParcela = null;
+                observacoesCobrancaOrcamento = null;
+                
             }
 
         }

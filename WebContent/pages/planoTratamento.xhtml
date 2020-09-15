@@ -1325,12 +1325,12 @@ body .ui-cell-editor-input .ui-autocomplete .ui-autocomplete-dropdown .ui-icon-t
 								value="Orçamentos do Plano de Tratamento '#{planoTratamentoMB.entity.descricao}'" />
 						</f:facet>
 						<p:column width="120" headerText="Editar">
-							<p:commandButton process="@this"
+							<p:commandButton process="@this" title="Visualizar"
 								actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
 								update=":lume:tabViewPaciente:panelDescObs,:lume:tabViewPaciente:orcamentoViewTable, :lume:tabViewPaciente:pnViewOrcamento, :lume:tabViewPaciente:orcamentoViewHeader, :lume:tabViewPaciente:buttonsDlgOrcamentoView"
 								oncomplete="PF('dlgViewOrcamento').show();"
 								styleClass="NavyButton" icon="fa fa-eye" />
-							<p:commandButton icon="White fa fa-print" process="@this"
+							<p:commandButton icon="White fa fa-print" process="@this" title="Imprimir"
 								update=":lume:tabViewPaciente:orcamentoViewPrint, :lume:tabViewPaciente:orcamentoViewPrintHeader"
 								actionListener="#{planoTratamentoMB.actionEditOrcamento(orcamento)}"
 								oncomplete="PF('dlgPrintOrcamento').show()"
