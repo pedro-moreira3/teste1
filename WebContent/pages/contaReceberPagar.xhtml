@@ -308,15 +308,21 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 										style="border:0px none; background-color:transparent;"
 										id="filtroPrincipalDatas">
 
-										<p:outputLabel for="inicioLancamento" value="Inicio : " />
+										<p:outputLabel for="inicioLancamento" value="Inicio: " />
 										<p:calendar id="inicioLancamento"
 											value="#{lancamentoContabilMB.inicio}" pattern="dd/MM/yyyy"
 											mask="true" required="false" />
 
-										<p:outputLabel for="fimLancamento" value="Fim : " />
+										<p:outputLabel for="fimLancamento" value="Fim: " />
 										<p:calendar id="fimLancamento"
 											value="#{lancamentoContabilMB.fim}" pattern="dd/MM/yyyy"
 											mask="true" required="false" />
+										
+										<p:outputLabel for="mostrarextornos" value="Mostrar lançamento de extorno: " />	
+										<p:selectBooleanCheckbox id="mostrarextornos" 
+											value="#{lancamentoContabilMB.mostrarExtorno}">
+											<p:ajax process="@this"/>
+										</p:selectBooleanCheckbox>
 
 									</p:panelGrid>
 

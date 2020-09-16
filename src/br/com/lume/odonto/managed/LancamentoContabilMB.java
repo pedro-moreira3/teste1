@@ -90,6 +90,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
     private DataTable tabelaLancamento;
 
     private Date inicio, fim;
+    
+    private boolean mostrarExtorno = false;
 
     public LancamentoContabilMB() {
         super(LancamentoContabilSingleton.getInstance().getBo());
@@ -176,7 +178,8 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
         try {
             tiposCategoria = TipoCategoriaSingleton.getInstance().getBo().listAll();
             categorias = CategoriaMotivoSingleton.getInstance().getBo().listAll();
-            lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listByEmpresaAndData(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), inicio, fim);
+            lancamentoContabeis = LancamentoContabilSingleton.getInstance().getBo().listByEmpresaAndData(
+                    UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(), inicio, fim, this.mostrarExtorno);
             carrearListasPorTipoPagamento();
             updateSomatorio();
         } catch (Exception e) {
@@ -504,6 +507,14 @@ public class LancamentoContabilMB extends LumeManagedBean<LancamentoContabil> {
 
     public void setSomatorioValorLancamento(BigDecimal somatorioValorLancamento) {
         this.somatorioValorLancamento = somatorioValorLancamento;
+    }
+
+    public boolean isMostrarExtorno() {
+        return mostrarExtorno;
+    }
+
+    public void setMostrarExtorno(boolean mostrarExtorno) {
+        this.mostrarExtorno = mostrarExtorno;
     }
 
 }
