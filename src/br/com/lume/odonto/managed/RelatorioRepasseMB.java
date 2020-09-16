@@ -116,7 +116,11 @@ public class RelatorioRepasseMB extends LumeManagedBean<RepasseFaturasLancamento
                 
                 for (RepasseFaturas rf : repasses) {
                     if (rf.getFaturaRepasse().getTipoLancamentos() == TipoLancamentos.MANUAL) {
-                        BigDecimal valorRestante = rf.getFaturaRepasse().getItensFiltered().get(0).getValorAjusteManual();
+                        BigDecimal valorRestante = new BigDecimal(0);
+                        if(rf.getFaturaRepasse().getItensFiltered() != null && rf.getFaturaRepasse().getItensFiltered().size() > 0) {
+                            valorRestante = rf.getFaturaRepasse().getItensFiltered().get(0).getValorAjusteManual();    
+                        }
+                        
                         BigDecimal valorRepassado = FaturaSingleton.getInstance().getTotalPago(rf.getFaturaRepasse());
 
                         if (valorRepassado == null)

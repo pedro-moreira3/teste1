@@ -1007,10 +1007,10 @@ public class AgendamentoMB extends LumeManagedBean<Agendamento> {
         }
     }
 
-    public void listenerAlterouProfissional() {
+    public void listenerAlterouProfissional() {     
+        this.calculaDataFim();
         this.validarAfastamentoProfissional();
         this.validaHoraUtilProfissionalCombo();
-        this.calculaDataFim();
     }
 
     public boolean validaHoraduplicadaProfissional(Agendamento agendamento) {
