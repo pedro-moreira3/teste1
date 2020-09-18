@@ -20,12 +20,12 @@ body .ui-selectoneradio td label {
 			<h:panelGroup id="foto">
 				<div class="Container100">
 					<p:graphicImage styleClass="Fleft"
-						value="#{lumeSecurity.imagemUsuario}" stream="false"
+						value="#{profissionalMB.imagemUsuario}" stream="false"
 						style="width:100%;"
-						rendered="#{lumeSecurity.imagemUsuario != null}" />
+						rendered="#{profissionalMB.imagemUsuario != null}" />
 					<h:graphicImage name="sem-imagem-avatar.png" styleClass="Fleft"
 						style="width:100%;" library="images"
-						rendered="#{lumeSecurity.imagemUsuario == null}" />
+						rendered="#{profissionalMB.imagemUsuario == null}" />
 
 					<p:outputPanel
 						rendered="#{profissionalMB.entity.id != null and profissionalMB.entity.id != 0}">

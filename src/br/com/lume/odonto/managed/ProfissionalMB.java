@@ -16,6 +16,7 @@ import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 import javax.imageio.stream.FileImageOutputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.PrimeFaces;
@@ -23,6 +24,7 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CaptureEvent;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 import org.primefaces.model.UploadedFile;
 
 import br.com.lume.common.OdontoPerfil;
@@ -419,7 +421,8 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         }
 
         if (targetFile == null || !targetFile.exists()) {
-            nomeImagem = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
+            nomeImagem = UtilsFrontEnd.getProfissionalLogado().getIdEmpresa() + "_" + UtilsFrontEnd.getProfissionalLogado().getId() 
+                    + "_" + Calendar.getInstance().getTimeInMillis() + ".jpeg";
             targetFile = new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + nomeImagem);
         }
         FileImageOutputStream imageOutput = new FileImageOutputStream(targetFile);
@@ -431,6 +434,23 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
     public void onCapture(CaptureEvent captureEvent) {
         data = captureEvent.getData();
         scFoto = new DefaultStreamedContent(new ByteArrayInputStream(data));
+    }
+    
+    public StreamedContent getImagemUsuario() {
+        try {
+            
+            Profissional profissional = this.getEntity();
+            
+            if (profissional != null && profissional.getNomeImagem() != null) {
+                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+                        FileUtils.readFileToByteArray(new File(OdontoMensagens.getMensagem("template.dir.imagens") + File.separator + profissional.getNomeImagem())));
+                DefaultStreamedContent defaultStreamedContent = new DefaultStreamedContent(byteArrayInputStream, "image/" + profissional.getNomeImagem().split("\\.")[1], profissional.getNomeImagem());
+                return defaultStreamedContent;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private void carregarObjetosProfissional() throws Exception {
