@@ -14,8 +14,13 @@ import org.apache.log4j.Logger;
 import org.primefaces.component.datatable.DataTable;
 
 import br.com.lume.afiliacao.AfiliacaoSingleton;
+import br.com.lume.common.iugu.Iugu;
+import br.com.lume.common.iugu.Iugu.StatusFaturaIugu;
+import br.com.lume.common.iugu.responses.InvoiceResponse;
+import br.com.lume.common.iugu.responses.ItemResponse;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Utils;
+import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Afiliacao;
 import br.com.lume.security.EmpresaSingleton;
 import br.com.lume.security.entity.Empresa;
@@ -48,7 +53,9 @@ public class RelatorioPatrocinadorMB extends LumeManagedBean<Empresa> {
     //EXPORTAÇÃO TABELA
     private DataTable tabelaRelatorio; 
     
-    private List<Empresa> clinicas = new ArrayList<>();    
+    private List<Empresa> clinicas = new ArrayList<>();
+
+    private Afiliacao afiliacao;    
 
     public RelatorioPatrocinadorMB() {
         super(EmpresaSingleton.getInstance().getBo());
@@ -72,31 +79,13 @@ public class RelatorioPatrocinadorMB extends LumeManagedBean<Empresa> {
                 this.addError("Erro", "Seleciona um patrocinador!", true);
                 return;
             }
-            Afiliacao afiliacao = AfiliacaoSingleton.getInstance().getBo().find(afiliacaoId);
+            afiliacao = AfiliacaoSingleton.getInstance().getBo().find(afiliacaoId);
             
-            //todas as clinicas ativas do patrociador selecionado
-            clinicas = EmpresaSingleton.getInstance().getBo().listaEmpresasAfiliadasPorStatus(afiliacao, "A","N");
-            
-            Calendar c = Calendar.getInstance();
-            c.set(Integer.parseInt(ano), Integer.parseInt(mes), 1);
-            
-            Date ultimoDiaMesCobranca = Utils.getUltimoDiaHoraMes(c.getTime());
-            Date primeiroDiaMesCobranca = Utils.getPrimeiroDiaHoraMes(c.getTime());
-           
-            //removendo se entrou em ativacao depois do ultimo dia do mes que estamos cobrando
-            clinicas.removeIf(clinica -> clinica.getEmpDtmAceite().after(ultimoDiaMesCobranca));
-           
-            //adicionando as clinicas inativas, mas que foram inativadas no mes de referencia
-            List<Empresa> inativas = EmpresaSingleton.getInstance().getBo().listaEmpresasAfiliadasPorStatus(afiliacao, "I","N");
-         
-            inativas.removeIf(clinica -> clinica.getDataInativacao() == null || (clinica.getDataInativacao().before(primeiroDiaMesCobranca) || clinica.getDataInativacao().after(ultimoDiaMesCobranca)));
-            clinicas.addAll(inativas);
-            
-             setRodape("Total: " + clinicas.size());
-
-            setRodape2("Valor Mensal: R$ " + new DecimalFormat("#,##0.00").format(afiliacao.getValorMensal()));
-
-            setRodape3("Total: R$ " + new DecimalFormat("#,##0.00").format(afiliacao.getValorMensal().multiply(new BigDecimal(clinicas.size()))));
+            if(afiliacao.getModalidadeContrato().equals("Mensal")) {
+                calculaRelatorioMensal();
+            }else if(afiliacao.getModalidadeContrato().equals("Comissao")) {
+                calculaRelatorioComissao();
+            }
             
             
         } catch (Exception e) {
@@ -104,6 +93,74 @@ public class RelatorioPatrocinadorMB extends LumeManagedBean<Empresa> {
             this.log.error(e);
         }
     }    
+
+    //PARA PATROCINADOR COMISSAO, PAGAMOS X% DE TODOS QUE PAGARAM NO MES DE REFERENCIA
+    private void calculaRelatorioComissao() {
+        //todas as clinicas ativas do patrociador selecionado
+        clinicas = EmpresaSingleton.getInstance().getBo().listaEmpresasAfiliadasPorStatus(afiliacao, "A","N");
+        //REMOVENDO TODOS QUE NAO TEM CADASTRO NO IUGU
+        clinicas.removeIf(clinica -> clinica.getIdIugu() == null || clinica.getAssinaturaIuguBanco() == null);
+        
+        List<Empresa> empresasPagaramMesReferencia = new ArrayList<Empresa>();
+        
+        Calendar c = Calendar.getInstance();
+        c.set(Integer.parseInt(ano), Integer.parseInt(mes), 1);
+        
+        Date ultimoDiaMesCobranca = Utils.getUltimoDiaHoraMes(c.getTime());
+        Date primeiroDiaMesCobranca = Utils.getPrimeiroDiaHoraMes(c.getTime());
+        BigDecimal totalRecebido = new BigDecimal(0);
+        for (Empresa clinica : clinicas) {
+            InvoiceResponse invoice = Iugu.getInstance().listaFaturasPorClienteEStatus (clinica.getIdIugu(),StatusFaturaIugu.PAGO);
+            List<ItemResponse> listaFaturas = invoice.getItems();
+            //pegamos as faturas do cliente que foram pagas no mes de referencia
+            for (ItemResponse item : listaFaturas) {
+                if(item.getPaidAt() != null && item.getPaidAt().after(primeiroDiaMesCobranca) && item.getPaidAt().before(ultimoDiaMesCobranca)) {
+                    empresasPagaramMesReferencia.add(clinica);
+                    totalRecebido = totalRecebido.add(afiliacao.getValorMensal());
+                }
+            }
+            
+        }
+        clinicas = empresasPagaramMesReferencia;
+        
+        BigDecimal totalAPagar =  totalRecebido.multiply(afiliacao.getPercentual()).divide(new BigDecimal(100));
+        
+        setRodape("Total de clientes: " + clinicas.size() + ". Valor mensal pago pelo cliente: R$ " + new DecimalFormat("#,##0.00").format(afiliacao.getValorMensal()));
+        setRodape2("Valor total pago: R$ " + new DecimalFormat("#,##0.00").format(totalRecebido) +
+                ". Comissão:" + new DecimalFormat("#").format(afiliacao.getPercentual())  + 
+                "%. "  );
+        setRodape3("Valor à pagar para o patrocinador: R$ " + new DecimalFormat("#,##0.00").format(totalAPagar));
+    }
+    
+    
+
+    //PARA PATROCINADOR MENSAL, COBRAMOS SE ESTEVE ATIVO NO MES DE REFERENCIA
+    private void calculaRelatorioMensal() {
+        //todas as clinicas ativas do patrociador selecionado
+        clinicas = EmpresaSingleton.getInstance().getBo().listaEmpresasAfiliadasPorStatus(afiliacao, "A","N");
+        
+        Calendar c = Calendar.getInstance();
+        c.set(Integer.parseInt(ano), Integer.parseInt(mes), 1);
+        
+        Date ultimoDiaMesCobranca = Utils.getUltimoDiaHoraMes(c.getTime());
+        Date primeiroDiaMesCobranca = Utils.getPrimeiroDiaHoraMes(c.getTime());
+       
+        //removendo se entrou em ativacao depois do ultimo dia do mes que estamos cobrando
+        clinicas.removeIf(clinica -> clinica.getEmpDtmAceite().after(ultimoDiaMesCobranca));
+       
+        //adicionando as clinicas inativas, mas que foram inativadas no mes de referencia
+        List<Empresa> inativas = EmpresaSingleton.getInstance().getBo().listaEmpresasAfiliadasPorStatus(afiliacao, "I","N");
+     
+        inativas.removeIf(clinica -> clinica.getDataInativacao() == null || (clinica.getDataInativacao().before(primeiroDiaMesCobranca) || clinica.getDataInativacao().after(ultimoDiaMesCobranca)));
+        clinicas.addAll(inativas);
+        
+         setRodape("Total: " + clinicas.size());
+
+        setRodape2("Valor Mensal: R$ " + new DecimalFormat("#,##0.00").format(afiliacao.getValorMensal()));
+
+        setRodape3("Total: R$ " + new DecimalFormat("#,##0.00").format(afiliacao.getValorMensal().multiply(new BigDecimal(clinicas.size()))));
+        
+    }
 
     public void exportarTabela(String type) {
         this.exportarTabela("", tabelaRelatorio, type);
