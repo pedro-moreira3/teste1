@@ -162,15 +162,15 @@
 						<p:column filterBy="#{f.dataCriacaoStr}"
 							headerText="Data de Criação" filterMatchMode="contains"
 							sortBy="#{f.dataCriacaoStr}">
-							<h:outputText value="#{f.dataCriacaoStr}" />
+							<h:outputText value="#{f.dataCriacaoStr}" title="#{f.id}" />
 						</p:column>
 						<p:column filterBy="#{f.dadosTabelaPT.descricao}"
 							sortBy="#{f.dadosTabelaPT.descricao}" filterMatchMode="contains"
 							headerText="Plano de Tratamento">
 							<h:outputText value="#{f.dadosTabelaPT.descricao}" />
 						</p:column>
-				
-					<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPago}"
+
+						<p:column filterBy="#{f.dadosTabelaRepasseTotalNaoPago}"
 							headerText="Valor à Receber" filterMatchMode="contains"
 							sortBy="#{f.dadosTabelaRepasseTotalNaoPago}">
 							<h:outputText value="#{f.dadosTabelaRepasseTotalNaoPago}">
@@ -184,8 +184,8 @@
 								</h:outputText>
 							</f:facet>
 						</p:column>
-						
-							<p:column filterBy="#{f.dadosTabelaRepasseTotalPago}"
+
+						<p:column filterBy="#{f.dadosTabelaRepasseTotalPago}"
 							headerText="Valor Recebido" filterMatchMode="contains"
 							sortBy="#{f.dadosTabelaRepasseTotalPago}">
 							<h:outputText value="#{f.dadosTabelaRepasseTotalPago}">
@@ -200,8 +200,8 @@
 							</f:facet>
 						</p:column>
 
-						
-						
+
+
 						<p:column filterBy="#{f.dadosTabelaRepasseTotalFatura}"
 							headerText="Valor Total" filterMatchMode="contains"
 							sortBy="#{f.dadosTabelaRepasseTotalFatura}">
@@ -216,7 +216,7 @@
 								</h:outputText>
 							</f:facet>
 						</p:column>
-						
+
 						<p:column width="80" headerText="Status"
 							filterBy="#{f.statusFaturaCompleto}"
 							sortBy="#{f.statusFaturaCompleto}" filterMatchMode="contains">

@@ -92,6 +92,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private PlanoTratamento[] ptSelecionados = new PlanoTratamento[] {};
     private List<PlanoTratamento> listaPt;
     private boolean showLancamentosCancelados = false;
+    private boolean showLancamentosExtorno = false;
 
     private StatusFatura status;
     private List<StatusFatura> listaStatus;
@@ -2267,6 +2268,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setExtornarLancamento(Lancamento extornarLancamento) {
         this.extornarLancamento = extornarLancamento;
+    }
+
+    public boolean isShowLancamentosExtorno() {
+        return showLancamentosExtorno;
+    }
+
+    public void setShowLancamentosExtorno(boolean showLancamentosExtorno) {
+        this.showLancamentosExtorno = showLancamentosExtorno;
     }
 
     //-------------------------------- EDITAR LANÇAMENTO --------------------------------    

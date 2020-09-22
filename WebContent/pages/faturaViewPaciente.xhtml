@@ -1420,6 +1420,12 @@ body .height31 input {
 									value="#{faturaPagtoMB.showLancamentosCancelados}">
 									<p:ajax process="@this" update="lancamentosFatura" />
 								</p:selectBooleanCheckbox>
+								
+								<p:selectBooleanCheckbox styleClass="sideChkBox"
+									itemLabel="Mostrar lançamentos de extorno."
+									value="#{faturaPagtoMB.showLancamentosExtorno}">
+									<p:ajax process="@this" update="lancamentosFatura" />
+								</p:selectBooleanCheckbox>
 							</p:panel>
 							<br />
 							<p:dataTable filterDelay="1500" reflow="true" emptyMessage=""
