@@ -1422,8 +1422,8 @@ body .height31 input {
 								</p:selectBooleanCheckbox>
 								
 								<p:selectBooleanCheckbox styleClass="sideChkBox"
-									itemLabel="Mostrar lançamentos de extorno."
-									value="#{faturaPagtoMB.showLancamentosExtorno}">
+									itemLabel="Mostrar lançamentos de estorno."
+									value="#{faturaPagtoMB.showLancamentosEstorno}">
 									<p:ajax process="@this" update="lancamentosFatura" />
 								</p:selectBooleanCheckbox>
 							</p:panel>
@@ -1435,7 +1435,7 @@ body .height31 input {
 								<f:facet name="header">Lançamentos da Fatura</f:facet>
 
 								<p:column headerText="Ações" width="50" exportable="false"
-									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
 									rendered="#{showNewLancamento != null and showNewLancamento == 'S'}">
 									<p:commandButton styleClass="RedButton" icon="fa fa-trash"
 										title="Cancelar lançamento"
@@ -1443,7 +1443,7 @@ body .height31 input {
 										update="@parent:@parent:@parent:pnlfaturaView, @parent:@parent:@parent:buttonViewFatura"
 										actionListener="#{faturaPagtoMB.cancelaLancamento(l)}"
 										process="@this"
-										rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.permiteExcluirLancamento}">
+										rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.permiteExcluirLancamento and l.lancamentoExtornado == 'N'}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											escape="false"
 											message="Você tem certeza que deseja cancelar este lançamento? &lt;br/&gt; &lt;b&gt;Se já foi confirmado&lt;/b&gt;, o saldo ficará disponível na &lt;b&gt;conta do paciente&lt;/b&gt;.">
@@ -1454,7 +1454,7 @@ body .height31 input {
 										actionListener="#{faturaPagtoMB.carregarAjuste(l)}"
 										oncomplete="PF('dlgAjusteLancamento').show();"
 										disabled="#{!l.ativo or l.validado == 'N' or !faturaPagtoMB.permiteExcluirLancamento}"
-										rendered="#{l.validado == 'S' and (showNewLancamento != null and showNewLancamento == 'S')}"
+										rendered="#{l.validado == 'S' and l.lancamentoExtornado == 'N' and (showNewLancamento != null and showNewLancamento == 'S')}"
 										process="@this" update=":lume:pnlAjusteLancamento">
 									</p:commandButton>
 									<p:commandButton styleClass="OrangeButton" icon="fa fa-pencil"
@@ -1463,14 +1463,14 @@ body .height31 input {
 										update="@parent:@parent:@parent:@parent:@parent:pnlEditarLancamento"
 										actionListener="#{faturaPagtoMB.actionStartEditarLancamento(l)}"
 										onsuccess="PF('dlgEditarLancamento').show()" process="@this"
-										rendered="#{showNewLancamento != null and showNewLancamento == 'S' and faturaPagtoMB.permiteExcluirLancamento}">
+										rendered="#{showNewLancamento != null and l.lancamentoExtornado == 'N' and showNewLancamento == 'S' and faturaPagtoMB.permiteExcluirLancamento}">
 									</p:commandButton>
 									<p:commandButton styleClass="GreenButton" icon="fa fa-check"
 										title="Recebido"
 										update="@parent:@parent, @parent:@parent:@parent:pnlfaturaView"
 										actionListener="#{faturaPagtoMB.confereLancamentoRepasse(l)}"
 										process="@this"
-										rendered="#{showNewLancamento != null and showNewLancamento == 'S'}"
+										rendered="#{showNewLancamento != null and showNewLancamento == 'S' and l.lancamentoExtornado == 'N'}"
 										disabled="#{l.pagamentoConferido == 'S' or l.validado != 'N' or !l.ativo}">
 										<p:confirm header="Confirmação" icon="ui-icon-alert"
 											message="Você confirma este recebimento?">
@@ -1478,7 +1478,7 @@ body .height31 input {
 									</p:commandButton>
 								</p:column>
 								<p:column
-									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')} cabecalho"
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')} cabecalho"
 									width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterBy="#{l.formaPagamentoStr}"
@@ -1486,7 +1486,7 @@ body .height31 input {
 									<h:outputText value="#{l.formaPagamentoStr}" title="#{l.id}" />
 								</p:column>
 								<p:column
-									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
 									sortBy="#{l.valor}" filterMatchMode="contains"
 									filterBy="#{l.valor}" headerText="Valor" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
@@ -1495,7 +1495,7 @@ body .height31 input {
 									</h:outputText>
 								</p:column>
 								<p:column
-									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
 									sortBy="#{l.tributo}" filterMatchMode="contains"
 									filterBy="#{l.tributo}" headerText="Tributos" width="5%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}">
@@ -1507,7 +1507,7 @@ body .height31 input {
 									</h:outputText>
 								</p:column>
 								<p:column
-									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
 									sortBy="#{l.dataPagamentoStr}"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterMatchMode="contains" filterBy="#{l.dataPagamentoStr}"
@@ -1515,7 +1515,7 @@ body .height31 input {
 									<h:outputText value="#{l.dataPagamentoStr}" />
 								</p:column>
 								<p:column
-									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
 									sortBy="#{l.dataCreditoStr}" filterMatchMode="contains"
 									width="10%" filterBy="#{l.dataCreditoStr}"
 									headerText="Data de Crédito"
@@ -1523,7 +1523,7 @@ body .height31 input {
 									<h:outputText value="#{l.dataCreditoStr}" />
 								</p:column>
 								<p:column
-									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
 									sortBy="#{(l.validado == 'S' ? 'Sim' : 'Não')}" width="5%"
 									filterMatchMode="contains"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
@@ -1532,7 +1532,7 @@ body .height31 input {
 									<h:outputText value="#{(l.validado == 'S' ? 'Sim' : 'Não')}" />
 								</p:column>
 								<p:column
-									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
 									sortBy="#{l.validadoPorProfissional.dadosBasico.nome}"
 									filterMatchMode="contains" width="10%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
@@ -1542,7 +1542,7 @@ body .height31 input {
 										value="#{l.validadoPorProfissional.dadosBasico.nome}" />
 								</p:column>
 								<p:column
-									styleClass="#{(l.validado == 'C' ? 'lancamentoFalhaOperacao' : '')}"
+									styleClass="#{(l.validado == 'C' or l.lancamentoExtornado == 'S' ? 'lancamentoFalhaOperacao' : '')}"
 									headerText="Status" sortBy="#{l.statusCompleto}" width="15%"
 									style="#{l != null and !l.ativo ? 'color: red' : ''}"
 									filterMatchMode="contains" filterBy="#{l.statusCompleto}">
