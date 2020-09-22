@@ -52,7 +52,7 @@ public class MeuPlanoMB extends LumeManagedBean<Agendamento> {
         try {
             
             Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
-            Plano planoUsuLogado = PlanoSingleton.getInstance().getBo().findByUsuarioLogado(UtilsFrontEnd.getEmpresaLogada().getIdPlano());
+            Plano planoUsuLogado = PlanoSingleton.getInstance().getBo().findByUsuarioLogado(UtilsFrontEnd.getEmpresaLogada().getPlano().getId());
             agendamentos = AgendamentoSingleton.getInstance().getBo().listQuantidadeAgendamentosMes(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
             agendamentosMes = AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosMesAtual(empresaLogada.getEmpIntCod());
             
