@@ -1,0 +1,770 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<ui:define name="content">
+		<style>
+.ui-fileupload-content.ui-widget-content.ui-corner-bottom {
+	display: none !important;
+}
+
+.ui-fileupload-buttonbar.ui-widget-header.ui-corner-top {
+	background: none !important;
+	border: none !important;
+	padding: 0px !important;
+}
+
+.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-icon-left.ui-fileupload-choose
+	{
+	width: 300px !important;
+}
+
+.remove12ColPaddingSide div.ui-g-12.ui-lg-12 {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.removeSideGridPadding .ui-panelgrid-cell:first-child {
+	padding-left: 0px !important;
+}
+
+.removeSideGridPadding .ui-panelgrid-cell:last-child {
+	padding-right: 0px !important;
+}
+
+.segVia .ui-datepicker-inline {
+	margin: 0;
+}
+</style>
+
+		<p:dialog widgetVar="dlgNewInvoice" resizable="false" modal="true"
+			appendTo=":lume">
+			<f:facet name="header">
+				<p:outputPanel id="pnPrincipalInvoiceHeader">
+					<h:outputText
+						value="Nova Fatura do cliente #{gerenciamentoIuguMB.entity.empStrNme}" />
+				</p:outputPanel>
+			</f:facet>
+			<p:outputPanel id="pnPrincipalInvoice"
+				style="max-height: 50vh; height: 50vh; max-width: 60vw; width: 60vw;"
+				styleClass="remove12ColPaddingSide">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px">
+
+					<p:panelGrid columns="2" layout="grid" style="margin-top: 10px"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="md-inputfield">
+						
+						</h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="newInvoiceSubscription" disabled="true"
+								value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).id}" />
+							<p:outputLabel for="newInvoiceSubscription" value="ID Assinatura" />
+							<p:message for="newInvoiceSubscription" styleClass="msg" />
+						</h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="newInvoicePlan" disabled="true"
+								value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).planName}" />
+							<p:outputLabel for="newInvoicePlan" value="Plano" />
+							<p:message for="newInvoicePlan" styleClass="msg" />
+						</h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="newInvoicePrice" disabled="true"
+								value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).price}">
+								<f:convertNumber type="currency" currencySymbol="R$"
+									maxFractionDigits="2" />
+							</p:inputText>
+							<p:outputLabel for="newInvoicePrice" value="Valor do Plano" />
+							<p:message for="newInvoicePrice" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="newInvoiceEmail"
+								value="#{gerenciamentoIuguMB.newInvoiceEmail}" />
+							<p:outputLabel for="newInvoiceEmail" value="Email" />
+							<p:message for="newInvoiceEmail" styleClass="msg" />
+						</h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield">
+							<p:calendar id="newInvoiceDataVencimento"
+								value="#{gerenciamentoIuguMB.newInvoiceDataVencimento}" />
+							<p:outputLabel for="newInvoiceDataVencimento"
+								value="Data Vencimento" />
+							<p:message for="newInvoiceDataVencimento" styleClass="msg" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+
+					<p:fieldset legend="Itens">
+						<h:panelGroup id="itensNewInvoiceBotoes" styleClass="tableButtons">
+							<p:commandButton icon="ui-icon-add"
+								styleClass="BotaoCrud lime-btn"
+								action="#{gerenciamentoIuguMB.actionNewInvoiceNovoItem}"
+								process="@this, :lume:newInvoiceEmail, :lume:newInvoiceDataVencimento"
+								oncomplete="PF('dlgNewItemNewInvoice').show()"
+								update=":lume:pnPrincipalInvoiceNewItemHeader, :lume:pnPrincipalInvoiceNewItem,:lume:view-log" />
+						</h:panelGroup>
+						<p:dataTable emptyMessage="Nenhum Item adicionado"
+							id="tbInvoiceItens"
+							value="#{gerenciamentoIuguMB.newInvoiceItems}"
+							var="newInvoiceItem" rows="10" paginatorPosition="bottom"
+							paginatorAlwaysVisible="true" paginator="true"
+							rowKey="#{newInvoiceItem}" widgetVar="dtInvoiceItens">
+							<f:facet name="header">Itens</f:facet>
+							<p:column headerText="Ações" width="80" exportable="false">
+								<p:commandButton icon="ui-icon-remove" styleClass="red-btn"
+									actionListener="#{gerenciamentoIuguMB.actionNewInvoiceDelItem}"
+									update=":lume:pnPrincipalInvoice, :lume:view-log"
+									onstart="PF('loading').show()"
+									process="@this, :lume:newInvoiceEmail, :lume:newInvoiceDataVencimento"
+									oncomplete="PF('loading').hide()">
+									<p:confirm header="Confirmar"
+										message="Tem certeza que deseja excluir?" icon="ui-icon-alert" />
+									<f:attribute name="item" value="#{newInvoiceItem}" />
+								</p:commandButton>
+							</p:column>
+							<p:column headerText="Descrição"
+								filterBy="#{newInvoiceItem.description}"
+								sortBy="#{newInvoiceItem.description}"
+								filterMatchMode="contains">
+								<h:outputText value="#{newInvoiceItem.description}" />
+							</p:column>
+							<p:column headerText="Quantidade"
+								filterBy="#{newInvoiceItem.quantity}"
+								sortBy="#{newInvoiceItem.quantity}" filterMatchMode="contains">
+								<h:outputText value="#{newInvoiceItem.quantity}" />
+							</p:column>
+							<p:column headerText="Valor" filterBy="#{newInvoiceItem.price}"
+								sortBy="#{newInvoiceItem.price}" filterMatchMode="contains">
+								<h:outputText value="#{newInvoiceItem.price}">
+									<f:convertNumber type="currency" currencySymbol="R$"
+										maxFractionDigits="2" />
+								</h:outputText>
+							</p:column>
+						</p:dataTable>
+					</p:fieldset>
+
+				</p:scrollPanel>
+			</p:outputPanel>
+			<p:panelGrid columns="2" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton icon="fa fa-check" value="Criar Fatura"
+					process="@this, pnPrincipalInvoice" styleClass="lime-btn"
+					onstart="PF('loading').show()"
+					actionListener="#{gerenciamentoIuguMB.actionPersistNewInvoice}"
+					update=":lume:pnPrincipalAssinatura, :lume:view-log"
+					oncomplete="PF('dtAssinaturaFaturas').filter();PF('loading').hide()" />
+				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+					oncomplete="PF('dlgNewInvoice').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgNewItemNewInvoice" resizable="false"
+			modal="true" appendTo=":lume">
+			<f:facet name="header">
+				<p:outputPanel id="pnPrincipalInvoiceNewItemHeader">
+					<h:outputText
+						value="Novo Item - Nova Fatura do cliente #{gerenciamentoIuguMB.entity.empStrNme}" />
+				</p:outputPanel>
+			</f:facet>
+			<p:outputPanel id="pnPrincipalInvoiceNewItem"
+				style="max-height: 200px; height: 200px; max-width: 40vw; width: 40vw;"
+				styleClass="remove12ColPaddingSide">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px">
+
+					<p:panelGrid columns="1" layout="grid" style="margin-top: 10px"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="invoiceNewItemDescription"
+								value="#{gerenciamentoIuguMB.newInvoiceNewItem.description}" />
+							<p:outputLabel for="invoiceNewItemDescription" value="Descrição" />
+							<p:message for="invoiceNewItemDescription" styleClass="msg" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="invoiceNewItemQtde"
+								value="#{gerenciamentoIuguMB.newInvoiceNewItem.quantity}" />
+							<p:outputLabel for="invoiceNewItemQtde" value="Quantidade" />
+							<p:message for="invoiceNewItemQtde" styleClass="msg" />
+						</h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputNumber id="invoiceNewItemPrice" decimalPlaces="2"
+								decimalSeparator="," symbol="R$" thousandSeparator="."
+								value="#{gerenciamentoIuguMB.newInvoiceNewItem.price}" />
+							<p:outputLabel for="invoiceNewItemPrice" value="Preço" />
+							<p:message for="invoiceNewItemPrice" styleClass="msg" />
+						</h:panelGroup>
+					</p:panelGrid>
+
+				</p:scrollPanel>
+			</p:outputPanel>
+			<p:panelGrid columns="2" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton icon="fa fa-check" value="Salvar"
+					process="@this, pnPrincipalInvoiceNewItem" styleClass="lime-btn"
+					onstart="PF('loading').show()"
+					actionListener="#{gerenciamentoIuguMB.actionNewInvoiceSaveItem}"
+					update=":lume:pnPrincipalInvoice, :lume:view-log"
+					oncomplete="PF('loading').hide()" />
+				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+					oncomplete="PF('dlgNewItemNewInvoice').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgDataVencimentoSegVia" resizable="false"
+			modal="true" appendTo=":lume">
+			<f:facet name="header">
+				<p:outputPanel id="pnPrincipalAssinaturaSegViaHeader">
+					<h:outputText value="2ª Via - Vencimento" />
+				</p:outputPanel>
+			</f:facet>
+			<p:outputPanel id="pnPrincipalAssinaturaSegVia"
+				style="max-height: 300px; height: 300px; max-width: 275px; width: 275px;"
+				styleClass="remove12ColPaddingSide segVia">
+
+				<p:calendar id="dataVencimentoSegVia" mode="inline"
+					value="#{gerenciamentoIuguMB.dataVencimentoSegVia}" />
+
+			</p:outputPanel>
+			<p:panelGrid columns="1" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton value="Enviar 2ª Via" icon="fa fa-repeat"
+					process="@this, pnPrincipalAssinaturaSegVia" styleClass="lime-btn"
+					onstart="PF('loading').show()"
+					actionListener="#{gerenciamentoIuguMB.actionSegundaVia}"
+					update=":lume:pnPrincipalAssinatura,lume:view-log"
+					oncomplete="PF('dtAssinaturaItens').filter();PF('loading').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgNewItemAssinatura" resizable="false"
+			modal="true" appendTo=":lume">
+			<f:facet name="header">
+				<p:outputPanel id="pnPrincipalAssinaturaNewItemHeader">
+					<h:outputText
+						value="Novo Item - Assinatura do cliente #{gerenciamentoIuguMB.entity.empStrNme}" />
+				</p:outputPanel>
+			</f:facet>
+			<p:outputPanel id="pnPrincipalAssinaturaNewItem"
+				style="max-height: 200px; height: 200px; max-width: 40vw; width: 40vw;"
+				styleClass="remove12ColPaddingSide">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px">
+
+					<p:panelGrid columns="1" layout="grid" style="margin-top: 10px"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="assinaturaNewItemDescription"
+								value="#{gerenciamentoIuguMB.newItemSubscription.description}" />
+							<p:outputLabel for="assinaturaNewItemDescription"
+								value="Descrição" />
+							<p:message for="assinaturaNewItemDescription" styleClass="msg" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+					<p:panelGrid columns="2" layout="grid"
+						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="assinaturaNewItemQtde"
+								value="#{gerenciamentoIuguMB.newItemSubscription.quantity}" />
+							<p:outputLabel for="assinaturaNewItemQtde" value="Quantidade" />
+							<p:message for="assinaturaNewItemQtde" styleClass="msg" />
+						</h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputNumber id="assinaturaNewItemPrice" decimalPlaces="2"
+								decimalSeparator="," symbol="R$" thousandSeparator="."
+								value="#{gerenciamentoIuguMB.newItemSubscription.price}" />
+							<p:outputLabel for="assinaturaNewItemPrice" value="Preço" />
+							<p:message for="assinaturaNewItemPrice" styleClass="msg" />
+						</h:panelGroup>
+						<h:panelGroup styleClass="md-combo">
+							<p:selectOneMenu id="assinaturaNewItemRec"
+								value="#{gerenciamentoIuguMB.newItemSubscription.rec}">
+								<f:selectItem itemValue="#{false}" itemLabel="Não" />
+								<f:selectItem itemValue="#{true}" itemLabel="Sim" />
+							</p:selectOneMenu>
+							<p:outputLabel for="assinaturaNewItemRec" value="Recorrente?" />
+							<p:message for="assinaturaNewItemRec" styleClass="msg" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+
+				</p:scrollPanel>
+			</p:outputPanel>
+			<p:panelGrid columns="2" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:commandButton icon="fa fa-check" value="Salvar"
+					process="@this, pnPrincipalAssinaturaNewItem" styleClass="lime-btn"
+					onstart="PF('loading').show()"
+					actionListener="#{gerenciamentoIuguMB.actionPersistItem}"
+					update=":lume:pnPrincipalAssinatura,lume:view-log"
+					oncomplete="PF('dtAssinaturaItens').filter();PF('loading').hide()" />
+				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+					oncomplete="PF('dlgNewItemAssinatura').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgAssinaturaHist" resizable="false" modal="true"
+			appendTo=":lume">
+			<f:facet name="header">
+				<p:outputPanel id="pnPrincipalAssinaturaHistHeader">
+					<h:outputText
+						value="Histórico - Assinatura do cliente #{gerenciamentoIuguMB.entity.empStrNme}" />
+				</p:outputPanel>
+			</f:facet>
+			<p:outputPanel id="pnPrincipalAssinaturaHist"
+				style="max-height: 70vh; height: 70vh; max-width: 60vw; width: 60vw;"
+				styleClass="remove12ColPaddingSide">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px">
+
+					<p:dataTable emptyMessage="Nenhum histórico listado"
+						id="tbAssinaturaHist" style="margin-bottom: 10px;"
+						value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).logs}"
+						var="log" rowKey="#{log}" sortBy="#{log.createdDate}"
+						sortOrder="DESCENDING" widgetVar="dtAssinaturaHist">
+						<f:facet name="header">Histórico</f:facet>
+						<p:column headerText="Descrição" filterBy="#{log.description}"
+							sortBy="#{log.description}" filterMatchMode="contains"
+							width="25%">
+							<h:outputText value="#{log.description}" />
+						</p:column>
+						<p:column headerText="Notas" filterBy="#{log.notes}"
+							sortBy="#{log.notes}" filterMatchMode="contains" width="50%">
+							<h:outputText value="#{log.notes}" />
+						</p:column>
+						<p:column headerText="Data de Criação"
+							filterBy="#{log.createdFormat}" sortBy="#{log.createdFormat}"
+							filterMatchMode="contains" width="25%">
+							<h:outputText value="#{log.createdFormat}" />
+						</p:column>
+					</p:dataTable>
+
+				</p:scrollPanel>
+			</p:outputPanel>
+			<p:panelGrid columns="4" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+					oncomplete="PF('dlgAssinaturaHist').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgFaturaHist" resizable="false" modal="true"
+			appendTo=":lume">
+			<f:facet name="header">
+				<p:outputPanel id="pnPrincipalFaturaHistHeader">
+					<h:outputText
+						value="Histórico da Fatura - Assinatura do cliente #{gerenciamentoIuguMB.entity.empStrNme}" />
+				</p:outputPanel>
+			</f:facet>
+			<p:outputPanel id="pnPrincipalFaturaHist"
+				style="max-height: 70vh; height: 70vh; max-width: 60vw; width: 60vw;"
+				styleClass="remove12ColPaddingSide">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px">
+
+					<p:dataTable emptyMessage="Nenhum histórico listado"
+						id="tbFaturaHist" style="margin-bottom: 10px;"
+						value="#{gerenciamentoIuguMB.invoiceSelected.logs}" var="log"
+						rowKey="#{log}" sortBy="#{log.createdDate}" sortOrder="DESCENDING"
+						widgetVar="dtFaturaHist">
+						<f:facet name="header">Histórico</f:facet>
+						<p:column headerText="Descrição" filterBy="#{log.description}"
+							sortBy="#{log.description}" filterMatchMode="contains"
+							width="25%">
+							<h:outputText value="#{log.description}" />
+						</p:column>
+						<p:column headerText="Notas" filterBy="#{log.notes}"
+							sortBy="#{log.notes}" filterMatchMode="contains" width="50%">
+							<h:outputText value="#{log.notes}" />
+						</p:column>
+						<p:column headerText="Data de Criação"
+							filterBy="#{log.createdFormat}" sortBy="#{log.createdFormat}"
+							filterMatchMode="contains" width="25%">
+							<h:outputText value="#{log.createdFormat}" />
+						</p:column>
+					</p:dataTable>
+
+				</p:scrollPanel>
+			</p:outputPanel>
+			<p:panelGrid columns="4" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+					oncomplete="PF('dlgFaturaHist').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<p:dialog widgetVar="dlgAssinaturaView" resizable="false" modal="true"
+			appendTo=":lume">
+			<f:facet name="header">
+				<p:outputPanel id="pnPrincipalAssinaturaHeader">
+					<h:outputText
+						value="Assinatura do cliente #{gerenciamentoIuguMB.entity.empStrNme}" />
+				</p:outputPanel>
+			</f:facet>
+			<p:outputPanel id="pnPrincipalAssinatura"
+				style="max-height: 80vh; height: 80vh; max-width: 80vw; width: 80vw;"
+				styleClass="remove12ColPaddingSide">
+				<p:scrollPanel mode="native"
+					style="position: relative; width: calc(100% - 20px); height: calc(100% - 20px); padding: 10px">
+
+					<p:panelGrid columns="3" layout="grid" style="margin-top: 20px;"
+						styleClass="ui-panelgrid-blank form-group ui-fluid">
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="assinaturaViewCliente" readonly="true"
+								value="#{gerenciamentoIuguMB.entity.empStrNme} - #{gerenciamentoIuguMB.entity.documento}" />
+							<p:outputLabel for="assinaturaViewCliente" value="Cliente" />
+							<p:message for="assinaturaViewCliente" styleClass="msg" />
+						</h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="assinaturaViewDescricaoPlano" readonly="true"
+								value="#{gerenciamentoIuguMB.entity.plano.nomeIugu}" />
+							<p:outputLabel for="assinaturaViewDescricaoPlano"
+								value="Plano Assinado" />
+							<p:message for="assinaturaViewDescricaoPlano" styleClass="msg" />
+						</h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="assinaturaViewStatus" readonly="true"
+								value="#{gerenciamentoIuguMB.statusIuguStr(gerenciamentoIuguMB.entity)}" />
+							<p:outputLabel for="assinaturaViewStatus"
+								value="Status da Assinatura" />
+							<p:message for="assinaturaViewStatus" styleClass="msg" />
+						</h:panelGroup>
+
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="assinaturaViewStatusUltFatura" readonly="true"
+								value="#{gerenciamentoIuguMB.statusUltimaFatura(gerenciamentoIuguMB.entity)}" />
+							<p:outputLabel for="assinaturaViewStatusUltFatura"
+								value="Status da Última Fatura" />
+							<p:message for="assinaturaViewStatusUltFatura" styleClass="msg" />
+						</h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="assinaturaViewUltPagto" readonly="true"
+								value="#{gerenciamentoIuguMB.ultimoPagamento(gerenciamentoIuguMB.entity)}">
+								<f:convertDateTime pattern="dd/MM/yyyy" />
+							</p:inputText>
+							<p:outputLabel for="assinaturaViewUltPagto"
+								value="Data do Último Pagamento" />
+							<p:message for="assinaturaViewUltPagto" styleClass="msg" />
+						</h:panelGroup>
+						<h:panelGroup styleClass="md-inputfield">
+							<p:inputText id="assinaturaViewProxVencimento" readonly="true"
+								value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).expiresAtStr}" />
+							<p:outputLabel for="assinaturaViewProxVencimento"
+								value="Próximo Vencimento" />
+							<p:message for="assinaturaViewProxVencimento" styleClass="msg" />
+						</h:panelGroup>
+
+					</p:panelGrid>
+
+					<p:fieldset legend="Itens">
+						<h:panelGroup id="itensBotoes" styleClass="tableButtons">
+							<p:commandButton icon="ui-icon-add"
+								styleClass="BotaoCrud lime-btn"
+								action="#{gerenciamentoIuguMB.actionNovoItem}" process="@this"
+								oncomplete="PF('dlgNewItemAssinatura').show()"
+								update=":lume:pnPrincipalAssinaturaNewItemHeader, :lume:pnPrincipalAssinaturaNewItem,:lume:view-log" />
+						</h:panelGroup>
+						<p:dataTable emptyMessage="Nenhum Item adicionado"
+							id="tbAssinaturaItens"
+							value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).subitems}"
+							var="item" rows="10" paginatorPosition="bottom"
+							paginatorAlwaysVisible="true" paginator="true" rowKey="#{item}"
+							sortBy="#{item.description}" widgetVar="dtAssinaturaItens">
+							<f:facet name="header">Itens</f:facet>
+							<p:column headerText="Ações" width="80" exportable="false">
+								<p:commandButton icon="ui-icon-remove" styleClass="red-btn"
+									actionListener="#{gerenciamentoIuguMB.removerItem(item)}"
+									update=":lume:pnPrincipalAssinatura,lume:view-log"
+									onstart="PF('loading').show()" process="@this"
+									oncomplete="PF('dtAssinaturaItens').filter();PF('loading').hide()">
+									<p:confirm header="Confirmar"
+										message="Tem certeza que deseja excluir?" icon="ui-icon-alert" />
+								</p:commandButton>
+							</p:column>
+							<p:column headerText="Descrição" filterBy="#{item.description}"
+								sortBy="#{item.description}" filterMatchMode="contains">
+								<h:outputText value="#{item.description}" />
+							</p:column>
+							<p:column headerText="Quantidade" filterBy="#{item.quantity}"
+								sortBy="#{item.quantity}" filterMatchMode="contains">
+								<h:outputText value="#{item.quantity}" />
+							</p:column>
+							<p:column headerText="Valor" filterBy="#{item.price}"
+								sortBy="#{item.price}" filterMatchMode="contains">
+								<h:outputText value="#{item.price}" />
+							</p:column>
+							<p:column headerText="Recorrente?"
+								filterBy="#{item.recurrentStr}" sortBy="#{item.recurrentStr}"
+								filterMatchMode="contains">
+								<h:outputText value="#{item.recurrentStr}" />
+							</p:column>
+						</p:dataTable>
+					</p:fieldset>
+
+					<p:fieldset legend="Faturas">
+						<p:dataTable emptyMessage="Nenhuma fatura criada"
+							id="tbAssinaturaFaturas"
+							value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).recentInvoices}"
+							var="fatura" rows="10" paginatorPosition="bottom"
+							paginatorAlwaysVisible="true" paginator="true" rowKey="#{fatura}"
+							sortBy="#{fatura.dueDate}" sortOrder="DESCENDING"
+							widgetVar="dtAssinaturaFaturas">
+							<f:facet name="header">Faturas</f:facet>
+							<p:column headerText="Ações" exportable="false" width="130">
+								<p:commandButton process="@this"
+									title="Visualizar Histórico da Fatura" icon="fa fa-history"
+									update=":lume:pnPrincipalFaturaHist, :lume:pnPrincipalFaturaHistHeader, :lume:view-log"
+									actionListener="#{gerenciamentoIuguMB.visualizaHistoricoFatura(fatura)}"
+									styleClass="lime-btn"
+									oncomplete="PF('loading').hide();PF('dlgFaturaHist').show()"
+									onstart="PF('loading').show()" />
+								<p:commandButton process="@this" title="Enviar 2º Via"
+									icon="fa fa-repeat"
+									onstart="PF('loading').show();PF('dlgDataVencimentoSegVia').show()"
+									actionListener="#{gerenciamentoIuguMB.actionStartSegundaVia(fatura)}"
+									update=":lume:pnPrincipalAssinaturaSegVia, :lume:pnPrincipalAssinaturaSegViaHeader"
+									oncomplete="PF('loading').hide()" styleClass="lime-btn"
+									disabled="#{fatura.status != 'Pendente'}" />
+								<p:commandButton process="@this" title="Cancelar Fatura"
+									icon="fa fa-trash" styleClass="red-btn"
+									onstart="PF('loading').show()"
+									oncomplete="PF('loading').hide()"
+									actionListener="#{gerenciamentoIuguMB.cancelaFatura(fatura)}"
+									update=":lume:pnPrincipalAssinatura,lume:view-log"
+									disabled="#{fatura.status != 'Pendente'}">
+									<p:confirm header="Confirmar"
+										message="Tem certeza que deseja cancelar a fatura?"
+										icon="ui-icon-alert" />
+								</p:commandButton>
+							</p:column>
+							<p:column headerText="Data de Vencimento"
+								filterBy="#{fatura.dueDate}" sortBy="#{fatura.dueDate}"
+								filterMatchMode="contains">
+								<h:outputText value="#{fatura.dueDateStr}" />
+							</p:column>
+							<p:column headerText="Status" filterBy="#{fatura.status}"
+								sortBy="#{fatura.status}" filterMatchMode="contains">
+								<h:outputText value="#{fatura.status}" />
+							</p:column>
+							<p:column headerText="Total" filterBy="#{fatura.total}"
+								sortBy="#{fatura.total}" filterMatchMode="contains">
+								<h:outputText value="#{fatura.total}" />
+							</p:column>
+							<p:column headerText="URL" filterBy="#{fatura.secureUrl}"
+								sortBy="#{fatura.secureUrl}" filterMatchMode="contains">
+								<h:outputText value="#{fatura.secureUrl}" />
+							</p:column>
+						</p:dataTable>
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+							<p:commandButton process="@this" value="Ativar Assinatura"
+								icon="fa fa-usd" onstart="PF('loading').show()"
+								oncomplete="PF('loading').hide()"
+								actionListener="#{gerenciamentoIuguMB.actionAtivaAssinatura}"
+								update=":lume:pnPrincipalAssinatura,lume:view-log"
+								styleClass="lime-btn">
+								<p:confirm header="Confirmar"
+									message="Tem certeza que deseja ativar a assinatura?"
+									icon="ui-icon-alert" />
+							</p:commandButton>
+							<p:commandButton process="@this" value="Visualizar Histórico"
+								icon="fa fa-history" onstart="PF('loading').show()"
+								update=":lume:pnPrincipalAssinaturaHist, :lume:pnPrincipalAssinaturaHistHeader, :lume:view-log"
+								styleClass="lime-btn"
+								oncomplete="PF('loading').hide();PF('dlgAssinaturaHist').show()" />
+							<p:commandButton process="@this" value="Nova Fatura"
+								icon="fa fa-barcode" onstart="PF('loading').show()"
+								update=":lume:pnPrincipalInvoice, :lume:pnPrincipalInvoiceHeader, :lume:view-log"
+								styleClass="lime-btn"
+								actionListener="#{gerenciamentoIuguMB.actionNewInvoice}"
+								oncomplete="PF('loading').hide();PF('dtInvoiceItens').filter();PF('dlgNewInvoice').show()" />
+						</p:panelGrid>
+					</p:fieldset>
+
+					<p:fieldset legend="Alteração da Cobrança"
+						style="margin-bottom: 20px;">
+						<p:panelGrid columns="2" layout="grid"
+							id="viewAssinaturaDataVencimento"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+							<h:panelGroup styleClass="md-inputfield">
+								<p:calendar id="dataVencimento"
+									value="#{gerenciamentoIuguMB.alteraAssinaturaDataVencimento}" />
+								<p:outputLabel for="dataVencimento" value="Data de Vencimento:" />
+								<p:message for="dataVencimento" styleClass="msg" />
+							</h:panelGroup>
+							<h:panelGroup styleClass="md-combo">
+								<p:selectOneMenu id="suspended"
+									value="#{gerenciamentoIuguMB.suspended}">
+									<f:selectItem itemValue="#{null}" itemLabel="Sem Info"
+										itemDisabled="true" />
+									<f:selectItem itemValue="#{true}" itemLabel="Sim" />
+									<f:selectItem itemValue="#{false}" itemLabel="Não" />
+								</p:selectOneMenu>
+								<p:outputLabel for="suspended" value="Suspenso?" />
+								<p:message for="suspended" styleClass="msg" />
+							</h:panelGroup>
+						</p:panelGrid>
+						<p:panelGrid columns="3" layout="grid"
+							styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+							<p:commandButton process="@this, viewAssinaturaDataVencimento"
+								icon="fa fa-edit" onstart="PF('loading').show()"
+								oncomplete="PF('loading').hide()"
+								actionListener="#{gerenciamentoIuguMB.actionAlteraCobranca}"
+								update=":lume:pnPrincipalAssinatura,lume:view-log"
+								value="Alterar Cobrança" styleClass="lime-btn" />
+						</p:panelGrid>
+					</p:fieldset>
+
+				</p:scrollPanel>
+			</p:outputPanel>
+			<p:panelGrid columns="4" layout="grid"
+				styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
+				<p:column />
+				<p:column />
+				<p:column />
+				<p:commandButton icon="fa fa-close" value="Fechar" process="@this"
+					oncomplete="PF('dlgAssinaturaView').hide()" />
+			</p:panelGrid>
+		</p:dialog>
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+					<h1>Gerenciamento IUGU</h1>
+
+					<p:fieldset legend="Filtros">
+						<p:panelGrid columns="3" layout="grid" id="filterClientes"
+							styleClass="ui-panelgrid-blank ui-fluid form-group removeSideGridPadding">
+
+							<h:panelGroup styleClass="md-combo">
+								<p:outputLabel for="filtroPeriodo"
+									value="Período do Último Pagamento:" />
+								<p:selectOneMenu id="filtroPeriodo" converter="enumPeriodoBusca"
+									value="#{gerenciamentoIuguMB.periodoUltimoPagamento}">
+									<p:ajax process="@this"
+										update="inicioUltimoPagamento, fimUltimoPagamento"
+										listener="#{gerenciamentoIuguMB.actionTrocaDatasUltimoPagamento}" />
+									<f:selectItems value="#{padroesTelaMB.periodosDataBusca}"
+										var="periodo" itemValue="#{periodo}"
+										itemLabel="#{periodo.descricao}" />
+								</p:selectOneMenu>
+								<p:message for="filtroPeriodo" styleClass="msg" />
+							</h:panelGroup>
+							<h:panelGroup styleClass="md-inputfield taller">
+								<p:calendar id="inicioUltimoPagamento"
+									value="#{gerenciamentoIuguMB.inicioUltimoPagamento}" />
+								<p:outputLabel for="inicioUltimoPagamento"
+									value="Data de criação de:" />
+								<p:message for="inicioUltimoPagamento" styleClass="msg" />
+							</h:panelGroup>
+							<h:panelGroup styleClass="md-inputfield taller">
+								<p:calendar id="fimUltimoPagamento"
+									value="#{gerenciamentoIuguMB.fimUltimoPagamento}" />
+								<p:outputLabel for="fimUltimoPagamento"
+									value="Data de criação até:" />
+								<p:message for="fimUltimoPagamento" styleClass="msg" />
+							</h:panelGroup>
+
+							<h:panelGroup styleClass="md-inputfield">
+								<p:inputText id="filtroTextoCliente"
+									value="#{gerenciamentoIuguMB.filtroTexto}" />
+								<p:outputLabel for="filtroTextoCliente"
+									value="Busca por Cliente (Razão Social, Nome Fantasia ou Documento)" />
+								<p:message for="filtroTextoCliente" styleClass="msg" />
+							</h:panelGroup>
+							<h:panelGroup styleClass="md-combo">
+								<p:outputLabel for="filtroIuguSuspenso"
+									value="Buscar Clientes Suspensos?" />
+								<p:selectOneMenu id="filtroIuguSuspenso"
+									value="#{gerenciamentoIuguMB.iuguSuspenso}">
+									<f:selectItem itemValue="#{null}" itemLabel="Todos" />
+									<f:selectItem itemValue="S" itemLabel="Sim" />
+									<f:selectItem itemValue="N" itemLabel="Não" />
+								</p:selectOneMenu>
+							</h:panelGroup>
+							<p:column />
+
+							<p:commandButton value="Pesquisar" icon="fa fa-search"
+								onstart="PF('loading').show()" process="@this, filterClientes"
+								update="tbClientes" oncomplete="PF('loading').hide()"
+								actionListener="#{gerenciamentoIuguMB.carregaLista}" />
+
+						</p:panelGrid>
+					</p:fieldset>
+					<br />
+					<p:dataTable emptyMessage="Nenhum Cliente encontrado"
+						id="tbClientes" value="#{gerenciamentoIuguMB.entityList}"
+						var="objeto" rows="10" paginatorPosition="bottom"
+						paginatorAlwaysVisible="true" paginator="true" rowKey="#{objeto}"
+						sortBy="#{objeto.empStrNme}" widgetVar="dtClientes">
+						<f:facet name="header">Clientes</f:facet>
+
+						<p:column headerText="Ações" width="70" exportable="false">
+							<p:commandButton process="@this" title="Vizualizar Assinatura"
+								icon="fa fa-eye" styleClass="lime-btn"
+								onstart="PF('loading').show()"
+								actionListener="#{gerenciamentoIuguMB.visualizarAssinatura(objeto)}"
+								update=":lume:pnPrincipalAssinatura, :lume:pnPrincipalAssinaturaHeader"
+								onsuccess="PF('dlgAssinaturaView').show();PF('loading').hide()" />
+						</p:column>
+
+						<p:column headerText="Nome da Clínica"
+							filterBy="#{objeto.empStrNme}" filterMatchMode="contains"
+							sortBy="#{objeto.empStrNme}">
+							<h:outputText value="#{objeto.empStrNme}" />
+						</p:column>
+						<p:column headerText="CNPJ" filterBy="#{objeto.empChaCnpj}"
+							filterMatchMode="contains" sortBy="#{objeto.empChaCnpj}">
+							<h:outputText value="#{objeto.empChaCnpj}" />
+						</p:column>
+						<p:column headerText="CPF" filterBy="#{objeto.empChaCpf}"
+							filterMatchMode="contains" sortBy="#{objeto.empChaCpf}">
+							<h:outputText value="#{objeto.empChaCpf}" />
+						</p:column>
+						<p:column headerText="Plano"
+							filterBy="#{objeto.plano.nomeIugu}"
+							filterMatchMode="contains" sortBy="#{objeto.plano.nomeIugu}">
+							<h:outputText value="#{objeto.plano.nomeIugu}" />
+						</p:column>
+						<p:column headerText="Status" filterBy="#{objeto.empChaStsString}"
+							filterMatchMode="contains" sortBy="#{objeto.empChaStsString}">
+							<h:outputText value="#{objeto.empChaStsString}" />
+						</p:column>
+						<p:column headerText="Status Última Fatura"
+							filterBy="#{gerenciamentoIuguMB.statusUltimaFatura(objeto)}"
+							filterMatchMode="contains" sortBy="#{gerenciamentoIuguMB.statusUltimaFatura(objeto)}">
+							<h:outputText value="#{gerenciamentoIuguMB.statusUltimaFatura(objeto)}" />
+						</p:column>
+						<p:column headerText="Data Último Pagamento"
+							filterBy="#{gerenciamentoIuguMB.ultimoPagamento(objeto)}" filterMatchMode="contains"
+							sortBy="#{gerenciamentoIuguMB.ultimoPagamento(objeto)}">
+							<h:outputText value="#{gerenciamentoIuguMB.ultimoPagamento(objeto)}">
+								<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+							</h:outputText>
+						</p:column>
+
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+		
+		</script>
+	</ui:define>
+</ui:composition>

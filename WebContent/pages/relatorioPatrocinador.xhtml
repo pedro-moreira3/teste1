@@ -73,7 +73,7 @@
 					<p:dataTable emptyMessage="Nenhuma Clínica encontrada."
 						widgetVar="dtClinicas" id="dtClinicas"
 						value="#{relatorioPatrocinadorMB.clinicas}" var="objeto"
-						rows="10" paginatorPosition="bottom" paginatorAlwaysVisible="true"
+						rows="100" paginatorPosition="bottom" paginatorAlwaysVisible="true"
 						paginator="true" selectionMode="single" rowKey="#{objeto}"
 						selection="#{relatorioPatrocinadorMB.entity}">
 						<f:facet name="header">
@@ -81,7 +81,7 @@
 						</f:facet>
 
 						<p:column filterBy="#{objeto.documento}" filterMatchMode="contains"
-							headerText="CNPJ/CPF" sortBy="#{objeto.documento}" width="20%">
+							headerText="CNPJ/CPF" sortBy="#{objeto.documento}" width="30%">
 							<h:outputText value="#{objeto.documento}" />
 							<f:facet name="footer">
 								<h:outputText value="#{relatorioPatrocinadorMB.rodape}" />

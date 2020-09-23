@@ -92,6 +92,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
     private PlanoTratamento[] ptSelecionados = new PlanoTratamento[] {};
     private List<PlanoTratamento> listaPt;
     private boolean showLancamentosCancelados = false;
+    private boolean showLancamentosEstorno = false;
 
     private StatusFatura status;
     private List<StatusFatura> listaStatus;
@@ -414,6 +415,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
          */
         setEntity(fatura);
         setShowLancamentosCancelados(false);
+        setShowLancamentosEstorno(false);
         updateValues(fatura, true, false);
 
         updateWichScreenOpenForFaturaView();
@@ -1522,6 +1524,12 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.NAO_VALIDADO, false));
             lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.FALHA_OPERACAO, false));
         }
+        
+        if (showLancamentosEstorno) {
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.VALIDADO, true, true));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.NAO_VALIDADO, true, true));
+            lancamentosSearch.addAll(LancamentoSingleton.getInstance().getBo().listLancamentosFromFatura(getEntity(), null, ValidacaoLancamento.FALHA_OPERACAO, true, true));
+        }
 
         if (lancamentosSearch != null) {
             lancamentosSearch.sort(new Comparator<Lancamento>() {
@@ -2267,6 +2275,14 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     public void setExtornarLancamento(Lancamento extornarLancamento) {
         this.extornarLancamento = extornarLancamento;
+    }
+
+    public boolean isShowLancamentosEstorno() {
+        return showLancamentosEstorno;
+    }
+
+    public void setShowLancamentosEstorno(boolean showLancamentosEstorno) {
+        this.showLancamentosEstorno = showLancamentosEstorno;
     }
 
     //-------------------------------- EDITAR LANÇAMENTO --------------------------------    

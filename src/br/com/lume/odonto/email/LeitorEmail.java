@@ -43,7 +43,7 @@ public class LeitorEmail implements Job {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
             for (Empresa empresa : empresas) {
                 Integer quantidadeAgendamentosMesAtual = AgendamentoSingleton.getInstance().getBo().findQuantidadeAgendamentosMesAtual(empresa.getEmpIntCod());
-                long idPlano = empresa.getIdPlano();
+                long idPlano = empresa.getPlano().getId();
                 Plano p = PlanoSingleton.getInstance().getBo().find(idPlano);
                 if (p != null) {
                     System.out.println("----------------------------");
@@ -57,7 +57,7 @@ public class LeitorEmail implements Job {
                         System.out.println("limiteEmail " + limiteEmail);
                         if (quantidadeAgendamentosMesAtual != null && quantidadeAgendamentosMesAtual > 0 && quantidadeAgendamentosMesAtual >= limiteEmail) {
                             System.out.println("ENVIAR EMAIL >> " + empresa.getEmpStrEmail());
-                            Plano plano = PlanoSingleton.getInstance().getBo().find(empresa.getIdPlano());
+                            Plano plano = PlanoSingleton.getInstance().getBo().find(empresa.getPlano().getId());
                             Map<String, String> valores = new HashMap<>();
                             valores.put("#qtd_agendamentos", plano.getConsultas() + "");
                             valores.put("#data", simpleDateFormat.format(empresa.getEmpDtmExpiracao()));

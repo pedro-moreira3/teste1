@@ -26,6 +26,8 @@
 }
 </style>
 
+	
+
 		<div class="ui-g ui-fluid">
 			<div class="ui-g-12 ui-lg-12">
 				<div class="card card-w-title">
@@ -120,5 +122,19 @@
 				</div>
 			</div>
 		</div>
+		
+		<h:inputHidden value="#{avisosMB.idEmpresaParaSocket}" id="idEmpresaParaSocket" />
+		
+		
+			
+				<f:websocket channel="atualizarAvisos"
+			onmessage="function(idEmpresa){						
+						 if(idEmpresa == document.getElementById('lume:idEmpresaParaSocket').value){						   
+							PF('dtAvisos').filter();
+						 }
+			          }
+			" />			
+				
+		
 	</ui:define>
 </ui:composition>

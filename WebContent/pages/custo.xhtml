@@ -91,14 +91,12 @@
 								value="#{custoMB.entity.valor}" required="true" maxlength="10"
 								maxValue="99999999.99" decimalSeparator="," symbol=""
 								thousandSeparator="." >
-								<p:ajax process="@this"/>
 							</p:inputNumber>
 
 							<p:outputLabel for="descricaoCusto" value="Descrição do custo: " />
 							<p:inputTextarea id="descricaoCusto"
 								value="#{custoMB.entity.descricao}" required="true"
 								maxlength="100" disabled="#{custoMB.planoTratamento == null}" >
-								<p:ajax process="@this"/>
 							</p:inputTextarea>
 
 						</p:panelGrid>
@@ -116,7 +114,7 @@
 								icon="White fa fa-save"
 								actionListener="#{custoMB.actionPersist}"
 								update=":lume:dtCusto,:lume:botoes"
-								process="paciente, @this"
+								process="paciente, descricaoCusto, valorCusto, @this"
 								disabled="#{custoMB.planoTratamento == null}"
 								styleClass="GreenButton" />
 							<p:commandButton id="delete" icon="White fa fa-trash-o"
