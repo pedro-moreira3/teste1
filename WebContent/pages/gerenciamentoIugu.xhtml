@@ -55,26 +55,23 @@
 						styleClass="ui-panelgrid-blank form-group ui-fluid removeSideGridPadding">
 
 						<h:panelGroup styleClass="md-inputfield">
-							<p:inputText id="newInvoiceCustomer" disabled="true"
-								value="#{gerenciamentoIuguMB.entity.assinaturaIugu.customerId} - #{gerenciamentoIuguMB.entity.assinaturaIugu.customerName}" />
-							<p:outputLabel for="newInvoiceCustomer" value="Cliente" />
-							<p:message for="newInvoiceCustomer" styleClass="msg" />
+						
 						</h:panelGroup>
 						<h:panelGroup styleClass="md-inputfield">
 							<p:inputText id="newInvoiceSubscription" disabled="true"
-								value="#{gerenciamentoIuguMB.entity.assinaturaIugu.id}" />
+								value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).id}" />
 							<p:outputLabel for="newInvoiceSubscription" value="ID Assinatura" />
 							<p:message for="newInvoiceSubscription" styleClass="msg" />
 						</h:panelGroup>
 						<h:panelGroup styleClass="md-inputfield">
 							<p:inputText id="newInvoicePlan" disabled="true"
-								value="#{gerenciamentoIuguMB.entity.assinaturaIugu.planName}" />
+								value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).planName}" />
 							<p:outputLabel for="newInvoicePlan" value="Plano" />
 							<p:message for="newInvoicePlan" styleClass="msg" />
 						</h:panelGroup>
 						<h:panelGroup styleClass="md-inputfield">
 							<p:inputText id="newInvoicePrice" disabled="true"
-								value="#{gerenciamentoIuguMB.entity.assinaturaIugu.price}">
+								value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).price}">
 								<f:convertNumber type="currency" currencySymbol="R$"
 									maxFractionDigits="2" />
 							</p:inputText>
@@ -331,7 +328,7 @@
 
 					<p:dataTable emptyMessage="Nenhum histórico listado"
 						id="tbAssinaturaHist" style="margin-bottom: 10px;"
-						value="#{gerenciamentoIuguMB.entity.assinaturaIugu.logs}"
+						value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).logs}"
 						var="log" rowKey="#{log}" sortBy="#{log.createdDate}"
 						sortOrder="DESCENDING" widgetVar="dtAssinaturaHist">
 						<f:facet name="header">Histórico</f:facet>
@@ -443,7 +440,7 @@
 						</h:panelGroup>
 						<h:panelGroup styleClass="md-inputfield">
 							<p:inputText id="assinaturaViewStatus" readonly="true"
-								value="#{gerenciamentoIuguMB.entity.statusIuguStr}" />
+								value="#{gerenciamentoIuguMB.statusIuguStr(gerenciamentoIuguMB.entity)}" />
 							<p:outputLabel for="assinaturaViewStatus"
 								value="Status da Assinatura" />
 							<p:message for="assinaturaViewStatus" styleClass="msg" />
@@ -451,14 +448,14 @@
 
 						<h:panelGroup styleClass="md-inputfield">
 							<p:inputText id="assinaturaViewStatusUltFatura" readonly="true"
-								value="#{gerenciamentoIuguMB.entity.statusUltimaFatura}" />
+								value="#{gerenciamentoIuguMB.statusUltimaFatura(gerenciamentoIuguMB.entity)}" />
 							<p:outputLabel for="assinaturaViewStatusUltFatura"
 								value="Status da Última Fatura" />
 							<p:message for="assinaturaViewStatusUltFatura" styleClass="msg" />
 						</h:panelGroup>
 						<h:panelGroup styleClass="md-inputfield">
 							<p:inputText id="assinaturaViewUltPagto" readonly="true"
-								value="#{gerenciamentoIuguMB.entity.ultimoPagamento}">
+								value="#{gerenciamentoIuguMB.ultimoPagamento(gerenciamentoIuguMB.entity)}">
 								<f:convertDateTime pattern="dd/MM/yyyy" />
 							</p:inputText>
 							<p:outputLabel for="assinaturaViewUltPagto"
@@ -467,7 +464,7 @@
 						</h:panelGroup>
 						<h:panelGroup styleClass="md-inputfield">
 							<p:inputText id="assinaturaViewProxVencimento" readonly="true"
-								value="#{gerenciamentoIuguMB.entity.assinaturaIugu.expiresAtStr}" />
+								value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).expiresAtStr}" />
 							<p:outputLabel for="assinaturaViewProxVencimento"
 								value="Próximo Vencimento" />
 							<p:message for="assinaturaViewProxVencimento" styleClass="msg" />
@@ -485,7 +482,7 @@
 						</h:panelGroup>
 						<p:dataTable emptyMessage="Nenhum Item adicionado"
 							id="tbAssinaturaItens"
-							value="#{gerenciamentoIuguMB.entity.assinaturaIugu.subitems}"
+							value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).subitems}"
 							var="item" rows="10" paginatorPosition="bottom"
 							paginatorAlwaysVisible="true" paginator="true" rowKey="#{item}"
 							sortBy="#{item.description}" widgetVar="dtAssinaturaItens">
@@ -523,7 +520,7 @@
 					<p:fieldset legend="Faturas">
 						<p:dataTable emptyMessage="Nenhuma fatura criada"
 							id="tbAssinaturaFaturas"
-							value="#{gerenciamentoIuguMB.entity.assinaturaIugu.recentInvoices}"
+							value="#{gerenciamentoIuguMB.assinaturaIugu(gerenciamentoIuguMB.entity).recentInvoices}"
 							var="fatura" rows="10" paginatorPosition="bottom"
 							paginatorAlwaysVisible="true" paginator="true" rowKey="#{fatura}"
 							sortBy="#{fatura.dueDate}" sortOrder="DESCENDING"
@@ -750,14 +747,14 @@
 							<h:outputText value="#{objeto.empChaStsString}" />
 						</p:column>
 						<p:column headerText="Status Última Fatura"
-							filterBy="#{objeto.statusUltimaFatura}"
-							filterMatchMode="contains" sortBy="#{objeto.statusUltimaFatura}">
-							<h:outputText value="#{objeto.statusUltimaFatura}" />
+							filterBy="#{gerenciamentoIuguMB.statusUltimaFatura(objeto)}"
+							filterMatchMode="contains" sortBy="#{gerenciamentoIuguMB.statusUltimaFatura(objeto)}">
+							<h:outputText value="#{gerenciamentoIuguMB.statusUltimaFatura(objeto)}" />
 						</p:column>
 						<p:column headerText="Data Último Pagamento"
-							filterBy="#{objeto.ultimoPagamento}" filterMatchMode="contains"
-							sortBy="#{objeto.ultimoPagamento}">
-							<h:outputText value="#{objeto.ultimoPagamento}">
+							filterBy="#{gerenciamentoIuguMB.ultimoPagamento(objeto)}" filterMatchMode="contains"
+							sortBy="#{gerenciamentoIuguMB.ultimoPagamento(objeto)}">
+							<h:outputText value="#{gerenciamentoIuguMB.ultimoPagamento(objeto)}">
 								<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
 							</h:outputText>
 						</p:column>

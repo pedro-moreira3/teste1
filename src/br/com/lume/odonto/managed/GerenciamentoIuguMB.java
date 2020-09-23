@@ -16,6 +16,7 @@ import br.com.lume.common.iugu.Iugu;
 import br.com.lume.common.iugu.objects.NewItem;
 import br.com.lume.common.iugu.responses.InvoiceResponse;
 import br.com.lume.common.iugu.responses.SubItemResponse;
+import br.com.lume.common.iugu.responses.SubscriptionResponse;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.UtilsPadraoRelatorio;
 import br.com.lume.common.util.UtilsPadraoRelatorio.PeriodoBusca;
@@ -53,15 +54,17 @@ public class GerenciamentoIuguMB extends LumeManagedBean<Empresa> implements Ser
     public void carregaLista() {
         try {
             
+            
+            
             setEntityList(EmpresaSingleton.getInstance().getBo().findClientesByFilterIUGU(filtroTexto, iuguSuspenso));
             if (inicioUltimoPagamento != null || fimUltimoPagamento != null) {
                 getEntityList().removeIf(cliente -> {
-                    if (cliente.getUltimoPagamento() == null)
+                    if (EmpresaSingleton.getInstance().getUltimoPagamento(cliente) == null)
                         return true;
 
-                    if (inicioUltimoPagamento != null && cliente.getUltimoPagamento().before(inicioUltimoPagamento))
+                    if (inicioUltimoPagamento != null && EmpresaSingleton.getInstance().getUltimoPagamento(cliente).before(inicioUltimoPagamento))
                         return true;
-                    if (fimUltimoPagamento != null && cliente.getUltimoPagamento().after(fimUltimoPagamento))
+                    if (fimUltimoPagamento != null && EmpresaSingleton.getInstance().getUltimoPagamento(cliente).after(fimUltimoPagamento))
                         return true;
 
                     return false;
@@ -82,17 +85,15 @@ public class GerenciamentoIuguMB extends LumeManagedBean<Empresa> implements Ser
         }
     }
 
-    public void visualizarAssinatura(Empresa objeto) {
-        setEntity(objeto);
-        this.alteraAssinaturaDataVencimento = objeto.getAssinaturaIugu().getExpiresAtDate();
-        this.suspended = objeto.getAssinaturaIugu().getSuspended().booleanValue();
+    public void visualizarAssinatura(Empresa empresa) {
+        setEntity(empresa);
+        this.alteraAssinaturaDataVencimento = EmpresaSingleton.getInstance().getAssinaturaIugu(empresa).getExpiresAtDate();
+        this.suspended = EmpresaSingleton.getInstance().getAssinaturaIugu(empresa).getSuspended().booleanValue();
     }
 
     public void removerItem(SubItemResponse item) {
         try {
-            Iugu.getInstance().removeItemAssinatura(getEntity().getAssinaturaIugu().getId(), item.getId());
-            getEntity().getAssinaturaIugu(Boolean.TRUE);
-
+            Iugu.getInstance().removeItemAssinatura(EmpresaSingleton.getInstance().getAssinaturaIugu(getEntity()).getId(), item.getId());
             this.addInfo("Item removido com sucesso","");
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,9 +103,7 @@ public class GerenciamentoIuguMB extends LumeManagedBean<Empresa> implements Ser
 
     public void actionAlteraCobranca() {
         try {
-            Iugu.getInstance().alteraCobranca(getEntity().getAssinaturaIuguBanco(), this.alteraAssinaturaDataVencimento, this.suspended);
-            getEntity().getAssinaturaIugu(Boolean.TRUE);
-
+            Iugu.getInstance().alteraCobranca(getEntity().getAssinaturaIuguBanco(), this.alteraAssinaturaDataVencimento, this.suspended);    
             this.addInfo("Cobrança alterada com sucesso","");
         } catch (Exception e) {
             e.printStackTrace();
@@ -115,8 +114,6 @@ public class GerenciamentoIuguMB extends LumeManagedBean<Empresa> implements Ser
     public void cancelaFatura(InvoiceResponse fatura) {
         try {
             Iugu.getInstance().cancelaFatura(fatura.getId());
-            getEntity().getAssinaturaIugu(Boolean.TRUE);
-
             this.addInfo("Fatura cancelada com sucesso","");
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,8 +123,7 @@ public class GerenciamentoIuguMB extends LumeManagedBean<Empresa> implements Ser
 
     public void actionAtivaAssinatura() {
         try {
-            Iugu.getInstance().ativaAssinatura(getEntity().getAssinaturaIuguBanco());
-            getEntity().getAssinaturaIugu(Boolean.TRUE);
+            Iugu.getInstance().ativaAssinatura(getEntity().getAssinaturaIuguBanco());            
 
             this.addInfo("Assinatura ativada com sucesso","");
         } catch (Exception e) {
@@ -148,7 +144,6 @@ public class GerenciamentoIuguMB extends LumeManagedBean<Empresa> implements Ser
             if (!"Pendente".equals(this.invoiceSelected.getStatus()))
                 throw new Exception("Última fatura não está Pendente!");
             Iugu.getInstance().geraSegundaVia(this.invoiceSelected.getId(), this.dataVencimentoSegVia);
-            getEntity().getAssinaturaIugu(Boolean.TRUE);
 
             PrimeFaces.current().executeScript("PF('dlgDataVencimentoSegVia').hide()");
             this.addInfo("Segunda via emitida com sucesso","");
@@ -173,7 +168,7 @@ public class GerenciamentoIuguMB extends LumeManagedBean<Empresa> implements Ser
     public void actionPersistItem() {
         try {
             Iugu.getInstance().createNewItem(getEntity().getAssinaturaIuguBanco(), this.newItemSubscription);
-            getEntity().getAssinaturaIugu(Boolean.TRUE);
+           
             PrimeFaces.current().executeScript("PF('dlgNewItemAssinatura').hide()");
 
             this.addInfo("Item criado com sucesso","");
@@ -183,8 +178,26 @@ public class GerenciamentoIuguMB extends LumeManagedBean<Empresa> implements Ser
         }
     }
 
+    public SubscriptionResponse assinaturaIugu(Empresa empresa) {
+        return EmpresaSingleton.getInstance().getAssinaturaIugu(empresa);
+    }
+    
+    public String statusIuguStr(Empresa empresa) {
+        if (EmpresaSingleton.getInstance().getAssinaturaIugu(empresa) != null)
+            return (EmpresaSingleton.getInstance().getAssinaturaIugu(empresa).getSuspended().booleanValue() ? "Bloqueado" : "Ativo");
+        return null;
+    }
+    
+    public String statusUltimaFatura(Empresa empresa) {       
+        return EmpresaSingleton.getInstance().getStatusUltimaFatura(empresa);
+    }
+    
+    public Date ultimoPagamento(Empresa empresa) {
+        return EmpresaSingleton.getInstance().getUltimoPagamento(empresa);
+    }  
+    
     public void actionNewInvoice() {
-        this.newInvoiceEmail = getEntity().getAssinaturaIugu().getCustomerEmail();
+        this.newInvoiceEmail = EmpresaSingleton.getInstance().getAssinaturaIugu(getEntity()).getCustomerEmail();
         this.newInvoiceDataVencimento = null;
         this.newInvoiceItems = new ArrayList<>();
     }
@@ -202,9 +215,10 @@ public class GerenciamentoIuguMB extends LumeManagedBean<Empresa> implements Ser
 
     public void actionPersistNewInvoice() {
         try {
-            Iugu.getInstance().createNewInvoice(getEntity().getAssinaturaIugu().getId(), getEntity().getAssinaturaIugu().getCustomerId(), this.newInvoiceDataVencimento, this.newInvoiceEmail,
+            Iugu.getInstance().createNewInvoice(EmpresaSingleton.getInstance().getAssinaturaIugu(getEntity()).getId(), 
+                    EmpresaSingleton.getInstance().getAssinaturaIugu(getEntity()).getCustomerId(), this.newInvoiceDataVencimento, this.newInvoiceEmail,
                     this.newInvoiceItems);
-            getEntity().getAssinaturaIugu(Boolean.TRUE);
+           
             PrimeFaces.current().executeScript("PF('dlgNewInvoice').hide()");
 
             this.addInfo("Fatura criada com sucesso","");
