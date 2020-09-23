@@ -19,6 +19,7 @@ import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Plano;
 import br.com.lume.plano.PlanoSingleton;
 import br.com.lume.security.EmpresaSingleton;
+import br.com.lume.security.PlanoAfiliacaoSingleton;
 import br.com.lume.security.entity.Empresa;
 
 @ManagedBean
@@ -85,8 +86,18 @@ public class EmpresaMB extends LumeManagedBean<Empresa> {
     
     public void criarAssinaturaIugu(Empresa empresa) {
         
-        try {           
-            Plano plano = PlanoSingleton.getInstance().getBo().findByNomeIugu(empresa.getAfiliacao().getPlanoIugu());
+        try { 
+            
+          //TODO hoje so temos um plano, por isso pegamos 0;
+           Plano plano = null;
+            try {
+                plano = PlanoAfiliacaoSingleton.getInstance().getBo().listDisponiveisByAfiliacao(empresa.getAfiliacao()).get(0).getPlano();
+                return;
+            } catch (Exception e) {
+                this.addError("Erro!", "Plano não encontrado para contratação, entre em contato com o suporte.");
+            }
+            
+            
             if(empresa.getIdIugu() != null) {
                 if(empresa.getAssinaturaIuguBanco() != null) {
                     this.addError("Erro!", "Cliente já tem assinatura criada");
