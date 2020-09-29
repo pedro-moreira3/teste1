@@ -29,7 +29,7 @@
 						<div class="SeparatorFull"></div>
 
 						<p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank form-group ui-fluid">
-							<p:commandButton value="Salvar" actionListener="#{trocarSenhaMB.actionPersist}" update=":lume:pnPrincipal" icon="White fa fa-save"
+							<p:commandButton value="Salvar" process="pnSenha,@this" actionListener="#{trocarSenhaMB.actionPersist}" update=":lume:pnPrincipal" icon="White fa fa-save"
 								styleClass="GreenButton" />
 						</p:panelGrid>
 
