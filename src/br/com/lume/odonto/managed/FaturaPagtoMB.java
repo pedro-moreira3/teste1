@@ -935,7 +935,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 atualizaInfoParcelamentoNovoLancamento(TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE);
             } else {
                 novoLancamentoValorDaPrimeiraParcelaDiferenca = BigDecimal.ZERO;
-                novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorTotal;
+                novoLancamentoValorDaPrimeiraParcela = BigDecimal.ZERO;
                 novoLancamentoValorDaParcela = null;
 
                 atualizaInfoParcelamentoNovoLancamento(TipoNegociacao.A_VISTA);
@@ -952,7 +952,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 atualizaInfoParcelamentoNovoLancamento(TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS);
             } else {
                 novoLancamentoValorDaPrimeiraParcelaDiferenca = BigDecimal.ZERO;
-                novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorTotal;
+                novoLancamentoValorDaPrimeiraParcela = BigDecimal.ZERO;
                 novoLancamentoValorDaParcela = null;
 
                 atualizaInfoParcelamentoNovoLancamento(TipoNegociacao.A_VISTA);
