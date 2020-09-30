@@ -923,6 +923,9 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
             if (novoLancamentoValorDaPrimeiraParcela.compareTo(novoLancamentoValorTotal) > 0) {
                 this.addError("Erro", "Insira uma primeira parcela menor que o total!");
                 return;
+            }else if(novoLancamentoQuantidadeParcelas > 1 && novoLancamentoValorDaPrimeiraParcela.compareTo(novoLancamentoValorTotal) >= 0) {
+                this.addError("Erro", "Primeira parcela não pode ser igual ao valor total!");
+                return;
             }
 
             if (novoLancamentoQuantidadeParcelas > 1) {
@@ -935,7 +938,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 atualizaInfoParcelamentoNovoLancamento(TipoNegociacao.PARCELADO_PRIMEIRA_PARCELA_DIFERENTE);
             } else {
                 novoLancamentoValorDaPrimeiraParcelaDiferenca = BigDecimal.ZERO;
-                novoLancamentoValorDaPrimeiraParcela = BigDecimal.ZERO;
+                novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorTotal;
                 novoLancamentoValorDaParcela = null;
 
                 atualizaInfoParcelamentoNovoLancamento(TipoNegociacao.A_VISTA);
@@ -952,7 +955,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
                 atualizaInfoParcelamentoNovoLancamento(TipoNegociacao.PARCELADO_TODAS_PARCELAS_IGUAIS);
             } else {
                 novoLancamentoValorDaPrimeiraParcelaDiferenca = BigDecimal.ZERO;
-                novoLancamentoValorDaPrimeiraParcela = BigDecimal.ZERO;
+                novoLancamentoValorDaPrimeiraParcela = novoLancamentoValorTotal;
                 novoLancamentoValorDaParcela = null;
 
                 atualizaInfoParcelamentoNovoLancamento(TipoNegociacao.A_VISTA);
