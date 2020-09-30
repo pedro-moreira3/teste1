@@ -42,6 +42,47 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
         setEntity(null); 
         listar();
         
+//        try {
+//            long idEmpresaDestino = 567l;
+//            //pegando da empresa template
+//            List<ConfiguracaoAnamnese> configuracaoEmpresaTemplate =  ConfiguracaoAnamneseSingleton.getInstance().getBo().listAll(92l);
+//            //copiando anamneses da empresa base.
+//            for (ConfiguracaoAnamnese configuracaoAnamnese : configuracaoEmpresaTemplate) {
+//                ConfiguracaoAnamnese nova = new ConfiguracaoAnamnese();
+//                nova.setAtivo("S");
+//                nova.setDescricao(configuracaoAnamnese.getDescricao());
+//                //id da empresa que estamos copiando
+//                nova.setIdEmpresa(idEmpresaDestino);               
+//                ConfiguracaoAnamneseSingleton.getInstance().getBo().persist(nova);
+//                nova = ConfiguracaoAnamneseSingleton.getInstance().getBo().findByDescricaoAndEmpresa(configuracaoAnamnese.getDescricao(),idEmpresaDestino);
+//               // List <Pergunta> perguntasParaCriar = new ArrayList<Pergunta>();
+//                for (Pergunta pergunta : configuracaoAnamnese.getPerguntas()) {
+//                    Pergunta novaPerguta = pergunta;
+//                    novaPerguta.setIdEmpresa(idEmpresaDestino);
+//                    novaPerguta.setConfiguracaoAnamnese(nova);
+//                    novaPerguta.setRespostas(new ArrayList<Resposta>());
+//                   // perguntasParaCriar.add(novaPerguta);                   
+//                    PerguntaSingleton.getInstance().getBo().persist(novaPerguta);
+//                    PerguntaSingleton.getInstance().getBo().fin
+//                    for (Resposta resposta :  pergunta.getRespostas()) {
+//                        Resposta novaResposta = resposta;
+//                        novaResposta.setPergunta(novaPerguta);  
+//                        RespostaSingleton.getInstance().getBo().persist(novaResposta);
+//                        //novaResposta = novaResposta
+//                      //  novaPerguta.getRespostas().add(novaResposta);
+//                    }
+//                   // PerguntaSingleton.getInstance().getBo().persist(novaPerguta);
+//                }
+//                
+//                
+//            }            
+//          
+//            
+//        } catch (Exception e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        }
+        
 //        //TEMPORARIO, RODAR UMA SÓ VEZ PARA INSERIR A LISTA DE ANAMNESE INICIAL
 //      try {
 //          List<Pergunta> perguntas = PerguntaSingleton.getInstance().getBo().listSemConfiguracaoAnamnese();
@@ -232,7 +273,7 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
             for (int i = 0; i < items.length; i++) {
               //  System.out.println(items[i]);
                 if (items[i].equals(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO)) {   
-                    System.out.println();
+                    //System.out.println();
                     perguntasParaSalvar.add(criaPergunta(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO, items[i + 2], i, Boolean.parseBoolean(items[i + 1])));
                     i++;
                     continue;
@@ -252,10 +293,10 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
                     //enquanto nao for outra pergunta é uma resposta, entao vamos adicionando.
                     List<Resposta> respostas = new ArrayList<Resposta>();
                     while (i < items.length && !Arrays.asList(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO, Pergunta.TIPO_RESPOSTA_TEXTO, Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS,
-                            Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS, Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE).contains(items[i])
-                            && !items[i].equals("true") && !items[i].equals("false")
+                            Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS, Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE).contains(items[i+1])
+                            && !items[i+1].equals("true") && !items[i+1].equals("false")
                             ) {
-                        respostas.add(criaResposta(novaPergunta, items[i]));
+                        respostas.add(criaResposta(novaPergunta, items[i+1]));
                         i++;
                     }
                     novaPergunta.setRespostas(respostas);
@@ -270,10 +311,10 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
                     //enquanto nao for outra pergunta é uma resposta, entao vamos adicionando.
                     List<Resposta> respostas = new ArrayList<Resposta>();
                     while (i < items.length && !Arrays.asList(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO, Pergunta.TIPO_RESPOSTA_TEXTO, Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS,
-                            Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS, Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE).contains(items[i])
-                            && !items[i].equals("true") && !items[i].equals("false")
+                            Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS, Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE).contains(items[i+1])
+                            && !items[i+1].equals("true") && !items[i+1].equals("false")
                             ) {
-                        respostas.add(criaResposta(novaPergunta, items[i]));
+                        respostas.add(criaResposta(novaPergunta, items[i+1]));
                         i++;
                     }
                     novaPergunta.setRespostas(respostas);
