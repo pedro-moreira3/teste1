@@ -41,7 +41,8 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
         this.setClazz(ConfiguracaoAnamnese.class);
         setEntity(null); 
         listar();
-        
+      
+        //PARA INSERIR AS DEFAULT PARA uma clinica especifica
 //        try {
 //            long idEmpresaDestino = 567l;
 //            //pegando da empresa template
@@ -55,23 +56,24 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
 //                nova.setIdEmpresa(idEmpresaDestino);               
 //                ConfiguracaoAnamneseSingleton.getInstance().getBo().persist(nova);
 //                nova = ConfiguracaoAnamneseSingleton.getInstance().getBo().findByDescricaoAndEmpresa(configuracaoAnamnese.getDescricao(),idEmpresaDestino);
-//               // List <Pergunta> perguntasParaCriar = new ArrayList<Pergunta>();
+//                System.out.println("id conf: " + nova.getId());             
 //                for (Pergunta pergunta : configuracaoAnamnese.getPerguntas()) {
+//                    List<Resposta> respostas = pergunta.getRespostas();
 //                    Pergunta novaPerguta = pergunta;
+//                    novaPerguta.setId(null);
 //                    novaPerguta.setIdEmpresa(idEmpresaDestino);
 //                    novaPerguta.setConfiguracaoAnamnese(nova);
-//                    novaPerguta.setRespostas(new ArrayList<Resposta>());
-//                   // perguntasParaCriar.add(novaPerguta);                   
-//                    PerguntaSingleton.getInstance().getBo().persist(novaPerguta);
-//                    PerguntaSingleton.getInstance().getBo().fin
-//                    for (Resposta resposta :  pergunta.getRespostas()) {
+//                    novaPerguta.setRespostas(new ArrayList<Resposta>());                            
+//                   PerguntaSingleton.getInstance().getBo().persist(novaPerguta);
+//                    novaPerguta = PerguntaSingleton.getInstance().getBo().findByDescricaoAndConfiguracaoAnamnese(novaPerguta.getDescricao(), nova);
+//                    System.out.println("id pergunta: " + novaPerguta.getId());
+//                    for (Resposta resposta :  respostas) {
 //                        Resposta novaResposta = resposta;
+//                        novaResposta.setId(0l);
 //                        novaResposta.setPergunta(novaPerguta);  
 //                        RespostaSingleton.getInstance().getBo().persist(novaResposta);
-//                        //novaResposta = novaResposta
-//                      //  novaPerguta.getRespostas().add(novaResposta);
-//                    }
-//                   // PerguntaSingleton.getInstance().getBo().persist(novaPerguta);
+//                        System.out.println("resposta: " + resposta.getDescricao());
+//                    }                 
 //                }
 //                
 //                
@@ -292,7 +294,7 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
                     i++;
                     //enquanto nao for outra pergunta é uma resposta, entao vamos adicionando.
                     List<Resposta> respostas = new ArrayList<Resposta>();
-                    while (i < items.length && !Arrays.asList(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO, Pergunta.TIPO_RESPOSTA_TEXTO, Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS,
+                    while (i+1 < items.length && !Arrays.asList(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO, Pergunta.TIPO_RESPOSTA_TEXTO, Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS,
                             Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS, Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE).contains(items[i+1])
                             && !items[i+1].equals("true") && !items[i+1].equals("false")
                             ) {
@@ -310,7 +312,7 @@ public class ConfiguracaoAnamneseMB extends LumeManagedBean<ConfiguracaoAnamnese
                     i++;
                     //enquanto nao for outra pergunta é uma resposta, entao vamos adicionando.
                     List<Resposta> respostas = new ArrayList<Resposta>();
-                    while (i < items.length && !Arrays.asList(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO, Pergunta.TIPO_RESPOSTA_TEXTO, Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS,
+                    while (i+1 < items.length && !Arrays.asList(Pergunta.TIPO_RESPOSTA_SIM_OU_NAO, Pergunta.TIPO_RESPOSTA_TEXTO, Pergunta.TIPO_RESPOSTA_UMA_EM_VARIAS,
                             Pergunta.TIPO_RESPOSTA_VARIAS_EM_VARIAS, Pergunta.TIPO_RESPOSTA_TEXTO_LIVRE).contains(items[i+1])
                             && !items[i+1].equals("true") && !items[i+1].equals("false")
                             ) {
