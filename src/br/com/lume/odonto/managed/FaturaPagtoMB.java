@@ -286,20 +286,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
     private void cancelaLancamentoValidado(Lancamento l) {
         try {
-            Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
-            Tarifa tarifa = TarifaSingleton.getInstance().getBo().findByProdutoAndEmpresa("Dinheiro", profissionalLogado.getIdEmpresa());
-
-            Lancamento lancamento = LancamentoSingleton.getInstance().novoLancamento(l.getFatura(), l.getValor(), tarifa.getTipo(), l.getNumeroParcela(), l.getParcelaTotal(), new Date(), new Date(),
-                    tarifa, UtilsFrontEnd.getProfissionalLogado(), null, true, null);
-
-            l.setLancamentoExtornado(Status.SIM);
-            LancamentoSingleton.getInstance().getBo().persist(l);
-
-            LancamentoSingleton.getInstance().cancelaRepasseFromExtornoRecebimento(l, profissionalLogado);
-
-            LancamentoContabilSingleton.getInstance().validaEConfereLancamentos(lancamento, profissionalLogado);
-            lancamento.calculaStatusESubStatus();
-
+            LancamentoSingleton.getInstance().gerarEstornoRecebimento(l, UtilsFrontEnd.getProfissionalLogado());
             this.addInfo("Sucesso", "Lançamento cancelado com sucesso!", true);
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog(e);

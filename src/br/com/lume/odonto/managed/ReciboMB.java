@@ -166,7 +166,7 @@ public class ReciboMB extends LumeManagedBean<Recibo> {
 
     public List<TagDocumento> getTagDinamicasAsList() {
         List<TagDocumento> listAux = tagDinamicas != null ? new ArrayList<>(tagDinamicas) : new ArrayList<>();
-        Collections.sort(listAux);
+        //Collections.sort(listAux);
         return listAux;
     }
 

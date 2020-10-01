@@ -237,7 +237,7 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
         try {
             setEntityList(FaturaSingleton.getInstance().getBo().getFaturasFromPacienteByOrSubStatus(paciente, null));
             this.getEntityList().removeIf(fatura -> !fatura.isAtivo() ||
-                    fatura.getStatusFatura().equals(Fatura.StatusFatura.INTERROMPIDO));
+                    fatura.getStatusFatura().equals(Fatura.StatusFatura.CANCELADO));
             
             BigDecimal valorAReceber = new BigDecimal(0);
 

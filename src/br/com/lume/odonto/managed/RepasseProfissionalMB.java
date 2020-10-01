@@ -138,8 +138,8 @@ public class RepasseProfissionalMB extends LumeManagedBean<Fatura> {
                         fatura.setDadosTabelaRepasseTotalRestante(FaturaSingleton.getInstance().getTotalRestante(fatura).setScale(2, BigDecimal.ROUND_HALF_UP));
 
                         fatura.setDadosTabelaStatusFatura("A Pagar");
-                        if (fatura.getStatusFatura() == StatusFatura.INTERROMPIDO)
-                            fatura.setDadosTabelaStatusFatura(StatusFatura.INTERROMPIDO.getDescricao());
+                        if (fatura.getStatusFatura() == StatusFatura.CANCELADO)
+                            fatura.setDadosTabelaStatusFatura(StatusFatura.CANCELADO.getDescricao());
                         else if (fatura.getDadosTabelaRepasseTotalFatura().subtract(fatura.getDadosTabelaRepasseTotalPago()).doubleValue() <= 0)
                             fatura.setDadosTabelaStatusFatura("Pago");
                     } catch (Exception e) {
