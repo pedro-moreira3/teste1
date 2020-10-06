@@ -47,9 +47,11 @@
 			<div class="Container100 ui-fluid NoPadding">
 				<div class="Card">
 
+					<ui:remove>
 					<p:commandButton value="Teste email" styleClass="NavyButton" 
 						actionListener="#{avisosMB.testeEmail()}"
 						process="@this"/>
+					</ui:remove>
 					
 					<p:dataTable emptyMessage="Nenhum Aviso no momento"
 						widgetVar="dtAvisos" id="dtAvisos" value="#{avisosMB.entityList}"
