@@ -47,6 +47,10 @@
 			<div class="Container100 ui-fluid NoPadding">
 				<div class="Card">
 
+					<p:commandButton value="Teste email" styleClass="NavyButton" 
+						actionListener="#{avisosMB.testeEmail()}"
+						process="@this"/>
+					
 					<p:dataTable emptyMessage="Nenhum Aviso no momento"
 						widgetVar="dtAvisos" id="dtAvisos" value="#{avisosMB.entityList}"
 						var="objeto" rows="5" paginatorPosition="bottom"
