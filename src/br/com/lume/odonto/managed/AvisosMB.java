@@ -51,6 +51,7 @@ public class AvisosMB extends LumeManagedBean<Avisos>{
             EnviaEmail.envioResetSenha(UsuarioSingleton.getInstance().getBo().find(UtilsFrontEnd.getProfissionalLogado().getIdUsuario()));
         } catch (Exception e) {
             e.printStackTrace();
+            this.addError("Erro", e.getMessage());
         }
     }
 
