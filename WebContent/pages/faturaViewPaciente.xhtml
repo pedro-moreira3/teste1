@@ -283,7 +283,7 @@ body .height31 input {
 
 											<p:ajax process="@this"
 												listener="#{faturaPagtoMB.actionNovoLancamentoAtualizaQuantidadeDeParcelas}"
-												update="tooltipNovoLancamentoTarifasDisponiveisObj, novoLancamentoFormaPagamento, novoLancamentoValorPrimeiraParcela, novoLancamentoInfoParcelamento, novoLancamentoParcelasTable" />
+												update="painelEntradaLancamento,tooltipNovoLancamentoTarifasDisponiveisObj, novoLancamentoFormaPagamento, novoLancamentoValorPrimeiraParcela, novoLancamentoInfoParcelamento, novoLancamentoParcelasTable" />
 										</p:selectOneMenu>
 										<p:outputPanel id="tooltipNovoLancamentoTarifasDisponiveisObj">
 											<h:outputLabel class="fa fa-question"
@@ -332,16 +332,16 @@ body .height31 input {
 								</h:panelGroup>
 
 								<h:panelGroup styleClass="md-inputfield"
-									style="margin-top: 10px;">
-									<p:inputNumber id="novoLancamentoValorPrimeiraParcela"
+									style="margin-top: 10px;" id="painelEntradaLancamento">
+									<p:inputNumber id="novoLancamentoValorPrimeiraParcela" rendered="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas != 1}"
 										value="#{faturaPagtoMB.novoLancamentoValorDaPrimeiraParcela}"
 										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 										symbol="R$ " thousandSeparator=".">
 										<p:ajax process="@this"
 											oncomplete="novoLancamentoRefazCalculos()" />
 									</p:inputNumber>
-									<p:outputLabel for="novoLancamentoValorPrimeiraParcela"
-										value="Valor da Entrada:" />
+									<p:outputLabel for="novoLancamentoValorPrimeiraParcela" rendered="#{faturaPagtoMB.novoLancamentoQuantidadeParcelas != 1}"
+										value="Valor da Entrada  (primeira parcela):" />
 									<p:message styleClass="msg"
 										for="novoLancamentoValorPrimeiraParcela" />
 								</h:panelGroup>
@@ -592,7 +592,7 @@ body .height31 input {
 
 											<p:ajax process="@this"
 												listener="#{faturaPagtoMB.atualizaQuantidadeDeParcelas}"
-												update="tooltipNovaNegociacaoTarifasDisponiveisObj, negociacaoTipoDesconto, negociacaoValorDesconto, negociacaoValorPrimeiraParcela, infoParcelamento" />
+												update="painelEntrada,tooltipNovaNegociacaoTarifasDisponiveisObj, negociacaoTipoDesconto, negociacaoValorDesconto, negociacaoValorPrimeiraParcela, infoParcelamento" />
 										</p:selectOneMenu>
 										<p:outputPanel id="tooltipNovaNegociacaoTarifasDisponiveisObj">
 											<h:outputLabel class="fa fa-question"
@@ -647,16 +647,16 @@ body .height31 input {
 									</p:outputPanel>
 								</h:panelGroup>
 
-								<h:panelGroup styleClass="md-inputfield taller"
-									style="margin-top: 10px;">
-									<p:inputNumber id="negociacaoValorPrimeiraParcela"
+								<h:panelGroup styleClass="md-inputfield taller" id="painelEntrada"
+									style="margin-top: 10px;" >
+									<p:inputNumber id="negociacaoValorPrimeiraParcela" rendered="#{faturaPagtoMB.negociacaoQuantidadeParcelas != 1}"
 										value="#{faturaPagtoMB.negociacaoValorDaPrimeiraParcela}"
 										maxlength="13" maxValue="9999999999.99" decimalSeparator=","
 										symbol="R$ " thousandSeparator=".">
 										<p:ajax process="@this" oncomplete="refazCalculos()" />
 									</p:inputNumber>
-									<p:outputLabel for="negociacaoValorPrimeiraParcela"
-										value="Valor da Entrada:" />
+									<p:outputLabel for="negociacaoValorPrimeiraParcela" rendered="#{faturaPagtoMB.negociacaoQuantidadeParcelas != 1}"
+										value="Valor da Entrada  (primeira parcela):" />
 								</h:panelGroup>
 
 								<p:outputPanel id="infoParcelamento">
@@ -813,7 +813,7 @@ body .height31 input {
 													readonly="true">
 												</p:inputNumber>
 												<p:outputLabel for="negociacaoValorPrimeiraParcelaAprovacao"
-													value="Valor da Entrada:" />
+													value="Valor da Entrada (primeira parcela):" />
 											</h:panelGroup>
 
 											<p:outputPanel id="infoParcelamentoAprovacao">
@@ -948,7 +948,7 @@ body .height31 input {
 										symbol="R$ " thousandSeparator="." readonly="true">
 									</p:inputNumber>
 									<p:outputLabel for="negociacaoValorTotal1Aprovacao"
-										value="Valor da entrada:" />
+										value="Valor da entrada  (primeira parcela):" />
 									<p:message for="negociacaoValorTotal1Aprovacao"
 										styleClass="msg" />
 								</h:panelGroup>
@@ -1362,7 +1362,7 @@ body .height31 input {
 									<h:outputText value="#{negociacao.descricao}" />
 								</p:column>
 
-								<p:column headerText="Valor da Entrada"
+								<p:column headerText="Valor da Entrada  (primeira parcela)"
 									styleClass="#{(negociacao.status.rotulo == 'AP' ? 'negociacaoAprovada' : 'negociacaoEmAndamento')}"
 									sortBy="#{negociacao.valorPrimeiraParcela}"
 									filterBy="#{negociacao.valorPrimeiraParcela}"

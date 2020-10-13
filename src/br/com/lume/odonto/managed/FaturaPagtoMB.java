@@ -1080,6 +1080,13 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
 
             //if (negociacaoValorDaPrimeiraParcela != null && negociacaoValorDaPrimeiraParcelaDirefenca != null)
             //    negociacaoValorDaPrimeiraParcela = negociacaoValorDaPrimeiraParcela.add(negociacaoValorDaPrimeiraParcelaDirefenca);
+            
+          //uma parcela só, nao tem entrada
+            if(negociacaoQuantidadeParcelas == 1) {
+                negociacaoValorDaParcela = negociacaoValorDaPrimeiraParcela;
+                negociacaoValorDaPrimeiraParcela = new BigDecimal(0);
+            }            
+            
             NegociacaoFaturaSingleton.getInstance().criaNovaNegociacao(getEntity(), getDescontoObjFromParcela(negociacaoQuantidadeParcelas), negociacaoQuantidadeParcelas, negociacaoTipoDesconto,
                     negociacaoValorDesconto, negociacaoValorDaPrimeiraParcela, negociacaoValorDaParcela, negociacaoValorDaPrimeiraParcelaDirefenca, negociacaoValorTotal, totalSemDesconto,
                     negociacaoObservacao, UtilsFrontEnd.getProfissionalLogado());
