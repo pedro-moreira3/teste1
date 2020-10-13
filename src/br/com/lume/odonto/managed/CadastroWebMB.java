@@ -37,6 +37,7 @@ import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
+import br.com.lume.configuracaoAnamnese.ConfiguracaoAnamneseSingleton;
 import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.especialidade.EspecialidadeSingleton;
@@ -327,6 +328,10 @@ public class CadastroWebMB extends LumeManagedBean<Empresa> {
             EspecialidadeSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Cadastrou Especialidade!");
             addInfo("Cadastrou Especialidade!", "");
+            
+            ConfiguracaoAnamneseSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
+            System.out.println("Cadastrou Configuracoes anamnese!");
+            addInfo("Cadastrou Configuracoes anamnese!", "");
 
             ItemSingleton.getInstance().getBo().clonarDadosEmpresaDefault(modelo, destino);
             System.out.println("Cadastrou Itens!");

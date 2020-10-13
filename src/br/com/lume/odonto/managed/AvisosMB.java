@@ -15,12 +15,14 @@ import br.com.lume.common.iugu.exceptions.IuguDadosObrigatoriosException;
 import br.com.lume.common.iugu.responses.InvoiceResponse;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.EnviaEmail;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.odonto.entity.Avisos;
 import br.com.lume.odonto.entity.Avisos.TIPO_AVISO;
 import br.com.lume.security.EmpresaSingleton;
+import br.com.lume.security.UsuarioSingleton;
 import br.com.lume.security.entity.Empresa;
 
 @ManagedBean
@@ -42,6 +44,15 @@ public class AvisosMB extends LumeManagedBean<Avisos>{
         idEmpresaParaSocket = "" + UtilsFrontEnd.getProfissionalLogado().getIdEmpresa();
         
         carregarAvisos();
+    }
+    
+    public void testeEmail() {
+        try {
+            EnviaEmail.envioResetSenha(UsuarioSingleton.getInstance().getBo().find(UtilsFrontEnd.getProfissionalLogado().getIdUsuario()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.addError("Erro", e.getMessage());
+        }
     }
 
     public void redireciona(Avisos aviso) {
