@@ -277,8 +277,8 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
 
         Profissional profissionalLogado = UtilsFrontEnd.getProfissionalLogado();
         Empresa empresaLogada = UtilsFrontEnd.getEmpresaLogada();
-
-        if (profissionalLogado != null && this.getLumeSecurity().getUsuario() != null && empresaLogada != null) {
+//TODO POR ENQUANTO PARA QS NAO MOSTRAMOS QUE ESTA EM TRIAL!!
+        if (profissionalLogado != null && this.getLumeSecurity().getUsuario() != null && empresaLogada != null && empresaLogada.getAfiliacao().getId() != 1l) {
             return empresaLogada.getEmpChaTrial().equals("S") && profissionalLogado.getPerfil().equals(OdontoPerfil.ADMINISTRADOR);
         } else {
             return false;
