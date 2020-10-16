@@ -419,13 +419,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 									<p:panelGrid columns="4" layout="grid"
 										styleClass="ui-panelgrid-blank form-group ui-fluid botoesAgenda">
 										<h:panelGroup rendered="#{agendamentoMB.habilitaSalvar}">
-											<p:commandButton id="persist" icon="White fa fa-save"
-									process=":lume:pnAgendamento, @this" value="Salvar"
-									rendered="#{agendamentoMB.habilitaSalvar}" immediate="true"
-									actionListener="#{agendamentoMB.actionPersist}"
-									update=":lume:pnAgendamento"
-									oncomplete="atualizaLista();PF('eventDialog').hide();"
-									styleClass="GreenButton" />	
+										<p:commandButton id="persist" icon="White fa fa-save"
+										process="@this,:lume:descricao" value="Salvar"
+										rendered="#{agendamentoMB.habilitaSalvar}"
+										actionListener="#{agendamentoMB.actionPersist}"
+										update=":lume:pnAgendamento"
+										oncomplete="atualizaLista();PF('eventDialog').hide();"
+										styleClass="GreenButton" />
 									
 									
 												
