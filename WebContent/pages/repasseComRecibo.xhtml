@@ -69,7 +69,8 @@ body.layout-compact .fakeTable.ui-datatable thead th {
 		</p:outputPanel>
 
 
-		<p:remoteCommand name="onHidePacienteFicha" />
+		<p:remoteCommand name="onHidePacienteFicha" process="@this"
+			update=":lume:viewFaturaRepasse" />
 
 		<p:dialog id="dlgPendencias" widgetVar="dlgPendencias"
 			header="Pendências" responsive="true" modal="true" width="40%">
