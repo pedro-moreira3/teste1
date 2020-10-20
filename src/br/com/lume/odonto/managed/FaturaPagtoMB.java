@@ -401,9 +401,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
          * LogIntelidenteSingleton.getInstance().makeLog(e); } }); }
          */
         setEntity(fatura);
+        fatura.setNegociacoes(NegociacaoFaturaSingleton.getInstance().getBo().getNegociacaoFromFatura(fatura));       
         setShowLancamentosCancelados(false);
         setShowLancamentosEstorno(false);
         updateValues(fatura, true, false);
+        
 
         updateWichScreenOpenForFaturaView();
     }
