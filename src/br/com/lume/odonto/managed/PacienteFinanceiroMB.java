@@ -57,6 +57,8 @@ public class PacienteFinanceiroMB extends LumeManagedBean<Fatura> {
     }
 
     public void pesquisar() {
+       lancamentosPendentes = new ArrayList<Lancamento>();
+       lancamentosAConferir = new ArrayList<Lancamento>();
         try {
             Calendar inicio = null;
             if (getInicio() != null) {

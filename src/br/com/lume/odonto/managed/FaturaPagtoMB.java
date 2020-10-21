@@ -401,9 +401,11 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
          * LogIntelidenteSingleton.getInstance().makeLog(e); } }); }
          */
         setEntity(fatura);
+        fatura.setNegociacoes(NegociacaoFaturaSingleton.getInstance().getBo().getNegociacaoFromFatura(fatura));       
         setShowLancamentosCancelados(false);
         setShowLancamentosEstorno(false);
         updateValues(fatura, true, false);
+        
 
         updateWichScreenOpenForFaturaView();
     }
@@ -907,7 +909,7 @@ public class FaturaPagtoMB extends LumeManagedBean<Fatura> {
         novoLancamentoValorDaPrimeiraParcelaDiferenca = BigDecimal.ZERO;
 
         if (novoLancamentoValorDaPrimeiraParcela != null) {
-            if (novoLancamentoValorDaPrimeiraParcela.compareTo(novoLancamentoValorTotal) > 0) {
+            if (novoLancamentoValorDaPrimeiraParcela.compareTo(novoLancamentoValorTotal) > 0 && novoLancamentoQuantidadeParcelas != 1) {
                 this.addError("Erro", "Insira uma primeira parcela menor que o total!");
                 return;
             }else if(novoLancamentoQuantidadeParcelas > 1 && novoLancamentoValorDaPrimeiraParcela.compareTo(novoLancamentoValorTotal) >= 0) {
