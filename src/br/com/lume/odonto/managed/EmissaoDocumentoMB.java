@@ -130,7 +130,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
             out.close();
 
         } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Não foi possível emitir o documento.");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
             e.printStackTrace();
         }
     }
