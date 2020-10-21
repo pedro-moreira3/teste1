@@ -19,29 +19,30 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Utils;
+import br.com.lume.common.util.Utils.ValidacaoLancamento;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.diagnosticoOrtodontico.DiagnosticoOrtodonticoSingleton;
 import br.com.lume.dominio.DominioSingleton;
+import br.com.lume.faturamento.FaturaSingleton;
 import br.com.lume.indiceReajuste.IndiceReajusteSingleton;
 import br.com.lume.lancamento.LancamentoSingleton;
 import br.com.lume.odonto.entity.AparelhoOrtodontico;
 import br.com.lume.odonto.entity.DiagnosticoOrtodontico;
 import br.com.lume.odonto.entity.Dominio;
+import br.com.lume.odonto.entity.Fatura;
+import br.com.lume.odonto.entity.FaturaItem;
 import br.com.lume.odonto.entity.IndiceReajuste;
 import br.com.lume.odonto.entity.Orcamento;
 import br.com.lume.odonto.entity.OrcamentoItem;
-import br.com.lume.odonto.entity.OrcamentoProcedimento;
 import br.com.lume.odonto.entity.Paciente;
 import br.com.lume.odonto.entity.PlanoTratamento;
 import br.com.lume.odonto.entity.PlanoTratamento.PlanoTratamentoTipo;
-import br.com.lume.odonto.util.OdontoMensagens;
 import br.com.lume.odonto.entity.PlanoTratamentoAparelho;
 import br.com.lume.odonto.entity.PlanoTratamentoDiagnostico;
 import br.com.lume.odonto.entity.PlanoTratamentoProcedimento;
 import br.com.lume.odonto.entity.Procedimento;
 import br.com.lume.odonto.entity.Retorno;
 import br.com.lume.orcamento.OrcamentoItemSingleton;
-import br.com.lume.orcamento.OrcamentoProcedimentoSingleton;
 import br.com.lume.orcamento.OrcamentoSingleton;
 import br.com.lume.planoTratamento.PlanoTratamentoSingleton;
 import br.com.lume.planoTratamentoProcedimento.PlanoTratamentoProcedimentoSingleton;
@@ -274,6 +275,30 @@ public class OrtodontiaMB extends LumeManagedBean<PlanoTratamento> {
             }
         } catch (Exception e) {
             this.addError("Erro", Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), true);
+        }
+    }
+    
+    public void desfazerOrcamentoPorPTP(Orcamento orcamento) {
+        try {
+            orcamento.setAtivo("N");
+            for(OrcamentoItem itemOrc : orcamento.getItens()) {
+                Fatura faturaRecebimento = itemOrc.getFaturaItem().getFaturaItem().getFatura();
+                BigDecimal totalPago = LancamentoSingleton.getInstance().getTotalLancamentoPorFatura(faturaRecebimento, true, ValidacaoLancamento.VALIDADO);
+                if(faturaRecebimento.isAtivo() && totalPago.compareTo(BigDecimal.ZERO) == 0) {
+                    faturaRecebimento.setAtivo(false);
+                    for(FaturaItem fi : faturaRecebimento.getItens()) {
+                        fi.setAtivo(false);
+                    }
+                    
+                    FaturaSingleton.getInstance().getBo().persist(faturaRecebimento);
+                    OrcamentoSingleton.getInstance().getBo().persist(orcamento);
+                    this.addInfo("Sucesso ao salvar o registro", "");
+                }else if(totalPago.compareTo(BigDecimal.ZERO) > 0) {
+                    this.addWarn("Não foi possível cancelar o orçamento", "Fatura de recebimento com lançamento validado.");
+                }
+            }
+        }catch (Exception e) {
+            
         }
     }
     

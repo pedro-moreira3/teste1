@@ -1,0 +1,118 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+	xmlns:c="http://java.sun.com/jstl/core">
+	<ui:define name="content">
+
+		<div class="ui-g ui-fluid">
+			<div class="ui-g-12 ui-lg-12">
+				<div class="card card-w-title">
+
+					<p:outputPanel id="pnEmissaoPrincipal" styleClass="BordNone">
+						<h1>Emissão de documentos</h1>
+						<div class="SeparatorFull"></div>
+
+						<p:fieldset>
+							<p:panelGrid columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+								<h:panelGroup>
+									<p:outputLabel style="margin:0px;" for="filtroTipoDocumento"
+										value="Tipo de documento" />
+									<p:selectOneMenu id="filtroTipoDocumento"
+										style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+										value="#{emissaoDocumentoMB.filtroTipoDocumento}"
+										converter="dominio">
+										<f:selectItem itemLabel="Selecione um tipo"
+											itemValue="#{null}" />
+										<f:selectItems
+											value="#{emissaoDocumentoMB.listaTiposDocumentos}" var="tipo"
+											itemLabel="#{tipo.nome}" itemValue="#{tipo}" />
+
+										<p:ajax process="@this" />
+
+									</p:selectOneMenu>
+								</h:panelGroup>
+
+								<h:panelGroup>
+									<p:outputLabel style="margin:0px;" for="filtroProfissional"
+										value="Emitido por" />
+									<p:selectOneMenu id="filtroProfissional"
+										style="min-width:0px;margin-top:10px;margin-bottom:10px;"
+										value="#{emissaoDocumentoMB.filtroProfissionalEmissao}"
+										converter="dominio">
+										<f:selectItem itemLabel="Selecione um tipo"
+											itemValue="#{null}" />
+										<f:selectItems
+											value="#{emissaoDocumentoMB.listaTiposDocumentos}" var="tipo"
+											itemLabel="#{tipo.nome}" itemValue="#{tipo}" />
+
+										<p:ajax process="@this" />
+
+									</p:selectOneMenu>
+								</h:panelGroup>
+
+							</p:panelGrid>
+
+							<p:panelGrid columns="3" layout="grid"
+								styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+								<p:commandButton value="Pesquisar" styleClass="OrangeButton"
+									icon="White fa fa-search"
+									actionListener="#{emissaoDocumentoMB.pesquisar()}"
+									update="dtDocumentos" process="@this" />
+
+								<p:commandButton value="Emitir documento"
+									styleClass="NavyButton" icon="fa fa-file White"
+									actionListener="#{emissaoDocumentoMB.actionNew}"
+									oncomplete="PF('dlgEmitirDocumento').show();" process="@this" />
+
+							</p:panelGrid>
+						</p:fieldset>
+
+						<p:dataTable id="dtDocumentos" widgetVar="dtDocumentos"
+							value="#{emissaoDocumentoMB.entityList}">
+							
+							<f:facet name="header">Documentos emitidos</f:facet>
+
+							<p:column headerText="Tipo do documento">
+							</p:column>
+							<p:column headerText="Descrição">
+							</p:column>
+							<p:column headerText="Emitido por">
+							</p:column>
+							<p:column headerText="Data de emissão">
+							</p:column>
+						</p:dataTable>
+
+					</p:outputPanel>
+				</div>
+			</div>
+		</div>
+
+		<p:dialog id="dlgEmitirDocumento" widgetVar="dlgEmitirDocumento"
+			header="Emitir documento" responsive="true" modal="true"
+			onHide="PF('dlgEmitirDocumento').toggleMaximize();"
+			onShow="PF('dlgEmitirDocumento').toggleMaximize();">
+			
+			<p:outputPanel>
+				<ui:include src="dlgemitirdocumento.xhtml" />
+				<p:panelGrid columns="3" layout="grid"
+					styleClass="ui-panelgrid-blank ui-fluid form-group">
+
+					<p:commandButton value="Cancelar" oncomplete="PF('dlgEmitirDocumento').hide();"
+						process="@this"/>
+					<p:commandButton value="Imprimir documento" />
+					<p:commandButton value="Emitir documento"
+						actionListener="#{emissaoDocumentoMB.emitirDocumento()}"
+						process="@this,viewDoc"
+						update="viewDoc"/>
+
+				</p:panelGrid>
+			</p:outputPanel>
+		</p:dialog>
+	</ui:define>
+</ui:composition>
