@@ -34,6 +34,7 @@ import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.documento.DocumentoSingleton;
+import br.com.lume.documentoEmitido.DocumentoEmitidoSingleton;
 import br.com.lume.dominio.DominioSingleton;
 import br.com.lume.odonto.entity.CID;
 // import br.com.lume.odonto.bo.DocumentoBO;
@@ -54,7 +55,7 @@ import br.com.lume.tagEntidade.TagEntidadeSingleton;
 
 @ManagedBean
 @ViewScoped
-public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
+public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
     private static final long serialVersionUID = 1L;
 
@@ -77,13 +78,14 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
     private StreamedContent arqEmitido;
 
     public EmissaoDocumentoMB() {
-        super(DocumentoSingleton.getInstance().getBo());
-        this.setClazz(Documento.class);
+        super(DocumentoEmitidoSingleton.getInstance().getBo());
+        this.setClazz(DocumentoEmitido.class);
         this.carregarTiposDocumento();
+        pesquisar();
     }
 
     public void pesquisar() {
-
+        this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
     }
 
     public void emitirDocumento() {
@@ -94,7 +96,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
         DocumentoEmitido doc = new DocumentoEmitido();
         doc.setDataEmissao(new Date());
         doc.setEmitidoPor(UtilsFrontEnd.getProfissionalLogado());
-        doc.setPathDocumento("\\app\\odonto\\documentos\\" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "\\" + this.modeloSelecionado.getDescricao() + ".pdf");
+        doc.setPathDocumento("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/" + this.modeloSelecionado.getDescricao() + ".pdf");
         doc.setDocumentoModelo(this.modeloSelecionado);
 
         if (this.modeloSelecionado.getLayout() == null || this.modeloSelecionado.getLayout().isEmpty()) {
@@ -124,7 +126,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
             documento.newPage();
 
             if(this.modeloSelecionado.getMostrarLogo().equals(Status.SIM)) {
-                documento.add(Image.getInstance(String.format("\\app\\odonto\\imagens\\"+UtilsFrontEnd.getEmpresaLogada().getEmpStrLogoWCache())));
+                documento.add(Image.getInstance(String.format("/app/odonto/imagens/"+UtilsFrontEnd.getEmpresaLogada().getEmpStrLogoWCache())));
             }
             
             documento.add(new Paragraph(this.modeloSelecionado.getModelo()));
