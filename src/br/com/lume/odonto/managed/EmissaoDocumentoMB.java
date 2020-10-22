@@ -96,7 +96,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         DocumentoEmitido doc = new DocumentoEmitido();
         doc.setDataEmissao(new Date());
         doc.setEmitidoPor(UtilsFrontEnd.getProfissionalLogado());
-        doc.setPathDocumento("../../documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/" + this.modeloSelecionado.getDescricao() + ".pdf");
+        doc.setPathDocumento("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/" + this.modeloSelecionado.getDescricao() + ".pdf");
         doc.setDocumentoModelo(this.modeloSelecionado);
 
         if (this.modeloSelecionado.getLayout() == null || this.modeloSelecionado.getLayout().isEmpty()) {
@@ -126,7 +126,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             documento.newPage();
 
             if(this.modeloSelecionado.getMostrarLogo().equals(Status.SIM)) {
-                documento.add(Image.getInstance(String.format("../../imagens/"+UtilsFrontEnd.getEmpresaLogada().getEmpStrLogoWCache())));
+                documento.add(Image.getInstance(String.format("/app/odonto/imagens/"+UtilsFrontEnd.getEmpresaLogada().getEmpStrLogoWCache())));
             }
             
             documento.add(new Paragraph(this.modeloSelecionado.getModelo()));
@@ -134,7 +134,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             //DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
             this.docEmitido = doc;
 
-            File file = new File("../../documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/");
+            File file = new File("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/");
             file.mkdirs();
 
             documento.close();
