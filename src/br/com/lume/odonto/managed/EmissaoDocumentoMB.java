@@ -1,5 +1,6 @@
 package br.com.lume.odonto.managed;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,7 +12,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+
+import org.primefaces.PrimeFaces;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.PageSize;
@@ -62,6 +69,10 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
     private Paciente pacienteSelecionado;
     private CID cid;
     private DocumentoEmitido docEmitido;
+    private boolean teste = false;
+    
+    private StreamedContent arqTemp;
+    private StreamedContent arqEmitido;
 
     public EmissaoDocumentoMB() {
         super(DocumentoSingleton.getInstance().getBo());
@@ -81,7 +92,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
         DocumentoEmitido doc = new DocumentoEmitido();
         doc.setDataEmissao(new Date());
         doc.setEmitidoPor(UtilsFrontEnd.getProfissionalLogado());
-        doc.setPathDocumento("C:\\app\\odonto\\documentos\\" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "\\" + this.modeloSelecionado.getDescricao() + ".pdf");
+        doc.setPathDocumento("\\app\\odonto\\documentos\\" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "\\" + this.modeloSelecionado.getDescricao() + ".pdf");
         doc.setDocumentoModelo(this.modeloSelecionado);
 
         if (this.modeloSelecionado.getLayout() == null || this.modeloSelecionado.getLayout().isEmpty()) {
@@ -115,10 +126,12 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
             //DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
             this.docEmitido = doc;
 
-            File file = new File("\\app\\odonto\\documentos\\" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "\\").getAbsoluteFile();
+            File file = new File("\\app\\odonto\\documentos\\" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "\\");
             file.mkdirs();
 
             documento.close();
+            
+            this.arqEmitido = new DefaultStreamedContent(new ByteArrayInputStream(outputData.toByteArray()));
 
             FileOutputStream out = new FileOutputStream(file + "\\" + this.modeloSelecionado.getDescricao() + ".pdf");
             out.write(outputData.toByteArray());
@@ -128,6 +141,8 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
 
             out.flush();
             out.close();
+            
+            this.setTeste(true);
 
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
@@ -161,12 +176,59 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
         }
     }
 
+    public void construirModeloPDF() {
+        Document documento = null;
+
+        if (this.modeloSelecionado.getLayout() == null || this.modeloSelecionado.getLayout().isEmpty()) {
+            this.modeloSelecionado.setLayout("A4");
+        }
+
+        switch (this.modeloSelecionado.getLayout()) {
+            case "A3": {
+                documento = new Document(PageSize.A3.rotate(), 30, 30, 30, 30);
+            }
+                break;
+            case "A4": {
+                documento = new Document(PageSize.A4.rotate(), 30, 30, 30, 30);
+            }
+                break;
+            case "A5": {
+                documento = new Document(PageSize.A5.rotate(), 30, 30, 30, 30);
+            }
+                break;
+        }
+
+        try {
+            ByteArrayOutputStream outputData = new ByteArrayOutputStream();
+            PdfWriter pdfWriter = PdfWriter.getInstance(documento, outputData);
+
+            documento.open();
+            documento.newPage();
+
+            documento.add(new Paragraph(this.modeloSelecionado.getModelo()));
+
+            documento.close();
+            
+            this.setStreamOut(new ByteArrayInputStream(outputData.toByteArray()));
+            
+            outputData.flush();
+            outputData.close();
+            
+            this.setArquivoDownload(new DefaultStreamedContent(this.getStreamOut(), "application/pdf"));
+
+        } catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
     public void montarTags() {
         String regex = "\\{(.*?)\\}";
         String retorno = "";
 
+        construirModeloPDF();
+        
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-        this.modeloSelecionado.setModelo(this.modeloSelecionado.getModelo() + " {Custom-teste1}");
         Matcher comparator = pattern.matcher(this.modeloSelecionado.getModelo());
 
         while (comparator.find()) {
@@ -440,6 +502,30 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
 
     public void setTagsDinamicas(List<TagEntidade> tagsDinamicas) {
         this.tagsDinamicas = tagsDinamicas;
+    }
+
+    public StreamedContent getArqTemp() {
+        return arqTemp;
+    }
+
+    public void setArqTemp(StreamedContent arqTemp) {
+        this.arqTemp = arqTemp;
+    }
+
+    public StreamedContent getArqEmitido() {
+        return arqEmitido;
+    }
+
+    public void setArqEmitido(StreamedContent arqEmitido) {
+        this.arqEmitido = arqEmitido;
+    }
+
+    public boolean isTeste() {
+        return teste;
+    }
+
+    public void setTeste(boolean teste) {
+        this.teste = teste;
     }
 
 }

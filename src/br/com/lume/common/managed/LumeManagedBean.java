@@ -1,6 +1,7 @@
 package br.com.lume.common.managed;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.text.Normalizer;
 import java.util.Calendar;
@@ -447,5 +448,4 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     public void fazNada() {
         LogIntelidenteSingleton.getInstance().makeLog("Não fez nada!");
     }
-
 }
