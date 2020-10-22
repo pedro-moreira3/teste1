@@ -204,7 +204,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
 
             documento.open();
             documento.newPage();
-
+            
             documento.add(new Paragraph(this.modeloSelecionado.getModelo()));
 
             documento.close();

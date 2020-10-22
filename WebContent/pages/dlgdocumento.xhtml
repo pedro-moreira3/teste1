@@ -109,6 +109,12 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 					</p:selectOneMenu>
 				</h:panelGroup>
 			</ui:remove>
+			
+			<h:panelGroup>
+				<p:selectBooleanCheckbox value="#{documentoMB.mostrarCabecalho}" itemLabel="Mostrar cabeçalho:">
+					<p:ajax listener="#{documentoMB.inserirCabecalho}" update="editor"/>
+				</p:selectBooleanCheckbox>
+			</h:panelGroup>
 
 		</p:panelGrid>
 

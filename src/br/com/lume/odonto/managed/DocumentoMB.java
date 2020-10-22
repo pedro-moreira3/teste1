@@ -190,6 +190,10 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         return tagsDocumento;
     }
 
+    public void inserirCabecalho() {
+        this.documento = this.documento + "<img src=\"../../imagens/1574258181200.jpg\"/>";
+    }
+    
     @Override
     public void actionNew(ActionEvent event) {
         super.actionNew(event);

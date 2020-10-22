@@ -160,9 +160,16 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				styleClass="ui-panelgrid-blank ui-fluid form-group"
 				style="width:100%;">
 
-				<embed src="../../documentos/Facial-Clin/testepaciente.pdf" width="800" height="500"/>
+				<p:fieldset legend="Documento" toggleable="true">
+					<h:outputText id="documentoImprimir"
+						value="#{emissaoDocumentoMB.modeloSelecionado.modelo}" escape="false" />
+				</p:fieldset>
 
 				<ui:remove>
+
+					<embed src="../../documentos/Facial-Clin/testepaciente.pdf"
+						width="800" height="500" />
+
 					<p:media cache="disabled" id="documentoView"
 						value="#{emissaoDocumentoMB.arquivoDownload}" player="pdf" />
 				</ui:remove>
