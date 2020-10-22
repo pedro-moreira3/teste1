@@ -125,13 +125,13 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             documento.open();
             documento.newPage();
 
-            if(this.modeloSelecionado.getMostrarLogo().equals(Status.SIM)) {
-                documento.add(Image.getInstance(String.format("/app/odonto/imagens/"+UtilsFrontEnd.getEmpresaLogada().getEmpStrLogoWCache())));
+            if(this.modeloSelecionado.getMostrarLogo() != null && this.modeloSelecionado.getMostrarLogo().equals(Status.SIM)) {
+                documento.add(Image.getInstance(String.format("\\app\\odonto\\imagens\\1586189814856.png")));
             }
             
             documento.add(new Paragraph(this.modeloSelecionado.getModelo()));
 
-            //DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
+            DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
             this.docEmitido = doc;
 
             File file = new File("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/");
@@ -150,7 +150,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             out.flush();
             out.close();
             
-            this.setTeste(true);
+            this.pesquisar();
 
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
