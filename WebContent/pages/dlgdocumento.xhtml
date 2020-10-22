@@ -94,9 +94,11 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 			<h:panelGroup>
 				<p:selectBooleanCheckbox value="#{documentoMB.mostrarCabecalho}"
-					itemLabel="Mostrar cabeçalho:">
+					style="min-width:0px;margin-top:10px;margin-bottom:10px;">
 					<p:ajax listener="#{documentoMB.inserirCabecalho()}" process="@this" />
 				</p:selectBooleanCheckbox>
+				<p:outputLabel style="margin:0px;" for="layoutDocumento"
+					value="Mostrar cabeçalho" />
 			</h:panelGroup>
 
 			<ui:remove>
