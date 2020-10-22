@@ -141,7 +141,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             
             this.arqEmitido = new DefaultStreamedContent(new ByteArrayInputStream(outputData.toByteArray()));
 
-            FileOutputStream out = new FileOutputStream(file + "\\" + this.modeloSelecionado.getDescricao() + ".pdf");
+            FileOutputStream out = new FileOutputStream(file + "/" + this.modeloSelecionado.getDescricao() + ".pdf");
             out.write(outputData.toByteArray());
 
             outputData.flush();
