@@ -70,6 +70,7 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     private Exportacoes exportacao;
 
     private StreamedContent arquivoDownload;
+    private ByteArrayInputStream streamOut;
 
     @PostConstruct
     public void init() {
@@ -448,4 +449,19 @@ public abstract class LumeManagedBean<E extends Serializable> implements Seriali
     public void fazNada() {
         LogIntelidenteSingleton.getInstance().makeLog("Não fez nada!");
     }
+
+    public ByteArrayInputStream getStreamOut() {
+        return streamOut;
+    }
+
+    public void setStreamOut(ByteArrayInputStream streamOut) {
+        if(this.streamOut != null)
+            try {
+                this.streamOut.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        this.streamOut = streamOut;
+    }
+
 }

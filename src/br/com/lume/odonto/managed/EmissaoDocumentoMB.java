@@ -209,12 +209,12 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
 
             documento.close();
             
-            this.setStreamOut(new ByteArrayInputStream(outputData.toByteArray()));
+            //this.setStreamOut(new ByteArrayInputStream(outputData.toByteArray()));
             
             outputData.flush();
             outputData.close();
             
-            this.setArquivoDownload(new DefaultStreamedContent(this.getStreamOut(), "application/pdf"));
+            //this.setArquivoDownload(new DefaultStreamedContent(this.getStreamOut(), "application/pdf"));
 
         } catch (Exception e) {
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
