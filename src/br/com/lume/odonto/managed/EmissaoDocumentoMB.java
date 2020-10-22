@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +22,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 import com.lowagie.text.Document;
+import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfWriter;
@@ -121,6 +123,10 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
             documento.open();
             documento.newPage();
 
+            if(this.modeloSelecionado.getMostrarLogo().equals(Status.SIM)) {
+                documento.add(Image.getInstance(String.format("\\app\\odonto\\imagens\\"+UtilsFrontEnd.getEmpresaLogada().getEmpStrLogoWCache())));
+            }
+            
             documento.add(new Paragraph(this.modeloSelecionado.getModelo()));
 
             //DocumentoEmitidoSingleton.getInstance().getBo().persist(doc);
@@ -175,58 +181,10 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
             
         }
     }
-
-    public void construirModeloPDF() {
-        Document documento = null;
-
-        if (this.modeloSelecionado.getLayout() == null || this.modeloSelecionado.getLayout().isEmpty()) {
-            this.modeloSelecionado.setLayout("A4");
-        }
-
-        switch (this.modeloSelecionado.getLayout()) {
-            case "A3": {
-                documento = new Document(PageSize.A3.rotate(), 30, 30, 30, 30);
-            }
-                break;
-            case "A4": {
-                documento = new Document(PageSize.A4.rotate(), 30, 30, 30, 30);
-            }
-                break;
-            case "A5": {
-                documento = new Document(PageSize.A5.rotate(), 30, 30, 30, 30);
-            }
-                break;
-        }
-
-        try {
-            ByteArrayOutputStream outputData = new ByteArrayOutputStream();
-            PdfWriter pdfWriter = PdfWriter.getInstance(documento, outputData);
-
-            documento.open();
-            documento.newPage();
-            
-            documento.add(new Paragraph(this.modeloSelecionado.getModelo()));
-
-            documento.close();
-            
-            //this.setStreamOut(new ByteArrayInputStream(outputData.toByteArray()));
-            
-            outputData.flush();
-            outputData.close();
-            
-            //this.setArquivoDownload(new DefaultStreamedContent(this.getStreamOut(), "application/pdf"));
-
-        } catch (Exception e) {
-            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
-            e.printStackTrace();
-        }
-    }
     
     public void montarTags() {
         String regex = "\\{(.*?)\\}";
         String retorno = "";
-
-        construirModeloPDF();
         
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher comparator = pattern.matcher(this.modeloSelecionado.getModelo());
@@ -248,6 +206,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
                             
                             tag.setDescricaoCampo(str[1]);
                             tag.setInserirDado("S");
+                            tag.setTipoAtributo("texto");
                             tag.setEntidade(tagPai);
                             
                             this.tagsDinamicas.add(tag);
@@ -255,9 +214,14 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
                             TagEntidade tag = TagEntidadeSingleton.getInstance().getBo().findByAttributeAndEntidade(str[1], str[0]);
 
                             if (tag != null) {
-                                if(tag.getEntidade().getEntidade().equals("Paciente"))
+                                if(tag.getEntidade().getEntidade().equals("Paciente")) {
                                     this.tag = tag.getEntidade();
-                                this.tags.add(tag);
+                                    this.tags.add(tag);
+                                }else if(tag.getEntidade().getEntidade().equals("Empresa")){
+                                    this.tags.add(tag);
+                                }else {
+                                    this.tagsDinamicas.add(tag);
+                                }
                             }
                         }
                     } catch (Exception e) {
@@ -315,6 +279,9 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
                     if (obj instanceof String) {
                         modelo = modelo.replaceAll("\\{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", (String) obj);
                         this.modeloSelecionado.setModelo(modelo);
+                    }else if (obj == null) {
+                        modelo = modelo.replaceAll("\\{"+ tag.getEntidade().getEntidade() + "-" + tag.getDescricaoCampo() + "\\}", "");
+                        this.modeloSelecionado.setModelo(modelo);
                     }
                 }
                     break;
@@ -328,6 +295,15 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
                     if (obj instanceof String) {
                         modelo = modelo.replaceAll("\\{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", (String) obj);
                         this.modeloSelecionado.setModelo(modelo);
+                    }else if (obj instanceof Date) {
+                        Date data = (Date) obj;
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+                        
+                        modelo = modelo.replaceAll("\\{"+ tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", sdf.format(data));
+                        this.modeloSelecionado.setModelo(modelo);
+                    }else if (obj == null) {
+                        modelo = modelo.replaceAll("\\{"+ tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", "");
+                        this.modeloSelecionado.setModelo(modelo);
                     }
                 }
                     break;
@@ -336,8 +312,16 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
 
                     } else {
                         if (tag.getEntidade().getEntidade().equals("Custom")) {
-                            if (tag.getRespTag() != null) {
-                                modelo = modelo.replaceAll("\\{Custom-" + tag.getDescricaoCampo() + "\\}", tag.getRespTag());
+                            if (tag.getRespTag() != null && tag.getRespTag() instanceof String) {
+                                modelo = modelo.replaceAll("\\{Custom-" + tag.getDescricaoCampo() + "\\}", (String) tag.getRespTag());
+                                this.modeloSelecionado.setModelo(modelo);
+                            }
+                        }else {
+                            if (tag.getRespTag() != null && tag.getRespTag() instanceof Date) {
+                                Date data = (Date) tag.getRespTag();
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+                                
+                                modelo = modelo.replaceAll("\\{"+ tag.getEntidade().getEntidade() + "-" + tag.getDescricaoCampo() + "\\}", sdf.format(data));
                                 this.modeloSelecionado.setModelo(modelo);
                             }
                         }
@@ -400,6 +384,52 @@ public class EmissaoDocumentoMB extends LumeManagedBean<Documento> {
         }
     }
 
+//  public void construirModeloPDF() {
+//  Document documento = null;
+//
+//  if (this.modeloSelecionado.getLayout() == null || this.modeloSelecionado.getLayout().isEmpty()) {
+//      this.modeloSelecionado.setLayout("A4");
+//  }
+//
+//  switch (this.modeloSelecionado.getLayout()) {
+//      case "A3": {
+//          documento = new Document(PageSize.A3.rotate(), 30, 30, 30, 30);
+//      }
+//          break;
+//      case "A4": {
+//          documento = new Document(PageSize.A4.rotate(), 30, 30, 30, 30);
+//      }
+//          break;
+//      case "A5": {
+//          documento = new Document(PageSize.A5.rotate(), 30, 30, 30, 30);
+//      }
+//          break;
+//  }
+//
+//  try {
+//      ByteArrayOutputStream outputData = new ByteArrayOutputStream();
+//      PdfWriter pdfWriter = PdfWriter.getInstance(documento, outputData);
+//
+//      documento.open();
+//      documento.newPage();
+//      
+//      documento.add(new Paragraph(this.modeloSelecionado.getModelo()));
+//
+//      documento.close();
+//      
+//      //this.setStreamOut(new ByteArrayInputStream(outputData.toByteArray()));
+//      
+//      outputData.flush();
+//      outputData.close();
+//      
+//      //this.setArquivoDownload(new DefaultStreamedContent(this.getStreamOut(), "application/pdf"));
+//
+//  } catch (Exception e) {
+//      this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
+//      e.printStackTrace();
+//  }
+//}
+    
     public Tag getTag() {
         return tag;
     }

@@ -65,6 +65,8 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     private List<Dominio> listaTiposDocumentos;
 
     private DataTable tabelaDocumentos;
+    
+    private boolean mostrarCabecalho = false;
 
     //  private DominioBO dominioBO;
 
@@ -89,7 +91,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     public void carregarTags() {
         if (this.getEntity().getTipo() != null) {
-            this.classificacaoTag = TagSingleton.getInstance().getBo().listByTipoDocumento(this.getEntity().getTipo());
+            this.classificacaoTag = TagSingleton.getInstance().getBo().listTags();
         }
     }
 
@@ -137,7 +139,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 this.getEntity().setModelo(this.documento);
                 this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
-                this.getEntity().setTags(montarTags());
+                //this.getEntity().setTags(montarTags());
 
                 DocumentoSingleton.getInstance().getBo().persist(this.getEntity());
             }else {
@@ -191,7 +193,9 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     }
 
     public void inserirCabecalho() {
-        this.documento = this.documento + "<img src=\"../../imagens/1574258181200.jpg\"/>";
+        if(this.mostrarCabecalho) {
+            this.getEntity().setMostrarLogo("S");
+        }
     }
     
     @Override
@@ -330,6 +334,14 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     public void setNovaTag(String novaTag) {
         this.novaTag = novaTag;
+    }
+
+    public boolean isMostrarCabecalho() {
+        return mostrarCabecalho;
+    }
+
+    public void setMostrarCabecalho(boolean mostrarCabecalho) {
+        this.mostrarCabecalho = mostrarCabecalho;
     }
 
 }

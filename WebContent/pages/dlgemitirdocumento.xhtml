@@ -88,7 +88,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							itemLabel="#{tipo.descricao}" itemValue="#{tipo}" />
 
 						<p:ajax listener="#{emissaoDocumentoMB.montarTags}"
-							update="pnTags" process="@this" />
+							update="pnTags,viewDoc" process="@this" />
 
 					</p:selectOneMenu>
 				</h:panelGroup>
@@ -120,7 +120,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 							</p:column>
 
 							<p:ajax event="itemSelect" process="@this"
-								update="pnTags, viewDoc" />
+								update="pnTags,viewDoc" />
 						</p:autoComplete>
 					</h:panelGroup>
 
@@ -144,12 +144,22 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 					<ui:repeat var="tag" value="#{emissaoDocumentoMB.tagsDinamicas}">
 						<h:panelGroup style="margin-bottom:10px;"
-							rendered="#{tag.inserirDado == 'S'}">
+							rendered="#{tag.inserirDado == 'S' and tag.tipoAtributo eq 'texto'}">
 							<h:outputLabel value="#{tag.descricaoCampo}:" />
 							<p:inputText value="#{tag.respTag}"
 								style="min-width:0px;margin-top:10px;margin-bottom:10px;">
 								<p:ajax process="@this" />
 							</p:inputText>
+						</h:panelGroup>
+
+						<h:panelGroup style="margin-bottom:10px;"
+							rendered="#{tag.inserirDado == 'S' and tag.tipoAtributo eq 'data'}">
+							<h:outputLabel value="#{tag.descricaoCampo}:" />
+							<p:calendar value="#{tag.respTag}"
+								autocomplete="false" timeInput="true"
+								style="min-width:0px;margin-top:10px;margin-bottom:10px;">
+								<p:ajax process="@this" />
+							</p:calendar>
 						</h:panelGroup>
 					</ui:repeat>
 
@@ -162,7 +172,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 				<p:fieldset legend="Documento" toggleable="true">
 					<h:outputText id="documentoImprimir"
-						value="#{emissaoDocumentoMB.modeloSelecionado.modelo}" escape="false" />
+						value="#{emissaoDocumentoMB.modeloSelecionado.modelo}"
+						escape="false" />
 				</p:fieldset>
 
 				<ui:remove>

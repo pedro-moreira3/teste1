@@ -92,6 +92,13 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				</p:selectOneMenu>
 			</h:panelGroup>
 
+			<h:panelGroup>
+				<p:selectBooleanCheckbox value="#{documentoMB.mostrarCabecalho}"
+					itemLabel="Mostrar cabeçalho:">
+					<p:ajax listener="#{documentoMB.inserirCabecalho()}" process="@this" />
+				</p:selectBooleanCheckbox>
+			</h:panelGroup>
+
 			<ui:remove>
 				<h:panelGroup>
 					<p:outputLabel style="margin:0px;" for="orientacaoDocumento"
@@ -110,11 +117,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				</h:panelGroup>
 			</ui:remove>
 			
-			<h:panelGroup>
-				<p:selectBooleanCheckbox value="#{documentoMB.mostrarCabecalho}" itemLabel="Mostrar cabeçalho:">
-					<p:ajax listener="#{documentoMB.inserirCabecalho}" update="editor"/>
-				</p:selectBooleanCheckbox>
-			</h:panelGroup>
+			<br />
 
 		</p:panelGrid>
 
@@ -135,53 +138,58 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 			<p:panel id="paleta"
 				style="border:1px solid #bdbdbd;display:inline-block;margin-left:50px;vertical-align:top;
-					width:20%;height:300px;">
+					width:20%;height:400px;">
 
-				<div class="layout-paleta">
-					<div class="nano">
-						<div class="nano-content menu-scroll-content">
-							<po:menu model="#{documentoMB.menuModel}" />
+				<h:form style="height:80%;">
+					<div class="layout-paleta" style="height:100%;">
+						<div class="nano">
+							<div class="nano-content menu-scroll-content">
+								<po:menu model="#{documentoMB.menuModel}" />
+							</div>
 						</div>
 					</div>
-				</div>
+				</h:form>
 
-				<p:commandButton value="Tag customizada" styleClass="NavyButton"
-					rendered="#{documentoMB.entity.tipo != null}"
-					oncomplete="PF('dlgNovaTag').show();" update="dlgNovaTag"
-					process="@this">
-				</p:commandButton>
+				<h:panelGroup style="height:20%;">
+					<p:commandButton value="Tag customizada" styleClass="NavyButton"
+						rendered="#{documentoMB.entity.tipo != null}"
+						oncomplete="PF('dlgNovaTag').show();" update="dlgNovaTag"
+						process="@this">
+					</p:commandButton>
+				</h:panelGroup>
 			</p:panel>
 
 		</h:panelGroup>
 	</p:panel>
 
-	<p:remoteCommand name="novaTag" onstart="PrimeFaces.widgets.editor.instance.insertText('{Custom-#{documentoMB.novaTag}}')"
+	<p:remoteCommand name="novaTag"
+		onstart="PrimeFaces.widgets.editor.instance.insertText('{Custom-#{documentoMB.novaTag}}')"
 		process="@this,editor" update="editor">
 	</p:remoteCommand>
 
 	<p:dialog id="dlgNovaTag" widgetVar="dlgNovaTag" header="Nova tag">
 		<p:panelGrid columns="1" layout="grid"
 			styleClass="ui-panelgrid-blank ui-fluid form-group">
-			
+
 			<h:panelGroup>
 				<p:outputLabel value="Informe o nome da tag:" />
 				<p:inputText id="inputTag" value="#{documentoMB.novaTag}">
-					<p:ajax process="@this"/>
+					<p:ajax process="@this" />
 				</p:inputText>
 			</h:panelGroup>
 		</p:panelGrid>
-		
+
 		<p:panelGrid columns="3" layout="grid"
 			styleClass="ui-panelgrid-blank ui-fluid form-group">
-			<p:commandButton value="Cancelar" actionListener="#{documentoMB.setNovaTag(null)}"
+			<p:commandButton value="Cancelar"
+				actionListener="#{documentoMB.setNovaTag(null)}"
 				styleClass="RedButton" oncomplete="PF('dlgNovaTag').hide();"
-				process="@this"/>
+				process="@this" />
 			<h:panelGroup></h:panelGroup>
 			<p:commandButton value="Salvar" styleClass="GreenButton"
 				onclick="PrimeFaces.widgets.editor.instance.insertText('{Custom-#{documentoMB.novaTag}}')"
-				process="@this, editor"
-				update="editor"
-				oncomplete="PF('dlgNovaTag').hide();"/>
+				process="@this, editor" update="editor"
+				oncomplete="PF('dlgNovaTag').hide();" />
 		</p:panelGrid>
 	</p:dialog>
 
