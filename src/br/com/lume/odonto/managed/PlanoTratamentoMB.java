@@ -36,6 +36,7 @@ import br.com.lume.common.OdontoPerfil;
 import br.com.lume.common.lazy.models.PlanoTratamentoLazyModel;
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.FormaPagamento;
 import br.com.lume.common.util.JSFHelper;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.Status;
@@ -1099,10 +1100,17 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
     }
 
     
-    private boolean validaOrcamentoMaiorPermitido() {
+    private boolean validaOrcamentoMaiorPermitido() {  
+        
         BigDecimal valorDesconto = new BigDecimal(0);
+        
+        DescontoOrcamento descontoOrcamento = descontosDisponiveis.get(numeroParcelaOrcamento.intValue());
+        if(descontoOrcamento == null) {
+           return false; 
+        }       
+        
         if(!descontosDisponiveis.isEmpty()) {
-            valorDesconto = descontosDisponiveis.get(numeroParcelaOrcamento.intValue()).getDesconto();
+            valorDesconto = descontoOrcamento.getDesconto();
         }
         if (orcamentoSelecionado.getDescontoTipo().equals(
                 "P") && orcamentoSelecionado.getDescontoValor().compareTo(valorDesconto) == 1) {
@@ -1290,7 +1298,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
         if (getPlanejamentoAtual() != null && getPlanejamentoAtual().getFormaPagamento() != null) {
             if (existeCadastroTarifa()) {
                 setTarifasNewPlanejamento(
-                        TarifaSingleton.getInstance().getBo().listByForma(getPlanejamentoAtual().getFormaPagamento().getValor(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
+                        TarifaSingleton.getInstance().getBo().listByForma(getPlanejamentoAtual().getFormaPagamento().getValor(), UtilsFrontEnd.getProfissionalLogado().getIdEmpresa(),FormaPagamento.RECEBIMENTO));
                 return true;
             } else {
                 getPlanejamentoAtual().setnParcela(1);
@@ -1471,6 +1479,7 @@ public class PlanoTratamentoMB extends LumeManagedBean<PlanoTratamento> {
 
         } catch (Exception e) {
             LogIntelidenteSingleton.getInstance().makeLog("Erro no actionPersist OrcamentoMB", e);
+            e.printStackTrace();
             this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), e.getMessage());
             return;
         }
