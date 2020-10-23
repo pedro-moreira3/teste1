@@ -513,13 +513,19 @@ public class ProfissionalMB extends LumeManagedBean<Profissional> {
         carregarEspecialidadesSelecionadas();
     }
 
-    public void actionInativar(ActionEvent event) {
+ public void actionInativar(ActionEvent event) {
         try {
-            if (ProfissionalSingleton.getInstance().inativarProfissional(this.getEntity(), UtilsFrontEnd.getProfissionalLogado())) {
+            
+            this.getEntity().setStatus(Status.INATIVO);    
+            this.getEntity().setAlteradoPor(UtilsFrontEnd.getProfissionalLogado().getId());
+            
+            this.actionPersist(event);
+            
+           // if (ProfissionalSingleton.getInstance().inativarProfissional(this.getEntity(), UtilsFrontEnd.getProfissionalLogado())) {
                 this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "");
-            } else {
-                this.addError("Erro ao inativar profissional", "");
-            }
+           // } else {
+           //     this.addError("Erro ao inativar profissional", "");
+           // }
 
             PrimeFaces.current().ajax().addCallbackParam("justificativa", true);
         } catch (Exception e) {
