@@ -125,11 +125,9 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         DocumentoEmitido doc = new DocumentoEmitido();
         doc.setDataEmissao(new Date());
         doc.setEmitidoPor(UtilsFrontEnd.getProfissionalLogado());
-        
-        if(this.pacienteSelecionado != null)
-            doc.setEmitidoPara(this.pacienteSelecionado);
             
         if(this.pacienteSelecionado != null) {
+            doc.setEmitidoPara(this.pacienteSelecionado);
             doc.setPathDocumento("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/" + this.modeloSelecionado.getDescricao()+ "-" + this.pacienteSelecionado.getId() + ".pdf");
         }else {
             doc.setPathDocumento("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/" + this.modeloSelecionado.getDescricao() + ".pdf");
@@ -164,7 +162,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             documento.newPage();
 
             if(this.modeloSelecionado.getMostrarLogo() != null && this.modeloSelecionado.getMostrarLogo().equals(Status.SIM)) {
-                Image img = Image.getInstance(String.format("\\app\\odonto\\imagens\\"+UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo()));
+                Image img = Image.getInstance(String.format("\\app\\odonto\\imagens\\1586189814856.png"));
                 
                 float w = img.getWidth();
                 float h = img.getHeight();
@@ -364,7 +362,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
                     if (tag.getEntidade().getEntidadePai() != null) {
 
                     } else {
-                        if(tag.getAtributo().equals("cid")) {
+                        if(tag.getAtributo() != null && tag.getAtributo().equals("cid")) {
                             modelo = modelo.replaceAll("\\{"+ tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", this.cid.getDescricao());
                         }else if (tag.getEntidade().getEntidade().equals("Custom")) {
                             if (tag.getRespTag() != null) {

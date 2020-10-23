@@ -176,7 +176,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 			<h:panelGroup>
 				<p:outputLabel value="Informe o nome da tag:" />
 				<p:inputText id="inputTag" value="#{documentoMB.novaTag}">
-					<p:ajax process="@this" />
+					<p:ajax process="@this" update="btnNewTag"/>
 				</p:inputText>
 			</h:panelGroup>
 		</p:panelGrid>
@@ -188,9 +188,9 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				styleClass="RedButton" oncomplete="PF('dlgNovaTag').hide();"
 				process="@this" />
 			<h:panelGroup></h:panelGroup>
-			<p:commandButton value="Salvar" styleClass="GreenButton"
-				onclick="PrimeFaces.widgets.editor.instance.insertText('{Custom-#{documentoMB.novaTag}}')"
-				process="@this, editor" update="editor"
+			<p:commandButton id="btnNewTag" value="Salvar" styleClass="GreenButton"
+				onstart="PrimeFaces.widgets.editor.instance.insertText('{Custom-#{documentoMB.novaTag}}')"
+				process="@this,editor" update="editor"
 				oncomplete="PF('dlgNovaTag').hide();" />
 		</p:panelGrid>
 	</p:dialog>

@@ -155,8 +155,8 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						<h:panelGroup style="margin-bottom:10px;"
 							rendered="#{tag.inserirDado == 'S' and tag.tipoAtributo eq 'data'}">
 							<h:outputLabel value="#{tag.descricaoCampo}:" />
-							<p:calendar value="#{tag.respTagData}"
-								autocomplete="false" timeInput="true"
+							<p:calendar value="#{tag.respTagData}" autocomplete="false"
+								timeInput="true"
 								style="min-width:0px;margin-top:10px;margin-bottom:10px;">
 								<p:ajax event="dateSelect" process="@this" />
 							</p:calendar>
@@ -170,20 +170,19 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 				styleClass="ui-panelgrid-blank ui-fluid form-group"
 				style="width:100%;">
 
-				<p:fieldset legend="Documento" toggleable="true">
-					<h:outputText id="documentoImprimir"
-						value="#{emissaoDocumentoMB.modeloHtml.toString()}"
-						escape="false" />
-				</p:fieldset>
-
 				<ui:remove>
-
-					<embed src="../../documentos/Facial-Clin/testepaciente.pdf"
-						width="800" height="500" />
-
-					<p:media cache="disabled" id="documentoView"
-						value="#{emissaoDocumentoMB.arquivoDownload}" player="pdf" />
+					<p:fieldset legend="Documento" toggleable="true">
+						<h:outputText id="documentoImprimir"
+							value="#{emissaoDocumentoMB.modeloHtml.toString()}"
+							escape="false" />
+					</p:fieldset>
 				</ui:remove>
+
+
+				<p:media cache="disabled" id="documentoView"
+					value="/app/odonto/documentos/Facial-Clin/teste parser 3.pdf"
+					player="pdf" />
+
 
 			</p:panelGrid>
 

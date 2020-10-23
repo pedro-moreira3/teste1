@@ -31,6 +31,7 @@ import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
 import br.com.lume.common.util.HtmlToText;
 import br.com.lume.common.util.Mensagens;
+import br.com.lume.common.util.Status;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.documento.DocumentoSingleton;
 import br.com.lume.dominio.DominioSingleton;
@@ -96,12 +97,6 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     public void carregarTags() {
         if (this.getEntity().getTipo() != null) {
             this.classificacaoTag = TagSingleton.getInstance().getBo().listTags();
-        }
-    }
-
-    public void criarNovaTag() {
-        if (this.novaTag != null && !this.novaTag.isEmpty()) {
-            PrimeFaces.current().executeScript("novaTag();");
         }
     }
 
@@ -235,6 +230,21 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
 
     public void carregarDocumento(Documento doc) {
         setEntity(doc);
+        this.setMostrarCabecalho((doc.getMostrarLogo().equals(Status.SIM)));
+        
+        if(doc.getPathModelo() != null && !doc.getPathModelo().isEmpty()) {
+            this.documento = "";
+            carregarPaleta();
+            
+            try(BufferedReader reader = new BufferedReader(new FileReader(doc.getPathModelo()))){
+                while(reader.ready()) {
+                    this.documento = this.documento.concat(reader.readLine());
+                }
+            }catch (Exception e) {
+                this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_BUSCAR_REGISTROS), "Falha ao carregar o documento");
+                e.printStackTrace();
+            }
+        }
     }
     
     public void inserirCabecalho() {

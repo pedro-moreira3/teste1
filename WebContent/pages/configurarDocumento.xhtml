@@ -73,7 +73,7 @@
 									icon="White fa fa-eye"
 									actionListener="#{documentoMB.carregarDocumento(documento)}"
 									oncomplete="PF('dlgNovoDocumento').show();"
-									update="dlgNovoDocumento"
+									update=":lume:dlgNovoDocumento,:lume:editor"
 									process="@this" />
 
 								<p:commandButton id="btnRemove" styleClass="RedButton"
@@ -94,7 +94,7 @@
 
 							<p:column filterBy="#{documento.dataCriacaoStr}"
 								sortBy="#{documento.dataCriacaoStr}" filterMatchMode="contains"
-								headerText="Data de cricação">
+								headerText="Data de criação">
 								<h:outputText value="#{documento.dataCriacaoStr}" />
 							</p:column>
 
@@ -112,7 +112,7 @@
 		</div>
 
 		<p:dialog id="dlgNovoDocumento" widgetVar="dlgNovoDocumento"
-			header="Novo documento" responsive="true" modal="true"
+			header="Novo documento" responsive="true" modal="true" appendTo=":lume"
 			onHide="PF('dlgNovoDocumento').toggleMaximize();"
 			onShow="PF('dlgNovoDocumento').toggleMaximize();">
 
