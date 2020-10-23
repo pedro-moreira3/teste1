@@ -1,9 +1,12 @@
 package br.com.lume.odonto.managed;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,6 +19,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.swing.text.html.parser.ParserDelegator;
 
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
@@ -73,6 +77,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
     private CID cid;
     private DocumentoEmitido docEmitido;
     private boolean teste = false;
+    private StringBuilder modeloHtml = new StringBuilder("");
     
     private StreamedContent arqTemp;
     private StreamedContent arqEmitido;
@@ -88,6 +93,30 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         this.setEntityList(DocumentoEmitidoSingleton.getInstance().getBo().listByEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa()));
     }
 
+    public void carregarDocumentoHtmlModelo() {
+        BufferedReader reader = null;
+        
+        try {
+            if(this.modeloSelecionado != null && this.modeloSelecionado.getPathModelo() != null) {
+                reader = new BufferedReader(new FileReader(new File(this.modeloSelecionado.getPathModelo())));
+                
+                while(reader.ready()) {
+                    this.modeloHtml.append(reader.readLine());
+                }
+                
+            }
+        }catch (Exception e) {
+            this.addError("Erro", "Não foi possível carregar o documento modelo");
+            e.printStackTrace();
+        }finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
     public void emitirDocumento() {
         Document documento = null;
 
@@ -96,7 +125,16 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         DocumentoEmitido doc = new DocumentoEmitido();
         doc.setDataEmissao(new Date());
         doc.setEmitidoPor(UtilsFrontEnd.getProfissionalLogado());
-        doc.setPathDocumento("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/" + this.modeloSelecionado.getDescricao() + ".pdf");
+        
+        if(this.pacienteSelecionado != null)
+            doc.setEmitidoPara(this.pacienteSelecionado);
+            
+        if(this.pacienteSelecionado != null) {
+            doc.setPathDocumento("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/" + this.modeloSelecionado.getDescricao()+ "-" + this.pacienteSelecionado.getId() + ".pdf");
+        }else {
+            doc.setPathDocumento("/app/odonto/documentos/" + UtilsFrontEnd.getEmpresaLogada().getEmpStrNme() + "/" + this.modeloSelecionado.getDescricao() + ".pdf");
+        }
+        
         doc.setDocumentoModelo(this.modeloSelecionado);
 
         if (this.modeloSelecionado.getLayout() == null || this.modeloSelecionado.getLayout().isEmpty()) {
@@ -126,7 +164,23 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             documento.newPage();
 
             if(this.modeloSelecionado.getMostrarLogo() != null && this.modeloSelecionado.getMostrarLogo().equals(Status.SIM)) {
-                documento.add(Image.getInstance(String.format("\\app\\odonto\\imagens\\1586189814856.png")));
+                Image img = Image.getInstance(String.format("\\app\\odonto\\imagens\\1586189814856.png"));
+                
+                float w = img.getWidth();
+                float h = img.getHeight();
+                float r = ((w*h)/10000);
+                
+                float w1 = 0;
+                float h1 = 0;
+                
+                if( r > 1 ) {
+                    w1 = (w/100)/r;
+                    h1 = (h/100)/r;
+                }
+                
+                img.scaleAbsolute(w*w1, h*h1);
+                documento.add(img);
+                documento.addHeader(UtilsFrontEnd.getEmpresaLogada().getEmpStrNme(), "Telefone para contato: "+UtilsFrontEnd.getEmpresaLogada().getEmpChaFone());
             }
             
             documento.add(new Paragraph(this.modeloSelecionado.getModelo()));
@@ -190,6 +244,8 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
         
         Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
         Matcher comparator = pattern.matcher(this.modeloSelecionado.getModelo());
+        
+        carregarDocumentoHtmlModelo();
 
         while (comparator.find()) {
             retorno = comparator.group();
@@ -280,10 +336,8 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
                     if (obj instanceof String) {
                         modelo = modelo.replaceAll("\\{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", (String) obj);
-                        this.modeloSelecionado.setModelo(modelo);
                     }else if (obj == null) {
-                        modelo = modelo.replaceAll("\\{"+ tag.getEntidade().getEntidade() + "-" + tag.getDescricaoCampo() + "\\}", "");
-                        this.modeloSelecionado.setModelo(modelo);
+                        modelo = modelo.replaceAll("\\{"+ tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", "");
                     }
                 }
                     break;
@@ -296,16 +350,13 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
                     if (obj instanceof String) {
                         modelo = modelo.replaceAll("\\{" + tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", (String) obj);
-                        this.modeloSelecionado.setModelo(modelo);
                     }else if (obj instanceof Date) {
                         Date data = (Date) obj;
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                         
                         modelo = modelo.replaceAll("\\{"+ tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", sdf.format(data));
-                        this.modeloSelecionado.setModelo(modelo);
                     }else if (obj == null) {
                         modelo = modelo.replaceAll("\\{"+ tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", "");
-                        this.modeloSelecionado.setModelo(modelo);
                     }
                 }
                     break;
@@ -313,23 +364,29 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
                     if (tag.getEntidade().getEntidadePai() != null) {
 
                     } else {
-                        if (tag.getEntidade().getEntidade().equals("Custom")) {
-                            if (tag.getRespTag() != null && tag.getRespTag() instanceof String) {
-                                modelo = modelo.replaceAll("\\{Custom-" + tag.getDescricaoCampo() + "\\}", (String) tag.getRespTag());
-                                this.modeloSelecionado.setModelo(modelo);
+                        if(tag.getAtributo().equals("cid")) {
+                            modelo = modelo.replaceAll("\\{"+ tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", this.cid.getDescricao());
+                        }else if (tag.getEntidade().getEntidade().equals("Custom")) {
+                            if (tag.getRespTag() != null) {
+                                modelo = modelo.replaceAll("\\{Custom-" + tag.getDescricaoCampo() + "\\}", tag.getRespTag());
                             }
                         }else {
-                            if (tag.getRespTag() != null && tag.getRespTag() instanceof Date) {
-                                Date data = (Date) tag.getRespTag();
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+                            if (tag.getRespTagData() != null) {
+                                Date data = tag.getRespTagData();
+                                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                                 
-                                modelo = modelo.replaceAll("\\{"+ tag.getEntidade().getEntidade() + "-" + tag.getDescricaoCampo() + "\\}", sdf.format(data));
-                                this.modeloSelecionado.setModelo(modelo);
+                                modelo = modelo.replaceAll("\\{"+ tag.getEntidade().getEntidade() + "-" + tag.getAtributo() + "\\}", sdf.format(data));
                             }
                         }
                     }
                 }
             }
+            
+            
+            this.modeloSelecionado.setModelo(modelo);
+            modeloHtml = new StringBuilder("");
+            this.modeloHtml.append(modelo);
+            
         } catch (Exception e) {
             this.addError("Erro na emissão", "Falha ao processar as tags do documento.");
             e.printStackTrace();
@@ -558,6 +615,14 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
 
     public void setTeste(boolean teste) {
         this.teste = teste;
+    }
+
+    public String getModeloHtml() {
+        return modeloHtml.toString();
+    }
+
+    public void setModeloHtml(StringBuilder modeloHtml) {
+        this.modeloHtml = modeloHtml;
     }
 
 }

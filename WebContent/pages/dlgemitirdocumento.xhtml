@@ -155,10 +155,10 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 						<h:panelGroup style="margin-bottom:10px;"
 							rendered="#{tag.inserirDado == 'S' and tag.tipoAtributo eq 'data'}">
 							<h:outputLabel value="#{tag.descricaoCampo}:" />
-							<p:calendar value="#{tag.respTag}"
+							<p:calendar value="#{tag.respTagData}"
 								autocomplete="false" timeInput="true"
 								style="min-width:0px;margin-top:10px;margin-bottom:10px;">
-								<p:ajax process="@this" />
+								<p:ajax event="dateSelect" process="@this" />
 							</p:calendar>
 						</h:panelGroup>
 					</ui:repeat>
@@ -172,7 +172,7 @@ body.layout-compact .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon
 
 				<p:fieldset legend="Documento" toggleable="true">
 					<h:outputText id="documentoImprimir"
-						value="#{emissaoDocumentoMB.modeloSelecionado.modelo}"
+						value="#{emissaoDocumentoMB.modeloHtml.toString()}"
 						escape="false" />
 				</p:fieldset>
 

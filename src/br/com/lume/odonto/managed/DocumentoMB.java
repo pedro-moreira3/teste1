@@ -1,5 +1,13 @@
 package br.com.lume.odonto.managed;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +29,7 @@ import org.primefaces.model.menu.MenuModel;
 
 import br.com.lume.common.log.LogIntelidenteSingleton;
 import br.com.lume.common.managed.LumeManagedBean;
+import br.com.lume.common.util.HtmlToText;
 import br.com.lume.common.util.Mensagens;
 import br.com.lume.common.util.UtilsFrontEnd;
 import br.com.lume.documento.DocumentoSingleton;
@@ -45,17 +54,11 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
     private Logger log = Logger.getLogger(DocumentoMB.class);
 
     private List<String> legendas = new ArrayList<>();
-
     private List<Documento> documentos;
-
     private List<Dominio> dominios;
-
     private List<Tag> classificacaoTag;
-
     private String documento;
-
     private CKEditor ckEditor;
-
     private MenuModel menuModel;
 
     private String novaTag;
@@ -85,6 +88,7 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
             this.listaTiposDocumentos = DominioSingleton.getInstance().getBo().listByObjeto("documento");
         } catch (Exception e) {
             this.addError("Erro ao carregar tipos de documentos", "");
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Erro ao carregar documentos.");
             e.printStackTrace();
         }
     }
@@ -129,6 +133,40 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         }
     }
 
+    public void parserDocumento() {
+        FileWriter writer = null;
+        FileReader reader = null;
+        try {
+            HtmlToText parser = new HtmlToText();
+            
+            String path = "/app/odonto/modelo documentos/"+UtilsFrontEnd.getEmpresaLogada().getEmpStrNme()+"/";
+
+            File file = new File(path);
+            file.mkdirs();
+            
+            writer = new FileWriter(file+"/"+this.getEntity().getDescricao()+".html");
+            writer.write(this.getEntity().getModelo());
+            writer.flush();
+            
+            reader = new FileReader(new File(path+this.getEntity().getDescricao()+".html").getAbsolutePath());
+            parser.parse(reader);
+            
+            this.getEntity().setModelo(parser.getText());
+            this.getEntity().setPathModelo(path+this.getEntity().getDescricao()+".html");
+            
+        }catch (Exception e) {
+            this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "Erro no parser do documento.");
+            e.printStackTrace();
+        }finally {
+            try {
+                writer.close();
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
     @Override
     public void actionPersist(ActionEvent event) {
         try {
@@ -140,8 +178,11 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
                 this.getEntity().setIdEmpresa(UtilsFrontEnd.getProfissionalLogado().getIdEmpresa());
 
                 //this.getEntity().setTags(montarTags());
+                
+                parserDocumento();
 
                 DocumentoSingleton.getInstance().getBo().persist(this.getEntity());
+                this.addInfo(Mensagens.getMensagem(Mensagens.REGISTRO_SALVO_COM_SUCESSO), "Sucesso ao criar documento.");
             }else {
                 this.addError(Mensagens.getMensagem(Mensagens.ERRO_AO_SALVAR_REGISTRO), "é necessário informar a descrição do documento.");
             }
@@ -192,6 +233,10 @@ public class DocumentoMB extends LumeManagedBean<Documento> {
         return tagsDocumento;
     }
 
+    public void carregarDocumento(Documento doc) {
+        setEntity(doc);
+    }
+    
     public void inserirCabecalho() {
         if(this.mostrarCabecalho) {
             this.getEntity().setMostrarLogo("S");

@@ -71,10 +71,10 @@
 							<p:column headerText="Ações">
 								<p:commandButton id="btnView" styleClass="NavyButton"
 									icon="White fa fa-eye"
-									action="#{documentoMB.setEntity(documento)}" process="@this" />
-
-								<p:commandButton id="btnEdit" styleClass="OrangeButton"
-									icon="fa fa-pencil" process="@this" />
+									actionListener="#{documentoMB.carregarDocumento(documento)}"
+									oncomplete="PF('dlgNovoDocumento').show();"
+									update="dlgNovoDocumento"
+									process="@this" />
 
 								<p:commandButton id="btnRemove" styleClass="RedButton"
 									icon="fa fa-trash" process="@this" />
