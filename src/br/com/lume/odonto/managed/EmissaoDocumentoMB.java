@@ -164,7 +164,7 @@ public class EmissaoDocumentoMB extends LumeManagedBean<DocumentoEmitido> {
             documento.newPage();
 
             if(this.modeloSelecionado.getMostrarLogo() != null && this.modeloSelecionado.getMostrarLogo().equals(Status.SIM)) {
-                Image img = Image.getInstance(String.format("\\app\\odonto\\imagens\\1586189814856.png"));
+                Image img = Image.getInstance(String.format("\\app\\odonto\\imagens\\"+UtilsFrontEnd.getEmpresaLogada().getEmpStrLogo()));
                 
                 float w = img.getWidth();
                 float h = img.getHeight();
